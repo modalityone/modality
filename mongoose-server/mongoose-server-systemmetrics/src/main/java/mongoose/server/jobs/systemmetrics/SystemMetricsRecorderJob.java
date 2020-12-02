@@ -26,8 +26,6 @@ public final class SystemMetricsRecorderJob implements ApplicationJob {
 
     @Override
     public void onStart() {
-        if (true)
-            return;
         // Checking there is a metrics service provider registered for this platform
         if (SystemMetricsService.getProvider() == null)
             throw new IllegalStateException("SystemMetricsRecorderJob will not start as no SystemMetricsServiceProvider is registered for this platform");

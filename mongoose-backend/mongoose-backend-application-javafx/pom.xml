@@ -221,7 +221,7 @@
 
         <!-- profile to make a non fat standalone executable jar with all dependent libraries unpacked in lib folder -->
         <profile>
-            <id>mongoose-backend-application-javafx-nonfat</id>
+            <id>javafx-nonfatjar</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -235,7 +235,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>${plugins.param.jre.mainClass}</mainClass>
+                                    <mainClass>${webfx.mainClass}</mainClass>
                                     <addClasspath>true</addClasspath>
                                     <classpathPrefix>lib/</classpathPrefix>
                                 </manifest>
@@ -254,7 +254,7 @@
 
         <!-- profile to make a fat standalone executable jar with all dependent libraries included inside -->
         <profile>
-            <id>mongoose-backend-application-javafx-fat</id>
+            <id>javafx-fatjar</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -283,7 +283,7 @@
 
         <!-- Profile to minimize and obfuscate the jar file with Proguard -->
         <profile>
-            <id>mongoose-backend-application-javafx-min</id>
+            <id>javafx-minjar</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>

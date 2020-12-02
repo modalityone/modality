@@ -47,27 +47,27 @@ public final class LoginPanel implements MongooseButtonFactoryMixin {
                         .addNodeFillingRow(passwordField = newMaterialPasswordField("Password"))
                         .addNewRow(hyperLink)
                         .addNodeFillingRow(button = newLargeGreenButton(null))
-                .build()
+                        .build()
         );
         gridPane.setPadding(new Insets(20));
         GridPane.setHalignment(hyperLink, HPos.CENTER);
         hyperLink.setOnAction(e -> signInMode.setValue(!signInMode.getValue()));
         LayoutUtil.setUnmanagedWhenInvisible(passwordField, signInMode);
         Properties.runNowAndOnPropertiesChange(() ->
-            I18nControls.bindI18nProperties(button, signInMode.getValue() ? "SignIn>>" : "SendPassword>>")
-        , signInMode);
+                        I18nControls.bindI18nProperties(button, signInMode.getValue() ? "SignIn>>" : "SendPassword>>")
+                , signInMode);
         node = LayoutUtil.createGoldLayout(loginWindow);
         initValidation();
         button.setOnAction(event -> {
             if (validationSupport.isValid())
                 new AuthenticationRequest()
-                    .setUserCredentials(new UsernamePasswordCredentials(usernameField.getText(), passwordField.getText()))
-                    .executeAsync().setHandler(ar -> {
-                        if (ar.succeeded())
-                            uiSession.setUserPrincipal(ar.result());
-                        else
-                            Animations.shake(loginWindow);
-                    });
+                        .setUserCredentials(new UsernamePasswordCredentials(usernameField.getText(), passwordField.getText()))
+                        .executeAsync().setHandler(ar -> {
+                    if (ar.succeeded())
+                        uiSession.setUserPrincipal(ar.result());
+                    else
+                        Animations.shake(loginWindow);
+                });
         });
         prepareShowing();
     }
@@ -82,8 +82,6 @@ public final class LoginPanel implements MongooseButtonFactoryMixin {
     }
 
     public void prepareShowing() {
-        usernameField.setText("bruno.salmon1@gmail.com");
-        passwordField.setText("ultraboa");
         // Resetting the default button (required for JavaFx if displayed a second time)
         ButtonUtil.resetDefaultButton(button);
         SceneUtil.autoFocusIfEnabled(usernameField);

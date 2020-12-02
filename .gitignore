@@ -85,10 +85,6 @@ node_modules/
 bower_components/
 
 
-### Mongoose
-/mongoose-server/mongoose-server-datasource/src/main/resources/mongoose/server/datasource/MDS/ConnectionDetails.json
-/mongoose-client/mongoose-client-busconfig/src/main/resources/webfx/platform/client/services/websocketbus/conf/BusOptions.json
-
 ### Eclipse template
 
 .metadata
