@@ -217,7 +217,7 @@ jobs:
       # Delegating this task to a batch file (create-distribution-SNAPSHOT-windows-x64.bat)
       - if: matrix.msi-desktop-artifact-suffix != null
         name: Create Windows Installer (msi)
-        run: .\create-distribution-SNAPSHOT-windows-x64.bat ${{ env.application-name }} webfx-demo-${{ matrix.app.module-token }}-application-javafx-0.1.0-SNAPSHOT.jar
+        run: .\create-distribution-SNAPSHOT-windows-x64.bat ${{ env.application-name }} ${{ matrix.app.module-token }}-application-javafx-0.1.0-SNAPSHOT.jar
         working-directory: ${{ env.javafx-module }}
 
 
@@ -304,7 +304,7 @@ jobs:
       # Copying the app into the staging directory (will also be used for the final upload in the SNAPSHOT release)
       - if: matrix.gluon-desktop-artifact-suffix != null
         name: Copy native Desktop to staging
-        run: cp ${{ env.gluon-module }}/target/client/${{ matrix.gluon-desktop-arch-token }}/webfx-demo-* staging/${{ env.application-name }}-${{ matrix.gluon-desktop-artifact-suffix }}
+        run: cp ${{ env.gluon-module }}/target/client/${{ matrix.gluon-desktop-arch-token }}/${{ matrix.app.module-token}}* staging/${{ env.application-name }}-${{ matrix.gluon-desktop-artifact-suffix }}
 
       # Uploading it in the assets of this workflow run
       - if: matrix.gluon-desktop-artifact-suffix != null
