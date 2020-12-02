@@ -1,0 +1,11 @@
+<module>
+
+    <dependencies>
+
+        <source-modules>
+            <module>webfx-platform-shared-submit</module>
+        </source-modules>
+
+    </dependencies>
+
+</module>
