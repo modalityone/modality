@@ -26,6 +26,7 @@
         <module>mongoose-frontend-activities-summary</module>
         <module>mongoose-frontend-activities-terms</module>
         <module>mongoose-frontend-application</module>
+        <module>mongoose-frontend-application-gluon</module>
 
     </modules>
 
