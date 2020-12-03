@@ -27,8 +27,8 @@ jobs:
     strategy:
       matrix:
         app: [
-          {name: 'MongooseBackend',  module-token: 'mongoose-backend'},
-          {name: 'MongooseFrontend', module-token: 'mongoose-frontend'}
+          {name: 'MongooseBackend',  module-token: 'mongoose-backend', gwt-token: 'mongoose_backend'},
+          {name: 'MongooseFrontend', module-token: 'mongoose-frontend', gwt-token: 'mongoose_frontend'}
         ]
         os-config:  [1, 2, 3]
         include:
@@ -60,7 +60,7 @@ jobs:
       webfx-module:     ./webfx
       javafx-module:    ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-javafx
       gwt-module:       ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-gwt
-      gwt-build:        ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-gwt/target/${{ matrix.app.module-token }}-application-gwt-0.1.0-SNAPSHOT/${{ matrix.app.module-token }}_application_gwt/
+      gwt-build:        ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-gwt/target/${{ matrix.app.module-token }}-application-gwt-0.1.0-SNAPSHOT/${{ matrix.app.gwt-token }}_application_gwt/
       gluon-module:     ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-gluon
       web-push-repository-name: 'mongoose' # This same repository
       web-push-repository-owner: ${{ github.repository_owner }}
