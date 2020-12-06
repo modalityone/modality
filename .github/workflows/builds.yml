@@ -42,8 +42,8 @@ jobs:
             # Note: 1) must run on Ubuntu because the Github push action (to update the web-build branch) works only on Ubuntu
             web-artifact-suffix:           'Web.war'                            # build 1)
             fatjar-artifact-suffix:        'Linux-x64-runnable.jar'             # build 2)
-            jvm-deb-artifact-suffix:       'Linux-x64-jvm-package.deb'          # build 3)
-            jvm-rpm-artifact-suffix:       'Linux-x64-jvm-package.rpm'          # build 4)
+            #jvm-deb-artifact-suffix:       'Linux-x64-jvm-package.deb'          # build 3)
+            #jvm-rpm-artifact-suffix:       'Linux-x64-jvm-package.rpm'          # build 4)
             gluon-desktop-arch-token:      'x86_64-linux'                       # build 5)
             gluon-desktop-artifact-suffix: 'Linux-x64-native-runnable'          # build 5)
 
@@ -55,8 +55,8 @@ jobs:
           - os-config: 3 # Generates builds 7) 8) 9) & 10)
             os: windows-latest
             fatjar-artifact-suffix:        'Windows-x64-runnable.jar'           # build 7)
-            jvm-exe-artifact-suffix:       'Windows-x64-jvm-installer.exe'      # build 8)
-            jvm-msi-artifact-suffix:       'Windows-x64-jvm-installer.msi'      # build 9)
+            #jvm-exe-artifact-suffix:       'Windows-x64-jvm-installer.exe'      # build 8)
+            #jvm-msi-artifact-suffix:       'Windows-x64-jvm-installer.msi'      # build 9)
             gluon-desktop-arch-token:      'x86_64-windows'                     # build 10)
             gluon-desktop-artifact-suffix: 'Windows-x64-native-runnable.exe'    # build 10)
             msi-desktop-artifact-suffix:   'Windows-x64-jvm-installer.msi'      # build 9)
@@ -64,8 +64,8 @@ jobs:
           - os-config: 4 # Generates builds 11) 12) 13) 14) & 15)
             os: macos-latest
             fatjar-artifact-suffix:        'MacOS-x64.jar'                      # build 11)
-            jvm-dmg-artifact-suffix:       'MacOS-x64-jvm.dmg'                  # build 12)
-            jvm-pkg-artifact-suffix:       'MacOS-x64-jvm.pkg'                  # build 13)
+            #jvm-dmg-artifact-suffix:       'MacOS-x64-jvm.dmg'                  # build 12)
+            #jvm-pkg-artifact-suffix:       'MacOS-x64-jvm.pkg'                  # build 13)
             gluon-desktop-arch-token:      'x86_64-darwin'                      # build 14)
             gluon-desktop-Artifact-suffix: 'MacOS-x64-native-runnable'          # build 14)
             # Note: the iOS build needs the Apple certificate in secrets (the steps will be skipped otherwise)
