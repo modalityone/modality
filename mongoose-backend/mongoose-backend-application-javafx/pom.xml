@@ -215,9 +215,56 @@
     <properties>
         <!-- disabling classes-dependencies unpack to avoid including them again in the jar -->
         <plugin.dependency.param.unpack-classes.phase>none</plugin.dependency.param.unpack-classes.phase>
+
+        <plugin.javapackager.name>MongooseBackend</plugin.javapackager.name>
+        <plugin.javapackager.displayName>Mongoose Backend</plugin.javapackager.displayName>
     </properties>
 
+    <build>
+        <plugins>
+            <!-- This plugin must be ran explicitly by invoking mvn javafx:jlink -->
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
     <profiles>
+        <!-- profile to make a fat standalone executable jar with all dependent libraries included inside -->
+        <profile>
+            <id>javafx-fatjar</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+
+            <build>
+                <plugins>
+
+                    <!-- Calling Shade with the configuration defined in the parent pom -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>javapackager</id>
+
+            <build>
+                <plugins>
+
+                    <plugin>
+                        <groupId>io.github.fvarrui</groupId>
+                        <artifactId>javapackager</artifactId>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
 
         <!-- profile to make a non fat standalone executable jar with all dependent libraries unpacked in lib folder -->
         <profile>
