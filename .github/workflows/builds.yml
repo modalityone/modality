@@ -59,7 +59,7 @@ jobs:
             #jvm-msi-artifact-suffix:       'Windows-x64-jvm-installer.msi'      # build 9)
             gluon-desktop-arch-token:      'x86_64-windows'                     # build 10)
             gluon-desktop-artifact-suffix: 'Windows-x64-native-runnable.exe'    # build 10)
-            msi-desktop-artifact-suffix:   'Windows-x64-jvm-installer.msi'      # build 9)
+            #msi-desktop-artifact-suffix:   'Windows-x64-jvm-installer.msi'      # build 9)
 
           - os-config: 4 # Generates builds 11) 12) 13) 14) & 15)
             os: macos-latest
