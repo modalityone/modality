@@ -239,35 +239,6 @@
             </build>
         </profile>
 
-        <!-- profile to make a fat standalone executable jar with all dependent libraries included inside -->
-        <profile>
-            <id>javafx-fatjar</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-
-            <build>
-                <plugins>
-
-                    <!-- Calling Shade with the configuration defined in the parent pom -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-shade-plugin</artifactId>
-                        <configuration>
-                            <!-- Also relocating java_cup package to avoid version mismatch (with xalan library) when installing this application on Android with the Gluon plugin -->
-                            <relocations>
-                                <relocation>
-                                    <pattern>java_cup</pattern>
-                                    <shadedPattern>java_cub_11b</shadedPattern>
-                                </relocation>
-                            </relocations>
-                        </configuration>
-                    </plugin>
-
-                </plugins>
-            </build>
-        </profile>
-
         <!-- Profile to minimize and obfuscate the jar file with Proguard -->
         <profile>
             <id>javafx-minjar</id>
