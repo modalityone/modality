@@ -76,11 +76,11 @@ jobs:
       application-name: ${{ matrix.app.name }}
       webfx-module:     ./webfx
       this-module:      .
-      javafx-module:    ./webfx-demo-${{ matrix.app.module-token }}-application-javafx
-      gwt-module:       ./webfx-demo-${{ matrix.app.module-token }}-application-gwt
-      gwt-build:        ./webfx-demo-${{ matrix.app.module-token }}-application-gwt/target/webfx-demo-${{ matrix.app.module-token }}-application-gwt-0.1.0-SNAPSHOT/webfx_demo_${{ matrix.app.module-token }}_application_gwt/
-      gluon-module:     ./webfx-demo-${{ matrix.app.module-token }}-application-gluon
-      web-push-repository-name: 'mongoose' # This same repository (Github doesn't provide ${{ github.repository_name }}
+      javafx-module:    ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-javafx
+      gwt-module:       ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-gwt
+      gwt-build:        ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-gwt/target/${{ matrix.app.module-token }}-application-gwt-0.1.0-SNAPSHOT/${{ matrix.app.gwt-token }}_application_gwt/
+      gluon-module:     ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-gluon
+      web-push-repository-name: 'mongoose' # This same repository
       web-push-repository-owner: ${{ github.repository_owner }}
       web-push-branch: ${{ matrix.app.module-token }}-web-build
       web-push-username: ${{ github.actor }}
@@ -249,7 +249,7 @@ jobs:
         name: Create Windows Installer (msi)
         run: |
           mvn javafx:jlink
-          ${{ env.JAVA_HOME }}\bin\jpackage --input .\target\ --name ${{ env.application-name }} --main-jar webfx-demo-${{ matrix.app.module-token }}-application-javafx-0.1.0-SNAPSHOT.jar --main-class webfx.platform.shared.services.appcontainer.ApplicationContainer --type msi --runtime-image .\target\jlinkImage --app-version 0.0.0 --win-per-user-install --win-menu --win-menu-group WebFx
+          ${{ env.JAVA_HOME }}\bin\jpackage --input .\target\ --name ${{ env.application-name }} --main-jar ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-javafx-0.1.0-SNAPSHOT.jar --main-class webfx.platform.shared.services.appcontainer.ApplicationContainer --type msi --runtime-image .\target\jlinkImage --app-version 0.0.0 --win-per-user-install --win-menu --win-menu-group WebFx
         working-directory: ${{ env.javafx-module }}
 
       # Staging 9)
@@ -321,7 +321,7 @@ jobs:
       # Staging 5) | 14)
       - if: matrix.gluon-desktop-artifact-suffix != null && runner.os != 'Windows'
         name: Copy native Desktop to staging (Linux or MacOS)
-        run: cp ${{ env.gluon-module }}/target/client/${{ matrix.gluon-desktop-arch-token }}/webfx-demo-* staging/${{ env.application-name }}-${{ matrix.gluon-desktop-artifact-suffix }}
+        run: cp ${{ env.gluon-module }}/target/client/${{ matrix.gluon-desktop-arch-token }}/${{ matrix.app.module-token }}* staging/${{ env.application-name }}-${{ matrix.gluon-desktop-artifact-suffix }}
 
       # Staging 10)
       - if: matrix.gluon-desktop-artifact-suffix != null && runner.os == 'Windows'
