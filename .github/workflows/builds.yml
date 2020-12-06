@@ -154,13 +154,13 @@ jobs:
       # Building this repository with JDK 13+ (Java 11 target) including a GWT compilation (if required)
       - if: matrix.web-artifact-suffix != null
         name: Build this repository (JavaFx fat jar + GWT build)
-        run: mvn -P 'gwt-compile,javafx-fatjar,javapackager' install
+        run: mvn -P 'gwt-compile,javafx-fatjar,!javapackager' install
         working-directory: ${{ env.this-module }}
 
       # Or building this repository with JDK 13+ (Java 11 target) excluding a GWT compilation
       - if: matrix.web-artifact-suffix == null
         name: Build this repository (JavaFx fat jar - no GWT build)
-        run: mvn -P '!gwt-compile,javafx-fatjar,javapackager' install
+        run: mvn -P '!gwt-compile,javafx-fatjar,!javapackager' install
         working-directory: ${{ env.this-module }}
 
 
