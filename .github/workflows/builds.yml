@@ -32,9 +32,10 @@ jobs:
     strategy:
       matrix:
         app: [
-          {name: 'MongooseBackend',  module-token: 'mongoose-backend', gwt-token: 'mongoose_backend'},
-          {name: 'MongooseFrontend', module-token: 'mongoose-frontend', gwt-token: 'mongoose_frontend'}
+          { name: 'MongooseBackend',  module-token: 'mongoose-backend',  gwt-token: 'mongoose_backend',  ios-bundle-id: 'org.mongoose.backend',  version: '0.1.0-SNAPSHOT' },
+          { name: 'MongooseFrontend', module-token: 'mongoose-frontend', gwt-token: 'mongoose_frontend', ios-bundle-id: 'org.mongoose.frontend', version: '0.1.0-SNAPSHOT' }
         ]
+        dep-build-repos: [ { repo1: 'webfx-project/webfx' } ] # Must be 1 single json object {repo1, ... reposN} and keep N sync with manual iteration in 'Checkout & build dependent repos' section
         os-config:  [1, 2, 3, 4]
         include:
           - os-config: 1 # Generates builds 1) 2) 3) 4) & 5)
@@ -73,14 +74,14 @@ jobs:
             gluon-ios-artifact-suffix:     'iOS-arm64-native.ipa'               # build 15)
 
     env:
-      application-name: ${{ matrix.app.name }}
-      webfx-module:     ./webfx
-      this-module:      .
-      javafx-module:    ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-javafx
-      gwt-module:       ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-gwt
-      gwt-build:        ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-gwt/target/${{ matrix.app.module-token }}-application-gwt-0.1.0-SNAPSHOT/${{ matrix.app.gwt-token }}_application_gwt/
-      gluon-module:     ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-gluon
-      web-push-repository-name: 'mongoose' # This same repository
+      app-name:  ${{ matrix.app.name }}
+      repo-dir:                  ./
+      app-dir:                   ./${{ matrix.app.module-token }}
+      app-javafx-module-dir:     ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-javafx
+      app-gwt-module-dir:        ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-gwt
+      app-gwt-build-dir:         ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-gwt/target/${{ matrix.app.module-token }}-application-gwt-${{ matrix.app.version }}/${{ matrix.app.gwt-token }}_application_gwt
+      app-gluon-module-dir:      ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-gluon
+      web-push-repository-name:  'mongoose' # This same repository (Github doesn't provide ${{ github.repository_name }}
       web-push-repository-owner: ${{ github.repository_owner }}
       web-push-branch: ${{ matrix.app.module-token }}-web-build
       web-push-username: ${{ github.actor }}
@@ -104,28 +105,35 @@ jobs:
         name: Configure Git for long filenames (Windows only)
         run: git config --global core.longpaths true
 
-      # Checkout this repository
-      - name: Checkout this repository
-        uses: actions/checkout@v2
-        with:
-          path: ${{ env.this-module }}
-
-      # Checkout WebFx repository (we need to build it as well because there is no release yet)
-      - name: Checkout WebFx repository
-        uses: actions/checkout@v2
-        with:
-          repository: 'webfx-project/webfx'
-          path: ${{ env.webfx-module }}
-
       # Set up the JDK (WebFx requires JDK13+ due to javac bugs in prior versions - otherwise JDK11+ should be enough in theory)
       - name: Set up JDK ${{ env.jdk-version }}
         uses: actions/setup-java@v1
         with:
           java-version: ${{ env.jdk-version }}
 
+      # Checkout this repository
+      - name: Checkout this repository
+        uses: actions/checkout@v2
+        with:
+          path: ${{ env.repo-dir }}
+
       # The staging directory will be used to store all artifacts built in this job for upload
       - name: Make staging directory
         run: mkdir staging
+
+
+      ##################################################################################################################
+      #                                     Checkout & build dependent repos                                           #
+      ##################################################################################################################
+
+      # Repository 1
+      - uses: actions/checkout@v2
+        with:
+          repository: ${{ matrix.dep-build-repos.repo1 }}
+          path: ${{ matrix.dep-build-repos.repo1 }}
+
+      - run: mvn -P '!gwt-compile' install
+        working-directory: ${{ matrix.dep-build-repos.repo1 }}
 
 
       ##################################################################################################################
@@ -146,22 +154,17 @@ jobs:
       # 13) App-MacOS-x64-jvm-package.pkg                                                                              #
       ##################################################################################################################
 
-      # Building the latest WebFx version locally (since there is no public release yet)
-      - name: Build WebFx with JDK ${{ env.jdk-version }} (Java 11 target)
-        run: mvn -P '!gwt-compile' install
-        working-directory: ${{ env.webfx-module }}
-
       # Building this repository with JDK 13+ (Java 11 target) including a GWT compilation (if required)
       - if: matrix.web-artifact-suffix != null
         name: Build this repository (JavaFx fat jar + GWT build)
         run: mvn -P 'gwt-compile,javafx-fatjar,!javapackager' install
-        working-directory: ${{ env.this-module }}
+        working-directory: ${{ env.app-dir }}
 
       # Or building this repository with JDK 13+ (Java 11 target) excluding a GWT compilation
       - if: matrix.web-artifact-suffix == null
         name: Build this repository (JavaFx fat jar - no GWT build)
         run: mvn -P '!gwt-compile,javafx-fatjar,!javapackager' install
-        working-directory: ${{ env.this-module }}
+        working-directory: ${{ env.app-dir }}
 
 
       ##################################################################################################################
@@ -174,7 +177,7 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_GITHUB_TOKEN }}
         with:
-          source-directory: ${{ env.gwt-build }}
+          source-directory: ${{ env.app-gwt-build-dir }}
           destination-repository-username: ${{ env.web-push-repository-owner }}
           destination-repository-name: ${{ env.web-push-repository-name }}
           target-branch: ${{ env.web-push-branch }}
@@ -203,38 +206,38 @@ jobs:
       # Staging 1)
       - if: matrix.web-artifact-suffix != null
         name: Copy Web archive to staging
-        run: cp ${{ env.gwt-module }}/target/*.war staging/${{ env.application-name }}-${{ matrix.web-artifact-suffix }}
+        run: cp ${{ env.app-gwt-module-dir }}/target/*.war staging/${{ env.app-name }}-${{ matrix.web-artifact-suffix }}
 
       # Staging 2) | 7) | 11)
       - if: matrix.fatjar-artifact-suffix != null
         name: Copy fat jar with JavaFx to staging
-        run: cp ${{ env.javafx-module }}/target/*-fat.jar staging/${{ env.application-name }}-${{ matrix.fatjar-artifact-suffix }}
+        run: cp ${{ env.app-javafx-module-dir }}/target/*-fat.jar staging/${{ env.app-name }}-${{ matrix.fatjar-artifact-suffix }}
 
       # Staging 3)
       - if: matrix.jvm-deb-artifact-suffix != null
-        run: cp ${{ env.javafx-module }}/target/javapackager/*.deb staging/${{ env.application-name }}-${{ matrix.jvm-deb-artifact-suffix }} | true
+        run: cp ${{ env.app-javafx-module-dir }}/target/javapackager/*.deb staging/${{ env.app-name }}-${{ matrix.jvm-deb-artifact-suffix }} | true
 
       # Staging 4)
       - if: matrix.jvm-rpm-artifact-suffix != null
-        run: cp ${{ env.javafx-module }}/target/javapackager/*.rpm staging/${{ env.application-name }}-${{ matrix.jvm-rpm-artifact-suffix }} | true
+        run: cp ${{ env.app-javafx-module-dir }}/target/javapackager/*.rpm staging/${{ env.app-name }}-${{ matrix.jvm-rpm-artifact-suffix }} | true
 
       # Staging 8)
       - if: matrix.jvm-exe-artifact-suffix != null
-        run: Copy-Item "${{ env.javafx-module }}/target/javapackager/*.exe" -Destination "staging/${{ env.application-name }}-${{ matrix.jvm-exe-artifact-suffix }}"
+        run: Copy-Item "${{ env.app-javafx-module-dir }}/target/javapackager/*.exe" -Destination "staging/${{ env.app-name }}-${{ matrix.jvm-exe-artifact-suffix }}"
 
       # Staging 9)
       - if: matrix.jvm-msi-artifact-suffix != null
         run: |
-          dir ${{ env.javafx-module }}/target/javapackager/
-          Copy-Item "${{ env.javafx-module }}/target/javapackager/*.msi" -Destination "staging/${{ env.application-name }}-${{ matrix.jvm-msi-artifact-suffix }}"
+          dir ${{ env.app-javafx-module-dir }}/target/javapackager/
+          Copy-Item "${{ env.app-javafx-module-dir }}/target/javapackager/*.msi" -Destination "staging/${{ env.app-name }}-${{ matrix.jvm-msi-artifact-suffix }}"
 
       # Staging 12)
       - if: matrix.jvm-dmg-artifact-suffix != null
-        run: cp ${{ env.javafx-module }}/target/javapackager/*.dmg staging/${{ env.application-name }}-${{ matrix.jvm-dmg-artifact-suffix }} | true
+        run: cp ${{ env.app-javafx-module-dir }}/target/javapackager/*.dmg staging/${{ env.app-name }}-${{ matrix.jvm-dmg-artifact-suffix }} | true
 
       # Staging 13)
       - if: matrix.jvm-pkg-artifact-suffix != null
-        run: cp ${{ env.javafx-module }}/target/javapackager/*.pkg staging/${{ env.application-name }}-${{ matrix.jvm-pkg-artifact-suffix }} | true
+        run: cp ${{ env.app-javafx-module-dir }}/target/javapackager/*.pkg staging/${{ env.app-name }}-${{ matrix.jvm-pkg-artifact-suffix }} | true
 
 
       ##################################################################################################################
@@ -249,13 +252,13 @@ jobs:
         name: Create Windows Installer (msi)
         run: |
           mvn javafx:jlink
-          ${{ env.JAVA_HOME }}\bin\jpackage --input .\target\ --name ${{ env.application-name }} --main-jar ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-javafx-0.1.0-SNAPSHOT.jar --main-class webfx.platform.shared.services.appcontainer.ApplicationContainer --type msi --runtime-image .\target\jlinkImage --app-version 0.0.0 --win-per-user-install --win-menu --win-menu-group WebFx
-        working-directory: ${{ env.javafx-module }}
+          ${{ env.JAVA_HOME }}\bin\jpackage --input .\target\ --name ${{ env.app-name }} --main-jar ${{ matrix.app.module-token }}-application-javafx-${{ matrix.app.version }}.jar --main-class webfx.platform.shared.services.appcontainer.ApplicationContainer --type msi --runtime-image .\target\jlinkImage --app-version 0.0.0 --win-per-user-install --win-menu --win-menu-group WebFx
+        working-directory: ${{ env.app-javafx-module-dir }}
 
       # Staging 9)
       - if: matrix.msi-desktop-artifact-suffix != null
         name: Copy Windows installer to staging
-        run: cp ${{ env.javafx-module }}/*.msi staging/${{ env.application-name }}-${{ matrix.msi-desktop-artifact-suffix }}
+        run: cp ${{ env.app-javafx-module-dir }}/*.msi staging/${{ env.app-name }}-${{ matrix.msi-desktop-artifact-suffix }}
 
 
       ##################################################################################################################
@@ -307,7 +310,7 @@ jobs:
         run: mvn -P 'gluon-desktop' client:build client:package # May take a while
         env:
           GRAALVM_HOME: ${{ env.JAVA_HOME }}
-        working-directory: ${{ env.gluon-module }}
+        working-directory: ${{ env.app-gluon-module-dir }}
 
 
       ##################################################################################################################
@@ -321,12 +324,12 @@ jobs:
       # Staging 5) | 14)
       - if: matrix.gluon-desktop-artifact-suffix != null && runner.os != 'Windows'
         name: Copy native Desktop to staging (Linux or MacOS)
-        run: cp ${{ env.gluon-module }}/target/client/${{ matrix.gluon-desktop-arch-token }}/${{ matrix.app.module-token }}* staging/${{ env.application-name }}-${{ matrix.gluon-desktop-artifact-suffix }}
+        run: cp ${{ env.app-gluon-module-dir }}/target/client/${{ matrix.gluon-desktop-arch-token }}/${{ matrix.app.module-token }}* staging/${{ env.app-name }}-${{ matrix.gluon-desktop-artifact-suffix }}
 
       # Staging 10)
       - if: matrix.gluon-desktop-artifact-suffix != null && runner.os == 'Windows'
         name: Copy native Desktop to staging (Windows)
-        run: Copy-Item "${{ env.gluon-module }}/target/client/${{ matrix.gluon-desktop-arch-token }}/*.exe" -Destination "staging/${{ env.application-name }}-${{ matrix.gluon-desktop-artifact-suffix }}"
+        run: Copy-Item "${{ env.app-gluon-module-dir }}/target/client/${{ matrix.gluon-desktop-arch-token }}/*.exe" -Destination "staging/${{ env.app-name }}-${{ matrix.gluon-desktop-artifact-suffix }}"
 
 
       ##################################################################################################################
@@ -343,12 +346,12 @@ jobs:
         run: mvn -P 'gluon-android' clean client:build client:package # May take a while
         env:
           GRAALVM_HOME: ${{ env.JAVA_HOME }}
-        working-directory: ${{ env.gluon-module }}
+        working-directory: ${{ env.app-gluon-module-dir }}
 
       # Staging 6)
       - if: matrix.gluon-android-arch-token != null
         name: Copy Android native application to staging
-        run: cp ${{ env.gluon-module }}/target/client/${{ matrix.gluon-android-arch-token }}/gvm/*.apk staging/${{ env.application-name }}-${{ matrix.gluon-android-artifact-suffix }}
+        run: cp ${{ env.app-gluon-module-dir }}/target/client/${{ matrix.gluon-android-arch-token }}/gvm/*.apk staging/${{ env.app-name }}-${{ matrix.gluon-android-artifact-suffix }}
 
 
       ##################################################################################################################
@@ -368,7 +371,7 @@ jobs:
       - if: env.GLUON_IOS_APPSTORE_KEY_ID != ''
         uses: Apple-Actions/download-provisioning-profiles@v1
         with:
-          bundle-id: ${{ matrix.app.bundle-id }}
+          ios-bundle-id: ${{ matrix.app.ios-bundle-id }}
           issuer-id: ${{ secrets.GLUON_IOS_APPSTORE_ISSUER_ID }}
           api-key-id: ${{ secrets.GLUON_IOS_APPSTORE_KEY_ID }}
           api-private-key: ${{ secrets.GLUON_IOS_APPSTORE_PRIVATE_KEY }}
@@ -379,12 +382,12 @@ jobs:
         run: mvn -P 'gluon-ios' clean client:build client:package # May take a while
         env:
           GRAALVM_HOME: ${{ env.JAVA_HOME }}
-        working-directory: ${{ env.gluon-module }}
+        working-directory: ${{ env.app-gluon-module-dir }}
 
       # Staging 10)
       - if: matrix.gluon-ios-arch-token != null && env.GLUON_IOS_CERTIFICATES_FILE_BASE64 != ''
         name: Copy iOS native application to staging
-        run: cp ${{ env.gluon-module }}/target/client/${{ matrix.gluon-ios-arch-token }}/gvm/*.ipa staging/${{ env.application-name }}-${{ matrix.gluon-ios-artifact-suffix }}
+        run: cp ${{ env.app-gluon-module-dir }}/target/client/${{ matrix.gluon-ios-arch-token }}/gvm/*.ipa staging/${{ env.app-name }}-${{ matrix.gluon-ios-artifact-suffix }}
 
 
       ##################################################################################################################
@@ -396,7 +399,7 @@ jobs:
       - if: env.GLUON_IOS_APPSTORE_KEY_ID != ''
         uses: Apple-Actions/upload-testflight-build@master
         with:
-          app-path: staging/${{ env.application-name }}-${{ matrix.gluon-ios-artifact-suffix }}
+          app-path: staging/${{ env.app-name }}-${{ matrix.gluon-ios-artifact-suffix }}
           issuer-id: ${{ secrets.GLUON_IOS_APPSTORE_ISSUER_ID }}
           api-key-id: ${{ secrets.GLUON_IOS_APPSTORE_KEY_ID }}
           api-private-key: ${{ secrets.GLUON_IOS_APPSTORE_PRIVATE_KEY }}
@@ -430,7 +433,7 @@ jobs:
       - name: Upload artifacts in the assets of this worflow run
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.app.name }}-os-config-${{ matrix.os-config }}-assets
+          name: build-${{ matrix.os-config }}-assets
           path: staging/*
 
 
