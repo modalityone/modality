@@ -80,8 +80,13 @@ jobs:
       dep-repo-1: 'webfx-project/webfx-parent'
       dep-repo-2: 'webfx-project/webfx-lib-javacupruntime'
       dep-repo-3: 'webfx-project/webfx'
-      dep-repo-4: 'webfx-project/webfx-extras'
-      dep-repo-5: 'webfx-project/webfx-framework'
+      dep-repo-4: 'webfx-project/webfx-framework'
+      dep-repo-5: 'webfx-project/webfx-extras-webtext'
+      dep-repo-6: 'webfx-project/webfx-extras'
+      dep-repo-7: 'webfx-project/webfx-extras-flexbox'
+      dep-repo-8: 'webfx-project/webfx-extras-materialdesign'
+      dep-repo-9: 'webfx-project/webfx-extras-cell'
+      dep-repo-10: 'webfx-project/webfx-extras-visual'
       app-name:  ${{ matrix.app.name }}
       app-repo-dir:              ./
       app-parent-module-dir:     ./${{ matrix.app.module-token }}
@@ -187,6 +192,61 @@ jobs:
       - name: Build dependent repository 5
         run: mvn -B -P '!gwt-compile,!javafx-fatjar,!javapackager' install
         working-directory: 'dep-repo-5'
+
+      # Dependent Repository 6
+      - name: Checkout dependent repository 6
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ env.dep-repo-6 }}
+          path: 'dep-repo-6'
+
+      - name: Build dependent repository 6
+        run: mvn -B -P '!gwt-compile,!javafx-fatjar,!javapackager' install
+        working-directory: 'dep-repo-6'
+
+      # Dependent Repository 7
+      - name: Checkout dependent repository 7
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ env.dep-repo-7 }}
+          path: 'dep-repo-7'
+
+      - name: Build dependent repository 7
+        run: mvn -B -P '!gwt-compile,!javafx-fatjar,!javapackager' install
+        working-directory: 'dep-repo-7'
+
+      # Dependent Repository 8
+      - name: Checkout dependent repository 8
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ env.dep-repo-8 }}
+          path: 'dep-repo-8'
+
+      - name: Build dependent repository 8
+        run: mvn -B -P '!gwt-compile,!javafx-fatjar,!javapackager' install
+        working-directory: 'dep-repo-8'
+
+      # Dependent Repository 9
+      - name: Checkout dependent repository 9
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ env.dep-repo-9 }}
+          path: 'dep-repo-9'
+
+      - name: Build dependent repository 9
+        run: mvn -B -P '!gwt-compile,!javafx-fatjar,!javapackager' install
+        working-directory: 'dep-repo-9'
+
+      # Dependent Repository 10
+      - name: Checkout dependent repository 10
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ env.dep-repo-10 }}
+          path: 'dep-repo-10'
+
+      - name: Build dependent repository 10
+        run: mvn -B -P '!gwt-compile,!javafx-fatjar,!javapackager' install
+        working-directory: 'dep-repo-10'
 
 
       ##################################################################################################################
