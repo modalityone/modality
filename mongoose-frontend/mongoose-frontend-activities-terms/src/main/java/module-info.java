@@ -10,7 +10,7 @@ module mongoose.frontend.activities.terms {
     requires mongoose.client.icons;
     requires mongoose.client.sectionpanel;
     requires mongoose.client.util;
-    requires webfx.extras.visual;
+    requires webfx.extras.visual.base;
     requires webfx.extras.visual.controls.grid.peers.base;
     requires webfx.framework.client.activity;
     requires webfx.framework.client.i18n;

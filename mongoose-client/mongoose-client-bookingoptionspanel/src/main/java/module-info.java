@@ -13,7 +13,7 @@ module mongoose.client.bookingoptionspanel {
     requires mongoose.shared.entities;
     requires mongoose.shared.time;
     requires webfx.extras.type;
-    requires webfx.extras.visual;
+    requires webfx.extras.visual.base;
     requires webfx.extras.visual.controls.grid;
     requires webfx.framework.client.i18n;
     requires webfx.framework.client.orm.reactive.visual;

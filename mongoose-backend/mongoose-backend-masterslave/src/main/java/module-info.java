@@ -10,7 +10,7 @@ module mongoose.backend.masterslave {
     requires mongoose.client.entities;
     requires webfx.extras.imagestore;
     requires webfx.extras.type;
-    requires webfx.extras.visual;
+    requires webfx.extras.visual.base;
     requires webfx.extras.visual.controls;
     requires webfx.extras.visual.controls.charts;
     requires webfx.extras.visual.controls.grid;

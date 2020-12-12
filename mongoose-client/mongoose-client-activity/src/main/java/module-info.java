@@ -9,7 +9,7 @@ module mongoose.client.activity {
     requires mongoose.client.aggregates;
     requires mongoose.client.businesslogic;
     requires mongoose.client.presentationmodel;
-    requires webfx.extras.visual;
+    requires webfx.extras.visual.base;
     requires webfx.extras.visual.controls.grid;
     requires webfx.framework.client.controls;
     requires webfx.framework.client.orm.domainmodel.activity;

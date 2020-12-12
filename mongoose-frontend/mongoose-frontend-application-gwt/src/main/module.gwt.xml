@@ -338,7 +338,7 @@
     <!-- used by mongoose-shared-entities (SOURCE) -->
     <source path="mongoose/shared/businessdata/time"/>
     <!--===============================< webfx-extras-cell >================================-->
-    <!-- used by webfx-extras-visual (SOURCE) -->
+    <!-- used by webfx-extras-visual-base (SOURCE) -->
     <source path="webfx/extras/cell/collator"/>
     <source path="webfx/extras/cell/renderer"/>
     <source path="webfx/extras/cell/rowstyle"/>
@@ -361,10 +361,10 @@
     <source path="webfx/extras/materialdesign/util/layout"/>
     <source path="webfx/extras/materialdesign/util/scene"/>
     <!--===============================< webfx-extras-type >================================-->
-    <!-- used by webfx-extras-visual (SOURCE) -->
+    <!-- used by webfx-extras-visual-base (SOURCE) -->
     <!-- used by webfx-framework-shared-orm-expression (SOURCE) -->
     <source path="webfx/extras/type"/>
-    <!--==============================< webfx-extras-visual >===============================-->
+    <!--============================< webfx-extras-visual-base >============================-->
     <!-- used by webfx-extras-visual-controls-grid (SOURCE) -->
     <source path="webfx/extras/visual"/>
     <source path="webfx/extras/visual/impl"/>

@@ -14,7 +14,7 @@ module mongoose.backend.activities.payments {
     requires mongoose.client.util;
     requires mongoose.shared.domainmodel;
     requires mongoose.shared.entities;
-    requires webfx.extras.visual;
+    requires webfx.extras.visual.base;
     requires webfx.extras.visual.controls.grid;
     requires webfx.framework.client.action;
     requires webfx.framework.client.activity;

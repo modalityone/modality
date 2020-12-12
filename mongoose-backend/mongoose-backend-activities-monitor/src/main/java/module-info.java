@@ -7,7 +7,7 @@ module mongoose.backend.activities.monitor {
     requires javafx.controls;
     requires javafx.graphics;
     requires mongoose.client.activity;
-    requires webfx.extras.visual;
+    requires webfx.extras.visual.base;
     requires webfx.extras.visual.controls.charts;
     requires webfx.framework.client.activity;
     requires webfx.framework.client.orm.domainmodel.activity;

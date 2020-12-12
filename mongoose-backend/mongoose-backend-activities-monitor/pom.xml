@@ -38,7 +38,7 @@
         </dependency>
         
         <dependency>
-            <artifactId>webfx-extras-visual</artifactId>
+            <artifactId>webfx-extras-visual-base</artifactId>
             <groupId>${webfx.groupId}</groupId>
             <version>${webfx.version}</version>
         </dependency>

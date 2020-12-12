@@ -9,7 +9,7 @@ module mongoose.backend.activities.users {
     requires mongoose.client.activity;
     requires mongoose.shared.domainmodel;
     requires mongoose.shared.entities;
-    requires webfx.extras.visual;
+    requires webfx.extras.visual.base;
     requires webfx.framework.client.activity;
     requires webfx.framework.client.orm.domainmodel.activity;
     requires webfx.framework.client.orm.reactive.dql;

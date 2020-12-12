@@ -19,7 +19,7 @@ module mongoose.backend.activities.bookings {
     requires mongoose.frontend.activities.fees;
     requires mongoose.shared.domainmodel;
     requires mongoose.shared.entities;
-    requires webfx.extras.visual;
+    requires webfx.extras.visual.base;
     requires webfx.extras.visual.controls.grid;
     requires webfx.framework.client.action;
     requires webfx.framework.client.activity;

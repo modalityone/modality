@@ -21,7 +21,7 @@ module mongoose.frontend.activities.cart {
     requires mongoose.shared.entities;
     requires webfx.extras.flexbox;
     requires webfx.extras.type;
-    requires webfx.extras.visual;
+    requires webfx.extras.visual.base;
     requires webfx.extras.visual.controls.grid;
     requires webfx.framework.client.action;
     requires webfx.framework.client.activity;

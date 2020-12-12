@@ -19,7 +19,7 @@ module mongoose.frontend.activities.fees {
     requires webfx.extras.cell;
     requires webfx.extras.imagestore;
     requires webfx.extras.type;
-    requires webfx.extras.visual;
+    requires webfx.extras.visual.base;
     requires webfx.extras.visual.controls.grid;
     requires webfx.extras.visual.controls.grid.peers.base;
     requires webfx.framework.client.activity;

@@ -11,7 +11,7 @@ module mongoose.backend.activities.income {
     requires mongoose.client.entities;
     requires mongoose.client.util;
     requires mongoose.shared.entities;
-    requires webfx.extras.visual;
+    requires webfx.extras.visual.base;
     requires webfx.extras.visual.controls.grid;
     requires webfx.framework.client.activity;
     requires webfx.framework.client.operationaction;
