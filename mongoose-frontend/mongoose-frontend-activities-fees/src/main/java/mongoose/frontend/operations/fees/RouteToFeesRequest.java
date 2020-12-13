@@ -1,8 +1,8 @@
 package mongoose.frontend.operations.fees;
 
 import mongoose.frontend.activities.fees.routing.FeesRouting;
-import webfx.framework.client.operations.route.RoutePushRequest;
-import webfx.platform.client.services.windowhistory.spi.BrowsingHistory;
+import dev.webfx.framework.client.operations.route.RoutePushRequest;
+import dev.webfx.platform.client.services.windowhistory.spi.BrowsingHistory;
 
 /**
  * @author Bruno Salmon

@@ -12,8 +12,8 @@ import mongoose.shared.entities.*;
 import mongoose.shared.entities.markers.EntityHasPersonalDetails;
 import mongoose.shared.entities.markers.HasPersonalDetails;
 import mongoose.shared.businessdata.time.DateTimeRange;
-import webfx.framework.shared.orm.entity.*;
-import webfx.platform.shared.util.collection.Collections;
+import dev.webfx.framework.shared.orm.entity.*;
+import dev.webfx.platform.shared.util.collection.Collections;
 
 import java.util.ArrayList;
 import java.util.HashMap;

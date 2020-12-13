@@ -4,7 +4,7 @@ import mongoose.client.aggregates.event.EventAggregate;
 import mongoose.client.businessdata.preselection.ActiveOptionsPreselectionsByEventStore;
 import mongoose.client.businessdata.preselection.OptionsPreselection;
 import mongoose.shared.entities.Event;
-import webfx.framework.shared.orm.entity.EntityId;
+import dev.webfx.framework.shared.orm.entity.EntityId;
 
 import java.util.HashMap;
 import java.util.Map;

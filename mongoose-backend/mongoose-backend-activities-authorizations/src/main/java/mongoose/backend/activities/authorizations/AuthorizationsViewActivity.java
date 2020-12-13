@@ -6,13 +6,13 @@ import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.Pane;
 import mongoose.client.services.authn.MongooseUserPrincipal;
-import webfx.extras.visual.controls.grid.VisualGrid;
-import webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
-import webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import webfx.framework.client.ui.controls.entity.sheet.EntityPropertiesSheet;
-import webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.framework.client.ui.controls.entity.sheet.EntityPropertiesSheet;
+import dev.webfx.framework.shared.orm.entity.Entity;
 
-import static webfx.framework.shared.orm.dql.DqlStatement.where;
+import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
 
 /**
  * @author Bruno Salmon

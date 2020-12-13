@@ -4,8 +4,8 @@ import mongoose.client.businessdata.preselection.OptionsPreselection;
 import mongoose.shared.entities.Event;
 import mongoose.shared.entities.Label;
 import mongoose.client.entities.util.Labels;
-import webfx.platform.shared.util.Numbers;
-import webfx.platform.shared.util.Objects;
+import dev.webfx.platform.shared.util.Numbers;
+import dev.webfx.platform.shared.util.Objects;
 
 /**
  * @author Bruno Salmon

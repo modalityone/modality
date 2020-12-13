@@ -1,10 +1,10 @@
 package mongoose.shared.services.datasourcemodel;
 
-import webfx.framework.shared.orm.domainmodel.DataSourceModel;
-import webfx.framework.shared.orm.dql.sqlcompiler.sql.dbms.PostgresSyntax;
-import webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider;
-import webfx.framework.shared.services.domainmodel.DomainModelService;
-import webfx.platform.shared.util.async.Future;
+import dev.webfx.framework.shared.orm.domainmodel.DataSourceModel;
+import dev.webfx.framework.shared.orm.dql.sqlcompiler.sql.dbms.PostgresSyntax;
+import dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider;
+import dev.webfx.framework.shared.services.domainmodel.DomainModelService;
+import dev.webfx.platform.shared.util.async.Future;
 
 /**
  * @author Bruno Salmon

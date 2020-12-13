@@ -33,6 +33,6 @@ module mongoose.backend.activities.options {
     exports mongoose.backend.activities.options;
 
     // Provided services
-    provides webfx.framework.client.ui.uirouter.UiRoute with mongoose.backend.activities.options.EditableOptionsUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.backend.activities.options.EditableOptionsUiRoute;
 
 }

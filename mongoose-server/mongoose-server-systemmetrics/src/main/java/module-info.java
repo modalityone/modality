@@ -23,6 +23,6 @@ module mongoose.server.systemmetrics {
     uses mongoose.server.services.systemmetrics.spi.SystemMetricsServiceProvider;
 
     // Provided services
-    provides webfx.platform.shared.services.appcontainer.spi.ApplicationJob with mongoose.server.jobs.systemmetrics.SystemMetricsRecorderJob;
+    provides dev.webfx.platform.shared.services.appcontainer.spi.ApplicationJob with mongoose.server.jobs.systemmetrics.SystemMetricsRecorderJob;
 
 }

@@ -2,7 +2,7 @@ package mongoose.backend.operations.entities.documentline;
 
 import javafx.scene.layout.Pane;
 import mongoose.shared.entities.Document;
-import webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.util.async.Future;
 
 final class AddNewDocumentLineExecutor {
 

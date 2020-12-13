@@ -23,6 +23,6 @@ module mongoose.client.activities.login {
     exports mongoose.client.activities.login;
 
     // Provided services
-    provides webfx.framework.client.ui.uirouter.UiRoute with mongoose.client.activities.login.LoginUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.client.activities.login.LoginUiRoute;
 
 }

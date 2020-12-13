@@ -26,6 +26,6 @@ module mongoose.backend.activities.cloneevent {
     exports mongoose.backend.activities.cloneevent;
 
     // Provided services
-    provides webfx.framework.client.ui.uirouter.UiRoute with mongoose.backend.activities.cloneevent.CloneEventUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.backend.activities.cloneevent.CloneEventUiRoute;
 
 }

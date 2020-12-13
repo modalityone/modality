@@ -28,7 +28,7 @@ module mongoose.shared.domainmodel {
     opens mongoose.shared.domainmodel;
 
     // Provided services
-    provides webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider with mongoose.shared.services.datasourcemodel.MongooseDataSourceModelProvider;
-    provides webfx.framework.shared.services.domainmodel.spi.DomainModelProvider with mongoose.shared.services.domainmodel.MongooseDomainModelProvider;
+    provides dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider with mongoose.shared.services.datasourcemodel.MongooseDataSourceModelProvider;
+    provides dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider with mongoose.shared.services.domainmodel.MongooseDomainModelProvider;
 
 }

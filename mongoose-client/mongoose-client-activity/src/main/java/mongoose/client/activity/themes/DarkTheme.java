@@ -1,8 +1,8 @@
 package mongoose.client.activity.themes;
 
 import javafx.scene.paint.Color;
-import webfx.framework.client.ui.util.background.BackgroundUtil;
-import webfx.framework.client.ui.util.border.BorderUtil;
+import dev.webfx.framework.client.ui.util.background.BackgroundUtil;
+import dev.webfx.framework.client.ui.util.border.BorderUtil;
 
 /**
  * @author Bruno Salmon

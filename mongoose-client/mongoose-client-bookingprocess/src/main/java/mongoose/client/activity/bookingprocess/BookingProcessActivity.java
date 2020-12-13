@@ -10,10 +10,10 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import mongoose.client.activity.eventdependent.EventDependentViewDomainActivity;
 import mongoose.shared.entities.Event;
-import webfx.framework.client.ui.util.layout.LayoutUtil;
-import webfx.framework.client.ui.util.background.BackgroundUtil;
-import webfx.kit.util.properties.Properties;
-import webfx.platform.shared.util.Strings;
+import dev.webfx.framework.client.ui.util.layout.LayoutUtil;
+import dev.webfx.framework.client.ui.util.background.BackgroundUtil;
+import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.platform.shared.util.Strings;
 
 /**
  * @author Bruno Salmon

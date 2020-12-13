@@ -2,9 +2,9 @@ package mongoose.shared.entities;
 
 import mongoose.shared.businessdata.time.DateTimeRange;
 import mongoose.shared.entities.markers.*;
-import webfx.framework.shared.orm.entity.Entity;
-import webfx.framework.shared.orm.entity.EntityId;
-import webfx.platform.shared.util.Objects;
+import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.framework.shared.orm.entity.EntityId;
+import dev.webfx.platform.shared.util.Objects;
 
 import java.time.LocalDate;
 

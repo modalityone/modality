@@ -2,7 +2,7 @@ package mongoose.client.businessdata.preselection;
 
 import mongoose.client.aggregates.event.EventAggregate;
 import mongoose.shared.entities.Event;
-import webfx.framework.shared.orm.entity.EntityId;
+import dev.webfx.framework.shared.orm.entity.EntityId;
 
 import java.util.HashMap;
 import java.util.Map;

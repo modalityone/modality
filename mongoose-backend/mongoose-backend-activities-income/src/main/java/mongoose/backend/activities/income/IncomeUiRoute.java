@@ -1,9 +1,9 @@
 package mongoose.backend.activities.income;
 
 import mongoose.backend.activities.income.routing.IncomeRouting;
-import webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
-import webfx.framework.client.ui.uirouter.UiRoute;
-import webfx.framework.client.ui.uirouter.impl.UiRouteImpl;
+import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
+import dev.webfx.framework.client.ui.uirouter.UiRoute;
+import dev.webfx.framework.client.ui.uirouter.impl.UiRouteImpl;
 
 /**
  * @author Bruno Salmon

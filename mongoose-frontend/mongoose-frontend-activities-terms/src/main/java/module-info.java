@@ -28,6 +28,6 @@ module mongoose.frontend.activities.terms {
     exports mongoose.frontend.operations.terms;
 
     // Provided services
-    provides webfx.framework.client.ui.uirouter.UiRoute with mongoose.frontend.activities.terms.TermsUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.frontend.activities.terms.TermsUiRoute;
 
 }

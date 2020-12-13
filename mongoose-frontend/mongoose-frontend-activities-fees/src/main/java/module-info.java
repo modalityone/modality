@@ -42,6 +42,6 @@ module mongoose.frontend.activities.fees {
     exports mongoose.frontend.operations.fees;
 
     // Provided services
-    provides webfx.framework.client.ui.uirouter.UiRoute with mongoose.frontend.activities.fees.FeesUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.frontend.activities.fees.FeesUiRoute;
 
 }

@@ -16,16 +16,16 @@ import mongoose.client.controls.sectionpanel.SectionPanelFactory;
 import mongoose.frontend.operations.person.RouteToPersonRequest;
 import mongoose.shared.entities.Option;
 import mongoose.client.entities.util.Labels;
-import webfx.extras.flexbox.FlexBox;
-import webfx.platform.client.services.uischeduler.UiScheduler;
-import webfx.platform.shared.services.log.Logger;
-import webfx.platform.shared.util.Arrays;
+import dev.webfx.extras.flexbox.FlexBox;
+import dev.webfx.platform.client.services.uischeduler.UiScheduler;
+import dev.webfx.platform.shared.services.log.Logger;
+import dev.webfx.platform.shared.util.Arrays;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static webfx.framework.client.ui.util.layout.LayoutUtil.setMaxWidthToInfinite;
+import static dev.webfx.framework.client.ui.util.layout.LayoutUtil.setMaxWidthToInfinite;
 
 /**
  * @author Bruno Salmon

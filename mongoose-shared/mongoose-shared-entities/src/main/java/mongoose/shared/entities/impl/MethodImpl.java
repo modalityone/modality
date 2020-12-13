@@ -1,10 +1,10 @@
 package mongoose.shared.entities.impl;
 
 import mongoose.shared.entities.Method;
-import webfx.framework.shared.orm.entity.EntityId;
-import webfx.framework.shared.orm.entity.EntityStore;
-import webfx.framework.shared.orm.entity.impl.DynamicEntity;
-import webfx.framework.shared.orm.entity.impl.EntityFactoryProviderImpl;
+import dev.webfx.framework.shared.orm.entity.EntityId;
+import dev.webfx.framework.shared.orm.entity.EntityStore;
+import dev.webfx.framework.shared.orm.entity.impl.DynamicEntity;
+import dev.webfx.framework.shared.orm.entity.impl.EntityFactoryProviderImpl;
 
 /**
  * @author Bruno Salmon

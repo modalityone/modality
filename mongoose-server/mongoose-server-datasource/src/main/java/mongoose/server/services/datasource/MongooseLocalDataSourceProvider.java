@@ -1,15 +1,15 @@
 package mongoose.server.services.datasource;
 
-import webfx.framework.shared.services.datasourcemodel.DataSourceModelService;
-import webfx.platform.shared.services.datasource.ConnectionDetails;
-import webfx.platform.shared.services.datasource.DBMS;
-import webfx.platform.shared.services.datasource.LocalDataSource;
-import webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider;
-import webfx.platform.shared.services.datasource.spi.simple.SimpleLocalDataSource;
-import webfx.platform.shared.services.json.Json;
-import webfx.platform.shared.services.json.JsonObject;
-import webfx.platform.shared.services.log.Logger;
-import webfx.platform.shared.services.resource.ResourceService;
+import dev.webfx.framework.shared.services.datasourcemodel.DataSourceModelService;
+import dev.webfx.platform.shared.services.datasource.ConnectionDetails;
+import dev.webfx.platform.shared.services.datasource.DBMS;
+import dev.webfx.platform.shared.services.datasource.LocalDataSource;
+import dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider;
+import dev.webfx.platform.shared.services.datasource.spi.simple.SimpleLocalDataSource;
+import dev.webfx.platform.shared.services.json.Json;
+import dev.webfx.platform.shared.services.json.JsonObject;
+import dev.webfx.platform.shared.services.log.Logger;
+import dev.webfx.platform.shared.services.resource.ResourceService;
 
 /**
  * @author Bruno Salmon

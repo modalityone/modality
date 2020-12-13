@@ -2,7 +2,7 @@ package mongoose.server.services.systemmetrics;
 
 import mongoose.server.services.systemmetrics.spi.SystemMetricsServiceProvider;
 import mongoose.shared.services.systemmetrics.SystemMetrics;
-import webfx.platform.shared.util.serviceloader.SingleServiceProvider;
+import dev.webfx.platform.shared.util.serviceloader.SingleServiceProvider;
 
 import java.util.ServiceLoader;
 

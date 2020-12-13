@@ -10,8 +10,8 @@
     </dependencies>
 
     <providers>
-        <provider spi="webfx.framework.client.ui.uirouter.UiRoute">mongoose.backend.activities.users.UsersUiRoute</provider>
-        <provider spi="webfx.framework.client.operations.route.RouteRequestEmitter">mongoose.backend.activities.users.RouteToUsersRequestEmitter</provider>
+        <provider spi="dev.webfx.framework.client.ui.uirouter.UiRoute">mongoose.backend.activities.users.UsersUiRoute</provider>
+        <provider spi="dev.webfx.framework.client.operations.route.RouteRequestEmitter">mongoose.backend.activities.users.RouteToUsersRequestEmitter</provider>
     </providers>
 
 </module>

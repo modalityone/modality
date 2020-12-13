@@ -3,6 +3,6 @@
 module mongoose.client.busconfig {
 
     // Resources packages
-    opens webfx.platform.client.services.websocketbus.conf;
+    opens dev.webfx.platform.client.services.websocketbus.conf;
 
 }

@@ -26,7 +26,7 @@ module mongoose.backend.activities.authorizations {
     exports mongoose.backend.activities.operations.authorizations;
 
     // Provided services
-    provides webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.backend.activities.authorizations.RouteToAuthorizationsRequestEmitter;
-    provides webfx.framework.client.ui.uirouter.UiRoute with mongoose.backend.activities.authorizations.AuthorizationsUiRoute;
+    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.backend.activities.authorizations.RouteToAuthorizationsRequestEmitter;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.backend.activities.authorizations.AuthorizationsUiRoute;
 
 }

@@ -2,7 +2,7 @@ package mongoose.backend.activities.monitor;
 
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
-import webfx.extras.visual.VisualResult;
+import dev.webfx.extras.visual.VisualResult;
 
 /**
  * @author Bruno Salmon

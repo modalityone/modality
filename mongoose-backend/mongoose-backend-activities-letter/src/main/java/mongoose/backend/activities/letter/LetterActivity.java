@@ -4,9 +4,9 @@ import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import mongoose.backend.controls.multilangeditor.MultiLanguageEditor;
-import webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
-import webfx.framework.client.ui.controls.button.ButtonFactoryMixin;
-import webfx.kit.util.properties.Properties;
+import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.framework.client.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.kit.util.properties.Properties;
 
 /**
  * @author Bruno Salmon

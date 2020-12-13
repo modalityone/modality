@@ -1,9 +1,9 @@
 package mongoose.shared.domainmodel.functions;
 
-import webfx.framework.shared.orm.expression.lci.DomainReader;
-import webfx.framework.shared.orm.expression.terms.function.Function;
-import webfx.extras.type.PrimType;
-import webfx.platform.shared.util.Strings;
+import dev.webfx.framework.shared.orm.expression.lci.DomainReader;
+import dev.webfx.framework.shared.orm.expression.terms.function.Function;
+import dev.webfx.extras.type.PrimType;
+import dev.webfx.platform.shared.util.Strings;
 
 import java.util.Arrays;
 

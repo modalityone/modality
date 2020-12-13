@@ -31,20 +31,20 @@ import mongoose.backend.operations.entities.moneytransfer.DeletePaymentRequest;
 import mongoose.backend.operations.entities.moneytransfer.EditPaymentRequest;
 import mongoose.client.presentationmodel.HasSelectedDocumentProperty;
 import mongoose.shared.entities.Document;
-import webfx.extras.imagestore.ImageStore;
-import webfx.extras.visual.controls.grid.VisualGrid;
-import webfx.framework.client.activity.impl.elementals.activeproperty.HasActiveProperty;
-import webfx.framework.client.ui.action.operation.OperationActionFactoryMixin;
-import webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import webfx.framework.client.services.i18n.I18nControls;
-import webfx.framework.client.ui.action.ActionGroup;
-import webfx.framework.client.ui.controls.button.ButtonFactoryMixin;
-import webfx.framework.shared.orm.domainmodel.DataSourceModel;
-import webfx.framework.shared.orm.domainmodel.HasDataSourceModel;
-import webfx.framework.shared.orm.entity.Entity;
-import webfx.framework.shared.orm.entity.EntityId;
-import webfx.kit.util.properties.Properties;
-import webfx.platform.shared.util.Strings;
+import dev.webfx.extras.imagestore.ImageStore;
+import dev.webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.framework.client.activity.impl.elementals.activeproperty.HasActiveProperty;
+import dev.webfx.framework.client.ui.action.operation.OperationActionFactoryMixin;
+import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.framework.client.services.i18n.I18nControls;
+import dev.webfx.framework.client.ui.action.ActionGroup;
+import dev.webfx.framework.client.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.framework.shared.orm.domainmodel.DataSourceModel;
+import dev.webfx.framework.shared.orm.domainmodel.HasDataSourceModel;
+import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.framework.shared.orm.entity.EntityId;
+import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.platform.shared.util.Strings;
 
 import java.util.function.Supplier;
 
@@ -244,7 +244,7 @@ public final class BookingDetailsPanel implements
     }
 
     private void addFieldLabelAndValue(int rowIndex, int columnIndex, int columnSpan, String fieldName) {
-        webfx.extras.label.Label fieldLabel = dataSourceModel.getDomainModel().getClass("Document").getField(fieldName).getLabel();
+        dev.webfx.extras.label.Label fieldLabel = dataSourceModel.getDomainModel().getClass("Document").getField(fieldName).getLabel();
         ObservableValue<String> fieldValueProperty = Properties.compute(selectedDocumentProperty, document -> {
             Object fieldValue = document == null ? null : document.getFieldValue(fieldName);
             if (fieldValue instanceof EntityId)

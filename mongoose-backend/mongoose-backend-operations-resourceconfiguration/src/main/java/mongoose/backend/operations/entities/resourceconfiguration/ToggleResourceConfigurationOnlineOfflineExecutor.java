@@ -1,10 +1,10 @@
 package mongoose.backend.operations.entities.resourceconfiguration;
 
-import webfx.framework.shared.orm.entity.Entity;
-import webfx.framework.shared.orm.entity.UpdateStore;
-import webfx.platform.shared.services.submit.SubmitResult;
-import webfx.platform.shared.util.async.Batch;
-import webfx.platform.shared.util.async.Future;
+import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.framework.shared.orm.entity.UpdateStore;
+import dev.webfx.platform.shared.services.submit.SubmitResult;
+import dev.webfx.platform.shared.util.async.Batch;
+import dev.webfx.platform.shared.util.async.Future;
 
 final class ToggleResourceConfigurationOnlineOfflineExecutor {
 

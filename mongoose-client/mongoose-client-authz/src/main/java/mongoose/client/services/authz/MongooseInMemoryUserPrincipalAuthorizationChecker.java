@@ -1,16 +1,16 @@
 package mongoose.client.services.authz;
 
 import mongoose.client.services.authn.MongooseUserPrincipal;
-import webfx.framework.shared.operation.authz.OperationAuthorizationRuleParser;
-import webfx.framework.shared.orm.domainmodel.DataSourceModel;
-import webfx.framework.shared.orm.entity.Entity;
-import webfx.framework.shared.orm.entity.EntityStore;
-import webfx.framework.shared.router.auth.authz.RoutingAuthorizationRule;
-import webfx.framework.shared.router.auth.authz.RoutingAuthorizationRuleParser;
-import webfx.framework.shared.services.authz.spi.impl.inmemory.AuthorizationRuleType;
-import webfx.framework.shared.services.authz.spi.impl.inmemory.InMemoryUserPrincipalAuthorizationChecker;
-import webfx.platform.shared.services.log.Logger;
-import webfx.platform.shared.util.Strings;
+import dev.webfx.framework.shared.operation.authz.OperationAuthorizationRuleParser;
+import dev.webfx.framework.shared.orm.domainmodel.DataSourceModel;
+import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.framework.shared.orm.entity.EntityStore;
+import dev.webfx.framework.shared.router.auth.authz.RoutingAuthorizationRule;
+import dev.webfx.framework.shared.router.auth.authz.RoutingAuthorizationRuleParser;
+import dev.webfx.framework.shared.services.authz.spi.impl.inmemory.AuthorizationRuleType;
+import dev.webfx.framework.shared.services.authz.spi.impl.inmemory.InMemoryUserPrincipalAuthorizationChecker;
+import dev.webfx.platform.shared.services.log.Logger;
+import dev.webfx.platform.shared.util.Strings;
 
 /**
  * @author Bruno Salmon

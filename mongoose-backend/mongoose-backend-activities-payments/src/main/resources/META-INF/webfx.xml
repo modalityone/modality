@@ -11,8 +11,8 @@
     </dependencies>
 
     <providers>
-        <provider spi="webfx.framework.client.ui.uirouter.UiRoute">mongoose.backend.activities.payments.PaymentsUiRoute</provider>
-        <provider spi="webfx.framework.client.operations.route.RouteRequestEmitter">mongoose.backend.activities.payments.RouteToPaymentsRequestEmitter</provider>
+        <provider spi="dev.webfx.framework.client.ui.uirouter.UiRoute">mongoose.backend.activities.payments.PaymentsUiRoute</provider>
+        <provider spi="dev.webfx.framework.client.operations.route.RouteRequestEmitter">mongoose.backend.activities.payments.RouteToPaymentsRequestEmitter</provider>
     </providers>
 
 </module>

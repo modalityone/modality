@@ -18,12 +18,12 @@ import mongoose.frontend.operations.fees.RouteToFeesRequest;
 import mongoose.frontend.operations.program.RouteToProgramRequest;
 import mongoose.client.actions.MongooseActions;
 import mongoose.client.entities.util.Labels;
-import webfx.framework.client.ui.action.Action;
-import webfx.framework.client.ui.util.layout.LayoutUtil;
-import webfx.framework.client.ui.util.anim.Animations;
-import webfx.kit.util.properties.Properties;
-import webfx.extras.imagestore.ImageStore;
-import webfx.platform.client.services.uischeduler.UiScheduler;
+import dev.webfx.framework.client.ui.action.Action;
+import dev.webfx.framework.client.ui.util.layout.LayoutUtil;
+import dev.webfx.framework.client.ui.util.anim.Animations;
+import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.extras.imagestore.ImageStore;
+import dev.webfx.platform.client.services.uischeduler.UiScheduler;
 
 /**
  * @author Bruno Salmon

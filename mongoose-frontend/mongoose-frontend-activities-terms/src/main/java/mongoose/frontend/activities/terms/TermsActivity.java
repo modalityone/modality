@@ -1,6 +1,6 @@
 package mongoose.frontend.activities.terms;
 
-import webfx.framework.client.activity.impl.combinations.domainpresentation.impl.DomainPresentationActivityImpl;
+import dev.webfx.framework.client.activity.impl.combinations.domainpresentation.impl.DomainPresentationActivityImpl;
 
 /**
  * @author Bruno Salmon

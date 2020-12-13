@@ -19,6 +19,6 @@ module mongoose.server.datasource {
     opens mongoose.server.datasource.MDS;
 
     // Provided services
-    provides webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider with mongoose.server.services.datasource.MongooseLocalDataSourceProvider;
+    provides dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider with mongoose.server.services.datasource.MongooseLocalDataSourceProvider;
 
 }

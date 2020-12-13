@@ -26,7 +26,7 @@ module mongoose.backend.activities.organizations {
     exports mongoose.backend.operations.routes.organizations;
 
     // Provided services
-    provides webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.backend.activities.organizations.RouteToOrganizationsRequestEmitter;
-    provides webfx.framework.client.ui.uirouter.UiRoute with mongoose.backend.activities.organizations.OrganizationsUiRoute;
+    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.backend.activities.organizations.RouteToOrganizationsRequestEmitter;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.backend.activities.organizations.OrganizationsUiRoute;
 
 }

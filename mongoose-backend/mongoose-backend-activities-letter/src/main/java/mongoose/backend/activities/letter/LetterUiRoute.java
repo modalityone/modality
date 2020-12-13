@@ -1,9 +1,9 @@
 package mongoose.backend.activities.letter;
 
 import mongoose.backend.activities.letter.routing.LetterRouting;
-import webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
-import webfx.framework.client.ui.uirouter.UiRoute;
-import webfx.framework.client.ui.uirouter.impl.UiRouteImpl;
+import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
+import dev.webfx.framework.client.ui.uirouter.UiRoute;
+import dev.webfx.framework.client.ui.uirouter.impl.UiRouteImpl;
 
 /**
  * @author Bruno Salmon

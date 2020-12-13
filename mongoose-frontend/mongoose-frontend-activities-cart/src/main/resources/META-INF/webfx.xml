@@ -12,7 +12,7 @@
     </dependencies>
 
     <providers>
-        <provider spi="webfx.framework.client.ui.uirouter.UiRoute">mongoose.frontend.activities.cart.CartUiRoute</provider>
+        <provider spi="dev.webfx.framework.client.ui.uirouter.UiRoute">mongoose.frontend.activities.cart.CartUiRoute</provider>
     </providers>
 
 </module>

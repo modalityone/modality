@@ -12,8 +12,8 @@
     </dependencies>
 
     <providers>
-        <provider spi="webfx.framework.client.ui.uirouter.UiRoute">mongoose.backend.activities.letters.LettersUiRoute</provider>
-        <provider spi="webfx.framework.client.operations.route.RouteRequestEmitter">mongoose.backend.activities.letters.RouteToLettersRequestEmitter</provider>
+        <provider spi="dev.webfx.framework.client.ui.uirouter.UiRoute">mongoose.backend.activities.letters.LettersUiRoute</provider>
+        <provider spi="dev.webfx.framework.client.operations.route.RouteRequestEmitter">mongoose.backend.activities.letters.RouteToLettersRequestEmitter</provider>
     </providers>
 
 </module>

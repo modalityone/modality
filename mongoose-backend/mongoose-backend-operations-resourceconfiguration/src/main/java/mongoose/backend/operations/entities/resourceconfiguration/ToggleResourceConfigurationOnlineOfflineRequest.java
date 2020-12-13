@@ -1,11 +1,11 @@
 package mongoose.backend.operations.entities.resourceconfiguration;
 
-import webfx.framework.shared.operation.HasOperationCode;
-import webfx.framework.shared.operation.HasOperationExecutor;
-import webfx.framework.shared.orm.entity.Entity;
-import webfx.platform.shared.services.submit.SubmitResult;
-import webfx.platform.shared.util.async.AsyncFunction;
-import webfx.platform.shared.util.async.Batch;
+import dev.webfx.framework.shared.operation.HasOperationCode;
+import dev.webfx.framework.shared.operation.HasOperationExecutor;
+import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.platform.shared.services.submit.SubmitResult;
+import dev.webfx.platform.shared.util.async.AsyncFunction;
+import dev.webfx.platform.shared.util.async.Batch;
 
 public final class ToggleResourceConfigurationOnlineOfflineRequest implements HasOperationCode,
         HasOperationExecutor<ToggleResourceConfigurationOnlineOfflineRequest, Batch<SubmitResult>> {

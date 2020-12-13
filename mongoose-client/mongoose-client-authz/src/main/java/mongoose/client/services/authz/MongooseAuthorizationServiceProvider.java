@@ -1,9 +1,9 @@
 package mongoose.client.services.authz;
 
-import webfx.framework.shared.orm.domainmodel.DataSourceModel;
-import webfx.framework.shared.services.authz.spi.impl.AuthorizationServiceProviderBase;
-import webfx.framework.shared.services.authz.spi.impl.UserPrincipalAuthorizationChecker;
-import webfx.framework.shared.services.datasourcemodel.DataSourceModelService;
+import dev.webfx.framework.shared.orm.domainmodel.DataSourceModel;
+import dev.webfx.framework.shared.services.authz.spi.impl.AuthorizationServiceProviderBase;
+import dev.webfx.framework.shared.services.authz.spi.impl.UserPrincipalAuthorizationChecker;
+import dev.webfx.framework.shared.services.datasourcemodel.DataSourceModelService;
 
 /**
  * @author Bruno Salmon

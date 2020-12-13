@@ -20,7 +20,7 @@ module mongoose.client.i18n {
     opens mongoose.client.services.i18n.dictionaries;
 
     // Provided services
-    provides webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter with mongoose.client.operations.i18n.ChangeLanguageToEnglishRequest.ProvidedEmitter, mongoose.client.operations.i18n.ChangeLanguageToFrenchRequest.ProvidedEmitter;
-    provides webfx.framework.client.services.i18n.spi.I18nProvider with mongoose.client.services.i18n.MongooseI18nProvider;
+    provides dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter with mongoose.client.operations.i18n.ChangeLanguageToEnglishRequest.ProvidedEmitter, mongoose.client.operations.i18n.ChangeLanguageToFrenchRequest.ProvidedEmitter;
+    provides dev.webfx.framework.client.services.i18n.spi.I18nProvider with mongoose.client.services.i18n.MongooseI18nProvider;
 
 }

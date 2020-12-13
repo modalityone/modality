@@ -24,7 +24,7 @@ module mongoose.backend.activities.letters {
     exports mongoose.backend.operations.routes.letters;
 
     // Provided services
-    provides webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.backend.activities.letters.RouteToLettersRequestEmitter;
-    provides webfx.framework.client.ui.uirouter.UiRoute with mongoose.backend.activities.letters.LettersUiRoute;
+    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.backend.activities.letters.RouteToLettersRequestEmitter;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.backend.activities.letters.LettersUiRoute;
 
 }

@@ -16,12 +16,12 @@ import mongoose.backend.operations.entities.generic.CopySelectionRequest;
 import mongoose.client.activity.eventdependent.EventDependentViewDomainActivity;
 import mongoose.shared.entities.Attendance;
 import mongoose.shared.entities.DocumentLine;
-import webfx.extras.visual.controls.grid.VisualGrid;
-import webfx.framework.client.ui.action.operation.OperationActionFactoryMixin;
-import webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.framework.client.ui.action.operation.OperationActionFactoryMixin;
+import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.framework.shared.orm.entity.Entity;
 
-import static webfx.framework.shared.orm.dql.DqlStatement.where;
+import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
 
 final class DiningAreasActivity extends EventDependentViewDomainActivity implements
         OperationActionFactoryMixin,

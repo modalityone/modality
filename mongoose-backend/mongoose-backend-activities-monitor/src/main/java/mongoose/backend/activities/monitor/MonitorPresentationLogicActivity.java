@@ -1,9 +1,9 @@
 package mongoose.backend.activities.monitor;
 
 import mongoose.client.activity.MongooseDomainPresentationLogicActivityBase;
-import webfx.framework.client.orm.reactive.mapping.dql_to_entities.ReactiveEntitiesMapper;
-import webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.framework.client.orm.reactive.mapping.dql_to_entities.ReactiveEntitiesMapper;
+import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.framework.shared.orm.entity.Entity;
 
 /**
  * @author Bruno Salmon

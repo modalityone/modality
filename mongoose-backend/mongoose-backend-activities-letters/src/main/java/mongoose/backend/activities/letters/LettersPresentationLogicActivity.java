@@ -2,10 +2,10 @@ package mongoose.backend.activities.letters;
 
 import mongoose.backend.operations.routes.letter.RouteToLetterRequest;
 import mongoose.client.activity.eventdependent.EventDependentPresentationLogicActivity;
-import webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 
-import static webfx.framework.shared.orm.dql.DqlStatement.limit;
-import static webfx.framework.shared.orm.dql.DqlStatement.where;
+import static dev.webfx.framework.shared.orm.dql.DqlStatement.limit;
+import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
 
 /**
  * @author Bruno Salmon

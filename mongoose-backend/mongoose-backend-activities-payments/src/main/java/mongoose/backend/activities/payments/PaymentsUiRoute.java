@@ -1,10 +1,10 @@
 package mongoose.backend.activities.payments;
 
 import mongoose.backend.activities.payments.routing.PaymentsRouting;
-import webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
-import webfx.framework.client.ui.uirouter.UiRoute;
-import webfx.framework.client.ui.uirouter.impl.UiRouteImpl;
-import webfx.framework.shared.router.util.PathBuilder;
+import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
+import dev.webfx.framework.client.ui.uirouter.UiRoute;
+import dev.webfx.framework.client.ui.uirouter.impl.UiRouteImpl;
+import dev.webfx.framework.shared.router.util.PathBuilder;
 
 /**
  * @author Bruno Salmon

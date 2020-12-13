@@ -1,11 +1,11 @@
 package mongoose.frontend.activities.terms;
 
 import mongoose.client.activity.bookingprocess.BookingProcessPresentationLogicActivity;
-import webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import webfx.framework.client.services.i18n.I18n;
+import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.framework.client.services.i18n.I18n;
 
-import static webfx.framework.shared.orm.dql.DqlStatement.parse;
-import static webfx.framework.shared.orm.dql.DqlStatement.where;
+import static dev.webfx.framework.shared.orm.dql.DqlStatement.parse;
+import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
 
 /**
  * @author Bruno Salmon

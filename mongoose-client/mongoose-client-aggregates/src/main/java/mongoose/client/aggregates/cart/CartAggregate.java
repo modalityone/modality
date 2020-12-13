@@ -4,9 +4,9 @@ import mongoose.client.aggregates.event.EventAggregate;
 import mongoose.shared.entities.Cart;
 import mongoose.shared.entities.Document;
 import mongoose.shared.entities.MoneyTransfer;
-import webfx.framework.shared.orm.domainmodel.DataSourceModel;
-import webfx.framework.shared.orm.entity.EntityList;
-import webfx.platform.shared.util.async.Future;
+import dev.webfx.framework.shared.orm.domainmodel.DataSourceModel;
+import dev.webfx.framework.shared.orm.entity.EntityList;
+import dev.webfx.platform.shared.util.async.Future;
 
 import java.util.List;
 

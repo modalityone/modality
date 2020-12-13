@@ -1,7 +1,7 @@
 <module>
 
     <providers>
-        <provider spi="webfx.framework.client.ui.uirouter.UiRoute">mongoose.frontend.activities.contactus.ContactUsUiRoute</provider>
+        <provider spi="dev.webfx.framework.client.ui.uirouter.UiRoute">mongoose.frontend.activities.contactus.ContactUsUiRoute</provider>
     </providers>
 
     <dependencies>

@@ -2,10 +2,10 @@ package mongoose.backend.operations.entities.document;
 
 import javafx.scene.layout.Pane;
 import mongoose.shared.entities.Document;
-import webfx.framework.client.ui.controls.button.ButtonFactoryMixin;
-import webfx.framework.shared.operation.HasOperationCode;
-import webfx.framework.shared.operation.HasOperationExecutor;
-import webfx.platform.shared.util.async.AsyncFunction;
+import dev.webfx.framework.client.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.framework.shared.operation.HasOperationCode;
+import dev.webfx.framework.shared.operation.HasOperationExecutor;
+import dev.webfx.platform.shared.util.async.AsyncFunction;
 
 public final class EditDocumentPersonalDetailsRequest implements HasOperationCode,
         HasOperationExecutor<EditDocumentPersonalDetailsRequest, Void> {

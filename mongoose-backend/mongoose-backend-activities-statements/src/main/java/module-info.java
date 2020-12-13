@@ -33,7 +33,7 @@ module mongoose.backend.activities.statements {
     exports mongoose.backend.operations.routes.statements;
 
     // Provided services
-    provides webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.backend.activities.statements.RouteToStatementsRequestEmitter;
-    provides webfx.framework.client.ui.uirouter.UiRoute with mongoose.backend.activities.statements.StatementsUiRoute;
+    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.backend.activities.statements.RouteToStatementsRequestEmitter;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.backend.activities.statements.StatementsUiRoute;
 
 }

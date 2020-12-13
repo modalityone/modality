@@ -6,11 +6,11 @@ import mongoose.shared.entities.Attendance;
 import mongoose.shared.entities.Cart;
 import mongoose.shared.entities.Document;
 import mongoose.shared.entities.DocumentLine;
-import webfx.framework.shared.orm.entity.UpdateStore;
-import webfx.platform.shared.services.submit.SubmitArgument;
-import webfx.platform.shared.util.async.Future;
-import webfx.platform.shared.util.collection.Collections;
-import webfx.platform.shared.util.uuid.Uuid;
+import dev.webfx.framework.shared.orm.entity.UpdateStore;
+import dev.webfx.platform.shared.services.submit.SubmitArgument;
+import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.util.collection.Collections;
+import dev.webfx.platform.shared.util.uuid.Uuid;
 
 import java.time.LocalDate;
 import java.util.List;

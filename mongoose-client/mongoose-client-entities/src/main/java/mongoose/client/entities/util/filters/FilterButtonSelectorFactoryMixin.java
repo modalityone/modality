@@ -2,15 +2,15 @@ package mongoose.client.entities.util.filters;
 
 import javafx.beans.property.Property;
 import javafx.scene.layout.Pane;
-import webfx.framework.client.orm.reactive.dql.statement.conventions.HasColumnsDqlStatementProperty;
-import webfx.framework.client.orm.reactive.dql.statement.conventions.HasConditionDqlStatementProperty;
-import webfx.framework.client.orm.reactive.dql.statement.conventions.HasGroupDqlStatementProperty;
+import dev.webfx.framework.client.orm.reactive.dql.statement.conventions.HasColumnsDqlStatementProperty;
+import dev.webfx.framework.client.orm.reactive.dql.statement.conventions.HasConditionDqlStatementProperty;
+import dev.webfx.framework.client.orm.reactive.dql.statement.conventions.HasGroupDqlStatementProperty;
 import mongoose.shared.entities.Filter;
-import webfx.framework.shared.orm.dql.DqlStatement;
-import webfx.framework.client.ui.controls.button.ButtonFactoryMixin;
-import webfx.framework.client.ui.controls.entity.selector.EntityButtonSelector;
-import webfx.framework.shared.orm.domainmodel.HasDataSourceModel;
-import webfx.kit.util.properties.Properties;
+import dev.webfx.framework.shared.orm.dql.DqlStatement;
+import dev.webfx.framework.client.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.framework.client.ui.controls.entity.selector.EntityButtonSelector;
+import dev.webfx.framework.shared.orm.domainmodel.HasDataSourceModel;
+import dev.webfx.kit.util.properties.Properties;
 
 import java.util.function.Predicate;
 

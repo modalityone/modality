@@ -2,8 +2,8 @@ package mongoose.backend.operations.routes.bookings;
 
 import mongoose.client.aggregates.event.EventAggregate;
 import mongoose.frontend.operations.fees.RouteToFeesRequest;
-import webfx.platform.client.services.windowhistory.spi.BrowsingHistory;
-import webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.client.services.windowhistory.spi.BrowsingHistory;
+import dev.webfx.platform.shared.util.async.Future;
 
 /**
  * @author Bruno Salmon

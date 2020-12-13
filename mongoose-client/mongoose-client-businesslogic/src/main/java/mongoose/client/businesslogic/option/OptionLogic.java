@@ -6,7 +6,7 @@ import mongoose.shared.businessdata.time.TimeInterval;
 import mongoose.shared.entities.Event;
 import mongoose.shared.entities.Option;
 import mongoose.shared.entities.Site;
-import webfx.platform.shared.util.Numbers;
+import dev.webfx.platform.shared.util.Numbers;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;

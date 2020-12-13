@@ -6,11 +6,11 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import mongoose.client.activity.themes.Theme;
-import webfx.framework.client.activity.impl.elementals.presentation.view.impl.PresentationViewActivityImpl;
-import webfx.framework.client.ui.controls.button.ButtonFactoryMixin;
-import webfx.framework.client.ui.util.scene.SceneUtil;
-import webfx.kit.util.properties.Properties;
-import webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.framework.client.activity.impl.elementals.presentation.view.impl.PresentationViewActivityImpl;
+import dev.webfx.framework.client.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.framework.client.ui.util.scene.SceneUtil;
+import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.extras.visual.controls.grid.VisualGrid;
 
 /**
  * @author Bruno Salmon

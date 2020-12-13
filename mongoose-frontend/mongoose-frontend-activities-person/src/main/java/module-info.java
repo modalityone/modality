@@ -27,6 +27,6 @@ module mongoose.frontend.activities.person {
     exports mongoose.frontend.operations.person;
 
     // Provided services
-    provides webfx.framework.client.ui.uirouter.UiRoute with mongoose.frontend.activities.person.PersonUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.frontend.activities.person.PersonUiRoute;
 
 }

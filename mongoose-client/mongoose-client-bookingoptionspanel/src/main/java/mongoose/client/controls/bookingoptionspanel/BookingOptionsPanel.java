@@ -10,25 +10,25 @@ import mongoose.shared.entities.DocumentLine;
 import mongoose.shared.entities.Item;
 import mongoose.shared.businessdata.time.DaysArray;
 import mongoose.shared.businessdata.time.DaysArrayBuilder;
-import webfx.framework.client.services.i18n.I18n;
-import webfx.framework.shared.orm.expression.Expression;
-import webfx.framework.shared.orm.expression.lci.DomainReader;
-import webfx.framework.shared.orm.expression.terms.function.AggregateFunction;
-import webfx.framework.shared.orm.entity.EntityList;
-import webfx.framework.shared.orm.entity.EntityStore;
-import webfx.framework.client.orm.reactive.mapping.entities_to_visual.EntitiesToVisualResultMapper;
-import webfx.extras.visual.controls.grid.VisualGrid;
-import webfx.extras.visual.controls.grid.SkinnedVisualGrid;
-import webfx.extras.visual.VisualResult;
-import webfx.extras.visual.SelectionMode;
-import webfx.extras.type.PrimType;
-import webfx.kit.util.properties.Properties;
-import webfx.platform.shared.util.Objects;
-import webfx.platform.shared.util.collection.Collections;
+import dev.webfx.framework.client.services.i18n.I18n;
+import dev.webfx.framework.shared.orm.expression.Expression;
+import dev.webfx.framework.shared.orm.expression.lci.DomainReader;
+import dev.webfx.framework.shared.orm.expression.terms.function.AggregateFunction;
+import dev.webfx.framework.shared.orm.entity.EntityList;
+import dev.webfx.framework.shared.orm.entity.EntityStore;
+import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.EntitiesToVisualResultMapper;
+import dev.webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
+import dev.webfx.extras.visual.VisualResult;
+import dev.webfx.extras.visual.SelectionMode;
+import dev.webfx.extras.type.PrimType;
+import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.platform.shared.util.Objects;
+import dev.webfx.platform.shared.util.collection.Collections;
 
 import java.util.List;
 
-import static webfx.framework.shared.orm.domainmodel.formatter.FormatterRegistry.registerFormatter;
+import static dev.webfx.framework.shared.orm.domainmodel.formatter.FormatterRegistry.registerFormatter;
 
 /**
  * @author Bruno Salmon

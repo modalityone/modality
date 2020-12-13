@@ -2,8 +2,8 @@ package mongoose.backend.operations.entities.documentline;
 
 import javafx.scene.layout.Pane;
 import mongoose.shared.entities.DocumentLine;
-import webfx.framework.client.ui.controls.entity.sheet.EntityPropertiesSheet;
-import webfx.platform.shared.util.async.Future;
+import dev.webfx.framework.client.ui.controls.entity.sheet.EntityPropertiesSheet;
+import dev.webfx.platform.shared.util.async.Future;
 
 final class EditDocumentLineExecutor {
 

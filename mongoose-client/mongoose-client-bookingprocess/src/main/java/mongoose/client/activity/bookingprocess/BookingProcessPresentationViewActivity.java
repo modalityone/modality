@@ -9,11 +9,11 @@ import javafx.scene.layout.Region;
 import mongoose.client.activity.MongooseButtonFactoryMixin;
 import mongoose.client.aggregates.event.EventAggregate;
 import mongoose.shared.entities.Event;
-import webfx.framework.client.activity.impl.elementals.presentation.view.impl.PresentationViewActivityImpl;
-import webfx.framework.client.ui.util.background.BackgroundUtil;
-import webfx.framework.shared.services.datasourcemodel.DataSourceModelService;
-import webfx.kit.util.properties.Properties;
-import webfx.platform.shared.util.Strings;
+import dev.webfx.framework.client.activity.impl.elementals.presentation.view.impl.PresentationViewActivityImpl;
+import dev.webfx.framework.client.ui.util.background.BackgroundUtil;
+import dev.webfx.framework.shared.services.datasourcemodel.DataSourceModelService;
+import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.platform.shared.util.Strings;
 
 /**
  * @author Bruno Salmon

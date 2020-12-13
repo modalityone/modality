@@ -16,6 +16,6 @@ module mongoose.client.authz {
     exports mongoose.client.services.authz;
 
     // Provided services
-    provides webfx.framework.shared.services.authz.spi.AuthorizationServiceProvider with mongoose.client.services.authz.MongooseAuthorizationServiceProvider;
+    provides dev.webfx.framework.shared.services.authz.spi.AuthorizationServiceProvider with mongoose.client.services.authz.MongooseAuthorizationServiceProvider;
 
 }

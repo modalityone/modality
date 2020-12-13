@@ -1,10 +1,10 @@
 package mongoose.client.util.functions;
 
 import mongoose.client.entities.util.Labels;
-import webfx.framework.shared.orm.expression.lci.DomainReader;
-import webfx.framework.shared.orm.expression.terms.function.Function;
-import webfx.framework.client.services.i18n.I18n;
-import webfx.extras.type.PrimType;
+import dev.webfx.framework.shared.orm.expression.lci.DomainReader;
+import dev.webfx.framework.shared.orm.expression.terms.function.Function;
+import dev.webfx.framework.client.services.i18n.I18n;
+import dev.webfx.extras.type.PrimType;
 
 /**
  * @author Bruno Salmon

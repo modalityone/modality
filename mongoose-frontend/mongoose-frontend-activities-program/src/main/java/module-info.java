@@ -25,6 +25,6 @@ module mongoose.frontend.activities.program {
     exports mongoose.frontend.operations.program;
 
     // Provided services
-    provides webfx.framework.client.ui.uirouter.UiRoute with mongoose.frontend.activities.program.ProgramUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.frontend.activities.program.ProgramUiRoute;
 
 }

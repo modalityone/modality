@@ -8,7 +8,7 @@ package mongoose.frontend.activities.payment;
  * details.
  */
 
-import webfx.platform.shared.services.log.Logger;
+import dev.webfx.platform.shared.services.log.Logger;
 
 import java.nio.charset.StandardCharsets;
 

@@ -3,10 +3,10 @@ package mongoose.backend.activities.cloneevent;
 import mongoose.backend.operations.routes.bookings.RouteToBookingsRequest;
 import mongoose.client.activity.eventdependent.EventDependentPresentationLogicActivity;
 import mongoose.shared.entities.Event;
-import webfx.kit.util.properties.Properties;
-import webfx.platform.client.services.uischeduler.UiScheduler;
-import webfx.platform.shared.services.submit.SubmitArgument;
-import webfx.platform.shared.services.submit.SubmitService;
+import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.platform.client.services.uischeduler.UiScheduler;
+import dev.webfx.platform.shared.services.submit.SubmitArgument;
+import dev.webfx.platform.shared.services.submit.SubmitService;
 
 import java.time.LocalDate;
 

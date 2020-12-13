@@ -2,11 +2,11 @@ package mongoose.backend.operations.entities.resourceconfiguration;
 
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
-import webfx.framework.client.ui.controls.dialog.DialogContent;
-import webfx.framework.client.ui.controls.dialog.DialogUtil;
-import webfx.framework.shared.orm.entity.Entity;
-import webfx.framework.shared.orm.entity.UpdateStore;
-import webfx.platform.shared.util.async.Future;
+import dev.webfx.framework.client.ui.controls.dialog.DialogContent;
+import dev.webfx.framework.client.ui.controls.dialog.DialogUtil;
+import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.framework.shared.orm.entity.UpdateStore;
+import dev.webfx.platform.shared.util.async.Future;
 
 final class DeleteResourceExecutor {
 

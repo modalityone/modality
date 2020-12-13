@@ -7,11 +7,11 @@ import mongoose.client.activity.MongooseButtonFactoryMixin;
 import mongoose.client.aggregates.cart.CartAggregate;
 import mongoose.client.aggregates.event.EventAggregate;
 import mongoose.shared.entities.Event;
-import webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
-import webfx.framework.client.services.i18n.I18n;
-import webfx.framework.client.ui.util.background.BackgroundUtil;
-import webfx.kit.util.properties.Properties;
-import webfx.platform.shared.util.Strings;
+import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.framework.client.services.i18n.I18n;
+import dev.webfx.framework.client.ui.util.background.BackgroundUtil;
+import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.platform.shared.util.Strings;
 
 /**
  * @author Bruno Salmon

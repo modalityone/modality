@@ -14,17 +14,17 @@ import mongoose.shared.entities.Document;
 import mongoose.shared.entities.Event;
 import mongoose.shared.entities.History;
 import mongoose.shared.entities.Mail;
-import webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
-import webfx.framework.client.operations.route.RouteBackwardRequest;
-import webfx.framework.client.ui.action.Action;
-import webfx.framework.client.ui.util.layout.LayoutUtil;
-import webfx.framework.client.ui.util.background.BackgroundUtil;
-import webfx.framework.shared.orm.entity.EntityStore;
-import webfx.framework.shared.orm.entity.UpdateStore;
-import webfx.platform.client.services.uischeduler.UiScheduler;
-import webfx.platform.client.services.windowlocation.WindowLocation;
-import webfx.platform.shared.services.log.Logger;
-import webfx.platform.shared.util.Strings;
+import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.framework.client.operations.route.RouteBackwardRequest;
+import dev.webfx.framework.client.ui.action.Action;
+import dev.webfx.framework.client.ui.util.layout.LayoutUtil;
+import dev.webfx.framework.client.ui.util.background.BackgroundUtil;
+import dev.webfx.framework.shared.orm.entity.EntityStore;
+import dev.webfx.framework.shared.orm.entity.UpdateStore;
+import dev.webfx.platform.client.services.uischeduler.UiScheduler;
+import dev.webfx.platform.client.services.windowlocation.WindowLocation;
+import dev.webfx.platform.shared.services.log.Logger;
+import dev.webfx.platform.shared.util.Strings;
 
 /**
  * @author Bruno Salmon

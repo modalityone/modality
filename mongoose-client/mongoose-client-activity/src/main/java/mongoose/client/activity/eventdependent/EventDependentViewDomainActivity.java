@@ -1,8 +1,8 @@
 package mongoose.client.activity.eventdependent;
 
 import mongoose.client.activity.MongooseButtonFactoryMixin;
-import webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
-import webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
+import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
 
 /**
  * @author Bruno Salmon

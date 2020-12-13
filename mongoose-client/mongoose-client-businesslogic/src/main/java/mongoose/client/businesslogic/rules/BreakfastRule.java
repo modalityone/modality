@@ -7,7 +7,7 @@ import mongoose.client.businessdata.workingdocument.WorkingDocumentLine;
 import mongoose.client.businesslogic.workingdocument.BusinessType;
 import mongoose.client.businesslogic.option.OptionLogic;
 import mongoose.shared.entities.Option;
-import webfx.platform.shared.util.collection.Collections;
+import dev.webfx.platform.shared.util.collection.Collections;
 
 import java.util.ArrayList;
 import java.util.List;

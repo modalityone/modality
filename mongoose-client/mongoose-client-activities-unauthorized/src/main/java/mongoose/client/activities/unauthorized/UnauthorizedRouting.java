@@ -1,6 +1,6 @@
 package mongoose.client.activities.unauthorized;
 
-import webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
+import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
 
 /**
  * @author Bruno Salmon

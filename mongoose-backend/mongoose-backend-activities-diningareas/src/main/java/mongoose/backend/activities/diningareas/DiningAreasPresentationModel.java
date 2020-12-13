@@ -3,8 +3,8 @@ package mongoose.backend.activities.diningareas;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import mongoose.client.activity.eventdependent.EventDependentGenericTablePresentationModel;
-import webfx.extras.visual.VisualResult;
-import webfx.extras.visual.VisualSelection;
+import dev.webfx.extras.visual.VisualResult;
+import dev.webfx.extras.visual.VisualSelection;
 
 /**
  * @author Bruno Salmon

@@ -1,10 +1,10 @@
 package mongoose.shared.domainmodel.formatters;
 
-import webfx.framework.shared.orm.domainmodel.formatter.ValueFormatter;
-import webfx.framework.shared.orm.domainmodel.formatter.ValueParser;
-import webfx.extras.type.PrimType;
-import webfx.extras.type.Type;
-import webfx.platform.shared.util.Numbers;
+import dev.webfx.framework.shared.orm.domainmodel.formatter.ValueFormatter;
+import dev.webfx.framework.shared.orm.domainmodel.formatter.ValueParser;
+import dev.webfx.extras.type.PrimType;
+import dev.webfx.extras.type.Type;
+import dev.webfx.platform.shared.util.Numbers;
 
 /**
  * @author Bruno Salmon

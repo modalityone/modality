@@ -2,12 +2,12 @@ package mongoose.backend.operations.entities.generic;
 
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import webfx.framework.client.orm.reactive.mapping.entities_to_grid.EntityColumn;
-import webfx.framework.client.orm.reactive.mapping.entities_to_grid.EntityColumnFactory;
-import webfx.framework.shared.orm.entity.Entity;
-import webfx.framework.shared.orm.expression.Expression;
-import webfx.framework.shared.orm.domainmodel.formatter.ValueFormatter;
-import webfx.platform.shared.util.async.Future;
+import dev.webfx.framework.client.orm.reactive.mapping.entities_to_grid.EntityColumn;
+import dev.webfx.framework.client.orm.reactive.mapping.entities_to_grid.EntityColumnFactory;
+import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.framework.shared.orm.expression.Expression;
+import dev.webfx.framework.shared.orm.domainmodel.formatter.ValueFormatter;
+import dev.webfx.platform.shared.util.async.Future;
 
 import java.util.ArrayList;
 import java.util.Collection;

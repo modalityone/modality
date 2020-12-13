@@ -24,7 +24,7 @@ module mongoose.backend.activities.operations {
     exports mongoose.backend.operations.routes.operations;
 
     // Provided services
-    provides webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.backend.activities.operations.RouteToOperationsRequestEmitter;
-    provides webfx.framework.client.ui.uirouter.UiRoute with mongoose.backend.activities.operations.OperationsUiRoute;
+    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.backend.activities.operations.RouteToOperationsRequestEmitter;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.backend.activities.operations.OperationsUiRoute;
 
 }

@@ -3,8 +3,8 @@ package mongoose.client.businessdata.feesgroup;
 import mongoose.client.aggregates.event.EventAggregate;
 import mongoose.client.businesslogic.feesgroup.FeesGroupLogic;
 import mongoose.shared.entities.Event;
-import webfx.framework.shared.orm.entity.EntityId;
-import webfx.platform.shared.util.async.Future;
+import dev.webfx.framework.shared.orm.entity.EntityId;
+import dev.webfx.platform.shared.util.async.Future;
 
 import java.util.HashMap;
 import java.util.Map;

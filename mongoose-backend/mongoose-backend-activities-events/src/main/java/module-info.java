@@ -25,7 +25,7 @@ module mongoose.backend.activities.events {
     exports mongoose.backend.operations.routes.events;
 
     // Provided services
-    provides webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.backend.activities.events.RouteToEventsRequestEmitter;
-    provides webfx.framework.client.ui.uirouter.UiRoute with mongoose.backend.activities.events.EventsUiRoute;
+    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.backend.activities.events.RouteToEventsRequestEmitter;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.backend.activities.events.EventsUiRoute;
 
 }

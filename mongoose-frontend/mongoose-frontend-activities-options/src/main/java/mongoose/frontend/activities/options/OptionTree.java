@@ -7,8 +7,8 @@ import mongoose.client.businessdata.workingdocument.WorkingDocument;
 import mongoose.client.businessdata.workingdocument.WorkingDocumentTransaction;
 import mongoose.shared.entities.Event;
 import mongoose.shared.entities.Option;
-import webfx.platform.client.services.uischeduler.UiScheduler;
-import webfx.platform.shared.util.collection.Collections;
+import dev.webfx.platform.client.services.uischeduler.UiScheduler;
+import dev.webfx.platform.shared.util.collection.Collections;
 
 import java.util.HashMap;
 import java.util.List;

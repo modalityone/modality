@@ -31,6 +31,6 @@ module mongoose.frontend.activities.startbooking {
     exports mongoose.frontend.operations.startbooking;
 
     // Provided services
-    provides webfx.framework.client.ui.uirouter.UiRoute with mongoose.frontend.activities.startbooking.StartBookingUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.frontend.activities.startbooking.StartBookingUiRoute;
 
 }

@@ -37,6 +37,6 @@ module mongoose.frontend.activities.payment {
     exports mongoose.frontend.operations.payment;
 
     // Provided services
-    provides webfx.framework.client.ui.uirouter.UiRoute with mongoose.frontend.activities.payment.PaymentUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.frontend.activities.payment.PaymentUiRoute;
 
 }

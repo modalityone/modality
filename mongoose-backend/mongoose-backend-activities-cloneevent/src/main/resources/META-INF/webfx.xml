@@ -11,7 +11,7 @@
     </dependencies>
 
     <providers>
-        <provider spi="webfx.framework.client.ui.uirouter.UiRoute">mongoose.backend.activities.cloneevent.CloneEventUiRoute</provider>
+        <provider spi="dev.webfx.framework.client.ui.uirouter.UiRoute">mongoose.backend.activities.cloneevent.CloneEventUiRoute</provider>
     </providers>
 
 </module>

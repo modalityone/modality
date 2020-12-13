@@ -5,22 +5,22 @@ import mongoose.shared.domainmodel.formatters.DateTimeFormatter;
 import mongoose.shared.domainmodel.formatters.PriceFormatter;
 import mongoose.shared.domainmodel.functions.AbcNames;
 import mongoose.shared.domainmodel.functions.DateIntervalFormat;
-import webfx.extras.type.PrimType;
-import webfx.extras.type.Type;
-import webfx.framework.shared.orm.domainmodel.DomainModel;
-import webfx.framework.shared.orm.entity.EntityFactoryRegistry;
-import webfx.framework.shared.orm.expression.terms.function.DomainClassType;
-import webfx.framework.shared.orm.expression.terms.function.Function;
-import webfx.framework.shared.orm.expression.terms.function.InlineFunction;
-import webfx.framework.shared.services.domainmodel.spi.DomainModelLoader;
-import webfx.framework.shared.orm.domainmodel.formatter.FormatterRegistry;
-import webfx.platform.shared.services.json.Json;
-import webfx.platform.shared.services.json.JsonElement;
-import webfx.platform.shared.services.query.QueryResult;
-import webfx.platform.shared.services.resource.ResourceService;
-import webfx.platform.shared.services.serial.SerialCodecManager;
-import webfx.platform.shared.util.async.Batch;
-import webfx.platform.shared.util.async.Future;
+import dev.webfx.extras.type.PrimType;
+import dev.webfx.extras.type.Type;
+import dev.webfx.framework.shared.orm.domainmodel.DomainModel;
+import dev.webfx.framework.shared.orm.entity.EntityFactoryRegistry;
+import dev.webfx.framework.shared.orm.expression.terms.function.DomainClassType;
+import dev.webfx.framework.shared.orm.expression.terms.function.Function;
+import dev.webfx.framework.shared.orm.expression.terms.function.InlineFunction;
+import dev.webfx.framework.shared.services.domainmodel.spi.DomainModelLoader;
+import dev.webfx.framework.shared.orm.domainmodel.formatter.FormatterRegistry;
+import dev.webfx.platform.shared.services.json.Json;
+import dev.webfx.platform.shared.services.json.JsonElement;
+import dev.webfx.platform.shared.services.query.QueryResult;
+import dev.webfx.platform.shared.services.resource.ResourceService;
+import dev.webfx.platform.shared.services.serial.SerialCodecManager;
+import dev.webfx.platform.shared.util.async.Batch;
+import dev.webfx.platform.shared.util.async.Future;
 
 /**
  * @author Bruno Salmon

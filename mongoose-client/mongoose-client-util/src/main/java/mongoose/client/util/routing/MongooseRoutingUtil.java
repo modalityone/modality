@@ -1,7 +1,7 @@
 package mongoose.client.util.routing;
 
-import webfx.framework.shared.orm.entity.Entities;
-import webfx.platform.shared.util.Strings;
+import dev.webfx.framework.shared.orm.entity.Entities;
+import dev.webfx.platform.shared.util.Strings;
 
 /**
  * @author Bruno Salmon

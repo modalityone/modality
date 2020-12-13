@@ -1,7 +1,7 @@
 <module>
 
     <providers>
-        <provider spi="webfx.framework.client.ui.uirouter.UiRoute">mongoose.frontend.activities.startbooking.StartBookingUiRoute</provider>
+        <provider spi="dev.webfx.framework.client.ui.uirouter.UiRoute">mongoose.frontend.activities.startbooking.StartBookingUiRoute</provider>
     </providers>
 
     <dependencies>

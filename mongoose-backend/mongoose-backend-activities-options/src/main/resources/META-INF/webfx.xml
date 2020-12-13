@@ -1,7 +1,7 @@
 <module>
 
     <providers>
-        <provider spi="webfx.framework.client.ui.uirouter.UiRoute">mongoose.backend.activities.options.EditableOptionsUiRoute</provider>
+        <provider spi="dev.webfx.framework.client.ui.uirouter.UiRoute">mongoose.backend.activities.options.EditableOptionsUiRoute</provider>
     </providers>
 
     <dependencies>

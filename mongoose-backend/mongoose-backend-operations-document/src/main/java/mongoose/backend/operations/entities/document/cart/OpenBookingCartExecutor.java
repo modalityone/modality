@@ -2,9 +2,9 @@ package mongoose.backend.operations.entities.document.cart;
 
 import javafx.scene.layout.Pane;
 import mongoose.shared.entities.Document;
-import webfx.framework.client.ui.controls.alert.AlertUtil;
-import webfx.kit.launcher.WebFxKitLauncher;
-import webfx.platform.shared.util.async.Future;
+import dev.webfx.framework.client.ui.controls.alert.AlertUtil;
+import dev.webfx.kit.launcher.WebFxKitLauncher;
+import dev.webfx.platform.shared.util.async.Future;
 
 final class OpenBookingCartExecutor {
 

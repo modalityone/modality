@@ -15,6 +15,6 @@ module mongoose.server.sessioncloser {
     exports mongoose.server.jobs.sessioncloser;
 
     // Provided services
-    provides webfx.platform.shared.services.appcontainer.spi.ApplicationJob with mongoose.server.jobs.sessioncloser.MongooseServerUnresponsiveClientSessionCloserJob;
+    provides dev.webfx.platform.shared.services.appcontainer.spi.ApplicationJob with mongoose.server.jobs.sessioncloser.MongooseServerUnresponsiveClientSessionCloserJob;
 
 }

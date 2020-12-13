@@ -19,6 +19,6 @@ module mongoose.client.operationactionsloading {
     exports mongoose.client.operationactionsloading;
 
     // Provided services
-    provides webfx.platform.shared.services.appcontainer.spi.ApplicationModuleInitializer with mongoose.client.operationactionsloading.MongooseClientOperationActionsLoader;
+    provides dev.webfx.platform.shared.services.appcontainer.spi.ApplicationModuleInitializer with mongoose.client.operationactionsloading.MongooseClientOperationActionsLoader;
 
 }

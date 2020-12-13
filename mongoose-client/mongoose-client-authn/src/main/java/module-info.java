@@ -13,6 +13,6 @@ module mongoose.client.authn {
     exports mongoose.client.services.authn;
 
     // Provided services
-    provides webfx.framework.shared.services.authn.spi.AuthenticationServiceProvider with mongoose.client.services.authn.MongooseAuthenticationServiceProvider;
+    provides dev.webfx.framework.shared.services.authn.spi.AuthenticationServiceProvider with mongoose.client.services.authn.MongooseAuthenticationServiceProvider;
 
 }

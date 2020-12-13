@@ -1,8 +1,8 @@
 package mongoose.backend.controls.masterslave;
 
 import javafx.scene.Node;
-import webfx.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasSlaveVisualResultProperty;
-import webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasSlaveVisualResultProperty;
+import dev.webfx.extras.visual.controls.grid.VisualGrid;
 
 public class SlaveTableView implements UiBuilder {
 

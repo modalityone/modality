@@ -10,7 +10,7 @@
     </dependencies>
 
     <providers>
-        <provider spi="webfx.framework.client.ui.uirouter.UiRoute">mongoose.client.activities.unauthorized.UnauthorizedUiRoute</provider>
+        <provider spi="dev.webfx.framework.client.ui.uirouter.UiRoute">mongoose.client.activities.unauthorized.UnauthorizedUiRoute</provider>
     </providers>
 
 </module>

@@ -5,9 +5,9 @@ import mongoose.client.businessdata.preselection.OptionsPreselection;
 import mongoose.client.businessdata.workingdocument.ActiveWorkingDocumentsByEventStore;
 import mongoose.client.businessdata.workingdocument.WorkingDocument;
 import mongoose.frontend.activities.options.routing.OptionsRouting;
-import webfx.framework.client.operations.route.RoutePushRequest;
-import webfx.framework.shared.orm.entity.EntityId;
-import webfx.platform.client.services.windowhistory.spi.BrowsingHistory;
+import dev.webfx.framework.client.operations.route.RoutePushRequest;
+import dev.webfx.framework.shared.orm.entity.EntityId;
+import dev.webfx.platform.client.services.windowhistory.spi.BrowsingHistory;
 
 /**
  * @author Bruno Salmon

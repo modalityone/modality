@@ -1,16 +1,16 @@
 package mongoose.client.operationactionsloading;
 
-import webfx.framework.client.ui.action.operation.OperationActionFactoryMixin;
-import webfx.framework.client.ui.action.operation.OperationActionRegistry;
-import webfx.framework.client.services.i18n.I18n;
-import webfx.framework.client.ui.action.Action;
-import webfx.framework.client.ui.action.ActionFactoryMixin;
-import webfx.framework.client.ui.uirouter.uisession.UiSession;
-import webfx.framework.shared.orm.entity.Entity;
-import webfx.framework.shared.orm.entity.EntityStore;
-import webfx.framework.shared.services.datasourcemodel.DataSourceModelService;
-import webfx.platform.shared.services.appcontainer.spi.ApplicationModuleInitializer;
-import webfx.platform.shared.services.log.Logger;
+import dev.webfx.framework.client.ui.action.operation.OperationActionFactoryMixin;
+import dev.webfx.framework.client.ui.action.operation.OperationActionRegistry;
+import dev.webfx.framework.client.services.i18n.I18n;
+import dev.webfx.framework.client.ui.action.Action;
+import dev.webfx.framework.client.ui.action.ActionFactoryMixin;
+import dev.webfx.framework.client.ui.uirouter.uisession.UiSession;
+import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.framework.shared.orm.entity.EntityStore;
+import dev.webfx.framework.shared.services.datasourcemodel.DataSourceModelService;
+import dev.webfx.platform.shared.services.appcontainer.spi.ApplicationModuleInitializer;
+import dev.webfx.platform.shared.services.log.Logger;
 
 /**
  * @author Bruno Salmon

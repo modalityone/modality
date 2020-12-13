@@ -40,6 +40,6 @@ module mongoose.frontend.activities.options {
     exports mongoose.frontend.operations.options;
 
     // Provided services
-    provides webfx.framework.client.ui.uirouter.UiRoute with mongoose.frontend.activities.options.OptionsUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.frontend.activities.options.OptionsUiRoute;
 
 }

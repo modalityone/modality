@@ -5,16 +5,16 @@ import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import webfx.framework.client.orm.reactive.dql.statement.conventions.HasColumnsDqlStatementProperty;
-import webfx.framework.client.orm.reactive.dql.statement.conventions.HasConditionDqlStatementProperty;
-import webfx.framework.client.orm.reactive.dql.statement.conventions.HasGroupDqlStatementProperty;
+import dev.webfx.framework.client.orm.reactive.dql.statement.conventions.HasColumnsDqlStatementProperty;
+import dev.webfx.framework.client.orm.reactive.dql.statement.conventions.HasConditionDqlStatementProperty;
+import dev.webfx.framework.client.orm.reactive.dql.statement.conventions.HasGroupDqlStatementProperty;
 import mongoose.client.presentationmodel.HasSearchTextProperty;
 import mongoose.shared.entities.Filter;
-import webfx.framework.client.ui.controls.entity.selector.EntityButtonSelector;
-import webfx.framework.client.ui.util.scene.SceneUtil;
+import dev.webfx.framework.client.ui.controls.entity.selector.EntityButtonSelector;
+import dev.webfx.framework.client.ui.util.scene.SceneUtil;
 
-import static webfx.framework.client.ui.util.layout.LayoutUtil.setHGrowable;
-import static webfx.framework.client.ui.util.layout.LayoutUtil.setMaxHeightToInfinite;
+import static dev.webfx.framework.client.ui.util.layout.LayoutUtil.setHGrowable;
+import static dev.webfx.framework.client.ui.util.layout.LayoutUtil.setMaxHeightToInfinite;
 
 public final class FilterSearchBar {
 

@@ -1,13 +1,13 @@
 package mongoose.client.application;
 
 import mongoose.client.actions.MongooseActions;
-import webfx.framework.client.activity.Activity;
-import webfx.framework.client.activity.ActivityContext;
-import webfx.framework.client.activity.impl.combinations.viewdomain.ViewDomainActivityContext;
-import webfx.framework.client.activity.impl.combinations.viewdomain.ViewDomainActivityContextMixin;
-import webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
-import webfx.framework.client.ui.uirouter.UiRouter;
-import webfx.platform.shared.util.function.Factory;
+import dev.webfx.framework.client.activity.Activity;
+import dev.webfx.framework.client.activity.ActivityContext;
+import dev.webfx.framework.client.activity.impl.combinations.viewdomain.ViewDomainActivityContext;
+import dev.webfx.framework.client.activity.impl.combinations.viewdomain.ViewDomainActivityContextMixin;
+import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
+import dev.webfx.framework.client.ui.uirouter.UiRouter;
+import dev.webfx.platform.shared.util.function.Factory;
 
 /**
  * @author Bruno Salmon

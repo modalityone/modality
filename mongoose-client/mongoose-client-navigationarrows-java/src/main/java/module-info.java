@@ -10,6 +10,6 @@ module mongoose.client.navigationarrows.java {
     exports mongoose.client.navigationarrows;
 
     // Provided services
-    provides webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.client.navigationarrows.RouteBackwardRequestEmitter, mongoose.client.navigationarrows.RouteForwardRequestEmitter;
+    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.client.navigationarrows.RouteBackwardRequestEmitter, mongoose.client.navigationarrows.RouteForwardRequestEmitter;
 
 }

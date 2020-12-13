@@ -1,7 +1,7 @@
 package mongoose.backend.operations.entities.generic;
 
 import javafx.scene.layout.Pane;
-import webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.framework.shared.orm.entity.Entity;
 
 public abstract class ToggleBooleanEntityFieldRequest extends SetEntityFieldRequest {
 

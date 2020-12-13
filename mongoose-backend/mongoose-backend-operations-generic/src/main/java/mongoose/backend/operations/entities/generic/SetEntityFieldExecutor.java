@@ -2,15 +2,15 @@ package mongoose.backend.operations.entities.generic;
 
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
-import webfx.framework.client.ui.controls.alert.AlertUtil;
-import webfx.framework.client.ui.controls.dialog.DialogCallback;
-import webfx.framework.client.ui.controls.dialog.DialogContent;
-import webfx.framework.client.ui.controls.dialog.DialogUtil;
-import webfx.framework.shared.orm.expression.Expression;
-import webfx.framework.shared.orm.entity.Entity;
-import webfx.framework.shared.orm.entity.UpdateStore;
-import webfx.platform.shared.services.submit.SubmitArgument;
-import webfx.platform.shared.util.async.Future;
+import dev.webfx.framework.client.ui.controls.alert.AlertUtil;
+import dev.webfx.framework.client.ui.controls.dialog.DialogCallback;
+import dev.webfx.framework.client.ui.controls.dialog.DialogContent;
+import dev.webfx.framework.client.ui.controls.dialog.DialogUtil;
+import dev.webfx.framework.shared.orm.expression.Expression;
+import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.framework.shared.orm.entity.UpdateStore;
+import dev.webfx.platform.shared.services.submit.SubmitArgument;
+import dev.webfx.platform.shared.util.async.Future;
 
 final class SetEntityFieldExecutor {
 

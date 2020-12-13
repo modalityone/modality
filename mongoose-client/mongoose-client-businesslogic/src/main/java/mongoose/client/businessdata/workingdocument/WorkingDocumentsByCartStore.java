@@ -4,8 +4,8 @@ import mongoose.client.aggregates.cart.CartAggregate;
 import mongoose.client.aggregates.cart.CartAggregateImpl;
 import mongoose.client.aggregates.event.EventAggregate;
 import mongoose.shared.entities.Cart;
-import webfx.framework.shared.orm.entity.EntityId;
-import webfx.platform.shared.util.collection.Collections;
+import dev.webfx.framework.shared.orm.entity.EntityId;
+import dev.webfx.platform.shared.util.collection.Collections;
 
 import java.util.HashMap;
 import java.util.List;

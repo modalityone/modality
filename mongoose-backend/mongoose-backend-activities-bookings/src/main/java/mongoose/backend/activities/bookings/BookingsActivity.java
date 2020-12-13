@@ -19,14 +19,14 @@ import mongoose.backend.operations.routes.cloneevent.RouteToCloneEventRequest;
 import mongoose.client.activity.eventdependent.EventDependentViewDomainActivity;
 import mongoose.shared.domainmodel.functions.AbcNames;
 import mongoose.shared.entities.Document;
-import webfx.extras.visual.controls.grid.VisualGrid;
-import webfx.framework.client.ui.action.operation.OperationActionFactoryMixin;
-import webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import webfx.framework.client.ui.util.layout.LayoutUtil;
+import dev.webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.framework.client.ui.action.operation.OperationActionFactoryMixin;
+import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.framework.client.ui.util.layout.LayoutUtil;
 
-import static webfx.framework.shared.orm.dql.DqlStatement.fields;
-import static webfx.framework.shared.orm.dql.DqlStatement.where;
-import static webfx.framework.client.ui.util.layout.LayoutUtil.setUnmanagedWhenInvisible;
+import static dev.webfx.framework.shared.orm.dql.DqlStatement.fields;
+import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
+import static dev.webfx.framework.client.ui.util.layout.LayoutUtil.setUnmanagedWhenInvisible;
 
 final class BookingsActivity extends EventDependentViewDomainActivity implements
         OperationActionFactoryMixin,

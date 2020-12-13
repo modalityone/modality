@@ -8,8 +8,8 @@ import mongoose.shared.entities.impl.LabelImpl;
 import mongoose.shared.entities.markers.HasItem;
 import mongoose.shared.entities.markers.HasLabel;
 import mongoose.shared.entities.markers.HasName;
-import webfx.framework.client.services.i18n.I18n;
-import webfx.platform.shared.util.Objects;
+import dev.webfx.framework.client.services.i18n.I18n;
+import dev.webfx.platform.shared.util.Objects;
 
 /**
  * @author Bruno Salmon

@@ -1,7 +1,7 @@
 package mongoose.backend.operations.entities.generic;
 
-import webfx.framework.client.orm.reactive.mapping.entities_to_grid.EntityColumn;
-import webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.framework.client.orm.reactive.mapping.entities_to_grid.EntityColumn;
+import dev.webfx.framework.shared.orm.entity.Entity;
 
 import java.util.Collection;
 

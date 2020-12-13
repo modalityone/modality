@@ -43,6 +43,6 @@ module mongoose.frontend.activities.cart {
     exports mongoose.frontend.activities.cart;
 
     // Provided services
-    provides webfx.framework.client.ui.uirouter.UiRoute with mongoose.frontend.activities.cart.CartUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.frontend.activities.cart.CartUiRoute;
 
 }

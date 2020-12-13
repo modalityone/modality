@@ -8,10 +8,10 @@ import mongoose.shared.entities.Label;
 import mongoose.shared.entities.Option;
 import mongoose.shared.entities.formatters.EventPriceFormatter;
 import mongoose.client.entities.util.Labels;
-import webfx.framework.shared.orm.entity.Entities;
-import webfx.platform.shared.services.query.QueryResult;
-import webfx.platform.shared.util.Booleans;
-import webfx.platform.shared.util.collection.Collections;
+import dev.webfx.framework.shared.orm.entity.Entities;
+import dev.webfx.platform.shared.services.query.QueryResult;
+import dev.webfx.platform.shared.util.Booleans;
+import dev.webfx.platform.shared.util.collection.Collections;
 
 import java.util.List;
 

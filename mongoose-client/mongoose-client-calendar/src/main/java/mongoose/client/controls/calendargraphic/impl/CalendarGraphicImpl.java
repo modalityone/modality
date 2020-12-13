@@ -19,15 +19,15 @@ import mongoose.client.businessdata.calendar.Calendar;
 import mongoose.client.businessdata.calendar.CalendarTimeline;
 import mongoose.shared.businessdata.time.DayTimeRange;
 import mongoose.shared.businessdata.time.TimeInterval;
-import webfx.platform.shared.util.async.Handler;
-import webfx.platform.shared.util.collection.Collections;
-import webfx.platform.shared.util.tuples.Unit;
-import webfx.kit.util.properties.Properties;
+import dev.webfx.platform.shared.util.async.Handler;
+import dev.webfx.platform.shared.util.collection.Collections;
+import dev.webfx.platform.shared.util.tuples.Unit;
+import dev.webfx.kit.util.properties.Properties;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static webfx.framework.client.ui.util.layout.LayoutUtil.setMinSizeToZeroAndPrefSizeToInfinite;
+import static dev.webfx.framework.client.ui.util.layout.LayoutUtil.setMinSizeToZeroAndPrefSizeToInfinite;
 
 /**
  * @author Bruno Salmon

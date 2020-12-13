@@ -2,11 +2,11 @@ package mongoose.client.aggregates.event;
 
 import mongoose.client.aggregates.person.PersonAggregate;
 import mongoose.shared.entities.*;
-import webfx.framework.shared.orm.entity.Entity;
-import webfx.framework.shared.orm.entity.EntityList;
-import webfx.framework.shared.orm.entity.EntityStore;
-import webfx.platform.shared.services.query.QueryResult;
-import webfx.platform.shared.util.async.Future;
+import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.framework.shared.orm.entity.EntityList;
+import dev.webfx.framework.shared.orm.entity.EntityStore;
+import dev.webfx.platform.shared.services.query.QueryResult;
+import dev.webfx.platform.shared.util.async.Future;
 
 import java.util.List;
 import java.util.function.Predicate;

@@ -17,23 +17,23 @@ import mongoose.client.controls.bookingcalendar.BookingCalendar;
 import mongoose.frontend.activities.options.OptionsActivity;
 import mongoose.shared.entities.Label;
 import mongoose.shared.entities.Option;
-import webfx.extras.visual.controls.grid.VisualGrid;
-import webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import webfx.framework.client.ui.controls.dialog.DialogCallback;
-import webfx.framework.client.ui.controls.dialog.DialogContent;
-import webfx.framework.client.ui.controls.dialog.DialogUtil;
-import webfx.framework.shared.orm.entity.Entity;
-import webfx.framework.shared.orm.entity.UpdateStore;
-import webfx.kit.util.properties.Properties;
-import webfx.platform.shared.services.submit.SubmitArgument;
-import webfx.platform.shared.services.submit.SubmitService;
+import dev.webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.framework.client.ui.controls.dialog.DialogCallback;
+import dev.webfx.framework.client.ui.controls.dialog.DialogContent;
+import dev.webfx.framework.client.ui.controls.dialog.DialogUtil;
+import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.framework.shared.orm.entity.UpdateStore;
+import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.platform.shared.services.submit.SubmitArgument;
+import dev.webfx.platform.shared.services.submit.SubmitService;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static webfx.framework.shared.orm.dql.DqlStatement.where;
-import static webfx.framework.client.ui.util.layout.LayoutUtil.*;
+import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
+import static dev.webfx.framework.client.ui.util.layout.LayoutUtil.*;
 
 /**
  * @author Bruno Salmon

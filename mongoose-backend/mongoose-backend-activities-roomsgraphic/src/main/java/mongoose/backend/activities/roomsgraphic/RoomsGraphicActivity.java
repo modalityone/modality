@@ -21,27 +21,27 @@ import mongoose.client.presentationmodel.HasSelectedDocumentProperty;
 import mongoose.shared.entities.Document;
 import mongoose.shared.entities.DocumentLine;
 import mongoose.shared.entities.Site;
-import webfx.extras.flexbox.FlexBox;
-import webfx.extras.imagestore.ImageStore;
-import webfx.extras.visual.controls.grid.SkinnedVisualGrid;
-import webfx.extras.visual.controls.grid.VisualGrid;
-import webfx.framework.client.orm.reactive.mapping.dql_to_entities.ReactiveEntitiesMapper;
-import webfx.framework.client.orm.reactive.mapping.entities_to_objects.IndividualEntityToObjectMapper;
-import webfx.framework.client.orm.reactive.mapping.entities_to_objects.ReactiveObjectsMapper;
-import webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import webfx.framework.client.ui.action.ActionGroup;
-import webfx.framework.client.ui.action.operation.OperationActionFactoryMixin;
-import webfx.framework.client.ui.util.layout.LayoutUtil;
-import webfx.framework.shared.orm.entity.Entity;
-import webfx.kit.util.properties.Properties;
-import webfx.platform.shared.datascope.aggregate.AggregateScope;
-import webfx.platform.shared.services.json.Json;
-import webfx.platform.shared.services.serial.SerialCodecManager;
+import dev.webfx.extras.flexbox.FlexBox;
+import dev.webfx.extras.imagestore.ImageStore;
+import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
+import dev.webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.framework.client.orm.reactive.mapping.dql_to_entities.ReactiveEntitiesMapper;
+import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.IndividualEntityToObjectMapper;
+import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.ReactiveObjectsMapper;
+import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.framework.client.ui.action.ActionGroup;
+import dev.webfx.framework.client.ui.action.operation.OperationActionFactoryMixin;
+import dev.webfx.framework.client.ui.util.layout.LayoutUtil;
+import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.platform.shared.datascope.aggregate.AggregateScope;
+import dev.webfx.platform.shared.services.json.Json;
+import dev.webfx.platform.shared.services.serial.SerialCodecManager;
 
 import java.util.List;
 import java.util.Objects;
 
-import static webfx.framework.shared.orm.dql.DqlStatement.where;
+import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
 
 final class RoomsGraphicActivity extends EventDependentViewDomainActivity implements
         HasSelectedDocumentProperty,

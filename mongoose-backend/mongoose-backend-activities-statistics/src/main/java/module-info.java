@@ -42,7 +42,7 @@ module mongoose.backend.activities.statistics {
     exports mongoose.backend.operations.routes.statistics;
 
     // Provided services
-    provides webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.backend.activities.statistics.RouteToStatisticsRequestEmitter;
-    provides webfx.framework.client.ui.uirouter.UiRoute with mongoose.backend.activities.statistics.StatisticsUiRoute;
+    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.backend.activities.statistics.RouteToStatisticsRequestEmitter;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.backend.activities.statistics.StatisticsUiRoute;
 
 }

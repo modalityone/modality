@@ -1,9 +1,9 @@
 package mongoose.backend.operations.routes.letters;
 
 import mongoose.backend.activities.letters.routing.LettersRouting;
-import webfx.framework.client.operations.route.RoutePushRequest;
-import webfx.framework.shared.operation.HasOperationCode;
-import webfx.platform.client.services.windowhistory.spi.BrowsingHistory;
+import dev.webfx.framework.client.operations.route.RoutePushRequest;
+import dev.webfx.framework.shared.operation.HasOperationCode;
+import dev.webfx.platform.client.services.windowhistory.spi.BrowsingHistory;
 
 /**
  * @author Bruno Salmon

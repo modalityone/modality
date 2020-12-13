@@ -1,8 +1,8 @@
 package mongoose.client.operationactionsloading;
 
-import webfx.framework.client.services.i18n.spi.HasDictionaryMessageKey;
-import webfx.framework.shared.orm.entity.Entity;
-import webfx.framework.shared.orm.entity.HasEntity;
+import dev.webfx.framework.client.services.i18n.spi.HasDictionaryMessageKey;
+import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.framework.shared.orm.entity.HasEntity;
 
 import java.util.Objects;
 

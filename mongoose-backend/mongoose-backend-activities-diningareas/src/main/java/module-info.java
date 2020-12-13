@@ -34,7 +34,7 @@ module mongoose.backend.activities.diningareas {
     exports mongoose.backend.operations.routes.diningareas;
 
     // Provided services
-    provides webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.backend.activities.diningareas.RouteToDiningAreasRequestEmitter;
-    provides webfx.framework.client.ui.uirouter.UiRoute with mongoose.backend.activities.diningareas.DiningAreasUiRoute;
+    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.backend.activities.diningareas.RouteToDiningAreasRequestEmitter;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.backend.activities.diningareas.DiningAreasUiRoute;
 
 }

@@ -5,10 +5,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import mongoose.client.controls.personaldetails.PersonalDetailsPanel;
 import mongoose.shared.entities.Document;
-import webfx.framework.client.ui.controls.button.ButtonFactoryMixin;
-import webfx.framework.client.ui.controls.dialog.DialogContent;
-import webfx.framework.client.ui.controls.dialog.DialogUtil;
-import webfx.platform.shared.util.async.Future;
+import dev.webfx.framework.client.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.framework.client.ui.controls.dialog.DialogContent;
+import dev.webfx.framework.client.ui.controls.dialog.DialogUtil;
+import dev.webfx.platform.shared.util.async.Future;
 
 final class EditDocumentPersonalDetailsExecutor {
 

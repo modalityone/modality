@@ -9,8 +9,8 @@ import mongoose.shared.businessdata.time.DaysArray;
 import mongoose.shared.businessdata.time.DaysArrayBuilder;
 import mongoose.shared.entities.*;
 import mongoose.shared.entities.markers.HasItemFamilyType;
-import webfx.framework.shared.orm.entity.Entities;
-import webfx.platform.shared.util.collection.Collections;
+import dev.webfx.framework.shared.orm.entity.Entities;
+import dev.webfx.platform.shared.util.collection.Collections;
 
 import java.time.LocalDate;
 import java.util.List;

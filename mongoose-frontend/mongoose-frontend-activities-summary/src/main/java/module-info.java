@@ -31,6 +31,6 @@ module mongoose.frontend.activities.summary {
     exports mongoose.frontend.operations.summary;
 
     // Provided services
-    provides webfx.framework.client.ui.uirouter.UiRoute with mongoose.frontend.activities.summary.SummaryUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.frontend.activities.summary.SummaryUiRoute;
 
 }

@@ -9,12 +9,12 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import mongoose.client.controls.bookingcalendar.BookingCalendar;
 import mongoose.client.icons.MongooseIcons;
-import webfx.framework.client.services.i18n.I18nControls;
-import webfx.framework.client.ui.util.background.BackgroundUtil;
-import webfx.framework.client.ui.util.border.BorderUtil;
-import webfx.extras.cell.collator.NodeCollatorRegistry;
+import dev.webfx.framework.client.services.i18n.I18nControls;
+import dev.webfx.framework.client.ui.util.background.BackgroundUtil;
+import dev.webfx.framework.client.ui.util.border.BorderUtil;
+import dev.webfx.extras.cell.collator.NodeCollatorRegistry;
 
-import static webfx.framework.client.ui.util.image.JsonImageViews.createImageView;
+import static dev.webfx.framework.client.ui.util.image.JsonImageViews.createImageView;
 
 /**
  * @author Bruno Salmon

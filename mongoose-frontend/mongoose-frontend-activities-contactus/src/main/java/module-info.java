@@ -29,6 +29,6 @@ module mongoose.frontend.activities.contactus {
     exports mongoose.frontend.operations.contactus;
 
     // Provided services
-    provides webfx.framework.client.ui.uirouter.UiRoute with mongoose.frontend.activities.contactus.ContactUsUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.frontend.activities.contactus.ContactUsUiRoute;
 
 }

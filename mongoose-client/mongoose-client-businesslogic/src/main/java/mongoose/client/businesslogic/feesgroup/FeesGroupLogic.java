@@ -8,8 +8,8 @@ import mongoose.shared.entities.DateInfo;
 import mongoose.shared.entities.Option;
 import mongoose.shared.entities.Site;
 import mongoose.client.entities.util.Labels;
-import webfx.framework.shared.orm.entity.EntityList;
-import webfx.platform.shared.util.collection.Collections;
+import dev.webfx.framework.shared.orm.entity.EntityList;
+import dev.webfx.platform.shared.util.collection.Collections;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

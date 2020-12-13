@@ -2,7 +2,7 @@ package mongoose.backend.operations.entities.allocationrule;
 
 import javafx.scene.layout.Pane;
 import mongoose.shared.entities.Event;
-import webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.util.async.Future;
 
 final class AddNewAllocationRuleExecutor {
 

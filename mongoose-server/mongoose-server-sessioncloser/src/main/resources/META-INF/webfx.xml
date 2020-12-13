@@ -10,7 +10,7 @@
     </dependencies>
 
     <providers>
-        <provider spi="webfx.platform.shared.services.appcontainer.spi.ApplicationJob">mongoose.server.jobs.sessioncloser.MongooseServerUnresponsiveClientSessionCloserJob</provider>
+        <provider spi="dev.webfx.platform.shared.services.appcontainer.spi.ApplicationJob">mongoose.server.jobs.sessioncloser.MongooseServerUnresponsiveClientSessionCloserJob</provider>
     </providers>
 
 </module>

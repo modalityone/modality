@@ -1,10 +1,10 @@
 package mongoose.backend.activities.roomsgraphic;
 
 import mongoose.backend.activities.roomsgraphic.routing.RoomsGraphicRouting;
-import webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
-import webfx.framework.client.ui.uirouter.UiRoute;
-import webfx.framework.client.ui.uirouter.impl.UiRouteImpl;
-import webfx.framework.shared.router.util.PathBuilder;
+import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
+import dev.webfx.framework.client.ui.uirouter.UiRoute;
+import dev.webfx.framework.client.ui.uirouter.impl.UiRouteImpl;
+import dev.webfx.framework.shared.router.util.PathBuilder;
 
 /**
  * @author Bruno Salmon

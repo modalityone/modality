@@ -1,8 +1,8 @@
 package mongoose.shared.entities;
 
 import mongoose.shared.entities.markers.EntityHasDocument;
-import webfx.framework.shared.orm.entity.Entity;
-import webfx.framework.shared.orm.entity.EntityId;
+import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.framework.shared.orm.entity.EntityId;
 
 import java.time.LocalDateTime;
 

@@ -2,8 +2,8 @@ package mongoose.shared.entities.formatters;
 
 import mongoose.shared.domainmodel.formatters.PriceFormatter;
 import mongoose.shared.entities.Event;
-import webfx.framework.shared.orm.entity.EntityId;
-import webfx.platform.shared.util.Numbers;
+import dev.webfx.framework.shared.orm.entity.EntityId;
+import dev.webfx.platform.shared.util.Numbers;
 
 /**
  * @author Bruno Salmon

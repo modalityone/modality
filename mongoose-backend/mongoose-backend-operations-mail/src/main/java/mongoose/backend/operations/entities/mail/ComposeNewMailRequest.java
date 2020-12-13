@@ -2,9 +2,9 @@ package mongoose.backend.operations.entities.mail;
 
 import javafx.scene.layout.Pane;
 import mongoose.shared.entities.Document;
-import webfx.framework.shared.operation.HasOperationCode;
-import webfx.framework.shared.operation.HasOperationExecutor;
-import webfx.platform.shared.util.async.AsyncFunction;
+import dev.webfx.framework.shared.operation.HasOperationCode;
+import dev.webfx.framework.shared.operation.HasOperationExecutor;
+import dev.webfx.platform.shared.util.async.AsyncFunction;
 
 public final class ComposeNewMailRequest implements HasOperationCode,
         HasOperationExecutor<ComposeNewMailRequest, Void> {

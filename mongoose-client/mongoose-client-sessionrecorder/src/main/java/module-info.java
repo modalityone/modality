@@ -22,6 +22,6 @@ module mongoose.client.sessionrecorder {
     exports mongoose.client.jobs.sessionrecorder;
 
     // Provided services
-    provides webfx.platform.shared.services.appcontainer.spi.ApplicationJob with mongoose.client.jobs.sessionrecorder.ClientSessionRecorderJob;
+    provides dev.webfx.platform.shared.services.appcontainer.spi.ApplicationJob with mongoose.client.jobs.sessionrecorder.ClientSessionRecorderJob;
 
 }

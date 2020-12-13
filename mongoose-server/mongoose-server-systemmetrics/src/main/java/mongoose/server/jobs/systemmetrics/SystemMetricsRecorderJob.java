@@ -2,15 +2,15 @@ package mongoose.server.jobs.systemmetrics;
 
 import mongoose.server.services.systemmetrics.SystemMetricsService;
 import mongoose.shared.entities.SystemMetricsEntity;
-import webfx.framework.shared.orm.domainmodel.DataSourceModel;
-import webfx.framework.shared.orm.entity.UpdateStore;
-import webfx.framework.shared.services.datasourcemodel.DataSourceModelService;
-import webfx.platform.shared.services.appcontainer.spi.ApplicationJob;
-import webfx.platform.shared.services.log.Logger;
-import webfx.platform.shared.services.scheduler.Scheduled;
-import webfx.platform.shared.services.scheduler.Scheduler;
-import webfx.platform.shared.services.submit.SubmitArgument;
-import webfx.platform.shared.services.submit.SubmitService;
+import dev.webfx.framework.shared.orm.domainmodel.DataSourceModel;
+import dev.webfx.framework.shared.orm.entity.UpdateStore;
+import dev.webfx.framework.shared.services.datasourcemodel.DataSourceModelService;
+import dev.webfx.platform.shared.services.appcontainer.spi.ApplicationJob;
+import dev.webfx.platform.shared.services.log.Logger;
+import dev.webfx.platform.shared.services.scheduler.Scheduled;
+import dev.webfx.platform.shared.services.scheduler.Scheduler;
+import dev.webfx.platform.shared.services.submit.SubmitArgument;
+import dev.webfx.platform.shared.services.submit.SubmitService;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;

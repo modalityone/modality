@@ -2,11 +2,11 @@ package mongoose.backend.activities.monitor;
 
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
-import webfx.framework.client.activity.impl.elementals.presentation.view.impl.PresentationViewActivityImpl;
-import webfx.extras.visual.controls.charts.VisualChart;
-import webfx.extras.visual.controls.charts.VisualLineChart;
+import dev.webfx.framework.client.activity.impl.elementals.presentation.view.impl.PresentationViewActivityImpl;
+import dev.webfx.extras.visual.controls.charts.VisualChart;
+import dev.webfx.extras.visual.controls.charts.VisualLineChart;
 
-import static webfx.framework.client.ui.util.layout.LayoutUtil.setVGrowable;
+import static dev.webfx.framework.client.ui.util.layout.LayoutUtil.setVGrowable;
 
 /**
  * @author Bruno Salmon

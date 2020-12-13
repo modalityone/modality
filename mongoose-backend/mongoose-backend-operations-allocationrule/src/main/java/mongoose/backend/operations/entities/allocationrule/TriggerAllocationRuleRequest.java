@@ -2,7 +2,7 @@ package mongoose.backend.operations.entities.allocationrule;
 
 import javafx.scene.layout.Pane;
 import mongoose.backend.operations.entities.generic.SetEntityFieldRequest;
-import webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.framework.shared.orm.entity.Entity;
 
 public final class TriggerAllocationRuleRequest extends SetEntityFieldRequest {
 

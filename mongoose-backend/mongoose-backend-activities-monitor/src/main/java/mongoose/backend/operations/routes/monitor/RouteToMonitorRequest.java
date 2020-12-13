@@ -1,9 +1,9 @@
 package mongoose.backend.operations.routes.monitor;
 
 import mongoose.backend.activities.monitor.routing.MonitorRouting;
-import webfx.framework.shared.operation.HasOperationCode;
-import webfx.framework.client.operations.route.RoutePushRequest;
-import webfx.platform.client.services.windowhistory.spi.BrowsingHistory;
+import dev.webfx.framework.shared.operation.HasOperationCode;
+import dev.webfx.framework.client.operations.route.RoutePushRequest;
+import dev.webfx.platform.client.services.windowhistory.spi.BrowsingHistory;
 
 /**
  * @author Bruno Salmon

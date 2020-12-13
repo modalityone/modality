@@ -1,12 +1,12 @@
 package mongoose.backend.operations.entities.generic;
 
 import javafx.scene.layout.Pane;
-import webfx.framework.shared.orm.expression.Expression;
-import webfx.framework.shared.operation.HasOperationCode;
-import webfx.framework.shared.operation.HasOperationExecutor;
-import webfx.framework.shared.orm.entity.Entity;
-import webfx.framework.shared.orm.entity.HasEntity;
-import webfx.platform.shared.util.async.AsyncFunction;
+import dev.webfx.framework.shared.orm.expression.Expression;
+import dev.webfx.framework.shared.operation.HasOperationCode;
+import dev.webfx.framework.shared.operation.HasOperationExecutor;
+import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.framework.shared.orm.entity.HasEntity;
+import dev.webfx.platform.shared.util.async.AsyncFunction;
 
 public abstract class SetEntityFieldRequest implements HasOperationCode,
         HasEntity,

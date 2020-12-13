@@ -13,6 +13,6 @@ module mongoose.client.activities.unauthorized {
     exports mongoose.client.activities.unauthorized;
 
     // Provided services
-    provides webfx.framework.client.ui.uirouter.UiRoute with mongoose.client.activities.unauthorized.UnauthorizedUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.client.activities.unauthorized.UnauthorizedUiRoute;
 
 }

@@ -12,8 +12,8 @@
     </dependencies>
 
     <providers>
-        <provider spi="webfx.framework.client.ui.uirouter.UiRoute">mongoose.backend.activities.statistics.StatisticsUiRoute</provider>
-        <provider spi="webfx.framework.client.operations.route.RouteRequestEmitter">mongoose.backend.activities.statistics.RouteToStatisticsRequestEmitter</provider>
+        <provider spi="dev.webfx.framework.client.ui.uirouter.UiRoute">mongoose.backend.activities.statistics.StatisticsUiRoute</provider>
+        <provider spi="dev.webfx.framework.client.operations.route.RouteRequestEmitter">mongoose.backend.activities.statistics.RouteToStatisticsRequestEmitter</provider>
     </providers>
 
 </module>

@@ -1,21 +1,21 @@
 package mongoose.client.jobs.sessionrecorder;
 
 import mongoose.client.services.authn.MongooseUserPrincipal;
-import webfx.framework.shared.orm.entity.Entities;
-import webfx.framework.shared.orm.entity.Entity;
-import webfx.framework.shared.orm.entity.EntityId;
-import webfx.framework.shared.orm.entity.UpdateStore;
-import webfx.framework.client.ui.uirouter.uisession.UiSession;
-import webfx.framework.shared.services.datasourcemodel.DataSourceModelService;
-import webfx.kit.launcher.WebFxKitLauncher;
-import webfx.framework.client.services.push.PushClientService;
-import webfx.platform.client.services.storage.LocalStorage;
-import webfx.platform.shared.services.appcontainer.spi.ApplicationJob;
-import webfx.platform.shared.services.bus.Bus;
-import webfx.platform.shared.services.bus.BusHook;
-import webfx.platform.shared.services.bus.BusService;
-import webfx.platform.shared.services.bus.Registration;
-import webfx.platform.shared.services.log.Logger;
+import dev.webfx.framework.shared.orm.entity.Entities;
+import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.framework.shared.orm.entity.EntityId;
+import dev.webfx.framework.shared.orm.entity.UpdateStore;
+import dev.webfx.framework.client.ui.uirouter.uisession.UiSession;
+import dev.webfx.framework.shared.services.datasourcemodel.DataSourceModelService;
+import dev.webfx.kit.launcher.WebFxKitLauncher;
+import dev.webfx.framework.client.services.push.PushClientService;
+import dev.webfx.platform.client.services.storage.LocalStorage;
+import dev.webfx.platform.shared.services.appcontainer.spi.ApplicationJob;
+import dev.webfx.platform.shared.services.bus.Bus;
+import dev.webfx.platform.shared.services.bus.BusHook;
+import dev.webfx.platform.shared.services.bus.BusService;
+import dev.webfx.platform.shared.services.bus.Registration;
+import dev.webfx.platform.shared.services.log.Logger;
 
 import java.time.Instant;
 

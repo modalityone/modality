@@ -21,9 +21,9 @@ import mongoose.client.businessdata.workingdocument.WorkingDocumentLine;
 import mongoose.client.businessdata.workingdocument.WorkingDocumentMerger;
 import mongoose.client.aggregates.event.EventAggregate;
 import mongoose.client.util.log.PerformanceLogger;
-import webfx.framework.shared.orm.entity.Entities;
-import webfx.platform.shared.services.log.Logger;
-import webfx.platform.client.services.uischeduler.UiScheduler;
+import dev.webfx.framework.shared.orm.entity.Entities;
+import dev.webfx.platform.shared.services.log.Logger;
+import dev.webfx.platform.client.services.uischeduler.UiScheduler;
 
 import java.util.concurrent.TimeUnit;
 

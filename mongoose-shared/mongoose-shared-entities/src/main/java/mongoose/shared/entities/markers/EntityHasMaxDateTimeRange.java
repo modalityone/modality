@@ -1,7 +1,7 @@
 package mongoose.shared.entities.markers;
 
 import mongoose.shared.businessdata.time.DateTimeRange;
-import webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.framework.shared.orm.entity.Entity;
 
 /**
  * @author Bruno Salmon

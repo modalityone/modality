@@ -2,12 +2,12 @@ package mongoose.client.services.i18n;
 
 
 import javafx.scene.Node;
-import webfx.framework.client.services.i18n.I18nPart;
-import webfx.framework.client.services.i18n.spi.impl.I18nSubKey;
-import webfx.framework.client.services.i18n.spi.impl.json.JsonI18nProvider;
-import webfx.framework.client.ui.util.image.JsonImageViews;
-import webfx.framework.shared.orm.entity.Entity;
-import webfx.framework.shared.orm.entity.HasEntity;
+import dev.webfx.framework.client.services.i18n.I18nPart;
+import dev.webfx.framework.client.services.i18n.spi.impl.I18nSubKey;
+import dev.webfx.framework.client.services.i18n.spi.impl.json.JsonI18nProvider;
+import dev.webfx.framework.client.ui.util.image.JsonImageViews;
+import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.framework.shared.orm.entity.HasEntity;
 
 /**
  * @author Bruno Salmon

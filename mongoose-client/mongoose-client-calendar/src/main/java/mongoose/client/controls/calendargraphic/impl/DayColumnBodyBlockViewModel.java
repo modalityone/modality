@@ -16,7 +16,7 @@ import mongoose.client.controls.calendargraphic.CalendarGraphic;
 import mongoose.client.businessdata.calendar.CalendarTimeline;
 import mongoose.shared.businessdata.time.TimeInterval;
 import mongoose.client.controls.calendargraphic.CalendarCell;
-import webfx.framework.client.ui.util.background.BackgroundUtil;
+import dev.webfx.framework.client.ui.util.background.BackgroundUtil;
 
 import java.util.concurrent.TimeUnit;
 

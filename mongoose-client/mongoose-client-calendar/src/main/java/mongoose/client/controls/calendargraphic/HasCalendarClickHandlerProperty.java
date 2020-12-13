@@ -1,7 +1,7 @@
 package mongoose.client.controls.calendargraphic;
 
 import javafx.beans.property.Property;
-import webfx.platform.shared.util.async.Handler;
+import dev.webfx.platform.shared.util.async.Handler;
 
 /**
  * @author Bruno Salmon
