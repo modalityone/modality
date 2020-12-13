@@ -6,17 +6,20 @@
 
     <parent>
         <artifactId>webfx-parent</artifactId>
-        <groupId>org.webfx</groupId>
+        <groupId>dev.webfx</groupId>
         <version>0.1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>mongoose</artifactId>
+    <groupId>org.mongoose</groupId>
+    <version>1.0.0-SNAPSHOT</version>
+
     <packaging>pom</packaging>
 
     <properties>
-        <!-- Mongoose groupId & version (same as WebFx for now) -->
-        <mongoose.groupId>${webfx.groupId}</mongoose.groupId>
-        <mongoose.version>${webfx.version}</mongoose.version>
+        <!-- Mongoose groupId & version -->
+        <mongoose.groupId>org.mongoose</mongoose.groupId>
+        <mongoose.version>1.0.0-SNAPSHOT</mongoose.version>
     </properties>
 
     <modules>
