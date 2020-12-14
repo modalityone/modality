@@ -33,10 +33,9 @@ jobs:
     strategy:
       matrix:
         app: [
-          { name: 'MongooseBackend',  module-token: 'mongoose-backend',  gwt-token: 'mongoose_backend',  web-push-branch: 'mongoose-backend-web-build',  ios-bundle-id: 'org.mongoose.backend',  version: '0.1.0-SNAPSHOT' },
-          { name: 'MongooseFrontend', module-token: 'mongoose-frontend', gwt-token: 'mongoose_frontend', web-push-branch: 'mongoose-frontend-web-build', ios-bundle-id: 'org.mongoose.frontend', version: '0.1.0-SNAPSHOT' }
+          { name: 'MongooseBackend',  module-token: 'mongoose-backend',  gwt-token: 'mongoose_backend',  web-push-branch: 'mongoose-backend-web-build',  ios-bundle-id: 'org.mongoose.backend',  version: '1.0.0-SNAPSHOT' },
+          { name: 'MongooseFrontend', module-token: 'mongoose-frontend', gwt-token: 'mongoose_frontend', web-push-branch: 'mongoose-frontend-web-build', ios-bundle-id: 'org.mongoose.frontend', version: '1.0.0-SNAPSHOT' }
         ]
-        dep-build-repos: [ { repo1: 'webfx-project/webfx' } ] # Must be 1 single json object {repo1, ... reposN} and keep N sync with manual iteration in 'Checkout & build dependent repos' section
         os-config:  [1, 2, 3, 4]
         include:
           - os-config: 1 # Generates builds 1) 2) 3) 4) & 5)
