@@ -16,6 +16,18 @@
 
     <packaging>pom</packaging>
 
+    <repositories>
+
+        <!-- For WebFx snapshots download (including webfx-parent) -->
+        <repository>
+            <id>webfx-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>true</enabled></snapshots>
+        </repository>
+
+    </repositories>
+
     <properties>
         <!-- Mongoose groupId & version -->
         <mongoose.groupId>org.mongoose</mongoose.groupId>
