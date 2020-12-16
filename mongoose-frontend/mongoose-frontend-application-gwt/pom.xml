@@ -40,12 +40,18 @@
         <dependency>
             <artifactId>org.jresearch.gwt.time</artifactId>
             <groupId>org.jresearch.gwt.time</groupId>
-            <version>2.0.1</version>
+            <version>2.0.3</version>
         </dependency>
         
         <dependency>
             <artifactId>gwt-dev</artifactId>
             <groupId>com.google.gwt</groupId>
+        </dependency>
+        
+        <dependency>
+            <artifactId>gwt-nio</artifactId>
+            <groupId>org.treblereel.gwt.nio</groupId>
+            <version>1.1</version>
         </dependency>
         
         <dependency>

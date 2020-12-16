@@ -112,6 +112,10 @@
     <!--==================================< java-logging >==================================-->
     <!-- used by webfx-platform-shared-util (SOURCE) -->
     <inherits name="com.google.gwt.logging.Logging"/>
+    <!--=================================< java-nio-emul >==================================-->
+    <!-- used by webfx-kit-javafxgraphics-emul (SOURCE) -->
+    <!-- used by webfx-platform-gwt-emul-javabase (SOURCE) -->
+    <inherits name="org.gwtproject.nio.GwtNioSupport"/>
     <!--==================================< javafx-base >===================================-->
     <!-- used by webfx-framework-client-i18n-json (SOURCE) -->
     <!-- used by webfx-kit-javafxgraphics-peers-base (SOURCE) -->
