@@ -4,4 +4,14 @@
         <provider spi="mongoose.server.services.systemmetrics.spi.SystemMetricsServiceProvider">mongoose.server.services.systemmetrics.spi.java.JavaSystemMetricsServiceProvider</provider>
     </providers>
 
+    <libraries>
+
+        <module name="jdk-management">
+            <packages>
+                <package>com.sun.management</package>
+            </packages>
+        </module>
+
+    </libraries>
+
 </module>
