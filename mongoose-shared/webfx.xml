@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module>
+
+    <modules>
+
+        <module>mongoose-shared-domainmodel</module>
+        <module>mongoose-shared-entities</module>
+        <module>mongoose-shared-time</module>
+
+    </modules>
+
+</module>

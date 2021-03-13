@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<module>
+
+    <modules>
+
+        <module>mongoose-server-sessioncloser</module>
+        <module>mongoose-server-datasource</module>
+        <module>mongoose-server-systemmetrics</module>
+        <module>mongoose-server-systemmetrics-java</module>
+        <module>mongoose-server-application</module>
+        <module>mongoose-server-application-vertx</module>
+
+    </modules>
+
+</module>
