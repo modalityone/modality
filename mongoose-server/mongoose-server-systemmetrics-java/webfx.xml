@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <module>
 
+    <packages exports="true"/>
+
     <providers>
         <provider spi="mongoose.server.services.systemmetrics.spi.SystemMetricsServiceProvider">mongoose.server.services.systemmetrics.spi.java.JavaSystemMetricsServiceProvider</provider>
     </providers>

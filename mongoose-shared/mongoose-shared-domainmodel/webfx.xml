@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <module>
 
+    <packages exports="true"/>
+
     <providers>
         <provider spi="dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider">mongoose.shared.services.domainmodel.MongooseDomainModelProvider</provider>
         <provider spi="dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider">mongoose.shared.services.datasourcemodel.MongooseDataSourceModelProvider</provider>
