@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <module show-loading-spinner-on-startup="true">
 
-    <packages export-sources="true">
-        <package resource="true">mongoose.client.images</package>
-        <package resource="true">images.buddhas</package>
+    <packages export-sources="true" resource="true">
+        <package>mongoose.client.images</package>
+        <package>images.buddhas</package>
     </packages>
 
     <dependencies>

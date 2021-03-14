@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <module implements-module="mongoose-client-css">
 
-    <packages>
-        <package resource="true">mongoose.client.css</package>
-        <package resource="true">mongoose.client.fonts</package>
+    <packages resource="true">
+        <package>mongoose.client.css</package>
+        <package>mongoose.client.fonts</package>
     </packages>
 
 </module>

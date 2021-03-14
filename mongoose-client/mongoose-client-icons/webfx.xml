@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <module>
 
-    <packages export-sources="true">
-        <package resource="true">images.s16</package>
-        <package resource="true">images.s16.actions</package>
-        <package resource="true">images.s16.continents</package>
-        <package resource="true">images.s16.countries</package>
-        <package resource="true">images.s16.currencies</package>
-        <package resource="true">images.s16.itemFamilies</package>
-        <package resource="true">images.s16.languages</package>
-        <package resource="true">images.s16.methods</package>
-        <package resource="true">images.s16.moneyAccountTypes</package>
-        <package resource="true">images.s16.multipleBookings</package>
-        <package resource="true">images.s16.organizations</package>
-        <package resource="true">images.s16.security</package>
-        <package resource="true">images.s16.system</package>
-        <package resource="true">images.s16.validation</package>
-        <package resource="true">images.s32.system</package>
-        <package resource="true">images.svg.color</package>
-        <package resource="true">images.svg.mono</package>
+    <packages export-sources="true" resource="true">
+        <package>images.s16</package>
+        <package>images.s16.actions</package>
+        <package>images.s16.continents</package>
+        <package>images.s16.countries</package>
+        <package>images.s16.currencies</package>
+        <package>images.s16.itemFamilies</package>
+        <package>images.s16.languages</package>
+        <package>images.s16.methods</package>
+        <package>images.s16.moneyAccountTypes</package>
+        <package>images.s16.multipleBookings</package>
+        <package>images.s16.organizations</package>
+        <package>images.s16.security</package>
+        <package>images.s16.system</package>
+        <package>images.s16.validation</package>
+        <package>images.s32.system</package>
+        <package>images.svg.color</package>
+        <package>images.svg.mono</package>
     </packages>
 
     <embed-resources>

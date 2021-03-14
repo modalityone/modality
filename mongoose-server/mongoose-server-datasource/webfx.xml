@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <module>
 
-    <packages export-sources="true">
-        <package resource="true">mongoose.server.datasource.MDS</package>
+    <packages export-sources="true" resource="true">
+        <package>mongoose.server.datasource.MDS</package>
     </packages>
 
 
