@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <module>
 
-    <packages export-sources="true" resource="true">
-        <package>images.s16</package>
-        <package>images.s16.actions</package>
-        <package>images.s16.continents</package>
-        <package>images.s16.countries</package>
-        <package>images.s16.currencies</package>
-        <package>images.s16.itemFamilies</package>
-        <package>images.s16.languages</package>
-        <package>images.s16.methods</package>
-        <package>images.s16.moneyAccountTypes</package>
-        <package>images.s16.multipleBookings</package>
-        <package>images.s16.organizations</package>
-        <package>images.s16.security</package>
-        <package>images.s16.system</package>
-        <package>images.s16.validation</package>
-        <package>images.s32.system</package>
-        <package>images.svg.color</package>
-        <package>images.svg.mono</package>
+    <packages export-sources="true">
+        <resource-package>images.s16</resource-package>
+        <resource-package>images.s16.actions</resource-package>
+        <resource-package>images.s16.continents</resource-package>
+        <resource-package>images.s16.countries</resource-package>
+        <resource-package>images.s16.currencies</resource-package>
+        <resource-package>images.s16.itemFamilies</resource-package>
+        <resource-package>images.s16.languages</resource-package>
+        <resource-package>images.s16.methods</resource-package>
+        <resource-package>images.s16.moneyAccountTypes</resource-package>
+        <resource-package>images.s16.multipleBookings</resource-package>
+        <resource-package>images.s16.organizations</resource-package>
+        <resource-package>images.s16.security</resource-package>
+        <resource-package>images.s16.system</resource-package>
+        <resource-package>images.s16.validation</resource-package>
+        <resource-package>images.s32.system</resource-package>
+        <resource-package>images.svg.color</resource-package>
+        <resource-package>images.svg.mono</resource-package>
     </packages>
 
     <embed-resources>
