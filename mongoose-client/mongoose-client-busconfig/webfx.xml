@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <module>
 
-    <packages exports="true"/>
-
-    <resource-packages>
-        <package>dev.webfx.platform.client.services.websocketbus.conf</package>
-    </resource-packages>
+    <packages exports="true">
+        <package resource="true">dev.webfx.platform.client.services.websocketbus.conf</package>
+    </packages>
 
     <embed-resources>
         <resource>dev/webfx/platform/client/services/websocketbus/conf/BusOptions.json</resource>

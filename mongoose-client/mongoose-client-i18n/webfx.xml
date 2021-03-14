@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <module>
 
-    <packages exports="true"/>
+    <packages exports="true">
+        <package resource="true">mongoose.client.services.i18n.dictionaries</package>
+    </packages>
 
     <providers>
         <provider spi="dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter">mongoose.client.operations.i18n.ChangeLanguageToEnglishRequest$ProvidedEmitter</provider>
@@ -17,10 +19,6 @@
         </source-modules>
 
     </dependencies>
-
-    <resource-packages>
-        <package>mongoose.client.services.i18n.dictionaries</package>
-    </resource-packages>
 
     <embed-resources>
         <resource>mongoose/client/services/i18n/dictionaries/en.json</resource>

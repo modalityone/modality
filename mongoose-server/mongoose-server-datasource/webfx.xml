@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <module>
 
-    <packages exports="true"/>
+    <packages exports="true">
+        <package resource="true">mongoose.server.datasource.MDS</package>
+    </packages>
+
 
     <providers>
         <provider spi="dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider">mongoose.server.services.datasource.MongooseLocalDataSourceProvider</provider>
     </providers>
-
-    <resource-packages>
-        <package>mongoose.server.datasource.MDS</package>
-    </resource-packages>
 
     <dependencies>
 
