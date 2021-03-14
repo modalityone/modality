@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <module show-loading-spinner-on-startup="true">
 
-    <packages export-sources="true">
+    <packages>
+        <source-packages/>
         <resource-package>mongoose.client.images</resource-package>
         <resource-package>images.buddhas</resource-package>
     </packages>

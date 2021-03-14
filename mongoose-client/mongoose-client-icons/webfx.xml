@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <module>
 
-    <packages export-sources="true">
+    <packages>
+        <source-packages/>
         <resource-package>images.s16</resource-package>
         <resource-package>images.s16.actions</resource-package>
         <resource-package>images.s16.continents</resource-package>
