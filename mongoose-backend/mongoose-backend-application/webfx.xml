@@ -13,24 +13,22 @@
 
         <source-module>javafx-graphics</source-module>
 
-        <plugin-modules>
-            <module>mongoose-backend-activities-authorizations</module>
-            <module>mongoose-backend-activities-bookings</module>
-            <module>mongoose-backend-activities-cloneevent</module>
-            <module>mongoose-backend-activities-diningareas</module>
-            <module>mongoose-backend-activities-events</module>
-            <module>mongoose-backend-activities-income</module>
-            <module>mongoose-backend-activities-monitor</module>
-            <module>mongoose-backend-activities-letters</module>
-            <module>mongoose-backend-activities-letter</module>
-            <module>mongoose-backend-activities-payments</module>
-            <module>mongoose-backend-activities-roomsgraphic</module>
-            <module>mongoose-backend-activities-statistics</module>
-            <module>mongoose-backend-activities-statements</module>
-            <module>mongoose-backend-activities-users</module>
-            <module>mongoose-backend-activities-operations</module>
-            <module>mongoose-backend-activities-organizations</module>
-        </plugin-modules>
+        <plugin-module>mongoose-backend-activities-authorizations</plugin-module>
+        <plugin-module>mongoose-backend-activities-bookings</plugin-module>
+        <plugin-module>mongoose-backend-activities-cloneevent</plugin-module>
+        <plugin-module>mongoose-backend-activities-diningareas</plugin-module>
+        <plugin-module>mongoose-backend-activities-events</plugin-module>
+        <plugin-module>mongoose-backend-activities-income</plugin-module>
+        <plugin-module>mongoose-backend-activities-monitor</plugin-module>
+        <plugin-module>mongoose-backend-activities-letters</plugin-module>
+        <plugin-module>mongoose-backend-activities-letter</plugin-module>
+        <plugin-module>mongoose-backend-activities-payments</plugin-module>
+        <plugin-module>mongoose-backend-activities-roomsgraphic</plugin-module>
+        <plugin-module>mongoose-backend-activities-statistics</plugin-module>
+        <plugin-module>mongoose-backend-activities-statements</plugin-module>
+        <plugin-module>mongoose-backend-activities-users</plugin-module>
+        <plugin-module>mongoose-backend-activities-operations</plugin-module>
+        <plugin-module>mongoose-backend-activities-organizations</plugin-module>
 
     </dependencies>
 

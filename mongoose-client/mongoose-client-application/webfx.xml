@@ -17,17 +17,15 @@
             <module>mongoose-client-busconfig</module>
         </resource-modules>
 
-        <plugin-modules>
-            <module executable-target="java">mongoose-client-navigationarrows-java</module>
-            <module>mongoose-client-i18n</module>
-            <module>mongoose-client-authz</module>
-            <module>mongoose-client-operationactionsloading</module>
-            <module>mongoose-client-sessionrecorder</module>
-            <module>mongoose-client-activities-login</module>
-            <module>mongoose-client-activities-unauthorized</module>
-            <module>webfx-framework-client-push-simple</module>
-            <module>webfx-framework-client-querypush-simple</module>
-        </plugin-modules>
+        <plugin-module executable-target="java">mongoose-client-navigationarrows-java</plugin-module>
+        <plugin-module>mongoose-client-i18n</plugin-module>
+        <plugin-module>mongoose-client-authz</plugin-module>
+        <plugin-module>mongoose-client-operationactionsloading</plugin-module>
+        <plugin-module>mongoose-client-sessionrecorder</plugin-module>
+        <plugin-module>mongoose-client-activities-login</plugin-module>
+        <plugin-module>mongoose-client-activities-unauthorized</plugin-module>
+        <plugin-module>webfx-framework-client-push-simple</plugin-module>
+        <plugin-module>webfx-framework-client-querypush-simple</plugin-module>
 
     </dependencies>
 

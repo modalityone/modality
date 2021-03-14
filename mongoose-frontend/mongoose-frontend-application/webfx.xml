@@ -9,18 +9,16 @@
 
         <source-module>javafx-graphics</source-module>
 
-        <plugin-modules>
-            <module>mongoose-frontend-activities-startbooking</module>
-            <module>mongoose-frontend-activities-terms</module>
-            <module>mongoose-frontend-activities-program</module>
-            <module>mongoose-frontend-activities-fees</module>
-            <module>mongoose-frontend-activities-options</module>
-            <module>mongoose-frontend-activities-person</module>
-            <module>mongoose-frontend-activities-summary</module>
-            <module>mongoose-frontend-activities-cart</module>
-            <module>mongoose-frontend-activities-payment</module>
-            <module>mongoose-frontend-activities-contactus</module>
-        </plugin-modules>
+        <plugin-module>mongoose-frontend-activities-startbooking</plugin-module>
+        <plugin-module>mongoose-frontend-activities-terms</plugin-module>
+        <plugin-module>mongoose-frontend-activities-program</plugin-module>
+        <plugin-module>mongoose-frontend-activities-fees</plugin-module>
+        <plugin-module>mongoose-frontend-activities-options</plugin-module>
+        <plugin-module>mongoose-frontend-activities-person</plugin-module>
+        <plugin-module>mongoose-frontend-activities-summary</plugin-module>
+        <plugin-module>mongoose-frontend-activities-cart</plugin-module>
+        <plugin-module>mongoose-frontend-activities-payment</plugin-module>
+        <plugin-module>mongoose-frontend-activities-contactus</plugin-module>
 
     </dependencies>
 

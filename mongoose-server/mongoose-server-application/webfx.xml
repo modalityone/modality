@@ -7,13 +7,11 @@
 
     <dependencies>
 
-        <plugin-modules>
-            <module>mongoose-server-datasource</module>
-            <module>mongoose-server-sessioncloser</module>
-            <module>mongoose-server-systemmetrics</module>
-            <module>webfx-framework-shared-querypush</module>
-            <module>webfx-platform-shared-buscalljob</module>
-        </plugin-modules>
+        <plugin-module>mongoose-server-datasource</plugin-module>
+        <plugin-module>mongoose-server-sessioncloser</plugin-module>
+        <plugin-module>mongoose-server-systemmetrics</plugin-module>
+        <plugin-module>webfx-framework-shared-querypush</plugin-module>
+        <plugin-module>webfx-platform-shared-buscalljob</plugin-module>
 
     </dependencies>
 

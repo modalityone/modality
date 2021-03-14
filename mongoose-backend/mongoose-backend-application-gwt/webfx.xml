@@ -3,9 +3,7 @@
 
     <dependencies>
 
-        <plugin-modules>
-            <module>mongoose-backend-application</module>
-        </plugin-modules>
+        <plugin-module>mongoose-backend-application</plugin-module>
 
     </dependencies>
 
