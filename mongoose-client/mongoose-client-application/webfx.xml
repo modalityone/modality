@@ -12,10 +12,8 @@
         <source-module>webfx-framework-shared-router</source-module>
         <source-module>webfx-kit-javafxcontrols-emul</source-module>
 
-        <resource-modules>
-            <module>mongoose-client-css</module>
-            <module>mongoose-client-busconfig</module>
-        </resource-modules>
+        <resource-module>mongoose-client-css</resource-module>
+        <resource-module>mongoose-client-busconfig</resource-module>
 
         <plugin-module executable-target="java">mongoose-client-navigationarrows-java</plugin-module>
         <plugin-module>mongoose-client-i18n</plugin-module>
