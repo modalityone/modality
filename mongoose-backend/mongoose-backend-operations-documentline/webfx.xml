@@ -7,9 +7,7 @@
 
     <dependencies>
 
-        <source-modules>
-            <module>webfx-platform-shared-submit</module>
-        </source-modules>
+        <source-module>webfx-platform-shared-submit</source-module>
 
     </dependencies>
 

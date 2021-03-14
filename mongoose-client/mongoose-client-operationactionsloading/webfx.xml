@@ -7,10 +7,8 @@
 
     <dependencies>
 
-        <source-modules>
-            <module>javafx-base</module>
-            <module>webfx-platform-shared-util</module>
-        </source-modules>
+        <source-module>javafx-base</source-module>
+        <source-module>webfx-platform-shared-util</source-module>
 
     </dependencies>
 

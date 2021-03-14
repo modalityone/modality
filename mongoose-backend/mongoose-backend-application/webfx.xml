@@ -11,9 +11,7 @@
 
     <dependencies>
 
-        <source-modules>
-            <module>javafx-graphics</module>
-        </source-modules>
+        <source-module>javafx-graphics</source-module>
 
         <plugin-modules>
             <module>mongoose-backend-activities-authorizations</module>

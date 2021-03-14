@@ -7,9 +7,7 @@
 
     <dependencies>
 
-        <source-modules>
-            <module>webfx-framework-shared-orm-domainmodel</module>
-        </source-modules>
+        <source-module>webfx-framework-shared-orm-domainmodel</source-module>
 
     </dependencies>
 

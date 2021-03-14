@@ -7,9 +7,7 @@
 
     <dependencies>
 
-        <source-modules>
-            <module>javafx-controls</module>
-        </source-modules>
+        <source-module>javafx-controls</source-module>
 
     </dependencies>
 

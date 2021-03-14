@@ -11,11 +11,9 @@
 
     <dependencies>
 
-        <source-modules>
-            <module>mongoose-shared-entities</module>
-            <module>webfx-framework-client-activity</module>
-            <module>webfx-platform-shared-util</module>
-        </source-modules>
+        <source-module>mongoose-shared-entities</source-module>
+        <source-module>webfx-framework-client-activity</source-module>
+        <source-module>webfx-platform-shared-util</source-module>
 
     </dependencies>
 

@@ -9,10 +9,8 @@
 
     <dependencies>
 
-        <source-modules>
-            <module>webfx-framework-shared-router</module>
-            <module>webfx-kit-javafxcontrols-emul</module>
-        </source-modules>
+        <source-module>webfx-framework-shared-router</source-module>
+        <source-module>webfx-kit-javafxcontrols-emul</source-module>
 
         <resource-modules>
             <module>mongoose-client-css</module>

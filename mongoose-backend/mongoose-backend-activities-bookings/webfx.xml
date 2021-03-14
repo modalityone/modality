@@ -7,10 +7,8 @@
 
     <dependencies>
 
-        <source-modules>
-            <module>webfx-framework-client-action</module>
-            <module>webfx-framework-client-activity</module>
-        </source-modules>
+        <source-module>webfx-framework-client-action</source-module>
+        <source-module>webfx-framework-client-activity</source-module>
 
     </dependencies>
 

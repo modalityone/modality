@@ -7,12 +7,10 @@
 
     <dependencies>
 
-        <source-modules>
-            <module>webfx-framework-client-activity</module>
-            <module>webfx-framework-shared-orm-entity</module>
-            <module>webfx-platform-shared-util</module>
-            <module>webfx-kit-javafxgraphics-emul</module>
-        </source-modules>
+        <source-module>webfx-framework-client-activity</source-module>
+        <source-module>webfx-framework-shared-orm-entity</source-module>
+        <source-module>webfx-platform-shared-util</source-module>
+        <source-module>webfx-kit-javafxgraphics-emul</source-module>
 
     </dependencies>
 

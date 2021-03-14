@@ -7,13 +7,11 @@
 
     <dependencies>
 
-        <source-modules>
-            <module>webfx-framework-client-activity</module>
-            <module>webfx-framework-shared-orm-domainmodel</module>
-            <module>webfx-kit-javafxcontrols-emul</module>
-            <module>webfx-extras-visual-controls-grid</module>
-            <module>webfx-platform-shared-util</module>
-        </source-modules>
+        <source-module>webfx-framework-client-activity</source-module>
+        <source-module>webfx-framework-shared-orm-domainmodel</source-module>
+        <source-module>webfx-kit-javafxcontrols-emul</source-module>
+        <source-module>webfx-extras-visual-controls-grid</source-module>
+        <source-module>webfx-platform-shared-util</source-module>
 
     </dependencies>
 
