@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<module show-loading-spinner-on-startup="true">
+<module>
+
+    <properties>
+        <show-loading-spinner-on-startup>true</show-loading-spinner-on-startup>
+    </properties>
 
     <packages>
         <source-packages/>
