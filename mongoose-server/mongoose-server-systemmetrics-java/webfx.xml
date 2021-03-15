@@ -15,11 +15,11 @@
 
     <libraries>
 
-        <module name="jdk-management">
+        <library name="jdk-management">
             <packages>
                 <package>com.sun.management</package>
             </packages>
-        </module>
+        </library>
 
     </libraries>
 
