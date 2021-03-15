@@ -6,4 +6,8 @@
         <resource-package>mongoose.client.fonts</resource-package>
     </packages>
 
+    <dependencies>
+        <source-modules/>
+    </dependencies>
+
 </module>

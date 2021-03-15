@@ -5,8 +5,12 @@
         <source-packages/>
     </packages>
 
-    <dependencies>
+    <providers>
+        <provider spi="javafx.application.Application">mongoose.frontend.application.MongooseFrontendApplication</provider>
+    </providers>
 
+    <dependencies>
+        <source-modules/>
         <source-module>javafx-graphics</source-module>
 
         <plugin-module>mongoose-frontend-activities-startbooking</plugin-module>
@@ -19,11 +23,6 @@
         <plugin-module>mongoose-frontend-activities-cart</plugin-module>
         <plugin-module>mongoose-frontend-activities-payment</plugin-module>
         <plugin-module>mongoose-frontend-activities-contactus</plugin-module>
-
     </dependencies>
-
-    <providers>
-        <provider spi="javafx.application.Application">mongoose.frontend.application.MongooseFrontendApplication</provider>
-    </providers>
 
 </module>

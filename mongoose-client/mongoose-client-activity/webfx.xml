@@ -6,9 +6,8 @@
     </packages>
 
     <dependencies>
-
+        <source-modules/>
         <source-module>webfx-framework-shared-orm-domainmodel</source-module>
-
     </dependencies>
 
 </module>

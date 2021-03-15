@@ -10,10 +10,9 @@
     </providers>
 
     <dependencies>
-
+        <source-modules/>
         <source-module>webfx-framework-client-activity</source-module>
         <source-module>webfx-platform-shared-submit</source-module>
-
     </dependencies>
 
 </module>

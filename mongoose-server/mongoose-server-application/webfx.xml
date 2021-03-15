@@ -6,13 +6,12 @@
     </packages>
 
     <dependencies>
-
+        <source-modules/>
         <plugin-module>mongoose-server-datasource</plugin-module>
         <plugin-module>mongoose-server-sessioncloser</plugin-module>
         <plugin-module>mongoose-server-systemmetrics</plugin-module>
         <plugin-module>webfx-framework-shared-querypush</plugin-module>
         <plugin-module>webfx-platform-shared-buscalljob</plugin-module>
-
     </dependencies>
 
 </module>

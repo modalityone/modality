@@ -9,6 +9,10 @@
         <provider spi="mongoose.server.services.systemmetrics.spi.SystemMetricsServiceProvider">mongoose.server.services.systemmetrics.spi.java.JavaSystemMetricsServiceProvider</provider>
     </providers>
 
+    <dependencies>
+        <source-modules/>
+    </dependencies>
+
     <libraries>
 
         <module name="jdk-management">

@@ -8,7 +8,7 @@
     </packages>
 
     <dependencies>
-
+        <source-modules/>
         <source-module>webfx-framework-shared-router</source-module>
         <source-module>webfx-kit-javafxcontrols-emul</source-module>
 
@@ -24,7 +24,6 @@
         <plugin-module>mongoose-client-activities-unauthorized</plugin-module>
         <plugin-module>webfx-framework-client-push-simple</plugin-module>
         <plugin-module>webfx-framework-client-querypush-simple</plugin-module>
-
     </dependencies>
 
 </module>

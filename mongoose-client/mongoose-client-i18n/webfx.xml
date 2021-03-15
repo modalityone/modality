@@ -13,10 +13,9 @@
     </providers>
 
     <dependencies>
-
+        <source-modules/>
         <source-module>javafx-base</source-module>
         <source-module>webfx-platform-shared-util</source-module>
-
     </dependencies>
 
     <embed-resources>

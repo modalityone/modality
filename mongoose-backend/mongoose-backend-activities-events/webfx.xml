@@ -5,17 +5,16 @@
         <source-packages/>
     </packages>
 
-    <dependencies>
-
-        <source-module>webfx-framework-client-activity</source-module>
-        <source-module>webfx-framework-shared-orm-entity</source-module>
-        <source-module>webfx-kit-javafxgraphics-emul</source-module>
-
-    </dependencies>
-
     <providers>
         <provider spi="dev.webfx.framework.client.ui.uirouter.UiRoute">mongoose.backend.activities.events.EventsUiRoute</provider>
         <provider spi="dev.webfx.framework.client.operations.route.RouteRequestEmitter">mongoose.backend.activities.events.RouteToEventsRequestEmitter</provider>
     </providers>
+
+    <dependencies>
+        <source-modules/>
+        <source-module>webfx-framework-client-activity</source-module>
+        <source-module>webfx-framework-shared-orm-entity</source-module>
+        <source-module>webfx-kit-javafxgraphics-emul</source-module>
+    </dependencies>
 
 </module>

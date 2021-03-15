@@ -33,4 +33,8 @@
         <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.TeacherImpl$ProvidedFactory</provider>
     </providers>
 
+    <dependencies>
+        <source-modules/>
+    </dependencies>
+
 </module>

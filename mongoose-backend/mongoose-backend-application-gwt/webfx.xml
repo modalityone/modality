@@ -2,9 +2,8 @@
 <module executable="true" application-module="mongoose-backend-application">
 
     <dependencies>
-
+        <source-modules/>
         <plugin-module>mongoose-backend-application</plugin-module>
-
     </dependencies>
 
     <html>

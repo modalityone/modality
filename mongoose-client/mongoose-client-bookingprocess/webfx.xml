@@ -6,9 +6,8 @@
     </packages>
 
     <dependencies>
-
+        <source-modules/>
         <source-module>webfx-platform-client-windowhistory</source-module>
-
     </dependencies>
 
 </module>

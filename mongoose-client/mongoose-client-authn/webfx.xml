@@ -9,4 +9,8 @@
         <provider spi="dev.webfx.framework.shared.services.authn.spi.AuthenticationServiceProvider">mongoose.client.services.authn.MongooseAuthenticationServiceProvider</provider>
     </providers>
 
+    <dependencies>
+        <source-modules/>
+    </dependencies>
+
 </module>

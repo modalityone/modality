@@ -22,6 +22,10 @@
         <resource-package>images.svg.mono</resource-package>
     </packages>
 
+    <dependencies>
+        <source-modules/>
+    </dependencies>
+
     <embed-resources>
         <resource>images/svg/mono/certificate.svg</resource>
         <resource>images/svg/mono/calendar.svg</resource>

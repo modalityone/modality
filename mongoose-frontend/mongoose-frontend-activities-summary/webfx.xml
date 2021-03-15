@@ -5,14 +5,13 @@
         <source-packages/>
     </packages>
 
-    <dependencies>
-
-        <source-module>webfx-framework-client-activity</source-module>
-
-    </dependencies>
-
     <providers>
         <provider spi="dev.webfx.framework.client.ui.uirouter.UiRoute">mongoose.frontend.activities.summary.SummaryUiRoute</provider>
     </providers>
+
+    <dependencies>
+        <source-modules/>
+        <source-module>webfx-framework-client-activity</source-module>
+    </dependencies>
 
 </module>

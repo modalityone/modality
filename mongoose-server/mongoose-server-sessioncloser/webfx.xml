@@ -5,15 +5,14 @@
         <source-packages/>
     </packages>
 
-    <dependencies>
-
-        <source-module>webfx-framework-shared-orm-domainmodel</source-module>
-        <source-module>webfx-platform-shared-util</source-module>
-
-    </dependencies>
-
     <providers>
         <provider spi="dev.webfx.platform.shared.services.appcontainer.spi.ApplicationJob">mongoose.server.jobs.sessioncloser.MongooseServerUnresponsiveClientSessionCloserJob</provider>
     </providers>
+
+    <dependencies>
+        <source-modules/>
+        <source-module>webfx-framework-shared-orm-domainmodel</source-module>
+        <source-module>webfx-platform-shared-util</source-module>
+    </dependencies>
 
 </module>

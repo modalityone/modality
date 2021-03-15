@@ -6,6 +6,10 @@
         <resource-package>dev.webfx.platform.client.services.websocketbus.conf</resource-package>
     </packages>
 
+    <dependencies>
+        <source-modules/>
+    </dependencies>
+
     <embed-resources>
         <resource>dev/webfx/platform/client/services/websocketbus/conf/BusOptions.json</resource>
     </embed-resources>

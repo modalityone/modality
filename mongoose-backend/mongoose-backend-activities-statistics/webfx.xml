@@ -5,18 +5,17 @@
         <source-packages/>
     </packages>
 
-    <dependencies>
-
-        <source-module>webfx-framework-client-action</source-module>
-        <source-module>webfx-framework-client-activity</source-module>
-        <source-module>webfx-kit-javafxcontrols-emul</source-module>
-        <source-module>webfx-platform-shared-util</source-module>
-
-    </dependencies>
-
     <providers>
         <provider spi="dev.webfx.framework.client.ui.uirouter.UiRoute">mongoose.backend.activities.statistics.StatisticsUiRoute</provider>
         <provider spi="dev.webfx.framework.client.operations.route.RouteRequestEmitter">mongoose.backend.activities.statistics.RouteToStatisticsRequestEmitter</provider>
     </providers>
+
+    <dependencies>
+        <source-modules/>
+        <source-module>webfx-framework-client-action</source-module>
+        <source-module>webfx-framework-client-activity</source-module>
+        <source-module>webfx-kit-javafxcontrols-emul</source-module>
+        <source-module>webfx-platform-shared-util</source-module>
+    </dependencies>
 
 </module>

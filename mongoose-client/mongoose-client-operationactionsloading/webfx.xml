@@ -5,15 +5,14 @@
         <source-packages/>
     </packages>
 
-    <dependencies>
-
-        <source-module>javafx-base</source-module>
-        <source-module>webfx-platform-shared-util</source-module>
-
-    </dependencies>
-
     <providers>
         <provider spi="dev.webfx.platform.shared.services.appcontainer.spi.ApplicationModuleInitializer">mongoose.client.operationactionsloading.MongooseClientOperationActionsLoader</provider>
     </providers>
+
+    <dependencies>
+        <source-modules/>
+        <source-module>javafx-base</source-module>
+        <source-module>webfx-platform-shared-util</source-module>
+    </dependencies>
 
 </module>

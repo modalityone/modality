@@ -6,7 +6,6 @@
         <resource-package>mongoose.shared.domainmodel</resource-package>
     </packages>
 
-
     <providers>
         <provider spi="dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider">mongoose.shared.services.domainmodel.MongooseDomainModelProvider</provider>
         <provider spi="dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider">mongoose.shared.services.datasourcemodel.MongooseDataSourceModelProvider</provider>
@@ -15,5 +14,9 @@
     <embed-resources>
         <resource>mongoose/shared/domainmodel/DomainModelSnapshot.json</resource>
     </embed-resources>
+
+    <dependencies>
+        <source-modules/>
+    </dependencies>
 
 </module>

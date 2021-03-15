@@ -6,12 +6,11 @@
     </packages>
 
     <dependencies>
-
+        <source-modules/>
         <source-module>mongoose-client-aggregates</source-module>
         <source-module>webfx-framework-client-activity</source-module>
         <source-module>webfx-framework-shared-orm-domainmodel</source-module>
         <source-module>webfx-platform-shared-submit</source-module>
-
     </dependencies>
 
     <providers>

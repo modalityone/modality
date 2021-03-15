@@ -10,9 +10,8 @@
     </providers>
 
     <dependencies>
-
+        <source-modules/>
         <source-module>javafx-graphics</source-module>
-
         <plugin-module>mongoose-backend-activities-authorizations</plugin-module>
         <plugin-module>mongoose-backend-activities-bookings</plugin-module>
         <plugin-module>mongoose-backend-activities-cloneevent</plugin-module>
@@ -29,7 +28,6 @@
         <plugin-module>mongoose-backend-activities-users</plugin-module>
         <plugin-module>mongoose-backend-activities-operations</plugin-module>
         <plugin-module>mongoose-backend-activities-organizations</plugin-module>
-
     </dependencies>
 
 </module>

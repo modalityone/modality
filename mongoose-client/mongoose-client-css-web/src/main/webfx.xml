@@ -1,3 +1,7 @@
 <module implements-module="mongoose-client-css">
 
+    <dependencies>
+        <source-modules/>
+    </dependencies>
+
 </module>
