@@ -6,7 +6,7 @@
     </packages>
 
     <providers>
-        <provider spi="mongoose.server.services.systemmetrics.spi.SystemMetricsServiceProvider">mongoose.server.services.systemmetrics.spi.java.JavaSystemMetricsServiceProvider</provider>
+        <mongoose.server.services.systemmetrics.spi.SystemMetricsServiceProvider>mongoose.server.services.systemmetrics.spi.java.JavaSystemMetricsServiceProvider</mongoose.server.services.systemmetrics.spi.SystemMetricsServiceProvider>
     </providers>
 
     <dependencies>

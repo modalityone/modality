@@ -6,7 +6,7 @@
     </packages>
 
     <providers>
-        <provider spi="dev.webfx.framework.client.ui.uirouter.UiRoute">mongoose.backend.activities.options.EditableOptionsUiRoute</provider>
+        <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.backend.activities.options.EditableOptionsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
     </providers>
 
     <dependencies>

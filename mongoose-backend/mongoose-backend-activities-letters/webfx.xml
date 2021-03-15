@@ -6,8 +6,8 @@
     </packages>
 
     <providers>
-        <provider spi="dev.webfx.framework.client.ui.uirouter.UiRoute">mongoose.backend.activities.letters.LettersUiRoute</provider>
-        <provider spi="dev.webfx.framework.client.operations.route.RouteRequestEmitter">mongoose.backend.activities.letters.RouteToLettersRequestEmitter</provider>
+        <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.backend.activities.letters.LettersUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+        <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.backend.activities.letters.RouteToLettersRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
     </providers>
 
     <dependencies>

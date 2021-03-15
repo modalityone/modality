@@ -6,8 +6,8 @@
     </packages>
 
     <providers>
-        <provider spi="dev.webfx.framework.client.ui.uirouter.UiRoute">mongoose.backend.activities.authorizations.AuthorizationsUiRoute</provider>
-        <provider spi="dev.webfx.framework.client.operations.route.RouteRequestEmitter">mongoose.backend.activities.authorizations.RouteToAuthorizationsRequestEmitter</provider>
+        <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.backend.activities.authorizations.AuthorizationsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+        <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.backend.activities.authorizations.RouteToAuthorizationsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
     </providers>
 
     <dependencies>

@@ -8,7 +8,7 @@
 
 
     <providers>
-        <provider spi="dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider">mongoose.server.services.datasource.MongooseLocalDataSourceProvider</provider>
+        <dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider>mongoose.server.services.datasource.MongooseLocalDataSourceProvider</dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider>
     </providers>
 
     <dependencies>

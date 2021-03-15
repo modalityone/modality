@@ -6,8 +6,8 @@
     </packages>
 
     <providers>
-        <provider spi="dev.webfx.framework.client.ui.uirouter.UiRoute">mongoose.backend.activities.income.IncomeUiRoute</provider>
-        <provider spi="dev.webfx.framework.client.operations.route.RouteRequestEmitter">mongoose.backend.activities.income.RouteToIncomeRequestEmitter</provider>
+        <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.backend.activities.income.IncomeUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+        <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.backend.activities.income.RouteToIncomeRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
     </providers>
 
     <dependencies>

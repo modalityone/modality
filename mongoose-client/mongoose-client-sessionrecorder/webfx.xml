@@ -6,7 +6,7 @@
     </packages>
 
     <providers>
-        <provider spi="dev.webfx.platform.shared.services.appcontainer.spi.ApplicationJob">mongoose.client.jobs.sessionrecorder.ClientSessionRecorderJob</provider>
+        <dev.webfx.platform.shared.services.appcontainer.spi.ApplicationJob>mongoose.client.jobs.sessionrecorder.ClientSessionRecorderJob</dev.webfx.platform.shared.services.appcontainer.spi.ApplicationJob>
     </providers>
 
     <dependencies>

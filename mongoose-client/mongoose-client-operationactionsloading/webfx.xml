@@ -6,7 +6,7 @@
     </packages>
 
     <providers>
-        <provider spi="dev.webfx.platform.shared.services.appcontainer.spi.ApplicationModuleInitializer">mongoose.client.operationactionsloading.MongooseClientOperationActionsLoader</provider>
+        <dev.webfx.platform.shared.services.appcontainer.spi.ApplicationModuleInitializer>mongoose.client.operationactionsloading.MongooseClientOperationActionsLoader</dev.webfx.platform.shared.services.appcontainer.spi.ApplicationModuleInitializer>
     </providers>
 
     <dependencies>

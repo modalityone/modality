@@ -6,7 +6,7 @@
     </packages>
 
     <providers>
-        <provider spi="dev.webfx.framework.shared.services.authz.spi.AuthorizationServiceProvider">mongoose.client.services.authz.MongooseAuthorizationServiceProvider</provider>
+        <dev.webfx.framework.shared.services.authz.spi.AuthorizationServiceProvider>mongoose.client.services.authz.MongooseAuthorizationServiceProvider</dev.webfx.framework.shared.services.authz.spi.AuthorizationServiceProvider>
     </providers>
 
     <dependencies>

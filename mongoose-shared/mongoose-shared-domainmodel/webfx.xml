@@ -7,8 +7,8 @@
     </packages>
 
     <providers>
-        <provider spi="dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider">mongoose.shared.services.domainmodel.MongooseDomainModelProvider</provider>
-        <provider spi="dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider">mongoose.shared.services.datasourcemodel.MongooseDataSourceModelProvider</provider>
+        <dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider>mongoose.shared.services.domainmodel.MongooseDomainModelProvider</dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider>
+        <dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider>mongoose.shared.services.datasourcemodel.MongooseDataSourceModelProvider</dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider>
     </providers>
 
     <embed-resources>

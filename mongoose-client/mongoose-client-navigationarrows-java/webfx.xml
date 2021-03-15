@@ -6,8 +6,8 @@
     </packages>
 
     <providers>
-        <provider spi="dev.webfx.framework.client.operations.route.RouteRequestEmitter">mongoose.client.navigationarrows.RouteBackwardRequestEmitter</provider>
-        <provider spi="dev.webfx.framework.client.operations.route.RouteRequestEmitter">mongoose.client.navigationarrows.RouteForwardRequestEmitter</provider>
+        <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.client.navigationarrows.RouteBackwardRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+        <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.client.navigationarrows.RouteForwardRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
     </providers>
 
     <dependencies>

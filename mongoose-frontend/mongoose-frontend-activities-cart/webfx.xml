@@ -14,7 +14,7 @@
     </dependencies>
 
     <providers>
-        <provider spi="dev.webfx.framework.client.ui.uirouter.UiRoute">mongoose.frontend.activities.cart.CartUiRoute</provider>
+        <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.frontend.activities.cart.CartUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
     </providers>
 
 </project>

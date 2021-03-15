@@ -6,7 +6,7 @@
     </packages>
 
     <providers>
-        <provider spi="javafx.application.Application">mongoose.frontend.application.MongooseFrontendApplication</provider>
+        <javafx.application.Application>mongoose.frontend.application.MongooseFrontendApplication</javafx.application.Application>
     </providers>
 
     <dependencies>

@@ -6,7 +6,7 @@
     </packages>
 
     <providers>
-        <provider spi="dev.webfx.platform.shared.services.appcontainer.spi.ApplicationJob">mongoose.server.jobs.sessioncloser.MongooseServerUnresponsiveClientSessionCloserJob</provider>
+        <dev.webfx.platform.shared.services.appcontainer.spi.ApplicationJob>mongoose.server.jobs.sessioncloser.MongooseServerUnresponsiveClientSessionCloserJob</dev.webfx.platform.shared.services.appcontainer.spi.ApplicationJob>
     </providers>
 
     <dependencies>

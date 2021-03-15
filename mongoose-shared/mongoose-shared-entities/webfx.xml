@@ -6,31 +6,31 @@
     </packages>
 
     <providers>
-        <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.AttendanceImpl$ProvidedFactory</provider>
-        <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.CartImpl$ProvidedFactory</provider>
-        <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.CountryImpl$ProvidedFactory</provider>
-        <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.DateInfoImpl$ProvidedFactory</provider>
-        <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.DocumentImpl$ProvidedFactory</provider>
-        <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.DocumentLineImpl$ProvidedFactory</provider>
-        <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.EventImpl$ProvidedFactory</provider>
-        <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.FilterImpl$ProvidedFactory</provider>
-        <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.GatewayParameterImpl$ProvidedFactory</provider>
-        <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.HistoryImpl$ProvidedFactory</provider>
-        <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.ImageImpl$ProvidedFactory</provider>
-        <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.ItemFamilyImpl$ProvidedFactory</provider>
-        <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.ItemImpl$ProvidedFactory</provider>
-        <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.LabelImpl$ProvidedFactory</provider>
-        <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.MailImpl$ProvidedFactory</provider>
-        <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.MethodImpl$ProvidedFactory</provider>
-        <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.MoneyTransferImpl$ProvidedFactory</provider>
-        <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.OptionImpl$ProvidedFactory</provider>
-        <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.OrganizationImpl$ProvidedFactory</provider>
-        <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.OrganizationTypeImpl$ProvidedFactory</provider>
-        <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.PersonImpl$ProvidedFactory</provider>
-        <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.RateImpl$ProvidedFactory</provider>
-        <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.SiteImpl$ProvidedFactory</provider>
-        <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.SystemMetricsEntityImpl$ProvidedFactory</provider>
-        <provider spi="dev.webfx.framework.shared.orm.entity.EntityFactoryProvider">mongoose.shared.entities.impl.TeacherImpl$ProvidedFactory</provider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.shared.entities.impl.AttendanceImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.shared.entities.impl.CartImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.shared.entities.impl.CountryImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.shared.entities.impl.DateInfoImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.shared.entities.impl.DocumentImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.shared.entities.impl.DocumentLineImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.shared.entities.impl.EventImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.shared.entities.impl.FilterImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.shared.entities.impl.GatewayParameterImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.shared.entities.impl.HistoryImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.shared.entities.impl.ImageImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.shared.entities.impl.ItemFamilyImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.shared.entities.impl.ItemImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.shared.entities.impl.LabelImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.shared.entities.impl.MailImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.shared.entities.impl.MethodImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.shared.entities.impl.MoneyTransferImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.shared.entities.impl.OptionImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.shared.entities.impl.OrganizationImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.shared.entities.impl.OrganizationTypeImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.shared.entities.impl.PersonImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.shared.entities.impl.RateImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.shared.entities.impl.SiteImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.shared.entities.impl.SystemMetricsEntityImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.shared.entities.impl.TeacherImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
     </providers>
 
     <dependencies>
