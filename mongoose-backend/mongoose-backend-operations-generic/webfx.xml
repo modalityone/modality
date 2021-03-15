@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<module>
+<project>
 
     <packages>
         <source-packages/>
@@ -11,4 +11,4 @@
         <source-module>webfx-platform-shared-submit</source-module>
     </dependencies>
 
-</module>
+</project>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<module>
+<project>
 
     <packages>
         <source-packages/>
@@ -15,4 +15,4 @@
         <provider spi="dev.webfx.framework.client.ui.uirouter.UiRoute">mongoose.client.activities.login.LoginUiRoute</provider>
     </providers>
 
-</module>
+</project>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<module>
+<project>
 
     <packages>
         <source-packages/>
@@ -30,4 +30,4 @@
         <plugin-module>mongoose-backend-activities-organizations</plugin-module>
     </dependencies>
 
-</module>
+</project>
