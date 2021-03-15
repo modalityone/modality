@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<module implements-module="mongoose-client-css">
+<module>
+
+    <implements>
+        <module>mongoose-client-css</module>
+    </implements>
 
     <packages>
         <resource-package>mongoose.client.css</resource-package>
