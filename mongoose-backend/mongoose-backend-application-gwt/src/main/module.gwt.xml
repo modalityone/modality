@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><module rename-to="mongoose_backend_application_gwt">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Managed by WebFX (DO NOT EDIT MANUALLY) --><module rename-to="mongoose_backend_application_gwt">
 
     <!-- Configuring logging (must be in first position) -->
     <inherits name="com.google.gwt.logging.Logging"/>
@@ -6,14 +7,13 @@
     <set-property name="gwt.logging.logLevel" value="FINEST"/>
     <set-property name="gwt.logging.consoleHandler" value="ENABLED"/>
 
-    <!-- Listing transitive dependencies modules -->
+    <!-- Speeding up GWT compilation time in development mode -->
     <!--===========================< webfx-kit-javafxbase-emul >============================-->
     <!-- used by webfx-kit-javafxcontrols-emul (SOURCE) -->
     <!-- used by webfx-kit-javafxgraphics-emul (SOURCE) -->
     <!-- used by mongoose-backend-bookingdetailspanel (SOURCE) -->
     <!-- used by webfx-extras-visual-controls (SOURCE) -->
     <!-- used by webfx-extras-visual-controls-grid (SOURCE) -->
-    <!-- used by webfx-extras-webtext-controls (SOURCE) -->
     <!-- used by webfx-kit-javafxgraphics-peers (SOURCE) -->
     <!-- used by webfx-platform-shared-buscall (SOURCE) -->
     <source path="com/sun/javafx"/>
@@ -745,6 +745,7 @@
     <source path="dev/webfx/kit/registry/javafxcontrols"/>
     <!--=========================< webfx-kit-javafxgraphics-peers >=========================-->
     <!-- used by webfx-kit-javafxgraphics-emul (SOURCE) -->
+    <!-- used by webfx-extras-webtext-controls (SOURCE) -->
     <!-- used by webfx-kit-javafxgraphics-registry-gwt (SOURCE) -->
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics"/>
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics/markers"/>
@@ -988,12 +989,6 @@
     <!-- used by mongoose-backend-application-gwt (IMPLICIT_PROVIDER) -->
     <!-- used by webfx-platform-gwt-windowhistory-impl (SOURCE) -->
     <source path="dev/webfx/platform/web/services/windowhistory/spi/impl"/>
-
-    <source path="mongoose/client/services/bus/conf/gwt"/>
-    <source path="mongoose/shared/domainmodel/gwt"/>
-    <source path="mongoose/client/icons/gwt"/>
-
-    <!-- Speeding up GWT compilation time in development mode -->
     <set-property name="user.agent" value="safari"/> <!-- to make only 1 permutation for testing with Chrome -->
     <set-property name="jre.checks.checkLevel" value="MINIMAL"/>
 

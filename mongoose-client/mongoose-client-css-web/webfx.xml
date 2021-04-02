@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project>
 
+    <implements>
+        <module>mongoose-client-css</module>
+    </implements>
+
     <dependencies>
         <source-modules/>
     </dependencies>
