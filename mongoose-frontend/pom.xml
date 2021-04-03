@@ -26,32 +26,10 @@
         <module>mongoose-frontend-activities-summary</module>
         <module>mongoose-frontend-activities-terms</module>
         <module>mongoose-frontend-application</module>
+        <module>mongoose-frontend-application-javafx</module>
+        <module>mongoose-frontend-application-gwt</module>
         <module>mongoose-frontend-application-gluon</module>
 
     </modules>
-
-    <profiles>
-        <!-- JRE profiles (JavaFx) -->
-        <profile>
-            <id>mongoose-frontend-application-javafx</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>mongoose-frontend-application-javafx</module>
-            </modules>
-        </profile>
-
-        <profile>
-            <id>mongoose-frontend-application-gwt</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>mongoose-frontend-application-gwt</module>
-            </modules>
-        </profile>
-
-    </profiles>
 
 </project>

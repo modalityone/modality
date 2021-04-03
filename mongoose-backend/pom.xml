@@ -34,6 +34,9 @@
         <module>mongoose-backend-activities-statistics</module>
         <module>mongoose-backend-activities-users</module>
         <module>mongoose-backend-application</module>
+        <module>mongoose-backend-application-javafx</module>
+        <module>mongoose-backend-application-gwt</module>
+        <module>mongoose-backend-application-gluon</module>
         <module>mongoose-backend-bookingdetailspanel</module>
         <module>mongoose-backend-masterslave</module>
         <module>mongoose-backend-multilangeditor</module>
@@ -44,35 +47,7 @@
         <module>mongoose-backend-operations-mail</module>
         <module>mongoose-backend-operations-moneytransfer</module>
         <module>mongoose-backend-operations-resourceconfiguration</module>
-        <module>mongoose-backend-application-javafx</module>
-        <module>mongoose-backend-application-gwt</module>
-        <module>mongoose-backend-application-gluon</module>
 
     </modules>
-
-    <profiles>
-        <!-- JRE profiles (JavaFx) -->
-        <profile>
-            <id>mongoose-backend-application-javafx</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>mongoose-backend-application-javafx</module>
-            </modules>
-        </profile>
-
-        <!-- Web profiles (GWT, TeaVM) -->
-        <profile>
-            <id>mongoose-backend-application-gwt</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>mongoose-backend-application-gwt</module>
-            </modules>
-        </profile>
-
-    </profiles>
 
 </project>

@@ -117,7 +117,7 @@
                             <artifactSet>
                                 <includes> <!-- We want only the project artifact, not the artifact dependencies -->
                                     <include>${mongoose.groupId}:*</include>
-                                    <include>${webfx.groupId}:*</include>
+                                    <include>${mongoose.groupId}:*</include>
                                 </includes>
                             </artifactSet>
                             <shadedArtifactAttached>true</shadedArtifactAttached>
