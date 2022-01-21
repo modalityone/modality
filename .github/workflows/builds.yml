@@ -315,12 +315,12 @@ jobs:
       # Staging 5) | 14)
       - if: matrix.gluon-desktop-artifact-suffix != null && runner.os != 'Windows'
         name: Copy native Desktop to staging (Linux or MacOS)
-        run: cp ${{ env.app-gluon-module-dir }}/target/client/${{ matrix.gluon-desktop-arch-token }}/${{ matrix.app.module-token }}* staging/${{ env.app-name }}-${{ matrix.gluon-desktop-artifact-suffix }}
+        run: cp ${{ env.app-gluon-module-dir }}/target/gluonfx/${{ matrix.gluon-desktop-arch-token }}/${{ matrix.app.module-token }}* staging/${{ env.app-name }}-${{ matrix.gluon-desktop-artifact-suffix }}
 
       # Staging 10)
       - if: matrix.gluon-desktop-artifact-suffix != null && runner.os == 'Windows'
         name: Copy native Desktop to staging (Windows)
-        run: Copy-Item "${{ env.app-gluon-module-dir }}/target/client/${{ matrix.gluon-desktop-arch-token }}/*.exe" -Destination "staging/${{ env.app-name }}-${{ matrix.gluon-desktop-artifact-suffix }}"
+        run: Copy-Item "${{ env.app-gluon-module-dir }}/target/gluonfx/${{ matrix.gluon-desktop-arch-token }}/*.exe" -Destination "staging/${{ env.app-name }}-${{ matrix.gluon-desktop-artifact-suffix }}"
 
 
       ##################################################################################################################
@@ -342,7 +342,7 @@ jobs:
       # Staging 6)
       - if: matrix.gluon-android-arch-token != null
         name: Copy Android native application to staging
-        run: cp ${{ env.app-gluon-module-dir }}/target/client/${{ matrix.gluon-android-arch-token }}/gvm/*.apk staging/${{ env.app-name }}-${{ matrix.gluon-android-artifact-suffix }}
+        run: cp ${{ env.app-gluon-module-dir }}/target/gluonfx/${{ matrix.gluon-android-arch-token }}/gvm/*.apk staging/${{ env.app-name }}-${{ matrix.gluon-android-artifact-suffix }}
 
 
       ##################################################################################################################
@@ -378,7 +378,7 @@ jobs:
       # Staging 10)
       - if: matrix.gluon-ios-arch-token != null && env.GLUON_IOS_CERTIFICATES_FILE_BASE64 != ''
         name: Copy iOS native application to staging
-        run: cp ${{ env.app-gluon-module-dir }}/target/client/${{ matrix.gluon-ios-arch-token }}/gvm/*.ipa staging/${{ env.app-name }}-${{ matrix.gluon-ios-artifact-suffix }}
+        run: cp ${{ env.app-gluon-module-dir }}/target/gluonfx/${{ matrix.gluon-ios-arch-token }}/gvm/*.ipa staging/${{ env.app-name }}-${{ matrix.gluon-ios-artifact-suffix }}
 
 
       ##################################################################################################################
