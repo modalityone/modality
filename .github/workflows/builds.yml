@@ -67,8 +67,9 @@ jobs:
             fatjar-artifact-suffix:        'MacOS-x64.jar'                      # build 11)
             #jvm-dmg-artifact-suffix:       'MacOS-x64-jvm.dmg'                  # build 12)
             #jvm-pkg-artifact-suffix:       'MacOS-x64-jvm.pkg'                  # build 13)
-            gluon-desktop-arch-token:      'x86_64-darwin'                      # build 14)
-            gluon-desktop-Artifact-suffix: 'MacOS-x64-native-runnable'          # build 14)
+            # Commented MacOS Desktop due to new error from Gluon plugin: No valid Identity (Certificate) found for macOS development.
+            #gluon-desktop-arch-token:      'x86_64-darwin'                      # build 14)
+            #gluon-desktop-Artifact-suffix: 'MacOS-x64-native-runnable'          # build 14)
             # Note: the iOS build needs the Apple certificate in secrets (the steps will be skipped otherwise)
             gluon-ios-arch-token:          'arm64-ios'                          # build 15)
             gluon-ios-artifact-suffix:     'iOS-arm64-native.ipa'               # build 15)
