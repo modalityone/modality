@@ -1,5 +1,5 @@
 {
-  "serverHost": "localhost",
+  "serverHost": "mongoose-server.lan",
   "serverPort": 9090,
   "serverSSL": false,
   "busPrefix": "eventbus",
