@@ -87,7 +87,7 @@ jobs:
       web-push-email: ${{ secrets.API_GITHUB_EMAIL }}
       jdk-version: '15.0.1'
       xcode-version: '11.7.0'
-      graalvm-version: '20.3.0.java11'
+      graalvm-version: '21.3.0.java11'
       API_GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
       GLUON_LICENSE: ${{ secrets.GLUON_LICENSE }}
       GLUON_IOS_CERTIFICATES_FILE_BASE64: ${{ secrets.GLUON_IOS_CERTIFICATES_FILE_BASE64 }}
