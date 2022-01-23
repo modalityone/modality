@@ -234,7 +234,7 @@ final class OptionTreeNode {
                 OptionsActivity activity = tree.getActivity();
                 childrenOptionSelector = new EntityButtonSelector<>(
                         // Note: translationOption() expression function has been registered in OptionTree constructor
-                        "{class: 'Option', columns: ['translateOption(this)'], where: 'parent=" + option.getPrimaryKey() + "'}",
+                        "{class: 'Option', fields: 'site,item', columns: ['translateOption(this)'], where: 'parent=" + option.getPrimaryKey() + " and online and site!=null', orderBy: 'ord'}",
                         activity,
                         () -> (Pane) activity.getNode(), // passing the parent getter for a future access because it is not immediately available (since we haven't yet finished building the activity UI)
                         activity.getDataSourceModel());
