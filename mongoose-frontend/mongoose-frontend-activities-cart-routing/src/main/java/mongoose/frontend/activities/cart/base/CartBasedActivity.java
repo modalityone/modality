@@ -58,8 +58,12 @@ public abstract class CartBasedActivity
         });
     }
 
-    protected void reloadCart() {
+    protected void unloadCart() {
         cartAggregate().unload();
+    }
+
+    protected void reloadCart() {
+        unloadCart();
         loadCart();
     }
 

@@ -42,4 +42,12 @@ public class WorkingDocumentsByCartStore {
         }
         return workingDocuments;
     }
+
+    public static void unloadCartWorkingDocuments(Cart cart) {
+        unloadCartWorkingDocuments(cart.getId());
+    }
+
+    public static void unloadCartWorkingDocuments(EntityId cartId) {
+        workingDocumentsByCartMap.remove(cartId);
+    }
 }

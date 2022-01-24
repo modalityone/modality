@@ -183,6 +183,13 @@ final class CartActivity extends CartBasedActivity {
     }
 
     @Override
+    protected void unloadCart() {
+        if (selectedWorkingDocument != null)
+            WorkingDocumentsByCartStore.unloadCartWorkingDocuments(selectedWorkingDocument.getDocument().getCart());
+        super.unloadCart();
+    }
+
+    @Override
     protected void onCartLoaded() {
         super.onCartLoaded(); // Applying the css background of the event if provided
         Event event = getEvent();
@@ -238,7 +245,7 @@ final class CartActivity extends CartBasedActivity {
             bookingOptionsPanel.syncUiFromModel(selectedWorkingDocument);
             Document selectedDocument = selectedWorkingDocument.getDocument();
             bookingLabel.setText(selectedDocument.getFullName() + " - " + I18n.getI18nText("Status:") + " " + I18n.getI18nText(getDocumentStatus(selectedDocument)));
-            disableBookinOptionsButtons(selectedDocument.isCancelled());
+            disableBookingOptionsButtons(selectedDocument.isCancelled());
             updatePaymentsVisibility();
         }
     }
@@ -249,7 +256,7 @@ final class CartActivity extends CartBasedActivity {
         return Collections.indexOf(getCartWorkingDocuments(), wd -> Entities.sameId(wd.getDocument(), workingDocument.getDocument()));
     }
 
-    private void disableBookinOptionsButtons(boolean disable) {
+    private void disableBookingOptionsButtons(boolean disable) {
         cancelBookingAction.setDisabled(disable);
         modifyBookingAction.setDisabled(disable);
         contactUsAction.setDisabled(disable || selectedWorkingDocument == null || selectedWorkingDocument.getDocument().getEmail() == null);
@@ -306,7 +313,7 @@ final class CartActivity extends CartBasedActivity {
                         .addNodeFillingRow(newLabel("BookingCancellation"))
                         .addNodeFillingRow(newLabel("ConfirmBookingCancellation"))
                         .addButtons("YesBookingCancellation", dialogCallback -> {
-                                    disableBookinOptionsButtons(true);
+                                    disableBookingOptionsButtons(true);
                                     Document selectedDocument = selectedWorkingDocument.getDocument();
                                     UpdateStore updateStore = UpdateStore.createAbove(selectedDocument.getStore());
                                     Document updatedDocument = updateStore.updateEntity(selectedDocument);
@@ -335,6 +342,12 @@ final class CartActivity extends CartBasedActivity {
 
     private void addAnotherBooking() {
         new RouteToStartBookingRequest(getEventId(), getHistory()).execute();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        unloadCart();
     }
 
     private void makePayment() {
