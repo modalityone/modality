@@ -89,7 +89,7 @@ public final class GroupView<E extends Entity> implements UiBuilder,
     }
 
     public static <E extends Entity> GroupView<E> createAndBind(boolean tableOnly, HasGroupVisualResultProperty pm) {
-        GroupView<E> groupView = new GroupView<>(/*tableOnly*/true); // always table only for now due to performance issue (to be fixed)
+        GroupView<E> groupView = new GroupView<>(tableOnly); // Note: tableOnly=false (ie with charts)  may cause performance issue TODO: to be fixed
         groupView.doDataBinding(pm);
         return groupView;
     }
