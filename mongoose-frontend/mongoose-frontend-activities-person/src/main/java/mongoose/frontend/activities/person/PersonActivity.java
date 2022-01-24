@@ -1,30 +1,23 @@
 package mongoose.frontend.activities.person;
 
+import dev.webfx.framework.client.ui.uirouter.uisession.UiSession;
+import dev.webfx.framework.client.ui.util.layout.LayoutUtil;
+import dev.webfx.kit.util.properties.Properties;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.event.ActionEvent;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import mongoose.client.activities.login.LoginPanel;
 import mongoose.client.activity.bookingprocess.BookingProcessActivity;
 import mongoose.client.businessdata.workingdocument.WorkingDocument;
 import mongoose.client.controls.personaldetails.PersonalDetailsPanel;
 import mongoose.frontend.operations.summary.RouteToSummaryRequest;
-import dev.webfx.framework.client.ui.util.layout.LayoutUtil;
-import dev.webfx.framework.client.ui.uirouter.uisession.UiSession;
-import dev.webfx.framework.client.ui.util.background.BackgroundUtil;
-import dev.webfx.framework.client.ui.util.border.BorderUtil;
-import dev.webfx.kit.util.properties.Properties;
-import dev.webfx.platform.shared.util.Numbers;
 
 /**
  * @author Bruno Salmon
@@ -36,6 +29,7 @@ final class PersonActivity extends BookingProcessActivity {
     @Override
     protected void createViewNodes() {
         super.createViewNodes();
+/*
         BorderPane accountTopNote = new BorderPane();
         Text accountTopText = newText("AccountTopNote");
         accountTopText.setFill(Color.web("#8a6d3b"));
@@ -52,6 +46,7 @@ final class PersonActivity extends BookingProcessActivity {
         accountTopNote.setBackground(BackgroundUtil.newVerticalLinearGradientBackground("rgba(244, 217, 132, 0.8)", "rgba(235, 192, 120, 0.8)", 5));
         accountTopNote.setPadding(new Insets(10));
         accountTopNote.setBorder(BorderUtil.newWebColorBorder("#ebc078", 5));
+*/
         ToggleGroup accountToggleGroup = new ToggleGroup();
         FlowPane accountTabs = new FlowPane(new Button(null, newRadioButton("IDontHaveAnAccount", accountToggleGroup)), new Button(null, newRadioButton("IAlreadyHaveAnAccount", accountToggleGroup)));
         UiSession uiSession = getUiSession();
@@ -73,7 +68,7 @@ final class PersonActivity extends BookingProcessActivity {
                 Platform.runLater(() -> accountToggleGroup.selectToggle(accountToggleGroup.getToggles().get(0)));
         }, loggedInProperty);
         verticalStack.getChildren().setAll(
-                LayoutUtil.setUnmanagedWhenInvisible(accountTopNote, notLoggedIn),
+                //LayoutUtil.setUnmanagedWhenInvisible(accountTopNote, notLoggedIn),
                 new VBox(LayoutUtil.setUnmanagedWhenInvisible(accountTabs, notLoggedIn)
                         , accountPane)
                 );

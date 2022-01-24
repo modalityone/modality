@@ -13,6 +13,7 @@
         <source-modules/>
         <source-module>webfx-framework-client-activity</source-module>
         <source-module>webfx-framework-client-action</source-module>
+        <source-module>webfx-platform-shared-util</source-module>
     </dependencies>
 
 </project>
