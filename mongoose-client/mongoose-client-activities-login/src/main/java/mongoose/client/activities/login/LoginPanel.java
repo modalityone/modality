@@ -1,5 +1,6 @@
 package mongoose.client.activities.login;
 
+import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.HPos;
@@ -62,12 +63,12 @@ public final class LoginPanel implements MongooseButtonFactoryMixin {
             if (validationSupport.isValid())
                 new AuthenticationRequest()
                         .setUserCredentials(new UsernamePasswordCredentials(usernameField.getText(), passwordField.getText()))
-                        .executeAsync().setHandler(ar -> {
+                        .executeAsync().setHandler(ar -> Platform.runLater(() -> { // Executing in UI thread
                     if (ar.succeeded())
                         uiSession.setUserPrincipal(ar.result());
                     else
                         Animations.shake(loginWindow);
-                });
+                }));
         });
         prepareShowing();
     }
