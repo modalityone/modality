@@ -32,7 +32,7 @@ final class OperationsPresentationLogicActivity
         ReactiveVisualMapper.createPushReactiveChain(this)
                 .always("{class: 'Operation', alias: 'o', orderBy: 'name'}")
                 // Search box condition
-                .ifTrimNotEmpty(pm.searchTextProperty(), s -> where("lower(name) like ?", "%" + s.toLowerCase() + "%"))
+                .ifTrimNotEmpty(pm.searchTextProperty(), s -> where("lower(operationCode) like ?", "%" + s.toLowerCase() + "%"))
                 // Limit condition
                 .ifPositive(pm.limitProperty(), l -> limit("?", l))
                 .setEntityColumns(expressionColumns)
