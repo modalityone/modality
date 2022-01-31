@@ -211,6 +211,7 @@
   "CloneEvent": "Clone event",
   "Clone": "Clone",
   "Organizations": {"graphic": "images/s16/organizations/generic.png"},
+  "Events": {"graphic": "images/s16/event.png"},
   "Bookings": {"graphic": "images/s16/system/booking.png"},
   "Operations": { "text": "Operations", "graphic": "images/s16/operation.png"},
   "Authorizations": {"text": "Authorizations", "graphic": "images/s16/keys.png"},
