@@ -31,7 +31,7 @@ final class AuthorizationsViewActivity extends ViewDomainActivityBase {
     public Node buildUi() {
         assignmentsGrid.setOnMouseClicked(e -> {
             if (e.getClickCount() == 2)
-                EntityPropertiesSheet.editEntity(assignmentVisualMapper.getSelectedEntity(), assignmentColumns, (Pane) getNode());
+                EntityPropertiesSheet.editEntity(assignmentVisualMapper.getSelectedEntity(), assignmentColumns, (Pane) getNode().getParent());
         });
         return new SplitPane(usersGrid, assignmentsGrid);
     }
