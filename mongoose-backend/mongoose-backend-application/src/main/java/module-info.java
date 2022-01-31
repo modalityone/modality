@@ -14,6 +14,7 @@ module mongoose.backend.application {
     requires mongoose.backend.activities.letters;
     requires mongoose.backend.activities.monitor;
     requires mongoose.backend.activities.operations;
+    requires mongoose.backend.activities.options;
     requires mongoose.backend.activities.organizations;
     requires mongoose.backend.activities.payments;
     requires mongoose.backend.activities.roomsgraphic;

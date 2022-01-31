@@ -27,6 +27,7 @@
         <plugin-module>mongoose-backend-activities-statements</plugin-module>
         <plugin-module>mongoose-backend-activities-users</plugin-module>
         <plugin-module>mongoose-backend-activities-operations</plugin-module>
+        <plugin-module>mongoose-backend-activities-options</plugin-module>
         <plugin-module>mongoose-backend-activities-organizations</plugin-module>
     </dependencies>
 

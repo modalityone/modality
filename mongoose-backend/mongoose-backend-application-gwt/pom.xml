@@ -143,6 +143,13 @@
     
         <dependency>
             <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-backend-activities-options</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
             <artifactId>mongoose-backend-activities-organizations</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
