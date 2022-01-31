@@ -111,6 +111,7 @@
     <!-- used by webfx-platform-client-storage (SOURCE) -->
     <!-- used by webfx-platform-gwt-emul-javabase (SOURCE) -->
     <!-- used by webfx-platform-shared-bus (SOURCE) -->
+    <!-- used by webfx-platform-shared-log (SOURCE) -->
     <!-- used by webfx-platform-shared-shutdown (SOURCE) -->
     <!-- used by webfx-platform-shared-util (SOURCE) -->
     <!--==================================< java-logging >==================================-->
@@ -183,6 +184,9 @@
     <source path="mongoose/backend/activities/operations"/>
     <source path="mongoose/backend/activities/operations/routing"/>
     <source path="mongoose/backend/operations/routes/operations"/>
+    <!--======================< mongoose-backend-activities-options >=======================-->
+    <!-- used by mongoose-backend-application (PLUGIN) -->
+    <source path="mongoose/backend/activities/options"/>
     <!--===================< mongoose-backend-activities-organizations >====================-->
     <!-- used by mongoose-backend-application (PLUGIN) -->
     <source path="mongoose/backend/activities/organizations"/>
@@ -902,6 +906,7 @@
     <source path="dev/webfx/platform/shared/services/json/spi"/>
     <source path="dev/webfx/platform/shared/services/json/spi/impl/listmap"/>
     <!--===========================< webfx-platform-shared-log >============================-->
+    <!-- used by webfx-framework-shared-orm-expression (SOURCE) -->
     <!-- used by webfx-kit-launcher (SOURCE) -->
     <!-- used by webfx-platform-gwt-log-impl (SOURCE) -->
     <!-- used by webfx-platform-gwt-uischeduler-impl (SOURCE) -->
