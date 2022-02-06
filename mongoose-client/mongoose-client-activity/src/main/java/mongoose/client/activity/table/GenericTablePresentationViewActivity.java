@@ -19,6 +19,10 @@ public abstract class GenericTablePresentationViewActivity<PM extends GenericTab
         extends PresentationViewActivityImpl<PM>
         implements ButtonFactoryMixin {
 
+    // These height values are the ones for the current GWT implementation of the WebFX data grid.
+    private static final int TABLE_HEADER_HEIGHT = 29;
+    private static final int TABLE_ROW_HEIGHT = 28;
+
     protected TextField searchBox;
     protected VisualGrid table;
     protected CheckBox limitCheckBox;
@@ -41,7 +45,7 @@ public abstract class GenericTablePresentationViewActivity<PM extends GenericTab
         // User inputs: the UI state changes are transferred in the presentation model
         pm.searchTextProperty().bind(searchBox.textProperty());
         //pm.limitProperty().bind(Bindings.when(limitCheckBox.selectedProperty()).then(table.heightProperty().divide(36)).otherwise(-1)); // not implemented in webfx-kit-javafxbase-emul
-        Properties.runNowAndOnPropertiesChange(() -> pm.limitProperty().setValue(limitCheckBox.isSelected() ? table.getHeight() / 36 : -1), limitCheckBox.selectedProperty(), table.heightProperty());
+        Properties.runNowAndOnPropertiesChange(() -> pm.limitProperty().setValue(limitCheckBox.isSelected() ? (table.getHeight() - TABLE_HEADER_HEIGHT + TABLE_ROW_HEIGHT) / TABLE_ROW_HEIGHT : -1), limitCheckBox.selectedProperty(), table.heightProperty());
         table.fullHeightProperty().bind(limitCheckBox.selectedProperty());
         //pm.limitProperty().bind(limitCheckBox.selectedProperty());
         pm.genericVisualSelectionProperty().bind(table.visualSelectionProperty());
