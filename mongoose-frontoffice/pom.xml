@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>mongoose</artifactId>
+        <groupId>org.mongoose</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>mongoose-frontoffice</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+
+        <module>mongoose-frontoffice-activities-cart</module>
+        <module>mongoose-frontoffice-activities-cart-routing</module>
+        <module>mongoose-frontoffice-activities-contactus</module>
+        <module>mongoose-frontoffice-activities-fees</module>
+        <module>mongoose-frontoffice-activities-options</module>
+        <module>mongoose-frontoffice-activities-person</module>
+        <module>mongoose-frontoffice-activities-payment</module>
+        <module>mongoose-frontoffice-activities-program</module>
+        <module>mongoose-frontoffice-activities-startbooking</module>
+        <module>mongoose-frontoffice-activities-summary</module>
+        <module>mongoose-frontoffice-activities-terms</module>
+        <module>mongoose-frontoffice-application</module>
+        <module>mongoose-frontoffice-application-javafx</module>
+        <module>mongoose-frontoffice-application-gwt</module>
+        <module>mongoose-frontoffice-application-gluon</module>
+
+    </modules>
+
+</project>

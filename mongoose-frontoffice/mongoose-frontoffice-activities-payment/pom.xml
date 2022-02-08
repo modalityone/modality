@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>mongoose-frontoffice</artifactId>
+        <groupId>org.mongoose</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>mongoose-frontoffice-activities-payment</artifactId>
+
+    <dependencies> <!-- Dependencies managed by WebFX (DO NOT EDIT MANUALLY) -->
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>16</version>
+            <scope>provided</scope>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>16</version>
+            <scope>provided</scope>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-aggregates</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-entities</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-sectionpanel</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-util</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-frontoffice-activities-cart-routing</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-shared-domainmodel</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-shared-entities</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-webtext-controls</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-action</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-activity</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-controls</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-i18n</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-orm-domainmodel-activity</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-uirouter</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-util</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-shared-orm-entity</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-client-uischeduler</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-client-websocketbus</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-client-windowhistory</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-client-windowlocation</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-shared-bus</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-shared-log</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-shared-submit</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-shared-util</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+    
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <!-- Generating the source artifact for GWT compilation -->
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>

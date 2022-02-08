@@ -13,7 +13,7 @@ module mongoose.backoffice.activities.options {
     requires mongoose.client.businesslogic;
     requires mongoose.client.calendar;
     requires mongoose.client.icons;
-    requires mongoose.frontend.activities.options;
+    requires mongoose.frontoffice.activities.options;
     requires mongoose.shared.entities;
     requires mongoose.shared.time;
     requires webfx.extras.visual.controls.grid;

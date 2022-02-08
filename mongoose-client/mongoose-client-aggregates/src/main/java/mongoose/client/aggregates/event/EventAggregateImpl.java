@@ -217,7 +217,7 @@ final class EventAggregateImpl implements EventAggregate {
         if (eventAvailabilitiesFutureBroadcaster == null)
             eventAvailabilitiesFutureBroadcaster = new FutureBroadcaster<>(() -> QueryService.executeQuery(QueryArgument.builder()
                     .setStatement(
-                    "with ra as (select * from resource_availability_by_event_items(?) where max>0)," + // resources with max(=max_online)=0 (like private rooms) are not displayed in the frontend
+                    "with ra as (select * from resource_availability_by_event_items(?) where max>0)," + // resources with max(=max_online)=0 (like private rooms) are not displayed in the front-office
                     // let's see if some options for this event require to have the per day availabilities details
                     " pda as (select site_id,item_id,item_family_id from option where per_day_availability and event_id=?)" +
                     // for such options we keep all the details: site, item and date (this applies to availabilities having site=option.site and item=option.item if set, item_family=item.family otherwise)

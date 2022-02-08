@@ -1,6 +1,6 @@
 package mongoose.backoffice.activities.options;
 
-import mongoose.frontend.activities.options.routing.OptionsRouting;
+import mongoose.frontoffice.activities.options.routing.OptionsRouting;
 import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.framework.client.ui.uirouter.UiRoute;
 import dev.webfx.framework.client.ui.uirouter.impl.UiRouteImpl;

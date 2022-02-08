@@ -16,7 +16,7 @@ module mongoose.backoffice.activities.bookings {
     requires mongoose.client.aggregates;
     requires mongoose.client.presentationmodel;
     requires mongoose.client.util;
-    requires mongoose.frontend.activities.fees;
+    requires mongoose.frontoffice.activities.fees;
     requires mongoose.shared.domainmodel;
     requires mongoose.shared.entities;
     requires webfx.extras.visual.base;

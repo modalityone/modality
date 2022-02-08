@@ -34,7 +34,7 @@ jobs:
       matrix:
         app: [
           { name: 'MongooseBackOffice',  module-token: 'mongoose-backoffice',  gwt-token: 'mongoose_backoffice',  web-push-branch: 'mongoose-backoffice-web-build',  ios-bundle-id: 'org.mongoose.backoffice',  version: '1.0.0-SNAPSHOT' },
-          { name: 'MongooseFrontend', module-token: 'mongoose-frontend', gwt-token: 'mongoose_frontend', web-push-branch: 'mongoose-frontend-web-build', ios-bundle-id: 'org.mongoose.frontend', version: '1.0.0-SNAPSHOT' }
+          { name: 'MongooseFrontOffice', module-token: 'mongoose-frontoffice', gwt-token: 'mongoose_frontoffice', web-push-branch: 'mongoose-frontoffice-web-build', ios-bundle-id: 'org.mongoose.frontoffice', version: '1.0.0-SNAPSHOT' }
         ]
         os-config:  [1, 2, 3, 4]
         include:

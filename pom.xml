@@ -38,7 +38,7 @@
 
         <module>mongoose-backoffice</module>
         <module>mongoose-client</module>
-        <module>mongoose-frontend</module>
+        <module>mongoose-frontoffice</module>
         <module>mongoose-server</module>
         <module>mongoose-shared</module>
 

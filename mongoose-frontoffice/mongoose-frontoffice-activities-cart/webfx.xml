@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project>
+
+    <packages>
+        <source-packages/>
+    </packages>
+
+    <dependencies>
+        <source-modules/>
+        <source-module>mongoose-client-aggregates</source-module>
+        <source-module>webfx-framework-client-activity</source-module>
+        <source-module>webfx-framework-shared-orm-domainmodel</source-module>
+        <source-module>webfx-platform-shared-submit</source-module>
+    </dependencies>
+
+    <providers>
+        <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.frontoffice.activities.cart.CartUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+    </providers>
+
+</project>

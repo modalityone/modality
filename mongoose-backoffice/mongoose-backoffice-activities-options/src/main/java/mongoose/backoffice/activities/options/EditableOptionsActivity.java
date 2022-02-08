@@ -14,7 +14,7 @@ import mongoose.client.actions.MongooseActions;
 import mongoose.client.businessdata.feesgroup.FeesGroup;
 import mongoose.client.businessdata.preselection.OptionsPreselection;
 import mongoose.client.controls.bookingcalendar.BookingCalendar;
-import mongoose.frontend.activities.options.OptionsActivity;
+import mongoose.frontoffice.activities.options.OptionsActivity;
 import mongoose.shared.entities.Label;
 import mongoose.shared.entities.Option;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;

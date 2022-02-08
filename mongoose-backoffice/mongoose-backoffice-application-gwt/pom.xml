@@ -437,35 +437,35 @@
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-frontend-activities-cart-routing</artifactId>
+            <artifactId>mongoose-frontoffice-activities-cart-routing</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-frontend-activities-fees</artifactId>
+            <artifactId>mongoose-frontoffice-activities-fees</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-frontend-activities-options</artifactId>
+            <artifactId>mongoose-frontoffice-activities-options</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-frontend-activities-person</artifactId>
+            <artifactId>mongoose-frontoffice-activities-person</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-frontend-activities-summary</artifactId>
+            <artifactId>mongoose-frontoffice-activities-summary</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>

@@ -1,7 +1,7 @@
 package mongoose.backoffice.operations.routes.bookings;
 
 import mongoose.client.aggregates.event.EventAggregate;
-import mongoose.frontend.operations.fees.RouteToFeesRequest;
+import mongoose.frontoffice.operations.fees.RouteToFeesRequest;
 import dev.webfx.platform.client.services.windowhistory.spi.BrowsingHistory;
 import dev.webfx.platform.shared.util.async.Future;
 
@@ -15,8 +15,8 @@ final class RouteToNewBackOfficeBookingExecutor {
     }
 
     private static Future<Void> execute(Object eventId, BrowsingHistory history) {
-        // When made in the backoffice, we don't want to add the new booking to the last visited booking cart (as
-        // opposed to the frontend), so we clear the reference to the active booking cart (if set) before routing
+        // When made in the back-office, we don't want to add the new booking to the last visited booking cart (as
+        // opposed to the front-office), so we clear the reference to the active booking cart (if set) before routing
         EventAggregate eventAggregate = EventAggregate.get(eventId);
         if (eventAggregate != null)
             eventAggregate.setActiveCart(null);

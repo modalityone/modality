@@ -292,10 +292,10 @@
     <!-- used by mongoose-client-sectionpanel (SOURCE) -->
     <source path="mongoose/client/controls/bookingcalendar"/>
     <!--======================< mongoose-client-bookingoptionspanel >=======================-->
-    <!-- used by mongoose-frontend-activities-summary (SOURCE) -->
+    <!-- used by mongoose-frontoffice-activities-summary (SOURCE) -->
     <source path="mongoose/client/controls/bookingoptionspanel"/>
     <!--=========================< mongoose-client-bookingprocess >=========================-->
-    <!-- used by mongoose-frontend-activities-fees (SOURCE) -->
+    <!-- used by mongoose-frontoffice-activities-fees (SOURCE) -->
     <source path="mongoose/client/activity/bookingprocess"/>
     <!--===========================< mongoose-client-busconfig >============================-->
     <!-- used by mongoose-client-application (RESOURCE) -->
@@ -397,31 +397,31 @@
     <!--===========================< mongoose-client-validation >===========================-->
     <!-- used by mongoose-client-personaldetails (SOURCE) -->
     <source path="mongoose/client/validation"/>
-    <!--===================< mongoose-frontend-activities-cart-routing >====================-->
-    <!-- used by mongoose-frontend-activities-summary (SOURCE) -->
-    <source path="mongoose/frontend/activities/cart/base"/>
-    <source path="mongoose/frontend/activities/cart/routing"/>
-    <source path="mongoose/frontend/operations/cart"/>
-    <!--=======================< mongoose-frontend-activities-fees >========================-->
+    <!--==================< mongoose-frontoffice-activities-cart-routing >==================-->
+    <!-- used by mongoose-frontoffice-activities-summary (SOURCE) -->
+    <source path="mongoose/frontoffice/activities/cart/base"/>
+    <source path="mongoose/frontoffice/activities/cart/routing"/>
+    <source path="mongoose/frontoffice/operations/cart"/>
+    <!--======================< mongoose-frontoffice-activities-fees >======================-->
     <!-- used by mongoose-backoffice-activities-bookings (SOURCE) -->
-    <source path="mongoose/frontend/activities/fees"/>
-    <source path="mongoose/frontend/activities/fees/routing"/>
-    <source path="mongoose/frontend/operations/fees"/>
-    <!--======================< mongoose-frontend-activities-options >======================-->
-    <!-- used by mongoose-frontend-activities-fees (SOURCE) -->
-    <source path="mongoose/frontend/activities/options"/>
-    <source path="mongoose/frontend/activities/options/routing"/>
-    <source path="mongoose/frontend/operations/options"/>
-    <!--======================< mongoose-frontend-activities-person >=======================-->
-    <!-- used by mongoose-frontend-activities-options (SOURCE) -->
-    <source path="mongoose/frontend/activities/person"/>
-    <source path="mongoose/frontend/activities/person/routing"/>
-    <source path="mongoose/frontend/operations/person"/>
-    <!--======================< mongoose-frontend-activities-summary >======================-->
-    <!-- used by mongoose-frontend-activities-person (SOURCE) -->
-    <source path="mongoose/frontend/activities/summary"/>
-    <source path="mongoose/frontend/activities/summary/routing"/>
-    <source path="mongoose/frontend/operations/summary"/>
+    <source path="mongoose/frontoffice/activities/fees"/>
+    <source path="mongoose/frontoffice/activities/fees/routing"/>
+    <source path="mongoose/frontoffice/operations/fees"/>
+    <!--====================< mongoose-frontoffice-activities-options >=====================-->
+    <!-- used by mongoose-frontoffice-activities-fees (SOURCE) -->
+    <source path="mongoose/frontoffice/activities/options"/>
+    <source path="mongoose/frontoffice/activities/options/routing"/>
+    <source path="mongoose/frontoffice/operations/options"/>
+    <!--=====================< mongoose-frontoffice-activities-person >=====================-->
+    <!-- used by mongoose-frontoffice-activities-options (SOURCE) -->
+    <source path="mongoose/frontoffice/activities/person"/>
+    <source path="mongoose/frontoffice/activities/person/routing"/>
+    <source path="mongoose/frontoffice/operations/person"/>
+    <!--====================< mongoose-frontoffice-activities-summary >=====================-->
+    <!-- used by mongoose-frontoffice-activities-person (SOURCE) -->
+    <source path="mongoose/frontoffice/activities/summary"/>
+    <source path="mongoose/frontoffice/activities/summary/routing"/>
+    <source path="mongoose/frontoffice/operations/summary"/>
     <!--==========================< mongoose-shared-domainmodel >===========================-->
     <!-- used by mongoose-shared-entities (SOURCE) -->
     <source path="mongoose/shared/domainmodel/formatters"/>
@@ -447,7 +447,7 @@
     <source path="dev/webfx/extras/cell/renderer"/>
     <source path="dev/webfx/extras/cell/rowstyle"/>
     <!--==============================< webfx-extras-flexbox >==============================-->
-    <!-- used by mongoose-frontend-activities-options (SOURCE) -->
+    <!-- used by mongoose-frontoffice-activities-options (SOURCE) -->
     <source path="dev/webfx/extras/flexbox"/>
     <!--============================< webfx-extras-imagestore >=============================-->
     <!-- used by webfx-extras-cell (SOURCE) -->
@@ -498,7 +498,7 @@
     <source path="dev/webfx/extras/visual/controls/grid/peers/gwt/html"/>
     <source path="dev/webfx/extras/visual/controls/grid/registry"/>
     <!--==================< webfx-extras-visual-controls-grid-peers-base >==================-->
-    <!-- used by mongoose-frontend-activities-fees (SOURCE) -->
+    <!-- used by mongoose-frontoffice-activities-fees (SOURCE) -->
     <!-- used by webfx-extras-visual-controls-grid-peers-gwt (SOURCE) -->
     <source path="dev/webfx/extras/cell/collator/grid"/>
     <source path="dev/webfx/extras/visual/controls/grid/peers/base"/>
