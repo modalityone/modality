@@ -38,7 +38,7 @@ public class MongooseClientContainerActivity extends ViewDomainActivityBase
         String[] sortedPossibleNavigationOperations = {
                 "RouteBackward",
                 "RouteForward",
-                // Backend operations
+                // Back-Office operations
                 "RouteToOrganizations",
                 "RouteToEvents",
                 "RouteToBookings",

@@ -182,7 +182,7 @@ final class FeesActivity extends BookingProcessActivity {
                             if (availability == null && optionsPreselection.hasAccommodationExcludingSharing()) // ... if it's an accommodation option (but not just sharing)
                                 availability = 0; // we show it as sold out - otherwise (if it's a sharing option or no accommodation) we show it as available
                             boolean soldout = availability != null && Numbers.doubleValue(availability) <= 0 || // Showing sold out if the availability is zero
-                                    optionsPreselection.isForceSoldout() || // or if the option has been forced as sold out in the backend
+                                    optionsPreselection.isForceSoldout() || // or if the option has been forced as sold out in the back-office
                                     feesGroup.isForceSoldout(); // or if the whole FeesGroup has been forced as sold out
                             if (soldout)
                                 return buttonFactory.newSoldoutButton();

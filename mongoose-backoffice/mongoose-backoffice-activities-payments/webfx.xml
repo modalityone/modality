@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project>
+
+    <packages>
+        <source-packages/>
+    </packages>
+
+    <providers>
+        <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.backoffice.activities.payments.PaymentsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+        <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.backoffice.activities.payments.RouteToPaymentsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+    </providers>
+
+    <dependencies>
+        <source-modules/>
+        <source-module>webfx-framework-client-action</source-module>
+        <source-module>webfx-framework-client-activity</source-module>
+        <source-module>webfx-platform-shared-util</source-module>
+    </dependencies>
+
+</project>

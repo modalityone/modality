@@ -124,10 +124,10 @@ VisualGrid, VisualLineChart, VisualPieChart, VisualBarChart, VisualAreaChart, Gr
 .share_mate { -color-base: #FFF073; }
 .wrongAllocation { -color-base: #FF4400; }
 
-.backend_released {-color-base: #E0CDCD;}
+.backoffice_released {-color-base: #E0CDCD;}
 .frontend_released {-color-base: #E0CDCD;}
 
-.backend_released {
+.backoffice_released {
     -fx-background-color:   -fx-table-cell-border-color,
                             linear-gradient(from 0% 0% to 0% 100%, derive(-color-base, +10%) 0%, derive(-color-base, -10%) 100%),
                             linear-gradient(from 0px 5px to 5px 0px, reflect, transparent, transparent 85%, #808080);

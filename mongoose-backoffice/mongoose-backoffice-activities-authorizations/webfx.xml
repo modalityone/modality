@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project>
+
+    <packages>
+        <source-packages/>
+    </packages>
+
+    <providers>
+        <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.backoffice.activities.authorizations.AuthorizationsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+        <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.backoffice.activities.authorizations.RouteToAuthorizationsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+    </providers>
+
+    <dependencies>
+        <source-modules/>
+        <source-module>webfx-platform-shared-util</source-module>
+        <source-module>webfx-framework-client-activity</source-module>
+        <source-module>webfx-kit-javafxcontrols-emul</source-module>
+    </dependencies>
+
+</project>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project executable="true" application-module="mongoose-backoffice-application">
+
+    <dependencies>
+        <source-modules/>
+        <plugin-module>mongoose-backoffice-application</plugin-module>
+    </dependencies>
+
+    <html>
+        <head>
+            <title>Mongoose Back-Office</title>
+        </head>
+    </html>
+
+</project>

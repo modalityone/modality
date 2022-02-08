@@ -134,11 +134,11 @@ tr.specialRate, .grid-row.specialRate {
 .share_mate { --color-light: #fef087; --color-dark: #e6d768 }
 .wrongAllocation { --color-base: #FF4400; }
 
-/* JavaFx declaration for backend_released and frontend_release (not converted to html5 css for now)
-.backend_released { --color-base: #E0CDCD;}
+/* JavaFX declaration for backoffice_released and frontend_release (not converted to html5 css for now)
+.backoffice_released { --color-base: #E0CDCD;}
 .frontend_released { --color-base: #E0CDCD;}
 
-.backend_released {
+.backoffice_released {
     -fx-background-color:   -fx-table-cell-border-color,
                             linear-gradient(from 0% 0% to 0% 100%, derive(-color-base, +10%) 0%, derive(-color-base, -10%) 100%),
                             linear-gradient(from 0px 5px to 5px 0px, reflect, transparent, transparent 85%, #808080);
@@ -153,7 +153,7 @@ tr.specialRate, .grid-row.specialRate {
 */
 
 /* Just applying the same as cancelled for now */
-.backend_released, .frontend_released { --color-light: #e3a9d3; --color-dark: #ca90b9; }
+.backoffice_released, .frontend_released { --color-light: #e3a9d3; --color-dark: #ca90b9; }
 
 tr.share_owner, .grid-row.share_owner {
     font-style: italic;
