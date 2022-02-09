@@ -68,7 +68,7 @@ jobs:
             fatjar-artifact-suffix:        'MacOS-x64.jar'                      # build 11)
             #jvm-dmg-artifact-suffix:       'MacOS-x64-jvm.dmg'                  # build 12)
             #jvm-pkg-artifact-suffix:       'MacOS-x64-jvm.pkg'                  # build 13)
-            # Commented MacOS Desktop due to new error from Gluon plugin: No valid Identity (Certificate) found for macOS development.
+            # Commented macOS Desktop due to new error from Gluon plugin: No valid Identity (Certificate) found for macOS development.
             # gluon-desktop-arch-token:      'x86_64-darwin'                      # build 14)
             # gluon-desktop-Artifact-suffix: 'MacOS-x64-native-runnable'          # build 14)
             # Note: the iOS build needs the Apple certificate in secrets (the steps will be skipped otherwise)
@@ -83,7 +83,7 @@ jobs:
       app-gwt-module-dir:        ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-gwt
       app-gwt-build-dir:         ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-gwt/target/${{ matrix.app.module-token }}-application-gwt-${{ matrix.app.version }}/${{ matrix.app.gwt-token }}_application_gwt
       app-gluon-module-dir:      ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-gluon
-      web-push-repository-name:  'mongoose' # This same repository (Github doesn't provide ${{ github.repository_name }}
+      web-push-repository-name:  'mongoose' # This same repository (GitHub doesn't provide ${{ github.repository_name }}
       web-push-repository-owner: ${{ github.repository_owner }}
       web-push-username: ${{ github.actor }}
       web-push-email: ${{ secrets.API_GITHUB_EMAIL }}
@@ -149,13 +149,13 @@ jobs:
       # Building this repository with JDK 13+ (Java 11 target) including a GWT compilation (if required)
       - if: matrix.web-artifact-suffix != null
         name: Build this application (OpenJFX fat jar + GWT build)
-        run: mvn -B -P 'gwt-compile,openjfx-fatjar,javapackager' package
+        run: mvn -B -P 'gwt-compile,openjfx-fatjar,!javapackager' package # profile javapackager removed due to module error with Java-WebSocket
         working-directory: ${{ env.app-parent-module-dir }}
 
       # Or building this repository with JDK 13+ (Java 11 target) excluding a GWT compilation
       - if: matrix.web-artifact-suffix == null
         name: Build this application (OpenJFX fat jar - no GWT build)
-        run: mvn -B -P '!gwt-compile,openjfx-fatjar,javapackager' package
+        run: mvn -B -P '!gwt-compile,openjfx-fatjar,!javapackager' package # profile javapackager removed due to module error with Java-WebSocket
         working-directory: ${{ env.app-parent-module-dir }}
 
 
