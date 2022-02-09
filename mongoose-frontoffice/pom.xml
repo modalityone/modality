@@ -26,7 +26,7 @@
         <module>mongoose-frontoffice-activities-summary</module>
         <module>mongoose-frontoffice-activities-terms</module>
         <module>mongoose-frontoffice-application</module>
-        <module>mongoose-frontoffice-application-javafx</module>
+        <module>mongoose-frontoffice-application-openjfx</module>
         <module>mongoose-frontoffice-application-gwt</module>
         <module>mongoose-frontoffice-application-gluon</module>
 

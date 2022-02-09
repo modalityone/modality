@@ -7,7 +7,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>mongoose-backoffice-application-javafx</artifactId>
+    <artifactId>mongoose-backoffice-application-openjfx</artifactId>
 
     <dependencies> <!-- Dependencies managed by WebFX (DO NOT EDIT MANUALLY) -->
 
@@ -55,7 +55,7 @@
     
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-extras-visual-controls-charts-peers-javafx</artifactId>
+            <artifactId>webfx-extras-visual-controls-charts-peers-openjfx</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
     
@@ -67,7 +67,7 @@
     
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-extras-visual-controls-grid-peers-javafx</artifactId>
+            <artifactId>webfx-extras-visual-controls-grid-peers-openjfx</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
     
@@ -79,7 +79,7 @@
     
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-extras-webtext-controls-peers-javafx</artifactId>
+            <artifactId>webfx-extras-webtext-controls-peers-openjfx</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
     
@@ -127,7 +127,7 @@
     
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-kit-javafx</artifactId>
+            <artifactId>webfx-kit-openjfx</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
     
@@ -234,7 +234,7 @@
     <profiles>
         <!-- profile to make a fat standalone executable jar with all dependent libraries included inside -->
         <profile>
-            <id>javafx-fatjar</id>
+            <id>openjfx-fatjar</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -269,7 +269,7 @@
 
         <!-- profile to make a non fat standalone executable jar with all dependent libraries unpacked in lib folder -->
         <profile>
-            <id>javafx-nonfatjar</id>
+            <id>openjfx-nonfatjar</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -302,7 +302,7 @@
 
         <!-- Profile to minimize and obfuscate the jar file with Proguard -->
         <profile>
-            <id>javafx-minjar</id>
+            <id>openjfx-minjar</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>

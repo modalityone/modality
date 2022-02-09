@@ -1,4 +1,4 @@
-package mongoose.backoffice.activities.event.clone.javafx;
+package mongoose.backoffice.activities.event.clone.openjfx;
 
 import javafx.scene.control.DatePicker;
 import mongoose.backoffice.activities.cloneevent.CloneEventPresentationModel;

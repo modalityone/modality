@@ -32,7 +32,7 @@
     
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-extras-visual-controls-grid-peers-javafx</artifactId>
+            <artifactId>webfx-extras-visual-controls-grid-peers-openjfx</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
     
@@ -44,7 +44,7 @@
     
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-extras-webtext-controls-peers-javafx</artifactId>
+            <artifactId>webfx-extras-webtext-controls-peers-openjfx</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
     
@@ -74,7 +74,7 @@
     
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-kit-javafx</artifactId>
+            <artifactId>webfx-kit-openjfx</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
     

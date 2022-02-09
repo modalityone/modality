@@ -3,18 +3,18 @@
 ##################################################################################################################
 # Builds generated on Ubuntu:                                                                                    #
 #  1) App-Web.war : Web app (built with GWT)                                                                     #
-#  2) App-Linux-x64-runnable.jar : Java archive (fat jar with JavaFx for Linux)                                  #
+#  2) App-Linux-x64-runnable.jar : Java archive (fat jar with OpenJFX for Linux)                                 #
 #  3) App-Linux-x64-jvm-package.deb                                                                              #
 #  4) App-Linux-x64-jvm-package.rpm                                                                              #
 #  5) App-Linux-x64-native-runnable : Linux desktop native app (Gluon)                                           #
 #  6) App-Android-aarch64-native-package.apk : Android native app (Gluon)                                        #
 # Builds generated on Windows:                                                                                   #
-#  7) App-Windows-x64-runnable.jar : Java archive (fat jar with JavaFx for Windows)                              #
+#  7) App-Windows-x64-runnable.jar : Java archive (fat jar with OpenJFX for Windows)                             #
 #  8) App-Windows-x64-jvm-installer.exe : Windows installer (exe)                                                #
 #  9) App-Windows-x64-jvm-installer.msi : Windows installer (msi)                                                #
 # 10) App-Windows-x64-native-runnable.exe : Windows desktop native app (Gluon)                                   #
 # Builds generated on MacOS:                                                                                     #
-# 11) App-MacOS-x64-runnable.jar : Java archive (fat jar with JavaFx for MacOS)                                  #
+# 11) App-MacOS-x64-runnable.jar : Java archive (fat jar with OpenJFX for MacOS)                                 #
 # 12) App-MacOs-x64-jvm-package.dmg                                                                              #
 # 13) App-MacOS-x64-jvm-package.pkg                                                                              #
 # 14) App-macOS-x64-native-runnable : MacOS desktop native app (Gluon)                                           #
@@ -40,7 +40,7 @@ jobs:
         include:
           - os-config: 1 # Generates builds 1) 2) 3) 4) & 5)
             os: ubuntu-latest
-            # Note: 1) must run on Ubuntu because the Github push action (to update the web-build branch) works only on Ubuntu
+            # Note: 1) must run on Ubuntu because the GitHub push action (to update the web-build branch) works only on Ubuntu
             web-artifact-suffix:           'Web.war'                            # build 1)
             fatjar-artifact-suffix:        'Linux-x64-runnable.jar'             # build 2)
             #jvm-deb-artifact-suffix:       'Linux-x64-jvm-package.deb'          # build 3)
@@ -61,7 +61,7 @@ jobs:
             gluon-desktop-arch-token:      'x86_64-windows'                     # build 10)
             # Commented as getting error: Error running candle to generate wixobj
             # gluon-desktop-artifact-suffix: 'Windows-x64-native-runnable.exe'    # build 10)
-            #msi-desktop-artifact-suffix:   'Windows-x64-jvm-installer.msi'      # build 9)
+            # msi-desktop-artifact-suffix:   'Windows-x64-jvm-installer.msi'      # build 9)
 
           - os-config: 4 # Generates builds 11) 12) 13) 14) & 15)
             os: macos-latest
@@ -69,8 +69,8 @@ jobs:
             #jvm-dmg-artifact-suffix:       'MacOS-x64-jvm.dmg'                  # build 12)
             #jvm-pkg-artifact-suffix:       'MacOS-x64-jvm.pkg'                  # build 13)
             # Commented MacOS Desktop due to new error from Gluon plugin: No valid Identity (Certificate) found for macOS development.
-            #gluon-desktop-arch-token:      'x86_64-darwin'                      # build 14)
-            #gluon-desktop-Artifact-suffix: 'MacOS-x64-native-runnable'          # build 14)
+            # gluon-desktop-arch-token:      'x86_64-darwin'                      # build 14)
+            # gluon-desktop-Artifact-suffix: 'MacOS-x64-native-runnable'          # build 14)
             # Note: the iOS build needs the Apple certificate in secrets (the steps will be skipped otherwise)
             gluon-ios-arch-token:          'arm64-ios'                          # build 15)
             gluon-ios-artifact-suffix:     'iOS-arm64-native.ipa'               # build 15)
@@ -79,7 +79,7 @@ jobs:
       app-name:  ${{ matrix.app.name }}
       app-repo-dir:              ./
       app-parent-module-dir:     ./${{ matrix.app.module-token }}
-      app-javafx-module-dir:     ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-javafx
+      app-openjfx-module-dir:    ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-openjfx
       app-gwt-module-dir:        ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-gwt
       app-gwt-build-dir:         ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-gwt/target/${{ matrix.app.module-token }}-application-gwt-${{ matrix.app.version }}/${{ matrix.app.gwt-token }}_application_gwt
       app-gluon-module-dir:      ./${{ matrix.app.module-token }}/${{ matrix.app.module-token }}-application-gluon
@@ -124,38 +124,38 @@ jobs:
 
 
       ##################################################################################################################
-      #      Building WebFx + this repository (jars + javafx fat jar + javapackager + Web build (GWT) if required)     #
+      #      Building WebFx + this repository (jars + OpenJFX fat jar + javapackager + Web build (GWT) if required)    #
       ##################################################################################################################
       # Builds generated on Ubuntu:                                                                                    #
       #  1) App-Web.war : Web app (built with GWT)                                                                     #
-      #  2) App-Linux-x64-runnable.jar : Java archive (fat jar with JavaFx for Linux)                                  #
+      #  2) App-Linux-x64-runnable.jar : Java archive (fat jar with OpenJFX for Linux)                                 #
       #  3) App-Linux-x64-jvm-package.deb                                                                              #
       #  4) App-Linux-x64-jvm-package.rpm                                                                              #
       # Builds generated on Windows:                                                                                   #
-      #  7) App-Windows-x64-runnable.jar : Java archive (fat jar with JavaFx for Windows)                              #
+      #  7) App-Windows-x64-runnable.jar : Java archive (fat jar with OpenJFX for Windows)                             #
       #  8) App-Windows-x64-jvm-installer.exe : Windows installer (exe)                                                #
       #  9) App-Windows-x64-jvm-installer.msi : Windows installer (msi)                                                #
       # Builds generated on MacOS:                                                                                     #
-      # 11) App-MacOS-x64-runnable.jar : Java archive (fat jar with JavaFx for MacOS)                                  #
+      # 11) App-MacOS-x64-runnable.jar : Java archive (fat jar with OpenJFX for MacOS)                                 #
       # 12) App-MacOs-x64-jvm-package.dmg                                                                              #
       # 13) App-MacOS-x64-jvm-package.pkg                                                                              #
       ##################################################################################################################
 
       # Building this repository with JDK 13+ (Java 11 target)
-      - name: Build this repository (no JavaFx fat jar - no GWT build)
-        run: mvn -B -P '!gwt-compile,!javafx-fatjar,!javapackager' install
+      - name: Build this repository (no OpenJFX fat jar - no GWT build)
+        run: mvn -B -P '!gwt-compile,!openjfx-fatjar,!javapackager' install
         working-directory: ${{ env.app-repo-dir }}
 
       # Building this repository with JDK 13+ (Java 11 target) including a GWT compilation (if required)
       - if: matrix.web-artifact-suffix != null
-        name: Build this application (JavaFx fat jar + GWT build)
-        run: mvn -B -P 'gwt-compile,javafx-fatjar,!javapackager' package
+        name: Build this application (OpenJFX fat jar + GWT build)
+        run: mvn -B -P 'gwt-compile,openjfx-fatjar,javapackager' package
         working-directory: ${{ env.app-parent-module-dir }}
 
       # Or building this repository with JDK 13+ (Java 11 target) excluding a GWT compilation
       - if: matrix.web-artifact-suffix == null
-        name: Build this application (JavaFx fat jar - no GWT build)
-        run: mvn -B -P '!gwt-compile,javafx-fatjar,!javapackager' package
+        name: Build this application (OpenJFX fat jar - no GWT build)
+        run: mvn -B -P '!gwt-compile,openjfx-fatjar,javapackager' package
         working-directory: ${{ env.app-parent-module-dir }}
 
 
@@ -182,15 +182,15 @@ jobs:
       ##################################################################################################################
       # On Ubuntu:                                                                                                     #
       #  1) App-Web.war : Web app (built with GWT)                                                                     #
-      #  2) App-Linux-x64-runnable.jar : Java archive (fat jar with JavaFx for Linux)                                  #
+      #  2) App-Linux-x64-runnable.jar : Java archive (fat jar with OpenJFX for Linux)                                 #
       #  3) App-Linux-x64-jvm-package.deb                                                                              #
       #  4) App-Linux-x64-jvm-package.rpm                                                                              #
       # On Windows:                                                                                                    #
-      #  7) App-Windows-x64-runnable.jar : Java archive (fat jar with JavaFx for Windows)                              #
+      #  7) App-Windows-x64-runnable.jar : Java archive (fat jar with OpenJFX for Windows)                             #
       #  8) App-Windows-x64-jvm-installer.exe : Windows installer (exe)                                                #
       #  9) App-Windows-x64-jvm-installer.msi : Windows installer (msi)                                                #
       # On MacOS:                                                                                                      #
-      # 11) App-MacOS-x64-runnable.jar : Java archive (fat jar with JavaFx for MacOS)                                  #
+      # 11) App-MacOS-x64-runnable.jar : Java archive (fat jar with OpenJFX for MacOS)                                 #
       # 12) App-MacOs-x64-jvm-package.dmg                                                                              #
       # 13) App-MacOS-x64-jvm-package.pkg                                                                              #
       ##################################################################################################################
@@ -202,34 +202,34 @@ jobs:
 
       # Staging 2) | 7) | 11)
       - if: matrix.fatjar-artifact-suffix != null
-        name: Copy fat jar with JavaFx to staging
-        run: cp ${{ env.app-javafx-module-dir }}/target/*-fat.jar staging/${{ env.app-name }}-${{ matrix.fatjar-artifact-suffix }}
+        name: Copy fat jar with OpenJFX to staging
+        run: cp ${{ env.app-openjfx-module-dir }}/target/*-fat.jar staging/${{ env.app-name }}-${{ matrix.fatjar-artifact-suffix }}
 
       # Staging 3)
       - if: matrix.jvm-deb-artifact-suffix != null
-        run: cp ${{ env.app-javafx-module-dir }}/target/javapackager/*.deb staging/${{ env.app-name }}-${{ matrix.jvm-deb-artifact-suffix }} | true
+        run: cp ${{ env.app-openjfx-module-dir }}/target/javapackager/*.deb staging/${{ env.app-name }}-${{ matrix.jvm-deb-artifact-suffix }} | true
 
       # Staging 4)
       - if: matrix.jvm-rpm-artifact-suffix != null
-        run: cp ${{ env.app-javafx-module-dir }}/target/javapackager/*.rpm staging/${{ env.app-name }}-${{ matrix.jvm-rpm-artifact-suffix }} | true
+        run: cp ${{ env.app-openjfx-module-dir }}/target/javapackager/*.rpm staging/${{ env.app-name }}-${{ matrix.jvm-rpm-artifact-suffix }} | true
 
       # Staging 8)
       - if: matrix.jvm-exe-artifact-suffix != null
-        run: Copy-Item "${{ env.app-javafx-module-dir }}/target/javapackager/*.exe" -Destination "staging/${{ env.app-name }}-${{ matrix.jvm-exe-artifact-suffix }}"
+        run: Copy-Item "${{ env.app-openjfx-module-dir }}/target/javapackager/*.exe" -Destination "staging/${{ env.app-name }}-${{ matrix.jvm-exe-artifact-suffix }}"
 
       # Staging 9)
       - if: matrix.jvm-msi-artifact-suffix != null
         run: |
-          dir ${{ env.app-javafx-module-dir }}/target/javapackager/
-          Copy-Item "${{ env.app-javafx-module-dir }}/target/javapackager/*.msi" -Destination "staging/${{ env.app-name }}-${{ matrix.jvm-msi-artifact-suffix }}"
+          dir ${{ env.app-openjfx-module-dir }}/target/javapackager/
+          Copy-Item "${{ env.app-openjfx-module-dir }}/target/javapackager/*.msi" -Destination "staging/${{ env.app-name }}-${{ matrix.jvm-msi-artifact-suffix }}"
 
       # Staging 12)
       - if: matrix.jvm-dmg-artifact-suffix != null
-        run: cp ${{ env.app-javafx-module-dir }}/target/javapackager/*.dmg staging/${{ env.app-name }}-${{ matrix.jvm-dmg-artifact-suffix }} | true
+        run: cp ${{ env.app-openjfx-module-dir }}/target/javapackager/*.dmg staging/${{ env.app-name }}-${{ matrix.jvm-dmg-artifact-suffix }} | true
 
       # Staging 13)
       - if: matrix.jvm-pkg-artifact-suffix != null
-        run: cp ${{ env.app-javafx-module-dir }}/target/javapackager/*.pkg staging/${{ env.app-name }}-${{ matrix.jvm-pkg-artifact-suffix }} | true
+        run: cp ${{ env.app-openjfx-module-dir }}/target/javapackager/*.pkg staging/${{ env.app-name }}-${{ matrix.jvm-pkg-artifact-suffix }} | true
 
 
       ##################################################################################################################
@@ -244,13 +244,13 @@ jobs:
         name: Create Windows Installer (msi)
         run: |
           mvn -B javafx:jlink
-          ${{ env.JAVA_HOME }}\bin\jpackage --input .\target\ --name ${{ env.app-name }} --main-jar ${{ matrix.app.module-token }}-application-javafx-${{ matrix.app.version }}.jar --main-class dev.webfx.platform.shared.services.appcontainer.ApplicationContainer --type msi --runtime-image .\target\jlinkImage --app-version 0.0.0 --win-per-user-install --win-menu --win-menu-group WebFx
-        working-directory: ${{ env.app-javafx-module-dir }}
+          ${{ env.JAVA_HOME }}\bin\jpackage --input .\target\ --name ${{ env.app-name }} --main-jar ${{ matrix.app.module-token }}-application-openjfx-${{ matrix.app.version }}.jar --main-class dev.webfx.platform.shared.services.appcontainer.ApplicationContainer --type msi --runtime-image .\target\jlinkImage --app-version 0.0.0 --win-per-user-install --win-menu --win-menu-group WebFx
+        working-directory: ${{ env.app-openjfx-module-dir }}
 
       # Staging 9)
       - if: matrix.msi-desktop-artifact-suffix != null
         name: Copy Windows installer to staging
-        run: cp ${{ env.app-javafx-module-dir }}/*.msi staging/${{ env.app-name }}-${{ matrix.msi-desktop-artifact-suffix }}
+        run: cp ${{ env.app-openjfx-module-dir }}/*.msi staging/${{ env.app-name }}-${{ matrix.msi-desktop-artifact-suffix }}
 
 
       ##################################################################################################################
@@ -296,7 +296,7 @@ jobs:
         with:
           gluon-license: ${{ secrets.GLUON_LICENSE }}
 
-      # Invoking the Gluon Maven plugin to build the native Desktop app (chaining build & package goals)
+      # Invoking the Gluon Client Maven plugin to build the native Desktop app (chaining build & package goals)
       - if: matrix.gluon-desktop-artifact-suffix != null
         name: Gluon Build for Desktop
         run: mvn -B -P 'gluon-desktop' gluonfx:build gluonfx:package # May take a while
@@ -402,19 +402,19 @@ jobs:
       ##################################################################################################################
       # Build-1-assets:                                                                                                #
       #  1) App-Web.war : Web app (built with GWT)                                                                     #
-      #  2) App-Linux-x64-runnable.jar : Java archive (fat jar with JavaFx for Linux)                                  #
+      #  2) App-Linux-x64-runnable.jar : Java archive (fat jar with OpenJFX for Linux)                                 #
       #  3) App-Linux-x64-jvm-package.deb                                                                              #
       #  4) App-Linux-x64-jvm-package.rpm                                                                              #
       #  5) App-Linux-x64-native-runnable : Linux desktop native app (Gluon)                                           #
       # Build-2-assets:                                                                                                #
       #  6) App-Android-aarch64-native-package.apk : Android native app (Gluon)                                        #
       # Build-3-assets:                                                                                                #
-      #  7) App-Windows-x64-runnable.jar : Java archive (fat jar with JavaFx for Windows)                              #
+      #  7) App-Windows-x64-runnable.jar : Java archive (fat jar with OpenJFX for Windows)                             #
       #  8) App-Windows-x64-jvm-installer.exe : Windows installer (exe)                                                #
       #  9) App-Windows-x64-jvm-installer.msi : Windows installer (msi)                                                #
       # 10) App-Windows-x64-native-runnable.exe : Windows desktop native app (Gluon)                                   #
       # Build-4-assets:                                                                                                #
-      # 11) App-MacOS-x64-runnable.jar : Java archive (fat jar with JavaFx for MacOS)                                  #
+      # 11) App-MacOS-x64-runnable.jar : Java archive (fat jar with OpenJFX for MacOS)                                 #
       # 12) App-MacOs-x64-jvm-package.dmg                                                                              #
       # 13) App-MacOS-x64-jvm-package.pkg                                                                              #
       # 14) App-macOS-x64-native-runnable : MacOS desktop native app (Gluon)                                           #

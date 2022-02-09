@@ -34,7 +34,7 @@
         <module>mongoose-backoffice-activities-statistics</module>
         <module>mongoose-backoffice-activities-users</module>
         <module>mongoose-backoffice-application</module>
-        <module>mongoose-backoffice-application-javafx</module>
+        <module>mongoose-backoffice-application-openjfx</module>
         <module>mongoose-backoffice-application-gwt</module>
         <module>mongoose-backoffice-application-gluon</module>
         <module>mongoose-backoffice-bookingdetailspanel</module>

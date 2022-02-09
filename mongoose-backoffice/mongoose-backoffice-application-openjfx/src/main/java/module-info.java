@@ -1,6 +1,6 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
-module mongoose.backoffice.application.javafx {
+module mongoose.backoffice.application.openjfx {
 
     // Direct dependencies modules
     requires javafx.controls;
@@ -15,7 +15,7 @@ module mongoose.backoffice.application.javafx {
     requires webfx.framework.shared.orm.dql.query.interceptor;
     requires webfx.framework.shared.orm.dql.querypush.interceptor;
     requires webfx.framework.shared.orm.dql.submit.interceptor;
-    requires webfx.kit.javafx;
+    requires webfx.kit.openjfx;
     requires webfx.platform.java.appcontainer.impl;
     requires webfx.platform.java.resource.impl;
     requires webfx.platform.java.scheduler.impl;
@@ -31,6 +31,6 @@ module mongoose.backoffice.application.javafx {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.backoffice.activities.event.clone.javafx;
+    exports mongoose.backoffice.activities.event.clone.openjfx;
 
 }

@@ -1,6 +1,6 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
-module mongoose.frontoffice.application.javafx {
+module mongoose.frontoffice.application.openjfx {
 
     // Direct dependencies modules
     requires mongoose.client.navigationarrows.java;
@@ -8,7 +8,7 @@ module mongoose.frontoffice.application.javafx {
     requires webfx.framework.shared.orm.dql.query.interceptor;
     requires webfx.framework.shared.orm.dql.querypush.interceptor;
     requires webfx.framework.shared.orm.dql.submit.interceptor;
-    requires webfx.kit.javafx;
+    requires webfx.kit.openjfx;
     requires webfx.platform.java.appcontainer.impl;
     requires webfx.platform.java.resource.impl;
     requires webfx.platform.java.scheduler.impl;
