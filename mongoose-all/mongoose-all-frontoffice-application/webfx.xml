@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project>
+
+    <packages>
+        <source-packages/>
+    </packages>
+
+    <providers>
+        <javafx.application.Application>mongoose.all.frontoffice.application.MongooseFrontOfficeApplication</javafx.application.Application>
+    </providers>
+
+    <dependencies>
+        <source-modules/>
+        <source-module>javafx-graphics</source-module>
+
+        <plugin-module>mongoose-frontoffice-activities-startbooking</plugin-module>
+        <plugin-module>mongoose-frontoffice-activities-terms</plugin-module>
+        <plugin-module>mongoose-frontoffice-activities-program</plugin-module>
+        <plugin-module>mongoose-frontoffice-activities-fees</plugin-module>
+        <plugin-module>mongoose-frontoffice-activities-options</plugin-module>
+        <plugin-module>mongoose-frontoffice-activities-person</plugin-module>
+        <plugin-module>mongoose-frontoffice-activities-summary</plugin-module>
+        <plugin-module>mongoose-frontoffice-activities-cart</plugin-module>
+        <plugin-module>mongoose-frontoffice-activities-payment</plugin-module>
+        <plugin-module>mongoose-frontoffice-activities-contactus</plugin-module>
+    </dependencies>
+
+</project>

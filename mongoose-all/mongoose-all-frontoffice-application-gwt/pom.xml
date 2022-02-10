@@ -1,0 +1,1066 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>mongoose-all</artifactId>
+        <groupId>org.mongoose</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>mongoose-all-frontoffice-application-gwt</artifactId>
+    <packaging>gwt-app</packaging>
+
+    <dependencies> <!-- Dependencies managed by WebFX (DO NOT EDIT MANUALLY) -->
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-javafxbase-emul</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-javafxcontrols-emul</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-javafxgraphics-emul</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>com.google.elemental2</groupId>
+            <artifactId>elemental2-svg</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.jresearch.gwt.time</groupId>
+            <artifactId>org.jresearch.gwt.time</artifactId>
+            <version>2.0.3</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-dev</artifactId>
+            <version>2.9.0</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.treblereel.gwt.nio</groupId>
+            <artifactId>gwt-nio</artifactId>
+            <version>1.1</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-all-frontoffice-application</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-activities-login</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-activities-unauthorized</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-activity</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-aggregates</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-application</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-authn</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-authz</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-bookingcalendar</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-bookingoptionspanel</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-bookingprocess</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-busconfig</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-businesslogic</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-calendar</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-css-web</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-entities</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-i18n</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-icons</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-operationactionsloading</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-personaldetails</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-presentationmodel</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-sectionpanel</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-sessionrecorder</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-util</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-client-validation</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-frontoffice-activities-cart</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-frontoffice-activities-cart-routing</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-frontoffice-activities-contactus</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-frontoffice-activities-fees</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-frontoffice-activities-options</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-frontoffice-activities-payment</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-frontoffice-activities-person</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-frontoffice-activities-program</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-frontoffice-activities-startbooking</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-frontoffice-activities-summary</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-frontoffice-activities-terms</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-shared-domainmodel</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-shared-entities</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-shared-time</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-cell</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-flexbox</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-imagestore</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-label</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-materialdesign</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-type</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-visual-base</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-visual-controls</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-visual-controls-grid</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-visual-controls-grid-peers-gwt</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-visual-controls-grid-peers-base</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-visual-controls-peers-base</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-webtext-controls</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-webtext-controls-peers-base</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-webtext-controls-peers-gwt</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-action</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-activity</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-controls</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-i18n</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-i18n-json</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-operationaction</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-orm-domainmodel-activity</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-orm-entity-controls</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-orm-reactive-dql</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-orm-reactive-entities</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-orm-reactive-visual</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-push</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-push-simple</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-querypush</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-querypush-simple</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-uirouter</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-util</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-validation</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-shared-authn</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-shared-authz</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-shared-operation</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-shared-orm-datasourcemodelservice</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-shared-orm-domainmodel</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-shared-orm-domainmodelservice</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-shared-orm-dql</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-shared-orm-dql-query-interceptor</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-shared-orm-dql-querypush-interceptor</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-shared-orm-dql-submit-interceptor</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-shared-orm-entity</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-shared-orm-expression</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-shared-push</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-shared-querypush</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-shared-router</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-gwt</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-javafxcontrols-peers-base</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-javafxcontrols-peers-gwt</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-javafxcontrols-registry-gwt</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-javafxgraphics-peers</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-javafxgraphics-peers-base</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-javafxgraphics-peers-gwt</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-javafxgraphics-registry-gwt</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-launcher</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-util</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-lib-javacupruntime</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-client-storage</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-client-uischeduler</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-client-websocket</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-client-websocketbus</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-client-windowhistory</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-client-windowlocation</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-gwt-appcontainer-impl</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-gwt-emul-javabase</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>shaded-sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-gwt-json-impl</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-gwt-log-impl</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-gwt-resource-impl</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-gwt-shutdown-impl</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-gwt-storage-impl</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-gwt-uischeduler-impl</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-gwt-websocket-impl</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-gwt-windowhistory-impl</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-gwt-windowlocation-impl</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-shared-appcontainer</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-shared-bus</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-shared-buscall</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-shared-datascope</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-shared-datasource</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-shared-json</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-shared-log</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-shared-query</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-shared-query-impl-remote</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-shared-resource</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-shared-scheduler</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-shared-serial</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-shared-shutdown</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-shared-submit</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-shared-submit-impl-remote</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-shared-util</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-web-websocketbus</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-web-windowhistory-impl</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+    
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <!-- Generating the source artifact for another GWT compilation (ex: KBS) -->
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+
+            <!-- Calling the GWT maven plugin to compile the gwt module into javascript -->
+            <plugin>
+                <groupId>net.ltgt.gwt.maven</groupId>
+                <artifactId>gwt-maven-plugin</artifactId>
+                <configuration>
+                    <skipCompilation>${plugin.gwt.param.skipCompilation}</skipCompilation>
+                    <moduleName>${plugin.gwt.param.module}</moduleName>
+                    <failOnError>true</failOnError>
+                    <draftCompile>${plugin.gwt.param.draftCompile}</draftCompile>
+                    <optimize>${plugin.gwt.param.optimize}</optimize>
+                    <sourceLevel>${gwt.sourceLevel}</sourceLevel>
+                    <compilerArgs>
+                        <!-- Setting value to return when compiling System.getProperty("application.name") -->
+                        <compilerArg>-setProperty</compilerArg>
+                        <compilerArg>application.name=${application.name}</compilerArg>
+                        <!-- Setting value to return when compiling System.getProperty("application.version") -->
+                        <compilerArg>-setProperty</compilerArg>
+                        <compilerArg>application.version=${application.version}</compilerArg>
+                        <!-- Setting value to return when compiling System.getProperty("application.build.tool") -->
+                        <compilerArg>-setProperty</compilerArg>
+                        <compilerArg>application.build.tool=${application.build.tool}</compilerArg>
+                        <!-- Setting value to return when compiling System.getProperty("application.build.number") -->
+                        <compilerArg>-setProperty</compilerArg>
+                        <compilerArg>application.build.number=${application.build.number}</compilerArg>
+                        <!-- Setting value to return when compiling System.getProperty("application.build.timestamp") -->
+                        <compilerArg>-setProperty</compilerArg>
+                        <compilerArg>application.build.timestamp=${application.build.timestamp}</compilerArg>
+                        <!--compilerArg>-style</compilerArg>
+                        <compilerArg>DETAILED</compilerArg-->
+                    </compilerArgs>
+                    <!-- Doing the same for the code server (when compiling in super dev mode) -->
+                    <codeserverArgs>
+                        <!-- Setting value to return when compiling System.getProperty("application.name") -->
+                        <codeserverArg>-setProperty</codeserverArg>
+                        <codeserverArg>application.name=${application.name}</codeserverArg>
+                        <!-- Setting value to return when compiling System.getProperty("application.version") -->
+                        <codeserverArg>-setProperty</codeserverArg>
+                        <codeserverArg>application.version=${application.version}</codeserverArg>
+                        <!-- Setting value to return when compiling System.getProperty("application.build.tool") -->
+                        <codeserverArg>-setProperty</codeserverArg>
+                        <codeserverArg>application.build.tool=${application.build.tool}</codeserverArg>
+                        <!-- Setting value to return when compiling System.getProperty("application.build.number") -->
+                        <codeserverArg>-setProperty</codeserverArg>
+                        <codeserverArg>application.build.number=${application.build.number}</codeserverArg>
+                        <!-- Setting value to return when compiling System.getProperty("application.build.timestamp") -->
+                        <codeserverArg>-setProperty</codeserverArg>
+                        <codeserverArg>application.build.timestamp=${application.build.timestamp}</codeserverArg>
+                    </codeserverArgs>
+                    <!-- Trying to solve a java heap OutOfMemoryError on the server -->
+                    <jvmArgs>
+                        <jvmArg>-Xmx1024m</jvmArg>
+                    </jvmArgs>
+                    <!--<localWorkers>1</localWorkers>-->
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <!-- Redefining the GWT profile here so it can be activated locally when invoking this pom directly -->
+    <!-- Note: activating a profile locally here will trigger the properties defined in the root pom -->
+    <profiles>
+        <profile><id>gwt-compile</id></profile>
+    </profiles>
+
+</project>

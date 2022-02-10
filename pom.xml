@@ -36,11 +36,15 @@
 
     <modules>
 
-        <module>mongoose-backoffice</module>
-        <module>mongoose-client</module>
-        <module>mongoose-frontoffice</module>
-        <module>mongoose-server</module>
-        <module>mongoose-shared</module>
+        <module>mongoose-all</module>
+        <module>mongoose-base</module>
+        <module>mongoose-catering</module>
+        <module>mongoose-crm</module>
+        <module>mongoose-ecommerce</module>
+        <module>mongoose-event</module>
+        <module>mongoose-hotel</module>
+        <module>mongoose-restaurant</module>
+        <module>mongoose-shop</module>
 
     </modules>
 

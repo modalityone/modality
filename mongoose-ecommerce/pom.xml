@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>mongoose</artifactId>
+        <groupId>org.mongoose</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>mongoose-ecommerce</artifactId>
+
+    <packaging>pom</packaging>
+
+    <modules>
+
+        <module>mongoose-backoffice-activities-bookings</module>
+        <module>mongoose-backoffice-activities-income</module>
+        <module>mongoose-backoffice-activities-payments</module>
+        <module>mongoose-backoffice-activities-statements</module>
+        <module>mongoose-backoffice-activities-statistics</module>
+        <module>mongoose-backoffice-operations-documentline</module>
+        <module>mongoose-backoffice-operations-document</module>
+        <module>mongoose-backoffice-operations-moneytransfer</module>
+        <module>mongoose-client-bookingoptionspanel</module>
+        <module>mongoose-client-bookingprocess</module>
+        <module>mongoose-client-businesslogic</module>
+        <module>mongoose-frontoffice-activities-cart</module>
+        <module>mongoose-frontoffice-activities-cart-routing</module>
+        <module>mongoose-frontoffice-activities-contactus</module>
+        <module>mongoose-frontoffice-activities-payment</module>
+        <module>mongoose-frontoffice-activities-person</module>
+        <module>mongoose-frontoffice-activities-summary</module>
+
+    </modules>
+
+</project>

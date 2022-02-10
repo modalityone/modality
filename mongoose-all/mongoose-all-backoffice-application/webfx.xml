@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project>
+
+    <packages>
+        <source-packages/>
+    </packages>
+
+    <providers>
+        <javafx.application.Application>mongoose.all.backoffice.application.MongooseBackOfficeApplication</javafx.application.Application>
+    </providers>
+
+    <dependencies>
+        <source-modules/>
+        <source-module>javafx-graphics</source-module>
+        <plugin-module>mongoose-backoffice-activities-authorizations</plugin-module>
+        <plugin-module>mongoose-backoffice-activities-bookings</plugin-module>
+        <plugin-module>mongoose-backoffice-activities-cloneevent</plugin-module>
+        <plugin-module>mongoose-backoffice-activities-diningareas</plugin-module>
+        <plugin-module>mongoose-backoffice-activities-events</plugin-module>
+        <plugin-module>mongoose-backoffice-activities-income</plugin-module>
+        <plugin-module>mongoose-backoffice-activities-monitor</plugin-module>
+        <plugin-module>mongoose-backoffice-activities-letters</plugin-module>
+        <plugin-module>mongoose-backoffice-activities-letter</plugin-module>
+        <plugin-module>mongoose-backoffice-activities-payments</plugin-module>
+        <plugin-module>mongoose-backoffice-activities-roomsgraphic</plugin-module>
+        <plugin-module>mongoose-backoffice-activities-statistics</plugin-module>
+        <plugin-module>mongoose-backoffice-activities-statements</plugin-module>
+        <plugin-module>mongoose-backoffice-activities-users</plugin-module>
+        <plugin-module>mongoose-backoffice-activities-operations</plugin-module>
+        <plugin-module>mongoose-backoffice-activities-options</plugin-module>
+        <plugin-module>mongoose-backoffice-activities-organizations</plugin-module>
+    </dependencies>
+
+</project>
