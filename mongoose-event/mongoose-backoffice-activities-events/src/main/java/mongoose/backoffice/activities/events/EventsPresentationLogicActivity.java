@@ -30,7 +30,7 @@ final class EventsPresentationLogicActivity
     @Override
     protected void startLogic(EventsPresentationModel pm) {
         ReactiveVisualMapper.createPushReactiveChain(this)
-                .always("{class: 'Event', alias: 'e', fields2: '(select count(1) from Document where !cancelled and event=e) as bookingsCount', where2: 'active', orderBy: 'startDate desc,id desc'}")
+                .always("{class: 'Event', alias: 'e', fields2: '(select count(1) from Document where !cancelled and event=e) as bookingsCount', where: 'active', orderBy: 'startDate desc,id desc'}")
                 // Search box condition
                 .ifTrimNotEmpty(pm.searchTextProperty(), s -> where("lower(name) like ?", "%" + s.toLowerCase() + "%"))
                 .ifNotNull(pm.organizationIdProperty(), o -> where("organization=?", o))
