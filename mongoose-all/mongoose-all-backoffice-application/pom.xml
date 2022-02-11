@@ -20,121 +20,121 @@
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-authorizations</artifactId>
+            <artifactId>mongoose-base-backoffice-activities-monitor</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-bookings</artifactId>
+            <artifactId>mongoose-base-backoffice-activities-operations</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-cloneevent</artifactId>
+            <artifactId>mongoose-base-backoffice-masterslave</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-diningareas</artifactId>
+            <artifactId>mongoose-base-client-application</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-events</artifactId>
+            <artifactId>mongoose-catering-backoffice-activities-diningareas</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-income</artifactId>
+            <artifactId>mongoose-crm-backoffice-activities-authorizations</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-letter</artifactId>
+            <artifactId>mongoose-crm-backoffice-activities-letter</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-letters</artifactId>
+            <artifactId>mongoose-crm-backoffice-activities-letters</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-monitor</artifactId>
+            <artifactId>mongoose-crm-backoffice-activities-organizations</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-operations</artifactId>
+            <artifactId>mongoose-crm-backoffice-activities-users</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-options</artifactId>
+            <artifactId>mongoose-crm-backoffice-bookingdetailspanel</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-organizations</artifactId>
+            <artifactId>mongoose-ecommerce-backoffice-activities-bookings</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-payments</artifactId>
+            <artifactId>mongoose-ecommerce-backoffice-activities-income</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-roomsgraphic</artifactId>
+            <artifactId>mongoose-ecommerce-backoffice-activities-payments</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-statements</artifactId>
+            <artifactId>mongoose-ecommerce-backoffice-activities-statements</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-statistics</artifactId>
+            <artifactId>mongoose-ecommerce-backoffice-activities-statistics</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-users</artifactId>
+            <artifactId>mongoose-event-backoffice-activities-cloneevent</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-bookingdetailspanel</artifactId>
+            <artifactId>mongoose-event-backoffice-activities-events</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-masterslave</artifactId>
+            <artifactId>mongoose-event-backoffice-activities-options</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-application</artifactId>
+            <artifactId>mongoose-hotel-backoffice-activities-roomsgraphic</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project>
+
+    <implements>
+        <module>mongoose-base-client-css</module>
+    </implements>
+
+    <packages>
+        <resource-package>mongoose.base.client.css</resource-package>
+        <resource-package>mongoose.base.client.fonts</resource-package>
+    </packages>
+
+    <dependencies>
+        <source-modules/>
+    </dependencies>
+
+</project>

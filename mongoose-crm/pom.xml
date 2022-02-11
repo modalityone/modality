@@ -15,18 +15,18 @@
 
     <modules>
 
-        <module>mongoose-backoffice-activities-authorizations</module>
-        <module>mongoose-backoffice-activities-letter</module>
-        <module>mongoose-backoffice-activities-letters</module>
-        <module>mongoose-backoffice-activities-organizations</module>
-        <module>mongoose-backoffice-activities-users</module>
-        <module>mongoose-backoffice-bookingdetailspanel</module>
-        <module>mongoose-backoffice-operations-mail</module>
-        <module>mongoose-client-activities-login</module>
-        <module>mongoose-client-activities-unauthorized</module>
-        <module>mongoose-client-authn</module>
-        <module>mongoose-client-authz</module>
-        <module>mongoose-client-personaldetails</module>
+        <module>mongoose-crm-backoffice-activities-authorizations</module>
+        <module>mongoose-crm-backoffice-activities-letter</module>
+        <module>mongoose-crm-backoffice-activities-letters</module>
+        <module>mongoose-crm-backoffice-activities-organizations</module>
+        <module>mongoose-crm-backoffice-activities-users</module>
+        <module>mongoose-crm-backoffice-bookingdetailspanel</module>
+        <module>mongoose-crm-backoffice-operations-mail</module>
+        <module>mongoose-crm-client-activities-login</module>
+        <module>mongoose-crm-client-activities-unauthorized</module>
+        <module>mongoose-crm-client-authn</module>
+        <module>mongoose-crm-client-authz</module>
+        <module>mongoose-crm-client-personaldetails</module>
 
     </modules>
 

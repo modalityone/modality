@@ -13,16 +13,16 @@
         <source-modules/>
         <source-module>javafx-graphics</source-module>
 
-        <plugin-module>mongoose-frontoffice-activities-startbooking</plugin-module>
-        <plugin-module>mongoose-frontoffice-activities-terms</plugin-module>
-        <plugin-module>mongoose-frontoffice-activities-program</plugin-module>
-        <plugin-module>mongoose-frontoffice-activities-fees</plugin-module>
-        <plugin-module>mongoose-frontoffice-activities-options</plugin-module>
-        <plugin-module>mongoose-frontoffice-activities-person</plugin-module>
-        <plugin-module>mongoose-frontoffice-activities-summary</plugin-module>
-        <plugin-module>mongoose-frontoffice-activities-cart</plugin-module>
-        <plugin-module>mongoose-frontoffice-activities-payment</plugin-module>
-        <plugin-module>mongoose-frontoffice-activities-contactus</plugin-module>
+        <plugin-module>mongoose-event-frontoffice-activities-startbooking</plugin-module>
+        <plugin-module>mongoose-event-frontoffice-activities-terms</plugin-module>
+        <plugin-module>mongoose-event-frontoffice-activities-program</plugin-module>
+        <plugin-module>mongoose-event-frontoffice-activities-fees</plugin-module>
+        <plugin-module>mongoose-event-frontoffice-activities-options</plugin-module>
+        <plugin-module>mongoose-ecommerce-frontoffice-activities-person</plugin-module>
+        <plugin-module>mongoose-ecommerce-frontoffice-activities-summary</plugin-module>
+        <plugin-module>mongoose-ecommerce-frontoffice-activities-cart</plugin-module>
+        <plugin-module>mongoose-ecommerce-frontoffice-activities-payment</plugin-module>
+        <plugin-module>mongoose-ecommerce-frontoffice-activities-contactus</plugin-module>
     </dependencies>
 
 </project>

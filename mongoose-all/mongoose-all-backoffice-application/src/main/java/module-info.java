@@ -4,26 +4,26 @@ module mongoose.all.backoffice.application {
 
     // Direct dependencies modules
     requires javafx.graphics;
-    requires mongoose.backoffice.activities.authorizations;
-    requires mongoose.backoffice.activities.bookings;
-    requires mongoose.backoffice.activities.cloneevent;
-    requires mongoose.backoffice.activities.diningareas;
-    requires mongoose.backoffice.activities.events;
-    requires mongoose.backoffice.activities.income;
-    requires mongoose.backoffice.activities.letter;
-    requires mongoose.backoffice.activities.letters;
-    requires mongoose.backoffice.activities.monitor;
-    requires mongoose.backoffice.activities.operations;
-    requires mongoose.backoffice.activities.options;
-    requires mongoose.backoffice.activities.organizations;
-    requires mongoose.backoffice.activities.payments;
-    requires mongoose.backoffice.activities.roomsgraphic;
-    requires mongoose.backoffice.activities.statements;
-    requires mongoose.backoffice.activities.statistics;
-    requires mongoose.backoffice.activities.users;
-    requires mongoose.backoffice.bookingdetailspanel;
-    requires mongoose.backoffice.masterslave;
-    requires mongoose.client.application;
+    requires mongoose.base.backoffice.activities.monitor;
+    requires mongoose.base.backoffice.activities.operations;
+    requires mongoose.base.backoffice.masterslave;
+    requires mongoose.base.client.application;
+    requires mongoose.catering.backoffice.activities.diningareas;
+    requires mongoose.crm.backoffice.activities.authorizations;
+    requires mongoose.crm.backoffice.activities.letter;
+    requires mongoose.crm.backoffice.activities.letters;
+    requires mongoose.crm.backoffice.activities.organizations;
+    requires mongoose.crm.backoffice.activities.users;
+    requires mongoose.crm.backoffice.bookingdetailspanel;
+    requires mongoose.ecommerce.backoffice.activities.bookings;
+    requires mongoose.ecommerce.backoffice.activities.income;
+    requires mongoose.ecommerce.backoffice.activities.payments;
+    requires mongoose.ecommerce.backoffice.activities.statements;
+    requires mongoose.ecommerce.backoffice.activities.statistics;
+    requires mongoose.event.backoffice.activities.cloneevent;
+    requires mongoose.event.backoffice.activities.events;
+    requires mongoose.event.backoffice.activities.options;
+    requires mongoose.hotel.backoffice.activities.roomsgraphic;
 
     // Exported packages
     exports mongoose.all.backoffice.application;

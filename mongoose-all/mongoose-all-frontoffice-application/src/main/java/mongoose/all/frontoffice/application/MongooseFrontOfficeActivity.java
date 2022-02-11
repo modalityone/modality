@@ -1,6 +1,6 @@
 package mongoose.all.frontoffice.application;
 
-import mongoose.client.application.MongooseClientActivity;
+import mongoose.base.client.application.MongooseClientActivity;
 
 /**
  * @author Bruno Salmon

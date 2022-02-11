@@ -73,420 +73,420 @@
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-authorizations</artifactId>
+            <artifactId>mongoose-base-backoffice-activities-monitor</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-bookings</artifactId>
+            <artifactId>mongoose-base-backoffice-activities-operations</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-cloneevent</artifactId>
+            <artifactId>mongoose-base-backoffice-masterslave</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-cloneevent-routing</artifactId>
+            <artifactId>mongoose-base-backoffice-multilangeditor</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-diningareas</artifactId>
+            <artifactId>mongoose-base-backoffice-operations-generic</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-events</artifactId>
+            <artifactId>mongoose-base-client-activity</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-income</artifactId>
+            <artifactId>mongoose-base-client-aggregates</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-letter</artifactId>
+            <artifactId>mongoose-base-client-application</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-letters</artifactId>
+            <artifactId>mongoose-base-client-busconfig</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-monitor</artifactId>
+            <artifactId>mongoose-base-client-css-web</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-operations</artifactId>
+            <artifactId>mongoose-base-client-entities</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-options</artifactId>
+            <artifactId>mongoose-base-client-i18n</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-organizations</artifactId>
+            <artifactId>mongoose-base-client-icons</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-payments</artifactId>
+            <artifactId>mongoose-base-client-operationactionsloading</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-roomsgraphic</artifactId>
+            <artifactId>mongoose-base-client-presentationmodel</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-statements</artifactId>
+            <artifactId>mongoose-base-client-sessionrecorder</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-statistics</artifactId>
+            <artifactId>mongoose-base-client-util</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-activities-users</artifactId>
+            <artifactId>mongoose-base-client-validation</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-bookingdetailspanel</artifactId>
+            <artifactId>mongoose-base-shared-domainmodel</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-masterslave</artifactId>
+            <artifactId>mongoose-base-shared-entities</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-multilangeditor</artifactId>
+            <artifactId>mongoose-catering-backoffice-activities-diningareas</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-operations-allocationrule</artifactId>
+            <artifactId>mongoose-catering-backoffice-operations-allocationrule</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-operations-document</artifactId>
+            <artifactId>mongoose-crm-backoffice-activities-authorizations</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-operations-documentline</artifactId>
+            <artifactId>mongoose-crm-backoffice-activities-letter</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-operations-generic</artifactId>
+            <artifactId>mongoose-crm-backoffice-activities-letters</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-operations-mail</artifactId>
+            <artifactId>mongoose-crm-backoffice-activities-organizations</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-operations-moneytransfer</artifactId>
+            <artifactId>mongoose-crm-backoffice-activities-users</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-backoffice-operations-resourceconfiguration</artifactId>
+            <artifactId>mongoose-crm-backoffice-bookingdetailspanel</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-activities-login</artifactId>
+            <artifactId>mongoose-crm-backoffice-operations-mail</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-activities-unauthorized</artifactId>
+            <artifactId>mongoose-crm-client-activities-login</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-activity</artifactId>
+            <artifactId>mongoose-crm-client-activities-unauthorized</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-aggregates</artifactId>
+            <artifactId>mongoose-crm-client-authn</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-application</artifactId>
+            <artifactId>mongoose-crm-client-authz</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-authn</artifactId>
+            <artifactId>mongoose-crm-client-personaldetails</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-authz</artifactId>
+            <artifactId>mongoose-ecommerce-backoffice-activities-bookings</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-bookingcalendar</artifactId>
+            <artifactId>mongoose-ecommerce-backoffice-activities-income</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-bookingoptionspanel</artifactId>
+            <artifactId>mongoose-ecommerce-backoffice-activities-payments</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-bookingprocess</artifactId>
+            <artifactId>mongoose-ecommerce-backoffice-activities-statements</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-busconfig</artifactId>
+            <artifactId>mongoose-ecommerce-backoffice-activities-statistics</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-businesslogic</artifactId>
+            <artifactId>mongoose-ecommerce-backoffice-operations-document</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-calendar</artifactId>
+            <artifactId>mongoose-ecommerce-backoffice-operations-documentline</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-css-web</artifactId>
+            <artifactId>mongoose-ecommerce-backoffice-operations-moneytransfer</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-entities</artifactId>
+            <artifactId>mongoose-ecommerce-client-bookingoptionspanel</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-i18n</artifactId>
+            <artifactId>mongoose-ecommerce-client-bookingprocess</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-icons</artifactId>
+            <artifactId>mongoose-ecommerce-client-businesslogic</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-operationactionsloading</artifactId>
+            <artifactId>mongoose-ecommerce-frontoffice-activities-cart-routing</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-personaldetails</artifactId>
+            <artifactId>mongoose-ecommerce-frontoffice-activities-person</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-presentationmodel</artifactId>
+            <artifactId>mongoose-ecommerce-frontoffice-activities-summary</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-sectionpanel</artifactId>
+            <artifactId>mongoose-event-backoffice-activities-cloneevent</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-sessionrecorder</artifactId>
+            <artifactId>mongoose-event-backoffice-activities-cloneevent-routing</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-util</artifactId>
+            <artifactId>mongoose-event-backoffice-activities-events</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-validation</artifactId>
+            <artifactId>mongoose-event-backoffice-activities-options</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-frontoffice-activities-cart-routing</artifactId>
+            <artifactId>mongoose-event-client-bookingcalendar</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-frontoffice-activities-fees</artifactId>
+            <artifactId>mongoose-event-client-calendar</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-frontoffice-activities-options</artifactId>
+            <artifactId>mongoose-event-client-sectionpanel</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-frontoffice-activities-person</artifactId>
+            <artifactId>mongoose-event-frontoffice-activities-fees</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-frontoffice-activities-summary</artifactId>
+            <artifactId>mongoose-event-frontoffice-activities-options</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-shared-domainmodel</artifactId>
+            <artifactId>mongoose-hotel-backoffice-activities-roomsgraphic</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-shared-entities</artifactId>
+            <artifactId>mongoose-hotel-backoffice-operations-resourceconfiguration</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-shared-time</artifactId>
+            <artifactId>mongoose-hotel-shared-time</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>

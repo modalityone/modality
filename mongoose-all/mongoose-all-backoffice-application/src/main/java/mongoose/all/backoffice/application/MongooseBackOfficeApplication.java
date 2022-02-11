@@ -1,6 +1,6 @@
 package mongoose.all.backoffice.application;
 
-import mongoose.client.application.MongooseClientApplication;
+import mongoose.base.client.application.MongooseClientApplication;
 
 /**
  * @author Bruno Salmon

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project>
+
+    <packages>
+        <source-packages/>
+    </packages>
+
+    <dependencies>
+        <source-modules/>
+        <source-module>webfx-framework-client-activity</source-module>
+        <source-module>webfx-platform-shared-util</source-module>
+    </dependencies>
+
+    <providers>
+        <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.crm.client.activities.login.LoginUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+    </providers>
+
+</project>

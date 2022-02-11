@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project>
+
+    <packages>
+        <source-packages/>
+    </packages>
+
+    <providers>
+        <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.ecommerce.frontoffice.activities.payment.PaymentUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+    </providers>
+
+    <dependencies>
+        <source-modules/>
+        <source-module>mongoose-base-client-aggregates</source-module>
+        <source-module>webfx-framework-client-activity</source-module>
+        <source-module>webfx-platform-shared-submit</source-module>
+    </dependencies>
+
+</project>

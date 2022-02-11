@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project>
+
+    <packages>
+        <source-packages/>
+    </packages>
+
+    <providers>
+        <dev.webfx.platform.shared.services.appcontainer.spi.ApplicationJob>mongoose.base.server.jobs.sessioncloser.MongooseServerUnresponsiveClientSessionCloserJob</dev.webfx.platform.shared.services.appcontainer.spi.ApplicationJob>
+    </providers>
+
+    <dependencies>
+        <source-modules/>
+        <source-module>webfx-framework-shared-orm-domainmodel</source-module>
+        <source-module>webfx-platform-shared-util</source-module>
+    </dependencies>
+
+</project>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project>
+
+    <packages>
+        <source-packages/>
+        <resource-package>mongoose.base.shared.domainmodel</resource-package>
+    </packages>
+
+    <providers>
+        <dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider>mongoose.base.shared.services.domainmodel.MongooseDomainModelProvider</dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider>
+        <dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider>mongoose.base.shared.services.datasourcemodel.MongooseDataSourceModelProvider</dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider>
+    </providers>
+
+    <embed-resources>
+        <resource>mongoose/base/shared/domainmodel/DomainModelSnapshot.json</resource>
+    </embed-resources>
+
+    <dependencies>
+        <source-modules/>
+    </dependencies>
+
+</project>

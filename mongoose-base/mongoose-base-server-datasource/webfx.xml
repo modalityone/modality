@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project>
+
+    <packages>
+        <source-packages/>
+        <resource-package>mongoose.base.server.datasource.MDS</resource-package>
+    </packages>
+
+
+    <providers>
+        <dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider>mongoose.base.server.services.datasource.MongooseLocalDataSourceProvider</dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider>
+    </providers>
+
+    <dependencies>
+        <source-modules/>
+        <source-module>webfx-framework-shared-orm-domainmodel</source-module>
+        <source-module>webfx-framework-shared-orm-dql</source-module>
+        <source-module>webfx-platform-shared-util</source-module>
+    </dependencies>
+
+</project>

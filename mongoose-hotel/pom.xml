@@ -15,9 +15,9 @@
 
     <modules>
 
-        <module>mongoose-backoffice-activities-roomsgraphic</module>
-        <module>mongoose-backoffice-operations-resourceconfiguration</module>
-        <module>mongoose-shared-time</module>
+        <module>mongoose-hotel-backoffice-activities-roomsgraphic</module>
+        <module>mongoose-hotel-backoffice-operations-resourceconfiguration</module>
+        <module>mongoose-hotel-shared-time</module>
 
 </modules>
 

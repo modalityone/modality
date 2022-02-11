@@ -4,17 +4,17 @@ module mongoose.all.frontoffice.application {
 
     // Direct dependencies modules
     requires javafx.graphics;
-    requires mongoose.client.application;
-    requires mongoose.frontoffice.activities.cart;
-    requires mongoose.frontoffice.activities.contactus;
-    requires mongoose.frontoffice.activities.fees;
-    requires mongoose.frontoffice.activities.options;
-    requires mongoose.frontoffice.activities.payment;
-    requires mongoose.frontoffice.activities.person;
-    requires mongoose.frontoffice.activities.program;
-    requires mongoose.frontoffice.activities.startbooking;
-    requires mongoose.frontoffice.activities.summary;
-    requires mongoose.frontoffice.activities.terms;
+    requires mongoose.base.client.application;
+    requires mongoose.ecommerce.frontoffice.activities.cart;
+    requires mongoose.ecommerce.frontoffice.activities.contactus;
+    requires mongoose.ecommerce.frontoffice.activities.payment;
+    requires mongoose.ecommerce.frontoffice.activities.person;
+    requires mongoose.ecommerce.frontoffice.activities.summary;
+    requires mongoose.event.frontoffice.activities.fees;
+    requires mongoose.event.frontoffice.activities.options;
+    requires mongoose.event.frontoffice.activities.program;
+    requires mongoose.event.frontoffice.activities.startbooking;
+    requires mongoose.event.frontoffice.activities.terms;
 
     // Exported packages
     exports mongoose.all.frontoffice.application;

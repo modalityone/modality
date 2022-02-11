@@ -1,7 +1,7 @@
 package mongoose.all.backoffice.activities.event.clone.openjfx;
 
-import mongoose.backoffice.activities.cloneevent.CloneEventPresentationLogicActivity;
-import mongoose.backoffice.activities.cloneevent.CloneEventPresentationModel;
+import mongoose.event.backoffice.activities.cloneevent.CloneEventPresentationLogicActivity;
+import mongoose.event.backoffice.activities.cloneevent.CloneEventPresentationModel;
 import dev.webfx.framework.client.activity.impl.combinations.domainpresentation.impl.DomainPresentationActivityImpl;
 
 /**

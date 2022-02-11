@@ -1,8 +1,8 @@
 package mongoose.all.backoffice.application;
 
-import mongoose.backoffice.controls.bookingdetailspanel.BookingDetailsPanel;
-import mongoose.backoffice.controls.masterslave.MasterSlaveView;
-import mongoose.client.application.MongooseClientActivity;
+import mongoose.crm.backoffice.controls.bookingdetailspanel.BookingDetailsPanel;
+import mongoose.base.backoffice.controls.masterslave.MasterSlaveView;
+import mongoose.base.client.application.MongooseClientActivity;
 
 /**
  * @author Bruno Salmon

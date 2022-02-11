@@ -15,8 +15,8 @@
 
     <modules>
 
-        <module>mongoose-backoffice-activities-diningareas</module>
-        <module>mongoose-backoffice-operations-allocationrule</module>
+        <module>mongoose-catering-backoffice-activities-diningareas</module>
+        <module>mongoose-catering-backoffice-operations-allocationrule</module>
 
     </modules>
 

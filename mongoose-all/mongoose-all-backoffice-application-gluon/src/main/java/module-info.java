@@ -4,7 +4,7 @@ module mongoose.all.backoffice.application.gluon {
 
     // Direct dependencies modules
     requires mongoose.all.backoffice.application;
-    requires mongoose.client.navigationarrows.java;
+    requires mongoose.base.client.navigationarrows.java;
     requires webfx.framework.shared.orm.dql.query.interceptor;
     requires webfx.framework.shared.orm.dql.querypush.interceptor;
     requires webfx.framework.shared.orm.dql.submit.interceptor;

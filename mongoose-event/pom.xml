@@ -15,18 +15,18 @@
 
     <modules>
 
-        <module>mongoose-backoffice-activities-cloneevent</module>
-        <module>mongoose-backoffice-activities-cloneevent-routing</module>
-        <module>mongoose-backoffice-activities-events</module>
-        <module>mongoose-backoffice-activities-options</module>
-        <module>mongoose-client-bookingcalendar</module>
-        <module>mongoose-client-calendar</module>
-        <module>mongoose-client-sectionpanel</module>
-        <module>mongoose-frontoffice-activities-fees</module>
-        <module>mongoose-frontoffice-activities-options</module>
-        <module>mongoose-frontoffice-activities-program</module>
-        <module>mongoose-frontoffice-activities-startbooking</module>
-        <module>mongoose-frontoffice-activities-terms</module>
+        <module>mongoose-event-backoffice-activities-cloneevent</module>
+        <module>mongoose-event-backoffice-activities-cloneevent-routing</module>
+        <module>mongoose-event-backoffice-activities-events</module>
+        <module>mongoose-event-backoffice-activities-options</module>
+        <module>mongoose-event-client-bookingcalendar</module>
+        <module>mongoose-event-client-calendar</module>
+        <module>mongoose-event-client-sectionpanel</module>
+        <module>mongoose-event-frontoffice-activities-fees</module>
+        <module>mongoose-event-frontoffice-activities-options</module>
+        <module>mongoose-event-frontoffice-activities-program</module>
+        <module>mongoose-event-frontoffice-activities-startbooking</module>
+        <module>mongoose-event-frontoffice-activities-terms</module>
 
     </modules>
 

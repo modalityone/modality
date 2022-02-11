@@ -20,67 +20,67 @@
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-application</artifactId>
+            <artifactId>mongoose-base-client-application</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-frontoffice-activities-cart</artifactId>
+            <artifactId>mongoose-ecommerce-frontoffice-activities-cart</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-frontoffice-activities-contactus</artifactId>
+            <artifactId>mongoose-ecommerce-frontoffice-activities-contactus</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-frontoffice-activities-fees</artifactId>
+            <artifactId>mongoose-ecommerce-frontoffice-activities-payment</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-frontoffice-activities-options</artifactId>
+            <artifactId>mongoose-ecommerce-frontoffice-activities-person</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-frontoffice-activities-payment</artifactId>
+            <artifactId>mongoose-ecommerce-frontoffice-activities-summary</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-frontoffice-activities-person</artifactId>
+            <artifactId>mongoose-event-frontoffice-activities-fees</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-frontoffice-activities-program</artifactId>
+            <artifactId>mongoose-event-frontoffice-activities-options</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-frontoffice-activities-startbooking</artifactId>
+            <artifactId>mongoose-event-frontoffice-activities-program</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-frontoffice-activities-summary</artifactId>
+            <artifactId>mongoose-event-frontoffice-activities-startbooking</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-frontoffice-activities-terms</artifactId>
+            <artifactId>mongoose-event-frontoffice-activities-terms</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     

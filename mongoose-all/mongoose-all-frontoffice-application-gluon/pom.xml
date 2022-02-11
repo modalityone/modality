@@ -20,13 +20,13 @@
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-css-java</artifactId>
+            <artifactId>mongoose-base-client-css-java</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-client-navigationarrows-java</artifactId>
+            <artifactId>mongoose-base-client-navigationarrows-java</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     

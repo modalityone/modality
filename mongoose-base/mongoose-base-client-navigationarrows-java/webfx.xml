@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project>
+
+    <packages>
+        <source-packages/>
+    </packages>
+
+    <providers>
+        <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.base.client.navigationarrows.RouteBackwardRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+        <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.base.client.navigationarrows.RouteForwardRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+    </providers>
+
+    <dependencies>
+        <source-modules/>
+    </dependencies>
+
+</project>

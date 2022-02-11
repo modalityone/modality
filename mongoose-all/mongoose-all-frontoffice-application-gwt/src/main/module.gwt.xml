@@ -121,7 +121,7 @@
     <!-- used by webfx-framework-client-i18n-json (SOURCE) -->
     <!-- used by webfx-kit-javafxgraphics-peers-base (SOURCE) -->
     <!--================================< javafx-controls >=================================-->
-    <!-- used by mongoose-client-calendar (SOURCE) -->
+    <!-- used by mongoose-event-client-calendar (SOURCE) -->
     <!--================================< javafx-graphics >=================================-->
     <!-- used by mongoose-all-frontoffice-application (SOURCE) -->
     <!--=============================< jsinterop-annotations >==============================-->
@@ -131,82 +131,45 @@
     <!-- used by mongoose-all-frontoffice-application-gwt (APPLICATION) -->
     <!-- used by mongoose-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <source path="mongoose/all/frontoffice/application"/>
-    <!--========================< mongoose-client-activities-login >========================-->
-    <!-- used by mongoose-client-application (PLUGIN) -->
-    <source path="mongoose/client/activities/login"/>
-    <!--====================< mongoose-client-activities-unauthorized >=====================-->
-    <!-- used by mongoose-client-application (PLUGIN) -->
-    <source path="mongoose/client/activities/unauthorized"/>
-    <!--============================< mongoose-client-activity >============================-->
-    <!-- used by mongoose-client-application (SOURCE) -->
-    <source path="mongoose/client/activity"/>
-    <source path="mongoose/client/activity/eventdependent"/>
-    <source path="mongoose/client/activity/organizationdependent"/>
-    <source path="mongoose/client/activity/table"/>
-    <source path="mongoose/client/activity/themes"/>
-    <!--===========================< mongoose-client-aggregates >===========================-->
-    <!-- used by mongoose-client-businesslogic (SOURCE) -->
-    <source path="mongoose/client/aggregates/cart"/>
-    <source path="mongoose/client/aggregates/event"/>
-    <source path="mongoose/client/aggregates/person"/>
-    <!--==========================< mongoose-client-application >===========================-->
+    <!--=========================< mongoose-base-client-activity >==========================-->
+    <!-- used by mongoose-base-client-application (SOURCE) -->
+    <source path="mongoose/base/client/activity"/>
+    <source path="mongoose/base/client/activity/eventdependent"/>
+    <source path="mongoose/base/client/activity/organizationdependent"/>
+    <source path="mongoose/base/client/activity/table"/>
+    <source path="mongoose/base/client/activity/themes"/>
+    <!--========================< mongoose-base-client-aggregates >=========================-->
+    <!-- used by mongoose-ecommerce-client-businesslogic (SOURCE) -->
+    <source path="mongoose/base/client/aggregates/cart"/>
+    <source path="mongoose/base/client/aggregates/event"/>
+    <source path="mongoose/base/client/aggregates/person"/>
+    <!--========================< mongoose-base-client-application >========================-->
     <!-- used by mongoose-all-frontoffice-application (SOURCE) -->
-    <source path="mongoose/client/application"/>
+    <source path="mongoose/base/client/application"/>
     <resource path="images/buddhas"/>
     <public includes="images/buddhas/" path=""/>
-    <resource path="mongoose/client/images"/>
-    <public includes="mongoose/client/images/" path=""/>
-    <!--=============================< mongoose-client-authn >==============================-->
-    <!-- used by mongoose-client-authz (SOURCE) -->
-    <source path="mongoose/client/services/authn"/>
-    <!--=============================< mongoose-client-authz >==============================-->
-    <!-- used by mongoose-client-application (PLUGIN) -->
-    <source path="mongoose/client/services/authz"/>
-    <!--========================< mongoose-client-bookingcalendar >=========================-->
-    <!-- used by mongoose-client-sectionpanel (SOURCE) -->
-    <source path="mongoose/client/controls/bookingcalendar"/>
-    <!--======================< mongoose-client-bookingoptionspanel >=======================-->
-    <!-- used by mongoose-frontoffice-activities-summary (SOURCE) -->
-    <source path="mongoose/client/controls/bookingoptionspanel"/>
-    <!--=========================< mongoose-client-bookingprocess >=========================-->
-    <!-- used by mongoose-frontoffice-activities-startbooking (SOURCE) -->
-    <source path="mongoose/client/activity/bookingprocess"/>
-    <!--===========================< mongoose-client-busconfig >============================-->
-    <!-- used by mongoose-client-application (RESOURCE) -->
+    <resource path="mongoose/base/client/images"/>
+    <public includes="mongoose/base/client/images/" path=""/>
+    <!--=========================< mongoose-base-client-busconfig >=========================-->
+    <!-- used by mongoose-base-client-application (RESOURCE) -->
     <resource path="dev/webfx/platform/client/services/websocketbus/conf"/>
     <public includes="dev/webfx/platform/client/services/websocketbus/conf/" path=""/>
-    <!--=========================< mongoose-client-businesslogic >==========================-->
-    <!-- used by mongoose-client-activity (SOURCE) -->
-    <source path="mongoose/client/businessdata/feesgroup"/>
-    <source path="mongoose/client/businessdata/preselection"/>
-    <source path="mongoose/client/businessdata/workingdocument"/>
-    <source path="mongoose/client/businesslogic/feesgroup"/>
-    <source path="mongoose/client/businesslogic/option"/>
-    <source path="mongoose/client/businesslogic/pricing"/>
-    <source path="mongoose/client/businesslogic/rules"/>
-    <source path="mongoose/client/businesslogic/workingdocument"/>
-    <!--============================< mongoose-client-calendar >============================-->
-    <!-- used by mongoose-client-businesslogic (SOURCE) -->
-    <source path="mongoose/client/businessdata/calendar"/>
-    <source path="mongoose/client/businessdata/calendar/impl"/>
-    <source path="mongoose/client/controls/calendargraphic"/>
-    <source path="mongoose/client/controls/calendargraphic/impl"/>
-    <!--============================< mongoose-client-css-web >=============================-->
+    <!--==========================< mongoose-base-client-css-web >==========================-->
     <!-- used by mongoose-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
-    <!--============================< mongoose-client-entities >============================-->
-    <!-- used by mongoose-client-businesslogic (SOURCE) -->
-    <source path="mongoose/client/entities/util"/>
-    <source path="mongoose/client/entities/util/filters"/>
-    <!--==============================< mongoose-client-i18n >==============================-->
-    <!-- used by mongoose-client-application (PLUGIN) -->
-    <source path="mongoose/client/operations/i18n"/>
-    <source path="mongoose/client/services/i18n"/>
-    <resource path="mongoose/client/services/i18n/dictionaries"/>
-    <public includes="mongoose/client/services/i18n/dictionaries/" path=""/>
-    <!--=============================< mongoose-client-icons >==============================-->
-    <!-- used by mongoose-client-application (SOURCE) -->
-    <source path="mongoose/client/actions"/>
-    <source path="mongoose/client/icons"/>
+    <!--=========================< mongoose-base-client-entities >==========================-->
+    <!-- used by mongoose-ecommerce-client-businesslogic (SOURCE) -->
+    <source path="mongoose/base/client/entities/util"/>
+    <source path="mongoose/base/client/entities/util/filters"/>
+    <!--===========================< mongoose-base-client-i18n >============================-->
+    <!-- used by mongoose-base-client-application (PLUGIN) -->
+    <source path="mongoose/base/client/operations/i18n"/>
+    <source path="mongoose/base/client/services/i18n"/>
+    <resource path="mongoose/base/client/services/i18n/dictionaries"/>
+    <public includes="mongoose/base/client/services/i18n/dictionaries/" path=""/>
+    <!--===========================< mongoose-base-client-icons >===========================-->
+    <!-- used by mongoose-base-client-application (SOURCE) -->
+    <source path="mongoose/base/client/actions"/>
+    <source path="mongoose/base/client/icons"/>
     <resource path="images/s16"/>
     <public includes="images/s16/" path=""/>
     <resource path="images/s16/actions"/>
@@ -241,114 +204,151 @@
     <public includes="images/svg/color/" path=""/>
     <resource path="images/svg/mono"/>
     <public includes="images/svg/mono/" path=""/>
-    <!--====================< mongoose-client-operationactionsloading >=====================-->
+    <!--==================< mongoose-base-client-operationactionsloading >==================-->
     <!-- used by mongoose-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
-    <!-- used by mongoose-client-application (PLUGIN) -->
-    <source path="mongoose/client/operationactionsloading"/>
-    <!--========================< mongoose-client-personaldetails >=========================-->
-    <!-- used by mongoose-frontoffice-activities-person (SOURCE) -->
-    <source path="mongoose/client/controls/personaldetails"/>
-    <!--=======================< mongoose-client-presentationmodel >========================-->
-    <!-- used by mongoose-client-activity (SOURCE) -->
-    <source path="mongoose/client/presentationmodel"/>
-    <!--==========================< mongoose-client-sectionpanel >==========================-->
-    <!-- used by mongoose-client-activities-login (SOURCE) -->
-    <source path="mongoose/client/controls/sectionpanel"/>
-    <!--========================< mongoose-client-sessionrecorder >=========================-->
+    <!-- used by mongoose-base-client-application (PLUGIN) -->
+    <source path="mongoose/base/client/operationactionsloading"/>
+    <!--=====================< mongoose-base-client-presentationmodel >=====================-->
+    <!-- used by mongoose-base-client-activity (SOURCE) -->
+    <source path="mongoose/base/client/presentationmodel"/>
+    <!--======================< mongoose-base-client-sessionrecorder >======================-->
     <!-- used by mongoose-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
-    <!-- used by mongoose-client-application (PLUGIN) -->
-    <source path="mongoose/client/jobs/sessionrecorder"/>
+    <!-- used by mongoose-base-client-application (PLUGIN) -->
+    <source path="mongoose/base/client/jobs/sessionrecorder"/>
     <define-configuration-property is_multi_valued="false" name="application.build.number"/>
     <define-configuration-property is_multi_valued="false" name="application.build.timestamp"/>
     <define-configuration-property is_multi_valued="false" name="application.build.tool"/>
     <define-configuration-property is_multi_valued="false" name="application.name"/>
     <define-configuration-property is_multi_valued="false" name="application.version"/>
-    <!--==============================< mongoose-client-util >==============================-->
-    <!-- used by mongoose-client-bookingcalendar (SOURCE) -->
-    <source path="mongoose/client/util/functions"/>
-    <source path="mongoose/client/util/log"/>
-    <source path="mongoose/client/util/routing"/>
-    <!--===========================< mongoose-client-validation >===========================-->
-    <!-- used by mongoose-client-activities-login (SOURCE) -->
-    <source path="mongoose/client/validation"/>
-    <!--======================< mongoose-frontoffice-activities-cart >======================-->
+    <!--===========================< mongoose-base-client-util >============================-->
+    <!-- used by mongoose-event-client-bookingcalendar (SOURCE) -->
+    <source path="mongoose/base/client/util/functions"/>
+    <source path="mongoose/base/client/util/log"/>
+    <source path="mongoose/base/client/util/routing"/>
+    <!--========================< mongoose-base-client-validation >=========================-->
+    <!-- used by mongoose-crm-client-activities-login (SOURCE) -->
+    <source path="mongoose/base/client/validation"/>
+    <!--========================< mongoose-base-shared-domainmodel >========================-->
+    <!-- used by mongoose-base-shared-entities (SOURCE) -->
+    <source path="mongoose/base/shared/domainmodel/formatters"/>
+    <source path="mongoose/base/shared/domainmodel/functions"/>
+    <source path="mongoose/base/shared/services/datasourcemodel"/>
+    <source path="mongoose/base/shared/services/domainmodel"/>
+    <resource path="mongoose/base/shared/domainmodel"/>
+    <public includes="mongoose/base/shared/domainmodel/" path=""/>
+    <!--=========================< mongoose-base-shared-entities >==========================-->
+    <!-- used by mongoose-base-client-icons (SOURCE) -->
+    <source path="mongoose/base/shared/entities"/>
+    <source path="mongoose/base/shared/entities/formatters"/>
+    <source path="mongoose/base/shared/entities/impl"/>
+    <source path="mongoose/base/shared/entities/markers"/>
+    <source path="mongoose/base/shared/services/systemmetrics"/>
+    <!--======================< mongoose-crm-client-activities-login >======================-->
+    <!-- used by mongoose-base-client-application (PLUGIN) -->
+    <source path="mongoose/crm/client/activities/login"/>
+    <!--==================< mongoose-crm-client-activities-unauthorized >===================-->
+    <!-- used by mongoose-base-client-application (PLUGIN) -->
+    <source path="mongoose/crm/client/activities/unauthorized"/>
+    <!--===========================< mongoose-crm-client-authn >============================-->
+    <!-- used by mongoose-crm-client-authz (SOURCE) -->
+    <source path="mongoose/crm/client/services/authn"/>
+    <!--===========================< mongoose-crm-client-authz >============================-->
+    <!-- used by mongoose-base-client-application (PLUGIN) -->
+    <source path="mongoose/crm/client/services/authz"/>
+    <!--======================< mongoose-crm-client-personaldetails >=======================-->
+    <!-- used by mongoose-ecommerce-frontoffice-activities-person (SOURCE) -->
+    <source path="mongoose/crm/client/controls/personaldetails"/>
+    <!--=================< mongoose-ecommerce-client-bookingoptionspanel >==================-->
+    <!-- used by mongoose-ecommerce-frontoffice-activities-summary (SOURCE) -->
+    <source path="mongoose/ecommerce/client/controls/bookingoptionspanel"/>
+    <!--====================< mongoose-ecommerce-client-bookingprocess >====================-->
+    <!-- used by mongoose-event-frontoffice-activities-startbooking (SOURCE) -->
+    <source path="mongoose/ecommerce/client/activity/bookingprocess"/>
+    <!--====================< mongoose-ecommerce-client-businesslogic >=====================-->
+    <!-- used by mongoose-base-client-activity (SOURCE) -->
+    <source path="mongoose/ecommerce/client/businessdata/feesgroup"/>
+    <source path="mongoose/ecommerce/client/businessdata/preselection"/>
+    <source path="mongoose/ecommerce/client/businessdata/workingdocument"/>
+    <source path="mongoose/ecommerce/client/businesslogic/feesgroup"/>
+    <source path="mongoose/ecommerce/client/businesslogic/option"/>
+    <source path="mongoose/ecommerce/client/businesslogic/pricing"/>
+    <source path="mongoose/ecommerce/client/businesslogic/rules"/>
+    <source path="mongoose/ecommerce/client/businesslogic/workingdocument"/>
+    <!--=================< mongoose-ecommerce-frontoffice-activities-cart >=================-->
     <!-- used by mongoose-all-frontoffice-application (PLUGIN) -->
-    <source path="mongoose/frontoffice/activities/cart"/>
-    <!--==================< mongoose-frontoffice-activities-cart-routing >==================-->
-    <!-- used by mongoose-frontoffice-activities-summary (SOURCE) -->
-    <source path="mongoose/frontoffice/activities/cart/base"/>
-    <source path="mongoose/frontoffice/activities/cart/routing"/>
-    <source path="mongoose/frontoffice/operations/cart"/>
-    <!--===================< mongoose-frontoffice-activities-contactus >====================-->
-    <!-- used by mongoose-frontoffice-activities-cart (SOURCE) -->
-    <source path="mongoose/frontoffice/activities/contactus"/>
-    <source path="mongoose/frontoffice/activities/contactus/routing"/>
-    <source path="mongoose/frontoffice/operations/contactus"/>
-    <!--======================< mongoose-frontoffice-activities-fees >======================-->
-    <!-- used by mongoose-frontoffice-activities-startbooking (SOURCE) -->
-    <source path="mongoose/frontoffice/activities/fees"/>
-    <source path="mongoose/frontoffice/activities/fees/routing"/>
-    <source path="mongoose/frontoffice/operations/fees"/>
-    <!--====================< mongoose-frontoffice-activities-options >=====================-->
-    <!-- used by mongoose-frontoffice-activities-startbooking (SOURCE) -->
-    <source path="mongoose/frontoffice/activities/options"/>
-    <source path="mongoose/frontoffice/activities/options/routing"/>
-    <source path="mongoose/frontoffice/operations/options"/>
-    <!--====================< mongoose-frontoffice-activities-payment >=====================-->
-    <!-- used by mongoose-frontoffice-activities-cart (SOURCE) -->
-    <source path="mongoose/frontoffice/activities/payment"/>
-    <source path="mongoose/frontoffice/activities/payment/routing"/>
-    <source path="mongoose/frontoffice/operations/payment"/>
-    <!--=====================< mongoose-frontoffice-activities-person >=====================-->
-    <!-- used by mongoose-frontoffice-activities-options (SOURCE) -->
-    <source path="mongoose/frontoffice/activities/person"/>
-    <source path="mongoose/frontoffice/activities/person/routing"/>
-    <source path="mongoose/frontoffice/operations/person"/>
-    <!--====================< mongoose-frontoffice-activities-program >=====================-->
-    <!-- used by mongoose-frontoffice-activities-startbooking (SOURCE) -->
-    <source path="mongoose/frontoffice/activities/program"/>
-    <source path="mongoose/frontoffice/activities/program/routing"/>
-    <source path="mongoose/frontoffice/operations/program"/>
-    <!--==================< mongoose-frontoffice-activities-startbooking >==================-->
+    <source path="mongoose/ecommerce/frontoffice/activities/cart"/>
+    <!--=============< mongoose-ecommerce-frontoffice-activities-cart-routing >=============-->
+    <!-- used by mongoose-ecommerce-frontoffice-activities-summary (SOURCE) -->
+    <source path="mongoose/ecommerce/frontoffice/activities/cart/base"/>
+    <source path="mongoose/ecommerce/frontoffice/activities/cart/routing"/>
+    <source path="mongoose/ecommerce/frontoffice/operations/cart"/>
+    <!--==============< mongoose-ecommerce-frontoffice-activities-contactus >===============-->
+    <!-- used by mongoose-ecommerce-frontoffice-activities-cart (SOURCE) -->
+    <source path="mongoose/ecommerce/frontoffice/activities/contactus"/>
+    <source path="mongoose/ecommerce/frontoffice/activities/contactus/routing"/>
+    <source path="mongoose/ecommerce/frontoffice/operations/contactus"/>
+    <!--===============< mongoose-ecommerce-frontoffice-activities-payment >================-->
+    <!-- used by mongoose-ecommerce-frontoffice-activities-cart (SOURCE) -->
+    <source path="mongoose/ecommerce/frontoffice/activities/payment"/>
+    <source path="mongoose/ecommerce/frontoffice/activities/payment/routing"/>
+    <source path="mongoose/ecommerce/frontoffice/operations/payment"/>
+    <!--================< mongoose-ecommerce-frontoffice-activities-person >================-->
+    <!-- used by mongoose-event-frontoffice-activities-options (SOURCE) -->
+    <source path="mongoose/ecommerce/frontoffice/activities/person"/>
+    <source path="mongoose/ecommerce/frontoffice/activities/person/routing"/>
+    <source path="mongoose/ecommerce/frontoffice/operations/person"/>
+    <!--===============< mongoose-ecommerce-frontoffice-activities-summary >================-->
+    <!-- used by mongoose-ecommerce-frontoffice-activities-person (SOURCE) -->
+    <source path="mongoose/ecommerce/frontoffice/activities/summary"/>
+    <source path="mongoose/ecommerce/frontoffice/activities/summary/routing"/>
+    <source path="mongoose/ecommerce/frontoffice/operations/summary"/>
+    <!--=====================< mongoose-event-client-bookingcalendar >======================-->
+    <!-- used by mongoose-event-client-sectionpanel (SOURCE) -->
+    <source path="mongoose/event/client/controls/bookingcalendar"/>
+    <!--=========================< mongoose-event-client-calendar >=========================-->
+    <!-- used by mongoose-ecommerce-client-businesslogic (SOURCE) -->
+    <source path="mongoose/event/client/businessdata/calendar"/>
+    <source path="mongoose/event/client/businessdata/calendar/impl"/>
+    <source path="mongoose/event/client/controls/calendargraphic"/>
+    <source path="mongoose/event/client/controls/calendargraphic/impl"/>
+    <!--=======================< mongoose-event-client-sectionpanel >=======================-->
+    <!-- used by mongoose-crm-client-activities-login (SOURCE) -->
+    <source path="mongoose/event/client/controls/sectionpanel"/>
+    <!--===================< mongoose-event-frontoffice-activities-fees >===================-->
+    <!-- used by mongoose-event-frontoffice-activities-startbooking (SOURCE) -->
+    <source path="mongoose/event/frontoffice/activities/fees"/>
+    <source path="mongoose/event/frontoffice/activities/fees/routing"/>
+    <source path="mongoose/event/frontoffice/operations/fees"/>
+    <!--=================< mongoose-event-frontoffice-activities-options >==================-->
+    <!-- used by mongoose-event-frontoffice-activities-startbooking (SOURCE) -->
+    <source path="mongoose/event/frontoffice/activities/options"/>
+    <source path="mongoose/event/frontoffice/activities/options/routing"/>
+    <source path="mongoose/event/frontoffice/operations/options"/>
+    <!--=================< mongoose-event-frontoffice-activities-program >==================-->
+    <!-- used by mongoose-event-frontoffice-activities-startbooking (SOURCE) -->
+    <source path="mongoose/event/frontoffice/activities/program"/>
+    <source path="mongoose/event/frontoffice/activities/program/routing"/>
+    <source path="mongoose/event/frontoffice/operations/program"/>
+    <!--===============< mongoose-event-frontoffice-activities-startbooking >===============-->
     <!-- used by mongoose-all-frontoffice-application (PLUGIN) -->
-    <source path="mongoose/frontoffice/activities/startbooking"/>
-    <source path="mongoose/frontoffice/activities/startbooking/routing"/>
-    <source path="mongoose/frontoffice/operations/startbooking"/>
-    <!--====================< mongoose-frontoffice-activities-summary >=====================-->
-    <!-- used by mongoose-frontoffice-activities-person (SOURCE) -->
-    <source path="mongoose/frontoffice/activities/summary"/>
-    <source path="mongoose/frontoffice/activities/summary/routing"/>
-    <source path="mongoose/frontoffice/operations/summary"/>
-    <!--=====================< mongoose-frontoffice-activities-terms >======================-->
-    <!-- used by mongoose-frontoffice-activities-startbooking (SOURCE) -->
-    <source path="mongoose/frontoffice/activities/terms"/>
-    <source path="mongoose/frontoffice/activities/terms/routing"/>
-    <source path="mongoose/frontoffice/operations/terms"/>
-    <!--==========================< mongoose-shared-domainmodel >===========================-->
-    <!-- used by mongoose-shared-entities (SOURCE) -->
-    <source path="mongoose/shared/domainmodel/formatters"/>
-    <source path="mongoose/shared/domainmodel/functions"/>
-    <source path="mongoose/shared/services/datasourcemodel"/>
-    <source path="mongoose/shared/services/domainmodel"/>
-    <resource path="mongoose/shared/domainmodel"/>
-    <public includes="mongoose/shared/domainmodel/" path=""/>
-    <!--============================< mongoose-shared-entities >============================-->
-    <!-- used by mongoose-client-icons (SOURCE) -->
-    <source path="mongoose/shared/entities"/>
-    <source path="mongoose/shared/entities/formatters"/>
-    <source path="mongoose/shared/entities/impl"/>
-    <source path="mongoose/shared/entities/markers"/>
-    <source path="mongoose/shared/services/systemmetrics"/>
-    <!--==============================< mongoose-shared-time >==============================-->
-    <!-- used by mongoose-shared-entities (SOURCE) -->
-    <source path="mongoose/shared/businessdata/time"/>
+    <source path="mongoose/event/frontoffice/activities/startbooking"/>
+    <source path="mongoose/event/frontoffice/activities/startbooking/routing"/>
+    <source path="mongoose/event/frontoffice/operations/startbooking"/>
+    <!--==================< mongoose-event-frontoffice-activities-terms >===================-->
+    <!-- used by mongoose-event-frontoffice-activities-startbooking (SOURCE) -->
+    <source path="mongoose/event/frontoffice/activities/terms"/>
+    <source path="mongoose/event/frontoffice/activities/terms/routing"/>
+    <source path="mongoose/event/frontoffice/operations/terms"/>
+    <!--===========================< mongoose-hotel-shared-time >===========================-->
+    <!-- used by mongoose-base-shared-entities (SOURCE) -->
+    <source path="mongoose/hotel/shared/businessdata/time"/>
     <!--===============================< webfx-extras-cell >================================-->
     <!-- used by webfx-extras-visual-base (SOURCE) -->
     <source path="dev/webfx/extras/cell/collator"/>
     <source path="dev/webfx/extras/cell/renderer"/>
     <source path="dev/webfx/extras/cell/rowstyle"/>
     <!--==============================< webfx-extras-flexbox >==============================-->
-    <!-- used by mongoose-frontoffice-activities-options (SOURCE) -->
+    <!-- used by mongoose-event-frontoffice-activities-options (SOURCE) -->
     <source path="dev/webfx/extras/flexbox"/>
     <!--============================< webfx-extras-imagestore >=============================-->
     <!-- used by webfx-extras-cell (SOURCE) -->
@@ -377,7 +377,7 @@
     <!-- used by webfx-extras-visual-controls-grid (SOURCE) -->
     <source path="dev/webfx/extras/visual/controls"/>
     <!--=======================< webfx-extras-visual-controls-grid >========================-->
-    <!-- used by mongoose-client-activity (SOURCE) -->
+    <!-- used by mongoose-base-client-activity (SOURCE) -->
     <!-- used by webfx-extras-visual-controls-grid-peers-gwt (SOURCE) -->
     <source path="dev/webfx/extras/visual/controls/grid"/>
     <!--==================< webfx-extras-visual-controls-grid-peers-gwt >===================-->
@@ -386,7 +386,7 @@
     <source path="dev/webfx/extras/visual/controls/grid/peers/gwt/html"/>
     <source path="dev/webfx/extras/visual/controls/grid/registry"/>
     <!--==================< webfx-extras-visual-controls-grid-peers-base >==================-->
-    <!-- used by mongoose-frontoffice-activities-terms (SOURCE) -->
+    <!-- used by mongoose-event-frontoffice-activities-terms (SOURCE) -->
     <!-- used by webfx-extras-visual-controls-grid-peers-gwt (SOURCE) -->
     <source path="dev/webfx/extras/cell/collator/grid"/>
     <source path="dev/webfx/extras/visual/controls/grid/peers/base"/>
@@ -405,11 +405,11 @@
     <source path="dev/webfx/extras/webtext/controls/peers/gwt/html"/>
     <source path="dev/webfx/extras/webtext/controls/registry"/>
     <!--=========================< webfx-framework-client-action >==========================-->
-    <!-- used by mongoose-client-icons (SOURCE) -->
+    <!-- used by mongoose-base-client-icons (SOURCE) -->
     <source path="dev/webfx/framework/client/ui/action"/>
     <source path="dev/webfx/framework/client/ui/action/impl"/>
     <!--========================< webfx-framework-client-activity >=========================-->
-    <!-- used by mongoose-client-application (SOURCE) -->
+    <!-- used by mongoose-base-client-application (SOURCE) -->
     <source path="dev/webfx/framework/client/activity"/>
     <source path="dev/webfx/framework/client/activity/impl"/>
     <source path="dev/webfx/framework/client/activity/impl/composition"/>
@@ -417,7 +417,7 @@
     <source path="dev/webfx/framework/client/activity/impl/elementals/activeproperty"/>
     <source path="dev/webfx/framework/client/activity/impl/elementals/activeproperty/impl"/>
     <!--========================< webfx-framework-client-controls >=========================-->
-    <!-- used by mongoose-client-activity (SOURCE) -->
+    <!-- used by mongoose-base-client-activity (SOURCE) -->
     <source path="dev/webfx/framework/client/ui/controls"/>
     <source path="dev/webfx/framework/client/ui/controls/alert"/>
     <source path="dev/webfx/framework/client/ui/controls/button"/>
@@ -431,13 +431,13 @@
     <source path="dev/webfx/framework/client/services/i18n/spi"/>
     <source path="dev/webfx/framework/client/services/i18n/spi/impl"/>
     <!--========================< webfx-framework-client-i18n-json >========================-->
-    <!-- used by mongoose-client-i18n (SOURCE) -->
+    <!-- used by mongoose-base-client-i18n (SOURCE) -->
     <source path="dev/webfx/framework/client/services/i18n/spi/impl/json"/>
     <!--=====================< webfx-framework-client-operationaction >=====================-->
-    <!-- used by mongoose-client-application (SOURCE) -->
+    <!-- used by mongoose-base-client-application (SOURCE) -->
     <source path="dev/webfx/framework/client/ui/action/operation"/>
     <!--================< webfx-framework-client-orm-domainmodel-activity >=================-->
-    <!-- used by mongoose-client-application (SOURCE) -->
+    <!-- used by mongoose-base-client-application (SOURCE) -->
     <source path="dev/webfx/framework/client/activity/impl/combinations/domainpresentation"/>
     <source path="dev/webfx/framework/client/activity/impl/combinations/domainpresentation/impl"/>
     <source path="dev/webfx/framework/client/activity/impl/combinations/domainpresentationlogic/impl"/>
@@ -446,7 +446,7 @@
     <source path="dev/webfx/framework/client/activity/impl/elementals/domain"/>
     <source path="dev/webfx/framework/client/activity/impl/elementals/domain/impl"/>
     <!--===================< webfx-framework-client-orm-entity-controls >===================-->
-    <!-- used by mongoose-client-entities (SOURCE) -->
+    <!-- used by mongoose-base-client-entities (SOURCE) -->
     <source path="dev/webfx/framework/client/ui/controls/entity/selector"/>
     <source path="dev/webfx/framework/client/ui/controls/entity/sheet"/>
     <!--====================< webfx-framework-client-orm-reactive-dql >=====================-->
@@ -464,7 +464,7 @@
     <source path="dev/webfx/framework/client/orm/reactive/mapping/entities_to_grid"/>
     <source path="dev/webfx/framework/client/orm/reactive/mapping/entities_to_objects"/>
     <!--===================< webfx-framework-client-orm-reactive-visual >===================-->
-    <!-- used by mongoose-client-activity (SOURCE) -->
+    <!-- used by mongoose-base-client-activity (SOURCE) -->
     <source path="dev/webfx/framework/client/orm/reactive/mapping/entities_to_visual"/>
     <source path="dev/webfx/framework/client/orm/reactive/mapping/entities_to_visual/conventions"/>
     <!--==========================< webfx-framework-client-push >===========================-->
@@ -472,14 +472,14 @@
     <source path="dev/webfx/framework/client/services/push"/>
     <source path="dev/webfx/framework/client/services/push/spi"/>
     <!--=======================< webfx-framework-client-push-simple >=======================-->
-    <!-- used by mongoose-client-application (PLUGIN) -->
+    <!-- used by mongoose-base-client-application (PLUGIN) -->
     <source path="dev/webfx/framework/client/services/push/spi/impl/simple"/>
     <!--========================< webfx-framework-client-querypush >========================-->
     <!-- used by webfx-framework-client-querypush-simple (SOURCE) -->
     <source path="dev/webfx/framework/client/services/querypush"/>
     <!--====================< webfx-framework-client-querypush-simple >=====================-->
     <!-- used by mongoose-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
-    <!-- used by mongoose-client-application (PLUGIN) -->
+    <!-- used by mongoose-base-client-application (PLUGIN) -->
     <source path="dev/webfx/framework/client/jobs/querypush"/>
     <!--========================< webfx-framework-client-uirouter >=========================-->
     <!-- used by webfx-framework-client-orm-domainmodel-activity (SOURCE) -->
@@ -520,7 +520,7 @@
     <resource path="dev/webfx/framework/client/ui/validation/controlsfx/images"/>
     <public includes="dev/webfx/framework/client/ui/validation/controlsfx/images/" path=""/>
     <!--==========================< webfx-framework-shared-authn >==========================-->
-    <!-- used by mongoose-client-authn (SOURCE) -->
+    <!-- used by mongoose-crm-client-authn (SOURCE) -->
     <source path="dev/webfx/framework/shared/services/authn"/>
     <source path="dev/webfx/framework/shared/services/authn/spi"/>
     <!--==========================< webfx-framework-shared-authz >==========================-->
@@ -536,7 +536,7 @@
     <!-- used by webfx-framework-client-i18n (SOURCE) -->
     <source path="dev/webfx/framework/shared/operation"/>
     <!--===============< webfx-framework-shared-orm-datasourcemodelservice >================-->
-    <!-- used by mongoose-shared-domainmodel (SOURCE) -->
+    <!-- used by mongoose-base-shared-domainmodel (SOURCE) -->
     <!-- used by webfx-framework-shared-orm-dql-query-interceptor (SOURCE) -->
     <!-- used by webfx-framework-shared-orm-dql-querypush-interceptor (SOURCE) -->
     <!-- used by webfx-framework-shared-orm-dql-submit-interceptor (SOURCE) -->
@@ -552,7 +552,7 @@
     <source path="dev/webfx/framework/shared/orm/domainmodel/formatter"/>
     <source path="dev/webfx/framework/shared/orm/domainmodel/lciimpl"/>
     <!--=================< webfx-framework-shared-orm-domainmodelservice >==================-->
-    <!-- used by mongoose-shared-domainmodel (SOURCE) -->
+    <!-- used by mongoose-base-shared-domainmodel (SOURCE) -->
     <source path="dev/webfx/framework/shared/services/domainmodel"/>
     <source path="dev/webfx/framework/shared/services/domainmodel/spi"/>
     <!--=========================< webfx-framework-shared-orm-dql >=========================-->
@@ -575,7 +575,7 @@
     <!-- used by mongoose-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <source path="dev/webfx/framework/shared/interceptors/dqlsubmit"/>
     <!--=======================< webfx-framework-shared-orm-entity >========================-->
-    <!-- used by mongoose-shared-entities (SOURCE) -->
+    <!-- used by mongoose-base-shared-entities (SOURCE) -->
     <source path="dev/webfx/framework/shared/orm/entity"/>
     <source path="dev/webfx/framework/shared/orm/entity/impl"/>
     <source path="dev/webfx/framework/shared/orm/entity/lciimpl"/>
@@ -672,7 +672,7 @@
     <!-- used by webfx-platform-shared-json (SOURCE) -->
     <source path="java_cup/runtime"/>
     <!--=========================< webfx-platform-client-storage >==========================-->
-    <!-- used by mongoose-client-sessionrecorder (SOURCE) -->
+    <!-- used by mongoose-base-client-sessionrecorder (SOURCE) -->
     <!-- used by webfx-platform-gwt-storage-impl (SOURCE) -->
     <source path="dev/webfx/platform/client/services/storage"/>
     <source path="dev/webfx/platform/client/services/storage/spi"/>
@@ -689,7 +689,7 @@
     <source path="dev/webfx/platform/client/services/websocket"/>
     <source path="dev/webfx/platform/client/services/websocket/spi"/>
     <!--=======================< webfx-platform-client-websocketbus >=======================-->
-    <!-- used by mongoose-client-aggregates (SOURCE) -->
+    <!-- used by mongoose-base-client-aggregates (SOURCE) -->
     <!-- used by webfx-platform-web-websocketbus (SOURCE) -->
     <source path="dev/webfx/platform/client/services/websocketbus"/>
     <!--======================< webfx-platform-client-windowhistory >=======================-->
@@ -817,7 +817,7 @@
     <!-- used by mongoose-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <source path="dev/webfx/platform/shared/services/query/spi/impl/remote"/>
     <!--=========================< webfx-platform-shared-resource >=========================-->
-    <!-- used by mongoose-shared-domainmodel (SOURCE) -->
+    <!-- used by mongoose-base-shared-domainmodel (SOURCE) -->
     <!-- used by webfx-kit-javafxgraphics-peers-gwt (SOURCE) -->
     <!-- used by webfx-platform-client-websocketbus (SOURCE) -->
     <!-- used by webfx-platform-gwt-resource-impl (SOURCE) -->

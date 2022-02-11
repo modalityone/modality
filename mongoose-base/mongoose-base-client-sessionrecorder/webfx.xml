@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project>
+
+    <packages>
+        <source-packages/>
+    </packages>
+
+    <providers>
+        <dev.webfx.platform.shared.services.appcontainer.spi.ApplicationJob>mongoose.base.client.jobs.sessionrecorder.ClientSessionRecorderJob</dev.webfx.platform.shared.services.appcontainer.spi.ApplicationJob>
+    </providers>
+
+    <dependencies>
+        <source-modules/>
+        <source-module>javafx-base</source-module>
+        <source-module>webfx-platform-shared-submit</source-module>
+        <source-module>webfx-platform-shared-util</source-module>
+    </dependencies>
+
+    <system-properties>
+        <property>application.name</property>
+        <property>application.version</property>
+        <property>application.build.tool</property>
+        <property>application.build.number</property>
+        <property>application.build.timestamp</property>
+    </system-properties>
+
+</project>
