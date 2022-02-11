@@ -31,7 +31,8 @@ public class MongooseClientOperationActionsLoader implements ApplicationModuleIn
 
     @Override
     public void initModule() {
-        EntityStore.create(DataSourceModelService.getDefaultDataSourceModel()).executeQuery("select operationCode,i18nCode,public from Operation").setHandler(ar -> {
+        // Temporary load only the operations for the backend (ie back-office) for the demo (because backend and frontend fields are not considered by authz so far)
+        EntityStore.create(DataSourceModelService.getDefaultDataSourceModel()).executeQuery("select operationCode,i18nCode,public from Operation where backend").setHandler(ar -> {
             if (ar.failed())
                 Logger.log("Failed loading operations", ar.cause());
             else {
@@ -50,7 +51,7 @@ public class MongooseClientOperationActionsLoader implements ApplicationModuleIn
                 // needs to be updated to say 'Cancel' or 'Uncancel' on selection change)
                 registry.setOperationActionGraphicalPropertiesUpdater(operationAction -> {
                     // Actually since text and graphic properties come from I18n, we just need to inform it about the
-                    // change and it will refresh all translations, including therefore these graphical properties.
+                    // change, and it will refresh all translations, including therefore these graphical properties.
                     // The possible expressions used by operations like ToggleCancel will be recomputed through this
                     // refresh thanks to the I18n evaluation system.
                     // Instantiating an operation request just to have the request class or operation code
