@@ -11,18 +11,22 @@
 
     <dependencies>
         <source-modules/>
-        <source-module>javafx-graphics</source-module>
+        <source-module>javafx-graphics</source-module> <!-- necessary for the declaration of the javafx application at this module level -->
 
-        <plugin-module>mongoose-event-frontoffice-activities-startbooking</plugin-module>
-        <plugin-module>mongoose-event-frontoffice-activities-terms</plugin-module>
-        <plugin-module>mongoose-event-frontoffice-activities-program</plugin-module>
-        <plugin-module>mongoose-event-frontoffice-activities-fees</plugin-module>
-        <plugin-module>mongoose-event-frontoffice-activities-options</plugin-module>
+        <!-- Ecommerce activities -->
         <plugin-module>mongoose-ecommerce-frontoffice-activities-person</plugin-module>
         <plugin-module>mongoose-ecommerce-frontoffice-activities-summary</plugin-module>
         <plugin-module>mongoose-ecommerce-frontoffice-activities-cart</plugin-module>
         <plugin-module>mongoose-ecommerce-frontoffice-activities-payment</plugin-module>
         <plugin-module>mongoose-ecommerce-frontoffice-activities-contactus</plugin-module>
+
+        <!-- Event activities -->
+        <plugin-module>mongoose-event-frontoffice-activities-startbooking</plugin-module>
+        <plugin-module>mongoose-event-frontoffice-activities-terms</plugin-module>
+        <plugin-module>mongoose-event-frontoffice-activities-program</plugin-module>
+        <plugin-module>mongoose-event-frontoffice-activities-fees</plugin-module>
+        <plugin-module>mongoose-event-frontoffice-activities-options</plugin-module>
+
     </dependencies>
 
 </project>

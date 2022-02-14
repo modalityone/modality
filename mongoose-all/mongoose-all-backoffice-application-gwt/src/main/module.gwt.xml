@@ -324,7 +324,7 @@
     <!-- used by mongoose-ecommerce-backoffice-operations-document (SOURCE) -->
     <source path="mongoose/crm/client/controls/personaldetails"/>
     <!--===============< mongoose-ecommerce-backoffice-activities-bookings >================-->
-    <!-- used by mongoose-all-backoffice-application (PLUGIN) -->
+    <!-- used by mongoose-event-backoffice-activities-events (SOURCE) -->
     <source path="mongoose/ecommerce/backoffice/activities/bookings"/>
     <source path="mongoose/ecommerce/backoffice/activities/bookings/routing"/>
     <source path="mongoose/ecommerce/backoffice/operations/routes/bookings"/>
@@ -344,7 +344,7 @@
     <source path="mongoose/ecommerce/backoffice/activities/statements/routing"/>
     <source path="mongoose/ecommerce/backoffice/operations/routes/statements"/>
     <!--==============< mongoose-ecommerce-backoffice-activities-statistics >===============-->
-    <!-- used by mongoose-catering-backoffice-activities-diningareas (SOURCE) -->
+    <!-- used by mongoose-all-backoffice-application (PLUGIN) -->
     <source path="mongoose/ecommerce/backoffice/activities/statistics"/>
     <source path="mongoose/ecommerce/backoffice/activities/statistics/routing"/>
     <source path="mongoose/ecommerce/backoffice/operations/routes/statistics"/>
@@ -400,7 +400,7 @@
     <source path="mongoose/event/backoffice/activities/cloneevent/routing"/>
     <source path="mongoose/event/backoffice/operations/routes/cloneevent"/>
     <!--==================< mongoose-event-backoffice-activities-events >===================-->
-    <!-- used by mongoose-all-backoffice-application (PLUGIN) -->
+    <!-- used by mongoose-crm-backoffice-activities-organizations (SOURCE) -->
     <source path="mongoose/event/backoffice/activities/events"/>
     <source path="mongoose/event/backoffice/activities/events/routing"/>
     <source path="mongoose/event/backoffice/operations/routes/events"/>

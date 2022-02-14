@@ -262,7 +262,7 @@
     <!-- used by mongoose-ecommerce-frontoffice-activities-summary (SOURCE) -->
     <source path="mongoose/ecommerce/client/controls/bookingoptionspanel"/>
     <!--====================< mongoose-ecommerce-client-bookingprocess >====================-->
-    <!-- used by mongoose-event-frontoffice-activities-startbooking (SOURCE) -->
+    <!-- used by mongoose-ecommerce-frontoffice-activities-person (SOURCE) -->
     <source path="mongoose/ecommerce/client/activity/bookingprocess"/>
     <!--====================< mongoose-ecommerce-client-businesslogic >=====================-->
     <!-- used by mongoose-base-client-activity (SOURCE) -->
@@ -293,7 +293,7 @@
     <source path="mongoose/ecommerce/frontoffice/activities/payment/routing"/>
     <source path="mongoose/ecommerce/frontoffice/operations/payment"/>
     <!--================< mongoose-ecommerce-frontoffice-activities-person >================-->
-    <!-- used by mongoose-event-frontoffice-activities-options (SOURCE) -->
+    <!-- used by mongoose-all-frontoffice-application (PLUGIN) -->
     <source path="mongoose/ecommerce/frontoffice/activities/person"/>
     <source path="mongoose/ecommerce/frontoffice/activities/person/routing"/>
     <source path="mongoose/ecommerce/frontoffice/operations/person"/>
@@ -320,7 +320,7 @@
     <source path="mongoose/event/frontoffice/activities/fees/routing"/>
     <source path="mongoose/event/frontoffice/operations/fees"/>
     <!--=================< mongoose-event-frontoffice-activities-options >==================-->
-    <!-- used by mongoose-event-frontoffice-activities-startbooking (SOURCE) -->
+    <!-- used by mongoose-ecommerce-frontoffice-activities-cart (SOURCE) -->
     <source path="mongoose/event/frontoffice/activities/options"/>
     <source path="mongoose/event/frontoffice/activities/options/routing"/>
     <source path="mongoose/event/frontoffice/operations/options"/>
@@ -330,7 +330,7 @@
     <source path="mongoose/event/frontoffice/activities/program/routing"/>
     <source path="mongoose/event/frontoffice/operations/program"/>
     <!--===============< mongoose-event-frontoffice-activities-startbooking >===============-->
-    <!-- used by mongoose-all-frontoffice-application (PLUGIN) -->
+    <!-- used by mongoose-ecommerce-frontoffice-activities-cart (SOURCE) -->
     <source path="mongoose/event/frontoffice/activities/startbooking"/>
     <source path="mongoose/event/frontoffice/activities/startbooking/routing"/>
     <source path="mongoose/event/frontoffice/operations/startbooking"/>
