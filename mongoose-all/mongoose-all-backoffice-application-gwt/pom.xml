@@ -36,7 +36,7 @@
         <dependency>
             <groupId>org.pepstock</groupId>
             <artifactId>charba</artifactId>
-            <version>3.3-gwt</version>
+            <version>5.1-gwt</version>
             <classifier>sources</classifier>
         </dependency>
     
