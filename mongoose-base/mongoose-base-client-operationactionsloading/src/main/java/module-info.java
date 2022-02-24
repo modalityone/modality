@@ -11,7 +11,7 @@ module mongoose.base.client.operationactionsloading {
     requires webfx.framework.client.uirouter;
     requires webfx.framework.shared.orm.datasourcemodelservice;
     requires webfx.framework.shared.orm.entity;
-    requires webfx.platform.shared.appcontainer;
+    requires webfx.platform.shared.boot;
     requires webfx.platform.shared.log;
     requires webfx.platform.shared.util;
 
@@ -19,6 +19,6 @@ module mongoose.base.client.operationactionsloading {
     exports mongoose.base.client.operationactionsloading;
 
     // Provided services
-    provides dev.webfx.platform.shared.services.appcontainer.spi.ApplicationModuleInitializer with mongoose.base.client.operationactionsloading.MongooseClientOperationActionsLoader;
+    provides dev.webfx.platform.shared.services.boot.spi.ApplicationModuleBooter with mongoose.base.client.operationactionsloading.MongooseClientOperationActionsLoader;
 
 }

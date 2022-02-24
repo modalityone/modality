@@ -9,13 +9,13 @@ import dev.webfx.framework.client.ui.uirouter.uisession.UiSession;
 import dev.webfx.framework.shared.orm.entity.Entity;
 import dev.webfx.framework.shared.orm.entity.EntityStore;
 import dev.webfx.framework.shared.services.datasourcemodel.DataSourceModelService;
-import dev.webfx.platform.shared.services.appcontainer.spi.ApplicationModuleInitializer;
+import dev.webfx.platform.shared.services.boot.spi.ApplicationModuleBooter;
 import dev.webfx.platform.shared.services.log.Logger;
 
 /**
  * @author Bruno Salmon
  */
-public class MongooseClientOperationActionsLoader implements ApplicationModuleInitializer,
+public class MongooseClientOperationActionsLoader implements ApplicationModuleBooter,
         OperationActionFactoryMixin,
         ActionFactoryMixin {
 
@@ -25,12 +25,12 @@ public class MongooseClientOperationActionsLoader implements ApplicationModuleIn
     }
 
     @Override
-    public int getInitLevel() {
-        return APPLICATION_INIT_LEVEL;
+    public int getBootLevel() {
+        return APPLICATION_BOOT_LEVEL;
     }
 
     @Override
-    public void initModule() {
+    public void bootModule() {
         // Temporary load only the operations for the backend (ie back-office) for the demo (because backend and frontend fields are not considered by authz so far)
         EntityStore.create(DataSourceModelService.getDefaultDataSourceModel()).executeQuery("select operationCode,i18nCode,public from Operation where backend").setHandler(ar -> {
             if (ar.failed())

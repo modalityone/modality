@@ -6,7 +6,7 @@ module mongoose.base.server.sessioncloser {
     requires webfx.framework.server.push;
     requires webfx.framework.shared.orm.datasourcemodelservice;
     requires webfx.framework.shared.orm.domainmodel;
-    requires webfx.platform.shared.appcontainer;
+    requires webfx.platform.shared.boot;
     requires webfx.platform.shared.log;
     requires webfx.platform.shared.submit;
     requires webfx.platform.shared.util;
@@ -15,6 +15,6 @@ module mongoose.base.server.sessioncloser {
     exports mongoose.base.server.jobs.sessioncloser;
 
     // Provided services
-    provides dev.webfx.platform.shared.services.appcontainer.spi.ApplicationJob with mongoose.base.server.jobs.sessioncloser.MongooseServerUnresponsiveClientSessionCloserJob;
+    provides dev.webfx.platform.shared.services.boot.spi.ApplicationJob with mongoose.base.server.jobs.sessioncloser.MongooseServerUnresponsiveClientSessionCloserJob;
 
 }

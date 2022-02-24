@@ -5,7 +5,7 @@ import mongoose.base.shared.entities.SystemMetricsEntity;
 import dev.webfx.framework.shared.orm.domainmodel.DataSourceModel;
 import dev.webfx.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.framework.shared.services.datasourcemodel.DataSourceModelService;
-import dev.webfx.platform.shared.services.appcontainer.spi.ApplicationJob;
+import dev.webfx.platform.shared.services.boot.spi.ApplicationJob;
 import dev.webfx.platform.shared.services.log.Logger;
 import dev.webfx.platform.shared.services.scheduler.Scheduled;
 import dev.webfx.platform.shared.services.scheduler.Scheduler;

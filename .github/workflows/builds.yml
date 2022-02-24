@@ -101,12 +101,12 @@ jobs:
       #                                              Preparation                                                       #
       ##################################################################################################################
 
-      # Configure Git for long filenames on Windows (otherwise the WebFx repository checkout will fail)
+      # Configure Git for long filenames on Windows (otherwise the WebFX repository checkout will fail)
       - if: runner.os == 'Windows'
         name: Configure Git for long filenames (Windows only)
         run: git config --global core.longpaths true
 
-      # Set up the JDK (WebFx requires JDK13+ due to javac bugs in prior versions - otherwise JDK11+ should be enough in theory)
+      # Set up the JDK (WebFX requires JDK13+ due to javac bugs in prior versions - otherwise JDK11+ should be enough in theory)
       - name: Set up JDK ${{ env.jdk-version }}
         uses: actions/setup-java@v1
         with:
@@ -124,7 +124,7 @@ jobs:
 
 
       ##################################################################################################################
-      #      Building WebFx + this repository (jars + OpenJFX fat jar + javapackager + Web build (GWT) if required)    #
+      #      Building WebFX + this repository (jars + OpenJFX fat jar + javapackager + Web build (GWT) if required)    #
       ##################################################################################################################
       # Builds generated on Ubuntu:                                                                                    #
       #  1) App-Web.war : Web app (built with GWT)                                                                     #
@@ -244,7 +244,7 @@ jobs:
         name: Create Windows Installer (msi)
         run: |
           mvn -B javafx:jlink
-          ${{ env.JAVA_HOME }}\bin\jpackage --input .\target\ --name ${{ env.app-name }} --main-jar ${{ matrix.app.module-token }}-application-openjfx-${{ matrix.app.version }}.jar --main-class dev.webfx.platform.shared.services.appcontainer.ApplicationContainer --type msi --runtime-image .\target\jlinkImage --app-version 0.0.0 --win-per-user-install --win-menu --win-menu-group WebFx
+          ${{ env.JAVA_HOME }}\bin\jpackage --input .\target\ --name ${{ env.app-name }} --main-jar ${{ matrix.app.module-token }}-application-openjfx-${{ matrix.app.version }}.jar --main-class dev.webfx.platform.shared.services.boot.ApplicationBooter --type msi --runtime-image .\target\jlinkImage --app-version 0.0.0 --win-per-user-install --win-menu --win-menu-group WebFX
         working-directory: ${{ env.app-openjfx-module-dir }}
 
       # Staging 9)

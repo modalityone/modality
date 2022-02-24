@@ -10,7 +10,7 @@ import dev.webfx.framework.shared.services.datasourcemodel.DataSourceModelServic
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.framework.client.services.push.PushClientService;
 import dev.webfx.platform.client.services.storage.LocalStorage;
-import dev.webfx.platform.shared.services.appcontainer.spi.ApplicationJob;
+import dev.webfx.platform.shared.services.boot.spi.ApplicationJob;
 import dev.webfx.platform.shared.services.bus.Bus;
 import dev.webfx.platform.shared.services.bus.BusHook;
 import dev.webfx.platform.shared.services.bus.BusService;

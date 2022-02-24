@@ -6,7 +6,7 @@
     </packages>
 
     <providers>
-        <dev.webfx.platform.shared.services.appcontainer.spi.ApplicationJob>mongoose.base.server.jobs.systemmetrics.SystemMetricsRecorderJob</dev.webfx.platform.shared.services.appcontainer.spi.ApplicationJob>
+        <dev.webfx.platform.shared.services.boot.spi.ApplicationJob>mongoose.base.server.jobs.systemmetrics.SystemMetricsRecorderJob</dev.webfx.platform.shared.services.boot.spi.ApplicationJob>
     </providers>
 
     <dependencies>

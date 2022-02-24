@@ -3,7 +3,7 @@ package mongoose.base.server.jobs.sessioncloser;
 import dev.webfx.framework.server.services.push.PushServerService;
 import dev.webfx.framework.server.services.push.UnresponsivePushClientListener;
 import dev.webfx.framework.shared.services.datasourcemodel.DataSourceModelService;
-import dev.webfx.platform.shared.services.appcontainer.spi.ApplicationJob;
+import dev.webfx.platform.shared.services.boot.spi.ApplicationJob;
 import dev.webfx.platform.shared.services.log.Logger;
 import dev.webfx.platform.shared.services.submit.SubmitArgument;
 import dev.webfx.platform.shared.services.submit.SubmitService;

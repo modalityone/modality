@@ -96,7 +96,7 @@
     <!-- used by mongoose-all-backoffice-application-gwt (EMULATION) -->
     <!--====================================< gwt-user >====================================-->
     <!-- used by webfx-kit-javafxgraphics-peers-gwt (SOURCE) -->
-    <!-- used by webfx-platform-gwt-appcontainer-impl (SOURCE) -->
+    <!-- used by webfx-platform-gwt-boot-impl (SOURCE) -->
     <!-- used by webfx-platform-gwt-emul-javabase (SOURCE) -->
     <!-- used by webfx-platform-gwt-json-impl (SOURCE) -->
     <!-- used by webfx-platform-gwt-resource-impl (SOURCE) -->
@@ -819,9 +819,9 @@
     <source path="dev/webfx/platform/client/services/windowlocation"/>
     <source path="dev/webfx/platform/client/services/windowlocation/spi"/>
     <source path="dev/webfx/platform/client/services/windowlocation/spi/impl"/>
-    <!--======================< webfx-platform-gwt-appcontainer-impl >======================-->
+    <!--======================< webfx-platform-gwt-boot-impl >======================-->
     <!-- used by mongoose-all-backoffice-application-gwt (IMPLICIT_PROVIDER) -->
-    <source path="dev/webfx/platform/gwt/services/appcontainer/spi/impl"/>
+    <source path="dev/webfx/platform/gwt/services/boot/spi/impl"/>
     <!--==========================< webfx-platform-gwt-json-impl >==========================-->
     <!-- used by mongoose-all-backoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <!-- used by webfx-platform-gwt-windowhistory-impl (SOURCE) -->
@@ -852,16 +852,16 @@
     <!-- used by mongoose-all-backoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <source path="dev/webfx/platform/gwt/services/windowlocation/spi/impl"/>
     <source path="dev/webfx/platform/gwt/services/windowlocation/spi/impl/jsinterop"/>
-    <!--=======================< webfx-platform-shared-appcontainer >=======================-->
+    <!--=======================< webfx-platform-shared-boot >=======================-->
     <!-- used by mongoose-all-backoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <!-- used by webfx-framework-shared-orm-dql-query-interceptor (SOURCE) -->
     <!-- used by webfx-kit-launcher (SOURCE) -->
-    <!-- used by webfx-platform-gwt-appcontainer-impl (SOURCE) -->
+    <!-- used by webfx-platform-gwt-boot-impl (SOURCE) -->
     <!-- used by webfx-platform-gwt-resource-impl (SOURCE) -->
     <!-- used by webfx-platform-shared-serial (SOURCE) -->
-    <source path="dev/webfx/platform/shared/services/appcontainer"/>
-    <source path="dev/webfx/platform/shared/services/appcontainer/spi"/>
-    <source path="dev/webfx/platform/shared/services/appcontainer/spi/impl"/>
+    <source path="dev/webfx/platform/shared/services/boot"/>
+    <source path="dev/webfx/platform/shared/services/boot/spi"/>
+    <source path="dev/webfx/platform/shared/services/boot/spi/impl"/>
     <!--===========================< webfx-platform-shared-bus >============================-->
     <!-- used by webfx-platform-shared-buscall (SOURCE) -->
     <!-- used by webfx-platform-web-websocketbus (SOURCE) -->
@@ -910,7 +910,7 @@
     <!-- used by webfx-kit-launcher (SOURCE) -->
     <!-- used by webfx-platform-gwt-log-impl (SOURCE) -->
     <!-- used by webfx-platform-gwt-uischeduler-impl (SOURCE) -->
-    <!-- used by webfx-platform-shared-appcontainer (SOURCE) -->
+    <!-- used by webfx-platform-shared-boot (SOURCE) -->
     <!-- used by webfx-platform-shared-bus (SOURCE) -->
     <!-- used by webfx-platform-shared-serial (SOURCE) -->
     <!-- used by webfx-platform-web-windowhistory-impl (SOURCE) -->
@@ -952,7 +952,7 @@
     <!--=========================< webfx-platform-shared-shutdown >=========================-->
     <!-- used by webfx-kit-javafxgraphics-emul (SOURCE) -->
     <!-- used by webfx-platform-gwt-shutdown-impl (SOURCE) -->
-    <!-- used by webfx-platform-shared-appcontainer (SOURCE) -->
+    <!-- used by webfx-platform-shared-boot (SOURCE) -->
     <source path="dev/webfx/platform/shared/services/shutdown"/>
     <source path="dev/webfx/platform/shared/services/shutdown/spi"/>
     <source path="dev/webfx/platform/shared/services/shutdown/spi/impl"/>
@@ -972,7 +972,7 @@
     <!-- used by webfx-kit-javafxgraphics-peers (SOURCE) -->
     <!-- used by webfx-platform-client-storage (SOURCE) -->
     <!-- used by webfx-platform-client-windowlocation (SOURCE) -->
-    <!-- used by webfx-platform-shared-appcontainer (SOURCE) -->
+    <!-- used by webfx-platform-shared-boot (SOURCE) -->
     <!-- used by webfx-platform-shared-bus (SOURCE) -->
     <!-- used by webfx-platform-shared-datasource (SOURCE) -->
     <!-- used by webfx-platform-shared-json (SOURCE) -->
@@ -998,7 +998,7 @@
     <set-property name="jre.checks.checkLevel" value="MINIMAL"/>
 
     <!-- Specify the app entry point class. -->
-    <entry-point class="dev.webfx.platform.gwt.services.appcontainer.spi.impl.GwtApplicationContainerProvider"/>
+    <entry-point class="dev.webfx.platform.gwt.services.boot.spi.impl.GwtApplicationBooterProvider"/>
 
     <super-source path="super"/>
     <super-source includes="java/io/" path=""/>

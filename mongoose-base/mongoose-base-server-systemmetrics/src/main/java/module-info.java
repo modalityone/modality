@@ -8,7 +8,7 @@ module mongoose.base.server.systemmetrics {
     requires webfx.framework.shared.orm.datasourcemodelservice;
     requires webfx.framework.shared.orm.domainmodel;
     requires webfx.framework.shared.orm.entity;
-    requires webfx.platform.shared.appcontainer;
+    requires webfx.platform.shared.boot;
     requires webfx.platform.shared.log;
     requires webfx.platform.shared.scheduler;
     requires webfx.platform.shared.submit;
@@ -23,6 +23,6 @@ module mongoose.base.server.systemmetrics {
     uses mongoose.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider;
 
     // Provided services
-    provides dev.webfx.platform.shared.services.appcontainer.spi.ApplicationJob with mongoose.base.server.jobs.systemmetrics.SystemMetricsRecorderJob;
+    provides dev.webfx.platform.shared.services.boot.spi.ApplicationJob with mongoose.base.server.jobs.systemmetrics.SystemMetricsRecorderJob;
 
 }

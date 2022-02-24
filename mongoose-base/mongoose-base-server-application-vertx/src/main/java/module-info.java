@@ -14,7 +14,7 @@ module mongoose.base.server.application.vertx {
     requires webfx.platform.java.resource.impl;
     requires webfx.platform.java.shutdown.impl;
     requires webfx.platform.shared.log.impl.simple;
-    requires webfx.platform.vertx.appcontainer.impl;
+    requires webfx.platform.vertx.boot.impl;
     requires webfx.platform.vertx.bus.impl;
     requires webfx.platform.vertx.json.impl;
     requires webfx.platform.vertx.query.impl.postgres.mysql.jdbc;
