@@ -10,10 +10,11 @@
     </providers>
 
     <dependencies>
-        <source-modules/>
-        <source-module>mongoose-base-client-aggregates</source-module>
-        <source-module>webfx-framework-client-activity</source-module>
-        <source-module>webfx-platform-shared-submit</source-module>
+        <source-modules>
+            <undiscovered-source-module>mongoose-base-client-aggregates</undiscovered-source-module>
+            <undiscovered-source-module>webfx-framework-client-activity</undiscovered-source-module>
+            <undiscovered-source-module>webfx-platform-shared-submit</undiscovered-source-module>
+        </source-modules>
     </dependencies>
 
 </project>

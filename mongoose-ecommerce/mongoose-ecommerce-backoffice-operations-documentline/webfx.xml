@@ -6,8 +6,9 @@
     </packages>
 
     <dependencies>
-        <source-modules/>
-        <source-module>webfx-platform-shared-submit</source-module>
+        <source-modules>
+            <undiscovered-source-module>webfx-platform-shared-submit</undiscovered-source-module>
+        </source-modules>
     </dependencies>
 
 </project>

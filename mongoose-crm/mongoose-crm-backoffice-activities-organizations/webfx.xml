@@ -11,9 +11,10 @@
     </providers>
 
     <dependencies>
-        <source-modules/>
-        <source-module>webfx-framework-client-activity</source-module>
-        <source-module>webfx-framework-shared-orm-entity</source-module>
+        <source-modules>
+            <undiscovered-source-module>webfx-framework-client-activity</undiscovered-source-module>
+            <undiscovered-source-module>webfx-framework-shared-orm-entity</undiscovered-source-module>
+        </source-modules>
     </dependencies>
 
 </project>

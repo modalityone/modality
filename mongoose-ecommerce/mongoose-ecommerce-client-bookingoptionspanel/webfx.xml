@@ -6,9 +6,10 @@
     </packages>
 
     <dependencies>
-        <source-modules/>
-        <source-module>mongoose-base-client-aggregates</source-module>
-        <source-module>webfx-kit-javafxcontrols-emul</source-module>
+        <source-modules>
+            <undiscovered-source-module>mongoose-base-client-aggregates</undiscovered-source-module>
+            <undiscovered-source-module>webfx-kit-javafxcontrols-emul</undiscovered-source-module>
+        </source-modules>
     </dependencies>
 
 </project>
