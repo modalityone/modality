@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project>
 
-    <packages>
+    <exported-packages>
         <source-packages/>
-    </packages>
+    </exported-packages>
 
     <providers>
         <javafx.application.Application>mongoose.all.frontoffice.application.MongooseFrontOfficeApplication</javafx.application.Application>

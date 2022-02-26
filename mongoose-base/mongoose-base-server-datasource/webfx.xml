@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project>
 
-    <packages>
+    <exported-packages>
         <source-packages/>
         <resource-package>mongoose.base.server.datasource.MDS</resource-package>
-    </packages>
+    </exported-packages>
 
 
     <providers>

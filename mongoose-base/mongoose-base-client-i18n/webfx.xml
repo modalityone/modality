@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project>
 
-    <packages>
+    <exported-packages>
         <source-packages/>
         <resource-package>mongoose.base.client.services.i18n.dictionaries</resource-package>
-    </packages>
+    </exported-packages>
 
     <providers>
         <dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>mongoose.base.client.operations.i18n.ChangeLanguageToEnglishRequest$ProvidedEmitter</dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>

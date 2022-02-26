@@ -5,10 +5,10 @@
         <module>mongoose-base-client-css</module>
     </implements>
 
-    <packages>
+    <exported-packages>
         <resource-package>mongoose.base.client.css</resource-package>
         <resource-package>mongoose.base.client.fonts</resource-package>
-    </packages>
+    </exported-packages>
 
     <dependencies>
         <used-by-source-modules/>

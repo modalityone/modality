@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project>
 
-    <packages>
+    <exported-packages>
         <source-packages/>
         <resource-package>images.s16</resource-package>
         <resource-package>images.s16.actions</resource-package>
@@ -20,7 +20,7 @@
         <resource-package>images.s32.system</resource-package>
         <resource-package>images.svg.color</resource-package>
         <resource-package>images.svg.mono</resource-package>
-    </packages>
+    </exported-packages>
 
     <dependencies>
         <used-by-source-modules/>

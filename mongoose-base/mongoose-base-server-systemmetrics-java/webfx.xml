@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project>
 
-    <packages>
+    <exported-packages>
         <source-packages/>
-    </packages>
+    </exported-packages>
 
     <providers>
         <mongoose.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider>mongoose.base.server.services.systemmetrics.spi.java.JavaSystemMetricsServiceProvider</mongoose.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider>
@@ -16,9 +16,9 @@
     <libraries>
 
         <library name="jdk-management">
-            <packages>
+            <exported-packages>
                 <package>com.sun.management</package>
-            </packages>
+            </exported-packages>
         </library>
 
     </libraries>

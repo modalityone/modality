@@ -5,11 +5,11 @@
         <show-loading-spinner-on-startup>true</show-loading-spinner-on-startup>
     </properties>
 
-    <packages>
+    <exported-packages>
         <source-packages/>
         <resource-package>mongoose.base.client.images</resource-package>
         <resource-package>images.buddhas</resource-package>
-    </packages>
+    </exported-packages>
 
     <dependencies>
         <used-by-source-modules>
