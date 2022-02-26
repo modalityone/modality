@@ -10,10 +10,10 @@
     </providers>
 
     <dependencies>
-        <source-modules>
-            <undiscovered-source-module>javafx-base</undiscovered-source-module>
-            <undiscovered-source-module>webfx-platform-shared-util</undiscovered-source-module>
-        </source-modules>
+        <used-by-source-modules>
+            <undiscovered-used-by-source-module>javafx-base</undiscovered-used-by-source-module>
+            <undiscovered-used-by-source-module>webfx-platform-shared-util</undiscovered-used-by-source-module>
+        </used-by-source-modules>
     </dependencies>
 
 </project>

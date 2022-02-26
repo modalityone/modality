@@ -6,7 +6,7 @@
     </packages>
 
     <dependencies>
-        <source-modules/>
+        <used-by-source-modules/>
         <plugin-module>mongoose-base-server-datasource</plugin-module>
         <plugin-module>mongoose-base-server-sessioncloser</plugin-module>
         <plugin-module>mongoose-base-server-systemmetrics</plugin-module>

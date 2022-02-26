@@ -12,10 +12,10 @@
     </packages>
 
     <dependencies>
-        <source-modules>
-            <undiscovered-source-module>webfx-framework-shared-router</undiscovered-source-module>
-            <undiscovered-source-module>webfx-kit-javafxcontrols-emul</undiscovered-source-module>
-        </source-modules>
+        <used-by-source-modules>
+            <undiscovered-used-by-source-module>webfx-framework-shared-router</undiscovered-used-by-source-module>
+            <undiscovered-used-by-source-module>webfx-kit-javafxcontrols-emul</undiscovered-used-by-source-module>
+        </used-by-source-modules>
 
         <resource-module>mongoose-base-client-css</resource-module>
         <resource-module>mongoose-base-client-busconfig</resource-module>

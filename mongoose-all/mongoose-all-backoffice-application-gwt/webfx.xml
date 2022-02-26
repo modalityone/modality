@@ -2,7 +2,7 @@
 <project executable="true" application-module="mongoose-all-backoffice-application">
 
     <dependencies>
-        <source-modules/>
+        <used-by-source-modules/>
         <plugin-module>mongoose-all-backoffice-application</plugin-module>
     </dependencies>
 

@@ -6,10 +6,10 @@
     </packages>
 
     <dependencies>
-        <source-modules>
-            <undiscovered-source-module>webfx-extras-visual-controls-grid</undiscovered-source-module>
-            <undiscovered-source-module>webfx-platform-shared-submit</undiscovered-source-module>
-        </source-modules>
+        <used-by-source-modules>
+            <undiscovered-used-by-source-module>webfx-extras-visual-controls-grid</undiscovered-used-by-source-module>
+            <undiscovered-used-by-source-module>webfx-platform-shared-submit</undiscovered-used-by-source-module>
+        </used-by-source-modules>
     </dependencies>
 
 </project>

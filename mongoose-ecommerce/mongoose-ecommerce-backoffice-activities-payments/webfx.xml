@@ -11,11 +11,11 @@
     </providers>
 
     <dependencies>
-        <source-modules>
-            <undiscovered-source-module>webfx-framework-client-action</undiscovered-source-module>
-            <undiscovered-source-module>webfx-framework-client-activity</undiscovered-source-module>
-            <undiscovered-source-module>webfx-platform-shared-util</undiscovered-source-module>
-        </source-modules>
+        <used-by-source-modules>
+            <undiscovered-used-by-source-module>webfx-framework-client-action</undiscovered-used-by-source-module>
+            <undiscovered-used-by-source-module>webfx-framework-client-activity</undiscovered-used-by-source-module>
+            <undiscovered-used-by-source-module>webfx-platform-shared-util</undiscovered-used-by-source-module>
+        </used-by-source-modules>
     </dependencies>
 
 </project>

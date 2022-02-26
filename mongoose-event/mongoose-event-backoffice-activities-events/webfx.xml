@@ -11,11 +11,11 @@
     </providers>
 
     <dependencies>
-        <source-modules>
-            <undiscovered-source-module>webfx-framework-client-activity</undiscovered-source-module>
-            <undiscovered-source-module>webfx-framework-shared-orm-entity</undiscovered-source-module>
-            <undiscovered-source-module>webfx-kit-javafxgraphics-emul</undiscovered-source-module>
-        </source-modules>
+        <used-by-source-modules>
+            <undiscovered-used-by-source-module>webfx-framework-client-activity</undiscovered-used-by-source-module>
+            <undiscovered-used-by-source-module>webfx-framework-shared-orm-entity</undiscovered-used-by-source-module>
+            <undiscovered-used-by-source-module>webfx-kit-javafxgraphics-emul</undiscovered-used-by-source-module>
+        </used-by-source-modules>
     </dependencies>
 
 </project>

@@ -10,8 +10,7 @@
     </providers>
 
     <dependencies>
-        <source-modules/>
-        <source-module>javafx-graphics</source-module> <!-- necessary for the declaration of the javafx application at this module level -->
+        <used-by-source-modules/>
 
         <!-- Base activities -->
         <plugin-module>mongoose-base-backoffice-activities-monitor</plugin-module>

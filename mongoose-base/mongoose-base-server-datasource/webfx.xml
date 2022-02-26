@@ -12,11 +12,11 @@
     </providers>
 
     <dependencies>
-        <source-modules>
-            <undiscovered-source-module>webfx-framework-shared-orm-domainmodel</undiscovered-source-module>
-            <undiscovered-source-module>webfx-framework-shared-orm-dql</undiscovered-source-module>
-            <undiscovered-source-module>webfx-platform-shared-util</undiscovered-source-module>
-        </source-modules>
+        <used-by-source-modules>
+            <undiscovered-used-by-source-module>webfx-framework-shared-orm-domainmodel</undiscovered-used-by-source-module>
+            <undiscovered-used-by-source-module>webfx-framework-shared-orm-dql</undiscovered-used-by-source-module>
+            <undiscovered-used-by-source-module>webfx-platform-shared-util</undiscovered-used-by-source-module>
+        </used-by-source-modules>
     </dependencies>
 
 </project>
