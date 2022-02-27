@@ -92,8 +92,6 @@
     <!--=================================< elemental2-svg >=================================-->
     <!-- used by webfx-kit-javafxgraphics-peers-gwt (SOURCE) -->
     <inherits name="elemental2.svg.Svg"/>
-    <!--====================================< gwt-time >====================================-->
-    <!-- used by mongoose-all-backoffice-application-gwt (EMULATION) -->
     <!--====================================< gwt-user >====================================-->
     <!-- used by webfx-kit-javafxgraphics-peers-gwt (SOURCE) -->
     <!-- used by webfx-platform-gwt-boot-impl (SOURCE) -->
@@ -105,15 +103,6 @@
     <!-- used by webfx-platform-gwt-websocket-impl (SOURCE) -->
     <!-- used by webfx-platform-gwt-windowlocation-impl (SOURCE) -->
     <inherits name="com.google.gwt.user.User"/>
-    <!--===================================< java-base >====================================-->
-    <!-- used by webfx-kit-javafxbase-emul (SOURCE) -->
-    <!-- used by webfx-framework-shared-orm-expression (SOURCE) -->
-    <!-- used by webfx-platform-client-storage (SOURCE) -->
-    <!-- used by webfx-platform-gwt-emul-javabase (SOURCE) -->
-    <!-- used by webfx-platform-shared-bus (SOURCE) -->
-    <!-- used by webfx-platform-shared-log (SOURCE) -->
-    <!-- used by webfx-platform-shared-shutdown (SOURCE) -->
-    <!-- used by webfx-platform-shared-util (SOURCE) -->
     <!--==================================< java-logging >==================================-->
     <!-- used by webfx-platform-shared-util (SOURCE) -->
     <inherits name="com.google.gwt.logging.Logging"/>
@@ -121,17 +110,6 @@
     <!-- used by webfx-kit-javafxgraphics-emul (SOURCE) -->
     <!-- used by webfx-platform-gwt-emul-javabase (SOURCE) -->
     <inherits name="org.gwtproject.nio.GwtNioSupport"/>
-    <!--==================================< javafx-base >===================================-->
-    <!-- used by webfx-framework-client-i18n-json (SOURCE) -->
-    <!-- used by webfx-kit-javafxgraphics-peers-base (SOURCE) -->
-    <!--================================< javafx-controls >=================================-->
-    <!-- used by mongoose-event-client-calendar (SOURCE) -->
-    <!-- used by webfx-extras-visual-controls-charts-peers-base (SOURCE) -->
-    <!--================================< javafx-graphics >=================================-->
-    <!-- used by mongoose-all-backoffice-application (SOURCE) -->
-    <!--=============================< jsinterop-annotations >==============================-->
-    <!-- used by webfx-platform-gwt-windowhistory-impl (SOURCE) -->
-    <!-- used by webfx-platform-gwt-windowlocation-impl (SOURCE) -->
     <!--======================< mongoose-all-backoffice-application >=======================-->
     <!-- used by mongoose-all-backoffice-application-gwt (APPLICATION) -->
     <!-- used by mongoose-all-backoffice-application-gwt (IMPLICIT_PROVIDER) -->
@@ -180,8 +158,6 @@
     <!-- used by mongoose-base-client-application (RESOURCE) -->
     <resource path="dev/webfx/platform/client/services/websocketbus/conf"/>
     <public includes="dev/webfx/platform/client/services/websocketbus/conf/" path=""/>
-    <!--==========================< mongoose-base-client-css-web >==========================-->
-    <!-- used by mongoose-all-backoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <!--=========================< mongoose-base-client-entities >==========================-->
     <!-- used by mongoose-base-backoffice-masterslave (SOURCE) -->
     <source path="mongoose/base/client/entities/util"/>
@@ -206,6 +182,8 @@
     <public includes="images/s16/countries/" path=""/>
     <resource path="images/s16/currencies"/>
     <public includes="images/s16/currencies/" path=""/>
+    <resource path="images/s16/event"/>
+    <public includes="images/s16/event/" path=""/>
     <resource path="images/s16/itemFamilies"/>
     <public includes="images/s16/itemFamilies/" path=""/>
     <resource path="images/s16/languages"/>
@@ -819,7 +797,7 @@
     <source path="dev/webfx/platform/client/services/windowlocation"/>
     <source path="dev/webfx/platform/client/services/windowlocation/spi"/>
     <source path="dev/webfx/platform/client/services/windowlocation/spi/impl"/>
-    <!--======================< webfx-platform-gwt-boot-impl >======================-->
+    <!--==========================< webfx-platform-gwt-boot-impl >==========================-->
     <!-- used by mongoose-all-backoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <source path="dev/webfx/platform/gwt/services/boot/spi/impl"/>
     <!--==========================< webfx-platform-gwt-json-impl >==========================-->
@@ -852,7 +830,7 @@
     <!-- used by mongoose-all-backoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <source path="dev/webfx/platform/gwt/services/windowlocation/spi/impl"/>
     <source path="dev/webfx/platform/gwt/services/windowlocation/spi/impl/jsinterop"/>
-    <!--=======================< webfx-platform-shared-boot >=======================-->
+    <!--===========================< webfx-platform-shared-boot >===========================-->
     <!-- used by mongoose-all-backoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <!-- used by webfx-framework-shared-orm-dql-query-interceptor (SOURCE) -->
     <!-- used by webfx-kit-launcher (SOURCE) -->
