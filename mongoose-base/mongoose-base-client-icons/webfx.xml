@@ -8,6 +8,7 @@
         <resource-package>images.s16.continents</resource-package>
         <resource-package>images.s16.countries</resource-package>
         <resource-package>images.s16.currencies</resource-package>
+        <resource-package>images.s16.event</resource-package>
         <resource-package>images.s16.itemFamilies</resource-package>
         <resource-package>images.s16.languages</resource-package>
         <resource-package>images.s16.methods</resource-package>
