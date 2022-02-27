@@ -9,10 +9,14 @@
 
     <artifactId>mongoose-base-client-css-web</artifactId>
 
+    <dependencies> <!-- Dependencies managed by WebFX (DO NOT EDIT MANUALLY) -->
+
+    </dependencies>
+
     <build>
         <plugins>
 
-<!-- Generating the source artifact for GWT compilation -->
+            <!-- Generating the source artifact for GWT compilation -->
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
             </plugin>
@@ -20,8 +24,4 @@
         </plugins>
     </build>
 
-
-    <dependencies> <!-- Dependencies managed by WebFX (DO NOT EDIT MANUALLY) -->
-
-    </dependencies>
 </project>
