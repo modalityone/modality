@@ -5,7 +5,6 @@ module mongoose.all.backoffice.application.openjfx {
     // Direct dependencies modules
     requires javafx.controls;
     requires mongoose.all.backoffice.application;
-    requires mongoose.base.client.navigationarrows.java;
     requires mongoose.base.shared.domainmodel;
     requires mongoose.event.backoffice.activities.cloneevent;
     requires mongoose.event.backoffice.activities.cloneevent.routing;

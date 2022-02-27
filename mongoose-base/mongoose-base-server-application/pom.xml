@@ -16,30 +16,35 @@
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-base-server-datasource</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-base-server-sessioncloser</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
         </dependency>
     
         <dependency>
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-base-server-systemmetrics</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
         </dependency>
     
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-framework-shared-querypush</artifactId>
             <version>0.1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
         </dependency>
     
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-shared-buscalljob</artifactId>
             <version>0.1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
         </dependency>
     
     </dependencies>

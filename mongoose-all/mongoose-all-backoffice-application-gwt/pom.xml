@@ -68,6 +68,7 @@
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-all-backoffice-application</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
             <classifier>sources</classifier>
         </dependency>
     
@@ -75,6 +76,7 @@
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-base-backoffice-activities-monitor</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
             <classifier>sources</classifier>
         </dependency>
     
@@ -82,6 +84,7 @@
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-base-backoffice-activities-operations</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
             <classifier>sources</classifier>
         </dependency>
     
@@ -131,6 +134,7 @@
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-base-client-busconfig</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
             <classifier>sources</classifier>
         </dependency>
     
@@ -152,6 +156,7 @@
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-base-client-i18n</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
             <classifier>sources</classifier>
         </dependency>
     
@@ -166,6 +171,7 @@
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-base-client-operationactionsloading</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
             <classifier>sources</classifier>
         </dependency>
     
@@ -180,6 +186,7 @@
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-base-client-sessionrecorder</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
             <classifier>sources</classifier>
         </dependency>
     
@@ -215,6 +222,7 @@
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-catering-backoffice-activities-diningareas</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
             <classifier>sources</classifier>
         </dependency>
     
@@ -229,6 +237,7 @@
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-crm-backoffice-activities-authorizations</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
             <classifier>sources</classifier>
         </dependency>
     
@@ -243,6 +252,7 @@
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-crm-backoffice-activities-letters</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
             <classifier>sources</classifier>
         </dependency>
     
@@ -250,6 +260,7 @@
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-crm-backoffice-activities-organizations</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
             <classifier>sources</classifier>
         </dependency>
     
@@ -257,6 +268,7 @@
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-crm-backoffice-activities-users</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
             <classifier>sources</classifier>
         </dependency>
     
@@ -278,6 +290,7 @@
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-crm-client-activities-login</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
             <classifier>sources</classifier>
         </dependency>
     
@@ -285,6 +298,7 @@
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-crm-client-activities-unauthorized</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
             <classifier>sources</classifier>
         </dependency>
     
@@ -299,6 +313,7 @@
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-crm-client-authz</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
             <classifier>sources</classifier>
         </dependency>
     
@@ -320,6 +335,7 @@
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-ecommerce-backoffice-activities-income</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
             <classifier>sources</classifier>
         </dependency>
     
@@ -327,6 +343,7 @@
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-ecommerce-backoffice-activities-payments</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
             <classifier>sources</classifier>
         </dependency>
     
@@ -334,6 +351,7 @@
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-ecommerce-backoffice-activities-statements</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
             <classifier>sources</classifier>
         </dependency>
     
@@ -341,6 +359,7 @@
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-ecommerce-backoffice-activities-statistics</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
             <classifier>sources</classifier>
         </dependency>
     
@@ -411,6 +430,7 @@
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-event-backoffice-activities-cloneevent</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
             <classifier>sources</classifier>
         </dependency>
     
@@ -432,6 +452,7 @@
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-event-backoffice-activities-options</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
             <classifier>sources</classifier>
         </dependency>
     
@@ -474,6 +495,7 @@
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-hotel-backoffice-activities-roomsgraphic</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
             <classifier>sources</classifier>
         </dependency>
     
@@ -705,6 +727,7 @@
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-framework-client-push-simple</artifactId>
             <version>0.1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
             <classifier>sources</classifier>
         </dependency>
     
@@ -719,6 +742,7 @@
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-framework-client-querypush-simple</artifactId>
             <version>0.1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
             <classifier>sources</classifier>
         </dependency>
     

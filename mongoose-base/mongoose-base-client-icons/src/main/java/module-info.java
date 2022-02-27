@@ -18,6 +18,7 @@ module mongoose.base.client.icons {
     opens images.s16.continents;
     opens images.s16.countries;
     opens images.s16.currencies;
+    opens images.s16.event;
     opens images.s16.itemFamilies;
     opens images.s16.languages;
     opens images.s16.methods;
