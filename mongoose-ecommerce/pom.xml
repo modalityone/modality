@@ -17,6 +17,7 @@
 
         <module>mongoose-ecommerce-backoffice-activities-bookings</module>
         <module>mongoose-ecommerce-backoffice-activities-income</module>
+        <module>mongoose-ecommerce-backoffice-activities-moneyflows</module>
         <module>mongoose-ecommerce-backoffice-activities-payments</module>
         <module>mongoose-ecommerce-backoffice-activities-statements</module>
         <module>mongoose-ecommerce-backoffice-activities-statistics</module>

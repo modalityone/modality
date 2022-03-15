@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <providers>
+        <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.ecommerce.backoffice.activities.moneyflows.MoneyFlowsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+        <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.ecommerce.backoffice.activities.moneyflows.RouteToMoneyFlowsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+    </providers>
+
+    <dependencies>
+        <used-by-source-modules>
+            <undiscovered-used-by-source-module>webfx-framework-client-action</undiscovered-used-by-source-module>
+            <undiscovered-used-by-source-module>webfx-framework-client-activity</undiscovered-used-by-source-module>
+            <undiscovered-used-by-source-module>webfx-platform-shared-util</undiscovered-used-by-source-module>
+        </used-by-source-modules>
+    </dependencies>
+
+</project>

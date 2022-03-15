@@ -108,6 +108,13 @@
     
         <dependency>
             <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-ecommerce-backoffice-activities-moneyflows</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.mongoose</groupId>
             <artifactId>mongoose-ecommerce-backoffice-activities-payments</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
