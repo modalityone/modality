@@ -1,11 +1,12 @@
 package mongoose.base.client.activity.eventdependent;
 
 import javafx.beans.property.ObjectProperty;
+import mongoose.base.client.activity.organizationdependent.OrganizationDependentPresentationModelMixin;
 
 /**
  * @author Bruno Salmon
  */
-public interface EventDependentPresentationModelMixin extends EventDependentPresentationModel {
+public interface EventDependentPresentationModelMixin extends EventDependentPresentationModel, OrganizationDependentPresentationModelMixin {
 
     EventDependentPresentationModel getPresentationModel();
 
@@ -24,18 +25,4 @@ public interface EventDependentPresentationModelMixin extends EventDependentPres
         return getPresentationModel().getEventId();
     }
 
-    @Override
-    default ObjectProperty<Object> organizationIdProperty() {
-        return getPresentationModel().organizationIdProperty();
-    }
-
-    @Override
-    default void setOrganizationId(Object organizationId) {
-        getPresentationModel().setOrganizationId(organizationId);
-    }
-
-    @Override
-    default Object getOrganizationId() {
-        return getPresentationModel().getOrganizationId();
-    }
 }

@@ -2,12 +2,13 @@ package mongoose.base.client.activity.eventdependent;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import mongoose.base.client.activity.table.GenericTablePresentationModel;
+import mongoose.base.client.activity.organizationdependent.OrganizationDependentGenericTablePresentationModel;
 
 /**
  * @author Bruno Salmon
  */
-public class EventDependentGenericTablePresentationModel extends GenericTablePresentationModel
+public class EventDependentGenericTablePresentationModel
+        extends OrganizationDependentGenericTablePresentationModel
         implements EventDependentPresentationModel {
 
     private final ObjectProperty<Object> eventIdProperty = new SimpleObjectProperty<>();
@@ -16,10 +17,5 @@ public class EventDependentGenericTablePresentationModel extends GenericTablePre
         return this.eventIdProperty;
     }
 
-    private final ObjectProperty<Object> organizationIdProperty = new SimpleObjectProperty<>();
-    @Override
-    public ObjectProperty<Object> organizationIdProperty() {
-        return organizationIdProperty;
-    }
 }
 

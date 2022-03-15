@@ -1,18 +1,17 @@
 package mongoose.base.client.activity.eventdependent;
 
-import mongoose.ecommerce.client.businessdata.feesgroup.FeesGroup;
+import dev.webfx.framework.client.activity.impl.elementals.domain.DomainActivityContext;
+import dev.webfx.framework.client.activity.impl.elementals.uiroute.UiRouteActivityContext;
+import dev.webfx.platform.shared.util.async.Future;
+import mongoose.base.client.activity.organizationdependent.OrganizationDependentActivityMixin;
 import mongoose.base.client.aggregates.event.EventAggregate;
 import mongoose.base.client.aggregates.event.EventAggregateMixin;
+import mongoose.ecommerce.client.businessdata.feesgroup.FeesGroup;
 import mongoose.ecommerce.client.businessdata.feesgroup.FeesGroupsByEventStore;
 import mongoose.ecommerce.client.businessdata.preselection.ActiveOptionsPreselectionsByEventStore;
 import mongoose.ecommerce.client.businessdata.preselection.OptionsPreselection;
 import mongoose.ecommerce.client.businessdata.workingdocument.ActiveWorkingDocumentsByEventStore;
 import mongoose.ecommerce.client.businessdata.workingdocument.WorkingDocument;
-import dev.webfx.framework.client.activity.impl.elementals.domain.DomainActivityContext;
-import dev.webfx.framework.client.activity.impl.elementals.domain.DomainActivityContextMixin;
-import dev.webfx.framework.client.activity.impl.elementals.uiroute.UiRouteActivityContext;
-import dev.webfx.framework.client.activity.impl.elementals.uiroute.UiRouteActivityContextMixin;
-import dev.webfx.platform.shared.util.async.Future;
 
 /**
  * @author Bruno Salmon
@@ -20,8 +19,7 @@ import dev.webfx.platform.shared.util.async.Future;
 public interface EventDependentActivityMixin
         <C extends DomainActivityContext<C> & UiRouteActivityContext<C>>
 
-        extends UiRouteActivityContextMixin<C>,
-        DomainActivityContextMixin<C>,
+        extends OrganizationDependentActivityMixin<C>,
         EventAggregateMixin,
         EventDependentPresentationModelMixin
 {
@@ -32,7 +30,7 @@ public interface EventDependentActivityMixin
 
     default void updateEventDependentPresentationModelFromContextParameters() {
         setEventId(getParameter("eventId"));
-        setOrganizationId(getParameter("organizationId"));
+        updateOrganizationDependentPresentationModelFromContextParameters();
     }
 
     default WorkingDocument getEventActiveWorkingDocument() {

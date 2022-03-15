@@ -9,9 +9,13 @@ import javafx.beans.property.SimpleObjectProperty;
 public class EventDependentPresentationModelImpl implements EventDependentPresentationModel {
 
     private final ObjectProperty<Object> eventIdProperty = new SimpleObjectProperty<>();
-    public ObjectProperty<Object> eventIdProperty() { return eventIdProperty; }
+
+    public ObjectProperty<Object> eventIdProperty() {
+        return eventIdProperty;
+    }
 
     private final ObjectProperty<Object> organizationIdProperty = new SimpleObjectProperty<>();
+
     @Override
     public ObjectProperty<Object> organizationIdProperty() {
         return organizationIdProperty;

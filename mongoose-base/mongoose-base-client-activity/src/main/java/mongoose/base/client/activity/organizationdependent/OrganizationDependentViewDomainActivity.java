@@ -1,15 +1,17 @@
-package mongoose.base.client.activity.eventdependent;
+package mongoose.base.client.activity.organizationdependent;
 
-import mongoose.base.client.activity.MongooseButtonFactoryMixin;
-import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
+import mongoose.base.client.activity.MongooseButtonFactoryMixin;
+import mongoose.base.client.activity.eventdependent.EventDependentPresentationModel;
+import mongoose.base.client.activity.eventdependent.EventDependentPresentationModelImpl;
 
 /**
  * @author Bruno Salmon
  */
-public abstract class EventDependentViewDomainActivity
+public abstract class OrganizationDependentViewDomainActivity
         extends ViewDomainActivityBase
-        implements EventDependentActivityMixin<ViewDomainActivityContextFinal>,
+        implements OrganizationDependentActivityMixin<ViewDomainActivityContextFinal>,
         MongooseButtonFactoryMixin {
 
     private EventDependentPresentationModel presentationModel;
@@ -23,7 +25,7 @@ public abstract class EventDependentViewDomainActivity
 
     @Override
     protected void updateModelFromContextParameters() {
-        updateEventDependentPresentationModelFromContextParameters();
+        updateOrganizationDependentPresentationModelFromContextParameters();
         super.updateModelFromContextParameters();
     }
 }
