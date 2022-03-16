@@ -287,7 +287,7 @@ jobs:
       # Gluon needs additional libraries on Linux
       - if: runner.os == 'Linux'
         name: Install libraries required for Gluon on Linux
-        run: sudo apt install libasound2-dev libavcodec-dev libavformat-dev libavutil-dev libgl-dev libgtk-3-dev libpango1.0-dev libxtst-dev
+        run: sudo apt update; sudo apt install libasound2-dev libavcodec-dev libavformat-dev libavutil-dev libgl-dev libgtk-3-dev libpango1.0-dev libxtst-dev
 
       # Passing the Gluon License (if set)
       - if: env.GLUON_LICENSE != ''
