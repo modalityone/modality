@@ -3,7 +3,6 @@ package mongoose.base.client.activity.organizationdependent;
 import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
 import mongoose.base.client.activity.MongooseButtonFactoryMixin;
-import mongoose.base.client.activity.eventdependent.EventDependentPresentationModel;
 import mongoose.base.client.activity.eventdependent.EventDependentPresentationModelImpl;
 
 /**
@@ -14,13 +13,13 @@ public abstract class OrganizationDependentViewDomainActivity
         implements OrganizationDependentActivityMixin<ViewDomainActivityContextFinal>,
         MongooseButtonFactoryMixin {
 
-    private EventDependentPresentationModel presentationModel;
+    protected OrganizationDependentPresentationModel pm;
 
     @Override
-    public EventDependentPresentationModel getPresentationModel() {
-        if (presentationModel == null)
-            presentationModel = new EventDependentPresentationModelImpl();
-        return presentationModel;
+    public OrganizationDependentPresentationModel getPresentationModel() {
+        if (pm == null)
+            pm = new EventDependentPresentationModelImpl();
+        return pm;
     }
 
     @Override

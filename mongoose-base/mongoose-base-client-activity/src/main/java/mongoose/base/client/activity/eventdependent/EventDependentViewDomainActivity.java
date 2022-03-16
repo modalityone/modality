@@ -12,13 +12,13 @@ public abstract class EventDependentViewDomainActivity
         implements EventDependentActivityMixin<ViewDomainActivityContextFinal>,
         MongooseButtonFactoryMixin {
 
-    private EventDependentPresentationModel presentationModel;
+    protected EventDependentPresentationModel pm;
 
     @Override
     public EventDependentPresentationModel getPresentationModel() {
-        if (presentationModel == null)
-            presentationModel = new EventDependentPresentationModelImpl();
-        return presentationModel;
+        if (pm == null)
+            pm = new EventDependentPresentationModelImpl();
+        return pm;
     }
 
     @Override
