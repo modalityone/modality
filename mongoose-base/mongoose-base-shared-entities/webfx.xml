@@ -9,6 +9,7 @@
         <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.AttendanceImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
         <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.CartImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
         <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.CountryImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.CurrencyImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
         <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.DateInfoImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
         <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.DocumentImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
         <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.DocumentLineImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
@@ -23,6 +24,9 @@
         <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.MailImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
         <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.MethodImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
         <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.MoneyTransferImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.MoneyAccountImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.MoneyAccountTypeImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.MoneyFlowImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
         <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.OptionImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
         <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.OrganizationImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
         <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.OrganizationTypeImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>

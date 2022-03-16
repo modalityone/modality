@@ -1,15 +1,16 @@
 package mongoose.base.shared.entities;
 
-import mongoose.base.shared.entities.markers.EntityHasEvent;
-import mongoose.base.shared.entities.markers.EntityHasItemFamily;
-import mongoose.base.shared.entities.markers.EntityHasLabel;
-import mongoose.base.shared.entities.markers.EntityHasName;
-import dev.webfx.framework.shared.orm.entity.Entity;
+import mongoose.base.shared.entities.markers.*;
 
 /**
  * @author Bruno Salmon
  */
-public interface Site extends Entity, EntityHasName, EntityHasLabel, EntityHasEvent, EntityHasItemFamily {
+public interface Site extends
+        EntityHasName,
+        EntityHasLabel,
+        EntityHasIcon,
+        EntityHasEvent,
+        EntityHasItemFamily {
 
     //// Domain fields
 
@@ -20,7 +21,5 @@ public interface Site extends Entity, EntityHasName, EntityHasLabel, EntityHasEv
     default Boolean isMain() {
         return getBooleanFieldValue("main");
     }
-
-    default String getIcon() { return (String) evaluate("icon"); }
 
 }

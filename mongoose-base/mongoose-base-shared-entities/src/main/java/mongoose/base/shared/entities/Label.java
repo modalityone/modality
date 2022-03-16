@@ -1,11 +1,14 @@
 package mongoose.base.shared.entities;
 
-import dev.webfx.framework.shared.orm.entity.Entity;
+import mongoose.base.shared.entities.markers.EntityHasIcon;
+import mongoose.base.shared.entities.markers.EntityHasOrganization;
 
 /**
  * @author Bruno Salmon
  */
-public interface Label extends Entity {
+public interface Label extends
+        EntityHasIcon,
+        EntityHasOrganization {
 
     default void setDe(String de) {
         setFieldValue("de", de);

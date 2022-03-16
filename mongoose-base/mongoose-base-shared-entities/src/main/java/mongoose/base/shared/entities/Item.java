@@ -1,16 +1,17 @@
 package mongoose.base.shared.entities;
 
-import mongoose.base.shared.entities.markers.EntityHasCode;
-import mongoose.base.shared.entities.markers.EntityHasLabel;
-import mongoose.base.shared.entities.markers.EntityHasName;
-import mongoose.base.shared.entities.markers.HasItemFamilyType;
-import dev.webfx.framework.shared.orm.entity.Entity;
 import dev.webfx.framework.shared.orm.entity.EntityId;
+import mongoose.base.shared.entities.markers.*;
 
 /**
  * @author Bruno Salmon
  */
-public interface Item extends Entity, EntityHasCode, EntityHasName, EntityHasLabel, HasItemFamilyType {
+public interface Item extends
+        EntityHasCode,
+        EntityHasName,
+        EntityHasLabel,
+        EntityHasIcon,
+        HasItemFamilyType {
 
     //// Domain fields
 

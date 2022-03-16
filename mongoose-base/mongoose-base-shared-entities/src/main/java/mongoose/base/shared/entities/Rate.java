@@ -1,14 +1,18 @@
 package mongoose.base.shared.entities;
 
 import mongoose.base.shared.entities.markers.EntityHasArrivalSiteAndItem;
-import dev.webfx.framework.shared.orm.entity.Entity;
+import mongoose.base.shared.entities.markers.EntityHasIcon;
+import mongoose.base.shared.entities.markers.EntityHasSiteAndItem;
 
 import java.time.LocalDate;
 
 /**
  * @author Bruno Salmon
  */
-public interface Rate extends Entity, EntityHasArrivalSiteAndItem {
+public interface Rate extends
+        EntityHasIcon,
+        EntityHasSiteAndItem,
+        EntityHasArrivalSiteAndItem {
 
     default void setStartDate(LocalDate startDate) {
         setFieldValue("startDate", startDate);

@@ -1,12 +1,14 @@
 package mongoose.base.shared.entities;
 
+import mongoose.base.shared.entities.markers.EntityHasIcon;
 import mongoose.base.shared.entities.markers.EntityHasName;
-import dev.webfx.framework.shared.orm.entity.Entity;
 
 /**
  * @author Bruno Salmon
  */
-public interface GatewayParameter extends Entity, EntityHasName {
+public interface GatewayParameter extends
+        EntityHasName,
+        EntityHasIcon {
 
     default void setValue(String value) {
         setFieldValue("value", value);

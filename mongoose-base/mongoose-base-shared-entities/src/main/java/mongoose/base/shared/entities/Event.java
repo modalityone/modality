@@ -1,11 +1,10 @@
 package mongoose.base.shared.entities;
 
-import mongoose.base.shared.entities.markers.*;
-import mongoose.hotel.shared.businessdata.time.DateTimeRange;
-import mongoose.base.shared.entities.markers.*;
 import dev.webfx.framework.shared.orm.entity.Entity;
 import dev.webfx.framework.shared.orm.entity.EntityId;
 import dev.webfx.platform.shared.util.Objects;
+import mongoose.base.shared.entities.markers.*;
+import mongoose.hotel.shared.businessdata.time.DateTimeRange;
 
 import java.time.LocalDate;
 
@@ -15,6 +14,7 @@ import java.time.LocalDate;
 public interface Event extends Entity,
         EntityHasName,
         EntityHasLabel,
+        EntityHasIcon,
         EntityHasOrganization,
         EntityHasDateTimeRange,
         EntityHasMinDateTimeRange,

@@ -1,15 +1,17 @@
 package mongoose.base.shared.entities;
 
-import mongoose.base.shared.entities.markers.EntityHasDocument;
-import dev.webfx.framework.shared.orm.entity.Entity;
 import dev.webfx.framework.shared.orm.entity.EntityId;
+import mongoose.base.shared.entities.markers.EntityHasDocument;
+import mongoose.base.shared.entities.markers.EntityHasIcon;
 
 import java.time.LocalDateTime;
 
 /**
  * @author Bruno Salmon
  */
-public interface MoneyTransfer extends Entity, EntityHasDocument {
+public interface MoneyTransfer extends
+        EntityHasDocument,
+        EntityHasIcon {
 
     default void setAmount(Integer amount) {
         setFieldValue("amount", amount);

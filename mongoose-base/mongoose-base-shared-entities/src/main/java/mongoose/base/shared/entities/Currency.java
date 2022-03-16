@@ -7,8 +7,17 @@ import mongoose.base.shared.entities.markers.EntityHasName;
 /**
  * @author Bruno Salmon
  */
-public interface OrganizationType extends
+public interface Currency extends
         EntityHasCode,
-        EntityHasIcon,
-        EntityHasName {
+        EntityHasName,
+        EntityHasIcon {
+
+    default void setSymbol(String symbol) {
+        setFieldValue("symbol", symbol);
+    }
+
+    default String getSymbol() {
+        return getStringFieldValue("symbol");
+    }
+
 }

@@ -1,11 +1,10 @@
 package mongoose.base.shared.entities;
 
+import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.framework.shared.orm.entity.EntityId;
 import mongoose.base.shared.entities.markers.*;
 import mongoose.hotel.shared.businessdata.time.DateTimeRange;
 import mongoose.hotel.shared.businessdata.time.DayTimeRange;
-import mongoose.base.shared.entities.markers.*;
-import dev.webfx.framework.shared.orm.entity.Entity;
-import dev.webfx.framework.shared.orm.entity.EntityId;
 
 /**
  * @author Bruno Salmon
@@ -15,6 +14,7 @@ public interface Option extends Entity,
         EntityHasEvent,
         EntityHasName,
         EntityHasLabel,
+        EntityHasIcon,
         EntityHasArrivalSiteAndItem,
         EntityHasItemFamily,
         EntityHasDateTimeRange {

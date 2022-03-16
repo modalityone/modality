@@ -1,15 +1,16 @@
 package mongoose.base.shared.entities;
 
-import mongoose.base.shared.entities.markers.EntityHasCode;
-import mongoose.base.shared.entities.markers.EntityHasLabel;
-import mongoose.base.shared.entities.markers.EntityHasName;
-import mongoose.base.shared.entities.markers.HasItemFamilyType;
-import dev.webfx.framework.shared.orm.entity.Entity;
+import mongoose.base.shared.entities.markers.*;
 
 /**
  * @author Bruno Salmon
  */
-public interface ItemFamily extends Entity, EntityHasCode, EntityHasName, EntityHasLabel, HasItemFamilyType {
+public interface ItemFamily extends
+        EntityHasCode,
+        EntityHasName,
+        EntityHasLabel,
+        EntityHasIcon,
+        HasItemFamilyType {
 
     @Override
     default ItemFamilyType getItemFamilyType() {
