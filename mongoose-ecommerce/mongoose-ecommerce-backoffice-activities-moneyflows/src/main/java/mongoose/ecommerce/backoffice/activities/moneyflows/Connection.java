@@ -1,20 +1,22 @@
 package mongoose.ecommerce.backoffice.activities.moneyflows;
 
+import mongoose.base.shared.entities.MoneyAccount;
+
 public class Connection {
 
-    private MoneyTransferEntity source;
-    private MoneyTransferEntity dest;
+    private MoneyAccount source;
+    private MoneyAccount dest;
 
-    public Connection(MoneyTransferEntity source, MoneyTransferEntity dest) {
+    public Connection(MoneyAccount source, MoneyAccount dest) {
         this.source = source;
         this.dest = dest;
     }
 
-    public MoneyTransferEntity getSource() {
+    public MoneyAccount getSource() {
         return source;
     }
 
-    public MoneyTransferEntity getDest() {
+    public MoneyAccount getDest() {
         return dest;
     }
 }
