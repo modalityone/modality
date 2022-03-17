@@ -7,20 +7,16 @@ import dev.webfx.framework.shared.orm.entity.Entity;
 import dev.webfx.kit.util.properties.Properties;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilder;
 import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
-import mongoose.base.client.activity.eventdependent.EventDependentPresentationModel;
-import mongoose.base.client.activity.organizationdependent.OrganizationDependentGenericTablePresentationModel;
 import mongoose.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
 import mongoose.base.shared.domainmodel.functions.AbcNames;
+import mongoose.base.shared.entities.MoneyAccount;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
-import static dev.webfx.framework.shared.orm.dql.DqlStatement.fields;
 import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
 
 /**
@@ -28,7 +24,7 @@ import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
  */
 public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity implements ConventionalUiBuilderMixin {
 
-    private ReactiveVisualMapper<Entity> masterVisualMapper;
+    private ReactiveVisualMapper<MoneyAccount> masterVisualMapper;
 
     private final MoneyFlowsPresentationModel pm = new MoneyFlowsPresentationModel();
 
@@ -54,36 +50,18 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
     }
 
     private void updateGraph() {
-        VisualResult result = pm.getMasterVisualResult();
-        VisualColumn[] columns = result.getColumns();
-        for (int columnIndex = 0; columnIndex < columns.length; columnIndex++) {
-            if ("name".equals(columns[columnIndex].getName())) {
-                List<MoneyTransferEntity> entities = new ArrayList<>(result.getRowCount());
-                for (int rowIndex = 0; rowIndex < result.getRowCount(); rowIndex++) {
-                    String moneyAccountName = result.getValue(rowIndex, columnIndex).toString();
-                    entities.add(new MoneyTransferEntity(moneyAccountName));
-                }
-                graph.setEntities(entities);
-                return;
-            }
-        }
-        // TODO handle the name column not being found
+        graph.setEntities(masterVisualMapper.getEntities());
     }
 
     private void updateSelectedEntity() {
-        Entity selectedEntity = pm.getSelectedMaster();
-        System.out.println("selectedEntity = " + selectedEntity);
-        if (selectedEntity == null) {
-            graph.setSelectedEntity(null);
-        } else {
-            graph.setSelectedEntity(new MoneyTransferEntity(selectedEntity.getFieldValue("name").toString()));
-        }
+        System.out.println("selectedEntity = " + pm.selectedMasterProperty().get());
+        graph.setSelectedEntity(pm.selectedMasterProperty().get());
     }
 
     @Override
     protected void startLogic() {
         // Setting up the master mapper that build the content displayed in the master view
-        masterVisualMapper = ReactiveVisualMapper.<Entity>createMasterPushReactiveChain(this, pm)
+        masterVisualMapper = ReactiveVisualMapper.<MoneyAccount>createMasterPushReactiveChain(this, pm)
                 .always("{class: 'MoneyAccount', alias: 'ma', columns: 'name,type'}")
                 // Applying the user search
                 .ifTrimNotEmpty(pm.searchTextProperty(), s -> where("name like ?", AbcNames.evaluate(s, true)))

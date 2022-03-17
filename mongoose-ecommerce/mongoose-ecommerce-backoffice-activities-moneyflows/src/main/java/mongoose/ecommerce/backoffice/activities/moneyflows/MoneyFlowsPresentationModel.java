@@ -7,12 +7,15 @@ import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.conven
 import dev.webfx.framework.shared.orm.entity.Entity;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import mongoose.base.client.activity.eventdependent.EventDependentGenericTablePresentationModel;
+import mongoose.base.shared.entities.MoneyAccount;
 
 public class MoneyFlowsPresentationModel extends EventDependentGenericTablePresentationModel implements
         HasGroupVisualResultProperty,
         HasMasterVisualResultProperty,
-        HasSelectedMasterProperty<Entity> {
+        HasSelectedMasterProperty<MoneyAccount> {
 
     private final ObjectProperty<VisualResult> groupVisualResultProperty = new SimpleObjectProperty<>();
     @Override public ObjectProperty<VisualResult> groupVisualResultProperty() { return groupVisualResultProperty; }
@@ -20,6 +23,7 @@ public class MoneyFlowsPresentationModel extends EventDependentGenericTablePrese
     private final ObjectProperty<VisualResult> masterVisualResultProperty = new SimpleObjectProperty<>();
     @Override public ObjectProperty<VisualResult> masterVisualResultProperty() { return masterVisualResultProperty; }
 
-    private final ObjectProperty<Entity> selectedMasterProperty = new SimpleObjectProperty<>();
-    @Override public ObjectProperty<Entity> selectedMasterProperty() { return selectedMasterProperty; }
+    private final ObjectProperty<MoneyAccount> selectedMasterProperty = new SimpleObjectProperty<>();
+    @Override public ObjectProperty<MoneyAccount> selectedMasterProperty() { return selectedMasterProperty; }
+
 }
