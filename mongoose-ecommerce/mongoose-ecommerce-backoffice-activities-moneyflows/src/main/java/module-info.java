@@ -24,6 +24,7 @@ module mongoose.ecommerce.backoffice.activities.moneyflows {
     requires webfx.extras.visual.base;
     requires webfx.framework.client.orm.reactive.dql;
     requires mongoose.base.shared.entities;
+    requires webfx.framework.client.orm.reactive.entities;
 
     // Exported packages
     exports mongoose.ecommerce.backoffice.activities.moneyflows;
