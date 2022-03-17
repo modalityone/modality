@@ -7,7 +7,7 @@ import mongoose.base.client.util.routing.MongooseRoutingUtil;
  */
 public final class MoneyFlowsRouting {
 
-    private final static String PATH = "/money-flows/organization/:organisationId";
+    private final static String PATH = "/money-flows/organization/:organizationId";
 
     public static String getPath() {
         return PATH;
