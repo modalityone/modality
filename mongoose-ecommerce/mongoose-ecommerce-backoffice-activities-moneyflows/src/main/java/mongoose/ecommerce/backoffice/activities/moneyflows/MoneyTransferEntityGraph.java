@@ -20,31 +20,32 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
+import mongoose.base.shared.entities.MoneyAccount;
 
 public class MoneyTransferEntityGraph extends Region {
 
 	private static final int ARROW_HEAD_LENGTH = 30;
 
 	private Pane newButton;
-	private ObservableList<MoneyTransferEntity> vertices;
-	private Map<MoneyTransferEntity, Pane> nodeForVertex;
+	private ObservableList<MoneyAccount> vertices;
+	private Map<MoneyAccount, Pane> nodeForVertex;
 	//private MoneyTransferConnections connections;
 	private Map<Connection, Line> connectionArrows;
-	private MoneyTransferEntity selectedEntity;
+	private MoneyAccount selectedEntity;
 
 	public MoneyTransferEntityGraph() {
-		vertices = FXCollections.observableList(new ArrayList<MoneyTransferEntity>());
-		vertices.addListener(new ListChangeListener<MoneyTransferEntity>() {
+		vertices = FXCollections.observableList(new ArrayList<MoneyAccount>());
+		vertices.addListener(new ListChangeListener<MoneyAccount>() {
 			@Override
-			public void onChanged(Change<? extends MoneyTransferEntity> c) {
+			public void onChanged(Change<? extends MoneyAccount> c) {
 				updateLayout();
 			}
 		});
 		nodeForVertex = new HashMap<>();
 		/*connections = new MoneyTransferConnections();
-		connections.addListener(new ListChangeListener<MoneyTransferEntity>() {
+		connections.addListener(new ListChangeListener<MoneyAccount>() {
 			@Override
-			public void onChanged(Change<? extends MoneyTransferEntity> c) {
+			public void onChanged(Change<? extends MoneyAccount> c) {
 				updateLayout();
 			}
 		});*/
@@ -64,7 +65,7 @@ public class MoneyTransferEntityGraph extends Region {
 	}
 
 	private void showNewPopup() {
-		/*MoneyTransferCreatorView moneyTransferCreatorView = new MoneyTransferCreatorView((ObservableList<MoneyTransferEntity>) vertices);
+		/*MoneyTransferCreatorView moneyTransferCreatorView = new MoneyTransferCreatorView((ObservableList<MoneyAccount>) vertices);
 		showPopup(moneyTransferCreatorView);*/
 	}
 
@@ -82,12 +83,9 @@ public class MoneyTransferEntityGraph extends Region {
 		return result;
 	}
 
-	public void addNode(MoneyTransferEntity node) {
-		vertices.add(node);
-	}
-
 	private void updateLayout() {
-		Map<Integer, List<MoneyTransferEntity>> nodesByDistanceFromRoot = orderByDistanceFromRoot();
+		getChildren().clear();
+		Map<Integer, List<MoneyAccount>> nodesByDistanceFromRoot = orderByDistanceFromRoot();
 		if (nodesByDistanceFromRoot.isEmpty()) {
 			return;
 		}
@@ -95,10 +93,10 @@ public class MoneyTransferEntityGraph extends Region {
 		int widthDenominator = highestDistance + 2;
 		int longestColumn = nodesByDistanceFromRoot.values().stream().map(List::size).max(Integer::compare).get();
 		int heightDenominator = longestColumn + 2;
-		for (Entry<Integer, List<MoneyTransferEntity>> entry : nodesByDistanceFromRoot.entrySet()) {
+		for (Entry<Integer, List<MoneyAccount>> entry : nodesByDistanceFromRoot.entrySet()) {
 			int widthNumerator = Math.max(entry.getKey() + 1, 1);
 			int index = 1;
-			for (MoneyTransferEntity vertex : entry.getValue()) {
+			for (MoneyAccount vertex : entry.getValue()) {
 				final int finalIndex = index;
 				Pane pane = getPaneForVertex(vertex);
 				pane.layoutXProperty().bind(Properties.compute(widthProperty(), width -> width.doubleValue() * widthNumerator / widthDenominator));
@@ -109,10 +107,10 @@ public class MoneyTransferEntityGraph extends Region {
 		ensureArrowsExistForAllConnections();
 	}
 
-	private Map<Integer, List<MoneyTransferEntity>> orderByDistanceFromRoot() {
-		Map<Integer, List<MoneyTransferEntity>> result = new HashMap<>();
+	private Map<Integer, List<MoneyAccount>> orderByDistanceFromRoot() {
+		Map<Integer, List<MoneyAccount>> result = new HashMap<>();
 		result.put(0, vertices);
-		/*for (MoneyTransferEntity vertex : vertices) {
+		/*for (MoneyAccount vertex : vertices) {
 			int maxDistanceFromRoot = connections.getMaxDistanceFromRoot(vertex);
 			if (!result.containsKey(maxDistanceFromRoot)) {
 				result.put(maxDistanceFromRoot, new ArrayList<>());
@@ -122,26 +120,26 @@ public class MoneyTransferEntityGraph extends Region {
 		return result;
 	}
 
-	private Pane getPaneForVertex(MoneyTransferEntity vertex) {
+	private Pane getPaneForVertex(MoneyAccount vertex) {
 		if (!nodeForVertex.containsKey(vertex)) {
 			nodeForVertex.put(vertex, buildPane(vertex));
 		}
 		return nodeForVertex.get(vertex);
 	}
 
-	private Pane buildPane(MoneyTransferEntity entity) {
+	private Pane buildPane(MoneyAccount entity) {
 		Pane pane = new Pane();
 		pane.setStyle(getEntityStyle(entity));
 		pane.setPadding(new Insets(8));
 		pane.setOnMouseClicked(e -> showVertexContextMenu(entity));
-		Label label = new Label(entity.toString());
+		Label label = new Label(entity.getName());
 		pane.getChildren().addAll(label);
 		label.setAlignment(Pos.CENTER);
 		getChildren().add(pane);
 		return pane;
 	}
 
-	private String getEntityStyle(MoneyTransferEntity entity) {
+	private String getEntityStyle(MoneyAccount entity) {
 		// TODO retrieve colour from the ReactiveVisualMapper
 		String colorName = entity.equals(selectedEntity) ? "yellow" : "blue";
 		return "-fx-border-color: " + colorName + ";" +
@@ -150,7 +148,7 @@ public class MoneyTransferEntityGraph extends Region {
                 "-fx-border-style: dashed;";
 	}
 
-	private void showVertexContextMenu(MoneyTransferEntity entity) {
+	private void showVertexContextMenu(MoneyAccount entity) {
 		/*MenuItem addConnectionMenuItem = new MenuItem("Add connection");
 		ContextMenu vertexContextMenu = new ContextMenu(addConnectionMenuItem);
 		vertexContextMenu.setOnAction(e -> {
@@ -162,7 +160,7 @@ public class MoneyTransferEntityGraph extends Region {
 		vertexContextMenu.show(getScene().getWindow(), vertexPos.getX(), vertexPos.getY());*/
 	}
 
-	private Point2D getVertexPos(MoneyTransferEntity vertex) {
+	private Point2D getVertexPos(MoneyAccount vertex) {
 		Pane pane = getPaneForVertex(vertex);
 		double x = pane.getLayoutX() + getScene().getWindow().getX();
 		double y = pane.getLayoutY() + getScene().getWindow().getY();
@@ -228,11 +226,11 @@ public class MoneyTransferEntityGraph extends Region {
 		arrowHeadRight.setEndY(ARROW_HEAD_LENGTH * Math.cos(Math.toRadians(arrowAngleDegrees + 45)));
 	}*/
 
-	public void setEntities(List<MoneyTransferEntity> entities) {
+	public void setEntities(List<MoneyAccount> entities) {
 		vertices.setAll(entities);
 	}
 
-	public void setSelectedEntity(MoneyTransferEntity selectedEntity) {
+	public void setSelectedEntity(MoneyAccount selectedEntity) {
 		this.selectedEntity = selectedEntity;
 		updateLayout();
 	}
