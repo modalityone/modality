@@ -4,6 +4,7 @@ module mongoose.ecommerce.backoffice.activities.moneyflows {
 
     // Direct dependencies modules
     requires javafx.graphics;
+    requires javafx.controls;
     requires mongoose.base.client.activity;
     requires mongoose.base.client.util;
     requires webfx.framework.client.action;
@@ -14,6 +15,14 @@ module mongoose.ecommerce.backoffice.activities.moneyflows {
     requires webfx.framework.shared.router;
     requires webfx.platform.client.windowhistory;
     requires webfx.platform.shared.util;
+    requires webfx.kit.util;
+    requires webfx.framework.shared.orm.entity;
+    requires webfx.framework.client.orm.reactive.visual;
+    requires mongoose.base.shared.domainmodel;
+    requires webfx.framework.shared.orm.dql;
+    requires mongoose.base.backoffice.masterslave;
+    requires webfx.extras.visual.base;
+    requires webfx.framework.client.orm.reactive.dql;
 
     // Exported packages
     exports mongoose.ecommerce.backoffice.activities.moneyflows;
