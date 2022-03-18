@@ -15,13 +15,12 @@ public class MoneyAccountPane extends HBox {
 
     private final ObjectProperty<MoneyAccount> moneyAccountProperty = new SimpleObjectProperty<>();
     public ObjectProperty<MoneyAccount> moneyAccountProperty() { return moneyAccountProperty; }
-    private Label label = new Label();
+    private final Label label = new Label();
 
     public MoneyAccountPane(MoneyAccount moneyAccount) {
         moneyAccountProperty.addListener(e -> label.setText(moneyAccountProperty.get().getName()));
         moneyAccountProperty.set(moneyAccount);
         setPadding(new Insets(8));
-        //setOnMouseClicked(e -> showVertexContextMenu(moneyAccount));
         label.setAlignment(Pos.CENTER);
         updateBorder();
         getChildren().addAll(label);
