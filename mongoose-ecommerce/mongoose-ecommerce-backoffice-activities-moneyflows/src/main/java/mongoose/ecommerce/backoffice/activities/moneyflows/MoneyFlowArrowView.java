@@ -1,6 +1,8 @@
 package mongoose.ecommerce.backoffice.activities.moneyflows;
 
 import dev.webfx.kit.util.properties.Properties;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
@@ -13,14 +15,29 @@ public class MoneyFlowArrowView extends Pane {
 
     private static final int ARROW_HEAD_LENGTH = 30;
 
-    private final MoneyFlow moneyFlow;
-
-    private MoneyFlowArrowView(MoneyFlow moneyFlow) {
-        this.moneyFlow = moneyFlow;
-    }
+    private final ObjectProperty<MoneyFlow> moneyFlowProperty = new SimpleObjectProperty<>();
+    public ObjectProperty<MoneyFlow> moneyFlowProperty() { return moneyFlowProperty; }
+    private final ObjectProperty<Pane> sourceVertexProperty = new SimpleObjectProperty<>();
+    public ObjectProperty<Pane> sourceVertexProperty() { return sourceVertexProperty; }
+    private final ObjectProperty<Pane> destVertexProperty = new SimpleObjectProperty<>();
+    public ObjectProperty<Pane> destVertexProperty() { return destVertexProperty; }
 
     public MoneyFlowArrowView(MoneyFlow moneyFlow, Pane sourceVertex, Pane destVertex) {
-        this.moneyFlow = moneyFlow;
+        moneyFlowProperty.addListener(e -> createLines());
+        moneyFlowProperty.set(moneyFlow);
+        sourceVertexProperty.set(sourceVertex);
+        destVertexProperty.set(destVertex);
+        createLines();
+    }
+
+    private void createLines() {
+        getChildren().clear();
+        Pane sourceVertex = sourceVertexProperty.get();
+        Pane destVertex = destVertexProperty.get();
+        if (sourceVertex == null || destVertex == null) {
+            return;
+        }
+
         Line arrowLine = new Line();
         ObservableValue<Double> lineLayoutXProperty = Properties.combine(sourceVertex.layoutXProperty(), sourceVertex.widthProperty(), (x, width) -> x.doubleValue() + width.doubleValue());
         ObservableValue<Double> lineLayoutYProperty = Properties.combine(sourceVertex.layoutYProperty(), sourceVertex.heightProperty(), (y, height) -> y.doubleValue() + height.doubleValue() / 2);
@@ -28,15 +45,15 @@ public class MoneyFlowArrowView extends Pane {
         ObservableValue<Double> lineEndYProperty = Properties.combine(
                 Properties.combine(destVertex.layoutYProperty(), arrowLine.layoutYProperty(), (destY, arrowY) -> destY.doubleValue() - arrowY.doubleValue()),
                 destVertex.heightProperty(),
-                (a, b) -> a.doubleValue() + b.doubleValue() / 2);
+                (a, b) -> a + b.doubleValue() / 2);
 
         arrowLine.layoutXProperty().bind(lineLayoutXProperty);
         arrowLine.layoutYProperty().bind(lineLayoutYProperty);
         arrowLine.endXProperty().bind(lineEndXProperty);
         arrowLine.endYProperty().bind(lineEndYProperty);
 
-        ObservableValue<Double> arrowHeadXProperty = Properties.combine(lineLayoutXProperty, lineEndXProperty, (layoutX, endX) -> layoutX.doubleValue() + endX.doubleValue());
-        ObservableValue<Double> arrowHeadYProperty = Properties.combine(lineLayoutYProperty, lineEndYProperty, (layoutY, endY) -> layoutY.doubleValue() + endY.doubleValue());
+        ObservableValue<Double> arrowHeadXProperty = Properties.combine(lineLayoutXProperty, lineEndXProperty, Double::sum);
+        ObservableValue<Double> arrowHeadYProperty = Properties.combine(lineLayoutYProperty, lineEndYProperty, Double::sum);
         Line arrowHeadLeft = new Line();
         arrowHeadLeft.layoutXProperty().bind(arrowHeadXProperty);
         arrowHeadLeft.layoutYProperty().bind(arrowHeadYProperty);
@@ -65,14 +82,6 @@ public class MoneyFlowArrowView extends Pane {
         arrowHeadRight.setEndX(-ARROW_HEAD_LENGTH * Math.sin(Math.toRadians(arrowAngleDegrees + 45)));
         arrowHeadLeft.setEndY(ARROW_HEAD_LENGTH * Math.cos(Math.toRadians(arrowAngleDegrees - 45)));
         arrowHeadRight.setEndY(ARROW_HEAD_LENGTH * Math.cos(Math.toRadians(arrowAngleDegrees + 45)));
-    }
-
-    public MoneyFlow getMoneyFlow() {
-        return moneyFlow;
-    }
-
-    public static MoneyFlowArrowView empty(MoneyFlow moneyFlow) {
-        return new MoneyFlowArrowView(moneyFlow);
     }
 
 }
