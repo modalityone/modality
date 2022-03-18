@@ -1,27 +1,24 @@
 package mongoose.ecommerce.backoffice.activities.moneyflows;
 
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.IndividualEntityToObjectMapper;
-import dev.webfx.framework.shared.orm.entity.Entity;
-import dev.webfx.framework.shared.orm.entity.EntityId;
 import dev.webfx.kit.util.properties.Properties;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.geometry.Point2D;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import mongoose.base.shared.entities.MoneyAccount;
 import mongoose.base.shared.entities.MoneyFlow;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 /**
  * @author Dan Newman
@@ -54,31 +51,12 @@ public class MoneyTransferEntityGraph extends Region {
 	private void addNewButton() {
 		Label label = new Label("+");
 		label.setFont(new Font(128));
-		label.setOnMouseClicked(e -> showNewPopup());
+		//label.setOnMouseClicked(e -> showNewPopup());
 		newButton = new Pane();
 		newButton.getChildren().add(label);
 		newButton.layoutXProperty().bind(Properties.combine(widthProperty(), newButton.widthProperty(), (nodeWidth, buttonWidth) -> nodeWidth.doubleValue() - buttonWidth.doubleValue()));
 		newButton.layoutYProperty().bind(Properties.combine(heightProperty(), newButton.heightProperty(), (nodeHeight, buttonHeight) -> nodeHeight.doubleValue() - buttonHeight.doubleValue()));
 		getChildren().add(newButton);
-	}
-
-	private void showNewPopup() {
-		/*MoneyTransferCreatorView moneyTransferCreatorView = new MoneyTransferCreatorView((ObservableList<MoneyAccount>) vertices);
-		showPopup(moneyTransferCreatorView);*/
-	}
-
-	private void showPopup(Node node) {
-		/*Popup popup = new Popup();
-		popup.getContent().add(buildPopupNode(node));
-		popup.setAutoHide(true);
-		popup.show(getScene().getWindow());*/
-	}
-
-	private Node buildPopupNode(Node node) {
-		VBox result = new VBox(node);
-		result.setPadding(new Insets(8));
-		result.setStyle("-fx-border-color: gray; -fx-border-width: 3;");
-		return result;
 	}
 
 	private void updateLayout() {
@@ -145,25 +123,6 @@ public class MoneyTransferEntityGraph extends Region {
 				.filter(pane -> pane.moneyAccountProperty().get().equals(moneyAccount))
 				.findAny()
 				.orElse(null);
-	}
-
-	private void showVertexContextMenu(MoneyAccount entity) {
-		/*MenuItem addConnectionMenuItem = new MenuItem("Add connection");
-		ContextMenu vertexContextMenu = new ContextMenu(addConnectionMenuItem);
-		vertexContextMenu.setOnAction(e -> {
-			MoneyTransferConnectionCreatorView moneyTransferConnectionCreatorView =
-					new MoneyTransferConnectionCreatorView(entity, vertices, connections);
-			showPopup(moneyTransferConnectionCreatorView);
-		});
-		Point2D vertexPos = getVertexPos(entity);
-		vertexContextMenu.show(getScene().getWindow(), vertexPos.getX(), vertexPos.getY());*/
-	}
-
-	private Point2D getVertexPos(MoneyAccount vertex) {
-		Pane pane = getPaneForMoneyAccount(vertex);
-		double x = pane.getLayoutX() + getScene().getWindow().getX();
-		double y = pane.getLayoutY() + getScene().getWindow().getY();
-		return new Point2D(x, y);
 	}
 
 	private void removePreviousMoneyAccountPanes() {
