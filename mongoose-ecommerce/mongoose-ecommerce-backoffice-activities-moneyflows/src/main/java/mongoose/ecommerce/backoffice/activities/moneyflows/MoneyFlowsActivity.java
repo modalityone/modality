@@ -5,6 +5,7 @@ import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.React
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.kit.util.properties.Properties;
 import javafx.scene.Node;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilder;
@@ -34,16 +35,20 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
 
     private ConventionalUiBuilder ui;
     private MoneyTransferEntityGraph graph = new MoneyTransferEntityGraph();
+    private MoneyAccountEditorPane editorPane;
 
     @Override
     public Node buildUi() {
         ui = createAndBindGroupMasterSlaveViewWithFilterSearchBar(pm, "bookings", "MoneyAccount");
         Pane table = ui.buildUi();
-        VBox container = new VBox(table, graph);
-        table.prefHeightProperty().bind(Properties.compute(container.heightProperty(), height -> height.doubleValue() * 0.3));
-        graph.prefHeightProperty().bind(Properties.compute(container.heightProperty(), height -> height.doubleValue() * 0.7));
+        editorPane = new MoneyAccountEditorPane(graph.moneyAccountPanes(), graph.moneyFlowArrowViews());
+        HBox editorAndGraph = new HBox(editorPane, graph);
+        graph.prefWidthProperty().bind(Properties.combine(editorAndGraph.widthProperty(), editorPane.widthProperty(), (parentWidth, editorWidth) -> parentWidth.doubleValue() - editorWidth.doubleValue()));
+        VBox root = new VBox(table, editorAndGraph);
+        table.prefHeightProperty().bind(Properties.compute(root.heightProperty(), height -> height.doubleValue() * 0.3));
+        graph.prefHeightProperty().bind(Properties.compute(root.heightProperty(), height -> height.doubleValue() * 0.7));
         pm.selectedMasterProperty().addListener(e -> updateSelectedEntity());
-        return container;
+        return root;
     }
 
     private void updateSelectedEntity() {
@@ -65,7 +70,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         moneyAccountToPaneMapper = ReactiveObjectsMapper.<MoneyAccount, MoneyAccountPane>createPushReactiveChain(this)
                 .always("{class: 'MoneyAccount', alias: 'ma', columns: 'name,type'}")
                 .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
-                .setIndividualEntityToObjectMapperFactory(MoneyAccountToPaneMapper::new)
+                .setIndividualEntityToObjectMapperFactory(moneyAccount -> new MoneyAccountToPaneMapper(moneyAccount, editorPane))
                 .setStore(masterVisualMapper.getStore())
                 .storeMappedObjectsInto(graph.moneyAccountPanes())
                 .start();
@@ -84,8 +89,9 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
 
         final MoneyAccountPane pane;
 
-        MoneyAccountToPaneMapper(MoneyAccount moneyAccount) {
+        MoneyAccountToPaneMapper(MoneyAccount moneyAccount, MoneyAccountEditorPane editorPane) {
             pane = new MoneyAccountPane(moneyAccount);
+            pane.setOnMouseClicked(e -> editorPane.edit(moneyAccount));
         }
 
         @Override

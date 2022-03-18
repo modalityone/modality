@@ -5,6 +5,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import mongoose.base.shared.entities.MoneyFlow;
 
@@ -38,7 +39,7 @@ public class MoneyFlowArrowView extends Pane {
             return;
         }
 
-        Line arrowLine = new Line();
+        ArrowLine arrowLine = new ArrowLine();
         ObservableValue<Double> lineLayoutXProperty = Properties.combine(sourceVertex.layoutXProperty(), sourceVertex.widthProperty(), (x, width) -> x.doubleValue() + width.doubleValue());
         ObservableValue<Double> lineLayoutYProperty = Properties.combine(sourceVertex.layoutYProperty(), sourceVertex.heightProperty(), (y, height) -> y.doubleValue() + height.doubleValue() / 2);
         ObservableValue<Double> lineEndXProperty = Properties.combine(destVertex.layoutXProperty(), arrowLine.layoutXProperty(), (destX, arrowX) -> destX.doubleValue() - arrowX.doubleValue());
@@ -54,13 +55,13 @@ public class MoneyFlowArrowView extends Pane {
 
         ObservableValue<Double> arrowHeadXProperty = Properties.combine(lineLayoutXProperty, lineEndXProperty, Double::sum);
         ObservableValue<Double> arrowHeadYProperty = Properties.combine(lineLayoutYProperty, lineEndYProperty, Double::sum);
-        Line arrowHeadLeft = new Line();
+        ArrowLine arrowHeadLeft = new ArrowLine();
         arrowHeadLeft.layoutXProperty().bind(arrowHeadXProperty);
         arrowHeadLeft.layoutYProperty().bind(arrowHeadYProperty);
         arrowHeadLeft.setEndX(-30);
         arrowHeadLeft.setEndY(-30);
 
-        Line arrowHeadRight = new Line();
+        ArrowLine arrowHeadRight = new ArrowLine();
         arrowHeadRight.layoutXProperty().bind(arrowHeadXProperty);
         arrowHeadRight.layoutYProperty().bind(arrowHeadYProperty);
         arrowHeadRight.setEndX(-30);
@@ -82,6 +83,13 @@ public class MoneyFlowArrowView extends Pane {
         arrowHeadRight.setEndX(-ARROW_HEAD_LENGTH * Math.sin(Math.toRadians(arrowAngleDegrees + 45)));
         arrowHeadLeft.setEndY(ARROW_HEAD_LENGTH * Math.cos(Math.toRadians(arrowAngleDegrees - 45)));
         arrowHeadRight.setEndY(ARROW_HEAD_LENGTH * Math.cos(Math.toRadians(arrowAngleDegrees + 45)));
+    }
+
+    private static class ArrowLine extends Line {
+
+        public ArrowLine() {
+            setStroke(Color.BLACK);
+        }
     }
 
 }

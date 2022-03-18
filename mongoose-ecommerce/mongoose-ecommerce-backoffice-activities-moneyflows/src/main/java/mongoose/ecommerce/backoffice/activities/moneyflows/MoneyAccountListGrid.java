@@ -1,8 +1,5 @@
 package mongoose.ecommerce.backoffice.activities.moneyflows;
 
-import dev.webfx.framework.shared.orm.entity.Entity;
-import dev.webfx.framework.shared.orm.entity.UpdateStore;
-import dev.webfx.platform.shared.services.submit.SubmitArgument;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
@@ -14,7 +11,6 @@ import mongoose.base.shared.entities.MoneyAccount;
 import mongoose.base.shared.entities.MoneyFlow;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -39,11 +35,10 @@ public abstract class MoneyAccountListGrid extends GridPane {
     private void populate() {
         getChildren().clear();
 
-        List<MoneyFlow> moneyFlows = moneyFlowArrowViews.stream()
-                .map(arrow -> arrow.moneyFlowProperty().get())
+        List<MoneyAccount> moneyAccountList = moneyFlowArrowViews.stream()
+                .map(arrow -> getAccountFromFlow(arrow.moneyFlowProperty().get()))
+                .filter(moneyAccount -> !moneyAccount.equals(excludedMoneyAccount.get()))
                 .collect(Collectors.toList());
-
-        Set<MoneyAccount> moneyAccountList = getAccountsConnectedByFlow(excludedMoneyAccount.get(), moneyFlows);
 
         moneyAccountPanes.stream()
                 .sorted((pane1, pane2) -> pane1.moneyAccountProperty().get().getName().compareToIgnoreCase(pane2.moneyAccountProperty().get().getName()))
@@ -52,13 +47,6 @@ public abstract class MoneyAccountListGrid extends GridPane {
                 .forEach(moneyAccount -> {
                     CheckBox checkBox = new CheckBox();
                     checkBox.setSelected(moneyAccountList.contains(moneyAccount));
-                    checkBox.setOnAction(e -> {
-                        if (checkBox.isSelected()) {
-                            createFlow(moneyAccount);
-                        } else {
-                            deleteFlow(moneyAccount);
-                        }
-                    });
                     Label label = new Label(moneyAccount.getName());
                     int rowIndex = getRowCount();
                     add(checkBox, 0, rowIndex);
@@ -66,38 +54,5 @@ public abstract class MoneyAccountListGrid extends GridPane {
                 });
     }
 
-    protected abstract Set<MoneyAccount> getAccountsConnectedByFlow(MoneyAccount selectedMoneyAccount, List<MoneyFlow> moneyFlows);
-
-    private void createFlow(MoneyAccount otherAccount) {
-        UpdateStore updateStore = UpdateStore.createAbove(otherAccount.getStore());
-        MoneyFlow insertEntity = updateStore.insertEntity(MoneyFlow.class);
-        MoneyAccount selectedMoneyAccount = excludedMoneyAccount.get();
-        populateInsertEntity(insertEntity, selectedMoneyAccount, otherAccount);
-        insertEntity.setOrganization(selectedMoneyAccount.getOrganization());
-        updateStore.submitChanges(SubmitArgument.builder()
-                        .setStatement("select set_transaction_parameters(false)")
-                        .setDataSourceId(updateStore.getDataSourceId())
-                        .build());
-    }
-
-    protected abstract void populateInsertEntity(MoneyFlow insertEntity, MoneyAccount selectedMoneyAccount, MoneyAccount otherAccount);
-
-    private void deleteFlow(MoneyAccount otherAccount) {
-        List<MoneyFlow> moneyFlows = moneyFlowArrowViews.stream()
-                .map(arrow -> arrow.moneyFlowProperty().get())
-                .collect(Collectors.toList());
-        MoneyAccount selectedMoneyAccount = excludedMoneyAccount.get();
-        Entity deleteEntity = findEntityToDelete(moneyFlows, selectedMoneyAccount, otherAccount);
-        if (deleteEntity != null) {
-            UpdateStore updateStore = UpdateStore.createAbove(otherAccount.getStore());
-            updateStore.deleteEntity(deleteEntity);
-            updateStore.submitChanges(SubmitArgument.builder()
-                    .setStatement("select set_transaction_parameters(false)")
-                    .setDataSourceId(updateStore.getDataSourceId())
-                    .build());
-        }
-    }
-
-    protected abstract Entity findEntityToDelete(List<MoneyFlow> moneyFlows, MoneyAccount selectedMoneyAccount, MoneyAccount otherAccount);
-
+    protected abstract MoneyAccount getAccountFromFlow(MoneyFlow moneyFlow);
 }
