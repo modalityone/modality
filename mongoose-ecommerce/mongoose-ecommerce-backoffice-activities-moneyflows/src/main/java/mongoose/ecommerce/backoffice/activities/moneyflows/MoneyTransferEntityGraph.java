@@ -70,9 +70,9 @@ public class MoneyTransferEntityGraph extends Region {
 			return;
 		}
 		int highestDistance = nodesByDistanceFromRoot.keySet().stream().max(Integer::compare).get();
-		int widthDenominator = highestDistance + 2;
+		int widthDenominator = Math.max(highestDistance + 1, 1);
 		for (Entry<Integer, List<MoneyAccount>> entry : nodesByDistanceFromRoot.entrySet()) {
-			int widthNumerator = Math.max(entry.getKey() + 1, 1);
+			int widthNumerator = entry.getKey();
 			int heightDenominator = entry.getValue().size() + 2;
 			int index = 1;
 			List<MoneyAccount> alphabetizedMoneyAccounts = entry.getValue().stream()
