@@ -1,5 +1,6 @@
 package mongoose.ecommerce.backoffice.activities.moneyflows;
 
+import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.IndividualEntityToObjectMapper;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.ReactiveObjectsMapper;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.kit.util.properties.Properties;
@@ -22,6 +23,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
 
     private ReactiveVisualMapper<MoneyAccount> masterVisualMapper;
     private ReactiveObjectsMapper<MoneyFlow, MoneyFlowArrowView> moneyFlowToArrowMapper;
+    private ReactiveObjectsMapper<MoneyAccount, MoneyAccountPane> moneyAccountToPaneMapper;
 
     private final MoneyFlowsPresentationModel pm = new MoneyFlowsPresentationModel();
 
@@ -40,13 +42,8 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         VBox container = new VBox(table, graph);
         table.prefHeightProperty().bind(Properties.compute(container.heightProperty(), height -> height.doubleValue() * 0.3));
         graph.prefHeightProperty().bind(Properties.compute(container.heightProperty(), height -> height.doubleValue() * 0.7));
-        pm.masterVisualResultProperty().addListener(e -> updateGraph());
         pm.selectedMasterProperty().addListener(e -> updateSelectedEntity());
         return container;
-    }
-
-    private void updateGraph() {
-        graph.setMoneyAccounts(masterVisualMapper.getEntities());
     }
 
     private void updateSelectedEntity() {
@@ -65,13 +62,45 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .start();
 
+        moneyAccountToPaneMapper = ReactiveObjectsMapper.<MoneyAccount, MoneyAccountPane>createPushReactiveChain(this)
+                .always("{class: 'MoneyAccount', alias: 'ma', columns: 'name,type'}")
+                .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
+                .setIndividualEntityToObjectMapperFactory(MoneyAccountToPaneMapper::new)
+                .setStore(masterVisualMapper.getStore())
+                .storeMappedObjectsInto(graph.moneyAccountPanes())
+                .start();
+
         moneyFlowToArrowMapper = ReactiveObjectsMapper.<MoneyFlow, MoneyFlowArrowView>createPushReactiveChain(this)
                 .always("{class: 'MoneyFlow', alias: 'mf', fields: 'fromMoneyAccount,toMoneyAccount'}")
+                .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
                 .setIndividualEntityToObjectMapperFactory(graph::newMoneyFlowToArrowMapper)
                 .setStore(masterVisualMapper.getStore())
                 .storeMappedObjectsInto(graph.moneyFlowArrowViews())
                 .start();
 
+    }
+
+    class MoneyAccountToPaneMapper implements IndividualEntityToObjectMapper<MoneyAccount, MoneyAccountPane> {
+
+        final MoneyAccountPane pane;
+
+        MoneyAccountToPaneMapper(MoneyAccount moneyAccount) {
+            pane = new MoneyAccountPane(moneyAccount);
+        }
+
+        @Override
+        public MoneyAccountPane getMappedObject() {
+            return pane;
+        }
+
+        @Override
+        public void onEntityChangedOrReplaced(MoneyAccount moneyAccount) {
+            pane.moneyAccountProperty().set(moneyAccount);
+        }
+
+        @Override
+        public void onEntityRemoved(MoneyAccount moneyAccount) {
+        }
     }
 
     @Override
