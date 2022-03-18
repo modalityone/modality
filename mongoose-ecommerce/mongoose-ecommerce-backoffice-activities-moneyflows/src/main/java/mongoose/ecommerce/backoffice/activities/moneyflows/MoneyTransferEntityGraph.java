@@ -29,7 +29,6 @@ public class MoneyTransferEntityGraph extends Region {
 	public ObservableList<MoneyAccountPane> moneyAccountPanes() { return moneyAccountPanes; }
 	private final ObservableList<MoneyFlowArrowView> moneyFlowArrowViews = FXCollections.observableArrayList();
 	public ObservableList<MoneyFlowArrowView> moneyFlowArrowViews() { return moneyFlowArrowViews; }
-	private MoneyAccount selectedEntity;
 	private Pane newButton;
 
 	public MoneyTransferEntityGraph() {
@@ -137,11 +136,6 @@ public class MoneyTransferEntityGraph extends Region {
 				.filter(child -> child instanceof MoneyFlowArrowView)
 				.collect(Collectors.toList());
 		getChildren().removeAll(previousArrows);
-	}
-
-	public void setSelectedEntity(MoneyAccount selectedEntity) {
-		this.selectedEntity = selectedEntity;
-		updateLayout();
 	}
 
 	public MoneyFlowToArrowMapper newMoneyFlowToArrowMapper(MoneyFlow moneyFlow) {

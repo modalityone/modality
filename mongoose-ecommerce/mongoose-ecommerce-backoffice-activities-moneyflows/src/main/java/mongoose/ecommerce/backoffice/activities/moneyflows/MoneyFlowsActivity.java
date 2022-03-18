@@ -53,7 +53,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
 
     private void updateSelectedEntity() {
         System.out.println("selectedEntity = " + pm.selectedMasterProperty().get());
-        graph.setSelectedEntity(pm.selectedMasterProperty().get());
+        //graph.setSelectedEntity(pm.selectedMasterProperty().get());
     }
 
     @Override
