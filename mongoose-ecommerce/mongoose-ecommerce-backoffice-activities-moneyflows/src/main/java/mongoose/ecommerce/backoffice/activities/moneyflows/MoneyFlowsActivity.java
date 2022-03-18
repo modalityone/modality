@@ -34,7 +34,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
     }
 
     private ConventionalUiBuilder ui;
-    private MoneyTransferEntityGraph graph = new MoneyTransferEntityGraph();
+    private final MoneyTransferEntityGraph graph = new MoneyTransferEntityGraph();
     private MoneyAccountEditorPane editorPane;
 
     @Override
@@ -85,7 +85,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
 
     }
 
-    class MoneyAccountToPaneMapper implements IndividualEntityToObjectMapper<MoneyAccount, MoneyAccountPane> {
+    private static class MoneyAccountToPaneMapper implements IndividualEntityToObjectMapper<MoneyAccount, MoneyAccountPane> {
 
         final MoneyAccountPane pane;
 
