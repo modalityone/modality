@@ -28,15 +28,17 @@ public class MoneyAccountEditorPane extends VBox {
 
     public void edit(MoneyAccount moneyAccount) {
         getChildren().clear();
+
         Pane propertiesSheetPane = new Pane();
         propertiesSheetPane.prefWidthProperty().bind(widthProperty());
         propertiesSheetPane.setPrefHeight(300);
         EntityPropertiesSheet.editEntity(moneyAccount, "name,closed,currency,event,gatewayCompany,organization,type", propertiesSheetPane);
         getChildren().add(propertiesSheetPane);
+
         getChildren().add(buildHeadingLabel("Money flows from"));
         fromMoneyAccountListGrid.excludedMoneyAccount().set(moneyAccount);
         getChildren().add(fromMoneyAccountListGrid);
-        //
+
         getChildren().add(buildHeadingLabel("Money flows to"));
         toMoneyAccountListGrid.excludedMoneyAccount().set(moneyAccount);
         getChildren().add(toMoneyAccountListGrid);
