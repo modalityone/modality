@@ -30,7 +30,6 @@ public class MoneyTransferEntityGraph extends Region {
 
 	private final ObservableList<MoneyAccountPane> moneyAccountPanes = FXCollections.observableArrayList();
 	public ObservableList<MoneyAccountPane> moneyAccountPanes() { return moneyAccountPanes; }
-	//private final Map<MoneyAccount, Pane> nodeForMoneyAccount = new HashMap<>();
 	private final ObservableList<MoneyFlowArrowView> moneyFlowArrowViews = FXCollections.observableArrayList();
 	public ObservableList<MoneyFlowArrowView> moneyFlowArrowViews() { return moneyFlowArrowViews; }
 	private MoneyAccount selectedEntity;
@@ -83,7 +82,8 @@ public class MoneyTransferEntityGraph extends Region {
 	}
 
 	private void updateLayout() {
-		getChildren().clear();
+		removePreviousMoneyAccountPanes();
+		removePreviousArrows();
 		getChildren().addAll(moneyAccountPanes);
 		getChildren().addAll(moneyFlowArrowViews);
 
@@ -91,7 +91,6 @@ public class MoneyTransferEntityGraph extends Region {
 		if (nodesByDistanceFromRoot.isEmpty()) {
 			return;
 		}
-		System.out.println("========\n========\n=======\n=======\n=========");
 		int highestDistance = nodesByDistanceFromRoot.keySet().stream().max(Integer::compare).get();
 		int widthDenominator = highestDistance + 2;
 		for (Entry<Integer, List<MoneyAccount>> entry : nodesByDistanceFromRoot.entrySet()) {
@@ -148,15 +147,6 @@ public class MoneyTransferEntityGraph extends Region {
 				.orElse(null);
 	}
 
-	private String getMoneyAccountStyle(MoneyAccount moneyAccount) {
-		// TODO retrieve colour from the ReactiveVisualMapper
-		String colorName = moneyAccount.equals(selectedEntity) ? "yellow" : "blue";
-		return "-fx-border-color: " + colorName + ";" +
-                "-fx-border-insets: 5;" +
-                "-fx-border-width: 3;" +
-                "-fx-border-style: dashed;";
-	}
-
 	private void showVertexContextMenu(MoneyAccount entity) {
 		/*MenuItem addConnectionMenuItem = new MenuItem("Add connection");
 		ContextMenu vertexContextMenu = new ContextMenu(addConnectionMenuItem);
@@ -176,17 +166,11 @@ public class MoneyTransferEntityGraph extends Region {
 		return new Point2D(x, y);
 	}
 
-	public void ensureArrowsExistForAllMoneyFlows() {
-		removePreviousArrows();
-		//getChildren().addAll(moneyFlowArrowViews);
-		List<MoneyAccount> moneyAccounts = moneyAccountPanes.stream()
-				.map(pane -> pane.moneyAccountProperty().get())
+	private void removePreviousMoneyAccountPanes() {
+		List<Node> previousMoneyAccountPanes = getChildren().stream()
+				.filter(child -> child instanceof MoneyAccountPane)
 				.collect(Collectors.toList());
-		List<MoneyFlowArrowView> validArrows = moneyFlowArrowViews.stream()
-				.filter(arrow -> moneyAccounts.contains(arrow.moneyFlowProperty().get().getFromMoneyAccount()) &&
-						moneyAccounts.contains(arrow.moneyFlowProperty().get().getToMoneyAccount()))
-				.collect(Collectors.toList());
-		getChildren().addAll(validArrows);
+		getChildren().removeAll(previousMoneyAccountPanes);
 	}
 
 	private void removePreviousArrows() {
