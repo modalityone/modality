@@ -28,17 +28,18 @@ import mongoose.base.shared.entities.MoneyFlow;
  */
 public class MoneyTransferEntityGraph extends Region {
 
-	private final ObservableList<MoneyAccount> moneyAccounts = FXCollections.observableArrayList();
-	private final Map<MoneyAccount, Pane> nodeForMoneyAccount = new HashMap<>();
+	private final ObservableList<MoneyAccountPane> moneyAccountPanes = FXCollections.observableArrayList();
+	public ObservableList<MoneyAccountPane> moneyAccountPanes() { return moneyAccountPanes; }
+	//private final Map<MoneyAccount, Pane> nodeForMoneyAccount = new HashMap<>();
 	private final ObservableList<MoneyFlowArrowView> moneyFlowArrowViews = FXCollections.observableArrayList();
 	public ObservableList<MoneyFlowArrowView> moneyFlowArrowViews() { return moneyFlowArrowViews; }
 	private MoneyAccount selectedEntity;
 	private Pane newButton;
 
 	public MoneyTransferEntityGraph() {
-		moneyAccounts.addListener(new ListChangeListener<MoneyAccount>() {
+		moneyAccountPanes.addListener(new ListChangeListener<MoneyAccountPane>() {
 			@Override
-			public void onChanged(Change<? extends MoneyAccount> c) {
+			public void onChanged(Change<? extends MoneyAccountPane> c) {
 				updateLayout();
 			}
 		});
@@ -82,8 +83,10 @@ public class MoneyTransferEntityGraph extends Region {
 	}
 
 	private void updateLayout() {
-		ensureArrowsExistForAllMoneyFlows();
-		removeObsoleteMoneyAccountPanes();
+		getChildren().clear();
+		getChildren().addAll(moneyAccountPanes);
+		getChildren().addAll(moneyFlowArrowViews);
+
 		Map<Integer, List<MoneyAccount>> nodesByDistanceFromRoot = orderByDistanceFromRoot();
 		if (nodesByDistanceFromRoot.isEmpty()) {
 			return;
@@ -96,7 +99,7 @@ public class MoneyTransferEntityGraph extends Region {
 			int heightDenominator = entry.getValue().size() + 2;
 			int index = 1;
 			List<MoneyAccount> alphabetizedMoneyAccounts = entry.getValue().stream()
-					.sorted((account1, account2) -> account1.getName().compareToIgnoreCase(account2.getName()))
+					.sorted((account1, account2) -> ensureStringNotNull(account1.getName()).compareToIgnoreCase(ensureStringNotNull(account2.getName())))
 					.collect(Collectors.toList());
 			for (MoneyAccount moneyAccount : alphabetizedMoneyAccounts) {
 				final int finalIndex = index;
@@ -106,20 +109,17 @@ public class MoneyTransferEntityGraph extends Region {
 				index++;
 			}
 		}
-
 	}
 
-	private void removeObsoleteMoneyAccountPanes() {
-		List<Node> obsoleteMoneyAccountPanes = getChildren().stream()
-				.filter(node -> node instanceof MoneyAccountPane)
-				.filter(child -> !moneyAccounts.contains(((MoneyAccountPane) child).moneyAccount))
-				.collect(Collectors.toList());
-		getChildren().removeAll(obsoleteMoneyAccountPanes);
+	private String ensureStringNotNull(String s) {
+		// TODO investigate why MoneyAccount with ID 14 has no name or type
+		return s != null ? s : "";
 	}
 
 	private Map<Integer, List<MoneyAccount>> orderByDistanceFromRoot() {
 		Map<Integer, List<MoneyAccount>> result = new HashMap<>();
-		for (MoneyAccount moneyAccount : moneyAccounts) {
+		for (MoneyAccountPane moneyAccountPane : moneyAccountPanes) {
+			MoneyAccount moneyAccount = moneyAccountPane.moneyAccountProperty().get();
 			int maxDistanceFromRoot = getMaxDistanceFromRoot(moneyAccount);
 			if (!result.containsKey(maxDistanceFromRoot)) {
 				result.put(maxDistanceFromRoot, new ArrayList<>());
@@ -132,7 +132,7 @@ public class MoneyTransferEntityGraph extends Region {
 	private int getMaxDistanceFromRoot(MoneyAccount moneyAccount) {
 		int result = 0;
 		for (MoneyFlowArrowView moneyFlowArrowView : moneyFlowArrowViews) {
-			MoneyFlow moneyFlow = moneyFlowArrowView.getMoneyFlow();
+			MoneyFlow moneyFlow = moneyFlowArrowView.moneyFlowProperty().get();
 			if (moneyFlow.getToMoneyAccount().equals(moneyAccount)) {
 				int maxDistance = getMaxDistanceFromRoot(moneyFlow.getFromMoneyAccount()) + 1;
 				result = Math.max(result, maxDistance);
@@ -142,27 +142,10 @@ public class MoneyTransferEntityGraph extends Region {
 	}
 
 	private Pane getPaneForMoneyAccount(MoneyAccount moneyAccount) {
-		if (!nodeForMoneyAccount.containsKey(moneyAccount)) {
-			MoneyAccountPane moneyAccountPane = new MoneyAccountPane(moneyAccount);
-			nodeForMoneyAccount.put(moneyAccount, moneyAccountPane);
-			getChildren().add(moneyAccountPane);
-		}
-		return nodeForMoneyAccount.get(moneyAccount);
-	}
-
-	private class MoneyAccountPane extends Pane {
-
-		private final MoneyAccount moneyAccount;
-
-		public MoneyAccountPane(MoneyAccount moneyAccount) {
-			this.moneyAccount = moneyAccount;
-			//pane.setStyle(getMoneyAccountStyle(moneyAccount));
-			setPadding(new Insets(8));
-			setOnMouseClicked(e -> showVertexContextMenu(moneyAccount));
-			Label label = new Label(moneyAccount.getName());
-			getChildren().addAll(label);
-			label.setAlignment(Pos.CENTER);
-		}
+		return moneyAccountPanes.stream()
+				.filter(pane -> pane.moneyAccountProperty().get().equals(moneyAccount))
+				.findAny()
+				.orElse(null);
 	}
 
 	private String getMoneyAccountStyle(MoneyAccount moneyAccount) {
@@ -195,22 +178,15 @@ public class MoneyTransferEntityGraph extends Region {
 
 	public void ensureArrowsExistForAllMoneyFlows() {
 		removePreviousArrows();
-		getChildren().addAll(moneyFlowArrowViews);
-		System.out.println("moneyFlowArrowViews.size() = " + moneyFlowArrowViews.size());
-		moneyFlowArrowViews.forEach(arrow -> {
-			System.out.println(arrow.getMoneyFlow().getFromMoneyAccount().getName() + "(" + arrow.getMoneyFlow().getFromMoneyAccount().getId() + ", " + arrow.getMoneyFlow().getFromMoneyAccount().getStore() + ")"
-					+ " - " +
-					arrow.getMoneyFlow().getToMoneyAccount().getName() + "(" + arrow.getMoneyFlow().getToMoneyAccount().getId() + "," + arrow.getMoneyFlow().getToMoneyAccount().getStore() + ")");
-		});
-
-		List<EntityId> moneyAccoundIds = moneyAccounts.stream()
-				.map(MoneyAccount::getId)
+		//getChildren().addAll(moneyFlowArrowViews);
+		List<MoneyAccount> moneyAccounts = moneyAccountPanes.stream()
+				.map(pane -> pane.moneyAccountProperty().get())
 				.collect(Collectors.toList());
 		List<MoneyFlowArrowView> validArrows = moneyFlowArrowViews.stream()
-				.filter(arrow -> moneyAccoundIds.contains(arrow.getMoneyFlow().getFromMoneyAccount().getId()) &&
-						moneyAccoundIds.contains(arrow.getMoneyFlow().getToMoneyAccount().getId()))
+				.filter(arrow -> moneyAccounts.contains(arrow.moneyFlowProperty().get().getFromMoneyAccount()) &&
+						moneyAccounts.contains(arrow.moneyFlowProperty().get().getToMoneyAccount()))
 				.collect(Collectors.toList());
-		System.out.println("moneyFlowArrowViews.size() = " + moneyFlowArrowViews.size());
+		getChildren().addAll(validArrows);
 	}
 
 	private void removePreviousArrows() {
@@ -218,16 +194,6 @@ public class MoneyTransferEntityGraph extends Region {
 				.filter(child -> child instanceof MoneyFlowArrowView)
 				.collect(Collectors.toList());
 		getChildren().removeAll(previousArrows);
-	}
-
-	private List<MoneyFlow> listMoneyFlows() {
-		return moneyFlowArrowViews.stream()
-				.map(MoneyFlowArrowView::getMoneyFlow)
-				.collect(Collectors.toList());
-	}
-
-	public void setMoneyAccounts(List<MoneyAccount> moneyAccounts) {
-		this.moneyAccounts.setAll(moneyAccounts != null ? moneyAccounts : Collections.emptyList());
 	}
 
 	public void setSelectedEntity(MoneyAccount selectedEntity) {
@@ -244,18 +210,9 @@ public class MoneyTransferEntityGraph extends Region {
 		final MoneyFlowArrowView moneyFlowArrowView;
 
 		MoneyFlowToArrowMapper(MoneyFlow moneyFlow) {
-			if (toAndFromAccountsPresent(moneyFlow)) {
-				Pane sourceVertex = getPaneForMoneyAccount(moneyFlow.getFromMoneyAccount());
-				Pane destVertex = getPaneForMoneyAccount(moneyFlow.getToMoneyAccount());
-				moneyFlowArrowView = new MoneyFlowArrowView(moneyFlow, sourceVertex, destVertex);
-			} else {
-				moneyFlowArrowView = MoneyFlowArrowView.empty(moneyFlow);
-			}
-		}
-
-		private boolean toAndFromAccountsPresent(MoneyFlow moneyFlow) {
-			return nodeForMoneyAccount.containsKey(moneyFlow.getFromMoneyAccount()) &&
-					nodeForMoneyAccount.containsKey(moneyFlow.getToMoneyAccount());
+			Pane sourceVertex = getPaneForMoneyAccount(moneyFlow.getFromMoneyAccount());
+			Pane destVertex = getPaneForMoneyAccount(moneyFlow.getToMoneyAccount());
+			moneyFlowArrowView = new MoneyFlowArrowView(moneyFlow, sourceVertex, destVertex);
 		}
 
 		@Override
@@ -264,11 +221,12 @@ public class MoneyTransferEntityGraph extends Region {
 		}
 
 		@Override
-		public void onEntityChangedOrReplaced(MoneyFlow entity) {
+		public void onEntityChangedOrReplaced(MoneyFlow moneyFlow) {
+			moneyFlowArrowView.moneyFlowProperty().set(moneyFlow);
 		}
 
 		@Override
-		public void onEntityRemoved(MoneyFlow entity) {
+		public void onEntityRemoved(MoneyFlow moneyFlow) {
 		}
 	}
 }
