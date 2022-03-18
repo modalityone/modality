@@ -59,10 +59,10 @@ public class MoneyTransferEntityGraph extends Region {
 	}
 
 	private void updateLayout() {
-		removePreviousMoneyAccountPanes();
 		removePreviousArrows();
-		getChildren().addAll(moneyAccountPanes);
+		removePreviousMoneyAccountPanes();
 		getChildren().addAll(moneyFlowArrowViews);
+		getChildren().addAll(moneyAccountPanes);
 
 		Map<Integer, List<MoneyAccount>> nodesByDistanceFromRoot = orderByDistanceFromRoot();
 		if (nodesByDistanceFromRoot.isEmpty()) {
