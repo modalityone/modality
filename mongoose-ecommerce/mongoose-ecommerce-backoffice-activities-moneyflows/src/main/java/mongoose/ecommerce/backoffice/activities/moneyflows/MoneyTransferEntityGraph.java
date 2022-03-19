@@ -2,6 +2,8 @@ package mongoose.ecommerce.backoffice.activities.moneyflows;
 
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.IndividualEntityToObjectMapper;
 import dev.webfx.kit.util.properties.Properties;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -29,6 +31,8 @@ public class MoneyTransferEntityGraph extends Region {
 	public ObservableList<MoneyAccountPane> moneyAccountPanes() { return moneyAccountPanes; }
 	private final ObservableList<MoneyFlowArrowView> moneyFlowArrowViews = FXCollections.observableArrayList();
 	public ObservableList<MoneyFlowArrowView> moneyFlowArrowViews() { return moneyFlowArrowViews; }
+	private final ObjectProperty<MoneyAccount> selectedMoneyAccount = new SimpleObjectProperty<>();
+	public ObjectProperty<MoneyAccount> selectedMoneyAccount() { return selectedMoneyAccount; }
 	private Pane newButton;
 
 	public MoneyTransferEntityGraph() {

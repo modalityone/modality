@@ -85,13 +85,16 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
 
     }
 
-    private static class MoneyAccountToPaneMapper implements IndividualEntityToObjectMapper<MoneyAccount, MoneyAccountPane> {
+    class MoneyAccountToPaneMapper implements IndividualEntityToObjectMapper<MoneyAccount, MoneyAccountPane> {
 
         final MoneyAccountPane pane;
 
         MoneyAccountToPaneMapper(MoneyAccount moneyAccount, MoneyAccountEditorPane editorPane) {
-            pane = new MoneyAccountPane(moneyAccount);
-            pane.setOnMouseClicked(e -> editorPane.edit(moneyAccount));
+            pane = new MoneyAccountPane(moneyAccount, graph.selectedMoneyAccount());
+            pane.setOnMouseClicked(e -> {
+                graph.selectedMoneyAccount().set(moneyAccount);
+                editorPane.edit(moneyAccount);
+            });
         }
 
         @Override
