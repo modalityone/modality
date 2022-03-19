@@ -115,7 +115,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                     .sorted(String::compareToIgnoreCase)
                     .collect(Collectors.joining(System.lineSeparator()));
 
-            return String.format("%s has flows with the following accounts:\n\n%s\n\nThese money flows will also be deleted. Continue?",
+            return String.format("%s has money flows with the following accounts:\n\n%s\n\nThese money flows will also be deleted. Continue?",
                     moneyAccount.getName(), joinedAccountNames);
         }
     }
