@@ -52,6 +52,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         Pane table = ui.buildUi();
         editorPane = new MoneyAccountEditorPane(graph.moneyAccountPanes(), graph.moneyFlowArrowViews());
         ScrollPane editorScrollPane = new ScrollPane(editorPane);
+        editorScrollPane.setStyle("-fx-background-color: lightgray");
         HBox editorAndGraph = new HBox(editorScrollPane, graph);
         graph.prefWidthProperty().bind(Properties.combine(editorAndGraph.widthProperty(), editorPane.widthProperty(), (parentWidth, editorWidth) -> parentWidth.doubleValue() - editorWidth.doubleValue()));
         VBox root = new VBox(table, editorAndGraph);
