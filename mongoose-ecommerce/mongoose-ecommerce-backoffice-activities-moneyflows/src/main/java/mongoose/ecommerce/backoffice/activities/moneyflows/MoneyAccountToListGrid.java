@@ -4,6 +4,10 @@ import javafx.collections.ObservableList;
 import mongoose.base.shared.entities.MoneyAccount;
 import mongoose.base.shared.entities.MoneyFlow;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /**
  * @author Dan Newman
  */
@@ -14,7 +18,11 @@ public class MoneyAccountToListGrid extends MoneyAccountListGrid {
     }
 
     @Override
-    protected MoneyAccount getAccountFromFlow(MoneyFlow moneyFlow) {
-        return moneyFlow.getToMoneyAccount();
+    protected Set<MoneyAccount> getAccountsConnectedByFlow(MoneyAccount selectedMoneyAccount, List<MoneyFlow> moneyFlows) {
+        return moneyFlows.stream()
+                .filter(moneyFlow -> moneyFlow.getFromMoneyAccount().equals(selectedMoneyAccount))
+                .map(MoneyFlow::getToMoneyAccount)
+                .collect(Collectors.toSet());
     }
+
 }
