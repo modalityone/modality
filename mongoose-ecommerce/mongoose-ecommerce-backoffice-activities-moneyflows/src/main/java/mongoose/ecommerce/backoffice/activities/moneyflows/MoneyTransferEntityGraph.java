@@ -8,10 +8,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
-import javafx.scene.text.Font;
 import mongoose.base.shared.entities.MoneyAccount;
 import mongoose.base.shared.entities.MoneyFlow;
 
@@ -48,18 +46,6 @@ public class MoneyTransferEntityGraph extends Region {
 				updateLayout();
 			}
 		});
-		addNewButton();
-	}
-
-	private void addNewButton() {
-		Label label = new Label("+");
-		label.setFont(new Font(128));
-		//label.setOnMouseClicked(e -> showNewPopup());
-		newButton = new Pane();
-		newButton.getChildren().add(label);
-		newButton.layoutXProperty().bind(Properties.combine(widthProperty(), newButton.widthProperty(), (nodeWidth, buttonWidth) -> nodeWidth.doubleValue() - buttonWidth.doubleValue()));
-		newButton.layoutYProperty().bind(Properties.combine(heightProperty(), newButton.heightProperty(), (nodeHeight, buttonHeight) -> nodeHeight.doubleValue() - buttonHeight.doubleValue()));
-		getChildren().add(newButton);
 	}
 
 	private void updateLayout() {

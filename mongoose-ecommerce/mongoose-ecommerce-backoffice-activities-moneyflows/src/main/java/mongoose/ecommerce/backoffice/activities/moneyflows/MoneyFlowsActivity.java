@@ -3,11 +3,14 @@ package mongoose.ecommerce.backoffice.activities.moneyflows;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.IndividualEntityToObjectMapper;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.ReactiveObjectsMapper;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.kit.util.properties.Properties;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilder;
 import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
 import mongoose.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
@@ -48,7 +51,21 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         table.prefHeightProperty().bind(Properties.compute(root.heightProperty(), height -> height.doubleValue() * 0.3));
         graph.prefHeightProperty().bind(Properties.compute(root.heightProperty(), height -> height.doubleValue() * 0.7));
         pm.selectedMasterProperty().addListener(e -> updateSelectedEntity());
-        return root;
+        Pane rootPane = new Pane(root);
+        root.prefWidthProperty().bind(rootPane.widthProperty());
+        root.prefHeightProperty().bind(rootPane.heightProperty());
+
+        Label label = new Label("+");
+        label.setFont(new Font(128));
+        label.layoutXProperty().bind(Properties.combine(rootPane.widthProperty(), label.widthProperty(), (nodeWidth, buttonWidth) -> nodeWidth.doubleValue() - buttonWidth.doubleValue()));
+        label.layoutYProperty().bind(Properties.combine(rootPane.heightProperty(), label.heightProperty(), (nodeHeight, buttonHeight) -> nodeHeight.doubleValue() - buttonHeight.doubleValue()));
+        label.setOnMouseClicked(e -> {
+            UpdateStore updateStore = UpdateStore.createAbove(masterVisualMapper.getStore());
+            MoneyAccount insertEntity = updateStore.insertEntity(MoneyAccount.class);
+            editorPane.edit(insertEntity);
+        });
+        rootPane.getChildren().add(label);
+        return rootPane;
     }
 
     private void updateSelectedEntity() {
