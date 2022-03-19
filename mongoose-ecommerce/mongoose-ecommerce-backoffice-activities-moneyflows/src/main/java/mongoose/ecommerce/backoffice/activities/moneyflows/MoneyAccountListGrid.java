@@ -1,5 +1,7 @@
 package mongoose.ecommerce.backoffice.activities.moneyflows;
 
+import dev.webfx.framework.shared.orm.entity.UpdateStore;
+import dev.webfx.platform.shared.services.submit.SubmitArgument;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
@@ -49,6 +51,13 @@ public abstract class MoneyAccountListGrid extends GridPane {
                 .forEach(moneyAccount -> {
                     CheckBox checkBox = new CheckBox();
                     checkBox.setSelected(moneyAccountList.contains(moneyAccount));
+                    checkBox.setOnAction(e -> {
+                        if (checkBox.isSelected()) {
+                            createFlow(moneyAccount);
+                        } else {
+                            // TODO delete the money flow
+                        }
+                    });
                     Label label = new Label(moneyAccount.getName());
                     int rowIndex = getRowCount();
                     add(checkBox, 0, rowIndex);
@@ -57,4 +66,18 @@ public abstract class MoneyAccountListGrid extends GridPane {
     }
 
     protected abstract Set<MoneyAccount> getAccountsConnectedByFlow(MoneyAccount selectedMoneyAccount, List<MoneyFlow> moneyFlows);
+
+    private void createFlow(MoneyAccount otherAccount) {
+        UpdateStore updateStore = UpdateStore.createAbove(otherAccount.getStore());
+        MoneyFlow insertEntity = updateStore.insertEntity(MoneyFlow.class);
+        MoneyAccount selectedMoneyAccount = excludedMoneyAccount.get();
+        populateInsertEntity(insertEntity, selectedMoneyAccount, otherAccount);
+        insertEntity.setOrganization(selectedMoneyAccount.getOrganization());
+        updateStore.submitChanges(SubmitArgument.builder()
+                        .setStatement("select set_transaction_parameters(false)")
+                        .setDataSourceId(updateStore.getDataSourceId())
+                        .build());
+    }
+
+    protected abstract void populateInsertEntity(MoneyFlow insertEntity, MoneyAccount selectedMoneyAccount, MoneyAccount otherAccount);
 }

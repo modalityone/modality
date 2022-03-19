@@ -82,7 +82,6 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                 .setStore(masterVisualMapper.getStore())
                 .storeMappedObjectsInto(graph.moneyFlowArrowViews())
                 .start();
-
     }
 
     class MoneyAccountToPaneMapper implements IndividualEntityToObjectMapper<MoneyAccount, MoneyAccountPane> {
