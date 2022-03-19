@@ -25,4 +25,10 @@ public class MoneyAccountFromListGrid extends MoneyAccountListGrid {
                 .collect(Collectors.toSet());
     }
 
+    @Override
+    protected void populateInsertEntity(MoneyFlow insertEntity, MoneyAccount selectedMoneyAccount, MoneyAccount otherAccount) {
+        insertEntity.setFromMoneyAccount(otherAccount);
+        insertEntity.setToMoneyAccount(selectedMoneyAccount);
+    }
+
 }
