@@ -9,7 +9,6 @@ import dev.webfx.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.kit.util.properties.Properties;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -51,9 +50,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         ui = createAndBindGroupMasterSlaveViewWithFilterSearchBar(pm, "bookings", "MoneyAccount");
         Pane table = ui.buildUi();
         editorPane = new MoneyAccountEditorPane(graph.moneyAccountPanes(), graph.moneyFlowArrowViews());
-        ScrollPane editorScrollPane = new ScrollPane(editorPane);
-        editorScrollPane.setStyle("-fx-background-color: lightgray");
-        HBox editorAndGraph = new HBox(editorScrollPane, graph);
+        HBox editorAndGraph = new HBox(editorPane, graph);
         graph.prefWidthProperty().bind(Properties.combine(editorAndGraph.widthProperty(), editorPane.widthProperty(), (parentWidth, editorWidth) -> parentWidth.doubleValue() - editorWidth.doubleValue()));
         VBox root = new VBox(table, editorAndGraph);
         table.prefHeightProperty().bind(Properties.compute(root.heightProperty(), height -> height.doubleValue() * 0.3));
