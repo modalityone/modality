@@ -10,6 +10,7 @@ import javafx.scene.layout.GridPane;
 import mongoose.base.shared.entities.MoneyAccount;
 import mongoose.base.shared.entities.MoneyFlow;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,10 +36,11 @@ public abstract class MoneyAccountListGrid extends GridPane {
     private void populate() {
         getChildren().clear();
 
-        Set<MoneyAccount> moneyAccountList = moneyFlowArrowViews.stream()
-                .map(arrow -> getAccountFromFlow(arrow.moneyFlowProperty().get()))
-                .filter(moneyAccount -> !moneyAccount.equals(excludedMoneyAccount.get()))
-                .collect(Collectors.toSet());
+        List<MoneyFlow> moneyFlows = moneyFlowArrowViews.stream()
+                .map(arrow -> arrow.moneyFlowProperty().get())
+                .collect(Collectors.toList());
+
+        Set<MoneyAccount> moneyAccountList = getAccountsConnectedByFlow(excludedMoneyAccount.get(), moneyFlows);
 
         moneyAccountPanes.stream()
                 .sorted((pane1, pane2) -> pane1.moneyAccountProperty().get().getName().compareToIgnoreCase(pane2.moneyAccountProperty().get().getName()))
@@ -54,5 +56,5 @@ public abstract class MoneyAccountListGrid extends GridPane {
                 });
     }
 
-    protected abstract MoneyAccount getAccountFromFlow(MoneyFlow moneyFlow);
+    protected abstract Set<MoneyAccount> getAccountsConnectedByFlow(MoneyAccount selectedMoneyAccount, List<MoneyFlow> moneyFlows);
 }
