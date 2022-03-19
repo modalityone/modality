@@ -1,5 +1,6 @@
 package mongoose.ecommerce.backoffice.activities.moneyflows;
 
+import dev.webfx.framework.shared.orm.entity.Entity;
 import javafx.collections.ObservableList;
 import mongoose.base.shared.entities.MoneyAccount;
 import mongoose.base.shared.entities.MoneyFlow;
@@ -29,6 +30,15 @@ public class MoneyAccountFromListGrid extends MoneyAccountListGrid {
     protected void populateInsertEntity(MoneyFlow insertEntity, MoneyAccount selectedMoneyAccount, MoneyAccount otherAccount) {
         insertEntity.setFromMoneyAccount(otherAccount);
         insertEntity.setToMoneyAccount(selectedMoneyAccount);
+    }
+
+    @Override
+    protected Entity findEntityToDelete(List<MoneyFlow> moneyFlows, MoneyAccount selectedMoneyAccount, MoneyAccount otherAccount) {
+        return moneyFlows.stream()
+                .filter(moneyFlow -> moneyFlow.getFromMoneyAccount().equals(otherAccount) &&
+                        moneyFlow.getToMoneyAccount().equals(selectedMoneyAccount))
+                .findAny()
+                .orElse(null);
     }
 
 }
