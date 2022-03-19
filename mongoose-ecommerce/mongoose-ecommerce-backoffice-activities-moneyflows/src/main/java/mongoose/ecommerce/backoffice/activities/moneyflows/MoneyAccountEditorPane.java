@@ -3,6 +3,7 @@ package mongoose.ecommerce.backoffice.activities.moneyflows;
 import dev.webfx.framework.client.ui.controls.entity.sheet.EntityPropertiesSheet;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -18,12 +19,19 @@ public class MoneyAccountEditorPane extends VBox {
 
     private final MoneyAccountFromListGrid fromMoneyAccountListGrid;
     private final MoneyAccountToListGrid toMoneyAccountListGrid;
+    private final ScrollPane gridScrollPane;
 
     public MoneyAccountEditorPane(ObservableList<MoneyAccountPane> moneyAccountPanes, ObservableList<MoneyFlowArrowView> moneyFlowArrowViews) {
         setPrefWidth(400);
         setStyle("-fx-background-color: lightgray;");
         fromMoneyAccountListGrid = new MoneyAccountFromListGrid(moneyAccountPanes, moneyFlowArrowViews);
         toMoneyAccountListGrid = new MoneyAccountToListGrid(moneyAccountPanes, moneyFlowArrowViews);
+        VBox gridVbox = new VBox(
+                buildHeadingLabel("Money flows from"),
+                fromMoneyAccountListGrid,
+                buildHeadingLabel("Money flows to"),
+                toMoneyAccountListGrid);
+        gridScrollPane = new ScrollPane(gridVbox);
         showStartingMsg();
     }
 
@@ -42,13 +50,9 @@ public class MoneyAccountEditorPane extends VBox {
         EntityPropertiesSheet.editEntity(moneyAccount, "name,closed,currency,event,gatewayCompany,organization,type", propertiesSheetPane);
         getChildren().add(propertiesSheetPane);
 
-        getChildren().add(buildHeadingLabel("Money flows from"));
         fromMoneyAccountListGrid.excludedMoneyAccount().set(moneyAccount);
-        getChildren().add(fromMoneyAccountListGrid);
-
-        getChildren().add(buildHeadingLabel("Money flows to"));
         toMoneyAccountListGrid.excludedMoneyAccount().set(moneyAccount);
-        getChildren().add(toMoneyAccountListGrid);
+        getChildren().add(gridScrollPane);
     }
 
     private Label buildHeadingLabel(String text) {
