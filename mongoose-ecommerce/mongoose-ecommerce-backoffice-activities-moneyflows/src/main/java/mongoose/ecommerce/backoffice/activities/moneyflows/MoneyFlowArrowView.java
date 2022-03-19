@@ -72,7 +72,7 @@ public class MoneyFlowArrowView extends Pane {
         lineEndXProperty.addListener((a, b, c) -> updateArrowHead(arrowLine, arrowHeadLeft, arrowHeadRight));
         lineEndYProperty.addListener((a, b, c) -> updateArrowHead(arrowLine, arrowHeadLeft, arrowHeadRight));
         updateArrowHead(arrowLine, arrowHeadLeft, arrowHeadRight);
-        arrowHeadRight.setStroke(Color.RED);
+
         getChildren().addAll(arrowLine, arrowHeadLeft, arrowHeadRight);
     }
 
