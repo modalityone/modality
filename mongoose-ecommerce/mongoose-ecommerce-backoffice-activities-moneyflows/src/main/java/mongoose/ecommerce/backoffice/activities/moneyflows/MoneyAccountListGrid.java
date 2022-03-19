@@ -1,5 +1,6 @@
 package mongoose.ecommerce.backoffice.activities.moneyflows;
 
+import dev.webfx.framework.shared.orm.entity.Entity;
 import dev.webfx.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.platform.shared.services.submit.SubmitArgument;
 import javafx.beans.property.ObjectProperty;
@@ -55,7 +56,7 @@ public abstract class MoneyAccountListGrid extends GridPane {
                         if (checkBox.isSelected()) {
                             createFlow(moneyAccount);
                         } else {
-                            // TODO delete the money flow
+                            deleteFlow(moneyAccount);
                         }
                     });
                     Label label = new Label(moneyAccount.getName());
@@ -80,4 +81,23 @@ public abstract class MoneyAccountListGrid extends GridPane {
     }
 
     protected abstract void populateInsertEntity(MoneyFlow insertEntity, MoneyAccount selectedMoneyAccount, MoneyAccount otherAccount);
+
+    private void deleteFlow(MoneyAccount otherAccount) {
+        List<MoneyFlow> moneyFlows = moneyFlowArrowViews.stream()
+                .map(arrow -> arrow.moneyFlowProperty().get())
+                .collect(Collectors.toList());
+        MoneyAccount selectedMoneyAccount = excludedMoneyAccount.get();
+        Entity deleteEntity = findEntityToDelete(moneyFlows, selectedMoneyAccount, otherAccount);
+        if (deleteEntity != null) {
+            UpdateStore updateStore = UpdateStore.createAbove(otherAccount.getStore());
+            updateStore.deleteEntity(deleteEntity);
+            updateStore.submitChanges(SubmitArgument.builder()
+                    .setStatement("select set_transaction_parameters(false)")
+                    .setDataSourceId(updateStore.getDataSourceId())
+                    .build());
+        }
+    }
+
+    protected abstract Entity findEntityToDelete(List<MoneyFlow> moneyFlows, MoneyAccount selectedMoneyAccount, MoneyAccount otherAccount);
+
 }
