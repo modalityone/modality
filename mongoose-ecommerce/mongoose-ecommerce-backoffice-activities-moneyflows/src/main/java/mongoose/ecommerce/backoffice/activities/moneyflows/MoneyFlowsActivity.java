@@ -20,6 +20,9 @@ import mongoose.base.shared.domainmodel.functions.AbcNames;
 import mongoose.base.shared.entities.MoneyAccount;
 import mongoose.base.shared.entities.MoneyFlow;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
 
 /**
@@ -87,7 +90,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
             DialogContent dialogContent = new DialogContent().setContent(label);
             DialogUtil.showModalNodeInGoldLayout(dialogContent, rootPane);
             DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
-                System.out.println("TODO write delete function");
+                System.out.println("TODO write function to delete money account and its linked money flows");
                 dialogCallback.closeDialog();
             });
         });
@@ -95,7 +98,26 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
     }
 
     private String buildDeleteMoneyAccountMsg() {
-        return "Are you sure you wish to delete " + graph.selectedMoneyAccount().get().getName() + "?";
+        MoneyAccount moneyAccount = graph.selectedMoneyAccount().get();
+
+        List<MoneyFlow> moneyFlowsLinkedToAccount = graph.moneyFlowArrowViews().stream()
+                .map(arrow -> arrow.moneyFlowProperty().get())
+                .filter(moneyFlow -> moneyFlow.getToMoneyAccount().equals(moneyAccount) ||
+                        moneyFlow.getFromMoneyAccount().equals(moneyAccount))
+                .collect(Collectors.toList());
+
+        if (moneyFlowsLinkedToAccount.isEmpty()) {
+            return String.format("Are you sure you wish to delete %s?", moneyAccount.getName());
+        } else {
+            String joinedAccountNames = moneyFlowsLinkedToAccount.stream()
+                    .map(moneyFlow -> moneyFlow.getToMoneyAccount().equals(moneyAccount) ?
+                            moneyFlow.getFromMoneyAccount().getName() : moneyFlow.getToMoneyAccount().getName())
+                    .sorted(String::compareToIgnoreCase)
+                    .collect(Collectors.joining(System.lineSeparator()));
+
+            return String.format("%s has flows with the following accounts:\n\n%s\n\nThese money flows will also be deleted. Continue?",
+                    moneyAccount.getName(), joinedAccountNames);
+        }
     }
 
     private void updateSelectedEntity() {
