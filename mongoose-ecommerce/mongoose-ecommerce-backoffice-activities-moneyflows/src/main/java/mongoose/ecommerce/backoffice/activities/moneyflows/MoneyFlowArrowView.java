@@ -72,17 +72,20 @@ public class MoneyFlowArrowView extends Pane {
         lineEndXProperty.addListener((a, b, c) -> updateArrowHead(arrowLine, arrowHeadLeft, arrowHeadRight));
         lineEndYProperty.addListener((a, b, c) -> updateArrowHead(arrowLine, arrowHeadLeft, arrowHeadRight));
         updateArrowHead(arrowLine, arrowHeadLeft, arrowHeadRight);
-
+        arrowHeadRight.setStroke(Color.RED);
         getChildren().addAll(arrowLine, arrowHeadLeft, arrowHeadRight);
     }
 
     private void updateArrowHead(Line arrow, Line arrowHeadLeft, Line arrowHeadRight) {
+
+
         double arrowLength = Math.sqrt((arrow.getEndX() * arrow.getEndX()) + (arrow.getEndY() * arrow.getEndY()));
-        double arrowAngleDegrees = Math.toDegrees(Math.asin(arrow.getEndX() / arrowLength));
-        arrowHeadLeft.setEndX(-ARROW_HEAD_LENGTH * Math.sin(Math.toRadians(arrowAngleDegrees - 45)));
-        arrowHeadRight.setEndX(-ARROW_HEAD_LENGTH * Math.sin(Math.toRadians(arrowAngleDegrees + 45)));
-        arrowHeadLeft.setEndY(ARROW_HEAD_LENGTH * Math.cos(Math.toRadians(arrowAngleDegrees - 45)));
-        arrowHeadRight.setEndY(ARROW_HEAD_LENGTH * Math.cos(Math.toRadians(arrowAngleDegrees + 45)));
+        double arrowAngleDegrees = 90 - Math.toDegrees(Math.asin(arrow.getEndX() / arrowLength));
+        System.out.println("arrowAngleDegrees = " + arrowAngleDegrees);
+        arrowHeadLeft.setEndX(-ARROW_HEAD_LENGTH * Math.cos(Math.toRadians(arrowAngleDegrees - 45)));
+        arrowHeadRight.setEndX(ARROW_HEAD_LENGTH * Math.sin(Math.toRadians(arrowAngleDegrees - 45)));
+        arrowHeadLeft.setEndY(-ARROW_HEAD_LENGTH * Math.sin(Math.toRadians(arrowAngleDegrees - 45)));
+        arrowHeadRight.setEndY(-ARROW_HEAD_LENGTH * Math.cos(Math.toRadians(arrowAngleDegrees - 45)));
     }
 
     private static class ArrowLine extends Line {
