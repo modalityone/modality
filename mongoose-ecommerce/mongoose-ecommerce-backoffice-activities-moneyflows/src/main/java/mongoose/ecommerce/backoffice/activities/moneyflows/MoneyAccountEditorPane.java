@@ -24,6 +24,13 @@ public class MoneyAccountEditorPane extends VBox {
         setStyle("-fx-background-color: lightgray;");
         fromMoneyAccountListGrid = new MoneyAccountFromListGrid(moneyAccountPanes, moneyFlowArrowViews);
         toMoneyAccountListGrid = new MoneyAccountToListGrid(moneyAccountPanes, moneyFlowArrowViews);
+        showStartingMsg();
+    }
+
+    private void showStartingMsg() {
+        Label label = new Label("Please select an existing money account to edit or click the \"+\" button to create a new money account.");
+        label.setWrapText(true);
+        getChildren().add(label);
     }
 
     public void edit(MoneyAccount moneyAccount) {
