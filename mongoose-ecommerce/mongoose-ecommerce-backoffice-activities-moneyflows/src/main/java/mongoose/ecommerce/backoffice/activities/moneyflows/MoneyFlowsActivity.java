@@ -3,6 +3,8 @@ package mongoose.ecommerce.backoffice.activities.moneyflows;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.IndividualEntityToObjectMapper;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.ReactiveObjectsMapper;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.framework.client.ui.controls.dialog.DialogContent;
+import dev.webfx.framework.client.ui.controls.dialog.DialogUtil;
 import dev.webfx.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.kit.util.properties.Properties;
 import javafx.scene.Node;
@@ -26,8 +28,6 @@ import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
 public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity implements ConventionalUiBuilderMixin {
 
     private ReactiveVisualMapper<MoneyAccount> masterVisualMapper;
-    private ReactiveObjectsMapper<MoneyFlow, MoneyFlowArrowView> moneyFlowToArrowMapper;
-    private ReactiveObjectsMapper<MoneyAccount, MoneyAccountPane> moneyAccountToPaneMapper;
 
     private final MoneyFlowsPresentationModel pm = new MoneyFlowsPresentationModel();
 
@@ -39,6 +39,8 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
     private ConventionalUiBuilder ui;
     private final MoneyTransferEntityGraph graph = new MoneyTransferEntityGraph();
     private MoneyAccountEditorPane editorPane;
+    private Label addLabel;
+    private Label deleteLabel;
 
     @Override
     public Node buildUi() {
@@ -55,17 +57,45 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         root.prefWidthProperty().bind(rootPane.widthProperty());
         root.prefHeightProperty().bind(rootPane.heightProperty());
 
-        Label label = new Label("+");
-        label.setFont(new Font(128));
-        label.layoutXProperty().bind(Properties.combine(rootPane.widthProperty(), label.widthProperty(), (nodeWidth, buttonWidth) -> nodeWidth.doubleValue() - buttonWidth.doubleValue()));
-        label.layoutYProperty().bind(Properties.combine(rootPane.heightProperty(), label.heightProperty(), (nodeHeight, buttonHeight) -> nodeHeight.doubleValue() - buttonHeight.doubleValue()));
-        label.setOnMouseClicked(e -> {
+        createAddLabel(rootPane);
+        createDeleteLabel(rootPane);
+
+        return rootPane;
+    }
+
+    private void createAddLabel(Pane rootPane) {
+        addLabel = new Label("+");
+        addLabel.setFont(new Font(128));
+        addLabel.layoutXProperty().bind(Properties.combine(rootPane.widthProperty(), addLabel.widthProperty(), (nodeWidth, buttonWidth) -> nodeWidth.doubleValue() - buttonWidth.doubleValue()));
+        addLabel.layoutYProperty().bind(Properties.combine(rootPane.heightProperty(), addLabel.heightProperty(), (nodeHeight, buttonHeight) -> nodeHeight.doubleValue() - buttonHeight.doubleValue()));
+        addLabel.setOnMouseClicked(e -> {
             UpdateStore updateStore = UpdateStore.createAbove(masterVisualMapper.getStore());
             MoneyAccount insertEntity = updateStore.insertEntity(MoneyAccount.class);
             editorPane.edit(insertEntity);
         });
-        rootPane.getChildren().add(label);
-        return rootPane;
+        rootPane.getChildren().add(addLabel);
+    }
+
+    private void createDeleteLabel(Pane rootPane) {
+        deleteLabel = new Label("X");
+        deleteLabel.setFont(new Font(128));
+        deleteLabel.layoutXProperty().bind(Properties.combine(addLabel.layoutXProperty(), deleteLabel.widthProperty(), (x, width) -> x.doubleValue() - width.doubleValue()));
+        deleteLabel.layoutYProperty().bind(addLabel.layoutYProperty());
+        deleteLabel.setVisible(false);
+        deleteLabel.setOnMouseClicked(e -> {
+            Label label = new Label(buildDeleteMoneyAccountMsg());
+            DialogContent dialogContent = new DialogContent().setContent(label);
+            DialogUtil.showModalNodeInGoldLayout(dialogContent, rootPane);
+            DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
+                System.out.println("TODO write delete function");
+                dialogCallback.closeDialog();
+            });
+        });
+        rootPane.getChildren().add(deleteLabel);
+    }
+
+    private String buildDeleteMoneyAccountMsg() {
+        return "Are you sure you wish to delete " + graph.selectedMoneyAccount().get().getName() + "?";
     }
 
     private void updateSelectedEntity() {
@@ -84,7 +114,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .start();
 
-        moneyAccountToPaneMapper = ReactiveObjectsMapper.<MoneyAccount, MoneyAccountPane>createPushReactiveChain(this)
+        ReactiveObjectsMapper.<MoneyAccount, MoneyAccountPane>createPushReactiveChain(this)
                 .always("{class: 'MoneyAccount', alias: 'ma', columns: 'name,type'}")
                 .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
                 .setIndividualEntityToObjectMapperFactory(moneyAccount -> new MoneyAccountToPaneMapper(moneyAccount, editorPane))
@@ -92,7 +122,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                 .storeMappedObjectsInto(graph.moneyAccountPanes())
                 .start();
 
-        moneyFlowToArrowMapper = ReactiveObjectsMapper.<MoneyFlow, MoneyFlowArrowView>createPushReactiveChain(this)
+        ReactiveObjectsMapper.<MoneyFlow, MoneyFlowArrowView>createPushReactiveChain(this)
                 .always("{class: 'MoneyFlow', alias: 'mf', fields: 'fromMoneyAccount,toMoneyAccount'}")
                 .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
                 .setIndividualEntityToObjectMapperFactory(graph::newMoneyFlowToArrowMapper)
@@ -110,6 +140,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
             pane.setOnMouseClicked(e -> {
                 graph.selectedMoneyAccount().set(moneyAccount);
                 editorPane.edit(moneyAccount);
+                deleteLabel.setVisible(true);
             });
         }
 
