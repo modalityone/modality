@@ -7,6 +7,7 @@ import dev.webfx.framework.client.ui.controls.dialog.DialogContent;
 import dev.webfx.framework.client.ui.controls.dialog.DialogUtil;
 import dev.webfx.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.platform.shared.services.submit.SubmitArgument;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -90,7 +91,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
             DialogContent dialogContent = new DialogContent().setContent(label);
             DialogUtil.showModalNodeInGoldLayout(dialogContent, rootPane);
             DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
-                System.out.println("TODO write function to delete money account and its linked money flows");
+                deleteSelectedMoneyAccount();
                 dialogCallback.closeDialog();
             });
         });
@@ -99,12 +100,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
 
     private String buildDeleteMoneyAccountMsg() {
         MoneyAccount moneyAccount = graph.selectedMoneyAccount().get();
-
-        List<MoneyFlow> moneyFlowsLinkedToAccount = graph.moneyFlowArrowViews().stream()
-                .map(arrow -> arrow.moneyFlowProperty().get())
-                .filter(moneyFlow -> moneyFlow.getToMoneyAccount().equals(moneyAccount) ||
-                        moneyFlow.getFromMoneyAccount().equals(moneyAccount))
-                .collect(Collectors.toList());
+        List<MoneyFlow> moneyFlowsLinkedToAccount = getMoneyFlowsLinkedToAccount(moneyAccount);
 
         if (moneyFlowsLinkedToAccount.isEmpty()) {
             return String.format("Are you sure you wish to delete %s?", moneyAccount.getName());
@@ -118,6 +114,35 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
             return String.format("%s has money flows with the following accounts:\n\n%s\n\nThese money flows will also be deleted. Continue?",
                     moneyAccount.getName(), joinedAccountNames);
         }
+    }
+
+    private List<MoneyFlow> getMoneyFlowsLinkedToAccount(MoneyAccount moneyAccount) {
+        return graph.moneyFlowArrowViews().stream()
+                .map(arrow -> arrow.moneyFlowProperty().get())
+                .filter(moneyFlow -> moneyFlow.getToMoneyAccount().equals(moneyAccount) ||
+                        moneyFlow.getFromMoneyAccount().equals(moneyAccount))
+                .collect(Collectors.toList());
+    }
+
+    private void deleteSelectedMoneyAccount() {
+        MoneyAccount moneyAccount = graph.selectedMoneyAccount().get();
+        List<MoneyFlow> moneyFlowsLinkedToAccount = getMoneyFlowsLinkedToAccount(moneyAccount);
+
+        for (MoneyFlow moneyFlow : moneyFlowsLinkedToAccount) {
+            UpdateStore updateStore = UpdateStore.createAbove(moneyFlow.getStore());
+            updateStore.deleteEntity(moneyFlow);
+            updateStore.submitChanges(SubmitArgument.builder()
+                    .setStatement("select set_transaction_parameters(false)")
+                    .setDataSourceId(updateStore.getDataSourceId())
+                    .build());
+        }
+
+        UpdateStore updateStore = UpdateStore.createAbove(moneyAccount.getStore());
+        updateStore.deleteEntity(moneyAccount);
+        updateStore.submitChanges(SubmitArgument.builder()
+                .setStatement("select set_transaction_parameters(false)")
+                .setDataSourceId(updateStore.getDataSourceId())
+                .build());
     }
 
     private void updateSelectedEntity() {
