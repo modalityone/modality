@@ -55,6 +55,10 @@ public class MoneyAccountEditorPane extends VBox {
         getChildren().add(gridScrollPane);
     }
 
+    public void cancelEdit() {
+        getChildren().clear();
+    }
+
     private Label buildHeadingLabel(String text) {
         Label label = new Label(text);
         label.setFont(HEADING_FONT);
