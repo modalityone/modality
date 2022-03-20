@@ -91,6 +91,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
             DialogContent dialogContent = new DialogContent().setContent(label);
             DialogUtil.showModalNodeInGoldLayout(dialogContent, rootPane);
             DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
+                editorPane.cancelEdit();
                 deleteSelectedMoneyAccount();
                 dialogCallback.closeDialog();
             });
