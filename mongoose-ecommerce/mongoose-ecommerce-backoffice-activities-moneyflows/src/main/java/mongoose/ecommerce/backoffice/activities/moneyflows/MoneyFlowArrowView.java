@@ -81,7 +81,6 @@ public class MoneyFlowArrowView extends Pane {
 
         double arrowLength = Math.sqrt((arrow.getEndX() * arrow.getEndX()) + (arrow.getEndY() * arrow.getEndY()));
         double arrowAngleDegrees = 90 - Math.toDegrees(Math.asin(arrow.getEndX() / arrowLength));
-        System.out.println("arrowAngleDegrees = " + arrowAngleDegrees);
         arrowHeadLeft.setEndX(-ARROW_HEAD_LENGTH * Math.cos(Math.toRadians(arrowAngleDegrees - 45)));
         arrowHeadRight.setEndX(ARROW_HEAD_LENGTH * Math.sin(Math.toRadians(arrowAngleDegrees - 45)));
         arrowHeadLeft.setEndY(-ARROW_HEAD_LENGTH * Math.sin(Math.toRadians(arrowAngleDegrees - 45)));
