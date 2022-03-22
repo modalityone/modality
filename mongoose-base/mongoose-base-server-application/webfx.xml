@@ -9,7 +9,9 @@
         <used-by-source-modules/>
         <plugin-module>mongoose-base-server-datasource</plugin-module>
         <plugin-module>mongoose-base-server-sessioncloser</plugin-module>
+<!-- Commented while it's not necessary during the development phase (and creates logs on the server every second which may pollute other logs)
         <plugin-module>mongoose-base-server-systemmetrics</plugin-module>
+-->
         <plugin-module>webfx-framework-shared-querypush</plugin-module>
         <plugin-module>webfx-platform-shared-buscalljob</plugin-module>
     </dependencies>
