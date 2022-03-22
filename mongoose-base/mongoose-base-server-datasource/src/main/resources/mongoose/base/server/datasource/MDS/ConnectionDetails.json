@@ -1,7 +1,7 @@
 {
-  "host": "localhost",
+  "host": "0.0.0.0",
   "port": "5432",
-  "databaseName": "mongoose-databaseName",
-  "username": "mongoose-username",
-  "password": "mongoose-password"
+  "databaseName": "mongoose",
+  "username": "mongoose",
+  "password": "mongoose"
 }
