@@ -268,59 +268,6 @@
             </build>
         </profile>
 
-        <!-- profile to make a non fat standalone executable jar with all dependent libraries unpacked in lib folder -->
-        <profile>
-            <id>openjfx-nonfatjar</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-
-            <build>
-                <plugins>
-
-                    <!-- Setting the main class and classpath in the manifest file to make it executable (with java -jar) -->
-                    <plugin>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <configuration>
-                            <archive>
-                                <manifest>
-                                    <mainClass>${webfx.mainClass}</mainClass>
-                                    <addClasspath>true</addClasspath>
-                                    <classpathPrefix>lib/</classpathPrefix>
-                                </manifest>
-                            </archive>
-                        </configuration>
-                    </plugin>
-
-                    <!-- Unpacking all dependent libraries in the lib folder -->
-                    <plugin>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                    </plugin>
-
-                </plugins>
-            </build>
-        </profile>
-
-        <!-- Profile to minimize and obfuscate the jar file with Proguard -->
-        <profile>
-            <id>openjfx-minjar</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-
-            <build>
-                <plugins>
-
-                    <!-- Calling Proguard with the configuration defined in the parent pom -->
-                    <plugin>
-                        <groupId>com.github.wvengen</groupId>
-                        <artifactId>proguard-maven-plugin</artifactId>
-                    </plugin>
-
-                </plugins>
-            </build>
-        </profile>
-
     </profiles>
 
 </project>
