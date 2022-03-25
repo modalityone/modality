@@ -9,7 +9,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Translate;
 import dev.webfx.framework.client.services.i18n.I18nControls;
-import dev.webfx.framework.client.ui.util.background.BackgroundUtil;
+import dev.webfx.framework.client.ui.util.background.BackgroundFactory;
 
 import java.time.LocalDate;
 
@@ -50,7 +50,7 @@ public final class DayColumnHeaderViewModel implements HorizontalDayPositioned {
         monthText.setFill(dayColumnHeaderTextColor);
         monthText.setTextOrigin(VPos.BOTTOM);
         monthText.wrappingWidthProperty().bind(rootPane.widthProperty());
-        rootPane.setBackground(BackgroundUtil.newBackground(dayColumnHeaderFill));
+        rootPane.setBackground(BackgroundFactory.newBackground(dayColumnHeaderFill));
         rootPane.getChildren().setAll(dayOfWeekText, dayOfMonthText, monthText);
         rootPane.getTransforms().setAll(translate);
         rootPane.heightProperty().addListener((observable, oldValue, height) -> {

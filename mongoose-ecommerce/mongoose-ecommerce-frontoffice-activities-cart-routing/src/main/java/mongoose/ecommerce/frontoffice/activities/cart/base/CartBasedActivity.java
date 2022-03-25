@@ -9,7 +9,7 @@ import mongoose.base.client.aggregates.event.EventAggregate;
 import mongoose.base.shared.entities.Event;
 import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.framework.client.services.i18n.I18n;
-import dev.webfx.framework.client.ui.util.background.BackgroundUtil;
+import dev.webfx.framework.client.ui.util.background.BackgroundFactory;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.platform.shared.util.Strings;
 
@@ -78,7 +78,7 @@ public abstract class CartBasedActivity
             // TODO: capitalize this code with BookingProcessActivity
             String css = event.getStringFieldValue("cssClass");
             if (Strings.startsWith(css,"linear-gradient"))
-                ((Region) uiNode).setBackground(BackgroundUtil.newLinearGradientBackground(css));
+                ((Region) uiNode).setBackground(BackgroundFactory.newLinearGradientBackground(css));
         }
     }
 

@@ -18,7 +18,7 @@ import mongoose.base.client.validation.MongooseValidationSupport;
 import dev.webfx.framework.client.services.i18n.I18nControls;
 import dev.webfx.framework.shared.services.authn.AuthenticationRequest;
 import dev.webfx.framework.shared.services.authn.UsernamePasswordCredentials;
-import dev.webfx.framework.client.ui.controls.button.ButtonUtil;
+import dev.webfx.framework.client.ui.controls.button.ButtonFactory;
 import dev.webfx.framework.client.ui.controls.dialog.GridPaneBuilder;
 import dev.webfx.framework.client.ui.util.layout.LayoutUtil;
 import dev.webfx.framework.client.ui.util.scene.SceneUtil;
@@ -84,7 +84,7 @@ public final class LoginPanel implements MongooseButtonFactoryMixin {
 
     public void prepareShowing() {
         // Resetting the default button (required for JavaFx if displayed a second time)
-        ButtonUtil.resetDefaultButton(button);
+        ButtonFactory.resetDefaultButton(button);
         SceneUtil.autoFocusIfEnabled(usernameField);
     }
 }

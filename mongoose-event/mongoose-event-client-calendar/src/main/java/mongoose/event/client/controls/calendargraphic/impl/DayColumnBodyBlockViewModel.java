@@ -16,7 +16,7 @@ import mongoose.event.client.controls.calendargraphic.CalendarGraphic;
 import mongoose.event.client.businessdata.calendar.CalendarTimeline;
 import mongoose.hotel.shared.businessdata.time.TimeInterval;
 import mongoose.event.client.controls.calendargraphic.CalendarCell;
-import dev.webfx.framework.client.ui.util.background.BackgroundUtil;
+import dev.webfx.framework.client.ui.util.background.BackgroundFactory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -69,7 +69,7 @@ public final class DayColumnBodyBlockViewModel implements HorizontalDayPositione
             blockText.textProperty().unbind();
             blockText.setText(null);
         }
-        rootPane.setBackground(BackgroundUtil.newBackground(timeline.getBackgroundFill()));
+        rootPane.setBackground(BackgroundFactory.newBackground(timeline.getBackgroundFill()));
         if (calendarGraphic != null)
             rootPane.setOnMouseClicked(event -> {
                 if (calendarGraphic.getCalendarClickHandler() != null)

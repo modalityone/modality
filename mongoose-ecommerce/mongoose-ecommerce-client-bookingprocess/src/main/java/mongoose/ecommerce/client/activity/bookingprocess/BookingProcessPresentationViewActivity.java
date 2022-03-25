@@ -10,7 +10,7 @@ import mongoose.base.client.activity.MongooseButtonFactoryMixin;
 import mongoose.base.client.aggregates.event.EventAggregate;
 import mongoose.base.shared.entities.Event;
 import dev.webfx.framework.client.activity.impl.elementals.presentation.view.impl.PresentationViewActivityImpl;
-import dev.webfx.framework.client.ui.util.background.BackgroundUtil;
+import dev.webfx.framework.client.ui.util.background.BackgroundFactory;
 import dev.webfx.framework.shared.services.datasourcemodel.DataSourceModelService;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.platform.shared.util.Strings;
@@ -48,7 +48,7 @@ public abstract class BookingProcessPresentationViewActivity<PM extends BookingP
                 if (event != null) {
                     String css = event.getStringFieldValue("cssClass");
                     if (Strings.startsWith(css, "linear-gradient")) {
-                        Background eventBackground = BackgroundUtil.newLinearGradientBackground(css);
+                        Background eventBackground = BackgroundFactory.newLinearGradientBackground(css);
                         ((Region) uiNode).setBackground(eventBackground);
                     }
                 }

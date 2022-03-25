@@ -10,8 +10,8 @@ import javafx.scene.paint.Color;
 import mongoose.event.client.controls.bookingcalendar.BookingCalendar;
 import mongoose.base.client.icons.MongooseIcons;
 import dev.webfx.framework.client.services.i18n.I18nControls;
-import dev.webfx.framework.client.ui.util.background.BackgroundUtil;
-import dev.webfx.framework.client.ui.util.border.BorderUtil;
+import dev.webfx.framework.client.ui.util.background.BackgroundFactory;
+import dev.webfx.framework.client.ui.util.border.BorderFactory;
 import dev.webfx.extras.cell.collator.NodeCollatorRegistry;
 
 import static dev.webfx.framework.client.ui.util.image.JsonImageViews.createImageView;
@@ -54,8 +54,8 @@ public final class SectionPanelFactory {
     public static BorderPane createSectionPanelWithHeaderNodes(Node... headerNodes) {
         BorderPane sectionPanel = new BorderPane();
         sectionPanel.getStyleClass().add("section-panel");
-        sectionPanel.setBorder(BorderUtil.newBorder(Color.grayRgb(0x0d), 5, 1));
-        sectionPanel.setBackground(BackgroundUtil.WHITE_BACKGROUND);
+        sectionPanel.setBorder(BorderFactory.newBorder(Color.grayRgb(0x0d), 5, 1));
+        sectionPanel.setBackground(BackgroundFactory.WHITE_BACKGROUND);
         return setSectionPanelHeaderNodes(sectionPanel, headerNodes);
     }
 
@@ -66,7 +66,7 @@ public final class SectionPanelFactory {
     public static BorderPane setSectionPanelHeaderNode(BorderPane sectionPanel, Node headerNode) {
         if (headerNode instanceof Region) {
             Region headerRegion = (Region) headerNode;
-            headerRegion.setBackground(BackgroundUtil.newVerticalLinearGradientBackground("0xF0F0F0", "0xE0E0E0",5));
+            headerRegion.setBackground(BackgroundFactory.newVerticalLinearGradientBackground("0xF0F0F0", "0xE0E0E0",5));
             headerRegion.setMinHeight(40d);
             headerRegion.setPadding(new Insets(0, 10, 0 , 10));
         }

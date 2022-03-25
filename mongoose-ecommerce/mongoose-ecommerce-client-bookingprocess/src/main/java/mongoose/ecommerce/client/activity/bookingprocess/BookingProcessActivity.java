@@ -11,7 +11,7 @@ import javafx.scene.layout.VBox;
 import mongoose.base.client.activity.eventdependent.EventDependentViewDomainActivity;
 import mongoose.base.shared.entities.Event;
 import dev.webfx.framework.client.ui.util.layout.LayoutUtil;
-import dev.webfx.framework.client.ui.util.background.BackgroundUtil;
+import dev.webfx.framework.client.ui.util.background.BackgroundFactory;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.platform.shared.util.Strings;
 
@@ -57,7 +57,7 @@ public abstract class BookingProcessActivity
                 if (event != null) {
                     String css = event.getStringFieldValue("cssClass");
                     if (Strings.startsWith(css,"linear-gradient"))
-                        ((Region) uiNode).setBackground(BackgroundUtil.newLinearGradientBackground(css));
+                        ((Region) uiNode).setBackground(BackgroundFactory.newLinearGradientBackground(css));
                 }
             }), eventIdProperty());
         return uiNode;

@@ -1,8 +1,8 @@
 package mongoose.base.client.activity.themes;
 
 import javafx.scene.paint.Color;
-import dev.webfx.framework.client.ui.util.background.BackgroundUtil;
-import dev.webfx.framework.client.ui.util.border.BorderUtil;
+import dev.webfx.framework.client.ui.util.background.BackgroundFactory;
+import dev.webfx.framework.client.ui.util.border.BorderFactory;
 
 /**
  * @author Bruno Salmon
@@ -11,10 +11,10 @@ public final class DarkTheme implements ThemeProvider {
 
     @Override
     public void apply() {
-        Theme.setMainBackground(BackgroundUtil.newWebColorBackground("#101214"));
+        Theme.setMainBackground(BackgroundFactory.newWebColorBackground("#101214"));
         Theme.setMainTextFill(Color.WHITE);
-        Theme.setDialogBackground(BackgroundUtil.newBackground(Color.grayRgb(42),10));
-        Theme.setDialogBorder(BorderUtil.newBorder(Color.rgb(237, 162, 57),10));
+        Theme.setDialogBackground(BackgroundFactory.newBackground(Color.grayRgb(42),10));
+        Theme.setDialogBorder(BorderFactory.newBorder(Color.rgb(237, 162, 57),10));
         Theme.setDialogTextFill(Color.WHITE);
     }
 }

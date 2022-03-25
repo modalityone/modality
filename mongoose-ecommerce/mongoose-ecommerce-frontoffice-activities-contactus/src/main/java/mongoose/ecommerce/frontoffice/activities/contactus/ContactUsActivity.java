@@ -18,7 +18,7 @@ import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.Vie
 import dev.webfx.framework.client.operations.route.RouteBackwardRequest;
 import dev.webfx.framework.client.ui.action.Action;
 import dev.webfx.framework.client.ui.util.layout.LayoutUtil;
-import dev.webfx.framework.client.ui.util.background.BackgroundUtil;
+import dev.webfx.framework.client.ui.util.background.BackgroundFactory;
 import dev.webfx.framework.shared.orm.entity.EntityStore;
 import dev.webfx.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.platform.client.services.uischeduler.UiScheduler;
@@ -86,7 +86,7 @@ final class ContactUsActivity extends ViewDomainActivityBase
             // TODO: capitalize this code with BookingProcessActivity
             String css = event.getStringFieldValue("cssClass");
             if (Strings.startsWith(css,"linear-gradient"))
-                ((Region) uiNode).setBackground(BackgroundUtil.newLinearGradientBackground(css));
+                ((Region) uiNode).setBackground(BackgroundFactory.newLinearGradientBackground(css));
         }
     }
 
