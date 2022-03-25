@@ -87,9 +87,8 @@ jobs:
       web-push-repository-owner: ${{ github.repository_owner }}
       web-push-username: ${{ github.actor }}
       web-push-email: ${{ secrets.API_GITHUB_EMAIL }}
-      jdk-version: '15.0.1'
+      jdk-version: '17'
       xcode-version: '11.7.0'
-      graalvm-version: '21.3.0.java11'
       API_GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
       GLUON_LICENSE: ${{ secrets.GLUON_LICENSE }}
       GLUON_IOS_CERTIFICATES_FILE_BASE64: ${{ secrets.GLUON_IOS_CERTIFICATES_FILE_BASE64 }}
@@ -108,8 +107,9 @@ jobs:
 
       # Set up the JDK (WebFX requires JDK13+ due to javac bugs in prior versions - otherwise JDK11+ should be enough in theory)
       - name: Set up JDK ${{ env.jdk-version }}
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
+          distribution: 'zulu'
           java-version: ${{ env.jdk-version }}
 
       # Checkout this repository
@@ -149,13 +149,13 @@ jobs:
       # Building this repository with JDK 13+ (Java 11 target) including a GWT compilation (if required)
       - if: matrix.web-artifact-suffix != null
         name: Build this application (OpenJFX fat jar + GWT build)
-        run: mvn -B -P 'gwt-compile,openjfx-fatjar,!javapackager' package # profile javapackager removed due to module error with Java-WebSocket
+        run: mvn -B -P 'gwt-compile,openjfx-fatjar,javapackager' package
         working-directory: ${{ env.app-parent-module-dir }}
 
       # Or building this repository with JDK 13+ (Java 11 target) excluding a GWT compilation
       - if: matrix.web-artifact-suffix == null
         name: Build this application (OpenJFX fat jar - no GWT build)
-        run: mvn -B -P '!gwt-compile,openjfx-fatjar,!javapackager' package # profile javapackager removed due to module error with Java-WebSocket
+        run: mvn -B -P '!gwt-compile,openjfx-fatjar,javapackager' package
         working-directory: ${{ env.app-parent-module-dir }}
 
 
@@ -278,11 +278,11 @@ jobs:
         with:
           xcode-version: ${{ env.xcode-version }}
 
-      # Setting up the GraalVM environment
-      - name: Set up GraalVM environment ${{ env.graalvm-version }}
-        uses: DeLaGuardo/setup-graalvm@master
-        with:
-          graalvm-version: ${{ env.graalvm-version }}
+      # Using Gluon action to set up the GraalVM environment
+      - uses: gluonhq/setup-graalvm@master
+        # set GITHUB_TOKEN to avoid exceeding GitHub's API rate limit
+        env:
+          GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
 
       # Gluon needs additional libraries on Linux
       - if: runner.os == 'Linux'
