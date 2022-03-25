@@ -108,11 +108,6 @@
     <build>
         <plugins>
 
-            <!-- Generating the source artifact for GWT compilation -->
-            <plugin>
-                <artifactId>maven-source-plugin</artifactId>
-            </plugin>
-
             <!-- fat -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

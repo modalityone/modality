@@ -993,11 +993,6 @@
     <build>
         <plugins>
 
-            <!-- Generating the source artifact for another GWT compilation (ex: KBS) -->
-            <plugin>
-                <artifactId>maven-source-plugin</artifactId>
-            </plugin>
-
             <!-- Calling the GWT maven plugin to compile the gwt module into javascript -->
             <plugin>
                 <groupId>net.ltgt.gwt.maven</groupId>
