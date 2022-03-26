@@ -104,7 +104,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         List<MoneyFlow> moneyFlowsLinkedToAccount = getMoneyFlowsLinkedToAccount(moneyAccount);
 
         if (moneyFlowsLinkedToAccount.isEmpty()) {
-            return String.format("Are you sure you wish to delete %s?", moneyAccount.getName());
+            return "Are you sure you wish to delete " + moneyAccount.getName() + "?";
         } else {
             String joinedAccountNames = moneyFlowsLinkedToAccount.stream()
                     .map(moneyFlow -> moneyFlow.getToMoneyAccount().equals(moneyAccount) ?
@@ -112,8 +112,8 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                     .sorted(String::compareToIgnoreCase)
                     .collect(Collectors.joining("\n"));
 
-            return String.format("%s has money flows with the following accounts:\n\n%s\n\nThese money flows will also be deleted. Continue?",
-                    moneyAccount.getName(), joinedAccountNames);
+            return moneyAccount.getName() + "%s has money flows with the following accounts:\n\n" +
+                    joinedAccountNames + "\n\nThese money flows will also be deleted. Continue?";
         }
     }
 
