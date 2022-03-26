@@ -110,7 +110,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                     .map(moneyFlow -> moneyFlow.getToMoneyAccount().equals(moneyAccount) ?
                             moneyFlow.getFromMoneyAccount().getName() : moneyFlow.getToMoneyAccount().getName())
                     .sorted(String::compareToIgnoreCase)
-                    .collect(Collectors.joining(System.lineSeparator()));
+                    .collect(Collectors.joining("\n"));
 
             return String.format("%s has money flows with the following accounts:\n\n%s\n\nThese money flows will also be deleted. Continue?",
                     moneyAccount.getName(), joinedAccountNames);
