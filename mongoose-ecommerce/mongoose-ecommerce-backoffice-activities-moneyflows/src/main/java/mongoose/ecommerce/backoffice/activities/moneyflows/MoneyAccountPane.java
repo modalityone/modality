@@ -6,7 +6,9 @@ import javafx.beans.value.ObservableObjectValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import mongoose.base.shared.entities.MoneyAccount;
 
 /**
@@ -31,13 +33,14 @@ public class MoneyAccountPane extends HBox {
     }
 
     private void updateBorder() {
-        String color = moneyAccountProperty.get().equals(selectedMoneyAccount.get()) ? "yellow" : "lightgray";
-        setStyle("-fx-padding: 10;" +
-                "-fx-border-style: solid inside;" +
-                "-fx-border-width: 2;" +
-                "-fx-border-insets: 5;" +
-                "-fx-border-radius: 5;" +
-                "-fx-border-color: " + color + ";");
+        setPadding(new Insets(10));
+        Paint color = moneyAccountProperty.get().equals(selectedMoneyAccount.get()) ? Color.YELLOW : Color.LIGHTGRAY;
+        BorderStrokeStyle style = BorderStrokeStyle.SOLID;
+        CornerRadii radii = new CornerRadii(5);
+        BorderWidths widths = new BorderWidths(2);
+        Insets insets = new Insets(5);
+        BorderStroke borderStroke = new BorderStroke(color, style, radii, widths, insets);
+        setBorder(new Border(borderStroke));
     }
 
 }
