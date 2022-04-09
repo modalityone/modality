@@ -1,10 +1,12 @@
 package mongoose.ecommerce.backoffice.activities.moneyflows;
 
+import dev.webfx.framework.client.ui.controls.entity.sheet.EntityRenderer;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -19,17 +21,16 @@ public class MoneyAccountPane extends HBox {
     private final ObjectProperty<MoneyAccount> moneyAccountProperty = new SimpleObjectProperty<>();
     public ObjectProperty<MoneyAccount> moneyAccountProperty() { return moneyAccountProperty; }
     private final ObservableObjectValue<MoneyAccount> selectedMoneyAccount;
-    private final Label label = new Label();
 
     public MoneyAccountPane(MoneyAccount moneyAccount, ObservableObjectValue<MoneyAccount> selectedMoneyAccount) {
         this.selectedMoneyAccount = selectedMoneyAccount;
-        selectedMoneyAccount.addListener(e -> updateBorder());
-        moneyAccountProperty.addListener(e -> label.setText(moneyAccountProperty.get().getName()));
+        moneyAccountProperty.addListener(e -> {
+            Node body = EntityRenderer.renderEntity(moneyAccount);
+            getChildren().setAll(body);
+        });
         moneyAccountProperty.set(moneyAccount);
-        setPadding(new Insets(8));
-        label.setAlignment(Pos.CENTER);
+        selectedMoneyAccount.addListener(e -> updateBorder());
         updateBorder();
-        getChildren().addAll(label);
     }
 
     private void updateBorder() {
