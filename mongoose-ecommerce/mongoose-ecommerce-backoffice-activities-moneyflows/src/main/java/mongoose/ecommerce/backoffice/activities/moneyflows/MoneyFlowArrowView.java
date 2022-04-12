@@ -15,6 +15,7 @@ import mongoose.base.shared.entities.MoneyFlow;
 public class MoneyFlowArrowView extends Pane {
 
     private static final int ARROW_HEAD_LENGTH = 30;
+    private static final double ARROW_HEAD_ANGLE_IN_RADIANS = Math.PI / 6.0;
 
     private final ObjectProperty<MoneyFlow> moneyFlowProperty = new SimpleObjectProperty<>();
     public ObjectProperty<MoneyFlow> moneyFlowProperty() { return moneyFlowProperty; }
@@ -58,14 +59,10 @@ public class MoneyFlowArrowView extends Pane {
         ArrowLine arrowHeadLeft = new ArrowLine();
         arrowHeadLeft.layoutXProperty().bind(arrowHeadXProperty);
         arrowHeadLeft.layoutYProperty().bind(arrowHeadYProperty);
-        arrowHeadLeft.setEndX(-30);
-        arrowHeadLeft.setEndY(-30);
 
         ArrowLine arrowHeadRight = new ArrowLine();
         arrowHeadRight.layoutXProperty().bind(arrowHeadXProperty);
         arrowHeadRight.layoutYProperty().bind(arrowHeadYProperty);
-        arrowHeadRight.setEndX(-30);
-        arrowHeadRight.setEndY(30);
 
         lineLayoutXProperty.addListener((a, b, c) -> updateArrowHead(arrowLine, arrowHeadLeft, arrowHeadRight));
         lineLayoutYProperty.addListener((a, b, c) -> updateArrowHead(arrowLine, arrowHeadLeft, arrowHeadRight));
@@ -77,14 +74,13 @@ public class MoneyFlowArrowView extends Pane {
     }
 
     private void updateArrowHead(Line arrow, Line arrowHeadLeft, Line arrowHeadRight) {
-
-
-        double arrowLength = Math.sqrt((arrow.getEndX() * arrow.getEndX()) + (arrow.getEndY() * arrow.getEndY()));
-        double arrowAngleDegrees = 90 - Math.toDegrees(Math.asin(arrow.getEndX() / arrowLength));
-        arrowHeadLeft.setEndX(-ARROW_HEAD_LENGTH * Math.cos(Math.toRadians(arrowAngleDegrees - 45)));
-        arrowHeadRight.setEndX(ARROW_HEAD_LENGTH * Math.sin(Math.toRadians(arrowAngleDegrees - 45)));
-        arrowHeadLeft.setEndY(-ARROW_HEAD_LENGTH * Math.sin(Math.toRadians(arrowAngleDegrees - 45)));
-        arrowHeadRight.setEndY(-ARROW_HEAD_LENGTH * Math.cos(Math.toRadians(arrowAngleDegrees - 45)));
+        double arrowSlope = Math.atan2(arrow.getEndY() - arrow.getStartY(), arrow.getEndX() - arrow.getStartX());
+        double headSlopeLeft = arrowSlope - ARROW_HEAD_ANGLE_IN_RADIANS;
+        double headSlopeRight = arrowSlope + ARROW_HEAD_ANGLE_IN_RADIANS;
+        arrowHeadLeft.setEndX(-ARROW_HEAD_LENGTH * Math.cos(headSlopeLeft));
+        arrowHeadLeft.setEndY(-ARROW_HEAD_LENGTH * Math.sin(headSlopeLeft));
+        arrowHeadRight.setEndX(-ARROW_HEAD_LENGTH * Math.cos(headSlopeRight));
+        arrowHeadRight.setEndY(-ARROW_HEAD_LENGTH * Math.sin(headSlopeRight));
     }
 
     private static class ArrowLine extends Line {
