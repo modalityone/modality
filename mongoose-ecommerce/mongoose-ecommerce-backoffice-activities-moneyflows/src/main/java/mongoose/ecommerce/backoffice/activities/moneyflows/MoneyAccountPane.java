@@ -8,7 +8,9 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import mongoose.base.shared.entities.MoneyAccount;
 
 /**
@@ -16,29 +18,37 @@ import mongoose.base.shared.entities.MoneyAccount;
  */
 public class MoneyAccountPane extends HBox {
 
-    private final ObjectProperty<MoneyAccount> moneyAccountProperty = new SimpleObjectProperty<>();
-    public ObjectProperty<MoneyAccount> moneyAccountProperty() { return moneyAccountProperty; }
     private final ObservableObjectValue<MoneyAccount> selectedMoneyAccount;
 
+    private MoneyAccount moneyAccount;
+
     public MoneyAccountPane(MoneyAccount moneyAccount, ObservableObjectValue<MoneyAccount> selectedMoneyAccount) {
+        this.moneyAccount = moneyAccount;
         this.selectedMoneyAccount = selectedMoneyAccount;
-        moneyAccountProperty.addListener(e -> {
-            Node body = EntityRenderer.renderEntity(moneyAccount);
-            getChildren().setAll(body);
-        });
-        moneyAccountProperty.set(moneyAccount);
         selectedMoneyAccount.addListener(e -> updateBorder());
+        populate(moneyAccount);
+    }
+
+    public void populate(MoneyAccount moneyAccount) {
+        this.moneyAccount = moneyAccount;
+        Node body = EntityRenderer.renderEntity(moneyAccount);
+        getChildren().setAll(body);
         updateBorder();
     }
 
     private void updateBorder() {
-        String color = moneyAccountProperty.get().equals(selectedMoneyAccount.get()) ? "yellow" : "lightgray";
-        setStyle("-fx-padding: 10;" +
-                "-fx-border-style: solid inside;" +
-                "-fx-border-width: 2;" +
-                "-fx-border-insets: 5;" +
-                "-fx-border-radius: 5;" +
-                "-fx-border-color: " + color + ";");
+        setPadding(new Insets(10));
+        Paint color = moneyAccount.equals(selectedMoneyAccount.get()) ? Color.YELLOW : Color.LIGHTGRAY;
+        BorderStrokeStyle style = BorderStrokeStyle.SOLID;
+        CornerRadii radii = new CornerRadii(5);
+        BorderWidths widths = new BorderWidths(2);
+        Insets insets = new Insets(5);
+        BorderStroke borderStroke = new BorderStroke(color, style, radii, widths, insets);
+        setBorder(new Border(borderStroke));
+    }
+
+    public MoneyAccount getMoneyAccount() {
+        return moneyAccount;
     }
 
 }

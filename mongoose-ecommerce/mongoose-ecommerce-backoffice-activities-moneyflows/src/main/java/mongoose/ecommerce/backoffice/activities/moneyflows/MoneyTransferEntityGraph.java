@@ -85,7 +85,7 @@ public class MoneyTransferEntityGraph extends Region {
 	private Map<Integer, List<MoneyAccount>> orderByDistanceFromRoot() {
 		Map<Integer, List<MoneyAccount>> result = new HashMap<>();
 		for (MoneyAccountPane moneyAccountPane : moneyAccountPanes) {
-			MoneyAccount moneyAccount = moneyAccountPane.moneyAccountProperty().get();
+			MoneyAccount moneyAccount = moneyAccountPane.getMoneyAccount();
 			int maxDistanceFromRoot = getMaxDistanceFromRoot(moneyAccount);
 			if (!result.containsKey(maxDistanceFromRoot)) {
 				result.put(maxDistanceFromRoot, new ArrayList<>());
@@ -109,7 +109,7 @@ public class MoneyTransferEntityGraph extends Region {
 
 	private Pane getPaneForMoneyAccount(MoneyAccount moneyAccount) {
 		return moneyAccountPanes.stream()
-				.filter(pane -> pane.moneyAccountProperty().get().equals(moneyAccount))
+				.filter(pane -> pane.getMoneyAccount().equals(moneyAccount))
 				.findAny()
 				.orElse(null);
 	}
