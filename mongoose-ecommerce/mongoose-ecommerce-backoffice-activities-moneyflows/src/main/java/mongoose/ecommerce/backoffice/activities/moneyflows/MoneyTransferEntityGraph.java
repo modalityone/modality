@@ -31,7 +31,6 @@ public class MoneyTransferEntityGraph extends Region {
 	public ObservableList<MoneyFlowArrowView> moneyFlowArrowViews() { return moneyFlowArrowViews; }
 	private final ObjectProperty<MoneyAccount> selectedMoneyAccount = new SimpleObjectProperty<>();
 	public ObjectProperty<MoneyAccount> selectedMoneyAccount() { return selectedMoneyAccount; }
-	private Pane newButton;
 
 	public MoneyTransferEntityGraph() {
 		moneyAccountPanes.addListener(new ListChangeListener<MoneyAccountPane>() {
