@@ -163,7 +163,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                 .start();
 
         ReactiveObjectsMapper.<MoneyAccount, MoneyAccountPane>createPushReactiveChain(this)
-                .always("{class: 'MoneyAccount', alias: 'ma', columns: 'name,type'}")
+                .always("{class: 'MoneyAccount', alias: 'ma', fields: 'name,type'}")
                 .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
                 .setIndividualEntityToObjectMapperFactory(moneyAccount -> new MoneyAccountToPaneMapper(moneyAccount, editorPane))
                 .setStore(masterVisualMapper.getStore())
@@ -199,7 +199,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
 
         @Override
         public void onEntityChangedOrReplaced(MoneyAccount moneyAccount) {
-            pane.moneyAccountProperty().set(moneyAccount);
+            pane.populate(moneyAccount);
         }
 
         @Override

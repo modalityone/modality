@@ -18,30 +18,37 @@ import mongoose.base.shared.entities.MoneyAccount;
  */
 public class MoneyAccountPane extends HBox {
 
-    private final ObjectProperty<MoneyAccount> moneyAccountProperty = new SimpleObjectProperty<>();
-    public ObjectProperty<MoneyAccount> moneyAccountProperty() { return moneyAccountProperty; }
     private final ObservableObjectValue<MoneyAccount> selectedMoneyAccount;
 
+    private MoneyAccount moneyAccount;
+
     public MoneyAccountPane(MoneyAccount moneyAccount, ObservableObjectValue<MoneyAccount> selectedMoneyAccount) {
+        this.moneyAccount = moneyAccount;
         this.selectedMoneyAccount = selectedMoneyAccount;
-        moneyAccountProperty.addListener(e -> {
-            Node body = EntityRenderer.renderEntity(moneyAccount);
-            getChildren().setAll(body);
-        });
-        moneyAccountProperty.set(moneyAccount);
         selectedMoneyAccount.addListener(e -> updateBorder());
+        populate(moneyAccount);
+    }
+
+    public void populate(MoneyAccount moneyAccount) {
+        this.moneyAccount = moneyAccount;
+        Node body = EntityRenderer.renderEntity(moneyAccount);
+        getChildren().setAll(body);
         updateBorder();
     }
 
     private void updateBorder() {
         setPadding(new Insets(10));
-        Paint color = moneyAccountProperty.get().equals(selectedMoneyAccount.get()) ? Color.YELLOW : Color.LIGHTGRAY;
+        Paint color = moneyAccount.equals(selectedMoneyAccount.get()) ? Color.YELLOW : Color.LIGHTGRAY;
         BorderStrokeStyle style = BorderStrokeStyle.SOLID;
         CornerRadii radii = new CornerRadii(5);
         BorderWidths widths = new BorderWidths(2);
         Insets insets = new Insets(5);
         BorderStroke borderStroke = new BorderStroke(color, style, radii, widths, insets);
         setBorder(new Border(borderStroke));
+    }
+
+    public MoneyAccount getMoneyAccount() {
+        return moneyAccount;
     }
 
 }

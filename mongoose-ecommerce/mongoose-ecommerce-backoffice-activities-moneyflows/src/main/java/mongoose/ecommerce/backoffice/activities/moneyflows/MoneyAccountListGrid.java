@@ -46,8 +46,8 @@ public abstract class MoneyAccountListGrid extends GridPane {
         Set<MoneyAccount> moneyAccountList = getAccountsConnectedByFlow(excludedMoneyAccount.get(), moneyFlows);
 
         moneyAccountPanes.stream()
-                .sorted((pane1, pane2) -> pane1.moneyAccountProperty().get().getName().compareToIgnoreCase(pane2.moneyAccountProperty().get().getName()))
-                .map(pane -> pane.moneyAccountProperty().get())
+                .sorted((pane1, pane2) -> pane1.getMoneyAccount().getName().compareToIgnoreCase(pane2.getMoneyAccount().getName()))
+                .map(MoneyAccountPane::getMoneyAccount)
                 .filter(moneyAccount -> !moneyAccount.equals(excludedMoneyAccount.get()))
                 .forEach(moneyAccount -> {
                     CheckBox checkBox = new CheckBox();
