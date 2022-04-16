@@ -133,12 +133,22 @@ public class MoneyTransferEntityGraph extends Region {
 
 	class MoneyFlowToArrowMapper implements IndividualEntityToObjectMapper<MoneyFlow, MoneyFlowArrowView> {
 
+		final MoneyFlow moneyFlow;
 		final MoneyFlowArrowView moneyFlowArrowView;
 
 		MoneyFlowToArrowMapper(MoneyFlow moneyFlow) {
+			this.moneyFlow = moneyFlow;
 			Pane sourceVertex = getPaneForMoneyAccount(moneyFlow.getFromMoneyAccount());
 			Pane destVertex = getPaneForMoneyAccount(moneyFlow.getToMoneyAccount());
 			moneyFlowArrowView = new MoneyFlowArrowView(moneyFlow, sourceVertex, destVertex);
+			moneyAccountPanes.addListener((ListChangeListener<? super MoneyAccountPane>) e -> updateVertices());
+		}
+
+		private void updateVertices() {
+			Pane sourceVertex = getPaneForMoneyAccount(moneyFlow.getFromMoneyAccount());
+			Pane destVertex = getPaneForMoneyAccount(moneyFlow.getToMoneyAccount());
+			moneyFlowArrowView.sourceVertexProperty().set(sourceVertex);
+			moneyFlowArrowView.destVertexProperty().set(destVertex);
 		}
 
 		@Override
@@ -148,6 +158,7 @@ public class MoneyTransferEntityGraph extends Region {
 
 		@Override
 		public void onEntityChangedOrReplaced(MoneyFlow moneyFlow) {
+			updateVertices();
 			moneyFlowArrowView.moneyFlowProperty().set(moneyFlow);
 		}
 
