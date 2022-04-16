@@ -23,6 +23,7 @@
         <module>mongoose-ecommerce-backoffice-activities-statistics</module>
         <module>mongoose-ecommerce-backoffice-operations-documentline</module>
         <module>mongoose-ecommerce-backoffice-operations-document</module>
+        <module>mongoose-ecommerce-backoffice-operations-moneyflow</module>
         <module>mongoose-ecommerce-backoffice-operations-moneytransfer</module>
         <module>mongoose-ecommerce-client-bookingoptionspanel</module>
         <module>mongoose-ecommerce-client-bookingprocess</module>
