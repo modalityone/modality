@@ -199,14 +199,16 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                 db.setContent(content);
             });
             pane.setOnDragOver(e -> {
-                pane.setHovering(true);
-                e.acceptTransferModes(TransferMode.MOVE);
+                if (moneyAccount != getSelectedMoneyAccount()) {
+                    pane.setHovering(true);
+                    e.acceptTransferModes(TransferMode.MOVE);
+                }
             });
             pane.setOnDragExited(e -> pane.setHovering(false));
             pane.setOnDragDropped(e -> {
                 UpdateStore updateStore = UpdateStore.createAbove(moneyAccount.getStore());
                 MoneyFlow insertEntity = updateStore.insertEntity(MoneyFlow.class);
-                insertEntity.setFromMoneyAccount(graph.selectedMoneyAccount().get());
+                insertEntity.setFromMoneyAccount(getSelectedMoneyAccount());
                 insertEntity.setToMoneyAccount(moneyAccount);
                 insertEntity.setOrganization(moneyAccount.getOrganization());
                 updateStore.submitChanges(SubmitArgument.builder()
@@ -214,6 +216,10 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                         .setDataSourceId(updateStore.getDataSourceId())
                         .build());
             });
+        }
+
+        private MoneyAccount getSelectedMoneyAccount() {
+            return graph.selectedMoneyAccount().get();
         }
 
         private void selectMoneyAccount(MoneyAccount moneyAccount) {
