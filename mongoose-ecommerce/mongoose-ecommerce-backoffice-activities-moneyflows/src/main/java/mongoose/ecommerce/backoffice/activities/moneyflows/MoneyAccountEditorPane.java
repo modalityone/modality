@@ -37,7 +37,10 @@ public class MoneyAccountEditorPane extends VBox {
     }
 
     private void showStartingMsg() {
-        Label label = new Label("Please select an existing money account to edit or click the \"+\" button to create a new money account.");
+        Label label = new Label("Please perform one of the following actions\n" +
+                "1. Select an existing money account to edit.\n" +
+                "2. Click the \"+\" button to create a new money account.\n" +
+                "3. Create a new money flow by dragging from one money account to another.");
         label.setWrapText(true);
         getChildren().add(label);
     }
