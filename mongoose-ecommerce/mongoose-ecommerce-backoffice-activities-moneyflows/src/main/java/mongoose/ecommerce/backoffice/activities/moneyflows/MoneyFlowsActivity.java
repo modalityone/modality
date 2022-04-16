@@ -8,8 +8,13 @@ import dev.webfx.framework.client.ui.controls.dialog.DialogUtil;
 import dev.webfx.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.platform.shared.services.submit.SubmitArgument;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -31,17 +36,17 @@ import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
  */
 public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity implements ConventionalUiBuilderMixin {
 
-    private ReactiveVisualMapper<MoneyAccount> masterVisualMapper;
+    private static final DataFormat dndDataFormat = DataFormat.PLAIN_TEXT; // Using standard plain text format to ensure drag & drop works between applications
 
+    private final MoneyTransferEntityGraph graph = new MoneyTransferEntityGraph();
     private final MoneyFlowsPresentationModel pm = new MoneyFlowsPresentationModel();
-
     @Override
     public MoneyFlowsPresentationModel getPresentationModel() {
         return pm;
     }
 
     private ConventionalUiBuilder ui;
-    private final MoneyTransferEntityGraph graph = new MoneyTransferEntityGraph();
+    private ReactiveVisualMapper<MoneyAccount> masterVisualMapper;
     private MoneyAccountEditorPane editorPane;
     private Label addLabel;
     private Label deleteLabel;
@@ -163,7 +168,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                 .start();
 
         ReactiveObjectsMapper.<MoneyAccount, MoneyAccountPane>createPushReactiveChain(this)
-                .always("{class: 'MoneyAccount', alias: 'ma', fields: 'name,type'}")
+                .always("{class: 'MoneyAccount', alias: 'ma', fields: 'name,type,organization'}")
                 .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
                 .setIndividualEntityToObjectMapperFactory(moneyAccount -> new MoneyAccountToPaneMapper(moneyAccount, editorPane))
                 .setStore(masterVisualMapper.getStore())
@@ -185,11 +190,36 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
 
         MoneyAccountToPaneMapper(MoneyAccount moneyAccount, MoneyAccountEditorPane editorPane) {
             pane = new MoneyAccountPane(moneyAccount, graph.selectedMoneyAccount());
-            pane.setOnMouseClicked(e -> {
-                graph.selectedMoneyAccount().set(moneyAccount);
-                editorPane.edit(moneyAccount);
-                deleteLabel.setVisible(true);
+            pane.setOnMouseClicked(e -> selectMoneyAccount(moneyAccount));
+            pane.setOnDragDetected(e -> {
+                selectMoneyAccount(moneyAccount);
+                Dragboard db = graph.startDragAndDrop(TransferMode.MOVE);
+                ClipboardContent content = new ClipboardContent();
+                content.put(dndDataFormat, String.valueOf(moneyAccount.getId().getPrimaryKey()));
+                db.setContent(content);
             });
+            pane.setOnDragOver(e -> {
+                pane.setHovering(true);
+                e.acceptTransferModes(TransferMode.MOVE);
+            });
+            pane.setOnDragExited(e -> pane.setHovering(false));
+            pane.setOnDragDropped(e -> {
+                UpdateStore updateStore = UpdateStore.createAbove(moneyAccount.getStore());
+                MoneyFlow insertEntity = updateStore.insertEntity(MoneyFlow.class);
+                insertEntity.setFromMoneyAccount(graph.selectedMoneyAccount().get());
+                insertEntity.setToMoneyAccount(moneyAccount);
+                insertEntity.setOrganization(moneyAccount.getOrganization());
+                updateStore.submitChanges(SubmitArgument.builder()
+                        .setStatement("select set_transaction_parameters(false)")
+                        .setDataSourceId(updateStore.getDataSourceId())
+                        .build());
+            });
+        }
+
+        private void selectMoneyAccount(MoneyAccount moneyAccount) {
+            graph.selectedMoneyAccount().set(moneyAccount);
+            editorPane.edit(moneyAccount);
+            deleteLabel.setVisible(true);
         }
 
         @Override
