@@ -178,7 +178,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         ReactiveObjectsMapper.<MoneyAccount, MoneyAccountPane>createPushReactiveChain(this)
                 .always("{class: 'MoneyAccount', alias: 'ma', fields: 'name,type,organization'}")
                 .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
-                .setIndividualEntityToObjectMapperFactory(moneyAccount -> new MoneyAccountToPaneMapper(moneyAccount, editorPane))
+                .setIndividualEntityToObjectMapperFactory(MoneyAccountToPaneMapper::new)
                 .setStore(masterVisualMapper.getStore())
                 .storeMappedObjectsInto(graph.moneyAccountPanes())
                 .start();
@@ -196,7 +196,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
 
         final MoneyAccountPane pane;
 
-        MoneyAccountToPaneMapper(MoneyAccount moneyAccount, MoneyAccountEditorPane editorPane) {
+        MoneyAccountToPaneMapper(MoneyAccount moneyAccount) {
             pane = new MoneyAccountPane(moneyAccount, graph.selectedMoneyAccount());
             pane.setOnMouseClicked(e -> selectMoneyAccount(moneyAccount));
             pane.setOnDragDetected(e -> {
