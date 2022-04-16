@@ -17,6 +17,7 @@ public class MoneyAccountPane extends HBox {
     private final ObservableObjectValue<MoneyAccount> selectedMoneyAccount;
 
     private MoneyAccount moneyAccount;
+    private boolean showIllegalIndicator;
     private boolean hovering;
 
     public MoneyAccountPane(MoneyAccount moneyAccount, ObservableObjectValue<MoneyAccount> selectedMoneyAccount) {
@@ -46,7 +47,7 @@ public class MoneyAccountPane extends HBox {
 
     private Paint determineBorderColor() {
         if (hovering) {
-            return Color.GREEN;
+            return showIllegalIndicator ? Color.RED : Color.GREEN;
         } else if (moneyAccount.equals(selectedMoneyAccount.get())) {
             return Color.YELLOW;
         } else {
@@ -60,6 +61,11 @@ public class MoneyAccountPane extends HBox {
 
     public void setHovering(boolean hovering) {
         this.hovering = hovering;
+        updateBorder();
+    }
+
+    public void setShowIllegalIndicator(boolean showIllegalIndicator) {
+        this.showIllegalIndicator = showIllegalIndicator;
         updateBorder();
     }
 }
