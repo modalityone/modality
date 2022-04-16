@@ -5,10 +5,10 @@ import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.React
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.framework.client.ui.controls.dialog.DialogContent;
 import dev.webfx.framework.client.ui.controls.dialog.DialogUtil;
+import dev.webfx.framework.shared.orm.entity.EntityStore;
 import dev.webfx.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.platform.shared.services.submit.SubmitArgument;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.ClipboardContent;
@@ -25,6 +25,7 @@ import mongoose.base.client.activity.organizationdependent.OrganizationDependent
 import mongoose.base.shared.domainmodel.functions.AbcNames;
 import mongoose.base.shared.entities.MoneyAccount;
 import mongoose.base.shared.entities.MoneyFlow;
+import mongoose.base.shared.entities.Organization;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -80,9 +81,16 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         addLabel.setOnMouseClicked(e -> {
             UpdateStore updateStore = UpdateStore.createAbove(masterVisualMapper.getStore());
             MoneyAccount insertEntity = updateStore.insertEntity(MoneyAccount.class);
+            insertEntity.setOrganization(getOrganization());
             editorPane.edit(insertEntity);
         });
         rootPane.getChildren().add(addLabel);
+    }
+
+    private Organization getOrganization() {
+        Object organizationId = getOrganizationId();
+        EntityStore entityStore = EntityStore.createAbove(masterVisualMapper.getStore());
+        return entityStore.getEntity(Organization.class, organizationId);
     }
 
     private void createDeleteLabel(Pane rootPane) {
