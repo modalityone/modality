@@ -10,6 +10,7 @@ import dev.webfx.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.platform.shared.services.submit.SubmitArgument;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
@@ -49,6 +50,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
     private ConventionalUiBuilder ui;
     private ReactiveVisualMapper<MoneyAccount> masterVisualMapper;
     private MoneyAccountEditorPane editorPane;
+    private Pane rootPane;
     private Label addLabel;
     private Label deleteLabel;
 
@@ -63,7 +65,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         table.prefHeightProperty().bind(Properties.compute(root.heightProperty(), height -> height.doubleValue() * 0.3));
         graph.prefHeightProperty().bind(Properties.compute(root.heightProperty(), height -> height.doubleValue() * 0.7));
         pm.selectedMasterProperty().addListener(e -> updateSelectedEntity());
-        Pane rootPane = new Pane(root);
+        rootPane = new Pane(root);
         root.prefWidthProperty().bind(rootPane.widthProperty());
         root.prefHeightProperty().bind(rootPane.heightProperty());
 
@@ -125,7 +127,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                     .sorted(String::compareToIgnoreCase)
                     .collect(Collectors.joining("\n"));
 
-            return moneyAccount.getName() + "%s has money flows with the following accounts:\n\n" +
+            return moneyAccount.getName() + "has money flows with the following accounts:\n\n" +
                     joinedAccountNames + "\n\nThese money flows will also be deleted. Continue?";
         }
     }
@@ -208,22 +210,47 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
             });
             pane.setOnDragOver(e -> {
                 if (moneyAccount != getSelectedMoneyAccount()) {
+                    MoneyAccount fromAccount = getSelectedMoneyAccount();
+                    MoneyAccount toAccount = moneyAccount;
+                    pane.setShowIllegalIndicator(!canCreateMoneyFlow(fromAccount, toAccount));
                     pane.setHovering(true);
                     e.acceptTransferModes(TransferMode.MOVE);
                 }
             });
-            pane.setOnDragExited(e -> pane.setHovering(false));
-            pane.setOnDragDropped(e -> {
-                UpdateStore updateStore = UpdateStore.createAbove(moneyAccount.getStore());
-                MoneyFlow insertEntity = updateStore.insertEntity(MoneyFlow.class);
-                insertEntity.setFromMoneyAccount(getSelectedMoneyAccount());
-                insertEntity.setToMoneyAccount(moneyAccount);
-                insertEntity.setOrganization(moneyAccount.getOrganization());
-                updateStore.submitChanges(SubmitArgument.builder()
-                        .setStatement("select set_transaction_parameters(false)")
-                        .setDataSourceId(updateStore.getDataSourceId())
-                        .build());
+            pane.setOnDragExited(e -> {
+                pane.setShowIllegalIndicator(false);
+                pane.setHovering(false);
             });
+            pane.setOnDragDropped(e -> {
+                MoneyAccount fromAccount = getSelectedMoneyAccount();
+                MoneyAccount toAccount = moneyAccount;
+                if (doesMoneyFlowExist(fromAccount, moneyAccount)) {
+                    String msg = String.format("A money flow from %s to %s already exists.", fromAccount.getName(), toAccount.getName());
+                    showMsg(msg);
+                } else if (isFirstAccountUpstreamOfSeconds(moneyAccount, fromAccount)) {
+                    String msg = String.format("Creating a money flow from %s to %s would result in a circular reference.",
+                            fromAccount.getName(), toAccount.getName());
+                    showMsg(msg);
+                } else {
+                    UpdateStore updateStore = UpdateStore.createAbove(moneyAccount.getStore());
+                    MoneyFlow insertEntity = updateStore.insertEntity(MoneyFlow.class);
+                    insertEntity.setFromMoneyAccount(fromAccount);
+                    insertEntity.setToMoneyAccount(moneyAccount);
+                    insertEntity.setOrganization(moneyAccount.getOrganization());
+                    updateStore.submitChanges(SubmitArgument.builder()
+                            .setStatement("select set_transaction_parameters(false)")
+                            .setDataSourceId(updateStore.getDataSourceId())
+                            .build());
+                }
+            });
+        }
+
+        private void showMsg(String msg) {
+            Label label = new Label(msg);
+            DialogContent dialogContent = new DialogContent().setContent(label);
+            dialogContent.getCancelButton().setVisible(false);
+            DialogUtil.showModalNodeInGoldLayout(dialogContent, rootPane);
+            DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> dialogCallback.closeDialog());
         }
 
         private MoneyAccount getSelectedMoneyAccount() {
@@ -249,6 +276,37 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         @Override
         public void onEntityRemoved(MoneyAccount moneyAccount) {
         }
+    }
+
+    private boolean canCreateMoneyFlow(MoneyAccount fromAccount, MoneyAccount toAccount) {
+        return !doesMoneyFlowExist(fromAccount, toAccount) && !isFirstAccountUpstreamOfSeconds(toAccount, fromAccount);
+    }
+
+    private boolean doesMoneyFlowExist(MoneyAccount fromAccount, MoneyAccount toAccount) {
+        return graph.moneyFlowArrowViews().stream()
+                .map(arrow -> arrow.moneyFlowProperty().get())
+                .anyMatch(moneyFlow -> moneyFlow.getFromMoneyAccount().equals(fromAccount) && moneyFlow.getToMoneyAccount().equals(toAccount));
+    }
+
+    private boolean isFirstAccountUpstreamOfSeconds(MoneyAccount firstAccount, MoneyAccount secondAccount) {
+        List<MoneyFlow> moneyFlowsFrom = getMoneyFlowsFrom(firstAccount);
+        for (MoneyFlow moneyFlow : moneyFlowsFrom) {
+            MoneyAccount toAccount = moneyFlow.getToMoneyAccount();
+            if (toAccount.equals(secondAccount)) {
+                return true;
+            }
+            if (isFirstAccountUpstreamOfSeconds(toAccount, secondAccount)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<MoneyFlow> getMoneyFlowsFrom(MoneyAccount sourceAccount) {
+        return graph.moneyFlowArrowViews().stream()
+                .map(arrow -> arrow.moneyFlowProperty().get())
+                .filter(moneyFlow -> moneyFlow.getFromMoneyAccount().equals(sourceAccount))
+                .collect(Collectors.toList());
     }
 
     @Override
