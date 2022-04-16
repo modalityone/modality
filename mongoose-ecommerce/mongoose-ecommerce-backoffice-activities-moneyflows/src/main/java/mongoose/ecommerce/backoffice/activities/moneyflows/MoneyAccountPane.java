@@ -1,13 +1,9 @@
 package mongoose.ecommerce.backoffice.activities.moneyflows;
 
 import dev.webfx.framework.client.ui.controls.entity.sheet.EntityRenderer;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -21,6 +17,7 @@ public class MoneyAccountPane extends HBox {
     private final ObservableObjectValue<MoneyAccount> selectedMoneyAccount;
 
     private MoneyAccount moneyAccount;
+    private boolean hovering;
 
     public MoneyAccountPane(MoneyAccount moneyAccount, ObservableObjectValue<MoneyAccount> selectedMoneyAccount) {
         this.moneyAccount = moneyAccount;
@@ -38,7 +35,7 @@ public class MoneyAccountPane extends HBox {
 
     private void updateBorder() {
         setPadding(new Insets(10));
-        Paint color = moneyAccount.equals(selectedMoneyAccount.get()) ? Color.YELLOW : Color.LIGHTGRAY;
+        Paint color = determineBorderColor();
         BorderStrokeStyle style = BorderStrokeStyle.SOLID;
         CornerRadii radii = new CornerRadii(5);
         BorderWidths widths = new BorderWidths(2);
@@ -47,8 +44,22 @@ public class MoneyAccountPane extends HBox {
         setBorder(new Border(borderStroke));
     }
 
+    private Paint determineBorderColor() {
+        if (hovering) {
+            return Color.GREEN;
+        } else if (moneyAccount.equals(selectedMoneyAccount.get())) {
+            return Color.YELLOW;
+        } else {
+            return Color.LIGHTGRAY;
+        }
+    }
+
     public MoneyAccount getMoneyAccount() {
         return moneyAccount;
     }
 
+    public void setHovering(boolean hovering) {
+        this.hovering = hovering;
+        updateBorder();
+    }
 }
