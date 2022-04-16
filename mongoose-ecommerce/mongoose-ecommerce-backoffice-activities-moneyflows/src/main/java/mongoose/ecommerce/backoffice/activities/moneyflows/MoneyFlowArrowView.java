@@ -25,11 +25,12 @@ public class MoneyFlowArrowView extends Pane {
     public ObjectProperty<Pane> destVertexProperty() { return destVertexProperty; }
 
     public MoneyFlowArrowView(MoneyFlow moneyFlow, Pane sourceVertex, Pane destVertex) {
-        moneyFlowProperty.addListener(e -> createLines());
-        moneyFlowProperty.set(moneyFlow);
         sourceVertexProperty.set(sourceVertex);
         destVertexProperty.set(destVertex);
-        createLines();
+        sourceVertexProperty.addListener(e -> createLines());
+        destVertexProperty.addListener(e -> createLines());
+        moneyFlowProperty.addListener(e -> createLines());
+        moneyFlowProperty.set(moneyFlow);
     }
 
     private void createLines() {
