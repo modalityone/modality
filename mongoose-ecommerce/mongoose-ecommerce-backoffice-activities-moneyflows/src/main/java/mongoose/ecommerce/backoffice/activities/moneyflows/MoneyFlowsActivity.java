@@ -10,7 +10,6 @@ import dev.webfx.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.platform.shared.services.submit.SubmitArgument;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
@@ -225,11 +224,10 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                 MoneyAccount fromAccount = getSelectedMoneyAccount();
                 MoneyAccount toAccount = moneyAccount;
                 if (doesMoneyFlowExist(fromAccount, moneyAccount)) {
-                    String msg = String.format("A money flow from %s to %s already exists.", fromAccount.getName(), toAccount.getName());
+                    String msg = "A money flow from " + fromAccount.getName() + " to " + toAccount.getName() + " already exists.";
                     showMsg(msg);
                 } else if (isFirstAccountUpstreamOfSeconds(moneyAccount, fromAccount)) {
-                    String msg = String.format("Creating a money flow from %s to %s would result in a circular reference.",
-                            fromAccount.getName(), toAccount.getName());
+                    String msg = "Creating a money flow from " + fromAccount.getName() + " to " + toAccount.getName() + " would result in a circular reference.";
                     showMsg(msg);
                 } else {
                     UpdateStore updateStore = UpdateStore.createAbove(moneyAccount.getStore());
