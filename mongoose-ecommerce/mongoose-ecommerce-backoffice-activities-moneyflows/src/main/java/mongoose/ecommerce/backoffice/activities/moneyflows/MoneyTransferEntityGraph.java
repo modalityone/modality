@@ -1,6 +1,8 @@
 package mongoose.ecommerce.backoffice.activities.moneyflows;
 
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.IndividualEntityToObjectMapper;
+import dev.webfx.framework.client.ui.action.operation.OperationActionFactoryMixin;
+import dev.webfx.framework.client.ui.controls.ControlFactoryMixin;
 import dev.webfx.kit.util.properties.Properties;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -9,7 +11,6 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import mongoose.base.shared.entities.MoneyAccount;
 import mongoose.base.shared.entities.MoneyFlow;
 
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 /**
  * @author Dan Newman
  */
-public class MoneyTransferEntityGraph extends Region {
+public class MoneyTransferEntityGraph extends Pane implements ControlFactoryMixin, OperationActionFactoryMixin {
 
 	private final ObservableList<MoneyAccountPane> moneyAccountPanes = FXCollections.observableArrayList();
 	public ObservableList<MoneyAccountPane> moneyAccountPanes() { return moneyAccountPanes; }
@@ -140,7 +141,7 @@ public class MoneyTransferEntityGraph extends Region {
 			this.moneyFlow = moneyFlow;
 			Pane sourceVertex = getPaneForMoneyAccount(moneyFlow.getFromMoneyAccount());
 			Pane destVertex = getPaneForMoneyAccount(moneyFlow.getToMoneyAccount());
-			moneyFlowArrowView = new MoneyFlowArrowView(moneyFlow, sourceVertex, destVertex);
+			moneyFlowArrowView = new MoneyFlowArrowView(moneyFlow, sourceVertex, destVertex, MoneyTransferEntityGraph.this);
 			moneyAccountPanes.addListener((ListChangeListener<? super MoneyAccountPane>) e -> updateVertices());
 		}
 
