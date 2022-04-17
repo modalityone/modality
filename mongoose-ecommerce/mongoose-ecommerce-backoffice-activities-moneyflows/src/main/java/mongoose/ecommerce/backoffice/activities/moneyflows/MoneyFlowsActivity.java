@@ -11,6 +11,7 @@ import dev.webfx.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.platform.shared.services.submit.SubmitArgument;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
@@ -52,7 +53,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
     private ReactiveVisualMapper<MoneyAccount> masterVisualMapper;
     private MoneyAccountEditorPane editorPane;
     private Pane rootPane;
-    private Label addLabel;
+    private Button addNewMoneyAccountButton;
     private Label deleteLabel;
 
     @Override
@@ -70,22 +71,18 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         root.prefWidthProperty().bind(rootPane.widthProperty());
         root.prefHeightProperty().bind(rootPane.heightProperty());
 
-        createAddLabel(rootPane);
-        createDeleteLabel(rootPane);
+        createAddNewMoneyAccountButton();
+        createDeleteLabel();
 
         return rootPane;
     }
 
-    private void createAddLabel(Pane rootPane) {
-        addLabel = new Label("+");
-        addLabel.setFont(new Font(128));
-        addLabel.layoutXProperty().bind(Properties.combine(rootPane.widthProperty(), addLabel.widthProperty(), (nodeWidth, buttonWidth) -> nodeWidth.doubleValue() - buttonWidth.doubleValue()));
-        addLabel.layoutYProperty().bind(Properties.combine(rootPane.heightProperty(), addLabel.heightProperty(), (nodeHeight, buttonHeight) -> nodeHeight.doubleValue() - buttonHeight.doubleValue()));
-        addLabel.setOnMouseClicked(e -> {
-            Organization organization = getOrganization();
-            executeOperation(new AddNewMoneyAccountRequest(organization, rootPane));
-        });
-        rootPane.getChildren().add(addLabel);
+    private void createAddNewMoneyAccountButton() {
+        addNewMoneyAccountButton = newButton(newOperationAction(() -> new AddNewMoneyAccountRequest(getOrganization(), rootPane)));
+        addNewMoneyAccountButton.setFont(new Font(32));
+        addNewMoneyAccountButton.layoutXProperty().bind(Properties.combine(rootPane.widthProperty(), addNewMoneyAccountButton.widthProperty(), (nodeWidth, buttonWidth) -> nodeWidth.doubleValue() - buttonWidth.doubleValue()));
+        addNewMoneyAccountButton.layoutYProperty().bind(Properties.combine(rootPane.heightProperty(), addNewMoneyAccountButton.heightProperty(), (nodeHeight, buttonHeight) -> nodeHeight.doubleValue() - buttonHeight.doubleValue()));
+        rootPane.getChildren().add(addNewMoneyAccountButton);
     }
 
     private Organization getOrganization() {
@@ -94,11 +91,11 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         return entityStore.getEntity(Organization.class, organizationId);
     }
 
-    private void createDeleteLabel(Pane rootPane) {
+    private void createDeleteLabel() {
         deleteLabel = new Label("X");
         deleteLabel.setFont(new Font(128));
-        deleteLabel.layoutXProperty().bind(Properties.combine(addLabel.layoutXProperty(), deleteLabel.widthProperty(), (x, width) -> x.doubleValue() - width.doubleValue()));
-        deleteLabel.layoutYProperty().bind(addLabel.layoutYProperty());
+        deleteLabel.layoutXProperty().bind(Properties.combine(addNewMoneyAccountButton.layoutXProperty(), deleteLabel.widthProperty(), (x, width) -> x.doubleValue() - width.doubleValue()));
+        deleteLabel.layoutYProperty().bind(addNewMoneyAccountButton.layoutYProperty());
         deleteLabel.setVisible(false);
         deleteLabel.setOnMouseClicked(e -> {
             Label label = new Label(buildDeleteMoneyAccountMsg());
