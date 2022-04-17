@@ -9,6 +9,8 @@ module mongoose.ecommerce.backoffice.operations.moneyflow {
     requires webfx.framework.shared.operation;
     requires webfx.framework.shared.orm.entity;
     requires webfx.platform.shared.util;
+    requires webfx.platform.shared.submit;
+    requires webfx.framework.client.controls;
 
     // Exported packages
     exports mongoose.ecommerce.backoffice.operations.entities.moneyaccount;
