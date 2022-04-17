@@ -29,6 +29,7 @@ import mongoose.base.shared.entities.MoneyAccount;
 import mongoose.base.shared.entities.MoneyFlow;
 import mongoose.base.shared.entities.Organization;
 import mongoose.ecommerce.backoffice.operations.entities.moneyaccount.AddNewMoneyAccountRequest;
+import mongoose.ecommerce.backoffice.operations.entities.moneyaccount.DeleteMoneyAccountRequest;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,7 +55,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
     private MoneyAccountEditorPane editorPane;
     private Pane rootPane;
     private Button addNewMoneyAccountButton;
-    private Label deleteLabel;
+    private Button deleteLabel;
 
     @Override
     public Node buildUi() {
@@ -92,69 +93,21 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
     }
 
     private void createDeleteLabel() {
-        deleteLabel = new Label("X");
-        deleteLabel.setFont(new Font(128));
+        deleteLabel = newButton(newOperationAction(() -> new DeleteMoneyAccountRequest(getSelectedMoneyAccount(), getMoneyFlows(), rootPane)));
+        deleteLabel.setFont(new Font(32));
         deleteLabel.layoutXProperty().bind(Properties.combine(addNewMoneyAccountButton.layoutXProperty(), deleteLabel.widthProperty(), (x, width) -> x.doubleValue() - width.doubleValue()));
         deleteLabel.layoutYProperty().bind(addNewMoneyAccountButton.layoutYProperty());
-        deleteLabel.setVisible(false);
-        deleteLabel.setOnMouseClicked(e -> {
-            Label label = new Label(buildDeleteMoneyAccountMsg());
-            DialogContent dialogContent = new DialogContent().setContent(label);
-            DialogUtil.showModalNodeInGoldLayout(dialogContent, rootPane);
-            DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
-                editorPane.cancelEdit();
-                deleteSelectedMoneyAccount();
-                dialogCallback.closeDialog();
-            });
-        });
         rootPane.getChildren().add(deleteLabel);
     }
 
-    private String buildDeleteMoneyAccountMsg() {
-        MoneyAccount moneyAccount = graph.selectedMoneyAccount().get();
-        List<MoneyFlow> moneyFlowsLinkedToAccount = getMoneyFlowsLinkedToAccount(moneyAccount);
-
-        if (moneyFlowsLinkedToAccount.isEmpty()) {
-            return "Are you sure you wish to delete " + moneyAccount.getName() + "?";
-        } else {
-            String joinedAccountNames = moneyFlowsLinkedToAccount.stream()
-                    .map(moneyFlow -> moneyFlow.getToMoneyAccount().equals(moneyAccount) ?
-                            moneyFlow.getFromMoneyAccount().getName() : moneyFlow.getToMoneyAccount().getName())
-                    .sorted(String::compareToIgnoreCase)
-                    .collect(Collectors.joining("\n"));
-
-            return moneyAccount.getName() + "has money flows with the following accounts:\n\n" +
-                    joinedAccountNames + "\n\nThese money flows will also be deleted. Continue?";
-        }
+    private MoneyAccount getSelectedMoneyAccount() {
+        return graph.selectedMoneyAccount().get();
     }
 
-    private List<MoneyFlow> getMoneyFlowsLinkedToAccount(MoneyAccount moneyAccount) {
+    private List<MoneyFlow> getMoneyFlows() {
         return graph.moneyFlowArrowViews().stream()
                 .map(arrow -> arrow.moneyFlowProperty().get())
-                .filter(moneyFlow -> moneyFlow.getToMoneyAccount().equals(moneyAccount) ||
-                        moneyFlow.getFromMoneyAccount().equals(moneyAccount))
                 .collect(Collectors.toList());
-    }
-
-    private void deleteSelectedMoneyAccount() {
-        MoneyAccount moneyAccount = graph.selectedMoneyAccount().get();
-        List<MoneyFlow> moneyFlowsLinkedToAccount = getMoneyFlowsLinkedToAccount(moneyAccount);
-
-        for (MoneyFlow moneyFlow : moneyFlowsLinkedToAccount) {
-            UpdateStore updateStore = UpdateStore.createAbove(moneyFlow.getStore());
-            updateStore.deleteEntity(moneyFlow);
-            updateStore.submitChanges(SubmitArgument.builder()
-                    .setStatement("select set_transaction_parameters(false)")
-                    .setDataSourceId(updateStore.getDataSourceId())
-                    .build());
-        }
-
-        UpdateStore updateStore = UpdateStore.createAbove(moneyAccount.getStore());
-        updateStore.deleteEntity(moneyAccount);
-        updateStore.submitChanges(SubmitArgument.builder()
-                .setStatement("select set_transaction_parameters(false)")
-                .setDataSourceId(updateStore.getDataSourceId())
-                .build());
     }
 
     private void updateSelectedEntity() {
@@ -255,7 +208,6 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         private void selectMoneyAccount(MoneyAccount moneyAccount) {
             graph.selectedMoneyAccount().set(moneyAccount);
             editorPane.edit(moneyAccount);
-            deleteLabel.setVisible(true);
         }
 
         @Override
