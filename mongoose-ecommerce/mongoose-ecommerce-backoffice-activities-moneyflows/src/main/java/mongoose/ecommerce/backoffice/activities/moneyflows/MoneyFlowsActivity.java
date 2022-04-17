@@ -3,6 +3,7 @@ package mongoose.ecommerce.backoffice.activities.moneyflows;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.IndividualEntityToObjectMapper;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.ReactiveObjectsMapper;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.framework.client.ui.action.operation.OperationActionFactoryMixin;
 import dev.webfx.framework.client.ui.controls.dialog.DialogContent;
 import dev.webfx.framework.client.ui.controls.dialog.DialogUtil;
 import dev.webfx.framework.shared.orm.entity.EntityStore;
@@ -26,6 +27,7 @@ import mongoose.base.shared.domainmodel.functions.AbcNames;
 import mongoose.base.shared.entities.MoneyAccount;
 import mongoose.base.shared.entities.MoneyFlow;
 import mongoose.base.shared.entities.Organization;
+import mongoose.ecommerce.backoffice.operations.entities.moneyaccount.AddNewMoneyAccountRequest;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,7 +37,7 @@ import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
 /**
  * @author Bruno Salmon
  */
-public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity implements ConventionalUiBuilderMixin {
+public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity implements ConventionalUiBuilderMixin, OperationActionFactoryMixin {
 
     private static final DataFormat dndDataFormat = DataFormat.PLAIN_TEXT; // Using standard plain text format to ensure drag & drop works between applications
 
@@ -80,10 +82,8 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         addLabel.layoutXProperty().bind(Properties.combine(rootPane.widthProperty(), addLabel.widthProperty(), (nodeWidth, buttonWidth) -> nodeWidth.doubleValue() - buttonWidth.doubleValue()));
         addLabel.layoutYProperty().bind(Properties.combine(rootPane.heightProperty(), addLabel.heightProperty(), (nodeHeight, buttonHeight) -> nodeHeight.doubleValue() - buttonHeight.doubleValue()));
         addLabel.setOnMouseClicked(e -> {
-            UpdateStore updateStore = UpdateStore.createAbove(masterVisualMapper.getStore());
-            MoneyAccount insertEntity = updateStore.insertEntity(MoneyAccount.class);
-            insertEntity.setOrganization(getOrganization());
-            editorPane.edit(insertEntity);
+            Organization organization = getOrganization();
+            executeOperation(new AddNewMoneyAccountRequest(organization, rootPane));
         });
         rootPane.getChildren().add(addLabel);
     }
