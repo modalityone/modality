@@ -49,7 +49,7 @@ final class DeleteMoneyAccountExecutor {
                     .sorted(String::compareToIgnoreCase)
                     .collect(Collectors.joining("\n"));
 
-            return moneyAccount.getName() + "has money flows with the following accounts:\n\n" +
+            return moneyAccount.getName() + " has money flows with the following accounts:\n\n" +
                     joinedAccountNames + "\n\nThese money flows will also be deleted. Continue?";
         }
     }
