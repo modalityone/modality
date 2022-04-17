@@ -3,6 +3,7 @@ package mongoose.ecommerce.backoffice.activities.moneyflows;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.IndividualEntityToObjectMapper;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.ReactiveObjectsMapper;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.framework.client.ui.action.ActionGroup;
 import dev.webfx.framework.client.ui.action.operation.OperationActionFactoryMixin;
 import dev.webfx.framework.client.ui.controls.dialog.DialogContent;
 import dev.webfx.framework.client.ui.controls.dialog.DialogUtil;
@@ -191,6 +192,13 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                             .build());
                 }
             });
+            setUpContextMenu(pane, this::createContextMenuActionGroup);
+        }
+
+        private ActionGroup createContextMenuActionGroup() {
+            return newActionGroup(
+                    newOperationAction(() -> new DeleteMoneyAccountRequest(getSelectedMoneyAccount(), getMoneyFlows(), rootPane))
+            );
         }
 
         private void showMsg(String msg) {

@@ -32,6 +32,7 @@ module mongoose.ecommerce.backoffice.activities.moneyflows {
     requires webfx.platform.client.windowhistory;
     requires webfx.platform.shared.submit;
     requires webfx.platform.shared.util;
+    requires webfx.framework.client.util;
 
     // Exported packages
     exports mongoose.ecommerce.backoffice.activities.moneyflows;
