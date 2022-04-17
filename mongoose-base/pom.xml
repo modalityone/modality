@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- File managed by WebFX (DO NOT EDIT MANUALLY) -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <artifactId>mongoose</artifactId>
         <groupId>org.mongoose</groupId>
+        <artifactId>mongoose</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>mongoose-base</artifactId>
 
     <packaging>pom</packaging>
 
     <modules>
-    
         <module>mongoose-base-backoffice-activities-monitor</module>
         <module>mongoose-base-backoffice-activities-operations</module>
         <module>mongoose-base-backoffice-masterslave</module>
@@ -24,8 +25,8 @@
         <module>mongoose-base-client-aggregates</module>
         <module>mongoose-base-client-application</module>
         <module>mongoose-base-client-busconfig</module>
-        <module>mongoose-base-client-css-java</module>
         <module>mongoose-base-client-css</module>
+        <module>mongoose-base-client-css-java</module>
         <module>mongoose-base-client-css-web</module>
         <module>mongoose-base-client-entities</module>
         <module>mongoose-base-client-i18n</module>
@@ -40,11 +41,10 @@
         <module>mongoose-base-server-application-vertx</module>
         <module>mongoose-base-server-datasource</module>
         <module>mongoose-base-server-sessioncloser</module>
-        <module>mongoose-base-server-systemmetrics-java</module>
         <module>mongoose-base-server-systemmetrics</module>
+        <module>mongoose-base-server-systemmetrics-java</module>
         <module>mongoose-base-shared-domainmodel</module>
         <module>mongoose-base-shared-entities</module>
-
     </modules>
 
 </project>

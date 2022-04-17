@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Managed by WebFX (DO NOT EDIT MANUALLY) --><module rename-to="mongoose_all_frontoffice_application_gwt">
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- File managed by WebFX (DO NOT EDIT MANUALLY) -->
+<module rename-to="mongoose_all_frontoffice_application_gwt">
 
     <!-- Configuring logging (must be in first position) -->
     <inherits name="com.google.gwt.logging.Logging"/>
@@ -11,8 +12,7 @@
     <!--===========================< webfx-kit-javafxbase-emul >============================-->
     <!-- used by webfx-kit-javafxcontrols-emul (SOURCE) -->
     <!-- used by webfx-kit-javafxgraphics-emul (SOURCE) -->
-    <!-- used by webfx-extras-visual-controls-grid (SOURCE) -->
-    <!-- used by webfx-framework-client-action (SOURCE) -->
+    <!-- used by webfx-extras-visual-controls-grid-peers-gwt (SOURCE) -->
     <!-- used by webfx-kit-javafxgraphics-peers (SOURCE) -->
     <!-- used by webfx-platform-shared-buscall (SOURCE) -->
     <source path="com/sun/javafx"/>
@@ -28,9 +28,9 @@
     <source path="javafx/event"/>
     <source path="javafx/util"/>
     <!--=========================< webfx-kit-javafxcontrols-emul >==========================-->
-    <!-- used by webfx-extras-cell (SOURCE) -->
+    <!-- used by webfx-extras-visual-controls-grid-peers-gwt (SOURCE) -->
     <!-- used by webfx-extras-webtext-controls (SOURCE) -->
-    <!-- used by webfx-framework-client-action (SOURCE) -->
+    <!-- used by webfx-framework-client-i18n (SOURCE) -->
     <!-- used by webfx-kit-javafxcontrols-registry-gwt (SOURCE) -->
     <source path="com/sun/javafx/scene/control"/>
     <source path="com/sun/javafx/scene/control/behavior"/>
@@ -41,8 +41,9 @@
     <public includes="images/checkbox/" path=""/>
     <!--=========================< webfx-kit-javafxgraphics-emul >==========================-->
     <!-- used by webfx-kit-javafxcontrols-emul (SOURCE) -->
-    <!-- used by webfx-extras-cell (SOURCE) -->
-    <!-- used by webfx-framework-client-action (SOURCE) -->
+    <!-- used by mongoose-base-client-icons (SOURCE) -->
+    <!-- used by webfx-extras-visual-controls-grid-peers-gwt (SOURCE) -->
+    <!-- used by webfx-extras-webtext-controls (SOURCE) -->
     <!-- used by webfx-kit-gwt (SOURCE) -->
     <!-- used by webfx-kit-javafxgraphics-peers (SOURCE) -->
     <source path="com/sun/javafx/application"/>
@@ -81,6 +82,7 @@
     <source path="javafx/stage"/>
     <!--=================================< elemental2-dom >=================================-->
     <!-- used by webfx-extras-visual-controls-grid-peers-gwt (SOURCE) -->
+    <!-- used by webfx-kit-gwt (SOURCE) -->
     <!-- used by webfx-kit-javafxgraphics-peers-gwt (SOURCE) -->
     <!-- used by webfx-platform-gwt-shutdown-impl (SOURCE) -->
     <!-- used by webfx-platform-gwt-uischeduler-impl (SOURCE) -->
@@ -97,11 +99,9 @@
     <!-- used by webfx-platform-gwt-storage-impl (SOURCE) -->
     <!-- used by webfx-platform-gwt-uischeduler-impl (SOURCE) -->
     <!-- used by webfx-platform-gwt-websocket-impl (SOURCE) -->
+    <!-- used by webfx-platform-gwt-windowhistory-impl (SOURCE) -->
     <!-- used by webfx-platform-gwt-windowlocation-impl (SOURCE) -->
     <inherits name="com.google.gwt.user.User"/>
-    <!--==================================< java-logging >==================================-->
-    <!-- used by webfx-platform-shared-util (SOURCE) -->
-    <inherits name="com.google.gwt.logging.Logging"/>
     <!--=================================< java-nio-emul >==================================-->
     <!-- used by webfx-kit-javafxgraphics-emul (SOURCE) -->
     <!-- used by webfx-platform-gwt-emul-javabase (SOURCE) -->
@@ -118,7 +118,7 @@
     <source path="mongoose/base/client/activity/table"/>
     <source path="mongoose/base/client/activity/themes"/>
     <!--========================< mongoose-base-client-aggregates >=========================-->
-    <!-- used by mongoose-ecommerce-client-businesslogic (SOURCE) -->
+    <!-- used by mongoose-base-client-activity (SOURCE) -->
     <source path="mongoose/base/client/aggregates/cart"/>
     <source path="mongoose/base/client/aggregates/event"/>
     <source path="mongoose/base/client/aggregates/person"/>
@@ -322,7 +322,8 @@
     <!-- used by mongoose-base-shared-entities (SOURCE) -->
     <source path="mongoose/hotel/shared/businessdata/time"/>
     <!--===============================< webfx-extras-cell >================================-->
-    <!-- used by webfx-extras-visual-base (SOURCE) -->
+    <!-- used by webfx-extras-visual-controls-grid-peers-base (SOURCE) -->
+    <!-- used by webfx-framework-client-orm-entity-controls (SOURCE) -->
     <source path="dev/webfx/extras/cell/collator"/>
     <source path="dev/webfx/extras/cell/renderer"/>
     <source path="dev/webfx/extras/cell/rowstyle"/>
@@ -330,8 +331,8 @@
     <!-- used by mongoose-event-frontoffice-activities-options (SOURCE) -->
     <source path="dev/webfx/extras/flexbox"/>
     <!--============================< webfx-extras-imagestore >=============================-->
+    <!-- used by mongoose-base-client-icons (SOURCE) -->
     <!-- used by webfx-extras-cell (SOURCE) -->
-    <!-- used by webfx-framework-client-util (SOURCE) -->
     <source path="dev/webfx/extras/imagestore"/>
     <!--===============================< webfx-extras-label >===============================-->
     <!-- used by webfx-extras-cell (SOURCE) -->
@@ -345,19 +346,20 @@
     <source path="dev/webfx/extras/materialdesign/util/layout"/>
     <source path="dev/webfx/extras/materialdesign/util/scene"/>
     <!--===============================< webfx-extras-type >================================-->
-    <!-- used by webfx-extras-visual-base (SOURCE) -->
+    <!-- used by webfx-extras-cell (SOURCE) -->
     <!-- used by webfx-framework-shared-orm-expression (SOURCE) -->
     <source path="dev/webfx/extras/type"/>
     <!--============================< webfx-extras-visual-base >============================-->
     <!-- used by webfx-extras-visual-controls-grid (SOURCE) -->
+    <!-- used by webfx-framework-client-orm-entity-controls (SOURCE) -->
     <source path="dev/webfx/extras/visual"/>
     <source path="dev/webfx/extras/visual/impl"/>
     <!--==========================< webfx-extras-visual-controls >==========================-->
     <!-- used by webfx-extras-visual-controls-grid (SOURCE) -->
     <source path="dev/webfx/extras/visual/controls"/>
     <!--=======================< webfx-extras-visual-controls-grid >========================-->
-    <!-- used by mongoose-base-client-activity (SOURCE) -->
-    <!-- used by webfx-extras-visual-controls-grid-peers-gwt (SOURCE) -->
+    <!-- used by webfx-extras-visual-controls-grid-peers-base (SOURCE) -->
+    <!-- used by webfx-framework-client-orm-entity-controls (SOURCE) -->
     <source path="dev/webfx/extras/visual/controls/grid"/>
     <!--==================< webfx-extras-visual-controls-grid-peers-gwt >===================-->
     <!-- used by mongoose-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
@@ -396,7 +398,7 @@
     <source path="dev/webfx/framework/client/activity/impl/elementals/activeproperty"/>
     <source path="dev/webfx/framework/client/activity/impl/elementals/activeproperty/impl"/>
     <!--========================< webfx-framework-client-controls >=========================-->
-    <!-- used by mongoose-base-client-activity (SOURCE) -->
+    <!-- used by webfx-framework-client-orm-entity-controls (SOURCE) -->
     <source path="dev/webfx/framework/client/ui/controls"/>
     <source path="dev/webfx/framework/client/ui/controls/alert"/>
     <source path="dev/webfx/framework/client/ui/controls/button"/>
@@ -429,7 +431,7 @@
     <source path="dev/webfx/framework/client/ui/controls/entity/selector"/>
     <source path="dev/webfx/framework/client/ui/controls/entity/sheet"/>
     <!--====================< webfx-framework-client-orm-reactive-dql >=====================-->
-    <!-- used by webfx-framework-client-orm-reactive-visual (SOURCE) -->
+    <!-- used by mongoose-base-client-entities (SOURCE) -->
     <source path="dev/webfx/framework/client/orm/reactive/call"/>
     <source path="dev/webfx/framework/client/orm/reactive/call/query"/>
     <source path="dev/webfx/framework/client/orm/reactive/call/query/push"/>
@@ -438,12 +440,12 @@
     <source path="dev/webfx/framework/client/orm/reactive/dql/statement"/>
     <source path="dev/webfx/framework/client/orm/reactive/dql/statement/conventions"/>
     <!--==================< webfx-framework-client-orm-reactive-entities >==================-->
-    <!-- used by webfx-framework-client-orm-reactive-visual (SOURCE) -->
+    <!-- used by webfx-framework-client-orm-entity-controls (SOURCE) -->
     <source path="dev/webfx/framework/client/orm/reactive/mapping/dql_to_entities"/>
     <source path="dev/webfx/framework/client/orm/reactive/mapping/entities_to_grid"/>
     <source path="dev/webfx/framework/client/orm/reactive/mapping/entities_to_objects"/>
     <!--===================< webfx-framework-client-orm-reactive-visual >===================-->
-    <!-- used by mongoose-base-client-activity (SOURCE) -->
+    <!-- used by webfx-framework-client-orm-entity-controls (SOURCE) -->
     <source path="dev/webfx/framework/client/orm/reactive/mapping/entities_to_visual"/>
     <source path="dev/webfx/framework/client/orm/reactive/mapping/entities_to_visual/conventions"/>
     <!--==========================< webfx-framework-client-push >===========================-->
@@ -615,7 +617,6 @@
     <source path="dev/webfx/kit/registry/javafxcontrols"/>
     <!--=========================< webfx-kit-javafxgraphics-peers >=========================-->
     <!-- used by webfx-kit-javafxgraphics-emul (SOURCE) -->
-    <!-- used by webfx-extras-webtext-controls (SOURCE) -->
     <!-- used by webfx-kit-javafxgraphics-registry-gwt (SOURCE) -->
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics"/>
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics/markers"/>
@@ -723,6 +724,7 @@
     <!-- used by webfx-kit-launcher (SOURCE) -->
     <!-- used by webfx-platform-gwt-boot-impl (SOURCE) -->
     <!-- used by webfx-platform-gwt-resource-impl (SOURCE) -->
+    <!-- used by webfx-platform-shared-buscall (SOURCE) -->
     <!-- used by webfx-platform-shared-serial (SOURCE) -->
     <source path="dev/webfx/platform/shared/services/boot"/>
     <source path="dev/webfx/platform/shared/services/boot/spi"/>
@@ -735,6 +737,7 @@
     <source path="dev/webfx/platform/shared/services/bus/spi/impl"/>
     <!--=========================< webfx-platform-shared-buscall >==========================-->
     <!-- used by mongoose-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
+    <!-- used by webfx-framework-shared-querypush (SOURCE) -->
     <!-- used by webfx-platform-shared-query (SOURCE) -->
     <!-- used by webfx-platform-shared-submit (SOURCE) -->
     <source path="dev/webfx/platform/shared/services/buscall"/>
@@ -757,13 +760,12 @@
     <source path="dev/webfx/platform/shared/services/datasource/spi"/>
     <source path="dev/webfx/platform/shared/services/datasource/spi/simple"/>
     <!--===========================< webfx-platform-shared-json >===========================-->
-    <!-- used by webfx-framework-client-util (SOURCE) -->
     <!-- used by webfx-framework-shared-orm-expression (SOURCE) -->
+    <!-- used by webfx-platform-client-websocket (SOURCE) -->
     <!-- used by webfx-platform-client-windowlocation (SOURCE) -->
     <!-- used by webfx-platform-gwt-json-impl (SOURCE) -->
-    <!-- used by webfx-platform-gwt-websocket-impl (SOURCE) -->
     <!-- used by webfx-platform-shared-bus (SOURCE) -->
-    <!-- used by webfx-platform-shared-serial (SOURCE) -->
+    <!-- used by webfx-platform-shared-datascope (SOURCE) -->
     <!-- used by webfx-platform-web-windowhistory-impl (SOURCE) -->
     <source path="dev/webfx/platform/shared/services/json"/>
     <source path="dev/webfx/platform/shared/services/json/parser"/>
@@ -773,12 +775,10 @@
     <source path="dev/webfx/platform/shared/services/json/spi/impl/listmap"/>
     <!--===========================< webfx-platform-shared-log >============================-->
     <!-- used by webfx-framework-shared-orm-expression (SOURCE) -->
-    <!-- used by webfx-kit-launcher (SOURCE) -->
     <!-- used by webfx-platform-gwt-log-impl (SOURCE) -->
     <!-- used by webfx-platform-gwt-uischeduler-impl (SOURCE) -->
     <!-- used by webfx-platform-shared-boot (SOURCE) -->
     <!-- used by webfx-platform-shared-bus (SOURCE) -->
-    <!-- used by webfx-platform-shared-serial (SOURCE) -->
     <!-- used by webfx-platform-web-windowhistory-impl (SOURCE) -->
     <source path="dev/webfx/platform/shared/services/log"/>
     <source path="dev/webfx/platform/shared/services/log/spi"/>
@@ -811,12 +811,10 @@
     <!-- used by mongoose-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <!-- used by webfx-platform-shared-buscall (SOURCE) -->
     <!-- used by webfx-platform-shared-datascope (SOURCE) -->
-    <!-- used by webfx-platform-shared-query (SOURCE) -->
     <source path="dev/webfx/platform/shared/services/serial"/>
     <source path="dev/webfx/platform/shared/services/serial/spi"/>
     <source path="dev/webfx/platform/shared/services/serial/spi/impl"/>
     <!--=========================< webfx-platform-shared-shutdown >=========================-->
-    <!-- used by webfx-kit-javafxgraphics-emul (SOURCE) -->
     <!-- used by webfx-platform-gwt-shutdown-impl (SOURCE) -->
     <!-- used by webfx-platform-shared-boot (SOURCE) -->
     <source path="dev/webfx/platform/shared/services/shutdown"/>
@@ -833,17 +831,12 @@
     <!-- used by mongoose-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <source path="dev/webfx/platform/shared/services/submit/spi/impl/remote"/>
     <!--===========================< webfx-platform-shared-util >===========================-->
-    <!-- used by webfx-kit-javafxgraphics-emul (SOURCE) -->
     <!-- used by webfx-framework-shared-orm-expression (SOURCE) -->
-    <!-- used by webfx-kit-javafxgraphics-peers (SOURCE) -->
     <!-- used by webfx-platform-client-storage (SOURCE) -->
-    <!-- used by webfx-platform-client-windowlocation (SOURCE) -->
-    <!-- used by webfx-platform-shared-boot (SOURCE) -->
     <!-- used by webfx-platform-shared-bus (SOURCE) -->
-    <!-- used by webfx-platform-shared-datasource (SOURCE) -->
     <!-- used by webfx-platform-shared-json (SOURCE) -->
     <!-- used by webfx-platform-shared-log (SOURCE) -->
-    <!-- used by webfx-platform-shared-resource (SOURCE) -->
+    <!-- used by webfx-platform-shared-scheduler (SOURCE) -->
     <!-- used by webfx-platform-shared-shutdown (SOURCE) -->
     <source path="dev/webfx/platform/shared/util"/>
     <source path="dev/webfx/platform/shared/util/async"/>

@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- File managed by WebFX (DO NOT EDIT MANUALLY) -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <artifactId>mongoose</artifactId>
         <groupId>org.mongoose</groupId>
+        <artifactId>mongoose</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>mongoose-event</artifactId>
 
     <packaging>pom</packaging>
 
     <modules>
-
         <module>mongoose-event-backoffice-activities-cloneevent</module>
         <module>mongoose-event-backoffice-activities-cloneevent-routing</module>
         <module>mongoose-event-backoffice-activities-events</module>
@@ -27,7 +28,6 @@
         <module>mongoose-event-frontoffice-activities-program</module>
         <module>mongoose-event-frontoffice-activities-startbooking</module>
         <module>mongoose-event-frontoffice-activities-terms</module>
-
     </modules>
 
 </project>

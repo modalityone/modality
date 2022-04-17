@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Managed by WebFX (DO NOT EDIT MANUALLY) --><module rename-to="mongoose_all_backoffice_application_gwt">
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- File managed by WebFX (DO NOT EDIT MANUALLY) -->
+<module rename-to="mongoose_all_backoffice_application_gwt">
 
     <!-- Configuring logging (must be in first position) -->
     <inherits name="com.google.gwt.logging.Logging"/>
@@ -85,6 +86,69 @@
     <!--=====================================< charba >=====================================-->
     <!-- used by webfx-extras-visual-controls-charts-peers-gwt-charba (SOURCE) -->
     <inherits name="org.pepstock.charba.Charba"/>
+    <source path="org/pepstock/charba/client"/>
+    <source path="org/pepstock/charba/client/adapters"/>
+    <source path="org/pepstock/charba/client/annotation"/>
+    <source path="org/pepstock/charba/client/annotation/callbacks"/>
+    <source path="org/pepstock/charba/client/annotation/elements"/>
+    <source path="org/pepstock/charba/client/annotation/enums"/>
+    <source path="org/pepstock/charba/client/annotation/listeners"/>
+    <source path="org/pepstock/charba/client/callbacks"/>
+    <source path="org/pepstock/charba/client/colors"/>
+    <source path="org/pepstock/charba/client/colors/tiles"/>
+    <source path="org/pepstock/charba/client/commons"/>
+    <source path="org/pepstock/charba/client/configuration"/>
+    <source path="org/pepstock/charba/client/controllers"/>
+    <source path="org/pepstock/charba/client/data"/>
+    <source path="org/pepstock/charba/client/datalabels"/>
+    <source path="org/pepstock/charba/client/datalabels/callbacks"/>
+    <source path="org/pepstock/charba/client/datalabels/enums"/>
+    <source path="org/pepstock/charba/client/datalabels/events"/>
+    <source path="org/pepstock/charba/client/defaults"/>
+    <source path="org/pepstock/charba/client/defaults/chart"/>
+    <source path="org/pepstock/charba/client/defaults/globals"/>
+    <source path="org/pepstock/charba/client/dom"/>
+    <source path="org/pepstock/charba/client/dom/elements"/>
+    <source path="org/pepstock/charba/client/dom/enums"/>
+    <source path="org/pepstock/charba/client/dom/safehtml"/>
+    <source path="org/pepstock/charba/client/enums"/>
+    <source path="org/pepstock/charba/client/events"/>
+    <source path="org/pepstock/charba/client/geo"/>
+    <source path="org/pepstock/charba/client/geo/callbacks"/>
+    <source path="org/pepstock/charba/client/geo/enums"/>
+    <source path="org/pepstock/charba/client/gradient"/>
+    <source path="org/pepstock/charba/client/gwt"/>
+    <source path="org/pepstock/charba/client/gwt/widgets"/>
+    <source path="org/pepstock/charba/client/impl/callbacks"/>
+    <source path="org/pepstock/charba/client/impl/charts"/>
+    <source path="org/pepstock/charba/client/impl/plugins"/>
+    <source path="org/pepstock/charba/client/impl/plugins/enums"/>
+    <source path="org/pepstock/charba/client/intl"/>
+    <source path="org/pepstock/charba/client/intl/enums"/>
+    <source path="org/pepstock/charba/client/items"/>
+    <source path="org/pepstock/charba/client/labels"/>
+    <source path="org/pepstock/charba/client/labels/callbacks"/>
+    <source path="org/pepstock/charba/client/labels/enums"/>
+    <source path="org/pepstock/charba/client/matrix"/>
+    <source path="org/pepstock/charba/client/matrix/callbacks"/>
+    <source path="org/pepstock/charba/client/matrix/enums"/>
+    <source path="org/pepstock/charba/client/options"/>
+    <source path="org/pepstock/charba/client/plugins"/>
+    <source path="org/pepstock/charba/client/positioner"/>
+    <source path="org/pepstock/charba/client/resources"/>
+    <source path="org/pepstock/charba/client/sankey"/>
+    <source path="org/pepstock/charba/client/sankey/callbacks"/>
+    <source path="org/pepstock/charba/client/sankey/enums"/>
+    <source path="org/pepstock/charba/client/treemap"/>
+    <source path="org/pepstock/charba/client/treemap/callbacks"/>
+    <source path="org/pepstock/charba/client/treemap/enums"/>
+    <source path="org/pepstock/charba/client/utils"/>
+    <source path="org/pepstock/charba/client/utils/toast"/>
+    <source path="org/pepstock/charba/client/utils/toast/enums"/>
+    <source path="org/pepstock/charba/client/utils/toast/handlers"/>
+    <source path="org/pepstock/charba/client/zoom"/>
+    <source path="org/pepstock/charba/client/zoom/callbacks"/>
+    <source path="org/pepstock/charba/client/zoom/enums"/>
     <!--=================================< elemental2-dom >=================================-->
     <!-- used by webfx-extras-visual-controls-grid-peers-gwt (SOURCE) -->
     <!-- used by webfx-kit-gwt (SOURCE) -->
@@ -107,9 +171,6 @@
     <!-- used by webfx-platform-gwt-windowhistory-impl (SOURCE) -->
     <!-- used by webfx-platform-gwt-windowlocation-impl (SOURCE) -->
     <inherits name="com.google.gwt.user.User"/>
-    <!--==================================< java-logging >==================================-->
-    <!-- used by webfx-platform-shared-util (SOURCE) -->
-    <inherits name="com.google.gwt.logging.Logging"/>
     <!--=================================< java-nio-emul >==================================-->
     <!-- used by webfx-kit-javafxgraphics-emul (SOURCE) -->
     <!-- used by webfx-platform-gwt-emul-javabase (SOURCE) -->
@@ -345,6 +406,10 @@
     <!--=============< mongoose-ecommerce-backoffice-operations-documentline >==============-->
     <!-- used by mongoose-crm-backoffice-bookingdetailspanel (SOURCE) -->
     <source path="mongoose/ecommerce/backoffice/operations/entities/documentline"/>
+    <!--===============< mongoose-ecommerce-backoffice-operations-moneyflow >===============-->
+    <!-- used by mongoose-ecommerce-backoffice-activities-moneyflows (SOURCE) -->
+    <source path="mongoose/ecommerce/backoffice/operations/entities/moneyaccount"/>
+    <source path="mongoose/ecommerce/backoffice/operations/entities/moneyflow"/>
     <!--=============< mongoose-ecommerce-backoffice-operations-moneytransfer >=============-->
     <!-- used by mongoose-crm-backoffice-bookingdetailspanel (SOURCE) -->
     <source path="mongoose/ecommerce/backoffice/operations/entities/moneytransfer"/>
