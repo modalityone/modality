@@ -33,6 +33,7 @@ public class MoneyAccountEditorPane extends VBox {
                 buildHeadingLabel("Money flows to"),
                 toMoneyAccountListGrid);
         gridScrollPane = new ScrollPane(gridVbox);
+        VBox.setVgrow(gridScrollPane, Priority.ALWAYS);
         showStartingMsg();
     }
 
