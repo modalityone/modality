@@ -1,5 +1,8 @@
 package mongoose.ecommerce.backoffice.activities.moneyflows;
 
+import dev.webfx.framework.client.ui.action.ActionGroup;
+import dev.webfx.framework.client.ui.action.operation.OperationActionFactoryMixin;
+import dev.webfx.framework.client.ui.controls.ControlFactoryMixin;
 import dev.webfx.kit.util.properties.Properties;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -8,6 +11,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import mongoose.base.shared.entities.MoneyFlow;
+import mongoose.ecommerce.backoffice.operations.entities.moneyflow.DeleteMoneyFlowRequest;
 
 /**
  * @author Dan Newman
@@ -23,8 +27,10 @@ public class MoneyFlowArrowView extends Pane {
     public ObjectProperty<Pane> sourceVertexProperty() { return sourceVertexProperty; }
     private final ObjectProperty<Pane> destVertexProperty = new SimpleObjectProperty<>();
     public ObjectProperty<Pane> destVertexProperty() { return destVertexProperty; }
+    private final Pane parentContainer;
 
-    public MoneyFlowArrowView(MoneyFlow moneyFlow, Pane sourceVertex, Pane destVertex) {
+    public MoneyFlowArrowView(MoneyFlow moneyFlow, Pane sourceVertex, Pane destVertex, Pane parentContainer) {
+        this.parentContainer = parentContainer;
         sourceVertexProperty.set(sourceVertex);
         destVertexProperty.set(destVertex);
         sourceVertexProperty.addListener(e -> createLines());
@@ -84,10 +90,18 @@ public class MoneyFlowArrowView extends Pane {
         arrowHeadRight.setEndY(-ARROW_HEAD_LENGTH * Math.sin(headSlopeRight));
     }
 
-    private static class ArrowLine extends Line {
+    private class ArrowLine extends Line implements ControlFactoryMixin, OperationActionFactoryMixin {
 
         public ArrowLine() {
             setStroke(Color.BLACK);
+            setStrokeWidth(3);
+            setUpContextMenu(this, this::createContextMenuActionGroup);
+        }
+
+        private ActionGroup createContextMenuActionGroup() {
+            return newActionGroup(
+                    newOperationAction(() -> new DeleteMoneyFlowRequest(moneyFlowProperty.get(), parentContainer))
+            );
         }
     }
 
