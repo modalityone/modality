@@ -56,7 +56,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
     private MoneyAccountEditorPane editorPane;
     private Pane rootPane;
     private Button addNewMoneyAccountButton;
-    private Button deleteLabel;
+    private Button deleteMoneyAccountButton;
 
     @Override
     public Node buildUi() {
@@ -94,11 +94,11 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
     }
 
     private void createDeleteLabel() {
-        deleteLabel = newButton(newOperationAction(() -> new DeleteMoneyAccountRequest(getSelectedMoneyAccount(), getMoneyFlows(), rootPane)));
-        deleteLabel.setFont(new Font(32));
-        deleteLabel.layoutXProperty().bind(Properties.combine(addNewMoneyAccountButton.layoutXProperty(), deleteLabel.widthProperty(), (x, width) -> x.doubleValue() - width.doubleValue()));
-        deleteLabel.layoutYProperty().bind(addNewMoneyAccountButton.layoutYProperty());
-        rootPane.getChildren().add(deleteLabel);
+        deleteMoneyAccountButton = newButton(newOperationAction(() -> new DeleteMoneyAccountRequest(getSelectedMoneyAccount(), getMoneyFlows(), rootPane)));
+        deleteMoneyAccountButton.setFont(new Font(32));
+        deleteMoneyAccountButton.layoutXProperty().bind(Properties.combine(addNewMoneyAccountButton.layoutXProperty(), deleteMoneyAccountButton.widthProperty(), (x, width) -> x.doubleValue() - width.doubleValue()));
+        deleteMoneyAccountButton.layoutYProperty().bind(addNewMoneyAccountButton.layoutYProperty());
+        rootPane.getChildren().add(deleteMoneyAccountButton);
     }
 
     private MoneyAccount getSelectedMoneyAccount() {
