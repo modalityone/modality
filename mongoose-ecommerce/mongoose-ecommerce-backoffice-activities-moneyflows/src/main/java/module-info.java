@@ -3,33 +3,35 @@
 module mongoose.ecommerce.backoffice.activities.moneyflows {
 
     // Direct dependencies modules
-    requires javafx.graphics;
+    requires java.base;
+    requires javafx.base;
     requires javafx.controls;
+    requires javafx.graphics;
+    requires mongoose.base.backoffice.masterslave;
     requires mongoose.base.client.activity;
     requires mongoose.base.client.util;
+    requires mongoose.base.shared.domainmodel;
+    requires mongoose.base.shared.entities;
+    requires mongoose.ecommerce.backoffice.operations.moneyflow;
+    requires webfx.extras.visual.base;
     requires webfx.framework.client.action;
     requires webfx.framework.client.activity;
-    requires webfx.framework.client.orm.domainmodel.activity;
-    requires webfx.framework.client.uirouter;
-    requires webfx.framework.shared.operation;
-    requires webfx.framework.shared.router;
-    requires webfx.platform.client.windowhistory;
-    requires webfx.platform.shared.util;
-    requires webfx.kit.util;
-    requires webfx.framework.shared.orm.entity;
-    requires webfx.framework.client.orm.reactive.visual;
-    requires mongoose.base.shared.domainmodel;
-    requires webfx.framework.shared.orm.dql;
-    requires mongoose.base.backoffice.masterslave;
-    requires webfx.extras.visual.base;
-    requires webfx.framework.client.orm.reactive.dql;
-    requires mongoose.base.shared.entities;
-    requires webfx.framework.client.orm.reactive.entities;
-    requires webfx.framework.client.orm.entity.controls;
-    requires webfx.platform.shared.submit;
     requires webfx.framework.client.controls;
     requires webfx.framework.client.operationaction;
-    requires mongoose.ecommerce.backoffice.operations.moneyflow;
+    requires webfx.framework.client.orm.domainmodel.activity;
+    requires webfx.framework.client.orm.entity.controls;
+    requires webfx.framework.client.orm.reactive.dql;
+    requires webfx.framework.client.orm.reactive.entities;
+    requires webfx.framework.client.orm.reactive.visual;
+    requires webfx.framework.client.uirouter;
+    requires webfx.framework.shared.operation;
+    requires webfx.framework.shared.orm.dql;
+    requires webfx.framework.shared.orm.entity;
+    requires webfx.framework.shared.router;
+    requires webfx.kit.util;
+    requires webfx.platform.client.windowhistory;
+    requires webfx.platform.shared.submit;
+    requires webfx.platform.shared.util;
 
     // Exported packages
     exports mongoose.ecommerce.backoffice.activities.moneyflows;

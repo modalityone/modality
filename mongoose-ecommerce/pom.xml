@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- File managed by WebFX (DO NOT EDIT MANUALLY) -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <artifactId>mongoose</artifactId>
         <groupId>org.mongoose</groupId>
+        <artifactId>mongoose</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>mongoose-ecommerce</artifactId>
 
     <packaging>pom</packaging>
 
     <modules>
-
         <module>mongoose-ecommerce-backoffice-activities-bookings</module>
         <module>mongoose-ecommerce-backoffice-activities-income</module>
         <module>mongoose-ecommerce-backoffice-activities-moneyflows</module>
         <module>mongoose-ecommerce-backoffice-activities-payments</module>
         <module>mongoose-ecommerce-backoffice-activities-statements</module>
         <module>mongoose-ecommerce-backoffice-activities-statistics</module>
-        <module>mongoose-ecommerce-backoffice-operations-documentline</module>
         <module>mongoose-ecommerce-backoffice-operations-document</module>
+        <module>mongoose-ecommerce-backoffice-operations-documentline</module>
         <module>mongoose-ecommerce-backoffice-operations-moneyflow</module>
         <module>mongoose-ecommerce-backoffice-operations-moneytransfer</module>
         <module>mongoose-ecommerce-client-bookingoptionspanel</module>
@@ -34,7 +35,6 @@
         <module>mongoose-ecommerce-frontoffice-activities-payment</module>
         <module>mongoose-ecommerce-frontoffice-activities-person</module>
         <module>mongoose-ecommerce-frontoffice-activities-summary</module>
-
     </modules>
 
 </project>

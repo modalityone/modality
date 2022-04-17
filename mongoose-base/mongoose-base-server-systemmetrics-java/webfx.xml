@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project>
 
     <exported-packages>
@@ -12,15 +12,5 @@
     <dependencies>
         <used-by-source-modules/>
     </dependencies>
-
-    <libraries>
-
-        <library name="jdk-management">
-            <exported-packages>
-                <package>com.sun.management</package>
-            </exported-packages>
-        </library>
-
-    </libraries>
 
 </project>

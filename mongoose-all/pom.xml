@@ -1,30 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- File managed by WebFX (DO NOT EDIT MANUALLY) -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <artifactId>mongoose</artifactId>
         <groupId>org.mongoose</groupId>
+        <artifactId>mongoose</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>mongoose-all</artifactId>
 
     <packaging>pom</packaging>
 
     <modules>
-
         <module>mongoose-all-backoffice-application</module>
-        <module>mongoose-all-backoffice-application-openjfx</module>
-        <module>mongoose-all-backoffice-application-gwt</module>
         <module>mongoose-all-backoffice-application-gluon</module>
-
+        <module>mongoose-all-backoffice-application-gwt</module>
+        <module>mongoose-all-backoffice-application-openjfx</module>
         <module>mongoose-all-frontoffice-application</module>
-        <module>mongoose-all-frontoffice-application-openjfx</module>
-        <module>mongoose-all-frontoffice-application-gwt</module>
         <module>mongoose-all-frontoffice-application-gluon</module>
-
+        <module>mongoose-all-frontoffice-application-gwt</module>
+        <module>mongoose-all-frontoffice-application-openjfx</module>
     </modules>
 
 </project>

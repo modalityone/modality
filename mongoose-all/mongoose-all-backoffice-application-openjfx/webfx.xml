@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project executable="true">
 
     <exported-packages>
@@ -11,5 +11,14 @@
             <undiscovered-used-by-source-module>webfx-platform-shared-util</undiscovered-used-by-source-module>
         </used-by-source-modules>
     </dependencies>
+
+    <maven-pom-manual>
+        <!--
+        <properties>
+            <plugin.javapackager.name>MongooseBackOffice</plugin.javapackager.name>
+            <plugin.javapackager.displayName>Mongoose Back-Office</plugin.javapackager.displayName>
+        </properties>
+        -->
+    </maven-pom-manual>
 
 </project>

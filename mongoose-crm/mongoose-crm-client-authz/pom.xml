@@ -1,65 +1,68 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- File managed by WebFX (DO NOT EDIT MANUALLY) -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <artifactId>mongoose-crm</artifactId>
         <groupId>org.mongoose</groupId>
+        <artifactId>mongoose-crm</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>mongoose-crm-client-authz</artifactId>
 
-
-    <dependencies> <!-- Dependencies managed by WebFX (DO NOT EDIT MANUALLY) -->
+    <dependencies>
 
         <dependency>
             <groupId>org.mongoose</groupId>
             <artifactId>mongoose-crm-client-authn</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
-    
+
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-framework-shared-authz</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
-    
+
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-framework-shared-orm-datasourcemodelservice</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
-    
+
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-framework-shared-orm-domainmodel</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
-    
+
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-framework-shared-orm-entity</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
-    
+
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-framework-shared-router</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
-    
+
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-shared-log</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
-    
+
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-shared-util</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
-    
+
     </dependencies>
 
 </project>

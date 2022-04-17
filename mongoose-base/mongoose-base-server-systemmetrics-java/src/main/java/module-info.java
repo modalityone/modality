@@ -3,7 +3,6 @@
 module mongoose.base.server.systemmetrics.java {
 
     // Direct dependencies modules
-    requires java.base;
     requires jdk.management;
     requires mongoose.base.server.systemmetrics;
     requires mongoose.base.shared.entities;
