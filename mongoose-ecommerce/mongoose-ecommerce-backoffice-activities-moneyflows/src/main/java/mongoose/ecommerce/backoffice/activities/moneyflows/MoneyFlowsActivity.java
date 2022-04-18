@@ -33,6 +33,7 @@ import mongoose.base.shared.entities.MoneyFlow;
 import mongoose.base.shared.entities.Organization;
 import mongoose.ecommerce.backoffice.operations.entities.moneyaccount.AddNewMoneyAccountRequest;
 import mongoose.ecommerce.backoffice.operations.entities.moneyaccount.DeleteMoneyAccountRequest;
+import mongoose.ecommerce.backoffice.operations.entities.moneyaccount.EditMoneyAccountRequest;
 import mongoose.ecommerce.backoffice.operations.entities.moneyflow.DeleteMoneyFlowRequest;
 
 import java.util.List;
@@ -103,6 +104,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
 
     private ActionGroup createMoneyAccountTableContextMenuActionGroup() {
         return newActionGroup(
+                newOperationAction(() -> new EditMoneyAccountRequest(graph.selectedMoneyAccount().get(), moneyAccountTableContainer)),
                 newOperationAction(() -> new DeleteMoneyAccountRequest(graph.selectedMoneyAccount().get(), getMoneyFlows(), moneyAccountTableContainer))
         );
     }
