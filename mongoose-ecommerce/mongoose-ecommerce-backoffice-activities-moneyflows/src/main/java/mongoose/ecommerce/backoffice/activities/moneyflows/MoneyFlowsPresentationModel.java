@@ -1,6 +1,7 @@
 package mongoose.ecommerce.backoffice.activities.moneyflows;
 
 import dev.webfx.extras.visual.VisualResult;
+import dev.webfx.extras.visual.VisualSelection;
 import dev.webfx.framework.client.orm.reactive.dql.statement.conventions.HasSelectedMasterProperty;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualResultProperty;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
@@ -12,18 +13,17 @@ import mongoose.base.shared.entities.MoneyAccount;
 /**
  * @author Dan Newman
  */
-public class MoneyFlowsPresentationModel extends EventDependentGenericTablePresentationModel implements
-        HasGroupVisualResultProperty,
-        HasMasterVisualResultProperty,
-        HasSelectedMasterProperty<MoneyAccount> {
+public class MoneyFlowsPresentationModel extends EventDependentGenericTablePresentationModel {
 
-    private final ObjectProperty<VisualResult> groupVisualResultProperty = new SimpleObjectProperty<>();
-    @Override public ObjectProperty<VisualResult> groupVisualResultProperty() { return groupVisualResultProperty; }
+    private final ObjectProperty<VisualResult> moneyAccountsVisualResultProperty = new SimpleObjectProperty<>();
+    public ObjectProperty<VisualResult> moneyAccountsVisualResultProperty() { return moneyAccountsVisualResultProperty; }
 
-    private final ObjectProperty<VisualResult> masterVisualResultProperty = new SimpleObjectProperty<>();
-    @Override public ObjectProperty<VisualResult> masterVisualResultProperty() { return masterVisualResultProperty; }
+    private final ObjectProperty<VisualSelection> moneyAccountsVisualSelectionProperty = new SimpleObjectProperty<>();
+    public ObjectProperty<VisualSelection> moneyAccountsVisualSelectionProperty() { return moneyAccountsVisualSelectionProperty; }
 
-    private final ObjectProperty<MoneyAccount> selectedMasterProperty = new SimpleObjectProperty<>();
-    @Override public ObjectProperty<MoneyAccount> selectedMasterProperty() { return selectedMasterProperty; }
+    private final ObjectProperty<VisualResult> moneyFlowsVisualResultProperty = new SimpleObjectProperty<>();
+    public ObjectProperty<VisualResult> moneyFlowsVisualResultProperty() { return moneyFlowsVisualResultProperty; }
 
+    private final ObjectProperty<VisualSelection> moneyFlowsVisualSelectionProperty = new SimpleObjectProperty<>();
+    public ObjectProperty<VisualSelection> moneyFlowsVisualSelectionProperty() { return moneyFlowsVisualSelectionProperty; }
 }
