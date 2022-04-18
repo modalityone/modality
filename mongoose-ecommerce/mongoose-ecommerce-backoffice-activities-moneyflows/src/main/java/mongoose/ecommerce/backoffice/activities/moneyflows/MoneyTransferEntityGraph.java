@@ -6,6 +6,8 @@ import dev.webfx.framework.client.ui.controls.ControlFactoryMixin;
 import dev.webfx.kit.util.properties.Properties;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -46,6 +48,14 @@ public class MoneyTransferEntityGraph extends Pane implements ControlFactoryMixi
 			@Override
 			public void onChanged(Change<? extends MoneyFlowArrowView> c) {
 				updateLayout();
+			}
+		});
+		selectedMoneyFlow.addListener(new ChangeListener<MoneyFlow>() {
+			@Override
+			public void changed(ObservableValue<? extends MoneyFlow> observable, MoneyFlow oldValue, MoneyFlow newValue) {
+				moneyFlowArrowViews().forEach(arrow -> {
+					arrow.setHighlighted(newValue != null && newValue.equals(arrow.moneyFlowProperty().get()));
+				});
 			}
 		});
 	}
