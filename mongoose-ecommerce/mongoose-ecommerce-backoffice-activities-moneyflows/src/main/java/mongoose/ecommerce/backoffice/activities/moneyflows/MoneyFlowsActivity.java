@@ -23,7 +23,6 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
-import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilder;
 import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
 import mongoose.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
 import mongoose.base.shared.domainmodel.functions.AbcNames;
@@ -55,7 +54,6 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
     private ReactiveVisualMapper<MoneyAccount> masterVisualMapper;
     private ReactiveVisualMapper<MoneyFlow> moneyFlowMasterVisualMapper;
     private MoneyAccountEditorPane editorPane;
-    //private Pane rootPane;
     private Button addNewMoneyAccountButton;
     private Button deleteMoneyAccountButton;
 
@@ -76,12 +74,6 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         editorPane = new MoneyAccountEditorPane(graph.moneyAccountPanes(), graph.moneyFlowArrowViews());
         HBox editorAndGraph = new HBox(editorPane, graph);
         graph.prefWidthProperty().bind(Properties.combine(editorAndGraph.widthProperty(), editorPane.widthProperty(), (parentWidth, editorWidth) -> parentWidth.doubleValue() - editorWidth.doubleValue()));
-        //VBox root = new VBox(table, editorAndGraph);
-        //table.prefHeightProperty().bind(Properties.compute(root.heightProperty(), height -> height.doubleValue() * 0.3));
-        //graph.prefHeightProperty().bind(Properties.compute(root.heightProperty(), height -> height.doubleValue() * 0.7));
-        /*rootPane = new Pane(root);
-        root.prefWidthProperty().bind(rootPane.widthProperty());
-        root.prefHeightProperty().bind(rootPane.heightProperty());*/
 
         //createAddNewMoneyAccountButton();
         //createDeleteLabel();
@@ -140,7 +132,15 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                 .start();
 
         moneyFlowMasterVisualMapper = ReactiveVisualMapper.<MoneyFlow>createPushReactiveChain(this)
-                .always("{class: 'MoneyFlow', alias: 'mf', fields: 'fromMoneyAccount,toMoneyAccount'}")
+                .always("{class: 'MoneyFlow', alias: 'mf'}")
+                .setEntityColumns("[" +
+                        "{label: 'From', expression: 'fromMoneyAccount'}," +
+                        "{label: 'To', expression: 'toMoneyAccount'}," +
+                        "{label: 'Method', expression: 'method'}," +
+                        "{label: 'Positive Amounts', expression: 'positiveAmounts'}," +
+                        "{label: 'Negative Amounts', expression: 'negativeAmounts'}," +
+                        //"{label: 'Auto Transfer Time', expression: '[autoTransferTime]'}," +
+                        "]")
                 .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
