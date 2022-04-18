@@ -1,5 +1,7 @@
 package mongoose.ecommerce.backoffice.activities.moneyflows;
 
+import dev.webfx.extras.visual.VisualColumn;
+import dev.webfx.extras.visual.VisualSelection;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.IndividualEntityToObjectMapper;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.ReactiveObjectsMapper;
@@ -67,9 +69,14 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         moneyFlowTable.visualResultProperty().bind(pm.moneyFlowsVisualResultProperty());
         moneyFlowTable.visualSelectionProperty().bindBidirectional(pm.moneyFlowsVisualSelectionProperty());
 
-        pm.moneyAccountsVisualResultProperty().addListener(e -> System.out.println("1111"));
-        pm.moneyFlowsVisualResultProperty().addListener(e -> System.out.println("222222"));
-
+        graph.selectedMoneyAccount().addListener(e -> {
+            MoneyAccount selectedEntity = graph.selectedMoneyAccount().get();
+            int rowIndex = masterVisualMapper.getEntities().indexOf(selectedEntity);
+            if (rowIndex != -1) {
+                VisualSelection value = VisualSelection.createSingleRowSelection(rowIndex);
+                pm.moneyAccountsVisualSelectionProperty().set(value);
+            }
+        });
 
         editorPane = new MoneyAccountEditorPane(graph.moneyAccountPanes(), graph.moneyFlowArrowViews());
         HBox editorAndGraph = new HBox(editorPane, graph);
@@ -121,7 +128,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
     protected void startLogic() {
         // Setting up the master mapper that build the content displayed in the master view
         masterVisualMapper = ReactiveVisualMapper.<MoneyAccount>createPushReactiveChain(this)
-                .always("{class: 'MoneyAccount', alias: 'ma', columns: 'name,closed,currency,event,gatewayCompany,type', orderBy: 'name desc'}")
+                .always("{class: 'MoneyAccount', alias: 'ma', columns: 'name,closed,currency,event,gatewayCompany,type', fields: 'id', orderBy: 'name desc'}")
                 .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
                 .ifTrimNotEmpty(pm.searchTextProperty(), s -> where("name like ?", AbcNames.evaluate(s, true)))
                 .applyDomainModelRowStyle() // Colorizing the rows
