@@ -87,8 +87,8 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         HBox editorAndGraph = new HBox(editorPane, graph);
         graph.prefWidthProperty().bind(Properties.combine(editorAndGraph.widthProperty(), editorPane.widthProperty(), (parentWidth, editorWidth) -> parentWidth.doubleValue() - editorWidth.doubleValue()));
 
-        //createAddNewMoneyAccountButton();
-        //createDeleteLabel();
+        createAddNewMoneyAccountButton();
+        createDeleteLabel();
 
         TabPane tabPane = new TabPane();
         tabPane.getTabs().add(new Tab("Graph", graph));
