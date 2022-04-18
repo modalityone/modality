@@ -57,6 +57,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
     private ReactiveVisualMapper<MoneyAccount> masterVisualMapper;
     private ReactiveVisualMapper<MoneyFlow> moneyFlowMasterVisualMapper;
     private MoneyAccountEditorPane editorPane;
+    private Pane moneyAccountTableContainer;
     private Pane moneyFlowTableContainer;
     private Button addNewMoneyAccountButton;
     private Button deleteMoneyAccountButton;
@@ -66,6 +67,9 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         VisualGrid moneyAccountTable = new VisualGrid();
         moneyAccountTable.visualResultProperty().bind(pm.moneyAccountsVisualResultProperty());
         moneyAccountTable.visualSelectionProperty().bindBidirectional(pm.moneyAccountsVisualSelectionProperty());
+        moneyAccountTable.prefWidthProperty().bind(graph.widthProperty());
+        moneyAccountTableContainer = new HBox(moneyAccountTable);
+        setUpContextMenu(moneyAccountTable, this::createMoneyAccountTableContextMenuActionGroup);
 
         VisualGrid moneyFlowTable = new VisualGrid();
         moneyFlowTable.visualResultProperty().bind(pm.moneyFlowsVisualResultProperty());
@@ -92,9 +96,15 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
 
         TabPane tabPane = new TabPane();
         tabPane.getTabs().add(new Tab("Graph", graph));
-        tabPane.getTabs().add(new Tab("Money Account Table", moneyAccountTable));
+        tabPane.getTabs().add(new Tab("Money Account Table", moneyAccountTableContainer));
         tabPane.getTabs().add(new Tab("Money Flow Table", moneyFlowTableContainer));
         return tabPane;
+    }
+
+    private ActionGroup createMoneyAccountTableContextMenuActionGroup() {
+        return newActionGroup(
+                newOperationAction(() -> new DeleteMoneyAccountRequest(graph.selectedMoneyAccount().get(), getMoneyFlows(), moneyAccountTableContainer))
+        );
     }
 
     private ActionGroup createMoneyFlowTableContextMenuActionGroup() {
