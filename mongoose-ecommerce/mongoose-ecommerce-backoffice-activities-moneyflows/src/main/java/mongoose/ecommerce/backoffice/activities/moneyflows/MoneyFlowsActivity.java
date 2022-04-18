@@ -58,7 +58,6 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
 
     private ReactiveVisualMapper<MoneyAccount> moneyAccountVisualMapper;
     private ReactiveVisualMapper<MoneyFlow> moneyFlowVisualMapper;
-    private MoneyAccountEditorPane editorPane;
     private Pane moneyAccountTableContainer;
     private Pane moneyFlowTableContainer;
     private Button addNewMoneyAccountButton;
@@ -88,10 +87,6 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                 pm.moneyAccountsVisualSelectionProperty().set(value);
             }
         });
-
-        editorPane = new MoneyAccountEditorPane(graph.moneyAccountPanes(), graph.moneyFlowArrowViews());
-        HBox editorAndGraph = new HBox(editorPane, graph);
-        graph.prefWidthProperty().bind(Properties.combine(editorAndGraph.widthProperty(), editorPane.widthProperty(), (parentWidth, editorWidth) -> parentWidth.doubleValue() - editorWidth.doubleValue()));
 
         createAddNewMoneyAccountButton();
         createDeleteLabel();
@@ -269,7 +264,6 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
 
         private void selectMoneyAccount(MoneyAccount moneyAccount) {
             graph.selectedMoneyAccount().set(moneyAccount);
-            editorPane.edit(moneyAccount);
         }
 
         @Override
