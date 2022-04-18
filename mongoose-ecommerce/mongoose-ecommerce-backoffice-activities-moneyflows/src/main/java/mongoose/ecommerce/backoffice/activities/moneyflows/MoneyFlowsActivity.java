@@ -164,13 +164,13 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                 .start();
 
         moneyFlowVisualMapper = ReactiveVisualMapper.<MoneyFlow>createPushReactiveChain(this)
-                .always("{class: 'MoneyFlow', alias: 'mf'}")
+                .always("{class: 'MoneyFlow', alias: 'mf', fields: 'organization'}")
                 .setEntityColumns("[" +
                         "{label: 'From', expression: 'fromMoneyAccount'}," +
                         "{label: 'To', expression: 'toMoneyAccount'}," +
                         "{label: 'Method', expression: 'method'}," +
                         "{label: 'Positive Amounts', expression: 'positiveAmounts'}," +
-                        "{label: 'Negative Amounts', expression: 'negativeAmounts'}," +
+                        "{label: 'Negative Amounts', expression: 'negativeAmounts'}" +
                         //"{label: 'Auto Transfer Time', expression: '[autoTransferTime]'}," +
                         "]")
                 .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))

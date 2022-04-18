@@ -12,7 +12,15 @@ final class EditMoneyFlowExecutor {
     }
 
     private static Future<Void> execute(MoneyFlow moneyFlow, Pane parentContainer) {
-        EntityPropertiesSheet.editEntity(moneyFlow, "fromMoneyAccount,toMoneyAccount,method,positiveAmounts,negativeAmounts", parentContainer);
+        Object organizationPk = moneyFlow.getOrganizationId().getPrimaryKey();
+        String expressionColumns = "[" +
+                "{expression: `fromMoneyAccount`, foreignWhere: 'organization=" + organizationPk + "'}," +
+                "{expression: `toMoneyAccount`, foreignWhere: 'organization=" + organizationPk + "'}," +
+                "{expression: `method`, foreignWhere: '1=1'}," +
+                "`positiveAmounts`," +
+                "`negativeAmounts`" +
+                "]";
+        EntityPropertiesSheet.editEntity(moneyFlow, expressionColumns, parentContainer);
         return Future.succeededFuture();
     }
 }
