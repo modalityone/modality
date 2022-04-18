@@ -56,8 +56,8 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         return pm;
     }
 
-    private ReactiveVisualMapper<MoneyAccount> masterVisualMapper;
-    private ReactiveVisualMapper<MoneyFlow> moneyFlowMasterVisualMapper;
+    private ReactiveVisualMapper<MoneyAccount> moneyAccountVisualMapper;
+    private ReactiveVisualMapper<MoneyFlow> moneyFlowVisualMapper;
     private MoneyAccountEditorPane editorPane;
     private Pane moneyAccountTableContainer;
     private Pane moneyFlowTableContainer;
@@ -82,7 +82,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
 
         graph.selectedMoneyAccount().addListener(e -> {
             MoneyAccount selectedEntity = graph.selectedMoneyAccount().get();
-            int rowIndex = masterVisualMapper.getEntities().indexOf(selectedEntity);
+            int rowIndex = moneyAccountVisualMapper.getEntities().indexOf(selectedEntity);
             if (rowIndex != -1) {
                 VisualSelection value = VisualSelection.createSingleRowSelection(rowIndex);
                 pm.moneyAccountsVisualSelectionProperty().set(value);
@@ -127,7 +127,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
 
     private Organization getOrganization() {
         Object organizationId = getOrganizationId();
-        EntityStore entityStore = EntityStore.createAbove(masterVisualMapper.getStore());
+        EntityStore entityStore = EntityStore.createAbove(moneyAccountVisualMapper.getStore());
         return entityStore.getEntity(Organization.class, organizationId);
     }
 
@@ -152,7 +152,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
     @Override
     protected void startLogic() {
         // Setting up the master mapper that build the content displayed in the master view
-        masterVisualMapper = ReactiveVisualMapper.<MoneyAccount>createPushReactiveChain(this)
+        moneyAccountVisualMapper = ReactiveVisualMapper.<MoneyAccount>createPushReactiveChain(this)
                 .always("{class: 'MoneyAccount', alias: 'ma', columns: 'name,closed,currency,event,gatewayCompany,type', fields: 'id', orderBy: 'name desc'}")
                 .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
                 .ifTrimNotEmpty(pm.searchTextProperty(), s -> where("name like ?", AbcNames.evaluate(s, true)))
@@ -163,7 +163,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                 .setSelectedEntityHandler(entity -> graph.selectedMoneyAccount().set(entity))
                 .start();
 
-        moneyFlowMasterVisualMapper = ReactiveVisualMapper.<MoneyFlow>createPushReactiveChain(this)
+        moneyFlowVisualMapper = ReactiveVisualMapper.<MoneyFlow>createPushReactiveChain(this)
                 .always("{class: 'MoneyFlow', alias: 'mf'}")
                 .setEntityColumns("[" +
                         "{label: 'From', expression: 'fromMoneyAccount'}," +
@@ -185,7 +185,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                 .always("{class: 'MoneyAccount', alias: 'ma', fields: 'name,type,organization'}")
                 .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
                 .setIndividualEntityToObjectMapperFactory(MoneyAccountToPaneMapper::new)
-                .setStore(masterVisualMapper.getStore())
+                .setStore(moneyAccountVisualMapper.getStore())
                 .storeMappedObjectsInto(graph.moneyAccountPanes())
                 .start();
 
@@ -193,7 +193,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                 .always("{class: 'MoneyFlow', alias: 'mf', fields: 'fromMoneyAccount,toMoneyAccount'}")
                 .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
                 .setIndividualEntityToObjectMapperFactory(graph::newMoneyFlowToArrowMapper)
-                .setStore(masterVisualMapper.getStore())
+                .setStore(moneyAccountVisualMapper.getStore())
                 .storeMappedObjectsInto(graph.moneyFlowArrowViews())
                 .start();
     }
@@ -320,8 +320,8 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
 
     @Override
     protected void refreshDataOnActive() {
-        masterVisualMapper.refreshWhenActive();
-        moneyFlowMasterVisualMapper.refreshWhenActive();
+        moneyAccountVisualMapper.refreshWhenActive();
+        moneyFlowVisualMapper.refreshWhenActive();
     }
 
     @Override
