@@ -1,5 +1,6 @@
 package mongoose.ecommerce.backoffice.activities.moneyflows;
 
+import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.IndividualEntityToObjectMapper;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.ReactiveObjectsMapper;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
@@ -14,13 +15,13 @@ import dev.webfx.platform.shared.services.submit.SubmitArgument;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilder;
 import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
@@ -51,40 +52,53 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         return pm;
     }
 
-    private ConventionalUiBuilder ui;
     private ReactiveVisualMapper<MoneyAccount> masterVisualMapper;
+    private ReactiveVisualMapper<MoneyFlow> moneyFlowMasterVisualMapper;
     private MoneyAccountEditorPane editorPane;
-    private Pane rootPane;
+    //private Pane rootPane;
     private Button addNewMoneyAccountButton;
     private Button deleteMoneyAccountButton;
 
     @Override
     public Node buildUi() {
-        ui = createAndBindGroupMasterSlaveViewWithFilterSearchBar(pm, "bookings", "MoneyAccount");
-        Pane table = ui.buildUi();
+        VisualGrid moneyAccountTable = new VisualGrid();
+        moneyAccountTable.visualResultProperty().bind(pm.moneyAccountsVisualResultProperty());
+        moneyAccountTable.visualSelectionProperty().bindBidirectional(pm.moneyAccountsVisualSelectionProperty());
+
+        VisualGrid moneyFlowTable = new VisualGrid();
+        moneyFlowTable.visualResultProperty().bind(pm.moneyFlowsVisualResultProperty());
+        moneyFlowTable.visualSelectionProperty().bindBidirectional(pm.moneyFlowsVisualSelectionProperty());
+
+        pm.moneyAccountsVisualResultProperty().addListener(e -> System.out.println("1111"));
+        pm.moneyFlowsVisualResultProperty().addListener(e -> System.out.println("222222"));
+
+
         editorPane = new MoneyAccountEditorPane(graph.moneyAccountPanes(), graph.moneyFlowArrowViews());
         HBox editorAndGraph = new HBox(editorPane, graph);
         graph.prefWidthProperty().bind(Properties.combine(editorAndGraph.widthProperty(), editorPane.widthProperty(), (parentWidth, editorWidth) -> parentWidth.doubleValue() - editorWidth.doubleValue()));
-        VBox root = new VBox(table, editorAndGraph);
-        table.prefHeightProperty().bind(Properties.compute(root.heightProperty(), height -> height.doubleValue() * 0.3));
-        graph.prefHeightProperty().bind(Properties.compute(root.heightProperty(), height -> height.doubleValue() * 0.7));
-        pm.selectedMasterProperty().addListener(e -> updateSelectedEntity());
-        rootPane = new Pane(root);
+        //VBox root = new VBox(table, editorAndGraph);
+        //table.prefHeightProperty().bind(Properties.compute(root.heightProperty(), height -> height.doubleValue() * 0.3));
+        //graph.prefHeightProperty().bind(Properties.compute(root.heightProperty(), height -> height.doubleValue() * 0.7));
+        /*rootPane = new Pane(root);
         root.prefWidthProperty().bind(rootPane.widthProperty());
-        root.prefHeightProperty().bind(rootPane.heightProperty());
+        root.prefHeightProperty().bind(rootPane.heightProperty());*/
 
-        createAddNewMoneyAccountButton();
-        createDeleteLabel();
+        //createAddNewMoneyAccountButton();
+        //createDeleteLabel();
 
-        return rootPane;
+        TabPane tabPane = new TabPane();
+        tabPane.getTabs().add(new Tab("Graph", graph));
+        tabPane.getTabs().add(new Tab("Money Account Table", moneyAccountTable));
+        tabPane.getTabs().add(new Tab("Money Flow Table", moneyFlowTable));
+        return tabPane;
     }
 
     private void createAddNewMoneyAccountButton() {
-        addNewMoneyAccountButton = newButton(newOperationAction(() -> new AddNewMoneyAccountRequest(getOrganization(), rootPane)));
+        addNewMoneyAccountButton = newButton(newOperationAction(() -> new AddNewMoneyAccountRequest(getOrganization(), graph)));
         addNewMoneyAccountButton.setFont(new Font(32));
-        addNewMoneyAccountButton.layoutXProperty().bind(Properties.combine(rootPane.widthProperty(), addNewMoneyAccountButton.widthProperty(), (nodeWidth, buttonWidth) -> nodeWidth.doubleValue() - buttonWidth.doubleValue()));
-        addNewMoneyAccountButton.layoutYProperty().bind(Properties.combine(rootPane.heightProperty(), addNewMoneyAccountButton.heightProperty(), (nodeHeight, buttonHeight) -> nodeHeight.doubleValue() - buttonHeight.doubleValue()));
-        rootPane.getChildren().add(addNewMoneyAccountButton);
+        addNewMoneyAccountButton.layoutXProperty().bind(Properties.combine(graph.widthProperty(), addNewMoneyAccountButton.widthProperty(), (nodeWidth, buttonWidth) -> nodeWidth.doubleValue() - buttonWidth.doubleValue()));
+        addNewMoneyAccountButton.layoutYProperty().bind(Properties.combine(graph.heightProperty(), addNewMoneyAccountButton.heightProperty(), (nodeHeight, buttonHeight) -> nodeHeight.doubleValue() - buttonHeight.doubleValue()));
+        graph.getChildren().add(addNewMoneyAccountButton);
     }
 
     private Organization getOrganization() {
@@ -94,11 +108,11 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
     }
 
     private void createDeleteLabel() {
-        deleteMoneyAccountButton = newButton(newOperationAction(() -> new DeleteMoneyAccountRequest(getSelectedMoneyAccount(), getMoneyFlows(), rootPane)));
+        deleteMoneyAccountButton = newButton(newOperationAction(() -> new DeleteMoneyAccountRequest(getSelectedMoneyAccount(), getMoneyFlows(), graph)));
         deleteMoneyAccountButton.setFont(new Font(32));
         deleteMoneyAccountButton.layoutXProperty().bind(Properties.combine(addNewMoneyAccountButton.layoutXProperty(), deleteMoneyAccountButton.widthProperty(), (x, width) -> x.doubleValue() - width.doubleValue()));
         deleteMoneyAccountButton.layoutYProperty().bind(addNewMoneyAccountButton.layoutYProperty());
-        rootPane.getChildren().add(deleteMoneyAccountButton);
+        graph.getChildren().add(deleteMoneyAccountButton);
     }
 
     private MoneyAccount getSelectedMoneyAccount() {
@@ -111,20 +125,27 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                 .collect(Collectors.toList());
     }
 
-    private void updateSelectedEntity() {
-        System.out.println("selectedEntity = " + pm.selectedMasterProperty().get());
-        //graph.setSelectedEntity(pm.selectedMasterProperty().get());
-    }
-
     @Override
     protected void startLogic() {
         // Setting up the master mapper that build the content displayed in the master view
-        masterVisualMapper = ReactiveVisualMapper.<MoneyAccount>createMasterPushReactiveChain(this, pm)
-                .always("{class: 'MoneyAccount', alias: 'ma', columns: 'name,type', orderBy: 'name desc'}")
+        masterVisualMapper = ReactiveVisualMapper.<MoneyAccount>createPushReactiveChain(this)
+                .always("{class: 'MoneyAccount', alias: 'ma', columns: 'name,closed,currency,event,gatewayCompany,type', orderBy: 'name desc'}")
                 .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
                 .ifTrimNotEmpty(pm.searchTextProperty(), s -> where("name like ?", AbcNames.evaluate(s, true)))
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
+                .visualizeResultInto(pm.moneyAccountsVisualResultProperty())
+                .setVisualSelectionProperty(pm.moneyAccountsVisualSelectionProperty())
+                .setSelectedEntityHandler(entity -> graph.selectedMoneyAccount().set(entity))
+                .start();
+
+        moneyFlowMasterVisualMapper = ReactiveVisualMapper.<MoneyFlow>createPushReactiveChain(this)
+                .always("{class: 'MoneyFlow', alias: 'mf', fields: 'fromMoneyAccount,toMoneyAccount'}")
+                .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
+                .applyDomainModelRowStyle() // Colorizing the rows
+                .autoSelectSingleRow() // When the result is a singe row, automatically select it
+                .visualizeResultInto(pm.moneyFlowsVisualResultProperty())
+                .setVisualSelectionProperty(pm.moneyFlowsVisualSelectionProperty())
                 .start();
 
         ReactiveObjectsMapper.<MoneyAccount, MoneyAccountPane>createPushReactiveChain(this)
@@ -197,7 +218,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
 
         private ActionGroup createContextMenuActionGroup() {
             return newActionGroup(
-                    newOperationAction(() -> new DeleteMoneyAccountRequest(getSelectedMoneyAccount(), getMoneyFlows(), rootPane))
+                    newOperationAction(() -> new DeleteMoneyAccountRequest(getSelectedMoneyAccount(), getMoneyFlows(), graph))
             );
         }
 
@@ -205,7 +226,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
             Label label = new Label(msg);
             DialogContent dialogContent = new DialogContent().setContent(label);
             dialogContent.getCancelButton().setVisible(false);
-            DialogUtil.showModalNodeInGoldLayout(dialogContent, rootPane);
+            DialogUtil.showModalNodeInGoldLayout(dialogContent, graph);
             DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> dialogCallback.closeDialog());
         }
 
@@ -267,12 +288,15 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
     @Override
     protected void refreshDataOnActive() {
         masterVisualMapper.refreshWhenActive();
+        moneyFlowMasterVisualMapper.refreshWhenActive();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        ui.onResume();
+        //ui.onResume();
+        /*if (filterSearchBar != null)
+            filterSearchBar.onResume();*/
     }
 
 }
