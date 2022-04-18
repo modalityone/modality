@@ -35,6 +35,7 @@ import mongoose.ecommerce.backoffice.operations.entities.moneyaccount.AddNewMone
 import mongoose.ecommerce.backoffice.operations.entities.moneyaccount.DeleteMoneyAccountRequest;
 import mongoose.ecommerce.backoffice.operations.entities.moneyaccount.EditMoneyAccountRequest;
 import mongoose.ecommerce.backoffice.operations.entities.moneyflow.DeleteMoneyFlowRequest;
+import mongoose.ecommerce.backoffice.operations.entities.moneyflow.EditMoneyFlowRequest;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -111,6 +112,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
 
     private ActionGroup createMoneyFlowTableContextMenuActionGroup() {
         return newActionGroup(
+                newOperationAction(() -> new EditMoneyFlowRequest(graph.selectedMoneyFlow().get(), moneyFlowTableContainer)),
                 newOperationAction(() -> new DeleteMoneyFlowRequest(graph.selectedMoneyFlow().get(), moneyFlowTableContainer))
         );
     }
