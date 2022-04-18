@@ -1,6 +1,5 @@
 package mongoose.ecommerce.backoffice.activities.moneyflows;
 
-import dev.webfx.extras.visual.VisualColumn;
 import dev.webfx.extras.visual.VisualSelection;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.IndividualEntityToObjectMapper;
@@ -24,6 +23,7 @@ import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
 import mongoose.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
@@ -33,6 +33,7 @@ import mongoose.base.shared.entities.MoneyFlow;
 import mongoose.base.shared.entities.Organization;
 import mongoose.ecommerce.backoffice.operations.entities.moneyaccount.AddNewMoneyAccountRequest;
 import mongoose.ecommerce.backoffice.operations.entities.moneyaccount.DeleteMoneyAccountRequest;
+import mongoose.ecommerce.backoffice.operations.entities.moneyflow.DeleteMoneyFlowRequest;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,6 +57,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
     private ReactiveVisualMapper<MoneyAccount> masterVisualMapper;
     private ReactiveVisualMapper<MoneyFlow> moneyFlowMasterVisualMapper;
     private MoneyAccountEditorPane editorPane;
+    private Pane moneyFlowTableContainer;
     private Button addNewMoneyAccountButton;
     private Button deleteMoneyAccountButton;
 
@@ -68,6 +70,9 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         VisualGrid moneyFlowTable = new VisualGrid();
         moneyFlowTable.visualResultProperty().bind(pm.moneyFlowsVisualResultProperty());
         moneyFlowTable.visualSelectionProperty().bindBidirectional(pm.moneyFlowsVisualSelectionProperty());
+        moneyFlowTable.prefWidthProperty().bind(graph.widthProperty());
+        moneyFlowTableContainer = new HBox(moneyFlowTable);
+        setUpContextMenu(moneyFlowTable, this::createMoneyFlowTableContextMenuActionGroup);
 
         graph.selectedMoneyAccount().addListener(e -> {
             MoneyAccount selectedEntity = graph.selectedMoneyAccount().get();
@@ -88,8 +93,14 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         TabPane tabPane = new TabPane();
         tabPane.getTabs().add(new Tab("Graph", graph));
         tabPane.getTabs().add(new Tab("Money Account Table", moneyAccountTable));
-        tabPane.getTabs().add(new Tab("Money Flow Table", moneyFlowTable));
+        tabPane.getTabs().add(new Tab("Money Flow Table", moneyFlowTableContainer));
         return tabPane;
+    }
+
+    private ActionGroup createMoneyFlowTableContextMenuActionGroup() {
+        return newActionGroup(
+                newOperationAction(() -> new DeleteMoneyFlowRequest(graph.selectedMoneyFlow().get(), moneyFlowTableContainer))
+        );
     }
 
     private void createAddNewMoneyAccountButton() {
@@ -153,6 +164,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .visualizeResultInto(pm.moneyFlowsVisualResultProperty())
                 .setVisualSelectionProperty(pm.moneyFlowsVisualSelectionProperty())
+                .setSelectedEntityHandler(entity -> graph.selectedMoneyFlow().set(entity))
                 .start();
 
         ReactiveObjectsMapper.<MoneyAccount, MoneyAccountPane>createPushReactiveChain(this)

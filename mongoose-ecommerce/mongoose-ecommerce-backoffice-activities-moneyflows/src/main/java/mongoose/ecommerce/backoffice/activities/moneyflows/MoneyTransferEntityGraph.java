@@ -32,6 +32,8 @@ public class MoneyTransferEntityGraph extends Pane implements ControlFactoryMixi
 	public ObservableList<MoneyFlowArrowView> moneyFlowArrowViews() { return moneyFlowArrowViews; }
 	private final ObjectProperty<MoneyAccount> selectedMoneyAccount = new SimpleObjectProperty<>();
 	public ObjectProperty<MoneyAccount> selectedMoneyAccount() { return selectedMoneyAccount; }
+	private final ObjectProperty<MoneyFlow> selectedMoneyFlow = new SimpleObjectProperty<>();
+	public ObjectProperty<MoneyFlow> selectedMoneyFlow() { return selectedMoneyFlow; }
 
 	public MoneyTransferEntityGraph() {
 		moneyAccountPanes.addListener(new ListChangeListener<MoneyAccountPane>() {
