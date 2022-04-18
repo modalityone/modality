@@ -14,12 +14,7 @@ final class EditMoneyAccountExecutor {
     }
 
     private static Future<Void> execute(MoneyAccount moneyAccount, Pane parentContainer) {
-        Pane propertiesSheetPane = new Pane();
-        propertiesSheetPane.prefWidthProperty().bind(parentContainer.widthProperty());
-        propertiesSheetPane.prefHeightProperty().bind(parentContainer.heightProperty());
-        EntityPropertiesSheet.editEntity(moneyAccount, "name,closed,currency,event,gatewayCompany,type", propertiesSheetPane);
-        parentContainer.getChildren().add(propertiesSheetPane);
-
+        EntityPropertiesSheet.editEntity(moneyAccount, "name,closed,currency,event,gatewayCompany,type", parentContainer);
         return Future.succeededFuture();
     }
 }
