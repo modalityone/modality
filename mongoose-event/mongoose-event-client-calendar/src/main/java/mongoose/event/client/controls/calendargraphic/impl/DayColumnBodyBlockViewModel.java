@@ -73,7 +73,7 @@ public final class DayColumnBodyBlockViewModel implements HorizontalDayPositione
         if (calendarGraphic != null)
             rootPane.setOnMouseClicked(event -> {
                 if (calendarGraphic.getCalendarClickHandler() != null)
-                    calendarGraphic.getCalendarClickHandler().handle(new CalendarClickEvent(event, this, timeline));
+                    calendarGraphic.getCalendarClickHandler().accept(new CalendarClickEvent(event, this, timeline));
             });
         ObservableList<Node> children = rootPane.getChildren();
         if (!displayTimes) {
