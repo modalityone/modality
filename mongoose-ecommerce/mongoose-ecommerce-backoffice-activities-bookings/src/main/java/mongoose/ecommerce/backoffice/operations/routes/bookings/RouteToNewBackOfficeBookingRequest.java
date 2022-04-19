@@ -3,7 +3,7 @@ package mongoose.ecommerce.backoffice.operations.routes.bookings;
 import dev.webfx.framework.shared.operation.HasOperationCode;
 import dev.webfx.framework.client.operations.route.RouteRequestBase;
 import dev.webfx.platform.client.services.windowhistory.spi.BrowsingHistory;
-import dev.webfx.platform.shared.util.async.AsyncFunction;
+import dev.webfx.platform.shared.async.AsyncFunction;
 
 /**
  * @author Bruno Salmon

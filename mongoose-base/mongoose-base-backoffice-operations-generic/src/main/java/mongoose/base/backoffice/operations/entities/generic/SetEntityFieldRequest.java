@@ -6,7 +6,7 @@ import dev.webfx.framework.shared.operation.HasOperationCode;
 import dev.webfx.framework.shared.operation.HasOperationExecutor;
 import dev.webfx.framework.shared.orm.entity.Entity;
 import dev.webfx.framework.shared.orm.entity.HasEntity;
-import dev.webfx.platform.shared.util.async.AsyncFunction;
+import dev.webfx.platform.shared.async.AsyncFunction;
 
 public abstract class SetEntityFieldRequest implements HasOperationCode,
         HasEntity,

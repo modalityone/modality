@@ -35,6 +35,7 @@ module mongoose.ecommerce.frontoffice.activities.cart {
     requires webfx.framework.shared.orm.entity;
     requires webfx.framework.shared.orm.expression;
     requires webfx.platform.client.uischeduler;
+    requires webfx.platform.shared.async;
     requires webfx.platform.shared.log;
     requires webfx.platform.shared.submit;
     requires webfx.platform.shared.util;

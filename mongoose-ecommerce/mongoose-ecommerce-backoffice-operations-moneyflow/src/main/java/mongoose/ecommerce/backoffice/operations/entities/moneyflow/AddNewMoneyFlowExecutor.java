@@ -1,6 +1,6 @@
 package mongoose.ecommerce.backoffice.operations.entities.moneyflow;
 
-import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.async.Future;
 import javafx.scene.layout.Pane;
 
 final class AddNewMoneyFlowExecutor {

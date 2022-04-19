@@ -4,7 +4,7 @@ import dev.webfx.framework.client.orm.reactive.mapping.entities_to_grid.EntityCo
 import dev.webfx.framework.shared.operation.HasOperationCode;
 import dev.webfx.framework.shared.operation.HasOperationExecutor;
 import dev.webfx.framework.shared.orm.entity.Entity;
-import dev.webfx.platform.shared.util.async.AsyncFunction;
+import dev.webfx.platform.shared.async.AsyncFunction;
 
 import java.util.Collection;
 

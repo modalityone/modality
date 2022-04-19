@@ -16,6 +16,7 @@ module mongoose.ecommerce.frontoffice.activities.cart.routing {
     requires webfx.framework.client.util;
     requires webfx.kit.util;
     requires webfx.platform.client.windowhistory;
+    requires webfx.platform.shared.async;
     requires webfx.platform.shared.json;
     requires webfx.platform.shared.util;
 

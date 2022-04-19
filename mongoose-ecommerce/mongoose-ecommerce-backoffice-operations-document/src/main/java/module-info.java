@@ -12,8 +12,8 @@ module mongoose.ecommerce.backoffice.operations.document {
     requires webfx.framework.shared.operation;
     requires webfx.framework.shared.orm.domainmodel;
     requires webfx.kit.launcher;
+    requires webfx.platform.shared.async;
     requires webfx.platform.shared.submit;
-    requires webfx.platform.shared.util;
 
     // Exported packages
     exports mongoose.ecommerce.backoffice.operations.entities.document;

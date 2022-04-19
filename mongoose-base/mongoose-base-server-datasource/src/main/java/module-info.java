@@ -6,11 +6,11 @@ module mongoose.base.server.datasource {
     requires webfx.framework.shared.orm.datasourcemodelservice;
     requires webfx.framework.shared.orm.domainmodel;
     requires webfx.framework.shared.orm.dql;
+    requires webfx.platform.shared.async;
     requires webfx.platform.shared.datasource;
     requires webfx.platform.shared.json;
     requires webfx.platform.shared.log;
     requires webfx.platform.shared.resource;
-    requires webfx.platform.shared.util;
 
     // Exported packages
     exports mongoose.base.server.services.datasource;

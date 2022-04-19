@@ -4,7 +4,7 @@ import mongoose.base.client.aggregates.event.EventAggregate;
 import mongoose.ecommerce.client.businesslogic.feesgroup.FeesGroupLogic;
 import mongoose.base.shared.entities.Event;
 import dev.webfx.framework.shared.orm.entity.EntityId;
-import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.async.Future;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -3,7 +3,7 @@ package mongoose.ecommerce.backoffice.operations.routes.bookings;
 import mongoose.base.client.aggregates.event.EventAggregate;
 import mongoose.event.frontoffice.operations.fees.RouteToFeesRequest;
 import dev.webfx.platform.client.services.windowhistory.spi.BrowsingHistory;
-import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.async.Future;
 
 /**
  * @author Bruno Salmon

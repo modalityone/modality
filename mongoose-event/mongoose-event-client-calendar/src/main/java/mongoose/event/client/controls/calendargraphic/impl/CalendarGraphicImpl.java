@@ -19,7 +19,7 @@ import mongoose.event.client.businessdata.calendar.Calendar;
 import mongoose.event.client.businessdata.calendar.CalendarTimeline;
 import mongoose.hotel.shared.businessdata.time.DayTimeRange;
 import mongoose.hotel.shared.businessdata.time.TimeInterval;
-import dev.webfx.platform.shared.util.async.Handler;
+import dev.webfx.platform.shared.async.Handler;
 import dev.webfx.platform.shared.util.collection.Collections;
 import dev.webfx.platform.shared.util.tuples.Unit;
 import dev.webfx.kit.util.properties.Properties;

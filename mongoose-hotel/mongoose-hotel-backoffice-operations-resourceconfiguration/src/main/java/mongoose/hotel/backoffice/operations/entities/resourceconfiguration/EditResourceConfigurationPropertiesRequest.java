@@ -4,7 +4,7 @@ import javafx.scene.layout.Pane;
 import dev.webfx.framework.shared.operation.HasOperationCode;
 import dev.webfx.framework.shared.operation.HasOperationExecutor;
 import dev.webfx.framework.shared.orm.entity.Entity;
-import dev.webfx.platform.shared.util.async.AsyncFunction;
+import dev.webfx.platform.shared.async.AsyncFunction;
 
 public final class EditResourceConfigurationPropertiesRequest implements HasOperationCode,
         HasOperationExecutor<EditResourceConfigurationPropertiesRequest, Void> {

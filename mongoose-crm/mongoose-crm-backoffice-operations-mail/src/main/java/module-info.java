@@ -6,7 +6,7 @@ module mongoose.crm.backoffice.operations.mail {
     requires javafx.graphics;
     requires mongoose.base.shared.entities;
     requires webfx.framework.shared.operation;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.shared.async;
 
     // Exported packages
     exports mongoose.crm.backoffice.operations.entities.mail;

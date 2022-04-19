@@ -2,16 +2,11 @@ package mongoose.ecommerce.backoffice.operations.entities.moneyflow;
 
 import dev.webfx.framework.client.ui.controls.dialog.DialogContent;
 import dev.webfx.framework.client.ui.controls.dialog.DialogUtil;
-import dev.webfx.framework.shared.orm.entity.Entity;
 import dev.webfx.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.platform.shared.services.submit.SubmitArgument;
-import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.async.Future;
 import javafx.scene.layout.Pane;
-import mongoose.base.shared.entities.MoneyAccount;
 import mongoose.base.shared.entities.MoneyFlow;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 final class DeleteMoneyFlowExecutor {
 

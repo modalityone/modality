@@ -2,8 +2,8 @@ package mongoose.hotel.backoffice.operations.entities.resourceconfiguration;
 
 import dev.webfx.framework.shared.orm.entity.Entity;
 import dev.webfx.framework.shared.orm.entity.UpdateStore;
-import dev.webfx.platform.shared.util.async.Future;
-import dev.webfx.platform.shared.util.async.Promise;
+import dev.webfx.platform.shared.async.Future;
+import dev.webfx.platform.shared.async.Promise;
 import mongoose.base.shared.entities.DocumentLine;
 
 final class MoveToResourceConfigurationExecutor {

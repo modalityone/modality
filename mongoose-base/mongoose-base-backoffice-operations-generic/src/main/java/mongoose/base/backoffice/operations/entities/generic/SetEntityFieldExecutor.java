@@ -8,8 +8,8 @@ import dev.webfx.framework.shared.orm.entity.Entity;
 import dev.webfx.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.framework.shared.orm.expression.Expression;
 import dev.webfx.platform.shared.services.submit.SubmitArgument;
-import dev.webfx.platform.shared.util.async.Future;
-import dev.webfx.platform.shared.util.async.Promise;
+import dev.webfx.platform.shared.async.Future;
+import dev.webfx.platform.shared.async.Promise;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 

@@ -1,6 +1,6 @@
 package mongoose.ecommerce.client.businessdata.workingdocument;
 
-import dev.webfx.platform.shared.util.async.AsyncUtil;
+import dev.webfx.platform.shared.async.AsyncUtil;
 import mongoose.base.client.aggregates.cart.CartAggregateImpl;
 import mongoose.base.client.aggregates.event.EventAggregate;
 import mongoose.base.shared.entities.Attendance;
@@ -9,7 +9,7 @@ import mongoose.base.shared.entities.DocumentLine;
 import dev.webfx.framework.shared.orm.entity.EntityList;
 import dev.webfx.framework.shared.orm.entity.EntityStore;
 import dev.webfx.framework.shared.orm.entity.EntityStoreQuery;
-import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.async.Future;
 import dev.webfx.platform.shared.util.collection.Collections;
 
 import java.util.ArrayList;
