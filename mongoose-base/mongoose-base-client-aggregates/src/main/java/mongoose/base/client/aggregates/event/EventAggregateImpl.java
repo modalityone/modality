@@ -14,8 +14,8 @@ import dev.webfx.platform.shared.services.query.QueryResult;
 import dev.webfx.platform.shared.services.query.QueryService;
 import dev.webfx.platform.shared.util.Numbers;
 import dev.webfx.platform.shared.util.Objects;
-import dev.webfx.platform.shared.util.async.Future;
-import dev.webfx.platform.shared.util.async.FutureBroadcaster;
+import dev.webfx.platform.shared.async.Future;
+import dev.webfx.platform.shared.async.FutureBroadcaster;
 import dev.webfx.platform.shared.util.collection.Collections;
 
 import java.util.HashMap;

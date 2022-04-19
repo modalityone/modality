@@ -26,6 +26,7 @@ module mongoose.ecommerce.frontoffice.activities.payment {
     requires webfx.platform.client.websocketbus;
     requires webfx.platform.client.windowhistory;
     requires webfx.platform.client.windowlocation;
+    requires webfx.platform.shared.async;
     requires webfx.platform.shared.bus;
     requires webfx.platform.shared.log;
     requires webfx.platform.shared.submit;

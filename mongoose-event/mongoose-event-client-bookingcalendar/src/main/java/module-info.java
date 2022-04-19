@@ -14,8 +14,8 @@ module mongoose.event.client.bookingcalendar {
     requires mongoose.hotel.shared.time;
     requires webfx.framework.shared.orm.entity;
     requires webfx.platform.client.uischeduler;
+    requires webfx.platform.shared.async;
     requires webfx.platform.shared.log;
-    requires webfx.platform.shared.util;
 
     // Exported packages
     exports mongoose.event.client.controls.bookingcalendar;

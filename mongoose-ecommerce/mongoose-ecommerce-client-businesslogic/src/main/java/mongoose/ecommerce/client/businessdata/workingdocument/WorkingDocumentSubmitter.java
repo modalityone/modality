@@ -8,7 +8,7 @@ import mongoose.base.shared.entities.Document;
 import mongoose.base.shared.entities.DocumentLine;
 import dev.webfx.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.platform.shared.services.submit.SubmitArgument;
-import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.async.Future;
 import dev.webfx.platform.shared.util.collection.Collections;
 import dev.webfx.platform.shared.util.uuid.Uuid;
 

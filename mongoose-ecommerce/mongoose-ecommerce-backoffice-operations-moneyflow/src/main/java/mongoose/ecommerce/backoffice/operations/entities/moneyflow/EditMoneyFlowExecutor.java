@@ -1,7 +1,7 @@
 package mongoose.ecommerce.backoffice.operations.entities.moneyflow;
 
 import dev.webfx.framework.client.ui.controls.entity.sheet.EntityPropertiesSheet;
-import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.async.Future;
 import javafx.scene.layout.Pane;
 import mongoose.base.shared.entities.MoneyFlow;
 

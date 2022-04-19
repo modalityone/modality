@@ -7,8 +7,8 @@ import dev.webfx.framework.shared.orm.entity.EntityStore;
 import dev.webfx.framework.shared.orm.entity.EntityStoreQuery;
 import dev.webfx.platform.shared.services.log.Logger;
 import dev.webfx.platform.shared.util.Strings;
-import dev.webfx.platform.shared.util.async.Future;
-import dev.webfx.platform.shared.util.async.Promise;
+import dev.webfx.platform.shared.async.Future;
+import dev.webfx.platform.shared.async.Promise;
 import mongoose.base.client.aggregates.event.EventAggregate;
 import mongoose.base.shared.entities.*;
 

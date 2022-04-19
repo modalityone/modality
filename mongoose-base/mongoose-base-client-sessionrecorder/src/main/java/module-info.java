@@ -12,11 +12,11 @@ module mongoose.base.client.sessionrecorder {
     requires webfx.framework.shared.orm.entity;
     requires webfx.kit.launcher;
     requires webfx.platform.client.storage;
+    requires webfx.platform.shared.async;
     requires webfx.platform.shared.boot;
     requires webfx.platform.shared.bus;
     requires webfx.platform.shared.log;
     requires webfx.platform.shared.submit;
-    requires webfx.platform.shared.util;
 
     // Exported packages
     exports mongoose.base.client.jobs.sessionrecorder;

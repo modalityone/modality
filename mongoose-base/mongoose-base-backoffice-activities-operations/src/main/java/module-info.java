@@ -16,6 +16,7 @@ module mongoose.base.backoffice.activities.operations {
     requires webfx.framework.shared.router;
     requires webfx.kit.launcher;
     requires webfx.platform.client.windowhistory;
+    requires webfx.platform.shared.async;
     requires webfx.platform.shared.util;
 
     // Exported packages

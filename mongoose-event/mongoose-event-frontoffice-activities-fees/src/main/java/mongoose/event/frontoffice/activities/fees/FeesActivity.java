@@ -49,7 +49,7 @@ import dev.webfx.platform.shared.util.Arrays;
 import dev.webfx.platform.shared.util.Booleans;
 import dev.webfx.platform.shared.util.Numbers;
 import dev.webfx.platform.shared.util.Objects;
-import dev.webfx.platform.shared.util.async.Handler;
+import dev.webfx.platform.shared.async.Handler;
 import dev.webfx.platform.shared.util.tuples.Pair;
 
 import static dev.webfx.framework.client.ui.util.image.JsonImageViews.createImageView;

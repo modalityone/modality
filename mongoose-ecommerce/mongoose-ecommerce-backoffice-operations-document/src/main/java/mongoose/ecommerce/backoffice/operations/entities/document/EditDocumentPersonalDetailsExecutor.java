@@ -8,7 +8,7 @@ import mongoose.base.shared.entities.Document;
 import dev.webfx.framework.client.ui.controls.button.ButtonFactoryMixin;
 import dev.webfx.framework.client.ui.controls.dialog.DialogContent;
 import dev.webfx.framework.client.ui.controls.dialog.DialogUtil;
-import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.async.Future;
 
 final class EditDocumentPersonalDetailsExecutor {
 

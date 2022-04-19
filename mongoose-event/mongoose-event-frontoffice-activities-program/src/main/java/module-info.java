@@ -16,6 +16,7 @@ module mongoose.event.frontoffice.activities.program {
     requires webfx.framework.client.uirouter;
     requires webfx.framework.client.util;
     requires webfx.platform.client.windowhistory;
+    requires webfx.platform.shared.async;
     requires webfx.platform.shared.log;
     requires webfx.platform.shared.util;
 

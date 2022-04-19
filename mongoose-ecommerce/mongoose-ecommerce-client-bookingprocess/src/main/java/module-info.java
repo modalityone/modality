@@ -14,6 +14,7 @@ module mongoose.ecommerce.client.bookingprocess {
     requires webfx.framework.shared.orm.datasourcemodelservice;
     requires webfx.kit.util;
     requires webfx.platform.client.windowhistory;
+    requires webfx.platform.shared.async;
     requires webfx.platform.shared.util;
 
     // Exported packages

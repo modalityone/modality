@@ -3,7 +3,7 @@ package mongoose.hotel.backoffice.operations.entities.resourceconfiguration;
 import javafx.scene.layout.Pane;
 import dev.webfx.framework.client.ui.controls.entity.sheet.EntityPropertiesSheet;
 import dev.webfx.framework.shared.orm.entity.Entity;
-import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.async.Future;
 
 final class EditResourceConfigurationPropertiesExecutor {
 

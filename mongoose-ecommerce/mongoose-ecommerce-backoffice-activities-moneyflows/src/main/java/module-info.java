@@ -31,6 +31,7 @@ module mongoose.ecommerce.backoffice.activities.moneyflows {
     requires webfx.framework.shared.router;
     requires webfx.kit.util;
     requires webfx.platform.client.windowhistory;
+    requires webfx.platform.shared.async;
     requires webfx.platform.shared.submit;
     requires webfx.platform.shared.util;
 

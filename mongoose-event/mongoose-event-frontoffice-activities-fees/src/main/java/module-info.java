@@ -31,6 +31,7 @@ module mongoose.event.frontoffice.activities.fees {
     requires webfx.kit.util;
     requires webfx.platform.client.uischeduler;
     requires webfx.platform.client.windowhistory;
+    requires webfx.platform.shared.async;
     requires webfx.platform.shared.json;
     requires webfx.platform.shared.log;
     requires webfx.platform.shared.query;

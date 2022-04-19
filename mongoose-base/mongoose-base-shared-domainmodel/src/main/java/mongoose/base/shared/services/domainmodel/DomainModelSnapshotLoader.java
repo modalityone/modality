@@ -19,8 +19,8 @@ import dev.webfx.platform.shared.services.json.JsonElement;
 import dev.webfx.platform.shared.services.query.QueryResult;
 import dev.webfx.platform.shared.services.resource.ResourceService;
 import dev.webfx.platform.shared.services.serial.SerialCodecManager;
-import dev.webfx.platform.shared.util.async.Batch;
-import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.async.Batch;
+import dev.webfx.platform.shared.async.Future;
 
 /**
  * @author Bruno Salmon
