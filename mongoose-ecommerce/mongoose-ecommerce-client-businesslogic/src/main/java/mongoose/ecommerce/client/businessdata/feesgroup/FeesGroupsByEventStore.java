@@ -43,7 +43,7 @@ public class FeesGroupsByEventStore {
         FeesGroup[] feesGroups = feesGroupsByEventMap.get(eventId);
         if (feesGroups != null)
             return Future.succeededFuture(feesGroups);
-        return EventAggregate.get(eventId).onEventOptions().map(() -> getEventFeesGroups(eventId));
+        return EventAggregate.get(eventId).onEventOptions().map(ignored -> getEventFeesGroups(eventId));
     }
 
 }

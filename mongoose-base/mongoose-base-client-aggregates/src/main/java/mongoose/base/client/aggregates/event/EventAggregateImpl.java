@@ -98,7 +98,7 @@ final class EventAggregateImpl implements EventAggregate {
         if (eventFutureBroadcaster == null)
             eventFutureBroadcaster = new FutureBroadcaster<>(
                 store.executeListQuery(EVENTS_LIST_ID, "select <frontend_loadEvent> from Event where id=?", eventId)
-                .map(this::getEvent));
+                .map(ignored -> getEvent()));
         return eventFutureBroadcaster.newClient();
     }
 
@@ -119,7 +119,7 @@ final class EventAggregateImpl implements EventAggregate {
                     , new EntityStoreQuery("select <frontend_loadEvent> from Site where id in " + siteIds, parameters, SITES_LIST_ID)
                     , new EntityStoreQuery("select <frontend_loadEvent> from Rate where " + rateCondition, parameters, RATES_LIST_ID)
                     , new EntityStoreQuery("select <frontend_loadEvent> from DateInfo where event=? order by id", new Object[]{eventId}, DATE_INFOS_LIST_ID)
-            ).map(this::getEventOptions));
+            ).map(ignored -> getEventOptions()));
         }
         return eventOptionsFutureBroadcaster.newClient();
     }

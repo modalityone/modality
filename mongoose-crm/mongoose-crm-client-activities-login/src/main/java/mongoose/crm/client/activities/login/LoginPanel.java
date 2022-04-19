@@ -1,6 +1,15 @@
 package mongoose.crm.client.activities.login;
 
-import javafx.application.Platform;
+import dev.webfx.framework.client.services.i18n.I18nControls;
+import dev.webfx.framework.client.ui.controls.button.ButtonFactory;
+import dev.webfx.framework.client.ui.controls.dialog.GridPaneBuilder;
+import dev.webfx.framework.client.ui.uirouter.uisession.UiSession;
+import dev.webfx.framework.client.ui.util.anim.Animations;
+import dev.webfx.framework.client.ui.util.layout.LayoutUtil;
+import dev.webfx.framework.client.ui.util.scene.SceneUtil;
+import dev.webfx.framework.shared.services.authn.AuthenticationRequest;
+import dev.webfx.framework.shared.services.authn.UsernamePasswordCredentials;
+import dev.webfx.kit.util.properties.Properties;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.HPos;
@@ -13,18 +22,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import mongoose.base.client.activity.MongooseButtonFactoryMixin;
-import mongoose.event.client.controls.sectionpanel.SectionPanelFactory;
 import mongoose.base.client.validation.MongooseValidationSupport;
-import dev.webfx.framework.client.services.i18n.I18nControls;
-import dev.webfx.framework.shared.services.authn.AuthenticationRequest;
-import dev.webfx.framework.shared.services.authn.UsernamePasswordCredentials;
-import dev.webfx.framework.client.ui.controls.button.ButtonFactory;
-import dev.webfx.framework.client.ui.controls.dialog.GridPaneBuilder;
-import dev.webfx.framework.client.ui.util.layout.LayoutUtil;
-import dev.webfx.framework.client.ui.util.scene.SceneUtil;
-import dev.webfx.framework.client.ui.uirouter.uisession.UiSession;
-import dev.webfx.framework.client.ui.util.anim.Animations;
-import dev.webfx.kit.util.properties.Properties;
+import mongoose.event.client.controls.sectionpanel.SectionPanelFactory;
 
 
 /**
@@ -63,12 +62,9 @@ public final class LoginPanel implements MongooseButtonFactoryMixin {
             if (validationSupport.isValid())
                 new AuthenticationRequest()
                         .setUserCredentials(new UsernamePasswordCredentials(usernameField.getText(), passwordField.getText()))
-                        .executeAsync().setHandler(ar -> Platform.runLater(() -> { // Executing in UI thread
-                    if (ar.succeeded())
-                        uiSession.setUserPrincipal(ar.result());
-                    else
-                        Animations.shake(loginWindow);
-                }));
+                        .executeAsync()
+                        .onFailure(cause -> Animations.shake(loginWindow))
+                        .onSuccess(uiSession::setUserPrincipal);
         });
         prepareShowing();
     }

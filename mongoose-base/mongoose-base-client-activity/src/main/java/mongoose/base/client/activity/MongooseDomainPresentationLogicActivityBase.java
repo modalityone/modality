@@ -34,19 +34,17 @@ public abstract class MongooseDomainPresentationLogicActivityBase<PM>
                 .setStatement("select parameters from ActivityState where id=?")
                 .setParameters(activityStateId)
                 .setDataSourceId(getDataSourceId())
-                .build()).setHandler(ar -> {
-            if (ar.failed())
-                Logger.log(ar.cause());
-            else {
-                // Parsing the read parameters (json string expected) into a Json object
-                JsonObject stateParameters = Json.parseObject(ar.result().getValue(0, 1));
-                // Merging these parameters into the context
-                WritableJsonObject contextParams = (WritableJsonObject) getParams(); // not beautiful...
-                Json.mergeInto(stateParameters, contextParams);
-                // Updating the presentation model from the new context parameters
-                updatePresentationModelFromContextParameters(getPresentationModel());
-            }
-        });
+                .build())
+                .onFailure(Logger::log)
+                .onSuccess(queryResult -> {
+                    // Parsing the read parameters (json string expected) into a Json object
+                    JsonObject stateParameters = Json.parseObject(queryResult.getValue(0, 1));
+                    // Merging these parameters into the context
+                    WritableJsonObject contextParams = (WritableJsonObject) getParams(); // not beautiful...
+                    Json.mergeInto(stateParameters, contextParams);
+                    // Updating the presentation model from the new context parameters
+                    updatePresentationModelFromContextParameters(getPresentationModel());
+                });
     }
 
 }

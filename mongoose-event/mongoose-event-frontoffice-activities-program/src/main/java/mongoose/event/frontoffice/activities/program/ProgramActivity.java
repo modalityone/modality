@@ -35,14 +35,12 @@ final class ProgramActivity extends BookingProcessActivity {
 
     @Override
     protected void startLogic() {
-        onEventFeesGroups().setHandler(ar -> {
-            if (ar.failed())
-                Logger.log(ar.cause());
-            else {
-                noAccommodationOptionsPreselection = findNoAccommodationOptionsPreselection(ar.result());
-                showBookingCalendarIfReady();
-            }
-        });
+        onEventFeesGroups()
+                .onFailure(Logger::log)
+                .onSuccess(result -> {
+                    noAccommodationOptionsPreselection = findNoAccommodationOptionsPreselection(result);
+                    showBookingCalendarIfReady();
+                });
     }
 
     private static OptionsPreselection findNoAccommodationOptionsPreselection(FeesGroup[] feesGroups) {

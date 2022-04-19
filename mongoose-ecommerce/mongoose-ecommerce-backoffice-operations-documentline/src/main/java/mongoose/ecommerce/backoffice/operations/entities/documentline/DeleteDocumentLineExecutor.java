@@ -1,12 +1,13 @@
 package mongoose.ecommerce.backoffice.operations.entities.documentline;
 
-import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
-import mongoose.base.shared.entities.DocumentLine;
 import dev.webfx.framework.client.ui.controls.dialog.DialogContent;
 import dev.webfx.framework.client.ui.controls.dialog.DialogUtil;
 import dev.webfx.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.util.async.Promise;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
+import mongoose.base.shared.entities.DocumentLine;
 
 final class DeleteDocumentLineExecutor {
 
@@ -15,19 +16,16 @@ final class DeleteDocumentLineExecutor {
     }
 
     private static Future<Void> execute(DocumentLine documentLine, Pane parentContainer) {
-        Future<Void> future = Future.future();
+        Promise<Void> promise = Promise.promise();
         DialogContent dialogContent = new DialogContent().setContent(new Text("Are you sure you want to delete this option?"));
-        DialogUtil.showModalNodeInGoldLayout(dialogContent, parentContainer).addCloseHook(future::complete);
+        DialogUtil.showModalNodeInGoldLayout(dialogContent, parentContainer).addCloseHook(promise::complete);
         DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
             UpdateStore updateStore = UpdateStore.create(documentLine.getStore().getDataSourceModel());
             updateStore.deleteEntity(documentLine);
-            updateStore.submitChanges().setHandler(ar -> {
-                if (ar.failed())
-                    dialogCallback.showException(ar.cause());
-                else
-                    dialogCallback.closeDialog();
-            });
+            updateStore.submitChanges()
+                    .onFailure(dialogCallback::showException)
+                    .onSuccess(resultBatch -> dialogCallback.closeDialog());
         });
-        return future;
+        return promise.future();
     }
 }

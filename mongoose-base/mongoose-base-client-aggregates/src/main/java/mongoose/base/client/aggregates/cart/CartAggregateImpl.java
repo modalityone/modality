@@ -1,12 +1,16 @@
 package mongoose.base.client.aggregates.cart;
 
-import mongoose.base.client.aggregates.event.EventAggregate;
-import mongoose.base.shared.entities.*;
 import dev.webfx.framework.shared.orm.domainmodel.DataSourceModel;
-import dev.webfx.framework.shared.orm.entity.*;
+import dev.webfx.framework.shared.orm.entity.Entities;
+import dev.webfx.framework.shared.orm.entity.EntityList;
+import dev.webfx.framework.shared.orm.entity.EntityStore;
+import dev.webfx.framework.shared.orm.entity.EntityStoreQuery;
 import dev.webfx.platform.shared.services.log.Logger;
 import dev.webfx.platform.shared.util.Strings;
 import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.util.async.Promise;
+import mongoose.base.client.aggregates.event.EventAggregate;
+import mongoose.base.shared.entities.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -129,17 +133,18 @@ public final class CartAggregateImpl implements CartAggregate {
               new EntityStoreQuery(Strings.replaceAll(DOCUMENT_LINE_LOAD_QUERY, "document=?", documentCondition), parameter)
             , new EntityStoreQuery(Strings.replaceAll(ATTENDANCE_LOAD_QUERY, "document=?", documentCondition), parameter)
             , new EntityStoreQuery(Strings.replaceAll(PAYMENT_LOAD_QUERY, "document=?", documentCondition), parameter)
-        ).compose((entityLists, future) -> {
+        ).compose(entityLists -> {
             cartDocuments = new ArrayList<>();
             cartDocumentLines = entityLists[0];
             cartAttendances = entityLists[1];
             cartPayments = entityLists[2];
             if (cartDocumentLines.isEmpty()) {
                 loading = false;
-                future.complete();
+                return Future.succeededFuture();
             }
             eventAggregate = EventAggregate.getOrCreateFromDocument(cartDocumentLines.get(0).getDocument());
-            eventAggregate.onEventOptions().setHandler(ar -> {
+            Promise<Cart> promise = Promise.promise();
+            eventAggregate.onEventOptions().onComplete(ar -> {
                 if (!cartDocuments.isEmpty()) {
                     Logger.log("Warning: CartAggregate.onCart() has been called again before the first call is finished");
                     cartDocuments.clear();
@@ -152,8 +157,9 @@ public final class CartAggregateImpl implements CartAggregate {
                 }
                 setCart(cartDocuments.get(0).getCart());
                 loading = false;
-                future.complete(cart);
+                promise.complete(cart);
             });
+            return promise.future();
         });
     }
 

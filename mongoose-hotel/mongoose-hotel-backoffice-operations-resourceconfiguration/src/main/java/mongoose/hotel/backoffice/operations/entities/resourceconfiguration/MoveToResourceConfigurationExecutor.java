@@ -1,9 +1,10 @@
 package mongoose.hotel.backoffice.operations.entities.resourceconfiguration;
 
-import mongoose.base.shared.entities.DocumentLine;
 import dev.webfx.framework.shared.orm.entity.Entity;
 import dev.webfx.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.util.async.Promise;
+import mongoose.base.shared.entities.DocumentLine;
 
 final class MoveToResourceConfigurationExecutor {
 
@@ -12,7 +13,7 @@ final class MoveToResourceConfigurationExecutor {
     }
 
     private static Future<Void> execute(Entity resourceConfiguration, Object[] documentLinePrimaryKeys) {
-        Future<Void> future = Future.future();
+        Promise<Void> promise = Promise.promise();
         UpdateStore updateStore = UpdateStore.create(resourceConfiguration.getStore().getDataSourceModel());
         for (Object primaryKey : documentLinePrimaryKeys) {
             DocumentLine documentLine = updateStore.getOrCreateEntity(DocumentLine.class, primaryKey);
@@ -20,13 +21,12 @@ final class MoveToResourceConfigurationExecutor {
         }
         // Commented as now automatically set by the Dql submit interceptor TODO Remove this comment once the feature is completed
         //updateStore.setSubmitScope(AggregateScope.builder().addAggregate("ResourceConfiguration", resourceConfiguration.getPrimaryKey()).build());
-        updateStore.submitChanges().setHandler(ar -> {
-            if (ar.failed()) {
-                future.fail(ar.cause());
-                ar.cause().printStackTrace();
-            } else
-                future.complete();
-        });
-        return future;
+        updateStore.submitChanges()
+                .onSuccess(result -> promise.complete())
+                .onFailure(cause -> {
+                    promise.fail(cause);
+                    cause.printStackTrace();
+                });
+        return promise.future();
     }
 }

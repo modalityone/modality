@@ -11,7 +11,7 @@ final class AddNewDocumentLineExecutor {
     }
 
     private static Future<Void> execute(Document documentLine, Pane parentContainer) {
-        Future<Void> future = Future.future();
-        return future;
+        // Not yet implemented
+        return Future.succeededFuture();
     }
 }

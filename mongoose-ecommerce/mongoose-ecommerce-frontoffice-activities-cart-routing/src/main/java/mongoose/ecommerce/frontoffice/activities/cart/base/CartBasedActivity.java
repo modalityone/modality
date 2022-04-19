@@ -52,10 +52,7 @@ public abstract class CartBasedActivity
     }
 
     private void loadCart() {
-        cartAggregate().onCartDocuments().setHandler(ar -> {
-            if (ar.succeeded())
-                onCartLoaded();
-        });
+        cartAggregate().onCartDocuments().onSuccess(documents -> onCartLoaded());
     }
 
     protected void unloadCart() {

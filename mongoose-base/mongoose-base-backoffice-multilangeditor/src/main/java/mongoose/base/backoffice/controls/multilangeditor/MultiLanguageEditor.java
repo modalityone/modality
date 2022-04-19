@@ -106,14 +106,13 @@ public final class MultiLanguageEditor {
         if (entityUpdates.containsKey(entityId))
             monoLanguageEditor.setEditedEntity(entityUpdates.get(entityId));
         else if (loadingSelect != null)
-            loadingStore.executeListQuery(entityListId, loadingSelect, entityId).setHandler(ar -> {
-                if (ar.succeeded()) {
-                    Entity entity = ar.result().get(0);
-                    EditedEntity editedEntity = new EditedEntity(entity);
-                    entityUpdates.put(entityId, editedEntity);
-                    monoLanguageEditor.setEditedEntity(editedEntity);
-                }
-            });
+            loadingStore.executeListQuery(entityListId, loadingSelect, entityId)
+                    .onSuccess(entities -> {
+                        Entity entity = entities.get(0);
+                        EditedEntity editedEntity = new EditedEntity(entity);
+                        entityUpdates.put(entityId, editedEntity);
+                        monoLanguageEditor.setEditedEntity(editedEntity);
+                    });
     }
 
     private MonoLanguageEditor getCurrentMonoLanguageEditor() {
@@ -221,12 +220,11 @@ public final class MultiLanguageEditor {
 
         void save() {
             if (editedEntity != null)
-                editedEntity.updateStore.submitChanges().setHandler(ar -> {
-                    if (ar.succeeded()) {
-                        updateButtonsDisable();
-                        callCloseCallback(true);
-                    }
-                });
+                editedEntity.updateStore.submitChanges()
+                        .onSuccess(result -> {
+                            updateButtonsDisable();
+                            callCloseCallback(true);
+                        });
         }
 
         void callCloseCallback(boolean saved) {

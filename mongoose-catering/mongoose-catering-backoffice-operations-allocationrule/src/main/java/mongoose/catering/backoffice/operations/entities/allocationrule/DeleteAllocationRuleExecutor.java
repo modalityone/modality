@@ -1,12 +1,13 @@
 package mongoose.catering.backoffice.operations.entities.allocationrule;
 
-import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
 import dev.webfx.framework.client.ui.controls.dialog.DialogContent;
 import dev.webfx.framework.client.ui.controls.dialog.DialogUtil;
 import dev.webfx.framework.shared.orm.entity.Entity;
 import dev.webfx.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.util.async.Promise;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 
 final class DeleteAllocationRuleExecutor {
 
@@ -15,19 +16,16 @@ final class DeleteAllocationRuleExecutor {
     }
 
     private static Future<Void> execute(Entity documentLine, Pane parentContainer) {
-        Future<Void> future = Future.future();
+        Promise<Void> promise = Promise.promise();
         DialogContent dialogContent = new DialogContent().setContent(new Text("Are you sure you want to delete this rule?"));
-        DialogUtil.showModalNodeInGoldLayout(dialogContent, parentContainer).addCloseHook(future::complete);
+        DialogUtil.showModalNodeInGoldLayout(dialogContent, parentContainer).addCloseHook(promise::complete);
         DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
             UpdateStore updateStore = UpdateStore.create(documentLine.getStore().getDataSourceModel());
             updateStore.deleteEntity(documentLine);
-            updateStore.submitChanges().setHandler(ar -> {
-                if (ar.failed())
-                    dialogCallback.showException(ar.cause());
-                else
-                    dialogCallback.closeDialog();
-            });
+            updateStore.submitChanges()
+                    .onFailure(dialogCallback::showException)
+                    .onSuccess(batchResult -> dialogCallback.closeDialog());
         });
-        return future;
+        return promise.future();
     }
 }
