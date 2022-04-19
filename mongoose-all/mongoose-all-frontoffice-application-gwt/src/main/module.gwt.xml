@@ -720,8 +720,8 @@
     <source path="dev/webfx/platform/gwt/services/windowlocation/spi/impl/jsinterop"/>
     <!--==========================< webfx-platform-shared-async >===========================-->
     <!-- used by webfx-framework-shared-orm-datasourcemodelservice (SOURCE) -->
-    <!-- used by webfx-platform-shared-boot (SOURCE) -->
     <!-- used by webfx-platform-shared-bus (SOURCE) -->
+    <!-- used by webfx-platform-shared-serial (SOURCE) -->
     <!-- used by webfx-platform-web-windowhistory-impl (SOURCE) -->
     <source path="dev/webfx/platform/shared/async"/>
     <source path="dev/webfx/platform/shared/async/impl"/>
