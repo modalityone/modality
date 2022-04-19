@@ -11,7 +11,7 @@ final class SendLetterExecutor {
     }
 
     private static Future<Void> execute(Document document, Pane parentContainer) {
-        Future<Void> future = Future.future();
+        Future<Void> future = Future.succeededFuture();
         return future;
     }
 }

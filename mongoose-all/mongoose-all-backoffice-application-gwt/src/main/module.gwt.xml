@@ -1031,6 +1031,7 @@
     <!-- used by webfx-platform-shared-shutdown (SOURCE) -->
     <source path="dev/webfx/platform/shared/util"/>
     <source path="dev/webfx/platform/shared/util/async"/>
+    <source path="dev/webfx/platform/shared/util/async/impl"/>
     <source path="dev/webfx/platform/shared/util/collection"/>
     <source path="dev/webfx/platform/shared/util/function"/>
     <source path="dev/webfx/platform/shared/util/noreflect"/>

@@ -13,13 +13,9 @@ final class OpenBookingCartExecutor {
     }
 
     private static Future<Void> execute(Document document, Pane parentContainer) {
-        Future<Void> future = Future.future();
-        document.evaluateOnceLoaded("cartUrl").setHandler(ar -> {
-            if (ar.failed())
-                AlertUtil.showExceptionAlert(ar.cause(), parentContainer.getScene().getWindow());
-            else
-                WebFxKitLauncher.getApplication().getHostServices().showDocument(ar.result().toString());
-        });
-        return future;
+        document.evaluateOnceLoaded("cartUrl")
+                .onFailure(cause -> AlertUtil.showExceptionAlert(cause, parentContainer.getScene().getWindow()))
+                .onSuccess(cartUrl -> WebFxKitLauncher.getApplication().getHostServices().showDocument(cartUrl.toString()));
+        return Future.succeededFuture();
     }
 }

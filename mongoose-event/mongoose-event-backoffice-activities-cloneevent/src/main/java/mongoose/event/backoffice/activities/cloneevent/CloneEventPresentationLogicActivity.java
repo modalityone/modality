@@ -25,12 +25,10 @@ public final class CloneEventPresentationLogicActivity extends EventDependentPre
         Properties.runNowAndOnPropertiesChange(() -> {
             pm.setName(null);
             pm.setDate(null);
-            onEventOptions().setHandler(ar -> {
-                if (ar.succeeded()) {
-                    Event event = getEvent();
-                    pm.setName(event.getName());
-                    pm.setDate(event.getStartDate());
-                }
+            onEventOptions().onSuccess(options -> {
+                Event event = getEvent();
+                pm.setName(event.getName());
+                pm.setDate(event.getStartDate());
             });
         }, pm.eventIdProperty());
 
@@ -41,12 +39,11 @@ public final class CloneEventPresentationLogicActivity extends EventDependentPre
                     .setParameters(getEventId(), pm.getName(), startDate)
                     .setReturnGeneratedKeys(true)
                     .setDataSourceId(getDataSourceId())
-                    .build()).setHandler(ar -> {
-                if (ar.succeeded())
-                    UiScheduler.runInUiThread(() ->
-                            new RouteToBookingsRequest(ar.result().getGeneratedKeys()[0], getHistory()).execute()
-                    );
-            });
+                    .build())
+                    .onSuccess(result ->
+                        UiScheduler.runInUiThread(() ->
+                            new RouteToBookingsRequest(result.getGeneratedKeys()[0], getHistory()).execute()
+                    ));
         });
     }
 }

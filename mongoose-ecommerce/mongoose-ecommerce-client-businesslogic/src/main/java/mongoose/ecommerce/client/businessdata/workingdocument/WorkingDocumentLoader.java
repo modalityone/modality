@@ -1,5 +1,6 @@
 package mongoose.ecommerce.client.businessdata.workingdocument;
 
+import dev.webfx.platform.shared.util.async.AsyncUtil;
 import mongoose.base.client.aggregates.cart.CartAggregateImpl;
 import mongoose.base.client.aggregates.event.EventAggregate;
 import mongoose.base.shared.entities.Attendance;
@@ -29,7 +30,7 @@ public final class WorkingDocumentLoader {
               new EntityStoreQuery(CartAggregateImpl.DOCUMENT_LINE_LOAD_QUERY, new Object[]{documentPk})
             , new EntityStoreQuery(CartAggregateImpl.ATTENDANCE_LOAD_QUERY   , new Object[]{documentPk})
         );
-        return Future.allOf(eventAggregate.onEventOptions(), queryBatchFuture).map(v -> {
+        return AsyncUtil.allOf(eventAggregate.onEventOptions(), queryBatchFuture).map(v -> {
             EntityList[] entityLists = queryBatchFuture.result();
             EntityList<DocumentLine> dls = entityLists[0];
             EntityList<Attendance> as = entityLists[1];

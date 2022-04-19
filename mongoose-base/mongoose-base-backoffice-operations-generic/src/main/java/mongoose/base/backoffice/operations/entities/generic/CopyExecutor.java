@@ -46,6 +46,6 @@ final class CopyExecutor {
         ClipboardContent content = new ClipboardContent();
         content.putString(clipboardString.toString());
         Clipboard.getSystemClipboard().setContent(content);
-        return Future.future();
+        return Future.succeededFuture();
     }
 }

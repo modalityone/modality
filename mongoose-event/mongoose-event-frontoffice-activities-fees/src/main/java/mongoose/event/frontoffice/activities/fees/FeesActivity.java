@@ -114,13 +114,9 @@ final class FeesActivity extends BookingProcessActivity {
 
     private void loadAndDisplayFeesGroups() {
         lastLoadedEventOptions = null;
-        onEventFeesGroups().setHandler(ar -> {
-            lastLoadedEventOptions = getEventOptions();
-            if (ar.failed())
-                Logger.log(ar.cause());
-            else
-                displayFeesGroupsAndRefreshAvailabilities(ar.result());
-        });
+        onEventFeesGroups()
+                .onFailure(Logger::log)
+                .onSuccess(this::displayFeesGroupsAndRefreshAvailabilities);
     }
 
     private final Property<VisualResult> rsProperty = new SimpleObjectProperty<>();
@@ -128,7 +124,7 @@ final class FeesActivity extends BookingProcessActivity {
 
     private void displayFeesGroupsAndRefreshAvailabilities(FeesGroup[] feesGroups) {
         this.feesGroups = feesGroups;
-        onEventAvailabilities().setHandler(ar -> {
+        onEventAvailabilities().onComplete(ar -> {
             if (ar.succeeded())
                 displayFeesGroups();
         });

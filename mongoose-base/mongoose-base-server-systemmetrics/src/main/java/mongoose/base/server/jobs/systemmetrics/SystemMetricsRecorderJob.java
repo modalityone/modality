@@ -38,10 +38,8 @@ public final class SystemMetricsRecorderJob implements ApplicationJob {
             // Instantiating a new system metrics entity and asking the system metrics service to fill that entity
             SystemMetricsService.takeSystemMetricsSnapshot(store.insertEntity(SystemMetricsEntity.class));
             // Submitting this new record into the database
-            store.submitChanges().setHandler(asyncResult -> {
-                if (asyncResult.failed())
-                    Logger.log("Inserting metrics in database failed!", asyncResult.cause());
-            });
+            store.submitChanges()
+                    .onFailure(cause -> Logger.log("Inserting metrics in database failed!", cause));
         });
 
         // Deleting old metrics records (older than 1 day) regularly (every 12h)
@@ -51,13 +49,9 @@ public final class SystemMetricsRecorderJob implements ApplicationJob {
                         .setStatement("delete Metrics where LtTestSet is null and date < ?")
                         .setParameters(Instant.now().minus(1, ChronoUnit.DAYS))
                         .setDataSourceId(dataSourceModel.getDataSourceId())
-                        .build()
-                ).setHandler(ar -> {
-                    if (ar.failed())
-                        Logger.log("Deleting metrics in database failed!", ar.cause());
-                    else
-                        Logger.log("" + ar.result().getRowCount() + " metrics records have been deleted from the database");
-                }));
+                        .build())
+                        .onFailure(cause -> Logger.log("Deleting metrics in database failed!", cause))
+                        .onSuccess(submitResult -> Logger.log(submitResult.getRowCount() + " metrics records have been deleted from the database")));
     }
 
     @Override

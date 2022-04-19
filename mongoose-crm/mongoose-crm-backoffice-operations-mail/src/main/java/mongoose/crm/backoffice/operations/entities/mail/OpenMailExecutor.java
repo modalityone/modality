@@ -11,7 +11,7 @@ final class OpenMailExecutor {
     }
 
     private static Future<Void> execute(Mail mail, Pane parentContainer) {
-        Future<Void> future = Future.future();
+        Future<Void> future = Future.succeededFuture();
         return future;
     }
 }

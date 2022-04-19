@@ -11,7 +11,7 @@ final class AddNewAllocationRuleExecutor {
     }
 
     private static Future<Void> execute(Event documentLine, Pane parentContainer) {
-        Future<Void> future = Future.future();
-        return future;
+        // Not yet implemented
+        return Future.succeededFuture();
     }
 }

@@ -1,19 +1,20 @@
 package mongoose.hotel.backoffice.operations.entities.resourceconfiguration;
 
-import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
-import mongoose.base.shared.entities.Item;
 import dev.webfx.framework.client.ui.controls.button.ButtonFactoryMixin;
-import dev.webfx.framework.client.ui.controls.entity.selector.ButtonSelector;
-import dev.webfx.framework.client.ui.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.framework.client.ui.controls.dialog.DialogContent;
 import dev.webfx.framework.client.ui.controls.dialog.DialogUtil;
+import dev.webfx.framework.client.ui.controls.entity.selector.ButtonSelector;
+import dev.webfx.framework.client.ui.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.framework.shared.orm.domainmodel.DataSourceModel;
 import dev.webfx.framework.shared.orm.entity.Entity;
 import dev.webfx.framework.shared.orm.entity.EntityId;
 import dev.webfx.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.platform.shared.services.submit.SubmitArgument;
 import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.util.async.Promise;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
+import mongoose.base.shared.entities.Item;
 
 final class ChangeResourceConfigurationItemExecutor {
 
@@ -22,7 +23,7 @@ final class ChangeResourceConfigurationItemExecutor {
     }
 
     private static Future<Void> execute(Entity resourceConfiguration, Pane parentContainer, String itemFamilyCode, EntityId siteId) {
-        Future<Void> future = Future.future();
+        Promise<Void> promise = Promise.promise();
         DataSourceModel dataSourceModel = resourceConfiguration.getStore().getDataSourceModel();
         EntityButtonSelector<Item> itemSelector = new EntityButtonSelector<>("{class: `Item`, alias: `i`, where: `family.code='" + itemFamilyCode + "' and exists(select Option where item=i and site=" + siteId.getPrimaryKey() + ")`, orderBy: `ord,id`}", new ButtonFactoryMixin() {
         }, parentContainer, dataSourceModel);
@@ -33,8 +34,8 @@ final class ChangeResourceConfigurationItemExecutor {
             if (selectedItem != null) {
                 DialogContent dialogContent = new DialogContent().setContent(new Text("Are you sure?"));
                 DialogUtil.showModalNodeInGoldLayout(dialogContent, parentContainer).addCloseHook(() -> {
-                    if (!future.isComplete())
-                        future.complete();
+                    if (!promise.future().isComplete())
+                        promise.complete();
                 });
                 DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
                     UpdateStore updateStore = UpdateStore.create(dataSourceModel);
@@ -42,17 +43,15 @@ final class ChangeResourceConfigurationItemExecutor {
                     updateStore.submitChanges(SubmitArgument.builder()
                             .setStatement("select set_transaction_parameters(true)")
                             .setDataSourceId(dataSourceModel.getDataSourceId())
-                            .build()).setHandler(ar -> {
-                                if (ar.failed())
-                                    dialogCallback.showException(ar.cause());
-                                else {
-                                    dialogCallback.closeDialog();
-                                    future.complete();
-                                }
+                            .build())
+                            .onFailure(dialogCallback::showException)
+                            .onSuccess(x -> {
+                                dialogCallback.closeDialog();
+                                promise.complete();
                             });
                 });
             }
         });
-        return future;
+        return promise.future();
     }
 }

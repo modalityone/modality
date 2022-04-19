@@ -69,7 +69,7 @@ final class StartBookingActivity extends BookingProcessActivity {
     @Override
     protected Node styleUi(Node uiNode) {
         fadeOut();
-        onEvent().setHandler(ar -> {
+        onEvent().onComplete(ar -> {
             onEventOptions(); // Anticipating event options loading now (required for options and fees pages)
             UiScheduler.runInUiThread(() -> {
                 String imageUrl = null;
