@@ -17,7 +17,9 @@ module mongoose.crm.backoffice.activities.organizations {
     requires webfx.framework.shared.orm.dql;
     requires webfx.framework.shared.orm.entity;
     requires webfx.framework.shared.router;
+    requires webfx.kit.util;
     requires webfx.platform.client.windowhistory;
+    requires webfx.platform.shared.json;
     requires webfx.platform.shared.util;
 
     // Exported packages
