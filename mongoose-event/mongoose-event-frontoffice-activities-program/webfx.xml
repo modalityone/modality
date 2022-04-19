@@ -11,10 +11,10 @@
 
     <dependencies>
         <used-by-source-modules>
-            <undiscovered-used-by-source-module>webfx-framework-client-activity</undiscovered-used-by-source-module>
-            <undiscovered-used-by-source-module>webfx-platform-shared-async</undiscovered-used-by-source-module>
-            <undiscovered-used-by-source-module>webfx-platform-shared-util</undiscovered-used-by-source-module>
-            <undiscovered-used-by-source-module>webfx-kit-javafxcontrols-emul</undiscovered-used-by-source-module>
+            <undetected-used-by-source-module>webfx-framework-client-activity</undetected-used-by-source-module>
+            <undetected-used-by-source-module>webfx-platform-shared-async</undetected-used-by-source-module>
+            <undetected-used-by-source-module>webfx-platform-shared-util</undetected-used-by-source-module>
+            <undetected-used-by-source-module>webfx-kit-javafxcontrols-emul</undetected-used-by-source-module>
         </used-by-source-modules>
     </dependencies>
 
