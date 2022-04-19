@@ -7,8 +7,8 @@
 
     <dependencies>
         <used-by-source-modules>
-            <undiscovered-used-by-source-module>webfx-framework-shared-orm-domainmodel</undiscovered-used-by-source-module>
-            <undiscovered-used-by-source-module>webfx-platform-shared-submit</undiscovered-used-by-source-module>
+            <undetected-used-by-source-module>webfx-framework-shared-orm-domainmodel</undetected-used-by-source-module>
+            <undetected-used-by-source-module>webfx-platform-shared-submit</undetected-used-by-source-module>
         </used-by-source-modules>
     </dependencies>
 
