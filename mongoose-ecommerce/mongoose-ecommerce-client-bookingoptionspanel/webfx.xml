@@ -7,8 +7,8 @@
 
     <dependencies>
         <used-by-source-modules>
-            <undetected-used-by-source-module>mongoose-base-client-aggregates</undetected-used-by-source-module>
-            <undetected-used-by-source-module>webfx-kit-javafxcontrols-emul</undetected-used-by-source-module>
+            <undetected-module>mongoose-base-client-aggregates</undetected-module>
+            <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
         </used-by-source-modules>
     </dependencies>
 

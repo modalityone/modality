@@ -11,8 +11,8 @@
 
     <dependencies>
         <used-by-source-modules>
-            <undetected-used-by-source-module>webfx-framework-shared-orm-domainmodel</undetected-used-by-source-module>
-            <undetected-used-by-source-module>webfx-platform-shared-async</undetected-used-by-source-module>
+            <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
+            <undetected-module>webfx-platform-shared-async</undetected-module>
         </used-by-source-modules>
     </dependencies>
 

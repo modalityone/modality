@@ -11,9 +11,9 @@
 
     <dependencies>
         <used-by-source-modules>
-            <undetected-used-by-source-module>webfx-framework-client-activity</undetected-used-by-source-module>
-            <undetected-used-by-source-module>webfx-framework-client-action</undetected-used-by-source-module>
-            <undetected-used-by-source-module>webfx-platform-shared-util</undetected-used-by-source-module>
+            <undetected-module>webfx-framework-client-activity</undetected-module>
+            <undetected-module>webfx-framework-client-action</undetected-module>
+            <undetected-module>webfx-platform-shared-util</undetected-module>
         </used-by-source-modules>
     </dependencies>
 

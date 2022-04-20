@@ -7,8 +7,8 @@
 
     <dependencies>
         <used-by-source-modules>
-            <undetected-used-by-source-module>webfx-platform-client-windowhistory</undetected-used-by-source-module>
-            <undetected-used-by-source-module>webfx-platform-shared-async</undetected-used-by-source-module>
+            <undetected-module>webfx-platform-client-windowhistory</undetected-module>
+            <undetected-module>webfx-platform-shared-async</undetected-module>
         </used-by-source-modules>
     </dependencies>
 
