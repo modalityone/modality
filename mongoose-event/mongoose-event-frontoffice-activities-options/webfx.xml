@@ -11,9 +11,9 @@
 
     <dependencies>
         <used-by-source-modules>
-            <undetected-used-by-source-module>mongoose-base-client-aggregates</undetected-used-by-source-module>
-            <undetected-used-by-source-module>webfx-framework-client-activity</undetected-used-by-source-module>
-            <undetected-used-by-source-module>webfx-platform-shared-async</undetected-used-by-source-module>
+            <undetected-module>mongoose-base-client-aggregates</undetected-module>
+            <undetected-module>webfx-framework-client-activity</undetected-module>
+            <undetected-module>webfx-platform-shared-async</undetected-module>
         </used-by-source-modules>
     </dependencies>
 

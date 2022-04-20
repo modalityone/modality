@@ -7,7 +7,7 @@
 
     <dependencies>
         <used-by-source-modules>
-            <undetected-used-by-source-module>javafx-controls</undetected-used-by-source-module>
+            <undetected-module>javafx-controls</undetected-module>
         </used-by-source-modules>
     </dependencies>
 
