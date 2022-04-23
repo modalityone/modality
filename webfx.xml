@@ -3161,6 +3161,94 @@
 
         </project>
 
+        <usages>
+
+            <java-package name="dev.webfx.framework.shared.orm.domainmodel">
+                <module>mongoose-base-backoffice-multilangeditor</module>
+                <module>mongoose-base-backoffice-operations-generic</module>
+                <module>mongoose-base-client-aggregates</module>
+                <module>mongoose-base-client-entities</module>
+                <module>mongoose-base-server-systemmetrics</module>
+                <module>mongoose-base-shared-domainmodel</module>
+                <module>mongoose-crm-backoffice-bookingdetailspanel</module>
+                <module>mongoose-crm-client-authn</module>
+                <module>mongoose-crm-client-authz</module>
+                <module>mongoose-crm-client-personaldetails</module>
+                <module>mongoose-hotel-backoffice-operations-resourceconfiguration</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-orm-entity-controls</module>
+                <module>webfx-framework-client-orm-reactive-dql</module>
+                <module>webfx-framework-client-orm-reactive-entities</module>
+                <module>webfx-framework-client-orm-reactive-visual</module>
+                <module>webfx-framework-shared-orm-datasourcemodelservice</module>
+                <module>webfx-framework-shared-orm-domainmodel</module>
+                <module>webfx-framework-shared-orm-domainmodelservice</module>
+                <module>webfx-framework-shared-orm-dql-query-interceptor</module>
+                <module>webfx-framework-shared-orm-dql-querypush-interceptor</module>
+                <module>webfx-framework-shared-orm-dql-submit-interceptor</module>
+                <module>webfx-framework-shared-orm-entity</module>
+            </java-package>
+
+            <java-package name="dev.webfx.framework.shared.services.querypush">
+                <module>webfx-framework-client-orm-reactive-dql</module>
+                <module>webfx-framework-client-querypush</module>
+                <module>webfx-framework-server-querypush</module>
+                <module>webfx-framework-server-querypush-simple</module>
+                <module>webfx-framework-shared-orm-dql-querypush-interceptor</module>
+                <module>webfx-framework-shared-querypush</module>
+            </java-package>
+
+            <java-package name="dev.webfx.platform.shared.services.query">
+                <module>mongoose-base-client-activity</module>
+                <module>mongoose-base-client-aggregates</module>
+                <module>mongoose-base-shared-domainmodel</module>
+                <module>mongoose-crm-client-authn</module>
+                <module>mongoose-ecommerce-client-businesslogic</module>
+                <module>webfx-framework-client-orm-reactive-dql</module>
+                <module>webfx-framework-client-orm-reactive-entities</module>
+                <module>webfx-framework-server-querypush</module>
+                <module>webfx-framework-server-querypush-simple</module>
+                <module>webfx-framework-shared-orm-domainmodelservice</module>
+                <module>webfx-framework-shared-orm-dql-query-interceptor</module>
+                <module>webfx-framework-shared-orm-dql-querypush-interceptor</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-framework-shared-querypush</module>
+                <module>webfx-platform-shared-query</module>
+                <module>webfx-platform-vertx-queryupdate</module>
+            </java-package>
+
+            <java-package name="dev.webfx.platform.shared.services.submit">
+                <module>mongoose-base-backoffice-operations-generic</module>
+                <module>mongoose-base-server-sessioncloser</module>
+                <module>mongoose-base-server-systemmetrics</module>
+                <module>mongoose-ecommerce-backoffice-activities-moneyflows</module>
+                <module>mongoose-ecommerce-backoffice-operations-moneyflow</module>
+                <module>mongoose-ecommerce-client-businesslogic</module>
+                <module>mongoose-event-backoffice-activities-cloneevent</module>
+                <module>mongoose-event-backoffice-activities-options</module>
+                <module>mongoose-hotel-backoffice-operations-resourceconfiguration</module>
+                <module>webfx-framework-server-querypush</module>
+                <module>webfx-framework-shared-orm-dql-submit-interceptor</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-platform-shared-submit</module>
+                <module>webfx-platform-shared-submitlistener</module>
+                <module>webfx-platform-vertx-queryupdate</module>
+            </java-package>
+
+            <java-package name="java.util.regex">
+                <module>webfx-framework-shared-router</module>
+            </java-package>
+
+            <java-class name="javafx.scene.control.ScrollPane">
+                <module>mongoose-ecommerce-backoffice-operations-document</module>
+                <module>mongoose-ecommerce-client-bookingprocess</module>
+                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-framework-client-controls</module>
+                <module>webfx-framework-client-util</module>
+            </java-class>
+
+        </usages>
+
     </export-snapshot>
 
 </project>
