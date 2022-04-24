@@ -122,6 +122,12 @@
             <artifactId>webfx-platform-shared-util</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>org.mongoose</groupId>
+            <artifactId>mongoose-ecommerce-backoffice-operations-document</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
 
     </dependencies>
 
