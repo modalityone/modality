@@ -87,12 +87,7 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules>
-                    <module>mongoose-base-backoffice-masterslave</module>
-                    <module>mongoose-base-client-application</module>
-                    <module>mongoose-crm-backoffice-bookingdetailspanel</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
 
                 <!-- Base activities -->
                 <plugin-module>mongoose-base-backoffice-activities-monitor</plugin-module>
@@ -130,6 +125,13 @@
                 <package>mongoose.all.backoffice.application</package>
             </source-packages>
 
+            <used-by-source-modules>
+                <module>mongoose-base-backoffice-masterslave</module>
+                <module>mongoose-base-client-application</module>
+                <module>mongoose-crm-backoffice-bookingdetailspanel</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+            </used-by-source-modules>
+
         </project>
 
         <project executable="true" name="mongoose-all-backoffice-application-gluon">
@@ -137,6 +139,8 @@
             <dependencies>
                 <used-by-source-modules/>
             </dependencies>
+
+            <used-by-source-modules/>
 
         </project>
 
@@ -165,18 +169,21 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
-                    <module>mongoose-base-shared-domainmodel</module>
-                    <module>mongoose-event-backoffice-activities-cloneevent</module>
-                    <module>mongoose-event-backoffice-activities-cloneevent-routing</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
                 </used-by-source-modules>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.all.backoffice.activities.event.clone.openjfx</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-shared-domainmodel</module>
+                <module>mongoose-event-backoffice-activities-cloneevent</module>
+                <module>mongoose-event-backoffice-activities-cloneevent-routing</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -191,10 +198,7 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules>
-                    <module>mongoose-base-client-application</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
 
                 <!-- Ecommerce activities -->
                 <plugin-module>mongoose-ecommerce-frontoffice-activities-person</plugin-module>
@@ -216,6 +220,11 @@
                 <package>mongoose.all.frontoffice.application</package>
             </source-packages>
 
+            <used-by-source-modules>
+                <module>mongoose-base-client-application</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+            </used-by-source-modules>
+
         </project>
 
         <project executable="true" name="mongoose-all-frontoffice-application-gluon">
@@ -223,6 +232,8 @@
             <dependencies>
                 <used-by-source-modules/>
             </dependencies>
+
+            <used-by-source-modules/>
 
         </project>
 
@@ -245,6 +256,8 @@
             <dependencies>
                 <used-by-source-modules/>
             </dependencies>
+
+            <used-by-source-modules/>
 
         </project>
 
@@ -300,20 +313,6 @@
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
-                    <module>mongoose-base-client-activity</module>
-                    <module>webfx-extras-visual-base</module>
-                    <module>webfx-extras-visual-controls-charts</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-orm-reactive-entities</module>
-                    <module>webfx-framework-client-orm-reactive-visual</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-framework-shared-router</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-platform-client-windowhistory</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -322,6 +321,23 @@
                 <package>mongoose.base.backoffice.activities.monitor</package>
                 <package>mongoose.base.backoffice.activities.monitor.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-client-activity</module>
+                <module>webfx-extras-visual-base</module>
+                <module>webfx-extras-visual-controls-charts</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-orm-reactive-entities</module>
+                <module>webfx-framework-client-orm-reactive-visual</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-framework-shared-router</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-client-windowhistory</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -340,19 +356,6 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
-                    <module>mongoose-base-client-activity</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-orm-entity-controls</module>
-                    <module>webfx-framework-client-orm-reactive-visual</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-framework-shared-orm-dql</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-framework-shared-router</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-kit-launcher</module>
-                    <module>webfx-platform-client-windowhistory</module>
-                    <module>webfx-platform-shared-util</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -361,6 +364,22 @@
                 <package>mongoose.base.backoffice.activities.operations</package>
                 <package>mongoose.base.backoffice.activities.operations.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-client-activity</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-orm-entity-controls</module>
+                <module>webfx-framework-client-orm-reactive-visual</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-dql</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-framework-shared-router</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-launcher</module>
+                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -373,27 +392,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
-                    <module>java.base</module>
-                    <module>mongoose-base-client-entities</module>
-                    <module>webfx-extras-imagestore</module>
-                    <module>webfx-extras-type</module>
-                    <module>webfx-extras-visual-base</module>
-                    <module>webfx-extras-visual-controls</module>
-                    <module>webfx-extras-visual-controls-charts</module>
-                    <module>webfx-extras-visual-controls-grid</module>
-                    <module>webfx-framework-client-controls</module>
-                    <module>webfx-framework-client-orm-reactive-dql</module>
-                    <module>webfx-framework-client-orm-reactive-entities</module>
-                    <module>webfx-framework-client-orm-reactive-visual</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-framework-shared-orm-dql</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-framework-shared-orm-expression</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-kit-util</module>
-                    <module>webfx-platform-shared-util</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -401,6 +399,30 @@
                 <package>mongoose.base.backoffice.controls.masterslave</package>
                 <package>mongoose.base.backoffice.controls.masterslave.group</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-base-client-entities</module>
+                <module>webfx-extras-imagestore</module>
+                <module>webfx-extras-type</module>
+                <module>webfx-extras-visual-base</module>
+                <module>webfx-extras-visual-controls</module>
+                <module>webfx-extras-visual-controls-charts</module>
+                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-framework-client-controls</module>
+                <module>webfx-framework-client-orm-reactive-dql</module>
+                <module>webfx-framework-client-orm-reactive-entities</module>
+                <module>webfx-framework-client-orm-reactive-visual</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-framework-shared-orm-dql</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-framework-shared-orm-expression</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -413,26 +435,29 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-platform-shared-submit</undetected-module>
-                    <module>java.base</module>
-                    <module>mongoose-base-client-icons</module>
-                    <module>webfx-extras-webtext-controls</module>
-                    <module>webfx-framework-client-action</module>
-                    <module>webfx-framework-client-controls</module>
-                    <module>webfx-framework-client-i18n</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-framework-shared-orm-domainmodel</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-kit-util</module>
-                    <module>webfx-platform-shared-async</module>
-                    <module>webfx-platform-shared-util</module>
                 </used-by-source-modules>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.base.backoffice.controls.multilangeditor</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-base-client-icons</module>
+                <module>webfx-extras-webtext-controls</module>
+                <module>webfx-framework-client-action</module>
+                <module>webfx-framework-client-controls</module>
+                <module>webfx-framework-client-i18n</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-framework-shared-orm-domainmodel</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-platform-shared-async</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -446,23 +471,26 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-extras-visual-controls-grid</undetected-module>
                     <undetected-module>webfx-platform-shared-submit</undetected-module>
-                    <module>java.base</module>
-                    <module>webfx-extras-type</module>
-                    <module>webfx-framework-client-controls</module>
-                    <module>webfx-framework-client-orm-reactive-entities</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-framework-shared-orm-domainmodel</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-framework-shared-orm-expression</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-platform-shared-async</module>
-                    <module>webfx-platform-shared-submit</module>
                 </used-by-source-modules>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.base.backoffice.operations.entities.generic</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>webfx-extras-type</module>
+                <module>webfx-framework-client-controls</module>
+                <module>webfx-framework-client-orm-reactive-entities</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-domainmodel</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-framework-shared-orm-expression</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-shared-async</module>
+                <module>webfx-platform-shared-submit</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -475,26 +503,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
-                    <module>mongoose-base-client-aggregates</module>
-                    <module>mongoose-base-client-presentationmodel</module>
-                    <module>mongoose-ecommerce-client-businesslogic</module>
-                    <module>webfx-extras-visual-base</module>
-                    <module>webfx-extras-visual-controls-grid</module>
-                    <module>webfx-framework-client-controls</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-orm-reactive-dql</module>
-                    <module>webfx-framework-client-orm-reactive-visual</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-kit-util</module>
-                    <module>webfx-platform-shared-async</module>
-                    <module>webfx-platform-shared-json</module>
-                    <module>webfx-platform-shared-log</module>
-                    <module>webfx-platform-shared-query</module>
-                    <module>webfx-platform-shared-util</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -506,6 +514,29 @@
                 <package>mongoose.base.client.activity.themes</package>
             </source-packages>
 
+            <used-by-source-modules>
+                <module>mongoose-base-client-aggregates</module>
+                <module>mongoose-base-client-presentationmodel</module>
+                <module>mongoose-ecommerce-client-businesslogic</module>
+                <module>webfx-extras-visual-base</module>
+                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-framework-client-controls</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-orm-reactive-dql</module>
+                <module>webfx-framework-client-orm-reactive-visual</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-platform-shared-async</module>
+                <module>webfx-platform-shared-json</module>
+                <module>webfx-platform-shared-log</module>
+                <module>webfx-platform-shared-query</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
+
         </project>
 
         <project name="mongoose-base-client-aggregates">
@@ -515,18 +546,7 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules>
-                    <module>java.base</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>webfx-framework-shared-orm-domainmodel</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-platform-client-websocketbus</module>
-                    <module>webfx-platform-shared-async</module>
-                    <module>webfx-platform-shared-bus</module>
-                    <module>webfx-platform-shared-log</module>
-                    <module>webfx-platform-shared-query</module>
-                    <module>webfx-platform-shared-util</module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -534,6 +554,19 @@
                 <package>mongoose.base.client.aggregates.cart</package>
                 <package>mongoose.base.client.aggregates.event</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>webfx-framework-shared-orm-domainmodel</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-platform-client-websocketbus</module>
+                <module>webfx-platform-shared-async</module>
+                <module>webfx-platform-shared-bus</module>
+                <module>webfx-platform-shared-log</module>
+                <module>webfx-platform-shared-query</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -553,26 +586,6 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-shared-router</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
-                    <module>java.base</module>
-                    <module>mongoose-base-client-activity</module>
-                    <module>mongoose-base-client-icons</module>
-                    <module>webfx-extras-imagestore</module>
-                    <module>webfx-framework-client-action</module>
-                    <module>webfx-framework-client-activity</module>
-                    <module>webfx-framework-client-i18n</module>
-                    <module>webfx-framework-client-operationaction</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-framework-shared-orm-datasourcemodelservice</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-kit-launcher</module>
-                    <module>webfx-kit-util</module>
-                    <module>webfx-platform-client-uischeduler</module>
-                    <module>webfx-platform-shared-buscall</module>
-                    <module>webfx-platform-shared-util</module>
                 </used-by-source-modules>
 
                 <resource-module>mongoose-base-client-css</resource-module>
@@ -593,6 +606,29 @@
                 <package>mongoose.base.client.application</package>
             </source-packages>
 
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-base-client-activity</module>
+                <module>mongoose-base-client-icons</module>
+                <module>webfx-extras-imagestore</module>
+                <module>webfx-framework-client-action</module>
+                <module>webfx-framework-client-activity</module>
+                <module>webfx-framework-client-i18n</module>
+                <module>webfx-framework-client-operationaction</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-datasourcemodelservice</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-launcher</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-platform-client-uischeduler</module>
+                <module>webfx-platform-shared-buscall</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
+
         </project>
 
         <project name="mongoose-base-client-busconfig">
@@ -610,6 +646,8 @@
                 <resource>dev/webfx/platform/client/services/websocketbus/conf/BusOptions.json</resource>
             </embed-resources>
 
+            <used-by-source-modules/>
+
         </project>
 
         <project interface="true" name="mongoose-base-client-css">
@@ -621,6 +659,8 @@
             <dependencies>
                 <used-by-source-modules/>
             </dependencies>
+
+            <used-by-source-modules/>
 
         </project>
 
@@ -638,6 +678,8 @@
             <dependencies>
                 <used-by-source-modules/>
             </dependencies>
+
+            <used-by-source-modules/>
 
         </project>
 
@@ -660,29 +702,31 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules>
-                    <module>java.base</module>
-                    <module>mongoose-base-client-presentationmodel</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>webfx-framework-client-controls</module>
-                    <module>webfx-framework-client-i18n</module>
-                    <module>webfx-framework-client-orm-entity-controls</module>
-                    <module>webfx-framework-client-orm-reactive-dql</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-framework-shared-orm-domainmodel</module>
-                    <module>webfx-framework-shared-orm-dql</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-kit-util</module>
-                    <module>webfx-platform-shared-util</module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.base.client.entities.util.filters</package>
                 <package>mongoose.base.client.entities.util</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-base-client-presentationmodel</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>webfx-framework-client-controls</module>
+                <module>webfx-framework-client-i18n</module>
+                <module>webfx-framework-client-orm-entity-controls</module>
+                <module>webfx-framework-client-orm-reactive-dql</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-framework-shared-orm-domainmodel</module>
+                <module>webfx-framework-shared-orm-dql</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -703,12 +747,6 @@
                 <used-by-source-modules>
                     <undetected-module>javafx-base</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
-                    <module>webfx-framework-client-i18n</module>
-                    <module>webfx-framework-client-i18n-json</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -721,6 +759,15 @@
                 <package>mongoose.base.client.operations.i18n</package>
                 <package>mongoose.base.client.services.i18n</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>webfx-framework-client-i18n</module>
+                <module>webfx-framework-client-i18n-json</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -749,12 +796,7 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>webfx-extras-imagestore</module>
-                    <module>webfx-framework-client-action</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <embed-resources>
@@ -768,6 +810,13 @@
                 <package>mongoose.base.client.icons</package>
                 <package>mongoose.base.client.actions</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-shared-entities</module>
+                <module>webfx-extras-imagestore</module>
+                <module>webfx-framework-client-action</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -783,15 +832,17 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-shared-router</module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.base.client.navigationarrows</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-shared-router</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -809,21 +860,24 @@
                 <used-by-source-modules>
                     <undetected-module>javafx-base</undetected-module>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
-                    <module>java.base</module>
-                    <module>webfx-framework-client-action</module>
-                    <module>webfx-framework-client-i18n</module>
-                    <module>webfx-framework-client-operationaction</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-shared-orm-datasourcemodelservice</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-platform-shared-boot</module>
-                    <module>webfx-platform-shared-log</module>
                 </used-by-source-modules>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.base.client.operationactionsloading</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>webfx-framework-client-action</module>
+                <module>webfx-framework-client-i18n</module>
+                <module>webfx-framework-client-operationaction</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-shared-orm-datasourcemodelservice</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-platform-shared-boot</module>
+                <module>webfx-platform-shared-log</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -834,15 +888,17 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.base.client.presentationmodel</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-shared-entities</module>
+                <module>webfx-kit-javafxbase-emul</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -861,17 +917,6 @@
                     <undetected-module>javafx-base</undetected-module>
                     <undetected-module>webfx-platform-shared-submit</undetected-module>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
-                    <module>java.base</module>
-                    <module>mongoose-crm-client-authn</module>
-                    <module>webfx-framework-client-push</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-shared-orm-datasourcemodelservice</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-kit-launcher</module>
-                    <module>webfx-platform-client-storage</module>
-                    <module>webfx-platform-shared-boot</module>
-                    <module>webfx-platform-shared-bus</module>
-                    <module>webfx-platform-shared-log</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -887,6 +932,20 @@
                 <package>mongoose.base.client.jobs.sessionrecorder</package>
             </source-packages>
 
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-crm-client-authn</module>
+                <module>webfx-framework-client-push</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-shared-orm-datasourcemodelservice</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-kit-launcher</module>
+                <module>webfx-platform-client-storage</module>
+                <module>webfx-platform-shared-boot</module>
+                <module>webfx-platform-shared-bus</module>
+                <module>webfx-platform-shared-log</module>
+            </used-by-source-modules>
+
         </project>
 
         <project name="mongoose-base-client-util">
@@ -896,15 +955,7 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules>
-                    <module>mongoose-base-client-entities</module>
-                    <module>webfx-extras-type</module>
-                    <module>webfx-framework-client-i18n</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-framework-shared-orm-expression</module>
-                    <module>webfx-platform-shared-log</module>
-                    <module>webfx-platform-shared-util</module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -912,6 +963,16 @@
                 <package>mongoose.base.client.util.log</package>
                 <package>mongoose.base.client.util.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-client-entities</module>
+                <module>webfx-extras-type</module>
+                <module>webfx-framework-client-i18n</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-framework-shared-orm-expression</module>
+                <module>webfx-platform-shared-log</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -922,23 +983,25 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules>
-                    <module>java.base</module>
-                    <module>webfx-extras-imagestore</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-framework-client-validation</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-kit-util</module>
-                    <module>webfx-platform-client-uischeduler</module>
-                    <module>webfx-platform-shared-util</module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.base.client.validation</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>webfx-extras-imagestore</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-framework-client-validation</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-platform-client-uischeduler</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -959,6 +1022,8 @@
                 <plugin-module>webfx-platform-shared-buscalljob</plugin-module>
             </dependencies>
 
+            <used-by-source-modules/>
+
         </project>
 
         <project executable="true" name="mongoose-base-server-application-vertx">
@@ -966,6 +1031,8 @@
             <dependencies>
                 <used-by-source-modules/>
             </dependencies>
+
+            <used-by-source-modules/>
 
         </project>
 
@@ -985,17 +1052,20 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
                     <undetected-module>webfx-framework-shared-orm-dql</undetected-module>
-                    <module>webfx-framework-shared-orm-datasourcemodelservice</module>
-                    <module>webfx-platform-shared-datasource</module>
-                    <module>webfx-platform-shared-json</module>
-                    <module>webfx-platform-shared-log</module>
-                    <module>webfx-platform-shared-resource</module>
                 </used-by-source-modules>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.base.server.services.datasource</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>webfx-framework-shared-orm-datasourcemodelservice</module>
+                <module>webfx-platform-shared-datasource</module>
+                <module>webfx-platform-shared-json</module>
+                <module>webfx-platform-shared-log</module>
+                <module>webfx-platform-shared-resource</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -1013,17 +1083,20 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
-                    <module>webfx-framework-server-push</module>
-                    <module>webfx-framework-shared-orm-datasourcemodelservice</module>
-                    <module>webfx-platform-shared-boot</module>
-                    <module>webfx-platform-shared-log</module>
-                    <module>webfx-platform-shared-submit</module>
                 </used-by-source-modules>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.base.server.jobs.sessioncloser</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>webfx-framework-server-push</module>
+                <module>webfx-framework-shared-orm-datasourcemodelservice</module>
+                <module>webfx-platform-shared-boot</module>
+                <module>webfx-platform-shared-log</module>
+                <module>webfx-platform-shared-submit</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -1040,16 +1113,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
-                    <module>java.base</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>webfx-framework-shared-orm-datasourcemodelservice</module>
-                    <module>webfx-framework-shared-orm-domainmodel</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-platform-shared-boot</module>
-                    <module>webfx-platform-shared-log</module>
-                    <module>webfx-platform-shared-scheduler</module>
-                    <module>webfx-platform-shared-submit</module>
-                    <module>webfx-platform-shared-util</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1058,6 +1121,19 @@
                 <package>mongoose.base.server.services.systemmetrics.spi</package>
                 <package>mongoose.base.server.services.systemmetrics</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>webfx-framework-shared-orm-datasourcemodelservice</module>
+                <module>webfx-framework-shared-orm-domainmodel</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-platform-shared-boot</module>
+                <module>webfx-platform-shared-log</module>
+                <module>webfx-platform-shared-scheduler</module>
+                <module>webfx-platform-shared-submit</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
             <used-services>
                 <required-service>mongoose.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider</required-service>
@@ -1076,16 +1152,18 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules>
-                    <module>jdk.management</module>
-                    <module>mongoose-base-server-systemmetrics</module>
-                    <module>mongoose-base-shared-entities</module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.base.server.services.systemmetrics.spi.java</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>jdk.management</module>
+                <module>mongoose-base-server-systemmetrics</module>
+                <module>mongoose-base-shared-entities</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -1106,23 +1184,7 @@
             </embed-resources>
 
             <dependencies>
-                <used-by-source-modules>
-                    <module>java.base</module>
-                    <module>webfx-extras-type</module>
-                    <module>webfx-framework-shared-orm-datasourcemodelservice</module>
-                    <module>webfx-framework-shared-orm-domainmodel</module>
-                    <module>webfx-framework-shared-orm-domainmodelservice</module>
-                    <module>webfx-framework-shared-orm-dql</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-framework-shared-orm-expression</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-platform-shared-async</module>
-                    <module>webfx-platform-shared-json</module>
-                    <module>webfx-platform-shared-query</module>
-                    <module>webfx-platform-shared-resource</module>
-                    <module>webfx-platform-shared-serial</module>
-                    <module>webfx-platform-shared-util</module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -1131,6 +1193,24 @@
                 <package>mongoose.base.shared.services.domainmodel</package>
                 <package>mongoose.base.shared.services.datasourcemodel</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>webfx-extras-type</module>
+                <module>webfx-framework-shared-orm-datasourcemodelservice</module>
+                <module>webfx-framework-shared-orm-domainmodel</module>
+                <module>webfx-framework-shared-orm-domainmodelservice</module>
+                <module>webfx-framework-shared-orm-dql</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-framework-shared-orm-expression</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-platform-shared-async</module>
+                <module>webfx-platform-shared-json</module>
+                <module>webfx-platform-shared-query</module>
+                <module>webfx-platform-shared-resource</module>
+                <module>webfx-platform-shared-serial</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -1173,13 +1253,7 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules>
-                    <module>java.base</module>
-                    <module>mongoose-base-shared-domainmodel</module>
-                    <module>mongoose-hotel-shared-time</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-platform-shared-util</module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -1189,6 +1263,14 @@
                 <package>mongoose.base.shared.entities.markers</package>
                 <package>mongoose.base.shared.entities.formatters</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-base-shared-domainmodel</module>
+                <module>mongoose-hotel-shared-time</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -1218,27 +1300,6 @@
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
-                    <module>mongoose-base-backoffice-masterslave</module>
-                    <module>mongoose-base-backoffice-operations-generic</module>
-                    <module>mongoose-base-client-activity</module>
-                    <module>mongoose-base-client-util</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>mongoose-catering-backoffice-operations-allocationrule</module>
-                    <module>mongoose-ecommerce-backoffice-activities-statistics</module>
-                    <module>webfx-extras-visual-base</module>
-                    <module>webfx-extras-visual-controls-grid</module>
-                    <module>webfx-framework-client-operationaction</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-orm-reactive-visual</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-framework-shared-orm-dql</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-framework-shared-router</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-platform-client-windowhistory</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1247,6 +1308,30 @@
                 <package>mongoose.catering.backoffice.activities.diningareas</package>
                 <package>mongoose.catering.backoffice.activities.diningareas.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-backoffice-masterslave</module>
+                <module>mongoose-base-backoffice-operations-generic</module>
+                <module>mongoose-base-client-activity</module>
+                <module>mongoose-base-client-util</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>mongoose-catering-backoffice-operations-allocationrule</module>
+                <module>mongoose-ecommerce-backoffice-activities-statistics</module>
+                <module>webfx-extras-visual-base</module>
+                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-framework-client-operationaction</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-orm-reactive-visual</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-dql</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-framework-shared-router</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-client-windowhistory</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -1259,20 +1344,23 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-platform-shared-submit</undetected-module>
-                    <module>mongoose-base-backoffice-operations-generic</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>webfx-framework-client-controls</module>
-                    <module>webfx-framework-client-orm-entity-controls</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-platform-shared-async</module>
                 </used-by-source-modules>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.catering.backoffice.operations.entities.allocationrule</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-backoffice-operations-generic</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>webfx-framework-client-controls</module>
+                <module>webfx-framework-client-orm-entity-controls</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-shared-async</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -1312,20 +1400,6 @@
                     <undetected-module>webfx-platform-shared-util</undetected-module>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
-                    <module>mongoose-crm-client-authn</module>
-                    <module>webfx-extras-visual-controls-grid</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-orm-entity-controls</module>
-                    <module>webfx-framework-client-orm-reactive-visual</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-framework-shared-orm-dql</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-framework-shared-router</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-platform-client-windowhistory</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1334,6 +1408,23 @@
                 <package>mongoose.crm.backoffice.activities.authorizations.routing</package>
                 <package>mongoose.crm.backoffice.activities.operations.authorizations</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-crm-client-authn</module>
+                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-orm-entity-controls</module>
+                <module>webfx-framework-client-orm-reactive-visual</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-dql</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-framework-shared-router</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-client-windowhistory</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -1351,15 +1442,6 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
-                    <module>mongoose-base-backoffice-multilangeditor</module>
-                    <module>mongoose-base-client-util</module>
-                    <module>webfx-framework-client-controls</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-kit-util</module>
-                    <module>webfx-platform-client-windowhistory</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1368,6 +1450,18 @@
                 <package>mongoose.crm.backoffice.activities.letter</package>
                 <package>mongoose.crm.backoffice.activities.letter.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-backoffice-multilangeditor</module>
+                <module>mongoose-base-client-util</module>
+                <module>webfx-framework-client-controls</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-platform-client-windowhistory</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -1389,16 +1483,6 @@
                     <undetected-module>webfx-platform-shared-async</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
                     <undetected-module>webfx-kit-javafxgraphics-emul</undetected-module>
-                    <module>mongoose-base-client-activity</module>
-                    <module>mongoose-base-client-util</module>
-                    <module>mongoose-crm-backoffice-activities-letter</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-orm-reactive-visual</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-framework-shared-orm-dql</module>
-                    <module>webfx-framework-shared-router</module>
-                    <module>webfx-platform-client-windowhistory</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1407,6 +1491,19 @@
                 <package>mongoose.crm.backoffice.activities.letters</package>
                 <package>mongoose.crm.backoffice.activities.letters.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-client-activity</module>
+                <module>mongoose-base-client-util</module>
+                <module>mongoose-crm-backoffice-activities-letter</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-orm-reactive-visual</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-dql</module>
+                <module>webfx-framework-shared-router</module>
+                <module>webfx-platform-client-windowhistory</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -1426,20 +1523,6 @@
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-framework-shared-orm-entity</undetected-module>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
-                    <module>mongoose-base-client-activity</module>
-                    <module>mongoose-event-backoffice-activities-events</module>
-                    <module>webfx-framework-client-i18n</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-orm-reactive-visual</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-framework-shared-orm-dql</module>
-                    <module>webfx-framework-shared-router</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-platform-client-windowhistory</module>
-                    <module>webfx-platform-shared-util</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1448,6 +1531,23 @@
                 <package>mongoose.crm.backoffice.activities.organizations</package>
                 <package>mongoose.crm.backoffice.activities.organizations.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-client-activity</module>
+                <module>mongoose-event-backoffice-activities-events</module>
+                <module>webfx-framework-client-i18n</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-orm-reactive-visual</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-dql</module>
+                <module>webfx-framework-shared-router</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -1466,22 +1566,6 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
-                    <module>mongoose-base-backoffice-masterslave</module>
-                    <module>mongoose-base-client-activity</module>
-                    <module>mongoose-base-shared-domainmodel</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>webfx-extras-visual-base</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-orm-reactive-dql</module>
-                    <module>webfx-framework-client-orm-reactive-visual</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-framework-shared-orm-dql</module>
-                    <module>webfx-framework-shared-orm-expression</module>
-                    <module>webfx-framework-shared-router</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-platform-client-windowhistory</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1490,6 +1574,25 @@
                 <package>mongoose.crm.backoffice.activities.users</package>
                 <package>mongoose.crm.backoffice.activities.users.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-backoffice-masterslave</module>
+                <module>mongoose-base-client-activity</module>
+                <module>mongoose-base-shared-domainmodel</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>webfx-extras-visual-base</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-orm-reactive-dql</module>
+                <module>webfx-framework-client-orm-reactive-visual</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-dql</module>
+                <module>webfx-framework-shared-orm-expression</module>
+                <module>webfx-framework-shared-router</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-client-windowhistory</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -1502,37 +1605,40 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
-                    <module>java.base</module>
-                    <module>mongoose-base-backoffice-masterslave</module>
-                    <module>mongoose-base-backoffice-operations-generic</module>
-                    <module>mongoose-base-client-presentationmodel</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>mongoose-crm-backoffice-operations-mail</module>
-                    <module>mongoose-ecommerce-backoffice-operations-document</module>
-                    <module>mongoose-ecommerce-backoffice-operations-documentline</module>
-                    <module>mongoose-ecommerce-backoffice-operations-moneytransfer</module>
-                    <module>webfx-extras-imagestore</module>
-                    <module>webfx-extras-label</module>
-                    <module>webfx-extras-visual-controls-grid</module>
-                    <module>webfx-framework-client-action</module>
-                    <module>webfx-framework-client-activity</module>
-                    <module>webfx-framework-client-controls</module>
-                    <module>webfx-framework-client-i18n</module>
-                    <module>webfx-framework-client-operationaction</module>
-                    <module>webfx-framework-client-orm-reactive-visual</module>
-                    <module>webfx-framework-shared-orm-domainmodel</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-kit-util</module>
-                    <module>webfx-platform-shared-util</module>
                 </used-by-source-modules>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.crm.backoffice.controls.bookingdetailspanel</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-base-backoffice-masterslave</module>
+                <module>mongoose-base-backoffice-operations-generic</module>
+                <module>mongoose-base-client-presentationmodel</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>mongoose-crm-backoffice-operations-mail</module>
+                <module>mongoose-ecommerce-backoffice-operations-document</module>
+                <module>mongoose-ecommerce-backoffice-operations-documentline</module>
+                <module>mongoose-ecommerce-backoffice-operations-moneytransfer</module>
+                <module>webfx-extras-imagestore</module>
+                <module>webfx-extras-label</module>
+                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-framework-client-action</module>
+                <module>webfx-framework-client-activity</module>
+                <module>webfx-framework-client-controls</module>
+                <module>webfx-framework-client-i18n</module>
+                <module>webfx-framework-client-operationaction</module>
+                <module>webfx-framework-client-orm-reactive-visual</module>
+                <module>webfx-framework-shared-orm-domainmodel</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -1543,17 +1649,19 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-platform-shared-async</module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.crm.backoffice.operations.entities.mail</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-shared-entities</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-shared-async</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -1568,19 +1676,6 @@
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
-                    <module>mongoose-base-client-activity</module>
-                    <module>mongoose-base-client-validation</module>
-                    <module>mongoose-event-client-sectionpanel</module>
-                    <module>webfx-framework-client-controls</module>
-                    <module>webfx-framework-client-i18n</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-framework-shared-authn</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-kit-util</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1591,6 +1686,22 @@
             <source-packages>
                 <package>mongoose.crm.client.activities.login</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-client-activity</module>
+                <module>mongoose-base-client-validation</module>
+                <module>mongoose-event-client-sectionpanel</module>
+                <module>webfx-framework-client-controls</module>
+                <module>webfx-framework-client-i18n</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-framework-shared-authn</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -1608,15 +1719,18 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
                 </used-by-source-modules>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.crm.client.activities.unauthorized</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -1631,18 +1745,20 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules>
-                    <module>webfx-framework-shared-authn</module>
-                    <module>webfx-framework-shared-orm-datasourcemodelservice</module>
-                    <module>webfx-framework-shared-orm-domainmodel</module>
-                    <module>webfx-platform-shared-async</module>
-                    <module>webfx-platform-shared-query</module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.crm.client.services.authn</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>webfx-framework-shared-authn</module>
+                <module>webfx-framework-shared-orm-datasourcemodelservice</module>
+                <module>webfx-framework-shared-orm-domainmodel</module>
+                <module>webfx-platform-shared-async</module>
+                <module>webfx-platform-shared-query</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -1659,20 +1775,23 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
-                    <module>mongoose-crm-client-authn</module>
-                    <module>webfx-framework-shared-authz</module>
-                    <module>webfx-framework-shared-orm-datasourcemodelservice</module>
-                    <module>webfx-framework-shared-orm-domainmodel</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-framework-shared-router</module>
-                    <module>webfx-platform-shared-log</module>
-                    <module>webfx-platform-shared-util</module>
                 </used-by-source-modules>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.crm.client.services.authz</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-crm-client-authn</module>
+                <module>webfx-framework-shared-authz</module>
+                <module>webfx-framework-shared-orm-datasourcemodelservice</module>
+                <module>webfx-framework-shared-orm-domainmodel</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-framework-shared-router</module>
+                <module>webfx-platform-shared-log</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -1683,36 +1802,38 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules>
-                    <module>java.base</module>
-                    <module>mongoose-base-client-activity</module>
-                    <module>mongoose-base-client-validation</module>
-                    <module>mongoose-base-shared-domainmodel</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>mongoose-crm-client-authn</module>
-                    <module>mongoose-event-client-sectionpanel</module>
-                    <module>webfx-extras-materialdesign</module>
-                    <module>webfx-extras-type</module>
-                    <module>webfx-extras-visual-base</module>
-                    <module>webfx-extras-visual-controls-grid</module>
-                    <module>webfx-framework-client-controls</module>
-                    <module>webfx-framework-client-i18n</module>
-                    <module>webfx-framework-client-orm-entity-controls</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-framework-shared-orm-domainmodel</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-kit-util</module>
-                    <module>webfx-platform-client-uischeduler</module>
-                    <module>webfx-platform-shared-util</module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.crm.client.controls.personaldetails</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-base-client-activity</module>
+                <module>mongoose-base-client-validation</module>
+                <module>mongoose-base-shared-domainmodel</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>mongoose-crm-client-authn</module>
+                <module>mongoose-event-client-sectionpanel</module>
+                <module>webfx-extras-materialdesign</module>
+                <module>webfx-extras-type</module>
+                <module>webfx-extras-visual-base</module>
+                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-framework-client-controls</module>
+                <module>webfx-framework-client-i18n</module>
+                <module>webfx-framework-client-orm-entity-controls</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-framework-shared-orm-domainmodel</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-platform-client-uischeduler</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -1758,36 +1879,6 @@
                     <undetected-module>webfx-framework-client-action</undetected-module>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
-                    <module>java.base</module>
-                    <module>mongoose-base-backoffice-masterslave</module>
-                    <module>mongoose-base-backoffice-operations-generic</module>
-                    <module>mongoose-base-client-activity</module>
-                    <module>mongoose-base-client-aggregates</module>
-                    <module>mongoose-base-client-presentationmodel</module>
-                    <module>mongoose-base-client-util</module>
-                    <module>mongoose-base-shared-domainmodel</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>mongoose-crm-backoffice-bookingdetailspanel</module>
-                    <module>mongoose-ecommerce-backoffice-operations-document</module>
-                    <module>mongoose-event-backoffice-activities-cloneevent-routing</module>
-                    <module>mongoose-event-frontoffice-activities-fees</module>
-                    <module>webfx-extras-visual-base</module>
-                    <module>webfx-extras-visual-controls-grid</module>
-                    <module>webfx-framework-client-operationaction</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-orm-reactive-dql</module>
-                    <module>webfx-framework-client-orm-reactive-visual</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-framework-shared-orm-dql</module>
-                    <module>webfx-framework-shared-orm-expression</module>
-                    <module>webfx-framework-shared-router</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-platform-client-windowhistory</module>
-                    <module>webfx-platform-shared-async</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1796,6 +1887,39 @@
                 <package>mongoose.ecommerce.backoffice.activities.bookings</package>
                 <package>mongoose.ecommerce.backoffice.activities.bookings.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-base-backoffice-masterslave</module>
+                <module>mongoose-base-backoffice-operations-generic</module>
+                <module>mongoose-base-client-activity</module>
+                <module>mongoose-base-client-aggregates</module>
+                <module>mongoose-base-client-presentationmodel</module>
+                <module>mongoose-base-client-util</module>
+                <module>mongoose-base-shared-domainmodel</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>mongoose-crm-backoffice-bookingdetailspanel</module>
+                <module>mongoose-ecommerce-backoffice-operations-document</module>
+                <module>mongoose-event-backoffice-activities-cloneevent-routing</module>
+                <module>mongoose-event-frontoffice-activities-fees</module>
+                <module>webfx-extras-visual-base</module>
+                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-framework-client-operationaction</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-orm-reactive-dql</module>
+                <module>webfx-framework-client-orm-reactive-visual</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-dql</module>
+                <module>webfx-framework-shared-orm-expression</module>
+                <module>webfx-framework-shared-router</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-platform-shared-async</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -1817,25 +1941,6 @@
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                     <undetected-module>webfx-extras-visual-controls-grid</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
-                    <module>mongoose-base-backoffice-masterslave</module>
-                    <module>mongoose-base-client-activity</module>
-                    <module>mongoose-base-client-entities</module>
-                    <module>mongoose-base-client-util</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>webfx-extras-visual-base</module>
-                    <module>webfx-extras-visual-controls-grid</module>
-                    <module>webfx-framework-client-operationaction</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-orm-entity-controls</module>
-                    <module>webfx-framework-client-orm-reactive-dql</module>
-                    <module>webfx-framework-client-orm-reactive-visual</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-framework-shared-orm-dql</module>
-                    <module>webfx-framework-shared-router</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-platform-client-windowhistory</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1844,6 +1949,28 @@
                 <package>mongoose.ecommerce.backoffice.activities.income</package>
                 <package>mongoose.ecommerce.backoffice.activities.income.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-backoffice-masterslave</module>
+                <module>mongoose-base-client-activity</module>
+                <module>mongoose-base-client-entities</module>
+                <module>mongoose-base-client-util</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>webfx-extras-visual-base</module>
+                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-framework-client-operationaction</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-orm-entity-controls</module>
+                <module>webfx-framework-client-orm-reactive-dql</module>
+                <module>webfx-framework-client-orm-reactive-visual</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-dql</module>
+                <module>webfx-framework-shared-router</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-client-windowhistory</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -1864,34 +1991,6 @@
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
-                    <module>java.base</module>
-                    <module>mongoose-base-backoffice-masterslave</module>
-                    <module>mongoose-base-client-activity</module>
-                    <module>mongoose-base-client-util</module>
-                    <module>mongoose-base-shared-domainmodel</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>mongoose-ecommerce-backoffice-operations-moneyflow</module>
-                    <module>webfx-extras-visual-base</module>
-                    <module>webfx-extras-visual-controls-grid</module>
-                    <module>webfx-framework-client-action</module>
-                    <module>webfx-framework-client-controls</module>
-                    <module>webfx-framework-client-operationaction</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-orm-entity-controls</module>
-                    <module>webfx-framework-client-orm-reactive-dql</module>
-                    <module>webfx-framework-client-orm-reactive-entities</module>
-                    <module>webfx-framework-client-orm-reactive-visual</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-framework-shared-orm-dql</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-framework-shared-router</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-kit-util</module>
-                    <module>webfx-platform-client-windowhistory</module>
-                    <module>webfx-platform-shared-submit</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1900,6 +1999,37 @@
                 <package>mongoose.ecommerce.backoffice.activities.moneyflows</package>
                 <package>mongoose.ecommerce.backoffice.activities.moneyflows.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-base-backoffice-masterslave</module>
+                <module>mongoose-base-client-activity</module>
+                <module>mongoose-base-client-util</module>
+                <module>mongoose-base-shared-domainmodel</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>mongoose-ecommerce-backoffice-operations-moneyflow</module>
+                <module>webfx-extras-visual-base</module>
+                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-framework-client-action</module>
+                <module>webfx-framework-client-controls</module>
+                <module>webfx-framework-client-operationaction</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-orm-entity-controls</module>
+                <module>webfx-framework-client-orm-reactive-dql</module>
+                <module>webfx-framework-client-orm-reactive-entities</module>
+                <module>webfx-framework-client-orm-reactive-visual</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-dql</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-framework-shared-router</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-platform-shared-submit</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -1919,30 +2049,6 @@
                     <undetected-module>webfx-framework-client-action</undetected-module>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
-                    <module>mongoose-base-backoffice-masterslave</module>
-                    <module>mongoose-base-backoffice-operations-generic</module>
-                    <module>mongoose-base-client-activity</module>
-                    <module>mongoose-base-client-presentationmodel</module>
-                    <module>mongoose-base-client-util</module>
-                    <module>mongoose-base-shared-domainmodel</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>mongoose-ecommerce-backoffice-operations-moneytransfer</module>
-                    <module>webfx-extras-visual-base</module>
-                    <module>webfx-extras-visual-controls-grid</module>
-                    <module>webfx-framework-client-operationaction</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-orm-reactive-dql</module>
-                    <module>webfx-framework-client-orm-reactive-visual</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-framework-shared-orm-dql</module>
-                    <module>webfx-framework-shared-orm-expression</module>
-                    <module>webfx-framework-shared-router</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-platform-client-windowhistory</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1951,6 +2057,33 @@
                 <package>mongoose.ecommerce.backoffice.activities.payments</package>
                 <package>mongoose.ecommerce.backoffice.activities.payments.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-backoffice-masterslave</module>
+                <module>mongoose-base-backoffice-operations-generic</module>
+                <module>mongoose-base-client-activity</module>
+                <module>mongoose-base-client-presentationmodel</module>
+                <module>mongoose-base-client-util</module>
+                <module>mongoose-base-shared-domainmodel</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>mongoose-ecommerce-backoffice-operations-moneytransfer</module>
+                <module>webfx-extras-visual-base</module>
+                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-framework-client-operationaction</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-orm-reactive-dql</module>
+                <module>webfx-framework-client-orm-reactive-visual</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-dql</module>
+                <module>webfx-framework-shared-orm-expression</module>
+                <module>webfx-framework-shared-router</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-client-windowhistory</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -1970,27 +2103,6 @@
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
-                    <module>mongoose-base-backoffice-masterslave</module>
-                    <module>mongoose-base-client-activity</module>
-                    <module>mongoose-base-client-presentationmodel</module>
-                    <module>mongoose-base-client-util</module>
-                    <module>mongoose-base-shared-domainmodel</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>webfx-extras-visual-base</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-orm-entity-controls</module>
-                    <module>webfx-framework-client-orm-reactive-dql</module>
-                    <module>webfx-framework-client-orm-reactive-visual</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-framework-shared-orm-dql</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-framework-shared-orm-expression</module>
-                    <module>webfx-framework-shared-router</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-platform-client-windowhistory</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1999,6 +2111,30 @@
                 <package>mongoose.ecommerce.backoffice.activities.statements</package>
                 <package>mongoose.ecommerce.backoffice.activities.statements.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-backoffice-masterslave</module>
+                <module>mongoose-base-client-activity</module>
+                <module>mongoose-base-client-presentationmodel</module>
+                <module>mongoose-base-client-util</module>
+                <module>mongoose-base-shared-domainmodel</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>webfx-extras-visual-base</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-orm-entity-controls</module>
+                <module>webfx-framework-client-orm-reactive-dql</module>
+                <module>webfx-framework-client-orm-reactive-visual</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-dql</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-framework-shared-orm-expression</module>
+                <module>webfx-framework-shared-router</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-client-windowhistory</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -2019,35 +2155,6 @@
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
-                    <module>java.base</module>
-                    <module>mongoose-base-backoffice-masterslave</module>
-                    <module>mongoose-base-backoffice-operations-generic</module>
-                    <module>mongoose-base-client-activity</module>
-                    <module>mongoose-base-client-presentationmodel</module>
-                    <module>mongoose-base-client-util</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>mongoose-crm-backoffice-bookingdetailspanel</module>
-                    <module>mongoose-ecommerce-backoffice-operations-document</module>
-                    <module>mongoose-ecommerce-backoffice-operations-documentline</module>
-                    <module>webfx-extras-type</module>
-                    <module>webfx-extras-visual-base</module>
-                    <module>webfx-extras-visual-controls-grid</module>
-                    <module>webfx-framework-client-operationaction</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-orm-reactive-dql</module>
-                    <module>webfx-framework-client-orm-reactive-entities</module>
-                    <module>webfx-framework-client-orm-reactive-visual</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-framework-shared-orm-dql</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-framework-shared-orm-expression</module>
-                    <module>webfx-framework-shared-router</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-platform-client-windowhistory</module>
-                    <module>webfx-platform-shared-util</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2056,6 +2163,38 @@
                 <package>mongoose.ecommerce.backoffice.activities.statistics</package>
                 <package>mongoose.ecommerce.backoffice.activities.statistics.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-base-backoffice-masterslave</module>
+                <module>mongoose-base-backoffice-operations-generic</module>
+                <module>mongoose-base-client-activity</module>
+                <module>mongoose-base-client-presentationmodel</module>
+                <module>mongoose-base-client-util</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>mongoose-crm-backoffice-bookingdetailspanel</module>
+                <module>mongoose-ecommerce-backoffice-operations-document</module>
+                <module>mongoose-ecommerce-backoffice-operations-documentline</module>
+                <module>webfx-extras-type</module>
+                <module>webfx-extras-visual-base</module>
+                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-framework-client-operationaction</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-orm-reactive-dql</module>
+                <module>webfx-framework-client-orm-reactive-entities</module>
+                <module>webfx-framework-client-orm-reactive-visual</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-dql</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-framework-shared-orm-expression</module>
+                <module>webfx-framework-shared-router</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -2069,15 +2208,6 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
                     <undetected-module>webfx-platform-shared-submit</undetected-module>
-                    <module>mongoose-base-backoffice-operations-generic</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>mongoose-crm-client-personaldetails</module>
-                    <module>webfx-framework-client-controls</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-kit-launcher</module>
-                    <module>webfx-platform-shared-async</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2088,6 +2218,18 @@
                 <package>mongoose.ecommerce.backoffice.operations.entities.document.cart</package>
                 <package>mongoose.ecommerce.backoffice.operations.entities.document.multiplebookings</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-backoffice-operations-generic</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>mongoose-crm-client-personaldetails</module>
+                <module>webfx-framework-client-controls</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-launcher</module>
+                <module>webfx-platform-shared-async</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -2100,20 +2242,23 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-platform-shared-submit</undetected-module>
-                    <module>mongoose-base-backoffice-operations-generic</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>webfx-framework-client-controls</module>
-                    <module>webfx-framework-client-orm-entity-controls</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-platform-shared-async</module>
                 </used-by-source-modules>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.ecommerce.backoffice.operations.entities.documentline</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-backoffice-operations-generic</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>webfx-framework-client-controls</module>
+                <module>webfx-framework-client-orm-entity-controls</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-shared-async</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -2124,23 +2269,25 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules>
-                    <module>java.base</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>webfx-framework-client-controls</module>
-                    <module>webfx-framework-client-orm-entity-controls</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-platform-shared-async</module>
-                    <module>webfx-platform-shared-submit</module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.ecommerce.backoffice.operations.entities.moneyflow</package>
                 <package>mongoose.ecommerce.backoffice.operations.entities.moneyaccount</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>webfx-framework-client-controls</module>
+                <module>webfx-framework-client-orm-entity-controls</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-shared-async</module>
+                <module>webfx-platform-shared-submit</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -2153,19 +2300,22 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-platform-shared-submit</undetected-module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>webfx-framework-client-controls</module>
-                    <module>webfx-framework-client-orm-entity-controls</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-platform-shared-async</module>
                 </used-by-source-modules>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.ecommerce.backoffice.operations.entities.moneytransfer</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-shared-entities</module>
+                <module>webfx-framework-client-controls</module>
+                <module>webfx-framework-client-orm-entity-controls</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-shared-async</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -2179,29 +2329,32 @@
                 <used-by-source-modules>
                     <undetected-module>mongoose-base-client-aggregates</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
-                    <module>java.base</module>
-                    <module>mongoose-base-client-util</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>mongoose-ecommerce-client-businesslogic</module>
-                    <module>mongoose-event-client-sectionpanel</module>
-                    <module>mongoose-hotel-shared-time</module>
-                    <module>webfx-extras-type</module>
-                    <module>webfx-extras-visual-base</module>
-                    <module>webfx-extras-visual-controls-grid</module>
-                    <module>webfx-framework-client-i18n</module>
-                    <module>webfx-framework-client-orm-reactive-visual</module>
-                    <module>webfx-framework-shared-orm-domainmodel</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-framework-shared-orm-expression</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-kit-util</module>
-                    <module>webfx-platform-shared-util</module>
                 </used-by-source-modules>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.ecommerce.client.controls.bookingoptionspanel</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-base-client-util</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>mongoose-ecommerce-client-businesslogic</module>
+                <module>mongoose-event-client-sectionpanel</module>
+                <module>mongoose-hotel-shared-time</module>
+                <module>webfx-extras-type</module>
+                <module>webfx-extras-visual-base</module>
+                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-framework-client-i18n</module>
+                <module>webfx-framework-client-orm-reactive-visual</module>
+                <module>webfx-framework-shared-orm-domainmodel</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-framework-shared-orm-expression</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -2215,23 +2368,26 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-platform-client-windowhistory</undetected-module>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
-                    <module>mongoose-base-client-activity</module>
-                    <module>mongoose-base-client-aggregates</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-framework-shared-orm-datasourcemodelservice</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-kit-util</module>
-                    <module>webfx-platform-shared-util</module>
                 </used-by-source-modules>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.ecommerce.client.activity.bookingprocess</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-client-activity</module>
+                <module>mongoose-base-client-aggregates</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-framework-shared-orm-datasourcemodelservice</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -2244,19 +2400,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
-                    <module>java.base</module>
-                    <module>mongoose-base-client-aggregates</module>
-                    <module>mongoose-base-client-entities</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>mongoose-event-client-calendar</module>
-                    <module>mongoose-hotel-shared-time</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-platform-shared-async</module>
-                    <module>webfx-platform-shared-query</module>
-                    <module>webfx-platform-shared-submit</module>
-                    <module>webfx-platform-shared-util</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2270,6 +2413,22 @@
                 <package>mongoose.ecommerce.client.businesslogic.rules</package>
                 <package>mongoose.ecommerce.client.businesslogic.pricing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-base-client-aggregates</module>
+                <module>mongoose-base-client-entities</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>mongoose-event-client-calendar</module>
+                <module>mongoose-hotel-shared-time</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-shared-async</module>
+                <module>webfx-platform-shared-query</module>
+                <module>webfx-platform-shared-submit</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -2285,39 +2444,6 @@
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
                     <undetected-module>webfx-platform-shared-submit</undetected-module>
-                    <module>java.base</module>
-                    <module>mongoose-base-client-util</module>
-                    <module>mongoose-base-shared-domainmodel</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>mongoose-ecommerce-client-bookingoptionspanel</module>
-                    <module>mongoose-ecommerce-client-businesslogic</module>
-                    <module>mongoose-ecommerce-frontoffice-activities-cart-routing</module>
-                    <module>mongoose-ecommerce-frontoffice-activities-contactus</module>
-                    <module>mongoose-ecommerce-frontoffice-activities-payment</module>
-                    <module>mongoose-event-client-sectionpanel</module>
-                    <module>mongoose-event-frontoffice-activities-options</module>
-                    <module>mongoose-event-frontoffice-activities-startbooking</module>
-                    <module>webfx-extras-flexbox</module>
-                    <module>webfx-extras-type</module>
-                    <module>webfx-extras-visual-base</module>
-                    <module>webfx-extras-visual-controls-grid</module>
-                    <module>webfx-framework-client-action</module>
-                    <module>webfx-framework-client-controls</module>
-                    <module>webfx-framework-client-i18n</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-orm-reactive-visual</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-framework-shared-orm-domainmodel</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-framework-shared-orm-expression</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-platform-client-uischeduler</module>
-                    <module>webfx-platform-shared-async</module>
-                    <module>webfx-platform-shared-log</module>
-                    <module>webfx-platform-shared-util</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2328,6 +2454,42 @@
             <source-packages>
                 <package>mongoose.ecommerce.frontoffice.activities.cart</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-base-client-util</module>
+                <module>mongoose-base-shared-domainmodel</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>mongoose-ecommerce-client-bookingoptionspanel</module>
+                <module>mongoose-ecommerce-client-businesslogic</module>
+                <module>mongoose-ecommerce-frontoffice-activities-cart-routing</module>
+                <module>mongoose-ecommerce-frontoffice-activities-contactus</module>
+                <module>mongoose-ecommerce-frontoffice-activities-payment</module>
+                <module>mongoose-event-client-sectionpanel</module>
+                <module>mongoose-event-frontoffice-activities-options</module>
+                <module>mongoose-event-frontoffice-activities-startbooking</module>
+                <module>webfx-extras-flexbox</module>
+                <module>webfx-extras-type</module>
+                <module>webfx-extras-visual-base</module>
+                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-framework-client-action</module>
+                <module>webfx-framework-client-controls</module>
+                <module>webfx-framework-client-i18n</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-orm-reactive-visual</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-framework-shared-orm-domainmodel</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-framework-shared-orm-expression</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-client-uischeduler</module>
+                <module>webfx-platform-shared-async</module>
+                <module>webfx-platform-shared-log</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -2340,21 +2502,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
-                    <module>java.base</module>
-                    <module>mongoose-base-client-activity</module>
-                    <module>mongoose-base-client-aggregates</module>
-                    <module>mongoose-base-client-util</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>webfx-framework-client-i18n</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-kit-util</module>
-                    <module>webfx-platform-client-windowhistory</module>
-                    <module>webfx-platform-shared-json</module>
-                    <module>webfx-platform-shared-util</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2363,6 +2510,24 @@
                 <package>mongoose.ecommerce.frontoffice.activities.cart.routing</package>
                 <package>mongoose.ecommerce.frontoffice.activities.cart.base</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-base-client-activity</module>
+                <module>mongoose-base-client-aggregates</module>
+                <module>mongoose-base-client-util</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>webfx-framework-client-i18n</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-platform-shared-json</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -2381,23 +2546,6 @@
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
                     <undetected-module>webfx-platform-shared-submit</undetected-module>
-                    <module>mongoose-base-client-activity</module>
-                    <module>mongoose-base-client-util</module>
-                    <module>mongoose-base-client-validation</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>mongoose-ecommerce-frontoffice-activities-cart-routing</module>
-                    <module>webfx-framework-client-action</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-platform-client-uischeduler</module>
-                    <module>webfx-platform-client-windowhistory</module>
-                    <module>webfx-platform-client-windowlocation</module>
-                    <module>webfx-platform-shared-log</module>
-                    <module>webfx-platform-shared-util</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2406,6 +2554,26 @@
                 <package>mongoose.ecommerce.frontoffice.activities.contactus</package>
                 <package>mongoose.ecommerce.frontoffice.activities.contactus.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-client-activity</module>
+                <module>mongoose-base-client-util</module>
+                <module>mongoose-base-client-validation</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>mongoose-ecommerce-frontoffice-activities-cart-routing</module>
+                <module>webfx-framework-client-action</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-client-uischeduler</module>
+                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-platform-client-windowlocation</module>
+                <module>webfx-platform-shared-log</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -2425,31 +2593,6 @@
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
                     <undetected-module>webfx-platform-shared-submit</undetected-module>
-                    <module>java-nio-emul</module>
-                    <module>java.base</module>
-                    <module>mongoose-base-client-entities</module>
-                    <module>mongoose-base-client-util</module>
-                    <module>mongoose-base-shared-domainmodel</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>mongoose-ecommerce-frontoffice-activities-cart-routing</module>
-                    <module>mongoose-event-client-sectionpanel</module>
-                    <module>webfx-extras-webtext-controls</module>
-                    <module>webfx-framework-client-action</module>
-                    <module>webfx-framework-client-controls</module>
-                    <module>webfx-framework-client-i18n</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-platform-client-uischeduler</module>
-                    <module>webfx-platform-client-websocketbus</module>
-                    <module>webfx-platform-client-windowhistory</module>
-                    <module>webfx-platform-client-windowlocation</module>
-                    <module>webfx-platform-shared-bus</module>
-                    <module>webfx-platform-shared-log</module>
-                    <module>webfx-platform-shared-util</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2458,6 +2601,34 @@
                 <package>mongoose.ecommerce.frontoffice.activities.payment</package>
                 <package>mongoose.ecommerce.frontoffice.activities.payment.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java-nio-emul</module>
+                <module>java.base</module>
+                <module>mongoose-base-client-entities</module>
+                <module>mongoose-base-client-util</module>
+                <module>mongoose-base-shared-domainmodel</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>mongoose-ecommerce-frontoffice-activities-cart-routing</module>
+                <module>mongoose-event-client-sectionpanel</module>
+                <module>webfx-extras-webtext-controls</module>
+                <module>webfx-framework-client-action</module>
+                <module>webfx-framework-client-controls</module>
+                <module>webfx-framework-client-i18n</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-client-uischeduler</module>
+                <module>webfx-platform-client-websocketbus</module>
+                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-platform-client-windowlocation</module>
+                <module>webfx-platform-shared-bus</module>
+                <module>webfx-platform-shared-log</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -2476,20 +2647,6 @@
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-framework-client-action</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
-                    <module>mongoose-base-client-util</module>
-                    <module>mongoose-crm-client-activities-login</module>
-                    <module>mongoose-crm-client-personaldetails</module>
-                    <module>mongoose-ecommerce-client-bookingprocess</module>
-                    <module>mongoose-ecommerce-client-businesslogic</module>
-                    <module>mongoose-ecommerce-frontoffice-activities-summary</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-kit-util</module>
-                    <module>webfx-platform-client-windowhistory</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2498,6 +2655,23 @@
                 <package>mongoose.ecommerce.frontoffice.activities.person</package>
                 <package>mongoose.ecommerce.frontoffice.activities.person.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-client-util</module>
+                <module>mongoose-crm-client-activities-login</module>
+                <module>mongoose-crm-client-personaldetails</module>
+                <module>mongoose-ecommerce-client-bookingprocess</module>
+                <module>mongoose-ecommerce-client-businesslogic</module>
+                <module>mongoose-ecommerce-frontoffice-activities-summary</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-platform-client-windowhistory</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -2515,26 +2689,6 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
-                    <module>mongoose-base-client-util</module>
-                    <module>mongoose-base-client-validation</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>mongoose-crm-client-personaldetails</module>
-                    <module>mongoose-ecommerce-client-bookingoptionspanel</module>
-                    <module>mongoose-ecommerce-client-bookingprocess</module>
-                    <module>mongoose-ecommerce-client-businesslogic</module>
-                    <module>mongoose-ecommerce-frontoffice-activities-cart-routing</module>
-                    <module>mongoose-event-client-bookingcalendar</module>
-                    <module>mongoose-event-client-sectionpanel</module>
-                    <module>webfx-framework-client-i18n</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-kit-util</module>
-                    <module>webfx-platform-client-windowhistory</module>
-                    <module>webfx-platform-shared-log</module>
-                    <module>webfx-platform-shared-util</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2543,6 +2697,29 @@
                 <package>mongoose.ecommerce.frontoffice.activities.summary</package>
                 <package>mongoose.ecommerce.frontoffice.activities.summary.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-client-util</module>
+                <module>mongoose-base-client-validation</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>mongoose-crm-client-personaldetails</module>
+                <module>mongoose-ecommerce-client-bookingoptionspanel</module>
+                <module>mongoose-ecommerce-client-bookingprocess</module>
+                <module>mongoose-ecommerce-client-businesslogic</module>
+                <module>mongoose-ecommerce-frontoffice-activities-cart-routing</module>
+                <module>mongoose-event-client-bookingcalendar</module>
+                <module>mongoose-event-client-sectionpanel</module>
+                <module>webfx-framework-client-i18n</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-platform-shared-log</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -2581,27 +2758,30 @@
                     <undetected-module>webfx-framework-shared-orm-entity</undetected-module>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
-                    <module>java.base</module>
-                    <module>mongoose-base-client-activity</module>
-                    <module>mongoose-base-shared-domainmodel</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>mongoose-ecommerce-backoffice-activities-bookings</module>
-                    <module>mongoose-event-backoffice-activities-cloneevent-routing</module>
-                    <module>webfx-framework-client-controls</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-kit-util</module>
-                    <module>webfx-platform-client-uischeduler</module>
-                    <module>webfx-platform-shared-submit</module>
                 </used-by-source-modules>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.event.backoffice.activities.cloneevent</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-base-client-activity</module>
+                <module>mongoose-base-shared-domainmodel</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>mongoose-ecommerce-backoffice-activities-bookings</module>
+                <module>mongoose-event-backoffice-activities-cloneevent-routing</module>
+                <module>webfx-framework-client-controls</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-platform-client-uischeduler</module>
+                <module>webfx-platform-shared-submit</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -2612,18 +2792,20 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules>
-                    <module>mongoose-base-client-util</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-platform-client-windowhistory</module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.event.backoffice.operations.routes.cloneevent</package>
                 <package>mongoose.event.backoffice.activities.cloneevent.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-client-util</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-platform-client-windowhistory</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -2644,18 +2826,6 @@
                     <undetected-module>webfx-framework-shared-orm-entity</undetected-module>
                     <undetected-module>webfx-kit-javafxgraphics-emul</undetected-module>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
-                    <module>mongoose-base-client-activity</module>
-                    <module>mongoose-base-client-util</module>
-                    <module>mongoose-ecommerce-backoffice-activities-bookings</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-orm-reactive-visual</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-framework-shared-orm-dql</module>
-                    <module>webfx-framework-shared-router</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-platform-client-windowhistory</module>
-                    <module>webfx-platform-shared-util</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2664,6 +2834,21 @@
                 <package>mongoose.event.backoffice.activities.events</package>
                 <package>mongoose.event.backoffice.activities.events.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-client-activity</module>
+                <module>mongoose-base-client-util</module>
+                <module>mongoose-ecommerce-backoffice-activities-bookings</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-orm-reactive-visual</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-dql</module>
+                <module>webfx-framework-shared-router</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -2683,34 +2868,37 @@
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
-                    <module>java.base</module>
-                    <module>mongoose-base-backoffice-multilangeditor</module>
-                    <module>mongoose-base-client-icons</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>mongoose-ecommerce-client-businesslogic</module>
-                    <module>mongoose-event-client-bookingcalendar</module>
-                    <module>mongoose-event-client-calendar</module>
-                    <module>mongoose-event-frontoffice-activities-options</module>
-                    <module>mongoose-hotel-shared-time</module>
-                    <module>webfx-extras-visual-controls-grid</module>
-                    <module>webfx-framework-client-controls</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-orm-reactive-visual</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-framework-shared-orm-dql</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-kit-util</module>
-                    <module>webfx-platform-shared-submit</module>
                 </used-by-source-modules>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.event.backoffice.activities.options</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-base-backoffice-multilangeditor</module>
+                <module>mongoose-base-client-icons</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>mongoose-ecommerce-client-businesslogic</module>
+                <module>mongoose-event-client-bookingcalendar</module>
+                <module>mongoose-event-client-calendar</module>
+                <module>mongoose-event-frontoffice-activities-options</module>
+                <module>mongoose-hotel-shared-time</module>
+                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-framework-client-controls</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-orm-reactive-visual</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-framework-shared-orm-dql</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-platform-shared-submit</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -2723,24 +2911,27 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
-                    <module>java.base</module>
-                    <module>mongoose-base-client-aggregates</module>
-                    <module>mongoose-base-client-util</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>mongoose-ecommerce-client-businesslogic</module>
-                    <module>mongoose-event-client-calendar</module>
-                    <module>mongoose-hotel-shared-time</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-platform-client-uischeduler</module>
-                    <module>webfx-platform-shared-log</module>
                 </used-by-source-modules>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.event.client.controls.bookingcalendar</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-base-client-aggregates</module>
+                <module>mongoose-base-client-util</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>mongoose-ecommerce-client-businesslogic</module>
+                <module>mongoose-event-client-calendar</module>
+                <module>mongoose-hotel-shared-time</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-client-uischeduler</module>
+                <module>webfx-platform-shared-log</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -2753,14 +2944,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>javafx-controls</undetected-module>
-                    <module>java.base</module>
-                    <module>mongoose-hotel-shared-time</module>
-                    <module>webfx-framework-client-i18n</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-kit-util</module>
-                    <module>webfx-platform-shared-util</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2771,6 +2954,17 @@
                 <package>mongoose.event.client.controls.calendargraphic</package>
             </source-packages>
 
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-hotel-shared-time</module>
+                <module>webfx-framework-client-i18n</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
+
         </project>
 
         <project name="mongoose-event-client-sectionpanel">
@@ -2780,21 +2974,23 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules>
-                    <module>mongoose-base-client-icons</module>
-                    <module>mongoose-event-client-bookingcalendar</module>
-                    <module>webfx-extras-cell</module>
-                    <module>webfx-framework-client-i18n</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.event.client.controls.sectionpanel</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-client-icons</module>
+                <module>mongoose-event-client-bookingcalendar</module>
+                <module>webfx-extras-cell</module>
+                <module>webfx-framework-client-i18n</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -2813,37 +3009,6 @@
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
                     <undetected-module>webfx-platform-shared-query</undetected-module>
-                    <module>java.base</module>
-                    <module>mongoose-base-client-activity</module>
-                    <module>mongoose-base-client-aggregates</module>
-                    <module>mongoose-base-client-entities</module>
-                    <module>mongoose-base-client-icons</module>
-                    <module>mongoose-base-client-util</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>mongoose-ecommerce-client-bookingprocess</module>
-                    <module>mongoose-ecommerce-client-businesslogic</module>
-                    <module>mongoose-event-client-sectionpanel</module>
-                    <module>mongoose-event-frontoffice-activities-options</module>
-                    <module>webfx-extras-cell</module>
-                    <module>webfx-extras-imagestore</module>
-                    <module>webfx-extras-type</module>
-                    <module>webfx-extras-visual-base</module>
-                    <module>webfx-extras-visual-controls-grid</module>
-                    <module>webfx-extras-visual-controls-grid-peers-base</module>
-                    <module>webfx-framework-client-i18n</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-kit-util</module>
-                    <module>webfx-platform-client-uischeduler</module>
-                    <module>webfx-platform-client-windowhistory</module>
-                    <module>webfx-platform-shared-json</module>
-                    <module>webfx-platform-shared-log</module>
-                    <module>webfx-platform-shared-util</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2852,6 +3017,40 @@
                 <package>mongoose.event.frontoffice.activities.fees</package>
                 <package>mongoose.event.frontoffice.activities.fees.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-base-client-activity</module>
+                <module>mongoose-base-client-aggregates</module>
+                <module>mongoose-base-client-entities</module>
+                <module>mongoose-base-client-icons</module>
+                <module>mongoose-base-client-util</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>mongoose-ecommerce-client-bookingprocess</module>
+                <module>mongoose-ecommerce-client-businesslogic</module>
+                <module>mongoose-event-client-sectionpanel</module>
+                <module>mongoose-event-frontoffice-activities-options</module>
+                <module>webfx-extras-cell</module>
+                <module>webfx-extras-imagestore</module>
+                <module>webfx-extras-type</module>
+                <module>webfx-extras-visual-base</module>
+                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-extras-visual-controls-grid-peers-base</module>
+                <module>webfx-framework-client-i18n</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-platform-client-uischeduler</module>
+                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-platform-shared-json</module>
+                <module>webfx-platform-shared-log</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -2870,34 +3069,6 @@
                     <undetected-module>mongoose-base-client-aggregates</undetected-module>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
-                    <module>java.base</module>
-                    <module>mongoose-base-client-entities</module>
-                    <module>mongoose-base-client-icons</module>
-                    <module>mongoose-base-client-util</module>
-                    <module>mongoose-base-client-validation</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>mongoose-ecommerce-client-bookingprocess</module>
-                    <module>mongoose-ecommerce-client-businesslogic</module>
-                    <module>mongoose-ecommerce-frontoffice-activities-person</module>
-                    <module>mongoose-event-client-bookingcalendar</module>
-                    <module>mongoose-event-client-sectionpanel</module>
-                    <module>mongoose-hotel-shared-time</module>
-                    <module>webfx-extras-flexbox</module>
-                    <module>webfx-extras-imagestore</module>
-                    <module>webfx-framework-client-i18n</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-orm-entity-controls</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-kit-util</module>
-                    <module>webfx-platform-client-uischeduler</module>
-                    <module>webfx-platform-client-windowhistory</module>
-                    <module>webfx-platform-shared-log</module>
-                    <module>webfx-platform-shared-util</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2906,6 +3077,37 @@
                 <package>mongoose.event.frontoffice.activities.options</package>
                 <package>mongoose.event.frontoffice.activities.options.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-base-client-entities</module>
+                <module>mongoose-base-client-icons</module>
+                <module>mongoose-base-client-util</module>
+                <module>mongoose-base-client-validation</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>mongoose-ecommerce-client-bookingprocess</module>
+                <module>mongoose-ecommerce-client-businesslogic</module>
+                <module>mongoose-ecommerce-frontoffice-activities-person</module>
+                <module>mongoose-event-client-bookingcalendar</module>
+                <module>mongoose-event-client-sectionpanel</module>
+                <module>mongoose-hotel-shared-time</module>
+                <module>webfx-extras-flexbox</module>
+                <module>webfx-extras-imagestore</module>
+                <module>webfx-framework-client-i18n</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-orm-entity-controls</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-platform-client-uischeduler</module>
+                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-platform-shared-log</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -2925,18 +3127,6 @@
                     <undetected-module>webfx-platform-shared-async</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
-                    <module>mongoose-base-client-icons</module>
-                    <module>mongoose-base-client-util</module>
-                    <module>mongoose-ecommerce-client-bookingprocess</module>
-                    <module>mongoose-ecommerce-client-businesslogic</module>
-                    <module>mongoose-event-client-bookingcalendar</module>
-                    <module>mongoose-event-client-sectionpanel</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-platform-client-windowhistory</module>
-                    <module>webfx-platform-shared-log</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2945,6 +3135,21 @@
                 <package>mongoose.event.frontoffice.activities.program</package>
                 <package>mongoose.event.frontoffice.activities.program.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-client-icons</module>
+                <module>mongoose-base-client-util</module>
+                <module>mongoose-ecommerce-client-bookingprocess</module>
+                <module>mongoose-ecommerce-client-businesslogic</module>
+                <module>mongoose-event-client-bookingcalendar</module>
+                <module>mongoose-event-client-sectionpanel</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-platform-shared-log</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -2964,24 +3169,6 @@
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
-                    <module>mongoose-base-client-entities</module>
-                    <module>mongoose-base-client-icons</module>
-                    <module>mongoose-base-client-util</module>
-                    <module>mongoose-ecommerce-client-bookingprocess</module>
-                    <module>mongoose-event-frontoffice-activities-fees</module>
-                    <module>mongoose-event-frontoffice-activities-options</module>
-                    <module>mongoose-event-frontoffice-activities-program</module>
-                    <module>mongoose-event-frontoffice-activities-terms</module>
-                    <module>webfx-extras-imagestore</module>
-                    <module>webfx-framework-client-action</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-kit-util</module>
-                    <module>webfx-platform-client-uischeduler</module>
-                    <module>webfx-platform-client-windowhistory</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2990,6 +3177,27 @@
                 <package>mongoose.event.frontoffice.activities.startbooking</package>
                 <package>mongoose.event.frontoffice.activities.startbooking.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-client-entities</module>
+                <module>mongoose-base-client-icons</module>
+                <module>mongoose-base-client-util</module>
+                <module>mongoose-ecommerce-client-bookingprocess</module>
+                <module>mongoose-event-frontoffice-activities-fees</module>
+                <module>mongoose-event-frontoffice-activities-options</module>
+                <module>mongoose-event-frontoffice-activities-program</module>
+                <module>mongoose-event-frontoffice-activities-terms</module>
+                <module>webfx-extras-imagestore</module>
+                <module>webfx-framework-client-action</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-platform-client-uischeduler</module>
+                <module>webfx-platform-client-windowhistory</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -3008,21 +3216,6 @@
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
-                    <module>mongoose-base-client-icons</module>
-                    <module>mongoose-base-client-util</module>
-                    <module>mongoose-ecommerce-client-bookingprocess</module>
-                    <module>mongoose-event-client-sectionpanel</module>
-                    <module>webfx-extras-visual-base</module>
-                    <module>webfx-extras-visual-controls-grid-peers-base</module>
-                    <module>webfx-framework-client-i18n</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-orm-reactive-visual</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-framework-shared-orm-dql</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-platform-client-windowhistory</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -3031,6 +3224,24 @@
                 <package>mongoose.event.frontoffice.activities.terms</package>
                 <package>mongoose.event.frontoffice.activities.terms.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-client-icons</module>
+                <module>mongoose-base-client-util</module>
+                <module>mongoose-ecommerce-client-bookingprocess</module>
+                <module>mongoose-event-client-sectionpanel</module>
+                <module>webfx-extras-visual-base</module>
+                <module>webfx-extras-visual-controls-grid-peers-base</module>
+                <module>webfx-framework-client-i18n</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-orm-reactive-visual</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-framework-shared-orm-dql</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-client-windowhistory</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -3063,35 +3274,6 @@
                     <undetected-module>webfx-platform-shared-async</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
                     <undetected-module>webfx-platform-shared-json</undetected-module>
-                    <module>java.base</module>
-                    <module>mongoose-base-backoffice-masterslave</module>
-                    <module>mongoose-base-client-activity</module>
-                    <module>mongoose-base-client-presentationmodel</module>
-                    <module>mongoose-base-client-util</module>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>mongoose-hotel-backoffice-operations-resourceconfiguration</module>
-                    <module>webfx-extras-flexbox</module>
-                    <module>webfx-extras-imagestore</module>
-                    <module>webfx-extras-visual-controls-grid</module>
-                    <module>webfx-framework-client-action</module>
-                    <module>webfx-framework-client-operationaction</module>
-                    <module>webfx-framework-client-orm-domainmodel-activity</module>
-                    <module>webfx-framework-client-orm-reactive-entities</module>
-                    <module>webfx-framework-client-orm-reactive-visual</module>
-                    <module>webfx-framework-client-uirouter</module>
-                    <module>webfx-framework-client-util</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-framework-shared-orm-dql</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-framework-shared-router</module>
-                    <module>webfx-kit-javafxbase-emul</module>
-                    <module>webfx-kit-javafxcontrols-emul</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-kit-util</module>
-                    <module>webfx-platform-client-windowhistory</module>
-                    <module>webfx-platform-shared-datascope</module>
-                    <module>webfx-platform-shared-json</module>
-                    <module>webfx-platform-shared-serial</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -3100,6 +3282,38 @@
                 <package>mongoose.hotel.backoffice.activities.roomsgraphic</package>
                 <package>mongoose.hotel.backoffice.activities.roomsgraphic.routing</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-base-backoffice-masterslave</module>
+                <module>mongoose-base-client-activity</module>
+                <module>mongoose-base-client-presentationmodel</module>
+                <module>mongoose-base-client-util</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>mongoose-hotel-backoffice-operations-resourceconfiguration</module>
+                <module>webfx-extras-flexbox</module>
+                <module>webfx-extras-imagestore</module>
+                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-framework-client-action</module>
+                <module>webfx-framework-client-operationaction</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-orm-reactive-entities</module>
+                <module>webfx-framework-client-orm-reactive-visual</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-client-util</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-dql</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-framework-shared-router</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-platform-shared-datascope</module>
+                <module>webfx-platform-shared-json</module>
+                <module>webfx-platform-shared-serial</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -3110,22 +3324,24 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules>
-                    <module>mongoose-base-shared-entities</module>
-                    <module>webfx-framework-client-controls</module>
-                    <module>webfx-framework-client-orm-entity-controls</module>
-                    <module>webfx-framework-shared-operation</module>
-                    <module>webfx-framework-shared-orm-domainmodel</module>
-                    <module>webfx-framework-shared-orm-entity</module>
-                    <module>webfx-kit-javafxgraphics-emul</module>
-                    <module>webfx-platform-shared-async</module>
-                    <module>webfx-platform-shared-submit</module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.hotel.backoffice.operations.entities.resourceconfiguration</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-shared-entities</module>
+                <module>webfx-framework-client-controls</module>
+                <module>webfx-framework-client-orm-entity-controls</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-domainmodel</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-shared-async</module>
+                <module>webfx-platform-shared-submit</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -3136,16 +3352,18 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules>
-                    <module>java.base</module>
-                    <module>webfx-platform-shared-json</module>
-                    <module>webfx-platform-shared-util</module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
                 <package>mongoose.hotel.shared.businessdata.time</package>
             </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>webfx-platform-shared-json</module>
+                <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -3213,6 +3431,7 @@
                 <module>webfx-framework-shared-orm-dql-querypush-interceptor</module>
                 <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-framework-shared-querypush</module>
+                <module>webfx-platform-java-queryupdate</module>
                 <module>webfx-platform-shared-query</module>
                 <module>webfx-platform-vertx-queryupdate</module>
             </java-package>
@@ -3230,6 +3449,7 @@
                 <module>webfx-framework-server-querypush</module>
                 <module>webfx-framework-shared-orm-dql-submit-interceptor</module>
                 <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-platform-java-queryupdate</module>
                 <module>webfx-platform-shared-submit</module>
                 <module>webfx-platform-shared-submitlistener</module>
                 <module>webfx-platform-vertx-queryupdate</module>
