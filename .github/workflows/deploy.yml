@@ -1,4 +1,4 @@
-name: Deploy to Sonatype repository
+name: Deploy to mongoose-packages GitHub repository
 
 on:
   push:
@@ -22,7 +22,7 @@ jobs:
           java-version: ${{ env.jdk-version }}
           server-id: mongoose-github-deploy
           server-username: API_GITHUB_EMAIL
-          server-password: API_GITHUB_TOKEN
+          server-password: PACKAGES_GITHUB_TOKEN
 
       # Checkout this repository
       - name: Checkout this repository
@@ -33,4 +33,4 @@ jobs:
         run: mvn -B -P '!gwt-compile,!javafx-fatjar,!javapackager' deploy
         env:
           API_GITHUB_EMAIL: ${{ secrets.API_GITHUB_EMAIL }}
-          GITHUB_PASSWORD: ${{ secrets.API_GITHUB_TOKEN }}
+          PACKAGES_GITHUB_TOKEN: ${{ secrets.PACKAGES_GITHUB_TOKEN }}
