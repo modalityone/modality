@@ -1,0 +1,36 @@
+name: Deploy to Sonatype repository
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      # WebFX requires at least JDK 13 due to javac bugs in prior versions (otherwise JDK 11+ should be enough in theory)
+      jdk-version: '18'
+
+    steps:
+
+      # Set up the JDK and Maven settings.xml
+      - name: Set up JDK ${{ env.jdk-version }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: ${{ env.jdk-version }}
+          server-id: mongoose-github-deploy
+          server-username: API_GITHUB_EMAIL
+          server-password: API_GITHUB_TOKEN
+
+      # Checkout this repository
+      - name: Checkout this repository
+        uses: actions/checkout@v3
+
+      # Build all modules and deploy their SNAPSHOT artifacts to the Mongoose packages GitHub repository
+      - name: Deploy this repository
+        run: mvn -B -P '!gwt-compile,!javafx-fatjar,!javapackager' deploy
+        env:
+          API_GITHUB_EMAIL: ${{ secrets.API_GITHUB_EMAIL }}
+          GITHUB_PASSWORD: ${{ secrets.API_GITHUB_TOKEN }}
