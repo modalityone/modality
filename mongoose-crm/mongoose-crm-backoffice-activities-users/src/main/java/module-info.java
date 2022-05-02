@@ -23,6 +23,7 @@ module mongoose.crm.backoffice.activities.users {
     requires webfx.platform.shared.util;
     requires webfx.framework.client.action;
     requires mongoose.ecommerce.backoffice.operations.document;
+    requires mongoose.base.client.aggregates;
 
     // Exported packages
     exports mongoose.crm.backoffice.activities.users;
