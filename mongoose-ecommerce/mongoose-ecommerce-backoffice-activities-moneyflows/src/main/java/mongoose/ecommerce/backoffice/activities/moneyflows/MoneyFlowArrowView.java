@@ -29,13 +29,15 @@ public class MoneyFlowArrowView extends Pane {
     private final ObjectProperty<Pane> destVertexProperty = new SimpleObjectProperty<>();
     public ObjectProperty<Pane> destVertexProperty() { return destVertexProperty; }
     private final Pane parentContainer;
+    private final ObjectProperty<MoneyFlow> selectedMoneyFlow;
 
     private ArrowLine arrowLine;
     private ArrowLine arrowHeadLeft;
     private ArrowLine arrowHeadRight;
 
-    public MoneyFlowArrowView(MoneyFlow moneyFlow, Pane sourceVertex, Pane destVertex, Pane parentContainer) {
+    public MoneyFlowArrowView(MoneyFlow moneyFlow, Pane sourceVertex, Pane destVertex, Pane parentContainer, ObjectProperty<MoneyFlow> selectedMoneyFlow) {
         this.parentContainer = parentContainer;
+        this.selectedMoneyFlow = selectedMoneyFlow;
         sourceVertexProperty.set(sourceVertex);
         destVertexProperty.set(destVertex);
         sourceVertexProperty.addListener(e -> createLines());
@@ -106,8 +108,9 @@ public class MoneyFlowArrowView extends Pane {
 
         public ArrowLine() {
             setStroke(Color.BLACK);
-            setStrokeWidth(1);
+            setStrokeWidth(7);
             setUpContextMenu(this, this::createContextMenuActionGroup);
+            setOnMouseClicked(e -> selectedMoneyFlow.set(moneyFlowProperty.get()));
         }
 
         private ActionGroup createContextMenuActionGroup() {

@@ -153,7 +153,7 @@ public class MoneyTransferEntityGraph extends Pane implements ControlFactoryMixi
 			this.moneyFlow = moneyFlow;
 			Pane sourceVertex = getPaneForMoneyAccount(moneyFlow.getFromMoneyAccount());
 			Pane destVertex = getPaneForMoneyAccount(moneyFlow.getToMoneyAccount());
-			moneyFlowArrowView = new MoneyFlowArrowView(moneyFlow, sourceVertex, destVertex, MoneyTransferEntityGraph.this);
+			moneyFlowArrowView = new MoneyFlowArrowView(moneyFlow, sourceVertex, destVertex, MoneyTransferEntityGraph.this, selectedMoneyFlow);
 			moneyAccountPanes.addListener((ListChangeListener<? super MoneyAccountPane>) e -> updateVertices());
 		}
 

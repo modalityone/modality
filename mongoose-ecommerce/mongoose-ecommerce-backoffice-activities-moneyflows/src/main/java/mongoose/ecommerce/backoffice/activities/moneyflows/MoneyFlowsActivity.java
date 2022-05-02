@@ -85,6 +85,14 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                 pm.moneyAccountsVisualSelectionProperty().set(value);
             }
         });
+        graph.selectedMoneyFlow().addListener(e -> {
+            MoneyFlow selectedEntity = graph.selectedMoneyFlow().get();
+            int rowIndex = moneyFlowVisualMapper.getEntities().indexOf(selectedEntity);
+            if (rowIndex != -1) {
+                VisualSelection value = VisualSelection.createSingleRowSelection(rowIndex);
+                pm.moneyFlowsVisualSelectionProperty().set(value);
+            }
+        });
 
         createAddNewMoneyAccountButton();
 
