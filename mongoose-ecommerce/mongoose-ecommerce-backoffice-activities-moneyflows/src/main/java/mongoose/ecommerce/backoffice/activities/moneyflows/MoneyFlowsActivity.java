@@ -60,8 +60,6 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
     private ReactiveVisualMapper<MoneyFlow> moneyFlowVisualMapper;
     private Pane moneyAccountTableContainer;
     private Pane moneyFlowTableContainer;
-    private Button addNewMoneyAccountButton;
-    private Button deleteMoneyAccountButton;
 
     @Override
     public Node buildUi() {
@@ -89,7 +87,6 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         });
 
         createAddNewMoneyAccountButton();
-        createDeleteLabel();
 
         TabPane tabPane = new TabPane();
         tabPane.getTabs().add(new Tab("Graph", graph));
@@ -113,7 +110,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
     }
 
     private void createAddNewMoneyAccountButton() {
-        addNewMoneyAccountButton = newButton(newOperationAction(() -> new AddNewMoneyAccountRequest(getOrganization(), graph)));
+        Button addNewMoneyAccountButton = newButton(newOperationAction(() -> new AddNewMoneyAccountRequest(getOrganization(), graph)));
         addNewMoneyAccountButton.setFont(new Font(32));
         addNewMoneyAccountButton.layoutXProperty().bind(Properties.combine(graph.widthProperty(), addNewMoneyAccountButton.widthProperty(), (nodeWidth, buttonWidth) -> nodeWidth.doubleValue() - buttonWidth.doubleValue()));
         addNewMoneyAccountButton.layoutYProperty().bind(Properties.combine(graph.heightProperty(), addNewMoneyAccountButton.heightProperty(), (nodeHeight, buttonHeight) -> nodeHeight.doubleValue() - buttonHeight.doubleValue()));
@@ -124,14 +121,6 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         Object organizationId = getOrganizationId();
         EntityStore entityStore = EntityStore.createAbove(moneyAccountVisualMapper.getStore());
         return entityStore.getEntity(Organization.class, organizationId);
-    }
-
-    private void createDeleteLabel() {
-        deleteMoneyAccountButton = newButton(newOperationAction(() -> new DeleteMoneyAccountRequest(getSelectedMoneyAccount(), getMoneyFlows(), graph)));
-        deleteMoneyAccountButton.setFont(new Font(32));
-        deleteMoneyAccountButton.layoutXProperty().bind(Properties.combine(addNewMoneyAccountButton.layoutXProperty(), deleteMoneyAccountButton.widthProperty(), (x, width) -> x.doubleValue() - width.doubleValue()));
-        deleteMoneyAccountButton.layoutYProperty().bind(addNewMoneyAccountButton.layoutYProperty());
-        graph.getChildren().add(deleteMoneyAccountButton);
     }
 
     private MoneyAccount getSelectedMoneyAccount() {
