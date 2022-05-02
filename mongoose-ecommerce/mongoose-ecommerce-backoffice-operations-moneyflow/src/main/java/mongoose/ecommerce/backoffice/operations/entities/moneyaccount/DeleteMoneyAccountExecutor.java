@@ -19,21 +19,13 @@ final class DeleteMoneyAccountExecutor {
     }
 
     private static Future<Void> execute(MoneyAccount moneyAccount, List<MoneyFlow> moneyFlows, Pane parentContainer) {
-        if (moneyAccount == null) {
-            DialogContent dialogContent = new DialogContent().setContentText("No money account selected.");
-            DialogUtil.showModalNodeInGoldLayout(dialogContent, parentContainer);
-            DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
-                dialogCallback.closeDialog();
-            });
-        } else {
-            String msg = buildDeleteMoneyAccountMsg(moneyAccount, moneyFlows);
-            DialogContent dialogContent = new DialogContent().setContentText(msg);
-            DialogUtil.showModalNodeInGoldLayout(dialogContent, parentContainer);
-            DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
-                deleteSelectedMoneyAccount(moneyAccount, moneyFlows);
-                dialogCallback.closeDialog();
-            });
-        }
+        String msg = buildDeleteMoneyAccountMsg(moneyAccount, moneyFlows);
+        DialogContent dialogContent = new DialogContent().setContentText(msg);
+        DialogUtil.showModalNodeInGoldLayout(dialogContent, parentContainer);
+        DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
+            deleteSelectedMoneyAccount(moneyAccount, moneyFlows);
+            dialogCallback.closeDialog();
+        });
         return Future.succeededFuture();
     }
 
