@@ -235,6 +235,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
 
         private ActionGroup createContextMenuActionGroup() {
             return newActionGroup(
+                    newOperationAction(() -> new EditMoneyAccountRequest(graph.selectedMoneyAccount().get(), graph)),
                     newOperationAction(() -> new DeleteMoneyAccountRequest(getSelectedMoneyAccount(), getMoneyFlows(), graph))
             );
         }
