@@ -2,7 +2,7 @@ package mongoose.base.client.activity.eventdependent;
 
 import dev.webfx.framework.client.activity.impl.elementals.domain.DomainActivityContext;
 import dev.webfx.framework.client.activity.impl.elementals.uiroute.UiRouteActivityContext;
-import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.async.Future;
 import mongoose.base.client.activity.organizationdependent.OrganizationDependentActivityMixin;
 import mongoose.base.client.aggregates.event.EventAggregate;
 import mongoose.base.client.aggregates.event.EventAggregateMixin;

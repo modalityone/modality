@@ -13,6 +13,7 @@ module mongoose.ecommerce.client.businesslogic {
     requires mongoose.event.client.calendar;
     requires mongoose.hotel.shared.time;
     requires webfx.framework.shared.orm.entity;
+    requires webfx.platform.shared.async;
     requires webfx.platform.shared.query;
     requires webfx.platform.shared.submit;
     requires webfx.platform.shared.util;

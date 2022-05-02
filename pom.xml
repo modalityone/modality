@@ -33,6 +33,18 @@
 
     </repositories>
 
+
+
+    <distributionManagement>
+
+        <!-- To tell mvn deploy to deploy snapshots to mongoose-packages GitHub repository  -->
+        <snapshotRepository>
+            <id>mongoose-github-deploy</id>            <!-- server username & password must be set in settings.xml -->
+            <url>https://maven.pkg.github.com/mongoose-project/mongoose-packages</url>
+        </snapshotRepository>
+
+    </distributionManagement>
+
     <packaging>pom</packaging>
 
     <modules>

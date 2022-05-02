@@ -22,7 +22,7 @@ public final class MongooseLocalDataSourceProvider implements LocalDataSourcePro
         Object dataSourceId = DataSourceModelService.getDefaultDataSourceId();
         DBMS dbms = DBMS.POSTGRES;
         String connectionPath = "mongoose/base/server/datasource/" + dataSourceId + "/ConnectionDetails.json";
-        String connectionContent = ResourceService.getText(connectionPath).result();
+        String connectionContent = ResourceService.getText(connectionPath);
         JsonObject json = connectionContent == null ? null : Json.parseObject(connectionContent);
         ConnectionDetails connectionDetails = json == null ? null : new ConnectionDetails(
                 json.getString("host"),

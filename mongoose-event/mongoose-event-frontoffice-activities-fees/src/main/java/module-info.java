@@ -3,6 +3,7 @@
 module mongoose.event.frontoffice.activities.fees {
 
     // Direct dependencies modules
+    requires java.base;
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
@@ -31,6 +32,7 @@ module mongoose.event.frontoffice.activities.fees {
     requires webfx.kit.util;
     requires webfx.platform.client.uischeduler;
     requires webfx.platform.client.windowhistory;
+    requires webfx.platform.shared.async;
     requires webfx.platform.shared.json;
     requires webfx.platform.shared.log;
     requires webfx.platform.shared.query;

@@ -1,5 +1,31 @@
 package mongoose.event.frontoffice.activities.fees;
 
+import dev.webfx.extras.cell.collator.NodeCollatorRegistry;
+import dev.webfx.extras.cell.collator.grid.GridCollator;
+import dev.webfx.extras.cell.renderer.TextRenderer;
+import dev.webfx.extras.cell.renderer.ValueRenderingContext;
+import dev.webfx.extras.imagestore.ImageStore;
+import dev.webfx.extras.type.PrimType;
+import dev.webfx.extras.type.SpecializedTextType;
+import dev.webfx.extras.visual.*;
+import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
+import dev.webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.framework.client.services.i18n.Dictionary;
+import dev.webfx.framework.client.services.i18n.I18n;
+import dev.webfx.framework.client.services.i18n.I18nControls;
+import dev.webfx.framework.client.ui.util.layout.LayoutUtil;
+import dev.webfx.framework.shared.orm.entity.EntityList;
+import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.platform.client.services.uischeduler.UiScheduler;
+import dev.webfx.platform.shared.services.json.Json;
+import dev.webfx.platform.shared.services.json.JsonObject;
+import dev.webfx.platform.shared.services.json.WritableJsonObject;
+import dev.webfx.platform.shared.services.log.Logger;
+import dev.webfx.platform.shared.util.Arrays;
+import dev.webfx.platform.shared.util.Booleans;
+import dev.webfx.platform.shared.util.Numbers;
+import dev.webfx.platform.shared.util.Objects;
+import dev.webfx.platform.shared.util.tuples.Pair;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
@@ -15,42 +41,17 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mongoose.base.client.activity.MongooseButtonFactoryMixin;
 import mongoose.base.client.aggregates.event.EventAggregate;
-import mongoose.ecommerce.client.businessdata.feesgroup.FeesGroup;
-import mongoose.ecommerce.client.activity.bookingprocess.BookingProcessActivity;
-import mongoose.ecommerce.client.businessdata.preselection.OptionsPreselection;
+import mongoose.base.client.entities.util.Labels;
 import mongoose.base.client.icons.MongooseIcons;
-import mongoose.event.client.controls.sectionpanel.SectionPanelFactory;
-import mongoose.event.frontoffice.operations.options.RouteToOptionsRequest;
 import mongoose.base.shared.entities.Option;
 import mongoose.base.shared.entities.Person;
-import mongoose.base.client.entities.util.Labels;
-import dev.webfx.extras.visual.*;
-import dev.webfx.framework.client.services.i18n.Dictionary;
-import dev.webfx.framework.client.services.i18n.I18n;
-import dev.webfx.framework.client.services.i18n.I18nControls;
-import dev.webfx.framework.client.ui.util.layout.LayoutUtil;
-import dev.webfx.framework.shared.orm.entity.EntityList;
-import dev.webfx.extras.cell.collator.grid.GridCollator;
-import dev.webfx.extras.cell.collator.NodeCollatorRegistry;
-import dev.webfx.extras.cell.renderer.TextRenderer;
-import dev.webfx.extras.cell.renderer.ValueRenderingContext;
-import dev.webfx.extras.visual.controls.grid.VisualGrid;
-import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
-import dev.webfx.extras.type.PrimType;
-import dev.webfx.extras.type.SpecializedTextType;
-import dev.webfx.extras.imagestore.ImageStore;
-import dev.webfx.kit.util.properties.Properties;
-import dev.webfx.platform.client.services.uischeduler.UiScheduler;
-import dev.webfx.platform.shared.services.json.Json;
-import dev.webfx.platform.shared.services.json.JsonObject;
-import dev.webfx.platform.shared.services.json.WritableJsonObject;
-import dev.webfx.platform.shared.services.log.Logger;
-import dev.webfx.platform.shared.util.Arrays;
-import dev.webfx.platform.shared.util.Booleans;
-import dev.webfx.platform.shared.util.Numbers;
-import dev.webfx.platform.shared.util.Objects;
-import dev.webfx.platform.shared.util.async.Handler;
-import dev.webfx.platform.shared.util.tuples.Pair;
+import mongoose.ecommerce.client.activity.bookingprocess.BookingProcessActivity;
+import mongoose.ecommerce.client.businessdata.feesgroup.FeesGroup;
+import mongoose.ecommerce.client.businessdata.preselection.OptionsPreselection;
+import mongoose.event.client.controls.sectionpanel.SectionPanelFactory;
+import mongoose.event.frontoffice.operations.options.RouteToOptionsRequest;
+
+import java.util.function.Consumer;
 
 import static dev.webfx.framework.client.ui.util.image.JsonImageViews.createImageView;
 
@@ -114,13 +115,9 @@ final class FeesActivity extends BookingProcessActivity {
 
     private void loadAndDisplayFeesGroups() {
         lastLoadedEventOptions = null;
-        onEventFeesGroups().setHandler(ar -> {
-            lastLoadedEventOptions = getEventOptions();
-            if (ar.failed())
-                Logger.log(ar.cause());
-            else
-                displayFeesGroupsAndRefreshAvailabilities(ar.result());
-        });
+        onEventFeesGroups()
+                .onFailure(Logger::log)
+                .onSuccess(this::displayFeesGroupsAndRefreshAvailabilities);
     }
 
     private final Property<VisualResult> rsProperty = new SimpleObjectProperty<>();
@@ -128,7 +125,7 @@ final class FeesActivity extends BookingProcessActivity {
 
     private void displayFeesGroupsAndRefreshAvailabilities(FeesGroup[] feesGroups) {
         this.feesGroups = feesGroups;
-        onEventAvailabilities().setHandler(ar -> {
+        onEventAvailabilities().onComplete(ar -> {
             if (ar.succeeded())
                 displayFeesGroups();
         });
@@ -161,7 +158,7 @@ final class FeesActivity extends BookingProcessActivity {
         rsProperty.setValue(rs);
     }
 
-    private VisualResult generateFeesGroupVisualResult(FeesGroup feesGroup, Handler<OptionsPreselection> bookHandler, ColumnWidthCumulator[] cumulators) {
+    private VisualResult generateFeesGroupVisualResult(FeesGroup feesGroup, Consumer<OptionsPreselection> bookHandler, ColumnWidthCumulator[] cumulators) {
         MongooseButtonFactoryMixin buttonFactory = this;
         EventAggregate eventAggregate = this;
         boolean showBadges = Objects.areEquals(eventAggregate.getEvent().getOrganizationId().getPrimaryKey(), 2); // For now only showing badges on KMCF courses
@@ -187,7 +184,7 @@ final class FeesActivity extends BookingProcessActivity {
                             if (soldout)
                                 return buttonFactory.newSoldoutButton();
                             Button button = buttonFactory.newBookButton();
-                            button.setOnAction(e -> bookHandler.handle(optionsPreselection));
+                            button.setOnAction(e -> bookHandler.accept(optionsPreselection));
                             if (availability == null || !showBadges)
                                 return button;
                             HBox hBox = (HBox) NodeCollatorRegistry.hBoxCollator().collateNodes(createBadge(TextRenderer.SINGLETON.renderValue(availability, ValueRenderingContext.DEFAULT_READONLY_CONTEXT)), button);

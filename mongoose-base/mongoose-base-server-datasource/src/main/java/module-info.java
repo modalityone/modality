@@ -10,7 +10,6 @@ module mongoose.base.server.datasource {
     requires webfx.platform.shared.json;
     requires webfx.platform.shared.log;
     requires webfx.platform.shared.resource;
-    requires webfx.platform.shared.util;
 
     // Exported packages
     exports mongoose.base.server.services.datasource;

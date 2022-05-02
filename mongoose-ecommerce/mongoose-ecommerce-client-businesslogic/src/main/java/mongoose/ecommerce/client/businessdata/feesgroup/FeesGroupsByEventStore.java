@@ -4,7 +4,7 @@ import mongoose.base.client.aggregates.event.EventAggregate;
 import mongoose.ecommerce.client.businesslogic.feesgroup.FeesGroupLogic;
 import mongoose.base.shared.entities.Event;
 import dev.webfx.framework.shared.orm.entity.EntityId;
-import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.async.Future;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +43,7 @@ public class FeesGroupsByEventStore {
         FeesGroup[] feesGroups = feesGroupsByEventMap.get(eventId);
         if (feesGroups != null)
             return Future.succeededFuture(feesGroups);
-        return EventAggregate.get(eventId).onEventOptions().map(() -> getEventFeesGroups(eventId));
+        return EventAggregate.get(eventId).onEventOptions().map(ignored -> getEventFeesGroups(eventId));
     }
 
 }

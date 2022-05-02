@@ -13,8 +13,8 @@
 
     <dependencies>
         <used-by-source-modules>
-            <undiscovered-used-by-source-module>webfx-framework-shared-router</undiscovered-used-by-source-module>
-            <undiscovered-used-by-source-module>webfx-kit-javafxcontrols-emul</undiscovered-used-by-source-module>
+            <undetected-module>webfx-framework-shared-router</undetected-module>
+            <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
         </used-by-source-modules>
 
         <resource-module>mongoose-base-client-css</resource-module>

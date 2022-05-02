@@ -198,23 +198,23 @@ public final class ClientSessionRecorderJob implements ApplicationJob {
     private void executeUpdate() {
         boolean newSessionAgent = Entities.isNew(sessionAgent);
         boolean newSessionApplication =  Entities.isNew(sessionApplication);
-        store.submitChanges().setHandler(ar -> {
-            if (ar.failed()) {
-                if (tryRestoreSessionFromLocalStorage) {
-                    Logger.log("Client session couldn't be restored (inconsistent state between the local storage and the database) - Restarting a brand-new client session");
-                    tryRestoreSessionFromLocalStorage = false;
-                    clearSessionInfo();
-                    onConnectionOpened();
-                } else
-                    Logger.log("Client Session Recorder error", ar.cause());
-            } else {
-                if (newSessionAgent)
-                    storeEntityToLocalStorage(sessionAgent, "sessionAgent", "agentString");
-                if (newSessionApplication)
-                    storeEntityToLocalStorage(sessionApplication, "sessionApplication", "name", "version", "buildTool", "buildNumberString", "buildTimestampString");
-                listenServerPushCallsIfReady();
-            }
-        });
+        store.submitChanges()
+                .onSuccess(resultBatch -> {
+                    if (newSessionAgent)
+                        storeEntityToLocalStorage(sessionAgent, "sessionAgent", "agentString");
+                    if (newSessionApplication)
+                        storeEntityToLocalStorage(sessionApplication, "sessionApplication", "name", "version", "buildTool", "buildNumberString", "buildTimestampString");
+                    listenServerPushCallsIfReady();
+                })
+                .onFailure(cause -> {
+                    if (tryRestoreSessionFromLocalStorage) {
+                        Logger.log("Client session couldn't be restored (inconsistent state between the local storage and the database) - Restarting a brand-new client session");
+                        tryRestoreSessionFromLocalStorage = false;
+                        clearSessionInfo();
+                        onConnectionOpened();
+                    } else
+                        Logger.log("Client Session Recorder error", cause);
+                });
     }
 
     private void listenServerPushCallsIfReady() {

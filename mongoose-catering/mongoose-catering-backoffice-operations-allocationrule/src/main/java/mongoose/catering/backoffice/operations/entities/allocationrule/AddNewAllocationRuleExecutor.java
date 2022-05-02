@@ -2,7 +2,7 @@ package mongoose.catering.backoffice.operations.entities.allocationrule;
 
 import javafx.scene.layout.Pane;
 import mongoose.base.shared.entities.Event;
-import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.async.Future;
 
 final class AddNewAllocationRuleExecutor {
 
@@ -11,7 +11,7 @@ final class AddNewAllocationRuleExecutor {
     }
 
     private static Future<Void> execute(Event documentLine, Pane parentContainer) {
-        Future<Void> future = Future.future();
-        return future;
+        // Not yet implemented
+        return Future.succeededFuture();
     }
 }

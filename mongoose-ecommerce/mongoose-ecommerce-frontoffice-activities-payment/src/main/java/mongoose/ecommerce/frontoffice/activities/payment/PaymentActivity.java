@@ -240,31 +240,27 @@ final class PaymentActivity extends CartBasedActivity {
                 paymentRef = (paymentRef == null ? "" : paymentRef + "-") + payment.document.getRef().toString();
             }
         }
-        updateStore.submitChanges().setHandler(ar -> {
-            if (ar.failed())
-                Logger.log("Error submitting payment", ar.cause());
-            else {
-                cartAggregate().unload();
-                Object[] paymentIdParameter = {ar.result().getArray()[0].getGeneratedKeys()[0]};
-                loadStore.executeQueryBatch(
-                      new EntityStoreQuery("select <frontoffice_loadEvent> from GatewayParameter gp where exists(select MoneyTransfer mt where mt=? and (gp.account=mt.toMoneyAccount or gp.account=null and gp.company=mt.toMoneyAccount.gatewayCompany)) order by company", paymentIdParameter, "gatewayParameters")
-                    , new EntityStoreQuery("select <frontoffice_cart> from MoneyTransfer where id=?", paymentIdParameter, "lastPayment")
-                ).setHandler(ar2 -> {
-                    if (ar2.failed())
-                        Logger.log("Error submitting payment", ar.cause());
-                    else {
-                        EntityList<GatewayParameter> gatewayParameters = ar2.result()[0];
-                        lastPayment = (MoneyTransfer) ar2.result()[1].get(0);
-                        UiScheduler.runInUiThread(() -> {
-                            String innerHtml = generateHtmlForm(gatewayParameters);
-                            //Logger.log(innerHtml);
-                            HtmlText htmlText = LayoutUtil.setMaxPrefSizeToInfinite(new HtmlText(innerHtml));
-                            DialogUtil.showModalNodeInGoldLayout(htmlText, (Pane) getNode(), 0.9, 0.8);
-                        });
-                    }
+        updateStore.submitChanges()
+                .onFailure(cause -> Logger.log("Error submitting payment", cause))
+                .onSuccess(submitBatch -> {
+                    cartAggregate().unload();
+                    Object[] paymentIdParameter = { submitBatch.getArray()[0].getGeneratedKeys()[0] };
+                    loadStore.executeQueryBatch(
+                                    new EntityStoreQuery("select <frontoffice_loadEvent> from GatewayParameter gp where exists(select MoneyTransfer mt where mt=? and (gp.account=mt.toMoneyAccount or gp.account=null and gp.company=mt.toMoneyAccount.gatewayCompany)) order by company", paymentIdParameter, "gatewayParameters"),
+                                    new EntityStoreQuery("select <frontoffice_cart> from MoneyTransfer where id=?", paymentIdParameter, "lastPayment")
+                            )
+                            .onFailure(cause -> Logger.log("Error submitting payment", cause))
+                            .onSuccess(entityLists -> {
+                                EntityList<GatewayParameter> gatewayParameters = entityLists[0];
+                                lastPayment = (MoneyTransfer) entityLists[1].get(0);
+                                UiScheduler.runInUiThread(() -> {
+                                    String innerHtml = generateHtmlForm(gatewayParameters);
+                                    //Logger.log(innerHtml);
+                                    HtmlText htmlText = LayoutUtil.setMaxPrefSizeToInfinite(new HtmlText(innerHtml));
+                                    DialogUtil.showModalNodeInGoldLayout(htmlText, (Pane) getNode(), 0.9, 0.8);
+                                });
+                            });
                 });
-            }
-        });
     }
 
     private String paymentUrl;
@@ -277,9 +273,14 @@ final class PaymentActivity extends CartBasedActivity {
         StringBuilder sb = new StringBuilder();
         for (GatewayParameter gp : gatewayParameters) {
             switch (gp.getName()) {
-                case "paymentUrl": paymentUrl = gp.getValue(); break;
-                case "certificate": certificate = gp.getValue(); break;
-                default: sb.append("\n<input type='hidden' name=").append(htmlQuote(gp.getName())).append(" value=").append(htmlQuote(replaceBrackets(gp.getValue()))).append("/>");
+                case "paymentUrl":
+                    paymentUrl = gp.getValue();
+                    break;
+                case "certificate":
+                    certificate = gp.getValue();
+                    break;
+                default:
+                    sb.append("\n<input type='hidden' name=").append(htmlQuote(gp.getName())).append(" value=").append(htmlQuote(replaceBrackets(gp.getValue()))).append("/>");
             }
         }
         if (certificate != null) { // certificate => computing vads signature

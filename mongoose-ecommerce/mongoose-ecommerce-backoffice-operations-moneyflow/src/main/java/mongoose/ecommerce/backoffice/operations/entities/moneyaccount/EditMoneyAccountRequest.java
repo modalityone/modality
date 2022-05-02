@@ -2,10 +2,9 @@ package mongoose.ecommerce.backoffice.operations.entities.moneyaccount;
 
 import dev.webfx.framework.shared.operation.HasOperationCode;
 import dev.webfx.framework.shared.operation.HasOperationExecutor;
-import dev.webfx.platform.shared.util.async.AsyncFunction;
+import dev.webfx.platform.shared.async.AsyncFunction;
 import javafx.scene.layout.Pane;
 import mongoose.base.shared.entities.MoneyAccount;
-import mongoose.base.shared.entities.Organization;
 
 public final class EditMoneyAccountRequest implements HasOperationCode,
         HasOperationExecutor<EditMoneyAccountRequest, Void> {

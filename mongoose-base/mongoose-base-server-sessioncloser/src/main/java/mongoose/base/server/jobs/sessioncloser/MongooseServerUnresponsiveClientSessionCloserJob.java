@@ -23,12 +23,9 @@ public final class MongooseServerUnresponsiveClientSessionCloserJob implements A
                         .setStatement("update SessionConnection set end=now() where process=?")
                         .setParameters(pushClientId)
                         .setDataSourceId(DataSourceModelService.getDefaultDataSourceId())
-                        .build()).setHandler(ar -> {
-                    if (ar.failed())
-                        Logger.log("Error while closing session for pushClientId=" + pushClientId, ar.cause());
-                    else
-                        Logger.log("Closed session for pushClientId=" + pushClientId);
-                }));
+                        .build())
+                        .onFailure(cause -> Logger.log("Error while closing session for pushClientId=" + pushClientId, cause))
+                        .onSuccess(result -> Logger.log("Closed session for pushClientId=" + pushClientId)));
     }
 
     @Override

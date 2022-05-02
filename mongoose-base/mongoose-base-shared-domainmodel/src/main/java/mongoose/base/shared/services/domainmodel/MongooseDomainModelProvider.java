@@ -3,7 +3,7 @@ package mongoose.base.shared.services.domainmodel;
 import mongoose.base.shared.services.datasourcemodel.MongooseDataSourceModelProvider;
 import dev.webfx.framework.shared.orm.domainmodel.DomainModel;
 import dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider;
-import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.async.Future;
 
 /**
  * @author Bruno Salmon

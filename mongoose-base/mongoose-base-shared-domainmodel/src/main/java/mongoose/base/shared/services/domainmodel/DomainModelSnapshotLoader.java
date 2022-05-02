@@ -1,26 +1,25 @@
 package mongoose.base.shared.services.domainmodel;
 
-import mongoose.base.shared.domainmodel.formatters.DateFormatter;
-import mongoose.base.shared.domainmodel.formatters.DateTimeFormatter;
-import mongoose.base.shared.domainmodel.formatters.PriceFormatter;
-import mongoose.base.shared.domainmodel.functions.AbcNames;
-import mongoose.base.shared.domainmodel.functions.DateIntervalFormat;
 import dev.webfx.extras.type.PrimType;
 import dev.webfx.extras.type.Type;
 import dev.webfx.framework.shared.orm.domainmodel.DomainModel;
+import dev.webfx.framework.shared.orm.domainmodel.formatter.FormatterRegistry;
 import dev.webfx.framework.shared.orm.entity.EntityFactoryRegistry;
 import dev.webfx.framework.shared.orm.expression.terms.function.DomainClassType;
 import dev.webfx.framework.shared.orm.expression.terms.function.Function;
 import dev.webfx.framework.shared.orm.expression.terms.function.InlineFunction;
 import dev.webfx.framework.shared.services.domainmodel.spi.DomainModelLoader;
-import dev.webfx.framework.shared.orm.domainmodel.formatter.FormatterRegistry;
+import dev.webfx.platform.shared.async.Batch;
 import dev.webfx.platform.shared.services.json.Json;
 import dev.webfx.platform.shared.services.json.JsonElement;
 import dev.webfx.platform.shared.services.query.QueryResult;
 import dev.webfx.platform.shared.services.resource.ResourceService;
 import dev.webfx.platform.shared.services.serial.SerialCodecManager;
-import dev.webfx.platform.shared.util.async.Batch;
-import dev.webfx.platform.shared.util.async.Future;
+import mongoose.base.shared.domainmodel.formatters.DateFormatter;
+import mongoose.base.shared.domainmodel.formatters.DateTimeFormatter;
+import mongoose.base.shared.domainmodel.formatters.PriceFormatter;
+import mongoose.base.shared.domainmodel.functions.AbcNames;
+import mongoose.base.shared.domainmodel.functions.DateIntervalFormat;
 
 /**
  * @author Bruno Salmon
@@ -44,8 +43,7 @@ final class DomainModelSnapshotLoader {
             // Registering entity java classes
             EntityFactoryRegistry.registerProvidedEntityFactories();
             // Loading the model from the resource snapshot
-            Future<String> text = ResourceService.getText("mongoose/base/shared/domainmodel/DomainModelSnapshot.json");
-            String jsonString = text.result(); // LZString.decompressFromBase64(text.result());
+            String jsonString = ResourceService.getText("mongoose/base/shared/domainmodel/DomainModelSnapshot.json");
             JsonElement json = Json.parseObject(jsonString);
             Batch<QueryResult> snapshotBatch = SerialCodecManager.decodeFromJson(json);
             DomainModel domainModel = new DomainModelLoader(1).generateDomainModel(snapshotBatch);

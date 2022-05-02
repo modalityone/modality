@@ -2,7 +2,7 @@ package mongoose.ecommerce.backoffice.operations.entities.moneyflow;
 
 import dev.webfx.framework.shared.operation.HasOperationCode;
 import dev.webfx.framework.shared.operation.HasOperationExecutor;
-import dev.webfx.platform.shared.util.async.AsyncFunction;
+import dev.webfx.platform.shared.async.AsyncFunction;
 import javafx.scene.layout.Pane;
 import mongoose.base.shared.entities.MoneyFlow;
 

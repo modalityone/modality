@@ -1,18 +1,19 @@
 package mongoose.event.client.controls.calendargraphic;
 
 import javafx.beans.property.Property;
-import dev.webfx.platform.shared.util.async.Handler;
+
+import java.util.function.Consumer;
 
 /**
  * @author Bruno Salmon
  */
 interface HasCalendarClickHandlerProperty {
 
-    Property<Handler<CalendarClickEvent>> calendarClickHandlerProperty();
-    default void setCalendarClickHandler(Handler<CalendarClickEvent> calendarClickEventHandler) {
+    Property<Consumer<CalendarClickEvent>> calendarClickHandlerProperty();
+    default void setCalendarClickHandler(Consumer<CalendarClickEvent> calendarClickEventHandler) {
         calendarClickHandlerProperty().setValue(calendarClickEventHandler);
     }
-    default Handler<CalendarClickEvent> getCalendarClickHandler() {
+    default Consumer<CalendarClickEvent> getCalendarClickHandler() {
         return calendarClickHandlerProperty().getValue();
     }
 

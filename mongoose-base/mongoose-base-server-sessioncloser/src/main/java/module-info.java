@@ -6,10 +6,10 @@ module mongoose.base.server.sessioncloser {
     requires webfx.framework.server.push;
     requires webfx.framework.shared.orm.datasourcemodelservice;
     requires webfx.framework.shared.orm.domainmodel;
+    requires webfx.platform.shared.async;
     requires webfx.platform.shared.boot;
     requires webfx.platform.shared.log;
     requires webfx.platform.shared.submit;
-    requires webfx.platform.shared.util;
 
     // Exported packages
     exports mongoose.base.server.jobs.sessioncloser;

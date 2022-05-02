@@ -12,11 +12,11 @@
 
     <dependencies>
         <used-by-source-modules>
-            <undiscovered-used-by-source-module>webfx-framework-client-activity</undiscovered-used-by-source-module>
-            <undiscovered-used-by-source-module>webfx-framework-shared-orm-domainmodel</undiscovered-used-by-source-module>
-            <undiscovered-used-by-source-module>webfx-kit-javafxcontrols-emul</undiscovered-used-by-source-module>
-            <undiscovered-used-by-source-module>webfx-extras-visual-controls-grid</undiscovered-used-by-source-module>
-            <undiscovered-used-by-source-module>webfx-platform-shared-util</undiscovered-used-by-source-module>
+            <undetected-module>webfx-framework-client-activity</undetected-module>
+            <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
+            <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
+            <undetected-module>webfx-extras-visual-controls-grid</undetected-module>
+            <undetected-module>webfx-platform-shared-util</undetected-module>
         </used-by-source-modules>
     </dependencies>
 

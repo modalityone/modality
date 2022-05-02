@@ -12,11 +12,12 @@
 
     <dependencies>
         <used-by-source-modules>
-            <undiscovered-used-by-source-module>webfx-framework-client-action</undiscovered-used-by-source-module>
-            <undiscovered-used-by-source-module>webfx-framework-client-activity</undiscovered-used-by-source-module>
-            <undiscovered-used-by-source-module>webfx-kit-javafxcontrols-emul</undiscovered-used-by-source-module>
-            <undiscovered-used-by-source-module>webfx-platform-shared-util</undiscovered-used-by-source-module>
-            <undiscovered-used-by-source-module>webfx-platform-shared-json</undiscovered-used-by-source-module>
+            <undetected-module>webfx-framework-client-action</undetected-module>
+            <undetected-module>webfx-framework-client-activity</undetected-module>
+            <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
+            <undetected-module>webfx-platform-shared-async</undetected-module>
+            <undetected-module>webfx-platform-shared-util</undetected-module>
+            <undetected-module>webfx-platform-shared-json</undetected-module>
         </used-by-source-modules>
     </dependencies>
 

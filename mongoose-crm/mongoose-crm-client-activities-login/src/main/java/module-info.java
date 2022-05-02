@@ -17,6 +17,7 @@ module mongoose.crm.client.activities.login {
     requires webfx.framework.client.util;
     requires webfx.framework.shared.authn;
     requires webfx.kit.util;
+    requires webfx.platform.shared.async;
     requires webfx.platform.shared.util;
 
     // Exported packages

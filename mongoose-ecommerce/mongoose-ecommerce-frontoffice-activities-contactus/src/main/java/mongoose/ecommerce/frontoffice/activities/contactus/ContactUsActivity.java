@@ -1,5 +1,16 @@
 package mongoose.ecommerce.frontoffice.activities.contactus;
 
+import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.framework.client.operations.route.RouteBackwardRequest;
+import dev.webfx.framework.client.ui.action.Action;
+import dev.webfx.framework.client.ui.util.background.BackgroundFactory;
+import dev.webfx.framework.client.ui.util.layout.LayoutUtil;
+import dev.webfx.framework.shared.orm.entity.EntityStore;
+import dev.webfx.framework.shared.orm.entity.UpdateStore;
+import dev.webfx.platform.client.services.uischeduler.UiScheduler;
+import dev.webfx.platform.client.services.windowlocation.WindowLocation;
+import dev.webfx.platform.shared.services.log.Logger;
+import dev.webfx.platform.shared.util.Strings;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -8,23 +19,12 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import mongoose.base.client.activity.MongooseButtonFactoryMixin;
 import mongoose.base.client.validation.MongooseValidationSupport;
-import mongoose.ecommerce.frontoffice.activities.cart.routing.CartRouting;
-import mongoose.ecommerce.frontoffice.activities.contactus.routing.ContactUsRouting;
 import mongoose.base.shared.entities.Document;
 import mongoose.base.shared.entities.Event;
 import mongoose.base.shared.entities.History;
 import mongoose.base.shared.entities.Mail;
-import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
-import dev.webfx.framework.client.operations.route.RouteBackwardRequest;
-import dev.webfx.framework.client.ui.action.Action;
-import dev.webfx.framework.client.ui.util.layout.LayoutUtil;
-import dev.webfx.framework.client.ui.util.background.BackgroundFactory;
-import dev.webfx.framework.shared.orm.entity.EntityStore;
-import dev.webfx.framework.shared.orm.entity.UpdateStore;
-import dev.webfx.platform.client.services.uischeduler.UiScheduler;
-import dev.webfx.platform.client.services.windowlocation.WindowLocation;
-import dev.webfx.platform.shared.services.log.Logger;
-import dev.webfx.platform.shared.util.Strings;
+import mongoose.ecommerce.frontoffice.activities.cart.routing.CartRouting;
+import mongoose.ecommerce.frontoffice.activities.contactus.routing.ContactUsRouting;
 
 /**
  * @author Bruno Salmon
@@ -70,14 +70,12 @@ final class ContactUsActivity extends ViewDomainActivityBase
     protected void startLogic() {
         // Loading the document in order to prepare
         EntityStore loadStore = EntityStore.create(getDataSourceModel());
-        loadStore.<Document>executeQuery(DOCUMENT_LOAD_QUERY, documentId).setHandler(ar -> {
-            if (ar.failed())
-                Logger.log(ar);
-            else {
-                document = ar.result().get(0);
-                applyEventCssBackgroundIfProvided();
-            }
-        });
+        loadStore.<Document>executeQuery(DOCUMENT_LOAD_QUERY, documentId)
+                .onFailure(Logger::log)
+                .onSuccess(documents -> {
+                    document = documents.get(0);
+                    applyEventCssBackgroundIfProvided();
+                });
     }
 
     private void applyEventCssBackgroundIfProvided() {
@@ -119,16 +117,14 @@ final class ContactUsActivity extends ViewDomainActivityBase
         history.setMail(mail);
         history.setUsername("online");
         history.setComment("Sent '" + subjectTextField.getText() + "'");
-        updateStore.submitChanges().setHandler(ar -> {
-            if (ar.failed())
-                Logger.log("Error", ar.cause());
-            else {
-                // Going back (probably to booking cart)
-                new RouteBackwardRequest(getHistory()).execute();
-                // Clearing the fields for the next time visit
-                subjectTextField.clear();
-                bodyTextArea.clear();
-            }
-        });
+        updateStore.submitChanges()
+                .onFailure(Logger::log)
+                .onSuccess(submitResultBatch -> {
+                    // Going back (probably to booking cart)
+                    new RouteBackwardRequest(getHistory()).execute();
+                    // Clearing the fields for the next time visit
+                    subjectTextField.clear();
+                    bodyTextArea.clear();
+                });
     }
 }

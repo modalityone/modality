@@ -1,5 +1,9 @@
 package mongoose.ecommerce.frontoffice.activities.summary;
 
+import dev.webfx.framework.client.services.i18n.I18n;
+import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.platform.shared.services.log.Logger;
+import dev.webfx.platform.shared.util.Strings;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableStringValue;
 import javafx.event.ActionEvent;
@@ -12,21 +16,16 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
-import mongoose.event.client.controls.bookingcalendar.BookingCalendar;
-import mongoose.ecommerce.client.controls.bookingoptionspanel.BookingOptionsPanel;
+import mongoose.base.client.validation.MongooseValidationSupport;
+import mongoose.base.shared.entities.Cart;
+import mongoose.crm.client.controls.personaldetails.PersonalDetailsPanel;
 import mongoose.ecommerce.client.activity.bookingprocess.BookingProcessActivity;
 import mongoose.ecommerce.client.businessdata.workingdocument.WorkingDocument;
 import mongoose.ecommerce.client.businessdata.workingdocument.WorkingDocumentSubmitter;
-import mongoose.crm.client.controls.personaldetails.PersonalDetailsPanel;
-import mongoose.event.client.controls.sectionpanel.SectionPanelFactory;
-import mongoose.base.client.validation.MongooseValidationSupport;
+import mongoose.ecommerce.client.controls.bookingoptionspanel.BookingOptionsPanel;
 import mongoose.ecommerce.frontoffice.operations.cart.RouteToCartRequest;
-import mongoose.base.shared.entities.Cart;
-import mongoose.base.shared.entities.Document;
-import dev.webfx.framework.client.services.i18n.I18n;
-import dev.webfx.kit.util.properties.Properties;
-import dev.webfx.platform.shared.services.log.Logger;
-import dev.webfx.platform.shared.util.Strings;
+import mongoose.event.client.controls.bookingcalendar.BookingCalendar;
+import mongoose.event.client.controls.sectionpanel.SectionPanelFactory;
 
 /**
  * @author Bruno Salmon
@@ -131,21 +130,18 @@ final class SummaryActivity extends BookingProcessActivity {
     @Override
     protected void onNextButtonPressed(ActionEvent event) {
         if (validationSupport.isValid())
-            WorkingDocumentSubmitter.submit(getEventActiveWorkingDocument(), commentTextArea.getText()).setHandler(ar -> {
-                if (ar.failed())
-                    Logger.log("Error submitting booking", ar.cause());
-                else {
-                    Document document = ar.result();
-                    Cart cart = document.getCart();
-                    if (cart == null) {
-                        WorkingDocument workingDocument = getEventActiveWorkingDocument();
-                        if (workingDocument.getLoadedWorkingDocument() != null)
-                            workingDocument = workingDocument.getLoadedWorkingDocument();
-                        document = workingDocument.getDocument();
-                        cart = document.getCart();
-                    }
-                    new RouteToCartRequest(cart.getUuid(), getHistory()).execute();
-                }
-            });
+            WorkingDocumentSubmitter.submit(getEventActiveWorkingDocument(), commentTextArea.getText())
+                    .onFailure(cause -> Logger.log("Error submitting booking", cause))
+                    .onSuccess(document -> {
+                        Cart cart = document.getCart();
+                        if (cart == null) {
+                            WorkingDocument workingDocument = getEventActiveWorkingDocument();
+                            if (workingDocument.getLoadedWorkingDocument() != null)
+                                workingDocument = workingDocument.getLoadedWorkingDocument();
+                            document = workingDocument.getDocument();
+                            cart = document.getCart();
+                        }
+                        new RouteToCartRequest(cart.getUuid(), getHistory()).execute();
+                    });
     }
 }

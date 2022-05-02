@@ -1,12 +1,13 @@
 package mongoose.ecommerce.backoffice.operations.entities.moneytransfer;
 
-import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
-import mongoose.base.shared.entities.MoneyTransfer;
 import dev.webfx.framework.client.ui.controls.dialog.DialogContent;
 import dev.webfx.framework.client.ui.controls.dialog.DialogUtil;
 import dev.webfx.framework.shared.orm.entity.UpdateStore;
-import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.async.Future;
+import dev.webfx.platform.shared.async.Promise;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
+import mongoose.base.shared.entities.MoneyTransfer;
 
 final class DeletePaymentExecutor {
 
@@ -15,19 +16,16 @@ final class DeletePaymentExecutor {
     }
 
     private static Future<Void> execute(MoneyTransfer payment, Pane parentContainer) {
-        Future<Void> future = Future.future();
+        Promise<Void> promise = Promise.promise();
         DialogContent dialogContent = new DialogContent().setContent(new Text("Are you sure you want to delete this payment?"));
-        DialogUtil.showModalNodeInGoldLayout(dialogContent, parentContainer).addCloseHook(future::complete);
+        DialogUtil.showModalNodeInGoldLayout(dialogContent, parentContainer).addCloseHook(promise::complete);
         DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
             UpdateStore updateStore = UpdateStore.create(payment.getStore().getDataSourceModel());
             updateStore.deleteEntity(payment);
-            updateStore.submitChanges().setHandler(ar -> {
-                if (ar.failed())
-                    dialogCallback.showException(ar.cause());
-                else
-                    dialogCallback.closeDialog();
-            });
+            updateStore.submitChanges()
+                    .onFailure(dialogCallback::showException)
+                    .onSuccess(resultBatch -> dialogCallback.closeDialog());
         });
-        return future;
+        return promise.future();
     }
 }

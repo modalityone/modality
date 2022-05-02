@@ -46,7 +46,7 @@ import dev.webfx.extras.type.PrimType;
 import dev.webfx.platform.client.services.uischeduler.UiScheduler;
 import dev.webfx.platform.shared.services.log.Logger;
 import dev.webfx.platform.shared.util.Arrays;
-import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.async.Future;
 import dev.webfx.platform.shared.util.collection.Collections;
 
 import java.util.List;
@@ -141,7 +141,7 @@ final class CartActivity extends CartBasedActivity {
         documentVisualSelectionProperty.addListener((observable, oldValue, selection) -> {
             int selectedRow = selection == null ? -1 : selection.getSelectedRow();
             if (selectedRow != -1) {
-                onCartWorkingDocuments().setHandler(ar -> UiScheduler.runInUiThread(() -> {
+                onCartWorkingDocuments().onComplete(ar -> UiScheduler.runInUiThread(() -> {
                     setSelectedWorkingDocument(Collections.get(getCartWorkingDocuments(), selectedRow));
                     displayBookingOptions();
                 }));
@@ -150,7 +150,7 @@ final class CartActivity extends CartBasedActivity {
     }
 
     private Future<List<WorkingDocument>> onCartWorkingDocuments() {
-        return cartAggregate().onCartDocuments().map(this::getCartWorkingDocuments);
+        return cartAggregate().onCartDocuments().map(ignored -> getCartWorkingDocuments());
     }
 
     private List<WorkingDocument> getCartWorkingDocuments() {
@@ -318,11 +318,9 @@ final class CartActivity extends CartBasedActivity {
                                     UpdateStore updateStore = UpdateStore.createAbove(selectedDocument.getStore());
                                     Document updatedDocument = updateStore.updateEntity(selectedDocument);
                                     updatedDocument.setCancelled(true);
-                                    updateStore.submitChanges().setHandler(ar -> {
-                                        if (ar.succeeded()) {
-                                            reloadCart();
-                                            dialogCallback.closeDialog();
-                                        }
+                                    updateStore.submitChanges().onSuccess(resultBatch -> {
+                                        reloadCart();
+                                        dialogCallback.closeDialog();
                                     });
                                 },
                                 "NoBookingCancellation", DialogCallback::closeDialog)

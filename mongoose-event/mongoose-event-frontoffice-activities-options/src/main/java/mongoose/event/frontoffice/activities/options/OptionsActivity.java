@@ -46,30 +46,28 @@ public class OptionsActivity extends BookingProcessActivity {
     @Override
     protected void startLogic() {
         boolean forceRefresh = true; //getEventOptions() == null; // forcing refresh in case the working document has changed (ex: going back from the personal details after having changed the age)
-        onEventFeesGroups().setHandler(ar -> {
-            if (ar.failed())
-                Logger.log(ar.cause());
-            else {
-                OptionsPreselection selectedOptionsPreselection = getEventActiveOptionsPreselection();
-                WorkingDocument workingDocument = getEventActiveWorkingDocument();
-                // Detecting if it's a new booking
-                if (workingDocument == null || selectedOptionsPreselection != null && selectedOptionsPreselection.getWorkingDocument() == workingDocument) {
-                    // Using no accommodation option by default if no preselection was selected
-                    if (selectedOptionsPreselection == null) {
-                        selectedOptionsPreselection = findNoAccommodationOptionsPreselection(ar.result());
-                        selectedOptionsPreselection.setEventActive();
+        onEventFeesGroups()
+                .onFailure(Logger::log)
+                .onSuccess(feesGroups -> {
+                    OptionsPreselection selectedOptionsPreselection = getEventActiveOptionsPreselection();
+                    WorkingDocument workingDocument = getEventActiveWorkingDocument();
+                    // Detecting if it's a new booking
+                    if (workingDocument == null || selectedOptionsPreselection != null && selectedOptionsPreselection.getWorkingDocument() == workingDocument) {
+                        // Using no accommodation option by default if no preselection was selected
+                        if (selectedOptionsPreselection == null) {
+                            selectedOptionsPreselection = findNoAccommodationOptionsPreselection(feesGroups);
+                            selectedOptionsPreselection.setEventActive();
+                        }
+                        // Ensuring the working document is a duplication of the preselection one to not alter the original one
+                        selectedOptionsPreselection.createNewWorkingDocument(null).setEventActive(); // And make it active
                     }
-                    // Ensuring the working document is a duplication of the preselection one to not alter the original one
-                    selectedOptionsPreselection.createNewWorkingDocument(null).setEventActive(); // And make it active
-                }
-                if (lastWorkingDocument != workingDocument) {
-                    if (verticalScrollPane != null)
-                        verticalScrollPane.setVvalue(0);
-                    optionTree.reset();
-                }
-                createOrUpdateOptionPanelsIfReady(forceRefresh);
-            }
-        });
+                    if (lastWorkingDocument != workingDocument) {
+                        if (verticalScrollPane != null)
+                            verticalScrollPane.setVvalue(0);
+                        optionTree.reset();
+                    }
+                    createOrUpdateOptionPanelsIfReady(forceRefresh);
+                });
     }
 
     private OptionsPreselection findNoAccommodationOptionsPreselection(FeesGroup[] feesGroups) {

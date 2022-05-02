@@ -1,5 +1,8 @@
 package mongoose.event.client.controls.calendargraphic.impl;
 
+import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.platform.shared.util.collection.Collections;
+import dev.webfx.platform.shared.util.tuples.Unit;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -13,19 +16,16 @@ import javafx.scene.layout.Pane;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
-import mongoose.event.client.controls.calendargraphic.CalendarClickEvent;
-import mongoose.event.client.controls.calendargraphic.CalendarGraphic;
 import mongoose.event.client.businessdata.calendar.Calendar;
 import mongoose.event.client.businessdata.calendar.CalendarTimeline;
+import mongoose.event.client.controls.calendargraphic.CalendarClickEvent;
+import mongoose.event.client.controls.calendargraphic.CalendarGraphic;
 import mongoose.hotel.shared.businessdata.time.DayTimeRange;
 import mongoose.hotel.shared.businessdata.time.TimeInterval;
-import dev.webfx.platform.shared.util.async.Handler;
-import dev.webfx.platform.shared.util.collection.Collections;
-import dev.webfx.platform.shared.util.tuples.Unit;
-import dev.webfx.kit.util.properties.Properties;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import static dev.webfx.framework.client.ui.util.layout.LayoutUtil.setMinSizeToZeroAndPrefSizeToInfinite;
 
@@ -55,19 +55,19 @@ public final class CalendarGraphicImpl implements CalendarGraphic {
             createOrUpdateRootNodeCalendar();
     }
 
-    private final Property<Handler<CalendarClickEvent>> calendarClickHandlerProperty = new SimpleObjectProperty<>();
+    private final Property<Consumer<CalendarClickEvent>> calendarClickHandlerProperty = new SimpleObjectProperty<>();
     @Override
-    public Property<Handler<CalendarClickEvent>> calendarClickHandlerProperty() {
+    public Property<Consumer<CalendarClickEvent>> calendarClickHandlerProperty() {
         return calendarClickHandlerProperty;
     }
 
     @Override
-    public Handler<CalendarClickEvent> getCalendarClickHandler() {
+    public Consumer<CalendarClickEvent> getCalendarClickHandler() {
         return calendarClickHandlerProperty.getValue();
     }
 
     @Override
-    public void setCalendarClickHandler(Handler<CalendarClickEvent> calendarClickEventHandler) {
+    public void setCalendarClickHandler(Consumer<CalendarClickEvent> calendarClickEventHandler) {
         calendarClickHandlerProperty().setValue(calendarClickEventHandler);
     }
 

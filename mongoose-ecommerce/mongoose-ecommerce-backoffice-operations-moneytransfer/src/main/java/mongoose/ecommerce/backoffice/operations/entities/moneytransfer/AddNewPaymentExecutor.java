@@ -2,7 +2,7 @@ package mongoose.ecommerce.backoffice.operations.entities.moneytransfer;
 
 import javafx.scene.layout.Pane;
 import mongoose.base.shared.entities.Document;
-import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.async.Future;
 
 final class AddNewPaymentExecutor {
 
@@ -11,7 +11,7 @@ final class AddNewPaymentExecutor {
     }
 
     private static Future<Void> execute(Document documentLine, Pane parentContainer) {
-        Future<Void> future = Future.future();
-        return future;
+        // Not yet implemented
+        return Future.succeededFuture();
     }
 }

@@ -14,6 +14,7 @@ module mongoose.ecommerce.backoffice.activities.moneyflows {
     requires mongoose.base.shared.entities;
     requires mongoose.ecommerce.backoffice.operations.moneyflow;
     requires webfx.extras.visual.base;
+    requires webfx.extras.visual.controls.grid;
     requires webfx.framework.client.action;
     requires webfx.framework.client.activity;
     requires webfx.framework.client.controls;
@@ -30,10 +31,9 @@ module mongoose.ecommerce.backoffice.activities.moneyflows {
     requires webfx.framework.shared.router;
     requires webfx.kit.util;
     requires webfx.platform.client.windowhistory;
+    requires webfx.platform.shared.async;
     requires webfx.platform.shared.submit;
     requires webfx.platform.shared.util;
-    requires webfx.framework.client.util;
-    requires webfx.extras.visual.controls.grid;
 
     // Exported packages
     exports mongoose.ecommerce.backoffice.activities.moneyflows;

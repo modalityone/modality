@@ -95,18 +95,16 @@ final class EditableOptionsActivity extends OptionsActivity {
                     // Deleting the option entity
                     store.deleteEntity(option);
                     // Submitting this change into the database
-                    store.submitChanges().setHandler(asyncResult -> {
-                        if (asyncResult.failed())
-                            dialogCallback.showException(asyncResult.cause());
-                        else {
-                            dialogCallback.closeDialog();
-                            // Updating the UI
-                            getEventActiveWorkingDocument().getWorkingDocumentLines().removeIf(line -> getTopParentOption(line.getOption()) == option);
-                            getEventActiveOptionsPreselection().getOptionPreselections().removeIf(optionPreselection -> getTopParentOption(optionPreselection.getOption()) == option);
-                            clearEventOptions();
-                            startLogic();
-                        }
-                    });
+                    store.submitChanges()
+                            .onFailure(dialogCallback::showException)
+                            .onSuccess(resultBatch -> {
+                                dialogCallback.closeDialog();
+                                // Updating the UI
+                                getEventActiveWorkingDocument().getWorkingDocumentLines().removeIf(line -> getTopParentOption(line.getOption()) == option);
+                                getEventActiveOptionsPreselection().getOptionPreselections().removeIf(optionPreselection -> getTopParentOption(optionPreselection.getOption()) == option);
+                                clearEventOptions();
+                                startLogic();
+                            });
                 }, pageContainer);
     }
 
@@ -147,29 +145,27 @@ final class EditableOptionsActivity extends OptionsActivity {
                     .setParameters(selectedOption.getPrimaryKey(), getEventId())
                     .setReturnGeneratedKeys(true)
                     .setDataSourceId(getDataSourceId())
-                    .build()).setHandler(ar -> {
-                if (ar.failed())
-                    addOptionDialogCallback.showException(ar.cause());
-                else {
-                    closeAddOptionDialog();
-                    OptionsPreselection selectedOptionsPreselection = getEventActiveOptionsPreselection();
-                    clearEventOptions();
-                    onEventFeesGroups().setHandler(ar2 -> {
-                        if (ar2.succeeded()) {
-                            for (FeesGroup feesGroup : ar2.result()) {
-                                for (OptionsPreselection optionsPreselection : feesGroup.getOptionsPreselections()) {
-                                    if (optionsPreselection.getLabel() == selectedOptionsPreselection.getLabel()) {
-                                        optionsPreselection.setEventActive();
-                                        optionsPreselection.getWorkingDocument().setEventActive();
-                                        startLogic();
-                                        return;
+                    .build())
+                    .onFailure(addOptionDialogCallback::showException)
+                    .onSuccess(batchResult -> {
+                        closeAddOptionDialog();
+                        OptionsPreselection selectedOptionsPreselection = getEventActiveOptionsPreselection();
+                        clearEventOptions();
+                        onEventFeesGroups().onComplete(ar2 -> {
+                            if (ar2.succeeded()) {
+                                for (FeesGroup feesGroup : ar2.result()) {
+                                    for (OptionsPreselection optionsPreselection : feesGroup.getOptionsPreselections()) {
+                                        if (optionsPreselection.getLabel() == selectedOptionsPreselection.getLabel()) {
+                                            optionsPreselection.setEventActive();
+                                            optionsPreselection.getWorkingDocument().setEventActive();
+                                            startLogic();
+                                            return;
+                                        }
                                     }
                                 }
                             }
-                        }
+                        });
                     });
-                }
-            });
         }
         closeAddOptionDialog();
     }

@@ -23,6 +23,7 @@ module mongoose.event.frontoffice.activities.startbooking {
     requires webfx.kit.util;
     requires webfx.platform.client.uischeduler;
     requires webfx.platform.client.windowhistory;
+    requires webfx.platform.shared.async;
     requires webfx.platform.shared.util;
 
     // Exported packages

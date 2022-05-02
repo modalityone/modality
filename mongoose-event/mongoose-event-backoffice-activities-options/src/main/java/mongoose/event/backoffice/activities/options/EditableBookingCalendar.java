@@ -48,16 +48,14 @@ public final class EditableBookingCalendar extends BookingCalendar {
                             // Updating the option time range
                             updatingOption.setTimeRange(newDayTimeRange.getText());
                             // Asking the update record this change in the database
-                            store.submitChanges().setHandler(asyncResult -> {
-                                if (asyncResult.failed())
-                                    dialogCallback.showException(asyncResult.cause());
-                                else {
-                                    dialogCallback.closeDialog();
-                                    // Updating the UI
-                                    option.setTimeRange(newDayTimeRange.getText());
-                                    createOrUpdateCalendarGraphicFromWorkingDocument(workingDocument, true);
-                                }
-                            });
+                            store.submitChanges()
+                                    .onFailure(dialogCallback::showException)
+                                    .onSuccess(resultBatch -> {
+                                        dialogCallback.closeDialog();
+                                        // Updating the UI
+                                        option.setTimeRange(newDayTimeRange.getText());
+                                        createOrUpdateCalendarGraphicFromWorkingDocument(workingDocument, true);
+                                    });
                         }, parentOwner
                 );
             }

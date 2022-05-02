@@ -11,8 +11,8 @@
 
     <dependencies>
         <used-by-source-modules>
-            <undiscovered-used-by-source-module>javafx-base</undiscovered-used-by-source-module>
-            <undiscovered-used-by-source-module>webfx-platform-shared-util</undiscovered-used-by-source-module>
+            <undetected-module>javafx-base</undetected-module>
+            <undetected-module>webfx-platform-shared-async</undetected-module>
         </used-by-source-modules>
     </dependencies>
 

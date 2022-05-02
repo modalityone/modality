@@ -1,12 +1,13 @@
 package mongoose.hotel.backoffice.operations.entities.resourceconfiguration;
 
-import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
 import dev.webfx.framework.client.ui.controls.dialog.DialogContent;
 import dev.webfx.framework.client.ui.controls.dialog.DialogUtil;
 import dev.webfx.framework.shared.orm.entity.Entity;
 import dev.webfx.framework.shared.orm.entity.UpdateStore;
-import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.async.Future;
+import dev.webfx.platform.shared.async.Promise;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 
 final class DeleteResourceExecutor {
 
@@ -15,20 +16,17 @@ final class DeleteResourceExecutor {
     }
 
     private static Future<Void> execute(Entity resourceConfiguration, Pane parentContainer) {
-        Future<Void> future = Future.future();
+        Promise<Void> promise = Promise.promise();
         DialogContent dialogContent = new DialogContent().setContent(new Text("Are you sure you want to delete room " + resourceConfiguration.evaluate("name") + '?'));
-        DialogUtil.showModalNodeInGoldLayout(dialogContent, parentContainer).addCloseHook(future::complete);
+        DialogUtil.showModalNodeInGoldLayout(dialogContent, parentContainer).addCloseHook(promise::complete);
         DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
             UpdateStore updateStore = UpdateStore.create(resourceConfiguration.getStore().getDataSourceModel());
             updateStore.deleteEntity(resourceConfiguration);
             updateStore.deleteEntity(resourceConfiguration.<Entity>getForeignEntity("resource"));
-            updateStore.submitChanges().setHandler(ar -> {
-                if (ar.failed())
-                    dialogCallback.showException(ar.cause());
-                else
-                    dialogCallback.closeDialog();
-            });
+            updateStore.submitChanges()
+                    .onFailure(dialogCallback::showException)
+                    .onSuccess(resultBatch -> dialogCallback.closeDialog());
         });
-        return future;
+        return promise.future();
     }
 }

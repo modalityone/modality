@@ -7,7 +7,7 @@ import dev.webfx.framework.client.orm.reactive.mapping.entities_to_grid.EntityCo
 import dev.webfx.framework.shared.orm.entity.Entity;
 import dev.webfx.framework.shared.orm.expression.Expression;
 import dev.webfx.framework.shared.orm.domainmodel.formatter.ValueFormatter;
-import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.async.Future;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,6 +46,6 @@ final class CopyExecutor {
         ClipboardContent content = new ClipboardContent();
         content.putString(clipboardString.toString());
         Clipboard.getSystemClipboard().setContent(content);
-        return Future.future();
+        return Future.succeededFuture();
     }
 }

@@ -2,7 +2,7 @@ package mongoose.crm.backoffice.operations.entities.mail;
 
 import javafx.scene.layout.Pane;
 import mongoose.base.shared.entities.Document;
-import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.async.Future;
 
 final class ComposeNewMailExecutor {
 
@@ -11,7 +11,7 @@ final class ComposeNewMailExecutor {
     }
 
     private static Future<Void> execute(Document document, Pane parentContainer) {
-        Future<Void> future = Future.future();
+        Future<Void> future = Future.succeededFuture();
         return future;
     }
 }

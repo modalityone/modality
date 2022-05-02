@@ -1,8 +1,7 @@
 package mongoose.ecommerce.backoffice.operations.entities.moneyflow;
 
-import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.async.Future;
 import javafx.scene.layout.Pane;
-import mongoose.base.shared.entities.MoneyFlow;
 
 final class AddNewMoneyFlowExecutor {
 
@@ -11,7 +10,7 @@ final class AddNewMoneyFlowExecutor {
     }
 
     private static Future<Void> execute(Pane parentContainer) {
-        Future<Void> future = Future.future();
-        return future;
+        // Not yet implemented
+        return Future.succeededFuture();
     }
 }

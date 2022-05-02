@@ -6,7 +6,7 @@ import mongoose.base.shared.entities.Document;
 import mongoose.base.shared.entities.MoneyTransfer;
 import dev.webfx.framework.shared.orm.domainmodel.DataSourceModel;
 import dev.webfx.framework.shared.orm.entity.EntityList;
-import dev.webfx.platform.shared.util.async.Future;
+import dev.webfx.platform.shared.async.Future;
 
 import java.util.List;
 
