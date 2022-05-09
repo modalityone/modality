@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.mongoose</groupId>
+        <groupId>dev.webfx</groupId>
         <artifactId>mongoose-all</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
@@ -60,273 +60,273 @@
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-all-frontoffice-application</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-base-client-activity</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-base-client-aggregates</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-base-client-application</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-base-client-busconfig</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-base-client-css-web</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-base-client-entities</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-base-client-i18n</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-base-client-icons</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-base-client-operationactionsloading</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-base-client-presentationmodel</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-base-client-sessionrecorder</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-base-client-util</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-base-client-validation</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-base-shared-domainmodel</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-base-shared-entities</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-crm-client-activities-login</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-crm-client-activities-unauthorized</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-crm-client-authn</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-crm-client-authz</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-crm-client-personaldetails</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-ecommerce-client-bookingoptionspanel</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-ecommerce-client-bookingprocess</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-ecommerce-client-businesslogic</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-ecommerce-frontoffice-activities-cart</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-ecommerce-frontoffice-activities-cart-routing</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-ecommerce-frontoffice-activities-contactus</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-ecommerce-frontoffice-activities-payment</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-ecommerce-frontoffice-activities-person</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-ecommerce-frontoffice-activities-summary</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-event-client-bookingcalendar</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-event-client-calendar</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-event-client-sectionpanel</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-event-frontoffice-activities-fees</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-event-frontoffice-activities-options</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-event-frontoffice-activities-program</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-event-frontoffice-activities-startbooking</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-event-frontoffice-activities-terms</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-hotel-shared-time</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>

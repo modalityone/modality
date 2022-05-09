@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.mongoose</groupId>
+        <groupId>dev.webfx</groupId>
         <artifactId>mongoose-all</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
@@ -22,76 +22,76 @@
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-base-client-application</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-ecommerce-frontoffice-activities-cart</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-ecommerce-frontoffice-activities-contactus</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-ecommerce-frontoffice-activities-payment</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-ecommerce-frontoffice-activities-person</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-ecommerce-frontoffice-activities-summary</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-event-frontoffice-activities-fees</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-event-frontoffice-activities-options</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-event-frontoffice-activities-program</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-event-frontoffice-activities-startbooking</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-event-frontoffice-activities-terms</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>

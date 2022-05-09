@@ -3,7 +3,7 @@
 
     <parent name="webfx-stack-parent"/>
 
-    <groupId>org.mongoose</groupId>
+    <groupId>dev.webfx</groupId>
     <version>1.0.0-SNAPSHOT</version>
 
     <update-options>
@@ -40,7 +40,7 @@
 
             <parent name="webfx-stack-parent"/>
 
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <version>1.0.0-SNAPSHOT</version>
     
             <modules>

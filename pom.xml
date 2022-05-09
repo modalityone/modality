@@ -11,8 +11,6 @@
         <version>0.1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.mongoose</groupId>
-
     <artifactId>mongoose</artifactId>
 
     <version>1.0.0-SNAPSHOT</version>

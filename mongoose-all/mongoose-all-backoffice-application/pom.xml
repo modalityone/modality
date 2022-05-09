@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.mongoose</groupId>
+        <groupId>dev.webfx</groupId>
         <artifactId>mongoose-all</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
@@ -22,144 +22,144 @@
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-base-backoffice-activities-monitor</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-base-backoffice-activities-operations</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-base-backoffice-masterslave</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-base-client-application</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-catering-backoffice-activities-diningareas</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-crm-backoffice-activities-authorizations</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-crm-backoffice-activities-letter</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-crm-backoffice-activities-letters</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-crm-backoffice-activities-organizations</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-crm-backoffice-activities-users</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-crm-backoffice-bookingdetailspanel</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-ecommerce-backoffice-activities-bookings</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-ecommerce-backoffice-activities-income</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-ecommerce-backoffice-activities-moneyflows</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-ecommerce-backoffice-activities-payments</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-ecommerce-backoffice-activities-statements</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-ecommerce-backoffice-activities-statistics</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-event-backoffice-activities-cloneevent</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-event-backoffice-activities-events</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-event-backoffice-activities-options</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-hotel-backoffice-activities-roomsgraphic</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
