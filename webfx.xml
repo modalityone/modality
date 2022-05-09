@@ -157,6 +157,8 @@
                 </head>
             </html>
 
+            <used-by-source-modules/>
+
         </project>
 
         <project executable="true" name="mongoose-all-backoffice-application-openjfx">
@@ -248,6 +250,8 @@
                     <title>Mongoose Front-Office</title>
                 </head>
             </html>
+
+            <used-by-source-modules/>
 
         </project>
 
@@ -692,6 +696,8 @@
             <dependencies>
                 <used-by-source-modules/>
             </dependencies>
+
+            <used-by-source-modules/>
 
         </project>
 
