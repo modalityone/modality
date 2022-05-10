@@ -53,7 +53,8 @@ public class MongooseClientContainerActivity extends ViewDomainActivityBase
                 "RouteToTester",
                 "RouteToUsers",
                 "RouteToOperations",
-                "RouteToAuthorizations"
+                "RouteToAuthorizations",
+                "RouteToFilters"
         };
         Collection<RouteRequestEmitter> providedEmitters = RouteRequestEmitter.getProvidedEmitters();
         return Arrays.stream(sortedPossibleNavigationOperations)

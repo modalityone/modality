@@ -116,6 +116,11 @@
     <!-- used by mongoose-all-backoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <!-- used by mongoose-all-backoffice-application-gwt (PLUGIN) -->
     <source path="mongoose/all/backoffice/application"/>
+    <!--==================< mongoose-base-backoffice-activities-filters >===================-->
+    <!-- used by mongoose-all-backoffice-application (PLUGIN) -->
+    <source path="mongoose/base/backoffice/activities/filters"/>
+    <source path="mongoose/base/backoffice/activities/filters/routing"/>
+    <source path="mongoose/base/backoffice/operations/routes/filters"/>
     <!--==================< mongoose-base-backoffice-activities-monitor >===================-->
     <!-- used by mongoose-all-backoffice-application (PLUGIN) -->
     <source path="mongoose/base/backoffice/activities/monitor"/>
@@ -384,7 +389,7 @@
     <!-- used by mongoose-all-backoffice-application (PLUGIN) -->
     <source path="mongoose/event/backoffice/activities/cloneevent"/>
     <!--============< mongoose-event-backoffice-activities-cloneevent-routing >=============-->
-    <!-- used by mongoose-ecommerce-backoffice-activities-bookings (SOURCE) -->
+    <!-- used by mongoose-base-backoffice-activities-filters (SOURCE) -->
     <source path="mongoose/event/backoffice/activities/cloneevent/routing"/>
     <source path="mongoose/event/backoffice/operations/routes/cloneevent"/>
     <!--==================< mongoose-event-backoffice-activities-events >===================-->
@@ -408,7 +413,7 @@
     <!-- used by mongoose-crm-client-personaldetails (SOURCE) -->
     <source path="mongoose/event/client/controls/sectionpanel"/>
     <!--===================< mongoose-event-frontoffice-activities-fees >===================-->
-    <!-- used by mongoose-ecommerce-backoffice-activities-bookings (SOURCE) -->
+    <!-- used by mongoose-base-backoffice-activities-filters (SOURCE) -->
     <source path="mongoose/event/frontoffice/activities/fees"/>
     <source path="mongoose/event/frontoffice/activities/fees/routing"/>
     <source path="mongoose/event/frontoffice/operations/fees"/>
