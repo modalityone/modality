@@ -9,6 +9,6 @@ public final class RouteToFiltersRequestEmitter implements RouteRequestEmitter {
 
     @Override
     public RouteRequest instantiateRouteRequest(UiRouteActivityContext context) {
-        return new RouteToFiltersRequest(context.getParameter("eventId"), context.getHistory());
+        return new RouteToFiltersRequest(context.getHistory());
     }
 }

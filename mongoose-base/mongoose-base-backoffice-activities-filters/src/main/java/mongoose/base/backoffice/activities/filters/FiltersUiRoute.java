@@ -13,7 +13,7 @@ public final class FiltersUiRoute extends UiRouteImpl {
     }
 
     public static UiRoute<?> uiRoute() {
-        return UiRoute.createRegex(PathBuilder.toRegexPath(FiltersRouting.getAnyPath())
+        return UiRoute.createRegex(PathBuilder.toRegexPath(FiltersRouting.getPath())
                 , false
                 , FiltersActivity::new
                 , ViewDomainActivityContextFinal::new
