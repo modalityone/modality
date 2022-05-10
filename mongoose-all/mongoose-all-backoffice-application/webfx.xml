@@ -14,6 +14,7 @@
 
         <!-- Base activities -->
         <plugin-module>mongoose-base-backoffice-activities-monitor</plugin-module>
+        <plugin-module>mongoose-base-backoffice-activities-filters</plugin-module>
         <plugin-module>mongoose-base-backoffice-activities-operations</plugin-module>
 
         <!-- CRM activities -->
