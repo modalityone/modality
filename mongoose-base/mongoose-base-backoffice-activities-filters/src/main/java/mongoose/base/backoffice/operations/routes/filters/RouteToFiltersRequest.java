@@ -9,8 +9,8 @@ public final class RouteToFiltersRequest extends RoutePushRequest implements Has
 
     private final static String OPERATION_CODE = "RouteToFilters";
 
-    public RouteToFiltersRequest(Object eventId, BrowsingHistory history) {
-        super(FiltersRouting.getEventBookingsPath(eventId), history);
+    public RouteToFiltersRequest(BrowsingHistory history) {
+        super(FiltersRouting.getPath(), history);
     }
 
     @Override
