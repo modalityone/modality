@@ -17,4 +17,16 @@ public final class Array {
         }
     }
 
+    public static int getLength(Object array) {
+        return asArray(array).length;
+    }
+
+    // From com.google.gwt.lang.Array (gwt-dev:2.9.0)
+    /**
+     * Use JSNI to effect a castless type change.
+     */
+    private static native <T> T[] asArray(Object array) /*-{
+        return array;
+    }-*/;
+
 }
