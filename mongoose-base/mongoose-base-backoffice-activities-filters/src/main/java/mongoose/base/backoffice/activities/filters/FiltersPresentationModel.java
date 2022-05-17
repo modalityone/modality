@@ -16,9 +16,9 @@ import dev.webfx.framework.client.orm.reactive.dql.statement.conventions.*;
 import dev.webfx.framework.shared.orm.expression.builder.ReferenceResolver;
 
 final class FiltersPresentationModel extends EventDependentGenericTablePresentationModel implements
-        HasConditionDqlStatementProperty,
-        HasGroupDqlStatementProperty,
-        HasColumnsDqlStatementProperty,
+        // HasConditionDqlStatementProperty,
+        // HasGroupDqlStatementProperty,
+        //  HasColumnsDqlStatementProperty,
         HasGroupVisualResultProperty,
         HasGroupVisualSelectionProperty,
         HasSelectedGroupProperty<Document>,
@@ -29,6 +29,7 @@ final class FiltersPresentationModel extends EventDependentGenericTablePresentat
         HasSelectedMasterProperty<Document>,
         HasSelectedDocumentProperty {
 
+    /*
     private final ObjectProperty<DqlStatement> conditionDqlStatementProperty = new SimpleObjectProperty<>();
     @Override public ObjectProperty<DqlStatement> conditionDqlStatementProperty() { return conditionDqlStatementProperty; }
 
@@ -37,6 +38,7 @@ final class FiltersPresentationModel extends EventDependentGenericTablePresentat
 
     private final ObjectProperty<DqlStatement> columnsDqlStatementProperty = new SimpleObjectProperty<>();
     @Override public ObjectProperty<DqlStatement> columnsDqlStatementProperty() { return columnsDqlStatementProperty; }
+    */
 
     private final ObjectProperty<VisualResult> groupVisualResultProperty = new SimpleObjectProperty<>();
     @Override public ObjectProperty<VisualResult> groupVisualResultProperty() { return groupVisualResultProperty; }
