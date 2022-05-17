@@ -47,8 +47,11 @@ public class ConventionalUiBuilder implements UiBuilder {
         if (container == null) {
             container = new BorderPane();
 
+            System.out.println("GOT HERE1------");
+
             // Building the filter search bar and put it on top
             if (mixin instanceof FilterButtonSelectorFactoryMixin) {
+                System.out.println("GOT HERE2------");
                 filterSearchBar = ((FilterButtonSelectorFactoryMixin) mixin).createFilterSearchBar(activityName, domainClassId, container, pm);
                 if (leftTopNodes.length == 0 && rightTopNodes.length == 0)
                     container.setTop(filterSearchBar.buildUi());
@@ -62,6 +65,7 @@ public class ConventionalUiBuilder implements UiBuilder {
             }
 
             if (pm instanceof HasGroupVisualResultProperty && pm instanceof HasMasterVisualResultProperty && pm instanceof HasSelectedMasterProperty) {
+                System.out.println("GOT HERE 5------");
                 groupMasterSlaveView = GroupMasterSlaveView.createAndBind((HasGroupVisualResultProperty & HasMasterVisualResultProperty & HasSelectedMasterProperty<Entity/*necessary for GWT 2.9*/>) pm, mixin, () -> container);
                 container.setCenter(groupMasterSlaveView.buildUi());
             }

@@ -14,7 +14,6 @@ import mongoose.ecommerce.backoffice.operations.entities.document.security.Toggl
 import mongoose.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsVerifiedRequest;
 import mongoose.base.backoffice.operations.entities.generic.CopyAllRequest;
 import mongoose.base.backoffice.operations.entities.generic.CopySelectionRequest;
-import mongoose.base.backoffice.operations.routes.filters.RouteToNewBackOfficeFiltersRequest;
 import mongoose.event.backoffice.operations.routes.cloneevent.RouteToCloneEventRequest;
 import mongoose.base.client.activity.eventdependent.EventDependentViewDomainActivity;
 import mongoose.base.shared.domainmodel.functions.AbcNames;
@@ -47,20 +46,13 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements
 
     @Override
     public Node buildUi() {
+
         ui = createAndBindGroupMasterSlaveViewWithFilterSearchBar(pm, "filters", "Document");
-
-        // Adding new booking button on left and clone event on right of the filter search bar
-        Button newBookingButton = newButton(newOperationAction(() -> new RouteToNewBackOfficeFiltersRequest(getEventId(), getHistory()))),
-                cloneEventButton = newButton(newOperationAction(() -> new RouteToCloneEventRequest(getEventId(), getHistory())));
-        ui.setLeftTopNodes(setUnmanagedWhenInvisible(newBookingButton));
-        ui.setRightTopNodes(setUnmanagedWhenInvisible(cloneEventButton));
-
         Pane container = ui.buildUi();
-
         setUpContextMenu(LayoutUtil.lookupChild(ui.getGroupMasterSlaveView().getMasterView(), n -> n instanceof VisualGrid), () -> newActionGroup(
                 newOperationAction(() -> new SendLetterRequest(pm.getSelectedDocument(), container)),
                 newSeparatorActionGroup("Registration",
-                        newOperationAction(() -> new ToggleMarkDocumentAsReadRequest(pm.getSelectedDocument(), container), /* to update the i18n text when the selection change -> */ pm.selectedDocumentProperty()),
+                        newOperationAction(() -> new ToggleMarkDocumentAsReadRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()), // to update the i18n text when the selection change ->
                         newOperationAction(() -> new ToggleMarkDocumentAsWillPayRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
                         newOperationAction(() -> new ToggleCancelDocumentRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
                         newOperationAction(() -> new ToggleConfirmDocumentRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
@@ -80,7 +72,6 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements
                         newOperationAction(() -> new CopyAllRequest(masterVisualMapper.getCurrentEntities(), masterVisualMapper.getEntityColumns()))
                 )
         ));
-
         return container;
     }
 
