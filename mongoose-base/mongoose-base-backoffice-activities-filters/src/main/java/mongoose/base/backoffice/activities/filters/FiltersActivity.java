@@ -1,8 +1,20 @@
 package mongoose.base.backoffice.activities.filters;
 
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import mongoose.crm.backoffice.controls.bookingdetailspanel.BookingDetailsPanel;
 import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilder;
 import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
@@ -42,11 +54,12 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements
         return pm; // eventId and organizationId will then be updated from route
     }
 
-    private ConventionalUiBuilder ui; // Keeping this reference for activity resume
+    private Pane moneyAccountTableContainer;
 
     @Override
     public Node buildUi() {
 
+        /*
         ui = createAndBindGroupMasterSlaveViewWithFilterSearchBar(pm, "filters", "Document");
         Pane container = ui.buildUi();
         setUpContextMenu(LayoutUtil.lookupChild(ui.getGroupMasterSlaveView().getMasterView(), n -> n instanceof VisualGrid), () -> newActionGroup(
@@ -73,12 +86,74 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements
                 )
         ));
         return container;
+        */
+
+        // FilterPane components
+        Label searchLabel = new Label("Search filters");
+        TextField filterSearchField = new TextField();
+        VisualGrid filterGrid = new VisualGrid();
+
+        // The FilterPane button bar
+        HBox filterPaneButtonBar = new HBox();
+        filterPaneButtonBar.getChildren().add(new Button("Add"));
+        filterPaneButtonBar.getChildren().add(new Button("Edit"));
+        filterPaneButtonBar.getChildren().add(new Button("Delete"));
+        filterPaneButtonBar.setSpacing(5);
+        filterPaneButtonBar.setAlignment(Pos.BASELINE_RIGHT);
+
+        // The FilterPane container of components
+        VBox filterPane = new VBox();
+        filterPane.getChildren().add(searchLabel);
+        filterPane.getChildren().add(filterSearchField);
+        filterPane.getChildren().add(filterGrid);
+        filterPane.getChildren().add(filterPaneButtonBar);
+        filterPane.setSpacing(10);
+        VBox.setMargin(filterPane, new Insets(20, 20, 20, 20));
+
+        // The FilterPane border wrapper
+        VBox filterPaneBorder = new VBox();
+        filterPaneBorder.getChildren().add(filterPane);
+        filterPaneBorder.setBorder(new Border(new BorderStroke(Color.LIGHTGRAY, BorderStrokeStyle.SOLID, null, null)));
+        VBox.setMargin(filterPaneBorder, new Insets(20, 20, 20, 20));
+
+        // ResultPane components
+        Label resultLabel = new Label("Returned results");
+        VisualGrid resultsGrid = new VisualGrid();
+
+        // The ResultPane container of components
+        VBox resultPane = new VBox();
+        resultPane.getChildren().add(resultLabel);
+        resultPane.getChildren().add(resultsGrid);
+        resultPane.setSpacing(10);
+        VBox.setMargin(resultPane, new Insets(20, 20, 20, 20));
+        // resultPane.setPrefSize(300,300);
+        // resultPane.setBorder(new Border(new BorderStroke(Color.LIGHTGRAY, BorderStrokeStyle.SOLID, null, null)));
+
+        // The FilterPane border wrapper
+        VBox resultPaneBorder = new VBox();
+        resultPaneBorder.getChildren().add(resultPane);
+        resultPaneBorder.setBorder(new Border(new BorderStroke(Color.LIGHTGRAY, BorderStrokeStyle.SOLID, null, null)));
+        VBox.setMargin(resultPaneBorder, new Insets(20, 20, 20, 20));
+
+        // The outer box of components.
+        VBox outerVerticalBox = new VBox();
+        outerVerticalBox.getChildren().add(filterPaneBorder);
+        outerVerticalBox.getChildren().add(resultPaneBorder);
+
+        /*
+        VisualGrid moneyAccountTable = new VisualGrid();
+        moneyAccountTableContainer = new HBox(moneyAccountTable);
+        TabPane tabPane = new TabPane();
+        tabPane.getTabs().add(new Tab("Filters", moneyAccountTableContainer));
+        return tabPane;
+        */
+        return outerVerticalBox;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        ui.onResume(); // activate search text focus on activity resume
+        // ui.onResume(); // activate search text focus on activity resume
     }
 
 
@@ -116,7 +191,10 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements
 
     @Override
     protected void refreshDataOnActive() {
+        /*
         groupVisualMapper.refreshWhenActive();
         masterVisualMapper.refreshWhenActive();
+        */
+        //moneyAccountVisualMapper.refreshWhenActive();
     }
 }
