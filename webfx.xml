@@ -1044,11 +1044,15 @@
 
         <project name="mongoose-base-server-datasource">
 
+            <required-libraries>
+                <library artifact="org.junit.jupiter:junit-jupiter:5.8.2"/>
+                <library artifact="org.mockito:mockito-inline:3.5.13"/>
+            </required-libraries>
+
             <exported-packages>
                 <source-packages/>
                 <resource-package>mongoose.base.server.datasource.MDS</resource-package>
             </exported-packages>
-
 
             <providers>
                 <dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider>mongoose.base.server.services.datasource.MongooseLocalDataSourceProvider</dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider>
@@ -1058,6 +1062,8 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
                     <undetected-module>webfx-framework-shared-orm-dql</undetected-module>
+                    <undetected-module scope="test">junit-jupiter</undetected-module>
+                    <undetected-module scope="test">mockito-inline</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
