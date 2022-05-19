@@ -321,9 +321,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.backoffice.operations.routes.monitor</package>
                 <package>mongoose.base.backoffice.activities.monitor</package>
                 <package>mongoose.base.backoffice.activities.monitor.routing</package>
+                <package>mongoose.base.backoffice.operations.routes.monitor</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -364,9 +364,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.backoffice.operations.routes.operations</package>
                 <package>mongoose.base.backoffice.activities.operations</package>
                 <package>mongoose.base.backoffice.activities.operations.routing</package>
+                <package>mongoose.base.backoffice.operations.routes.operations</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -512,8 +512,8 @@
 
             <source-packages>
                 <package>mongoose.base.client.activity.eventdependent</package>
-                <package>mongoose.base.client.activity.organizationdependent</package>
                 <package>mongoose.base.client.activity</package>
+                <package>mongoose.base.client.activity.organizationdependent</package>
                 <package>mongoose.base.client.activity.table</package>
                 <package>mongoose.base.client.activity.themes</package>
             </source-packages>
@@ -554,9 +554,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.client.aggregates.person</package>
                 <package>mongoose.base.client.aggregates.cart</package>
                 <package>mongoose.base.client.aggregates.event</package>
+                <package>mongoose.base.client.aggregates.person</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -813,8 +813,8 @@
             </embed-resources>
 
             <source-packages>
-                <package>mongoose.base.client.icons</package>
                 <package>mongoose.base.client.actions</package>
+                <package>mongoose.base.client.icons</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1047,6 +1047,21 @@
             <required-libraries>
                 <library artifact="org.junit.jupiter:junit-jupiter:5.8.2"/>
                 <library artifact="org.mockito:mockito-inline:3.5.13"/>
+                <library artifact="org.seleniumhq.selenium:selenium-java:4.1.4"/>
+                <library artifact="io.github.bonigarcia:webdrivermanager:5.1.1">
+
+                    <exported-packages>
+                        <package>io.github.bonigarcia.wdm</package>
+                        <package>io.github.bonigarcia.wdm.config</package>
+                        <package>io.github.bonigarcia.wdm.managers</package>
+                        <package>io.github.bonigarcia.wdm.docker</package>
+                        <package>io.github.bonigarcia.wdm.online</package>
+                        <package>io.github.bonigarcia.wdm.cache</package>
+                        <package>io.github.bonigarcia.wdm.versions</package>
+                        <package>io.github.bonigarcia.wdm.webdriver</package>
+                    </exported-packages>
+
+                </library>
             </required-libraries>
 
             <exported-packages>
@@ -1064,6 +1079,8 @@
                     <undetected-module>webfx-framework-shared-orm-dql</undetected-module>
                     <undetected-module scope="test">junit-jupiter</undetected-module>
                     <undetected-module scope="test">mockito-inline</undetected-module>
+                    <undetected-module scope="verify">selenium-java</undetected-module>
+                    <undetected-module scope="verify">webdrivermanager</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1202,8 +1219,8 @@
             <source-packages>
                 <package>mongoose.base.shared.domainmodel.formatters</package>
                 <package>mongoose.base.shared.domainmodel.functions</package>
-                <package>mongoose.base.shared.services.domainmodel</package>
                 <package>mongoose.base.shared.services.datasourcemodel</package>
+                <package>mongoose.base.shared.services.domainmodel</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1269,11 +1286,11 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.shared.services.systemmetrics</package>
-                <package>mongoose.base.shared.entities.impl</package>
                 <package>mongoose.base.shared.entities</package>
-                <package>mongoose.base.shared.entities.markers</package>
                 <package>mongoose.base.shared.entities.formatters</package>
+                <package>mongoose.base.shared.entities.impl</package>
+                <package>mongoose.base.shared.entities.markers</package>
+                <package>mongoose.base.shared.services.systemmetrics</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1316,9 +1333,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.catering.backoffice.operations.routes.diningareas</package>
                 <package>mongoose.catering.backoffice.activities.diningareas</package>
                 <package>mongoose.catering.backoffice.activities.diningareas.routing</package>
+                <package>mongoose.catering.backoffice.operations.routes.diningareas</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1458,9 +1475,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.crm.backoffice.operations.routes.letter</package>
                 <package>mongoose.crm.backoffice.activities.letter</package>
                 <package>mongoose.crm.backoffice.activities.letter.routing</package>
+                <package>mongoose.crm.backoffice.operations.routes.letter</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1499,9 +1516,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.crm.backoffice.operations.routes.letters</package>
                 <package>mongoose.crm.backoffice.activities.letters</package>
                 <package>mongoose.crm.backoffice.activities.letters.routing</package>
+                <package>mongoose.crm.backoffice.operations.routes.letters</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1539,9 +1556,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.crm.backoffice.operations.routes.organizations</package>
                 <package>mongoose.crm.backoffice.activities.organizations</package>
                 <package>mongoose.crm.backoffice.activities.organizations.routing</package>
+                <package>mongoose.crm.backoffice.operations.routes.organizations</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1582,9 +1599,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.crm.backoffice.operations.routes.users</package>
                 <package>mongoose.crm.backoffice.activities.users</package>
                 <package>mongoose.crm.backoffice.activities.users.routing</package>
+                <package>mongoose.crm.backoffice.operations.routes.users</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1895,9 +1912,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.backoffice.operations.routes.bookings</package>
                 <package>mongoose.ecommerce.backoffice.activities.bookings</package>
                 <package>mongoose.ecommerce.backoffice.activities.bookings.routing</package>
+                <package>mongoose.ecommerce.backoffice.operations.routes.bookings</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1957,9 +1974,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.backoffice.operations.routes.income</package>
                 <package>mongoose.ecommerce.backoffice.activities.income</package>
                 <package>mongoose.ecommerce.backoffice.activities.income.routing</package>
+                <package>mongoose.ecommerce.backoffice.operations.routes.income</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2007,9 +2024,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.backoffice.operations.routes.moneyflows</package>
                 <package>mongoose.ecommerce.backoffice.activities.moneyflows</package>
                 <package>mongoose.ecommerce.backoffice.activities.moneyflows.routing</package>
+                <package>mongoose.ecommerce.backoffice.operations.routes.moneyflows</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2065,9 +2082,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.backoffice.operations.routes.payments</package>
                 <package>mongoose.ecommerce.backoffice.activities.payments</package>
                 <package>mongoose.ecommerce.backoffice.activities.payments.routing</package>
+                <package>mongoose.ecommerce.backoffice.operations.routes.payments</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2119,9 +2136,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.backoffice.operations.routes.statements</package>
                 <package>mongoose.ecommerce.backoffice.activities.statements</package>
                 <package>mongoose.ecommerce.backoffice.activities.statements.routing</package>
+                <package>mongoose.ecommerce.backoffice.operations.routes.statements</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2171,9 +2188,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.backoffice.operations.routes.statistics</package>
                 <package>mongoose.ecommerce.backoffice.activities.statistics</package>
                 <package>mongoose.ecommerce.backoffice.activities.statistics.routing</package>
+                <package>mongoose.ecommerce.backoffice.operations.routes.statistics</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2224,11 +2241,11 @@
             </dependencies>
 
             <source-packages>
+                <package>mongoose.ecommerce.backoffice.operations.entities.document.cart</package>
                 <package>mongoose.ecommerce.backoffice.operations.entities.document</package>
+                <package>mongoose.ecommerce.backoffice.operations.entities.document.multiplebookings</package>
                 <package>mongoose.ecommerce.backoffice.operations.entities.document.registration</package>
                 <package>mongoose.ecommerce.backoffice.operations.entities.document.security</package>
-                <package>mongoose.ecommerce.backoffice.operations.entities.document.cart</package>
-                <package>mongoose.ecommerce.backoffice.operations.entities.document.multiplebookings</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2285,8 +2302,8 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.backoffice.operations.entities.moneyflow</package>
                 <package>mongoose.ecommerce.backoffice.operations.entities.moneyaccount</package>
+                <package>mongoose.ecommerce.backoffice.operations.entities.moneyflow</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2416,14 +2433,14 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.client.businessdata.workingdocument</package>
-                <package>mongoose.ecommerce.client.businessdata.preselection</package>
                 <package>mongoose.ecommerce.client.businessdata.feesgroup</package>
-                <package>mongoose.ecommerce.client.businesslogic.workingdocument</package>
-                <package>mongoose.ecommerce.client.businesslogic.option</package>
+                <package>mongoose.ecommerce.client.businessdata.preselection</package>
+                <package>mongoose.ecommerce.client.businessdata.workingdocument</package>
                 <package>mongoose.ecommerce.client.businesslogic.feesgroup</package>
-                <package>mongoose.ecommerce.client.businesslogic.rules</package>
+                <package>mongoose.ecommerce.client.businesslogic.option</package>
                 <package>mongoose.ecommerce.client.businesslogic.pricing</package>
+                <package>mongoose.ecommerce.client.businesslogic.rules</package>
+                <package>mongoose.ecommerce.client.businesslogic.workingdocument</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2518,9 +2535,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.frontoffice.operations.cart</package>
-                <package>mongoose.ecommerce.frontoffice.activities.cart.routing</package>
                 <package>mongoose.ecommerce.frontoffice.activities.cart.base</package>
+                <package>mongoose.ecommerce.frontoffice.activities.cart.routing</package>
+                <package>mongoose.ecommerce.frontoffice.operations.cart</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2562,9 +2579,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.frontoffice.operations.contactus</package>
                 <package>mongoose.ecommerce.frontoffice.activities.contactus</package>
                 <package>mongoose.ecommerce.frontoffice.activities.contactus.routing</package>
+                <package>mongoose.ecommerce.frontoffice.operations.contactus</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2609,9 +2626,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.frontoffice.operations.payment</package>
                 <package>mongoose.ecommerce.frontoffice.activities.payment</package>
                 <package>mongoose.ecommerce.frontoffice.activities.payment.routing</package>
+                <package>mongoose.ecommerce.frontoffice.operations.payment</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2663,9 +2680,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.frontoffice.operations.person</package>
                 <package>mongoose.ecommerce.frontoffice.activities.person</package>
                 <package>mongoose.ecommerce.frontoffice.activities.person.routing</package>
+                <package>mongoose.ecommerce.frontoffice.operations.person</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2705,9 +2722,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.frontoffice.operations.summary</package>
-                <package>mongoose.ecommerce.frontoffice.activities.summary</package>
                 <package>mongoose.ecommerce.frontoffice.activities.summary.routing</package>
+                <package>mongoose.ecommerce.frontoffice.activities.summary</package>
+                <package>mongoose.ecommerce.frontoffice.operations.summary</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2808,8 +2825,8 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.event.backoffice.operations.routes.cloneevent</package>
                 <package>mongoose.event.backoffice.activities.cloneevent.routing</package>
+                <package>mongoose.event.backoffice.operations.routes.cloneevent</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2842,9 +2859,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.event.backoffice.operations.routes.events</package>
                 <package>mongoose.event.backoffice.activities.events</package>
                 <package>mongoose.event.backoffice.activities.events.routing</package>
+                <package>mongoose.event.backoffice.operations.routes.events</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2960,10 +2977,10 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.event.client.businessdata.calendar.impl</package>
                 <package>mongoose.event.client.businessdata.calendar</package>
-                <package>mongoose.event.client.controls.calendargraphic.impl</package>
+                <package>mongoose.event.client.businessdata.calendar.impl</package>
                 <package>mongoose.event.client.controls.calendargraphic</package>
+                <package>mongoose.event.client.controls.calendargraphic.impl</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3025,9 +3042,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.event.frontoffice.operations.fees</package>
                 <package>mongoose.event.frontoffice.activities.fees</package>
                 <package>mongoose.event.frontoffice.activities.fees.routing</package>
+                <package>mongoose.event.frontoffice.operations.fees</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3085,9 +3102,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.event.frontoffice.operations.options</package>
                 <package>mongoose.event.frontoffice.activities.options</package>
                 <package>mongoose.event.frontoffice.activities.options.routing</package>
+                <package>mongoose.event.frontoffice.operations.options</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3143,9 +3160,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.event.frontoffice.operations.program</package>
                 <package>mongoose.event.frontoffice.activities.program</package>
                 <package>mongoose.event.frontoffice.activities.program.routing</package>
+                <package>mongoose.event.frontoffice.operations.program</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3185,9 +3202,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.event.frontoffice.operations.startbooking</package>
-                <package>mongoose.event.frontoffice.activities.startbooking</package>
                 <package>mongoose.event.frontoffice.activities.startbooking.routing</package>
+                <package>mongoose.event.frontoffice.activities.startbooking</package>
+                <package>mongoose.event.frontoffice.operations.startbooking</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3232,9 +3249,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.event.frontoffice.operations.terms</package>
-                <package>mongoose.event.frontoffice.activities.terms</package>
                 <package>mongoose.event.frontoffice.activities.terms.routing</package>
+                <package>mongoose.event.frontoffice.activities.terms</package>
+                <package>mongoose.event.frontoffice.operations.terms</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3290,9 +3307,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.hotel.backoffice.operations.routes.roomsgraphic</package>
                 <package>mongoose.hotel.backoffice.activities.roomsgraphic</package>
                 <package>mongoose.hotel.backoffice.activities.roomsgraphic.routing</package>
+                <package>mongoose.hotel.backoffice.operations.routes.roomsgraphic</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3468,6 +3485,7 @@
             </java-package>
 
             <java-package name="java.util.regex">
+                <module>webdrivermanager</module>
                 <module>webfx-framework-shared-router</module>
             </java-package>
 
