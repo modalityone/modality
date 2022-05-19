@@ -24,8 +24,10 @@ public final class MongooseLocalDataSourceProvider implements LocalDataSourcePro
         String connectionPath = "mongoose/base/server/datasource/" + dataSourceId + "/ConnectionDetails.json";
         String connectionContent = ResourceService.getText(connectionPath);
         JsonObject json = connectionContent == null ? null : Json.parseObject(connectionContent);
+        //getProperty(json);
+
         ConnectionDetails connectionDetails = json == null ? null : new ConnectionDetails(
-                json.getString("host"),
+                getProperty(json, "host"),
                 json.getInteger("port", -1),
                 json.getString("filePath"),
                 json.getString("databaseName"),
@@ -36,6 +38,13 @@ public final class MongooseLocalDataSourceProvider implements LocalDataSourcePro
         if (connectionDetails == null)
             Logger.log("WARNING: No connection details found for Mongoose data source (please check " + connectionPath + ")");
         MONGOOSE_DATA_SOURCE = new SimpleLocalDataSource(dataSourceId, dbms, connectionDetails);
+    }
+
+    protected String getProperty(JsonObject json, String key) {
+        String value = System.getProperty(key);
+        if (value == null || value.isEmpty())
+             value = json.getString(key);
+        return value;
     }
 
     @Override

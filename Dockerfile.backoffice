@@ -1,0 +1,6 @@
+FROM azul/zulu-openjdk:17.0.2-jre
+
+COPY ./mongoose-base/mongoose-base-server-application-vertx/target/mongoose-base-server-application-vertx-1.0.0-SNAPSHOT-fat.jar /
+
+
+
