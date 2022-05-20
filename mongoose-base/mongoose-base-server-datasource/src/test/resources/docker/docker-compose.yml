@@ -3,14 +3,17 @@ version: "2.4"
 services:
 
     database:
-        container_name: database
-        image: registry.heroku.com/hk-mongoose/kbs_database
+        container_name: mongoose_db
+        build:
+            context: .
+            dockerfile: Dockerfile.db
+            args:
+                - POSTGRES_USER=${POSTGRES_USER}
+                - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
         restart: "no"
         ports:
             - '5432:5432'
         environment:
-            # Container run-time arguments
-            # You should already have run previously: source .env
             - POSTGRES_USER=${POSTGRES_USER}
             - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
         volumes:
@@ -18,9 +21,11 @@ services:
 
     mongoose:
         depends_on:
-            - database
-        container_name: mongoose
-        image: mongoose-with-db
+            - mongoose_db
+        container_name: mongoose_backoffice
+        build:
+            context: .
+            dockerfile: Dockerfile.backoffice
         restart: "no"
         ports:
             - '80:80'
@@ -29,9 +34,11 @@ services:
 
     web:
         depends_on:
-            - mongoose
-        container_name: mongoose-web
-        image: mongoose-web
+            - mongoose_backoffice
+        container_name: mongoose_web
+        build:
+            context: .
+            dockerfile: Dockerfile.web
         restart: "no"
         ports:
             - '8082:8080'

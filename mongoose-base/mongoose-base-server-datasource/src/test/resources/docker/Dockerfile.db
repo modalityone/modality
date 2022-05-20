@@ -1,0 +1,19 @@
+FROM postgres:14.2
+
+WORKDIR /docker
+
+# Make the build arguments availble to Docker
+ARG POSTGRES_USER
+ARG POSTGRES_PASSWORD
+
+# Copy across files to virtual machine
+COPY ./build /docker/build
+
+# Update and configure container and database
+RUN mkdir -vp /tmp && chmod -R 777 /docker
+RUN build/update-container.sh
+RUN build/configure-locales.sh
+ENV LANG en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
+
+COPY /C:/Users/andre/code/mongoose/mongoose-base/mongoose-base-server-datasource/src/test/resources/dbschema.sql /docker-entrypoint-initdb.d
