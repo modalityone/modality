@@ -1,7 +1,7 @@
 name: Deploy to mongoose-packages GitHub repository
 
 on:
-  push:
+  [push, pull_request]:
     branches: [ main ]
 
 jobs:
