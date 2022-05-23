@@ -4,8 +4,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderStroke;
@@ -13,20 +11,11 @@ import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import mongoose.base.shared.entities.MoneyAccount;
 import mongoose.crm.backoffice.controls.bookingdetailspanel.BookingDetailsPanel;
-import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilder;
 import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
-import mongoose.ecommerce.backoffice.operations.entities.document.SendLetterRequest;
-import mongoose.ecommerce.backoffice.operations.entities.document.registration.*;
-import mongoose.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsKnownRequest;
-import mongoose.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsUncheckedRequest;
-import mongoose.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsUnknownRequest;
-import mongoose.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsVerifiedRequest;
-import mongoose.base.backoffice.operations.entities.generic.CopyAllRequest;
 import mongoose.base.backoffice.operations.entities.generic.CopySelectionRequest;
-import mongoose.event.backoffice.operations.routes.cloneevent.RouteToCloneEventRequest;
 import mongoose.base.client.activity.eventdependent.EventDependentViewDomainActivity;
 import mongoose.base.shared.domainmodel.functions.AbcNames;
 import mongoose.base.shared.entities.Document;
@@ -39,9 +28,7 @@ import static dev.webfx.framework.shared.orm.dql.DqlStatement.fields;
 import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
 import static dev.webfx.framework.client.ui.util.layout.LayoutUtil.setUnmanagedWhenInvisible;
 
-final class FiltersActivity extends EventDependentViewDomainActivity implements
-        OperationActionFactoryMixin,
-        ConventionalUiBuilderMixin {
+final class FiltersActivity extends EventDependentViewDomainActivity implements OperationActionFactoryMixin, ConventionalUiBuilderMixin {
 
     /*==================================================================================================================
     ================================================= Graphical layer ==================================================
@@ -50,48 +37,19 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements
     private final FiltersPresentationModel pm = new FiltersPresentationModel();
 
     @Override
-    public FiltersPresentationModel getPresentationModel() {
-        return pm; // eventId and organizationId will then be updated from route
-    }
+    public FiltersPresentationModel getPresentationModel() { return pm; }
 
-    private Pane moneyAccountTableContainer;
+    private ReactiveVisualMapper<MoneyAccount> filtersVisualMapper;
 
     @Override
     public Node buildUi() {
 
-        /*
-        ui = createAndBindGroupMasterSlaveViewWithFilterSearchBar(pm, "filters", "Document");
-        Pane container = ui.buildUi();
-        setUpContextMenu(LayoutUtil.lookupChild(ui.getGroupMasterSlaveView().getMasterView(), n -> n instanceof VisualGrid), () -> newActionGroup(
-                newOperationAction(() -> new SendLetterRequest(pm.getSelectedDocument(), container)),
-                newSeparatorActionGroup("Registration",
-                        newOperationAction(() -> new ToggleMarkDocumentAsReadRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()), // to update the i18n text when the selection change ->
-                        newOperationAction(() -> new ToggleMarkDocumentAsWillPayRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleCancelDocumentRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleConfirmDocumentRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleFlagDocumentRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentPassAsReadyRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new MarkDocumentPassAsUpdatedRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentAsArrivedRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty())
-                ),
-                newSeparatorActionGroup("Security",
-                        newOperationAction(() -> new ToggleMarkDocumentAsUncheckedRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentAsUnknownRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentAsKnownRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentAsVerifiedRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty())
-                ),
-                newSeparatorActionGroup(
-                        newOperationAction(() -> new CopySelectionRequest(masterVisualMapper.getSelectedEntities(), masterVisualMapper.getEntityColumns())),
-                        newOperationAction(() -> new CopyAllRequest(masterVisualMapper.getCurrentEntities(), masterVisualMapper.getEntityColumns()))
-                )
-        ));
-        return container;
-        */
-
         // FilterPane components
         Label searchLabel = new Label("Search filters");
         TextField filterSearchField = new TextField();
+
         VisualGrid filterGrid = new VisualGrid();
+        filterGrid.visualResultProperty().bind(pm.filtersVisualResultProperty());
 
         // The FilterPane button bar
         HBox filterPaneButtonBar = new HBox();
@@ -126,8 +84,6 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements
         resultPane.getChildren().add(resultsGrid);
         resultPane.setSpacing(10);
         VBox.setMargin(resultPane, new Insets(20, 20, 20, 20));
-        // resultPane.setPrefSize(300,300);
-        // resultPane.setBorder(new Border(new BorderStroke(Color.LIGHTGRAY, BorderStrokeStyle.SOLID, null, null)));
 
         // The FilterPane border wrapper
         VBox resultPaneBorder = new VBox();
@@ -139,14 +95,6 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements
         VBox outerVerticalBox = new VBox();
         outerVerticalBox.getChildren().add(filterPaneBorder);
         outerVerticalBox.getChildren().add(resultPaneBorder);
-
-        /*
-        VisualGrid moneyAccountTable = new VisualGrid();
-        moneyAccountTableContainer = new HBox(moneyAccountTable);
-        TabPane tabPane = new TabPane();
-        tabPane.getTabs().add(new Tab("Filters", moneyAccountTableContainer));
-        return tabPane;
-        */
         return outerVerticalBox;
     }
 
@@ -165,6 +113,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements
 
     @Override
     protected void startLogic() {
+        /*
         // Setting up the group mapper that build the content displayed in the group view
         groupVisualMapper = ReactiveVisualMapper.<Document>createGroupReactiveChain(this, pm)
                 .always("{class: 'Document', alias: 'd'}")
@@ -186,6 +135,19 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements
                                 : where("person_abcNames like ?", AbcNames.evaluate(s, true)))
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
+                .start();
+        */
+
+        // Setting up the filter mapper that builds the content displayed in the filters listing
+        filtersVisualMapper = ReactiveVisualMapper.<MoneyAccount>createPushReactiveChain(this)
+                .always("{class: 'Filter', alias: 'fil', columns: 'id,name,description,isColumns,isCondition,isGroup,active,activityName,class,alias,columns,whereClause,groupByClause,havingClause,orderByClause,limitClause,ord', fields: 'id', orderBy: 'name desc'}")
+                // .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
+                // .ifTrimNotEmpty(pm.searchTextProperty(), s -> where("name like ?", AbcNames.evaluate(s, true)))
+                .applyDomainModelRowStyle() // Colorizing the rows
+                .autoSelectSingleRow() // When the result is a singe row, automatically select it
+                .visualizeResultInto(pm.filtersVisualResultProperty())
+                // .setVisualSelectionProperty(pm.filtersVisualSelectionProperty())
+                // .setSelectedEntityHandler(entity -> graph.selectedMoneyAccount().set(entity))
                 .start();
     }
 
