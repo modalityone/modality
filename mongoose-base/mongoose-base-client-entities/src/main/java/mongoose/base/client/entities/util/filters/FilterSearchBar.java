@@ -44,7 +44,6 @@ public final class FilterSearchBar {
     public HBox buildUi() {
         HBox bar = new HBox(10);
         ObservableList<Node> children = bar.getChildren();
-        System.out.println("GOT HERE 4-------");
         if (conditionSelector != null)
             children.add(conditionSelector.getButton());
         if (groupSelector != null)
