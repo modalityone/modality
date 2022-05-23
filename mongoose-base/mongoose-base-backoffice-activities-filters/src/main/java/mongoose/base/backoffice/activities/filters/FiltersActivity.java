@@ -12,6 +12,7 @@ import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import mongoose.base.client.presentationmodel.HasSearchTextProperty;
 import mongoose.base.shared.entities.MoneyAccount;
 import mongoose.crm.backoffice.controls.bookingdetailspanel.BookingDetailsPanel;
 import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
@@ -47,6 +48,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         // FilterPane components
         Label searchLabel = new Label("Search filters");
         TextField filterSearchField = new TextField();
+        ((HasSearchTextProperty) pm).searchTextProperty().bind(filterSearchField.textProperty());
 
         VisualGrid filterGrid = new VisualGrid();
         filterGrid.visualResultProperty().bind(pm.filtersVisualResultProperty());
@@ -140,9 +142,10 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
 
         // Setting up the filter mapper that builds the content displayed in the filters listing
         filtersVisualMapper = ReactiveVisualMapper.<MoneyAccount>createPushReactiveChain(this)
-                .always("{class: 'Filter', alias: 'fil', columns: 'id,name,description,isColumns,isCondition,isGroup,active,activityName,class,alias,columns,whereClause,groupByClause,havingClause,orderByClause,limitClause,ord', fields: 'id', orderBy: 'name desc'}")
-                // .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
-                // .ifTrimNotEmpty(pm.searchTextProperty(), s -> where("name like ?", AbcNames.evaluate(s, true)))
+                .always("{class: 'Filter', alias: 'fil', columns: 'id,name,description,isColumns,isCondition,isGroup,active,activityName,class,alias,columns,whereClause,groupByClause,havingClause,orderByClause,limitClause,ord', fields: 'id', orderBy: 'name asc'}")
+                
+                .ifTrimNotEmpty(pm.searchTextProperty(), s -> where("lower(name) like ?", "%" + s.toLowerCase() + "%"))
+
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .visualizeResultInto(pm.filtersVisualResultProperty())
@@ -153,6 +156,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
 
     @Override
     protected void refreshDataOnActive() {
+        filtersVisualMapper.refreshWhenActive();
         /*
         groupVisualMapper.refreshWhenActive();
         masterVisualMapper.refreshWhenActive();
