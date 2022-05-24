@@ -5,7 +5,6 @@ import dev.webfx.extras.visual.VisualSelection;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import mongoose.base.client.activity.eventdependent.EventDependentGenericTablePresentationModel;
-import mongoose.base.shared.entities.Filter;
 
 /**
  * @author Ben Vickers
@@ -17,4 +16,10 @@ public class FiltersPresentationModel extends EventDependentGenericTablePresenta
 
     private final ObjectProperty<VisualSelection> filtersVisualSelectionProperty = new SimpleObjectProperty<>();
     public ObjectProperty<VisualSelection> filtersVisualSelectionProperty() { return filtersVisualSelectionProperty; }
+
+    private final ObjectProperty<VisualResult> fieldsVisualResultProperty = new SimpleObjectProperty<>();
+    public ObjectProperty<VisualResult> fieldsVisualResultProperty() { return fieldsVisualResultProperty; }
+
+    private final ObjectProperty<VisualSelection> fieldsVisualSelectionProperty = new SimpleObjectProperty<>();
+    public ObjectProperty<VisualSelection> fieldsVisualSelectionProperty() { return fieldsVisualSelectionProperty; }
 }
