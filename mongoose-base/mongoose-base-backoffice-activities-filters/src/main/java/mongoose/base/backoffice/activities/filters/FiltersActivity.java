@@ -153,7 +153,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
 
         // Setting up the filter mapper that builds the content displayed in the filters listing
         filtersVisualMapper = ReactiveVisualMapper.<Filter>createPushReactiveChain(this)
-                .always("{class: 'Filter', alias: 'fil', fields: 'id', where: '!isColumns', orderBy: 'name asc', limit: 5}")
+                .always("{class: 'Filter', alias: 'fil', fields: 'id', where: '!isColumns', orderBy: 'name asc'}")
                 .setEntityColumns("[" +
                         "{label: 'Name', expression: 'name'}," +
                         "{label: 'Is Columns', expression: 'isColumns'}," +
@@ -178,7 +178,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                 .start();
 
         fieldsVisualMapper = ReactiveVisualMapper.<Filter>createPushReactiveChain(this)
-                .always("{class: 'Filter', alias: 'fil', fields: 'id', where: 'isColumns', orderBy: 'name asc', limit: 5}")
+                .always("{class: 'Filter', alias: 'fil', fields: 'id', where: 'isColumns', orderBy: 'name asc'}")
                 .setEntityColumns("[" +
                         "{label: 'Name', expression: 'name'}," +
                         "{label: 'Is Columns', expression: 'isColumns'}," +
