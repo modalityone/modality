@@ -23,7 +23,9 @@ public class FiltersPresentationModel extends EventDependentGenericTablePresenta
     private final ObjectProperty<VisualSelection> fieldsVisualSelectionProperty = new SimpleObjectProperty<>();
     public ObjectProperty<VisualSelection> fieldsVisualSelectionProperty() { return fieldsVisualSelectionProperty; }
 
-
     private final ObjectProperty<VisualResult> filterFieldsVisualResultProperty = new SimpleObjectProperty<>();
     public ObjectProperty<VisualResult> filterFieldsVisualResultProperty() { return filterFieldsVisualResultProperty; }
+
+    private final ObjectProperty<String> filterClassProperty = new SimpleObjectProperty<>();
+    public ObjectProperty<String> filterClassProperty() { return filterClassProperty; }
 }
