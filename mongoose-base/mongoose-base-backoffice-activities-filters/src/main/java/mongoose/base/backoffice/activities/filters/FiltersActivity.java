@@ -1,5 +1,7 @@
 package mongoose.base.backoffice.activities.filters;
 
+import dev.webfx.extras.visual.VisualResult;
+import dev.webfx.extras.visual.VisualSelection;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.framework.client.ui.action.operation.OperationActionFactoryMixin;
@@ -79,7 +81,24 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
 
         VisualGrid fieldGrid = new VisualGrid();
         fieldGrid.visualResultProperty().bind(pm.fieldsVisualResultProperty());
-        // fieldGrid.setDisable(true);
+        filterGrid.visualResultProperty().addListener(e -> {
+            VisualResult resultValue = filterGrid.visualResultProperty().getValue();
+            if (resultValue != null) {
+                int rowCount = resultValue.getRowCount();
+                fieldGrid.setDisable(rowCount > 0);
+            } else {
+                fieldGrid.setDisable(true);
+            }
+        });
+        filterGrid.visualSelectionProperty().addListener(e -> {
+            VisualSelection selection = filterGrid.visualSelectionProperty().getValue();
+            if (selection != null) {
+                int selectedRowCount = selection.getSelectedRows().size();
+                fieldGrid.setDisable(selectedRowCount == 0);
+            } else {
+                fieldGrid.setDisable(true);
+            }
+        });
 
         // The FieldPane button bar
         HBox fieldPaneButtonBar = new HBox();
