@@ -7,10 +7,12 @@ import dev.webfx.framework.shared.orm.domainmodel.DomainClass;
 import dev.webfx.framework.shared.orm.entity.Entity;
 import dev.webfx.framework.shared.orm.dql.DqlStatement;
 import dev.webfx.framework.shared.orm.dql.DqlStatementBuilder;
+import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
@@ -19,6 +21,9 @@ import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
 import mongoose.base.client.activity.eventdependent.EventDependentViewDomainActivity;
 import mongoose.base.client.presentationmodel.HasSearchTextProperty;
 import mongoose.base.shared.entities.Filter;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
 
@@ -40,6 +45,12 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         Label filterSearchLabel = new Label("Select search filter");
         TextField filterSearchField = new TextField();
         ((HasSearchTextProperty) pm).searchTextProperty().bind(filterSearchField.textProperty());
+        Label classLabel = new Label("Class");
+        ComboBox<String> classComboBox = new ComboBox<>();
+        classComboBox.setItems(FXCollections.observableList(listClasses()));
+        pm.filterClassProperty().bind(classComboBox.valueProperty());
+        HBox filterSearchRow = new HBox(filterSearchField, classLabel, classComboBox);
+        HBox.setHgrow(filterSearchField, Priority.ALWAYS);
 
         VisualGrid filterGrid = new VisualGrid();
         filterGrid.visualResultProperty().bind(pm.filtersVisualResultProperty());
@@ -53,7 +64,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
 
         VBox filterPane = new VBox();
         filterPane.getChildren().add(filterSearchLabel);
-        filterPane.getChildren().add(filterSearchField);
+        filterPane.getChildren().add(filterSearchRow);
         filterPane.getChildren().add(filterGrid);
         filterPane.getChildren().add(filterPaneButtonBar);
         filterPane.setSpacing(10);
@@ -133,6 +144,11 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         return outerVerticalBox;
     }
 
+    private List<String> listClasses() {
+        // TODO do not hard-code this. Read the classes from the Document model
+        return Arrays.asList(null, "Document", "MoneyTransfer", "Person");
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -170,6 +186,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                         //"{label: 'Limit', expression: 'limitClause'}" +
                         "]")
                 .ifTrimNotEmpty(pm.searchTextProperty(), s -> where("lower(name) like ?", "%" + s.toLowerCase() + "%"))
+                .ifTrimNotEmpty(pm.filterClassProperty(), s -> where("lower(class) like ?", "%" + s.toLowerCase() + "%"))
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .visualizeResultInto(pm.filtersVisualResultProperty())
