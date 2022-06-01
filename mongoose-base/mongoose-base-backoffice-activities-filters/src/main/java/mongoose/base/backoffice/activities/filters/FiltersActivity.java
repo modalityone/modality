@@ -187,7 +187,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                         //"{label: 'Limit', expression: 'limitClause'}" +
                         "]")
                 .ifTrimNotEmpty(pm.searchTextProperty(), s -> where("lower(name) like ?", "%" + s.toLowerCase() + "%"))
-                .ifTrimNotEmpty(pm.filterClassProperty(), s -> where("lower(class) like ?", "%" + s.toLowerCase() + "%"))
+                .ifTrimNotEmpty(pm.filterClassProperty(), s -> where("lower(class) = ?", s.toLowerCase()))
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .visualizeResultInto(pm.filtersVisualResultProperty())
@@ -213,6 +213,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                         //"{label: 'Limit', expression: 'limitClause'}" +
                         "]")
                 //.ifTrimNotEmpty(pm.searchTextProperty(), s -> where("lower(name) like ?", "%" + s.toLowerCase() + "%"))
+                .ifTrimNotEmpty(pm.filterClassProperty(), s -> where("lower(class) = ?", s.toLowerCase()))
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .visualizeResultInto(pm.fieldsVisualResultProperty())
