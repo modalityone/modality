@@ -1,5 +1,6 @@
 package mongoose.base.backoffice.activities.filters;
 
+import dev.webfx.extras.visual.VisualColumn;
 import dev.webfx.extras.visual.VisualResult;
 import dev.webfx.extras.visual.VisualSelection;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
@@ -99,6 +100,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                 fieldGrid.setDisable(true);
             }
         });
+        pm.filtersVisualSelectionProperty().bind(filterGrid.visualSelectionProperty());
 
         // The FieldPane button bar
         HBox fieldPaneButtonBar = new HBox();
@@ -232,7 +234,16 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                         //"{label: 'Limit', expression: 'limitClause'}" +
                         "]")
                 //.ifTrimNotEmpty(pm.searchTextProperty(), s -> where("lower(name) like ?", "%" + s.toLowerCase() + "%"))
-                .ifTrimNotEmpty(pm.filterClassProperty(), s -> where("lower(class) = ?", s.toLowerCase()))
+                .always(pm.filtersVisualSelectionProperty(), s -> {
+                    if (s != null && !s.getSelectedRows().isEmpty()) {
+                        int selectedRow = s.getSelectedRow();
+                        int classColumnIndex = getColumnIndex("class");
+                        String requiredClass = pm.filtersVisualResultProperty().get().getValue(selectedRow, classColumnIndex).toString();
+                        return where("lower(class) = ?", requiredClass.toLowerCase());
+                    } else {
+                        return where("1 = 0");
+                    }
+                })
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .visualizeResultInto(pm.fieldsVisualResultProperty())
@@ -246,6 +257,17 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .visualizeResultInto(pm.filterFieldsVisualResultProperty())
                 .start();
+    }
+
+    private int getColumnIndex(String columnName) {
+        int classColumnIndex = 0;
+        for (VisualColumn column : pm.filtersVisualResultProperty().get().getColumns()) {
+            if (column.getName().equalsIgnoreCase(columnName)) {
+                break;
+            }
+            classColumnIndex++;
+        }
+        return classColumnIndex;
     }
 
     protected DqlStatement getFiltersResultDqlStatementBuilder() {
