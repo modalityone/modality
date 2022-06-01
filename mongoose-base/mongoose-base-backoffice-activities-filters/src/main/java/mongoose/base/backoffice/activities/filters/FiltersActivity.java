@@ -1,36 +1,26 @@
 package mongoose.base.backoffice.activities.filters;
 
+import dev.webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.framework.client.ui.action.operation.OperationActionFactoryMixin;
+import dev.webfx.framework.shared.orm.domainmodel.DomainClass;
+import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.framework.shared.orm.dql.DqlStatement;
+import dev.webfx.framework.shared.orm.dql.DqlStatementBuilder;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.layout.Priority;
-import mongoose.base.shared.entities.Filter;
-import mongoose.base.client.presentationmodel.HasSearchTextProperty;
-import mongoose.crm.backoffice.controls.bookingdetailspanel.BookingDetailsPanel;
 import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
-import mongoose.base.backoffice.operations.entities.generic.CopySelectionRequest;
 import mongoose.base.client.activity.eventdependent.EventDependentViewDomainActivity;
-import mongoose.base.shared.domainmodel.functions.AbcNames;
-import mongoose.base.shared.entities.Document;
-import dev.webfx.extras.visual.controls.grid.VisualGrid;
-import dev.webfx.framework.client.ui.action.operation.OperationActionFactoryMixin;
-import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.framework.client.ui.util.layout.LayoutUtil;
+import mongoose.base.client.presentationmodel.HasSearchTextProperty;
+import mongoose.base.shared.entities.Filter;
 
-import static dev.webfx.framework.shared.orm.dql.DqlStatement.fields;
 import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
-import static dev.webfx.framework.client.ui.util.layout.LayoutUtil.setUnmanagedWhenInvisible;
 
 final class FiltersActivity extends EventDependentViewDomainActivity implements OperationActionFactoryMixin, ConventionalUiBuilderMixin {
 
@@ -77,6 +67,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
 
         VisualGrid fieldGrid = new VisualGrid();
         fieldGrid.visualResultProperty().bind(pm.fieldsVisualResultProperty());
+        // fieldGrid.setDisable(true);
 
         // The FieldPane button bar
         HBox fieldPaneButtonBar = new HBox();
@@ -120,6 +111,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         // ResultPane components
         Label resultLabel = new Label("Returned results");
         VisualGrid resultsGrid = new VisualGrid();
+        resultsGrid.visualResultProperty().bind(pm.filterFieldsVisualResultProperty());
 
         // The ResultPane container of components
         VBox resultPane = new VBox();
@@ -154,54 +146,30 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
 
     private ReactiveVisualMapper<Filter> filtersVisualMapper;
     private ReactiveVisualMapper<Filter> fieldsVisualMapper;
+    private ReactiveVisualMapper<Entity> filterFieldsResultVisualMapper;
 
     @Override
     protected void startLogic() {
-        /*
-        // Setting up the group mapper that build the content displayed in the group view
-        groupVisualMapper = ReactiveVisualMapper.<Document>createGroupReactiveChain(this, pm)
-                .always("{class: 'Document', alias: 'd'}")
-                // Applying the event condition
-                .ifNotNullOtherwiseEmpty(pm.eventIdProperty(), eventId -> where("event=?", eventId))
-                .start();
-
-        // Setting up the master mapper that build the content displayed in the master view
-        masterVisualMapper = ReactiveVisualMapper.<Document>createMasterPushReactiveChain(this, pm)
-                .always("{class: 'Document', alias: 'd', orderBy: 'ref desc'}")
-                // Always loading the fields required for viewing the booking details
-                .always(fields(BookingDetailsPanel.REQUIRED_FIELDS))
-                // Applying the event condition
-                .ifNotNullOtherwiseEmpty(pm.eventIdProperty(), eventId -> where("event=?", eventId))
-                // Applying the user search
-                .ifTrimNotEmpty(pm.searchTextProperty(), s ->
-                        Character.isDigit(s.charAt(0)) ? where("ref = ?", Integer.parseInt(s))
-                                : s.contains("@") ? where("lower(person_email) like ?", "%" + s.toLowerCase() + "%")
-                                : where("person_abcNames like ?", AbcNames.evaluate(s, true)))
-                .applyDomainModelRowStyle() // Colorizing the rows
-                .autoSelectSingleRow() // When the result is a singe row, automatically select it
-                .start();
-        */
 
         // Setting up the filter mapper that builds the content displayed in the filters listing
         filtersVisualMapper = ReactiveVisualMapper.<Filter>createPushReactiveChain(this)
-                .always("{class: 'Filter', alias: 'fil', fields: 'id', where: '!isColumns', orderBy: 'name asc'}")
+                .always("{class: 'Filter', alias: 'fil', fields: 'id', where: '!isColumns', orderBy: 'name asc', limit: 5}")
                 .setEntityColumns("[" +
                         "{label: 'Name', expression: 'name'}," +
                         "{label: 'Is Columns', expression: 'isColumns'}," +
-                        "{label: 'Is Condition', expression: 'isCondition'}," +
+                        //"{label: 'Is Condition', expression: 'isCondition'}," +
                         "{label: 'Is Group', expression: 'isGroup'}," +
-                        "{label: 'Is Active', expression: 'active'}," +
+                        //"{label: 'Is Active', expression: 'active'}," +
                         "{label: 'Activity Name', expression: 'activityName'}," +
                         "{label: 'Class', expression: 'class'}," +
                         "{label: 'Columns', expression: 'columns'}," +
                         "{label: 'Where', expression: 'whereClause'}," +
                         "{label: 'GroupBy', expression: 'groupByClause'}," +
-                        "{label: 'Having', expression: 'havingClause'}," +
-                        "{label: 'OrderBy', expression: 'orderByClause'}," +
-                        "{label: 'Limit', expression: 'limitClause'}" +
+                        //"{label: 'Having', expression: 'havingClause'}," +
+                        //"{label: 'OrderBy', expression: 'orderByClause'}," +
+                        //"{label: 'Limit', expression: 'limitClause'}" +
                         "]")
                 .ifTrimNotEmpty(pm.searchTextProperty(), s -> where("lower(name) like ?", "%" + s.toLowerCase() + "%"))
-                //.ifFalse(??, ??)
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .visualizeResultInto(pm.filtersVisualResultProperty())
@@ -210,21 +178,21 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                 .start();
 
         fieldsVisualMapper = ReactiveVisualMapper.<Filter>createPushReactiveChain(this)
-                .always("{class: 'Filter', alias: 'fil', fields: 'id', where: 'isColumns', orderBy: 'name asc'}")
+                .always("{class: 'Filter', alias: 'fil', fields: 'id', where: 'isColumns', orderBy: 'name asc', limit: 5}")
                 .setEntityColumns("[" +
                         "{label: 'Name', expression: 'name'}," +
                         "{label: 'Is Columns', expression: 'isColumns'}," +
-                        "{label: 'Is Condition', expression: 'isCondition'}," +
+                        //"{label: 'Is Condition', expression: 'isCondition'}," +
                         "{label: 'Is Group', expression: 'isGroup'}," +
-                        "{label: 'Is Active', expression: 'active'}," +
+                        //"{label: 'Is Active', expression: 'active'}," +
                         "{label: 'Activity Name', expression: 'activityName'}," +
                         "{label: 'Class', expression: 'class'}," +
                         "{label: 'Columns', expression: 'columns'}," +
                         "{label: 'Where', expression: 'whereClause'}," +
                         "{label: 'GroupBy', expression: 'groupByClause'}," +
-                        "{label: 'Having', expression: 'havingClause'}," +
-                        "{label: 'OrderBy', expression: 'orderByClause'}," +
-                        "{label: 'Limit', expression: 'limitClause'}" +
+                        //"{label: 'Having', expression: 'havingClause'}," +
+                        //"{label: 'OrderBy', expression: 'orderByClause'}," +
+                        //"{label: 'Limit', expression: 'limitClause'}" +
                         "]")
                 //.ifTrimNotEmpty(pm.searchTextProperty(), s -> where("lower(name) like ?", "%" + s.toLowerCase() + "%"))
                 .applyDomainModelRowStyle() // Colorizing the rows
@@ -233,11 +201,36 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                 // .setVisualSelectionProperty(pm.filtersVisualSelectionProperty())
                 // .setSelectedEntityHandler(entity -> graph.selectedMoneyAccount().set(entity))
                 .start();
+
+        filterFieldsResultVisualMapper = ReactiveVisualMapper.<Entity>createPushReactiveChain(this)
+                .ifNotNull(pm.filtersVisualSelectionProperty(), ignored -> getFiltersResultDqlStatementBuilder() )
+                .ifNotNullOtherwiseEmpty(pm.fieldsVisualSelectionProperty(), ignored -> getFieldsResultDqlStatementBuilder())
+                .applyDomainModelRowStyle() // Colorizing the rows
+                .visualizeResultInto(pm.filterFieldsVisualResultProperty())
+                .start();
+    }
+
+    protected DqlStatement getFiltersResultDqlStatementBuilder() {
+        System.out.print("GOT HERE 1------");
+        DomainClass domainClass = filtersVisualMapper.getSelectedEntity().getDomainClass();
+        DqlStatementBuilder builder = new DqlStatementBuilder(domainClass);
+        builder.setColumns(filtersVisualMapper.getSelectedEntity().getColumns());
+        return builder.build();
+    }
+
+    protected DqlStatement getFieldsResultDqlStatementBuilder() {
+        System.out.print("GOT HERE 2------");
+        DomainClass domainClass = fieldsVisualMapper.getSelectedEntity().getDomainClass();
+        DqlStatementBuilder builder = new DqlStatementBuilder(domainClass);
+        builder.setColumns(fieldsVisualMapper.getSelectedEntity().getColumns());
+        return builder.build();
+        // return new DqlStatementBuilder(fieldsVisualMapper.getSelectedEntity().getDomainClass()).setColumns(fieldsVisualMapper.getSelectedEntity().getColumns()).build()
     }
 
     @Override
     protected void refreshDataOnActive() {
         filtersVisualMapper.refreshWhenActive();
         fieldsVisualMapper.refreshWhenActive();
+        filterFieldsResultVisualMapper.refreshWhenActive();
     }
 }

@@ -36,6 +36,8 @@ module mongoose.base.backoffice.activities.filters {
     requires webfx.platform.client.windowhistory;
     requires webfx.platform.shared.async;
     requires webfx.platform.shared.util;
+    requires webfx.framework.shared.orm.domainmodel;
+    requires webfx.framework.shared.orm.entity;
 
     // Exported packages
     exports mongoose.base.backoffice.activities.filters;
