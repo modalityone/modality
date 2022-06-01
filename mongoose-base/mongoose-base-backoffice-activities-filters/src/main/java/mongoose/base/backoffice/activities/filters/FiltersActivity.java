@@ -50,6 +50,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         classComboBox.setItems(FXCollections.observableList(listClasses()));
         pm.filterClassProperty().bind(classComboBox.valueProperty());
         HBox filterSearchRow = new HBox(filterSearchField, classLabel, classComboBox);
+        filterSearchRow.setAlignment(Pos.CENTER);
         HBox.setHgrow(filterSearchField, Priority.ALWAYS);
 
         VisualGrid filterGrid = new VisualGrid();
