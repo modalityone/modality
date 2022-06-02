@@ -95,15 +95,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                 fieldGrid.setDisable(true);
             }
         });
-        filterGrid.visualSelectionProperty().addListener(e -> {
-            VisualSelection selection = filterGrid.visualSelectionProperty().getValue();
-            if (selection != null) {
-                int selectedRowCount = selection.getSelectedRows().size();
-                fieldGrid.setDisable(selectedRowCount == 0);
-            } else {
-                fieldGrid.setDisable(true);
-            }
-        });
+        filterGrid.visualSelectionProperty().addListener(e -> fieldGrid.setDisable(selectedFilter.get() != null));
         pm.filtersVisualSelectionProperty().bind(filterGrid.visualSelectionProperty());
         pm.fieldsVisualSelectionProperty().bind(fieldGrid.visualSelectionProperty());
         fieldGrid.visualSelectionProperty().addListener(e -> populateFilterTable());
