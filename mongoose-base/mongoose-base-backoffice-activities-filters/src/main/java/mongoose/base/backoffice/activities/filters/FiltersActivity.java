@@ -10,6 +10,8 @@ import dev.webfx.framework.shared.orm.domainmodel.DomainClass;
 import dev.webfx.framework.shared.orm.entity.Entity;
 import dev.webfx.framework.shared.orm.dql.DqlStatement;
 import dev.webfx.framework.shared.orm.dql.DqlStatementBuilder;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -40,6 +42,8 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
 
     @Override
     public FiltersPresentationModel getPresentationModel() { return pm; }
+
+    private ObjectProperty<Filter> selectedFilter = new SimpleObjectProperty<>();
 
     @Override
     public Node buildUi() {
@@ -214,8 +218,8 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .visualizeResultInto(pm.filtersVisualResultProperty())
-                // .setVisualSelectionProperty(pm.filtersVisualSelectionProperty())
-                // .setSelectedEntityHandler(entity -> graph.selectedMoneyAccount().set(entity))
+                .setVisualSelectionProperty(pm.filtersVisualSelectionProperty())
+                .setSelectedEntityHandler(entity -> selectedFilter.set(entity))
                 .start();
 
         fieldsVisualMapper = ReactiveVisualMapper.<Filter>createPushReactiveChain(this)
@@ -236,16 +240,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                         //"{label: 'Limit', expression: 'limitClause'}" +
                         "]")
                 //.ifTrimNotEmpty(pm.searchTextProperty(), s -> where("lower(name) like ?", "%" + s.toLowerCase() + "%"))
-                .always(pm.filtersVisualSelectionProperty(), s -> {
-                    if (s != null && !s.getSelectedRows().isEmpty()) {
-                        int selectedRow = s.getSelectedRow();
-                        int classColumnIndex = getFilterColumnIndex("class");
-                        String requiredClass = pm.filtersVisualResultProperty().get().getValue(selectedRow, classColumnIndex).toString();
-                        return where("lower(class) = ?", requiredClass.toLowerCase());
-                    } else {
-                        return where("1 = 0");
-                    }
-                })
+                .always(selectedFilter, s -> s != null ? where("lower(class) = ?", s.getClassId().toString().toLowerCase()) : where("1 = 0"))
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .visualizeResultInto(pm.fieldsVisualResultProperty())
@@ -255,7 +250,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
     }
 
     private void populateFilterTable() {
-        String selectedClass = getSelectedClass();
+        String selectedClass = selectedFilter.get().getClassId().toString();
         String columns = getSelectedColumns();
 
         filterFieldsResultVisualMapper = ReactiveVisualMapper.<Entity>createPushReactiveChain(this)
@@ -266,21 +261,6 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .visualizeResultInto(pm.filterFieldsVisualResultProperty())
                 .start();
-    }
-
-    private String getSelectedClass() {
-        return getSelectedFilterValue("class");
-    }
-
-    private String getSelectedFilterValue(String columnName) {
-        VisualSelection selection = pm.filtersVisualSelectionProperty().get();
-        if (selection != null && !selection.getSelectedRows().isEmpty()) {
-            int selectedRow = selection.getSelectedRow();
-            int classColumnIndex = getFilterColumnIndex(columnName);
-            return pm.filtersVisualResultProperty().get().getValue(selectedRow, classColumnIndex).toString();
-        } else {
-            return null;
-        }
     }
 
     private int getFilterColumnIndex(String columnName) {
