@@ -101,6 +101,8 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
             }
         });
         pm.filtersVisualSelectionProperty().bind(filterGrid.visualSelectionProperty());
+        pm.fieldsVisualSelectionProperty().bind(fieldGrid.visualSelectionProperty());
+        fieldGrid.visualSelectionProperty().addListener(e -> populateFilterTable());
 
         // The FieldPane button bar
         HBox fieldPaneButtonBar = new HBox();
@@ -237,7 +239,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                 .always(pm.filtersVisualSelectionProperty(), s -> {
                     if (s != null && !s.getSelectedRows().isEmpty()) {
                         int selectedRow = s.getSelectedRow();
-                        int classColumnIndex = getColumnIndex("class");
+                        int classColumnIndex = getFilterColumnIndex("class");
                         String requiredClass = pm.filtersVisualResultProperty().get().getValue(selectedRow, classColumnIndex).toString();
                         return where("lower(class) = ?", requiredClass.toLowerCase());
                     } else {
@@ -250,24 +252,62 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                 // .setVisualSelectionProperty(pm.filtersVisualSelectionProperty())
                 // .setSelectedEntityHandler(entity -> graph.selectedMoneyAccount().set(entity))
                 .start();
+    }
+
+    private void populateFilterTable() {
+        String selectedClass = getSelectedClass();
+        String columns = getSelectedColumns();
 
         filterFieldsResultVisualMapper = ReactiveVisualMapper.<Entity>createPushReactiveChain(this)
-                .ifNotNull(pm.filtersVisualSelectionProperty(), ignored -> getFiltersResultDqlStatementBuilder() )
-                .ifNotNullOtherwiseEmpty(pm.fieldsVisualSelectionProperty(), ignored -> getFieldsResultDqlStatementBuilder())
+                .always("{class: '" + selectedClass + "', alias: 'ma', columns: '" + columns + "', fields: 'id', orderBy: 'name desc'}")
+                .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
+                //.ifTrimNotEmpty(pm.searchTextProperty(), s -> where("name like ?", AbcNames.evaluate(s, true)))
                 .applyDomainModelRowStyle() // Colorizing the rows
+                .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .visualizeResultInto(pm.filterFieldsVisualResultProperty())
                 .start();
     }
 
-    private int getColumnIndex(String columnName) {
+    private String getSelectedClass() {
+        return getSelectedFilterValue("class");
+    }
+
+    private String getSelectedFilterValue(String columnName) {
+        VisualSelection selection = pm.filtersVisualSelectionProperty().get();
+        if (selection != null && !selection.getSelectedRows().isEmpty()) {
+            int selectedRow = selection.getSelectedRow();
+            int classColumnIndex = getFilterColumnIndex(columnName);
+            return pm.filtersVisualResultProperty().get().getValue(selectedRow, classColumnIndex).toString();
+        } else {
+            return null;
+        }
+    }
+
+    private int getFilterColumnIndex(String columnName) {
+        return getColumnIndex(columnName, pm.filtersVisualResultProperty().get());
+    }
+
+    private int getColumnIndex(String columnName, VisualResult visualResultProperty) {
         int classColumnIndex = 0;
-        for (VisualColumn column : pm.filtersVisualResultProperty().get().getColumns()) {
+        for (VisualColumn column : visualResultProperty.getColumns()) {
             if (column.getName().equalsIgnoreCase(columnName)) {
                 break;
             }
             classColumnIndex++;
         }
         return classColumnIndex;
+    }
+
+    private String getSelectedColumns() {
+        VisualSelection selection = pm.fieldsVisualSelectionProperty().get();
+        if (selection != null && !selection.getSelectedRows().isEmpty()) {
+            int selectedRow = selection.getSelectedRow();
+            VisualResult visualResultProperty = pm.fieldsVisualResultProperty().get();
+            int classColumnIndex = getColumnIndex("columns", visualResultProperty);
+            return visualResultProperty.getValue(selectedRow, classColumnIndex).toString();
+        } else {
+            return "";
+        }
     }
 
     protected DqlStatement getFiltersResultDqlStatementBuilder() {
