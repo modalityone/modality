@@ -5,6 +5,7 @@ import dev.webfx.extras.visual.VisualResult;
 import dev.webfx.extras.visual.VisualSelection;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.framework.client.ui.action.ActionGroup;
 import dev.webfx.framework.client.ui.action.operation.OperationActionFactoryMixin;
 import dev.webfx.framework.shared.orm.domainmodel.DomainClass;
 import dev.webfx.framework.shared.orm.entity.Entity;
@@ -23,6 +24,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
+import mongoose.base.backoffice.operations.entities.filters.EditFilterRequest;
 import mongoose.base.client.activity.eventdependent.EventDependentViewDomainActivity;
 import mongoose.base.client.presentationmodel.HasSearchTextProperty;
 import mongoose.base.shared.entities.Filter;
@@ -45,6 +47,8 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
 
     private ObjectProperty<Filter> selectedFilter = new SimpleObjectProperty<>();
 
+    private VBox outerVerticalBox;
+
     @Override
     public Node buildUi() {
 
@@ -62,6 +66,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
 
         VisualGrid filterGrid = new VisualGrid();
         filterGrid.visualResultProperty().bind(pm.filtersVisualResultProperty());
+        setUpContextMenu(filterGrid, this::createFilterGridContextMenuActionGroup);
 
         HBox filterPaneButtonBar = new HBox();
         filterPaneButtonBar.getChildren().add(new Button("Add"));
@@ -86,7 +91,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
 
         VisualGrid fieldGrid = new VisualGrid();
         fieldGrid.visualResultProperty().bind(pm.fieldsVisualResultProperty());
-        filterGrid.visualSelectionProperty().addListener(e -> fieldGrid.setDisable(selectedFilter.get() != null));
+        selectedFilter.addListener(e -> fieldGrid.setDisable(selectedFilter.get() == null));
         pm.filtersVisualSelectionProperty().bind(filterGrid.visualSelectionProperty());
         pm.fieldsVisualSelectionProperty().bind(fieldGrid.visualSelectionProperty());
         fieldGrid.visualSelectionProperty().addListener(e -> populateFilterTable());
@@ -149,7 +154,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         VBox.setMargin(resultPaneBorder, new Insets(20, 20, 20, 20));
 
         // The outer box of components.
-        VBox outerVerticalBox = new VBox();
+        outerVerticalBox = new VBox();
         outerVerticalBox.getChildren().add(filterAndFieldPaneBorder);
         outerVerticalBox.getChildren().add(resultPaneBorder);
         return outerVerticalBox;
@@ -158,6 +163,12 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
     private List<String> listClasses() {
         // TODO do not hard-code this. Read the classes from the Document model
         return Arrays.asList(null, "Document", "MoneyTransfer", "Person");
+    }
+
+    private ActionGroup createFilterGridContextMenuActionGroup() {
+        return newActionGroup(
+                newOperationAction(() -> new EditFilterRequest(selectedFilter.get(), outerVerticalBox))
+        );
     }
 
     @Override
