@@ -251,6 +251,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
 
         filterFieldsResultVisualMapper = ReactiveVisualMapper.<Entity>createPushReactiveChain(this)
                 .always("{class: '" + selectedClass + "', alias: 'ma', columns: '" + columns + "', fields: 'id', orderBy: 'name desc'}")
+                .always(selectedFilter, s -> where(s != null ? s.getWhereClause() : "1 = 1"))
                 .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
                 //.ifTrimNotEmpty(pm.searchTextProperty(), s -> where("name like ?", AbcNames.evaluate(s, true)))
                 .applyDomainModelRowStyle() // Colorizing the rows
