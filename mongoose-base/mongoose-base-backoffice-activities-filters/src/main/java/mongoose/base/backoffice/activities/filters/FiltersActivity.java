@@ -210,6 +210,11 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                 .visualizeResultInto(pm.filtersVisualResultProperty())
                 .setVisualSelectionProperty(pm.filtersVisualSelectionProperty())
                 .setSelectedEntityHandler(entity -> selectedFilter.set(entity))
+                .addEntitiesHandler(entities -> {
+                    if (entities.isEmpty()) {
+                        selectedFilter.set(null);
+                    }
+                })
                 .start();
 
         fieldsVisualMapper = ReactiveVisualMapper.<Filter>createPushReactiveChain(this)
