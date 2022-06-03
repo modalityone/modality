@@ -211,6 +211,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                 .setVisualSelectionProperty(pm.filtersVisualSelectionProperty())
                 .setSelectedEntityHandler(entity -> selectedFilter.set(entity))
                 .addEntitiesHandler(entities -> {
+                    // If the filter table is cleared (e.g. by the user entering text in the search field) set the selected filter property to null
                     if (entities.isEmpty()) {
                         selectedFilter.set(null);
                     }
