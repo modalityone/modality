@@ -15,7 +15,6 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -25,10 +24,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
 import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
-import mongoose.base.backoffice.operations.entities.filters.AddNewFieldsRequest;
-import mongoose.base.backoffice.operations.entities.filters.AddNewFilterRequest;
-import mongoose.base.backoffice.operations.entities.filters.DeleteFilterRequest;
-import mongoose.base.backoffice.operations.entities.filters.EditFilterRequest;
+import mongoose.base.backoffice.operations.entities.filters.*;
 import mongoose.base.client.activity.eventdependent.EventDependentViewDomainActivity;
 import mongoose.base.client.presentationmodel.HasSearchTextProperty;
 import mongoose.base.shared.entities.Filter;
@@ -50,6 +46,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
     public FiltersPresentationModel getPresentationModel() { return pm; }
 
     private ObjectProperty<Filter> selectedFilter = new SimpleObjectProperty<>();
+    private ObjectProperty<Filter> selectedFields = new SimpleObjectProperty<>();
 
     private VBox outerVerticalBox;
 
@@ -97,6 +94,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         pm.filtersVisualSelectionProperty().bind(filterGrid.visualSelectionProperty());
         pm.fieldsVisualSelectionProperty().bind(fieldGrid.visualSelectionProperty());
         fieldGrid.visualSelectionProperty().addListener(e -> populateFilterTable());
+        setUpContextMenu(fieldGrid, this::createFieldsGridContextMenuActionGroup);
 
         // The FieldPane container of components
         VBox fieldPane = new VBox();
@@ -185,6 +183,12 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         );
     }
 
+    private ActionGroup createFieldsGridContextMenuActionGroup() {
+        return newActionGroup(
+                newOperationAction(() -> new EditFieldsRequest(selectedFields.get(), outerVerticalBox))
+        );
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -258,8 +262,14 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .visualizeResultInto(pm.fieldsVisualResultProperty())
-                // .setVisualSelectionProperty(pm.filtersVisualSelectionProperty())
-                // .setSelectedEntityHandler(entity -> graph.selectedMoneyAccount().set(entity))
+                .setVisualSelectionProperty(pm.fieldsVisualSelectionProperty())
+                .setSelectedEntityHandler(entity -> selectedFields.set(entity))
+                .addEntitiesHandler(entities -> {
+                    // If the fields table is cleared (e.g. by the user entering text in the search field) set the selected fields property to null
+                    if (entities.isEmpty()) {
+                        selectedFields.set(null);
+                    }
+                })
                 .start();
     }
 
