@@ -12,7 +12,7 @@ final class EditFilterExecutor {
     }
 
     private static Future<Void> execute(Filter filter, Pane parentContainer) {
-        EntityPropertiesSheet.editEntity(filter, "name,description,isColumns,isCondition,isGroup,active,activityName,class,alias,columns,fields,whereClause,groupByClause,havingClause,orderByClause,limitClause,ord", parentContainer);
+        EntityPropertiesSheet.editEntity(filter, "name,description,isColumns,isCondition,isGroup,active,activityName,class,alias,columns,fields,whereClause,groupByClause,havingClause,orderByClause,limitClause", parentContainer);
         return Future.succeededFuture();
     }
 }
