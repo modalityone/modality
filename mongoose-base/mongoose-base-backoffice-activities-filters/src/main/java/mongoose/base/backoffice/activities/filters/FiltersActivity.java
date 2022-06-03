@@ -260,10 +260,6 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                 .start();
     }
 
-    private int getFilterColumnIndex(String columnName) {
-        return getColumnIndex(columnName, pm.filtersVisualResultProperty().get());
-    }
-
     private int getColumnIndex(String columnName, VisualResult visualResultProperty) {
         int classColumnIndex = 0;
         for (VisualColumn column : visualResultProperty.getColumns()) {
