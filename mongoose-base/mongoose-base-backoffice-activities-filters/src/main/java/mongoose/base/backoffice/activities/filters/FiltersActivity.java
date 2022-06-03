@@ -80,6 +80,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         // FieldPane components
         Label fieldSearchLabel = new Label("Search fields");
         TextField fieldSearchField = new TextField();
+        fieldSearchField.disableProperty().bind(selectedFilter.isNull());
         Button addNewFieldsButton = newButton(newOperationAction(() -> new AddNewFieldsRequest(getEventStore(), outerVerticalBox)));
         HBox fieldsSearchRow = new HBox(fieldSearchField, addNewFieldsButton);
         HBox.setHgrow(fieldSearchField, Priority.ALWAYS);
@@ -114,13 +115,11 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         filterAndFieldPanes.add(filterPane, 0, 0);
         filterAndFieldPanes.add(fieldPane, 1, 0);
 
-
         // Place the filterAndFieldPanes in a border wrapper
         VBox filterAndFieldPaneBorder = new VBox();
         filterAndFieldPaneBorder.getChildren().add(filterAndFieldPanes);
         filterAndFieldPaneBorder.setBorder(new Border(new BorderStroke(Color.LIGHTGRAY, BorderStrokeStyle.SOLID, null, null)));
         VBox.setMargin(filterAndFieldPaneBorder, new Insets(20, 20, 20, 20));
-
 
         // ResultPane components
         Label resultLabel = new Label("Returned results");
