@@ -31,8 +31,8 @@ import mongoose.base.client.activity.eventdependent.EventDependentViewDomainActi
 import mongoose.base.client.presentationmodel.HasSearchTextProperty;
 import mongoose.base.shared.entities.Filter;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
 
@@ -155,8 +155,9 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
     }
 
     private List<String> listClasses() {
-        // TODO do not hard-code this. Read the classes from the Document model
-        return Arrays.asList(null, "Document", "MoneyTransfer", "Person");
+        return getDomainModel().getAllClasses().stream()
+                .map(DomainClass::getName)
+                .collect(Collectors.toList());
     }
 
     private ActionGroup createFilterGridContextMenuActionGroup() {
