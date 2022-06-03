@@ -23,6 +23,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.util.StringConverter;
 import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
 import mongoose.base.backoffice.operations.entities.filters.AddNewFilterRequest;
 import mongoose.base.backoffice.operations.entities.filters.DeleteFilterRequest;
@@ -57,8 +58,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         // FilterPane components
         Label filterSearchLabel = new Label("Select search filter");
         Label classLabel = new Label("Class");
-        ComboBox<String> classComboBox = new ComboBox<>();
-        classComboBox.setItems(FXCollections.observableList(listClasses()));
+        ComboBox<String> classComboBox = buildClassComboBox();
         pm.filterClassProperty().bind(classComboBox.valueProperty());
         TextField filterSearchField = new TextField();
         ((HasSearchTextProperty) pm).searchTextProperty().bind(filterSearchField.textProperty());
@@ -154,10 +154,30 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         return outerVerticalBox;
     }
 
+    private ComboBox<String> buildClassComboBox() {
+        ComboBox<String> classComboBox = new ComboBox<>();
+        classComboBox.setItems(FXCollections.observableList(listClasses()));
+        classComboBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(String s) {
+                return s != null ? s : "<any>";
+            }
+
+            @Override
+            public String fromString(String s) {
+                return s;
+            }
+        });
+        return classComboBox;
+    }
+
     private List<String> listClasses() {
-        return getDomainModel().getAllClasses().stream()
+        List<String> allClassNames = getDomainModel().getAllClasses().stream()
                 .map(DomainClass::getName)
                 .collect(Collectors.toList());
+
+        allClassNames.add(0, null);
+        return allClassNames;
     }
 
     private ActionGroup createFilterGridContextMenuActionGroup() {
