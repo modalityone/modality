@@ -249,7 +249,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                         "{label: 'Is Group', expression: 'isGroup'}," +
                         //"{label: 'Is Active', expression: 'active'}," +
                         "{label: 'Activity Name', expression: 'activityName'}," +
-                        "{label: 'Class', expression: 'class'}," +
+                        //"{label: 'Class', expression: 'class'}," +
                         "{label: 'Columns', expression: 'columns'}," +
                         "{label: 'Where', expression: 'whereClause'}," +
                         "{label: 'GroupBy', expression: 'groupByClause'}," +
