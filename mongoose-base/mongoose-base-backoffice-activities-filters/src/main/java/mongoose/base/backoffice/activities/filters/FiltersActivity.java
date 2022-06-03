@@ -49,6 +49,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
     private final ObjectProperty<Filter> selectedFilter = new SimpleObjectProperty<>();
     private final ObjectProperty<Filter> selectedFields = new SimpleObjectProperty<>();
 
+    private Label statusLabel = new Label();
     private VBox outerVerticalBox;
 
     @Override
@@ -123,12 +124,15 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
 
         // ResultPane components
         Label resultLabel = new Label("Returned results");
+        statusLabel = new Label();
+        statusLabel.setPadding(new Insets(0, 0, 0, 8));
+        HBox resultAndStatusRow = new HBox(resultLabel, statusLabel);
         VisualGrid resultsGrid = new VisualGrid();
         resultsGrid.visualResultProperty().bind(pm.filterFieldsVisualResultProperty());
 
         // The ResultPane container of components
         VBox resultPane = new VBox();
-        resultPane.getChildren().add(resultLabel);
+        resultPane.getChildren().add(resultAndStatusRow);
         resultPane.getChildren().add(resultsGrid);
         resultPane.setSpacing(10);
         VBox.setMargin(resultPane, new Insets(20, 20, 20, 20));
@@ -274,6 +278,9 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         String selectedClass = selectedFilter.get().getClassId().toString();
         String columns = getSelectedColumns();
 
+        String status = "Loading result for " + selectedClass + " columns " + columns;
+        displayStatus(status);
+
         filterFieldsResultVisualMapper = ReactiveVisualMapper.<Entity>createPushReactiveChain(this)
                 .always("{class: '" + selectedClass + "', alias: 'ma', columns: '" + columns + "', fields: 'id', orderBy: 'name desc'}")
                 .always(selectedFilter, s -> s != null ? where(s.getWhereClause()) : null)
@@ -282,7 +289,12 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .visualizeResultInto(pm.filterFieldsVisualResultProperty())
+                .addEntitiesHandler(entities -> displayStatus(entities.size() + " rows displayed"))
                 .start();
+    }
+
+    private void displayStatus(String status) {
+        statusLabel.setText(status);
     }
 
     private int getColumnIndex(String columnName, VisualResult visualResultProperty) {
