@@ -7,18 +7,18 @@ import dev.webfx.platform.shared.async.Future;
 import javafx.scene.layout.Pane;
 import mongoose.base.shared.entities.Filter;
 
-final class AddNewFilterExecutor {
+final class AddNewFieldsExecutor {
 
-    static Future<Void> executeRequest(AddNewFilterRequest rq) {
+    static Future<Void> executeRequest(AddNewFieldsRequest rq) {
         return execute(rq.getEntityStore(), rq.getParentContainer());
     }
 
     private static Future<Void> execute(EntityStore entityStore, Pane parentContainer) {
         UpdateStore updateStore = UpdateStore.createAbove(entityStore);
         Filter insertEntity = updateStore.insertEntity(Filter.class);
-        insertEntity.setIsColumns(false);
+        insertEntity.setIsColumns(true);
 
-        EntityPropertiesSheet.editEntity(insertEntity, "name,description,isCondition,isGroup,active,activityName,class,alias,columns,fields,whereClause,groupByClause,havingClause,orderByClause,limitClause", parentContainer);
+        EntityPropertiesSheet.editEntity(insertEntity, "name,description,isCondition,isGroup,active,activityName,class,alias,columns,fields,orderByClause,limitClause", parentContainer);
 
         return Future.succeededFuture();
     }

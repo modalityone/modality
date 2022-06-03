@@ -25,6 +25,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
 import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
+import mongoose.base.backoffice.operations.entities.filters.AddNewFieldsRequest;
 import mongoose.base.backoffice.operations.entities.filters.AddNewFilterRequest;
 import mongoose.base.backoffice.operations.entities.filters.DeleteFilterRequest;
 import mongoose.base.backoffice.operations.entities.filters.EditFilterRequest;
@@ -64,7 +65,6 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         ((HasSearchTextProperty) pm).searchTextProperty().bind(filterSearchField.textProperty());
         Button addNewFilterButton = newButton(newOperationAction(() -> new AddNewFilterRequest(getEventStore(), outerVerticalBox)));
         HBox filterSearchRow = new HBox(classLabel, classComboBox, filterSearchField, addNewFilterButton);
-        filterSearchRow.setAlignment(Pos.CENTER);
         HBox.setHgrow(filterSearchField, Priority.ALWAYS);
 
         VisualGrid filterGrid = new VisualGrid();
@@ -81,32 +81,30 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         // FieldPane components
         Label fieldSearchLabel = new Label("Search fields");
         TextField fieldSearchField = new TextField();
+        Button addNewFieldsButton = newButton(newOperationAction(() -> new AddNewFieldsRequest(getEventStore(), outerVerticalBox)));
+        HBox fieldsSearchRow = new HBox(fieldSearchField, addNewFieldsButton);
+        HBox.setHgrow(fieldSearchField, Priority.ALWAYS);
         //((HasSearchTextProperty) pm).searchTextProperty().bind(fieldSearchField.textProperty());
 
         VisualGrid fieldGrid = new VisualGrid();
         fieldGrid.visualResultProperty().bind(pm.fieldsVisualResultProperty());
-        selectedFilter.addListener(e -> fieldGrid.setDisable(selectedFilter.get() == null));
+        /*selectedFilter.addListener(e -> {
+            boolean disabled = selectedFilter.get() == null;
+            fieldGrid.setDisable(disabled);
+            addNewFilterButton.setDisable(disabled);
+        });*/
+        fieldGrid.disableProperty().bind(selectedFilter.isNull());
         pm.filtersVisualSelectionProperty().bind(filterGrid.visualSelectionProperty());
         pm.fieldsVisualSelectionProperty().bind(fieldGrid.visualSelectionProperty());
         fieldGrid.visualSelectionProperty().addListener(e -> populateFilterTable());
 
-        // The FieldPane button bar
-        HBox fieldPaneButtonBar = new HBox();
-        fieldPaneButtonBar.getChildren().add(new Button("Add"));
-        fieldPaneButtonBar.getChildren().add(new Button("Edit"));
-        fieldPaneButtonBar.getChildren().add(new Button("Delete"));
-        fieldPaneButtonBar.setSpacing(5);
-        fieldPaneButtonBar.setAlignment(Pos.BASELINE_RIGHT);
-
         // The FieldPane container of components
         VBox fieldPane = new VBox();
         fieldPane.getChildren().add(fieldSearchLabel);
-        fieldPane.getChildren().add(fieldSearchField);
+        fieldPane.getChildren().add(fieldsSearchRow);
         fieldPane.getChildren().add(fieldGrid);
-        fieldPane.getChildren().add(fieldPaneButtonBar);
         fieldPane.setSpacing(10);
         VBox.setMargin(fieldPane, new Insets(20, 20, 20, 20));
-
 
         // Place the FilterPane and FieldPane side-by-side
         GridPane filterAndFieldPanes = new GridPane();
