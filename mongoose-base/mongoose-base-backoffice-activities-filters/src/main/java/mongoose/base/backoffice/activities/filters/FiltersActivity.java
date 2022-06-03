@@ -56,14 +56,14 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
 
         // FilterPane components
         Label filterSearchLabel = new Label("Select search filter");
-        TextField filterSearchField = new TextField();
-        ((HasSearchTextProperty) pm).searchTextProperty().bind(filterSearchField.textProperty());
         Label classLabel = new Label("Class");
         ComboBox<String> classComboBox = new ComboBox<>();
         classComboBox.setItems(FXCollections.observableList(listClasses()));
         pm.filterClassProperty().bind(classComboBox.valueProperty());
+        TextField filterSearchField = new TextField();
+        ((HasSearchTextProperty) pm).searchTextProperty().bind(filterSearchField.textProperty());
         Button addNewFilterButton = newButton(newOperationAction(() -> new AddNewFilterRequest(getEventStore(), outerVerticalBox)));
-        HBox filterSearchRow = new HBox(filterSearchField, classLabel, classComboBox, addNewFilterButton);
+        HBox filterSearchRow = new HBox(classLabel, classComboBox, filterSearchField, addNewFilterButton);
         filterSearchRow.setAlignment(Pos.CENTER);
         HBox.setHgrow(filterSearchField, Priority.ALWAYS);
 
