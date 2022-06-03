@@ -9,6 +9,9 @@ import mongoose.base.shared.entities.Filter;
 
 final class AddNewFilterExecutor {
 
+    static final String FILTER_EXPRESSION_COLUMNS =
+            "name,description,isCondition,isGroup,active,activityName,class,alias,columns,fields,whereClause,groupByClause,havingClause,orderByClause,limitClause";
+
     static Future<Void> executeRequest(AddNewFilterRequest rq) {
         return execute(rq.getEntityStore(), rq.getParentContainer());
     }
@@ -18,7 +21,7 @@ final class AddNewFilterExecutor {
         Filter insertEntity = updateStore.insertEntity(Filter.class);
         insertEntity.setIsColumns(false);
 
-        EntityPropertiesSheet.editEntity(insertEntity, "name,description,isCondition,isGroup,active,activityName,class,alias,columns,fields,whereClause,groupByClause,havingClause,orderByClause,limitClause", parentContainer);
+        EntityPropertiesSheet.editEntity(insertEntity, FILTER_EXPRESSION_COLUMNS, parentContainer);
 
         return Future.succeededFuture();
     }

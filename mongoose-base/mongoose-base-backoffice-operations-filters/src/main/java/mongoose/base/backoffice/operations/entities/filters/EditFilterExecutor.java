@@ -5,6 +5,8 @@ import dev.webfx.platform.shared.async.Future;
 import javafx.scene.layout.Pane;
 import mongoose.base.shared.entities.Filter;
 
+import static mongoose.base.backoffice.operations.entities.filters.AddNewFilterExecutor.FILTER_EXPRESSION_COLUMNS;
+
 final class EditFilterExecutor {
 
     static Future<Void> executeRequest(EditFilterRequest rq) {
@@ -12,7 +14,7 @@ final class EditFilterExecutor {
     }
 
     private static Future<Void> execute(Filter filter, Pane parentContainer) {
-        EntityPropertiesSheet.editEntity(filter, "name,description,isColumns,isCondition,isGroup,active,activityName,class,alias,columns,fields,whereClause,groupByClause,havingClause,orderByClause,limitClause", parentContainer);
+        EntityPropertiesSheet.editEntity(filter, FILTER_EXPRESSION_COLUMNS, parentContainer);
         return Future.succeededFuture();
     }
 }

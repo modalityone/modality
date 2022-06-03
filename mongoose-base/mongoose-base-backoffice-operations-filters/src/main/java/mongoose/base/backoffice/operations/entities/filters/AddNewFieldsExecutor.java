@@ -9,7 +9,7 @@ import mongoose.base.shared.entities.Filter;
 
 final class AddNewFieldsExecutor {
 
-    public static final String EXPRESSION_COLUMNS =
+    static final String EXPRESSION_COLUMNS =
             "name,description,isCondition,isGroup,active,activityName,class,alias,columns,fields,orderByClause,limitClause";
 
     static Future<Void> executeRequest(AddNewFieldsRequest rq) {
