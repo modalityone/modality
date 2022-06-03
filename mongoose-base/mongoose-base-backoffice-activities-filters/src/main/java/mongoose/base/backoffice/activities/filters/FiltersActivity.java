@@ -297,24 +297,9 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         statusLabel.setText(status);
     }
 
-    private int getColumnIndex(String columnName, VisualResult visualResultProperty) {
-        int classColumnIndex = 0;
-        for (VisualColumn column : visualResultProperty.getColumns()) {
-            if (column.getName().equalsIgnoreCase(columnName)) {
-                break;
-            }
-            classColumnIndex++;
-        }
-        return classColumnIndex;
-    }
-
     private String getSelectedColumns() {
-        VisualSelection selection = pm.fieldsVisualSelectionProperty().get();
-        if (selection != null && !selection.getSelectedRows().isEmpty()) {
-            int selectedRow = selection.getSelectedRow();
-            VisualResult visualResultProperty = pm.fieldsVisualResultProperty().get();
-            int classColumnIndex = getColumnIndex("columns", visualResultProperty);
-            return visualResultProperty.getValue(selectedRow, classColumnIndex).toString();
+        if (selectedFields.get() != null) {
+            return selectedFields.get().getColumns();
         } else {
             return "";
         }
