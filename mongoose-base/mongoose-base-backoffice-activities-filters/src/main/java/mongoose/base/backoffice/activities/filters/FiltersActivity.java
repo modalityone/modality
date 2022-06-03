@@ -15,6 +15,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -45,8 +46,8 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
     @Override
     public FiltersPresentationModel getPresentationModel() { return pm; }
 
-    private ObjectProperty<Filter> selectedFilter = new SimpleObjectProperty<>();
-    private ObjectProperty<Filter> selectedFields = new SimpleObjectProperty<>();
+    private final ObjectProperty<Filter> selectedFilter = new SimpleObjectProperty<>();
+    private final ObjectProperty<Filter> selectedFields = new SimpleObjectProperty<>();
 
     private VBox outerVerticalBox;
 
@@ -63,6 +64,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         Button addNewFilterButton = newButton(newOperationAction(() -> new AddNewFilterRequest(getEventStore(), outerVerticalBox)));
         HBox filterSearchRow = new HBox(classLabel, classComboBox, filterSearchField, addNewFilterButton);
         HBox.setHgrow(filterSearchField, Priority.ALWAYS);
+        filterSearchRow.setAlignment(Pos.CENTER);
 
         VisualGrid filterGrid = new VisualGrid();
         filterGrid.visualResultProperty().bind(pm.filtersVisualResultProperty());
