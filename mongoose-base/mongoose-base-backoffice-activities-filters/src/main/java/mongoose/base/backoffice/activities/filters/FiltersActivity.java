@@ -25,6 +25,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
 import mongoose.base.backoffice.operations.entities.filters.AddNewFilterRequest;
+import mongoose.base.backoffice.operations.entities.filters.DeleteFilterRequest;
 import mongoose.base.backoffice.operations.entities.filters.EditFilterRequest;
 import mongoose.base.client.activity.eventdependent.EventDependentViewDomainActivity;
 import mongoose.base.client.presentationmodel.HasSearchTextProperty;
@@ -70,20 +71,12 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         filterGrid.visualResultProperty().bind(pm.filtersVisualResultProperty());
         setUpContextMenu(filterGrid, this::createFilterGridContextMenuActionGroup);
 
-        HBox filterPaneButtonBar = new HBox();
-        filterPaneButtonBar.getChildren().add(new Button("Edit"));
-        filterPaneButtonBar.getChildren().add(new Button("Delete"));
-        filterPaneButtonBar.setSpacing(5);
-        filterPaneButtonBar.setAlignment(Pos.BASELINE_RIGHT);
-
         VBox filterPane = new VBox();
         filterPane.getChildren().add(filterSearchLabel);
         filterPane.getChildren().add(filterSearchRow);
         filterPane.getChildren().add(filterGrid);
-        filterPane.getChildren().add(filterPaneButtonBar);
         filterPane.setSpacing(10);
         VBox.setMargin(filterPane, new Insets(20, 20, 20, 20));
-
 
         // FieldPane components
         Label fieldSearchLabel = new Label("Search fields");
@@ -168,7 +161,8 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
 
     private ActionGroup createFilterGridContextMenuActionGroup() {
         return newActionGroup(
-                newOperationAction(() -> new EditFilterRequest(selectedFilter.get(), outerVerticalBox))
+                newOperationAction(() -> new EditFilterRequest(selectedFilter.get(), outerVerticalBox)),
+                newOperationAction(() -> new DeleteFilterRequest(selectedFilter.get(), outerVerticalBox))
         );
     }
 
