@@ -1,8 +1,5 @@
 package mongoose.base.backoffice.activities.filters;
 
-import dev.webfx.extras.visual.VisualColumn;
-import dev.webfx.extras.visual.VisualResult;
-import dev.webfx.extras.visual.VisualSelection;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.framework.client.ui.action.ActionGroup;
@@ -276,9 +273,9 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
 
     private void populateFilterTable() {
         String selectedClass = selectedFilter.get().getClassId().toString();
-        String columns = getSelectedColumns();
+        String columns = selectedFields.get().getColumns();
 
-        String status = "Loading result for " + selectedClass + " columns " + columns;
+        String status = "Loading " + selectedFields.get().getName() + " columns for " + selectedClass + ".";
         displayStatus(status);
 
         filterFieldsResultVisualMapper = ReactiveVisualMapper.<Entity>createPushReactiveChain(this)
@@ -295,14 +292,6 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
 
     private void displayStatus(String status) {
         statusLabel.setText(status);
-    }
-
-    private String getSelectedColumns() {
-        if (selectedFields.get() != null) {
-            return selectedFields.get().getColumns();
-        } else {
-            return "";
-        }
     }
 
     protected DqlStatement getFiltersResultDqlStatementBuilder() {
