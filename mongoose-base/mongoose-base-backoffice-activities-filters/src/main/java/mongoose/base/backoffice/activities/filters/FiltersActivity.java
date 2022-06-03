@@ -83,7 +83,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         Button addNewFieldsButton = newButton(newOperationAction(() -> new AddNewFieldsRequest(getEventStore(), outerVerticalBox)));
         HBox fieldsSearchRow = new HBox(fieldSearchField, addNewFieldsButton);
         HBox.setHgrow(fieldSearchField, Priority.ALWAYS);
-        //((HasSearchTextProperty) pm).searchTextProperty().bind(fieldSearchField.textProperty());
+        pm.fieldsSearchTextProperty().bind(fieldSearchField.textProperty());
 
         VisualGrid fieldGrid = new VisualGrid();
         fieldGrid.visualResultProperty().bind(pm.fieldsVisualResultProperty());
@@ -255,7 +255,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                         //"{label: 'OrderBy', expression: 'orderByClause'}," +
                         //"{label: 'Limit', expression: 'limitClause'}" +
                         "]")
-                //.ifTrimNotEmpty(pm.searchTextProperty(), s -> where("lower(name) like ?", "%" + s.toLowerCase() + "%"))
+                .ifTrimNotEmpty(pm.fieldsSearchTextProperty(), s -> where("lower(name) like ?", "%" + s.toLowerCase() + "%"))
                 .always(selectedFilter, s -> s != null ? where("lower(class) = ?", s.getClassId().toString().toLowerCase()) : where("1 = 0"))
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it

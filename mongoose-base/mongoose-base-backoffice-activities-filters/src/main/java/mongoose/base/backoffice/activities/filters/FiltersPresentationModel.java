@@ -28,4 +28,7 @@ public class FiltersPresentationModel extends EventDependentGenericTablePresenta
 
     private final ObjectProperty<String> filterClassProperty = new SimpleObjectProperty<>();
     public ObjectProperty<String> filterClassProperty() { return filterClassProperty; }
+
+    private final ObjectProperty<String> fieldsSearchTextProperty = new SimpleObjectProperty<>();
+    public ObjectProperty<String> fieldsSearchTextProperty() { return fieldsSearchTextProperty; }
 }
