@@ -185,7 +185,8 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
 
     private ActionGroup createFieldsGridContextMenuActionGroup() {
         return newActionGroup(
-                newOperationAction(() -> new EditFieldsRequest(selectedFields.get(), outerVerticalBox))
+                newOperationAction(() -> new EditFieldsRequest(selectedFields.get(), outerVerticalBox)),
+                newOperationAction(() -> new DeleteFieldsRequest(selectedFields.get(), outerVerticalBox))
         );
     }
 
