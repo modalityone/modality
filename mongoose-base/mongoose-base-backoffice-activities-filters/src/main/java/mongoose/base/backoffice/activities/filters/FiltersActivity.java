@@ -208,7 +208,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                 .always("{class: 'Filter', alias: 'fil', fields: 'id', where: '!isColumns', orderBy: 'name asc'}")
                 .setEntityColumns("[" +
                         "{label: 'Name', expression: 'name'}," +
-                        "{label: 'Is Columns', expression: 'isColumns'}," +
+                        //"{label: 'Is Columns', expression: 'isColumns'}," +
                         //"{label: 'Is Condition', expression: 'isCondition'}," +
                         "{label: 'Is Group', expression: 'isGroup'}," +
                         //"{label: 'Is Active', expression: 'active'}," +
@@ -240,7 +240,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                 .always("{class: 'Filter', alias: 'fil', fields: 'id', where: 'isColumns', orderBy: 'name asc'}")
                 .setEntityColumns("[" +
                         "{label: 'Name', expression: 'name'}," +
-                        "{label: 'Is Columns', expression: 'isColumns'}," +
+                        //"{label: 'Is Columns', expression: 'isColumns'}," +
                         //"{label: 'Is Condition', expression: 'isCondition'}," +
                         "{label: 'Is Group', expression: 'isGroup'}," +
                         //"{label: 'Is Active', expression: 'active'}," +
