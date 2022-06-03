@@ -24,6 +24,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
+import mongoose.base.backoffice.operations.entities.filters.AddNewFilterRequest;
 import mongoose.base.backoffice.operations.entities.filters.EditFilterRequest;
 import mongoose.base.client.activity.eventdependent.EventDependentViewDomainActivity;
 import mongoose.base.client.presentationmodel.HasSearchTextProperty;
@@ -60,7 +61,8 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         ComboBox<String> classComboBox = new ComboBox<>();
         classComboBox.setItems(FXCollections.observableList(listClasses()));
         pm.filterClassProperty().bind(classComboBox.valueProperty());
-        HBox filterSearchRow = new HBox(filterSearchField, classLabel, classComboBox);
+        Button addNewFilterButton = newButton(newOperationAction(() -> new AddNewFilterRequest(getEventStore(), outerVerticalBox)));
+        HBox filterSearchRow = new HBox(filterSearchField, classLabel, classComboBox, addNewFilterButton);
         filterSearchRow.setAlignment(Pos.CENTER);
         HBox.setHgrow(filterSearchField, Priority.ALWAYS);
 
@@ -69,7 +71,6 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         setUpContextMenu(filterGrid, this::createFilterGridContextMenuActionGroup);
 
         HBox filterPaneButtonBar = new HBox();
-        filterPaneButtonBar.getChildren().add(new Button("Add"));
         filterPaneButtonBar.getChildren().add(new Button("Edit"));
         filterPaneButtonBar.getChildren().add(new Button("Delete"));
         filterPaneButtonBar.setSpacing(5);
