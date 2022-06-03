@@ -6,8 +6,6 @@ import dev.webfx.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.platform.shared.async.Future;
 import javafx.scene.layout.Pane;
 import mongoose.base.shared.entities.Filter;
-import mongoose.base.shared.entities.MoneyAccount;
-import mongoose.base.shared.entities.Organization;
 
 final class AddNewFilterExecutor {
 
