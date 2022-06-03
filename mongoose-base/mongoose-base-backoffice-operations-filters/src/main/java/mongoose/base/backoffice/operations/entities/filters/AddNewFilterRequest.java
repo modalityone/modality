@@ -5,7 +5,6 @@ import dev.webfx.framework.shared.operation.HasOperationExecutor;
 import dev.webfx.framework.shared.orm.entity.EntityStore;
 import dev.webfx.platform.shared.async.AsyncFunction;
 import javafx.scene.layout.Pane;
-import mongoose.base.shared.entities.Organization;
 
 public final class AddNewFilterRequest implements HasOperationCode,
         HasOperationExecutor<AddNewFilterRequest, Void> {
