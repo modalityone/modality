@@ -286,7 +286,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .visualizeResultInto(pm.filterFieldsVisualResultProperty())
-                .addEntitiesHandler(entities -> displayStatus(entities.size() + " rows displayed"))
+                .addEntitiesHandler(entities -> displayStatus(entities.size() + " rows displayed."))
                 .start();
     }
 
