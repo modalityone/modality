@@ -30,8 +30,7 @@ import mongoose.base.shared.entities.Filter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static dev.webfx.framework.shared.orm.dql.DqlStatement.limit;
-import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
+import static dev.webfx.framework.shared.orm.dql.DqlStatement.*;
 
 final class FiltersActivity extends EventDependentViewDomainActivity implements OperationActionFactoryMixin, ConventionalUiBuilderMixin {
 
@@ -221,7 +220,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                         "{label: 'Where', expression: 'whereClause'}," +
                         "{label: 'GroupBy', expression: 'groupByClause'}," +
                         "{label: 'Having', expression: 'havingClause'}," +
-                        "{label: 'OrderBy', expression: 'orderByClause'}," +
+                        //"{label: 'OrderBy', expression: 'orderByClause'}," +
                         "{label: 'Limit', expression: 'limitClause'}" +
                         "]")
                 .ifTrimNotEmpty(pm.searchTextProperty(), s -> where("lower(name) like ?", "%" + s.toLowerCase() + "%"))
@@ -253,7 +252,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                         "{label: 'Where', expression: 'whereClause'}," +
                         "{label: 'GroupBy', expression: 'groupByClause'}," +
                         //"{label: 'Having', expression: 'havingClause'}," +
-                        //"{label: 'OrderBy', expression: 'orderByClause'}," +
+                        "{label: 'OrderBy', expression: 'orderByClause'}," +
                         //"{label: 'Limit', expression: 'limitClause'}" +
                         "]")
                 .ifTrimNotEmpty(pm.fieldsSearchTextProperty(), s -> where("lower(name) like ?", "%" + s.toLowerCase() + "%"))
@@ -275,14 +274,16 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
     private void populateFilterTable() {
         String selectedClass = selectedFilter.get().getClassId().toString();
         String columns = selectedFields.get().getColumns();
+        String orderBy = buildOrderByClause();
 
         String status = "Loading " + selectedFields.get().getName() + " columns for " + selectedClass + ".";
         displayStatus(status);
 
         filterFieldsResultVisualMapper = ReactiveVisualMapper.<Entity>createPushReactiveChain(this)
-                .always("{class: '" + selectedClass + "', alias: 'ma', columns: '" + columns + "', fields: 'id', orderBy: 'name desc'}")
+                .always("{class: '" + selectedClass + "', alias: 'ma', columns: '" + columns + "', fields: 'id'" + orderBy + "}")
                 .ifNotNull(selectedFilter, s -> where(s.getWhereClause()))
                 .ifNotNull(selectedFilter, s -> limit(s.getLimitClause()))
+                .ifNotNull(selectedFilter, s -> s.getOrderByClause() != null && !s.getOrderByClause().isEmpty() ? parse("orderBy: '" + s.getOrderByClause() + "'") : null)
                 .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
                 //.ifTrimNotEmpty(pm.searchTextProperty(), s -> where("name like ?", AbcNames.evaluate(s, true)))
                 .applyDomainModelRowStyle() // Colorizing the rows
@@ -290,6 +291,19 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                 .visualizeResultInto(pm.filterFieldsVisualResultProperty())
                 .addEntitiesHandler(entities -> displayStatus(entities.size() + " rows displayed."))
                 .start();
+    }
+
+    private String buildOrderByClause() {
+        if (selectedFields.get() == null) {
+            return "";
+        }
+
+        String orderBy = selectedFields.get().getOrderByClause();
+        if (orderBy != null && !orderBy.isBlank()) {
+            return ", orderBy: '" + orderBy + "'";
+        } else {
+            return "";
+        }
     }
 
     private void displayStatus(String status) {
