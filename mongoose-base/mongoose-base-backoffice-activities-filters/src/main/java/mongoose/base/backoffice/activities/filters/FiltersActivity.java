@@ -30,6 +30,7 @@ import mongoose.base.shared.entities.Filter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static dev.webfx.framework.shared.orm.dql.DqlStatement.limit;
 import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
 
 final class FiltersActivity extends EventDependentViewDomainActivity implements OperationActionFactoryMixin, ConventionalUiBuilderMixin {
@@ -212,16 +213,16 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                         "{label: 'Name', expression: 'name'}," +
                         //"{label: 'Is Columns', expression: 'isColumns'}," +
                         //"{label: 'Is Condition', expression: 'isCondition'}," +
-                        "{label: 'Is Group', expression: 'isGroup'}," +
+                        //"{label: 'Is Group', expression: 'isGroup'}," +
                         //"{label: 'Is Active', expression: 'active'}," +
                         "{label: 'Activity Name', expression: 'activityName'}," +
                         "{label: 'Class', expression: 'class'}," +
-                        "{label: 'Columns', expression: 'columns'}," +
+                        //"{label: 'Columns', expression: 'columns'}," +
                         "{label: 'Where', expression: 'whereClause'}," +
                         "{label: 'GroupBy', expression: 'groupByClause'}," +
-                        //"{label: 'Having', expression: 'havingClause'}," +
-                        //"{label: 'OrderBy', expression: 'orderByClause'}," +
-                        //"{label: 'Limit', expression: 'limitClause'}" +
+                        "{label: 'Having', expression: 'havingClause'}," +
+                        "{label: 'OrderBy', expression: 'orderByClause'}," +
+                        "{label: 'Limit', expression: 'limitClause'}" +
                         "]")
                 .ifTrimNotEmpty(pm.searchTextProperty(), s -> where("lower(name) like ?", "%" + s.toLowerCase() + "%"))
                 .ifTrimNotEmpty(pm.filterClassProperty(), s -> where("lower(class) = ?", s.toLowerCase()))
@@ -280,7 +281,8 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
 
         filterFieldsResultVisualMapper = ReactiveVisualMapper.<Entity>createPushReactiveChain(this)
                 .always("{class: '" + selectedClass + "', alias: 'ma', columns: '" + columns + "', fields: 'id', orderBy: 'name desc'}")
-                .always(selectedFilter, s -> s != null ? where(s.getWhereClause()) : null)
+                .ifNotNull(selectedFilter, s -> where(s.getWhereClause()))
+                .ifNotNull(selectedFilter, s -> limit(s.getLimitClause()))
                 .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
                 //.ifTrimNotEmpty(pm.searchTextProperty(), s -> where("name like ?", AbcNames.evaluate(s, true)))
                 .applyDomainModelRowStyle() // Colorizing the rows
