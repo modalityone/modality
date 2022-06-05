@@ -6,11 +6,13 @@ module mongoose.base.shared.entities {
     requires java.base;
     requires mongoose.base.shared.domainmodel;
     requires mongoose.hotel.shared.time;
+    requires webfx.framework.shared.orm.dql;
     requires webfx.framework.shared.orm.entity;
     requires webfx.platform.shared.util;
 
     // Exported packages
     exports mongoose.base.shared.entities;
+    exports mongoose.base.shared.entities.converters;
     exports mongoose.base.shared.entities.formatters;
     exports mongoose.base.shared.entities.impl;
     exports mongoose.base.shared.entities.markers;
