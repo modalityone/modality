@@ -92,10 +92,6 @@ public interface FilterButtonSelectorFactoryMixin extends ButtonFactoryMixin, Ha
         return conditionSelector;
     }
 
-    default EntityButtonSelector<Filter> createConditionFilterButtonSelectorAndBind(String activityName, String domainClassId, Pane parent, HasConditionDqlStatementProperty pm) {
-        return createConditionFilterButtonSelectorAndBind(activityName, domainClassId, parent, pm.conditionDqlStatementProperty());
-    }
-
     default EntityButtonSelector<Filter> createGroupFilterButtonSelectorAndBind(String activityName, String domainClassId, Pane parent, HasGroupDqlStatementProperty pm) {
         return createGroupFilterButtonSelectorAndBind(activityName, domainClassId, parent, pm.groupDqlStatementProperty());
     }

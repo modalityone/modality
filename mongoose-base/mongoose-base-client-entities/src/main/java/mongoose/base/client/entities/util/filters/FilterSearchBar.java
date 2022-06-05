@@ -18,14 +18,15 @@ import static dev.webfx.framework.client.ui.util.layout.LayoutUtil.setMaxHeightT
 
 public final class FilterSearchBar {
 
-    private final EntityButtonSelector<Filter> conditionSelector, groupSelector, columnsSelector;
+    private final FilterConditionChain conditionChain;
+    private final EntityButtonSelector<Filter> groupSelector, columnsSelector;
     private final TextField searchBox; // Keeping this reference to activate focus on activity resume
 
     public FilterSearchBar(FilterButtonSelectorFactoryMixin mixin, String activityName, String domainClassId, Pane parent, Object pm) {
         if (pm instanceof HasConditionDqlStatementProperty)
-            conditionSelector = mixin.createConditionFilterButtonSelectorAndBind(activityName,domainClassId, parent, (HasConditionDqlStatementProperty) pm);
+            conditionChain = new FilterConditionChain(mixin, activityName, domainClassId, parent, (HasConditionDqlStatementProperty) pm);
         else
-            conditionSelector = null;
+            conditionChain = null;
         if (pm instanceof HasGroupDqlStatementProperty)
             groupSelector = mixin.createGroupFilterButtonSelectorAndBind(activityName,domainClassId, parent, (HasGroupDqlStatementProperty) pm);
         else
@@ -44,8 +45,8 @@ public final class FilterSearchBar {
     public HBox buildUi() {
         HBox bar = new HBox(10);
         ObservableList<Node> children = bar.getChildren();
-        if (conditionSelector != null)
-            children.add(conditionSelector.getButton());
+        if (conditionChain != null)
+            children.add(conditionChain);
         if (groupSelector != null)
             children.add(groupSelector.getButton());
         if (columnsSelector != null)
