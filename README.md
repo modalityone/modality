@@ -2,6 +2,172 @@
 
 Mongoose is a booking system for a wide area of events, from small to complex events over several days or weeks including meals, onsite/offsite accommodation, transport, translation, etc...
 
-WebFX was born in the context of this project as a cross-platform development tool for both the back-office and the front-office.
 
-Mongoose is actually a private project (you can't run it as it requires a database not provided here). The reason it to be here is to keep its source code updated when doing some refactoring in WebFx modules. It will be moved to another repository later when WebFx will reach a stable state.
+
+## Installation
+### 1/ Create the mongoose root
+```sh
+mkdir -vp mongoose
+export MONGOOSE_ROOT=${PWD}/mongoose
+```
+
+
+### 2/ Clone the codebase
+Git clone the Mongoose codebase via the terminal (or IntelliJ etc):
+
+```sh
+cd $MONGOOSE_ROOT
+git clone https://github.com/mongoose-project/mongoose.git .
+```
+
+
+### 3/ Install Docker
+Mongoose uses Docker for all external services, including the database and the in-memory datastore for sessions, etc.
+
+Please install Docker on your local machine if you do not have it already. If using a Mac, the easiest way is to install using `brew`. 
+Please provide Docker with a minimum of 8GB of RAM, ideally more. Insufficient RAM may result in `java.lang.OutOfMemoryError` errors
+when importing the [mongoose-dev-db](https://github.com/mongoose-project/mongoose-dev-db).
+
+
+### 4/ Prepare Docker environment variables
+Environment variables store the Postgres database name, username and password. Defaults 
+are provided in the `.env-template`. Use this template file as the basis for
+your Docker-based configuration, by creating an `.env` file from it. You may leave
+the defaults, or provide new values accordingly:
+
+```sh
+cd $MONGOOSE_ROOT/docker
+cp .env-template .env
+source .env # make the environment variables available to the shell
+```
+
+
+### 5/ Build the Docker containers
+```sh
+cd $MONGOOSE_ROOT/docker
+docker-compose build --no-cache
+```
+
+
+### 6/ Start the containers and build the database
+```sh
+cd $MONGOOSE_ROOT/docker
+docker-compose up
+```
+
+The database scripts are stored in the `mongoose-base/mongoose-base-server-datasource/src/main/resources/db/` folder, and are executed sequentially 
+by the [Flyway](https://flywaydb.org/) database version control container. Please allow several minutes for Flyway to complete. Once finished, you 
+are now up and running with all the external services that Mongoose depends on.
+
+
+### 7/ Compile Mongoose codebase
+@TODO IntelliJ-based procedures to be added later. Once finished, you are now ready to run Mongoose locally.
+
+
+
+## Run Mongoose locally
+@TODO IntelliJ-based procedures to be added later
+
+
+
+## Using Docker
+### Connect to the Docker database container
+Connection is easily made via any Postgres client (e.g. DBeaver). Use the following credentials (contained within the `docker/.env-template` file):
+
+* Server: 127.0.0.1
+* Port: 5432
+* Database: mongoose
+* User: mongoose
+* Password: mongoose
+
+
+### Connect to the Docker session container
+Connection can be made through the Docker terminal:
+```sh
+cd $MONGOOSE_ROOT/docker
+docker exec -ti session /bin/sh
+redis-cli
+keys *
+```
+
+
+### Shut down Docker
+```sh
+cd $MONGOOSE_ROOT/docker
+docker-compose down
+```
+
+
+### Destroy & rebuild the Docker containers
+Sometimes you will want a fresh set of containers. The simplest way to do this is:
+```sh
+cd $MONGOOSE_ROOT/docker
+docker-compose down
+docker ps -a # Lists all Docker containers
+docker rm <container-id> # Remove any docker containers listed
+docker images # Lists all Docker images
+docker image rm <image-id> # Remove any docker images listed
+docker volume ls # Lists all Docker volumes
+docker volume rm <volume-id> # Remove all docker volumes listed
+docker system prune # Removes build cache, networks and dangling images
+rm -rf data # Removes locally stored database tables
+```
+
+You can now rebuild the Docker containers:
+```sh
+docker-compose build --no-cache
+docker-compose up
+```
+
+
+
+## Mongoose Database
+All database setup scripts are stored in the `mongoose-base/mongoose-base-server-datasource/src/main/resources/db/` folder, and are numbered in order of execution. 
+Execution of the database scripts is performed automatically by the Flyway container, which runs on startup. All the data is stored on the host, in directory:
+
+`$MONGOOSE_ROOT/docker/data/postgres/*`
+
+This provides persistence, and the container can be safely shut down and restarted without losing data.
+
+Any new database scripts must be:
+
+1. added to the same `mongoose-base/mongoose-base-server-datasource/src/main/resources/db/` folder
+2. named according to the convention used in the folder: `V{number}__{desc}.sql`
+
+Once a new script has been added to the folder, the Flyway container should be restarted, in order to apply
+the change. The easiest way to do this is to simply restart docker-compose:
+
+```sh
+cd $MONGOOSE_ROOT/docker
+docker-compose down
+docker-compose up
+```
+
+
+
+## Mongoose Development Database
+The Mongoose project additionally provides a development database that is pre-populated with test data, available from the 
+[mongoose-dev-db](https://github.com/mongoose-project/mongoose-dev-db) repository.
+
+If you wish to import this database, you will need to:
+
+1. shut down the Mongoose server
+2. shut down the docker containers
+3. delete the `docker/data/` folder
+4. download the [mongoose-dev-db](https://github.com/mongoose-project/mongoose-dev-db) repository
+5. decompress the `V0001__mongoose_dev_db.sql.zip` file in the [mongoose-dev-db](https://github.com/mongoose-project/mongoose-dev-db) repository
+6. move the unzipped `V0001__mongoose_dev_db.sql` to the `mongoose-base/mongoose-base-server-datasource/src/main/resources/db/` folder
+7. move all the other scripts temporarily out of the folder
+8. restart the docker containers - this will auto-import the development database
+9. wait until the import is complete. Due to the size of the development database, it can take 20+ minutes to import. Mongoose will not be usable during this time.
+
+
+
+## Mongoose Session
+The session data is controlled by the docker-based Redis container and is not persisted locally. The data persists only as long as the container is running.
+
+
+
+## Deploy to Heroku
+
+@TODO IntelliJ-based procedures to be added later

@@ -1,4 +1,4 @@
-version: "2.4"
+version: "3.7"
 
 services:
 
@@ -8,12 +8,16 @@ services:
             context: .
             dockerfile: Dockerfile.db
             args:
+                # Image build arguments.
+                # You should already have run previously: source .env
                 - POSTGRES_USER=${POSTGRES_USER}
                 - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-        restart: "no"
+        restart: always
         ports:
             - '5432:5432'
         environment:
+            # Container run-time arguments
+            # You should already have run previously: source .env
             - POSTGRES_USER=${POSTGRES_USER}
             - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
         volumes:
@@ -35,30 +39,14 @@ services:
             - FLYWAY_PLACEHOLDER_REPLACEMENT=false
         command: -locations=filesystem:/flyway/sql -connectRetries=120 migrate
         volumes:
-            - ../../../main/resources/db:/flyway/sql
+            - ../mongoose-base/mongoose-base-server-datasource/src/main/resources/db:/flyway/sql
         depends_on:
             - database
 
-    mongoose:
-        depends_on:
-            - database
-        container_name: mongoose_backoffice
-        build:
-            context: .
-            dockerfile: Dockerfile.backoffice
-        restart: "no"
+    session:
+        container_name: session
+        image: redis:6.2.6-alpine
+        restart: always
         ports:
-            - '80:80'
-            - '9090:9090'
-        command:  java -jar mongoose-base-server-application-vertx-1.0.0-SNAPSHOT-fat.jar
-
-    web:
-        depends_on:
-            - mongoose_backoffice
-        container_name: mongoose_web
-        build:
-            context: .
-            dockerfile: Dockerfile.web
-        restart: "no"
-        ports:
-            - '8082:8080'
+            - '6379:6379'
+        command: redis-server --save 60 1 --loglevel warning

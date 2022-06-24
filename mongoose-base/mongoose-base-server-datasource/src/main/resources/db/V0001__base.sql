@@ -92,7 +92,7 @@ CREATE TABLE public.attendance (
 );
 
 
-ALTER TABLE public.attendance OWNER TO kbs;
+
 
 --
 -- Name: document; Type: TABLE; Schema: public; Owner: kbs
@@ -204,7 +204,7 @@ CREATE TABLE public.document (
 );
 
 
-ALTER TABLE public.document OWNER TO kbs;
+
 
 --
 -- Name: document_line; Type: TABLE; Schema: public; Owner: kbs
@@ -275,7 +275,7 @@ CREATE TABLE public.document_line (
 );
 
 
-ALTER TABLE public.document_line OWNER TO kbs;
+
 
 --
 -- Name: COLUMN document_line.group_site_id; Type: COMMENT; Schema: public; Owner: kbs
@@ -391,7 +391,7 @@ CREATE TABLE public.rate (
 );
 
 
-ALTER TABLE public.rate OWNER TO kbs;
+
 
 --
 -- Name: COLUMN rate.bookings_updated; Type: COMMENT; Schema: public; Owner: kbs
@@ -416,7 +416,7 @@ CREATE TYPE public.compute_price_record AS (
 );
 
 
-ALTER TYPE public.compute_price_record OWNER TO kbs;
+
 
 --
 -- Name: resource_availibility; Type: TYPE; Schema: public; Owner: kbs
@@ -432,7 +432,7 @@ CREATE TYPE public.resource_availibility AS (
 );
 
 
-ALTER TYPE public.resource_availibility OWNER TO kbs;
+
 
 --
 -- Name: resource_capacity; Type: TYPE; Schema: public; Owner: kbs
@@ -448,7 +448,7 @@ CREATE TYPE public.resource_capacity AS (
 );
 
 
-ALTER TYPE public.resource_capacity OWNER TO kbs;
+
 
 --
 -- Name: abc_names(text); Type: FUNCTION; Schema: public; Owner: kbs
@@ -462,7 +462,7 @@ BEGIN
 END; $_$;
 
 
-ALTER FUNCTION public.abc_names(text) OWNER TO kbs;
+
 
 --
 -- Name: array_length(anyarray); Type: FUNCTION; Schema: public; Owner: kbs
@@ -477,7 +477,7 @@ END
 $_$;
 
 
-ALTER FUNCTION public.array_length(anyarray) OWNER TO kbs;
+
 
 --
 -- Name: money_transfer; Type: TABLE; Schema: public; Owner: kbs
@@ -520,7 +520,7 @@ CREATE TABLE public.money_transfer (
 );
 
 
-ALTER TABLE public.money_transfer OWNER TO kbs;
+
 
 --
 -- Name: COLUMN money_transfer.gateway_accesscode; Type: COMMENT; Schema: public; Owner: kbs
@@ -594,7 +594,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.autoset_money_transfer_from_account(mt public.money_transfer, update_money_transfer boolean) OWNER TO kbs;
+
 
 --
 -- Name: autoset_money_transfer_to_account(public.money_transfer, boolean); Type: FUNCTION; Schema: public; Owner: kbs
@@ -635,7 +635,7 @@ DECLARE
 			update money_transfer set to_money_account_id = ma_id where id=mt.id;END IF;RETURN ma_id;END;$$;
 
 
-ALTER FUNCTION public.autoset_money_transfer_to_account(mt public.money_transfer, update_money_transfer boolean) OWNER TO kbs;
+
 
 --
 -- Name: bookings_auto_confirm(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -754,7 +754,7 @@ return updated;
 $$;
 
 
-ALTER FUNCTION public.bookings_auto_confirm() OWNER TO kbs;
+
 
 --
 -- Name: cart_messages(integer); Type: FUNCTION; Schema: public; Owner: kbs
@@ -784,7 +784,7 @@ CREATE FUNCTION public.cart_messages(from_cart_id integer) RETURNS TABLE(documen
 $$;
 
 
-ALTER FUNCTION public.cart_messages(from_cart_id integer) OWNER TO kbs;
+
 
 --
 -- Name: cart_messages(character varying); Type: FUNCTION; Schema: public; Owner: kbs
@@ -806,7 +806,7 @@ CREATE FUNCTION public.cart_messages(from_cart_uuid character varying) RETURNS T
 $$;
 
 
-ALTER FUNCTION public.cart_messages(from_cart_uuid character varying) OWNER TO kbs;
+
 
 --
 -- Name: cart_messages_all(integer); Type: FUNCTION; Schema: public; Owner: kbs
@@ -922,7 +922,7 @@ CREATE FUNCTION public.cart_messages_all(from_cart_id integer) RETURNS TABLE(doc
 $$;
 
 
-ALTER FUNCTION public.cart_messages_all(from_cart_id integer) OWNER TO kbs;
+
 
 --
 -- Name: cart_messages_no_conflict(integer); Type: FUNCTION; Schema: public; Owner: kbs
@@ -968,7 +968,7 @@ CREATE FUNCTION public.cart_messages_no_conflict(from_cart_id integer) RETURNS T
 $$;
 
 
-ALTER FUNCTION public.cart_messages_no_conflict(from_cart_id integer) OWNER TO kbs;
+
 
 --
 -- Name: compute_dates(date[]); Type: FUNCTION; Schema: public; Owner: kbs
@@ -1006,7 +1006,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.compute_dates(dates date[]) OWNER TO kbs;
+
 
 --
 -- Name: compute_document_line_pricing_quantity(public.document_line); Type: FUNCTION; Schema: public; Owner: kbs
@@ -1042,7 +1042,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.compute_document_line_pricing_quantity(dl public.document_line) OWNER TO kbs;
+
 
 --
 -- Name: compute_document_prices(integer, boolean); Type: FUNCTION; Schema: public; Owner: kbs
@@ -1368,7 +1368,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.compute_document_prices(document_id integer, trace boolean) OWNER TO kbs;
+
 
 --
 -- Name: compute_rate_min_deposit(public.rate, date); Type: FUNCTION; Schema: public; Owner: kbs
@@ -1389,7 +1389,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.compute_rate_min_deposit(r public.rate, d date) OWNER TO kbs;
+
 
 --
 -- Name: compute_rate_non_refundable(public.rate, date); Type: FUNCTION; Schema: public; Owner: kbs
@@ -1410,7 +1410,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.compute_rate_non_refundable(r public.rate, d date) OWNER TO kbs;
+
 
 --
 -- Name: compute_rate_unit_price(public.rate, public.document); Type: FUNCTION; Schema: public; Owner: kbs
@@ -1437,7 +1437,7 @@ DECLARE
 				price := COALESCE(r.guest_price, price * (100 - r.guest_discount) / 100, price);END IF;END IF;RETURN price;END;$$;
 
 
-ALTER FUNCTION public.compute_rate_unit_price(r public.rate, d public.document) OWNER TO kbs;
+
 
 --
 -- Name: copy_date_info(integer, integer, integer); Type: FUNCTION; Schema: public; Owner: kbs
@@ -1467,7 +1467,7 @@ select rn.id as new_id, rs.id as src_id from row_new rn join row_src rs on rs.ro
 			new_id := new_info.new_id;end if;end loop;return new_id;END;$$;
 
 
-ALTER FUNCTION public.copy_date_info(src_event_id integer, src_date_info_id integer, dst_event_id integer) OWNER TO kbs;
+
 
 --
 -- Name: copy_event(integer, integer, date); Type: FUNCTION; Schema: public; Owner: kbs
@@ -1529,7 +1529,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.copy_event(src_event_id integer, dst_event_id integer, dst_event_start_date date) OWNER TO kbs;
+
 
 --
 -- Name: copy_event(integer, character varying, date); Type: FUNCTION; Schema: public; Owner: kbs
@@ -1643,7 +1643,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.copy_event(src_event_id integer, dst_event_name character varying, dst_event_start_date date) OWNER TO kbs;
+
 
 --
 -- Name: copy_gateway_parameter(integer, integer, integer); Type: FUNCTION; Schema: public; Owner: kbs
@@ -1682,7 +1682,7 @@ CREATE FUNCTION public.copy_gateway_parameter(src_money_account_id integer, src_
 $$;
 
 
-ALTER FUNCTION public.copy_gateway_parameter(src_money_account_id integer, src_gateway_parameter_id integer, dst_money_account_id integer) OWNER TO kbs;
+
 
 --
 -- Name: copy_letter(integer, integer, integer); Type: FUNCTION; Schema: public; Owner: kbs
@@ -1720,7 +1720,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.copy_letter(src_event_id integer, src_letter_id integer, dst_event_id integer) OWNER TO kbs;
+
 
 --
 -- Name: copy_money_account(integer, integer, integer); Type: FUNCTION; Schema: public; Owner: kbs
@@ -1765,7 +1765,7 @@ CREATE FUNCTION public.copy_money_account(src_event_id integer, src_money_accoun
 $$;
 
 
-ALTER FUNCTION public.copy_money_account(src_event_id integer, src_money_account_id integer, dst_event_id integer) OWNER TO kbs;
+
 
 --
 -- Name: copy_money_entities(integer, integer); Type: FUNCTION; Schema: public; Owner: kbs
@@ -1793,7 +1793,7 @@ CREATE FUNCTION public.copy_money_entities(src_event_id integer, dst_event_id in
 $$;
 
 
-ALTER FUNCTION public.copy_money_entities(src_event_id integer, dst_event_id integer) OWNER TO kbs;
+
 
 --
 -- Name: copy_money_flows(integer, integer); Type: FUNCTION; Schema: public; Owner: kbs
@@ -1834,7 +1834,7 @@ CREATE FUNCTION public.copy_money_flows(src_event_id integer, dst_event_id integ
 $$;
 
 
-ALTER FUNCTION public.copy_money_flows(src_event_id integer, dst_event_id integer) OWNER TO kbs;
+
 
 --
 -- Name: copy_option(integer, integer, integer, integer); Type: FUNCTION; Schema: public; Owner: kbs
@@ -1932,7 +1932,7 @@ END;
 $_$;
 
 
-ALTER FUNCTION public.copy_option(src_event_id integer, src_option_id integer, dst_event_id integer, dst_parent_id integer) OWNER TO kbs;
+
 
 --
 -- Name: copy_option_condition(integer, integer); Type: FUNCTION; Schema: public; Owner: kbs
@@ -1987,7 +1987,7 @@ END;
 $_$;
 
 
-ALTER FUNCTION public.copy_option_condition(src_option_id integer, dst_option_id integer) OWNER TO kbs;
+
 
 --
 -- Name: copy_rate(integer, integer, integer); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2032,7 +2032,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.copy_rate(src_site_item_family_id integer, src_rate_id integer, dst_site_item_family_id integer) OWNER TO kbs;
+
 
 --
 -- Name: copy_resource(integer, integer, integer); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2071,7 +2071,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.copy_resource(src_site_item_family_id integer, src_resource_id integer, dst_site_item_family_id integer) OWNER TO kbs;
+
 
 --
 -- Name: copy_resource_configuration(integer, integer, integer); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2101,7 +2101,7 @@ select rn.id as new_id, rs.id as src_id from row_new rn join row_src rs on rs.ro
 			new_id := new_info.new_id;end if;end loop;return new_id;END;$$;
 
 
-ALTER FUNCTION public.copy_resource_configuration(src_resource_id integer, src_resource_configuration_id integer, dst_resource_id integer) OWNER TO kbs;
+
 
 --
 -- Name: copy_site(integer, integer, integer); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2148,7 +2148,7 @@ END;
 $_$;
 
 
-ALTER FUNCTION public.copy_site(src_event_id integer, src_site_id integer, dst_event_id integer) OWNER TO kbs;
+
 
 --
 -- Name: copy_site_item_family(integer, integer, integer); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2188,7 +2188,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.copy_site_item_family(src_site_id integer, src_site_item_family_id integer, dst_site_id integer) OWNER TO kbs;
+
 
 --
 -- Name: deferred_allocate_document_line(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2289,7 +2289,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.deferred_allocate_document_line() OWNER TO kbs;
+
 
 --
 -- Name: deferred_compute_document_dates(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2317,7 +2317,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.deferred_compute_document_dates() OWNER TO kbs;
+
 
 --
 -- Name: deferred_compute_document_deposit(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2325,27 +2325,44 @@ ALTER FUNCTION public.deferred_compute_document_dates() OWNER TO kbs;
 
 CREATE FUNCTION public.deferred_compute_document_deposit() RETURNS trigger
     LANGUAGE plpgsql
-    AS $$
-BEGIN
-
-	IF (OLD.trigger_defer_compute_deposit = false and NEW.trigger_defer_compute_deposit = true) THEN
-
-	   RAISE NOTICE 'Entering trigger %.%(%)', TG_RELNAME, TG_NAME, NEW.id;
-
-	   -- compute document deposit
-   	update document as d set
-      	price_deposit = COALESCE((select sum(amount) from money_transfer where document_id=d.id and pending=false and successful=true group by document_id), 0),
-			trigger_defer_compute_deposit = false
-	      where d.id=NEW.id;
-
-   END IF;
-
-	RETURN NEW;
-END;
+    AS $$
+
+BEGIN
+
+
+
+	IF (OLD.trigger_defer_compute_deposit = false and NEW.trigger_defer_compute_deposit = true) THEN
+
+
+
+	   RAISE NOTICE 'Entering trigger %.%(%)', TG_RELNAME, TG_NAME, NEW.id;
+
+
+
+	   -- compute document deposit
+
+   	update document as d set
+
+      	price_deposit = COALESCE((select sum(amount) from money_transfer where document_id=d.id and pending=false and successful=true group by document_id), 0),
+
+			trigger_defer_compute_deposit = false
+
+	      where d.id=NEW.id;
+
+
+
+   END IF;
+
+
+
+	RETURN NEW;
+
+END;
+
 $$;
 
 
-ALTER FUNCTION public.deferred_compute_document_deposit() OWNER TO kbs;
+
 
 --
 -- Name: deferred_compute_document_lines_deposit(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2368,7 +2385,7 @@ BEGIN
 	      where d.id=NEW.id;END IF;RETURN NEW;END;$$;
 
 
-ALTER FUNCTION public.deferred_compute_document_lines_deposit() OWNER TO kbs;
+
 
 --
 -- Name: deferred_compute_document_prices(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2436,7 +2453,7 @@ CREATE FUNCTION public.deferred_compute_document_prices() RETURNS trigger
  $$;
 
 
-ALTER FUNCTION public.deferred_compute_document_prices() OWNER TO kbs;
+
 
 --
 -- Name: deferred_compute_money_account_balances(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2508,7 +2525,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.deferred_compute_money_account_balances() OWNER TO kbs;
+
 
 --
 -- Name: deferred_send_history_email(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2523,7 +2540,7 @@ DECLARE
 		subject := substring(interpret_brackets('KBS2 [eventName] ([eventId]) - [fullName] #[ref] ' || NEW.comment, NEW.document_id, 'en') for 255);body := interpret_brackets('<html><body>' || NEW.comment || '<hr/>' || case when NEW.request is not null then NEW.request || '<hr/>' else '' end || '[personalDetails]<hr/>[options]<hr/>Invoiced: [invoiced]<br/>Deposit: [deposit]<br/>Balance: [balance]<hr/>[yourCart]</body></html>', NEW.document_id, 'en');INSERT INTO mail (account_id, letter_id, document_id, background, subject, content, read, out, auto_delete) values (ma.id, null, NEW.document_id, true, subject, body, true, false, true);END IF;RETURN NEW;END $$;
 
 
-ALTER FUNCTION public.deferred_send_history_email() OWNER TO kbs;
+
 
 --
 -- Name: deferred_update_spread_money_transfer(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2575,7 +2592,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.deferred_update_spread_money_transfer() OWNER TO kbs;
+
 
 --
 -- Name: first_agg(anyelement, anyelement); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2588,7 +2605,7 @@ CREATE FUNCTION public.first_agg(anyelement, anyelement) RETURNS anyelement
 $_$;
 
 
-ALTER FUNCTION public.first_agg(anyelement, anyelement) OWNER TO kbs;
+
 
 --
 -- Name: generate_dates(date, date); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2599,7 +2616,7 @@ CREATE FUNCTION public.generate_dates(date, date) RETURNS SETOF date
     AS $_$select d.a::date from generate_series($1::timestamp, $2, '1 day') as d(a)$_$;
 
 
-ALTER FUNCTION public.generate_dates(date, date) OWNER TO kbs;
+
 
 --
 -- Name: generate_event_dates(integer); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2610,7 +2627,7 @@ CREATE FUNCTION public.generate_event_dates(integer) RETURNS SETOF date
     AS $_$select generate_dates(coalesce(e.pre_date,e.start_date), coalesce(e.post_date,e.end_date)) from event e where e.id=$1$_$;
 
 
-ALTER FUNCTION public.generate_event_dates(integer) OWNER TO kbs;
+
 
 --
 -- Name: get_transaction_parameter(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2628,7 +2645,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.get_transaction_parameter() OWNER TO kbs;
+
 
 --
 -- Name: install_table_notification(text, boolean); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2646,7 +2663,7 @@ DECLARE
 		s := s || format(E'\nIF (TG_OP = ''INSERT'' OR TG_OP = ''UPDATE'' AND OLD.%2$I IS DISTINCT FROM NEW.%2$I) THEN INSERT into sys_log (table_name, update, oid, column_name) values (%1$L, true, NEW.id, %2$L); END IF;', tname, ri.column_name);END LOOP;s := s || E'\nRETURN NEW;\nEND;\n\$\$ LANGUAGE plpgsql;';s := s || E'\nCREATE TRIGGER record_changes_for_notification AFTER UPDATE' || case when also_insert then ' OR INSERT' else '' end;s := s || format(E' ON %1$s FOR EACH ROW EXECUTE PROCEDURE record_changes_for_notification_%1$s();', tname);EXECUTE s;RETURN s;END;$_$;
 
 
-ALTER FUNCTION public.install_table_notification(tname text, also_insert boolean) OWNER TO kbs;
+
 
 --
 -- Name: interpret_brackets(text, integer, character); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2676,7 +2693,7 @@ END;
 $_$;
 
 
-ALTER FUNCTION public.interpret_brackets(txt text, docid integer, language character) OWNER TO kbs;
+
 
 --
 -- Name: interpret_brakets(text, integer, character); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2706,7 +2723,7 @@ END;
 $_$;
 
 
-ALTER FUNCTION public.interpret_brakets(txt text, docid integer, language character) OWNER TO kbs;
+
 
 --
 -- Name: is_on(boolean, timestamp without time zone, timestamp without time zone, timestamp without time zone); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2742,7 +2759,7 @@ SELECT
 $$;
 
 
-ALTER FUNCTION public.is_on(current_value boolean, on_ts timestamp without time zone, off_ts timestamp without time zone, ts timestamp without time zone) OWNER TO kbs;
+
 
 --
 -- Name: label(integer, text, character); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2760,7 +2777,7 @@ END;
 $_$;
 
 
-ALTER FUNCTION public.label(label_id integer, name text, lang character) OWNER TO kbs;
+
 
 --
 -- Name: last_agg(anyelement, anyelement); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2773,7 +2790,7 @@ CREATE FUNCTION public.last_agg(anyelement, anyelement) RETURNS anyelement
 $_$;
 
 
-ALTER FUNCTION public.last_agg(anyelement, anyelement) OWNER TO kbs;
+
 
 --
 -- Name: mincoalesce(integer, integer); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2788,7 +2805,7 @@ CREATE FUNCTION public.mincoalesce(integer, integer) RETURNS integer
 	 END;$_$;
 
 
-ALTER FUNCTION public.mincoalesce(integer, integer) OWNER TO kbs;
+
 
 --
 -- Name: money_transfer_timeout(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2856,7 +2873,7 @@ return updated;
 $$;
 
 
-ALTER FUNCTION public.money_transfer_timeout() OWNER TO kbs;
+
 
 --
 -- Name: FUNCTION money_transfer_timeout(); Type: COMMENT; Schema: public; Owner: kbs
@@ -2887,7 +2904,7 @@ BEGIN
 END; $_$;
 
 
-ALTER FUNCTION public.multi_replace(text, text[]) OWNER TO kbs;
+
 
 --
 -- Name: numbers(text); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2901,7 +2918,7 @@ BEGIN
 END; $_$;
 
 
-ALTER FUNCTION public.numbers(text) OWNER TO kbs;
+
 
 --
 -- Name: option_update_scheduled_settings(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2954,7 +2971,7 @@ CREATE FUNCTION public.option_update_scheduled_settings() RETURNS integer
 $$;
 
 
-ALTER FUNCTION public.option_update_scheduled_settings() OWNER TO kbs;
+
 
 --
 -- Name: overlaps(date, date, date, date); Type: FUNCTION; Schema: public; Owner: kbs
@@ -2962,16 +2979,22 @@ ALTER FUNCTION public.option_update_scheduled_settings() OWNER TO kbs;
 
 CREATE FUNCTION public."overlaps"(date, date, date, date) RETURNS boolean
     LANGUAGE sql IMMUTABLE
-    AS $_$SELECT CASE WHEN $1 is null and $2 is null or $3 is null and $4 is null THEN true
-			WHEN $1 is null THEN ($3 is null or $2 >= $3)
-			WHEN $2 is null THEN ($4 is null or $4 >= $1)
-			WHEN $3 is null THEN ($1 is null or $4 >= $1)
-			WHEN $4 is null THEN ($2 is null or $2 >= $3)
-			ELSE $1 <= $4 AND $2 >= $3
+    AS $_$SELECT CASE WHEN $1 is null and $2 is null or $3 is null and $4 is null THEN true
+
+			WHEN $1 is null THEN ($3 is null or $2 >= $3)
+
+			WHEN $2 is null THEN ($4 is null or $4 >= $1)
+
+			WHEN $3 is null THEN ($1 is null or $4 >= $1)
+
+			WHEN $4 is null THEN ($2 is null or $2 >= $3)
+
+			ELSE $1 <= $4 AND $2 >= $3
+
 	 END;$_$;
 
 
-ALTER FUNCTION public."overlaps"(date, date, date, date) OWNER TO kbs;
+
 
 --
 -- Name: person_merge(integer, integer); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3003,7 +3026,7 @@ CREATE FUNCTION public.person_merge(person_dst_id integer, person_src_id integer
 $$;
 
 
-ALTER FUNCTION public.person_merge(person_dst_id integer, person_src_id integer) OWNER TO kbs;
+
 
 --
 -- Name: rate_matches_date(public.rate, date, public.attendance[], integer); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3025,7 +3048,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.rate_matches_date(r public.rate, d date, attendances public.attendance[], index integer) OWNER TO kbs;
+
 
 --
 -- Name: rate_matches_document(public.rate, public.document); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3040,7 +3063,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.rate_matches_document(r public.rate, d public.document) OWNER TO kbs;
+
 
 --
 -- Name: record_changes_for_notification(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3072,7 +3095,7 @@ END;
 $_$;
 
 
-ALTER FUNCTION public.record_changes_for_notification() OWNER TO kbs;
+
 
 --
 -- Name: record_changes_for_notification_allocation_rule(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3108,7 +3131,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.record_changes_for_notification_allocation_rule() OWNER TO kbs;
+
 
 --
 -- Name: record_changes_for_notification_document(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3215,7 +3238,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.record_changes_for_notification_document() OWNER TO kbs;
+
 
 --
 -- Name: record_changes_for_notification_document_line(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3282,7 +3305,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.record_changes_for_notification_document_line() OWNER TO kbs;
+
 
 --
 -- Name: record_changes_for_notification_label(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3306,7 +3329,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.record_changes_for_notification_label() OWNER TO kbs;
+
 
 --
 -- Name: record_changes_for_notification_letter(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3340,7 +3363,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.record_changes_for_notification_letter() OWNER TO kbs;
+
 
 --
 -- Name: record_changes_for_notification_mail(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3371,7 +3394,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.record_changes_for_notification_mail() OWNER TO kbs;
+
 
 --
 -- Name: record_changes_for_notification_money_account(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3396,7 +3419,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.record_changes_for_notification_money_account() OWNER TO kbs;
+
 
 --
 -- Name: record_changes_for_notification_money_transfer(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3438,7 +3461,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.record_changes_for_notification_money_transfer() OWNER TO kbs;
+
 
 --
 -- Name: record_changes_for_notification_multiple_booking(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3457,7 +3480,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.record_changes_for_notification_multiple_booking() OWNER TO kbs;
+
 
 --
 -- Name: record_changes_for_notification_option(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3534,7 +3557,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.record_changes_for_notification_option() OWNER TO kbs;
+
 
 --
 -- Name: record_changes_for_notification_organization(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3556,7 +3579,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.record_changes_for_notification_organization() OWNER TO kbs;
+
 
 --
 -- Name: record_changes_for_notification_person(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3611,7 +3634,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.record_changes_for_notification_person() OWNER TO kbs;
+
 
 --
 -- Name: record_changes_for_notification_rate(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3696,7 +3719,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.record_changes_for_notification_rate() OWNER TO kbs;
+
 
 --
 -- Name: record_changes_for_notification_resource(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3717,7 +3740,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.record_changes_for_notification_resource() OWNER TO kbs;
+
 
 --
 -- Name: record_changes_for_notification_resource_configuration(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3743,7 +3766,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.record_changes_for_notification_resource_configuration() OWNER TO kbs;
+
 
 --
 -- Name: remove_table_notification(text); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3758,7 +3781,7 @@ END;
 $_$;
 
 
-ALTER FUNCTION public.remove_table_notification(tname text) OWNER TO kbs;
+
 
 --
 -- Name: resource_availability_by_event_items(integer); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3773,7 +3796,7 @@ CREATE FUNCTION public.resource_availability_by_event_items(eventid integer) RET
  select CAST(row_number() over(order by date) as int), site_id, item_id, date, CAST(COALESCE(current,0) as int) as current, CAST(max_online as int) as max from date_site_item_info_with_current$$;
 
 
-ALTER FUNCTION public.resource_availability_by_event_items(eventid integer) OWNER TO kbs;
+
 
 --
 -- Name: resource_capacity_by_event_items(integer); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3788,7 +3811,7 @@ CREATE FUNCTION public.resource_capacity_by_event_items(eventid integer) RETURNS
 	select CAST(row_number() over(order by site_id,item_id,capacity) as int),site_id,item_id,capacity,CAST(count(*) as int) as count,CAST(sum(case current when 0 then 1 else 0 end) as int) as free from resource_info group by site_id,item_id,capacity;$$;
 
 
-ALTER FUNCTION public.resource_capacity_by_event_items(eventid integer) OWNER TO kbs;
+
 
 --
 -- Name: set_transaction_parameters(boolean); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3805,7 +3828,7 @@ END;
 $$;
 
 
-ALTER FUNCTION public.set_transaction_parameters(backend boolean) OWNER TO kbs;
+
 
 --
 -- Name: shift_date_time_range(character varying, integer); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3820,7 +3843,7 @@ DECLARE
 		select into statement 'select ''' || regexp_replace(date_time_range, '(\d\d/\d\d/\d\d\d\d)', ''' || to_char(to_date(''\1'', ''DD/MM/YYYY'') + $1, ''DD/MM/YYYY'') || ''', 'g') || '''';EXECUTE statement into new_date_time_range using days_count;end if;return new_date_time_range;END;$_$;
 
 
-ALTER FUNCTION public.shift_date_time_range(date_time_range character varying, days_count integer) OWNER TO kbs;
+
 
 --
 -- Name: shift_event_for(integer, date); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3833,7 +3856,7 @@ BEGIN
 	return shift_event_for(event_id, (select start_date - e.start_date from event e where id=event_id));END;$$;
 
 
-ALTER FUNCTION public.shift_event_for(event_id integer, start_date date) OWNER TO kbs;
+
 
 --
 -- Name: shift_event_for(integer, integer); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3899,7 +3922,7 @@ END;
 $_$;
 
 
-ALTER FUNCTION public.shift_event_for(event_id integer, days_count integer) OWNER TO kbs;
+
 
 --
 -- Name: shift_event_to(integer, date); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3912,7 +3935,7 @@ BEGIN
 	return shift_event_for(event_id, (select new_start_date - e.start_date from event e where id=event_id));END;$$;
 
 
-ALTER FUNCTION public.shift_event_to(event_id integer, new_start_date date) OWNER TO kbs;
+
 
 --
 -- Name: trigger_allocation_rule_apply_rule(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3944,7 +3967,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_allocation_rule_apply_rule() OWNER TO kbs;
+
 
 --
 -- Name: trigger_attendance_defer_compute_document_prices_dates(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -3963,7 +3986,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_attendance_defer_compute_document_prices_dates() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_auto_ref(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4005,7 +4028,7 @@ return new;
 END $$;
 
 
-ALTER FUNCTION public.trigger_document_auto_ref() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_cancel_other_multiple_bookings(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4027,7 +4050,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_document_cancel_other_multiple_bookings() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_cascadecancelled(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4047,7 +4070,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_document_cascadecancelled() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_cascaderead(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4064,7 +4087,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_document_cascaderead() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_check_multiple_booking(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4126,7 +4149,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_document_check_multiple_booking() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_defer_compute_lines_deposit(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4142,7 +4165,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_document_defer_compute_lines_deposit() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_defer_compute_prices(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4159,7 +4182,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_document_defer_compute_prices() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_generate_mails_on_booking(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4184,7 +4207,7 @@ BEGIN
 END $_$;
 
 
-ALTER FUNCTION public.trigger_document_generate_mails_on_booking() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_line_auto_allocate(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4192,13 +4215,16 @@ ALTER FUNCTION public.trigger_document_generate_mails_on_booking() OWNER TO kbs;
 
 CREATE FUNCTION public.trigger_document_line_auto_allocate() RETURNS trigger
     LANGUAGE plpgsql
-    AS $$
-BEGIN	
-	return NEW;
+    AS $$
+
+BEGIN	
+
+	return NEW;
+
 END $$;
 
 
-ALTER FUNCTION public.trigger_document_line_auto_allocate() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_line_cascadeunread(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4213,7 +4239,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_document_line_cascadeunread() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_line_defer_allocate(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4239,7 +4265,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_document_line_defer_allocate() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_line_defer_compute_document_prices(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4265,7 +4291,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_document_line_defer_compute_document_prices() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_line_on_cancelled_auto_release(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4280,7 +4306,7 @@ BEGIN
 		update document_line set backend_released=false, frontend_released=false where id=NEW.id;end if;return NEW;END $$;
 
 
-ALTER FUNCTION public.trigger_document_line_on_cancelled_auto_release() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_line_on_not_system_allocated(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4295,7 +4321,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_document_line_on_not_system_allocated() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_line_on_owner_changes_cascade_mates(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4320,7 +4346,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_document_line_on_owner_changes_cascade_mates() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_line_on_share_linked_copy_info(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4340,7 +4366,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_document_line_on_share_linked_copy_info() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_line_set_cancellation_date(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4355,7 +4381,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_document_line_set_cancellation_date() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_line_set_donation_site(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4368,7 +4394,7 @@ BEGIN
 	select into NEW.site_id coalesce(site_id, NEW.site_id) from option where item_id=NEW.item_id and event_id=(select event_id from document where id=NEW.document_id);return NEW;END $$;
 
 
-ALTER FUNCTION public.trigger_document_line_set_donation_site() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_line_set_lang(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4391,7 +4417,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_document_line_set_lang() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_merge_from_other_multiple_bookings(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4424,7 +4450,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_document_merge_from_other_multiple_bookings() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_read_on_confirmed_or_arrived(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4439,7 +4465,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_document_read_on_confirmed_or_arrived() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_send_letter(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4477,7 +4503,7 @@ BEGIN
 END $_$;
 
 
-ALTER FUNCTION public.trigger_document_send_letter() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_send_system_letter(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4517,7 +4543,7 @@ BEGIN
 END $_$;
 
 
-ALTER FUNCTION public.trigger_document_send_system_letter() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_set_cancellation_date(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4532,7 +4558,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_document_set_cancellation_date() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_set_person_abc_names(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4545,7 +4571,7 @@ BEGIN
 	NEW.person_abc_names := abc_names(NEW.person_first_name || ' ' || NEW.person_last_name);return NEW;END $$;
 
 
-ALTER FUNCTION public.trigger_document_set_person_abc_names() OWNER TO kbs;
+
 
 --
 -- Name: trigger_document_transfer_from_other_multiple_bookings(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4576,7 +4602,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_document_transfer_from_other_multiple_bookings() OWNER TO kbs;
+
 
 --
 -- Name: trigger_frontend_account_generate_password_email(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4600,7 +4626,7 @@ BEGIN
    	if (eventid is not null) then
 		select into organizationid organization_id from event where id=eventid limit 1;
 	end if;
-	-- Takes "send password" letter from NKT if none active in the event
+	-- Takes "send password" letter if none active in the event
 	SELECT INTO lt * FROM letter l JOIN letter_type t ON l.type_id=t.id WHERE t.send_password and l.active and (eventid is not null and (l.event_id=eventid or l.event_id is null and l.organization_id=organizationid) or eventid is null and l.event_id is null and l.organization_id=organizationid) order by l.event_id asc LIMIT 1;
 	IF FOUND THEN
 			SELECT INTO ma * FROM mail_account a where eventid is not null and a.organization_id=organizationid or eventid is null and exists(select * from event e where e.corporation_id=NEW.corporation_id and a.organization_id=e.organization_id) order by case when event_id=eventid then 0 else 1 end,case when a.event_id is null and a.organization_id=organizationid then 0 else 1 end,id LIMIT 1;
@@ -4622,7 +4648,7 @@ BEGIN
 END $_$;
 
 
-ALTER FUNCTION public.trigger_frontend_account_generate_password_email() OWNER TO kbs;
+
 
 --
 -- Name: trigger_history_append_request_to_document(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4637,7 +4663,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_history_append_request_to_document() OWNER TO kbs;
+
 
 --
 -- Name: trigger_history_online_defer_send_email(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4653,7 +4679,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_history_online_defer_send_email() OWNER TO kbs;
+
 
 --
 -- Name: trigger_history_send_online_notification_email(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4678,7 +4704,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_history_send_online_notification_email() OWNER TO kbs;
+
 
 --
 -- Name: trigger_label_copy_translation(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4717,7 +4743,7 @@ return new;
 END $_$;
 
 
-ALTER FUNCTION public.trigger_label_copy_translation() OWNER TO kbs;
+
 
 --
 -- Name: trigger_mail_auto_account(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4733,7 +4759,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_mail_auto_account() OWNER TO kbs;
+
 
 --
 -- Name: trigger_mail_auto_delete(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4748,7 +4774,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_mail_auto_delete() OWNER TO kbs;
+
 
 --
 -- Name: trigger_mail_auto_recipient(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4779,7 +4805,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_mail_auto_recipient() OWNER TO kbs;
+
 
 --
 -- Name: trigger_mail_cascadeunread(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4794,7 +4820,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_mail_cascadeunread() OWNER TO kbs;
+
 
 --
 -- Name: trigger_money_flow_transfer_ready_daily_batch(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4812,7 +4838,7 @@ DECLARE
 	RETURN NEW;END $$;
 
 
-ALTER FUNCTION public.trigger_money_flow_transfer_ready_daily_batch() OWNER TO kbs;
+
 
 --
 -- Name: trigger_money_transfer_autoset_accounts(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4838,7 +4864,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_money_transfer_autoset_accounts() OWNER TO kbs;
+
 
 --
 -- Name: trigger_money_transfer_autoset_children(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4846,18 +4872,26 @@ ALTER FUNCTION public.trigger_money_transfer_autoset_accounts() OWNER TO kbs;
 
 CREATE FUNCTION public.trigger_money_transfer_autoset_children() RETURNS trigger
     LANGUAGE plpgsql
-    AS $$
-BEGIN
-	select into NEW.method_id method_id from money_transfer mt where mt.id=NEW.parent_id;
-	select into NEW.payment payment from money_transfer mt where mt.id=NEW.parent_id;
-	select into NEW.refund refund from money_transfer mt where mt.id=NEW.parent_id;
-	select into NEW.pending pending from money_transfer mt where mt.id=NEW.parent_id;
-	select into NEW.successful successful from money_transfer mt where mt.id=NEW.parent_id;
-	return NEW;
+    AS $$
+
+BEGIN
+
+	select into NEW.method_id method_id from money_transfer mt where mt.id=NEW.parent_id;
+
+	select into NEW.payment payment from money_transfer mt where mt.id=NEW.parent_id;
+
+	select into NEW.refund refund from money_transfer mt where mt.id=NEW.parent_id;
+
+	select into NEW.pending pending from money_transfer mt where mt.id=NEW.parent_id;
+
+	select into NEW.successful successful from money_transfer mt where mt.id=NEW.parent_id;
+
+	return NEW;
+
 END $$;
 
 
-ALTER FUNCTION public.trigger_money_transfer_autoset_children() OWNER TO kbs;
+
 
 --
 -- Name: trigger_money_transfer_cascade_children(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4879,7 +4913,7 @@ BEGIN
 		where parent_id=NEW.id;RETURN NEW;END $$;
 
 
-ALTER FUNCTION public.trigger_money_transfer_cascade_children() OWNER TO kbs;
+
 
 --
 -- Name: trigger_money_transfer_cascadedeletetransfer(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4894,7 +4928,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_money_transfer_cascadedeletetransfer() OWNER TO kbs;
+
 
 --
 -- Name: trigger_money_transfer_cascadeunread(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4909,7 +4943,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_money_transfer_cascadeunread() OWNER TO kbs;
+
 
 --
 -- Name: trigger_money_transfer_defer_compute_document_deposit(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4936,7 +4970,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_money_transfer_defer_compute_document_deposit() OWNER TO kbs;
+
 
 --
 -- Name: trigger_money_transfer_defer_compute_money_account_balances(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4944,25 +4978,40 @@ ALTER FUNCTION public.trigger_money_transfer_defer_compute_document_deposit() OW
 
 CREATE FUNCTION public.trigger_money_transfer_defer_compute_money_account_balances() RETURNS trigger
     LANGUAGE plpgsql
-    AS $$
-DECLARE
-   THIS money_transfer%ROWTYPE;
-	PREV money_transfer%ROWTYPE;
-BEGIN
-	IF (TG_OP = 'DELETE') THEN THIS := OLD; ELSE THIS := NEW; END IF;
-	IF (TG_OP = 'INSERT') THEN PREV := NEW; ELSE PREV := OLD; END IF;
-   -- RAISE NOTICE 'Entering trigger %.%(%)', TG_RELNAME, TG_NAME, THIS.id;
-	IF (THIS.parent_id is null) THEN
-	   update money_account set trigger_defer_compute_balances = true where (id=THIS.from_money_account_id or id=THIS.to_money_account_id or id=PREV.from_money_account_id or id=PREV.to_money_account_id) and trigger_defer_compute_balances = false;
-		create temporary table if not exists money_account_trigger_info (money_account_id int, date timestamp) ON COMMIT DROP;
-		insert into money_account_trigger_info (money_account_id) select id from money_account where (id=THIS.from_money_account_id or id=THIS.to_money_account_id or id=PREV.from_money_account_id or id=PREV.to_money_account_id) and not exists(select * from money_account_trigger_info where money_account_id = id);
-		update money_account_trigger_info set date = THIS.date from money_account as ma where money_account_id=id and (date is null or date > THIS.date) and (id=THIS.from_money_account_id or id=THIS.to_money_account_id or id=PREV.from_money_account_id or id=PREV.to_money_account_id);
-   END IF;
-	RETURN NEW;
+    AS $$
+
+DECLARE
+
+   THIS money_transfer%ROWTYPE;
+
+	PREV money_transfer%ROWTYPE;
+
+BEGIN
+
+	IF (TG_OP = 'DELETE') THEN THIS := OLD; ELSE THIS := NEW; END IF;
+
+	IF (TG_OP = 'INSERT') THEN PREV := NEW; ELSE PREV := OLD; END IF;
+
+   -- RAISE NOTICE 'Entering trigger %.%(%)', TG_RELNAME, TG_NAME, THIS.id;
+
+	IF (THIS.parent_id is null) THEN
+
+	   update money_account set trigger_defer_compute_balances = true where (id=THIS.from_money_account_id or id=THIS.to_money_account_id or id=PREV.from_money_account_id or id=PREV.to_money_account_id) and trigger_defer_compute_balances = false;
+
+		create temporary table if not exists money_account_trigger_info (money_account_id int, date timestamp) ON COMMIT DROP;
+
+		insert into money_account_trigger_info (money_account_id) select id from money_account where (id=THIS.from_money_account_id or id=THIS.to_money_account_id or id=PREV.from_money_account_id or id=PREV.to_money_account_id) and not exists(select * from money_account_trigger_info where money_account_id = id);
+
+		update money_account_trigger_info set date = THIS.date from money_account as ma where money_account_id=id and (date is null or date > THIS.date) and (id=THIS.from_money_account_id or id=THIS.to_money_account_id or id=PREV.from_money_account_id or id=PREV.to_money_account_id);
+
+   END IF;
+
+	RETURN NEW;
+
 END $$;
 
 
-ALTER FUNCTION public.trigger_money_transfer_defer_compute_money_account_balances() OWNER TO kbs;
+
 
 --
 -- Name: trigger_money_transfer_on_success_send_history_email(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -4977,7 +5026,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_money_transfer_on_success_send_history_email() OWNER TO kbs;
+
 
 --
 -- Name: trigger_money_transfer_on_verified(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -5005,7 +5054,7 @@ BEGIN
 			where transfer_id=NEW.id;end if;RETURN NEW;END $$;
 
 
-ALTER FUNCTION public.trigger_money_transfer_on_verified() OWNER TO kbs;
+
 
 --
 -- Name: trigger_multiple_booking_update_counts(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -5030,7 +5079,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_multiple_booking_update_counts() OWNER TO kbs;
+
 
 --
 -- Name: trigger_option_autoset_event_from_parent(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -5038,14 +5087,18 @@ ALTER FUNCTION public.trigger_multiple_booking_update_counts() OWNER TO kbs;
 
 CREATE FUNCTION public.trigger_option_autoset_event_from_parent() RETURNS trigger
     LANGUAGE plpgsql
-    AS $$
-BEGIN
-	SELECT INTO NEW.event_id o.event_id FROM option o where o.id=NEW.parent_id;
-	return NEW;
+    AS $$
+
+BEGIN
+
+	SELECT INTO NEW.event_id o.event_id FROM option o where o.id=NEW.parent_id;
+
+	return NEW;
+
 END $$;
 
 
-ALTER FUNCTION public.trigger_option_autoset_event_from_parent() OWNER TO kbs;
+
 
 --
 -- Name: trigger_person_on_email_change_update_frontend_username(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -5060,7 +5113,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_person_on_email_change_update_frontend_username() OWNER TO kbs;
+
 
 --
 -- Name: trigger_resource_auto_site(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -5068,15 +5121,20 @@ ALTER FUNCTION public.trigger_person_on_email_change_update_frontend_username() 
 
 CREATE FUNCTION public.trigger_resource_auto_site() RETURNS trigger
     LANGUAGE plpgsql
-    AS $$
-BEGIN
-   RAISE NOTICE 'Entering trigger %.%(%)', TG_RELNAME, TG_NAME, NEW.id;
-	select into new.site_id site_id from site_item_family where id=NEW.site_item_family_id;
-	return new;
+    AS $$
+
+BEGIN
+
+   RAISE NOTICE 'Entering trigger %.%(%)', TG_RELNAME, TG_NAME, NEW.id;
+
+	select into new.site_id site_id from site_item_family where id=NEW.site_item_family_id;
+
+	return new;
+
 END $$;
 
 
-ALTER FUNCTION public.trigger_resource_auto_site() OWNER TO kbs;
+
 
 --
 -- Name: trigger_resource_auto_site_item_family(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -5092,7 +5150,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_resource_auto_site_item_family() OWNER TO kbs;
+
 
 --
 -- Name: trigger_resource_configuration_check_overlap(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -5121,7 +5179,7 @@ BEGIN
 END $$;
 
 
-ALTER FUNCTION public.trigger_resource_configuration_check_overlap() OWNER TO kbs;
+
 
 --
 -- Name: trigger_resource_configuration_on_item_changed_cascade_document(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -5134,7 +5192,7 @@ BEGIN
 	update document_line set item_id=NEW.item_id where not cancelled and resource_configuration_id=NEW.id;insert into history (document_id, username, comment) select document_id, (select username from sys_sync limit 1), 'Changed ''' || (select name from resource where id=NEW.resource_id limit 1) || ''' room type from ''' || (select name from item where id=OLD.item_id limit 1) || ''' to ''' || (select name from item where id=NEW.item_id limit 1) || '''' from document_line where not cancelled and resource_configuration_id=NEW.id;RETURN NEW;END $$;
 
 
-ALTER FUNCTION public.trigger_resource_configuration_on_item_changed_cascade_document() OWNER TO kbs;
+
 
 --
 -- Name: trigger_resource_duplicate(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -5162,7 +5220,7 @@ RETURN NEW;
 END $$;
 
 
-ALTER FUNCTION public.trigger_resource_duplicate() OWNER TO kbs;
+
 
 --
 -- Name: update_documents_min_deposit(); Type: FUNCTION; Schema: public; Owner: kbs
@@ -5208,7 +5266,7 @@ return updated;
 $$;
 
 
-ALTER FUNCTION public.update_documents_min_deposit() OWNER TO kbs;
+
 
 --
 -- Name: first(anyelement); Type: AGGREGATE; Schema: public; Owner: kbs
@@ -5220,7 +5278,7 @@ CREATE AGGREGATE public.first(anyelement) (
 );
 
 
-ALTER AGGREGATE public.first(anyelement) OWNER TO kbs;
+
 
 --
 -- Name: last(anyelement); Type: AGGREGATE; Schema: public; Owner: kbs
@@ -5232,7 +5290,7 @@ CREATE AGGREGATE public.last(anyelement) (
 );
 
 
-ALTER AGGREGATE public.last(anyelement) OWNER TO kbs;
+
 
 --
 -- Name: accounting_account; Type: TABLE; Schema: public; Owner: kbs
@@ -5248,7 +5306,7 @@ CREATE TABLE public.accounting_account (
 );
 
 
-ALTER TABLE public.accounting_account OWNER TO kbs;
+
 
 --
 -- Name: accounting_account_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -5262,7 +5320,7 @@ CREATE SEQUENCE public.accounting_account_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.accounting_account_id_seq OWNER TO kbs;
+
 
 --
 -- Name: accounting_account_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -5283,7 +5341,7 @@ CREATE TABLE public.accounting_account_type (
 );
 
 
-ALTER TABLE public.accounting_account_type OWNER TO kbs;
+
 
 --
 -- Name: accounting_account_type_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -5297,7 +5355,7 @@ CREATE SEQUENCE public.accounting_account_type_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.accounting_account_type_id_seq OWNER TO kbs;
+
 
 --
 -- Name: accounting_account_type_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -5316,7 +5374,7 @@ CREATE TABLE public.accounting_model (
 );
 
 
-ALTER TABLE public.accounting_model OWNER TO kbs;
+
 
 --
 -- Name: accounting_model_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -5330,7 +5388,7 @@ CREATE SEQUENCE public.accounting_model_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.accounting_model_id_seq OWNER TO kbs;
+
 
 --
 -- Name: accounting_model_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -5352,7 +5410,7 @@ CREATE TABLE public.activity (
 );
 
 
-ALTER TABLE public.activity OWNER TO kbs;
+
 
 --
 -- Name: activity_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -5366,7 +5424,7 @@ CREATE SEQUENCE public.activity_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.activity_id_seq OWNER TO kbs;
+
 
 --
 -- Name: activity_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -5388,7 +5446,7 @@ CREATE TABLE public.activity_state (
 );
 
 
-ALTER TABLE public.activity_state OWNER TO kbs;
+
 
 --
 -- Name: activity_state_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -5402,7 +5460,7 @@ CREATE SEQUENCE public.activity_state_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.activity_state_id_seq OWNER TO kbs;
+
 
 --
 -- Name: activity_state_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -5440,7 +5498,7 @@ CREATE TABLE public.allocation_rule (
 );
 
 
-ALTER TABLE public.allocation_rule OWNER TO kbs;
+
 
 --
 -- Name: allocation_rule_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -5454,7 +5512,7 @@ CREATE SEQUENCE public.allocation_rule_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.allocation_rule_id_seq OWNER TO kbs;
+
 
 --
 -- Name: allocation_rule_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -5475,7 +5533,7 @@ CREATE SEQUENCE public.attendance_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.attendance_id_seq OWNER TO kbs;
+
 
 --
 -- Name: attendance_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -5500,7 +5558,7 @@ CREATE TABLE public.authorization_assignment (
 );
 
 
-ALTER TABLE public.authorization_assignment OWNER TO kbs;
+
 
 --
 -- Name: authorization_assignment_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -5514,7 +5572,7 @@ CREATE SEQUENCE public.authorization_assignment_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.authorization_assignment_id_seq OWNER TO kbs;
+
 
 --
 -- Name: authorization_assignment_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -5535,7 +5593,7 @@ CREATE TABLE public.authorization_management (
 );
 
 
-ALTER TABLE public.authorization_management OWNER TO kbs;
+
 
 --
 -- Name: authorization_management_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -5549,7 +5607,7 @@ CREATE SEQUENCE public.authorization_management_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.authorization_management_id_seq OWNER TO kbs;
+
 
 --
 -- Name: authorization_management_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -5568,7 +5626,7 @@ CREATE TABLE public.authorization_role (
 );
 
 
-ALTER TABLE public.authorization_role OWNER TO kbs;
+
 
 --
 -- Name: authorization_role_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -5582,7 +5640,7 @@ CREATE SEQUENCE public.authorization_role_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.authorization_role_id_seq OWNER TO kbs;
+
 
 --
 -- Name: authorization_role_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -5602,7 +5660,7 @@ CREATE TABLE public.authorization_rule (
 );
 
 
-ALTER TABLE public.authorization_rule OWNER TO kbs;
+
 
 --
 -- Name: authorization_rule_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -5616,7 +5674,7 @@ CREATE SEQUENCE public.authorization_rule_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.authorization_rule_id_seq OWNER TO kbs;
+
 
 --
 -- Name: authorization_rule_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -5635,7 +5693,7 @@ CREATE TABLE public.authorization_scope (
 );
 
 
-ALTER TABLE public.authorization_scope OWNER TO kbs;
+
 
 --
 -- Name: authorization_scope_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -5649,7 +5707,7 @@ CREATE SEQUENCE public.authorization_scope_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.authorization_scope_id_seq OWNER TO kbs;
+
 
 --
 -- Name: authorization_scope_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -5668,7 +5726,7 @@ CREATE TABLE public.bank (
 );
 
 
-ALTER TABLE public.bank OWNER TO kbs;
+
 
 --
 -- Name: bank_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -5682,7 +5740,7 @@ CREATE SEQUENCE public.bank_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.bank_id_seq OWNER TO kbs;
+
 
 --
 -- Name: bank_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -5701,7 +5759,7 @@ CREATE TABLE public.bank_system (
 );
 
 
-ALTER TABLE public.bank_system OWNER TO kbs;
+
 
 --
 -- Name: bank_system_account; Type: TABLE; Schema: public; Owner: kbs
@@ -5713,7 +5771,7 @@ CREATE TABLE public.bank_system_account (
 );
 
 
-ALTER TABLE public.bank_system_account OWNER TO kbs;
+
 
 --
 -- Name: bank_system_account_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -5727,7 +5785,7 @@ CREATE SEQUENCE public.bank_system_account_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.bank_system_account_id_seq OWNER TO kbs;
+
 
 --
 -- Name: bank_system_account_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -5748,7 +5806,7 @@ CREATE SEQUENCE public.bank_system_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.bank_system_id_seq OWNER TO kbs;
+
 
 --
 -- Name: bank_system_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -5773,7 +5831,7 @@ CREATE TABLE public.booking_form_layout (
 );
 
 
-ALTER TABLE public.booking_form_layout OWNER TO kbs;
+
 
 --
 -- Name: booking_form_layout_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -5787,7 +5845,7 @@ CREATE SEQUENCE public.booking_form_layout_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.booking_form_layout_id_seq OWNER TO kbs;
+
 
 --
 -- Name: booking_form_layout_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -5867,7 +5925,7 @@ CREATE TABLE public.event (
 );
 
 
-ALTER TABLE public.event OWNER TO kbs;
+
 
 --
 -- Name: COLUMN event.notification_cart_default_label_id; Type: COMMENT; Schema: public; Owner: kbs
@@ -6055,7 +6113,7 @@ CREATE VIEW public.bookings AS
   ORDER BY d1.id, e2.start_date DESC;
 
 
-ALTER TABLE public.bookings OWNER TO kbs;
+
 
 --
 -- Name: bracket_pattern; Type: TABLE; Schema: public; Owner: kbs
@@ -6072,7 +6130,7 @@ CREATE TABLE public.bracket_pattern (
 );
 
 
-ALTER TABLE public.bracket_pattern OWNER TO kbs;
+
 
 --
 -- Name: bracket_pattern_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -6086,7 +6144,7 @@ CREATE SEQUENCE public.bracket_pattern_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.bracket_pattern_id_seq OWNER TO kbs;
+
 
 --
 -- Name: bracket_pattern_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -6108,7 +6166,7 @@ CREATE TABLE public.buddha (
 );
 
 
-ALTER TABLE public.buddha OWNER TO kbs;
+
 
 --
 -- Name: buddha_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -6122,7 +6180,7 @@ CREATE SEQUENCE public.buddha_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.buddha_id_seq OWNER TO kbs;
+
 
 --
 -- Name: buddha_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -6141,7 +6199,7 @@ CREATE TABLE public.budget (
 );
 
 
-ALTER TABLE public.budget OWNER TO kbs;
+
 
 --
 -- Name: budget_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -6155,7 +6213,7 @@ CREATE SEQUENCE public.budget_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.budget_id_seq OWNER TO kbs;
+
 
 --
 -- Name: budget_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -6174,7 +6232,7 @@ CREATE TABLE public.budget_line (
 );
 
 
-ALTER TABLE public.budget_line OWNER TO kbs;
+
 
 --
 -- Name: budget_line_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -6188,7 +6246,7 @@ CREATE SEQUENCE public.budget_line_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.budget_line_id_seq OWNER TO kbs;
+
 
 --
 -- Name: budget_line_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -6210,7 +6268,7 @@ CREATE TABLE public.budget_transfer (
 );
 
 
-ALTER TABLE public.budget_transfer OWNER TO kbs;
+
 
 --
 -- Name: budget_transfer_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -6224,7 +6282,7 @@ CREATE SEQUENCE public.budget_transfer_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.budget_transfer_id_seq OWNER TO kbs;
+
 
 --
 -- Name: budget_transfer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -6243,7 +6301,7 @@ CREATE TABLE public.building (
 );
 
 
-ALTER TABLE public.building OWNER TO kbs;
+
 
 --
 -- Name: building_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -6257,7 +6315,7 @@ CREATE SEQUENCE public.building_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.building_id_seq OWNER TO kbs;
+
 
 --
 -- Name: building_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -6277,7 +6335,7 @@ CREATE TABLE public.cart (
 );
 
 
-ALTER TABLE public.cart OWNER TO kbs;
+
 
 --
 -- Name: cart_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -6291,7 +6349,7 @@ CREATE SEQUENCE public.cart_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.cart_id_seq OWNER TO kbs;
+
 
 --
 -- Name: cart_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -6319,7 +6377,7 @@ CREATE TABLE public.cart_message (
 );
 
 
-ALTER TABLE public.cart_message OWNER TO kbs;
+
 
 --
 -- Name: COLUMN cart_message.show_from; Type: COMMENT; Schema: public; Owner: kbs
@@ -6391,7 +6449,7 @@ CREATE TABLE public.cart_message_condition (
 );
 
 
-ALTER TABLE public.cart_message_condition OWNER TO kbs;
+
 
 --
 -- Name: COLUMN cart_message_condition.site_id; Type: COMMENT; Schema: public; Owner: kbs
@@ -6433,7 +6491,7 @@ CREATE SEQUENCE public.cart_message_condition_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.cart_message_condition_id_seq OWNER TO kbs;
+
 
 --
 -- Name: cart_message_condition_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -6454,7 +6512,7 @@ CREATE SEQUENCE public.cart_message_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.cart_message_id_seq OWNER TO kbs;
+
 
 --
 -- Name: cart_message_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -6483,7 +6541,7 @@ CREATE TABLE public.centre (
 );
 
 
-ALTER TABLE public.centre OWNER TO kbs;
+
 
 --
 -- Name: centre_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -6497,7 +6555,7 @@ CREATE SEQUENCE public.centre_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.centre_id_seq OWNER TO kbs;
+
 
 --
 -- Name: continent; Type: TABLE; Schema: public; Owner: kbs
@@ -6511,7 +6569,7 @@ CREATE TABLE public.continent (
 );
 
 
-ALTER TABLE public.continent OWNER TO kbs;
+
 
 --
 -- Name: continent_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -6525,7 +6583,7 @@ CREATE SEQUENCE public.continent_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.continent_id_seq OWNER TO kbs;
+
 
 --
 -- Name: continent_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -6570,7 +6628,7 @@ CREATE TABLE public.country (
 );
 
 
-ALTER TABLE public.country OWNER TO kbs;
+
 
 --
 -- Name: COLUMN country.require_state; Type: COMMENT; Schema: public; Owner: kbs
@@ -6598,7 +6656,7 @@ CREATE SEQUENCE public.country_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.country_id_seq OWNER TO kbs;
+
 
 --
 -- Name: country_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -6617,7 +6675,7 @@ CREATE TABLE public.css (
 );
 
 
-ALTER TABLE public.css OWNER TO kbs;
+
 
 --
 -- Name: css_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -6631,7 +6689,7 @@ CREATE SEQUENCE public.css_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.css_id_seq OWNER TO kbs;
+
 
 --
 -- Name: css_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -6652,7 +6710,7 @@ CREATE TABLE public.currency (
 );
 
 
-ALTER TABLE public.currency OWNER TO kbs;
+
 
 --
 -- Name: currency_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -6666,7 +6724,7 @@ CREATE SEQUENCE public.currency_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.currency_id_seq OWNER TO kbs;
+
 
 --
 -- Name: currency_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -6686,7 +6744,7 @@ CREATE TABLE public.currency_support (
 );
 
 
-ALTER TABLE public.currency_support OWNER TO kbs;
+
 
 --
 -- Name: currency_support_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -6700,7 +6758,7 @@ CREATE SEQUENCE public.currency_support_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.currency_support_id_seq OWNER TO kbs;
+
 
 --
 -- Name: currency_support_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -6731,7 +6789,7 @@ CREATE TABLE public.date_info (
 );
 
 
-ALTER TABLE public.date_info OWNER TO kbs;
+
 
 --
 -- Name: date_info_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -6745,7 +6803,7 @@ CREATE SEQUENCE public.date_info_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.date_info_id_seq OWNER TO kbs;
+
 
 --
 -- Name: date_info_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -6766,7 +6824,7 @@ CREATE SEQUENCE public.document_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.document_id_seq OWNER TO kbs;
+
 
 --
 -- Name: document_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -6787,7 +6845,7 @@ CREATE SEQUENCE public.document_line_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.document_line_id_seq OWNER TO kbs;
+
 
 --
 -- Name: document_line_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -6814,7 +6872,7 @@ CREATE TABLE public.domain (
 );
 
 
-ALTER TABLE public.domain OWNER TO kbs;
+
 
 --
 -- Name: domain_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -6828,7 +6886,7 @@ CREATE SEQUENCE public.domain_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.domain_id_seq OWNER TO kbs;
+
 
 --
 -- Name: domain_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -6850,7 +6908,7 @@ CREATE TABLE public.driver (
 );
 
 
-ALTER TABLE public.driver OWNER TO kbs;
+
 
 --
 -- Name: driver_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -6864,7 +6922,7 @@ CREATE SEQUENCE public.driver_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.driver_id_seq OWNER TO kbs;
+
 
 --
 -- Name: driver_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -6894,7 +6952,7 @@ CREATE TABLE public.enqueued_request (
 );
 
 
-ALTER TABLE public.enqueued_request OWNER TO kbs;
+
 
 --
 -- Name: enqueued_request_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -6908,7 +6966,7 @@ CREATE SEQUENCE public.enqueued_request_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.enqueued_request_id_seq OWNER TO kbs;
+
 
 --
 -- Name: enqueued_request_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -6929,7 +6987,7 @@ CREATE SEQUENCE public.event_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.event_id_seq OWNER TO kbs;
+
 
 --
 -- Name: event_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -6950,7 +7008,7 @@ CREATE TABLE public.event_type (
 );
 
 
-ALTER TABLE public.event_type OWNER TO kbs;
+
 
 --
 -- Name: event_type_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -6964,7 +7022,7 @@ CREATE SEQUENCE public.event_type_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.event_type_id_seq OWNER TO kbs;
+
 
 --
 -- Name: event_type_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -6999,7 +7057,7 @@ CREATE TABLE public.filter (
 );
 
 
-ALTER TABLE public.filter OWNER TO kbs;
+
 
 --
 -- Name: filter_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -7013,7 +7071,7 @@ CREATE SEQUENCE public.filter_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.filter_id_seq OWNER TO kbs;
+
 
 --
 -- Name: filter_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -7043,7 +7101,7 @@ CREATE TABLE public.frontend_account (
 );
 
 
-ALTER TABLE public.frontend_account OWNER TO kbs;
+
 
 --
 -- Name: COLUMN frontend_account.pwdreset_token; Type: COMMENT; Schema: public; Owner: kbs
@@ -7071,7 +7129,7 @@ CREATE SEQUENCE public.frontend_account_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.frontend_account_id_seq OWNER TO kbs;
+
 
 --
 -- Name: frontend_account_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -7106,7 +7164,7 @@ CREATE TABLE public.gateway_company (
 );
 
 
-ALTER TABLE public.gateway_company OWNER TO kbs;
+
 
 --
 -- Name: COLUMN gateway_company.json; Type: COMMENT; Schema: public; Owner: kbs
@@ -7190,7 +7248,7 @@ CREATE SEQUENCE public.gateway_company_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.gateway_company_id_seq OWNER TO kbs;
+
 
 --
 -- Name: gateway_company_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -7214,7 +7272,7 @@ CREATE TABLE public.gateway_parameter (
 );
 
 
-ALTER TABLE public.gateway_parameter OWNER TO kbs;
+
 
 --
 -- Name: gateway_parameter_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -7228,7 +7286,7 @@ CREATE SEQUENCE public.gateway_parameter_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.gateway_parameter_id_seq OWNER TO kbs;
+
 
 --
 -- Name: gateway_parameter_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -7255,7 +7313,7 @@ CREATE TABLE public.history (
 );
 
 
-ALTER TABLE public.history OWNER TO kbs;
+
 
 --
 -- Name: history_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -7269,7 +7327,7 @@ CREATE SEQUENCE public.history_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.history_id_seq OWNER TO kbs;
+
 
 --
 -- Name: history_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -7294,7 +7352,7 @@ CREATE TABLE public.image (
 );
 
 
-ALTER TABLE public.image OWNER TO kbs;
+
 
 --
 -- Name: image_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -7308,7 +7366,7 @@ CREATE SEQUENCE public.image_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.image_id_seq OWNER TO kbs;
+
 
 --
 -- Name: image_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -7337,7 +7395,7 @@ CREATE TABLE public.item (
 );
 
 
-ALTER TABLE public.item OWNER TO kbs;
+
 
 --
 -- Name: item_family; Type: TABLE; Schema: public; Owner: kbs
@@ -7355,7 +7413,7 @@ CREATE TABLE public.item_family (
 );
 
 
-ALTER TABLE public.item_family OWNER TO kbs;
+
 
 --
 -- Name: item_family_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -7369,7 +7427,7 @@ CREATE SEQUENCE public.item_family_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.item_family_id_seq OWNER TO kbs;
+
 
 --
 -- Name: item_family_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -7390,7 +7448,7 @@ CREATE SEQUENCE public.item_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.item_id_seq OWNER TO kbs;
+
 
 --
 -- Name: item_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -7411,7 +7469,7 @@ CREATE TABLE public.kbs1_country (
 );
 
 
-ALTER TABLE public.kbs1_country OWNER TO kbs;
+
 
 --
 -- Name: label; Type: TABLE; Schema: public; Owner: kbs
@@ -7430,7 +7488,7 @@ CREATE TABLE public.label (
 );
 
 
-ALTER TABLE public.label OWNER TO kbs;
+
 
 --
 -- Name: label_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -7444,7 +7502,7 @@ CREATE SEQUENCE public.label_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.label_id_seq OWNER TO kbs;
+
 
 --
 -- Name: label_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -7470,7 +7528,7 @@ CREATE TABLE public.language (
 );
 
 
-ALTER TABLE public.language OWNER TO kbs;
+
 
 --
 -- Name: language_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -7484,7 +7542,7 @@ CREATE SEQUENCE public.language_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.language_id_seq OWNER TO kbs;
+
 
 --
 -- Name: language_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -7522,7 +7580,7 @@ CREATE TABLE public.letter (
 );
 
 
-ALTER TABLE public.letter OWNER TO kbs;
+
 
 --
 -- Name: COLUMN letter.document_condition; Type: COMMENT; Schema: public; Owner: kbs
@@ -7550,7 +7608,7 @@ CREATE SEQUENCE public.letter_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.letter_id_seq OWNER TO kbs;
+
 
 --
 -- Name: letter_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -7584,7 +7642,7 @@ CREATE TABLE public.letter_type (
 );
 
 
-ALTER TABLE public.letter_type OWNER TO kbs;
+
 
 --
 -- Name: letter_type_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -7598,7 +7656,7 @@ CREATE SEQUENCE public.letter_type_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.letter_type_id_seq OWNER TO kbs;
+
 
 --
 -- Name: letter_type_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -7620,7 +7678,7 @@ CREATE TABLE public.lt_test_event (
 );
 
 
-ALTER TABLE public.lt_test_event OWNER TO kbs;
+
 
 --
 -- Name: lt_test_event_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -7634,7 +7692,7 @@ CREATE SEQUENCE public.lt_test_event_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.lt_test_event_id_seq OWNER TO kbs;
+
 
 --
 -- Name: lt_test_event_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -7655,7 +7713,7 @@ CREATE TABLE public.lt_test_set (
 );
 
 
-ALTER TABLE public.lt_test_set OWNER TO kbs;
+
 
 --
 -- Name: lt_test_set_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -7669,7 +7727,7 @@ CREATE SEQUENCE public.lt_test_set_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.lt_test_set_id_seq OWNER TO kbs;
+
 
 --
 -- Name: lt_test_set_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -7702,7 +7760,7 @@ CREATE TABLE public.mail (
 );
 
 
-ALTER TABLE public.mail OWNER TO kbs;
+
 
 --
 -- Name: mail_account; Type: TABLE; Schema: public; Owner: kbs
@@ -7719,7 +7777,7 @@ CREATE TABLE public.mail_account (
 );
 
 
-ALTER TABLE public.mail_account OWNER TO kbs;
+
 
 --
 -- Name: mail_account_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -7733,7 +7791,7 @@ CREATE SEQUENCE public.mail_account_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.mail_account_id_seq OWNER TO kbs;
+
 
 --
 -- Name: mail_account_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -7754,7 +7812,7 @@ CREATE SEQUENCE public.mail_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.mail_id_seq OWNER TO kbs;
+
 
 --
 -- Name: mail_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -7775,7 +7833,7 @@ CREATE TABLE public.method (
 );
 
 
-ALTER TABLE public.method OWNER TO kbs;
+
 
 --
 -- Name: method_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -7789,7 +7847,7 @@ CREATE SEQUENCE public.method_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.method_id_seq OWNER TO kbs;
+
 
 --
 -- Name: method_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -7811,7 +7869,7 @@ CREATE TABLE public.method_support (
 );
 
 
-ALTER TABLE public.method_support OWNER TO kbs;
+
 
 --
 -- Name: method_support_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -7825,7 +7883,7 @@ CREATE SEQUENCE public.method_support_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.method_support_id_seq OWNER TO kbs;
+
 
 --
 -- Name: method_support_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -7850,7 +7908,7 @@ CREATE TABLE public.metrics (
 );
 
 
-ALTER TABLE public.metrics OWNER TO kbs;
+
 
 --
 -- Name: metrics_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -7864,7 +7922,7 @@ CREATE SEQUENCE public.metrics_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.metrics_id_seq OWNER TO kbs;
+
 
 --
 -- Name: metrics_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -7892,7 +7950,7 @@ CREATE TABLE public.money_account (
 );
 
 
-ALTER TABLE public.money_account OWNER TO kbs;
+
 
 --
 -- Name: money_account_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -7906,7 +7964,7 @@ CREATE SEQUENCE public.money_account_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.money_account_id_seq OWNER TO kbs;
+
 
 --
 -- Name: money_account_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -7930,7 +7988,7 @@ CREATE TABLE public.money_account_type (
 );
 
 
-ALTER TABLE public.money_account_type OWNER TO kbs;
+
 
 --
 -- Name: money_account_type_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -7944,7 +8002,7 @@ CREATE SEQUENCE public.money_account_type_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.money_account_type_id_seq OWNER TO kbs;
+
 
 --
 -- Name: money_account_type_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -7970,7 +8028,7 @@ CREATE TABLE public.money_flow (
 );
 
 
-ALTER TABLE public.money_flow OWNER TO kbs;
+
 
 --
 -- Name: money_flow_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -7984,7 +8042,7 @@ CREATE SEQUENCE public.money_flow_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.money_flow_id_seq OWNER TO kbs;
+
 
 --
 -- Name: money_flow_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -8005,7 +8063,7 @@ CREATE TABLE public.money_flow_priority (
 );
 
 
-ALTER TABLE public.money_flow_priority OWNER TO kbs;
+
 
 --
 -- Name: money_flow_priority_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -8019,7 +8077,7 @@ CREATE SEQUENCE public.money_flow_priority_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.money_flow_priority_id_seq OWNER TO kbs;
+
 
 --
 -- Name: money_flow_priority_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -8039,7 +8097,7 @@ CREATE TABLE public.money_flow_type (
 );
 
 
-ALTER TABLE public.money_flow_type OWNER TO kbs;
+
 
 --
 -- Name: money_flow_type_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -8053,7 +8111,7 @@ CREATE SEQUENCE public.money_flow_type_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.money_flow_type_id_seq OWNER TO kbs;
+
 
 --
 -- Name: money_flow_type_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -8075,7 +8133,7 @@ CREATE TABLE public.money_statement (
 );
 
 
-ALTER TABLE public.money_statement OWNER TO kbs;
+
 
 --
 -- Name: money_statement_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -8089,7 +8147,7 @@ CREATE SEQUENCE public.money_statement_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.money_statement_id_seq OWNER TO kbs;
+
 
 --
 -- Name: money_statement_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -8110,7 +8168,7 @@ CREATE SEQUENCE public.money_transfer_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.money_transfer_id_seq OWNER TO kbs;
+
 
 --
 -- Name: money_transfer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -8132,7 +8190,7 @@ CREATE TABLE public.multiple_booking (
 );
 
 
-ALTER TABLE public.multiple_booking OWNER TO kbs;
+
 
 --
 -- Name: multiple_booking_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -8146,7 +8204,7 @@ CREATE SEQUENCE public.multiple_booking_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.multiple_booking_id_seq OWNER TO kbs;
+
 
 --
 -- Name: multiple_booking_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -8172,7 +8230,7 @@ CREATE TABLE public.operation (
 );
 
 
-ALTER TABLE public.operation OWNER TO kbs;
+
 
 --
 -- Name: operation_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -8186,7 +8244,7 @@ CREATE SEQUENCE public.operation_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.operation_id_seq OWNER TO kbs;
+
 
 --
 -- Name: operation_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -8282,7 +8340,7 @@ CREATE TABLE public.option (
 );
 
 
-ALTER TABLE public.option OWNER TO kbs;
+
 
 --
 -- Name: COLUMN option.cart_group_site_id; Type: COMMENT; Schema: public; Owner: kbs
@@ -8397,7 +8455,7 @@ CREATE TABLE public.option_condition (
 );
 
 
-ALTER TABLE public.option_condition OWNER TO kbs;
+
 
 --
 -- Name: option_condition_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -8411,7 +8469,7 @@ CREATE SEQUENCE public.option_condition_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.option_condition_id_seq OWNER TO kbs;
+
 
 --
 -- Name: option_condition_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -8432,7 +8490,7 @@ CREATE SEQUENCE public.option_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.option_id_seq OWNER TO kbs;
+
 
 --
 -- Name: option_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -8463,7 +8521,7 @@ CREATE TABLE public.organization (
 );
 
 
-ALTER TABLE public.organization OWNER TO kbs;
+
 
 --
 -- Name: COLUMN organization.timezone; Type: COMMENT; Schema: public; Owner: kbs
@@ -8519,7 +8577,7 @@ CREATE SEQUENCE public.organization_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.organization_id_seq OWNER TO kbs;
+
 
 --
 -- Name: organization_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -8540,7 +8598,7 @@ CREATE TABLE public.organization_type (
 );
 
 
-ALTER TABLE public.organization_type OWNER TO kbs;
+
 
 --
 -- Name: organization_type_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -8554,7 +8612,7 @@ CREATE SEQUENCE public.organization_type_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.organization_type_id_seq OWNER TO kbs;
+
 
 --
 -- Name: organization_type_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -8573,7 +8631,7 @@ CREATE TABLE public.package (
 );
 
 
-ALTER TABLE public.package OWNER TO kbs;
+
 
 --
 -- Name: package_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -8587,7 +8645,7 @@ CREATE SEQUENCE public.package_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.package_id_seq OWNER TO kbs;
+
 
 --
 -- Name: package_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -8607,7 +8665,7 @@ CREATE TABLE public.package_item (
 );
 
 
-ALTER TABLE public.package_item OWNER TO kbs;
+
 
 --
 -- Name: package_item_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -8621,7 +8679,7 @@ CREATE SEQUENCE public.package_item_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.package_item_id_seq OWNER TO kbs;
+
 
 --
 -- Name: package_item_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -8679,7 +8737,7 @@ CREATE TABLE public.person (
 );
 
 
-ALTER TABLE public.person OWNER TO kbs;
+
 
 --
 -- Name: person_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -8693,7 +8751,7 @@ CREATE SEQUENCE public.person_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.person_id_seq OWNER TO kbs;
+
 
 --
 -- Name: person_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -8714,7 +8772,7 @@ CREATE SEQUENCE public.rate_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.rate_id_seq OWNER TO kbs;
+
 
 --
 -- Name: rate_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -8742,7 +8800,7 @@ CREATE TABLE public.recipient (
 );
 
 
-ALTER TABLE public.recipient OWNER TO kbs;
+
 
 --
 -- Name: recipient_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -8756,7 +8814,7 @@ CREATE SEQUENCE public.recipient_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.recipient_id_seq OWNER TO kbs;
+
 
 --
 -- Name: recipient_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -8780,7 +8838,7 @@ CREATE TABLE public.resource (
 );
 
 
-ALTER TABLE public.resource OWNER TO kbs;
+
 
 --
 -- Name: resource_configuration; Type: TABLE; Schema: public; Owner: kbs
@@ -8801,7 +8859,7 @@ CREATE TABLE public.resource_configuration (
 );
 
 
-ALTER TABLE public.resource_configuration OWNER TO kbs;
+
 
 --
 -- Name: resource_configuration_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -8815,7 +8873,7 @@ CREATE SEQUENCE public.resource_configuration_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.resource_configuration_id_seq OWNER TO kbs;
+
 
 --
 -- Name: resource_configuration_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -8836,7 +8894,7 @@ CREATE SEQUENCE public.resource_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.resource_id_seq OWNER TO kbs;
+
 
 --
 -- Name: resource_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -8858,7 +8916,7 @@ CREATE TABLE public.role (
 );
 
 
-ALTER TABLE public.role OWNER TO kbs;
+
 
 --
 -- Name: role_attribution; Type: TABLE; Schema: public; Owner: kbs
@@ -8874,7 +8932,7 @@ CREATE TABLE public.role_attribution (
 );
 
 
-ALTER TABLE public.role_attribution OWNER TO kbs;
+
 
 --
 -- Name: role_attribution_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -8888,7 +8946,7 @@ CREATE SEQUENCE public.role_attribution_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.role_attribution_id_seq OWNER TO kbs;
+
 
 --
 -- Name: role_attribution_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -8909,7 +8967,7 @@ CREATE SEQUENCE public.role_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.role_id_seq OWNER TO kbs;
+
 
 --
 -- Name: role_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -8928,7 +8986,7 @@ CREATE TABLE public.sector (
 );
 
 
-ALTER TABLE public.sector OWNER TO kbs;
+
 
 --
 -- Name: sector_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -8942,7 +9000,7 @@ CREATE SEQUENCE public.sector_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.sector_id_seq OWNER TO kbs;
+
 
 --
 -- Name: sector_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -8965,7 +9023,7 @@ CREATE TABLE public.session_agent (
 );
 
 
-ALTER TABLE public.session_agent OWNER TO kbs;
+
 
 --
 -- Name: session_agent_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -8979,7 +9037,7 @@ CREATE SEQUENCE public.session_agent_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.session_agent_id_seq OWNER TO kbs;
+
 
 --
 -- Name: session_agent_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -9009,7 +9067,7 @@ CREATE TABLE public.session_application (
 );
 
 
-ALTER TABLE public.session_application OWNER TO kbs;
+
 
 --
 -- Name: session_application_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -9023,7 +9081,7 @@ CREATE SEQUENCE public.session_application_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.session_application_id_seq OWNER TO kbs;
+
 
 --
 -- Name: session_application_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -9046,7 +9104,7 @@ CREATE TABLE public.session_connection (
 );
 
 
-ALTER TABLE public.session_connection OWNER TO kbs;
+
 
 --
 -- Name: session_connection_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -9060,7 +9118,7 @@ CREATE SEQUENCE public.session_connection_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.session_connection_id_seq OWNER TO kbs;
+
 
 --
 -- Name: session_connection_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -9083,7 +9141,7 @@ CREATE TABLE public.session_process (
 );
 
 
-ALTER TABLE public.session_process OWNER TO kbs;
+
 
 --
 -- Name: session_process_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -9097,7 +9155,7 @@ CREATE SEQUENCE public.session_process_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.session_process_id_seq OWNER TO kbs;
+
 
 --
 -- Name: session_process_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -9121,7 +9179,7 @@ CREATE TABLE public."session_user" (
 );
 
 
-ALTER TABLE public."session_user" OWNER TO kbs;
+
 
 --
 -- Name: session_user_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -9135,7 +9193,7 @@ CREATE SEQUENCE public.session_user_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.session_user_id_seq OWNER TO kbs;
+
 
 --
 -- Name: session_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -9168,7 +9226,7 @@ CREATE TABLE public.site (
 );
 
 
-ALTER TABLE public.site OWNER TO kbs;
+
 
 --
 -- Name: site_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -9182,7 +9240,7 @@ CREATE SEQUENCE public.site_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.site_id_seq OWNER TO kbs;
+
 
 --
 -- Name: site_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -9203,7 +9261,7 @@ CREATE TABLE public.site_item_family (
 );
 
 
-ALTER TABLE public.site_item_family OWNER TO kbs;
+
 
 --
 -- Name: site_item_family_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -9217,7 +9275,7 @@ CREATE SEQUENCE public.site_item_family_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.site_item_family_id_seq OWNER TO kbs;
+
 
 --
 -- Name: site_item_family_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -9242,7 +9300,7 @@ CREATE TABLE public.smtp_account (
 );
 
 
-ALTER TABLE public.smtp_account OWNER TO kbs;
+
 
 --
 -- Name: smtp_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -9256,7 +9314,7 @@ CREATE SEQUENCE public.smtp_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.smtp_id_seq OWNER TO kbs;
+
 
 --
 -- Name: smtp_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -9275,7 +9333,7 @@ CREATE TABLE public.smtp_quota (
 );
 
 
-ALTER TABLE public.smtp_quota OWNER TO kbs;
+
 
 --
 -- Name: smtp_quota_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -9289,7 +9347,7 @@ CREATE SEQUENCE public.smtp_quota_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.smtp_quota_id_seq OWNER TO kbs;
+
 
 --
 -- Name: smtp_quota_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -9313,7 +9371,7 @@ CREATE TABLE public.stock (
 );
 
 
-ALTER TABLE public.stock OWNER TO kbs;
+
 
 --
 -- Name: stock_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -9327,7 +9385,7 @@ CREATE SEQUENCE public.stock_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.stock_id_seq OWNER TO kbs;
+
 
 --
 -- Name: stock_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -9355,7 +9413,7 @@ CREATE TABLE public.stock_transfer (
 );
 
 
-ALTER TABLE public.stock_transfer OWNER TO kbs;
+
 
 --
 -- Name: stock_transfer_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -9369,7 +9427,7 @@ CREATE SEQUENCE public.stock_transfer_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.stock_transfer_id_seq OWNER TO kbs;
+
 
 --
 -- Name: stock_transfer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -9394,7 +9452,7 @@ CREATE TABLE public.subscription (
 );
 
 
-ALTER TABLE public.subscription OWNER TO kbs;
+
 
 --
 -- Name: subscription_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -9408,7 +9466,7 @@ CREATE SEQUENCE public.subscription_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.subscription_id_seq OWNER TO kbs;
+
 
 --
 -- Name: subscription_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -9432,7 +9490,7 @@ CREATE UNLOGGED TABLE public.sys_log (
 );
 
 
-ALTER TABLE public.sys_log OWNER TO kbs;
+
 
 --
 -- Name: sys_log_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -9446,7 +9504,7 @@ CREATE SEQUENCE public.sys_log_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.sys_log_id_seq OWNER TO kbs;
+
 
 --
 -- Name: sys_log_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -9464,7 +9522,7 @@ CREATE TABLE public.sys_sync (
 );
 
 
-ALTER TABLE public.sys_sync OWNER TO kbs;
+
 
 --
 -- Name: teacher; Type: TABLE; Schema: public; Owner: kbs
@@ -9481,7 +9539,7 @@ CREATE TABLE public.teacher (
 );
 
 
-ALTER TABLE public.teacher OWNER TO kbs;
+
 
 --
 -- Name: teacher_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -9495,7 +9553,7 @@ CREATE SEQUENCE public.teacher_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.teacher_id_seq OWNER TO kbs;
+
 
 --
 -- Name: teacher_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -9516,7 +9574,7 @@ CREATE TABLE public.third_party (
 );
 
 
-ALTER TABLE public.third_party OWNER TO kbs;
+
 
 --
 -- Name: third_party_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -9530,7 +9588,7 @@ CREATE SEQUENCE public.third_party_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.third_party_id_seq OWNER TO kbs;
+
 
 --
 -- Name: third_party_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -9553,7 +9611,7 @@ CREATE TABLE public.timezone (
 );
 
 
-ALTER TABLE public.timezone OWNER TO kbs;
+
 
 --
 -- Name: timezone_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -9567,7 +9625,7 @@ CREATE SEQUENCE public.timezone_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.timezone_id_seq OWNER TO kbs;
+
 
 --
 -- Name: timezone_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -9587,7 +9645,7 @@ CREATE TABLE public.vat (
 );
 
 
-ALTER TABLE public.vat OWNER TO kbs;
+
 
 --
 -- Name: vat_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -9601,7 +9659,7 @@ CREATE SEQUENCE public.vat_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.vat_id_seq OWNER TO kbs;
+
 
 --
 -- Name: vat_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -9619,7 +9677,7 @@ CREATE TABLE public.visibility (
 );
 
 
-ALTER TABLE public.visibility OWNER TO kbs;
+
 
 --
 -- Name: visibility_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -9633,7 +9691,7 @@ CREATE SEQUENCE public.visibility_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.visibility_id_seq OWNER TO kbs;
+
 
 --
 -- Name: visibility_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
@@ -9653,7 +9711,7 @@ CREATE TABLE public.warehouse (
 );
 
 
-ALTER TABLE public.warehouse OWNER TO kbs;
+
 
 --
 -- Name: warehouse_id_seq; Type: SEQUENCE; Schema: public; Owner: kbs
@@ -9667,7 +9725,7 @@ CREATE SEQUENCE public.warehouse_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.warehouse_id_seq OWNER TO kbs;
+
 
 --
 -- Name: warehouse_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kbs
