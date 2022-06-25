@@ -1,8 +1,10 @@
 package mongoose.ecommerce.backoffice.activities.bookings;
 
+import dev.webfx.framework.client.ui.action.ActionGroup;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
+import mongoose.base.backoffice.operations.entities.generic.AddNewSnapshotRequest;
 import mongoose.crm.backoffice.controls.bookingdetailspanel.BookingDetailsPanel;
 import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilder;
 import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
@@ -58,6 +60,7 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
         Pane container = ui.buildUi();
 
         setUpContextMenu(LayoutUtil.lookupChild(ui.getGroupMasterSlaveView().getMasterView(), n -> n instanceof VisualGrid), () -> newActionGroup(
+                newSnapshotActionGroup(container),
                 newOperationAction(() -> new SendLetterRequest(pm.getSelectedDocument(), container)),
                 newSeparatorActionGroup("Registration",
                         newOperationAction(() -> new ToggleMarkDocumentAsReadRequest(pm.getSelectedDocument(), container), /* to update the i18n text when the selection change -> */ pm.selectedDocumentProperty()),
@@ -82,6 +85,14 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
         ));
 
         return container;
+    }
+
+    // TODO move this into an interface
+    private ActionGroup newSnapshotActionGroup(Pane container) {
+        //List<Document> selectedEntities = masterVisualMapper.getSelectedEntities();
+        //System.out.println("selectedEntities.size() = " + selectedEntities.size());
+        return newActionGroup("Snapshot", true,
+                newOperationAction(() -> new AddNewSnapshotRequest(masterVisualMapper.getSelectedEntities(), pm.getSelectedMaster().getOrganization(), container),  pm.selectedDocumentProperty()));
     }
 
     @Override

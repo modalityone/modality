@@ -21,6 +21,7 @@
         <module>mongoose-base-backoffice-masterslave</module>
         <module>mongoose-base-backoffice-multilangeditor</module>
         <module>mongoose-base-backoffice-operations-generic</module>
+        <module>mongoose-base-backoffice-operations-snapshot</module>
         <module>mongoose-base-client-activity</module>
         <module>mongoose-base-client-aggregates</module>
         <module>mongoose-base-client-application</module>

@@ -15,6 +15,8 @@ module mongoose.base.backoffice.operations.generic {
     requires webfx.framework.shared.orm.expression;
     requires webfx.platform.shared.async;
     requires webfx.platform.shared.submit;
+    requires mongoose.base.shared.entities;
+    requires webfx.framework.client.orm.entity.controls;
 
     // Exported packages
     exports mongoose.base.backoffice.operations.entities.generic;

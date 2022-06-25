@@ -25,5 +25,6 @@ mongoose.base.shared.entities.impl.OrganizationTypeImpl$ProvidedFactory
 mongoose.base.shared.entities.impl.PersonImpl$ProvidedFactory
 mongoose.base.shared.entities.impl.RateImpl$ProvidedFactory
 mongoose.base.shared.entities.impl.SiteImpl$ProvidedFactory
+mongoose.base.shared.entities.impl.SnapshotImpl$ProvidedFactory
 mongoose.base.shared.entities.impl.SystemMetricsEntityImpl$ProvidedFactory
 mongoose.base.shared.entities.impl.TeacherImpl$ProvidedFactory
