@@ -1,15 +1,11 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
-module mongoose.base.backoffice.operations.generic {
+module mongoose.base.backoffice.operations.snapshot {
 
     // Direct dependencies modules
     requires java.base;
     requires javafx.graphics;
-    requires mongoose.base.shared.entities;
-    requires webfx.extras.type;
     requires webfx.extras.visual.controls.grid;
-    requires webfx.framework.client.controls;
-    requires webfx.framework.client.orm.entity.controls;
     requires webfx.framework.client.orm.reactive.entities;
     requires webfx.framework.shared.operation;
     requires webfx.framework.shared.orm.domainmodel;
@@ -19,6 +15,6 @@ module mongoose.base.backoffice.operations.generic {
     requires webfx.platform.shared.submit;
 
     // Exported packages
-    exports mongoose.base.backoffice.operations.entities.generic;
+    exports mongoose.base.backoffice.operations.snapshot;
 
 }

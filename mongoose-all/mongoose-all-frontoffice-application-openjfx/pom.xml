@@ -194,7 +194,7 @@
         </profile>
 
         <profile>
-            <id>javapackager</id>
+            <id>openjfx-desktop</id>
 
             <build>
                 <plugins>
