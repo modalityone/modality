@@ -25,7 +25,7 @@ name: Multi-OS builds
 
 on:
   push:
-    branches: [ main ]
+    branches: [ refactor-modality ]
   pull_request:
      branches: [ main ]
 
@@ -35,8 +35,8 @@ jobs:
     strategy:
       matrix:
         app: [
-          { name: 'MongooseBackOffice',  parent-module: "mongoose-all", module-token: 'mongoose-all-backoffice',  gwt-token: 'mongoose_all_backoffice',  web-push-branch: 'mongoose-backoffice-web-build',  ios-bundle-id: 'org.mongoose.backoffice',  version: '1.0.0-SNAPSHOT' },
-          { name: 'MongooseFrontOffice', parent-module: "mongoose-all", module-token: 'mongoose-all-frontoffice', gwt-token: 'mongoose_all_frontoffice', web-push-branch: 'mongoose-frontoffice-web-build', ios-bundle-id: 'org.mongoose.frontoffice', version: '1.0.0-SNAPSHOT' }
+          { name: 'MongooseBackOffice',  parent-module: "mongoose-all", module-token: 'mongoose-all-backoffice',  gwt-token: 'mongoose_all_backoffice',  web-push-branch: 'backoffice',  ios-bundle-id: 'org.mongoose.backoffice',  version: '1.0.0-SNAPSHOT' },
+          { name: 'MongooseFrontOffice', parent-module: "mongoose-all", module-token: 'mongoose-all-frontoffice', gwt-token: 'mongoose_all_frontoffice', web-push-branch: 'frontoffice', ios-bundle-id: 'org.mongoose.frontoffice', version: '1.0.0-SNAPSHOT' }
         ]
         os-config:  [1, 2, 3, 4]
         include:
@@ -85,7 +85,7 @@ jobs:
       app-gwt-module-dir:        ./${{ matrix.app.parent-module }}/${{ matrix.app.module-token }}-application-gwt
       app-gwt-build-dir:         ./${{ matrix.app.parent-module }}/${{ matrix.app.module-token }}-application-gwt/target/${{ matrix.app.module-token }}-application-gwt-${{ matrix.app.version }}/${{ matrix.app.gwt-token }}_application_gwt
       app-gluon-module-dir:      ./${{ matrix.app.parent-module }}/${{ matrix.app.module-token }}-application-gluon
-      web-push-repository-name:  'mongoose' # This same repository (GitHub doesn't provide ${{ github.repository_name }}
+      web-push-repository-name:  'modality-netlify'
       web-push-repository-owner: ${{ github.repository_owner }}
       web-push-username: ${{ github.actor }}
       web-push-email: ${{ secrets.API_GITHUB_EMAIL }}
