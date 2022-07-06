@@ -1,33 +1,36 @@
 package mongoose.base.backoffice.activities.filters;
 
+import dev.webfx.extras.cell.renderer.TextRenderer;
+import dev.webfx.extras.visual.VisualColumn;
+import dev.webfx.extras.visual.VisualResultBuilder;
+import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.framework.client.ui.action.ActionGroup;
 import dev.webfx.framework.client.ui.action.operation.OperationActionFactoryMixin;
+import dev.webfx.framework.client.ui.controls.entity.selector.ButtonSelector;
 import dev.webfx.framework.shared.orm.domainmodel.DomainClass;
 import dev.webfx.framework.shared.orm.entity.Entity;
-import dev.webfx.framework.shared.orm.dql.DqlStatement;
-import dev.webfx.framework.shared.orm.dql.DqlStatementBuilder;
+import dev.webfx.kit.util.properties.Properties;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.util.StringConverter;
 import mongoose.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
 import mongoose.base.backoffice.operations.entities.filters.*;
 import mongoose.base.client.activity.eventdependent.EventDependentViewDomainActivity;
-import mongoose.base.client.presentationmodel.HasSearchTextProperty;
 import mongoose.base.shared.entities.Filter;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static dev.webfx.framework.shared.orm.dql.DqlStatement.*;
@@ -51,16 +54,59 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
 
     @Override
     public Node buildUi() {
+        // The outer box of components.
+        outerVerticalBox = new VBox();
 
         // FilterPane components
         Label filterSearchLabel = new Label("Select search filter");
-        Label classLabel = new Label("Class");
-        ComboBox<String> classComboBox = buildClassComboBox();
-        pm.filterClassProperty().bind(classComboBox.valueProperty());
+        Label classLabel = new Label("Class: ");
+        ButtonSelector<DomainClass> classSelector = new ButtonSelector<>(this, outerVerticalBox) {
+            private final List<DomainClass> allClasses = getDomainModel().getAllClasses();
+            private List<DomainClass> searchedClasses;
+            private final VisualGrid dialogVisualGrid = new SkinnedVisualGrid(); // Better rendering in desktop JavaFx (but might be slower in web version)
+            {
+                dialogVisualGrid.setHeaderVisible(false);
+                dialogVisualGrid.setCursor(Cursor.HAND);
+                BorderPane.setAlignment(dialogVisualGrid, Pos.TOP_LEFT);
+                updateDialogVisualGrid();
+                dialogVisualGrid.visualSelectionProperty().addListener((observable, oldValue, vs) -> {
+                    setSelectedItem(vs.getSelectedRow() == 0 ? null : searchedClasses.get(vs.getSelectedRow() - 1));
+                    pm.filterClassProperty().set(toText(getSelectedItem()));
+                    closeDialog();
+                });
+                Properties.runOnPropertiesChange(this::updateDialogVisualGrid, searchTextProperty());
+            }
+            @Override
+            protected Node getOrCreateButtonContentFromSelectedItem() {
+                return new Label(toText(getSelectedItem()));
+            }
+
+            @Override
+            protected void startLoading() {}
+
+            @Override
+            protected Region getOrCreateDialogContent() {
+                return dialogVisualGrid;
+            }
+
+            private String toText(DomainClass domainClass) {
+                return domainClass == null ? "<Any>" : domainClass.getName();
+            }
+
+            private void updateDialogVisualGrid() {
+                String classSearch = searchTextProperty().get();
+                searchedClasses = allClasses.stream().filter(c -> classSearch == null || c.getName().toLowerCase().contains(classSearch.toLowerCase())).collect(Collectors.toList());
+                VisualResultBuilder vsb = VisualResultBuilder.create(searchedClasses.size() + 1, VisualColumn.create(TextRenderer.SINGLETON));
+                vsb.setValue(0, 0, toText(null));
+                for (int i = 0; i < searchedClasses.size(); i++)
+                    vsb.setValue(i + 1, 0, toText(searchedClasses.get(i)));
+                dialogVisualGrid.setVisualResult(vsb.build());
+            }
+        };
         TextField filterSearchField = new TextField();
-        ((HasSearchTextProperty) pm).searchTextProperty().bind(filterSearchField.textProperty());
+        pm.searchTextProperty().bind(filterSearchField.textProperty());
         Button addNewFilterButton = newButton(newOperationAction(() -> new AddNewFilterRequest(getEventStore(), outerVerticalBox)));
-        HBox filterSearchRow = new HBox(classLabel, classComboBox, filterSearchField, addNewFilterButton);
+        HBox filterSearchRow = new HBox(classLabel, classSelector.getButton(), filterSearchField, addNewFilterButton);
         HBox.setHgrow(filterSearchField, Priority.ALWAYS);
         filterSearchRow.setAlignment(Pos.CENTER);
 
@@ -78,7 +124,9 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         // FieldPane components
         Label fieldSearchLabel = new Label("Search fields");
         TextField fieldSearchField = new TextField();
-        fieldSearchField.disableProperty().bind(selectedFilter.isNull());
+        //BooleanBinding isSelectedFilterNull = selectedFilter.isNull(); // Not yet emulated by WebFX
+        ObservableValue<Boolean> isSelectedFilterNull = Properties.compute(selectedFilter, Objects::isNull); // WebFX replacement
+        fieldSearchField.disableProperty().bind(isSelectedFilterNull);
         Button addNewFieldsButton = newButton(newOperationAction(() -> new AddNewFieldsRequest(getEventStore(), outerVerticalBox)));
         HBox fieldsSearchRow = new HBox(fieldSearchField, addNewFieldsButton);
         HBox.setHgrow(fieldSearchField, Priority.ALWAYS);
@@ -86,7 +134,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
 
         VisualGrid fieldGrid = new VisualGrid();
         fieldGrid.visualResultProperty().bind(pm.fieldsVisualResultProperty());
-        fieldGrid.disableProperty().bind(selectedFilter.isNull());
+        fieldGrid.disableProperty().bind(isSelectedFilterNull);
         pm.filtersVisualSelectionProperty().bind(filterGrid.visualSelectionProperty());
         pm.fieldsVisualSelectionProperty().bind(fieldGrid.visualSelectionProperty());
         fieldGrid.visualSelectionProperty().addListener(e -> populateFilterTable());
@@ -140,13 +188,12 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         resultPaneBorder.setBorder(new Border(new BorderStroke(Color.LIGHTGRAY, BorderStrokeStyle.SOLID, null, null)));
         VBox.setMargin(resultPaneBorder, new Insets(20, 20, 20, 20));
 
-        // The outer box of components.
-        outerVerticalBox = new VBox();
         outerVerticalBox.getChildren().add(filterAndFieldPaneBorder);
         outerVerticalBox.getChildren().add(resultPaneBorder);
         return outerVerticalBox;
     }
 
+/*
     private ComboBox<String> buildClassComboBox() {
         ComboBox<String> classComboBox = new ComboBox<>();
         classComboBox.setItems(FXCollections.observableList(listClasses()));
@@ -164,6 +211,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         return classComboBox;
     }
 
+
     private List<String> listClasses() {
         List<String> allClassNames = getDomainModel().getAllClasses().stream()
                 .map(DomainClass::getName)
@@ -172,7 +220,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         allClassNames.add(0, null);
         return allClassNames;
     }
-
+*/
     private ActionGroup createFilterGridContextMenuActionGroup() {
         return newActionGroup(
                 newOperationAction(() -> new EditFilterRequest(selectedFilter.get(), outerVerticalBox)),
@@ -252,7 +300,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                         "{label: 'Where', expression: 'whereClause'}," +
                         "{label: 'GroupBy', expression: 'groupByClause'}," +
                         //"{label: 'Having', expression: 'havingClause'}," +
-                        "{label: 'OrderBy', expression: 'orderByClause'}," +
+                        "{label: 'OrderBy', expression: 'orderByClause'}" +
                         //"{label: 'Limit', expression: 'limitClause'}" +
                         "]")
                 .ifTrimNotEmpty(pm.fieldsSearchTextProperty(), s -> where("lower(name) like ?", "%" + s.toLowerCase() + "%"))
@@ -280,7 +328,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         displayStatus(status);
 
         filterFieldsResultVisualMapper = ReactiveVisualMapper.<Entity>createPushReactiveChain(this)
-                .always("{class: '" + selectedClass + "', alias: 'ma', columns: '" + columns + "', fields: 'id'" + orderBy + "}")
+                .always("{class: '" + selectedClass + "', alias: 'ma', columns: '" + columns + "', fields: 'id'" + orderBy + ", limit: 100}")
                 .ifNotNull(selectedFilter, s -> where(s.getWhereClause()))
                 .ifNotNull(selectedFilter, s -> limit(s.getLimitClause()))
                 .ifNotNull(selectedFilter, s -> s.getOrderByClause() != null && !s.getOrderByClause().isEmpty() ? parse("orderBy: '" + s.getOrderByClause() + "'") : null)
@@ -299,7 +347,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         }
 
         String orderBy = selectedFields.get().getOrderByClause();
-        if (orderBy != null && !orderBy.isBlank()) {
+        if (orderBy != null && !orderBy.isEmpty()) {
             return ", orderBy: '" + orderBy + "'";
         } else {
             return "";
@@ -310,6 +358,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         statusLabel.setText(status);
     }
 
+/*
     protected DqlStatement getFiltersResultDqlStatementBuilder() {
         System.out.print("GOT HERE 1------");
         DomainClass domainClass = filtersVisualMapper.getSelectedEntity().getDomainClass();
@@ -326,6 +375,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         return builder.build();
         // return new DqlStatementBuilder(fieldsVisualMapper.getSelectedEntity().getDomainClass()).setColumns(fieldsVisualMapper.getSelectedEntity().getColumns()).build()
     }
+*/
 
     @Override
     protected void refreshDataOnActive() {

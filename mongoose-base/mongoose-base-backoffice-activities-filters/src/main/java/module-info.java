@@ -10,14 +10,16 @@ module mongoose.base.backoffice.activities.filters {
     requires mongoose.base.backoffice.masterslave;
     requires mongoose.base.backoffice.operations.filters;
     requires mongoose.base.client.activity;
-    requires mongoose.base.client.presentationmodel;
     requires mongoose.base.shared.entities;
+    requires webfx.extras.cell;
     requires webfx.extras.visual.base;
     requires webfx.extras.visual.controls.grid;
     requires webfx.framework.client.action;
     requires webfx.framework.client.activity;
+    requires webfx.framework.client.controls;
     requires webfx.framework.client.operationaction;
     requires webfx.framework.client.orm.domainmodel.activity;
+    requires webfx.framework.client.orm.entity.controls;
     requires webfx.framework.client.orm.reactive.visual;
     requires webfx.framework.client.uirouter;
     requires webfx.framework.shared.operation;
@@ -25,6 +27,7 @@ module mongoose.base.backoffice.activities.filters {
     requires webfx.framework.shared.orm.dql;
     requires webfx.framework.shared.orm.entity;
     requires webfx.framework.shared.router;
+    requires webfx.kit.util;
     requires webfx.platform.client.windowhistory;
     requires webfx.platform.shared.util;
 

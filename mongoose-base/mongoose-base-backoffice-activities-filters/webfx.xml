@@ -15,6 +15,7 @@
             <undetected-module>webfx-framework-client-action</undetected-module>
             <undetected-module>webfx-framework-client-activity</undetected-module>
             <undetected-module>webfx-platform-shared-util</undetected-module>
+            <undetected-module>webfx-framework-client-controls</undetected-module>
         </used-by-source-modules>
     </dependencies>
 

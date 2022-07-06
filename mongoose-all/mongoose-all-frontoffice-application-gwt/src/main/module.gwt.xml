@@ -219,6 +219,7 @@
     <!--=========================< mongoose-base-shared-entities >==========================-->
     <!-- used by mongoose-base-client-icons (SOURCE) -->
     <source path="mongoose/base/shared/entities"/>
+    <source path="mongoose/base/shared/entities/converters"/>
     <source path="mongoose/base/shared/entities/formatters"/>
     <source path="mongoose/base/shared/entities/impl"/>
     <source path="mongoose/base/shared/entities/markers"/>

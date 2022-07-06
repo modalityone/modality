@@ -13,6 +13,8 @@
 
     <artifactId>mongoose-all-frontoffice-application-gluon</artifactId>
 
+    <name>MongooseAllFrontoffice</name>
+
     <dependencies>
 
         <dependency>
@@ -156,29 +158,21 @@
 
     </dependencies>
 
-    <build>
-        <plugins>
-
-            <plugin>
-                <groupId>com.gluonhq</groupId>
-                <artifactId>gluonfx-maven-plugin</artifactId>
-            </plugin>
-
-        </plugins>
-    </build>
-
-    <!-- Redefining the gluon profiles here, so they can be activated locally when invoking this pom directly -->
-    <!-- Note: activating a profile locally here will trigger the properties defined in the root pom -->
+    <!-- Redefining the gluon profiles here, so they can be activated when invoking this pom directly -->
+    <!-- Note: activating a profile locally here will trigger the properties defined in webfx-parent -->
     <profiles>
         <profile>
-            <id>gluon-desktop</id>
+            <id>gluon-desktop</id>            <!-- Will set the Gluon target to host -->
         </profile>
         <profile>
-            <id>gluon-android</id>
+            <id>gluon-android</id>            <!-- Will set the Gluon target to android -->
         </profile>
         <profile>
-            <id>gluon-ios</id>
+            <id>gluon-ios</id>            <!-- Will set the Gluon target to ios -->
         </profile>
     </profiles>
+
+    <!-- The Gluon plugin is auto-injected here by the auto-plugin-gluon profile defined in webfx-parent -->
+    <!-- but it will be really executed only if Maven is invoked with a Gluon goal (ex: gluonfx:build) -->
 
 </project>

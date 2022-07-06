@@ -22,14 +22,14 @@
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-base-backoffice-activities-filters</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.mongoose</groupId>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-base-backoffice-activities-monitor</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>

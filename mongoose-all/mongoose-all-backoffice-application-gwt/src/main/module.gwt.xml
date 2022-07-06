@@ -138,6 +138,9 @@
     <!--====================< mongoose-base-backoffice-multilangeditor >====================-->
     <!-- used by mongoose-crm-backoffice-activities-letter (SOURCE) -->
     <source path="mongoose/base/backoffice/controls/multilangeditor"/>
+    <!--==================< mongoose-base-backoffice-operations-filters >===================-->
+    <!-- used by mongoose-base-backoffice-activities-filters (SOURCE) -->
+    <source path="mongoose/base/backoffice/operations/entities/filters"/>
     <!--==================< mongoose-base-backoffice-operations-generic >===================-->
     <!-- used by mongoose-ecommerce-backoffice-operations-document (SOURCE) -->
     <source path="mongoose/base/backoffice/operations/entities/generic"/>
@@ -249,6 +252,7 @@
     <!--=========================< mongoose-base-shared-entities >==========================-->
     <!-- used by mongoose-base-client-presentationmodel (SOURCE) -->
     <source path="mongoose/base/shared/entities"/>
+    <source path="mongoose/base/shared/entities/converters"/>
     <source path="mongoose/base/shared/entities/formatters"/>
     <source path="mongoose/base/shared/entities/impl"/>
     <source path="mongoose/base/shared/entities/markers"/>
@@ -389,7 +393,7 @@
     <!-- used by mongoose-all-backoffice-application (PLUGIN) -->
     <source path="mongoose/event/backoffice/activities/cloneevent"/>
     <!--============< mongoose-event-backoffice-activities-cloneevent-routing >=============-->
-    <!-- used by mongoose-base-backoffice-activities-filters (SOURCE) -->
+    <!-- used by mongoose-ecommerce-backoffice-activities-bookings (SOURCE) -->
     <source path="mongoose/event/backoffice/activities/cloneevent/routing"/>
     <source path="mongoose/event/backoffice/operations/routes/cloneevent"/>
     <!--==================< mongoose-event-backoffice-activities-events >===================-->
@@ -413,7 +417,7 @@
     <!-- used by mongoose-crm-client-personaldetails (SOURCE) -->
     <source path="mongoose/event/client/controls/sectionpanel"/>
     <!--===================< mongoose-event-frontoffice-activities-fees >===================-->
-    <!-- used by mongoose-base-backoffice-activities-filters (SOURCE) -->
+    <!-- used by mongoose-ecommerce-backoffice-activities-bookings (SOURCE) -->
     <source path="mongoose/event/frontoffice/activities/fees"/>
     <source path="mongoose/event/frontoffice/activities/fees/routing"/>
     <source path="mongoose/event/frontoffice/operations/fees"/>
