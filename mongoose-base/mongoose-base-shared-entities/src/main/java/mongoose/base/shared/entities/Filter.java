@@ -41,4 +41,8 @@ public interface Filter extends Entity, EntityHasName {
         return getStringFieldValue("columns");
     }
 
+    default void setIsColumns(Boolean isColumns) {
+        setFieldValue("isColumns", isColumns);
+    }
+
 }

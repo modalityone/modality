@@ -16,10 +16,12 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>mongoose-base-backoffice-activities-filters</module>
         <module>mongoose-base-backoffice-activities-monitor</module>
         <module>mongoose-base-backoffice-activities-operations</module>
         <module>mongoose-base-backoffice-masterslave</module>
         <module>mongoose-base-backoffice-multilangeditor</module>
+        <module>mongoose-base-backoffice-operations-filters</module>
         <module>mongoose-base-backoffice-operations-generic</module>
         <module>mongoose-base-backoffice-operations-snapshot</module>
         <module>mongoose-base-client-activity</module>

@@ -91,6 +91,7 @@
 
                 <!-- Base activities -->
                 <plugin-module>mongoose-base-backoffice-activities-monitor</plugin-module>
+                <plugin-module>mongoose-base-backoffice-activities-filters</plugin-module>
                 <plugin-module>mongoose-base-backoffice-activities-operations</plugin-module>
 
                 <!-- CRM activities -->
@@ -268,10 +269,12 @@
         <project name="mongoose-base">
 
             <modules>
+                <module>mongoose-base-backoffice-activities-filters</module>
                 <module>mongoose-base-backoffice-activities-monitor</module>
                 <module>mongoose-base-backoffice-activities-operations</module>
                 <module>mongoose-base-backoffice-masterslave</module>
                 <module>mongoose-base-backoffice-multilangeditor</module>
+                <module>mongoose-base-backoffice-operations-filters</module>
                 <module>mongoose-base-backoffice-operations-generic</module>
                 <module>mongoose-base-backoffice-operations-snapshot</module>
                 <module>mongoose-base-client-activity</module>
@@ -299,6 +302,61 @@
                 <module>mongoose-base-shared-domainmodel</module>
                 <module>mongoose-base-shared-entities</module>
             </modules>
+
+        </project>
+
+        <project name="mongoose-base-backoffice-activities-filters">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <providers>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.base.backoffice.activities.filters.FiltersUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.base.backoffice.activities.filters.RouteToFiltersRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+            </providers>
+
+            <dependencies>
+                <used-by-source-modules>
+                    <undetected-module>webfx-framework-client-action</undetected-module>
+                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-platform-shared-util</undetected-module>
+                    <undetected-module>webfx-framework-client-controls</undetected-module>
+                </used-by-source-modules>
+            </dependencies>
+
+            <source-packages>
+                <package>mongoose.base.backoffice.operations.routes.filters</package>
+                <package>mongoose.base.backoffice.activities.filters</package>
+                <package>mongoose.base.backoffice.activities.filters.routing</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>mongoose-base-backoffice-masterslave</module>
+                <module>mongoose-base-backoffice-operations-filters</module>
+                <module>mongoose-base-client-activity</module>
+                <module>mongoose-base-shared-entities</module>
+                <module>webfx-extras-cell</module>
+                <module>webfx-extras-visual-base</module>
+                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-framework-client-action</module>
+                <module>webfx-framework-client-operationaction</module>
+                <module>webfx-framework-client-orm-domainmodel-activity</module>
+                <module>webfx-framework-client-orm-entity-controls</module>
+                <module>webfx-framework-client-orm-reactive-visual</module>
+                <module>webfx-framework-client-uirouter</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-domainmodel</module>
+                <module>webfx-framework-shared-orm-dql</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-framework-shared-router</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-platform-client-windowhistory</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -462,6 +520,33 @@
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-shared-async</module>
                 <module>webfx-platform-shared-util</module>
+            </used-by-source-modules>
+
+        </project>
+
+        <project name="mongoose-base-backoffice-operations-filters">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+            </dependencies>
+
+            <source-packages>
+                <package>mongoose.base.backoffice.operations.entities.filters</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>mongoose-base-shared-entities</module>
+                <module>webfx-framework-client-controls</module>
+                <module>webfx-framework-client-orm-entity-controls</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-shared-async</module>
+                <module>webfx-platform-shared-submit</module>
             </used-by-source-modules>
 
         </project>
@@ -3531,6 +3616,7 @@
         <usages>
 
             <java-package name="dev.webfx.framework.shared.orm.domainmodel">
+                <module>mongoose-base-backoffice-activities-filters</module>
                 <module>mongoose-base-backoffice-multilangeditor</module>
                 <module>mongoose-base-backoffice-operations-generic</module>
                 <module>mongoose-base-client-aggregates</module>
@@ -3586,6 +3672,7 @@
             </java-package>
 
             <java-package name="dev.webfx.platform.shared.services.submit">
+                <module>mongoose-base-backoffice-operations-filters</module>
                 <module>mongoose-base-backoffice-operations-generic</module>
                 <module>mongoose-base-server-sessioncloser</module>
                 <module>mongoose-base-server-systemmetrics</module>

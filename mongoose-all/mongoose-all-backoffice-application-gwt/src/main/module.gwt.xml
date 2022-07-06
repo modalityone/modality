@@ -116,6 +116,11 @@
     <!-- used by mongoose-all-backoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <!-- used by mongoose-all-backoffice-application-gwt (PLUGIN) -->
     <source path="mongoose/all/backoffice/application"/>
+    <!--==================< mongoose-base-backoffice-activities-filters >===================-->
+    <!-- used by mongoose-all-backoffice-application (PLUGIN) -->
+    <source path="mongoose/base/backoffice/activities/filters"/>
+    <source path="mongoose/base/backoffice/activities/filters/routing"/>
+    <source path="mongoose/base/backoffice/operations/routes/filters"/>
     <!--==================< mongoose-base-backoffice-activities-monitor >===================-->
     <!-- used by mongoose-all-backoffice-application (PLUGIN) -->
     <source path="mongoose/base/backoffice/activities/monitor"/>
@@ -133,6 +138,9 @@
     <!--====================< mongoose-base-backoffice-multilangeditor >====================-->
     <!-- used by mongoose-crm-backoffice-activities-letter (SOURCE) -->
     <source path="mongoose/base/backoffice/controls/multilangeditor"/>
+    <!--==================< mongoose-base-backoffice-operations-filters >===================-->
+    <!-- used by mongoose-base-backoffice-activities-filters (SOURCE) -->
+    <source path="mongoose/base/backoffice/operations/entities/filters"/>
     <!--==================< mongoose-base-backoffice-operations-generic >===================-->
     <!-- used by mongoose-ecommerce-backoffice-operations-document (SOURCE) -->
     <source path="mongoose/base/backoffice/operations/entities/generic"/>

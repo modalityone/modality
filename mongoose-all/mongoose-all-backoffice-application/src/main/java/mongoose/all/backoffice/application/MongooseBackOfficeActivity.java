@@ -9,7 +9,7 @@ import mongoose.base.client.application.MongooseClientActivity;
  */
 final class MongooseBackOfficeActivity extends MongooseClientActivity {
 
-    private static final String DEFAULT_START_PATH = "/organizations";
+    private static final String DEFAULT_START_PATH = "/money-flows/organization/151";
 
     MongooseBackOfficeActivity() {
         super(DEFAULT_START_PATH);

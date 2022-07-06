@@ -75,6 +75,13 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>mongoose-base-backoffice-activities-filters</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>mongoose-base-backoffice-activities-monitor</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
@@ -97,6 +104,13 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>mongoose-base-backoffice-multilangeditor</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>mongoose-base-backoffice-operations-filters</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
