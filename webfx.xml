@@ -273,6 +273,7 @@
                 <module>mongoose-base-backoffice-masterslave</module>
                 <module>mongoose-base-backoffice-multilangeditor</module>
                 <module>mongoose-base-backoffice-operations-generic</module>
+                <module>mongoose-base-backoffice-operations-snapshot</module>
                 <module>mongoose-base-client-activity</module>
                 <module>mongoose-base-client-aggregates</module>
                 <module>mongoose-base-client-application</module>
@@ -484,8 +485,10 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
+                <module>mongoose-base-shared-entities</module>
                 <module>webfx-extras-type</module>
                 <module>webfx-framework-client-controls</module>
+                <module>webfx-framework-client-orm-entity-controls</module>
                 <module>webfx-framework-client-orm-reactive-entities</module>
                 <module>webfx-framework-shared-operation</module>
                 <module>webfx-framework-shared-orm-domainmodel</module>
@@ -494,6 +497,36 @@
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-platform-shared-async</module>
                 <module>webfx-platform-shared-submit</module>
+            </used-by-source-modules>
+
+        </project>
+
+        <project name="mongoose-base-backoffice-operations-snapshot">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules>
+                    <undetected-module>webfx-extras-visual-controls-grid</undetected-module>
+                    <undetected-module>webfx-platform-shared-submit</undetected-module>
+                </used-by-source-modules>
+            </dependencies>
+
+            <source-packages>
+                <package>mongoose.base.backoffice.operations.snapshot</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>webfx-framework-client-orm-reactive-entities</module>
+                <module>webfx-framework-shared-operation</module>
+                <module>webfx-framework-shared-orm-domainmodel</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-framework-shared-orm-expression</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-shared-async</module>
             </used-by-source-modules>
 
         </project>
@@ -511,11 +544,11 @@
             </dependencies>
 
             <source-packages>
+                <package>mongoose.base.client.activity.themes</package>
+                <package>mongoose.base.client.activity.table</package>
+                <package>mongoose.base.client.activity</package>
                 <package>mongoose.base.client.activity.eventdependent</package>
                 <package>mongoose.base.client.activity.organizationdependent</package>
-                <package>mongoose.base.client.activity</package>
-                <package>mongoose.base.client.activity.table</package>
-                <package>mongoose.base.client.activity.themes</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -554,8 +587,8 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.client.aggregates.person</package>
                 <package>mongoose.base.client.aggregates.cart</package>
+                <package>mongoose.base.client.aggregates.person</package>
                 <package>mongoose.base.client.aggregates.event</package>
             </source-packages>
 
@@ -762,8 +795,8 @@
             </embed-resources>
 
             <source-packages>
-                <package>mongoose.base.client.operations.i18n</package>
                 <package>mongoose.base.client.services.i18n</package>
+                <package>mongoose.base.client.operations.i18n</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -813,8 +846,8 @@
             </embed-resources>
 
             <source-packages>
-                <package>mongoose.base.client.icons</package>
                 <package>mongoose.base.client.actions</package>
+                <package>mongoose.base.client.icons</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -965,8 +998,8 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.client.util.functions</package>
                 <package>mongoose.base.client.util.log</package>
+                <package>mongoose.base.client.util.functions</package>
                 <package>mongoose.base.client.util.routing</package>
             </source-packages>
 
@@ -1077,92 +1110,12 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
                     <undetected-module>webfx-framework-shared-orm-dql</undetected-module>
-                    <!--
-            <undetected-module scope="test">junit-jupiter</undetected-module>
-            <undetected-module scope="test">mockito-inline</undetected-module>
-            <undetected-module scope="verify">selenium-java</undetected-module>
-            <undetected-module scope="verify">webdrivermanager</undetected-module>
--->
+                    <undetected-module scope="test">junit-jupiter</undetected-module>
+                    <undetected-module scope="test">mockito-inline</undetected-module>
+                    <undetected-module scope="verify">selenium-java</undetected-module>
+                    <undetected-module scope="verify">webdrivermanager</undetected-module>
                 </used-by-source-modules>
             </dependencies>
-
-            <!--
-    <maven-pom-manual>
-        <build>
-            <plugins>
-                <plugin>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M5</version>
-                    <configuration>
-                        <excludes>
-                            <exclude>**/*IT</exclude>
-                        </excludes>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>3.0.0-M5</version>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>integration-test</goal>
-                                <goal>verify</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <plugin>
-                    <groupId>io.fabric8</groupId>
-                    <artifactId>docker-maven-plugin</artifactId>
-                    <version>0.39.1</version>
-
-                    <configuration>
-                        <images>
-                            <image>
-                                <alias>mongoose</alias>
-                                <name>fabric8/compose-demo:latest</name>
-                                <external>
-                                    <type>compose</type>
-                                    <basedir>${project.basedir}/src/test/resources/docker</basedir>
-                                    <composeFile>docker-compose.yml</composeFile>
-                                </external>
-                            </image>
-                        </images>
-                    </configuration>
-
-                    &lt;!&ndash; Connect start/stop to pre- and
-                         post-integration-test phase, respectively if you want to start
-                         your docker containers during integration tests &ndash;&gt;
-                    <executions>
-                        <execution>
-                            <id>start</id>
-                            <inherited>false</inherited>
-                            <phase>pre-integration-test</phase>
-                            <goals>
-                                &lt;!&ndash; "build" should be used to create the images with the
-                                     artifact &ndash;&gt;
-                                <goal>build</goal>
-                                <goal>start</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>stop</id>
-                            <inherited>false</inherited>
-                            <phase>post-integration-test</phase>
-                            <goals>
-                                <goal>stop</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                
-            </plugins>
-        </build>
-    </maven-pom-manual>
--->
 
             <source-packages>
                 <package>mongoose.base.server.services.datasource</package>
@@ -1297,10 +1250,10 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.shared.domainmodel.formatters</package>
-                <package>mongoose.base.shared.domainmodel.functions</package>
                 <package>mongoose.base.shared.services.domainmodel</package>
                 <package>mongoose.base.shared.services.datasourcemodel</package>
+                <package>mongoose.base.shared.domainmodel.formatters</package>
+                <package>mongoose.base.shared.domainmodel.functions</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1357,6 +1310,7 @@
                 <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.PersonImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
                 <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.RateImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
                 <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.SiteImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.SnapshotImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
                 <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.SystemMetricsEntityImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
                 <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.TeacherImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
             </providers>
@@ -1367,10 +1321,10 @@
 
             <source-packages>
                 <package>mongoose.base.shared.services.systemmetrics</package>
-                <package>mongoose.base.shared.entities.impl</package>
                 <package>mongoose.base.shared.entities</package>
-                <package>mongoose.base.shared.entities.markers</package>
                 <package>mongoose.base.shared.entities.formatters</package>
+                <package>mongoose.base.shared.entities.markers</package>
+                <package>mongoose.base.shared.entities.impl</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1513,9 +1467,9 @@
             </dependencies>
 
             <source-packages>
+                <package>mongoose.crm.backoffice.activities.operations.authorizations</package>
                 <package>mongoose.crm.backoffice.activities.authorizations</package>
                 <package>mongoose.crm.backoffice.activities.authorizations.routing</package>
-                <package>mongoose.crm.backoffice.activities.operations.authorizations</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2013,6 +1967,7 @@
                 <module>mongoose-event-frontoffice-activities-fees</module>
                 <module>webfx-extras-visual-base</module>
                 <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-framework-client-action</module>
                 <module>webfx-framework-client-operationaction</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-orm-reactive-dql</module>
@@ -2322,9 +2277,9 @@
 
             <source-packages>
                 <package>mongoose.ecommerce.backoffice.operations.entities.document</package>
-                <package>mongoose.ecommerce.backoffice.operations.entities.document.registration</package>
                 <package>mongoose.ecommerce.backoffice.operations.entities.document.security</package>
                 <package>mongoose.ecommerce.backoffice.operations.entities.document.cart</package>
+                <package>mongoose.ecommerce.backoffice.operations.entities.document.registration</package>
                 <package>mongoose.ecommerce.backoffice.operations.entities.document.multiplebookings</package>
             </source-packages>
 
@@ -2382,8 +2337,8 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.backoffice.operations.entities.moneyflow</package>
                 <package>mongoose.ecommerce.backoffice.operations.entities.moneyaccount</package>
+                <package>mongoose.ecommerce.backoffice.operations.entities.moneyflow</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2513,14 +2468,14 @@
             </dependencies>
 
             <source-packages>
+                <package>mongoose.ecommerce.client.businesslogic.rules</package>
+                <package>mongoose.ecommerce.client.businesslogic.workingdocument</package>
+                <package>mongoose.ecommerce.client.businesslogic.option</package>
+                <package>mongoose.ecommerce.client.businesslogic.pricing</package>
+                <package>mongoose.ecommerce.client.businesslogic.feesgroup</package>
                 <package>mongoose.ecommerce.client.businessdata.workingdocument</package>
                 <package>mongoose.ecommerce.client.businessdata.preselection</package>
                 <package>mongoose.ecommerce.client.businessdata.feesgroup</package>
-                <package>mongoose.ecommerce.client.businesslogic.workingdocument</package>
-                <package>mongoose.ecommerce.client.businesslogic.option</package>
-                <package>mongoose.ecommerce.client.businesslogic.feesgroup</package>
-                <package>mongoose.ecommerce.client.businesslogic.rules</package>
-                <package>mongoose.ecommerce.client.businesslogic.pricing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2616,8 +2571,8 @@
 
             <source-packages>
                 <package>mongoose.ecommerce.frontoffice.operations.cart</package>
-                <package>mongoose.ecommerce.frontoffice.activities.cart.routing</package>
                 <package>mongoose.ecommerce.frontoffice.activities.cart.base</package>
+                <package>mongoose.ecommerce.frontoffice.activities.cart.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3057,10 +3012,10 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.event.client.businessdata.calendar.impl</package>
-                <package>mongoose.event.client.businessdata.calendar</package>
-                <package>mongoose.event.client.controls.calendargraphic.impl</package>
                 <package>mongoose.event.client.controls.calendargraphic</package>
+                <package>mongoose.event.client.controls.calendargraphic.impl</package>
+                <package>mongoose.event.client.businessdata.calendar</package>
+                <package>mongoose.event.client.businessdata.calendar.impl</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3283,8 +3238,8 @@
 
             <source-packages>
                 <package>mongoose.event.frontoffice.operations.startbooking</package>
-                <package>mongoose.event.frontoffice.activities.startbooking</package>
                 <package>mongoose.event.frontoffice.activities.startbooking.routing</package>
+                <package>mongoose.event.frontoffice.activities.startbooking</package>
             </source-packages>
 
             <used-by-source-modules>

@@ -33,6 +33,7 @@
         <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.PersonImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
         <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.RateImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
         <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.SiteImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+        <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.SnapshotImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
         <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.SystemMetricsEntityImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
         <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.TeacherImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
     </providers>
