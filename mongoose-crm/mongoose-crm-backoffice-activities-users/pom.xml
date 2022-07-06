@@ -53,7 +53,19 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>mongoose-ecommerce-backoffice-operations-document</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-visual-base</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-framework-client-action</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -121,12 +133,6 @@
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-shared-util</artifactId>
             <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mongoose</groupId>
-            <artifactId>mongoose-ecommerce-backoffice-operations-document</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
 
     </dependencies>

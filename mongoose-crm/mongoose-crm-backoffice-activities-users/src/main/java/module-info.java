@@ -3,13 +3,16 @@
 module mongoose.crm.backoffice.activities.users {
 
     // Direct dependencies modules
+    requires java.base;
     requires javafx.base;
     requires javafx.graphics;
     requires mongoose.base.backoffice.masterslave;
     requires mongoose.base.client.activity;
     requires mongoose.base.shared.domainmodel;
     requires mongoose.base.shared.entities;
+    requires mongoose.ecommerce.backoffice.operations.document;
     requires webfx.extras.visual.base;
+    requires webfx.framework.client.action;
     requires webfx.framework.client.activity;
     requires webfx.framework.client.orm.domainmodel.activity;
     requires webfx.framework.client.orm.reactive.dql;
@@ -21,9 +24,6 @@ module mongoose.crm.backoffice.activities.users {
     requires webfx.framework.shared.router;
     requires webfx.platform.client.windowhistory;
     requires webfx.platform.shared.util;
-    requires webfx.framework.client.action;
-    requires mongoose.ecommerce.backoffice.operations.document;
-    requires mongoose.base.client.aggregates;
 
     // Exported packages
     exports mongoose.crm.backoffice.activities.users;

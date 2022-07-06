@@ -14,7 +14,6 @@
     <!-- used by webfx-kit-javafxgraphics-emul (SOURCE) -->
     <!-- used by webfx-extras-imagestore (SOURCE) -->
     <!-- used by webfx-extras-webtext-controls (SOURCE) -->
-    <!-- used by webfx-framework-client-i18n (SOURCE) -->
     <!-- used by webfx-platform-shared-buscall (SOURCE) -->
     <source path="com/sun/javafx"/>
     <source path="com/sun/javafx/binding"/>
@@ -41,6 +40,7 @@
     <public includes="images/checkbox/" path=""/>
     <!--=========================< webfx-kit-javafxgraphics-emul >==========================-->
     <!-- used by webfx-kit-javafxcontrols-emul (SOURCE) -->
+    <!-- used by mongoose-base-client-icons (SOURCE) -->
     <!-- used by webfx-extras-imagestore (SOURCE) -->
     <!-- used by webfx-kit-gwt (SOURCE) -->
     <!-- used by webfx-kit-javafxgraphics-registry-gwt (SOURCE) -->
@@ -219,6 +219,7 @@
     <!--=========================< mongoose-base-shared-entities >==========================-->
     <!-- used by mongoose-base-client-icons (SOURCE) -->
     <source path="mongoose/base/shared/entities"/>
+    <source path="mongoose/base/shared/entities/converters"/>
     <source path="mongoose/base/shared/entities/formatters"/>
     <source path="mongoose/base/shared/entities/impl"/>
     <source path="mongoose/base/shared/entities/markers"/>
@@ -323,8 +324,8 @@
     <!-- used by mongoose-base-shared-entities (SOURCE) -->
     <source path="mongoose/hotel/shared/businessdata/time"/>
     <!--===============================< webfx-extras-cell >================================-->
-    <!-- used by webfx-extras-visual-base (SOURCE) -->
     <!-- used by webfx-extras-visual-controls-grid-peers-gwt (SOURCE) -->
+    <!-- used by webfx-framework-client-orm-entity-controls (SOURCE) -->
     <source path="dev/webfx/extras/cell/collator"/>
     <source path="dev/webfx/extras/cell/renderer"/>
     <source path="dev/webfx/extras/cell/rowstyle"/>
@@ -332,15 +333,15 @@
     <!-- used by mongoose-event-frontoffice-activities-options (SOURCE) -->
     <source path="dev/webfx/extras/flexbox"/>
     <!--============================< webfx-extras-imagestore >=============================-->
+    <!-- used by mongoose-base-client-icons (SOURCE) -->
     <!-- used by webfx-extras-cell (SOURCE) -->
-    <!-- used by webfx-framework-client-util (SOURCE) -->
     <source path="dev/webfx/extras/imagestore"/>
     <!--===============================< webfx-extras-label >===============================-->
     <!-- used by webfx-extras-cell (SOURCE) -->
     <!-- used by webfx-framework-shared-orm-domainmodel (SOURCE) -->
     <source path="dev/webfx/extras/label"/>
     <!--==========================< webfx-extras-materialdesign >===========================-->
-    <!-- used by webfx-framework-client-controls (SOURCE) -->
+    <!-- used by webfx-framework-client-orm-entity-controls (SOURCE) -->
     <source path="dev/webfx/extras/materialdesign/textfield"/>
     <source path="dev/webfx/extras/materialdesign/util"/>
     <source path="dev/webfx/extras/materialdesign/util/background"/>
@@ -352,16 +353,16 @@
     <!-- used by webfx-framework-shared-orm-entity (SOURCE) -->
     <source path="dev/webfx/extras/type"/>
     <!--============================< webfx-extras-visual-base >============================-->
-    <!-- used by webfx-extras-visual-controls-grid (SOURCE) -->
     <!-- used by webfx-extras-visual-controls-grid-peers-gwt (SOURCE) -->
+    <!-- used by webfx-framework-client-orm-entity-controls (SOURCE) -->
     <source path="dev/webfx/extras/visual"/>
     <source path="dev/webfx/extras/visual/impl"/>
     <!--==========================< webfx-extras-visual-controls >==========================-->
     <!-- used by webfx-extras-visual-controls-grid (SOURCE) -->
     <source path="dev/webfx/extras/visual/controls"/>
     <!--=======================< webfx-extras-visual-controls-grid >========================-->
-    <!-- used by mongoose-base-client-activity (SOURCE) -->
     <!-- used by webfx-extras-visual-controls-grid-peers-gwt (SOURCE) -->
+    <!-- used by webfx-framework-client-orm-entity-controls (SOURCE) -->
     <source path="dev/webfx/extras/visual/controls/grid"/>
     <!--==================< webfx-extras-visual-controls-grid-peers-gwt >===================-->
     <!-- used by mongoose-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
@@ -400,7 +401,7 @@
     <source path="dev/webfx/framework/client/activity/impl/elementals/activeproperty"/>
     <source path="dev/webfx/framework/client/activity/impl/elementals/activeproperty/impl"/>
     <!--========================< webfx-framework-client-controls >=========================-->
-    <!-- used by mongoose-base-client-activity (SOURCE) -->
+    <!-- used by webfx-framework-client-orm-entity-controls (SOURCE) -->
     <source path="dev/webfx/framework/client/ui/controls"/>
     <source path="dev/webfx/framework/client/ui/controls/alert"/>
     <source path="dev/webfx/framework/client/ui/controls/button"/>
@@ -433,7 +434,7 @@
     <source path="dev/webfx/framework/client/ui/controls/entity/selector"/>
     <source path="dev/webfx/framework/client/ui/controls/entity/sheet"/>
     <!--====================< webfx-framework-client-orm-reactive-dql >=====================-->
-    <!-- used by webfx-framework-client-orm-reactive-visual (SOURCE) -->
+    <!-- used by mongoose-base-client-entities (SOURCE) -->
     <source path="dev/webfx/framework/client/orm/reactive/call"/>
     <source path="dev/webfx/framework/client/orm/reactive/call/query"/>
     <source path="dev/webfx/framework/client/orm/reactive/call/query/push"/>
@@ -442,12 +443,12 @@
     <source path="dev/webfx/framework/client/orm/reactive/dql/statement"/>
     <source path="dev/webfx/framework/client/orm/reactive/dql/statement/conventions"/>
     <!--==================< webfx-framework-client-orm-reactive-entities >==================-->
-    <!-- used by webfx-framework-client-orm-reactive-visual (SOURCE) -->
+    <!-- used by webfx-framework-client-orm-entity-controls (SOURCE) -->
     <source path="dev/webfx/framework/client/orm/reactive/mapping/dql_to_entities"/>
     <source path="dev/webfx/framework/client/orm/reactive/mapping/entities_to_grid"/>
     <source path="dev/webfx/framework/client/orm/reactive/mapping/entities_to_objects"/>
     <!--===================< webfx-framework-client-orm-reactive-visual >===================-->
-    <!-- used by mongoose-base-client-activity (SOURCE) -->
+    <!-- used by webfx-framework-client-orm-entity-controls (SOURCE) -->
     <source path="dev/webfx/framework/client/orm/reactive/mapping/entities_to_visual"/>
     <source path="dev/webfx/framework/client/orm/reactive/mapping/entities_to_visual/conventions"/>
     <!--==========================< webfx-framework-client-push >===========================-->
@@ -718,8 +719,8 @@
     <source path="dev/webfx/platform/gwt/services/windowlocation/spi/impl"/>
     <source path="dev/webfx/platform/gwt/services/windowlocation/spi/impl/jsinterop"/>
     <!--==========================< webfx-platform-shared-async >===========================-->
-    <!-- used by webfx-framework-shared-operation (SOURCE) -->
     <!-- used by webfx-framework-shared-orm-datasourcemodelservice (SOURCE) -->
+    <!-- used by webfx-framework-shared-orm-entity (SOURCE) -->
     <!-- used by webfx-platform-client-websocketbus (SOURCE) -->
     <!-- used by webfx-platform-client-windowhistory (SOURCE) -->
     <!-- used by webfx-platform-gwt-windowhistory-impl (SOURCE) -->
@@ -771,7 +772,6 @@
     <source path="dev/webfx/platform/shared/services/datasource/spi"/>
     <source path="dev/webfx/platform/shared/services/datasource/spi/simple"/>
     <!--===========================< webfx-platform-shared-json >===========================-->
-    <!-- used by webfx-framework-client-util (SOURCE) -->
     <!-- used by webfx-framework-shared-orm-expression (SOURCE) -->
     <!-- used by webfx-platform-client-websocket (SOURCE) -->
     <!-- used by webfx-platform-client-windowlocation (SOURCE) -->
