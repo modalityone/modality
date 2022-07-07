@@ -38,12 +38,12 @@ module mongoose.ecommerce.backoffice.activities.bookings {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.ecommerce.backoffice.activities.bookings;
-    exports mongoose.ecommerce.backoffice.activities.bookings.routing;
-    exports mongoose.ecommerce.backoffice.operations.routes.bookings;
+    exports org.modality_project.ecommerce.backoffice.activities.bookings;
+    exports org.modality_project.ecommerce.backoffice.activities.bookings.routing;
+    exports org.modality_project.ecommerce.backoffice.operations.routes.bookings;
 
     // Provided services
-    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.ecommerce.backoffice.activities.bookings.RouteToBookingsRequestEmitter;
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.ecommerce.backoffice.activities.bookings.BookingsUiRoute;
+    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with org.modality_project.ecommerce.backoffice.activities.bookings.RouteToBookingsRequestEmitter;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.ecommerce.backoffice.activities.bookings.BookingsUiRoute;
 
 }

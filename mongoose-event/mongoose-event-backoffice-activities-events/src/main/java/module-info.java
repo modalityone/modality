@@ -21,12 +21,12 @@ module mongoose.event.backoffice.activities.events {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.event.backoffice.activities.events;
-    exports mongoose.event.backoffice.activities.events.routing;
-    exports mongoose.event.backoffice.operations.routes.events;
+    exports org.modality_project.event.backoffice.activities.events;
+    exports org.modality_project.event.backoffice.activities.events.routing;
+    exports org.modality_project.event.backoffice.operations.routes.events;
 
     // Provided services
-    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.event.backoffice.activities.events.RouteToEventsRequestEmitter;
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.event.backoffice.activities.events.EventsUiRoute;
+    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with org.modality_project.event.backoffice.activities.events.RouteToEventsRequestEmitter;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.event.backoffice.activities.events.EventsUiRoute;
 
 }

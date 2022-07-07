@@ -6,8 +6,8 @@
     </exported-packages>
 
     <providers>
-        <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.base.backoffice.activities.filters.FiltersUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-        <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.base.backoffice.activities.filters.RouteToFiltersRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+        <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.base.backoffice.activities.filters.FiltersUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+        <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.base.backoffice.activities.filters.RouteToFiltersRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
     </providers>
 
     <dependencies>

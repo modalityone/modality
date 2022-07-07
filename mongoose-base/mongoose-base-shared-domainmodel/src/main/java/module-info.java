@@ -20,16 +20,16 @@ module mongoose.base.shared.domainmodel {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.base.shared.domainmodel.formatters;
-    exports mongoose.base.shared.domainmodel.functions;
-    exports mongoose.base.shared.services.datasourcemodel;
-    exports mongoose.base.shared.services.domainmodel;
+    exports org.modality_project.base.shared.domainmodel.formatters;
+    exports org.modality_project.base.shared.domainmodel.functions;
+    exports org.modality_project.base.shared.services.datasourcemodel;
+    exports org.modality_project.base.shared.services.domainmodel;
 
     // Resources packages
-    opens mongoose.base.shared.domainmodel;
+    opens org.modality_project.base.shared.domainmodel;
 
     // Provided services
-    provides dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider with mongoose.base.shared.services.datasourcemodel.MongooseDataSourceModelProvider;
-    provides dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider with mongoose.base.shared.services.domainmodel.MongooseDomainModelProvider;
+    provides dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider with org.modality_project.base.shared.services.datasourcemodel.MongooseDataSourceModelProvider;
+    provides dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider with org.modality_project.base.shared.services.domainmodel.MongooseDomainModelProvider;
 
 }

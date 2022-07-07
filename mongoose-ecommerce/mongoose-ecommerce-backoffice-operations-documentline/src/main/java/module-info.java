@@ -14,6 +14,6 @@ module mongoose.ecommerce.backoffice.operations.documentline {
     requires webfx.platform.shared.submit;
 
     // Exported packages
-    exports mongoose.ecommerce.backoffice.operations.entities.documentline;
+    exports org.modality_project.ecommerce.backoffice.operations.entities.documentline;
 
 }

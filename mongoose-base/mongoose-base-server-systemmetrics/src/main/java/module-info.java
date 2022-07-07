@@ -16,14 +16,14 @@ module mongoose.base.server.systemmetrics {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.base.server.jobs.systemmetrics;
-    exports mongoose.base.server.services.systemmetrics;
-    exports mongoose.base.server.services.systemmetrics.spi;
+    exports org.modality_project.base.server.jobs.systemmetrics;
+    exports org.modality_project.base.server.services.systemmetrics;
+    exports org.modality_project.base.server.services.systemmetrics.spi;
 
     // Used services
-    uses mongoose.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider;
+    uses org.modality_project.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider;
 
     // Provided services
-    provides dev.webfx.platform.shared.services.boot.spi.ApplicationJob with mongoose.base.server.jobs.systemmetrics.SystemMetricsRecorderJob;
+    provides dev.webfx.platform.shared.services.boot.spi.ApplicationJob with org.modality_project.base.server.jobs.systemmetrics.SystemMetricsRecorderJob;
 
 }

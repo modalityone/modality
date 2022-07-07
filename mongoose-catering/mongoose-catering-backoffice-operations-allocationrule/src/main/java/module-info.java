@@ -14,6 +14,6 @@ module mongoose.catering.backoffice.operations.allocationrule {
     requires webfx.platform.shared.submit;
 
     // Exported packages
-    exports mongoose.catering.backoffice.operations.entities.allocationrule;
+    exports org.modality_project.catering.backoffice.operations.entities.allocationrule;
 
 }

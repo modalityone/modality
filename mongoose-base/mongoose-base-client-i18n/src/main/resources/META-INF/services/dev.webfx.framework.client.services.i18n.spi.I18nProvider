@@ -1,1 +1,1 @@
-mongoose.base.client.services.i18n.MongooseI18nProvider
+org.modality_project.base.client.services.i18n.MongooseI18nProvider

@@ -39,11 +39,11 @@ module mongoose.event.frontoffice.activities.fees {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.event.frontoffice.activities.fees;
-    exports mongoose.event.frontoffice.activities.fees.routing;
-    exports mongoose.event.frontoffice.operations.fees;
+    exports org.modality_project.event.frontoffice.activities.fees;
+    exports org.modality_project.event.frontoffice.activities.fees.routing;
+    exports org.modality_project.event.frontoffice.operations.fees;
 
     // Provided services
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.event.frontoffice.activities.fees.FeesUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.event.frontoffice.activities.fees.FeesUiRoute;
 
 }

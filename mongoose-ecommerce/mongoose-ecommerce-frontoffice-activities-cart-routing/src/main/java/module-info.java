@@ -21,8 +21,8 @@ module mongoose.ecommerce.frontoffice.activities.cart.routing {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.ecommerce.frontoffice.activities.cart.base;
-    exports mongoose.ecommerce.frontoffice.activities.cart.routing;
-    exports mongoose.ecommerce.frontoffice.operations.cart;
+    exports org.modality_project.ecommerce.frontoffice.activities.cart.base;
+    exports org.modality_project.ecommerce.frontoffice.activities.cart.routing;
+    exports org.modality_project.ecommerce.frontoffice.operations.cart;
 
 }

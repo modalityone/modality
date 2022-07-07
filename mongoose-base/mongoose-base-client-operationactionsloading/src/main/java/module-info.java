@@ -16,9 +16,9 @@ module mongoose.base.client.operationactionsloading {
     requires webfx.platform.shared.log;
 
     // Exported packages
-    exports mongoose.base.client.operationactionsloading;
+    exports org.modality_project.base.client.operationactionsloading;
 
     // Provided services
-    provides dev.webfx.platform.shared.services.boot.spi.ApplicationModuleBooter with mongoose.base.client.operationactionsloading.MongooseClientOperationActionsLoader;
+    provides dev.webfx.platform.shared.services.boot.spi.ApplicationModuleBooter with org.modality_project.base.client.operationactionsloading.MongooseClientOperationActionsLoader;
 
 }

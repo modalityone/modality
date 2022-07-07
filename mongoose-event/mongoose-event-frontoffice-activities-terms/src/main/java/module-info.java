@@ -23,11 +23,11 @@ module mongoose.event.frontoffice.activities.terms {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.event.frontoffice.activities.terms;
-    exports mongoose.event.frontoffice.activities.terms.routing;
-    exports mongoose.event.frontoffice.operations.terms;
+    exports org.modality_project.event.frontoffice.activities.terms;
+    exports org.modality_project.event.frontoffice.activities.terms.routing;
+    exports org.modality_project.event.frontoffice.operations.terms;
 
     // Provided services
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.event.frontoffice.activities.terms.TermsUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.event.frontoffice.activities.terms.TermsUiRoute;
 
 }

@@ -15,8 +15,8 @@ module mongoose.base.client.aggregates {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.base.client.aggregates.cart;
-    exports mongoose.base.client.aggregates.event;
-    exports mongoose.base.client.aggregates.person;
+    exports org.modality_project.base.client.aggregates.cart;
+    exports org.modality_project.base.client.aggregates.event;
+    exports org.modality_project.base.client.aggregates.person;
 
 }

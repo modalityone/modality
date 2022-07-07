@@ -12,9 +12,9 @@ module mongoose.base.server.sessioncloser {
     requires webfx.platform.shared.submit;
 
     // Exported packages
-    exports mongoose.base.server.jobs.sessioncloser;
+    exports org.modality_project.base.server.jobs.sessioncloser;
 
     // Provided services
-    provides dev.webfx.platform.shared.services.boot.spi.ApplicationJob with mongoose.base.server.jobs.sessioncloser.MongooseServerUnresponsiveClientSessionCloserJob;
+    provides dev.webfx.platform.shared.services.boot.spi.ApplicationJob with org.modality_project.base.server.jobs.sessioncloser.MongooseServerUnresponsiveClientSessionCloserJob;
 
 }

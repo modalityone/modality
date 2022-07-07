@@ -15,7 +15,7 @@
     </dependencies>
 
     <providers>
-        <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.ecommerce.frontoffice.activities.cart.CartUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+        <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.frontoffice.activities.cart.CartUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
     </providers>
 
 </project>

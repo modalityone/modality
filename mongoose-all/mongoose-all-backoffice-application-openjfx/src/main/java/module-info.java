@@ -30,6 +30,6 @@ module mongoose.all.backoffice.application.openjfx {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.all.backoffice.activities.event.clone.openjfx;
+    exports org.modality_project.all.backoffice.activities.event.clone.openjfx;
 
 }

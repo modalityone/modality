@@ -24,6 +24,6 @@ module mongoose.ecommerce.client.bookingoptionspanel {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.ecommerce.client.controls.bookingoptionspanel;
+    exports org.modality_project.ecommerce.client.controls.bookingoptionspanel;
 
 }

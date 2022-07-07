@@ -7,9 +7,9 @@ module mongoose.all.frontoffice.application {
     requires mongoose.base.client.application;
 
     // Exported packages
-    exports mongoose.all.frontoffice.application;
+    exports org.modality_project.all.frontoffice.application;
 
     // Provided services
-    provides javafx.application.Application with mongoose.all.frontoffice.application.MongooseFrontOfficeApplication;
+    provides javafx.application.Application with org.modality_project.all.frontoffice.application.MongooseFrontOfficeApplication;
 
 }

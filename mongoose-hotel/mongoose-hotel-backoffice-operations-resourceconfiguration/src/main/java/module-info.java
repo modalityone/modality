@@ -14,6 +14,6 @@ module mongoose.hotel.backoffice.operations.resourceconfiguration {
     requires webfx.platform.shared.submit;
 
     // Exported packages
-    exports mongoose.hotel.backoffice.operations.entities.resourceconfiguration;
+    exports org.modality_project.hotel.backoffice.operations.entities.resourceconfiguration;
 
 }

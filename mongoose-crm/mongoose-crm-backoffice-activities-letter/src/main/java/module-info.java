@@ -16,11 +16,11 @@ module mongoose.crm.backoffice.activities.letter {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.crm.backoffice.activities.letter;
-    exports mongoose.crm.backoffice.activities.letter.routing;
-    exports mongoose.crm.backoffice.operations.routes.letter;
+    exports org.modality_project.crm.backoffice.activities.letter;
+    exports org.modality_project.crm.backoffice.activities.letter.routing;
+    exports org.modality_project.crm.backoffice.operations.routes.letter;
 
     // Provided services
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.crm.backoffice.activities.letter.LetterUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.crm.backoffice.activities.letter.LetterUiRoute;
 
 }

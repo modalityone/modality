@@ -18,6 +18,6 @@ module mongoose.ecommerce.client.bookingprocess {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.ecommerce.client.activity.bookingprocess;
+    exports org.modality_project.ecommerce.client.activity.bookingprocess;
 
 }

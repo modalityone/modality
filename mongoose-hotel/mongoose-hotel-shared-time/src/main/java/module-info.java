@@ -8,6 +8,6 @@ module mongoose.hotel.shared.time {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.hotel.shared.businessdata.time;
+    exports org.modality_project.hotel.shared.businessdata.time;
 
 }

@@ -25,11 +25,11 @@ module mongoose.ecommerce.frontoffice.activities.contactus {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.ecommerce.frontoffice.activities.contactus;
-    exports mongoose.ecommerce.frontoffice.activities.contactus.routing;
-    exports mongoose.ecommerce.frontoffice.operations.contactus;
+    exports org.modality_project.ecommerce.frontoffice.activities.contactus;
+    exports org.modality_project.ecommerce.frontoffice.activities.contactus.routing;
+    exports org.modality_project.ecommerce.frontoffice.operations.contactus;
 
     // Provided services
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.ecommerce.frontoffice.activities.contactus.ContactUsUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.ecommerce.frontoffice.activities.contactus.ContactUsUiRoute;
 
 }

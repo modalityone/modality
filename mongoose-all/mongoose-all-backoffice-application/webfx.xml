@@ -6,7 +6,7 @@
     </exported-packages>
 
     <providers>
-        <javafx.application.Application>mongoose.all.backoffice.application.MongooseBackOfficeApplication</javafx.application.Application>
+        <javafx.application.Application>org.modality_project.all.backoffice.application.MongooseBackOfficeApplication</javafx.application.Application>
     </providers>
 
     <dependencies>

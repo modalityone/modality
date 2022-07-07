@@ -9,8 +9,8 @@ module mongoose.base.client.icons {
     requires webfx.framework.client.action;
 
     // Exported packages
-    exports mongoose.base.client.actions;
-    exports mongoose.base.client.icons;
+    exports org.modality_project.base.client.actions;
+    exports org.modality_project.base.client.icons;
 
     // Resources packages
     opens images.s16;

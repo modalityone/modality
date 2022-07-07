@@ -22,12 +22,12 @@ module mongoose.base.backoffice.activities.monitor {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.base.backoffice.activities.monitor;
-    exports mongoose.base.backoffice.activities.monitor.routing;
-    exports mongoose.base.backoffice.operations.routes.monitor;
+    exports org.modality_project.base.backoffice.activities.monitor;
+    exports org.modality_project.base.backoffice.activities.monitor.routing;
+    exports org.modality_project.base.backoffice.operations.routes.monitor;
 
     // Provided services
-    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.base.backoffice.activities.monitor.RouteToMonitorRequestEmitter;
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.base.backoffice.activities.monitor.MonitorUiRoute;
+    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with org.modality_project.base.backoffice.activities.monitor.RouteToMonitorRequestEmitter;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.base.backoffice.activities.monitor.MonitorUiRoute;
 
 }

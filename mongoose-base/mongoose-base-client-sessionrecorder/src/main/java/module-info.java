@@ -19,9 +19,9 @@ module mongoose.base.client.sessionrecorder {
     requires webfx.platform.shared.submit;
 
     // Exported packages
-    exports mongoose.base.client.jobs.sessionrecorder;
+    exports org.modality_project.base.client.jobs.sessionrecorder;
 
     // Provided services
-    provides dev.webfx.platform.shared.services.boot.spi.ApplicationJob with mongoose.base.client.jobs.sessionrecorder.ClientSessionRecorderJob;
+    provides dev.webfx.platform.shared.services.boot.spi.ApplicationJob with org.modality_project.base.client.jobs.sessionrecorder.ClientSessionRecorderJob;
 
 }

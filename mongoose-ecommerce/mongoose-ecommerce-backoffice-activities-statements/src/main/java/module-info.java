@@ -28,12 +28,12 @@ module mongoose.ecommerce.backoffice.activities.statements {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.ecommerce.backoffice.activities.statements;
-    exports mongoose.ecommerce.backoffice.activities.statements.routing;
-    exports mongoose.ecommerce.backoffice.operations.routes.statements;
+    exports org.modality_project.ecommerce.backoffice.activities.statements;
+    exports org.modality_project.ecommerce.backoffice.activities.statements.routing;
+    exports org.modality_project.ecommerce.backoffice.operations.routes.statements;
 
     // Provided services
-    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.ecommerce.backoffice.activities.statements.RouteToStatementsRequestEmitter;
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.ecommerce.backoffice.activities.statements.StatementsUiRoute;
+    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with org.modality_project.ecommerce.backoffice.activities.statements.RouteToStatementsRequestEmitter;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.ecommerce.backoffice.activities.statements.StatementsUiRoute;
 
 }

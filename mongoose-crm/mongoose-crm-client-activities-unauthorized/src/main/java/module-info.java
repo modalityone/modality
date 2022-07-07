@@ -10,9 +10,9 @@ module mongoose.crm.client.activities.unauthorized {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.crm.client.activities.unauthorized;
+    exports org.modality_project.crm.client.activities.unauthorized;
 
     // Provided services
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.crm.client.activities.unauthorized.UnauthorizedUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.crm.client.activities.unauthorized.UnauthorizedUiRoute;
 
 }

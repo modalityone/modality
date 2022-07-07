@@ -31,9 +31,9 @@ module mongoose.event.backoffice.activities.options {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.event.backoffice.activities.options;
+    exports org.modality_project.event.backoffice.activities.options;
 
     // Provided services
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.event.backoffice.activities.options.EditableOptionsUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.event.backoffice.activities.options.EditableOptionsUiRoute;
 
 }

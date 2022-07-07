@@ -32,12 +32,12 @@ module mongoose.ecommerce.backoffice.activities.payments {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.ecommerce.backoffice.activities.payments;
-    exports mongoose.ecommerce.backoffice.activities.payments.routing;
-    exports mongoose.ecommerce.backoffice.operations.routes.payments;
+    exports org.modality_project.ecommerce.backoffice.activities.payments;
+    exports org.modality_project.ecommerce.backoffice.activities.payments.routing;
+    exports org.modality_project.ecommerce.backoffice.operations.routes.payments;
 
     // Provided services
-    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.ecommerce.backoffice.activities.payments.RouteToPaymentsRequestEmitter;
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.ecommerce.backoffice.activities.payments.PaymentsUiRoute;
+    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with org.modality_project.ecommerce.backoffice.activities.payments.RouteToPaymentsRequestEmitter;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.ecommerce.backoffice.activities.payments.PaymentsUiRoute;
 
 }

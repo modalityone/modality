@@ -9,9 +9,9 @@ module mongoose.all.backoffice.application {
     requires mongoose.crm.backoffice.bookingdetailspanel;
 
     // Exported packages
-    exports mongoose.all.backoffice.application;
+    exports org.modality_project.all.backoffice.application;
 
     // Provided services
-    provides javafx.application.Application with mongoose.all.backoffice.application.MongooseBackOfficeApplication;
+    provides javafx.application.Application with org.modality_project.all.backoffice.application.MongooseBackOfficeApplication;
 
 }

@@ -14,7 +14,7 @@ module mongoose.ecommerce.backoffice.operations.moneyflow {
     requires webfx.platform.shared.submit;
 
     // Exported packages
-    exports mongoose.ecommerce.backoffice.operations.entities.moneyaccount;
-    exports mongoose.ecommerce.backoffice.operations.entities.moneyflow;
+    exports org.modality_project.ecommerce.backoffice.operations.entities.moneyaccount;
+    exports org.modality_project.ecommerce.backoffice.operations.entities.moneyflow;
 
 }

@@ -27,7 +27,7 @@ module mongoose.base.backoffice.masterslave {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.base.backoffice.controls.masterslave;
-    exports mongoose.base.backoffice.controls.masterslave.group;
+    exports org.modality_project.base.backoffice.controls.masterslave;
+    exports org.modality_project.base.backoffice.controls.masterslave.group;
 
 }

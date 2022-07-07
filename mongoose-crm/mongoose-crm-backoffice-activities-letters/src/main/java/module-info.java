@@ -20,12 +20,12 @@ module mongoose.crm.backoffice.activities.letters {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.crm.backoffice.activities.letters;
-    exports mongoose.crm.backoffice.activities.letters.routing;
-    exports mongoose.crm.backoffice.operations.routes.letters;
+    exports org.modality_project.crm.backoffice.activities.letters;
+    exports org.modality_project.crm.backoffice.activities.letters.routing;
+    exports org.modality_project.crm.backoffice.operations.routes.letters;
 
     // Provided services
-    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.crm.backoffice.activities.letters.RouteToLettersRequestEmitter;
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.crm.backoffice.activities.letters.LettersUiRoute;
+    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with org.modality_project.crm.backoffice.activities.letters.RouteToLettersRequestEmitter;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.crm.backoffice.activities.letters.LettersUiRoute;
 
 }

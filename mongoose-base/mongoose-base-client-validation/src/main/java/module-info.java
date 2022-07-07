@@ -15,6 +15,6 @@ module mongoose.base.client.validation {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.base.client.validation;
+    exports org.modality_project.base.client.validation;
 
 }

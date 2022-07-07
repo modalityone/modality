@@ -7,9 +7,9 @@ module mongoose.base.client.navigationarrows.java {
     requires webfx.framework.shared.router;
 
     // Exported packages
-    exports mongoose.base.client.navigationarrows;
+    exports org.modality_project.base.client.navigationarrows;
 
     // Provided services
-    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.base.client.navigationarrows.RouteBackwardRequestEmitter, mongoose.base.client.navigationarrows.RouteForwardRequestEmitter;
+    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with org.modality_project.base.client.navigationarrows.RouteBackwardRequestEmitter, org.modality_project.base.client.navigationarrows.RouteForwardRequestEmitter;
 
 }

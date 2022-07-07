@@ -29,12 +29,12 @@ module mongoose.catering.backoffice.activities.diningareas {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.catering.backoffice.activities.diningareas;
-    exports mongoose.catering.backoffice.activities.diningareas.routing;
-    exports mongoose.catering.backoffice.operations.routes.diningareas;
+    exports org.modality_project.catering.backoffice.activities.diningareas;
+    exports org.modality_project.catering.backoffice.activities.diningareas.routing;
+    exports org.modality_project.catering.backoffice.operations.routes.diningareas;
 
     // Provided services
-    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.catering.backoffice.activities.diningareas.RouteToDiningAreasRequestEmitter;
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.catering.backoffice.activities.diningareas.DiningAreasUiRoute;
+    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with org.modality_project.catering.backoffice.activities.diningareas.RouteToDiningAreasRequestEmitter;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.catering.backoffice.activities.diningareas.DiningAreasUiRoute;
 
 }

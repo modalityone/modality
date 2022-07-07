@@ -20,7 +20,7 @@ module mongoose.base.client.entities {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.base.client.entities.util;
-    exports mongoose.base.client.entities.util.filters;
+    exports org.modality_project.base.client.entities.util;
+    exports org.modality_project.base.client.entities.util.filters;
 
 }

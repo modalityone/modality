@@ -1,1 +1,1 @@
-mongoose.base.backoffice.activities.monitor.RouteToMonitorRequestEmitter
+org.modality_project.base.backoffice.activities.monitor.RouteToMonitorRequestEmitter

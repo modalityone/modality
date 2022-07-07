@@ -13,6 +13,6 @@ module mongoose.base.backoffice.operations.filters {
     requires webfx.platform.shared.submit;
 
     // Exported packages
-    exports mongoose.base.backoffice.operations.entities.filters;
+    exports org.modality_project.base.backoffice.operations.entities.filters;
 
 }

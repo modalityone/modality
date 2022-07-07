@@ -41,9 +41,9 @@ module mongoose.ecommerce.frontoffice.activities.cart {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.ecommerce.frontoffice.activities.cart;
+    exports org.modality_project.ecommerce.frontoffice.activities.cart;
 
     // Provided services
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.ecommerce.frontoffice.activities.cart.CartUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.ecommerce.frontoffice.activities.cart.CartUiRoute;
 
 }

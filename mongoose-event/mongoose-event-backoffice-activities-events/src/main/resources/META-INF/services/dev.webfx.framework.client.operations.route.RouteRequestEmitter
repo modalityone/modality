@@ -1,1 +1,1 @@
-mongoose.event.backoffice.activities.events.RouteToEventsRequestEmitter
+org.modality_project.event.backoffice.activities.events.RouteToEventsRequestEmitter

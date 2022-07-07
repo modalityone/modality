@@ -26,12 +26,12 @@ module mongoose.crm.backoffice.activities.users {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.crm.backoffice.activities.users;
-    exports mongoose.crm.backoffice.activities.users.routing;
-    exports mongoose.crm.backoffice.operations.routes.users;
+    exports org.modality_project.crm.backoffice.activities.users;
+    exports org.modality_project.crm.backoffice.activities.users.routing;
+    exports org.modality_project.crm.backoffice.operations.routes.users;
 
     // Provided services
-    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.crm.backoffice.activities.users.RouteToUsersRequestEmitter;
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.crm.backoffice.activities.users.UsersUiRoute;
+    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with org.modality_project.crm.backoffice.activities.users.RouteToUsersRequestEmitter;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.crm.backoffice.activities.users.UsersUiRoute;
 
 }

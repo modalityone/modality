@@ -6,7 +6,7 @@
     </exported-packages>
 
     <providers>
-        <mongoose.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider>mongoose.base.server.services.systemmetrics.spi.java.JavaSystemMetricsServiceProvider</mongoose.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider>
+        <org.modality_project.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider>org.modality_project.base.server.services.systemmetrics.spi.java.JavaSystemMetricsServiceProvider</org.modality_project.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider>
     </providers>
 
     <dependencies>

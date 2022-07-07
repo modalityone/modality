@@ -10,11 +10,11 @@
 
     <exported-packages>
         <source-packages/>
-        <resource-package>mongoose.base.server.datasource.MDS</resource-package>
+        <resource-package>org.modality_project.base.server.datasource.MDS</resource-package>
     </exported-packages>
 
     <providers>
-        <dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider>mongoose.base.server.services.datasource.MongooseLocalDataSourceProvider</dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider>
+        <dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider>org.modality_project.base.server.services.datasource.MongooseLocalDataSourceProvider</dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider>
     </providers>
 
     <dependencies>

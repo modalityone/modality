@@ -8,9 +8,9 @@ module mongoose.base.server.systemmetrics.java {
     requires mongoose.base.shared.entities;
 
     // Exported packages
-    exports mongoose.base.server.services.systemmetrics.spi.java;
+    exports org.modality_project.base.server.services.systemmetrics.spi.java;
 
     // Provided services
-    provides mongoose.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider with mongoose.base.server.services.systemmetrics.spi.java.JavaSystemMetricsServiceProvider;
+    provides org.modality_project.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider with org.modality_project.base.server.services.systemmetrics.spi.java.JavaSystemMetricsServiceProvider;
 
 }

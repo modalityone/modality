@@ -14,9 +14,9 @@ module mongoose.crm.client.authz {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.crm.client.services.authz;
+    exports org.modality_project.crm.client.services.authz;
 
     // Provided services
-    provides dev.webfx.framework.shared.services.authz.spi.AuthorizationServiceProvider with mongoose.crm.client.services.authz.MongooseAuthorizationServiceProvider;
+    provides dev.webfx.framework.shared.services.authz.spi.AuthorizationServiceProvider with org.modality_project.crm.client.services.authz.MongooseAuthorizationServiceProvider;
 
 }

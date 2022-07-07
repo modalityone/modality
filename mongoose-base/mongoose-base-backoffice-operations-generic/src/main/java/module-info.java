@@ -19,6 +19,6 @@ module mongoose.base.backoffice.operations.generic {
     requires webfx.platform.shared.submit;
 
     // Exported packages
-    exports mongoose.base.backoffice.operations.entities.generic;
+    exports org.modality_project.base.backoffice.operations.entities.generic;
 
 }

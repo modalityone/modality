@@ -6,7 +6,7 @@
     </exported-packages>
 
     <providers>
-        <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.event.backoffice.activities.cloneevent.CloneEventUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+        <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.event.backoffice.activities.cloneevent.CloneEventUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
     </providers>
 
     <dependencies>

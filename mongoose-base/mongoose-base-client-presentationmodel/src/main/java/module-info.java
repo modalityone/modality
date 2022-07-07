@@ -7,6 +7,6 @@ module mongoose.base.client.presentationmodel {
     requires mongoose.base.shared.entities;
 
     // Exported packages
-    exports mongoose.base.client.presentationmodel;
+    exports org.modality_project.base.client.presentationmodel;
 
 }

@@ -31,6 +31,6 @@ module mongoose.crm.backoffice.bookingdetailspanel {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.crm.backoffice.controls.bookingdetailspanel;
+    exports org.modality_project.crm.backoffice.controls.bookingdetailspanel;
 
 }

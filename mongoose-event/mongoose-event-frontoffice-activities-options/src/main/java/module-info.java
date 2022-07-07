@@ -36,11 +36,11 @@ module mongoose.event.frontoffice.activities.options {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.event.frontoffice.activities.options;
-    exports mongoose.event.frontoffice.activities.options.routing;
-    exports mongoose.event.frontoffice.operations.options;
+    exports org.modality_project.event.frontoffice.activities.options;
+    exports org.modality_project.event.frontoffice.activities.options.routing;
+    exports org.modality_project.event.frontoffice.operations.options;
 
     // Provided services
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.event.frontoffice.activities.options.OptionsUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.event.frontoffice.activities.options.OptionsUiRoute;
 
 }

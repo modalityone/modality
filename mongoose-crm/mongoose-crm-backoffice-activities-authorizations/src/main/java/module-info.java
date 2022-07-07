@@ -22,12 +22,12 @@ module mongoose.crm.backoffice.activities.authorizations {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.crm.backoffice.activities.authorizations;
-    exports mongoose.crm.backoffice.activities.authorizations.routing;
-    exports mongoose.crm.backoffice.activities.operations.authorizations;
+    exports org.modality_project.crm.backoffice.activities.authorizations;
+    exports org.modality_project.crm.backoffice.activities.authorizations.routing;
+    exports org.modality_project.crm.backoffice.activities.operations.authorizations;
 
     // Provided services
-    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.crm.backoffice.activities.authorizations.RouteToAuthorizationsRequestEmitter;
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.crm.backoffice.activities.authorizations.AuthorizationsUiRoute;
+    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with org.modality_project.crm.backoffice.activities.authorizations.RouteToAuthorizationsRequestEmitter;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.crm.backoffice.activities.authorizations.AuthorizationsUiRoute;
 
 }

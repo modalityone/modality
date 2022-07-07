@@ -20,6 +20,6 @@ module mongoose.base.backoffice.multilangeditor {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.base.backoffice.controls.multilangeditor;
+    exports org.modality_project.base.backoffice.controls.multilangeditor;
 
 }

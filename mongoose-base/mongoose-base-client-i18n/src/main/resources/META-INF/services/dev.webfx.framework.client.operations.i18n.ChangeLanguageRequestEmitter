@@ -1,2 +1,2 @@
-mongoose.base.client.operations.i18n.ChangeLanguageToEnglishRequest$ProvidedEmitter
-mongoose.base.client.operations.i18n.ChangeLanguageToFrenchRequest$ProvidedEmitter
+org.modality_project.base.client.operations.i18n.ChangeLanguageToEnglishRequest$ProvidedEmitter
+org.modality_project.base.client.operations.i18n.ChangeLanguageToFrenchRequest$ProvidedEmitter

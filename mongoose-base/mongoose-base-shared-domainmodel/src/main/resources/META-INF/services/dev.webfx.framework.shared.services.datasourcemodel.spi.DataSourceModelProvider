@@ -1,1 +1,1 @@
-mongoose.base.shared.services.datasourcemodel.MongooseDataSourceModelProvider
+org.modality_project.base.shared.services.datasourcemodel.MongooseDataSourceModelProvider

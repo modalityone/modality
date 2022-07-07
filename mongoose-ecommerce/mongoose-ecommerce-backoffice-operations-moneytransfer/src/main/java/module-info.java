@@ -13,6 +13,6 @@ module mongoose.ecommerce.backoffice.operations.moneytransfer {
     requires webfx.platform.shared.submit;
 
     // Exported packages
-    exports mongoose.ecommerce.backoffice.operations.entities.moneytransfer;
+    exports org.modality_project.ecommerce.backoffice.operations.entities.moneytransfer;
 
 }

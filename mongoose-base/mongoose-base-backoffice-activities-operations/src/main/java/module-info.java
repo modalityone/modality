@@ -20,12 +20,12 @@ module mongoose.base.backoffice.activities.operations {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.base.backoffice.activities.operations;
-    exports mongoose.base.backoffice.activities.operations.routing;
-    exports mongoose.base.backoffice.operations.routes.operations;
+    exports org.modality_project.base.backoffice.activities.operations;
+    exports org.modality_project.base.backoffice.activities.operations.routing;
+    exports org.modality_project.base.backoffice.operations.routes.operations;
 
     // Provided services
-    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.base.backoffice.activities.operations.RouteToOperationsRequestEmitter;
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.base.backoffice.activities.operations.OperationsUiRoute;
+    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with org.modality_project.base.backoffice.activities.operations.RouteToOperationsRequestEmitter;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.base.backoffice.activities.operations.OperationsUiRoute;
 
 }

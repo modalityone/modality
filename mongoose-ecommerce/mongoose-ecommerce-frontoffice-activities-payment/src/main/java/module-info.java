@@ -33,11 +33,11 @@ module mongoose.ecommerce.frontoffice.activities.payment {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.ecommerce.frontoffice.activities.payment;
-    exports mongoose.ecommerce.frontoffice.activities.payment.routing;
-    exports mongoose.ecommerce.frontoffice.operations.payment;
+    exports org.modality_project.ecommerce.frontoffice.activities.payment;
+    exports org.modality_project.ecommerce.frontoffice.activities.payment.routing;
+    exports org.modality_project.ecommerce.frontoffice.operations.payment;
 
     // Provided services
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.ecommerce.frontoffice.activities.payment.PaymentUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.ecommerce.frontoffice.activities.payment.PaymentUiRoute;
 
 }

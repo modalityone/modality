@@ -32,12 +32,12 @@ module mongoose.base.backoffice.activities.filters {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.base.backoffice.activities.filters;
-    exports mongoose.base.backoffice.activities.filters.routing;
-    exports mongoose.base.backoffice.operations.routes.filters;
+    exports org.modality_project.base.backoffice.activities.filters;
+    exports org.modality_project.base.backoffice.activities.filters.routing;
+    exports org.modality_project.base.backoffice.operations.routes.filters;
 
     // Provided services
-    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.base.backoffice.activities.filters.RouteToFiltersRequestEmitter;
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.base.backoffice.activities.filters.FiltersUiRoute;
+    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with org.modality_project.base.backoffice.activities.filters.RouteToFiltersRequestEmitter;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.base.backoffice.activities.filters.FiltersUiRoute;
 
 }

@@ -1,1 +1,1 @@
-mongoose.base.client.jobs.sessionrecorder.ClientSessionRecorderJob
+org.modality_project.base.client.jobs.sessionrecorder.ClientSessionRecorderJob

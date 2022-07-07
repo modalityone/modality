@@ -12,8 +12,8 @@ module mongoose.base.client.util {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.base.client.util.functions;
-    exports mongoose.base.client.util.log;
-    exports mongoose.base.client.util.routing;
+    exports org.modality_project.base.client.util.functions;
+    exports org.modality_project.base.client.util.log;
+    exports org.modality_project.base.client.util.routing;
 
 }

@@ -26,10 +26,10 @@ module mongoose.base.client.activity {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.base.client.activity;
-    exports mongoose.base.client.activity.eventdependent;
-    exports mongoose.base.client.activity.organizationdependent;
-    exports mongoose.base.client.activity.table;
-    exports mongoose.base.client.activity.themes;
+    exports org.modality_project.base.client.activity;
+    exports org.modality_project.base.client.activity.eventdependent;
+    exports org.modality_project.base.client.activity.organizationdependent;
+    exports org.modality_project.base.client.activity.table;
+    exports org.modality_project.base.client.activity.themes;
 
 }

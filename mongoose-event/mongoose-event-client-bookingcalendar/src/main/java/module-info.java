@@ -18,6 +18,6 @@ module mongoose.event.client.bookingcalendar {
     requires webfx.platform.shared.log;
 
     // Exported packages
-    exports mongoose.event.client.controls.bookingcalendar;
+    exports org.modality_project.event.client.controls.bookingcalendar;
 
 }

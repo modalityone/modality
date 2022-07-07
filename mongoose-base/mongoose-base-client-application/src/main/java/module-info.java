@@ -27,10 +27,10 @@ module mongoose.base.client.application {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.base.client.application;
+    exports org.modality_project.base.client.application;
 
     // Resources packages
     opens images.buddhas;
-    opens mongoose.base.client.images;
+    opens org.modality_project.base.client.images;
 
 }

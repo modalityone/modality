@@ -1,1 +1,1 @@
-mongoose.base.backoffice.activities.filters.RouteToFiltersRequestEmitter
+org.modality_project.base.backoffice.activities.filters.RouteToFiltersRequestEmitter

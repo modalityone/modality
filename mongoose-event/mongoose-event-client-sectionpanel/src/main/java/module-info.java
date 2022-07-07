@@ -13,6 +13,6 @@ module mongoose.event.client.sectionpanel {
     requires webfx.framework.client.util;
 
     // Exported packages
-    exports mongoose.event.client.controls.sectionpanel;
+    exports org.modality_project.event.client.controls.sectionpanel;
 
 }

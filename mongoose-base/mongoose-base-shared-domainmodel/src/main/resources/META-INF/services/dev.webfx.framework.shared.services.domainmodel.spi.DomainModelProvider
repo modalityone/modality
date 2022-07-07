@@ -1,1 +1,1 @@
-mongoose.base.shared.services.domainmodel.MongooseDomainModelProvider
+org.modality_project.base.shared.services.domainmodel.MongooseDomainModelProvider

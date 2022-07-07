@@ -3,13 +3,13 @@
 
     <exported-packages>
         <source-packages/>
-        <resource-package>mongoose.base.client.services.i18n.dictionaries</resource-package>
+        <resource-package>org.modality_project.base.client.services.i18n.dictionaries</resource-package>
     </exported-packages>
 
     <providers>
-        <dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>mongoose.base.client.operations.i18n.ChangeLanguageToEnglishRequest$ProvidedEmitter</dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>
-        <dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>mongoose.base.client.operations.i18n.ChangeLanguageToFrenchRequest$ProvidedEmitter</dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>
-        <dev.webfx.framework.client.services.i18n.spi.I18nProvider>mongoose.base.client.services.i18n.MongooseI18nProvider</dev.webfx.framework.client.services.i18n.spi.I18nProvider>
+        <dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>org.modality_project.base.client.operations.i18n.ChangeLanguageToEnglishRequest$ProvidedEmitter</dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>
+        <dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>org.modality_project.base.client.operations.i18n.ChangeLanguageToFrenchRequest$ProvidedEmitter</dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>
+        <dev.webfx.framework.client.services.i18n.spi.I18nProvider>org.modality_project.base.client.services.i18n.MongooseI18nProvider</dev.webfx.framework.client.services.i18n.spi.I18nProvider>
     </providers>
 
     <dependencies>
@@ -20,8 +20,8 @@
     </dependencies>
 
     <embed-resources>
-        <resource>mongoose/base/client/services/i18n/dictionaries/en.json</resource>
-        <resource>mongoose/base/client/services/i18n/dictionaries/fr.json</resource>
+        <resource>org/modality_project/base/client/services/i18n/dictionaries/en.json</resource>
+        <resource>org/modality_project/base/client/services/i18n/dictionaries/fr.json</resource>
     </embed-resources>
 
 </project>

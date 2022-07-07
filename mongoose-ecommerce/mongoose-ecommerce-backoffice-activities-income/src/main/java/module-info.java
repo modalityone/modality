@@ -28,12 +28,12 @@ module mongoose.ecommerce.backoffice.activities.income {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.ecommerce.backoffice.activities.income;
-    exports mongoose.ecommerce.backoffice.activities.income.routing;
-    exports mongoose.ecommerce.backoffice.operations.routes.income;
+    exports org.modality_project.ecommerce.backoffice.activities.income;
+    exports org.modality_project.ecommerce.backoffice.activities.income.routing;
+    exports org.modality_project.ecommerce.backoffice.operations.routes.income;
 
     // Provided services
-    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.ecommerce.backoffice.activities.income.RouteToIncomeRequestEmitter;
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.ecommerce.backoffice.activities.income.IncomeUiRoute;
+    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with org.modality_project.ecommerce.backoffice.activities.income.RouteToIncomeRequestEmitter;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.ecommerce.backoffice.activities.income.IncomeUiRoute;
 
 }

@@ -1,1 +1,1 @@
-mongoose.base.server.jobs.sessioncloser.MongooseServerUnresponsiveClientSessionCloserJob
+org.modality_project.base.server.jobs.sessioncloser.MongooseServerUnresponsiveClientSessionCloserJob

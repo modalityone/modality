@@ -3,7 +3,7 @@
 module mongoose.base.client.css {
 
     // Resources packages
-    opens mongoose.base.client.css;
-    opens mongoose.base.client.fonts;
+    opens org.modality_project.base.client.css;
+    opens org.modality_project.base.client.fonts;
 
 }

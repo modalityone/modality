@@ -22,11 +22,11 @@ module mongoose.ecommerce.frontoffice.activities.person {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.ecommerce.frontoffice.activities.person;
-    exports mongoose.ecommerce.frontoffice.activities.person.routing;
-    exports mongoose.ecommerce.frontoffice.operations.person;
+    exports org.modality_project.ecommerce.frontoffice.activities.person;
+    exports org.modality_project.ecommerce.frontoffice.activities.person.routing;
+    exports org.modality_project.ecommerce.frontoffice.operations.person;
 
     // Provided services
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.ecommerce.frontoffice.activities.person.PersonUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.ecommerce.frontoffice.activities.person.PersonUiRoute;
 
 }

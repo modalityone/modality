@@ -22,12 +22,12 @@ module mongoose.crm.backoffice.activities.organizations {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.crm.backoffice.activities.organizations;
-    exports mongoose.crm.backoffice.activities.organizations.routing;
-    exports mongoose.crm.backoffice.operations.routes.organizations;
+    exports org.modality_project.crm.backoffice.activities.organizations;
+    exports org.modality_project.crm.backoffice.activities.organizations.routing;
+    exports org.modality_project.crm.backoffice.operations.routes.organizations;
 
     // Provided services
-    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.crm.backoffice.activities.organizations.RouteToOrganizationsRequestEmitter;
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.crm.backoffice.activities.organizations.OrganizationsUiRoute;
+    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with org.modality_project.crm.backoffice.activities.organizations.RouteToOrganizationsRequestEmitter;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.crm.backoffice.activities.organizations.OrganizationsUiRoute;
 
 }

@@ -115,72 +115,72 @@
     <!-- used by mongoose-all-backoffice-application-gwt (APPLICATION) -->
     <!-- used by mongoose-all-backoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <!-- used by mongoose-all-backoffice-application-gwt (PLUGIN) -->
-    <source path="mongoose/all/backoffice/application"/>
+    <source path="org/modality_project/all/backoffice/application"/>
     <!--==================< mongoose-base-backoffice-activities-filters >===================-->
     <!-- used by mongoose-all-backoffice-application (PLUGIN) -->
-    <source path="mongoose/base/backoffice/activities/filters"/>
-    <source path="mongoose/base/backoffice/activities/filters/routing"/>
-    <source path="mongoose/base/backoffice/operations/routes/filters"/>
+    <source path="org/modality_project/base/backoffice/activities/filters"/>
+    <source path="org/modality_project/base/backoffice/activities/filters/routing"/>
+    <source path="org/modality_project/base/backoffice/operations/routes/filters"/>
     <!--==================< mongoose-base-backoffice-activities-monitor >===================-->
     <!-- used by mongoose-all-backoffice-application (PLUGIN) -->
-    <source path="mongoose/base/backoffice/activities/monitor"/>
-    <source path="mongoose/base/backoffice/activities/monitor/routing"/>
-    <source path="mongoose/base/backoffice/operations/routes/monitor"/>
+    <source path="org/modality_project/base/backoffice/activities/monitor"/>
+    <source path="org/modality_project/base/backoffice/activities/monitor/routing"/>
+    <source path="org/modality_project/base/backoffice/operations/routes/monitor"/>
     <!--=================< mongoose-base-backoffice-activities-operations >=================-->
     <!-- used by mongoose-all-backoffice-application (PLUGIN) -->
-    <source path="mongoose/base/backoffice/activities/operations"/>
-    <source path="mongoose/base/backoffice/activities/operations/routing"/>
-    <source path="mongoose/base/backoffice/operations/routes/operations"/>
+    <source path="org/modality_project/base/backoffice/activities/operations"/>
+    <source path="org/modality_project/base/backoffice/activities/operations/routing"/>
+    <source path="org/modality_project/base/backoffice/operations/routes/operations"/>
     <!--======================< mongoose-base-backoffice-masterslave >======================-->
     <!-- used by mongoose-crm-backoffice-bookingdetailspanel (SOURCE) -->
-    <source path="mongoose/base/backoffice/controls/masterslave"/>
-    <source path="mongoose/base/backoffice/controls/masterslave/group"/>
+    <source path="org/modality_project/base/backoffice/controls/masterslave"/>
+    <source path="org/modality_project/base/backoffice/controls/masterslave/group"/>
     <!--====================< mongoose-base-backoffice-multilangeditor >====================-->
     <!-- used by mongoose-crm-backoffice-activities-letter (SOURCE) -->
-    <source path="mongoose/base/backoffice/controls/multilangeditor"/>
+    <source path="org/modality_project/base/backoffice/controls/multilangeditor"/>
     <!--==================< mongoose-base-backoffice-operations-filters >===================-->
     <!-- used by mongoose-base-backoffice-activities-filters (SOURCE) -->
-    <source path="mongoose/base/backoffice/operations/entities/filters"/>
+    <source path="org/modality_project/base/backoffice/operations/entities/filters"/>
     <!--==================< mongoose-base-backoffice-operations-generic >===================-->
     <!-- used by mongoose-ecommerce-backoffice-operations-document (SOURCE) -->
-    <source path="mongoose/base/backoffice/operations/entities/generic"/>
+    <source path="org/modality_project/base/backoffice/operations/entities/generic"/>
     <!--=========================< mongoose-base-client-activity >==========================-->
     <!-- used by mongoose-crm-client-personaldetails (SOURCE) -->
-    <source path="mongoose/base/client/activity"/>
-    <source path="mongoose/base/client/activity/eventdependent"/>
-    <source path="mongoose/base/client/activity/organizationdependent"/>
-    <source path="mongoose/base/client/activity/table"/>
-    <source path="mongoose/base/client/activity/themes"/>
+    <source path="org/modality_project/base/client/activity"/>
+    <source path="org/modality_project/base/client/activity/eventdependent"/>
+    <source path="org/modality_project/base/client/activity/organizationdependent"/>
+    <source path="org/modality_project/base/client/activity/table"/>
+    <source path="org/modality_project/base/client/activity/themes"/>
     <!--========================< mongoose-base-client-aggregates >=========================-->
-    <!-- used by mongoose-base-client-activity (SOURCE) -->
-    <source path="mongoose/base/client/aggregates/cart"/>
-    <source path="mongoose/base/client/aggregates/event"/>
-    <source path="mongoose/base/client/aggregates/person"/>
+    <!-- used by mongoose-ecommerce-client-businesslogic (SOURCE) -->
+    <source path="org/modality_project/base/client/aggregates/cart"/>
+    <source path="org/modality_project/base/client/aggregates/event"/>
+    <source path="org/modality_project/base/client/aggregates/person"/>
     <!--========================< mongoose-base-client-application >========================-->
     <!-- used by mongoose-all-backoffice-application (SOURCE) -->
-    <source path="mongoose/base/client/application"/>
+    <source path="org/modality_project/base/client/application"/>
     <resource path="images/buddhas"/>
     <public includes="images/buddhas/" path=""/>
-    <resource path="mongoose/base/client/images"/>
-    <public includes="mongoose/base/client/images/" path=""/>
+    <resource path="org/modality_project/base/client/images"/>
+    <public includes="org/modality_project/base/client/images/" path=""/>
     <!--=========================< mongoose-base-client-busconfig >=========================-->
     <!-- used by mongoose-base-client-application (RESOURCE) -->
     <resource path="dev/webfx/platform/client/services/websocketbus/conf"/>
     <public includes="dev/webfx/platform/client/services/websocketbus/conf/" path=""/>
     <!--=========================< mongoose-base-client-entities >==========================-->
     <!-- used by mongoose-base-backoffice-masterslave (SOURCE) -->
-    <source path="mongoose/base/client/entities/util"/>
-    <source path="mongoose/base/client/entities/util/filters"/>
+    <source path="org/modality_project/base/client/entities/util"/>
+    <source path="org/modality_project/base/client/entities/util/filters"/>
     <!--===========================< mongoose-base-client-i18n >============================-->
     <!-- used by mongoose-base-client-application (PLUGIN) -->
-    <source path="mongoose/base/client/operations/i18n"/>
-    <source path="mongoose/base/client/services/i18n"/>
-    <resource path="mongoose/base/client/services/i18n/dictionaries"/>
-    <public includes="mongoose/base/client/services/i18n/dictionaries/" path=""/>
+    <source path="org/modality_project/base/client/operations/i18n"/>
+    <source path="org/modality_project/base/client/services/i18n"/>
+    <resource path="org/modality_project/base/client/services/i18n/dictionaries"/>
+    <public includes="org/modality_project/base/client/services/i18n/dictionaries/" path=""/>
     <!--===========================< mongoose-base-client-icons >===========================-->
     <!-- used by mongoose-event-client-sectionpanel (SOURCE) -->
-    <source path="mongoose/base/client/actions"/>
-    <source path="mongoose/base/client/icons"/>
+    <source path="org/modality_project/base/client/actions"/>
+    <source path="org/modality_project/base/client/icons"/>
     <resource path="images/s16"/>
     <public includes="images/s16/" path=""/>
     <resource path="images/s16/actions"/>
@@ -220,14 +220,14 @@
     <!--==================< mongoose-base-client-operationactionsloading >==================-->
     <!-- used by mongoose-all-backoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <!-- used by mongoose-base-client-application (PLUGIN) -->
-    <source path="mongoose/base/client/operationactionsloading"/>
+    <source path="org/modality_project/base/client/operationactionsloading"/>
     <!--=====================< mongoose-base-client-presentationmodel >=====================-->
     <!-- used by mongoose-base-client-entities (SOURCE) -->
-    <source path="mongoose/base/client/presentationmodel"/>
+    <source path="org/modality_project/base/client/presentationmodel"/>
     <!--======================< mongoose-base-client-sessionrecorder >======================-->
     <!-- used by mongoose-all-backoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <!-- used by mongoose-base-client-application (PLUGIN) -->
-    <source path="mongoose/base/client/jobs/sessionrecorder"/>
+    <source path="org/modality_project/base/client/jobs/sessionrecorder"/>
     <define-configuration-property is_multi_valued="false" name="application.build.number"/>
     <define-configuration-property is_multi_valued="false" name="application.build.timestamp"/>
     <define-configuration-property is_multi_valued="false" name="application.build.tool"/>
@@ -235,208 +235,208 @@
     <define-configuration-property is_multi_valued="false" name="application.version"/>
     <!--===========================< mongoose-base-client-util >============================-->
     <!-- used by mongoose-event-client-bookingcalendar (SOURCE) -->
-    <source path="mongoose/base/client/util/functions"/>
-    <source path="mongoose/base/client/util/log"/>
-    <source path="mongoose/base/client/util/routing"/>
+    <source path="org/modality_project/base/client/util/functions"/>
+    <source path="org/modality_project/base/client/util/log"/>
+    <source path="org/modality_project/base/client/util/routing"/>
     <!--========================< mongoose-base-client-validation >=========================-->
     <!-- used by mongoose-crm-client-personaldetails (SOURCE) -->
-    <source path="mongoose/base/client/validation"/>
+    <source path="org/modality_project/base/client/validation"/>
     <!--========================< mongoose-base-shared-domainmodel >========================-->
     <!-- used by mongoose-base-shared-entities (SOURCE) -->
-    <source path="mongoose/base/shared/domainmodel/formatters"/>
-    <source path="mongoose/base/shared/domainmodel/functions"/>
-    <source path="mongoose/base/shared/services/datasourcemodel"/>
-    <source path="mongoose/base/shared/services/domainmodel"/>
-    <resource path="mongoose/base/shared/domainmodel"/>
-    <public includes="mongoose/base/shared/domainmodel/" path=""/>
+    <source path="org/modality_project/base/shared/domainmodel/formatters"/>
+    <source path="org/modality_project/base/shared/domainmodel/functions"/>
+    <source path="org/modality_project/base/shared/services/datasourcemodel"/>
+    <source path="org/modality_project/base/shared/services/domainmodel"/>
+    <resource path="org/modality_project/base/shared/domainmodel"/>
+    <public includes="org/modality_project/base/shared/domainmodel/" path=""/>
     <!--=========================< mongoose-base-shared-entities >==========================-->
     <!-- used by mongoose-base-client-presentationmodel (SOURCE) -->
-    <source path="mongoose/base/shared/entities"/>
-    <source path="mongoose/base/shared/entities/converters"/>
-    <source path="mongoose/base/shared/entities/formatters"/>
-    <source path="mongoose/base/shared/entities/impl"/>
-    <source path="mongoose/base/shared/entities/markers"/>
-    <source path="mongoose/base/shared/services/systemmetrics"/>
+    <source path="org/modality_project/base/shared/entities"/>
+    <source path="org/modality_project/base/shared/entities/converters"/>
+    <source path="org/modality_project/base/shared/entities/formatters"/>
+    <source path="org/modality_project/base/shared/entities/impl"/>
+    <source path="org/modality_project/base/shared/entities/markers"/>
+    <source path="org/modality_project/base/shared/services/systemmetrics"/>
     <!--==============< mongoose-catering-backoffice-activities-diningareas >===============-->
     <!-- used by mongoose-all-backoffice-application (PLUGIN) -->
-    <source path="mongoose/catering/backoffice/activities/diningareas"/>
-    <source path="mongoose/catering/backoffice/activities/diningareas/routing"/>
-    <source path="mongoose/catering/backoffice/operations/routes/diningareas"/>
+    <source path="org/modality_project/catering/backoffice/activities/diningareas"/>
+    <source path="org/modality_project/catering/backoffice/activities/diningareas/routing"/>
+    <source path="org/modality_project/catering/backoffice/operations/routes/diningareas"/>
     <!--=============< mongoose-catering-backoffice-operations-allocationrule >=============-->
     <!-- used by mongoose-catering-backoffice-activities-diningareas (SOURCE) -->
-    <source path="mongoose/catering/backoffice/operations/entities/allocationrule"/>
+    <source path="org/modality_project/catering/backoffice/operations/entities/allocationrule"/>
     <!--===============< mongoose-crm-backoffice-activities-authorizations >================-->
     <!-- used by mongoose-all-backoffice-application (PLUGIN) -->
-    <source path="mongoose/crm/backoffice/activities/authorizations"/>
-    <source path="mongoose/crm/backoffice/activities/authorizations/routing"/>
-    <source path="mongoose/crm/backoffice/activities/operations/authorizations"/>
+    <source path="org/modality_project/crm/backoffice/activities/authorizations"/>
+    <source path="org/modality_project/crm/backoffice/activities/authorizations/routing"/>
+    <source path="org/modality_project/crm/backoffice/activities/operations/authorizations"/>
     <!--===================< mongoose-crm-backoffice-activities-letter >====================-->
     <!-- used by mongoose-crm-backoffice-activities-letters (SOURCE) -->
-    <source path="mongoose/crm/backoffice/activities/letter"/>
-    <source path="mongoose/crm/backoffice/activities/letter/routing"/>
-    <source path="mongoose/crm/backoffice/operations/routes/letter"/>
+    <source path="org/modality_project/crm/backoffice/activities/letter"/>
+    <source path="org/modality_project/crm/backoffice/activities/letter/routing"/>
+    <source path="org/modality_project/crm/backoffice/operations/routes/letter"/>
     <!--===================< mongoose-crm-backoffice-activities-letters >===================-->
     <!-- used by mongoose-all-backoffice-application (PLUGIN) -->
-    <source path="mongoose/crm/backoffice/activities/letters"/>
-    <source path="mongoose/crm/backoffice/activities/letters/routing"/>
-    <source path="mongoose/crm/backoffice/operations/routes/letters"/>
+    <source path="org/modality_project/crm/backoffice/activities/letters"/>
+    <source path="org/modality_project/crm/backoffice/activities/letters/routing"/>
+    <source path="org/modality_project/crm/backoffice/operations/routes/letters"/>
     <!--================< mongoose-crm-backoffice-activities-organizations >================-->
     <!-- used by mongoose-all-backoffice-application (PLUGIN) -->
-    <source path="mongoose/crm/backoffice/activities/organizations"/>
-    <source path="mongoose/crm/backoffice/activities/organizations/routing"/>
-    <source path="mongoose/crm/backoffice/operations/routes/organizations"/>
+    <source path="org/modality_project/crm/backoffice/activities/organizations"/>
+    <source path="org/modality_project/crm/backoffice/activities/organizations/routing"/>
+    <source path="org/modality_project/crm/backoffice/operations/routes/organizations"/>
     <!--====================< mongoose-crm-backoffice-activities-users >====================-->
     <!-- used by mongoose-all-backoffice-application (PLUGIN) -->
-    <source path="mongoose/crm/backoffice/activities/users"/>
-    <source path="mongoose/crm/backoffice/activities/users/routing"/>
-    <source path="mongoose/crm/backoffice/operations/routes/users"/>
+    <source path="org/modality_project/crm/backoffice/activities/users"/>
+    <source path="org/modality_project/crm/backoffice/activities/users/routing"/>
+    <source path="org/modality_project/crm/backoffice/operations/routes/users"/>
     <!--==================< mongoose-crm-backoffice-bookingdetailspanel >===================-->
     <!-- used by mongoose-all-backoffice-application (SOURCE) -->
-    <source path="mongoose/crm/backoffice/controls/bookingdetailspanel"/>
+    <source path="org/modality_project/crm/backoffice/controls/bookingdetailspanel"/>
     <!--====================< mongoose-crm-backoffice-operations-mail >=====================-->
     <!-- used by mongoose-crm-backoffice-bookingdetailspanel (SOURCE) -->
-    <source path="mongoose/crm/backoffice/operations/entities/mail"/>
+    <source path="org/modality_project/crm/backoffice/operations/entities/mail"/>
     <!--======================< mongoose-crm-client-activities-login >======================-->
     <!-- used by mongoose-base-client-application (PLUGIN) -->
-    <source path="mongoose/crm/client/activities/login"/>
+    <source path="org/modality_project/crm/client/activities/login"/>
     <!--==================< mongoose-crm-client-activities-unauthorized >===================-->
     <!-- used by mongoose-base-client-application (PLUGIN) -->
-    <source path="mongoose/crm/client/activities/unauthorized"/>
+    <source path="org/modality_project/crm/client/activities/unauthorized"/>
     <!--===========================< mongoose-crm-client-authn >============================-->
     <!-- used by mongoose-crm-client-personaldetails (SOURCE) -->
-    <source path="mongoose/crm/client/services/authn"/>
+    <source path="org/modality_project/crm/client/services/authn"/>
     <!--===========================< mongoose-crm-client-authz >============================-->
     <!-- used by mongoose-base-client-application (PLUGIN) -->
-    <source path="mongoose/crm/client/services/authz"/>
+    <source path="org/modality_project/crm/client/services/authz"/>
     <!--======================< mongoose-crm-client-personaldetails >=======================-->
     <!-- used by mongoose-ecommerce-backoffice-operations-document (SOURCE) -->
-    <source path="mongoose/crm/client/controls/personaldetails"/>
+    <source path="org/modality_project/crm/client/controls/personaldetails"/>
     <!--===============< mongoose-ecommerce-backoffice-activities-bookings >================-->
     <!-- used by mongoose-event-backoffice-activities-events (SOURCE) -->
-    <source path="mongoose/ecommerce/backoffice/activities/bookings"/>
-    <source path="mongoose/ecommerce/backoffice/activities/bookings/routing"/>
-    <source path="mongoose/ecommerce/backoffice/operations/routes/bookings"/>
+    <source path="org/modality_project/ecommerce/backoffice/activities/bookings"/>
+    <source path="org/modality_project/ecommerce/backoffice/activities/bookings/routing"/>
+    <source path="org/modality_project/ecommerce/backoffice/operations/routes/bookings"/>
     <!--================< mongoose-ecommerce-backoffice-activities-income >=================-->
     <!-- used by mongoose-all-backoffice-application (PLUGIN) -->
-    <source path="mongoose/ecommerce/backoffice/activities/income"/>
-    <source path="mongoose/ecommerce/backoffice/activities/income/routing"/>
-    <source path="mongoose/ecommerce/backoffice/operations/routes/income"/>
+    <source path="org/modality_project/ecommerce/backoffice/activities/income"/>
+    <source path="org/modality_project/ecommerce/backoffice/activities/income/routing"/>
+    <source path="org/modality_project/ecommerce/backoffice/operations/routes/income"/>
     <!--==============< mongoose-ecommerce-backoffice-activities-moneyflows >===============-->
     <!-- used by mongoose-all-backoffice-application (PLUGIN) -->
-    <source path="mongoose/ecommerce/backoffice/activities/moneyflows"/>
-    <source path="mongoose/ecommerce/backoffice/activities/moneyflows/routing"/>
-    <source path="mongoose/ecommerce/backoffice/operations/routes/moneyflows"/>
+    <source path="org/modality_project/ecommerce/backoffice/activities/moneyflows"/>
+    <source path="org/modality_project/ecommerce/backoffice/activities/moneyflows/routing"/>
+    <source path="org/modality_project/ecommerce/backoffice/operations/routes/moneyflows"/>
     <!--===============< mongoose-ecommerce-backoffice-activities-payments >================-->
     <!-- used by mongoose-all-backoffice-application (PLUGIN) -->
-    <source path="mongoose/ecommerce/backoffice/activities/payments"/>
-    <source path="mongoose/ecommerce/backoffice/activities/payments/routing"/>
-    <source path="mongoose/ecommerce/backoffice/operations/routes/payments"/>
+    <source path="org/modality_project/ecommerce/backoffice/activities/payments"/>
+    <source path="org/modality_project/ecommerce/backoffice/activities/payments/routing"/>
+    <source path="org/modality_project/ecommerce/backoffice/operations/routes/payments"/>
     <!--==============< mongoose-ecommerce-backoffice-activities-statements >===============-->
     <!-- used by mongoose-all-backoffice-application (PLUGIN) -->
-    <source path="mongoose/ecommerce/backoffice/activities/statements"/>
-    <source path="mongoose/ecommerce/backoffice/activities/statements/routing"/>
-    <source path="mongoose/ecommerce/backoffice/operations/routes/statements"/>
+    <source path="org/modality_project/ecommerce/backoffice/activities/statements"/>
+    <source path="org/modality_project/ecommerce/backoffice/activities/statements/routing"/>
+    <source path="org/modality_project/ecommerce/backoffice/operations/routes/statements"/>
     <!--==============< mongoose-ecommerce-backoffice-activities-statistics >===============-->
     <!-- used by mongoose-all-backoffice-application (PLUGIN) -->
-    <source path="mongoose/ecommerce/backoffice/activities/statistics"/>
-    <source path="mongoose/ecommerce/backoffice/activities/statistics/routing"/>
-    <source path="mongoose/ecommerce/backoffice/operations/routes/statistics"/>
+    <source path="org/modality_project/ecommerce/backoffice/activities/statistics"/>
+    <source path="org/modality_project/ecommerce/backoffice/activities/statistics/routing"/>
+    <source path="org/modality_project/ecommerce/backoffice/operations/routes/statistics"/>
     <!--===============< mongoose-ecommerce-backoffice-operations-document >================-->
     <!-- used by mongoose-crm-backoffice-bookingdetailspanel (SOURCE) -->
-    <source path="mongoose/ecommerce/backoffice/operations/entities/document"/>
-    <source path="mongoose/ecommerce/backoffice/operations/entities/document/cart"/>
-    <source path="mongoose/ecommerce/backoffice/operations/entities/document/multiplebookings"/>
-    <source path="mongoose/ecommerce/backoffice/operations/entities/document/registration"/>
-    <source path="mongoose/ecommerce/backoffice/operations/entities/document/security"/>
+    <source path="org/modality_project/ecommerce/backoffice/operations/entities/document"/>
+    <source path="org/modality_project/ecommerce/backoffice/operations/entities/document/cart"/>
+    <source path="org/modality_project/ecommerce/backoffice/operations/entities/document/multiplebookings"/>
+    <source path="org/modality_project/ecommerce/backoffice/operations/entities/document/registration"/>
+    <source path="org/modality_project/ecommerce/backoffice/operations/entities/document/security"/>
     <!--=============< mongoose-ecommerce-backoffice-operations-documentline >==============-->
     <!-- used by mongoose-crm-backoffice-bookingdetailspanel (SOURCE) -->
-    <source path="mongoose/ecommerce/backoffice/operations/entities/documentline"/>
+    <source path="org/modality_project/ecommerce/backoffice/operations/entities/documentline"/>
     <!--===============< mongoose-ecommerce-backoffice-operations-moneyflow >===============-->
     <!-- used by mongoose-ecommerce-backoffice-activities-moneyflows (SOURCE) -->
-    <source path="mongoose/ecommerce/backoffice/operations/entities/moneyaccount"/>
-    <source path="mongoose/ecommerce/backoffice/operations/entities/moneyflow"/>
+    <source path="org/modality_project/ecommerce/backoffice/operations/entities/moneyaccount"/>
+    <source path="org/modality_project/ecommerce/backoffice/operations/entities/moneyflow"/>
     <!--=============< mongoose-ecommerce-backoffice-operations-moneytransfer >=============-->
     <!-- used by mongoose-crm-backoffice-bookingdetailspanel (SOURCE) -->
-    <source path="mongoose/ecommerce/backoffice/operations/entities/moneytransfer"/>
+    <source path="org/modality_project/ecommerce/backoffice/operations/entities/moneytransfer"/>
     <!--=================< mongoose-ecommerce-client-bookingoptionspanel >==================-->
     <!-- used by mongoose-ecommerce-frontoffice-activities-summary (SOURCE) -->
-    <source path="mongoose/ecommerce/client/controls/bookingoptionspanel"/>
+    <source path="org/modality_project/ecommerce/client/controls/bookingoptionspanel"/>
     <!--====================< mongoose-ecommerce-client-bookingprocess >====================-->
     <!-- used by mongoose-event-frontoffice-activities-fees (SOURCE) -->
-    <source path="mongoose/ecommerce/client/activity/bookingprocess"/>
+    <source path="org/modality_project/ecommerce/client/activity/bookingprocess"/>
     <!--====================< mongoose-ecommerce-client-businesslogic >=====================-->
-    <!-- used by mongoose-base-client-activity (SOURCE) -->
-    <source path="mongoose/ecommerce/client/businessdata/feesgroup"/>
-    <source path="mongoose/ecommerce/client/businessdata/preselection"/>
-    <source path="mongoose/ecommerce/client/businessdata/workingdocument"/>
-    <source path="mongoose/ecommerce/client/businesslogic/feesgroup"/>
-    <source path="mongoose/ecommerce/client/businesslogic/option"/>
-    <source path="mongoose/ecommerce/client/businesslogic/pricing"/>
-    <source path="mongoose/ecommerce/client/businesslogic/rules"/>
-    <source path="mongoose/ecommerce/client/businesslogic/workingdocument"/>
+    <!-- used by mongoose-event-client-bookingcalendar (SOURCE) -->
+    <source path="org/modality_project/ecommerce/client/businessdata/feesgroup"/>
+    <source path="org/modality_project/ecommerce/client/businessdata/preselection"/>
+    <source path="org/modality_project/ecommerce/client/businessdata/workingdocument"/>
+    <source path="org/modality_project/ecommerce/client/businesslogic/feesgroup"/>
+    <source path="org/modality_project/ecommerce/client/businesslogic/option"/>
+    <source path="org/modality_project/ecommerce/client/businesslogic/pricing"/>
+    <source path="org/modality_project/ecommerce/client/businesslogic/rules"/>
+    <source path="org/modality_project/ecommerce/client/businesslogic/workingdocument"/>
     <!--=============< mongoose-ecommerce-frontoffice-activities-cart-routing >=============-->
     <!-- used by mongoose-ecommerce-frontoffice-activities-summary (SOURCE) -->
-    <source path="mongoose/ecommerce/frontoffice/activities/cart/base"/>
-    <source path="mongoose/ecommerce/frontoffice/activities/cart/routing"/>
-    <source path="mongoose/ecommerce/frontoffice/operations/cart"/>
+    <source path="org/modality_project/ecommerce/frontoffice/activities/cart/base"/>
+    <source path="org/modality_project/ecommerce/frontoffice/activities/cart/routing"/>
+    <source path="org/modality_project/ecommerce/frontoffice/operations/cart"/>
     <!--================< mongoose-ecommerce-frontoffice-activities-person >================-->
     <!-- used by mongoose-event-frontoffice-activities-options (SOURCE) -->
-    <source path="mongoose/ecommerce/frontoffice/activities/person"/>
-    <source path="mongoose/ecommerce/frontoffice/activities/person/routing"/>
-    <source path="mongoose/ecommerce/frontoffice/operations/person"/>
+    <source path="org/modality_project/ecommerce/frontoffice/activities/person"/>
+    <source path="org/modality_project/ecommerce/frontoffice/activities/person/routing"/>
+    <source path="org/modality_project/ecommerce/frontoffice/operations/person"/>
     <!--===============< mongoose-ecommerce-frontoffice-activities-summary >================-->
     <!-- used by mongoose-ecommerce-frontoffice-activities-person (SOURCE) -->
-    <source path="mongoose/ecommerce/frontoffice/activities/summary"/>
-    <source path="mongoose/ecommerce/frontoffice/activities/summary/routing"/>
-    <source path="mongoose/ecommerce/frontoffice/operations/summary"/>
+    <source path="org/modality_project/ecommerce/frontoffice/activities/summary"/>
+    <source path="org/modality_project/ecommerce/frontoffice/activities/summary/routing"/>
+    <source path="org/modality_project/ecommerce/frontoffice/operations/summary"/>
     <!--================< mongoose-event-backoffice-activities-cloneevent >=================-->
     <!-- used by mongoose-all-backoffice-application (PLUGIN) -->
-    <source path="mongoose/event/backoffice/activities/cloneevent"/>
+    <source path="org/modality_project/event/backoffice/activities/cloneevent"/>
     <!--============< mongoose-event-backoffice-activities-cloneevent-routing >=============-->
     <!-- used by mongoose-ecommerce-backoffice-activities-bookings (SOURCE) -->
-    <source path="mongoose/event/backoffice/activities/cloneevent/routing"/>
-    <source path="mongoose/event/backoffice/operations/routes/cloneevent"/>
+    <source path="org/modality_project/event/backoffice/activities/cloneevent/routing"/>
+    <source path="org/modality_project/event/backoffice/operations/routes/cloneevent"/>
     <!--==================< mongoose-event-backoffice-activities-events >===================-->
     <!-- used by mongoose-crm-backoffice-activities-organizations (SOURCE) -->
-    <source path="mongoose/event/backoffice/activities/events"/>
-    <source path="mongoose/event/backoffice/activities/events/routing"/>
-    <source path="mongoose/event/backoffice/operations/routes/events"/>
+    <source path="org/modality_project/event/backoffice/activities/events"/>
+    <source path="org/modality_project/event/backoffice/activities/events/routing"/>
+    <source path="org/modality_project/event/backoffice/operations/routes/events"/>
     <!--==================< mongoose-event-backoffice-activities-options >==================-->
     <!-- used by mongoose-all-backoffice-application (PLUGIN) -->
-    <source path="mongoose/event/backoffice/activities/options"/>
+    <source path="org/modality_project/event/backoffice/activities/options"/>
     <!--=====================< mongoose-event-client-bookingcalendar >======================-->
     <!-- used by mongoose-event-client-sectionpanel (SOURCE) -->
-    <source path="mongoose/event/client/controls/bookingcalendar"/>
+    <source path="org/modality_project/event/client/controls/bookingcalendar"/>
     <!--=========================< mongoose-event-client-calendar >=========================-->
     <!-- used by mongoose-ecommerce-client-businesslogic (SOURCE) -->
-    <source path="mongoose/event/client/businessdata/calendar"/>
-    <source path="mongoose/event/client/businessdata/calendar/impl"/>
-    <source path="mongoose/event/client/controls/calendargraphic"/>
-    <source path="mongoose/event/client/controls/calendargraphic/impl"/>
+    <source path="org/modality_project/event/client/businessdata/calendar"/>
+    <source path="org/modality_project/event/client/businessdata/calendar/impl"/>
+    <source path="org/modality_project/event/client/controls/calendargraphic"/>
+    <source path="org/modality_project/event/client/controls/calendargraphic/impl"/>
     <!--=======================< mongoose-event-client-sectionpanel >=======================-->
     <!-- used by mongoose-crm-client-personaldetails (SOURCE) -->
-    <source path="mongoose/event/client/controls/sectionpanel"/>
+    <source path="org/modality_project/event/client/controls/sectionpanel"/>
     <!--===================< mongoose-event-frontoffice-activities-fees >===================-->
     <!-- used by mongoose-ecommerce-backoffice-activities-bookings (SOURCE) -->
-    <source path="mongoose/event/frontoffice/activities/fees"/>
-    <source path="mongoose/event/frontoffice/activities/fees/routing"/>
-    <source path="mongoose/event/frontoffice/operations/fees"/>
+    <source path="org/modality_project/event/frontoffice/activities/fees"/>
+    <source path="org/modality_project/event/frontoffice/activities/fees/routing"/>
+    <source path="org/modality_project/event/frontoffice/operations/fees"/>
     <!--=================< mongoose-event-frontoffice-activities-options >==================-->
     <!-- used by mongoose-event-frontoffice-activities-fees (SOURCE) -->
-    <source path="mongoose/event/frontoffice/activities/options"/>
-    <source path="mongoose/event/frontoffice/activities/options/routing"/>
-    <source path="mongoose/event/frontoffice/operations/options"/>
+    <source path="org/modality_project/event/frontoffice/activities/options"/>
+    <source path="org/modality_project/event/frontoffice/activities/options/routing"/>
+    <source path="org/modality_project/event/frontoffice/operations/options"/>
     <!--===============< mongoose-hotel-backoffice-activities-roomsgraphic >================-->
     <!-- used by mongoose-all-backoffice-application (PLUGIN) -->
-    <source path="mongoose/hotel/backoffice/activities/roomsgraphic"/>
-    <source path="mongoose/hotel/backoffice/activities/roomsgraphic/routing"/>
-    <source path="mongoose/hotel/backoffice/operations/routes/roomsgraphic"/>
+    <source path="org/modality_project/hotel/backoffice/activities/roomsgraphic"/>
+    <source path="org/modality_project/hotel/backoffice/activities/roomsgraphic/routing"/>
+    <source path="org/modality_project/hotel/backoffice/operations/routes/roomsgraphic"/>
     <!--===========< mongoose-hotel-backoffice-operations-resourceconfiguration >===========-->
     <!-- used by mongoose-hotel-backoffice-activities-roomsgraphic (SOURCE) -->
-    <source path="mongoose/hotel/backoffice/operations/entities/resourceconfiguration"/>
+    <source path="org/modality_project/hotel/backoffice/operations/entities/resourceconfiguration"/>
     <!--===========================< mongoose-hotel-shared-time >===========================-->
     <!-- used by mongoose-base-shared-entities (SOURCE) -->
-    <source path="mongoose/hotel/shared/businessdata/time"/>
+    <source path="org/modality_project/hotel/shared/businessdata/time"/>
     <!--===============================< webfx-extras-cell >================================-->
     <!-- used by webfx-extras-visual-base (SOURCE) -->
     <!-- used by webfx-extras-visual-controls-grid-peers-gwt (SOURCE) -->

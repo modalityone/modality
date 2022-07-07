@@ -3,16 +3,16 @@
 
     <exported-packages>
         <source-packages/>
-        <resource-package>mongoose.base.shared.domainmodel</resource-package>
+        <resource-package>org.modality_project.base.shared.domainmodel</resource-package>
     </exported-packages>
 
     <providers>
-        <dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider>mongoose.base.shared.services.domainmodel.MongooseDomainModelProvider</dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider>
-        <dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider>mongoose.base.shared.services.datasourcemodel.MongooseDataSourceModelProvider</dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider>
+        <dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider>org.modality_project.base.shared.services.domainmodel.MongooseDomainModelProvider</dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider>
+        <dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider>org.modality_project.base.shared.services.datasourcemodel.MongooseDataSourceModelProvider</dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider>
     </providers>
 
     <embed-resources>
-        <resource>mongoose/base/shared/domainmodel/DomainModelSnapshot.json</resource>
+        <resource>org/modality_project/base/shared/domainmodel/DomainModelSnapshot.json</resource>
     </embed-resources>
 
     <dependencies>

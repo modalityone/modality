@@ -19,13 +19,13 @@ module mongoose.ecommerce.client.businesslogic {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.ecommerce.client.businessdata.feesgroup;
-    exports mongoose.ecommerce.client.businessdata.preselection;
-    exports mongoose.ecommerce.client.businessdata.workingdocument;
-    exports mongoose.ecommerce.client.businesslogic.feesgroup;
-    exports mongoose.ecommerce.client.businesslogic.option;
-    exports mongoose.ecommerce.client.businesslogic.pricing;
-    exports mongoose.ecommerce.client.businesslogic.rules;
-    exports mongoose.ecommerce.client.businesslogic.workingdocument;
+    exports org.modality_project.ecommerce.client.businessdata.feesgroup;
+    exports org.modality_project.ecommerce.client.businessdata.preselection;
+    exports org.modality_project.ecommerce.client.businessdata.workingdocument;
+    exports org.modality_project.ecommerce.client.businesslogic.feesgroup;
+    exports org.modality_project.ecommerce.client.businesslogic.option;
+    exports org.modality_project.ecommerce.client.businesslogic.pricing;
+    exports org.modality_project.ecommerce.client.businesslogic.rules;
+    exports org.modality_project.ecommerce.client.businesslogic.workingdocument;
 
 }

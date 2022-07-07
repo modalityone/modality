@@ -28,6 +28,6 @@ module mongoose.crm.client.personaldetails {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.crm.client.controls.personaldetails;
+    exports org.modality_project.crm.client.controls.personaldetails;
 
 }

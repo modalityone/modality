@@ -10,9 +10,9 @@ module mongoose.crm.client.authn {
     requires webfx.platform.shared.query;
 
     // Exported packages
-    exports mongoose.crm.client.services.authn;
+    exports org.modality_project.crm.client.services.authn;
 
     // Provided services
-    provides dev.webfx.framework.shared.services.authn.spi.AuthenticationServiceProvider with mongoose.crm.client.services.authn.MongooseAuthenticationServiceProvider;
+    provides dev.webfx.framework.shared.services.authn.spi.AuthenticationServiceProvider with org.modality_project.crm.client.services.authn.MongooseAuthenticationServiceProvider;
 
 }

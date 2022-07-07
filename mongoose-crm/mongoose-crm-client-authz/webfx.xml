@@ -6,7 +6,7 @@
     </exported-packages>
 
     <providers>
-        <dev.webfx.framework.shared.services.authz.spi.AuthorizationServiceProvider>mongoose.crm.client.services.authz.MongooseAuthorizationServiceProvider</dev.webfx.framework.shared.services.authz.spi.AuthorizationServiceProvider>
+        <dev.webfx.framework.shared.services.authz.spi.AuthorizationServiceProvider>org.modality_project.crm.client.services.authz.MongooseAuthorizationServiceProvider</dev.webfx.framework.shared.services.authz.spi.AuthorizationServiceProvider>
     </providers>
 
     <dependencies>

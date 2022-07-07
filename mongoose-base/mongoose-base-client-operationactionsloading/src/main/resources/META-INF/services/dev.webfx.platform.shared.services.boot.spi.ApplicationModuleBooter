@@ -1,1 +1,1 @@
-mongoose.base.client.operationactionsloading.MongooseClientOperationActionsLoader
+org.modality_project.base.client.operationactionsloading.MongooseClientOperationActionsLoader

@@ -9,7 +9,7 @@ module mongoose.event.backoffice.activities.cloneevent.routing {
     requires webfx.platform.client.windowhistory;
 
     // Exported packages
-    exports mongoose.event.backoffice.activities.cloneevent.routing;
-    exports mongoose.event.backoffice.operations.routes.cloneevent;
+    exports org.modality_project.event.backoffice.activities.cloneevent.routing;
+    exports org.modality_project.event.backoffice.operations.routes.cloneevent;
 
 }

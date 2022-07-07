@@ -9,6 +9,6 @@ module mongoose.crm.backoffice.operations.mail {
     requires webfx.platform.shared.async;
 
     // Exported packages
-    exports mongoose.crm.backoffice.operations.entities.mail;
+    exports org.modality_project.crm.backoffice.operations.entities.mail;
 
 }

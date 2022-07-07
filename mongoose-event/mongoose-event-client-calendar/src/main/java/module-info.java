@@ -14,9 +14,9 @@ module mongoose.event.client.calendar {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.event.client.businessdata.calendar;
-    exports mongoose.event.client.businessdata.calendar.impl;
-    exports mongoose.event.client.controls.calendargraphic;
-    exports mongoose.event.client.controls.calendargraphic.impl;
+    exports org.modality_project.event.client.businessdata.calendar;
+    exports org.modality_project.event.client.businessdata.calendar.impl;
+    exports org.modality_project.event.client.controls.calendargraphic;
+    exports org.modality_project.event.client.controls.calendargraphic.impl;
 
 }

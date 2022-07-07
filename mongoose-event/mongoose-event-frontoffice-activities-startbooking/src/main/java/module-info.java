@@ -27,11 +27,11 @@ module mongoose.event.frontoffice.activities.startbooking {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.event.frontoffice.activities.startbooking;
-    exports mongoose.event.frontoffice.activities.startbooking.routing;
-    exports mongoose.event.frontoffice.operations.startbooking;
+    exports org.modality_project.event.frontoffice.activities.startbooking;
+    exports org.modality_project.event.frontoffice.activities.startbooking.routing;
+    exports org.modality_project.event.frontoffice.operations.startbooking;
 
     // Provided services
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.event.frontoffice.activities.startbooking.StartBookingUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.event.frontoffice.activities.startbooking.StartBookingUiRoute;
 
 }

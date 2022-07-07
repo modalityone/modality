@@ -1,1 +1,1 @@
-mongoose.base.server.services.datasource.MongooseLocalDataSourceProvider
+org.modality_project.base.server.services.datasource.MongooseLocalDataSourceProvider

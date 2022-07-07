@@ -37,12 +37,12 @@ module mongoose.hotel.backoffice.activities.roomsgraphic {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.hotel.backoffice.activities.roomsgraphic;
-    exports mongoose.hotel.backoffice.activities.roomsgraphic.routing;
-    exports mongoose.hotel.backoffice.operations.routes.roomsgraphic;
+    exports org.modality_project.hotel.backoffice.activities.roomsgraphic;
+    exports org.modality_project.hotel.backoffice.activities.roomsgraphic.routing;
+    exports org.modality_project.hotel.backoffice.operations.routes.roomsgraphic;
 
     // Provided services
-    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.hotel.backoffice.activities.roomsgraphic.RouteToRoomsGraphicRequestEmitter;
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.hotel.backoffice.activities.roomsgraphic.RoomsGraphicUiRoute;
+    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with org.modality_project.hotel.backoffice.activities.roomsgraphic.RouteToRoomsGraphicRequestEmitter;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.hotel.backoffice.activities.roomsgraphic.RoomsGraphicUiRoute;
 
 }

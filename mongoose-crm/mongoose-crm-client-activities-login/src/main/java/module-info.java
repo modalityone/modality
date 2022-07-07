@@ -21,9 +21,9 @@ module mongoose.crm.client.activities.login {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.crm.client.activities.login;
+    exports org.modality_project.crm.client.activities.login;
 
     // Provided services
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.crm.client.activities.login.LoginUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.crm.client.activities.login.LoginUiRoute;
 
 }

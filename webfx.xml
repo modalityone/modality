@@ -83,7 +83,7 @@
             </exported-packages>
 
             <providers>
-                <javafx.application.Application>mongoose.all.backoffice.application.MongooseBackOfficeApplication</javafx.application.Application>
+                <javafx.application.Application>org.modality_project.all.backoffice.application.MongooseBackOfficeApplication</javafx.application.Application>
             </providers>
 
             <dependencies>
@@ -123,7 +123,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.all.backoffice.application</package>
+                <package>org.modality_project.all.backoffice.application</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -176,7 +176,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.all.backoffice.activities.event.clone.openjfx</package>
+                <package>org.modality_project.all.backoffice.activities.event.clone.openjfx</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -197,7 +197,7 @@
             </exported-packages>
 
             <providers>
-                <javafx.application.Application>mongoose.all.frontoffice.application.MongooseFrontOfficeApplication</javafx.application.Application>
+                <javafx.application.Application>org.modality_project.all.frontoffice.application.MongooseFrontOfficeApplication</javafx.application.Application>
             </providers>
 
             <dependencies>
@@ -220,7 +220,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.all.frontoffice.application</package>
+                <package>org.modality_project.all.frontoffice.application</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -312,8 +312,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.base.backoffice.activities.filters.FiltersUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.base.backoffice.activities.filters.RouteToFiltersRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.base.backoffice.activities.filters.FiltersUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.base.backoffice.activities.filters.RouteToFiltersRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -326,9 +326,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.backoffice.operations.routes.filters</package>
-                <package>mongoose.base.backoffice.activities.filters</package>
-                <package>mongoose.base.backoffice.activities.filters.routing</package>
+                <package>org.modality_project.base.backoffice.operations.routes.filters</package>
+                <package>org.modality_project.base.backoffice.activities.filters</package>
+                <package>org.modality_project.base.backoffice.activities.filters.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -367,8 +367,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.base.backoffice.activities.monitor.MonitorUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.base.backoffice.activities.monitor.RouteToMonitorRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.base.backoffice.activities.monitor.MonitorUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.base.backoffice.activities.monitor.RouteToMonitorRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -380,9 +380,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.backoffice.operations.routes.monitor</package>
-                <package>mongoose.base.backoffice.activities.monitor</package>
-                <package>mongoose.base.backoffice.activities.monitor.routing</package>
+                <package>org.modality_project.base.backoffice.operations.routes.monitor</package>
+                <package>org.modality_project.base.backoffice.activities.monitor</package>
+                <package>org.modality_project.base.backoffice.activities.monitor.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -411,8 +411,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.base.backoffice.activities.operations.OperationsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.base.backoffice.activities.operations.RouteToOperationsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.base.backoffice.activities.operations.OperationsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.base.backoffice.activities.operations.RouteToOperationsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -423,9 +423,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.backoffice.operations.routes.operations</package>
-                <package>mongoose.base.backoffice.activities.operations</package>
-                <package>mongoose.base.backoffice.activities.operations.routing</package>
+                <package>org.modality_project.base.backoffice.operations.routes.operations</package>
+                <package>org.modality_project.base.backoffice.activities.operations</package>
+                <package>org.modality_project.base.backoffice.activities.operations.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -459,8 +459,8 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.backoffice.controls.masterslave</package>
-                <package>mongoose.base.backoffice.controls.masterslave.group</package>
+                <package>org.modality_project.base.backoffice.controls.masterslave</package>
+                <package>org.modality_project.base.backoffice.controls.masterslave.group</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -502,7 +502,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.backoffice.controls.multilangeditor</package>
+                <package>org.modality_project.base.backoffice.controls.multilangeditor</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -535,7 +535,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.backoffice.operations.entities.filters</package>
+                <package>org.modality_project.base.backoffice.operations.entities.filters</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -565,7 +565,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.backoffice.operations.entities.generic</package>
+                <package>org.modality_project.base.backoffice.operations.entities.generic</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -600,17 +600,14 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.backoffice.operations.snapshot</package>
+                <package>org.modality_project.base.backoffice.operations.snapshot</package>
             </source-packages>
 
             <used-by-source-modules>
                 <module>java.base</module>
                 <module>webfx-framework-client-orm-reactive-entities</module>
                 <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-domainmodel</module>
                 <module>webfx-framework-shared-orm-entity</module>
-                <module>webfx-framework-shared-orm-expression</module>
-                <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-platform-shared-async</module>
             </used-by-source-modules>
 
@@ -629,11 +626,11 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.client.activity.eventdependent</package>
-                <package>mongoose.base.client.activity.organizationdependent</package>
-                <package>mongoose.base.client.activity</package>
-                <package>mongoose.base.client.activity.table</package>
-                <package>mongoose.base.client.activity.themes</package>
+                <package>org.modality_project.base.client.activity.eventdependent</package>
+                <package>org.modality_project.base.client.activity.organizationdependent</package>
+                <package>org.modality_project.base.client.activity</package>
+                <package>org.modality_project.base.client.activity.table</package>
+                <package>org.modality_project.base.client.activity.themes</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -672,9 +669,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.client.aggregates.person</package>
-                <package>mongoose.base.client.aggregates.cart</package>
-                <package>mongoose.base.client.aggregates.event</package>
+                <package>org.modality_project.base.client.aggregates.person</package>
+                <package>org.modality_project.base.client.aggregates.cart</package>
+                <package>org.modality_project.base.client.aggregates.event</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -700,7 +697,7 @@
 
             <exported-packages>
                 <source-packages/>
-                <resource-package>mongoose.base.client.images</resource-package>
+                <resource-package>org.modality_project.base.client.images</resource-package>
                 <resource-package>images.buddhas</resource-package>
             </exported-packages>
 
@@ -725,7 +722,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.client.application</package>
+                <package>org.modality_project.base.client.application</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -793,8 +790,8 @@
             </implements>
 
             <exported-packages>
-                <resource-package>mongoose.base.client.css</resource-package>
-                <resource-package>mongoose.base.client.fonts</resource-package>
+                <resource-package>org.modality_project.base.client.css</resource-package>
+                <resource-package>org.modality_project.base.client.fonts</resource-package>
             </exported-packages>
 
             <dependencies>
@@ -830,8 +827,8 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.client.entities.util.filters</package>
-                <package>mongoose.base.client.entities.util</package>
+                <package>org.modality_project.base.client.entities.util.filters</package>
+                <package>org.modality_project.base.client.entities.util</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -858,13 +855,13 @@
 
             <exported-packages>
                 <source-packages/>
-                <resource-package>mongoose.base.client.services.i18n.dictionaries</resource-package>
+                <resource-package>org.modality_project.base.client.services.i18n.dictionaries</resource-package>
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>mongoose.base.client.operations.i18n.ChangeLanguageToEnglishRequest$ProvidedEmitter</dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>
-                <dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>mongoose.base.client.operations.i18n.ChangeLanguageToFrenchRequest$ProvidedEmitter</dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>
-                <dev.webfx.framework.client.services.i18n.spi.I18nProvider>mongoose.base.client.services.i18n.MongooseI18nProvider</dev.webfx.framework.client.services.i18n.spi.I18nProvider>
+                <dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>org.modality_project.base.client.operations.i18n.ChangeLanguageToEnglishRequest$ProvidedEmitter</dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>
+                <dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>org.modality_project.base.client.operations.i18n.ChangeLanguageToFrenchRequest$ProvidedEmitter</dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>
+                <dev.webfx.framework.client.services.i18n.spi.I18nProvider>org.modality_project.base.client.services.i18n.MongooseI18nProvider</dev.webfx.framework.client.services.i18n.spi.I18nProvider>
             </providers>
 
             <dependencies>
@@ -875,13 +872,13 @@
             </dependencies>
 
             <embed-resources>
-                <resource>mongoose/base/client/services/i18n/dictionaries/en.json</resource>
-                <resource>mongoose/base/client/services/i18n/dictionaries/fr.json</resource>
+                <resource>org/modality_project/base/client/services/i18n/dictionaries/en.json</resource>
+                <resource>org/modality_project/base/client/services/i18n/dictionaries/fr.json</resource>
             </embed-resources>
 
             <source-packages>
-                <package>mongoose.base.client.operations.i18n</package>
-                <package>mongoose.base.client.services.i18n</package>
+                <package>org.modality_project.base.client.operations.i18n</package>
+                <package>org.modality_project.base.client.services.i18n</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -931,8 +928,8 @@
             </embed-resources>
 
             <source-packages>
-                <package>mongoose.base.client.icons</package>
-                <package>mongoose.base.client.actions</package>
+                <package>org.modality_project.base.client.icons</package>
+                <package>org.modality_project.base.client.actions</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -951,8 +948,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.base.client.navigationarrows.RouteBackwardRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.base.client.navigationarrows.RouteForwardRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.base.client.navigationarrows.RouteBackwardRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.base.client.navigationarrows.RouteForwardRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -960,7 +957,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.client.navigationarrows</package>
+                <package>org.modality_project.base.client.navigationarrows</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -977,7 +974,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.platform.shared.services.boot.spi.ApplicationModuleBooter>mongoose.base.client.operationactionsloading.MongooseClientOperationActionsLoader</dev.webfx.platform.shared.services.boot.spi.ApplicationModuleBooter>
+                <dev.webfx.platform.shared.services.boot.spi.ApplicationModuleBooter>org.modality_project.base.client.operationactionsloading.MongooseClientOperationActionsLoader</dev.webfx.platform.shared.services.boot.spi.ApplicationModuleBooter>
             </providers>
 
             <dependencies>
@@ -988,7 +985,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.client.operationactionsloading</package>
+                <package>org.modality_project.base.client.operationactionsloading</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1016,7 +1013,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.client.presentationmodel</package>
+                <package>org.modality_project.base.client.presentationmodel</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1033,7 +1030,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.platform.shared.services.boot.spi.ApplicationJob>mongoose.base.client.jobs.sessionrecorder.ClientSessionRecorderJob</dev.webfx.platform.shared.services.boot.spi.ApplicationJob>
+                <dev.webfx.platform.shared.services.boot.spi.ApplicationJob>org.modality_project.base.client.jobs.sessionrecorder.ClientSessionRecorderJob</dev.webfx.platform.shared.services.boot.spi.ApplicationJob>
             </providers>
 
             <dependencies>
@@ -1053,7 +1050,7 @@
             </system-properties>
 
             <source-packages>
-                <package>mongoose.base.client.jobs.sessionrecorder</package>
+                <package>org.modality_project.base.client.jobs.sessionrecorder</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1083,9 +1080,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.client.util.functions</package>
-                <package>mongoose.base.client.util.log</package>
-                <package>mongoose.base.client.util.routing</package>
+                <package>org.modality_project.base.client.util.functions</package>
+                <package>org.modality_project.base.client.util.log</package>
+                <package>org.modality_project.base.client.util.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1111,7 +1108,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.client.validation</package>
+                <package>org.modality_project.base.client.validation</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1184,11 +1181,11 @@
 
             <exported-packages>
                 <source-packages/>
-                <resource-package>mongoose.base.server.datasource.MDS</resource-package>
+                <resource-package>org.modality_project.base.server.datasource.MDS</resource-package>
             </exported-packages>
 
             <providers>
-                <dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider>mongoose.base.server.services.datasource.MongooseLocalDataSourceProvider</dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider>
+                <dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider>org.modality_project.base.server.services.datasource.MongooseLocalDataSourceProvider</dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider>
             </providers>
 
             <dependencies>
@@ -1283,7 +1280,7 @@
 -->
 
             <source-packages>
-                <package>mongoose.base.server.services.datasource</package>
+                <package>org.modality_project.base.server.services.datasource</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1303,7 +1300,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.platform.shared.services.boot.spi.ApplicationJob>mongoose.base.server.jobs.sessioncloser.MongooseServerUnresponsiveClientSessionCloserJob</dev.webfx.platform.shared.services.boot.spi.ApplicationJob>
+                <dev.webfx.platform.shared.services.boot.spi.ApplicationJob>org.modality_project.base.server.jobs.sessioncloser.MongooseServerUnresponsiveClientSessionCloserJob</dev.webfx.platform.shared.services.boot.spi.ApplicationJob>
             </providers>
 
             <dependencies>
@@ -1314,7 +1311,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.server.jobs.sessioncloser</package>
+                <package>org.modality_project.base.server.jobs.sessioncloser</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1334,7 +1331,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.platform.shared.services.boot.spi.ApplicationJob>mongoose.base.server.jobs.systemmetrics.SystemMetricsRecorderJob</dev.webfx.platform.shared.services.boot.spi.ApplicationJob>
+                <dev.webfx.platform.shared.services.boot.spi.ApplicationJob>org.modality_project.base.server.jobs.systemmetrics.SystemMetricsRecorderJob</dev.webfx.platform.shared.services.boot.spi.ApplicationJob>
             </providers>
 
             <dependencies>
@@ -1344,9 +1341,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.server.jobs.systemmetrics</package>
-                <package>mongoose.base.server.services.systemmetrics.spi</package>
-                <package>mongoose.base.server.services.systemmetrics</package>
+                <package>org.modality_project.base.server.jobs.systemmetrics</package>
+                <package>org.modality_project.base.server.services.systemmetrics.spi</package>
+                <package>org.modality_project.base.server.services.systemmetrics</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1363,7 +1360,7 @@
             </used-by-source-modules>
 
             <used-services>
-                <required-service>mongoose.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider</required-service>
+                <required-service>org.modality_project.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider</required-service>
             </used-services>
 
         </project>
@@ -1375,7 +1372,7 @@
             </exported-packages>
 
             <providers>
-                <mongoose.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider>mongoose.base.server.services.systemmetrics.spi.java.JavaSystemMetricsServiceProvider</mongoose.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider>
+                <org.modality_project.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider>org.modality_project.base.server.services.systemmetrics.spi.java.JavaSystemMetricsServiceProvider</org.modality_project.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider>
             </providers>
 
             <dependencies>
@@ -1383,7 +1380,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.server.services.systemmetrics.spi.java</package>
+                <package>org.modality_project.base.server.services.systemmetrics.spi.java</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1398,16 +1395,16 @@
 
             <exported-packages>
                 <source-packages/>
-                <resource-package>mongoose.base.shared.domainmodel</resource-package>
+                <resource-package>org.modality_project.base.shared.domainmodel</resource-package>
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider>mongoose.base.shared.services.domainmodel.MongooseDomainModelProvider</dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider>
-                <dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider>mongoose.base.shared.services.datasourcemodel.MongooseDataSourceModelProvider</dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider>
+                <dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider>org.modality_project.base.shared.services.domainmodel.MongooseDomainModelProvider</dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider>
+                <dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider>org.modality_project.base.shared.services.datasourcemodel.MongooseDataSourceModelProvider</dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider>
             </providers>
 
             <embed-resources>
-                <resource>mongoose/base/shared/domainmodel/DomainModelSnapshot.json</resource>
+                <resource>org/modality_project/base/shared/domainmodel/DomainModelSnapshot.json</resource>
             </embed-resources>
 
             <dependencies>
@@ -1415,10 +1412,10 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.shared.domainmodel.formatters</package>
-                <package>mongoose.base.shared.domainmodel.functions</package>
-                <package>mongoose.base.shared.services.domainmodel</package>
-                <package>mongoose.base.shared.services.datasourcemodel</package>
+                <package>org.modality_project.base.shared.domainmodel.formatters</package>
+                <package>org.modality_project.base.shared.domainmodel.functions</package>
+                <package>org.modality_project.base.shared.services.domainmodel</package>
+                <package>org.modality_project.base.shared.services.datasourcemodel</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1448,36 +1445,36 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.AttendanceImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.CartImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.CountryImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.CurrencyImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.DateInfoImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.DocumentImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.DocumentLineImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.EventImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.FilterImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.GatewayParameterImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.HistoryImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.ImageImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.ItemFamilyImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.ItemImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.LabelImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.MailImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.MethodImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.MoneyTransferImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.MoneyAccountImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.MoneyAccountTypeImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.MoneyFlowImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.OptionImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.OrganizationImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.OrganizationTypeImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.PersonImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.RateImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.SiteImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.SnapshotImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.SystemMetricsEntityImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>mongoose.base.shared.entities.impl.TeacherImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.AttendanceImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.CartImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.CountryImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.CurrencyImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.DateInfoImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.DocumentImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.DocumentLineImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.EventImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.FilterImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.GatewayParameterImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.HistoryImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.ImageImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.ItemFamilyImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.ItemImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.LabelImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.MailImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.MethodImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.MoneyTransferImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.MoneyAccountImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.MoneyAccountTypeImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.MoneyFlowImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.OptionImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.OrganizationImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.OrganizationTypeImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.PersonImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.RateImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.SiteImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.SnapshotImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.SystemMetricsEntityImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.TeacherImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
             </providers>
 
             <dependencies>
@@ -1485,12 +1482,12 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.base.shared.services.systemmetrics</package>
-                <package>mongoose.base.shared.entities.impl</package>
-                <package>mongoose.base.shared.entities</package>
-                <package>mongoose.base.shared.entities.markers</package>
-                <package>mongoose.base.shared.entities.converters</package>
-                <package>mongoose.base.shared.entities.formatters</package>
+                <package>org.modality_project.base.shared.services.systemmetrics</package>
+                <package>org.modality_project.base.shared.entities.impl</package>
+                <package>org.modality_project.base.shared.entities</package>
+                <package>org.modality_project.base.shared.entities.markers</package>
+                <package>org.modality_project.base.shared.entities.converters</package>
+                <package>org.modality_project.base.shared.entities.formatters</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1520,8 +1517,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.catering.backoffice.activities.diningareas.DiningAreasUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.catering.backoffice.activities.diningareas.RouteToDiningAreasRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.catering.backoffice.activities.diningareas.DiningAreasUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.catering.backoffice.activities.diningareas.RouteToDiningAreasRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -1534,9 +1531,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.catering.backoffice.operations.routes.diningareas</package>
-                <package>mongoose.catering.backoffice.activities.diningareas</package>
-                <package>mongoose.catering.backoffice.activities.diningareas.routing</package>
+                <package>org.modality_project.catering.backoffice.operations.routes.diningareas</package>
+                <package>org.modality_project.catering.backoffice.activities.diningareas</package>
+                <package>org.modality_project.catering.backoffice.activities.diningareas.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1578,7 +1575,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.catering.backoffice.operations.entities.allocationrule</package>
+                <package>org.modality_project.catering.backoffice.operations.entities.allocationrule</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1620,8 +1617,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.crm.backoffice.activities.authorizations.AuthorizationsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.crm.backoffice.activities.authorizations.RouteToAuthorizationsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.backoffice.activities.authorizations.AuthorizationsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.crm.backoffice.activities.authorizations.RouteToAuthorizationsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -1634,9 +1631,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.crm.backoffice.activities.authorizations</package>
-                <package>mongoose.crm.backoffice.activities.authorizations.routing</package>
-                <package>mongoose.crm.backoffice.activities.operations.authorizations</package>
+                <package>org.modality_project.crm.backoffice.activities.authorizations</package>
+                <package>org.modality_project.crm.backoffice.activities.authorizations.routing</package>
+                <package>org.modality_project.crm.backoffice.activities.operations.authorizations</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1665,7 +1662,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.crm.backoffice.activities.letter.LetterUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.backoffice.activities.letter.LetterUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -1676,9 +1673,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.crm.backoffice.operations.routes.letter</package>
-                <package>mongoose.crm.backoffice.activities.letter</package>
-                <package>mongoose.crm.backoffice.activities.letter.routing</package>
+                <package>org.modality_project.crm.backoffice.operations.routes.letter</package>
+                <package>org.modality_project.crm.backoffice.activities.letter</package>
+                <package>org.modality_project.crm.backoffice.activities.letter.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1702,8 +1699,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.crm.backoffice.activities.letters.LettersUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.crm.backoffice.activities.letters.RouteToLettersRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.backoffice.activities.letters.LettersUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.crm.backoffice.activities.letters.RouteToLettersRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -1717,9 +1714,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.crm.backoffice.operations.routes.letters</package>
-                <package>mongoose.crm.backoffice.activities.letters</package>
-                <package>mongoose.crm.backoffice.activities.letters.routing</package>
+                <package>org.modality_project.crm.backoffice.operations.routes.letters</package>
+                <package>org.modality_project.crm.backoffice.activities.letters</package>
+                <package>org.modality_project.crm.backoffice.activities.letters.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1744,8 +1741,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.crm.backoffice.activities.organizations.OrganizationsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.crm.backoffice.activities.organizations.RouteToOrganizationsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.backoffice.activities.organizations.OrganizationsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.crm.backoffice.activities.organizations.RouteToOrganizationsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -1757,9 +1754,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.crm.backoffice.operations.routes.organizations</package>
-                <package>mongoose.crm.backoffice.activities.organizations</package>
-                <package>mongoose.crm.backoffice.activities.organizations.routing</package>
+                <package>org.modality_project.crm.backoffice.operations.routes.organizations</package>
+                <package>org.modality_project.crm.backoffice.activities.organizations</package>
+                <package>org.modality_project.crm.backoffice.activities.organizations.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1788,8 +1785,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.crm.backoffice.activities.users.UsersUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.crm.backoffice.activities.users.RouteToUsersRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.backoffice.activities.users.UsersUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.crm.backoffice.activities.users.RouteToUsersRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -1800,9 +1797,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.crm.backoffice.operations.routes.users</package>
-                <package>mongoose.crm.backoffice.activities.users</package>
-                <package>mongoose.crm.backoffice.activities.users.routing</package>
+                <package>org.modality_project.crm.backoffice.operations.routes.users</package>
+                <package>org.modality_project.crm.backoffice.activities.users</package>
+                <package>org.modality_project.crm.backoffice.activities.users.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1842,7 +1839,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.crm.backoffice.controls.bookingdetailspanel</package>
+                <package>org.modality_project.crm.backoffice.controls.bookingdetailspanel</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1886,7 +1883,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.crm.backoffice.operations.entities.mail</package>
+                <package>org.modality_project.crm.backoffice.operations.entities.mail</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1913,11 +1910,11 @@
             </dependencies>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.crm.client.activities.login.LoginUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.client.activities.login.LoginUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <source-packages>
-                <package>mongoose.crm.client.activities.login</package>
+                <package>org.modality_project.crm.client.activities.login</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1945,7 +1942,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.crm.client.activities.unauthorized.UnauthorizedUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.client.activities.unauthorized.UnauthorizedUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -1956,7 +1953,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.crm.client.activities.unauthorized</package>
+                <package>org.modality_project.crm.client.activities.unauthorized</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1974,7 +1971,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.shared.services.authn.spi.AuthenticationServiceProvider>mongoose.crm.client.services.authn.MongooseAuthenticationServiceProvider</dev.webfx.framework.shared.services.authn.spi.AuthenticationServiceProvider>
+                <dev.webfx.framework.shared.services.authn.spi.AuthenticationServiceProvider>org.modality_project.crm.client.services.authn.MongooseAuthenticationServiceProvider</dev.webfx.framework.shared.services.authn.spi.AuthenticationServiceProvider>
             </providers>
 
             <dependencies>
@@ -1982,7 +1979,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.crm.client.services.authn</package>
+                <package>org.modality_project.crm.client.services.authn</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2002,7 +1999,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.shared.services.authz.spi.AuthorizationServiceProvider>mongoose.crm.client.services.authz.MongooseAuthorizationServiceProvider</dev.webfx.framework.shared.services.authz.spi.AuthorizationServiceProvider>
+                <dev.webfx.framework.shared.services.authz.spi.AuthorizationServiceProvider>org.modality_project.crm.client.services.authz.MongooseAuthorizationServiceProvider</dev.webfx.framework.shared.services.authz.spi.AuthorizationServiceProvider>
             </providers>
 
             <dependencies>
@@ -2012,7 +2009,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.crm.client.services.authz</package>
+                <package>org.modality_project.crm.client.services.authz</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2039,7 +2036,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.crm.client.controls.personaldetails</package>
+                <package>org.modality_project.crm.client.controls.personaldetails</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2103,8 +2100,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.ecommerce.backoffice.activities.bookings.BookingsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.ecommerce.backoffice.activities.bookings.RouteToBookingsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.backoffice.activities.bookings.BookingsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.ecommerce.backoffice.activities.bookings.RouteToBookingsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -2116,9 +2113,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.backoffice.operations.routes.bookings</package>
-                <package>mongoose.ecommerce.backoffice.activities.bookings</package>
-                <package>mongoose.ecommerce.backoffice.activities.bookings.routing</package>
+                <package>org.modality_project.ecommerce.backoffice.operations.routes.bookings</package>
+                <package>org.modality_project.ecommerce.backoffice.activities.bookings</package>
+                <package>org.modality_project.ecommerce.backoffice.activities.bookings.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2164,8 +2161,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.ecommerce.backoffice.activities.income.IncomeUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.ecommerce.backoffice.activities.income.RouteToIncomeRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.backoffice.activities.income.IncomeUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.ecommerce.backoffice.activities.income.RouteToIncomeRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -2179,9 +2176,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.backoffice.operations.routes.income</package>
-                <package>mongoose.ecommerce.backoffice.activities.income</package>
-                <package>mongoose.ecommerce.backoffice.activities.income.routing</package>
+                <package>org.modality_project.ecommerce.backoffice.operations.routes.income</package>
+                <package>org.modality_project.ecommerce.backoffice.activities.income</package>
+                <package>org.modality_project.ecommerce.backoffice.activities.income.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2215,8 +2212,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.ecommerce.backoffice.activities.moneyflows.MoneyFlowsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.ecommerce.backoffice.activities.moneyflows.RouteToMoneyFlowsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.backoffice.activities.moneyflows.MoneyFlowsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.ecommerce.backoffice.activities.moneyflows.RouteToMoneyFlowsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -2229,9 +2226,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.backoffice.operations.routes.moneyflows</package>
-                <package>mongoose.ecommerce.backoffice.activities.moneyflows</package>
-                <package>mongoose.ecommerce.backoffice.activities.moneyflows.routing</package>
+                <package>org.modality_project.ecommerce.backoffice.operations.routes.moneyflows</package>
+                <package>org.modality_project.ecommerce.backoffice.activities.moneyflows</package>
+                <package>org.modality_project.ecommerce.backoffice.activities.moneyflows.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2249,7 +2246,6 @@
                 <module>webfx-framework-client-operationaction</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-orm-entity-controls</module>
-                <module>webfx-framework-client-orm-reactive-dql</module>
                 <module>webfx-framework-client-orm-reactive-entities</module>
                 <module>webfx-framework-client-orm-reactive-visual</module>
                 <module>webfx-framework-client-uirouter</module>
@@ -2274,8 +2270,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.ecommerce.backoffice.activities.payments.PaymentsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.ecommerce.backoffice.activities.payments.RouteToPaymentsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.backoffice.activities.payments.PaymentsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.ecommerce.backoffice.activities.payments.RouteToPaymentsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -2287,9 +2283,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.backoffice.operations.routes.payments</package>
-                <package>mongoose.ecommerce.backoffice.activities.payments</package>
-                <package>mongoose.ecommerce.backoffice.activities.payments.routing</package>
+                <package>org.modality_project.ecommerce.backoffice.operations.routes.payments</package>
+                <package>org.modality_project.ecommerce.backoffice.activities.payments</package>
+                <package>org.modality_project.ecommerce.backoffice.activities.payments.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2328,8 +2324,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.ecommerce.backoffice.activities.statements.StatementsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.ecommerce.backoffice.activities.statements.RouteToStatementsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.backoffice.activities.statements.StatementsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.ecommerce.backoffice.activities.statements.RouteToStatementsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -2341,9 +2337,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.backoffice.operations.routes.statements</package>
-                <package>mongoose.ecommerce.backoffice.activities.statements</package>
-                <package>mongoose.ecommerce.backoffice.activities.statements.routing</package>
+                <package>org.modality_project.ecommerce.backoffice.operations.routes.statements</package>
+                <package>org.modality_project.ecommerce.backoffice.activities.statements</package>
+                <package>org.modality_project.ecommerce.backoffice.activities.statements.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2379,8 +2375,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.ecommerce.backoffice.activities.statistics.StatisticsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.ecommerce.backoffice.activities.statistics.RouteToStatisticsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.backoffice.activities.statistics.StatisticsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.ecommerce.backoffice.activities.statistics.RouteToStatisticsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -2393,9 +2389,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.backoffice.operations.routes.statistics</package>
-                <package>mongoose.ecommerce.backoffice.activities.statistics</package>
-                <package>mongoose.ecommerce.backoffice.activities.statistics.routing</package>
+                <package>org.modality_project.ecommerce.backoffice.operations.routes.statistics</package>
+                <package>org.modality_project.ecommerce.backoffice.activities.statistics</package>
+                <package>org.modality_project.ecommerce.backoffice.activities.statistics.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2446,11 +2442,11 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.backoffice.operations.entities.document</package>
-                <package>mongoose.ecommerce.backoffice.operations.entities.document.registration</package>
-                <package>mongoose.ecommerce.backoffice.operations.entities.document.security</package>
-                <package>mongoose.ecommerce.backoffice.operations.entities.document.cart</package>
-                <package>mongoose.ecommerce.backoffice.operations.entities.document.multiplebookings</package>
+                <package>org.modality_project.ecommerce.backoffice.operations.entities.document</package>
+                <package>org.modality_project.ecommerce.backoffice.operations.entities.document.registration</package>
+                <package>org.modality_project.ecommerce.backoffice.operations.entities.document.security</package>
+                <package>org.modality_project.ecommerce.backoffice.operations.entities.document.cart</package>
+                <package>org.modality_project.ecommerce.backoffice.operations.entities.document.multiplebookings</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2480,7 +2476,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.backoffice.operations.entities.documentline</package>
+                <package>org.modality_project.ecommerce.backoffice.operations.entities.documentline</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2507,8 +2503,8 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.backoffice.operations.entities.moneyflow</package>
-                <package>mongoose.ecommerce.backoffice.operations.entities.moneyaccount</package>
+                <package>org.modality_project.ecommerce.backoffice.operations.entities.moneyflow</package>
+                <package>org.modality_project.ecommerce.backoffice.operations.entities.moneyaccount</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2538,7 +2534,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.backoffice.operations.entities.moneytransfer</package>
+                <package>org.modality_project.ecommerce.backoffice.operations.entities.moneytransfer</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2567,7 +2563,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.client.controls.bookingoptionspanel</package>
+                <package>org.modality_project.ecommerce.client.controls.bookingoptionspanel</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2606,7 +2602,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.client.activity.bookingprocess</package>
+                <package>org.modality_project.ecommerce.client.activity.bookingprocess</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2638,14 +2634,14 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.client.businessdata.workingdocument</package>
-                <package>mongoose.ecommerce.client.businessdata.preselection</package>
-                <package>mongoose.ecommerce.client.businessdata.feesgroup</package>
-                <package>mongoose.ecommerce.client.businesslogic.workingdocument</package>
-                <package>mongoose.ecommerce.client.businesslogic.option</package>
-                <package>mongoose.ecommerce.client.businesslogic.feesgroup</package>
-                <package>mongoose.ecommerce.client.businesslogic.rules</package>
-                <package>mongoose.ecommerce.client.businesslogic.pricing</package>
+                <package>org.modality_project.ecommerce.client.businessdata.workingdocument</package>
+                <package>org.modality_project.ecommerce.client.businessdata.preselection</package>
+                <package>org.modality_project.ecommerce.client.businessdata.feesgroup</package>
+                <package>org.modality_project.ecommerce.client.businesslogic.workingdocument</package>
+                <package>org.modality_project.ecommerce.client.businesslogic.option</package>
+                <package>org.modality_project.ecommerce.client.businesslogic.feesgroup</package>
+                <package>org.modality_project.ecommerce.client.businesslogic.rules</package>
+                <package>org.modality_project.ecommerce.client.businesslogic.pricing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2682,11 +2678,11 @@
             </dependencies>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.ecommerce.frontoffice.activities.cart.CartUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.frontoffice.activities.cart.CartUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <source-packages>
-                <package>mongoose.ecommerce.frontoffice.activities.cart</package>
+                <package>org.modality_project.ecommerce.frontoffice.activities.cart</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2740,9 +2736,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.frontoffice.operations.cart</package>
-                <package>mongoose.ecommerce.frontoffice.activities.cart.routing</package>
-                <package>mongoose.ecommerce.frontoffice.activities.cart.base</package>
+                <package>org.modality_project.ecommerce.frontoffice.operations.cart</package>
+                <package>org.modality_project.ecommerce.frontoffice.activities.cart.routing</package>
+                <package>org.modality_project.ecommerce.frontoffice.activities.cart.base</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2772,7 +2768,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.ecommerce.frontoffice.activities.contactus.ContactUsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.frontoffice.activities.contactus.ContactUsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -2784,9 +2780,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.frontoffice.operations.contactus</package>
-                <package>mongoose.ecommerce.frontoffice.activities.contactus</package>
-                <package>mongoose.ecommerce.frontoffice.activities.contactus.routing</package>
+                <package>org.modality_project.ecommerce.frontoffice.operations.contactus</package>
+                <package>org.modality_project.ecommerce.frontoffice.activities.contactus</package>
+                <package>org.modality_project.ecommerce.frontoffice.activities.contactus.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2818,7 +2814,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.ecommerce.frontoffice.activities.payment.PaymentUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.frontoffice.activities.payment.PaymentUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -2831,9 +2827,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.frontoffice.operations.payment</package>
-                <package>mongoose.ecommerce.frontoffice.activities.payment</package>
-                <package>mongoose.ecommerce.frontoffice.activities.payment.routing</package>
+                <package>org.modality_project.ecommerce.frontoffice.operations.payment</package>
+                <package>org.modality_project.ecommerce.frontoffice.activities.payment</package>
+                <package>org.modality_project.ecommerce.frontoffice.activities.payment.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2873,7 +2869,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.ecommerce.frontoffice.activities.person.PersonUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.frontoffice.activities.person.PersonUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -2885,9 +2881,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.frontoffice.operations.person</package>
-                <package>mongoose.ecommerce.frontoffice.activities.person</package>
-                <package>mongoose.ecommerce.frontoffice.activities.person.routing</package>
+                <package>org.modality_project.ecommerce.frontoffice.operations.person</package>
+                <package>org.modality_project.ecommerce.frontoffice.activities.person</package>
+                <package>org.modality_project.ecommerce.frontoffice.activities.person.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2916,7 +2912,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.ecommerce.frontoffice.activities.summary.SummaryUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.frontoffice.activities.summary.SummaryUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -2927,9 +2923,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.ecommerce.frontoffice.operations.summary</package>
-                <package>mongoose.ecommerce.frontoffice.activities.summary</package>
-                <package>mongoose.ecommerce.frontoffice.activities.summary.routing</package>
+                <package>org.modality_project.ecommerce.frontoffice.operations.summary</package>
+                <package>org.modality_project.ecommerce.frontoffice.activities.summary</package>
+                <package>org.modality_project.ecommerce.frontoffice.activities.summary.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2983,7 +2979,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.event.backoffice.activities.cloneevent.CloneEventUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.event.backoffice.activities.cloneevent.CloneEventUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -2996,7 +2992,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.event.backoffice.activities.cloneevent</package>
+                <package>org.modality_project.event.backoffice.activities.cloneevent</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3030,8 +3026,8 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.event.backoffice.operations.routes.cloneevent</package>
-                <package>mongoose.event.backoffice.activities.cloneevent.routing</package>
+                <package>org.modality_project.event.backoffice.operations.routes.cloneevent</package>
+                <package>org.modality_project.event.backoffice.activities.cloneevent.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3050,8 +3046,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.event.backoffice.activities.events.EventsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.event.backoffice.activities.events.RouteToEventsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.event.backoffice.activities.events.EventsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.event.backoffice.activities.events.RouteToEventsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -3064,9 +3060,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.event.backoffice.operations.routes.events</package>
-                <package>mongoose.event.backoffice.activities.events</package>
-                <package>mongoose.event.backoffice.activities.events.routing</package>
+                <package>org.modality_project.event.backoffice.operations.routes.events</package>
+                <package>org.modality_project.event.backoffice.activities.events</package>
+                <package>org.modality_project.event.backoffice.activities.events.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3093,7 +3089,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.event.backoffice.activities.options.EditableOptionsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.event.backoffice.activities.options.EditableOptionsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -3106,7 +3102,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.event.backoffice.activities.options</package>
+                <package>org.modality_project.event.backoffice.activities.options</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3149,7 +3145,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.event.client.controls.bookingcalendar</package>
+                <package>org.modality_project.event.client.controls.bookingcalendar</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3182,10 +3178,10 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.event.client.businessdata.calendar.impl</package>
-                <package>mongoose.event.client.businessdata.calendar</package>
-                <package>mongoose.event.client.controls.calendargraphic.impl</package>
-                <package>mongoose.event.client.controls.calendargraphic</package>
+                <package>org.modality_project.event.client.businessdata.calendar.impl</package>
+                <package>org.modality_project.event.client.businessdata.calendar</package>
+                <package>org.modality_project.event.client.controls.calendargraphic.impl</package>
+                <package>org.modality_project.event.client.controls.calendargraphic</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3212,7 +3208,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.event.client.controls.sectionpanel</package>
+                <package>org.modality_project.event.client.controls.sectionpanel</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3235,7 +3231,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.event.frontoffice.activities.fees.FeesUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.event.frontoffice.activities.fees.FeesUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -3247,9 +3243,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.event.frontoffice.operations.fees</package>
-                <package>mongoose.event.frontoffice.activities.fees</package>
-                <package>mongoose.event.frontoffice.activities.fees.routing</package>
+                <package>org.modality_project.event.frontoffice.operations.fees</package>
+                <package>org.modality_project.event.frontoffice.activities.fees</package>
+                <package>org.modality_project.event.frontoffice.activities.fees.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3295,7 +3291,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.event.frontoffice.activities.options.OptionsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.event.frontoffice.activities.options.OptionsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -3307,9 +3303,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.event.frontoffice.operations.options</package>
-                <package>mongoose.event.frontoffice.activities.options</package>
-                <package>mongoose.event.frontoffice.activities.options.routing</package>
+                <package>org.modality_project.event.frontoffice.operations.options</package>
+                <package>org.modality_project.event.frontoffice.activities.options</package>
+                <package>org.modality_project.event.frontoffice.activities.options.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3352,7 +3348,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.event.frontoffice.activities.program.ProgramUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.event.frontoffice.activities.program.ProgramUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -3365,9 +3361,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.event.frontoffice.operations.program</package>
-                <package>mongoose.event.frontoffice.activities.program</package>
-                <package>mongoose.event.frontoffice.activities.program.routing</package>
+                <package>org.modality_project.event.frontoffice.operations.program</package>
+                <package>org.modality_project.event.frontoffice.activities.program</package>
+                <package>org.modality_project.event.frontoffice.activities.program.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3394,7 +3390,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.event.frontoffice.activities.startbooking.StartBookingUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.event.frontoffice.activities.startbooking.StartBookingUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -3407,9 +3403,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.event.frontoffice.operations.startbooking</package>
-                <package>mongoose.event.frontoffice.activities.startbooking</package>
-                <package>mongoose.event.frontoffice.activities.startbooking.routing</package>
+                <package>org.modality_project.event.frontoffice.operations.startbooking</package>
+                <package>org.modality_project.event.frontoffice.activities.startbooking</package>
+                <package>org.modality_project.event.frontoffice.activities.startbooking.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3442,7 +3438,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.event.frontoffice.activities.terms.TermsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.event.frontoffice.activities.terms.TermsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -3454,9 +3450,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.event.frontoffice.operations.terms</package>
-                <package>mongoose.event.frontoffice.activities.terms</package>
-                <package>mongoose.event.frontoffice.activities.terms.routing</package>
+                <package>org.modality_project.event.frontoffice.operations.terms</package>
+                <package>org.modality_project.event.frontoffice.activities.terms</package>
+                <package>org.modality_project.event.frontoffice.activities.terms.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3496,8 +3492,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.hotel.backoffice.activities.roomsgraphic.RoomsGraphicUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>mongoose.hotel.backoffice.activities.roomsgraphic.RouteToRoomsGraphicRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.hotel.backoffice.activities.roomsgraphic.RoomsGraphicUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.hotel.backoffice.activities.roomsgraphic.RouteToRoomsGraphicRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -3512,9 +3508,9 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.hotel.backoffice.operations.routes.roomsgraphic</package>
-                <package>mongoose.hotel.backoffice.activities.roomsgraphic</package>
-                <package>mongoose.hotel.backoffice.activities.roomsgraphic.routing</package>
+                <package>org.modality_project.hotel.backoffice.operations.routes.roomsgraphic</package>
+                <package>org.modality_project.hotel.backoffice.activities.roomsgraphic</package>
+                <package>org.modality_project.hotel.backoffice.activities.roomsgraphic.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3562,7 +3558,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.hotel.backoffice.operations.entities.resourceconfiguration</package>
+                <package>org.modality_project.hotel.backoffice.operations.entities.resourceconfiguration</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3590,7 +3586,7 @@
             </dependencies>
 
             <source-packages>
-                <package>mongoose.hotel.shared.businessdata.time</package>
+                <package>org.modality_project.hotel.shared.businessdata.time</package>
             </source-packages>
 
             <used-by-source-modules>

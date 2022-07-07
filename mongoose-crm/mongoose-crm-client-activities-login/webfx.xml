@@ -14,7 +14,7 @@
     </dependencies>
 
     <providers>
-        <dev.webfx.framework.client.ui.uirouter.UiRoute>mongoose.crm.client.activities.login.LoginUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+        <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.client.activities.login.LoginUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
     </providers>
 
 </project>

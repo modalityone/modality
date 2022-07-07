@@ -21,7 +21,6 @@ module mongoose.ecommerce.backoffice.activities.moneyflows {
     requires webfx.framework.client.operationaction;
     requires webfx.framework.client.orm.domainmodel.activity;
     requires webfx.framework.client.orm.entity.controls;
-    requires webfx.framework.client.orm.reactive.dql;
     requires webfx.framework.client.orm.reactive.entities;
     requires webfx.framework.client.orm.reactive.visual;
     requires webfx.framework.client.uirouter;
@@ -36,12 +35,12 @@ module mongoose.ecommerce.backoffice.activities.moneyflows {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.ecommerce.backoffice.activities.moneyflows;
-    exports mongoose.ecommerce.backoffice.activities.moneyflows.routing;
-    exports mongoose.ecommerce.backoffice.operations.routes.moneyflows;
+    exports org.modality_project.ecommerce.backoffice.activities.moneyflows;
+    exports org.modality_project.ecommerce.backoffice.activities.moneyflows.routing;
+    exports org.modality_project.ecommerce.backoffice.operations.routes.moneyflows;
 
     // Provided services
-    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with mongoose.ecommerce.backoffice.activities.moneyflows.RouteToMoneyFlowsRequestEmitter;
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.ecommerce.backoffice.activities.moneyflows.MoneyFlowsUiRoute;
+    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with org.modality_project.ecommerce.backoffice.activities.moneyflows.RouteToMoneyFlowsRequestEmitter;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.ecommerce.backoffice.activities.moneyflows.MoneyFlowsUiRoute;
 
 }

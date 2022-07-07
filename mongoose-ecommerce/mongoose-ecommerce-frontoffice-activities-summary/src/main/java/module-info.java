@@ -27,11 +27,11 @@ module mongoose.ecommerce.frontoffice.activities.summary {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.ecommerce.frontoffice.activities.summary;
-    exports mongoose.ecommerce.frontoffice.activities.summary.routing;
-    exports mongoose.ecommerce.frontoffice.operations.summary;
+    exports org.modality_project.ecommerce.frontoffice.activities.summary;
+    exports org.modality_project.ecommerce.frontoffice.activities.summary.routing;
+    exports org.modality_project.ecommerce.frontoffice.operations.summary;
 
     // Provided services
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.ecommerce.frontoffice.activities.summary.SummaryUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.ecommerce.frontoffice.activities.summary.SummaryUiRoute;
 
 }

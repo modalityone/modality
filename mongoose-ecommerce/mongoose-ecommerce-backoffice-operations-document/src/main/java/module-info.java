@@ -16,10 +16,10 @@ module mongoose.ecommerce.backoffice.operations.document {
     requires webfx.platform.shared.submit;
 
     // Exported packages
-    exports mongoose.ecommerce.backoffice.operations.entities.document;
-    exports mongoose.ecommerce.backoffice.operations.entities.document.cart;
-    exports mongoose.ecommerce.backoffice.operations.entities.document.multiplebookings;
-    exports mongoose.ecommerce.backoffice.operations.entities.document.registration;
-    exports mongoose.ecommerce.backoffice.operations.entities.document.security;
+    exports org.modality_project.ecommerce.backoffice.operations.entities.document;
+    exports org.modality_project.ecommerce.backoffice.operations.entities.document.cart;
+    exports org.modality_project.ecommerce.backoffice.operations.entities.document.multiplebookings;
+    exports org.modality_project.ecommerce.backoffice.operations.entities.document.registration;
+    exports org.modality_project.ecommerce.backoffice.operations.entities.document.security;
 
 }

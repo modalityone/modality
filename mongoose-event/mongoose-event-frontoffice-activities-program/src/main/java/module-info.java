@@ -21,11 +21,11 @@ module mongoose.event.frontoffice.activities.program {
     requires webfx.platform.shared.util;
 
     // Exported packages
-    exports mongoose.event.frontoffice.activities.program;
-    exports mongoose.event.frontoffice.activities.program.routing;
-    exports mongoose.event.frontoffice.operations.program;
+    exports org.modality_project.event.frontoffice.activities.program;
+    exports org.modality_project.event.frontoffice.activities.program.routing;
+    exports org.modality_project.event.frontoffice.operations.program;
 
     // Provided services
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with mongoose.event.frontoffice.activities.program.ProgramUiRoute;
+    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.event.frontoffice.activities.program.ProgramUiRoute;
 
 }
