@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+        <plugin-module>modality-base-server-datasource</plugin-module>
+        <plugin-module>modality-base-server-sessioncloser</plugin-module>
+<!-- Commented while it's not necessary during the development phase (and creates logs on the server every second which may pollute other logs)
+        <plugin-module>mongoose-base-server-systemmetrics</plugin-module>
+-->
+        <plugin-module>webfx-framework-shared-querypush</plugin-module>
+        <plugin-module>webfx-platform-shared-buscalljob</plugin-module>
+    </dependencies>
+
+</project>

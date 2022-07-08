@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- File managed by WebFX (DO NOT EDIT MANUALLY) -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>dev.webfx</groupId>
+        <artifactId>mongoose</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>modality-all</artifactId>
+
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>modality-all-backoffice-application</module>
+        <module>modality-all-backoffice-application-gluon</module>
+        <module>modality-all-backoffice-application-gwt</module>
+        <module>modality-all-backoffice-application-openjfx</module>
+        <module>modality-all-frontoffice-application</module>
+        <module>modality-all-frontoffice-application-gluon</module>
+        <module>modality-all-frontoffice-application-gwt</module>
+        <module>modality-all-frontoffice-application-openjfx</module>
+    </modules>
+
+</project>

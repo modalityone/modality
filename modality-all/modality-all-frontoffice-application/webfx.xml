@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <providers>
+        <javafx.application.Application>org.modality_project.all.frontoffice.application.MongooseFrontOfficeApplication</javafx.application.Application>
+    </providers>
+
+    <dependencies>
+        <used-by-source-modules/>
+
+        <!-- Ecommerce activities -->
+        <plugin-module>modality-ecommerce-frontoffice-activities-person</plugin-module>
+        <plugin-module>modality-ecommerce-frontoffice-activities-summary</plugin-module>
+        <plugin-module>modality-ecommerce-frontoffice-activities-cart</plugin-module>
+        <plugin-module>modality-ecommerce-frontoffice-activities-payment</plugin-module>
+        <plugin-module>modality-ecommerce-frontoffice-activities-contactus</plugin-module>
+
+        <!-- Event activities -->
+        <plugin-module>modality-event-frontoffice-activities-startbooking</plugin-module>
+        <plugin-module>modality-event-frontoffice-activities-terms</plugin-module>
+        <plugin-module>modality-event-frontoffice-activities-program</plugin-module>
+        <plugin-module>modality-event-frontoffice-activities-fees</plugin-module>
+        <plugin-module>modality-event-frontoffice-activities-options</plugin-module>
+
+    </dependencies>
+
+</project>

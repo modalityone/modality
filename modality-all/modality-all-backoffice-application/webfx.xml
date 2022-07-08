@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <providers>
+        <javafx.application.Application>org.modality_project.all.backoffice.application.MongooseBackOfficeApplication</javafx.application.Application>
+    </providers>
+
+    <dependencies>
+        <used-by-source-modules/>
+
+        <!-- Base activities -->
+        <plugin-module>modality-base-backoffice-activities-monitor</plugin-module>
+        <plugin-module>modality-base-backoffice-activities-filters</plugin-module>
+        <plugin-module>modality-base-backoffice-activities-operations</plugin-module>
+
+        <!-- CRM activities -->
+        <plugin-module>modality-crm-backoffice-activities-authorizations</plugin-module>
+        <plugin-module>modality-crm-backoffice-activities-letters</plugin-module>
+        <plugin-module>modality-crm-backoffice-activities-letter</plugin-module>
+        <plugin-module>modality-crm-backoffice-activities-users</plugin-module>
+        <plugin-module>modality-crm-backoffice-activities-organizations</plugin-module>
+
+        <!-- Ecommerce activities -->
+        <plugin-module>modality-ecommerce-backoffice-activities-bookings</plugin-module>
+        <plugin-module>modality-ecommerce-backoffice-activities-income</plugin-module>
+        <plugin-module>modality-ecommerce-backoffice-activities-moneyflows</plugin-module>
+        <plugin-module>modality-ecommerce-backoffice-activities-payments</plugin-module>
+        <plugin-module>modality-ecommerce-backoffice-activities-statistics</plugin-module>
+        <plugin-module>modality-ecommerce-backoffice-activities-statements</plugin-module>
+
+        <!-- Hotel activities -->
+        <plugin-module>modality-hotel-backoffice-activities-roomsgraphic</plugin-module>
+
+        <!-- Event activities -->
+        <plugin-module>modality-event-backoffice-activities-cloneevent</plugin-module>
+        <plugin-module>modality-event-backoffice-activities-events</plugin-module>
+        <plugin-module>modality-event-backoffice-activities-options</plugin-module>
+
+        <!-- Catering activities -->
+        <plugin-module>modality-catering-backoffice-activities-diningareas</plugin-module>
+
+    </dependencies>
+
+</project>

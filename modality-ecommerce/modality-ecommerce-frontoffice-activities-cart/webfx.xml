@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules>
+            <undetected-module>modality-base-client-aggregates</undetected-module>
+            <undetected-module>webfx-framework-client-activity</undetected-module>
+            <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
+            <undetected-module>webfx-platform-shared-submit</undetected-module>
+        </used-by-source-modules>
+    </dependencies>
+
+    <providers>
+        <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.frontoffice.activities.cart.CartUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+    </providers>
+
+</project>

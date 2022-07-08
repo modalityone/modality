@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <providers>
+        <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.event.backoffice.activities.options.EditableOptionsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+    </providers>
+
+    <dependencies>
+        <used-by-source-modules>
+            <undetected-module>modality-base-client-aggregates</undetected-module>
+            <undetected-module>webfx-framework-client-activity</undetected-module>
+            <undetected-module>webfx-platform-shared-async</undetected-module>
+            <undetected-module>webfx-platform-shared-util</undetected-module>
+        </used-by-source-modules>
+    </dependencies>
+
+</project>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <implements>
+        <module>modality-base-client-css</module>
+    </implements>
+
+    <exported-packages>
+        <resource-package>org.modality_project.base.client.css</resource-package>
+        <resource-package>org.modality_project.base.client.fonts</resource-package>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+    </dependencies>
+
+</project>

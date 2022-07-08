@@ -35,8 +35,8 @@ jobs:
     strategy:
       matrix:
         app: [
-          { name: 'MongooseBackOffice',  parent-module: "mongoose-all", module-token: 'mongoose-all-backoffice',  gwt-token: 'mongoose_all_backoffice',  gluon-token: 'MongooseAllBackoffice',  web-push-branch: 'backoffice',  ios-bundle-id: 'org.mongoose.backoffice',  version: '1.0.0-SNAPSHOT' },
-          { name: 'MongooseFrontOffice', parent-module: "mongoose-all", module-token: 'mongoose-all-frontoffice', gwt-token: 'mongoose_all_frontoffice', gluon-token: 'MongooseAllFrontoffice', web-push-branch: 'frontoffice', ios-bundle-id: 'org.mongoose.frontoffice', version: '1.0.0-SNAPSHOT' }
+          { name: 'ModalityBackOffice',  parent-module: "modality-all", module-token: 'modality-all-backoffice',  gwt-token: 'modality_all_backoffice',  gluon-token: 'ModalityAllBackoffice',  web-push-branch: 'backoffice',  ios-bundle-id: 'org.modality.backoffice',  version: '1.0.0-SNAPSHOT' },
+          { name: 'ModalityFrontOffice', parent-module: "modality-all", module-token: 'modality-all-frontoffice', gwt-token: 'modality_all_frontoffice', gluon-token: 'ModalityAllFrontoffice', web-push-branch: 'frontoffice', ios-bundle-id: 'org.modality.frontoffice', version: '1.0.0-SNAPSHOT' }
         ]
         os-config:  [1, 2, 3, 4]
         include:

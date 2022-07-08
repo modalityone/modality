@@ -44,15 +44,15 @@
             <version>1.0.0-SNAPSHOT</version>
     
             <modules>
-                <module>mongoose-all</module>
-                <module>mongoose-base</module>
-                <module>mongoose-catering</module>
-                <module>mongoose-crm</module>
-                <module>mongoose-ecommerce</module>
-                <module>mongoose-event</module>
-                <module>mongoose-hotel</module>
-                <module>mongoose-restaurant</module>
-                <module>mongoose-shop</module>
+                <module>modality-all</module>
+                <module>modality-base</module>
+                <module>modality-catering</module>
+                <module>modality-crm</module>
+                <module>modality-ecommerce</module>
+                <module>modality-event</module>
+                <module>modality-hotel</module>
+                <module>modality-restaurant</module>
+                <module>modality-shop</module>
             </modules>
 
             <required-libraries>
@@ -61,22 +61,22 @@
 
         </project>
 
-        <project name="mongoose-all">
+        <project name="modality-all">
 
             <modules>
-                <module>mongoose-all-backoffice-application</module>
-                <module>mongoose-all-backoffice-application-gluon</module>
-                <module>mongoose-all-backoffice-application-gwt</module>
-                <module>mongoose-all-backoffice-application-openjfx</module>
-                <module>mongoose-all-frontoffice-application</module>
-                <module>mongoose-all-frontoffice-application-gluon</module>
-                <module>mongoose-all-frontoffice-application-gwt</module>
-                <module>mongoose-all-frontoffice-application-openjfx</module>
+                <module>modality-all-backoffice-application</module>
+                <module>modality-all-backoffice-application-gluon</module>
+                <module>modality-all-backoffice-application-gwt</module>
+                <module>modality-all-backoffice-application-openjfx</module>
+                <module>modality-all-frontoffice-application</module>
+                <module>modality-all-frontoffice-application-gluon</module>
+                <module>modality-all-frontoffice-application-gwt</module>
+                <module>modality-all-frontoffice-application-openjfx</module>
             </modules>
 
         </project>
 
-        <project name="mongoose-all-backoffice-application">
+        <project name="modality-all-backoffice-application">
 
             <exported-packages>
                 <source-packages/>
@@ -90,35 +90,35 @@
                 <used-by-source-modules/>
 
                 <!-- Base activities -->
-                <plugin-module>mongoose-base-backoffice-activities-monitor</plugin-module>
-                <plugin-module>mongoose-base-backoffice-activities-filters</plugin-module>
-                <plugin-module>mongoose-base-backoffice-activities-operations</plugin-module>
+                <plugin-module>modality-base-backoffice-activities-monitor</plugin-module>
+                <plugin-module>modality-base-backoffice-activities-filters</plugin-module>
+                <plugin-module>modality-base-backoffice-activities-operations</plugin-module>
 
                 <!-- CRM activities -->
-                <plugin-module>mongoose-crm-backoffice-activities-authorizations</plugin-module>
-                <plugin-module>mongoose-crm-backoffice-activities-letters</plugin-module>
-                <plugin-module>mongoose-crm-backoffice-activities-letter</plugin-module>
-                <plugin-module>mongoose-crm-backoffice-activities-users</plugin-module>
-                <plugin-module>mongoose-crm-backoffice-activities-organizations</plugin-module>
+                <plugin-module>modality-crm-backoffice-activities-authorizations</plugin-module>
+                <plugin-module>modality-crm-backoffice-activities-letters</plugin-module>
+                <plugin-module>modality-crm-backoffice-activities-letter</plugin-module>
+                <plugin-module>modality-crm-backoffice-activities-users</plugin-module>
+                <plugin-module>modality-crm-backoffice-activities-organizations</plugin-module>
 
                 <!-- Ecommerce activities -->
-                <plugin-module>mongoose-ecommerce-backoffice-activities-bookings</plugin-module>
-                <plugin-module>mongoose-ecommerce-backoffice-activities-income</plugin-module>
-                <plugin-module>mongoose-ecommerce-backoffice-activities-moneyflows</plugin-module>
-                <plugin-module>mongoose-ecommerce-backoffice-activities-payments</plugin-module>
-                <plugin-module>mongoose-ecommerce-backoffice-activities-statistics</plugin-module>
-                <plugin-module>mongoose-ecommerce-backoffice-activities-statements</plugin-module>
+                <plugin-module>modality-ecommerce-backoffice-activities-bookings</plugin-module>
+                <plugin-module>modality-ecommerce-backoffice-activities-income</plugin-module>
+                <plugin-module>modality-ecommerce-backoffice-activities-moneyflows</plugin-module>
+                <plugin-module>modality-ecommerce-backoffice-activities-payments</plugin-module>
+                <plugin-module>modality-ecommerce-backoffice-activities-statistics</plugin-module>
+                <plugin-module>modality-ecommerce-backoffice-activities-statements</plugin-module>
 
                 <!-- Hotel activities -->
-                <plugin-module>mongoose-hotel-backoffice-activities-roomsgraphic</plugin-module>
+                <plugin-module>modality-hotel-backoffice-activities-roomsgraphic</plugin-module>
 
                 <!-- Event activities -->
-                <plugin-module>mongoose-event-backoffice-activities-cloneevent</plugin-module>
-                <plugin-module>mongoose-event-backoffice-activities-events</plugin-module>
-                <plugin-module>mongoose-event-backoffice-activities-options</plugin-module>
+                <plugin-module>modality-event-backoffice-activities-cloneevent</plugin-module>
+                <plugin-module>modality-event-backoffice-activities-events</plugin-module>
+                <plugin-module>modality-event-backoffice-activities-options</plugin-module>
 
                 <!-- Catering activities -->
-                <plugin-module>mongoose-catering-backoffice-activities-diningareas</plugin-module>
+                <plugin-module>modality-catering-backoffice-activities-diningareas</plugin-module>
 
             </dependencies>
 
@@ -127,15 +127,15 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-backoffice-masterslave</module>
-                <module>mongoose-base-client-application</module>
-                <module>mongoose-crm-backoffice-bookingdetailspanel</module>
+                <module>modality-base-backoffice-masterslave</module>
+                <module>modality-base-client-application</module>
+                <module>modality-crm-backoffice-bookingdetailspanel</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
             </used-by-source-modules>
 
         </project>
 
-        <project executable="true" name="mongoose-all-backoffice-application-gluon">
+        <project executable="true" name="modality-all-backoffice-application-gluon">
 
             <dependencies>
                 <used-by-source-modules/>
@@ -145,11 +145,11 @@
 
         </project>
 
-        <project application-module="mongoose-all-backoffice-application" executable="true" name="mongoose-all-backoffice-application-gwt">
+        <project application-module="mongoose-all-backoffice-application" executable="true" name="modality-all-backoffice-application-gwt">
 
             <dependencies>
                 <used-by-source-modules/>
-                <plugin-module>mongoose-all-backoffice-application</plugin-module>
+                <plugin-module>modality-all-backoffice-application</plugin-module>
             </dependencies>
 
             <html>
@@ -162,7 +162,7 @@
 
         </project>
 
-        <project executable="true" name="mongoose-all-backoffice-application-openjfx">
+        <project executable="true" name="modality-all-backoffice-application-openjfx">
 
             <exported-packages>
                 <source-packages/>
@@ -180,9 +180,9 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-shared-domainmodel</module>
-                <module>mongoose-event-backoffice-activities-cloneevent</module>
-                <module>mongoose-event-backoffice-activities-cloneevent-routing</module>
+                <module>modality-base-shared-domainmodel</module>
+                <module>modality-event-backoffice-activities-cloneevent</module>
+                <module>modality-event-backoffice-activities-cloneevent-routing</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-uirouter</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
@@ -190,7 +190,7 @@
 
         </project>
 
-        <project name="mongoose-all-frontoffice-application">
+        <project name="modality-all-frontoffice-application">
 
             <exported-packages>
                 <source-packages/>
@@ -204,18 +204,18 @@
                 <used-by-source-modules/>
 
                 <!-- Ecommerce activities -->
-                <plugin-module>mongoose-ecommerce-frontoffice-activities-person</plugin-module>
-                <plugin-module>mongoose-ecommerce-frontoffice-activities-summary</plugin-module>
-                <plugin-module>mongoose-ecommerce-frontoffice-activities-cart</plugin-module>
-                <plugin-module>mongoose-ecommerce-frontoffice-activities-payment</plugin-module>
-                <plugin-module>mongoose-ecommerce-frontoffice-activities-contactus</plugin-module>
+                <plugin-module>modality-ecommerce-frontoffice-activities-person</plugin-module>
+                <plugin-module>modality-ecommerce-frontoffice-activities-summary</plugin-module>
+                <plugin-module>modality-ecommerce-frontoffice-activities-cart</plugin-module>
+                <plugin-module>modality-ecommerce-frontoffice-activities-payment</plugin-module>
+                <plugin-module>modality-ecommerce-frontoffice-activities-contactus</plugin-module>
 
                 <!-- Event activities -->
-                <plugin-module>mongoose-event-frontoffice-activities-startbooking</plugin-module>
-                <plugin-module>mongoose-event-frontoffice-activities-terms</plugin-module>
-                <plugin-module>mongoose-event-frontoffice-activities-program</plugin-module>
-                <plugin-module>mongoose-event-frontoffice-activities-fees</plugin-module>
-                <plugin-module>mongoose-event-frontoffice-activities-options</plugin-module>
+                <plugin-module>modality-event-frontoffice-activities-startbooking</plugin-module>
+                <plugin-module>modality-event-frontoffice-activities-terms</plugin-module>
+                <plugin-module>modality-event-frontoffice-activities-program</plugin-module>
+                <plugin-module>modality-event-frontoffice-activities-fees</plugin-module>
+                <plugin-module>modality-event-frontoffice-activities-options</plugin-module>
 
             </dependencies>
 
@@ -224,13 +224,13 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-client-application</module>
+                <module>modality-base-client-application</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
             </used-by-source-modules>
 
         </project>
 
-        <project executable="true" name="mongoose-all-frontoffice-application-gluon">
+        <project executable="true" name="modality-all-frontoffice-application-gluon">
 
             <dependencies>
                 <used-by-source-modules/>
@@ -240,7 +240,7 @@
 
         </project>
 
-        <project executable="true" name="mongoose-all-frontoffice-application-gwt">
+        <project executable="true" name="modality-all-frontoffice-application-gwt">
 
             <dependencies>
                 <used-by-source-modules/>
@@ -256,7 +256,7 @@
 
         </project>
 
-        <project executable="true" name="mongoose-all-frontoffice-application-openjfx">
+        <project executable="true" name="modality-all-frontoffice-application-openjfx">
 
             <dependencies>
                 <used-by-source-modules/>
@@ -266,46 +266,46 @@
 
         </project>
 
-        <project name="mongoose-base">
+        <project name="modality-base">
 
             <modules>
-                <module>mongoose-base-backoffice-activities-filters</module>
-                <module>mongoose-base-backoffice-activities-monitor</module>
-                <module>mongoose-base-backoffice-activities-operations</module>
-                <module>mongoose-base-backoffice-masterslave</module>
-                <module>mongoose-base-backoffice-multilangeditor</module>
-                <module>mongoose-base-backoffice-operations-filters</module>
-                <module>mongoose-base-backoffice-operations-generic</module>
-                <module>mongoose-base-backoffice-operations-snapshot</module>
-                <module>mongoose-base-client-activity</module>
-                <module>mongoose-base-client-aggregates</module>
-                <module>mongoose-base-client-application</module>
-                <module>mongoose-base-client-busconfig</module>
-                <module>mongoose-base-client-css</module>
-                <module>mongoose-base-client-css-java</module>
-                <module>mongoose-base-client-css-web</module>
-                <module>mongoose-base-client-entities</module>
-                <module>mongoose-base-client-i18n</module>
-                <module>mongoose-base-client-icons</module>
-                <module>mongoose-base-client-navigationarrows-java</module>
-                <module>mongoose-base-client-operationactionsloading</module>
-                <module>mongoose-base-client-presentationmodel</module>
-                <module>mongoose-base-client-sessionrecorder</module>
-                <module>mongoose-base-client-util</module>
-                <module>mongoose-base-client-validation</module>
-                <module>mongoose-base-server-application</module>
-                <module>mongoose-base-server-application-vertx</module>
-                <module>mongoose-base-server-datasource</module>
-                <module>mongoose-base-server-sessioncloser</module>
-                <module>mongoose-base-server-systemmetrics</module>
-                <module>mongoose-base-server-systemmetrics-java</module>
-                <module>mongoose-base-shared-domainmodel</module>
-                <module>mongoose-base-shared-entities</module>
+                <module>modality-base-backoffice-activities-filters</module>
+                <module>modality-base-backoffice-activities-monitor</module>
+                <module>modality-base-backoffice-activities-operations</module>
+                <module>modality-base-backoffice-masterslave</module>
+                <module>modality-base-backoffice-multilangeditor</module>
+                <module>modality-base-backoffice-operations-filters</module>
+                <module>modality-base-backoffice-operations-generic</module>
+                <module>modality-base-backoffice-operations-snapshot</module>
+                <module>modality-base-client-activity</module>
+                <module>modality-base-client-aggregates</module>
+                <module>modality-base-client-application</module>
+                <module>modality-base-client-busconfig</module>
+                <module>modality-base-client-css</module>
+                <module>modality-base-client-css-java</module>
+                <module>modality-base-client-css-web</module>
+                <module>modality-base-client-entities</module>
+                <module>modality-base-client-i18n</module>
+                <module>modality-base-client-icons</module>
+                <module>modality-base-client-navigationarrows-java</module>
+                <module>modality-base-client-operationactionsloading</module>
+                <module>modality-base-client-presentationmodel</module>
+                <module>modality-base-client-sessionrecorder</module>
+                <module>modality-base-client-util</module>
+                <module>modality-base-client-validation</module>
+                <module>modality-base-server-application</module>
+                <module>modality-base-server-application-vertx</module>
+                <module>modality-base-server-datasource</module>
+                <module>modality-base-server-sessioncloser</module>
+                <module>modality-base-server-systemmetrics</module>
+                <module>modality-base-server-systemmetrics-java</module>
+                <module>modality-base-shared-domainmodel</module>
+                <module>modality-base-shared-entities</module>
             </modules>
 
         </project>
 
-        <project name="mongoose-base-backoffice-activities-filters">
+        <project name="modality-base-backoffice-activities-filters">
 
             <exported-packages>
                 <source-packages/>
@@ -333,10 +333,10 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-backoffice-masterslave</module>
-                <module>mongoose-base-backoffice-operations-filters</module>
-                <module>mongoose-base-client-activity</module>
-                <module>mongoose-base-shared-entities</module>
+                <module>modality-base-backoffice-masterslave</module>
+                <module>modality-base-backoffice-operations-filters</module>
+                <module>modality-base-client-activity</module>
+                <module>modality-base-shared-entities</module>
                 <module>webfx-extras-cell</module>
                 <module>webfx-extras-visual-base</module>
                 <module>webfx-extras-visual-controls-grid</module>
@@ -360,7 +360,7 @@
 
         </project>
 
-        <project name="mongoose-base-backoffice-activities-monitor">
+        <project name="modality-base-backoffice-activities-monitor">
 
             <exported-packages>
                 <source-packages/>
@@ -386,7 +386,7 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-client-activity</module>
+                <module>modality-base-client-activity</module>
                 <module>webfx-extras-visual-base</module>
                 <module>webfx-extras-visual-controls-charts</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
@@ -404,7 +404,7 @@
 
         </project>
 
-        <project name="mongoose-base-backoffice-activities-operations">
+        <project name="modality-base-backoffice-activities-operations">
 
             <exported-packages>
                 <source-packages/>
@@ -429,7 +429,7 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-client-activity</module>
+                <module>modality-base-client-activity</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-orm-entity-controls</module>
                 <module>webfx-framework-client-orm-reactive-visual</module>
@@ -446,7 +446,7 @@
 
         </project>
 
-        <project name="mongoose-base-backoffice-masterslave">
+        <project name="modality-base-backoffice-masterslave">
 
             <exported-packages>
                 <source-packages/>
@@ -465,7 +465,7 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-client-entities</module>
+                <module>modality-base-client-entities</module>
                 <module>webfx-extras-imagestore</module>
                 <module>webfx-extras-type</module>
                 <module>webfx-extras-visual-base</module>
@@ -489,7 +489,7 @@
 
         </project>
 
-        <project name="mongoose-base-backoffice-multilangeditor">
+        <project name="modality-base-backoffice-multilangeditor">
 
             <exported-packages>
                 <source-packages/>
@@ -507,7 +507,7 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-client-icons</module>
+                <module>modality-base-client-icons</module>
                 <module>webfx-extras-webtext-controls</module>
                 <module>webfx-framework-client-action</module>
                 <module>webfx-framework-client-controls</module>
@@ -524,7 +524,7 @@
 
         </project>
 
-        <project name="mongoose-base-backoffice-operations-filters">
+        <project name="modality-base-backoffice-operations-filters">
 
             <exported-packages>
                 <source-packages/>
@@ -539,7 +539,7 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-shared-entities</module>
+                <module>modality-base-shared-entities</module>
                 <module>webfx-framework-client-controls</module>
                 <module>webfx-framework-client-orm-entity-controls</module>
                 <module>webfx-framework-shared-operation</module>
@@ -551,7 +551,7 @@
 
         </project>
 
-        <project name="mongoose-base-backoffice-operations-generic">
+        <project name="modality-base-backoffice-operations-generic">
 
             <exported-packages>
                 <source-packages/>
@@ -570,7 +570,7 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-shared-entities</module>
+                <module>modality-base-shared-entities</module>
                 <module>webfx-extras-type</module>
                 <module>webfx-framework-client-controls</module>
                 <module>webfx-framework-client-orm-entity-controls</module>
@@ -586,7 +586,7 @@
 
         </project>
 
-        <project name="mongoose-base-backoffice-operations-snapshot">
+        <project name="modality-base-backoffice-operations-snapshot">
 
             <exported-packages>
                 <source-packages/>
@@ -613,7 +613,7 @@
 
         </project>
 
-        <project name="mongoose-base-client-activity">
+        <project name="modality-base-client-activity">
 
             <exported-packages>
                 <source-packages/>
@@ -634,9 +634,9 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-client-aggregates</module>
-                <module>mongoose-base-client-presentationmodel</module>
-                <module>mongoose-ecommerce-client-businesslogic</module>
+                <module>modality-base-client-aggregates</module>
+                <module>modality-base-client-presentationmodel</module>
+                <module>modality-ecommerce-client-businesslogic</module>
                 <module>webfx-extras-visual-base</module>
                 <module>webfx-extras-visual-controls-grid</module>
                 <module>webfx-framework-client-controls</module>
@@ -658,7 +658,7 @@
 
         </project>
 
-        <project name="mongoose-base-client-aggregates">
+        <project name="modality-base-client-aggregates">
 
             <exported-packages>
                 <source-packages/>
@@ -676,7 +676,7 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-shared-entities</module>
+                <module>modality-base-shared-entities</module>
                 <module>webfx-framework-shared-orm-domainmodel</module>
                 <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-platform-client-websocketbus</module>
@@ -689,7 +689,7 @@
 
         </project>
 
-        <project name="mongoose-base-client-application">
+        <project name="modality-base-client-application">
 
             <properties>
                 <show-loading-spinner-on-startup>true</show-loading-spinner-on-startup>
@@ -707,16 +707,16 @@
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                 </used-by-source-modules>
 
-                <resource-module>mongoose-base-client-css</resource-module>
-                <resource-module>mongoose-base-client-busconfig</resource-module>
+                <resource-module>modality-base-client-css</resource-module>
+                <resource-module>modality-base-client-busconfig</resource-module>
 
-                <plugin-module executable-target="java">mongoose-base-client-navigationarrows-java</plugin-module>
-                <plugin-module>mongoose-base-client-i18n</plugin-module>
-                <plugin-module>mongoose-crm-client-authz</plugin-module>
-                <plugin-module>mongoose-base-client-operationactionsloading</plugin-module>
-                <plugin-module>mongoose-base-client-sessionrecorder</plugin-module>
-                <plugin-module>mongoose-crm-client-activities-login</plugin-module>
-                <plugin-module>mongoose-crm-client-activities-unauthorized</plugin-module>
+                <plugin-module executable-target="java">modality-base-client-navigationarrows-java</plugin-module>
+                <plugin-module>modality-base-client-i18n</plugin-module>
+                <plugin-module>modality-crm-client-authz</plugin-module>
+                <plugin-module>modality-base-client-operationactionsloading</plugin-module>
+                <plugin-module>modality-base-client-sessionrecorder</plugin-module>
+                <plugin-module>modality-crm-client-activities-login</plugin-module>
+                <plugin-module>modality-crm-client-activities-unauthorized</plugin-module>
                 <plugin-module>webfx-framework-client-push-simple</plugin-module>
                 <plugin-module>webfx-framework-client-querypush-simple</plugin-module>
             </dependencies>
@@ -727,8 +727,8 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-client-activity</module>
-                <module>mongoose-base-client-icons</module>
+                <module>modality-base-client-activity</module>
+                <module>modality-base-client-icons</module>
                 <module>webfx-extras-imagestore</module>
                 <module>webfx-framework-client-action</module>
                 <module>webfx-framework-client-activity</module>
@@ -750,7 +750,7 @@
 
         </project>
 
-        <project name="mongoose-base-client-busconfig">
+        <project name="modality-base-client-busconfig">
 
             <exported-packages>
                 <source-packages/>
@@ -769,7 +769,7 @@
 
         </project>
 
-        <project interface="true" name="mongoose-base-client-css">
+        <project interface="true" name="modality-base-client-css">
 
             <exported-packages>
                 <source-packages/>
@@ -783,10 +783,10 @@
 
         </project>
 
-        <project name="mongoose-base-client-css-java">
+        <project name="modality-base-client-css-java">
 
             <implements>
-                <module>mongoose-base-client-css</module>
+                <module>modality-base-client-css</module>
             </implements>
 
             <exported-packages>
@@ -802,10 +802,10 @@
 
         </project>
 
-        <project name="mongoose-base-client-css-web">
+        <project name="modality-base-client-css-web">
 
             <implements>
-                <module>mongoose-base-client-css</module>
+                <module>modality-base-client-css</module>
             </implements>
 
             <dependencies>
@@ -816,7 +816,7 @@
 
         </project>
 
-        <project name="mongoose-base-client-entities">
+        <project name="modality-base-client-entities">
 
             <exported-packages>
                 <source-packages/>
@@ -833,8 +833,8 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-client-presentationmodel</module>
-                <module>mongoose-base-shared-entities</module>
+                <module>modality-base-client-presentationmodel</module>
+                <module>modality-base-shared-entities</module>
                 <module>webfx-framework-client-controls</module>
                 <module>webfx-framework-client-i18n</module>
                 <module>webfx-framework-client-orm-entity-controls</module>
@@ -851,7 +851,7 @@
 
         </project>
 
-        <project name="mongoose-base-client-i18n">
+        <project name="modality-base-client-i18n">
 
             <exported-packages>
                 <source-packages/>
@@ -892,7 +892,7 @@
 
         </project>
 
-        <project name="mongoose-base-client-icons">
+        <project name="modality-base-client-icons">
 
             <exported-packages>
                 <source-packages/>
@@ -933,7 +933,7 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-shared-entities</module>
+                <module>modality-base-shared-entities</module>
                 <module>webfx-extras-imagestore</module>
                 <module>webfx-framework-client-action</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
@@ -941,7 +941,7 @@
 
         </project>
 
-        <project name="mongoose-base-client-navigationarrows-java">
+        <project name="modality-base-client-navigationarrows-java">
 
             <exported-packages>
                 <source-packages/>
@@ -967,7 +967,7 @@
 
         </project>
 
-        <project name="mongoose-base-client-operationactionsloading">
+        <project name="modality-base-client-operationactionsloading">
 
             <exported-packages>
                 <source-packages/>
@@ -1002,7 +1002,7 @@
 
         </project>
 
-        <project name="mongoose-base-client-presentationmodel">
+        <project name="modality-base-client-presentationmodel">
 
             <exported-packages>
                 <source-packages/>
@@ -1017,13 +1017,13 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-shared-entities</module>
+                <module>modality-base-shared-entities</module>
                 <module>webfx-kit-javafxbase-emul</module>
             </used-by-source-modules>
 
         </project>
 
-        <project name="mongoose-base-client-sessionrecorder">
+        <project name="modality-base-client-sessionrecorder">
 
             <exported-packages>
                 <source-packages/>
@@ -1055,7 +1055,7 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-crm-client-authn</module>
+                <module>modality-crm-client-authn</module>
                 <module>webfx-framework-client-push</module>
                 <module>webfx-framework-client-uirouter</module>
                 <module>webfx-framework-shared-orm-datasourcemodelservice</module>
@@ -1069,7 +1069,7 @@
 
         </project>
 
-        <project name="mongoose-base-client-util">
+        <project name="modality-base-client-util">
 
             <exported-packages>
                 <source-packages/>
@@ -1086,7 +1086,7 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-client-entities</module>
+                <module>modality-base-client-entities</module>
                 <module>webfx-extras-type</module>
                 <module>webfx-framework-client-i18n</module>
                 <module>webfx-framework-shared-orm-entity</module>
@@ -1097,7 +1097,7 @@
 
         </project>
 
-        <project name="mongoose-base-client-validation">
+        <project name="modality-base-client-validation">
 
             <exported-packages>
                 <source-packages/>
@@ -1126,7 +1126,7 @@
 
         </project>
 
-        <project name="mongoose-base-server-application">
+        <project name="modality-base-server-application">
 
             <exported-packages>
                 <source-packages/>
@@ -1134,8 +1134,8 @@
 
             <dependencies>
                 <used-by-source-modules/>
-                <plugin-module>mongoose-base-server-datasource</plugin-module>
-                <plugin-module>mongoose-base-server-sessioncloser</plugin-module>
+                <plugin-module>modality-base-server-datasource</plugin-module>
+                <plugin-module>modality-base-server-sessioncloser</plugin-module>
                 <!-- Commented while it's not necessary during the development phase (and creates logs on the server every second which may pollute other logs)
         <plugin-module>mongoose-base-server-systemmetrics</plugin-module>
 -->
@@ -1147,7 +1147,7 @@
 
         </project>
 
-        <project executable="true" name="mongoose-base-server-application-vertx">
+        <project executable="true" name="modality-base-server-application-vertx">
 
             <dependencies>
                 <used-by-source-modules/>
@@ -1157,7 +1157,7 @@
 
         </project>
 
-        <project name="mongoose-base-server-datasource">
+        <project name="modality-base-server-datasource">
 
             <required-libraries>
                 <library artifact="org.junit.jupiter:junit-jupiter:5.8.2"/>
@@ -1293,7 +1293,7 @@
 
         </project>
 
-        <project name="mongoose-base-server-sessioncloser">
+        <project name="modality-base-server-sessioncloser">
 
             <exported-packages>
                 <source-packages/>
@@ -1324,7 +1324,7 @@
 
         </project>
 
-        <project name="mongoose-base-server-systemmetrics">
+        <project name="modality-base-server-systemmetrics">
 
             <exported-packages>
                 <source-packages/>
@@ -1348,7 +1348,7 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-shared-entities</module>
+                <module>modality-base-shared-entities</module>
                 <module>webfx-framework-shared-orm-datasourcemodelservice</module>
                 <module>webfx-framework-shared-orm-domainmodel</module>
                 <module>webfx-framework-shared-orm-entity</module>
@@ -1365,7 +1365,7 @@
 
         </project>
 
-        <project name="mongoose-base-server-systemmetrics-java">
+        <project name="modality-base-server-systemmetrics-java">
 
             <exported-packages>
                 <source-packages/>
@@ -1385,13 +1385,13 @@
 
             <used-by-source-modules>
                 <module>jdk.management</module>
-                <module>mongoose-base-server-systemmetrics</module>
-                <module>mongoose-base-shared-entities</module>
+                <module>modality-base-server-systemmetrics</module>
+                <module>modality-base-shared-entities</module>
             </used-by-source-modules>
 
         </project>
 
-        <project name="mongoose-base-shared-domainmodel">
+        <project name="modality-base-shared-domainmodel">
 
             <exported-packages>
                 <source-packages/>
@@ -1438,7 +1438,7 @@
 
         </project>
 
-        <project name="mongoose-base-shared-entities">
+        <project name="modality-base-shared-entities">
 
             <exported-packages>
                 <source-packages/>
@@ -1492,8 +1492,8 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-shared-domainmodel</module>
-                <module>mongoose-hotel-shared-time</module>
+                <module>modality-base-shared-domainmodel</module>
+                <module>modality-hotel-shared-time</module>
                 <module>webfx-framework-shared-orm-dql</module>
                 <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-platform-shared-util</module>
@@ -1501,16 +1501,16 @@
 
         </project>
 
-        <project name="mongoose-catering">
+        <project name="modality-catering">
 
             <modules>
-                <module>mongoose-catering-backoffice-activities-diningareas</module>
-                <module>mongoose-catering-backoffice-operations-allocationrule</module>
+                <module>modality-catering-backoffice-activities-diningareas</module>
+                <module>modality-catering-backoffice-operations-allocationrule</module>
             </modules>
 
         </project>
 
-        <project name="mongoose-catering-backoffice-activities-diningareas">
+        <project name="modality-catering-backoffice-activities-diningareas">
 
             <exported-packages>
                 <source-packages/>
@@ -1537,13 +1537,13 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-backoffice-masterslave</module>
-                <module>mongoose-base-backoffice-operations-generic</module>
-                <module>mongoose-base-client-activity</module>
-                <module>mongoose-base-client-util</module>
-                <module>mongoose-base-shared-entities</module>
-                <module>mongoose-catering-backoffice-operations-allocationrule</module>
-                <module>mongoose-ecommerce-backoffice-activities-statistics</module>
+                <module>modality-base-backoffice-masterslave</module>
+                <module>modality-base-backoffice-operations-generic</module>
+                <module>modality-base-client-activity</module>
+                <module>modality-base-client-util</module>
+                <module>modality-base-shared-entities</module>
+                <module>modality-catering-backoffice-operations-allocationrule</module>
+                <module>modality-ecommerce-backoffice-activities-statistics</module>
                 <module>webfx-extras-visual-base</module>
                 <module>webfx-extras-visual-controls-grid</module>
                 <module>webfx-framework-client-operationaction</module>
@@ -1562,7 +1562,7 @@
 
         </project>
 
-        <project name="mongoose-catering-backoffice-operations-allocationrule">
+        <project name="modality-catering-backoffice-operations-allocationrule">
 
             <exported-packages>
                 <source-packages/>
@@ -1579,8 +1579,8 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-backoffice-operations-generic</module>
-                <module>mongoose-base-shared-entities</module>
+                <module>modality-base-backoffice-operations-generic</module>
+                <module>modality-base-shared-entities</module>
                 <module>webfx-framework-client-controls</module>
                 <module>webfx-framework-client-orm-entity-controls</module>
                 <module>webfx-framework-shared-operation</module>
@@ -1591,26 +1591,26 @@
 
         </project>
 
-        <project name="mongoose-crm">
+        <project name="modality-crm">
 
             <modules>
-                <module>mongoose-crm-backoffice-activities-authorizations</module>
-                <module>mongoose-crm-backoffice-activities-letter</module>
-                <module>mongoose-crm-backoffice-activities-letters</module>
-                <module>mongoose-crm-backoffice-activities-organizations</module>
-                <module>mongoose-crm-backoffice-activities-users</module>
-                <module>mongoose-crm-backoffice-bookingdetailspanel</module>
-                <module>mongoose-crm-backoffice-operations-mail</module>
-                <module>mongoose-crm-client-activities-login</module>
-                <module>mongoose-crm-client-activities-unauthorized</module>
-                <module>mongoose-crm-client-authn</module>
-                <module>mongoose-crm-client-authz</module>
-                <module>mongoose-crm-client-personaldetails</module>
+                <module>modality-crm-backoffice-activities-authorizations</module>
+                <module>modality-crm-backoffice-activities-letter</module>
+                <module>modality-crm-backoffice-activities-letters</module>
+                <module>modality-crm-backoffice-activities-organizations</module>
+                <module>modality-crm-backoffice-activities-users</module>
+                <module>modality-crm-backoffice-bookingdetailspanel</module>
+                <module>modality-crm-backoffice-operations-mail</module>
+                <module>modality-crm-client-activities-login</module>
+                <module>modality-crm-client-activities-unauthorized</module>
+                <module>modality-crm-client-authn</module>
+                <module>modality-crm-client-authz</module>
+                <module>modality-crm-client-personaldetails</module>
             </modules>
 
         </project>
 
-        <project name="mongoose-crm-backoffice-activities-authorizations">
+        <project name="modality-crm-backoffice-activities-authorizations">
 
             <exported-packages>
                 <source-packages/>
@@ -1637,7 +1637,7 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-crm-client-authn</module>
+                <module>modality-crm-client-authn</module>
                 <module>webfx-extras-visual-controls-grid</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-orm-entity-controls</module>
@@ -1655,7 +1655,7 @@
 
         </project>
 
-        <project name="mongoose-crm-backoffice-activities-letter">
+        <project name="modality-crm-backoffice-activities-letter">
 
             <exported-packages>
                 <source-packages/>
@@ -1679,8 +1679,8 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-backoffice-multilangeditor</module>
-                <module>mongoose-base-client-util</module>
+                <module>modality-base-backoffice-multilangeditor</module>
+                <module>modality-base-client-util</module>
                 <module>webfx-framework-client-controls</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-uirouter</module>
@@ -1692,7 +1692,7 @@
 
         </project>
 
-        <project name="mongoose-crm-backoffice-activities-letters">
+        <project name="modality-crm-backoffice-activities-letters">
 
             <exported-packages>
                 <source-packages/>
@@ -1720,9 +1720,9 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-client-activity</module>
-                <module>mongoose-base-client-util</module>
-                <module>mongoose-crm-backoffice-activities-letter</module>
+                <module>modality-base-client-activity</module>
+                <module>modality-base-client-util</module>
+                <module>modality-crm-backoffice-activities-letter</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-orm-reactive-visual</module>
                 <module>webfx-framework-client-uirouter</module>
@@ -1734,7 +1734,7 @@
 
         </project>
 
-        <project name="mongoose-crm-backoffice-activities-organizations">
+        <project name="modality-crm-backoffice-activities-organizations">
 
             <exported-packages>
                 <source-packages/>
@@ -1760,8 +1760,8 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-client-activity</module>
-                <module>mongoose-event-backoffice-activities-events</module>
+                <module>modality-base-client-activity</module>
+                <module>modality-event-backoffice-activities-events</module>
                 <module>webfx-framework-client-i18n</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-orm-reactive-visual</module>
@@ -1778,7 +1778,7 @@
 
         </project>
 
-        <project name="mongoose-crm-backoffice-activities-users">
+        <project name="modality-crm-backoffice-activities-users">
 
             <exported-packages>
                 <source-packages/>
@@ -1804,11 +1804,11 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-backoffice-masterslave</module>
-                <module>mongoose-base-client-activity</module>
-                <module>mongoose-base-shared-domainmodel</module>
-                <module>mongoose-base-shared-entities</module>
-                <module>mongoose-ecommerce-backoffice-operations-document</module>
+                <module>modality-base-backoffice-masterslave</module>
+                <module>modality-base-client-activity</module>
+                <module>modality-base-shared-domainmodel</module>
+                <module>modality-base-shared-entities</module>
+                <module>modality-ecommerce-backoffice-operations-document</module>
                 <module>webfx-extras-visual-base</module>
                 <module>webfx-framework-client-action</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
@@ -1826,7 +1826,7 @@
 
         </project>
 
-        <project name="mongoose-crm-backoffice-bookingdetailspanel">
+        <project name="modality-crm-backoffice-bookingdetailspanel">
 
             <exported-packages>
                 <source-packages/>
@@ -1844,14 +1844,14 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-backoffice-masterslave</module>
-                <module>mongoose-base-backoffice-operations-generic</module>
-                <module>mongoose-base-client-presentationmodel</module>
-                <module>mongoose-base-shared-entities</module>
-                <module>mongoose-crm-backoffice-operations-mail</module>
-                <module>mongoose-ecommerce-backoffice-operations-document</module>
-                <module>mongoose-ecommerce-backoffice-operations-documentline</module>
-                <module>mongoose-ecommerce-backoffice-operations-moneytransfer</module>
+                <module>modality-base-backoffice-masterslave</module>
+                <module>modality-base-backoffice-operations-generic</module>
+                <module>modality-base-client-presentationmodel</module>
+                <module>modality-base-shared-entities</module>
+                <module>modality-crm-backoffice-operations-mail</module>
+                <module>modality-ecommerce-backoffice-operations-document</module>
+                <module>modality-ecommerce-backoffice-operations-documentline</module>
+                <module>modality-ecommerce-backoffice-operations-moneytransfer</module>
                 <module>webfx-extras-imagestore</module>
                 <module>webfx-extras-label</module>
                 <module>webfx-extras-visual-controls-grid</module>
@@ -1872,7 +1872,7 @@
 
         </project>
 
-        <project name="mongoose-crm-backoffice-operations-mail">
+        <project name="modality-crm-backoffice-operations-mail">
 
             <exported-packages>
                 <source-packages/>
@@ -1887,7 +1887,7 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-shared-entities</module>
+                <module>modality-base-shared-entities</module>
                 <module>webfx-framework-shared-operation</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-platform-shared-async</module>
@@ -1895,7 +1895,7 @@
 
         </project>
 
-        <project name="mongoose-crm-client-activities-login">
+        <project name="modality-crm-client-activities-login">
 
             <exported-packages>
                 <source-packages/>
@@ -1918,9 +1918,9 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-client-activity</module>
-                <module>mongoose-base-client-validation</module>
-                <module>mongoose-event-client-sectionpanel</module>
+                <module>modality-base-client-activity</module>
+                <module>modality-base-client-validation</module>
+                <module>modality-event-client-sectionpanel</module>
                 <module>webfx-framework-client-controls</module>
                 <module>webfx-framework-client-i18n</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
@@ -1935,7 +1935,7 @@
 
         </project>
 
-        <project name="mongoose-crm-client-activities-unauthorized">
+        <project name="modality-crm-client-activities-unauthorized">
 
             <exported-packages>
                 <source-packages/>
@@ -1964,7 +1964,7 @@
 
         </project>
 
-        <project name="mongoose-crm-client-authn">
+        <project name="modality-crm-client-authn">
 
             <exported-packages>
                 <source-packages/>
@@ -1992,7 +1992,7 @@
 
         </project>
 
-        <project name="mongoose-crm-client-authz">
+        <project name="modality-crm-client-authz">
 
             <exported-packages>
                 <source-packages/>
@@ -2013,7 +2013,7 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-crm-client-authn</module>
+                <module>modality-crm-client-authn</module>
                 <module>webfx-framework-shared-authz</module>
                 <module>webfx-framework-shared-orm-datasourcemodelservice</module>
                 <module>webfx-framework-shared-orm-domainmodel</module>
@@ -2025,7 +2025,7 @@
 
         </project>
 
-        <project name="mongoose-crm-client-personaldetails">
+        <project name="modality-crm-client-personaldetails">
 
             <exported-packages>
                 <source-packages/>
@@ -2041,12 +2041,12 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-client-activity</module>
-                <module>mongoose-base-client-validation</module>
-                <module>mongoose-base-shared-domainmodel</module>
-                <module>mongoose-base-shared-entities</module>
-                <module>mongoose-crm-client-authn</module>
-                <module>mongoose-event-client-sectionpanel</module>
+                <module>modality-base-client-activity</module>
+                <module>modality-base-client-validation</module>
+                <module>modality-base-shared-domainmodel</module>
+                <module>modality-base-shared-entities</module>
+                <module>modality-crm-client-authn</module>
+                <module>modality-event-client-sectionpanel</module>
                 <module>webfx-extras-materialdesign</module>
                 <module>webfx-extras-type</module>
                 <module>webfx-extras-visual-base</module>
@@ -2067,33 +2067,33 @@
 
         </project>
 
-        <project name="mongoose-ecommerce">
+        <project name="modality-ecommerce">
 
             <modules>
-                <module>mongoose-ecommerce-backoffice-activities-bookings</module>
-                <module>mongoose-ecommerce-backoffice-activities-income</module>
-                <module>mongoose-ecommerce-backoffice-activities-moneyflows</module>
-                <module>mongoose-ecommerce-backoffice-activities-payments</module>
-                <module>mongoose-ecommerce-backoffice-activities-statements</module>
-                <module>mongoose-ecommerce-backoffice-activities-statistics</module>
-                <module>mongoose-ecommerce-backoffice-operations-document</module>
-                <module>mongoose-ecommerce-backoffice-operations-documentline</module>
-                <module>mongoose-ecommerce-backoffice-operations-moneyflow</module>
-                <module>mongoose-ecommerce-backoffice-operations-moneytransfer</module>
-                <module>mongoose-ecommerce-client-bookingoptionspanel</module>
-                <module>mongoose-ecommerce-client-bookingprocess</module>
-                <module>mongoose-ecommerce-client-businesslogic</module>
-                <module>mongoose-ecommerce-frontoffice-activities-cart</module>
-                <module>mongoose-ecommerce-frontoffice-activities-cart-routing</module>
-                <module>mongoose-ecommerce-frontoffice-activities-contactus</module>
-                <module>mongoose-ecommerce-frontoffice-activities-payment</module>
-                <module>mongoose-ecommerce-frontoffice-activities-person</module>
-                <module>mongoose-ecommerce-frontoffice-activities-summary</module>
+                <module>modality-ecommerce-backoffice-activities-bookings</module>
+                <module>modality-ecommerce-backoffice-activities-income</module>
+                <module>modality-ecommerce-backoffice-activities-moneyflows</module>
+                <module>modality-ecommerce-backoffice-activities-payments</module>
+                <module>modality-ecommerce-backoffice-activities-statements</module>
+                <module>modality-ecommerce-backoffice-activities-statistics</module>
+                <module>modality-ecommerce-backoffice-operations-document</module>
+                <module>modality-ecommerce-backoffice-operations-documentline</module>
+                <module>modality-ecommerce-backoffice-operations-moneyflow</module>
+                <module>modality-ecommerce-backoffice-operations-moneytransfer</module>
+                <module>modality-ecommerce-client-bookingoptionspanel</module>
+                <module>modality-ecommerce-client-bookingprocess</module>
+                <module>modality-ecommerce-client-businesslogic</module>
+                <module>modality-ecommerce-frontoffice-activities-cart</module>
+                <module>modality-ecommerce-frontoffice-activities-cart-routing</module>
+                <module>modality-ecommerce-frontoffice-activities-contactus</module>
+                <module>modality-ecommerce-frontoffice-activities-payment</module>
+                <module>modality-ecommerce-frontoffice-activities-person</module>
+                <module>modality-ecommerce-frontoffice-activities-summary</module>
             </modules>
 
         </project>
 
-        <project name="mongoose-ecommerce-backoffice-activities-bookings">
+        <project name="modality-ecommerce-backoffice-activities-bookings">
 
             <exported-packages>
                 <source-packages/>
@@ -2120,18 +2120,18 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-backoffice-masterslave</module>
-                <module>mongoose-base-backoffice-operations-generic</module>
-                <module>mongoose-base-client-activity</module>
-                <module>mongoose-base-client-aggregates</module>
-                <module>mongoose-base-client-presentationmodel</module>
-                <module>mongoose-base-client-util</module>
-                <module>mongoose-base-shared-domainmodel</module>
-                <module>mongoose-base-shared-entities</module>
-                <module>mongoose-crm-backoffice-bookingdetailspanel</module>
-                <module>mongoose-ecommerce-backoffice-operations-document</module>
-                <module>mongoose-event-backoffice-activities-cloneevent-routing</module>
-                <module>mongoose-event-frontoffice-activities-fees</module>
+                <module>modality-base-backoffice-masterslave</module>
+                <module>modality-base-backoffice-operations-generic</module>
+                <module>modality-base-client-activity</module>
+                <module>modality-base-client-aggregates</module>
+                <module>modality-base-client-presentationmodel</module>
+                <module>modality-base-client-util</module>
+                <module>modality-base-shared-domainmodel</module>
+                <module>modality-base-shared-entities</module>
+                <module>modality-crm-backoffice-bookingdetailspanel</module>
+                <module>modality-ecommerce-backoffice-operations-document</module>
+                <module>modality-event-backoffice-activities-cloneevent-routing</module>
+                <module>modality-event-frontoffice-activities-fees</module>
                 <module>webfx-extras-visual-base</module>
                 <module>webfx-extras-visual-controls-grid</module>
                 <module>webfx-framework-client-action</module>
@@ -2154,7 +2154,7 @@
 
         </project>
 
-        <project name="mongoose-ecommerce-backoffice-activities-income">
+        <project name="modality-ecommerce-backoffice-activities-income">
 
             <exported-packages>
                 <source-packages/>
@@ -2182,11 +2182,11 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-backoffice-masterslave</module>
-                <module>mongoose-base-client-activity</module>
-                <module>mongoose-base-client-entities</module>
-                <module>mongoose-base-client-util</module>
-                <module>mongoose-base-shared-entities</module>
+                <module>modality-base-backoffice-masterslave</module>
+                <module>modality-base-client-activity</module>
+                <module>modality-base-client-entities</module>
+                <module>modality-base-client-util</module>
+                <module>modality-base-shared-entities</module>
                 <module>webfx-extras-visual-base</module>
                 <module>webfx-extras-visual-controls-grid</module>
                 <module>webfx-framework-client-operationaction</module>
@@ -2205,7 +2205,7 @@
 
         </project>
 
-        <project name="mongoose-ecommerce-backoffice-activities-moneyflows">
+        <project name="modality-ecommerce-backoffice-activities-moneyflows">
 
             <exported-packages>
                 <source-packages/>
@@ -2233,12 +2233,12 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-backoffice-masterslave</module>
-                <module>mongoose-base-client-activity</module>
-                <module>mongoose-base-client-util</module>
-                <module>mongoose-base-shared-domainmodel</module>
-                <module>mongoose-base-shared-entities</module>
-                <module>mongoose-ecommerce-backoffice-operations-moneyflow</module>
+                <module>modality-base-backoffice-masterslave</module>
+                <module>modality-base-client-activity</module>
+                <module>modality-base-client-util</module>
+                <module>modality-base-shared-domainmodel</module>
+                <module>modality-base-shared-entities</module>
+                <module>modality-ecommerce-backoffice-operations-moneyflow</module>
                 <module>webfx-extras-visual-base</module>
                 <module>webfx-extras-visual-controls-grid</module>
                 <module>webfx-framework-client-action</module>
@@ -2263,7 +2263,7 @@
 
         </project>
 
-        <project name="mongoose-ecommerce-backoffice-activities-payments">
+        <project name="modality-ecommerce-backoffice-activities-payments">
 
             <exported-packages>
                 <source-packages/>
@@ -2289,14 +2289,14 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-backoffice-masterslave</module>
-                <module>mongoose-base-backoffice-operations-generic</module>
-                <module>mongoose-base-client-activity</module>
-                <module>mongoose-base-client-presentationmodel</module>
-                <module>mongoose-base-client-util</module>
-                <module>mongoose-base-shared-domainmodel</module>
-                <module>mongoose-base-shared-entities</module>
-                <module>mongoose-ecommerce-backoffice-operations-moneytransfer</module>
+                <module>modality-base-backoffice-masterslave</module>
+                <module>modality-base-backoffice-operations-generic</module>
+                <module>modality-base-client-activity</module>
+                <module>modality-base-client-presentationmodel</module>
+                <module>modality-base-client-util</module>
+                <module>modality-base-shared-domainmodel</module>
+                <module>modality-base-shared-entities</module>
+                <module>modality-ecommerce-backoffice-operations-moneytransfer</module>
                 <module>webfx-extras-visual-base</module>
                 <module>webfx-extras-visual-controls-grid</module>
                 <module>webfx-framework-client-operationaction</module>
@@ -2317,7 +2317,7 @@
 
         </project>
 
-        <project name="mongoose-ecommerce-backoffice-activities-statements">
+        <project name="modality-ecommerce-backoffice-activities-statements">
 
             <exported-packages>
                 <source-packages/>
@@ -2343,12 +2343,12 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-backoffice-masterslave</module>
-                <module>mongoose-base-client-activity</module>
-                <module>mongoose-base-client-presentationmodel</module>
-                <module>mongoose-base-client-util</module>
-                <module>mongoose-base-shared-domainmodel</module>
-                <module>mongoose-base-shared-entities</module>
+                <module>modality-base-backoffice-masterslave</module>
+                <module>modality-base-client-activity</module>
+                <module>modality-base-client-presentationmodel</module>
+                <module>modality-base-client-util</module>
+                <module>modality-base-shared-domainmodel</module>
+                <module>modality-base-shared-entities</module>
                 <module>webfx-extras-visual-base</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-orm-entity-controls</module>
@@ -2368,7 +2368,7 @@
 
         </project>
 
-        <project name="mongoose-ecommerce-backoffice-activities-statistics">
+        <project name="modality-ecommerce-backoffice-activities-statistics">
 
             <exported-packages>
                 <source-packages/>
@@ -2396,15 +2396,15 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-backoffice-masterslave</module>
-                <module>mongoose-base-backoffice-operations-generic</module>
-                <module>mongoose-base-client-activity</module>
-                <module>mongoose-base-client-presentationmodel</module>
-                <module>mongoose-base-client-util</module>
-                <module>mongoose-base-shared-entities</module>
-                <module>mongoose-crm-backoffice-bookingdetailspanel</module>
-                <module>mongoose-ecommerce-backoffice-operations-document</module>
-                <module>mongoose-ecommerce-backoffice-operations-documentline</module>
+                <module>modality-base-backoffice-masterslave</module>
+                <module>modality-base-backoffice-operations-generic</module>
+                <module>modality-base-client-activity</module>
+                <module>modality-base-client-presentationmodel</module>
+                <module>modality-base-client-util</module>
+                <module>modality-base-shared-entities</module>
+                <module>modality-crm-backoffice-bookingdetailspanel</module>
+                <module>modality-ecommerce-backoffice-operations-document</module>
+                <module>modality-ecommerce-backoffice-operations-documentline</module>
                 <module>webfx-extras-type</module>
                 <module>webfx-extras-visual-base</module>
                 <module>webfx-extras-visual-controls-grid</module>
@@ -2428,7 +2428,7 @@
 
         </project>
 
-        <project name="mongoose-ecommerce-backoffice-operations-document">
+        <project name="modality-ecommerce-backoffice-operations-document">
 
             <exported-packages>
                 <source-packages/>
@@ -2450,9 +2450,9 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-backoffice-operations-generic</module>
-                <module>mongoose-base-shared-entities</module>
-                <module>mongoose-crm-client-personaldetails</module>
+                <module>modality-base-backoffice-operations-generic</module>
+                <module>modality-base-shared-entities</module>
+                <module>modality-crm-client-personaldetails</module>
                 <module>webfx-framework-client-controls</module>
                 <module>webfx-framework-shared-operation</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
@@ -2463,7 +2463,7 @@
 
         </project>
 
-        <project name="mongoose-ecommerce-backoffice-operations-documentline">
+        <project name="modality-ecommerce-backoffice-operations-documentline">
 
             <exported-packages>
                 <source-packages/>
@@ -2480,8 +2480,8 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-backoffice-operations-generic</module>
-                <module>mongoose-base-shared-entities</module>
+                <module>modality-base-backoffice-operations-generic</module>
+                <module>modality-base-shared-entities</module>
                 <module>webfx-framework-client-controls</module>
                 <module>webfx-framework-client-orm-entity-controls</module>
                 <module>webfx-framework-shared-operation</module>
@@ -2492,7 +2492,7 @@
 
         </project>
 
-        <project name="mongoose-ecommerce-backoffice-operations-moneyflow">
+        <project name="modality-ecommerce-backoffice-operations-moneyflow">
 
             <exported-packages>
                 <source-packages/>
@@ -2509,7 +2509,7 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-shared-entities</module>
+                <module>modality-base-shared-entities</module>
                 <module>webfx-framework-client-controls</module>
                 <module>webfx-framework-client-orm-entity-controls</module>
                 <module>webfx-framework-shared-operation</module>
@@ -2521,7 +2521,7 @@
 
         </project>
 
-        <project name="mongoose-ecommerce-backoffice-operations-moneytransfer">
+        <project name="modality-ecommerce-backoffice-operations-moneytransfer">
 
             <exported-packages>
                 <source-packages/>
@@ -2538,7 +2538,7 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-shared-entities</module>
+                <module>modality-base-shared-entities</module>
                 <module>webfx-framework-client-controls</module>
                 <module>webfx-framework-client-orm-entity-controls</module>
                 <module>webfx-framework-shared-operation</module>
@@ -2549,7 +2549,7 @@
 
         </project>
 
-        <project name="mongoose-ecommerce-client-bookingoptionspanel">
+        <project name="modality-ecommerce-client-bookingoptionspanel">
 
             <exported-packages>
                 <source-packages/>
@@ -2557,7 +2557,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>mongoose-base-client-aggregates</undetected-module>
+                    <undetected-module>modality-base-client-aggregates</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2568,11 +2568,11 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-client-util</module>
-                <module>mongoose-base-shared-entities</module>
-                <module>mongoose-ecommerce-client-businesslogic</module>
-                <module>mongoose-event-client-sectionpanel</module>
-                <module>mongoose-hotel-shared-time</module>
+                <module>modality-base-client-util</module>
+                <module>modality-base-shared-entities</module>
+                <module>modality-ecommerce-client-businesslogic</module>
+                <module>modality-event-client-sectionpanel</module>
+                <module>modality-hotel-shared-time</module>
                 <module>webfx-extras-type</module>
                 <module>webfx-extras-visual-base</module>
                 <module>webfx-extras-visual-controls-grid</module>
@@ -2588,7 +2588,7 @@
 
         </project>
 
-        <project name="mongoose-ecommerce-client-bookingprocess">
+        <project name="modality-ecommerce-client-bookingprocess">
 
             <exported-packages>
                 <source-packages/>
@@ -2606,9 +2606,9 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-client-activity</module>
-                <module>mongoose-base-client-aggregates</module>
-                <module>mongoose-base-shared-entities</module>
+                <module>modality-base-client-activity</module>
+                <module>modality-base-client-aggregates</module>
+                <module>modality-base-shared-entities</module>
                 <module>webfx-framework-client-uirouter</module>
                 <module>webfx-framework-client-util</module>
                 <module>webfx-framework-shared-orm-datasourcemodelservice</module>
@@ -2621,7 +2621,7 @@
 
         </project>
 
-        <project name="mongoose-ecommerce-client-businesslogic">
+        <project name="modality-ecommerce-client-businesslogic">
 
             <exported-packages>
                 <source-packages/>
@@ -2646,11 +2646,11 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-client-aggregates</module>
-                <module>mongoose-base-client-entities</module>
-                <module>mongoose-base-shared-entities</module>
-                <module>mongoose-event-client-calendar</module>
-                <module>mongoose-hotel-shared-time</module>
+                <module>modality-base-client-aggregates</module>
+                <module>modality-base-client-entities</module>
+                <module>modality-base-shared-entities</module>
+                <module>modality-event-client-calendar</module>
+                <module>modality-hotel-shared-time</module>
                 <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
@@ -2662,7 +2662,7 @@
 
         </project>
 
-        <project name="mongoose-ecommerce-frontoffice-activities-cart">
+        <project name="modality-ecommerce-frontoffice-activities-cart">
 
             <exported-packages>
                 <source-packages/>
@@ -2670,7 +2670,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>mongoose-base-client-aggregates</undetected-module>
+                    <undetected-module>modality-base-client-aggregates</undetected-module>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
                     <undetected-module>webfx-platform-shared-submit</undetected-module>
@@ -2687,17 +2687,17 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-client-util</module>
-                <module>mongoose-base-shared-domainmodel</module>
-                <module>mongoose-base-shared-entities</module>
-                <module>mongoose-ecommerce-client-bookingoptionspanel</module>
-                <module>mongoose-ecommerce-client-businesslogic</module>
-                <module>mongoose-ecommerce-frontoffice-activities-cart-routing</module>
-                <module>mongoose-ecommerce-frontoffice-activities-contactus</module>
-                <module>mongoose-ecommerce-frontoffice-activities-payment</module>
-                <module>mongoose-event-client-sectionpanel</module>
-                <module>mongoose-event-frontoffice-activities-options</module>
-                <module>mongoose-event-frontoffice-activities-startbooking</module>
+                <module>modality-base-client-util</module>
+                <module>modality-base-shared-domainmodel</module>
+                <module>modality-base-shared-entities</module>
+                <module>modality-ecommerce-client-bookingoptionspanel</module>
+                <module>modality-ecommerce-client-businesslogic</module>
+                <module>modality-ecommerce-frontoffice-activities-cart-routing</module>
+                <module>modality-ecommerce-frontoffice-activities-contactus</module>
+                <module>modality-ecommerce-frontoffice-activities-payment</module>
+                <module>modality-event-client-sectionpanel</module>
+                <module>modality-event-frontoffice-activities-options</module>
+                <module>modality-event-frontoffice-activities-startbooking</module>
                 <module>webfx-extras-flexbox</module>
                 <module>webfx-extras-type</module>
                 <module>webfx-extras-visual-base</module>
@@ -2723,7 +2723,7 @@
 
         </project>
 
-        <project name="mongoose-ecommerce-frontoffice-activities-cart-routing">
+        <project name="modality-ecommerce-frontoffice-activities-cart-routing">
 
             <exported-packages>
                 <source-packages/>
@@ -2743,10 +2743,10 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-client-activity</module>
-                <module>mongoose-base-client-aggregates</module>
-                <module>mongoose-base-client-util</module>
-                <module>mongoose-base-shared-entities</module>
+                <module>modality-base-client-activity</module>
+                <module>modality-base-client-aggregates</module>
+                <module>modality-base-client-util</module>
+                <module>modality-base-shared-entities</module>
                 <module>webfx-framework-client-i18n</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-uirouter</module>
@@ -2761,7 +2761,7 @@
 
         </project>
 
-        <project name="mongoose-ecommerce-frontoffice-activities-contactus">
+        <project name="modality-ecommerce-frontoffice-activities-contactus">
 
             <exported-packages>
                 <source-packages/>
@@ -2786,11 +2786,11 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-client-activity</module>
-                <module>mongoose-base-client-util</module>
-                <module>mongoose-base-client-validation</module>
-                <module>mongoose-base-shared-entities</module>
-                <module>mongoose-ecommerce-frontoffice-activities-cart-routing</module>
+                <module>modality-base-client-activity</module>
+                <module>modality-base-client-util</module>
+                <module>modality-base-client-validation</module>
+                <module>modality-base-shared-entities</module>
+                <module>modality-ecommerce-frontoffice-activities-cart-routing</module>
                 <module>webfx-framework-client-action</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-uirouter</module>
@@ -2807,7 +2807,7 @@
 
         </project>
 
-        <project name="mongoose-ecommerce-frontoffice-activities-payment">
+        <project name="modality-ecommerce-frontoffice-activities-payment">
 
             <exported-packages>
                 <source-packages/>
@@ -2819,7 +2819,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>mongoose-base-client-aggregates</undetected-module>
+                    <undetected-module>modality-base-client-aggregates</undetected-module>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
                     <undetected-module>webfx-platform-shared-submit</undetected-module>
@@ -2835,12 +2835,12 @@
             <used-by-source-modules>
                 <module>java-nio-emul</module>
                 <module>java.base</module>
-                <module>mongoose-base-client-entities</module>
-                <module>mongoose-base-client-util</module>
-                <module>mongoose-base-shared-domainmodel</module>
-                <module>mongoose-base-shared-entities</module>
-                <module>mongoose-ecommerce-frontoffice-activities-cart-routing</module>
-                <module>mongoose-event-client-sectionpanel</module>
+                <module>modality-base-client-entities</module>
+                <module>modality-base-client-util</module>
+                <module>modality-base-shared-domainmodel</module>
+                <module>modality-base-shared-entities</module>
+                <module>modality-ecommerce-frontoffice-activities-cart-routing</module>
+                <module>modality-event-client-sectionpanel</module>
                 <module>webfx-extras-webtext-controls</module>
                 <module>webfx-framework-client-action</module>
                 <module>webfx-framework-client-controls</module>
@@ -2862,7 +2862,7 @@
 
         </project>
 
-        <project name="mongoose-ecommerce-frontoffice-activities-person">
+        <project name="modality-ecommerce-frontoffice-activities-person">
 
             <exported-packages>
                 <source-packages/>
@@ -2887,12 +2887,12 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-client-util</module>
-                <module>mongoose-crm-client-activities-login</module>
-                <module>mongoose-crm-client-personaldetails</module>
-                <module>mongoose-ecommerce-client-bookingprocess</module>
-                <module>mongoose-ecommerce-client-businesslogic</module>
-                <module>mongoose-ecommerce-frontoffice-activities-summary</module>
+                <module>modality-base-client-util</module>
+                <module>modality-crm-client-activities-login</module>
+                <module>modality-crm-client-personaldetails</module>
+                <module>modality-ecommerce-client-bookingprocess</module>
+                <module>modality-ecommerce-client-businesslogic</module>
+                <module>modality-ecommerce-frontoffice-activities-summary</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-uirouter</module>
                 <module>webfx-framework-client-util</module>
@@ -2905,7 +2905,7 @@
 
         </project>
 
-        <project name="mongoose-ecommerce-frontoffice-activities-summary">
+        <project name="modality-ecommerce-frontoffice-activities-summary">
 
             <exported-packages>
                 <source-packages/>
@@ -2929,16 +2929,16 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-client-util</module>
-                <module>mongoose-base-client-validation</module>
-                <module>mongoose-base-shared-entities</module>
-                <module>mongoose-crm-client-personaldetails</module>
-                <module>mongoose-ecommerce-client-bookingoptionspanel</module>
-                <module>mongoose-ecommerce-client-bookingprocess</module>
-                <module>mongoose-ecommerce-client-businesslogic</module>
-                <module>mongoose-ecommerce-frontoffice-activities-cart-routing</module>
-                <module>mongoose-event-client-bookingcalendar</module>
-                <module>mongoose-event-client-sectionpanel</module>
+                <module>modality-base-client-util</module>
+                <module>modality-base-client-validation</module>
+                <module>modality-base-shared-entities</module>
+                <module>modality-crm-client-personaldetails</module>
+                <module>modality-ecommerce-client-bookingoptionspanel</module>
+                <module>modality-ecommerce-client-bookingprocess</module>
+                <module>modality-ecommerce-client-businesslogic</module>
+                <module>modality-ecommerce-frontoffice-activities-cart-routing</module>
+                <module>modality-event-client-bookingcalendar</module>
+                <module>modality-event-client-sectionpanel</module>
                 <module>webfx-framework-client-i18n</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-uirouter</module>
@@ -2953,26 +2953,26 @@
 
         </project>
 
-        <project name="mongoose-event">
+        <project name="modality-event">
 
             <modules>
-                <module>mongoose-event-backoffice-activities-cloneevent</module>
-                <module>mongoose-event-backoffice-activities-cloneevent-routing</module>
-                <module>mongoose-event-backoffice-activities-events</module>
-                <module>mongoose-event-backoffice-activities-options</module>
-                <module>mongoose-event-client-bookingcalendar</module>
-                <module>mongoose-event-client-calendar</module>
-                <module>mongoose-event-client-sectionpanel</module>
-                <module>mongoose-event-frontoffice-activities-fees</module>
-                <module>mongoose-event-frontoffice-activities-options</module>
-                <module>mongoose-event-frontoffice-activities-program</module>
-                <module>mongoose-event-frontoffice-activities-startbooking</module>
-                <module>mongoose-event-frontoffice-activities-terms</module>
+                <module>modality-event-backoffice-activities-cloneevent</module>
+                <module>modality-event-backoffice-activities-cloneevent-routing</module>
+                <module>modality-event-backoffice-activities-events</module>
+                <module>modality-event-backoffice-activities-options</module>
+                <module>modality-event-client-bookingcalendar</module>
+                <module>modality-event-client-calendar</module>
+                <module>modality-event-client-sectionpanel</module>
+                <module>modality-event-frontoffice-activities-fees</module>
+                <module>modality-event-frontoffice-activities-options</module>
+                <module>modality-event-frontoffice-activities-program</module>
+                <module>modality-event-frontoffice-activities-startbooking</module>
+                <module>modality-event-frontoffice-activities-terms</module>
             </modules>
 
         </project>
 
-        <project name="mongoose-event-backoffice-activities-cloneevent">
+        <project name="modality-event-backoffice-activities-cloneevent">
 
             <exported-packages>
                 <source-packages/>
@@ -2997,11 +2997,11 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-client-activity</module>
-                <module>mongoose-base-shared-domainmodel</module>
-                <module>mongoose-base-shared-entities</module>
-                <module>mongoose-ecommerce-backoffice-activities-bookings</module>
-                <module>mongoose-event-backoffice-activities-cloneevent-routing</module>
+                <module>modality-base-client-activity</module>
+                <module>modality-base-shared-domainmodel</module>
+                <module>modality-base-shared-entities</module>
+                <module>modality-ecommerce-backoffice-activities-bookings</module>
+                <module>modality-event-backoffice-activities-cloneevent-routing</module>
                 <module>webfx-framework-client-controls</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-uirouter</module>
@@ -3015,7 +3015,7 @@
 
         </project>
 
-        <project name="mongoose-event-backoffice-activities-cloneevent-routing">
+        <project name="modality-event-backoffice-activities-cloneevent-routing">
 
             <exported-packages>
                 <source-packages/>
@@ -3031,7 +3031,7 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-client-util</module>
+                <module>modality-base-client-util</module>
                 <module>webfx-framework-client-uirouter</module>
                 <module>webfx-framework-shared-operation</module>
                 <module>webfx-platform-client-windowhistory</module>
@@ -3039,7 +3039,7 @@
 
         </project>
 
-        <project name="mongoose-event-backoffice-activities-events">
+        <project name="modality-event-backoffice-activities-events">
 
             <exported-packages>
                 <source-packages/>
@@ -3066,9 +3066,9 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-client-activity</module>
-                <module>mongoose-base-client-util</module>
-                <module>mongoose-ecommerce-backoffice-activities-bookings</module>
+                <module>modality-base-client-activity</module>
+                <module>modality-base-client-util</module>
+                <module>modality-ecommerce-backoffice-activities-bookings</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-orm-reactive-visual</module>
                 <module>webfx-framework-client-uirouter</module>
@@ -3082,7 +3082,7 @@
 
         </project>
 
-        <project name="mongoose-event-backoffice-activities-options">
+        <project name="modality-event-backoffice-activities-options">
 
             <exported-packages>
                 <source-packages/>
@@ -3094,7 +3094,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>mongoose-base-client-aggregates</undetected-module>
+                    <undetected-module>modality-base-client-aggregates</undetected-module>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
@@ -3107,14 +3107,14 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-backoffice-multilangeditor</module>
-                <module>mongoose-base-client-icons</module>
-                <module>mongoose-base-shared-entities</module>
-                <module>mongoose-ecommerce-client-businesslogic</module>
-                <module>mongoose-event-client-bookingcalendar</module>
-                <module>mongoose-event-client-calendar</module>
-                <module>mongoose-event-frontoffice-activities-options</module>
-                <module>mongoose-hotel-shared-time</module>
+                <module>modality-base-backoffice-multilangeditor</module>
+                <module>modality-base-client-icons</module>
+                <module>modality-base-shared-entities</module>
+                <module>modality-ecommerce-client-businesslogic</module>
+                <module>modality-event-client-bookingcalendar</module>
+                <module>modality-event-client-calendar</module>
+                <module>modality-event-frontoffice-activities-options</module>
+                <module>modality-hotel-shared-time</module>
                 <module>webfx-extras-visual-controls-grid</module>
                 <module>webfx-framework-client-controls</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
@@ -3132,7 +3132,7 @@
 
         </project>
 
-        <project name="mongoose-event-client-bookingcalendar">
+        <project name="modality-event-client-bookingcalendar">
 
             <exported-packages>
                 <source-packages/>
@@ -3150,12 +3150,12 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-client-aggregates</module>
-                <module>mongoose-base-client-util</module>
-                <module>mongoose-base-shared-entities</module>
-                <module>mongoose-ecommerce-client-businesslogic</module>
-                <module>mongoose-event-client-calendar</module>
-                <module>mongoose-hotel-shared-time</module>
+                <module>modality-base-client-aggregates</module>
+                <module>modality-base-client-util</module>
+                <module>modality-base-shared-entities</module>
+                <module>modality-ecommerce-client-businesslogic</module>
+                <module>modality-event-client-calendar</module>
+                <module>modality-hotel-shared-time</module>
                 <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
@@ -3165,7 +3165,7 @@
 
         </project>
 
-        <project name="mongoose-event-client-calendar">
+        <project name="modality-event-client-calendar">
 
             <exported-packages>
                 <source-packages/>
@@ -3186,7 +3186,7 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-hotel-shared-time</module>
+                <module>modality-hotel-shared-time</module>
                 <module>webfx-framework-client-i18n</module>
                 <module>webfx-framework-client-util</module>
                 <module>webfx-kit-javafxbase-emul</module>
@@ -3197,7 +3197,7 @@
 
         </project>
 
-        <project name="mongoose-event-client-sectionpanel">
+        <project name="modality-event-client-sectionpanel">
 
             <exported-packages>
                 <source-packages/>
@@ -3212,8 +3212,8 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-client-icons</module>
-                <module>mongoose-event-client-bookingcalendar</module>
+                <module>modality-base-client-icons</module>
+                <module>modality-event-client-bookingcalendar</module>
                 <module>webfx-extras-cell</module>
                 <module>webfx-framework-client-i18n</module>
                 <module>webfx-framework-client-util</module>
@@ -3224,7 +3224,7 @@
 
         </project>
 
-        <project name="mongoose-event-frontoffice-activities-fees">
+        <project name="modality-event-frontoffice-activities-fees">
 
             <exported-packages>
                 <source-packages/>
@@ -3250,16 +3250,16 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-client-activity</module>
-                <module>mongoose-base-client-aggregates</module>
-                <module>mongoose-base-client-entities</module>
-                <module>mongoose-base-client-icons</module>
-                <module>mongoose-base-client-util</module>
-                <module>mongoose-base-shared-entities</module>
-                <module>mongoose-ecommerce-client-bookingprocess</module>
-                <module>mongoose-ecommerce-client-businesslogic</module>
-                <module>mongoose-event-client-sectionpanel</module>
-                <module>mongoose-event-frontoffice-activities-options</module>
+                <module>modality-base-client-activity</module>
+                <module>modality-base-client-aggregates</module>
+                <module>modality-base-client-entities</module>
+                <module>modality-base-client-icons</module>
+                <module>modality-base-client-util</module>
+                <module>modality-base-shared-entities</module>
+                <module>modality-ecommerce-client-bookingprocess</module>
+                <module>modality-ecommerce-client-businesslogic</module>
+                <module>modality-event-client-sectionpanel</module>
+                <module>modality-event-frontoffice-activities-options</module>
                 <module>webfx-extras-cell</module>
                 <module>webfx-extras-imagestore</module>
                 <module>webfx-extras-type</module>
@@ -3284,7 +3284,7 @@
 
         </project>
 
-        <project name="mongoose-event-frontoffice-activities-options">
+        <project name="modality-event-frontoffice-activities-options">
 
             <exported-packages>
                 <source-packages/>
@@ -3296,7 +3296,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>mongoose-base-client-aggregates</undetected-module>
+                    <undetected-module>modality-base-client-aggregates</undetected-module>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
                 </used-by-source-modules>
@@ -3310,17 +3310,17 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-client-entities</module>
-                <module>mongoose-base-client-icons</module>
-                <module>mongoose-base-client-util</module>
-                <module>mongoose-base-client-validation</module>
-                <module>mongoose-base-shared-entities</module>
-                <module>mongoose-ecommerce-client-bookingprocess</module>
-                <module>mongoose-ecommerce-client-businesslogic</module>
-                <module>mongoose-ecommerce-frontoffice-activities-person</module>
-                <module>mongoose-event-client-bookingcalendar</module>
-                <module>mongoose-event-client-sectionpanel</module>
-                <module>mongoose-hotel-shared-time</module>
+                <module>modality-base-client-entities</module>
+                <module>modality-base-client-icons</module>
+                <module>modality-base-client-util</module>
+                <module>modality-base-client-validation</module>
+                <module>modality-base-shared-entities</module>
+                <module>modality-ecommerce-client-bookingprocess</module>
+                <module>modality-ecommerce-client-businesslogic</module>
+                <module>modality-ecommerce-frontoffice-activities-person</module>
+                <module>modality-event-client-bookingcalendar</module>
+                <module>modality-event-client-sectionpanel</module>
+                <module>modality-hotel-shared-time</module>
                 <module>webfx-extras-flexbox</module>
                 <module>webfx-extras-imagestore</module>
                 <module>webfx-framework-client-i18n</module>
@@ -3341,7 +3341,7 @@
 
         </project>
 
-        <project name="mongoose-event-frontoffice-activities-program">
+        <project name="modality-event-frontoffice-activities-program">
 
             <exported-packages>
                 <source-packages/>
@@ -3367,12 +3367,12 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-client-icons</module>
-                <module>mongoose-base-client-util</module>
-                <module>mongoose-ecommerce-client-bookingprocess</module>
-                <module>mongoose-ecommerce-client-businesslogic</module>
-                <module>mongoose-event-client-bookingcalendar</module>
-                <module>mongoose-event-client-sectionpanel</module>
+                <module>modality-base-client-icons</module>
+                <module>modality-base-client-util</module>
+                <module>modality-ecommerce-client-bookingprocess</module>
+                <module>modality-ecommerce-client-businesslogic</module>
+                <module>modality-event-client-bookingcalendar</module>
+                <module>modality-event-client-sectionpanel</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-uirouter</module>
                 <module>webfx-framework-client-util</module>
@@ -3383,7 +3383,7 @@
 
         </project>
 
-        <project name="mongoose-event-frontoffice-activities-startbooking">
+        <project name="modality-event-frontoffice-activities-startbooking">
 
             <exported-packages>
                 <source-packages/>
@@ -3395,7 +3395,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>mongoose-base-shared-entities</undetected-module>
+                    <undetected-module>modality-base-shared-entities</undetected-module>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-platform-shared-async</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
@@ -3409,14 +3409,14 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-client-entities</module>
-                <module>mongoose-base-client-icons</module>
-                <module>mongoose-base-client-util</module>
-                <module>mongoose-ecommerce-client-bookingprocess</module>
-                <module>mongoose-event-frontoffice-activities-fees</module>
-                <module>mongoose-event-frontoffice-activities-options</module>
-                <module>mongoose-event-frontoffice-activities-program</module>
-                <module>mongoose-event-frontoffice-activities-terms</module>
+                <module>modality-base-client-entities</module>
+                <module>modality-base-client-icons</module>
+                <module>modality-base-client-util</module>
+                <module>modality-ecommerce-client-bookingprocess</module>
+                <module>modality-event-frontoffice-activities-fees</module>
+                <module>modality-event-frontoffice-activities-options</module>
+                <module>modality-event-frontoffice-activities-program</module>
+                <module>modality-event-frontoffice-activities-terms</module>
                 <module>webfx-extras-imagestore</module>
                 <module>webfx-framework-client-action</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
@@ -3431,7 +3431,7 @@
 
         </project>
 
-        <project name="mongoose-event-frontoffice-activities-terms">
+        <project name="modality-event-frontoffice-activities-terms">
 
             <exported-packages>
                 <source-packages/>
@@ -3456,10 +3456,10 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-client-icons</module>
-                <module>mongoose-base-client-util</module>
-                <module>mongoose-ecommerce-client-bookingprocess</module>
-                <module>mongoose-event-client-sectionpanel</module>
+                <module>modality-base-client-icons</module>
+                <module>modality-base-client-util</module>
+                <module>modality-ecommerce-client-bookingprocess</module>
+                <module>modality-event-client-sectionpanel</module>
                 <module>webfx-extras-visual-base</module>
                 <module>webfx-extras-visual-controls-grid-peers-base</module>
                 <module>webfx-framework-client-i18n</module>
@@ -3475,17 +3475,17 @@
 
         </project>
 
-        <project name="mongoose-hotel">
+        <project name="modality-hotel">
 
             <modules>
-                <module>mongoose-hotel-backoffice-activities-roomsgraphic</module>
-                <module>mongoose-hotel-backoffice-operations-resourceconfiguration</module>
-                <module>mongoose-hotel-shared-time</module>
+                <module>modality-hotel-backoffice-activities-roomsgraphic</module>
+                <module>modality-hotel-backoffice-operations-resourceconfiguration</module>
+                <module>modality-hotel-shared-time</module>
             </modules>
 
         </project>
 
-        <project name="mongoose-hotel-backoffice-activities-roomsgraphic">
+        <project name="modality-hotel-backoffice-activities-roomsgraphic">
 
             <exported-packages>
                 <source-packages/>
@@ -3515,12 +3515,12 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>mongoose-base-backoffice-masterslave</module>
-                <module>mongoose-base-client-activity</module>
-                <module>mongoose-base-client-presentationmodel</module>
-                <module>mongoose-base-client-util</module>
-                <module>mongoose-base-shared-entities</module>
-                <module>mongoose-hotel-backoffice-operations-resourceconfiguration</module>
+                <module>modality-base-backoffice-masterslave</module>
+                <module>modality-base-client-activity</module>
+                <module>modality-base-client-presentationmodel</module>
+                <module>modality-base-client-util</module>
+                <module>modality-base-shared-entities</module>
+                <module>modality-hotel-backoffice-operations-resourceconfiguration</module>
                 <module>webfx-extras-flexbox</module>
                 <module>webfx-extras-imagestore</module>
                 <module>webfx-extras-visual-controls-grid</module>
@@ -3547,7 +3547,7 @@
 
         </project>
 
-        <project name="mongoose-hotel-backoffice-operations-resourceconfiguration">
+        <project name="modality-hotel-backoffice-operations-resourceconfiguration">
 
             <exported-packages>
                 <source-packages/>
@@ -3562,7 +3562,7 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>mongoose-base-shared-entities</module>
+                <module>modality-base-shared-entities</module>
                 <module>webfx-framework-client-controls</module>
                 <module>webfx-framework-client-orm-entity-controls</module>
                 <module>webfx-framework-shared-operation</module>
@@ -3575,7 +3575,7 @@
 
         </project>
 
-        <project name="mongoose-hotel-shared-time">
+        <project name="modality-hotel-shared-time">
 
             <exported-packages>
                 <source-packages/>
@@ -3597,13 +3597,13 @@
 
         </project>
 
-        <project name="mongoose-restaurant">
+        <project name="modality-restaurant">
 
             <modules/>
 
         </project>
 
-        <project name="mongoose-shop">
+        <project name="modality-shop">
 
             <modules/>
 
@@ -3612,18 +3612,18 @@
         <usages>
 
             <java-package name="dev.webfx.framework.shared.orm.domainmodel">
-                <module>mongoose-base-backoffice-activities-filters</module>
-                <module>mongoose-base-backoffice-multilangeditor</module>
-                <module>mongoose-base-backoffice-operations-generic</module>
-                <module>mongoose-base-client-aggregates</module>
-                <module>mongoose-base-client-entities</module>
-                <module>mongoose-base-server-systemmetrics</module>
-                <module>mongoose-base-shared-domainmodel</module>
-                <module>mongoose-crm-backoffice-bookingdetailspanel</module>
-                <module>mongoose-crm-client-authn</module>
-                <module>mongoose-crm-client-authz</module>
-                <module>mongoose-crm-client-personaldetails</module>
-                <module>mongoose-hotel-backoffice-operations-resourceconfiguration</module>
+                <module>modality-base-backoffice-activities-filters</module>
+                <module>modality-base-backoffice-multilangeditor</module>
+                <module>modality-base-backoffice-operations-generic</module>
+                <module>modality-base-client-aggregates</module>
+                <module>modality-base-client-entities</module>
+                <module>modality-base-server-systemmetrics</module>
+                <module>modality-base-shared-domainmodel</module>
+                <module>modality-crm-backoffice-bookingdetailspanel</module>
+                <module>modality-crm-client-authn</module>
+                <module>modality-crm-client-authz</module>
+                <module>modality-crm-client-personaldetails</module>
+                <module>modality-hotel-backoffice-operations-resourceconfiguration</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-orm-entity-controls</module>
                 <module>webfx-framework-client-orm-reactive-dql</module>
@@ -3648,11 +3648,11 @@
             </java-package>
 
             <java-package name="dev.webfx.platform.shared.services.query">
-                <module>mongoose-base-client-activity</module>
-                <module>mongoose-base-client-aggregates</module>
-                <module>mongoose-base-shared-domainmodel</module>
-                <module>mongoose-crm-client-authn</module>
-                <module>mongoose-ecommerce-client-businesslogic</module>
+                <module>modality-base-client-activity</module>
+                <module>modality-base-client-aggregates</module>
+                <module>modality-base-shared-domainmodel</module>
+                <module>modality-crm-client-authn</module>
+                <module>modality-ecommerce-client-businesslogic</module>
                 <module>webfx-framework-client-orm-reactive-dql</module>
                 <module>webfx-framework-client-orm-reactive-entities</module>
                 <module>webfx-framework-server-querypush</module>
@@ -3668,16 +3668,16 @@
             </java-package>
 
             <java-package name="dev.webfx.platform.shared.services.submit">
-                <module>mongoose-base-backoffice-operations-filters</module>
-                <module>mongoose-base-backoffice-operations-generic</module>
-                <module>mongoose-base-server-sessioncloser</module>
-                <module>mongoose-base-server-systemmetrics</module>
-                <module>mongoose-ecommerce-backoffice-activities-moneyflows</module>
-                <module>mongoose-ecommerce-backoffice-operations-moneyflow</module>
-                <module>mongoose-ecommerce-client-businesslogic</module>
-                <module>mongoose-event-backoffice-activities-cloneevent</module>
-                <module>mongoose-event-backoffice-activities-options</module>
-                <module>mongoose-hotel-backoffice-operations-resourceconfiguration</module>
+                <module>modality-base-backoffice-operations-filters</module>
+                <module>modality-base-backoffice-operations-generic</module>
+                <module>modality-base-server-sessioncloser</module>
+                <module>modality-base-server-systemmetrics</module>
+                <module>modality-ecommerce-backoffice-activities-moneyflows</module>
+                <module>modality-ecommerce-backoffice-operations-moneyflow</module>
+                <module>modality-ecommerce-client-businesslogic</module>
+                <module>modality-event-backoffice-activities-cloneevent</module>
+                <module>modality-event-backoffice-activities-options</module>
+                <module>modality-hotel-backoffice-operations-resourceconfiguration</module>
                 <module>webfx-framework-server-querypush</module>
                 <module>webfx-framework-shared-orm-dql-submit-interceptor</module>
                 <module>webfx-framework-shared-orm-entity</module>
@@ -3693,8 +3693,8 @@
             </java-package>
 
             <java-class name="javafx.scene.control.ScrollPane">
-                <module>mongoose-ecommerce-backoffice-operations-document</module>
-                <module>mongoose-ecommerce-client-bookingprocess</module>
+                <module>modality-ecommerce-backoffice-operations-document</module>
+                <module>modality-ecommerce-client-bookingprocess</module>
                 <module>webfx-extras-visual-controls-grid</module>
                 <module>webfx-framework-client-controls</module>
                 <module>webfx-framework-client-util</module>

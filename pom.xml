@@ -34,15 +34,15 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>mongoose-all</module>
-        <module>mongoose-base</module>
-        <module>mongoose-catering</module>
-        <module>mongoose-crm</module>
-        <module>mongoose-ecommerce</module>
-        <module>mongoose-event</module>
-        <module>mongoose-hotel</module>
-        <module>mongoose-restaurant</module>
-        <module>mongoose-shop</module>
+        <module>modality-all</module>
+        <module>modality-base</module>
+        <module>modality-catering</module>
+        <module>modality-crm</module>
+        <module>modality-ecommerce</module>
+        <module>modality-event</module>
+        <module>modality-hotel</module>
+        <module>modality-restaurant</module>
+        <module>modality-shop</module>
     </modules>
 
 </project>

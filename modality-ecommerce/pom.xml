@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- File managed by WebFX (DO NOT EDIT MANUALLY) -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>dev.webfx</groupId>
+        <artifactId>mongoose</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>modality-ecommerce</artifactId>
+
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>modality-ecommerce-backoffice-activities-bookings</module>
+        <module>modality-ecommerce-backoffice-activities-income</module>
+        <module>modality-ecommerce-backoffice-activities-moneyflows</module>
+        <module>modality-ecommerce-backoffice-activities-payments</module>
+        <module>modality-ecommerce-backoffice-activities-statements</module>
+        <module>modality-ecommerce-backoffice-activities-statistics</module>
+        <module>modality-ecommerce-backoffice-operations-document</module>
+        <module>modality-ecommerce-backoffice-operations-documentline</module>
+        <module>modality-ecommerce-backoffice-operations-moneyflow</module>
+        <module>modality-ecommerce-backoffice-operations-moneytransfer</module>
+        <module>modality-ecommerce-client-bookingoptionspanel</module>
+        <module>modality-ecommerce-client-bookingprocess</module>
+        <module>modality-ecommerce-client-businesslogic</module>
+        <module>modality-ecommerce-frontoffice-activities-cart</module>
+        <module>modality-ecommerce-frontoffice-activities-cart-routing</module>
+        <module>modality-ecommerce-frontoffice-activities-contactus</module>
+        <module>modality-ecommerce-frontoffice-activities-payment</module>
+        <module>modality-ecommerce-frontoffice-activities-person</module>
+        <module>modality-ecommerce-frontoffice-activities-summary</module>
+    </modules>
+
+</project>

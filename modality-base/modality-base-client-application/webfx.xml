@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <properties>
+        <show-loading-spinner-on-startup>true</show-loading-spinner-on-startup>
+    </properties>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-package>org.modality_project.base.client.images</resource-package>
+        <resource-package>images.buddhas</resource-package>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules>
+            <undetected-module>webfx-framework-shared-router</undetected-module>
+            <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
+        </used-by-source-modules>
+
+        <resource-module>modality-base-client-css</resource-module>
+        <resource-module>modality-base-client-busconfig</resource-module>
+
+        <plugin-module executable-target="java">modality-base-client-navigationarrows-java</plugin-module>
+        <plugin-module>modality-base-client-i18n</plugin-module>
+        <plugin-module>modality-crm-client-authz</plugin-module>
+        <plugin-module>modality-base-client-operationactionsloading</plugin-module>
+        <plugin-module>modality-base-client-sessionrecorder</plugin-module>
+        <plugin-module>modality-crm-client-activities-login</plugin-module>
+        <plugin-module>modality-crm-client-activities-unauthorized</plugin-module>
+        <plugin-module>webfx-framework-client-push-simple</plugin-module>
+        <plugin-module>webfx-framework-client-querypush-simple</plugin-module>
+    </dependencies>
+
+</project>
