@@ -2,7 +2,7 @@ package org.modality_project.base.client.activity.organizationdependent;
 
 import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
-import org.modality_project.base.client.activity.MongooseButtonFactoryMixin;
+import org.modality_project.base.client.activity.ModalityButtonFactoryMixin;
 import org.modality_project.base.client.activity.eventdependent.EventDependentPresentationModelImpl;
 
 /**
@@ -11,7 +11,7 @@ import org.modality_project.base.client.activity.eventdependent.EventDependentPr
 public abstract class OrganizationDependentViewDomainActivity
         extends ViewDomainActivityBase
         implements OrganizationDependentActivityMixin<ViewDomainActivityContextFinal>,
-        MongooseButtonFactoryMixin {
+        ModalityButtonFactoryMixin {
 
     protected OrganizationDependentPresentationModel pm;
 

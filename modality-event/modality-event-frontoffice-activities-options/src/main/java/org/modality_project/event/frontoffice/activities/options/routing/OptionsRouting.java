@@ -1,6 +1,6 @@
 package org.modality_project.event.frontoffice.activities.options.routing;
 
-import org.modality_project.base.client.util.routing.MongooseRoutingUtil;
+import org.modality_project.base.client.util.routing.ModalityRoutingUtil;
 
 /**
  * @author Bruno Salmon
@@ -14,7 +14,7 @@ public final class OptionsRouting {
     }
 
     public static String getEventOptionsPath(Object eventId) {
-        return MongooseRoutingUtil.interpolateEventIdInPath(eventId, getPath());
+        return ModalityRoutingUtil.interpolateEventIdInPath(eventId, getPath());
     }
 
 }

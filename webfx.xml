@@ -4,6 +4,7 @@
     <parent name="webfx-stack-parent"/>
 
     <groupId>dev.webfx</groupId>
+    <artifactId>modality</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
     <update-options>
@@ -41,6 +42,7 @@
             <parent name="webfx-stack-parent"/>
 
             <groupId>dev.webfx</groupId>
+            <artifactId>modality</artifactId>
             <version>1.0.0-SNAPSHOT</version>
     
             <modules>
@@ -83,7 +85,7 @@
             </exported-packages>
 
             <providers>
-                <javafx.application.Application>org.modality_project.all.backoffice.application.MongooseBackOfficeApplication</javafx.application.Application>
+                <javafx.application.Application>org.modality_project.all.backoffice.application.ModalityBackOfficeApplication</javafx.application.Application>
             </providers>
 
             <dependencies>
@@ -145,7 +147,7 @@
 
         </project>
 
-        <project application-module="mongoose-all-backoffice-application" executable="true" name="modality-all-backoffice-application-gwt">
+        <project application-module="modality-all-backoffice-application" executable="true" name="modality-all-backoffice-application-gwt">
 
             <dependencies>
                 <used-by-source-modules/>
@@ -154,7 +156,7 @@
 
             <html>
                 <head>
-                    <title>Mongoose Back-Office</title>
+                    <title>Modality Back-Office</title>
                 </head>
             </html>
 
@@ -197,7 +199,7 @@
             </exported-packages>
 
             <providers>
-                <javafx.application.Application>org.modality_project.all.frontoffice.application.MongooseFrontOfficeApplication</javafx.application.Application>
+                <javafx.application.Application>org.modality_project.all.frontoffice.application.ModalityFrontOfficeApplication</javafx.application.Application>
             </providers>
 
             <dependencies>
@@ -248,7 +250,7 @@
 
             <html>
                 <head>
-                    <title>Mongoose Front-Office</title>
+                    <title>Modality Front-Office</title>
                 </head>
             </html>
 
@@ -326,9 +328,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.base.backoffice.operations.routes.filters</package>
                 <package>org.modality_project.base.backoffice.activities.filters</package>
                 <package>org.modality_project.base.backoffice.activities.filters.routing</package>
+                <package>org.modality_project.base.backoffice.operations.routes.filters</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -380,9 +382,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.base.backoffice.operations.routes.monitor</package>
                 <package>org.modality_project.base.backoffice.activities.monitor</package>
                 <package>org.modality_project.base.backoffice.activities.monitor.routing</package>
+                <package>org.modality_project.base.backoffice.operations.routes.monitor</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -423,9 +425,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.base.backoffice.operations.routes.operations</package>
                 <package>org.modality_project.base.backoffice.activities.operations</package>
                 <package>org.modality_project.base.backoffice.activities.operations.routing</package>
+                <package>org.modality_project.base.backoffice.operations.routes.operations</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -626,11 +628,11 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.base.client.activity.eventdependent</package>
-                <package>org.modality_project.base.client.activity.organizationdependent</package>
                 <package>org.modality_project.base.client.activity</package>
-                <package>org.modality_project.base.client.activity.table</package>
                 <package>org.modality_project.base.client.activity.themes</package>
+                <package>org.modality_project.base.client.activity.table</package>
+                <package>org.modality_project.base.client.activity.organizationdependent</package>
+                <package>org.modality_project.base.client.activity.eventdependent</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -669,8 +671,8 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.base.client.aggregates.person</package>
                 <package>org.modality_project.base.client.aggregates.cart</package>
+                <package>org.modality_project.base.client.aggregates.person</package>
                 <package>org.modality_project.base.client.aggregates.event</package>
             </source-packages>
 
@@ -861,7 +863,7 @@
             <providers>
                 <dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>org.modality_project.base.client.operations.i18n.ChangeLanguageToEnglishRequest$ProvidedEmitter</dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>
                 <dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>org.modality_project.base.client.operations.i18n.ChangeLanguageToFrenchRequest$ProvidedEmitter</dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>
-                <dev.webfx.framework.client.services.i18n.spi.I18nProvider>org.modality_project.base.client.services.i18n.MongooseI18nProvider</dev.webfx.framework.client.services.i18n.spi.I18nProvider>
+                <dev.webfx.framework.client.services.i18n.spi.I18nProvider>org.modality_project.base.client.services.i18n.ModalityI18nProvider</dev.webfx.framework.client.services.i18n.spi.I18nProvider>
             </providers>
 
             <dependencies>
@@ -877,8 +879,8 @@
             </embed-resources>
 
             <source-packages>
-                <package>org.modality_project.base.client.operations.i18n</package>
                 <package>org.modality_project.base.client.services.i18n</package>
+                <package>org.modality_project.base.client.operations.i18n</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -928,8 +930,8 @@
             </embed-resources>
 
             <source-packages>
-                <package>org.modality_project.base.client.icons</package>
                 <package>org.modality_project.base.client.actions</package>
+                <package>org.modality_project.base.client.icons</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -974,7 +976,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.platform.shared.services.boot.spi.ApplicationModuleBooter>org.modality_project.base.client.operationactionsloading.MongooseClientOperationActionsLoader</dev.webfx.platform.shared.services.boot.spi.ApplicationModuleBooter>
+                <dev.webfx.platform.shared.services.boot.spi.ApplicationModuleBooter>org.modality_project.base.client.operationactionsloading.ModalityClientOperationActionsLoader</dev.webfx.platform.shared.services.boot.spi.ApplicationModuleBooter>
             </providers>
 
             <dependencies>
@@ -1080,9 +1082,9 @@
             </dependencies>
 
             <source-packages>
+                <package>org.modality_project.base.client.util.routing</package>
                 <package>org.modality_project.base.client.util.functions</package>
                 <package>org.modality_project.base.client.util.log</package>
-                <package>org.modality_project.base.client.util.routing</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1137,7 +1139,7 @@
                 <plugin-module>modality-base-server-datasource</plugin-module>
                 <plugin-module>modality-base-server-sessioncloser</plugin-module>
                 <!-- Commented while it's not necessary during the development phase (and creates logs on the server every second which may pollute other logs)
-        <plugin-module>mongoose-base-server-systemmetrics</plugin-module>
+        <plugin-module>modality-base-server-systemmetrics</plugin-module>
 -->
                 <plugin-module>webfx-framework-shared-querypush</plugin-module>
                 <plugin-module>webfx-platform-shared-buscalljob</plugin-module>
@@ -1185,7 +1187,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider>org.modality_project.base.server.services.datasource.MongooseLocalDataSourceProvider</dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider>
+                <dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider>org.modality_project.base.server.services.datasource.ModalityLocalDataSourceProvider</dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider>
             </providers>
 
             <dependencies>
@@ -1300,7 +1302,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.platform.shared.services.boot.spi.ApplicationJob>org.modality_project.base.server.jobs.sessioncloser.MongooseServerUnresponsiveClientSessionCloserJob</dev.webfx.platform.shared.services.boot.spi.ApplicationJob>
+                <dev.webfx.platform.shared.services.boot.spi.ApplicationJob>org.modality_project.base.server.jobs.sessioncloser.ModalityServerUnresponsiveClientSessionCloserJob</dev.webfx.platform.shared.services.boot.spi.ApplicationJob>
             </providers>
 
             <dependencies>
@@ -1399,8 +1401,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider>org.modality_project.base.shared.services.domainmodel.MongooseDomainModelProvider</dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider>
-                <dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider>org.modality_project.base.shared.services.datasourcemodel.MongooseDataSourceModelProvider</dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider>
+                <dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider>org.modality_project.base.shared.services.domainmodel.ModalityDomainModelProvider</dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider>
+                <dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider>org.modality_project.base.shared.services.datasourcemodel.ModalityDataSourceModelProvider</dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider>
             </providers>
 
             <embed-resources>
@@ -1412,8 +1414,8 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.base.shared.domainmodel.formatters</package>
                 <package>org.modality_project.base.shared.domainmodel.functions</package>
+                <package>org.modality_project.base.shared.domainmodel.formatters</package>
                 <package>org.modality_project.base.shared.services.domainmodel</package>
                 <package>org.modality_project.base.shared.services.datasourcemodel</package>
             </source-packages>
@@ -1483,11 +1485,11 @@
 
             <source-packages>
                 <package>org.modality_project.base.shared.services.systemmetrics</package>
-                <package>org.modality_project.base.shared.entities.impl</package>
                 <package>org.modality_project.base.shared.entities</package>
-                <package>org.modality_project.base.shared.entities.markers</package>
+                <package>org.modality_project.base.shared.entities.impl</package>
                 <package>org.modality_project.base.shared.entities.converters</package>
                 <package>org.modality_project.base.shared.entities.formatters</package>
+                <package>org.modality_project.base.shared.entities.markers</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1531,9 +1533,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.catering.backoffice.operations.routes.diningareas</package>
-                <package>org.modality_project.catering.backoffice.activities.diningareas</package>
                 <package>org.modality_project.catering.backoffice.activities.diningareas.routing</package>
+                <package>org.modality_project.catering.backoffice.activities.diningareas</package>
+                <package>org.modality_project.catering.backoffice.operations.routes.diningareas</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1631,8 +1633,8 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.crm.backoffice.activities.authorizations</package>
                 <package>org.modality_project.crm.backoffice.activities.authorizations.routing</package>
+                <package>org.modality_project.crm.backoffice.activities.authorizations</package>
                 <package>org.modality_project.crm.backoffice.activities.operations.authorizations</package>
             </source-packages>
 
@@ -1673,9 +1675,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.crm.backoffice.operations.routes.letter</package>
-                <package>org.modality_project.crm.backoffice.activities.letter</package>
                 <package>org.modality_project.crm.backoffice.activities.letter.routing</package>
+                <package>org.modality_project.crm.backoffice.activities.letter</package>
+                <package>org.modality_project.crm.backoffice.operations.routes.letter</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1714,9 +1716,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.crm.backoffice.operations.routes.letters</package>
                 <package>org.modality_project.crm.backoffice.activities.letters</package>
                 <package>org.modality_project.crm.backoffice.activities.letters.routing</package>
+                <package>org.modality_project.crm.backoffice.operations.routes.letters</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1754,9 +1756,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.crm.backoffice.operations.routes.organizations</package>
                 <package>org.modality_project.crm.backoffice.activities.organizations</package>
                 <package>org.modality_project.crm.backoffice.activities.organizations.routing</package>
+                <package>org.modality_project.crm.backoffice.operations.routes.organizations</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1797,9 +1799,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.crm.backoffice.operations.routes.users</package>
                 <package>org.modality_project.crm.backoffice.activities.users</package>
                 <package>org.modality_project.crm.backoffice.activities.users.routing</package>
+                <package>org.modality_project.crm.backoffice.operations.routes.users</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -1971,7 +1973,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.shared.services.authn.spi.AuthenticationServiceProvider>org.modality_project.crm.client.services.authn.MongooseAuthenticationServiceProvider</dev.webfx.framework.shared.services.authn.spi.AuthenticationServiceProvider>
+                <dev.webfx.framework.shared.services.authn.spi.AuthenticationServiceProvider>org.modality_project.crm.client.services.authn.ModalityAuthenticationServiceProvider</dev.webfx.framework.shared.services.authn.spi.AuthenticationServiceProvider>
             </providers>
 
             <dependencies>
@@ -1999,7 +2001,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.shared.services.authz.spi.AuthorizationServiceProvider>org.modality_project.crm.client.services.authz.MongooseAuthorizationServiceProvider</dev.webfx.framework.shared.services.authz.spi.AuthorizationServiceProvider>
+                <dev.webfx.framework.shared.services.authz.spi.AuthorizationServiceProvider>org.modality_project.crm.client.services.authz.ModalityAuthorizationServiceProvider</dev.webfx.framework.shared.services.authz.spi.AuthorizationServiceProvider>
             </providers>
 
             <dependencies>
@@ -2113,9 +2115,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.ecommerce.backoffice.operations.routes.bookings</package>
                 <package>org.modality_project.ecommerce.backoffice.activities.bookings</package>
                 <package>org.modality_project.ecommerce.backoffice.activities.bookings.routing</package>
+                <package>org.modality_project.ecommerce.backoffice.operations.routes.bookings</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2176,9 +2178,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.ecommerce.backoffice.operations.routes.income</package>
                 <package>org.modality_project.ecommerce.backoffice.activities.income</package>
                 <package>org.modality_project.ecommerce.backoffice.activities.income.routing</package>
+                <package>org.modality_project.ecommerce.backoffice.operations.routes.income</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2226,9 +2228,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.ecommerce.backoffice.operations.routes.moneyflows</package>
                 <package>org.modality_project.ecommerce.backoffice.activities.moneyflows</package>
                 <package>org.modality_project.ecommerce.backoffice.activities.moneyflows.routing</package>
+                <package>org.modality_project.ecommerce.backoffice.operations.routes.moneyflows</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2283,9 +2285,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.ecommerce.backoffice.operations.routes.payments</package>
                 <package>org.modality_project.ecommerce.backoffice.activities.payments</package>
                 <package>org.modality_project.ecommerce.backoffice.activities.payments.routing</package>
+                <package>org.modality_project.ecommerce.backoffice.operations.routes.payments</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2337,9 +2339,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.ecommerce.backoffice.operations.routes.statements</package>
-                <package>org.modality_project.ecommerce.backoffice.activities.statements</package>
                 <package>org.modality_project.ecommerce.backoffice.activities.statements.routing</package>
+                <package>org.modality_project.ecommerce.backoffice.activities.statements</package>
+                <package>org.modality_project.ecommerce.backoffice.operations.routes.statements</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2389,9 +2391,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.ecommerce.backoffice.operations.routes.statistics</package>
-                <package>org.modality_project.ecommerce.backoffice.activities.statistics</package>
                 <package>org.modality_project.ecommerce.backoffice.activities.statistics.routing</package>
+                <package>org.modality_project.ecommerce.backoffice.activities.statistics</package>
+                <package>org.modality_project.ecommerce.backoffice.operations.routes.statistics</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2443,9 +2445,9 @@
 
             <source-packages>
                 <package>org.modality_project.ecommerce.backoffice.operations.entities.document</package>
+                <package>org.modality_project.ecommerce.backoffice.operations.entities.document.cart</package>
                 <package>org.modality_project.ecommerce.backoffice.operations.entities.document.registration</package>
                 <package>org.modality_project.ecommerce.backoffice.operations.entities.document.security</package>
-                <package>org.modality_project.ecommerce.backoffice.operations.entities.document.cart</package>
                 <package>org.modality_project.ecommerce.backoffice.operations.entities.document.multiplebookings</package>
             </source-packages>
 
@@ -2634,14 +2636,14 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.ecommerce.client.businessdata.workingdocument</package>
-                <package>org.modality_project.ecommerce.client.businessdata.preselection</package>
-                <package>org.modality_project.ecommerce.client.businessdata.feesgroup</package>
+                <package>org.modality_project.ecommerce.client.businesslogic.pricing</package>
                 <package>org.modality_project.ecommerce.client.businesslogic.workingdocument</package>
                 <package>org.modality_project.ecommerce.client.businesslogic.option</package>
                 <package>org.modality_project.ecommerce.client.businesslogic.feesgroup</package>
                 <package>org.modality_project.ecommerce.client.businesslogic.rules</package>
-                <package>org.modality_project.ecommerce.client.businesslogic.pricing</package>
+                <package>org.modality_project.ecommerce.client.businessdata.preselection</package>
+                <package>org.modality_project.ecommerce.client.businessdata.workingdocument</package>
+                <package>org.modality_project.ecommerce.client.businessdata.feesgroup</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2736,9 +2738,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.ecommerce.frontoffice.operations.cart</package>
-                <package>org.modality_project.ecommerce.frontoffice.activities.cart.routing</package>
                 <package>org.modality_project.ecommerce.frontoffice.activities.cart.base</package>
+                <package>org.modality_project.ecommerce.frontoffice.activities.cart.routing</package>
+                <package>org.modality_project.ecommerce.frontoffice.operations.cart</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2780,9 +2782,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.ecommerce.frontoffice.operations.contactus</package>
-                <package>org.modality_project.ecommerce.frontoffice.activities.contactus</package>
                 <package>org.modality_project.ecommerce.frontoffice.activities.contactus.routing</package>
+                <package>org.modality_project.ecommerce.frontoffice.activities.contactus</package>
+                <package>org.modality_project.ecommerce.frontoffice.operations.contactus</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2827,9 +2829,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.ecommerce.frontoffice.operations.payment</package>
                 <package>org.modality_project.ecommerce.frontoffice.activities.payment</package>
                 <package>org.modality_project.ecommerce.frontoffice.activities.payment.routing</package>
+                <package>org.modality_project.ecommerce.frontoffice.operations.payment</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2881,9 +2883,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.ecommerce.frontoffice.operations.person</package>
                 <package>org.modality_project.ecommerce.frontoffice.activities.person</package>
                 <package>org.modality_project.ecommerce.frontoffice.activities.person.routing</package>
+                <package>org.modality_project.ecommerce.frontoffice.operations.person</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -2923,9 +2925,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.ecommerce.frontoffice.operations.summary</package>
-                <package>org.modality_project.ecommerce.frontoffice.activities.summary</package>
                 <package>org.modality_project.ecommerce.frontoffice.activities.summary.routing</package>
+                <package>org.modality_project.ecommerce.frontoffice.activities.summary</package>
+                <package>org.modality_project.ecommerce.frontoffice.operations.summary</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3026,8 +3028,8 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.event.backoffice.operations.routes.cloneevent</package>
                 <package>org.modality_project.event.backoffice.activities.cloneevent.routing</package>
+                <package>org.modality_project.event.backoffice.operations.routes.cloneevent</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3060,9 +3062,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.event.backoffice.operations.routes.events</package>
                 <package>org.modality_project.event.backoffice.activities.events</package>
                 <package>org.modality_project.event.backoffice.activities.events.routing</package>
+                <package>org.modality_project.event.backoffice.operations.routes.events</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3180,8 +3182,8 @@
             <source-packages>
                 <package>org.modality_project.event.client.businessdata.calendar.impl</package>
                 <package>org.modality_project.event.client.businessdata.calendar</package>
-                <package>org.modality_project.event.client.controls.calendargraphic.impl</package>
                 <package>org.modality_project.event.client.controls.calendargraphic</package>
+                <package>org.modality_project.event.client.controls.calendargraphic.impl</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3243,9 +3245,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.event.frontoffice.operations.fees</package>
-                <package>org.modality_project.event.frontoffice.activities.fees</package>
                 <package>org.modality_project.event.frontoffice.activities.fees.routing</package>
+                <package>org.modality_project.event.frontoffice.activities.fees</package>
+                <package>org.modality_project.event.frontoffice.operations.fees</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3303,9 +3305,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.event.frontoffice.operations.options</package>
                 <package>org.modality_project.event.frontoffice.activities.options</package>
                 <package>org.modality_project.event.frontoffice.activities.options.routing</package>
+                <package>org.modality_project.event.frontoffice.operations.options</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3361,9 +3363,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.event.frontoffice.operations.program</package>
                 <package>org.modality_project.event.frontoffice.activities.program</package>
                 <package>org.modality_project.event.frontoffice.activities.program.routing</package>
+                <package>org.modality_project.event.frontoffice.operations.program</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3403,9 +3405,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.event.frontoffice.operations.startbooking</package>
-                <package>org.modality_project.event.frontoffice.activities.startbooking</package>
                 <package>org.modality_project.event.frontoffice.activities.startbooking.routing</package>
+                <package>org.modality_project.event.frontoffice.activities.startbooking</package>
+                <package>org.modality_project.event.frontoffice.operations.startbooking</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3450,9 +3452,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.event.frontoffice.operations.terms</package>
-                <package>org.modality_project.event.frontoffice.activities.terms</package>
                 <package>org.modality_project.event.frontoffice.activities.terms.routing</package>
+                <package>org.modality_project.event.frontoffice.activities.terms</package>
+                <package>org.modality_project.event.frontoffice.operations.terms</package>
             </source-packages>
 
             <used-by-source-modules>
@@ -3508,9 +3510,9 @@
             </dependencies>
 
             <source-packages>
-                <package>org.modality_project.hotel.backoffice.operations.routes.roomsgraphic</package>
                 <package>org.modality_project.hotel.backoffice.activities.roomsgraphic</package>
                 <package>org.modality_project.hotel.backoffice.activities.roomsgraphic.routing</package>
+                <package>org.modality_project.hotel.backoffice.operations.routes.roomsgraphic</package>
             </source-packages>
 
             <used-by-source-modules>

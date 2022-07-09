@@ -1,6 +1,6 @@
 package org.modality_project.crm.backoffice.activities.letter.routing;
 
-import org.modality_project.base.client.util.routing.MongooseRoutingUtil;
+import org.modality_project.base.client.util.routing.ModalityRoutingUtil;
 
 /**
  * @author Bruno Salmon
@@ -14,7 +14,7 @@ public final class LetterRouting {
     }
 
     public static String getEditLetterPath(Object letterId) {
-        return MongooseRoutingUtil.interpolateLetterIdInPath(letterId, PATH);
+        return ModalityRoutingUtil.interpolateLetterIdInPath(letterId, PATH);
     }
 
 }

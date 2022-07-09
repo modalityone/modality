@@ -1,4 +1,4 @@
-name: Deploy to mongoose-packages GitHub repository
+name: Deploy to Sonatype repository
 
 on:
    push:
@@ -30,7 +30,7 @@ jobs:
       - name: Checkout this repository
         uses: actions/checkout@v3
 
-      # Build all modules and deploy their SNAPSHOT artifacts to the Mongoose packages GitHub repository
+      # Build all modules and deploy their SNAPSHOT artifacts to the Modality packages GitHub repository
       - name: Deploy this repository
         run: mvn -B -P '!gwt-compile,!javafx-fatjar,!javapackager' deploy
         env:

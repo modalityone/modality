@@ -1,6 +1,6 @@
 package org.modality_project.base.client.activity.eventdependent;
 
-import org.modality_project.base.client.activity.MongooseButtonFactoryMixin;
+import org.modality_project.base.client.activity.ModalityButtonFactoryMixin;
 import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
 
@@ -10,7 +10,7 @@ import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.Vie
 public abstract class EventDependentViewDomainActivity
         extends ViewDomainActivityBase
         implements EventDependentActivityMixin<ViewDomainActivityContextFinal>,
-        MongooseButtonFactoryMixin {
+        ModalityButtonFactoryMixin {
 
     protected EventDependentPresentationModel pm;
 

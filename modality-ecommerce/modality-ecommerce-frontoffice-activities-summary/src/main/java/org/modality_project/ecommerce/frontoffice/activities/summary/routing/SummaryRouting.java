@@ -1,6 +1,6 @@
 package org.modality_project.ecommerce.frontoffice.activities.summary.routing;
 
-import org.modality_project.base.client.util.routing.MongooseRoutingUtil;
+import org.modality_project.base.client.util.routing.ModalityRoutingUtil;
 
 /**
  * @author Bruno Salmon
@@ -14,7 +14,7 @@ public final class SummaryRouting {
     }
 
     public static String getSummaryPath(Object eventId) {
-        return MongooseRoutingUtil.interpolateEventIdInPath(eventId, PATH);
+        return ModalityRoutingUtil.interpolateEventIdInPath(eventId, PATH);
     }
 
 }

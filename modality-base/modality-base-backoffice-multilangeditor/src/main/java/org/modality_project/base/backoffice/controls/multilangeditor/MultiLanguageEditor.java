@@ -17,7 +17,7 @@ import dev.webfx.platform.shared.util.Strings;
 import dev.webfx.platform.shared.async.Handler;
 import dev.webfx.platform.shared.util.function.Callable;
 import dev.webfx.platform.shared.util.tuples.Pair;
-import org.modality_project.base.client.icons.MongooseIcons;
+import org.modality_project.base.client.icons.ModalityIcons;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -68,7 +68,7 @@ public final class MultiLanguageEditor {
         this.subjectFieldGetter = subjectFieldGetter;
         StringBuilder sb = domainClassIdOrLoadingSelect == null || domainClassIdOrLoadingSelect.startsWith("select ") ? null : new StringBuilder("select ");
         for (String language : languages) {
-            ToggleButton languageButton = new ToggleButton(null, MongooseIcons.getLanguageIcon32(language));
+            ToggleButton languageButton = new ToggleButton(null, ModalityIcons.getLanguageIcon32(language));
             languageButton.setUserData(language);
             languageButton.setMinWidth(50d);
             languageButtons.put(language, languageButton);

@@ -1,7 +1,7 @@
 package org.modality_project.base.backoffice.activities.operations;
 
 import javafx.scene.layout.Pane;
-import org.modality_project.base.client.activity.MongooseDomainPresentationLogicActivityBase;
+import org.modality_project.base.client.activity.ModalityDomainPresentationLogicActivityBase;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.framework.client.ui.controls.entity.sheet.EntityPropertiesSheet;
 import dev.webfx.framework.shared.orm.entity.Entity;
@@ -15,7 +15,7 @@ import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
  * @author Bruno Salmon
  */
 final class OperationsPresentationLogicActivity
-        extends MongooseDomainPresentationLogicActivityBase<OperationsPresentationModel> {
+        extends ModalityDomainPresentationLogicActivityBase<OperationsPresentationModel> {
 
     private final String expressionColumns = "['name','operationCode','i18nCode','backend','frontend','public']";
 

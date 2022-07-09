@@ -15,6 +15,6 @@ module modality.base.server.sessioncloser {
     exports org.modality_project.base.server.jobs.sessioncloser;
 
     // Provided services
-    provides dev.webfx.platform.shared.services.boot.spi.ApplicationJob with org.modality_project.base.server.jobs.sessioncloser.MongooseServerUnresponsiveClientSessionCloserJob;
+    provides dev.webfx.platform.shared.services.boot.spi.ApplicationJob with org.modality_project.base.server.jobs.sessioncloser.ModalityServerUnresponsiveClientSessionCloserJob;
 
 }

@@ -1,7 +1,7 @@
 package org.modality_project.event.frontoffice.activities.program;
 
 import javafx.scene.layout.BorderPane;
-import org.modality_project.base.client.icons.MongooseIcons;
+import org.modality_project.base.client.icons.ModalityIcons;
 import org.modality_project.ecommerce.client.businessdata.feesgroup.FeesGroup;
 import org.modality_project.ecommerce.client.businessdata.preselection.OptionsPreselection;
 import org.modality_project.event.client.controls.sectionpanel.SectionPanelFactory;
@@ -22,7 +22,7 @@ final class ProgramActivity extends BookingProcessActivity {
     protected void createViewNodes() {
         super.createViewNodes();
         bookingCalendar = new BookingCalendar(false);
-        BorderPane calendarSection = SectionPanelFactory.createSectionPanel(MongooseIcons.calendarMonoSvg16JsonUrl, "Timetable");
+        BorderPane calendarSection = SectionPanelFactory.createSectionPanel(ModalityIcons.calendarMonoSvg16JsonUrl, "Timetable");
         calendarSection.centerProperty().bind(bookingCalendar.calendarNodeProperty());
         verticalStack.getChildren().setAll(calendarSection, LayoutUtil.setMaxWidthToInfinite(backButton));
         showBookingCalendarIfReady();

@@ -1,1 +1,1 @@
-org.modality_project.crm.client.services.authn.MongooseAuthenticationServiceProvider
+org.modality_project.crm.client.services.authn.ModalityAuthenticationServiceProvider

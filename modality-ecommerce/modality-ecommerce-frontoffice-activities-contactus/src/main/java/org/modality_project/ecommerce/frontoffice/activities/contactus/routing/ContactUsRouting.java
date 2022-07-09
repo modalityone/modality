@@ -1,6 +1,6 @@
 package org.modality_project.ecommerce.frontoffice.activities.contactus.routing;
 
-import org.modality_project.base.client.util.routing.MongooseRoutingUtil;
+import org.modality_project.base.client.util.routing.ModalityRoutingUtil;
 
 /**
  * @author Bruno Salmon
@@ -14,7 +14,7 @@ public final class ContactUsRouting {
     }
 
     public static String getContactUsPath(Object documentId) {
-        return MongooseRoutingUtil.interpolateDocumentIdInPath(documentId, getPath());
+        return ModalityRoutingUtil.interpolateDocumentIdInPath(documentId, getPath());
     }
 
 }

@@ -9,7 +9,7 @@ import org.modality_project.base.shared.entities.Organization;
 
 import java.util.Collection;
 
-// TODO move this class to module mongoose-base-backoffice-operations-snapshot
+// TODO move this class to module modality-base-backoffice-operations-snapshot
 public final class AddNewSnapshotRequest implements HasOperationCode,
         HasOperationExecutor<AddNewSnapshotRequest, Void> {
 

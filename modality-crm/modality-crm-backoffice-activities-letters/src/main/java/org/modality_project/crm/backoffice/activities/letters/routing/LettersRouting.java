@@ -1,6 +1,6 @@
 package org.modality_project.crm.backoffice.activities.letters.routing;
 
-import org.modality_project.base.client.util.routing.MongooseRoutingUtil;
+import org.modality_project.base.client.util.routing.ModalityRoutingUtil;
 
 /**
  * @author Bruno Salmon
@@ -15,7 +15,7 @@ public final class LettersRouting {
     }
 
     public static String getEventLettersPath(Object eventId) {
-        return MongooseRoutingUtil.interpolateEventIdInPath(eventId, EVENT_PATH);
+        return ModalityRoutingUtil.interpolateEventIdInPath(eventId, EVENT_PATH);
     }
 
 }

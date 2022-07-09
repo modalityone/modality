@@ -8,7 +8,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import org.modality_project.event.client.controls.bookingcalendar.BookingCalendar;
-import org.modality_project.base.client.icons.MongooseIcons;
+import org.modality_project.base.client.icons.ModalityIcons;
 import dev.webfx.framework.client.services.i18n.I18nControls;
 import dev.webfx.framework.client.ui.util.background.BackgroundFactory;
 import dev.webfx.framework.client.ui.util.border.BorderFactory;
@@ -38,7 +38,7 @@ public final class SectionPanelFactory {
     }
 
     public static Node createBookingCalendarSection(BookingCalendar bookingCalendar) {
-        return createSectionPanel(MongooseIcons.attendanceIcon16JsonUrl,
+        return createSectionPanel(ModalityIcons.attendanceIcon16JsonUrl,
                 "Attendance",
                 bookingCalendar.calendarNodeProperty());
     }

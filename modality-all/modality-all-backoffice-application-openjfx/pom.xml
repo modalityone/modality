@@ -269,8 +269,8 @@
 
     <!--
         <properties>
-            <plugin.javapackager.name>MongooseBackOffice</plugin.javapackager.name>
-            <plugin.javapackager.displayName>Mongoose Back-Office</plugin.javapackager.displayName>
+            <plugin.javapackager.name>ModalityBackOffice</plugin.javapackager.name>
+            <plugin.javapackager.displayName>Modality Back-Office</plugin.javapackager.displayName>
         </properties>
         -->
 </project>

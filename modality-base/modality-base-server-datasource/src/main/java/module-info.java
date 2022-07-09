@@ -18,6 +18,6 @@ module modality.base.server.datasource {
     opens org.modality_project.base.server.datasource.MDS;
 
     // Provided services
-    provides dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider with org.modality_project.base.server.services.datasource.MongooseLocalDataSourceProvider;
+    provides dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider with org.modality_project.base.server.services.datasource.ModalityLocalDataSourceProvider;
 
 }

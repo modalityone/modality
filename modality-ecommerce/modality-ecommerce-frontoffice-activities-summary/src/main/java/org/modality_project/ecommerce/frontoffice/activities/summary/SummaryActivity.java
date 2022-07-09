@@ -22,7 +22,7 @@ import org.modality_project.ecommerce.client.businessdata.workingdocument.Workin
 import org.modality_project.ecommerce.client.businessdata.workingdocument.WorkingDocumentSubmitter;
 import org.modality_project.ecommerce.client.controls.bookingoptionspanel.BookingOptionsPanel;
 import org.modality_project.event.client.controls.sectionpanel.SectionPanelFactory;
-import org.modality_project.base.client.validation.MongooseValidationSupport;
+import org.modality_project.base.client.validation.ModalityValidationSupport;
 import org.modality_project.base.shared.entities.Cart;
 import org.modality_project.ecommerce.frontoffice.operations.cart.RouteToCartRequest;
 import org.modality_project.event.client.controls.bookingcalendar.BookingCalendar;
@@ -39,7 +39,7 @@ final class SummaryActivity extends BookingProcessActivity {
     private TextArea commentTextArea;
     private CheckBox termsCheckBox;
     private ObservableStringValue agreeTCTranslationProperty; // to avoid GC
-    private final MongooseValidationSupport validationSupport = new MongooseValidationSupport();
+    private final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
 
     @Override
     protected void createViewNodes() {

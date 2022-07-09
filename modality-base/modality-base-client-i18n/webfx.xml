@@ -9,7 +9,7 @@
     <providers>
         <dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>org.modality_project.base.client.operations.i18n.ChangeLanguageToEnglishRequest$ProvidedEmitter</dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>
         <dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>org.modality_project.base.client.operations.i18n.ChangeLanguageToFrenchRequest$ProvidedEmitter</dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>
-        <dev.webfx.framework.client.services.i18n.spi.I18nProvider>org.modality_project.base.client.services.i18n.MongooseI18nProvider</dev.webfx.framework.client.services.i18n.spi.I18nProvider>
+        <dev.webfx.framework.client.services.i18n.spi.I18nProvider>org.modality_project.base.client.services.i18n.ModalityI18nProvider</dev.webfx.framework.client.services.i18n.spi.I18nProvider>
     </providers>
 
     <dependencies>

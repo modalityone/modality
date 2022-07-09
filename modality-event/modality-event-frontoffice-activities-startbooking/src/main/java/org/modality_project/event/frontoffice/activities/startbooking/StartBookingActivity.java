@@ -11,7 +11,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import org.modality_project.base.client.actions.MongooseActions;
+import org.modality_project.base.client.actions.ModalityActions;
 import org.modality_project.base.client.entities.util.Labels;
 import org.modality_project.ecommerce.client.activity.bookingprocess.BookingProcessActivity;
 import org.modality_project.event.frontoffice.operations.fees.RouteToFeesRequest;
@@ -30,9 +30,9 @@ import dev.webfx.platform.client.services.uischeduler.UiScheduler;
  */
 final class StartBookingActivity extends BookingProcessActivity {
 
-    private final Action bookAction = MongooseActions.newVisitBookAction(this::onBookButtonPressed);
-    private final Action feesAction = MongooseActions.newVisitFeesAction(this::onFeesButtonPressed);
-    private final Action termsAction = MongooseActions.newVisitTermsAndConditionsAction(this::onTermsButtonPressed);
+    private final Action bookAction = ModalityActions.newVisitBookAction(this::onBookButtonPressed);
+    private final Action feesAction = ModalityActions.newVisitFeesAction(this::onFeesButtonPressed);
+    private final Action termsAction = ModalityActions.newVisitTermsAndConditionsAction(this::onTermsButtonPressed);
 
     private ImageView eventImageView;
     private BorderPane eventImageViewContainer;
@@ -47,7 +47,7 @@ final class StartBookingActivity extends BookingProcessActivity {
         Button bookButton = newTransparentButton(bookAction);
         Button feesButton = newTransparentButton(feesAction);
         Button termsButton = newTransparentButton(termsAction);
-        //Button programButton = newTransparentButton(MongooseActions.newVisitProgramAction(this::onProgramButtonPressed));
+        //Button programButton = newTransparentButton(ModalityActions.newVisitProgramAction(this::onProgramButtonPressed));
         Font eventFont = Font.font("Verdana", 24);
         Font bookButtonFont = Font.font("Verdana", 18);
         Font otherButtonFont = Font.font("Verdana", 12);

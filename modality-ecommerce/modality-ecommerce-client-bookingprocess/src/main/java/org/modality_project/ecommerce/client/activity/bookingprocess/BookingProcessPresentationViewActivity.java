@@ -6,7 +6,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
-import org.modality_project.base.client.activity.MongooseButtonFactoryMixin;
+import org.modality_project.base.client.activity.ModalityButtonFactoryMixin;
 import org.modality_project.base.client.aggregates.event.EventAggregate;
 import org.modality_project.base.shared.entities.Event;
 import dev.webfx.framework.client.activity.impl.elementals.presentation.view.impl.PresentationViewActivityImpl;
@@ -20,7 +20,7 @@ import dev.webfx.platform.shared.util.Strings;
  */
 public abstract class BookingProcessPresentationViewActivity<PM extends BookingProcessPresentationModel>
         extends PresentationViewActivityImpl<PM>
-        implements MongooseButtonFactoryMixin {
+        implements ModalityButtonFactoryMixin {
 
     protected Button backButton;
     protected Button nextButton;

@@ -1,7 +1,7 @@
 package org.modality_project.event.backoffice.activities.events;
 
 import org.modality_project.ecommerce.backoffice.operations.routes.bookings.RouteToBookingsRequest;
-import org.modality_project.base.client.activity.MongooseDomainPresentationLogicActivityBase;
+import org.modality_project.base.client.activity.ModalityDomainPresentationLogicActivityBase;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.platform.shared.util.function.Factory;
 
@@ -12,7 +12,7 @@ import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
  * @author Bruno Salmon
  */
 final class EventsPresentationLogicActivity
-        extends MongooseDomainPresentationLogicActivityBase<EventsPresentationModel> {
+        extends ModalityDomainPresentationLogicActivityBase<EventsPresentationModel> {
 
     EventsPresentationLogicActivity() {
         this(EventsPresentationModel::new);

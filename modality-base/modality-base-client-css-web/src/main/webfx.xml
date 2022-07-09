@@ -2,7 +2,7 @@
 <project>
 
     <implements>
-        <module>mongoose-base-client-css</module>
+        <module>modality-base-client-css</module>
     </implements>
 
     <dependencies>

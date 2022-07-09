@@ -6,7 +6,7 @@ import org.modality_project.base.shared.entities.Option;
 import org.modality_project.ecommerce.client.businessdata.workingdocument.WorkingDocument;
 import org.modality_project.ecommerce.client.businessdata.workingdocument.WorkingDocumentTransaction;
 import org.modality_project.base.client.util.functions.TranslateFunction;
-import org.modality_project.base.client.validation.MongooseValidationSupport;
+import org.modality_project.base.client.validation.ModalityValidationSupport;
 import dev.webfx.platform.client.services.uischeduler.UiScheduler;
 import dev.webfx.platform.shared.util.collection.Collections;
 
@@ -23,7 +23,7 @@ public final class OptionTree {
     private Event event;
     private List<Option> topLevelOptions;
     private WorkingDocumentTransaction workingDocumentTransaction;
-    private final MongooseValidationSupport validationSupport = new MongooseValidationSupport();
+    private final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
 
     OptionTree(OptionsActivity activity) {
         this.activity = activity;
@@ -55,7 +55,7 @@ public final class OptionTree {
         return workingDocumentTransaction;
     }
 
-    MongooseValidationSupport getValidationSupport() {
+    ModalityValidationSupport getValidationSupport() {
         return validationSupport;
     }
 

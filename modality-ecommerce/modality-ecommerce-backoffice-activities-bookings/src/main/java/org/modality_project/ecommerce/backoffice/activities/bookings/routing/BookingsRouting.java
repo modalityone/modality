@@ -1,6 +1,6 @@
 package org.modality_project.ecommerce.backoffice.activities.bookings.routing;
 
-import org.modality_project.base.client.util.routing.MongooseRoutingUtil;
+import org.modality_project.base.client.util.routing.ModalityRoutingUtil;
 
 import java.time.LocalDate;
 
@@ -18,7 +18,7 @@ public final class BookingsRouting {
     }
 
     public static String getEventBookingsPath(Object eventId) {
-        return MongooseRoutingUtil.interpolateEventIdInPath(eventId, EVENT_PATH);
+        return ModalityRoutingUtil.interpolateEventIdInPath(eventId, EVENT_PATH);
     }
 
     public static LocalDate parseDayParam(String parameterValue) {

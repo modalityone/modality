@@ -7,7 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import org.modality_project.base.client.entities.util.Labels;
-import org.modality_project.base.client.icons.MongooseIcons;
+import org.modality_project.base.client.icons.ModalityIcons;
 import org.modality_project.base.shared.entities.Option;
 import org.modality_project.ecommerce.client.activity.bookingprocess.BookingProcessActivity;
 import org.modality_project.ecommerce.client.businessdata.feesgroup.FeesGroup;
@@ -126,7 +126,7 @@ public class OptionsActivity extends BookingProcessActivity {
     protected List<Node> createOptionPanelHeaderNodes(Option option, Property<String> i18nTitle) {
         Label label = new Label();
         label.textProperty().bind(i18nTitle);
-        return Arrays.asList(MongooseIcons.getItemFamilyIcon16(option), label);
+        return Arrays.asList(ModalityIcons.getItemFamilyIcon16(option), label);
     }
 
     protected Node createLabelNode(org.modality_project.base.shared.entities.Label label) {

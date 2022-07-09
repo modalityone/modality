@@ -1,7 +1,7 @@
 package org.modality_project.ecommerce.frontoffice.activities.payment.routing;
 
 import org.modality_project.ecommerce.frontoffice.activities.cart.routing.CartRouting;
-import org.modality_project.base.client.util.routing.MongooseRoutingUtil;
+import org.modality_project.base.client.util.routing.ModalityRoutingUtil;
 
 /**
  * @author Bruno Salmon
@@ -15,7 +15,7 @@ public final class PaymentRouting {
     }
 
     public static String getPaymentPath(Object cartUuidOrDocument) {
-        return MongooseRoutingUtil.interpolateCartUuidInPath(CartRouting.getCartUuid(cartUuidOrDocument), getPath());
+        return ModalityRoutingUtil.interpolateCartUuidInPath(CartRouting.getCartUuid(cartUuidOrDocument), getPath());
     }
 
 }

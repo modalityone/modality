@@ -19,6 +19,6 @@ module modality.base.client.operationactionsloading {
     exports org.modality_project.base.client.operationactionsloading;
 
     // Provided services
-    provides dev.webfx.platform.shared.services.boot.spi.ApplicationModuleBooter with org.modality_project.base.client.operationactionsloading.MongooseClientOperationActionsLoader;
+    provides dev.webfx.platform.shared.services.boot.spi.ApplicationModuleBooter with org.modality_project.base.client.operationactionsloading.ModalityClientOperationActionsLoader;
 
 }

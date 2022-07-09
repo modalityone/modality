@@ -9,7 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import org.modality_project.base.client.actions.MongooseActions;
+import org.modality_project.base.client.actions.ModalityActions;
 import org.modality_project.ecommerce.client.businessdata.feesgroup.FeesGroup;
 import org.modality_project.ecommerce.client.businessdata.preselection.OptionsPreselection;
 import org.modality_project.base.backoffice.controls.multilangeditor.MultiLanguageEditor;
@@ -47,7 +47,7 @@ final class EditableOptionsActivity extends OptionsActivity {
         CheckBox editModeCheckBox = newCheckBox("EditMode");
         editModeProperty = editModeCheckBox.selectedProperty();
         Properties.runOnPropertiesChange(() -> ((EditableBookingCalendar) bookingCalendar).setEditMode(editModeProperty.getValue()), editModeProperty);
-        Button addOptionButton = newButton(MongooseActions.newAddOptionAction(this::showAddOptionDialog));
+        Button addOptionButton = newButton(ModalityActions.newAddOptionAction(this::showAddOptionDialog));
         addOptionButton.visibleProperty().bind(editModeProperty);
         super.createViewNodes();
         HBox hbox = new HBox(20, addOptionButton, createHGrowable(), editModeCheckBox, createHGrowable(), priceText);

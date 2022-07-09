@@ -62,7 +62,7 @@ final class CartActivity extends CartBasedActivity {
     private final WritableAction modifyBookingAction = new WritableAction(newAction("<<Modify", "{url: 'images/svg/mono/pen.svg', width: 16, height: 16}", this::modifyBooking), "*");
     private final WritableAction cancelBookingAction = new WritableAction(newAction("Cancel", "{url: 'images/svg/mono/cancel-red.svg', width: 16, height: 16}", this::cancelBooking), "*");
     private final WritableAction contactUsAction     = new WritableAction(newAction("ContactUs>>", "{url: 'images/svg/mono/mail.svg', width: 16, height: 16}", this::contactUs), "*");
-    //private final Action termsAction                 = MongooseActions.newVisitTermsAndConditionsAction(this::readTerms);
+    //private final Action termsAction                 = ModalityActions.newVisitTermsAndConditionsAction(this::readTerms);
     private final WritableAction showPaymentsAction  = new WritableAction(newAction("YourPayments", this::showPayments), "*");
     private final Action addAnotherBookingAction     = newAction("<<AddAnotherBooking", "{url: 'images/svg/mono/plus-circle-green.svg', width: 32, height: 32}", this::addAnotherBooking);
     private final Action makePaymentAction           = newAction("MakePayment>>", "{url: 'images/svg/mono/pay-circle.svg', width: 32, height: 32}", this::makePayment);

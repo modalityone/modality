@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project executable="true" application-module="mongoose-all-backoffice-application">
+<project executable="true" application-module="modality-all-backoffice-application">
 
     <dependencies>
         <used-by-source-modules/>
@@ -8,7 +8,7 @@
 
     <html>
         <head>
-            <title>Mongoose Back-Office</title>
+            <title>Modality Back-Office</title>
         </head>
     </html>
 

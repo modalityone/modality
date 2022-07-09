@@ -5,7 +5,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.Pane;
-import org.modality_project.crm.client.services.authn.MongooseUserPrincipal;
+import org.modality_project.crm.client.services.authn.ModalityUserPrincipal;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
@@ -43,7 +43,7 @@ final class AuthorizationsViewActivity extends ViewDomainActivityBase {
 
         ReactiveVisualMapper.createReactiveChain(this)
                 .always("{class: 'AuthorizationManagement', orderBy: 'id'}")
-                .ifNotNullOtherwiseEmpty(userPrincipalProperty(), principal -> where("manager=?", MongooseUserPrincipal.getUserPersonId(principal)))
+                .ifNotNullOtherwiseEmpty(userPrincipalProperty(), principal -> where("manager=?", ModalityUserPrincipal.getUserPersonId(principal)))
                 .setEntityColumns(manageeColumns)
                 .visualizeResultInto(usersGrid)
                 .setSelectedEntityHandler(selectedManagementProperty::setValue)

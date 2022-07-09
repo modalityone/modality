@@ -151,8 +151,8 @@ docker/.env
 docker/data/
 
 # Docker-based CI
-mongoose-base/mongoose-base-server-datasource/src/test/resources/docker/.env
-mongoose-base/mongoose-base-server-datasource/src/test/resources/docker/data/
+modality-base/modality-base-server-datasource/src/test/resources/docker/.env
+modality-base/modality-base-server-datasource/src/test/resources/docker/data/
 
 # Mongoose development database
 # Note that this is only ever manually added to the codebase, when developers need to run the code

@@ -22,20 +22,20 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import org.modality_project.event.client.controls.sectionpanel.SectionPanelFactory;
-import org.modality_project.base.client.activity.MongooseButtonFactoryMixin;
-import org.modality_project.base.client.validation.MongooseValidationSupport;
+import org.modality_project.base.client.activity.ModalityButtonFactoryMixin;
+import org.modality_project.base.client.validation.ModalityValidationSupport;
 
 
 /**
  * @author Bruno Salmon
  */
-public final class LoginPanel implements MongooseButtonFactoryMixin {
+public final class LoginPanel implements ModalityButtonFactoryMixin {
     private final Node node;
     private final TextField usernameField;
     private final PasswordField passwordField;
     private final Button button;
     private final Property<Boolean> signInMode = new SimpleObjectProperty<>(true);
-    private final MongooseValidationSupport validationSupport = new MongooseValidationSupport();
+    private final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
 
     public LoginPanel(UiSession uiSession) {
         BorderPane loginWindow = SectionPanelFactory.createSectionPanel("SignInWindowTitle");

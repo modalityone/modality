@@ -9,10 +9,10 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.*;
 import org.modality_project.base.shared.domainmodel.formatters.DateFormatter;
 import org.modality_project.base.shared.domainmodel.functions.AbcNames;
+import org.modality_project.crm.client.services.authn.ModalityUserPrincipal;
 import org.modality_project.event.client.controls.sectionpanel.SectionPanelFactory;
-import org.modality_project.base.client.activity.MongooseButtonFactoryMixin;
-import org.modality_project.crm.client.services.authn.MongooseUserPrincipal;
-import org.modality_project.base.client.validation.MongooseValidationSupport;
+import org.modality_project.base.client.activity.ModalityButtonFactoryMixin;
+import org.modality_project.base.client.validation.ModalityValidationSupport;
 import org.modality_project.base.shared.entities.Country;
 import org.modality_project.base.shared.entities.Event;
 import org.modality_project.base.shared.entities.Organization;
@@ -43,7 +43,7 @@ import java.time.LocalDate;
 /**
  * @author Bruno Salmon
  */
-public final class PersonalDetailsPanel implements MongooseButtonFactoryMixin {
+public final class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
 
     private static final int CHILD_MAX_AGE = 17;
 
@@ -59,7 +59,7 @@ public final class PersonalDetailsPanel implements MongooseButtonFactoryMixin {
     private final BorderPane sectionPanel;
     private HasPersonalDetails model;
     private boolean editable = true;
-    private final MongooseValidationSupport validationSupport = new MongooseValidationSupport();
+    private final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
 
     public PersonalDetailsPanel(Event event, ButtonFactoryMixin buttonFactoryMixin, Pane parent) {
         this(event, buttonFactoryMixin, parent, null);
@@ -106,9 +106,9 @@ public final class PersonalDetailsPanel implements MongooseButtonFactoryMixin {
             Properties.runOnPropertiesChange(p -> syncUiFromModel((Person) p.getValue()), personSelector.selectedItemProperty());
             Properties.runNowAndOnPropertiesChange(userProperty -> {
                 Object user = userProperty.getValue();
-                boolean loggedIn = user instanceof MongooseUserPrincipal;
+                boolean loggedIn = user instanceof ModalityUserPrincipal;
                 if (loggedIn) {
-                    Object userAccountId = ((MongooseUserPrincipal) user).getUserAccountId();
+                    Object userAccountId = ((ModalityUserPrincipal) user).getUserAccountId();
                     personSelector.setJsonOrClass("{class: 'Person', alias: 'p', fields: 'genderIcon,firstName,lastName,birthdate,email,phone,street,postCode,cityName,organization,country', columns: `[{expression: 'genderIcon,firstName,lastName'}]`, where: '!removed and frontendAccount=" + userAccountId + "', orderBy: 'id'}");
                     personSelector.autoSelectFirstEntity();
                 } else

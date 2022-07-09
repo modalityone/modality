@@ -40,12 +40,12 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.modality_project.base.client.entities.util.Labels;
-import org.modality_project.base.client.icons.MongooseIcons;
+import org.modality_project.base.client.icons.ModalityIcons;
 import org.modality_project.ecommerce.client.activity.bookingprocess.BookingProcessActivity;
 import org.modality_project.ecommerce.client.businessdata.feesgroup.FeesGroup;
 import org.modality_project.ecommerce.client.businessdata.preselection.OptionsPreselection;
 import org.modality_project.event.client.controls.sectionpanel.SectionPanelFactory;
-import org.modality_project.base.client.activity.MongooseButtonFactoryMixin;
+import org.modality_project.base.client.activity.ModalityButtonFactoryMixin;
 import org.modality_project.base.client.aggregates.event.EventAggregate;
 import org.modality_project.base.shared.entities.Option;
 import org.modality_project.base.shared.entities.Person;
@@ -145,7 +145,7 @@ final class FeesActivity extends BookingProcessActivity {
                 VisualColumn.create((value, context) -> renderFeesGroupHeader((Pair<JsonObject, String>) value)),
                 VisualColumn.create((value, context) -> renderFeesGroupBody((VisualResult) value)),
                 VisualColumn.create(null, SpecializedTextType.HTML)});
-        WritableJsonObject jsonImage = Json.parseObject(MongooseIcons.priceTagColorSvg16JsonUrl);
+        WritableJsonObject jsonImage = Json.parseObject(ModalityIcons.priceTagColorSvg16JsonUrl);
         ColumnWidthCumulator[] cumulators = {new ColumnWidthCumulator(), new ColumnWidthCumulator(), new ColumnWidthCumulator()};
         for (int i = 0; i < n; i++) {
             FeesGroup feesGroup = feesGroups[i];
@@ -159,7 +159,7 @@ final class FeesActivity extends BookingProcessActivity {
     }
 
     private VisualResult generateFeesGroupVisualResult(FeesGroup feesGroup, Consumer<OptionsPreselection> bookHandler, ColumnWidthCumulator[] cumulators) {
-        MongooseButtonFactoryMixin buttonFactory = this;
+        ModalityButtonFactoryMixin buttonFactory = this;
         EventAggregate eventAggregate = this;
         boolean showBadges = Objects.areEquals(eventAggregate.getEvent().getOrganizationId().getPrimaryKey(), 2); // For now only showing badges on KMCF courses
         OptionsPreselection[] optionsPreselections = feesGroup.getOptionsPreselections();
@@ -172,7 +172,7 @@ final class FeesActivity extends BookingProcessActivity {
                         .setValueRenderer((p, context) -> {
                             Pair<Object, OptionsPreselection> pair = (Pair<Object, OptionsPreselection>) p;
                             if (pair == null || !eventAggregate.areEventAvailabilitiesLoaded())
-                                return new ImageView(ImageStore.getOrCreateImage(MongooseIcons.spinnerIcon16Url, 16, 16));
+                                return new ImageView(ImageStore.getOrCreateImage(ModalityIcons.spinnerIcon16Url, 16, 16));
                             Object availability = pair.get1();
                             OptionsPreselection optionsPreselection = pair.get2();
                             // Availability is null when there is no online room at all. In this case...

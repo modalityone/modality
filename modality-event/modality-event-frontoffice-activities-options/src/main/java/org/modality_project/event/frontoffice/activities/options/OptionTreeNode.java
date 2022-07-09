@@ -17,7 +17,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.modality_project.base.client.entities.util.Labels;
-import org.modality_project.base.client.icons.MongooseIcons;
+import org.modality_project.base.client.icons.ModalityIcons;
 import org.modality_project.base.shared.entities.Label;
 import org.modality_project.base.shared.entities.Option;
 import org.modality_project.ecommerce.client.businessdata.workingdocument.WorkingDocument;
@@ -173,7 +173,7 @@ final class OptionTreeNode {
         checkBoxView.setFitWidth(16d);
         checkBoxView.setFitHeight(16d);
         checkBoxView.imageProperty().bind(Properties.compute(optionButtonSelectedProperty, selected ->
-                ImageStore.getOrCreateImage(selected ? MongooseIcons.checkedIcon16Url : MongooseIcons.uncheckedIcon16Url)));
+                ImageStore.getOrCreateImage(selected ? ModalityIcons.checkedIcon16Url : ModalityIcons.uncheckedIcon16Url)));
         ObservableList<Node> hBoxChildren = ((HBox) topLevelOptionButton.getTop()).getChildren();
         // Adding the checkbox before the already present icon and text
         hBoxChildren.add(0, checkBoxView);

@@ -21,6 +21,6 @@ module modality.base.client.i18n {
 
     // Provided services
     provides dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter with org.modality_project.base.client.operations.i18n.ChangeLanguageToEnglishRequest.ProvidedEmitter, org.modality_project.base.client.operations.i18n.ChangeLanguageToFrenchRequest.ProvidedEmitter;
-    provides dev.webfx.framework.client.services.i18n.spi.I18nProvider with org.modality_project.base.client.services.i18n.MongooseI18nProvider;
+    provides dev.webfx.framework.client.services.i18n.spi.I18nProvider with org.modality_project.base.client.services.i18n.ModalityI18nProvider;
 
 }

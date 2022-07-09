@@ -28,8 +28,8 @@
     <source path="javafx/event"/>
     <source path="javafx/util"/>
     <!--=========================< webfx-kit-javafxcontrols-emul >==========================-->
+    <!-- used by modality-base-client-activity (SOURCE) -->
     <!-- used by webfx-extras-webtext-controls (SOURCE) -->
-    <!-- used by webfx-framework-client-i18n (SOURCE) -->
     <!-- used by webfx-kit-javafxcontrols-registry-gwt (SOURCE) -->
     <source path="com/sun/javafx/scene/control"/>
     <source path="com/sun/javafx/scene/control/behavior"/>
@@ -40,7 +40,7 @@
     <public includes="images/checkbox/" path=""/>
     <!--=========================< webfx-kit-javafxgraphics-emul >==========================-->
     <!-- used by webfx-kit-javafxcontrols-emul (SOURCE) -->
-    <!-- used by modality-base-client-icons (SOURCE) -->
+    <!-- used by modality-base-client-application (SOURCE) -->
     <!-- used by webfx-extras-imagestore (SOURCE) -->
     <!-- used by webfx-kit-gwt (SOURCE) -->
     <!-- used by webfx-kit-javafxgraphics-registry-gwt (SOURCE) -->
@@ -217,7 +217,7 @@
     <resource path="org/modality_project/base/shared/domainmodel"/>
     <public includes="org/modality_project/base/shared/domainmodel/" path=""/>
     <!--=========================< modality-base-shared-entities >==========================-->
-    <!-- used by modality-base-client-icons (SOURCE) -->
+    <!-- used by modality-base-client-presentationmodel (SOURCE) -->
     <source path="org/modality_project/base/shared/entities"/>
     <source path="org/modality_project/base/shared/entities/converters"/>
     <source path="org/modality_project/base/shared/entities/formatters"/>
@@ -324,8 +324,8 @@
     <!-- used by modality-base-shared-entities (SOURCE) -->
     <source path="org/modality_project/hotel/shared/businessdata/time"/>
     <!--===============================< webfx-extras-cell >================================-->
+    <!-- used by webfx-extras-visual-base (SOURCE) -->
     <!-- used by webfx-extras-visual-controls-grid-peers-gwt (SOURCE) -->
-    <!-- used by webfx-framework-client-orm-entity-controls (SOURCE) -->
     <source path="dev/webfx/extras/cell/collator"/>
     <source path="dev/webfx/extras/cell/renderer"/>
     <source path="dev/webfx/extras/cell/rowstyle"/>
@@ -333,15 +333,15 @@
     <!-- used by modality-event-frontoffice-activities-options (SOURCE) -->
     <source path="dev/webfx/extras/flexbox"/>
     <!--============================< webfx-extras-imagestore >=============================-->
-    <!-- used by modality-base-client-icons (SOURCE) -->
     <!-- used by webfx-extras-cell (SOURCE) -->
+    <!-- used by webfx-framework-client-controls (SOURCE) -->
     <source path="dev/webfx/extras/imagestore"/>
     <!--===============================< webfx-extras-label >===============================-->
     <!-- used by webfx-extras-cell (SOURCE) -->
     <!-- used by webfx-framework-shared-orm-domainmodel (SOURCE) -->
     <source path="dev/webfx/extras/label"/>
     <!--==========================< webfx-extras-materialdesign >===========================-->
-    <!-- used by webfx-framework-client-orm-entity-controls (SOURCE) -->
+    <!-- used by webfx-framework-client-controls (SOURCE) -->
     <source path="dev/webfx/extras/materialdesign/textfield"/>
     <source path="dev/webfx/extras/materialdesign/util"/>
     <source path="dev/webfx/extras/materialdesign/util/background"/>
@@ -349,20 +349,20 @@
     <source path="dev/webfx/extras/materialdesign/util/scene"/>
     <!--===============================< webfx-extras-type >================================-->
     <!-- used by webfx-extras-cell (SOURCE) -->
+    <!-- used by webfx-framework-client-controls (SOURCE) -->
     <!-- used by webfx-framework-shared-orm-domainmodel (SOURCE) -->
-    <!-- used by webfx-framework-shared-orm-entity (SOURCE) -->
     <source path="dev/webfx/extras/type"/>
     <!--============================< webfx-extras-visual-base >============================-->
+    <!-- used by webfx-extras-visual-controls-grid (SOURCE) -->
     <!-- used by webfx-extras-visual-controls-grid-peers-gwt (SOURCE) -->
-    <!-- used by webfx-framework-client-orm-entity-controls (SOURCE) -->
     <source path="dev/webfx/extras/visual"/>
     <source path="dev/webfx/extras/visual/impl"/>
     <!--==========================< webfx-extras-visual-controls >==========================-->
     <!-- used by webfx-extras-visual-controls-grid (SOURCE) -->
     <source path="dev/webfx/extras/visual/controls"/>
     <!--=======================< webfx-extras-visual-controls-grid >========================-->
+    <!-- used by modality-base-client-activity (SOURCE) -->
     <!-- used by webfx-extras-visual-controls-grid-peers-gwt (SOURCE) -->
-    <!-- used by webfx-framework-client-orm-entity-controls (SOURCE) -->
     <source path="dev/webfx/extras/visual/controls/grid"/>
     <!--==================< webfx-extras-visual-controls-grid-peers-gwt >===================-->
     <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
@@ -389,11 +389,11 @@
     <source path="dev/webfx/extras/webtext/controls/peers/gwt/html"/>
     <source path="dev/webfx/extras/webtext/controls/registry"/>
     <!--=========================< webfx-framework-client-action >==========================-->
-    <!-- used by modality-base-client-icons (SOURCE) -->
+    <!-- used by webfx-framework-client-controls (SOURCE) -->
     <source path="dev/webfx/framework/client/ui/action"/>
     <source path="dev/webfx/framework/client/ui/action/impl"/>
     <!--========================< webfx-framework-client-activity >=========================-->
-    <!-- used by modality-base-client-application (SOURCE) -->
+    <!-- used by webfx-framework-client-controls (SOURCE) -->
     <source path="dev/webfx/framework/client/activity"/>
     <source path="dev/webfx/framework/client/activity/impl"/>
     <source path="dev/webfx/framework/client/activity/impl/composition"/>
@@ -401,7 +401,7 @@
     <source path="dev/webfx/framework/client/activity/impl/elementals/activeproperty"/>
     <source path="dev/webfx/framework/client/activity/impl/elementals/activeproperty/impl"/>
     <!--========================< webfx-framework-client-controls >=========================-->
-    <!-- used by webfx-framework-client-orm-entity-controls (SOURCE) -->
+    <!-- used by modality-base-client-activity (SOURCE) -->
     <source path="dev/webfx/framework/client/ui/controls"/>
     <source path="dev/webfx/framework/client/ui/controls/alert"/>
     <source path="dev/webfx/framework/client/ui/controls/button"/>
@@ -421,7 +421,7 @@
     <!-- used by modality-base-client-application (SOURCE) -->
     <source path="dev/webfx/framework/client/ui/action/operation"/>
     <!--================< webfx-framework-client-orm-domainmodel-activity >=================-->
-    <!-- used by modality-base-client-application (SOURCE) -->
+    <!-- used by modality-base-client-activity (SOURCE) -->
     <source path="dev/webfx/framework/client/activity/impl/combinations/domainpresentation"/>
     <source path="dev/webfx/framework/client/activity/impl/combinations/domainpresentation/impl"/>
     <source path="dev/webfx/framework/client/activity/impl/combinations/domainpresentationlogic/impl"/>
@@ -434,7 +434,7 @@
     <source path="dev/webfx/framework/client/ui/controls/entity/selector"/>
     <source path="dev/webfx/framework/client/ui/controls/entity/sheet"/>
     <!--====================< webfx-framework-client-orm-reactive-dql >=====================-->
-    <!-- used by modality-base-client-entities (SOURCE) -->
+    <!-- used by webfx-framework-client-orm-reactive-visual (SOURCE) -->
     <source path="dev/webfx/framework/client/orm/reactive/call"/>
     <source path="dev/webfx/framework/client/orm/reactive/call/query"/>
     <source path="dev/webfx/framework/client/orm/reactive/call/query/push"/>
@@ -443,12 +443,12 @@
     <source path="dev/webfx/framework/client/orm/reactive/dql/statement"/>
     <source path="dev/webfx/framework/client/orm/reactive/dql/statement/conventions"/>
     <!--==================< webfx-framework-client-orm-reactive-entities >==================-->
-    <!-- used by webfx-framework-client-orm-entity-controls (SOURCE) -->
+    <!-- used by webfx-framework-client-orm-reactive-visual (SOURCE) -->
     <source path="dev/webfx/framework/client/orm/reactive/mapping/dql_to_entities"/>
     <source path="dev/webfx/framework/client/orm/reactive/mapping/entities_to_grid"/>
     <source path="dev/webfx/framework/client/orm/reactive/mapping/entities_to_objects"/>
     <!--===================< webfx-framework-client-orm-reactive-visual >===================-->
-    <!-- used by webfx-framework-client-orm-entity-controls (SOURCE) -->
+    <!-- used by modality-base-client-activity (SOURCE) -->
     <source path="dev/webfx/framework/client/orm/reactive/mapping/entities_to_visual"/>
     <source path="dev/webfx/framework/client/orm/reactive/mapping/entities_to_visual/conventions"/>
     <!--==========================< webfx-framework-client-push >===========================-->
@@ -466,7 +466,7 @@
     <!-- used by modality-base-client-application (PLUGIN) -->
     <source path="dev/webfx/framework/client/jobs/querypush"/>
     <!--========================< webfx-framework-client-uirouter >=========================-->
-    <!-- used by webfx-framework-client-orm-domainmodel-activity (SOURCE) -->
+    <!-- used by modality-base-client-activity (SOURCE) -->
     <source path="dev/webfx/framework/client/activity/impl/elementals/presentation"/>
     <source path="dev/webfx/framework/client/activity/impl/elementals/presentation/impl"/>
     <source path="dev/webfx/framework/client/activity/impl/elementals/presentation/logic"/>
@@ -527,8 +527,8 @@
     <source path="dev/webfx/framework/shared/services/datasourcemodel"/>
     <source path="dev/webfx/framework/shared/services/datasourcemodel/spi"/>
     <!--=====================< webfx-framework-shared-orm-domainmodel >=====================-->
+    <!-- used by webfx-framework-client-orm-reactive-dql (SOURCE) -->
     <!-- used by webfx-framework-shared-orm-datasourcemodelservice (SOURCE) -->
-    <!-- used by webfx-framework-shared-orm-entity (SOURCE) -->
     <source path="dev/webfx/framework/shared/orm/domainmodel"/>
     <source path="dev/webfx/framework/shared/orm/domainmodel/builder"/>
     <source path="dev/webfx/framework/shared/orm/domainmodel/formatter"/>
@@ -557,7 +557,7 @@
     <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <source path="dev/webfx/framework/shared/interceptors/dqlsubmit"/>
     <!--=======================< webfx-framework-shared-orm-entity >========================-->
-    <!-- used by modality-base-shared-entities (SOURCE) -->
+    <!-- used by webfx-framework-client-orm-reactive-dql (SOURCE) -->
     <source path="dev/webfx/framework/shared/orm/entity"/>
     <source path="dev/webfx/framework/shared/orm/entity/impl"/>
     <source path="dev/webfx/framework/shared/orm/entity/lciimpl"/>
@@ -719,8 +719,8 @@
     <source path="dev/webfx/platform/gwt/services/windowlocation/spi/impl"/>
     <source path="dev/webfx/platform/gwt/services/windowlocation/spi/impl/jsinterop"/>
     <!--==========================< webfx-platform-shared-async >===========================-->
+    <!-- used by webfx-framework-shared-operation (SOURCE) -->
     <!-- used by webfx-framework-shared-orm-datasourcemodelservice (SOURCE) -->
-    <!-- used by webfx-framework-shared-orm-entity (SOURCE) -->
     <!-- used by webfx-platform-client-websocketbus (SOURCE) -->
     <!-- used by webfx-platform-client-windowhistory (SOURCE) -->
     <!-- used by webfx-platform-gwt-windowhistory-impl (SOURCE) -->
@@ -740,6 +740,7 @@
     <source path="dev/webfx/platform/shared/services/boot/spi"/>
     <source path="dev/webfx/platform/shared/services/boot/spi/impl"/>
     <!--===========================< webfx-platform-shared-bus >============================-->
+    <!-- used by webfx-framework-client-push (SOURCE) -->
     <!-- used by webfx-platform-client-websocketbus (SOURCE) -->
     <!-- used by webfx-platform-shared-buscall (SOURCE) -->
     <source path="dev/webfx/platform/shared/services/bus"/>
@@ -747,6 +748,7 @@
     <source path="dev/webfx/platform/shared/services/bus/spi/impl"/>
     <!--=========================< webfx-platform-shared-buscall >==========================-->
     <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
+    <!-- used by webfx-framework-client-push (SOURCE) -->
     <!-- used by webfx-framework-shared-querypush (SOURCE) -->
     <!-- used by webfx-platform-shared-query (SOURCE) -->
     <!-- used by webfx-platform-shared-submit (SOURCE) -->
@@ -772,6 +774,7 @@
     <source path="dev/webfx/platform/shared/services/datasource/spi"/>
     <source path="dev/webfx/platform/shared/services/datasource/spi/simple"/>
     <!--===========================< webfx-platform-shared-json >===========================-->
+    <!-- used by webfx-framework-client-util (SOURCE) -->
     <!-- used by webfx-framework-shared-orm-expression (SOURCE) -->
     <!-- used by webfx-platform-client-websocket (SOURCE) -->
     <!-- used by webfx-platform-client-windowlocation (SOURCE) -->

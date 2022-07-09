@@ -4,7 +4,7 @@ import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.layout.Region;
 import org.modality_project.base.shared.entities.Event;
-import org.modality_project.base.client.activity.MongooseButtonFactoryMixin;
+import org.modality_project.base.client.activity.ModalityButtonFactoryMixin;
 import org.modality_project.base.client.aggregates.cart.CartAggregate;
 import org.modality_project.base.client.aggregates.event.EventAggregate;
 import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
@@ -18,7 +18,7 @@ import dev.webfx.platform.shared.util.Strings;
  */
 public abstract class CartBasedActivity
         extends ViewDomainActivityBase
-        implements MongooseButtonFactoryMixin {
+        implements ModalityButtonFactoryMixin {
 
     private final Property<Object> cartUuidProperty = new SimpleObjectProperty<>();
 

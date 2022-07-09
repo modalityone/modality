@@ -12,6 +12,6 @@ module modality.all.backoffice.application {
     exports org.modality_project.all.backoffice.application;
 
     // Provided services
-    provides javafx.application.Application with org.modality_project.all.backoffice.application.MongooseBackOfficeApplication;
+    provides javafx.application.Application with org.modality_project.all.backoffice.application.ModalityBackOfficeApplication;
 
 }

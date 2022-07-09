@@ -1,6 +1,6 @@
 package org.modality_project.event.backoffice.activities.events.routing;
 
-import org.modality_project.base.client.util.routing.MongooseRoutingUtil;
+import org.modality_project.base.client.util.routing.ModalityRoutingUtil;
 
 /**
  * @author Bruno Salmon
@@ -21,7 +21,7 @@ public final class EventsRouting {
     }
 
     public static String getOrganizationEventsPath(Object organizationId) {
-        return MongooseRoutingUtil.interpolateOrganizationIdInPath(organizationId, ORGANIZATION_PATH);
+        return ModalityRoutingUtil.interpolateOrganizationIdInPath(organizationId, ORGANIZATION_PATH);
     }
 
 }

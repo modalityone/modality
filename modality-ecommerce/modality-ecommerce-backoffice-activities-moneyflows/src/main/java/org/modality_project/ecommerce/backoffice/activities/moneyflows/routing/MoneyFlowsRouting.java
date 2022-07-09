@@ -1,6 +1,6 @@
 package org.modality_project.ecommerce.backoffice.activities.moneyflows.routing;
 
-import org.modality_project.base.client.util.routing.MongooseRoutingUtil;
+import org.modality_project.base.client.util.routing.ModalityRoutingUtil;
 
 /**
  * @author Bruno Salmon
@@ -14,7 +14,7 @@ public final class MoneyFlowsRouting {
     }
 
     public static String getOrganizationIncomePath(Object organizationId) {
-        return MongooseRoutingUtil.interpolateEventIdInPath(organizationId, PATH);
+        return ModalityRoutingUtil.interpolateEventIdInPath(organizationId, PATH);
     }
 
 }

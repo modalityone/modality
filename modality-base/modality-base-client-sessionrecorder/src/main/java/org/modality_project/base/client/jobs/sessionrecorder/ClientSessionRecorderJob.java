@@ -1,6 +1,6 @@
 package org.modality_project.base.client.jobs.sessionrecorder;
 
-import org.modality_project.crm.client.services.authn.MongooseUserPrincipal;
+import org.modality_project.crm.client.services.authn.ModalityUserPrincipal;
 import dev.webfx.framework.shared.orm.entity.Entities;
 import dev.webfx.framework.shared.orm.entity.Entity;
 import dev.webfx.framework.shared.orm.entity.EntityId;
@@ -70,8 +70,8 @@ public final class ClientSessionRecorderJob implements ApplicationJob {
         if (bus.isOpen())
             onConnectionOpened();
         UiSession.get().userPrincipalProperty().addListener((observable, oldValue, userPrincipal) -> {
-            if (userPrincipal instanceof MongooseUserPrincipal && INSTANCE != null)
-                INSTANCE.recordNewSessionUser(((MongooseUserPrincipal) userPrincipal).getUserPersonId());
+            if (userPrincipal instanceof ModalityUserPrincipal && INSTANCE != null)
+                INSTANCE.recordNewSessionUser(((ModalityUserPrincipal) userPrincipal).getUserPersonId());
         });
     }
 

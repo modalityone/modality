@@ -1,6 +1,6 @@
 package org.modality_project.base.client.activity.eventdependent;
 
-import org.modality_project.base.client.activity.MongooseDomainPresentationLogicActivityBase;
+import org.modality_project.base.client.activity.ModalityDomainPresentationLogicActivityBase;
 import dev.webfx.framework.client.activity.impl.combinations.domainpresentationlogic.impl.DomainPresentationLogicActivityContextFinal;
 import dev.webfx.platform.shared.util.function.Factory;
 
@@ -10,7 +10,7 @@ import dev.webfx.platform.shared.util.function.Factory;
 public abstract class EventDependentPresentationLogicActivity
         <PM extends EventDependentPresentationModel>
 
-        extends MongooseDomainPresentationLogicActivityBase<PM>
+        extends ModalityDomainPresentationLogicActivityBase<PM>
         implements EventDependentActivityMixin<DomainPresentationLogicActivityContextFinal<PM>> {
 
     public EventDependentPresentationLogicActivity(Factory<PM> presentationModelFactory) {

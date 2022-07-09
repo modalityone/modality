@@ -18,8 +18,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import org.modality_project.ecommerce.frontoffice.activities.contactus.routing.ContactUsRouting;
-import org.modality_project.base.client.activity.MongooseButtonFactoryMixin;
-import org.modality_project.base.client.validation.MongooseValidationSupport;
+import org.modality_project.base.client.activity.ModalityButtonFactoryMixin;
+import org.modality_project.base.client.validation.ModalityValidationSupport;
 import org.modality_project.base.shared.entities.Document;
 import org.modality_project.base.shared.entities.Event;
 import org.modality_project.base.shared.entities.History;
@@ -30,7 +30,7 @@ import org.modality_project.ecommerce.frontoffice.activities.cart.routing.CartRo
  * @author Bruno Salmon
  */
 final class ContactUsActivity extends ViewDomainActivityBase
-        implements MongooseButtonFactoryMixin {
+        implements ModalityButtonFactoryMixin {
 
     private final Action sendAction = newAction("Send", "{url: 'images/svg/mono/send-circle.svg', width: 32, height: 32}", this::send);
 
@@ -38,7 +38,7 @@ final class ContactUsActivity extends ViewDomainActivityBase
     private TextArea bodyTextArea;
 
     private Object documentId;
-    private final MongooseValidationSupport validationSupport = new MongooseValidationSupport();
+    private final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
 
     @Override
     protected void updateModelFromContextParameters() {
