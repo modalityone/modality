@@ -105,7 +105,6 @@
     <inherits name="com.google.gwt.user.User"/>
     <!--=================================< java-nio-emul >==================================-->
     <!-- used by webfx-kit-javafxgraphics-emul (SOURCE) -->
-    <!-- used by webfx-platform-gwt-emul-javabase (SOURCE) -->
     <inherits name="org.gwtproject.nio.GwtNioSupport"/>
     <!--======================< modality-all-frontoffice-application >======================-->
     <!-- used by modality-all-frontoffice-application-gwt (APPLICATION) -->
