@@ -1,8 +1,8 @@
 package org.modality_project.ecommerce.backoffice.operations.routes.moneyflows;
 
-import dev.webfx.framework.client.operations.route.RoutePushRequest;
-import dev.webfx.framework.shared.operation.HasOperationCode;
-import dev.webfx.platform.client.services.windowhistory.spi.BrowsingHistory;
+import dev.webfx.stack.framework.client.operations.route.RoutePushRequest;
+import dev.webfx.stack.framework.shared.operation.HasOperationCode;
+import dev.webfx.stack.platform.windowhistory.spi.BrowsingHistory;
 import org.modality_project.ecommerce.backoffice.activities.moneyflows.routing.MoneyFlowsRouting;
 
 /**

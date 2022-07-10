@@ -1,13 +1,13 @@
 package org.modality_project.crm.client.services.authn;
 
-import dev.webfx.framework.shared.orm.domainmodel.DataSourceModel;
-import dev.webfx.framework.shared.orm.domainmodel.HasDataSourceModel;
-import dev.webfx.framework.shared.services.authn.UsernamePasswordCredentials;
-import dev.webfx.framework.shared.services.authn.spi.AuthenticationServiceProvider;
-import dev.webfx.framework.shared.services.datasourcemodel.DataSourceModelService;
-import dev.webfx.platform.shared.services.query.QueryArgument;
-import dev.webfx.platform.shared.services.query.QueryService;
-import dev.webfx.platform.shared.async.Future;
+import dev.webfx.stack.framework.shared.orm.domainmodel.DataSourceModel;
+import dev.webfx.stack.framework.shared.orm.domainmodel.HasDataSourceModel;
+import dev.webfx.stack.framework.shared.services.authn.UsernamePasswordCredentials;
+import dev.webfx.stack.framework.shared.services.authn.spi.AuthenticationServiceProvider;
+import dev.webfx.stack.framework.shared.services.datasourcemodel.DataSourceModelService;
+import dev.webfx.stack.platform.shared.services.query.QueryArgument;
+import dev.webfx.stack.platform.shared.services.query.QueryService;
+import dev.webfx.stack.platform.async.Future;
 
 /**
  * @author Bruno Salmon

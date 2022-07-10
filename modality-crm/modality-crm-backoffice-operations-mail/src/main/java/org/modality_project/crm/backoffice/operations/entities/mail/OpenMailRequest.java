@@ -2,9 +2,9 @@ package org.modality_project.crm.backoffice.operations.entities.mail;
 
 import javafx.scene.layout.Pane;
 import org.modality_project.base.shared.entities.Mail;
-import dev.webfx.framework.shared.operation.HasOperationCode;
-import dev.webfx.framework.shared.operation.HasOperationExecutor;
-import dev.webfx.platform.shared.async.AsyncFunction;
+import dev.webfx.stack.framework.shared.operation.HasOperationCode;
+import dev.webfx.stack.framework.shared.operation.HasOperationExecutor;
+import dev.webfx.stack.platform.async.AsyncFunction;
 
 public final class OpenMailRequest implements HasOperationCode,
         HasOperationExecutor<OpenMailRequest, Void> {

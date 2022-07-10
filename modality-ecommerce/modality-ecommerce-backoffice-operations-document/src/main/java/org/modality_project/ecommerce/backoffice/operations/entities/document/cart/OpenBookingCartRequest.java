@@ -2,9 +2,9 @@ package org.modality_project.ecommerce.backoffice.operations.entities.document.c
 
 import javafx.scene.layout.Pane;
 import org.modality_project.base.shared.entities.Document;
-import dev.webfx.framework.shared.operation.HasOperationCode;
-import dev.webfx.framework.shared.operation.HasOperationExecutor;
-import dev.webfx.platform.shared.async.AsyncFunction;
+import dev.webfx.stack.framework.shared.operation.HasOperationCode;
+import dev.webfx.stack.framework.shared.operation.HasOperationExecutor;
+import dev.webfx.stack.platform.async.AsyncFunction;
 
 public final class OpenBookingCartRequest implements HasOperationCode,
         HasOperationExecutor<OpenBookingCartRequest, Void> {

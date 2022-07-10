@@ -1,15 +1,15 @@
 package org.modality_project.base.backoffice.operations.entities.generic;
 
-import dev.webfx.framework.client.ui.controls.alert.AlertUtil;
-import dev.webfx.framework.client.ui.controls.dialog.DialogCallback;
-import dev.webfx.framework.client.ui.controls.dialog.DialogContent;
-import dev.webfx.framework.client.ui.controls.dialog.DialogUtil;
-import dev.webfx.framework.shared.orm.entity.Entity;
-import dev.webfx.framework.shared.orm.entity.UpdateStore;
-import dev.webfx.framework.shared.orm.expression.Expression;
-import dev.webfx.platform.shared.services.submit.SubmitArgument;
-import dev.webfx.platform.shared.async.Future;
-import dev.webfx.platform.shared.async.Promise;
+import dev.webfx.stack.framework.client.ui.controls.alert.AlertUtil;
+import dev.webfx.stack.framework.client.ui.controls.dialog.DialogCallback;
+import dev.webfx.stack.framework.client.ui.controls.dialog.DialogContent;
+import dev.webfx.stack.framework.client.ui.controls.dialog.DialogUtil;
+import dev.webfx.stack.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.framework.shared.orm.entity.UpdateStore;
+import dev.webfx.stack.framework.shared.orm.expression.Expression;
+import dev.webfx.stack.platform.shared.services.submit.SubmitArgument;
+import dev.webfx.stack.platform.async.Future;
+import dev.webfx.stack.platform.async.Promise;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 

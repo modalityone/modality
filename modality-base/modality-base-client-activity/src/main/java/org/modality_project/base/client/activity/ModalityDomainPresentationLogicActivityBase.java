@@ -1,12 +1,12 @@
 package org.modality_project.base.client.activity;
 
-import dev.webfx.framework.client.activity.impl.combinations.domainpresentationlogic.impl.DomainPresentationLogicActivityImpl;
-import dev.webfx.platform.shared.services.json.Json;
-import dev.webfx.platform.shared.services.json.JsonObject;
-import dev.webfx.platform.shared.services.json.WritableJsonObject;
+import dev.webfx.stack.framework.client.activity.impl.combinations.domainpresentationlogic.impl.DomainPresentationLogicActivityImpl;
+import dev.webfx.stack.platform.json.Json;
+import dev.webfx.stack.platform.json.JsonObject;
+import dev.webfx.stack.platform.json.WritableJsonObject;
 import dev.webfx.platform.shared.services.log.Logger;
-import dev.webfx.platform.shared.services.query.QueryArgument;
-import dev.webfx.platform.shared.services.query.QueryService;
+import dev.webfx.stack.platform.shared.services.query.QueryArgument;
+import dev.webfx.stack.platform.shared.services.query.QueryService;
 import dev.webfx.platform.shared.util.function.Factory;
 
 /**

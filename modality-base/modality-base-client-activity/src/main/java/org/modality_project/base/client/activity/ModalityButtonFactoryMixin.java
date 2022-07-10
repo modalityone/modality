@@ -2,9 +2,9 @@ package org.modality_project.base.client.activity;
 
 import javafx.scene.control.Button;
 import org.modality_project.base.client.activity.themes.Theme;
-import dev.webfx.framework.client.ui.controls.button.ButtonFactoryMixin;
-import dev.webfx.framework.client.ui.controls.button.ButtonBuilder;
-import dev.webfx.framework.client.ui.controls.MaterialFactoryMixin;
+import dev.webfx.stack.framework.client.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.stack.framework.client.ui.controls.button.ButtonBuilder;
+import dev.webfx.stack.framework.client.ui.controls.MaterialFactoryMixin;
 
 /**
  * @author Bruno Salmon

@@ -43,7 +43,7 @@ module modality.ecommerce.backoffice.activities.bookings {
     exports org.modality_project.ecommerce.backoffice.operations.routes.bookings;
 
     // Provided services
-    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with org.modality_project.ecommerce.backoffice.activities.bookings.RouteToBookingsRequestEmitter;
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.ecommerce.backoffice.activities.bookings.BookingsUiRoute;
+    provides dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter with org.modality_project.ecommerce.backoffice.activities.bookings.RouteToBookingsRequestEmitter;
+    provides dev.webfx.stack.framework.client.ui.uirouter.UiRoute with org.modality_project.ecommerce.backoffice.activities.bookings.BookingsUiRoute;
 
 }

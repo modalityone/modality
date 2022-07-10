@@ -1,11 +1,10 @@
 package org.modality_project.base.shared.entities;
 
-import dev.webfx.framework.shared.orm.entity.Entity;
-import dev.webfx.framework.shared.orm.entity.EntityId;
+import dev.webfx.stack.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.framework.shared.orm.entity.EntityId;
 import org.modality_project.base.shared.entities.markers.*;
 import org.modality_project.hotel.shared.businessdata.time.DateTimeRange;
 import org.modality_project.hotel.shared.businessdata.time.DayTimeRange;
-import org.modality_project.base.shared.entities.markers.*;
 
 /**
  * @author Bruno Salmon

@@ -12,14 +12,14 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import dev.webfx.extras.imagestore.ImageStore;
-import dev.webfx.framework.client.activity.ActivityManager;
-import dev.webfx.framework.client.activity.impl.combinations.viewdomain.ViewDomainActivityContext;
-import dev.webfx.framework.client.ui.util.scene.SceneUtil;
-import dev.webfx.framework.shared.services.datasourcemodel.DataSourceModelService;
+import dev.webfx.stack.framework.client.activity.ActivityManager;
+import dev.webfx.stack.framework.client.activity.impl.combinations.viewdomain.ViewDomainActivityContext;
+import dev.webfx.stack.framework.client.ui.util.scene.SceneUtil;
+import dev.webfx.stack.framework.shared.services.datasourcemodel.DataSourceModelService;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.platform.client.services.uischeduler.UiScheduler;
-import dev.webfx.platform.shared.services.buscall.PendingBusCall;
+import dev.webfx.stack.platform.shared.services.buscall.PendingBusCall;
 
 import java.util.function.Consumer;
 

@@ -41,6 +41,6 @@ module modality.event.frontoffice.activities.options {
     exports org.modality_project.event.frontoffice.operations.options;
 
     // Provided services
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.event.frontoffice.activities.options.OptionsUiRoute;
+    provides dev.webfx.stack.framework.client.ui.uirouter.UiRoute with org.modality_project.event.frontoffice.activities.options.OptionsUiRoute;
 
 }

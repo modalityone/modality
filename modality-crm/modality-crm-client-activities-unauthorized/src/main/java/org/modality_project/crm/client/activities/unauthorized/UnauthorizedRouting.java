@@ -1,7 +1,5 @@
 package org.modality_project.crm.client.activities.unauthorized;
 
-import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
-
 /**
  * @author Bruno Salmon
  */

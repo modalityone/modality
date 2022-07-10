@@ -4,10 +4,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.BorderPane;
-import dev.webfx.framework.client.orm.reactive.dql.statement.conventions.HasLimitProperty;
-import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
-import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualSelectionProperty;
-import dev.webfx.framework.client.ui.controls.ControlFactoryMixin;
+import dev.webfx.stack.framework.client.orm.reactive.dql.statement.conventions.HasLimitProperty;
+import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
+import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualSelectionProperty;
+import dev.webfx.stack.framework.client.ui.controls.ControlFactoryMixin;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.kit.util.properties.Properties;
 

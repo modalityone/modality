@@ -4,18 +4,18 @@ import dev.webfx.extras.flexbox.FlexBox;
 import dev.webfx.extras.imagestore.ImageStore;
 import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
-import dev.webfx.framework.client.orm.reactive.mapping.dql_to_entities.ReactiveEntitiesMapper;
-import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.IndividualEntityToObjectMapper;
-import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.ReactiveObjectsMapper;
-import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.framework.client.ui.action.ActionGroup;
-import dev.webfx.framework.client.ui.action.operation.OperationActionFactoryMixin;
-import dev.webfx.framework.client.ui.util.layout.LayoutUtil;
-import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.framework.client.orm.reactive.mapping.dql_to_entities.ReactiveEntitiesMapper;
+import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_objects.IndividualEntityToObjectMapper;
+import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_objects.ReactiveObjectsMapper;
+import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.framework.client.ui.action.ActionGroup;
+import dev.webfx.stack.framework.client.ui.action.operation.OperationActionFactoryMixin;
+import dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil;
+import dev.webfx.stack.framework.shared.orm.entity.Entity;
 import dev.webfx.kit.util.properties.Properties;
-import dev.webfx.platform.shared.datascope.aggregate.AggregateScope;
-import dev.webfx.platform.shared.services.json.Json;
-import dev.webfx.platform.shared.services.serial.SerialCodecManager;
+import dev.webfx.stack.platform.shared.datascope.aggregate.AggregateScope;
+import dev.webfx.stack.platform.json.Json;
+import dev.webfx.stack.com.serial.SerialCodecManager;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
@@ -37,12 +37,11 @@ import org.modality_project.base.shared.entities.Document;
 import org.modality_project.base.shared.entities.DocumentLine;
 import org.modality_project.base.shared.entities.Site;
 import org.modality_project.hotel.backoffice.operations.entities.resourceconfiguration.*;
-import org.modality_project.hotel.backoffice.operations.entities.resourceconfiguration.*;
 
 import java.util.List;
 import java.util.Objects;
 
-import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
+import static dev.webfx.stack.framework.shared.orm.dql.DqlStatement.where;
 
 final class RoomsGraphicActivity extends EventDependentViewDomainActivity implements
         HasSelectedDocumentProperty,

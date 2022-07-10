@@ -28,6 +28,6 @@ module modality.event.frontoffice.activities.terms {
     exports org.modality_project.event.frontoffice.operations.terms;
 
     // Provided services
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.event.frontoffice.activities.terms.TermsUiRoute;
+    provides dev.webfx.stack.framework.client.ui.uirouter.UiRoute with org.modality_project.event.frontoffice.activities.terms.TermsUiRoute;
 
 }

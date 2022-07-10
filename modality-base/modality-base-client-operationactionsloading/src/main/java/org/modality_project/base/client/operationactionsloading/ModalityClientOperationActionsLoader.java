@@ -1,14 +1,14 @@
 package org.modality_project.base.client.operationactionsloading;
 
-import dev.webfx.framework.client.services.i18n.I18n;
-import dev.webfx.framework.client.ui.action.Action;
-import dev.webfx.framework.client.ui.action.ActionFactoryMixin;
-import dev.webfx.framework.client.ui.action.operation.OperationActionFactoryMixin;
-import dev.webfx.framework.client.ui.action.operation.OperationActionRegistry;
-import dev.webfx.framework.client.ui.uirouter.uisession.UiSession;
-import dev.webfx.framework.shared.orm.entity.Entity;
-import dev.webfx.framework.shared.orm.entity.EntityStore;
-import dev.webfx.framework.shared.services.datasourcemodel.DataSourceModelService;
+import dev.webfx.stack.framework.client.services.i18n.I18n;
+import dev.webfx.stack.framework.client.ui.action.Action;
+import dev.webfx.stack.framework.client.ui.action.ActionFactoryMixin;
+import dev.webfx.stack.framework.client.ui.action.operation.OperationActionFactoryMixin;
+import dev.webfx.stack.framework.client.ui.action.operation.OperationActionRegistry;
+import dev.webfx.stack.framework.client.ui.uirouter.uisession.UiSession;
+import dev.webfx.stack.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.framework.shared.orm.entity.EntityStore;
+import dev.webfx.stack.framework.shared.services.datasourcemodel.DataSourceModelService;
 import dev.webfx.platform.shared.services.boot.spi.ApplicationModuleBooter;
 import dev.webfx.platform.shared.services.log.Logger;
 

@@ -1,9 +1,9 @@
 package org.modality_project.base.backoffice.activities.monitor;
 
 import org.modality_project.base.client.activity.ModalityDomainPresentationLogicActivityBase;
-import dev.webfx.framework.client.orm.reactive.mapping.dql_to_entities.ReactiveEntitiesMapper;
-import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.framework.client.orm.reactive.mapping.dql_to_entities.ReactiveEntitiesMapper;
+import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.framework.shared.orm.entity.Entity;
 
 /**
  * @author Bruno Salmon

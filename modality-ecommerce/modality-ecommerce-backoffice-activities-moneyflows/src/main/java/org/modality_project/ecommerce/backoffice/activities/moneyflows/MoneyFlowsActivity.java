@@ -2,18 +2,18 @@ package org.modality_project.ecommerce.backoffice.activities.moneyflows;
 
 import dev.webfx.extras.visual.VisualSelection;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
-import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.IndividualEntityToObjectMapper;
-import dev.webfx.framework.client.orm.reactive.mapping.entities_to_objects.ReactiveObjectsMapper;
-import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.framework.client.ui.action.ActionGroup;
-import dev.webfx.framework.client.ui.action.operation.OperationActionFactoryMixin;
-import dev.webfx.framework.client.ui.controls.dialog.DialogContent;
-import dev.webfx.framework.client.ui.controls.dialog.DialogUtil;
-import dev.webfx.framework.shared.orm.dql.DqlStatement;
-import dev.webfx.framework.shared.orm.entity.EntityStore;
-import dev.webfx.framework.shared.orm.entity.UpdateStore;
+import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_objects.IndividualEntityToObjectMapper;
+import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_objects.ReactiveObjectsMapper;
+import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.framework.client.ui.action.ActionGroup;
+import dev.webfx.stack.framework.client.ui.action.operation.OperationActionFactoryMixin;
+import dev.webfx.stack.framework.client.ui.controls.dialog.DialogContent;
+import dev.webfx.stack.framework.client.ui.controls.dialog.DialogUtil;
+import dev.webfx.stack.framework.shared.orm.dql.DqlStatement;
+import dev.webfx.stack.framework.shared.orm.entity.EntityStore;
+import dev.webfx.stack.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.kit.util.properties.Properties;
-import dev.webfx.platform.shared.services.submit.SubmitArgument;
+import dev.webfx.stack.platform.shared.services.submit.SubmitArgument;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -41,7 +41,7 @@ import org.modality_project.ecommerce.backoffice.operations.entities.moneyflow.E
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
+import static dev.webfx.stack.framework.shared.orm.dql.DqlStatement.where;
 
 /**
  * @author Bruno Salmon

@@ -26,7 +26,7 @@ module modality.event.backoffice.activities.events {
     exports org.modality_project.event.backoffice.operations.routes.events;
 
     // Provided services
-    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with org.modality_project.event.backoffice.activities.events.RouteToEventsRequestEmitter;
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.event.backoffice.activities.events.EventsUiRoute;
+    provides dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter with org.modality_project.event.backoffice.activities.events.RouteToEventsRequestEmitter;
+    provides dev.webfx.stack.framework.client.ui.uirouter.UiRoute with org.modality_project.event.backoffice.activities.events.EventsUiRoute;
 
 }

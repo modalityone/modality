@@ -1,7 +1,7 @@
 package org.modality_project.base.client.aggregates.person;
 
 import org.modality_project.base.shared.entities.Person;
-import dev.webfx.framework.shared.orm.entity.EntityStore;
+import dev.webfx.stack.framework.shared.orm.entity.EntityStore;
 
 /**
  * @author Bruno Salmon

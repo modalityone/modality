@@ -2,15 +2,15 @@ package org.modality_project.base.server.jobs.systemmetrics;
 
 import org.modality_project.base.server.services.systemmetrics.SystemMetricsService;
 import org.modality_project.base.shared.entities.SystemMetricsEntity;
-import dev.webfx.framework.shared.orm.domainmodel.DataSourceModel;
-import dev.webfx.framework.shared.orm.entity.UpdateStore;
-import dev.webfx.framework.shared.services.datasourcemodel.DataSourceModelService;
+import dev.webfx.stack.framework.shared.orm.domainmodel.DataSourceModel;
+import dev.webfx.stack.framework.shared.orm.entity.UpdateStore;
+import dev.webfx.stack.framework.shared.services.datasourcemodel.DataSourceModelService;
 import dev.webfx.platform.shared.services.boot.spi.ApplicationJob;
 import dev.webfx.platform.shared.services.log.Logger;
 import dev.webfx.platform.shared.services.scheduler.Scheduled;
 import dev.webfx.platform.shared.services.scheduler.Scheduler;
-import dev.webfx.platform.shared.services.submit.SubmitArgument;
-import dev.webfx.platform.shared.services.submit.SubmitService;
+import dev.webfx.stack.platform.shared.services.submit.SubmitArgument;
+import dev.webfx.stack.platform.shared.services.submit.SubmitService;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;

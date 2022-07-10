@@ -1,6 +1,6 @@
 package org.modality_project.ecommerce.backoffice.operations.entities.moneyflow;
 
-import dev.webfx.platform.shared.async.Future;
+import dev.webfx.stack.platform.async.Future;
 import javafx.scene.layout.Pane;
 
 final class AddNewMoneyFlowExecutor {

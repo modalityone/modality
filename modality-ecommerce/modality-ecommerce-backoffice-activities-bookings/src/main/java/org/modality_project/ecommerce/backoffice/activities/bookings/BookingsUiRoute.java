@@ -1,10 +1,10 @@
 package org.modality_project.ecommerce.backoffice.activities.bookings;
 
 import org.modality_project.ecommerce.backoffice.activities.bookings.routing.BookingsRouting;
-import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
-import dev.webfx.framework.client.ui.uirouter.UiRoute;
-import dev.webfx.framework.client.ui.uirouter.impl.UiRouteImpl;
-import dev.webfx.framework.shared.router.util.PathBuilder;
+import dev.webfx.stack.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
+import dev.webfx.stack.framework.client.ui.uirouter.UiRoute;
+import dev.webfx.stack.framework.client.ui.uirouter.impl.UiRouteImpl;
+import dev.webfx.stack.framework.shared.router.util.PathBuilder;
 
 /**
  * @author Bruno Salmon

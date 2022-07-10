@@ -1,8 +1,8 @@
 package org.modality_project.ecommerce.frontoffice.operations.person;
 
 import org.modality_project.ecommerce.frontoffice.activities.person.routing.PersonRouting;
-import dev.webfx.framework.client.operations.route.RoutePushRequest;
-import dev.webfx.platform.client.services.windowhistory.spi.BrowsingHistory;
+import dev.webfx.stack.framework.client.operations.route.RoutePushRequest;
+import dev.webfx.stack.platform.windowhistory.spi.BrowsingHistory;
 
 /**
  * @author Bruno Salmon

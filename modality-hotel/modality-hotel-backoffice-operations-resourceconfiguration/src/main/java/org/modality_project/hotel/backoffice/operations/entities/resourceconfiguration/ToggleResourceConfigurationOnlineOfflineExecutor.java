@@ -1,10 +1,10 @@
 package org.modality_project.hotel.backoffice.operations.entities.resourceconfiguration;
 
-import dev.webfx.framework.shared.orm.entity.Entity;
-import dev.webfx.framework.shared.orm.entity.UpdateStore;
-import dev.webfx.platform.shared.services.submit.SubmitResult;
-import dev.webfx.platform.shared.async.Batch;
-import dev.webfx.platform.shared.async.Future;
+import dev.webfx.stack.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.framework.shared.orm.entity.UpdateStore;
+import dev.webfx.stack.platform.shared.services.submit.SubmitResult;
+import dev.webfx.stack.platform.async.Batch;
+import dev.webfx.stack.platform.async.Future;
 
 final class ToggleResourceConfigurationOnlineOfflineExecutor {
 

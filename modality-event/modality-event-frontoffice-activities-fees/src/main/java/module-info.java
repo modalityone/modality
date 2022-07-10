@@ -44,6 +44,6 @@ module modality.event.frontoffice.activities.fees {
     exports org.modality_project.event.frontoffice.operations.fees;
 
     // Provided services
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.event.frontoffice.activities.fees.FeesUiRoute;
+    provides dev.webfx.stack.framework.client.ui.uirouter.UiRoute with org.modality_project.event.frontoffice.activities.fees.FeesUiRoute;
 
 }

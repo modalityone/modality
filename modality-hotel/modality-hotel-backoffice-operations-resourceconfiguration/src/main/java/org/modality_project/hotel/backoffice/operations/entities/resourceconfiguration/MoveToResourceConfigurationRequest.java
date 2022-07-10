@@ -1,9 +1,9 @@
 package org.modality_project.hotel.backoffice.operations.entities.resourceconfiguration;
 
-import dev.webfx.framework.shared.operation.HasOperationCode;
-import dev.webfx.framework.shared.operation.HasOperationExecutor;
-import dev.webfx.framework.shared.orm.entity.Entity;
-import dev.webfx.platform.shared.async.AsyncFunction;
+import dev.webfx.stack.framework.shared.operation.HasOperationCode;
+import dev.webfx.stack.framework.shared.operation.HasOperationExecutor;
+import dev.webfx.stack.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.platform.async.AsyncFunction;
 
 public final class MoveToResourceConfigurationRequest implements HasOperationCode,
         HasOperationExecutor<MoveToResourceConfigurationRequest, Void> {

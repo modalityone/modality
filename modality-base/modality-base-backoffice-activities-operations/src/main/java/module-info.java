@@ -25,7 +25,7 @@ module modality.base.backoffice.activities.operations {
     exports org.modality_project.base.backoffice.operations.routes.operations;
 
     // Provided services
-    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with org.modality_project.base.backoffice.activities.operations.RouteToOperationsRequestEmitter;
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.base.backoffice.activities.operations.OperationsUiRoute;
+    provides dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter with org.modality_project.base.backoffice.activities.operations.RouteToOperationsRequestEmitter;
+    provides dev.webfx.stack.framework.client.ui.uirouter.UiRoute with org.modality_project.base.backoffice.activities.operations.OperationsUiRoute;
 
 }

@@ -1,10 +1,10 @@
 package org.modality_project.base.shared.services.datasourcemodel;
 
-import dev.webfx.framework.shared.orm.domainmodel.DataSourceModel;
-import dev.webfx.framework.shared.orm.dql.sqlcompiler.sql.dbms.PostgresSyntax;
-import dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider;
-import dev.webfx.framework.shared.services.domainmodel.DomainModelService;
-import dev.webfx.platform.shared.async.Future;
+import dev.webfx.stack.framework.shared.orm.domainmodel.DataSourceModel;
+import dev.webfx.stack.framework.shared.orm.dql.sqlcompiler.sql.dbms.PostgresSyntax;
+import dev.webfx.stack.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider;
+import dev.webfx.stack.framework.shared.services.domainmodel.DomainModelService;
+import dev.webfx.stack.platform.async.Future;
 
 /**
  * @author Bruno Salmon

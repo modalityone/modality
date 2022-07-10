@@ -8,7 +8,7 @@ import org.modality_project.base.shared.entities.impl.LabelImpl;
 import org.modality_project.base.shared.entities.markers.HasItem;
 import org.modality_project.base.shared.entities.markers.HasLabel;
 import org.modality_project.base.shared.entities.markers.HasName;
-import dev.webfx.framework.client.services.i18n.I18n;
+import dev.webfx.stack.framework.client.services.i18n.I18n;
 import dev.webfx.platform.shared.util.Objects;
 
 /**

@@ -1,7 +1,7 @@
 package org.modality_project.base.shared.entities;
 
 import org.modality_project.base.shared.entities.markers.EntityHasName;
-import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.framework.shared.orm.entity.Entity;
 
 public interface Filter extends Entity, EntityHasName {
 

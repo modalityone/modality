@@ -1,9 +1,9 @@
 package org.modality_project.ecommerce.frontoffice.operations.cart;
 
 import org.modality_project.ecommerce.frontoffice.activities.cart.routing.CartRouting;
-import dev.webfx.framework.client.operations.route.RoutePushRequest;
-import dev.webfx.platform.shared.services.json.Json;
-import dev.webfx.platform.client.services.windowhistory.spi.BrowsingHistory;
+import dev.webfx.stack.framework.client.operations.route.RoutePushRequest;
+import dev.webfx.stack.platform.json.Json;
+import dev.webfx.stack.platform.windowhistory.spi.BrowsingHistory;
 
 import java.time.Instant;
 

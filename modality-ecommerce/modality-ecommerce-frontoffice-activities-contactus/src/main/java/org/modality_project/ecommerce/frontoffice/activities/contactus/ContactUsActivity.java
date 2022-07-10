@@ -1,14 +1,14 @@
 package org.modality_project.ecommerce.frontoffice.activities.contactus;
 
-import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
-import dev.webfx.framework.client.operations.route.RouteBackwardRequest;
-import dev.webfx.framework.client.ui.action.Action;
-import dev.webfx.framework.client.ui.util.background.BackgroundFactory;
-import dev.webfx.framework.client.ui.util.layout.LayoutUtil;
-import dev.webfx.framework.shared.orm.entity.EntityStore;
-import dev.webfx.framework.shared.orm.entity.UpdateStore;
+import dev.webfx.stack.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.stack.framework.client.operations.route.RouteBackwardRequest;
+import dev.webfx.stack.framework.client.ui.action.Action;
+import dev.webfx.stack.framework.client.ui.util.background.BackgroundFactory;
+import dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil;
+import dev.webfx.stack.framework.shared.orm.entity.EntityStore;
+import dev.webfx.stack.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.platform.client.services.uischeduler.UiScheduler;
-import dev.webfx.platform.client.services.windowlocation.WindowLocation;
+import dev.webfx.stack.platform.windowlocation.WindowLocation;
 import dev.webfx.platform.shared.services.log.Logger;
 import dev.webfx.platform.shared.util.Strings;
 import javafx.scene.Node;

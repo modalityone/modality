@@ -6,8 +6,8 @@
     </exported-packages>
 
     <providers>
-        <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.backoffice.activities.moneyflows.MoneyFlowsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-        <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.ecommerce.backoffice.activities.moneyflows.RouteToMoneyFlowsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+        <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.backoffice.activities.moneyflows.MoneyFlowsUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
+        <dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>org.modality_project.ecommerce.backoffice.activities.moneyflows.RouteToMoneyFlowsRequestEmitter</dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>
     </providers>
 
     <dependencies>

@@ -3,7 +3,7 @@
 
     <exported-packages>
         <source-packages/>
-        <resource-package>dev.webfx.platform.client.services.websocketbus.conf</resource-package>
+        <resource-package>dev.webfx.stack.platform.websocketbus.conf</resource-package>
     </exported-packages>
 
     <dependencies>
@@ -11,7 +11,7 @@
     </dependencies>
 
     <embed-resources>
-        <resource>dev/webfx/platform/client/services/websocketbus/conf/BusOptions.json</resource>
+        <resource>dev/webfx/stack/platform/websocketbus/conf/BusOptions.json</resource>
     </embed-resources>
 
 </project>

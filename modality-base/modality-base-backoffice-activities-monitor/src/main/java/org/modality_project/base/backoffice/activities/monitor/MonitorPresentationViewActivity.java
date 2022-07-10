@@ -2,11 +2,11 @@ package org.modality_project.base.backoffice.activities.monitor;
 
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
-import dev.webfx.framework.client.activity.impl.elementals.presentation.view.impl.PresentationViewActivityImpl;
+import dev.webfx.stack.framework.client.activity.impl.elementals.presentation.view.impl.PresentationViewActivityImpl;
 import dev.webfx.extras.visual.controls.charts.VisualChart;
 import dev.webfx.extras.visual.controls.charts.VisualLineChart;
 
-import static dev.webfx.framework.client.ui.util.layout.LayoutUtil.setVGrowable;
+import static dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil.setVGrowable;
 
 /**
  * @author Bruno Salmon

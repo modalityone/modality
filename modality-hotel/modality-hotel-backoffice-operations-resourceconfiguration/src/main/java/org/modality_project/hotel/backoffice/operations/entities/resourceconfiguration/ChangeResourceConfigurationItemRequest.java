@@ -1,11 +1,11 @@
 package org.modality_project.hotel.backoffice.operations.entities.resourceconfiguration;
 
 import javafx.scene.layout.Pane;
-import dev.webfx.framework.shared.operation.HasOperationCode;
-import dev.webfx.framework.shared.operation.HasOperationExecutor;
-import dev.webfx.framework.shared.orm.entity.Entity;
-import dev.webfx.framework.shared.orm.entity.EntityId;
-import dev.webfx.platform.shared.async.AsyncFunction;
+import dev.webfx.stack.framework.shared.operation.HasOperationCode;
+import dev.webfx.stack.framework.shared.operation.HasOperationExecutor;
+import dev.webfx.stack.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.framework.shared.orm.entity.EntityId;
+import dev.webfx.stack.platform.async.AsyncFunction;
 
 public final class ChangeResourceConfigurationItemRequest implements HasOperationCode,
         HasOperationExecutor<ChangeResourceConfigurationItemRequest, Void> {

@@ -13,6 +13,6 @@ module modality.crm.client.authn {
     exports org.modality_project.crm.client.services.authn;
 
     // Provided services
-    provides dev.webfx.framework.shared.services.authn.spi.AuthenticationServiceProvider with org.modality_project.crm.client.services.authn.ModalityAuthenticationServiceProvider;
+    provides dev.webfx.stack.framework.shared.services.authn.spi.AuthenticationServiceProvider with org.modality_project.crm.client.services.authn.ModalityAuthenticationServiceProvider;
 
 }

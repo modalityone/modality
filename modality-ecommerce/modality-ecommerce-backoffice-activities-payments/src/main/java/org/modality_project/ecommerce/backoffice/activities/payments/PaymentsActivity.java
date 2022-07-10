@@ -13,11 +13,11 @@ import org.modality_project.base.client.activity.eventdependent.EventDependentVi
 import org.modality_project.base.shared.domainmodel.functions.AbcNames;
 import org.modality_project.base.shared.entities.MoneyTransfer;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
-import dev.webfx.framework.client.ui.action.operation.OperationActionFactoryMixin;
-import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.framework.client.ui.util.layout.LayoutUtil;
+import dev.webfx.stack.framework.client.ui.action.operation.OperationActionFactoryMixin;
+import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil;
 
-import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
+import static dev.webfx.stack.framework.shared.orm.dql.DqlStatement.where;
 
 final class PaymentsActivity extends EventDependentViewDomainActivity implements
         ConventionalUiBuilderMixin,

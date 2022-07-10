@@ -10,13 +10,13 @@ import org.modality_project.base.client.util.functions.TranslateFunction;
 import org.modality_project.base.shared.entities.formatters.EventPriceFormatter;
 import org.modality_project.base.shared.entities.DocumentLine;
 import org.modality_project.base.shared.entities.Item;
-import dev.webfx.framework.client.services.i18n.I18n;
-import dev.webfx.framework.shared.orm.expression.Expression;
-import dev.webfx.framework.shared.orm.expression.lci.DomainReader;
-import dev.webfx.framework.shared.orm.expression.terms.function.AggregateFunction;
-import dev.webfx.framework.shared.orm.entity.EntityList;
-import dev.webfx.framework.shared.orm.entity.EntityStore;
-import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.EntitiesToVisualResultMapper;
+import dev.webfx.stack.framework.client.services.i18n.I18n;
+import dev.webfx.stack.framework.shared.orm.expression.Expression;
+import dev.webfx.stack.framework.shared.orm.expression.lci.DomainReader;
+import dev.webfx.stack.framework.shared.orm.expression.terms.function.AggregateFunction;
+import dev.webfx.stack.framework.shared.orm.entity.EntityList;
+import dev.webfx.stack.framework.shared.orm.entity.EntityStore;
+import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.EntitiesToVisualResultMapper;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
 import dev.webfx.extras.visual.VisualResult;
@@ -28,7 +28,7 @@ import dev.webfx.platform.shared.util.collection.Collections;
 
 import java.util.List;
 
-import static dev.webfx.framework.shared.orm.domainmodel.formatter.FormatterRegistry.registerFormatter;
+import static dev.webfx.stack.framework.shared.orm.domainmodel.formatter.FormatterRegistry.registerFormatter;
 
 /**
  * @author Bruno Salmon

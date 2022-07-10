@@ -1,8 +1,8 @@
 package org.modality_project.base.client.activity.themes;
 
 import javafx.scene.paint.Color;
-import dev.webfx.framework.client.ui.util.background.BackgroundFactory;
-import dev.webfx.framework.client.ui.util.border.BorderFactory;
+import dev.webfx.stack.framework.client.ui.util.background.BackgroundFactory;
+import dev.webfx.stack.framework.client.ui.util.border.BorderFactory;
 
 /**
  * @author Bruno Salmon

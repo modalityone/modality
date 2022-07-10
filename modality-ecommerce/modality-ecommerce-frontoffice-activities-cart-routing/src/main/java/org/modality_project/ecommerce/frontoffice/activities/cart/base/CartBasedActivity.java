@@ -7,9 +7,9 @@ import org.modality_project.base.shared.entities.Event;
 import org.modality_project.base.client.activity.ModalityButtonFactoryMixin;
 import org.modality_project.base.client.aggregates.cart.CartAggregate;
 import org.modality_project.base.client.aggregates.event.EventAggregate;
-import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
-import dev.webfx.framework.client.services.i18n.I18n;
-import dev.webfx.framework.client.ui.util.background.BackgroundFactory;
+import dev.webfx.stack.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.stack.framework.client.services.i18n.I18n;
+import dev.webfx.stack.framework.client.ui.util.background.BackgroundFactory;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.platform.shared.util.Strings;
 

@@ -2,9 +2,9 @@ package org.modality_project.base.backoffice.operations.routes.operations;
 
 
 import org.modality_project.base.backoffice.activities.operations.routing.OperationsRouting;
-import dev.webfx.framework.shared.operation.HasOperationCode;
-import dev.webfx.framework.client.operations.route.RoutePushRequest;
-import dev.webfx.platform.client.services.windowhistory.spi.BrowsingHistory;
+import dev.webfx.stack.framework.shared.operation.HasOperationCode;
+import dev.webfx.stack.framework.client.operations.route.RoutePushRequest;
+import dev.webfx.stack.platform.windowhistory.spi.BrowsingHistory;
 
 /**
  * @author Bruno Salmon

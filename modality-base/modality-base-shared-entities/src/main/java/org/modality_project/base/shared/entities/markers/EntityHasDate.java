@@ -1,6 +1,6 @@
 package org.modality_project.base.shared.entities.markers;
 
-import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.framework.shared.orm.entity.Entity;
 
 import java.time.LocalDate;
 

@@ -9,7 +9,7 @@ import dev.webfx.platform.gwt.services.resource.spi.impl.GwtResourceBundleBase;
 public interface EmbedResourcesBundle extends ClientBundle {
 
     EmbedResourcesBundle R = GWT.create(EmbedResourcesBundle.class);
-    @Source("dev/webfx/platform/client/services/websocketbus/conf/BusOptions.json")
+    @Source("dev/webfx/stack/platform/websocketbus/conf/BusOptions.json")
     TextResource r1();
 
     @Source("images/svg/color/price-tag.svg")
@@ -37,7 +37,7 @@ public interface EmbedResourcesBundle extends ClientBundle {
 
     final class ProvidedGwtResourceBundle extends GwtResourceBundleBase {
         public ProvidedGwtResourceBundle() {
-            registerResource("dev/webfx/platform/client/services/websocketbus/conf/BusOptions.json", R.r1());
+            registerResource("dev/webfx/stack/platform/websocketbus/conf/BusOptions.json", R.r1());
             registerResource("images/svg/color/price-tag.svg", R.r2());
             registerResource("images/svg/mono/calendar.svg", R.r3());
             registerResource("images/svg/mono/certificate.svg", R.r4());

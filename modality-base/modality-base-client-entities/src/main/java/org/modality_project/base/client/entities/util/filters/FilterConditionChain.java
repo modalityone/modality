@@ -1,9 +1,9 @@
 package org.modality_project.base.client.entities.util.filters;
 
-import dev.webfx.framework.client.orm.reactive.dql.statement.conventions.HasConditionDqlStatementProperty;
-import dev.webfx.framework.client.ui.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.framework.shared.orm.dql.DqlStatement;
-import dev.webfx.framework.shared.orm.dql.DqlStatementBuilder;
+import dev.webfx.stack.framework.client.orm.reactive.dql.statement.conventions.HasConditionDqlStatementProperty;
+import dev.webfx.stack.framework.client.ui.controls.entity.selector.EntityButtonSelector;
+import dev.webfx.stack.framework.shared.orm.dql.DqlStatement;
+import dev.webfx.stack.framework.shared.orm.dql.DqlStatementBuilder;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;

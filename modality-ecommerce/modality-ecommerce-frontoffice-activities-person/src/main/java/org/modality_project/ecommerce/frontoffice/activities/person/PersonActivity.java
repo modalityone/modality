@@ -1,7 +1,7 @@
 package org.modality_project.ecommerce.frontoffice.activities.person;
 
-import dev.webfx.framework.client.ui.uirouter.uisession.UiSession;
-import dev.webfx.framework.client.ui.util.layout.LayoutUtil;
+import dev.webfx.stack.framework.client.ui.uirouter.uisession.UiSession;
+import dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil;
 import dev.webfx.kit.util.properties.Properties;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanExpression;

@@ -17,6 +17,6 @@ module modality.crm.client.authz {
     exports org.modality_project.crm.client.services.authz;
 
     // Provided services
-    provides dev.webfx.framework.shared.services.authz.spi.AuthorizationServiceProvider with org.modality_project.crm.client.services.authz.ModalityAuthorizationServiceProvider;
+    provides dev.webfx.stack.framework.shared.services.authz.spi.AuthorizationServiceProvider with org.modality_project.crm.client.services.authz.ModalityAuthorizationServiceProvider;
 
 }

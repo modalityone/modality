@@ -7,8 +7,8 @@ public final class Array {
 
     public static Object newInstance(Class<?> componentType, int length) throws NegativeArraySizeException {
         switch (componentType.getName()) {
-            case "dev.webfx.platform.shared.services.query.QueryResult": return new dev.webfx.platform.shared.services.query.QueryResult[length];
-            case "dev.webfx.platform.shared.services.submit.SubmitResult": return new dev.webfx.platform.shared.services.submit.SubmitResult[length];
+            case "dev.webfx.stack.platform.shared.services.query.QueryResult": return new dev.webfx.stack.platform.shared.services.query.QueryResult[length];
+            case "dev.webfx.stack.platform.shared.services.submit.SubmitResult": return new dev.webfx.stack.platform.shared.services.submit.SubmitResult[length];
 
             // TYPE NOT FOUND
             default:

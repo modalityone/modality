@@ -6,7 +6,7 @@
     </exported-packages>
 
     <providers>
-        <dev.webfx.framework.shared.services.authn.spi.AuthenticationServiceProvider>org.modality_project.crm.client.services.authn.ModalityAuthenticationServiceProvider</dev.webfx.framework.shared.services.authn.spi.AuthenticationServiceProvider>
+        <dev.webfx.stack.framework.shared.services.authn.spi.AuthenticationServiceProvider>org.modality_project.crm.client.services.authn.ModalityAuthenticationServiceProvider</dev.webfx.stack.framework.shared.services.authn.spi.AuthenticationServiceProvider>
     </providers>
 
     <dependencies>

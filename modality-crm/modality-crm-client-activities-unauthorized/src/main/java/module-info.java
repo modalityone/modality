@@ -13,6 +13,6 @@ module modality.crm.client.activities.unauthorized {
     exports org.modality_project.crm.client.activities.unauthorized;
 
     // Provided services
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.crm.client.activities.unauthorized.UnauthorizedUiRoute;
+    provides dev.webfx.stack.framework.client.ui.uirouter.UiRoute with org.modality_project.crm.client.activities.unauthorized.UnauthorizedUiRoute;
 
 }

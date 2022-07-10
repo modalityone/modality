@@ -24,6 +24,6 @@ module modality.crm.client.activities.login {
     exports org.modality_project.crm.client.activities.login;
 
     // Provided services
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.crm.client.activities.login.LoginUiRoute;
+    provides dev.webfx.stack.framework.client.ui.uirouter.UiRoute with org.modality_project.crm.client.activities.login.LoginUiRoute;
 
 }

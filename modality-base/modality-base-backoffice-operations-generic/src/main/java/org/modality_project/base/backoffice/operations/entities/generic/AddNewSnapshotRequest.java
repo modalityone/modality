@@ -1,9 +1,9 @@
 package org.modality_project.base.backoffice.operations.entities.generic;
 
-import dev.webfx.framework.shared.operation.HasOperationCode;
-import dev.webfx.framework.shared.operation.HasOperationExecutor;
-import dev.webfx.framework.shared.orm.entity.Entity;
-import dev.webfx.platform.shared.async.AsyncFunction;
+import dev.webfx.stack.framework.shared.operation.HasOperationCode;
+import dev.webfx.stack.framework.shared.operation.HasOperationExecutor;
+import dev.webfx.stack.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.platform.async.AsyncFunction;
 import javafx.scene.layout.Pane;
 import org.modality_project.base.shared.entities.Organization;
 

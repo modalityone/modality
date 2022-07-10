@@ -1,20 +1,20 @@
 package org.modality_project.base.client.jobs.sessionrecorder;
 
 import org.modality_project.crm.client.services.authn.ModalityUserPrincipal;
-import dev.webfx.framework.shared.orm.entity.Entities;
-import dev.webfx.framework.shared.orm.entity.Entity;
-import dev.webfx.framework.shared.orm.entity.EntityId;
-import dev.webfx.framework.shared.orm.entity.UpdateStore;
-import dev.webfx.framework.client.ui.uirouter.uisession.UiSession;
-import dev.webfx.framework.shared.services.datasourcemodel.DataSourceModelService;
+import dev.webfx.stack.framework.shared.orm.entity.Entities;
+import dev.webfx.stack.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.framework.shared.orm.entity.EntityId;
+import dev.webfx.stack.framework.shared.orm.entity.UpdateStore;
+import dev.webfx.stack.framework.client.ui.uirouter.uisession.UiSession;
+import dev.webfx.stack.framework.shared.services.datasourcemodel.DataSourceModelService;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
-import dev.webfx.framework.client.services.push.PushClientService;
+import dev.webfx.stack.framework.client.services.push.PushClientService;
 import dev.webfx.platform.client.services.storage.LocalStorage;
 import dev.webfx.platform.shared.services.boot.spi.ApplicationJob;
-import dev.webfx.platform.shared.services.bus.Bus;
-import dev.webfx.platform.shared.services.bus.BusHook;
-import dev.webfx.platform.shared.services.bus.BusService;
-import dev.webfx.platform.shared.services.bus.Registration;
+import dev.webfx.stack.platform.shared.services.bus.Bus;
+import dev.webfx.stack.platform.shared.services.bus.BusHook;
+import dev.webfx.stack.platform.shared.services.bus.BusService;
+import dev.webfx.stack.platform.shared.services.bus.Registration;
 import dev.webfx.platform.shared.services.log.Logger;
 
 import java.time.Instant;

@@ -1,6 +1,6 @@
 package org.modality_project.ecommerce.frontoffice.activities.summary;
 
-import dev.webfx.framework.client.services.i18n.I18n;
+import dev.webfx.stack.framework.client.services.i18n.I18n;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.platform.shared.services.log.Logger;
 import dev.webfx.platform.shared.util.Strings;

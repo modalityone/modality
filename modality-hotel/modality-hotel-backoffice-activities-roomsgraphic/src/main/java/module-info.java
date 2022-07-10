@@ -42,7 +42,7 @@ module modality.hotel.backoffice.activities.roomsgraphic {
     exports org.modality_project.hotel.backoffice.operations.routes.roomsgraphic;
 
     // Provided services
-    provides dev.webfx.framework.client.operations.route.RouteRequestEmitter with org.modality_project.hotel.backoffice.activities.roomsgraphic.RouteToRoomsGraphicRequestEmitter;
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.hotel.backoffice.activities.roomsgraphic.RoomsGraphicUiRoute;
+    provides dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter with org.modality_project.hotel.backoffice.activities.roomsgraphic.RouteToRoomsGraphicRequestEmitter;
+    provides dev.webfx.stack.framework.client.ui.uirouter.UiRoute with org.modality_project.hotel.backoffice.activities.roomsgraphic.RoomsGraphicUiRoute;
 
 }

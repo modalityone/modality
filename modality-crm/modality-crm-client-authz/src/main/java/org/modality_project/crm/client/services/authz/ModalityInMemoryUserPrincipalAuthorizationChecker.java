@@ -1,14 +1,14 @@
 package org.modality_project.crm.client.services.authz;
 
 import org.modality_project.crm.client.services.authn.ModalityUserPrincipal;
-import dev.webfx.framework.shared.operation.authz.OperationAuthorizationRuleParser;
-import dev.webfx.framework.shared.orm.domainmodel.DataSourceModel;
-import dev.webfx.framework.shared.orm.entity.Entity;
-import dev.webfx.framework.shared.orm.entity.EntityStore;
-import dev.webfx.framework.shared.router.auth.authz.RoutingAuthorizationRule;
-import dev.webfx.framework.shared.router.auth.authz.RoutingAuthorizationRuleParser;
-import dev.webfx.framework.shared.services.authz.spi.impl.inmemory.AuthorizationRuleType;
-import dev.webfx.framework.shared.services.authz.spi.impl.inmemory.InMemoryUserPrincipalAuthorizationChecker;
+import dev.webfx.stack.framework.shared.operation.authz.OperationAuthorizationRuleParser;
+import dev.webfx.stack.framework.shared.orm.domainmodel.DataSourceModel;
+import dev.webfx.stack.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.framework.shared.orm.entity.EntityStore;
+import dev.webfx.stack.framework.shared.router.auth.authz.RoutingAuthorizationRule;
+import dev.webfx.stack.framework.shared.router.auth.authz.RoutingAuthorizationRuleParser;
+import dev.webfx.stack.framework.shared.services.authz.spi.impl.inmemory.AuthorizationRuleType;
+import dev.webfx.stack.framework.shared.services.authz.spi.impl.inmemory.InMemoryUserPrincipalAuthorizationChecker;
 import dev.webfx.platform.shared.services.log.Logger;
 import dev.webfx.platform.shared.util.Strings;
 

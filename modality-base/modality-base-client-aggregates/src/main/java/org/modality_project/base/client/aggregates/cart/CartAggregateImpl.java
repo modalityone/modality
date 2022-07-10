@@ -1,12 +1,12 @@
 package org.modality_project.base.client.aggregates.cart;
 
-import dev.webfx.framework.shared.orm.domainmodel.DataSourceModel;
-import dev.webfx.framework.shared.orm.entity.Entities;
-import dev.webfx.framework.shared.orm.entity.EntityList;
-import dev.webfx.framework.shared.orm.entity.EntityStore;
-import dev.webfx.framework.shared.orm.entity.EntityStoreQuery;
-import dev.webfx.platform.shared.async.Future;
-import dev.webfx.platform.shared.async.Promise;
+import dev.webfx.stack.framework.shared.orm.domainmodel.DataSourceModel;
+import dev.webfx.stack.framework.shared.orm.entity.Entities;
+import dev.webfx.stack.framework.shared.orm.entity.EntityList;
+import dev.webfx.stack.framework.shared.orm.entity.EntityStore;
+import dev.webfx.stack.framework.shared.orm.entity.EntityStoreQuery;
+import dev.webfx.stack.platform.async.Future;
+import dev.webfx.stack.platform.async.Promise;
 import dev.webfx.platform.shared.services.log.Logger;
 import dev.webfx.platform.shared.util.Strings;
 import org.modality_project.base.client.aggregates.event.EventAggregate;

@@ -1,9 +1,9 @@
 package org.modality_project.event.backoffice.operations.routes.cloneevent;
 
 import org.modality_project.event.backoffice.activities.cloneevent.routing.CloneEventRouting;
-import dev.webfx.framework.shared.operation.HasOperationCode;
-import dev.webfx.framework.client.operations.route.RoutePushRequest;
-import dev.webfx.platform.client.services.windowhistory.spi.BrowsingHistory;
+import dev.webfx.stack.framework.shared.operation.HasOperationCode;
+import dev.webfx.stack.framework.client.operations.route.RoutePushRequest;
+import dev.webfx.stack.platform.windowhistory.spi.BrowsingHistory;
 
 /**
  * @author Bruno Salmon

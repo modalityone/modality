@@ -314,8 +314,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.base.backoffice.activities.filters.FiltersUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.base.backoffice.activities.filters.RouteToFiltersRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.base.backoffice.activities.filters.FiltersUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>org.modality_project.base.backoffice.activities.filters.RouteToFiltersRequestEmitter</dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -369,8 +369,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.base.backoffice.activities.monitor.MonitorUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.base.backoffice.activities.monitor.RouteToMonitorRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.base.backoffice.activities.monitor.MonitorUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>org.modality_project.base.backoffice.activities.monitor.RouteToMonitorRequestEmitter</dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -413,8 +413,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.base.backoffice.activities.operations.OperationsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.base.backoffice.activities.operations.RouteToOperationsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.base.backoffice.activities.operations.OperationsUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>org.modality_project.base.backoffice.activities.operations.RouteToOperationsRequestEmitter</dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -756,7 +756,7 @@
 
             <exported-packages>
                 <source-packages/>
-                <resource-package>dev.webfx.platform.client.services.websocketbus.conf</resource-package>
+                <resource-package>dev.webfx.stack.platform.websocketbus.conf</resource-package>
             </exported-packages>
 
             <dependencies>
@@ -764,7 +764,7 @@
             </dependencies>
 
             <embed-resources>
-                <resource>dev/webfx/platform/client/services/websocketbus/conf/BusOptions.json</resource>
+                <resource>dev/webfx/stack/platform/websocketbus/conf/BusOptions.json</resource>
             </embed-resources>
 
             <used-by-source-modules/>
@@ -861,9 +861,9 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>org.modality_project.base.client.operations.i18n.ChangeLanguageToEnglishRequest$ProvidedEmitter</dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>
-                <dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>org.modality_project.base.client.operations.i18n.ChangeLanguageToFrenchRequest$ProvidedEmitter</dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitter>
-                <dev.webfx.framework.client.services.i18n.spi.I18nProvider>org.modality_project.base.client.services.i18n.ModalityI18nProvider</dev.webfx.framework.client.services.i18n.spi.I18nProvider>
+                <dev.webfx.stack.framework.client.operations.i18n.ChangeLanguageRequestEmitter>org.modality_project.base.client.operations.i18n.ChangeLanguageToEnglishRequest$ProvidedEmitter</dev.webfx.stack.framework.client.operations.i18n.ChangeLanguageRequestEmitter>
+                <dev.webfx.stack.framework.client.operations.i18n.ChangeLanguageRequestEmitter>org.modality_project.base.client.operations.i18n.ChangeLanguageToFrenchRequest$ProvidedEmitter</dev.webfx.stack.framework.client.operations.i18n.ChangeLanguageRequestEmitter>
+                <dev.webfx.stack.framework.client.services.i18n.spi.I18nProvider>org.modality_project.base.client.services.i18n.ModalityI18nProvider</dev.webfx.stack.framework.client.services.i18n.spi.I18nProvider>
             </providers>
 
             <dependencies>
@@ -950,8 +950,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.base.client.navigationarrows.RouteBackwardRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.base.client.navigationarrows.RouteForwardRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>org.modality_project.base.client.navigationarrows.RouteBackwardRequestEmitter</dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>org.modality_project.base.client.navigationarrows.RouteForwardRequestEmitter</dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -1187,7 +1187,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider>org.modality_project.base.server.services.datasource.ModalityLocalDataSourceProvider</dev.webfx.platform.shared.services.datasource.spi.LocalDataSourceProvider>
+                <dev.webfx.stack.platform.shared.services.datasource.spi.LocalDataSourceProvider>org.modality_project.base.server.services.datasource.ModalityLocalDataSourceProvider</dev.webfx.stack.platform.shared.services.datasource.spi.LocalDataSourceProvider>
             </providers>
 
             <dependencies>
@@ -1401,8 +1401,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider>org.modality_project.base.shared.services.domainmodel.ModalityDomainModelProvider</dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider>
-                <dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider>org.modality_project.base.shared.services.datasourcemodel.ModalityDataSourceModelProvider</dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider>
+                <dev.webfx.stack.framework.shared.services.domainmodel.spi.DomainModelProvider>org.modality_project.base.shared.services.domainmodel.ModalityDomainModelProvider</dev.webfx.stack.framework.shared.services.domainmodel.spi.DomainModelProvider>
+                <dev.webfx.stack.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider>org.modality_project.base.shared.services.datasourcemodel.ModalityDataSourceModelProvider</dev.webfx.stack.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider>
             </providers>
 
             <embed-resources>
@@ -1447,36 +1447,36 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.AttendanceImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.CartImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.CountryImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.CurrencyImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.DateInfoImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.DocumentImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.DocumentLineImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.EventImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.FilterImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.GatewayParameterImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.HistoryImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.ImageImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.ItemFamilyImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.ItemImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.LabelImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.MailImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.MethodImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.MoneyTransferImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.MoneyAccountImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.MoneyAccountTypeImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.MoneyFlowImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.OptionImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.OrganizationImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.OrganizationTypeImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.PersonImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.RateImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.SiteImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.SnapshotImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.SystemMetricsEntityImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
-                <dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.TeacherImpl$ProvidedFactory</dev.webfx.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.AttendanceImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.CartImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.CountryImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.CurrencyImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.DateInfoImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.DocumentImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.DocumentLineImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.EventImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.FilterImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.GatewayParameterImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.HistoryImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.ImageImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.ItemFamilyImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.ItemImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.LabelImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.MailImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.MethodImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.MoneyTransferImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.MoneyAccountImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.MoneyAccountTypeImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.MoneyFlowImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.OptionImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.OrganizationImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.OrganizationTypeImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.PersonImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.RateImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.SiteImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.SnapshotImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.SystemMetricsEntityImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
+                <dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>org.modality_project.base.shared.entities.impl.TeacherImpl$ProvidedFactory</dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider>
             </providers>
 
             <dependencies>
@@ -1519,8 +1519,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.catering.backoffice.activities.diningareas.DiningAreasUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.catering.backoffice.activities.diningareas.RouteToDiningAreasRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.catering.backoffice.activities.diningareas.DiningAreasUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>org.modality_project.catering.backoffice.activities.diningareas.RouteToDiningAreasRequestEmitter</dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -1619,8 +1619,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.backoffice.activities.authorizations.AuthorizationsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.crm.backoffice.activities.authorizations.RouteToAuthorizationsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.backoffice.activities.authorizations.AuthorizationsUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>org.modality_project.crm.backoffice.activities.authorizations.RouteToAuthorizationsRequestEmitter</dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -1664,7 +1664,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.backoffice.activities.letter.LetterUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.backoffice.activities.letter.LetterUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -1701,8 +1701,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.backoffice.activities.letters.LettersUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.crm.backoffice.activities.letters.RouteToLettersRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.backoffice.activities.letters.LettersUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>org.modality_project.crm.backoffice.activities.letters.RouteToLettersRequestEmitter</dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -1743,8 +1743,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.backoffice.activities.organizations.OrganizationsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.crm.backoffice.activities.organizations.RouteToOrganizationsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.backoffice.activities.organizations.OrganizationsUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>org.modality_project.crm.backoffice.activities.organizations.RouteToOrganizationsRequestEmitter</dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -1787,8 +1787,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.backoffice.activities.users.UsersUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.crm.backoffice.activities.users.RouteToUsersRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.backoffice.activities.users.UsersUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>org.modality_project.crm.backoffice.activities.users.RouteToUsersRequestEmitter</dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -1912,7 +1912,7 @@
             </dependencies>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.client.activities.login.LoginUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.client.activities.login.LoginUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <source-packages>
@@ -1944,7 +1944,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.client.activities.unauthorized.UnauthorizedUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.client.activities.unauthorized.UnauthorizedUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -1973,7 +1973,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.shared.services.authn.spi.AuthenticationServiceProvider>org.modality_project.crm.client.services.authn.ModalityAuthenticationServiceProvider</dev.webfx.framework.shared.services.authn.spi.AuthenticationServiceProvider>
+                <dev.webfx.stack.framework.shared.services.authn.spi.AuthenticationServiceProvider>org.modality_project.crm.client.services.authn.ModalityAuthenticationServiceProvider</dev.webfx.stack.framework.shared.services.authn.spi.AuthenticationServiceProvider>
             </providers>
 
             <dependencies>
@@ -2001,7 +2001,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.shared.services.authz.spi.AuthorizationServiceProvider>org.modality_project.crm.client.services.authz.ModalityAuthorizationServiceProvider</dev.webfx.framework.shared.services.authz.spi.AuthorizationServiceProvider>
+                <dev.webfx.stack.framework.shared.services.authz.spi.AuthorizationServiceProvider>org.modality_project.crm.client.services.authz.ModalityAuthorizationServiceProvider</dev.webfx.stack.framework.shared.services.authz.spi.AuthorizationServiceProvider>
             </providers>
 
             <dependencies>
@@ -2102,8 +2102,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.backoffice.activities.bookings.BookingsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.ecommerce.backoffice.activities.bookings.RouteToBookingsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.backoffice.activities.bookings.BookingsUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>org.modality_project.ecommerce.backoffice.activities.bookings.RouteToBookingsRequestEmitter</dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -2163,8 +2163,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.backoffice.activities.income.IncomeUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.ecommerce.backoffice.activities.income.RouteToIncomeRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.backoffice.activities.income.IncomeUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>org.modality_project.ecommerce.backoffice.activities.income.RouteToIncomeRequestEmitter</dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -2214,8 +2214,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.backoffice.activities.moneyflows.MoneyFlowsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.ecommerce.backoffice.activities.moneyflows.RouteToMoneyFlowsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.backoffice.activities.moneyflows.MoneyFlowsUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>org.modality_project.ecommerce.backoffice.activities.moneyflows.RouteToMoneyFlowsRequestEmitter</dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -2272,8 +2272,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.backoffice.activities.payments.PaymentsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.ecommerce.backoffice.activities.payments.RouteToPaymentsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.backoffice.activities.payments.PaymentsUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>org.modality_project.ecommerce.backoffice.activities.payments.RouteToPaymentsRequestEmitter</dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -2326,8 +2326,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.backoffice.activities.statements.StatementsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.ecommerce.backoffice.activities.statements.RouteToStatementsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.backoffice.activities.statements.StatementsUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>org.modality_project.ecommerce.backoffice.activities.statements.RouteToStatementsRequestEmitter</dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -2377,8 +2377,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.backoffice.activities.statistics.StatisticsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.ecommerce.backoffice.activities.statistics.RouteToStatisticsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.backoffice.activities.statistics.StatisticsUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>org.modality_project.ecommerce.backoffice.activities.statistics.RouteToStatisticsRequestEmitter</dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -2680,7 +2680,7 @@
             </dependencies>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.frontoffice.activities.cart.CartUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.frontoffice.activities.cart.CartUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <source-packages>
@@ -2770,7 +2770,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.frontoffice.activities.contactus.ContactUsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.frontoffice.activities.contactus.ContactUsUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -2816,7 +2816,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.frontoffice.activities.payment.PaymentUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.frontoffice.activities.payment.PaymentUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -2871,7 +2871,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.frontoffice.activities.person.PersonUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.frontoffice.activities.person.PersonUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -2914,7 +2914,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.frontoffice.activities.summary.SummaryUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.ecommerce.frontoffice.activities.summary.SummaryUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -2981,7 +2981,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.event.backoffice.activities.cloneevent.CloneEventUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.event.backoffice.activities.cloneevent.CloneEventUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -3048,8 +3048,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.event.backoffice.activities.events.EventsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.event.backoffice.activities.events.RouteToEventsRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.event.backoffice.activities.events.EventsUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>org.modality_project.event.backoffice.activities.events.RouteToEventsRequestEmitter</dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -3091,7 +3091,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.event.backoffice.activities.options.EditableOptionsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.event.backoffice.activities.options.EditableOptionsUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -3233,7 +3233,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.event.frontoffice.activities.fees.FeesUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.event.frontoffice.activities.fees.FeesUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -3293,7 +3293,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.event.frontoffice.activities.options.OptionsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.event.frontoffice.activities.options.OptionsUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -3350,7 +3350,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.event.frontoffice.activities.program.ProgramUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.event.frontoffice.activities.program.ProgramUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -3392,7 +3392,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.event.frontoffice.activities.startbooking.StartBookingUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.event.frontoffice.activities.startbooking.StartBookingUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -3440,7 +3440,7 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.event.frontoffice.activities.terms.TermsUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.event.frontoffice.activities.terms.TermsUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
             </providers>
 
             <dependencies>
@@ -3494,8 +3494,8 @@
             </exported-packages>
 
             <providers>
-                <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.hotel.backoffice.activities.roomsgraphic.RoomsGraphicUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
-                <dev.webfx.framework.client.operations.route.RouteRequestEmitter>org.modality_project.hotel.backoffice.activities.roomsgraphic.RouteToRoomsGraphicRequestEmitter</dev.webfx.framework.client.operations.route.RouteRequestEmitter>
+                <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.hotel.backoffice.activities.roomsgraphic.RoomsGraphicUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
+                <dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>org.modality_project.hotel.backoffice.activities.roomsgraphic.RouteToRoomsGraphicRequestEmitter</dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>
             </providers>
 
             <dependencies>
@@ -3613,7 +3613,7 @@
 
         <usages>
 
-            <java-package name="dev.webfx.framework.shared.orm.domainmodel">
+            <java-package name="dev.webfx.stack.framework.shared.orm.domainmodel">
                 <module>modality-base-backoffice-activities-filters</module>
                 <module>modality-base-backoffice-multilangeditor</module>
                 <module>modality-base-backoffice-operations-generic</module>
@@ -3640,7 +3640,7 @@
                 <module>webfx-framework-shared-orm-entity</module>
             </java-package>
 
-            <java-package name="dev.webfx.framework.shared.services.querypush">
+            <java-package name="dev.webfx.stack.framework.shared.services.querypush">
                 <module>webfx-framework-client-orm-reactive-dql</module>
                 <module>webfx-framework-client-querypush</module>
                 <module>webfx-framework-server-querypush</module>
@@ -3649,7 +3649,7 @@
                 <module>webfx-framework-shared-querypush</module>
             </java-package>
 
-            <java-package name="dev.webfx.platform.shared.services.query">
+            <java-package name="dev.webfx.stack.platform.shared.services.query">
                 <module>modality-base-client-activity</module>
                 <module>modality-base-client-aggregates</module>
                 <module>modality-base-shared-domainmodel</module>
@@ -3669,7 +3669,7 @@
                 <module>webfx-platform-vertx-queryupdate</module>
             </java-package>
 
-            <java-package name="dev.webfx.platform.shared.services.submit">
+            <java-package name="dev.webfx.stack.platform.shared.services.submit">
                 <module>modality-base-backoffice-operations-filters</module>
                 <module>modality-base-backoffice-operations-generic</module>
                 <module>modality-base-server-sessioncloser</module>

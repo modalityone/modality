@@ -30,6 +30,6 @@ module modality.ecommerce.frontoffice.activities.contactus {
     exports org.modality_project.ecommerce.frontoffice.operations.contactus;
 
     // Provided services
-    provides dev.webfx.framework.client.ui.uirouter.UiRoute with org.modality_project.ecommerce.frontoffice.activities.contactus.ContactUsUiRoute;
+    provides dev.webfx.stack.framework.client.ui.uirouter.UiRoute with org.modality_project.ecommerce.frontoffice.activities.contactus.ContactUsUiRoute;
 
 }

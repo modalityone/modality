@@ -1,6 +1,6 @@
 package org.modality_project.base.shared.entities;
 
-import dev.webfx.framework.shared.orm.entity.EntityId;
+import dev.webfx.stack.framework.shared.orm.entity.EntityId;
 import org.modality_project.base.shared.entities.markers.EntityHasIcon;
 import org.modality_project.base.shared.entities.markers.EntityHasOrganization;
 

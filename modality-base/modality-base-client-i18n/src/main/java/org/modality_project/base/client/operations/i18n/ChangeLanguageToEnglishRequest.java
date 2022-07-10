@@ -1,8 +1,8 @@
 package org.modality_project.base.client.operations.i18n;
 
-import dev.webfx.framework.shared.operation.HasOperationCode;
-import dev.webfx.framework.client.operations.i18n.ChangeLanguageRequest;
-import dev.webfx.framework.client.operations.i18n.ChangeLanguageRequestEmitterImpl;
+import dev.webfx.stack.framework.shared.operation.HasOperationCode;
+import dev.webfx.stack.framework.client.operations.i18n.ChangeLanguageRequest;
+import dev.webfx.stack.framework.client.operations.i18n.ChangeLanguageRequestEmitterImpl;
 
 /**
  * @author Bruno Salmon

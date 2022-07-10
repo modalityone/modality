@@ -1,9 +1,9 @@
 package org.modality_project.base.client.util.functions;
 
 import org.modality_project.base.client.entities.util.Labels;
-import dev.webfx.framework.shared.orm.expression.lci.DomainReader;
-import dev.webfx.framework.shared.orm.expression.terms.function.Function;
-import dev.webfx.framework.client.services.i18n.I18n;
+import dev.webfx.stack.framework.shared.orm.expression.lci.DomainReader;
+import dev.webfx.stack.framework.shared.orm.expression.terms.function.Function;
+import dev.webfx.stack.framework.client.services.i18n.I18n;
 import dev.webfx.extras.type.PrimType;
 
 /**

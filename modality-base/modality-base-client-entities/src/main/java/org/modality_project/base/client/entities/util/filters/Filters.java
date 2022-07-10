@@ -1,9 +1,9 @@
 package org.modality_project.base.client.entities.util.filters;
 
 import org.modality_project.base.shared.entities.Filter;
-import dev.webfx.framework.shared.orm.dql.DqlClause;
-import dev.webfx.framework.shared.orm.dql.DqlStatement;
-import dev.webfx.framework.shared.orm.dql.DqlStatementBuilder;
+import dev.webfx.stack.framework.shared.orm.dql.DqlClause;
+import dev.webfx.stack.framework.shared.orm.dql.DqlStatement;
+import dev.webfx.stack.framework.shared.orm.dql.DqlStatementBuilder;
 
 public final class Filters {
 

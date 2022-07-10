@@ -1,12 +1,12 @@
 package org.modality_project.base.client.aggregates.event;
 
-import dev.webfx.framework.shared.orm.domainmodel.DataSourceModel;
-import dev.webfx.framework.shared.orm.domainmodel.HasDataSourceModel;
-import dev.webfx.framework.shared.orm.entity.Entity;
-import dev.webfx.framework.shared.orm.entity.EntityList;
-import dev.webfx.framework.shared.orm.entity.EntityStore;
-import dev.webfx.platform.shared.async.Future;
-import dev.webfx.platform.shared.services.query.QueryResult;
+import dev.webfx.stack.framework.shared.orm.domainmodel.DataSourceModel;
+import dev.webfx.stack.framework.shared.orm.domainmodel.HasDataSourceModel;
+import dev.webfx.stack.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.framework.shared.orm.entity.EntityList;
+import dev.webfx.stack.framework.shared.orm.entity.EntityStore;
+import dev.webfx.stack.platform.async.Future;
+import dev.webfx.stack.platform.shared.services.query.QueryResult;
 import dev.webfx.platform.shared.util.collection.Collections;
 import org.modality_project.base.client.aggregates.person.PersonAggregate;
 import org.modality_project.base.shared.entities.*;

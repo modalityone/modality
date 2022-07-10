@@ -1,12 +1,12 @@
 package org.modality_project.base.backoffice.operations.entities.generic;
 
-import dev.webfx.framework.shared.orm.expression.Expression;
-import dev.webfx.framework.shared.orm.domainmodel.DomainClass;
-import dev.webfx.framework.shared.orm.domainmodel.DomainField;
+import dev.webfx.stack.framework.shared.orm.expression.Expression;
+import dev.webfx.stack.framework.shared.orm.domainmodel.DomainClass;
+import dev.webfx.stack.framework.shared.orm.domainmodel.DomainField;
 import dev.webfx.extras.type.PrimType;
 import dev.webfx.extras.type.Type;
 import dev.webfx.extras.type.Types;
-import dev.webfx.framework.shared.orm.expression.terms.*;
+import dev.webfx.stack.framework.shared.orm.expression.terms.*;
 
 import java.util.ArrayList;
 import java.util.List;

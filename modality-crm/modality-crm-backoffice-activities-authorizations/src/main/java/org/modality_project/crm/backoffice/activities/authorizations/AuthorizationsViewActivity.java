@@ -7,12 +7,12 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.layout.Pane;
 import org.modality_project.crm.client.services.authn.ModalityUserPrincipal;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
-import dev.webfx.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
-import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.framework.client.ui.controls.entity.sheet.EntityPropertiesSheet;
-import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.framework.client.ui.controls.entity.sheet.EntityPropertiesSheet;
+import dev.webfx.stack.framework.shared.orm.entity.Entity;
 
-import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
+import static dev.webfx.stack.framework.shared.orm.dql.DqlStatement.where;
 
 /**
  * @author Bruno Salmon

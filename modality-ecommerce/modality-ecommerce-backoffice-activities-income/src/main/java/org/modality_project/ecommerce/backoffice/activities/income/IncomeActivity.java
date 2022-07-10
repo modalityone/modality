@@ -10,11 +10,11 @@ import org.modality_project.base.shared.entities.Document;
 import org.modality_project.base.shared.entities.DocumentLine;
 import org.modality_project.base.shared.entities.Filter;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
-import dev.webfx.framework.client.ui.action.operation.OperationActionFactoryMixin;
-import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.framework.client.ui.controls.entity.selector.EntityButtonSelector;
+import dev.webfx.stack.framework.client.ui.action.operation.OperationActionFactoryMixin;
+import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.framework.client.ui.controls.entity.selector.EntityButtonSelector;
 
-import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
+import static dev.webfx.stack.framework.shared.orm.dql.DqlStatement.where;
 
 final class IncomeActivity extends EventDependentViewDomainActivity implements
         OperationActionFactoryMixin,

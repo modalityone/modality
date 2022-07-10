@@ -6,7 +6,7 @@ import javafx.scene.layout.VBox;
 import org.modality_project.base.client.icons.ModalityIcons;
 import org.modality_project.event.client.controls.sectionpanel.SectionPanelFactory;
 import org.modality_project.ecommerce.client.activity.bookingprocess.BookingProcessPresentationViewActivity;
-import dev.webfx.framework.client.ui.util.layout.LayoutUtil;
+import dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil;
 import dev.webfx.extras.cell.collator.grid.GridCollator;
 
 /**

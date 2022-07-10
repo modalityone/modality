@@ -1,11 +1,11 @@
 package org.modality_project.hotel.backoffice.operations.entities.resourceconfiguration;
 
-import dev.webfx.framework.shared.operation.HasOperationCode;
-import dev.webfx.framework.shared.operation.HasOperationExecutor;
-import dev.webfx.framework.shared.orm.entity.Entity;
-import dev.webfx.platform.shared.services.submit.SubmitResult;
-import dev.webfx.platform.shared.async.AsyncFunction;
-import dev.webfx.platform.shared.async.Batch;
+import dev.webfx.stack.framework.shared.operation.HasOperationCode;
+import dev.webfx.stack.framework.shared.operation.HasOperationExecutor;
+import dev.webfx.stack.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.platform.shared.services.submit.SubmitResult;
+import dev.webfx.stack.platform.async.AsyncFunction;
+import dev.webfx.stack.platform.async.Batch;
 
 public final class ToggleResourceConfigurationOnlineOfflineRequest implements HasOperationCode,
         HasOperationExecutor<ToggleResourceConfigurationOnlineOfflineRequest, Batch<SubmitResult>> {

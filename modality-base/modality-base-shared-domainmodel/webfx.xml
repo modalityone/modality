@@ -7,8 +7,8 @@
     </exported-packages>
 
     <providers>
-        <dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider>org.modality_project.base.shared.services.domainmodel.ModalityDomainModelProvider</dev.webfx.framework.shared.services.domainmodel.spi.DomainModelProvider>
-        <dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider>org.modality_project.base.shared.services.datasourcemodel.ModalityDataSourceModelProvider</dev.webfx.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider>
+        <dev.webfx.stack.framework.shared.services.domainmodel.spi.DomainModelProvider>org.modality_project.base.shared.services.domainmodel.ModalityDomainModelProvider</dev.webfx.stack.framework.shared.services.domainmodel.spi.DomainModelProvider>
+        <dev.webfx.stack.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider>org.modality_project.base.shared.services.datasourcemodel.ModalityDataSourceModelProvider</dev.webfx.stack.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider>
     </providers>
 
     <embed-resources>

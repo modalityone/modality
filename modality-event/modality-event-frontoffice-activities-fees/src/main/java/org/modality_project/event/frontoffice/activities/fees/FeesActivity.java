@@ -10,16 +10,16 @@ import dev.webfx.extras.type.SpecializedTextType;
 import dev.webfx.extras.visual.*;
 import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
-import dev.webfx.framework.client.services.i18n.Dictionary;
-import dev.webfx.framework.client.services.i18n.I18n;
-import dev.webfx.framework.client.services.i18n.I18nControls;
-import dev.webfx.framework.client.ui.util.layout.LayoutUtil;
-import dev.webfx.framework.shared.orm.entity.EntityList;
+import dev.webfx.stack.framework.client.services.i18n.Dictionary;
+import dev.webfx.stack.framework.client.services.i18n.I18n;
+import dev.webfx.stack.framework.client.services.i18n.I18nControls;
+import dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil;
+import dev.webfx.stack.framework.shared.orm.entity.EntityList;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.platform.client.services.uischeduler.UiScheduler;
-import dev.webfx.platform.shared.services.json.Json;
-import dev.webfx.platform.shared.services.json.JsonObject;
-import dev.webfx.platform.shared.services.json.WritableJsonObject;
+import dev.webfx.stack.platform.json.Json;
+import dev.webfx.stack.platform.json.JsonObject;
+import dev.webfx.stack.platform.json.WritableJsonObject;
 import dev.webfx.platform.shared.services.log.Logger;
 import dev.webfx.platform.shared.util.Arrays;
 import dev.webfx.platform.shared.util.Booleans;
@@ -53,7 +53,7 @@ import org.modality_project.event.frontoffice.operations.options.RouteToOptionsR
 
 import java.util.function.Consumer;
 
-import static dev.webfx.framework.client.ui.util.image.JsonImageViews.createImageView;
+import static dev.webfx.stack.framework.client.ui.util.image.JsonImageViews.createImageView;
 
 /**
  * @author Bruno Salmon

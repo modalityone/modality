@@ -14,7 +14,7 @@
     </dependencies>
 
     <providers>
-        <dev.webfx.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.client.activities.login.LoginUiRoute</dev.webfx.framework.client.ui.uirouter.UiRoute>
+        <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.client.activities.login.LoginUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
     </providers>
 
 </project>

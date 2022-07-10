@@ -1,7 +1,7 @@
 package org.modality_project.base.client.activity.eventdependent;
 
 import org.modality_project.base.client.activity.ModalityDomainPresentationLogicActivityBase;
-import dev.webfx.framework.client.activity.impl.combinations.domainpresentationlogic.impl.DomainPresentationLogicActivityContextFinal;
+import dev.webfx.stack.framework.client.activity.impl.combinations.domainpresentationlogic.impl.DomainPresentationLogicActivityContextFinal;
 import dev.webfx.platform.shared.util.function.Factory;
 
 /**

@@ -1,7 +1,7 @@
 package org.modality_project.base.backoffice.operations.entities.generic;
 
-import dev.webfx.framework.client.orm.reactive.mapping.entities_to_grid.EntityColumn;
-import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_grid.EntityColumn;
+import dev.webfx.stack.framework.shared.orm.entity.Entity;
 
 import java.util.Collection;
 

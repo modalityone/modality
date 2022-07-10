@@ -2,7 +2,7 @@ package org.modality_project.ecommerce.client.businessdata.preselection;
 
 import org.modality_project.base.client.aggregates.event.EventAggregate;
 import org.modality_project.base.shared.entities.Event;
-import dev.webfx.framework.shared.orm.entity.EntityId;
+import dev.webfx.stack.framework.shared.orm.entity.EntityId;
 
 import java.util.HashMap;
 import java.util.Map;

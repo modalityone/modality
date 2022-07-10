@@ -1,6 +1,6 @@
 package org.modality_project.base.server.services.datasource;
 
-import dev.webfx.platform.shared.services.json.spi.impl.listmap.MapJsonObject;
+import dev.webfx.stack.platform.json.spi.impl.listmap.MapJsonObject;
 
 import java.util.HashMap;
 import java.util.Map;

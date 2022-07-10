@@ -8,7 +8,7 @@ import org.modality_project.base.shared.entities.DateInfo;
 import org.modality_project.base.shared.entities.Option;
 import org.modality_project.base.shared.entities.Site;
 import org.modality_project.base.client.entities.util.Labels;
-import dev.webfx.framework.shared.orm.entity.EntityList;
+import dev.webfx.stack.framework.shared.orm.entity.EntityList;
 import dev.webfx.platform.shared.util.collection.Collections;
 
 import java.util.ArrayList;

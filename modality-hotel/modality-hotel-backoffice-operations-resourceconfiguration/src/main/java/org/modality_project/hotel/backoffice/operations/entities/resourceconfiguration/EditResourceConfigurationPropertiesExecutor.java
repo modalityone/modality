@@ -1,9 +1,9 @@
 package org.modality_project.hotel.backoffice.operations.entities.resourceconfiguration;
 
 import javafx.scene.layout.Pane;
-import dev.webfx.framework.client.ui.controls.entity.sheet.EntityPropertiesSheet;
-import dev.webfx.framework.shared.orm.entity.Entity;
-import dev.webfx.platform.shared.async.Future;
+import dev.webfx.stack.framework.client.ui.controls.entity.sheet.EntityPropertiesSheet;
+import dev.webfx.stack.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.platform.async.Future;
 
 final class EditResourceConfigurationPropertiesExecutor {
 

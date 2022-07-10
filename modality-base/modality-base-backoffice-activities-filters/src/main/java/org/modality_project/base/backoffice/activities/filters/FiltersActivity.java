@@ -5,12 +5,12 @@ import dev.webfx.extras.visual.VisualColumn;
 import dev.webfx.extras.visual.VisualResultBuilder;
 import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
-import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.framework.client.ui.action.ActionGroup;
-import dev.webfx.framework.client.ui.action.operation.OperationActionFactoryMixin;
-import dev.webfx.framework.client.ui.controls.entity.selector.ButtonSelector;
-import dev.webfx.framework.shared.orm.domainmodel.DomainClass;
-import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.framework.client.ui.action.ActionGroup;
+import dev.webfx.stack.framework.client.ui.action.operation.OperationActionFactoryMixin;
+import dev.webfx.stack.framework.client.ui.controls.entity.selector.ButtonSelector;
+import dev.webfx.stack.framework.shared.orm.domainmodel.DomainClass;
+import dev.webfx.stack.framework.shared.orm.entity.Entity;
 import dev.webfx.kit.util.properties.Properties;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -26,7 +26,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import org.modality_project.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
 import org.modality_project.base.backoffice.operations.entities.filters.*;
-import org.modality_project.base.backoffice.operations.entities.filters.*;
 import org.modality_project.base.client.activity.eventdependent.EventDependentViewDomainActivity;
 import org.modality_project.base.shared.entities.Filter;
 
@@ -34,7 +33,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static dev.webfx.framework.shared.orm.dql.DqlStatement.*;
+import static dev.webfx.stack.framework.shared.orm.dql.DqlStatement.*;
 
 final class FiltersActivity extends EventDependentViewDomainActivity implements OperationActionFactoryMixin, ConventionalUiBuilderMixin {
 

@@ -8,13 +8,13 @@ import javafx.scene.layout.Pane;
 import org.modality_project.base.backoffice.controls.masterslave.group.GroupMasterSlaveView;
 import org.modality_project.base.client.entities.util.filters.FilterButtonSelectorFactoryMixin;
 import org.modality_project.base.client.entities.util.filters.FilterSearchBar;
-import dev.webfx.framework.client.orm.reactive.dql.statement.conventions.HasSelectedMasterProperty;
-import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualResultProperty;
-import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
-import dev.webfx.framework.client.ui.controls.ControlFactoryMixin;
-import dev.webfx.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.framework.client.orm.reactive.dql.statement.conventions.HasSelectedMasterProperty;
+import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualResultProperty;
+import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
+import dev.webfx.stack.framework.client.ui.controls.ControlFactoryMixin;
+import dev.webfx.stack.framework.shared.orm.entity.Entity;
 
-import static dev.webfx.framework.client.ui.util.layout.LayoutUtil.setHGrowable;
+import static dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil.setHGrowable;
 
 public class ConventionalUiBuilder implements UiBuilder {
 

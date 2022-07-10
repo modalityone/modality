@@ -4,7 +4,7 @@ import org.modality_project.base.client.aggregates.cart.CartAggregate;
 import org.modality_project.base.client.aggregates.cart.CartAggregateImpl;
 import org.modality_project.base.client.aggregates.event.EventAggregate;
 import org.modality_project.base.shared.entities.Cart;
-import dev.webfx.framework.shared.orm.entity.EntityId;
+import dev.webfx.stack.framework.shared.orm.entity.EntityId;
 import dev.webfx.platform.shared.util.collection.Collections;
 
 import java.util.HashMap;

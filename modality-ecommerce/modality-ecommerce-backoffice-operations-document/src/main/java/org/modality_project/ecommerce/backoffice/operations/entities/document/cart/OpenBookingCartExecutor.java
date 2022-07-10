@@ -2,9 +2,9 @@ package org.modality_project.ecommerce.backoffice.operations.entities.document.c
 
 import javafx.scene.layout.Pane;
 import org.modality_project.base.shared.entities.Document;
-import dev.webfx.framework.client.ui.controls.alert.AlertUtil;
+import dev.webfx.stack.framework.client.ui.controls.alert.AlertUtil;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
-import dev.webfx.platform.shared.async.Future;
+import dev.webfx.stack.platform.async.Future;
 
 final class OpenBookingCartExecutor {
 

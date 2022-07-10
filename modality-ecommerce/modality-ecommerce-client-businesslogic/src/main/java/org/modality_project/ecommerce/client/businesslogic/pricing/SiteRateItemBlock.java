@@ -6,7 +6,7 @@ import org.modality_project.base.shared.entities.Document;
 import org.modality_project.base.shared.entities.Item;
 import org.modality_project.base.shared.entities.Rate;
 import org.modality_project.base.shared.entities.Site;
-import dev.webfx.framework.shared.orm.entity.Entities;
+import dev.webfx.stack.framework.shared.orm.entity.Entities;
 import dev.webfx.platform.shared.util.Booleans;
 import dev.webfx.platform.shared.util.Objects;
 

@@ -9,13 +9,13 @@ import org.modality_project.base.shared.entities.Document;
 import org.modality_project.base.shared.entities.DocumentLine;
 import dev.webfx.extras.visual.VisualResult;
 import dev.webfx.extras.visual.VisualSelection;
-import dev.webfx.framework.shared.orm.dql.DqlStatement;
-import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualResultProperty;
-import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualSelectionProperty;
-import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
-import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualSelectionProperty;
-import dev.webfx.framework.client.orm.reactive.dql.statement.conventions.*;
-import dev.webfx.framework.shared.orm.expression.builder.ReferenceResolver;
+import dev.webfx.stack.framework.shared.orm.dql.DqlStatement;
+import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualResultProperty;
+import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualSelectionProperty;
+import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
+import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualSelectionProperty;
+import dev.webfx.stack.framework.client.orm.reactive.dql.statement.conventions.*;
+import dev.webfx.stack.framework.shared.orm.expression.builder.ReferenceResolver;
 
 /**
  * @author Bruno Salmon

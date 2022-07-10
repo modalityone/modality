@@ -1,9 +1,9 @@
 package org.modality_project.crm.backoffice.activities.users;
 
-import dev.webfx.framework.client.ui.action.Action;
-import dev.webfx.framework.client.ui.action.ActionGroup;
-import dev.webfx.framework.client.ui.action.ActionGroupBuilder;
-import dev.webfx.framework.shared.orm.dql.DqlStatement;
+import dev.webfx.stack.framework.client.ui.action.Action;
+import dev.webfx.stack.framework.client.ui.action.ActionGroup;
+import dev.webfx.stack.framework.client.ui.action.ActionGroupBuilder;
+import dev.webfx.stack.framework.shared.orm.dql.DqlStatement;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -19,13 +19,13 @@ import org.modality_project.base.backoffice.controls.masterslave.ConventionalUiB
 import org.modality_project.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
 import org.modality_project.base.client.activity.eventdependent.EventDependentViewDomainActivity;
 import org.modality_project.base.shared.entities.Person;
-import dev.webfx.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import org.modality_project.ecommerce.backoffice.operations.entities.document.EditUsersPersonalDetailsRequest;
 
 import java.util.Arrays;
 import java.util.Collection;
 
-import static dev.webfx.framework.shared.orm.dql.DqlStatement.where;
+import static dev.webfx.stack.framework.shared.orm.dql.DqlStatement.where;
 
 final class UsersActivity extends EventDependentViewDomainActivity implements
         ConventionalUiBuilderMixin {

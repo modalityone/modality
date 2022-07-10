@@ -10,11 +10,6 @@
 
     <!-- Speeding up GWT compilation time in development mode -->
     <!--===========================< webfx-kit-javafxbase-emul >============================-->
-    <!-- used by webfx-kit-javafxcontrols-emul (SOURCE) -->
-    <!-- used by webfx-kit-javafxgraphics-emul (SOURCE) -->
-    <!-- used by webfx-extras-imagestore (SOURCE) -->
-    <!-- used by webfx-extras-webtext-controls (SOURCE) -->
-    <!-- used by webfx-platform-shared-buscall (SOURCE) -->
     <source path="com/sun/javafx"/>
     <source path="com/sun/javafx/binding"/>
     <source path="com/sun/javafx/collections"/>
@@ -28,9 +23,6 @@
     <source path="javafx/event"/>
     <source path="javafx/util"/>
     <!--=========================< webfx-kit-javafxcontrols-emul >==========================-->
-    <!-- used by modality-base-client-activity (SOURCE) -->
-    <!-- used by webfx-extras-webtext-controls (SOURCE) -->
-    <!-- used by webfx-kit-javafxcontrols-registry-gwt (SOURCE) -->
     <source path="com/sun/javafx/scene/control"/>
     <source path="com/sun/javafx/scene/control/behavior"/>
     <source path="com/sun/javafx/scene/control/skin"/>
@@ -39,11 +31,6 @@
     <resource path="images/checkbox"/>
     <public includes="images/checkbox/" path=""/>
     <!--=========================< webfx-kit-javafxgraphics-emul >==========================-->
-    <!-- used by webfx-kit-javafxcontrols-emul (SOURCE) -->
-    <!-- used by modality-base-client-application (SOURCE) -->
-    <!-- used by webfx-extras-imagestore (SOURCE) -->
-    <!-- used by webfx-kit-gwt (SOURCE) -->
-    <!-- used by webfx-kit-javafxgraphics-registry-gwt (SOURCE) -->
     <source path="com/sun/javafx/application"/>
     <source path="com/sun/javafx/cursor"/>
     <source path="com/sun/javafx/geom"/>
@@ -79,72 +66,43 @@
     <source path="javafx/scene/transform"/>
     <source path="javafx/stage"/>
     <!--=================================< elemental2-dom >=================================-->
-    <!-- used by webfx-extras-visual-controls-grid-peers-gwt (SOURCE) -->
-    <!-- used by webfx-extras-webtext-controls-peers-gwt (SOURCE) -->
-    <!-- used by webfx-kit-gwt (SOURCE) -->
-    <!-- used by webfx-kit-javafxcontrols-peers-gwt (SOURCE) -->
-    <!-- used by webfx-kit-javafxgraphics-peers-gwt (SOURCE) -->
-    <!-- used by webfx-platform-gwt-shutdown-impl (SOURCE) -->
-    <!-- used by webfx-platform-gwt-uischeduler-impl (SOURCE) -->
     <inherits name="elemental2.dom.Dom"/>
     <!--=================================< elemental2-svg >=================================-->
-    <!-- used by webfx-kit-javafxgraphics-peers-gwt (SOURCE) -->
     <inherits name="elemental2.svg.Svg"/>
     <!--====================================< gwt-user >====================================-->
-    <!-- used by webfx-extras-webtext-controls-peers-gwt (SOURCE) -->
-    <!-- used by webfx-kit-javafxgraphics-peers-gwt (SOURCE) -->
-    <!-- used by webfx-platform-gwt-boot-impl (SOURCE) -->
-    <!-- used by webfx-platform-gwt-emul-javabase (SOURCE) -->
-    <!-- used by webfx-platform-gwt-json-impl (SOURCE) -->
-    <!-- used by webfx-platform-gwt-resource-impl (SOURCE) -->
-    <!-- used by webfx-platform-gwt-storage-impl (SOURCE) -->
-    <!-- used by webfx-platform-gwt-uischeduler-impl (SOURCE) -->
-    <!-- used by webfx-platform-gwt-websocket-impl (SOURCE) -->
-    <!-- used by webfx-platform-gwt-windowhistory-impl (SOURCE) -->
-    <!-- used by webfx-platform-gwt-windowlocation-impl (SOURCE) -->
     <inherits name="com.google.gwt.user.User"/>
     <!--=================================< java-nio-emul >==================================-->
-    <!-- used by webfx-kit-javafxgraphics-emul (SOURCE) -->
     <inherits name="org.gwtproject.nio.GwtNioSupport"/>
     <!--======================< modality-all-frontoffice-application >======================-->
-    <!-- used by modality-all-frontoffice-application-gwt (APPLICATION) -->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <source path="org/modality_project/all/frontoffice/application"/>
     <!--=========================< modality-base-client-activity >==========================-->
-    <!-- used by modality-base-client-application (SOURCE) -->
     <source path="org/modality_project/base/client/activity"/>
     <source path="org/modality_project/base/client/activity/eventdependent"/>
     <source path="org/modality_project/base/client/activity/organizationdependent"/>
     <source path="org/modality_project/base/client/activity/table"/>
     <source path="org/modality_project/base/client/activity/themes"/>
     <!--========================< modality-base-client-aggregates >=========================-->
-    <!-- used by modality-ecommerce-client-businesslogic (SOURCE) -->
     <source path="org/modality_project/base/client/aggregates/cart"/>
     <source path="org/modality_project/base/client/aggregates/event"/>
     <source path="org/modality_project/base/client/aggregates/person"/>
     <!--========================< modality-base-client-application >========================-->
-    <!-- used by modality-all-frontoffice-application (SOURCE) -->
     <source path="org/modality_project/base/client/application"/>
     <resource path="images/buddhas"/>
     <public includes="images/buddhas/" path=""/>
     <resource path="org/modality_project/base/client/images"/>
     <public includes="org/modality_project/base/client/images/" path=""/>
     <!--=========================< modality-base-client-busconfig >=========================-->
-    <!-- used by modality-base-client-application (RESOURCE) -->
-    <resource path="dev/webfx/platform/client/services/websocketbus/conf"/>
-    <public includes="dev/webfx/platform/client/services/websocketbus/conf/" path=""/>
+    <resource path="dev/webfx/stack/platform/websocketbus/conf"/>
+    <public includes="dev/webfx/stack/platform/websocketbus/conf/" path=""/>
     <!--=========================< modality-base-client-entities >==========================-->
-    <!-- used by modality-ecommerce-client-businesslogic (SOURCE) -->
     <source path="org/modality_project/base/client/entities/util"/>
     <source path="org/modality_project/base/client/entities/util/filters"/>
     <!--===========================< modality-base-client-i18n >============================-->
-    <!-- used by modality-base-client-application (PLUGIN) -->
     <source path="org/modality_project/base/client/operations/i18n"/>
     <source path="org/modality_project/base/client/services/i18n"/>
     <resource path="org/modality_project/base/client/services/i18n/dictionaries"/>
     <public includes="org/modality_project/base/client/services/i18n/dictionaries/" path=""/>
     <!--===========================< modality-base-client-icons >===========================-->
-    <!-- used by modality-base-client-application (SOURCE) -->
     <source path="org/modality_project/base/client/actions"/>
     <source path="org/modality_project/base/client/icons"/>
     <resource path="images/s16"/>
@@ -184,15 +142,10 @@
     <resource path="images/svg/mono"/>
     <public includes="images/svg/mono/" path=""/>
     <!--==================< modality-base-client-operationactionsloading >==================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
-    <!-- used by modality-base-client-application (PLUGIN) -->
     <source path="org/modality_project/base/client/operationactionsloading"/>
     <!--=====================< modality-base-client-presentationmodel >=====================-->
-    <!-- used by modality-base-client-activity (SOURCE) -->
     <source path="org/modality_project/base/client/presentationmodel"/>
     <!--======================< modality-base-client-sessionrecorder >======================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
-    <!-- used by modality-base-client-application (PLUGIN) -->
     <source path="org/modality_project/base/client/jobs/sessionrecorder"/>
     <define-configuration-property is_multi_valued="false" name="application.build.number"/>
     <define-configuration-property is_multi_valued="false" name="application.build.timestamp"/>
@@ -200,15 +153,12 @@
     <define-configuration-property is_multi_valued="false" name="application.name"/>
     <define-configuration-property is_multi_valued="false" name="application.version"/>
     <!--===========================< modality-base-client-util >============================-->
-    <!-- used by modality-event-client-bookingcalendar (SOURCE) -->
     <source path="org/modality_project/base/client/util/functions"/>
     <source path="org/modality_project/base/client/util/log"/>
     <source path="org/modality_project/base/client/util/routing"/>
     <!--========================< modality-base-client-validation >=========================-->
-    <!-- used by modality-crm-client-activities-login (SOURCE) -->
     <source path="org/modality_project/base/client/validation"/>
     <!--========================< modality-base-shared-domainmodel >========================-->
-    <!-- used by modality-base-shared-entities (SOURCE) -->
     <source path="org/modality_project/base/shared/domainmodel/formatters"/>
     <source path="org/modality_project/base/shared/domainmodel/functions"/>
     <source path="org/modality_project/base/shared/services/datasourcemodel"/>
@@ -216,7 +166,6 @@
     <resource path="org/modality_project/base/shared/domainmodel"/>
     <public includes="org/modality_project/base/shared/domainmodel/" path=""/>
     <!--=========================< modality-base-shared-entities >==========================-->
-    <!-- used by modality-base-client-presentationmodel (SOURCE) -->
     <source path="org/modality_project/base/shared/entities"/>
     <source path="org/modality_project/base/shared/entities/converters"/>
     <source path="org/modality_project/base/shared/entities/formatters"/>
@@ -224,28 +173,20 @@
     <source path="org/modality_project/base/shared/entities/markers"/>
     <source path="org/modality_project/base/shared/services/systemmetrics"/>
     <!--======================< modality-crm-client-activities-login >======================-->
-    <!-- used by modality-base-client-application (PLUGIN) -->
     <source path="org/modality_project/crm/client/activities/login"/>
     <!--==================< modality-crm-client-activities-unauthorized >===================-->
-    <!-- used by modality-base-client-application (PLUGIN) -->
     <source path="org/modality_project/crm/client/activities/unauthorized"/>
     <!--===========================< modality-crm-client-authn >============================-->
-    <!-- used by modality-crm-client-authz (SOURCE) -->
     <source path="org/modality_project/crm/client/services/authn"/>
     <!--===========================< modality-crm-client-authz >============================-->
-    <!-- used by modality-base-client-application (PLUGIN) -->
     <source path="org/modality_project/crm/client/services/authz"/>
     <!--======================< modality-crm-client-personaldetails >=======================-->
-    <!-- used by modality-ecommerce-frontoffice-activities-person (SOURCE) -->
     <source path="org/modality_project/crm/client/controls/personaldetails"/>
     <!--=================< modality-ecommerce-client-bookingoptionspanel >==================-->
-    <!-- used by modality-ecommerce-frontoffice-activities-summary (SOURCE) -->
     <source path="org/modality_project/ecommerce/client/controls/bookingoptionspanel"/>
     <!--====================< modality-ecommerce-client-bookingprocess >====================-->
-    <!-- used by modality-ecommerce-frontoffice-activities-person (SOURCE) -->
     <source path="org/modality_project/ecommerce/client/activity/bookingprocess"/>
     <!--====================< modality-ecommerce-client-businesslogic >=====================-->
-    <!-- used by modality-base-client-activity (SOURCE) -->
     <source path="org/modality_project/ecommerce/client/businessdata/feesgroup"/>
     <source path="org/modality_project/ecommerce/client/businessdata/preselection"/>
     <source path="org/modality_project/ecommerce/client/businessdata/workingdocument"/>
@@ -255,601 +196,406 @@
     <source path="org/modality_project/ecommerce/client/businesslogic/rules"/>
     <source path="org/modality_project/ecommerce/client/businesslogic/workingdocument"/>
     <!--=================< modality-ecommerce-frontoffice-activities-cart >=================-->
-    <!-- used by modality-all-frontoffice-application (PLUGIN) -->
     <source path="org/modality_project/ecommerce/frontoffice/activities/cart"/>
     <!--=============< modality-ecommerce-frontoffice-activities-cart-routing >=============-->
-    <!-- used by modality-ecommerce-frontoffice-activities-summary (SOURCE) -->
     <source path="org/modality_project/ecommerce/frontoffice/activities/cart/base"/>
     <source path="org/modality_project/ecommerce/frontoffice/activities/cart/routing"/>
     <source path="org/modality_project/ecommerce/frontoffice/operations/cart"/>
     <!--==============< modality-ecommerce-frontoffice-activities-contactus >===============-->
-    <!-- used by modality-ecommerce-frontoffice-activities-cart (SOURCE) -->
     <source path="org/modality_project/ecommerce/frontoffice/activities/contactus"/>
     <source path="org/modality_project/ecommerce/frontoffice/activities/contactus/routing"/>
     <source path="org/modality_project/ecommerce/frontoffice/operations/contactus"/>
     <!--===============< modality-ecommerce-frontoffice-activities-payment >================-->
-    <!-- used by modality-ecommerce-frontoffice-activities-cart (SOURCE) -->
     <source path="org/modality_project/ecommerce/frontoffice/activities/payment"/>
     <source path="org/modality_project/ecommerce/frontoffice/activities/payment/routing"/>
     <source path="org/modality_project/ecommerce/frontoffice/operations/payment"/>
     <!--================< modality-ecommerce-frontoffice-activities-person >================-->
-    <!-- used by modality-all-frontoffice-application (PLUGIN) -->
     <source path="org/modality_project/ecommerce/frontoffice/activities/person"/>
     <source path="org/modality_project/ecommerce/frontoffice/activities/person/routing"/>
     <source path="org/modality_project/ecommerce/frontoffice/operations/person"/>
     <!--===============< modality-ecommerce-frontoffice-activities-summary >================-->
-    <!-- used by modality-ecommerce-frontoffice-activities-person (SOURCE) -->
     <source path="org/modality_project/ecommerce/frontoffice/activities/summary"/>
     <source path="org/modality_project/ecommerce/frontoffice/activities/summary/routing"/>
     <source path="org/modality_project/ecommerce/frontoffice/operations/summary"/>
     <!--=====================< modality-event-client-bookingcalendar >======================-->
-    <!-- used by modality-event-client-sectionpanel (SOURCE) -->
     <source path="org/modality_project/event/client/controls/bookingcalendar"/>
     <!--=========================< modality-event-client-calendar >=========================-->
-    <!-- used by modality-ecommerce-client-businesslogic (SOURCE) -->
     <source path="org/modality_project/event/client/businessdata/calendar"/>
     <source path="org/modality_project/event/client/businessdata/calendar/impl"/>
     <source path="org/modality_project/event/client/controls/calendargraphic"/>
     <source path="org/modality_project/event/client/controls/calendargraphic/impl"/>
     <!--=======================< modality-event-client-sectionpanel >=======================-->
-    <!-- used by modality-crm-client-activities-login (SOURCE) -->
     <source path="org/modality_project/event/client/controls/sectionpanel"/>
     <!--===================< modality-event-frontoffice-activities-fees >===================-->
-    <!-- used by modality-event-frontoffice-activities-startbooking (SOURCE) -->
     <source path="org/modality_project/event/frontoffice/activities/fees"/>
     <source path="org/modality_project/event/frontoffice/activities/fees/routing"/>
     <source path="org/modality_project/event/frontoffice/operations/fees"/>
     <!--=================< modality-event-frontoffice-activities-options >==================-->
-    <!-- used by modality-ecommerce-frontoffice-activities-cart (SOURCE) -->
     <source path="org/modality_project/event/frontoffice/activities/options"/>
     <source path="org/modality_project/event/frontoffice/activities/options/routing"/>
     <source path="org/modality_project/event/frontoffice/operations/options"/>
     <!--=================< modality-event-frontoffice-activities-program >==================-->
-    <!-- used by modality-event-frontoffice-activities-startbooking (SOURCE) -->
     <source path="org/modality_project/event/frontoffice/activities/program"/>
     <source path="org/modality_project/event/frontoffice/activities/program/routing"/>
     <source path="org/modality_project/event/frontoffice/operations/program"/>
     <!--===============< modality-event-frontoffice-activities-startbooking >===============-->
-    <!-- used by modality-ecommerce-frontoffice-activities-cart (SOURCE) -->
     <source path="org/modality_project/event/frontoffice/activities/startbooking"/>
     <source path="org/modality_project/event/frontoffice/activities/startbooking/routing"/>
     <source path="org/modality_project/event/frontoffice/operations/startbooking"/>
     <!--==================< modality-event-frontoffice-activities-terms >===================-->
-    <!-- used by modality-event-frontoffice-activities-startbooking (SOURCE) -->
     <source path="org/modality_project/event/frontoffice/activities/terms"/>
     <source path="org/modality_project/event/frontoffice/activities/terms/routing"/>
     <source path="org/modality_project/event/frontoffice/operations/terms"/>
     <!--===========================< modality-hotel-shared-time >===========================-->
-    <!-- used by modality-base-shared-entities (SOURCE) -->
     <source path="org/modality_project/hotel/shared/businessdata/time"/>
     <!--===============================< webfx-extras-cell >================================-->
-    <!-- used by webfx-extras-visual-base (SOURCE) -->
-    <!-- used by webfx-extras-visual-controls-grid-peers-gwt (SOURCE) -->
     <source path="dev/webfx/extras/cell/collator"/>
     <source path="dev/webfx/extras/cell/renderer"/>
     <source path="dev/webfx/extras/cell/rowstyle"/>
     <!--==============================< webfx-extras-flexbox >==============================-->
-    <!-- used by modality-event-frontoffice-activities-options (SOURCE) -->
     <source path="dev/webfx/extras/flexbox"/>
     <!--============================< webfx-extras-imagestore >=============================-->
-    <!-- used by webfx-extras-cell (SOURCE) -->
-    <!-- used by webfx-framework-client-controls (SOURCE) -->
     <source path="dev/webfx/extras/imagestore"/>
     <!--===============================< webfx-extras-label >===============================-->
-    <!-- used by webfx-extras-cell (SOURCE) -->
-    <!-- used by webfx-framework-shared-orm-domainmodel (SOURCE) -->
     <source path="dev/webfx/extras/label"/>
     <!--==========================< webfx-extras-materialdesign >===========================-->
-    <!-- used by webfx-framework-client-controls (SOURCE) -->
     <source path="dev/webfx/extras/materialdesign/textfield"/>
     <source path="dev/webfx/extras/materialdesign/util"/>
     <source path="dev/webfx/extras/materialdesign/util/background"/>
     <source path="dev/webfx/extras/materialdesign/util/layout"/>
     <source path="dev/webfx/extras/materialdesign/util/scene"/>
     <!--===============================< webfx-extras-type >================================-->
-    <!-- used by webfx-extras-cell (SOURCE) -->
-    <!-- used by webfx-framework-client-controls (SOURCE) -->
-    <!-- used by webfx-framework-shared-orm-domainmodel (SOURCE) -->
     <source path="dev/webfx/extras/type"/>
     <!--============================< webfx-extras-visual-base >============================-->
-    <!-- used by webfx-extras-visual-controls-grid (SOURCE) -->
-    <!-- used by webfx-extras-visual-controls-grid-peers-gwt (SOURCE) -->
     <source path="dev/webfx/extras/visual"/>
     <source path="dev/webfx/extras/visual/impl"/>
     <!--==========================< webfx-extras-visual-controls >==========================-->
-    <!-- used by webfx-extras-visual-controls-grid (SOURCE) -->
     <source path="dev/webfx/extras/visual/controls"/>
     <!--=======================< webfx-extras-visual-controls-grid >========================-->
-    <!-- used by modality-base-client-activity (SOURCE) -->
-    <!-- used by webfx-extras-visual-controls-grid-peers-gwt (SOURCE) -->
     <source path="dev/webfx/extras/visual/controls/grid"/>
     <!--==================< webfx-extras-visual-controls-grid-peers-gwt >===================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <source path="dev/webfx/extras/cell/collator/grid"/>
     <source path="dev/webfx/extras/visual/controls/grid/peers/gwt/html"/>
     <source path="dev/webfx/extras/visual/controls/grid/registry"/>
     <!--==================< webfx-extras-visual-controls-grid-peers-base >==================-->
-    <!-- used by modality-event-frontoffice-activities-fees (SOURCE) -->
-    <!-- used by webfx-extras-visual-controls-grid-peers-gwt (SOURCE) -->
     <source path="dev/webfx/extras/cell/collator/grid"/>
     <source path="dev/webfx/extras/visual/controls/grid/peers/base"/>
     <!--====================< webfx-extras-visual-controls-peers-base >=====================-->
-    <!-- used by webfx-extras-visual-controls-grid-peers-base (SOURCE) -->
     <source path="dev/webfx/extras/visual/controls/peers/base"/>
     <!--=========================< webfx-extras-webtext-controls >==========================-->
-    <!-- used by webfx-extras-cell (SOURCE) -->
-    <!-- used by webfx-extras-webtext-controls-peers-gwt (SOURCE) -->
     <source path="dev/webfx/extras/webtext/controls"/>
     <!--====================< webfx-extras-webtext-controls-peers-base >====================-->
-    <!-- used by webfx-extras-webtext-controls-peers-gwt (SOURCE) -->
     <source path="dev/webfx/extras/webtext/controls/peers/base"/>
     <!--====================< webfx-extras-webtext-controls-peers-gwt >=====================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <source path="dev/webfx/extras/webtext/controls/peers/gwt/html"/>
     <source path="dev/webfx/extras/webtext/controls/registry"/>
     <!--=========================< webfx-framework-client-action >==========================-->
-    <!-- used by webfx-framework-client-controls (SOURCE) -->
-    <source path="dev/webfx/framework/client/ui/action"/>
-    <source path="dev/webfx/framework/client/ui/action/impl"/>
+    <source path="dev/webfx/stack/framework/client/ui/action"/>
+    <source path="dev/webfx/stack/framework/client/ui/action/impl"/>
     <!--========================< webfx-framework-client-activity >=========================-->
-    <!-- used by webfx-framework-client-controls (SOURCE) -->
-    <source path="dev/webfx/framework/client/activity"/>
-    <source path="dev/webfx/framework/client/activity/impl"/>
-    <source path="dev/webfx/framework/client/activity/impl/composition"/>
-    <source path="dev/webfx/framework/client/activity/impl/composition/impl"/>
-    <source path="dev/webfx/framework/client/activity/impl/elementals/activeproperty"/>
-    <source path="dev/webfx/framework/client/activity/impl/elementals/activeproperty/impl"/>
+    <source path="dev/webfx/stack/framework/client/activity"/>
+    <source path="dev/webfx/stack/framework/client/activity/impl"/>
+    <source path="dev/webfx/stack/framework/client/activity/impl/composition"/>
+    <source path="dev/webfx/stack/framework/client/activity/impl/composition/impl"/>
+    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/activeproperty"/>
+    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/activeproperty/impl"/>
     <!--========================< webfx-framework-client-controls >=========================-->
-    <!-- used by modality-base-client-activity (SOURCE) -->
-    <source path="dev/webfx/framework/client/ui/controls"/>
-    <source path="dev/webfx/framework/client/ui/controls/alert"/>
-    <source path="dev/webfx/framework/client/ui/controls/button"/>
-    <source path="dev/webfx/framework/client/ui/controls/dialog"/>
+    <source path="dev/webfx/stack/framework/client/ui/controls"/>
+    <source path="dev/webfx/stack/framework/client/ui/controls/alert"/>
+    <source path="dev/webfx/stack/framework/client/ui/controls/button"/>
+    <source path="dev/webfx/stack/framework/client/ui/controls/dialog"/>
     <resource path="images/s16/controls"/>
     <public includes="images/s16/controls/" path=""/>
     <!--==========================< webfx-framework-client-i18n >===========================-->
-    <!-- used by webfx-framework-client-action (SOURCE) -->
-    <source path="dev/webfx/framework/client/operations/i18n"/>
-    <source path="dev/webfx/framework/client/services/i18n"/>
-    <source path="dev/webfx/framework/client/services/i18n/spi"/>
-    <source path="dev/webfx/framework/client/services/i18n/spi/impl"/>
+    <source path="dev/webfx/stack/framework/client/operations/i18n"/>
+    <source path="dev/webfx/stack/framework/client/services/i18n"/>
+    <source path="dev/webfx/stack/framework/client/services/i18n/spi"/>
+    <source path="dev/webfx/stack/framework/client/services/i18n/spi/impl"/>
     <!--========================< webfx-framework-client-i18n-json >========================-->
-    <!-- used by modality-base-client-i18n (SOURCE) -->
-    <source path="dev/webfx/framework/client/services/i18n/spi/impl/json"/>
+    <source path="dev/webfx/stack/framework/client/services/i18n/spi/impl/json"/>
     <!--=====================< webfx-framework-client-operationaction >=====================-->
-    <!-- used by modality-base-client-application (SOURCE) -->
-    <source path="dev/webfx/framework/client/ui/action/operation"/>
+    <source path="dev/webfx/stack/framework/client/ui/action/operation"/>
     <!--================< webfx-framework-client-orm-domainmodel-activity >=================-->
-    <!-- used by modality-base-client-activity (SOURCE) -->
-    <source path="dev/webfx/framework/client/activity/impl/combinations/domainpresentation"/>
-    <source path="dev/webfx/framework/client/activity/impl/combinations/domainpresentation/impl"/>
-    <source path="dev/webfx/framework/client/activity/impl/combinations/domainpresentationlogic/impl"/>
-    <source path="dev/webfx/framework/client/activity/impl/combinations/viewdomain"/>
-    <source path="dev/webfx/framework/client/activity/impl/combinations/viewdomain/impl"/>
-    <source path="dev/webfx/framework/client/activity/impl/elementals/domain"/>
-    <source path="dev/webfx/framework/client/activity/impl/elementals/domain/impl"/>
+    <source path="dev/webfx/stack/framework/client/activity/impl/combinations/domainpresentation"/>
+    <source path="dev/webfx/stack/framework/client/activity/impl/combinations/domainpresentation/impl"/>
+    <source path="dev/webfx/stack/framework/client/activity/impl/combinations/domainpresentationlogic/impl"/>
+    <source path="dev/webfx/stack/framework/client/activity/impl/combinations/viewdomain"/>
+    <source path="dev/webfx/stack/framework/client/activity/impl/combinations/viewdomain/impl"/>
+    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/domain"/>
+    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/domain/impl"/>
     <!--===================< webfx-framework-client-orm-entity-controls >===================-->
-    <!-- used by modality-base-client-entities (SOURCE) -->
-    <source path="dev/webfx/framework/client/ui/controls/entity/selector"/>
-    <source path="dev/webfx/framework/client/ui/controls/entity/sheet"/>
+    <source path="dev/webfx/stack/framework/client/ui/controls/entity/selector"/>
+    <source path="dev/webfx/stack/framework/client/ui/controls/entity/sheet"/>
     <!--====================< webfx-framework-client-orm-reactive-dql >=====================-->
-    <!-- used by webfx-framework-client-orm-reactive-visual (SOURCE) -->
-    <source path="dev/webfx/framework/client/orm/reactive/call"/>
-    <source path="dev/webfx/framework/client/orm/reactive/call/query"/>
-    <source path="dev/webfx/framework/client/orm/reactive/call/query/push"/>
-    <source path="dev/webfx/framework/client/orm/reactive/dql/query"/>
-    <source path="dev/webfx/framework/client/orm/reactive/dql/querypush"/>
-    <source path="dev/webfx/framework/client/orm/reactive/dql/statement"/>
-    <source path="dev/webfx/framework/client/orm/reactive/dql/statement/conventions"/>
+    <source path="dev/webfx/stack/framework/client/orm/reactive/call"/>
+    <source path="dev/webfx/stack/framework/client/orm/reactive/call/query"/>
+    <source path="dev/webfx/stack/framework/client/orm/reactive/call/query/push"/>
+    <source path="dev/webfx/stack/framework/client/orm/reactive/dql/query"/>
+    <source path="dev/webfx/stack/framework/client/orm/reactive/dql/querypush"/>
+    <source path="dev/webfx/stack/framework/client/orm/reactive/dql/statement"/>
+    <source path="dev/webfx/stack/framework/client/orm/reactive/dql/statement/conventions"/>
     <!--==================< webfx-framework-client-orm-reactive-entities >==================-->
-    <!-- used by webfx-framework-client-orm-reactive-visual (SOURCE) -->
-    <source path="dev/webfx/framework/client/orm/reactive/mapping/dql_to_entities"/>
-    <source path="dev/webfx/framework/client/orm/reactive/mapping/entities_to_grid"/>
-    <source path="dev/webfx/framework/client/orm/reactive/mapping/entities_to_objects"/>
+    <source path="dev/webfx/stack/framework/client/orm/reactive/mapping/dql_to_entities"/>
+    <source path="dev/webfx/stack/framework/client/orm/reactive/mapping/entities_to_grid"/>
+    <source path="dev/webfx/stack/framework/client/orm/reactive/mapping/entities_to_objects"/>
     <!--===================< webfx-framework-client-orm-reactive-visual >===================-->
-    <!-- used by modality-base-client-activity (SOURCE) -->
-    <source path="dev/webfx/framework/client/orm/reactive/mapping/entities_to_visual"/>
-    <source path="dev/webfx/framework/client/orm/reactive/mapping/entities_to_visual/conventions"/>
+    <source path="dev/webfx/stack/framework/client/orm/reactive/mapping/entities_to_visual"/>
+    <source path="dev/webfx/stack/framework/client/orm/reactive/mapping/entities_to_visual/conventions"/>
     <!--==========================< webfx-framework-client-push >===========================-->
-    <!-- used by webfx-framework-client-orm-reactive-dql (SOURCE) -->
-    <source path="dev/webfx/framework/client/services/push"/>
-    <source path="dev/webfx/framework/client/services/push/spi"/>
+    <source path="dev/webfx/stack/framework/client/services/push"/>
+    <source path="dev/webfx/stack/framework/client/services/push/spi"/>
     <!--=======================< webfx-framework-client-push-simple >=======================-->
-    <!-- used by modality-base-client-application (PLUGIN) -->
-    <source path="dev/webfx/framework/client/services/push/spi/impl/simple"/>
+    <source path="dev/webfx/stack/framework/client/services/push/spi/impl/simple"/>
     <!--========================< webfx-framework-client-querypush >========================-->
-    <!-- used by webfx-framework-client-querypush-simple (SOURCE) -->
-    <source path="dev/webfx/framework/client/services/querypush"/>
+    <source path="dev/webfx/stack/framework/client/services/querypush"/>
     <!--====================< webfx-framework-client-querypush-simple >=====================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
-    <!-- used by modality-base-client-application (PLUGIN) -->
-    <source path="dev/webfx/framework/client/jobs/querypush"/>
+    <source path="dev/webfx/stack/framework/client/jobs/querypush"/>
     <!--========================< webfx-framework-client-uirouter >=========================-->
-    <!-- used by modality-base-client-activity (SOURCE) -->
-    <source path="dev/webfx/framework/client/activity/impl/elementals/presentation"/>
-    <source path="dev/webfx/framework/client/activity/impl/elementals/presentation/impl"/>
-    <source path="dev/webfx/framework/client/activity/impl/elementals/presentation/logic"/>
-    <source path="dev/webfx/framework/client/activity/impl/elementals/presentation/logic/impl"/>
-    <source path="dev/webfx/framework/client/activity/impl/elementals/presentation/view"/>
-    <source path="dev/webfx/framework/client/activity/impl/elementals/presentation/view/impl"/>
-    <source path="dev/webfx/framework/client/activity/impl/elementals/uiroute"/>
-    <source path="dev/webfx/framework/client/activity/impl/elementals/uiroute/impl"/>
-    <source path="dev/webfx/framework/client/activity/impl/elementals/view"/>
-    <source path="dev/webfx/framework/client/activity/impl/elementals/view/impl"/>
-    <source path="dev/webfx/framework/client/operations/route"/>
-    <source path="dev/webfx/framework/client/ui/uirouter"/>
-    <source path="dev/webfx/framework/client/ui/uirouter/impl"/>
-    <source path="dev/webfx/framework/client/ui/uirouter/uisession"/>
-    <source path="dev/webfx/framework/client/ui/uirouter/uisession/impl"/>
+    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/presentation"/>
+    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/presentation/impl"/>
+    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/presentation/logic"/>
+    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/presentation/logic/impl"/>
+    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/presentation/view"/>
+    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/presentation/view/impl"/>
+    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/uiroute"/>
+    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/uiroute/impl"/>
+    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/view"/>
+    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/view/impl"/>
+    <source path="dev/webfx/stack/framework/client/operations/route"/>
+    <source path="dev/webfx/stack/framework/client/ui/uirouter"/>
+    <source path="dev/webfx/stack/framework/client/ui/uirouter/impl"/>
+    <source path="dev/webfx/stack/framework/client/ui/uirouter/uisession"/>
+    <source path="dev/webfx/stack/framework/client/ui/uirouter/uisession/impl"/>
     <!--==========================< webfx-framework-client-util >===========================-->
-    <!-- used by webfx-framework-client-action (SOURCE) -->
-    <source path="dev/webfx/framework/client/ui/util/anim"/>
-    <source path="dev/webfx/framework/client/ui/util/background"/>
-    <source path="dev/webfx/framework/client/ui/util/border"/>
-    <source path="dev/webfx/framework/client/ui/util/image"/>
-    <source path="dev/webfx/framework/client/ui/util/layout"/>
-    <source path="dev/webfx/framework/client/ui/util/paint"/>
-    <source path="dev/webfx/framework/client/ui/util/scene"/>
+    <source path="dev/webfx/stack/framework/client/ui/util/anim"/>
+    <source path="dev/webfx/stack/framework/client/ui/util/background"/>
+    <source path="dev/webfx/stack/framework/client/ui/util/border"/>
+    <source path="dev/webfx/stack/framework/client/ui/util/image"/>
+    <source path="dev/webfx/stack/framework/client/ui/util/layout"/>
+    <source path="dev/webfx/stack/framework/client/ui/util/paint"/>
+    <source path="dev/webfx/stack/framework/client/ui/util/scene"/>
     <!--=======================< webfx-framework-client-validation >========================-->
-    <!-- used by webfx-framework-client-controls (SOURCE) -->
-    <source path="dev/webfx/framework/client/ui/validation/controlsfx/control/decoration"/>
-    <source path="dev/webfx/framework/client/ui/validation/controlsfx/impl"/>
-    <source path="dev/webfx/framework/client/ui/validation/controlsfx/impl/skin"/>
-    <source path="dev/webfx/framework/client/ui/validation/controlsfx/tools"/>
-    <source path="dev/webfx/framework/client/ui/validation/controlsfx/validation"/>
-    <source path="dev/webfx/framework/client/ui/validation/controlsfx/validation/decoration"/>
-    <source path="dev/webfx/framework/client/ui/validation/mvvmfx"/>
-    <source path="dev/webfx/framework/client/ui/validation/mvvmfx/visualization"/>
-    <resource path="dev/webfx/framework/client/ui/validation/controlsfx/images"/>
-    <public includes="dev/webfx/framework/client/ui/validation/controlsfx/images/" path=""/>
+    <source path="dev/webfx/stack/framework/client/ui/validation/controlsfx/control/decoration"/>
+    <source path="dev/webfx/stack/framework/client/ui/validation/controlsfx/impl"/>
+    <source path="dev/webfx/stack/framework/client/ui/validation/controlsfx/impl/skin"/>
+    <source path="dev/webfx/stack/framework/client/ui/validation/controlsfx/tools"/>
+    <source path="dev/webfx/stack/framework/client/ui/validation/controlsfx/validation"/>
+    <source path="dev/webfx/stack/framework/client/ui/validation/controlsfx/validation/decoration"/>
+    <source path="dev/webfx/stack/framework/client/ui/validation/mvvmfx"/>
+    <source path="dev/webfx/stack/framework/client/ui/validation/mvvmfx/visualization"/>
+    <resource path="dev/webfx/stack/framework/client/ui/validation/controlsfx/images"/>
+    <public includes="dev/webfx/stack/framework/client/ui/validation/controlsfx/images/" path=""/>
     <!--==========================< webfx-framework-shared-authn >==========================-->
-    <!-- used by modality-crm-client-authn (SOURCE) -->
-    <source path="dev/webfx/framework/shared/services/authn"/>
-    <source path="dev/webfx/framework/shared/services/authn/spi"/>
+    <source path="dev/webfx/stack/framework/shared/services/authn"/>
+    <source path="dev/webfx/stack/framework/shared/services/authn/spi"/>
     <!--==========================< webfx-framework-shared-authz >==========================-->
-    <!-- used by webfx-framework-client-uirouter (SOURCE) -->
-    <source path="dev/webfx/framework/shared/operation/authz"/>
-    <source path="dev/webfx/framework/shared/services/authz"/>
-    <source path="dev/webfx/framework/shared/services/authz/mixin"/>
-    <source path="dev/webfx/framework/shared/services/authz/spi"/>
-    <source path="dev/webfx/framework/shared/services/authz/spi/impl"/>
-    <source path="dev/webfx/framework/shared/services/authz/spi/impl/inmemory"/>
-    <source path="dev/webfx/framework/shared/services/authz/spi/impl/inmemory/parser"/>
+    <source path="dev/webfx/stack/framework/shared/operation/authz"/>
+    <source path="dev/webfx/stack/framework/shared/services/authz"/>
+    <source path="dev/webfx/stack/framework/shared/services/authz/mixin"/>
+    <source path="dev/webfx/stack/framework/shared/services/authz/spi"/>
+    <source path="dev/webfx/stack/framework/shared/services/authz/spi/impl"/>
+    <source path="dev/webfx/stack/framework/shared/services/authz/spi/impl/inmemory"/>
+    <source path="dev/webfx/stack/framework/shared/services/authz/spi/impl/inmemory/parser"/>
     <!--========================< webfx-framework-shared-operation >========================-->
-    <!-- used by webfx-framework-client-i18n (SOURCE) -->
-    <source path="dev/webfx/framework/shared/operation"/>
+    <source path="dev/webfx/stack/framework/shared/operation"/>
     <!--===============< webfx-framework-shared-orm-datasourcemodelservice >================-->
-    <!-- used by modality-base-shared-domainmodel (SOURCE) -->
-    <!-- used by webfx-framework-shared-orm-dql-query-interceptor (SOURCE) -->
-    <!-- used by webfx-framework-shared-orm-dql-querypush-interceptor (SOURCE) -->
-    <!-- used by webfx-framework-shared-orm-dql-submit-interceptor (SOURCE) -->
-    <source path="dev/webfx/framework/shared/services/datasourcemodel"/>
-    <source path="dev/webfx/framework/shared/services/datasourcemodel/spi"/>
+    <source path="dev/webfx/stack/framework/shared/services/datasourcemodel"/>
+    <source path="dev/webfx/stack/framework/shared/services/datasourcemodel/spi"/>
     <!--=====================< webfx-framework-shared-orm-domainmodel >=====================-->
-    <!-- used by webfx-framework-client-orm-reactive-dql (SOURCE) -->
-    <!-- used by webfx-framework-shared-orm-datasourcemodelservice (SOURCE) -->
-    <source path="dev/webfx/framework/shared/orm/domainmodel"/>
-    <source path="dev/webfx/framework/shared/orm/domainmodel/builder"/>
-    <source path="dev/webfx/framework/shared/orm/domainmodel/formatter"/>
-    <source path="dev/webfx/framework/shared/orm/domainmodel/lciimpl"/>
+    <source path="dev/webfx/stack/framework/shared/orm/domainmodel"/>
+    <source path="dev/webfx/stack/framework/shared/orm/domainmodel/builder"/>
+    <source path="dev/webfx/stack/framework/shared/orm/domainmodel/formatter"/>
+    <source path="dev/webfx/stack/framework/shared/orm/domainmodel/lciimpl"/>
     <!--=================< webfx-framework-shared-orm-domainmodelservice >==================-->
-    <!-- used by modality-base-shared-domainmodel (SOURCE) -->
-    <source path="dev/webfx/framework/shared/services/domainmodel"/>
-    <source path="dev/webfx/framework/shared/services/domainmodel/spi"/>
+    <source path="dev/webfx/stack/framework/shared/services/domainmodel"/>
+    <source path="dev/webfx/stack/framework/shared/services/domainmodel/spi"/>
     <!--=========================< webfx-framework-shared-orm-dql >=========================-->
-    <!-- used by webfx-framework-shared-orm-domainmodel (SOURCE) -->
-    <source path="dev/webfx/framework/shared/orm/dql"/>
-    <source path="dev/webfx/framework/shared/orm/dql/sqlcompiler"/>
-    <source path="dev/webfx/framework/shared/orm/dql/sqlcompiler/lci"/>
-    <source path="dev/webfx/framework/shared/orm/dql/sqlcompiler/lci/mock"/>
-    <source path="dev/webfx/framework/shared/orm/dql/sqlcompiler/mapping"/>
-    <source path="dev/webfx/framework/shared/orm/dql/sqlcompiler/sql"/>
-    <source path="dev/webfx/framework/shared/orm/dql/sqlcompiler/sql/dbms"/>
-    <source path="dev/webfx/framework/shared/orm/dql/sqlcompiler/terms"/>
+    <source path="dev/webfx/stack/framework/shared/orm/dql"/>
+    <source path="dev/webfx/stack/framework/shared/orm/dql/sqlcompiler"/>
+    <source path="dev/webfx/stack/framework/shared/orm/dql/sqlcompiler/lci"/>
+    <source path="dev/webfx/stack/framework/shared/orm/dql/sqlcompiler/lci/mock"/>
+    <source path="dev/webfx/stack/framework/shared/orm/dql/sqlcompiler/mapping"/>
+    <source path="dev/webfx/stack/framework/shared/orm/dql/sqlcompiler/sql"/>
+    <source path="dev/webfx/stack/framework/shared/orm/dql/sqlcompiler/sql/dbms"/>
+    <source path="dev/webfx/stack/framework/shared/orm/dql/sqlcompiler/terms"/>
     <!--================< webfx-framework-shared-orm-dql-query-interceptor >================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
-    <source path="dev/webfx/framework/shared/interceptors/dqlquery"/>
+    <source path="dev/webfx/stack/framework/shared/interceptors/dqlquery"/>
     <!--==============< webfx-framework-shared-orm-dql-querypush-interceptor >==============-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
-    <source path="dev/webfx/framework/shared/interceptors/dqlquerypush"/>
+    <source path="dev/webfx/stack/framework/shared/interceptors/dqlquerypush"/>
     <!--===============< webfx-framework-shared-orm-dql-submit-interceptor >================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
-    <source path="dev/webfx/framework/shared/interceptors/dqlsubmit"/>
+    <source path="dev/webfx/stack/framework/shared/interceptors/dqlsubmit"/>
     <!--=======================< webfx-framework-shared-orm-entity >========================-->
-    <!-- used by webfx-framework-client-orm-reactive-dql (SOURCE) -->
-    <source path="dev/webfx/framework/shared/orm/entity"/>
-    <source path="dev/webfx/framework/shared/orm/entity/impl"/>
-    <source path="dev/webfx/framework/shared/orm/entity/lciimpl"/>
-    <source path="dev/webfx/framework/shared/orm/entity/query_result_to_entities"/>
-    <source path="dev/webfx/framework/shared/orm/entity/result"/>
-    <source path="dev/webfx/framework/shared/orm/entity/result/impl"/>
+    <source path="dev/webfx/stack/framework/shared/orm/entity"/>
+    <source path="dev/webfx/stack/framework/shared/orm/entity/impl"/>
+    <source path="dev/webfx/stack/framework/shared/orm/entity/lciimpl"/>
+    <source path="dev/webfx/stack/framework/shared/orm/entity/query_result_to_entities"/>
+    <source path="dev/webfx/stack/framework/shared/orm/entity/result"/>
+    <source path="dev/webfx/stack/framework/shared/orm/entity/result/impl"/>
     <!--=====================< webfx-framework-shared-orm-expression >======================-->
-    <!-- used by webfx-framework-shared-orm-dql (SOURCE) -->
-    <source path="dev/webfx/framework/shared/orm/expression"/>
-    <source path="dev/webfx/framework/shared/orm/expression/builder"/>
-    <source path="dev/webfx/framework/shared/orm/expression/builder/terms"/>
-    <source path="dev/webfx/framework/shared/orm/expression/lci"/>
-    <source path="dev/webfx/framework/shared/orm/expression/parser"/>
-    <source path="dev/webfx/framework/shared/orm/expression/parser/javacup"/>
-    <source path="dev/webfx/framework/shared/orm/expression/parser/jflex"/>
-    <source path="dev/webfx/framework/shared/orm/expression/parser/lci"/>
-    <source path="dev/webfx/framework/shared/orm/expression/parser/lci/mock"/>
-    <source path="dev/webfx/framework/shared/orm/expression/terms"/>
-    <source path="dev/webfx/framework/shared/orm/expression/terms/function"/>
-    <source path="dev/webfx/framework/shared/orm/expression/terms/function/java"/>
+    <source path="dev/webfx/stack/framework/shared/orm/expression"/>
+    <source path="dev/webfx/stack/framework/shared/orm/expression/builder"/>
+    <source path="dev/webfx/stack/framework/shared/orm/expression/builder/terms"/>
+    <source path="dev/webfx/stack/framework/shared/orm/expression/lci"/>
+    <source path="dev/webfx/stack/framework/shared/orm/expression/parser"/>
+    <source path="dev/webfx/stack/framework/shared/orm/expression/parser/javacup"/>
+    <source path="dev/webfx/stack/framework/shared/orm/expression/parser/jflex"/>
+    <source path="dev/webfx/stack/framework/shared/orm/expression/parser/lci"/>
+    <source path="dev/webfx/stack/framework/shared/orm/expression/parser/lci/mock"/>
+    <source path="dev/webfx/stack/framework/shared/orm/expression/terms"/>
+    <source path="dev/webfx/stack/framework/shared/orm/expression/terms/function"/>
+    <source path="dev/webfx/stack/framework/shared/orm/expression/terms/function/java"/>
     <!--==========================< webfx-framework-shared-push >===========================-->
-    <!-- used by webfx-framework-client-push (SOURCE) -->
-    <source path="dev/webfx/framework/shared/services/push"/>
+    <source path="dev/webfx/stack/framework/shared/services/push"/>
     <!--========================< webfx-framework-shared-querypush >========================-->
-    <!-- used by webfx-framework-client-orm-reactive-dql (SOURCE) -->
-    <!-- used by webfx-framework-shared-orm-dql-querypush-interceptor (SOURCE) -->
-    <source path="dev/webfx/framework/shared/services/querypush"/>
-    <source path="dev/webfx/framework/shared/services/querypush/diff"/>
-    <source path="dev/webfx/framework/shared/services/querypush/diff/impl"/>
-    <source path="dev/webfx/framework/shared/services/querypush/spi"/>
-    <source path="dev/webfx/framework/shared/services/querypush/spi/impl"/>
+    <source path="dev/webfx/stack/framework/shared/services/querypush"/>
+    <source path="dev/webfx/stack/framework/shared/services/querypush/diff"/>
+    <source path="dev/webfx/stack/framework/shared/services/querypush/diff/impl"/>
+    <source path="dev/webfx/stack/framework/shared/services/querypush/spi"/>
+    <source path="dev/webfx/stack/framework/shared/services/querypush/spi/impl"/>
     <!--=========================< webfx-framework-shared-router >==========================-->
-    <!-- used by webfx-framework-client-uirouter (SOURCE) -->
-    <source path="dev/webfx/framework/shared/router"/>
-    <source path="dev/webfx/framework/shared/router/auth"/>
-    <source path="dev/webfx/framework/shared/router/auth/authz"/>
-    <source path="dev/webfx/framework/shared/router/auth/impl"/>
-    <source path="dev/webfx/framework/shared/router/impl"/>
-    <source path="dev/webfx/framework/shared/router/session"/>
-    <source path="dev/webfx/framework/shared/router/session/impl"/>
-    <source path="dev/webfx/framework/shared/router/util"/>
+    <source path="dev/webfx/stack/framework/shared/router"/>
+    <source path="dev/webfx/stack/framework/shared/router/auth"/>
+    <source path="dev/webfx/stack/framework/shared/router/auth/authz"/>
+    <source path="dev/webfx/stack/framework/shared/router/auth/impl"/>
+    <source path="dev/webfx/stack/framework/shared/router/impl"/>
+    <source path="dev/webfx/stack/framework/shared/router/session"/>
+    <source path="dev/webfx/stack/framework/shared/router/session/impl"/>
+    <source path="dev/webfx/stack/framework/shared/router/util"/>
     <!--=================================< webfx-kit-gwt >==================================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
-    <!-- used by modality-all-frontoffice-application-gwt (EMULATION) -->
     <source path="dev/webfx/kit/launcher/spi/gwt"/>
     <source path="dev/webfx/kit/mapper/spi/gwt"/>
     <!--======================< webfx-kit-javafxcontrols-peers-base >=======================-->
-    <!-- used by webfx-extras-visual-controls-peers-base (SOURCE) -->
-    <!-- used by webfx-extras-webtext-controls-peers-base (SOURCE) -->
-    <!-- used by webfx-kit-javafxcontrols-peers-gwt (SOURCE) -->
     <source path="dev/webfx/kit/mapper/peers/javafxcontrols/base"/>
     <!--=======================< webfx-kit-javafxcontrols-peers-gwt >=======================-->
-    <!-- used by webfx-extras-webtext-controls-peers-gwt (SOURCE) -->
-    <!-- used by webfx-kit-javafxcontrols-registry-gwt (SOURCE) -->
     <source path="dev/webfx/kit/mapper/peers/javafxcontrols/gwt/html"/>
     <!--=====================< webfx-kit-javafxcontrols-registry-gwt >======================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <source path="dev/webfx/kit/registry/javafxcontrols"/>
     <!--=========================< webfx-kit-javafxgraphics-peers >=========================-->
-    <!-- used by webfx-kit-javafxgraphics-emul (SOURCE) -->
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics"/>
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics/markers"/>
     <!--======================< webfx-kit-javafxgraphics-peers-base >=======================-->
-    <!-- used by webfx-kit-javafxcontrols-peers-base (SOURCE) -->
-    <!-- used by webfx-kit-javafxgraphics-peers-gwt (SOURCE) -->
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics/base"/>
     <!--=======================< webfx-kit-javafxgraphics-peers-gwt >=======================-->
-    <!-- used by webfx-extras-visual-controls-grid-peers-gwt (SOURCE) -->
-    <!-- used by webfx-kit-gwt (SOURCE) -->
-    <!-- used by webfx-kit-javafxcontrols-peers-gwt (SOURCE) -->
-    <!-- used by webfx-kit-javafxgraphics-registry-gwt (SOURCE) -->
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics/gwt/html"/>
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics/gwt/html/layoutmeasurable"/>
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics/gwt/shared"/>
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics/gwt/svg"/>
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics/gwt/util"/>
     <!--=====================< webfx-kit-javafxgraphics-registry-gwt >======================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <source path="dev/webfx/kit/registry/javafxgraphics"/>
     <!--===============================< webfx-kit-launcher >===============================-->
-    <!-- used by webfx-kit-javafxgraphics-emul (SOURCE) -->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <source path="dev/webfx/kit/launcher"/>
     <source path="dev/webfx/kit/launcher/spi"/>
     <source path="dev/webfx/kit/launcher/spi/base"/>
     <!--=================================< webfx-kit-util >=================================-->
-    <!-- used by webfx-kit-javafxgraphics-emul (SOURCE) -->
     <source path="dev/webfx/kit/util/properties"/>
     <source path="dev/webfx/kit/util/properties/conversion"/>
     <!--============================< webfx-lib-javacupruntime >============================-->
-    <!-- used by webfx-framework-shared-orm-expression (SOURCE) -->
-    <!-- used by webfx-platform-shared-json (SOURCE) -->
     <source path="java_cup/runtime"/>
     <!--=========================< webfx-platform-client-storage >==========================-->
-    <!-- used by modality-base-client-sessionrecorder (SOURCE) -->
-    <!-- used by webfx-platform-gwt-storage-impl (SOURCE) -->
     <source path="dev/webfx/platform/client/services/storage"/>
     <source path="dev/webfx/platform/client/services/storage/spi"/>
     <!--=======================< webfx-platform-client-uischeduler >========================-->
-    <!-- used by webfx-kit-launcher (SOURCE) -->
-    <!-- used by webfx-platform-gwt-uischeduler-impl (SOURCE) -->
-    <!-- used by webfx-platform-web-windowhistory-impl (SOURCE) -->
     <source path="dev/webfx/platform/client/services/uischeduler"/>
     <source path="dev/webfx/platform/client/services/uischeduler/spi"/>
     <source path="dev/webfx/platform/client/services/uischeduler/spi/impl"/>
     <!--========================< webfx-platform-client-websocket >=========================-->
-    <!-- used by webfx-platform-client-websocketbus (SOURCE) -->
-    <!-- used by webfx-platform-gwt-websocket-impl (SOURCE) -->
-    <source path="dev/webfx/platform/client/services/websocket"/>
-    <source path="dev/webfx/platform/client/services/websocket/spi"/>
+    <source path="dev/webfx/stack/platform/websocket"/>
+    <source path="dev/webfx/stack/platform/websocket/spi"/>
     <!--=======================< webfx-platform-client-websocketbus >=======================-->
-    <!-- used by modality-base-client-aggregates (SOURCE) -->
-    <!-- used by webfx-platform-web-websocketbus (SOURCE) -->
-    <source path="dev/webfx/platform/client/services/websocketbus"/>
+    <source path="dev/webfx/stack/platform/websocketbus"/>
     <!--======================< webfx-platform-client-windowhistory >=======================-->
-    <!-- used by webfx-framework-client-uirouter (SOURCE) -->
-    <!-- used by webfx-platform-web-windowhistory-impl (SOURCE) -->
-    <source path="dev/webfx/platform/client/services/windowhistory"/>
-    <source path="dev/webfx/platform/client/services/windowhistory/spi"/>
-    <source path="dev/webfx/platform/client/services/windowhistory/spi/impl"/>
+    <source path="dev/webfx/stack/platform/windowhistory"/>
+    <source path="dev/webfx/stack/platform/windowhistory/spi"/>
+    <source path="dev/webfx/stack/platform/windowhistory/spi/impl"/>
     <!--======================< webfx-platform-client-windowlocation >======================-->
-    <!-- used by webfx-platform-client-windowhistory (SOURCE) -->
-    <!-- used by webfx-platform-gwt-windowlocation-impl (SOURCE) -->
-    <!-- used by webfx-platform-web-websocketbus (SOURCE) -->
-    <source path="dev/webfx/platform/client/services/windowlocation"/>
-    <source path="dev/webfx/platform/client/services/windowlocation/spi"/>
-    <source path="dev/webfx/platform/client/services/windowlocation/spi/impl"/>
+    <source path="dev/webfx/stack/platform/windowlocation"/>
+    <source path="dev/webfx/stack/platform/windowlocation/spi"/>
+    <source path="dev/webfx/stack/platform/windowlocation/spi/impl"/>
     <!--==========================< webfx-platform-gwt-boot-impl >==========================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <source path="dev/webfx/platform/gwt/services/boot/spi/impl"/>
     <!--==========================< webfx-platform-gwt-json-impl >==========================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
-    <!-- used by webfx-platform-gwt-windowhistory-impl (SOURCE) -->
-    <source path="dev/webfx/platform/gwt/services/json/spi/impl"/>
+    <source path="dev/webfx/stack/platform/json/spi/impl/gwt"/>
     <!--==========================< webfx-platform-gwt-log-impl >===========================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <source path="dev/webfx/platform/gwt/services/log/spi/impl"/>
     <!--========================< webfx-platform-gwt-resource-impl >========================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <source path="dev/webfx/platform/gwt/services/resource/spi/impl"/>
     <!--========================< webfx-platform-gwt-shutdown-impl >========================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <source path="dev/webfx/platform/gwt/services/shutdown/spi/impl"/>
     <!--========================< webfx-platform-gwt-storage-impl >=========================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <source path="dev/webfx/platform/gwt/services/storage/spi/impl"/>
     <!--======================< webfx-platform-gwt-uischeduler-impl >=======================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
     <source path="dev/webfx/platform/gwt/services/uischeduler/spi/impl"/>
     <!--=======================< webfx-platform-gwt-websocket-impl >========================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
-    <source path="dev/webfx/platform/gwt/services/websocket/spi/impl"/>
+    <source path="dev/webfx/stack/platform/websocket/spi/impl/gwt"/>
     <!--=====================< webfx-platform-gwt-windowhistory-impl >======================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
-    <source path="dev/webfx/platform/gwt/services/windowhistory/spi/impl"/>
-    <source path="dev/webfx/platform/gwt/services/windowhistory/spi/impl/jsinterop"/>
+    <source path="dev/webfx/stack/platform/windowhistory/spi/impl/gwt"/>
+    <source path="dev/webfx/stack/platform/windowhistory/spi/impl/gwt/jsinterop"/>
     <!--=====================< webfx-platform-gwt-windowlocation-impl >=====================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
-    <source path="dev/webfx/platform/gwt/services/windowlocation/spi/impl"/>
-    <source path="dev/webfx/platform/gwt/services/windowlocation/spi/impl/jsinterop"/>
+    <source path="dev/webfx/stack/platform/windowlocation/spi/impl/gwt"/>
+    <source path="dev/webfx/stack/platform/windowlocation/spi/impl/gwt/jsinterop"/>
     <!--==========================< webfx-platform-shared-async >===========================-->
-    <!-- used by webfx-framework-shared-operation (SOURCE) -->
-    <!-- used by webfx-framework-shared-orm-datasourcemodelservice (SOURCE) -->
-    <!-- used by webfx-platform-client-websocketbus (SOURCE) -->
-    <!-- used by webfx-platform-client-windowhistory (SOURCE) -->
-    <!-- used by webfx-platform-gwt-windowhistory-impl (SOURCE) -->
-    <!-- used by webfx-platform-shared-query (SOURCE) -->
-    <!-- used by webfx-platform-shared-submit (SOURCE) -->
-    <source path="dev/webfx/platform/shared/async"/>
-    <source path="dev/webfx/platform/shared/async/impl"/>
+    <source path="dev/webfx/stack/platform/async"/>
+    <source path="dev/webfx/stack/platform/async/impl"/>
     <!--===========================< webfx-platform-shared-boot >===========================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
-    <!-- used by webfx-framework-shared-orm-dql-query-interceptor (SOURCE) -->
-    <!-- used by webfx-framework-shared-orm-dql-submit-interceptor (SOURCE) -->
-    <!-- used by webfx-kit-launcher (SOURCE) -->
-    <!-- used by webfx-platform-gwt-boot-impl (SOURCE) -->
-    <!-- used by webfx-platform-gwt-resource-impl (SOURCE) -->
-    <!-- used by webfx-platform-shared-buscall (SOURCE) -->
     <source path="dev/webfx/platform/shared/services/boot"/>
     <source path="dev/webfx/platform/shared/services/boot/spi"/>
     <source path="dev/webfx/platform/shared/services/boot/spi/impl"/>
     <!--===========================< webfx-platform-shared-bus >============================-->
-    <!-- used by webfx-framework-client-push (SOURCE) -->
-    <!-- used by webfx-platform-client-websocketbus (SOURCE) -->
-    <!-- used by webfx-platform-shared-buscall (SOURCE) -->
-    <source path="dev/webfx/platform/shared/services/bus"/>
-    <source path="dev/webfx/platform/shared/services/bus/spi"/>
-    <source path="dev/webfx/platform/shared/services/bus/spi/impl"/>
+    <source path="dev/webfx/stack/platform/shared/services/bus"/>
+    <source path="dev/webfx/stack/platform/shared/services/bus/spi"/>
+    <source path="dev/webfx/stack/platform/shared/services/bus/spi/impl"/>
     <!--=========================< webfx-platform-shared-buscall >==========================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
-    <!-- used by webfx-framework-client-push (SOURCE) -->
-    <!-- used by webfx-framework-shared-querypush (SOURCE) -->
-    <!-- used by webfx-platform-shared-query (SOURCE) -->
-    <!-- used by webfx-platform-shared-submit (SOURCE) -->
-    <source path="dev/webfx/platform/shared/services/buscall"/>
-    <source path="dev/webfx/platform/shared/services/buscall/spi"/>
+    <source path="dev/webfx/stack/platform/shared/services/buscall"/>
+    <source path="dev/webfx/stack/platform/shared/services/buscall/spi"/>
     <!--========================< webfx-platform-shared-datascope >=========================-->
-    <!-- used by webfx-framework-shared-orm-dql-submit-interceptor (SOURCE) -->
-    <!-- used by webfx-framework-shared-orm-entity (SOURCE) -->
-    <!-- used by webfx-framework-shared-querypush (SOURCE) -->
-    <!-- used by webfx-platform-shared-query (SOURCE) -->
-    <!-- used by webfx-platform-shared-submit (SOURCE) -->
-    <source path="dev/webfx/platform/shared/datascope"/>
-    <source path="dev/webfx/platform/shared/datascope/aggregate"/>
-    <source path="dev/webfx/platform/shared/datascope/schema"/>
+    <source path="dev/webfx/stack/platform/shared/datascope"/>
+    <source path="dev/webfx/stack/platform/shared/datascope/aggregate"/>
+    <source path="dev/webfx/stack/platform/shared/datascope/schema"/>
     <!--========================< webfx-platform-shared-datasource >========================-->
-    <!-- used by webfx-framework-shared-orm-dql-query-interceptor (SOURCE) -->
-    <!-- used by webfx-framework-shared-orm-dql-submit-interceptor (SOURCE) -->
-    <!-- used by webfx-framework-shared-querypush (SOURCE) -->
-    <!-- used by webfx-platform-shared-query (SOURCE) -->
-    <!-- used by webfx-platform-shared-submit (SOURCE) -->
-    <source path="dev/webfx/platform/shared/services/datasource"/>
-    <source path="dev/webfx/platform/shared/services/datasource/jdbc"/>
-    <source path="dev/webfx/platform/shared/services/datasource/spi"/>
-    <source path="dev/webfx/platform/shared/services/datasource/spi/simple"/>
+    <source path="dev/webfx/stack/platform/shared/services/datasource"/>
+    <source path="dev/webfx/stack/platform/shared/services/datasource/jdbc"/>
+    <source path="dev/webfx/stack/platform/shared/services/datasource/spi"/>
+    <source path="dev/webfx/stack/platform/shared/services/datasource/spi/simple"/>
     <!--===========================< webfx-platform-shared-json >===========================-->
-    <!-- used by webfx-framework-client-util (SOURCE) -->
-    <!-- used by webfx-framework-shared-orm-expression (SOURCE) -->
-    <!-- used by webfx-platform-client-websocket (SOURCE) -->
-    <!-- used by webfx-platform-client-windowlocation (SOURCE) -->
-    <!-- used by webfx-platform-gwt-json-impl (SOURCE) -->
-    <!-- used by webfx-platform-shared-bus (SOURCE) -->
-    <source path="dev/webfx/platform/shared/services/json"/>
-    <source path="dev/webfx/platform/shared/services/json/parser"/>
-    <source path="dev/webfx/platform/shared/services/json/parser/javacup"/>
-    <source path="dev/webfx/platform/shared/services/json/parser/jflex"/>
-    <source path="dev/webfx/platform/shared/services/json/spi"/>
-    <source path="dev/webfx/platform/shared/services/json/spi/impl/listmap"/>
+    <source path="dev/webfx/stack/platform/json"/>
+    <source path="dev/webfx/stack/platform/json/parser"/>
+    <source path="dev/webfx/stack/platform/json/parser/javacup"/>
+    <source path="dev/webfx/stack/platform/json/parser/jflex"/>
+    <source path="dev/webfx/stack/platform/json/spi"/>
+    <source path="dev/webfx/stack/platform/json/spi/impl/listmap"/>
     <!--===========================< webfx-platform-shared-log >============================-->
-    <!-- used by webfx-framework-shared-orm-expression (SOURCE) -->
-    <!-- used by webfx-platform-gwt-log-impl (SOURCE) -->
-    <!-- used by webfx-platform-gwt-uischeduler-impl (SOURCE) -->
-    <!-- used by webfx-platform-shared-boot (SOURCE) -->
-    <!-- used by webfx-platform-shared-bus (SOURCE) -->
-    <!-- used by webfx-platform-web-windowhistory-impl (SOURCE) -->
     <source path="dev/webfx/platform/shared/services/log"/>
     <source path="dev/webfx/platform/shared/services/log/spi"/>
     <!--==========================< webfx-platform-shared-query >===========================-->
-    <!-- used by webfx-framework-shared-orm-dql-query-interceptor (SOURCE) -->
-    <!-- used by webfx-framework-shared-orm-entity (SOURCE) -->
-    <!-- used by webfx-framework-shared-querypush (SOURCE) -->
-    <!-- used by webfx-platform-shared-query-impl-remote (SOURCE) -->
-    <source path="dev/webfx/platform/shared/services/query"/>
-    <source path="dev/webfx/platform/shared/services/query/compression"/>
-    <source path="dev/webfx/platform/shared/services/query/compression/repeat"/>
-    <source path="dev/webfx/platform/shared/services/query/spi"/>
-    <source path="dev/webfx/platform/shared/services/query/spi/impl"/>
+    <source path="dev/webfx/stack/platform/shared/services/query"/>
+    <source path="dev/webfx/stack/platform/shared/services/query/compression"/>
+    <source path="dev/webfx/stack/platform/shared/services/query/compression/repeat"/>
+    <source path="dev/webfx/stack/platform/shared/services/query/spi"/>
+    <source path="dev/webfx/stack/platform/shared/services/query/spi/impl"/>
     <!--====================< webfx-platform-shared-query-impl-remote >=====================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
-    <source path="dev/webfx/platform/shared/services/query/spi/impl/remote"/>
+    <source path="dev/webfx/stack/platform/shared/services/query/spi/impl/remote"/>
     <!--=========================< webfx-platform-shared-resource >=========================-->
-    <!-- used by modality-base-shared-domainmodel (SOURCE) -->
-    <!-- used by webfx-kit-javafxgraphics-peers-gwt (SOURCE) -->
-    <!-- used by webfx-platform-client-websocketbus (SOURCE) -->
-    <!-- used by webfx-platform-gwt-resource-impl (SOURCE) -->
     <source path="dev/webfx/platform/shared/services/resource"/>
     <source path="dev/webfx/platform/shared/services/resource/spi"/>
     <!--========================< webfx-platform-shared-scheduler >=========================-->
-    <!-- used by webfx-platform-client-uischeduler (SOURCE) -->
-    <!-- used by webfx-platform-shared-bus (SOURCE) -->
     <source path="dev/webfx/platform/shared/services/scheduler"/>
     <source path="dev/webfx/platform/shared/services/scheduler/spi"/>
     <!--==========================< webfx-platform-shared-serial >==========================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
-    <!-- used by webfx-platform-shared-buscall (SOURCE) -->
-    <!-- used by webfx-platform-shared-datascope (SOURCE) -->
-    <source path="dev/webfx/platform/shared/services/serial"/>
-    <source path="dev/webfx/platform/shared/services/serial/spi"/>
-    <source path="dev/webfx/platform/shared/services/serial/spi/impl"/>
+    <source path="dev/webfx/stack/com/serial"/>
+    <source path="dev/webfx/stack/com/serial/spi"/>
+    <source path="dev/webfx/stack/com/serial/spi/impl"/>
     <!--=========================< webfx-platform-shared-shutdown >=========================-->
-    <!-- used by webfx-platform-gwt-shutdown-impl (SOURCE) -->
-    <!-- used by webfx-platform-shared-boot (SOURCE) -->
     <source path="dev/webfx/platform/shared/services/shutdown"/>
     <source path="dev/webfx/platform/shared/services/shutdown/spi"/>
     <source path="dev/webfx/platform/shared/services/shutdown/spi/impl"/>
     <!--==========================< webfx-platform-shared-submit >==========================-->
-    <!-- used by webfx-framework-shared-orm-dql-submit-interceptor (SOURCE) -->
-    <!-- used by webfx-framework-shared-orm-entity (SOURCE) -->
-    <!-- used by webfx-platform-shared-submit-impl-remote (SOURCE) -->
-    <source path="dev/webfx/platform/shared/services/submit"/>
-    <source path="dev/webfx/platform/shared/services/submit/spi"/>
-    <source path="dev/webfx/platform/shared/services/submit/spi/impl"/>
+    <source path="dev/webfx/stack/platform/shared/services/submit"/>
+    <source path="dev/webfx/stack/platform/shared/services/submit/spi"/>
+    <source path="dev/webfx/stack/platform/shared/services/submit/spi/impl"/>
     <!--====================< webfx-platform-shared-submit-impl-remote >====================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
-    <source path="dev/webfx/platform/shared/services/submit/spi/impl/remote"/>
+    <source path="dev/webfx/stack/platform/shared/services/submit/spi/impl/remote"/>
     <!--===========================< webfx-platform-shared-util >===========================-->
-    <!-- used by webfx-kit-javafxgraphics-peers (SOURCE) -->
-    <!-- used by webfx-platform-client-storage (SOURCE) -->
-    <!-- used by webfx-platform-shared-async (SOURCE) -->
-    <!-- used by webfx-platform-shared-json (SOURCE) -->
-    <!-- used by webfx-platform-shared-log (SOURCE) -->
-    <!-- used by webfx-platform-shared-scheduler (SOURCE) -->
-    <!-- used by webfx-platform-shared-shutdown (SOURCE) -->
     <source path="dev/webfx/platform/shared/util"/>
     <source path="dev/webfx/platform/shared/util/collection"/>
     <source path="dev/webfx/platform/shared/util/function"/>
@@ -858,12 +604,9 @@
     <source path="dev/webfx/platform/shared/util/tuples"/>
     <source path="dev/webfx/platform/shared/util/uuid"/>
     <!--========================< webfx-platform-web-websocketbus >=========================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
-    <source path="dev/webfx/platform/client/services/websocketbus/web"/>
+    <source path="dev/webfx/stack/platform/websocketbus/web"/>
     <!--=====================< webfx-platform-web-windowhistory-impl >======================-->
-    <!-- used by modality-all-frontoffice-application-gwt (IMPLICIT_PROVIDER) -->
-    <!-- used by webfx-platform-gwt-windowhistory-impl (SOURCE) -->
-    <source path="dev/webfx/platform/web/services/windowhistory/spi/impl"/>
+    <source path="dev/webfx/stack/platform/windowhistory/spi/impl/web"/>
     <set-property name="user.agent" value="safari"/> <!-- to make only 1 permutation for testing with Chrome -->
     <set-property name="jre.checks.checkLevel" value="MINIMAL"/>
 

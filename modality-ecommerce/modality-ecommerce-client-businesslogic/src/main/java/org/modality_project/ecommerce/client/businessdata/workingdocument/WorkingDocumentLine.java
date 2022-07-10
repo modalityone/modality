@@ -1,6 +1,6 @@
 package org.modality_project.ecommerce.client.businessdata.workingdocument;
 
-import dev.webfx.framework.shared.orm.entity.Entities;
+import dev.webfx.stack.framework.shared.orm.entity.Entities;
 import dev.webfx.platform.shared.util.collection.Collections;
 import org.modality_project.base.shared.entities.*;
 import org.modality_project.ecommerce.client.businesslogic.option.OptionLogic;
