@@ -6,8 +6,8 @@
     </exported-packages>
 
     <providers>
-        <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.event.backoffice.activities.events.EventsUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
-        <dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>org.modality_project.event.backoffice.activities.events.RouteToEventsRequestEmitter</dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>
+        <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.event.backoffice.activities.events.EventsUiRoute</provider>
+        <provider interface="dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter">org.modality_project.event.backoffice.activities.events.RouteToEventsRequestEmitter</provider>
     </providers>
 
     <dependencies>

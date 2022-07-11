@@ -6,7 +6,7 @@
     </exported-packages>
 
     <providers>
-        <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.event.frontoffice.activities.startbooking.StartBookingUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
+        <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.event.frontoffice.activities.startbooking.StartBookingUiRoute</provider>
     </providers>
 
     <dependencies>

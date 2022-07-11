@@ -6,8 +6,8 @@
     </exported-packages>
 
     <providers>
-        <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.catering.backoffice.activities.diningareas.DiningAreasUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
-        <dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>org.modality_project.catering.backoffice.activities.diningareas.RouteToDiningAreasRequestEmitter</dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>
+        <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.catering.backoffice.activities.diningareas.DiningAreasUiRoute</provider>
+        <provider interface="dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter">org.modality_project.catering.backoffice.activities.diningareas.RouteToDiningAreasRequestEmitter</provider>
     </providers>
 
     <dependencies>

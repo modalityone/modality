@@ -6,7 +6,7 @@
     </exported-packages>
 
     <providers>
-        <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.event.backoffice.activities.cloneevent.CloneEventUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
+        <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.event.backoffice.activities.cloneevent.CloneEventUiRoute</provider>
     </providers>
 
     <dependencies>

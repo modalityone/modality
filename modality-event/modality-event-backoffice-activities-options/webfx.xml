@@ -6,7 +6,7 @@
     </exported-packages>
 
     <providers>
-        <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.event.backoffice.activities.options.EditableOptionsUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
+        <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.event.backoffice.activities.options.EditableOptionsUiRoute</provider>
     </providers>
 
     <dependencies>

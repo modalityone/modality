@@ -6,7 +6,7 @@
     </exported-packages>
 
     <providers>
-        <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.client.activities.unauthorized.UnauthorizedUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
+        <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.crm.client.activities.unauthorized.UnauthorizedUiRoute</provider>
     </providers>
 
     <dependencies>

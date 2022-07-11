@@ -6,8 +6,8 @@
     </exported-packages>
 
     <providers>
-        <dev.webfx.stack.framework.client.ui.uirouter.UiRoute>org.modality_project.crm.backoffice.activities.users.UsersUiRoute</dev.webfx.stack.framework.client.ui.uirouter.UiRoute>
-        <dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>org.modality_project.crm.backoffice.activities.users.RouteToUsersRequestEmitter</dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter>
+        <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.crm.backoffice.activities.users.UsersUiRoute</provider>
+        <provider interface="dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter">org.modality_project.crm.backoffice.activities.users.RouteToUsersRequestEmitter</provider>
     </providers>
 
     <dependencies>

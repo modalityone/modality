@@ -6,7 +6,7 @@
     </exported-packages>
 
     <providers>
-        <dev.webfx.platform.shared.services.boot.spi.ApplicationModuleBooter>org.modality_project.base.client.operationactionsloading.ModalityClientOperationActionsLoader</dev.webfx.platform.shared.services.boot.spi.ApplicationModuleBooter>
+        <provider interface="dev.webfx.platform.shared.services.boot.spi.ApplicationModuleBooter">org.modality_project.base.client.operationactionsloading.ModalityClientOperationActionsLoader</provider>
     </providers>
 
     <dependencies>
