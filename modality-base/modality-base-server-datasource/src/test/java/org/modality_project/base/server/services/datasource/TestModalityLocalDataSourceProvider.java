@@ -11,9 +11,9 @@ public class TestModalityLocalDataSourceProvider {
         return "{" +
                 "\"host\": \"localhost\"," +
                 "\"port\": \"5432\"," +
-                "\"databaseName\": \"mongoose\"," +
-                "\"username\": \"mongoose\"," +
-                "\"password\": \"mongoose\"" +
+                "\"databaseName\": \"modality\"," +
+                "\"username\": \"modality\"," +
+                "\"password\": \"modality\"" +
                 "}";
     }
 
@@ -22,9 +22,9 @@ public class TestModalityLocalDataSourceProvider {
         MapJsonObject mapJsonObject = new MapJsonObject();
         mapJsonObject.setNativeElement("host", "localhost");
         mapJsonObject.setNativeElement("port", "5432");
-        mapJsonObject.setNativeElement("databaseName","mongoose");
-        mapJsonObject.setNativeElement("username","mongoose");
-        mapJsonObject.setNativeElement("password","mongoose");
+        mapJsonObject.setNativeElement("databaseName","modality");
+        mapJsonObject.setNativeElement("username","modality");
+        mapJsonObject.setNativeElement("password","modality");
         return mapJsonObject;
     }
 /* Temporarily commented for Modality refactoring (was causing build error otherwise)

@@ -39,7 +39,7 @@ services:
             - FLYWAY_PLACEHOLDER_REPLACEMENT=false
         command: -locations=filesystem:/flyway/sql -connectRetries=120 migrate
         volumes:
-            - ../mongoose-base/mongoose-base-server-datasource/src/main/resources/db:/flyway/sql
+            - ../modality-base/modality-base-server-datasource/src/main/resources/db:/flyway/sql
         depends_on:
             - database
 

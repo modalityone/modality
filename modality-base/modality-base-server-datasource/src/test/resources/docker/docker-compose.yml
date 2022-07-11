@@ -39,10 +39,10 @@ services:
         depends_on:
             - database
 
-    mongoose:
+    modality_backoffice:
         depends_on:
             - database
-        container_name: mongoose_backoffice
+        container_name: modality_backoffice
         build:
             context: .
             dockerfile: Dockerfile.backoffice
@@ -50,12 +50,12 @@ services:
         ports:
             - '80:80'
             - '9090:9090'
-        command:  java -jar mongoose-base-server-application-vertx-1.0.0-SNAPSHOT-fat.jar
+        command:  java -jar modality-base-server-application-vertx-1.0.0-SNAPSHOT-fat.jar
 
-    web:
+    modality_web:
         depends_on:
-            - mongoose_backoffice
-        container_name: mongoose_web
+            - modality_backoffice
+        container_name: modality_web
         build:
             context: .
             dockerfile: Dockerfile.web
