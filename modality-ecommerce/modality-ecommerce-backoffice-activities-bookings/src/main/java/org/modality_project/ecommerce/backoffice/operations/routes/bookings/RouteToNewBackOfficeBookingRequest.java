@@ -3,7 +3,7 @@ package org.modality_project.ecommerce.backoffice.operations.routes.bookings;
 import dev.webfx.stack.framework.shared.operation.HasOperationCode;
 import dev.webfx.stack.framework.client.operations.route.RouteRequestBase;
 import dev.webfx.stack.platform.windowhistory.spi.BrowsingHistory;
-import dev.webfx.stack.platform.async.AsyncFunction;
+import dev.webfx.stack.async.AsyncFunction;
 
 /**
  * @author Bruno Salmon

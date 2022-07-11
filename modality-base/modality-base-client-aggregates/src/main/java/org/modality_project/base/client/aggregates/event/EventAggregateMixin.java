@@ -3,8 +3,8 @@ package org.modality_project.base.client.aggregates.event;
 import dev.webfx.stack.framework.shared.orm.entity.Entity;
 import dev.webfx.stack.framework.shared.orm.entity.EntityList;
 import dev.webfx.stack.framework.shared.orm.entity.EntityStore;
-import dev.webfx.stack.platform.async.Future;
-import dev.webfx.stack.platform.shared.services.query.QueryResult;
+import dev.webfx.stack.async.Future;
+import dev.webfx.stack.db.query.QueryResult;
 import org.modality_project.base.client.aggregates.person.PersonAggregate;
 import org.modality_project.base.shared.entities.*;
 

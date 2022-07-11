@@ -3,7 +3,7 @@ package org.modality_project.base.backoffice.operations.entities.filters;
 import dev.webfx.stack.framework.shared.operation.HasOperationCode;
 import dev.webfx.stack.framework.shared.operation.HasOperationExecutor;
 import dev.webfx.stack.framework.shared.orm.entity.EntityStore;
-import dev.webfx.stack.platform.async.AsyncFunction;
+import dev.webfx.stack.async.AsyncFunction;
 import javafx.scene.layout.Pane;
 
 public final class AddNewFieldsRequest implements HasOperationCode,

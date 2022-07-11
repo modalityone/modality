@@ -7,7 +7,7 @@ import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_grid.En
 import dev.webfx.stack.framework.shared.orm.entity.Entity;
 import dev.webfx.stack.framework.shared.orm.expression.Expression;
 import dev.webfx.stack.framework.shared.orm.domainmodel.formatter.ValueFormatter;
-import dev.webfx.stack.platform.async.Future;
+import dev.webfx.stack.async.Future;
 
 import java.util.ArrayList;
 import java.util.Collection;

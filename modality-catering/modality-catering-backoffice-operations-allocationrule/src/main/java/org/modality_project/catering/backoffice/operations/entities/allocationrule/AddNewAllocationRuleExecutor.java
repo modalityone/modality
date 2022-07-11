@@ -2,7 +2,7 @@ package org.modality_project.catering.backoffice.operations.entities.allocationr
 
 import javafx.scene.layout.Pane;
 import org.modality_project.base.shared.entities.Event;
-import dev.webfx.stack.platform.async.Future;
+import dev.webfx.stack.async.Future;
 
 final class AddNewAllocationRuleExecutor {
 

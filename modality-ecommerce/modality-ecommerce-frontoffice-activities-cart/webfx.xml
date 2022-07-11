@@ -10,7 +10,7 @@
             <undetected-module>modality-base-client-aggregates</undetected-module>
             <undetected-module>webfx-framework-client-activity</undetected-module>
             <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
-            <undetected-module>webfx-platform-shared-submit</undetected-module>
+            <undetected-module>webfx-stack-db-submit</undetected-module>
         </used-by-source-modules>
     </dependencies>
 

@@ -8,12 +8,12 @@ module modality.base.server.systemmetrics {
     requires webfx.framework.shared.orm.datasourcemodelservice;
     requires webfx.framework.shared.orm.domainmodel;
     requires webfx.framework.shared.orm.entity;
-    requires webfx.platform.shared.async;
     requires webfx.platform.shared.boot;
     requires webfx.platform.shared.log;
     requires webfx.platform.shared.scheduler;
-    requires webfx.platform.shared.submit;
     requires webfx.platform.shared.util;
+    requires webfx.stack.async;
+    requires webfx.stack.db.submit;
 
     // Exported packages
     exports org.modality_project.base.server.jobs.systemmetrics;

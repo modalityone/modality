@@ -2,7 +2,7 @@ package org.modality_project.ecommerce.backoffice.operations.entities.moneyflow;
 
 import dev.webfx.stack.framework.shared.operation.HasOperationCode;
 import dev.webfx.stack.framework.shared.operation.HasOperationExecutor;
-import dev.webfx.stack.platform.async.AsyncFunction;
+import dev.webfx.stack.async.AsyncFunction;
 import javafx.scene.layout.Pane;
 import org.modality_project.base.shared.entities.MoneyFlow;
 

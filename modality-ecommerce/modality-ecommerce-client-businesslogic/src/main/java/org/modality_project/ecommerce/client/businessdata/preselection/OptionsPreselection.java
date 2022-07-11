@@ -9,7 +9,7 @@ import org.modality_project.base.shared.entities.Label;
 import org.modality_project.base.shared.entities.Option;
 import org.modality_project.base.shared.entities.formatters.EventPriceFormatter;
 import dev.webfx.stack.framework.shared.orm.entity.Entities;
-import dev.webfx.stack.platform.shared.services.query.QueryResult;
+import dev.webfx.stack.db.query.QueryResult;
 import dev.webfx.platform.shared.util.Booleans;
 import dev.webfx.platform.shared.util.collection.Collections;
 

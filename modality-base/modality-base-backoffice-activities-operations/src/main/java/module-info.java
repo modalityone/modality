@@ -15,9 +15,9 @@ module modality.base.backoffice.activities.operations {
     requires webfx.framework.shared.orm.entity;
     requires webfx.framework.shared.router;
     requires webfx.kit.launcher;
-    requires webfx.platform.client.windowhistory;
-    requires webfx.platform.shared.async;
     requires webfx.platform.shared.util;
+    requires webfx.stack.async;
+    requires webfx.stack.platform.windowhistory;
 
     // Exported packages
     exports org.modality_project.base.backoffice.activities.operations;

@@ -12,12 +12,12 @@ module modality.base.shared.domainmodel {
     requires webfx.framework.shared.orm.dql;
     requires webfx.framework.shared.orm.entity;
     requires webfx.framework.shared.orm.expression;
-    requires webfx.platform.shared.async;
-    requires webfx.platform.shared.json;
-    requires webfx.platform.shared.query;
     requires webfx.platform.shared.resource;
-    requires webfx.platform.shared.serial;
     requires webfx.platform.shared.util;
+    requires webfx.stack.async;
+    requires webfx.stack.com.serial;
+    requires webfx.stack.db.query;
+    requires webfx.stack.platform.json;
 
     // Exported packages
     exports org.modality_project.base.shared.domainmodel.formatters;

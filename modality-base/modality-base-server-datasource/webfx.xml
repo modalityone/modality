@@ -14,7 +14,7 @@
     </exported-packages>
 
     <providers>
-        <provider interface="dev.webfx.stack.platform.shared.services.datasource.spi.LocalDataSourceProvider">org.modality_project.base.server.services.datasource.ModalityLocalDataSourceProvider</provider>
+        <provider interface="dev.webfx.stack.db.datasource.spi.LocalDataSourceProvider">org.modality_project.base.server.services.datasource.ModalityLocalDataSourceProvider</provider>
     </providers>
 
     <dependencies>

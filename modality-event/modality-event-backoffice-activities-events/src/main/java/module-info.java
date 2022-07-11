@@ -16,9 +16,9 @@ module modality.event.backoffice.activities.events {
     requires webfx.framework.shared.orm.dql;
     requires webfx.framework.shared.orm.entity;
     requires webfx.framework.shared.router;
-    requires webfx.platform.client.windowhistory;
-    requires webfx.platform.shared.async;
     requires webfx.platform.shared.util;
+    requires webfx.stack.async;
+    requires webfx.stack.platform.windowhistory;
 
     // Exported packages
     exports org.modality_project.event.backoffice.activities.events;

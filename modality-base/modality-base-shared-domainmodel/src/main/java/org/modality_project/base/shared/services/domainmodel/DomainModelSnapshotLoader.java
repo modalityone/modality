@@ -9,10 +9,10 @@ import dev.webfx.stack.framework.shared.orm.expression.terms.function.DomainClas
 import dev.webfx.stack.framework.shared.orm.expression.terms.function.Function;
 import dev.webfx.stack.framework.shared.orm.expression.terms.function.InlineFunction;
 import dev.webfx.stack.framework.shared.services.domainmodel.spi.DomainModelLoader;
-import dev.webfx.stack.platform.async.Batch;
+import dev.webfx.stack.async.Batch;
 import dev.webfx.stack.platform.json.Json;
 import dev.webfx.stack.platform.json.JsonElement;
-import dev.webfx.stack.platform.shared.services.query.QueryResult;
+import dev.webfx.stack.db.query.QueryResult;
 import dev.webfx.platform.shared.services.resource.ResourceService;
 import dev.webfx.stack.com.serial.SerialCodecManager;
 import org.modality_project.base.shared.domainmodel.formatters.DateFormatter;

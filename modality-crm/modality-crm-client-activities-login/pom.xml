@@ -101,13 +101,13 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-shared-async</artifactId>
+            <artifactId>webfx-platform-shared-util</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-shared-util</artifactId>
+            <artifactId>webfx-stack-async</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

@@ -12,8 +12,8 @@
     <dependencies>
         <used-by-source-modules>
             <undetected-module>webfx-framework-client-activity</undetected-module>
-            <undetected-module>webfx-platform-shared-async</undetected-module>
-            <undetected-module>webfx-platform-shared-submit</undetected-module>
+            <undetected-module>webfx-stack-async</undetected-module>
+            <undetected-module>webfx-stack-db-submit</undetected-module>
         </used-by-source-modules>
     </dependencies>
 

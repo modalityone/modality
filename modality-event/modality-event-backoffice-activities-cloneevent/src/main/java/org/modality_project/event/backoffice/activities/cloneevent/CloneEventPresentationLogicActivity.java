@@ -5,8 +5,8 @@ import org.modality_project.base.shared.entities.Event;
 import org.modality_project.ecommerce.backoffice.operations.routes.bookings.RouteToBookingsRequest;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.platform.client.services.uischeduler.UiScheduler;
-import dev.webfx.stack.platform.shared.services.submit.SubmitArgument;
-import dev.webfx.stack.platform.shared.services.submit.SubmitService;
+import dev.webfx.stack.db.submit.SubmitArgument;
+import dev.webfx.stack.db.submit.SubmitService;
 
 import java.time.LocalDate;
 

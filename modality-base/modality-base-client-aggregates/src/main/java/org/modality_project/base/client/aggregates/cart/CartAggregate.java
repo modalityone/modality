@@ -6,7 +6,7 @@ import org.modality_project.base.shared.entities.Document;
 import org.modality_project.base.shared.entities.MoneyTransfer;
 import dev.webfx.stack.framework.shared.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.framework.shared.orm.entity.EntityList;
-import dev.webfx.stack.platform.async.Future;
+import dev.webfx.stack.async.Future;
 
 import java.util.List;
 

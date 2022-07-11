@@ -3,7 +3,7 @@ package org.modality_project.ecommerce.backoffice.operations.routes.bookings;
 import org.modality_project.base.client.aggregates.event.EventAggregate;
 import org.modality_project.event.frontoffice.operations.fees.RouteToFeesRequest;
 import dev.webfx.stack.platform.windowhistory.spi.BrowsingHistory;
-import dev.webfx.stack.platform.async.Future;
+import dev.webfx.stack.async.Future;
 
 /**
  * @author Bruno Salmon

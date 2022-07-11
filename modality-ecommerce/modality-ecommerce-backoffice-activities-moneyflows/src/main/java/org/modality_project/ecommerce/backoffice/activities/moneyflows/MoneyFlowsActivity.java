@@ -13,7 +13,7 @@ import dev.webfx.stack.framework.shared.orm.dql.DqlStatement;
 import dev.webfx.stack.framework.shared.orm.entity.EntityStore;
 import dev.webfx.stack.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.kit.util.properties.Properties;
-import dev.webfx.stack.platform.shared.services.submit.SubmitArgument;
+import dev.webfx.stack.db.submit.SubmitArgument;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;

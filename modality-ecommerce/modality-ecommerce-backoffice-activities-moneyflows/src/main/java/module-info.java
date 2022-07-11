@@ -29,10 +29,10 @@ module modality.ecommerce.backoffice.activities.moneyflows {
     requires webfx.framework.shared.orm.entity;
     requires webfx.framework.shared.router;
     requires webfx.kit.util;
-    requires webfx.platform.client.windowhistory;
-    requires webfx.platform.shared.async;
-    requires webfx.platform.shared.submit;
     requires webfx.platform.shared.util;
+    requires webfx.stack.async;
+    requires webfx.stack.db.submit;
+    requires webfx.stack.platform.windowhistory;
 
     // Exported packages
     exports org.modality_project.ecommerce.backoffice.activities.moneyflows;

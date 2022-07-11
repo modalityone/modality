@@ -31,12 +31,12 @@ module modality.event.frontoffice.activities.fees {
     requires webfx.framework.shared.orm.entity;
     requires webfx.kit.util;
     requires webfx.platform.client.uischeduler;
-    requires webfx.platform.client.windowhistory;
-    requires webfx.platform.shared.async;
-    requires webfx.platform.shared.json;
     requires webfx.platform.shared.log;
-    requires webfx.platform.shared.query;
     requires webfx.platform.shared.util;
+    requires webfx.stack.async;
+    requires webfx.stack.db.query;
+    requires webfx.stack.platform.json;
+    requires webfx.stack.platform.windowhistory;
 
     // Exported packages
     exports org.modality_project.event.frontoffice.activities.fees;

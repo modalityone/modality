@@ -5,8 +5,8 @@ import dev.webfx.stack.platform.json.Json;
 import dev.webfx.stack.platform.json.JsonObject;
 import dev.webfx.stack.platform.json.WritableJsonObject;
 import dev.webfx.platform.shared.services.log.Logger;
-import dev.webfx.stack.platform.shared.services.query.QueryArgument;
-import dev.webfx.stack.platform.shared.services.query.QueryService;
+import dev.webfx.stack.db.query.QueryArgument;
+import dev.webfx.stack.db.query.QueryService;
 import dev.webfx.platform.shared.util.function.Factory;
 
 /**

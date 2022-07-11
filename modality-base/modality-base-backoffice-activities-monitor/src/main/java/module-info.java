@@ -18,8 +18,8 @@ module modality.base.backoffice.activities.monitor {
     requires webfx.framework.shared.operation;
     requires webfx.framework.shared.orm.entity;
     requires webfx.framework.shared.router;
-    requires webfx.platform.client.windowhistory;
     requires webfx.platform.shared.util;
+    requires webfx.stack.platform.windowhistory;
 
     // Exported packages
     exports org.modality_project.base.backoffice.activities.monitor;

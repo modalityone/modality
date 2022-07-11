@@ -24,8 +24,8 @@ module modality.ecommerce.backoffice.activities.income {
     requires webfx.framework.shared.orm.domainmodel;
     requires webfx.framework.shared.orm.dql;
     requires webfx.framework.shared.router;
-    requires webfx.platform.client.windowhistory;
     requires webfx.platform.shared.util;
+    requires webfx.stack.platform.windowhistory;
 
     // Exported packages
     exports org.modality_project.ecommerce.backoffice.activities.income;

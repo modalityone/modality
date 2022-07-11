@@ -1,11 +1,11 @@
 package org.modality_project.base.server.services.datasource;
 
 import dev.webfx.stack.framework.shared.services.datasourcemodel.DataSourceModelService;
-import dev.webfx.stack.platform.shared.services.datasource.ConnectionDetails;
-import dev.webfx.stack.platform.shared.services.datasource.DBMS;
-import dev.webfx.stack.platform.shared.services.datasource.LocalDataSource;
-import dev.webfx.stack.platform.shared.services.datasource.spi.LocalDataSourceProvider;
-import dev.webfx.stack.platform.shared.services.datasource.spi.simple.SimpleLocalDataSource;
+import dev.webfx.stack.db.datasource.ConnectionDetails;
+import dev.webfx.stack.db.datasource.DBMS;
+import dev.webfx.stack.db.datasource.LocalDataSource;
+import dev.webfx.stack.db.datasource.spi.LocalDataSourceProvider;
+import dev.webfx.stack.db.datasource.spi.simple.SimpleLocalDataSource;
 import dev.webfx.stack.platform.json.Json;
 import dev.webfx.stack.platform.json.JsonObject;
 import dev.webfx.platform.shared.services.log.Logger;

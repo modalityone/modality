@@ -4,7 +4,7 @@ import javafx.scene.layout.Pane;
 import org.modality_project.base.shared.entities.DocumentLine;
 import dev.webfx.stack.framework.shared.operation.HasOperationCode;
 import dev.webfx.stack.framework.shared.operation.HasOperationExecutor;
-import dev.webfx.stack.platform.async.AsyncFunction;
+import dev.webfx.stack.async.AsyncFunction;
 
 public final class DeleteDocumentLineRequest implements HasOperationCode,
         HasOperationExecutor<DeleteDocumentLineRequest, Void> {

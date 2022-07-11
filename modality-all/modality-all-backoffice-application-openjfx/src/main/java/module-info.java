@@ -20,14 +20,13 @@ module modality.all.backoffice.application.openjfx {
     requires webfx.platform.java.scheduler.impl;
     requires webfx.platform.java.shutdown.impl;
     requires webfx.platform.java.storage.impl;
-    requires webfx.platform.java.websocket.impl;
-    requires webfx.platform.java.windowhistory.impl;
-    requires webfx.platform.java.windowlocation.impl;
-    requires webfx.platform.shared.json.impl;
     requires webfx.platform.shared.log.impl.simple;
-    requires webfx.platform.shared.query.impl.remote;
-    requires webfx.platform.shared.submit.impl.remote;
     requires webfx.platform.shared.util;
+    requires webfx.stack.com.websocket.java;
+    requires webfx.stack.db.querysubmit.java.jdbc;
+    requires webfx.stack.platform.json.java;
+    requires webfx.stack.platform.windowhistory.java;
+    requires webfx.stack.platform.windowlocation.java;
 
     // Exported packages
     exports org.modality_project.all.backoffice.activities.event.clone.openjfx;

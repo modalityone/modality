@@ -3,8 +3,8 @@ package org.modality_project.ecommerce.backoffice.operations.entities.moneytrans
 import dev.webfx.stack.framework.client.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.framework.client.ui.controls.dialog.DialogUtil;
 import dev.webfx.stack.framework.shared.orm.entity.UpdateStore;
-import dev.webfx.stack.platform.async.Future;
-import dev.webfx.stack.platform.async.Promise;
+import dev.webfx.stack.async.Future;
+import dev.webfx.stack.async.Promise;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import org.modality_project.base.shared.entities.MoneyTransfer;

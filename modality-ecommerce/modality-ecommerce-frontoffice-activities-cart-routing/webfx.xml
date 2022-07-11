@@ -7,7 +7,7 @@
 
     <dependencies>
         <used-by-source-modules>
-            <undetected-module>webfx-platform-shared-async</undetected-module>
+            <undetected-module>webfx-stack-async</undetected-module>
         </used-by-source-modules>
     </dependencies>
 

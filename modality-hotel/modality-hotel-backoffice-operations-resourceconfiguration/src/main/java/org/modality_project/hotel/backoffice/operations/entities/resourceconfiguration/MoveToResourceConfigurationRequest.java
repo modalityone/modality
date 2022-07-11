@@ -3,7 +3,7 @@ package org.modality_project.hotel.backoffice.operations.entities.resourceconfig
 import dev.webfx.stack.framework.shared.operation.HasOperationCode;
 import dev.webfx.stack.framework.shared.operation.HasOperationExecutor;
 import dev.webfx.stack.framework.shared.orm.entity.Entity;
-import dev.webfx.stack.platform.async.AsyncFunction;
+import dev.webfx.stack.async.AsyncFunction;
 
 public final class MoveToResourceConfigurationRequest implements HasOperationCode,
         HasOperationExecutor<MoveToResourceConfigurationRequest, Void> {

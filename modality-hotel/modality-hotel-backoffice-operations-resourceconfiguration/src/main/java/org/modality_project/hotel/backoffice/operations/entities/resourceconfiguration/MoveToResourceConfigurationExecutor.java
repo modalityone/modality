@@ -2,8 +2,8 @@ package org.modality_project.hotel.backoffice.operations.entities.resourceconfig
 
 import dev.webfx.stack.framework.shared.orm.entity.Entity;
 import dev.webfx.stack.framework.shared.orm.entity.UpdateStore;
-import dev.webfx.stack.platform.async.Future;
-import dev.webfx.stack.platform.async.Promise;
+import dev.webfx.stack.async.Future;
+import dev.webfx.stack.async.Promise;
 import org.modality_project.base.shared.entities.DocumentLine;
 
 final class MoveToResourceConfigurationExecutor {

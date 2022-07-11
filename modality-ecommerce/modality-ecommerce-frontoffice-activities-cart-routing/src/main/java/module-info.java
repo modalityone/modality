@@ -15,10 +15,10 @@ module modality.ecommerce.frontoffice.activities.cart.routing {
     requires webfx.framework.client.uirouter;
     requires webfx.framework.client.util;
     requires webfx.kit.util;
-    requires webfx.platform.client.windowhistory;
-    requires webfx.platform.shared.async;
-    requires webfx.platform.shared.json;
     requires webfx.platform.shared.util;
+    requires webfx.stack.async;
+    requires webfx.stack.platform.json;
+    requires webfx.stack.platform.windowhistory;
 
     // Exported packages
     exports org.modality_project.ecommerce.frontoffice.activities.cart.base;

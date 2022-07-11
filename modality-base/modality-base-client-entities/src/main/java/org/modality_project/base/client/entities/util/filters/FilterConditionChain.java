@@ -76,14 +76,16 @@ public class FilterConditionChain extends HBox {
     }
 
     public void updateDqlStatementProperty() {
-        Object domainClassId = conditionSelectorChain.get(0).getSelectedItem().getClassId();
-        DqlStatementBuilder mergeBuilder = new DqlStatementBuilder(domainClassId);
-        for (EntityButtonSelector<Filter> filterSelector : conditionSelectorChain) {
-            Filter filter = filterSelector.selectedItemProperty().getValue();
-            DqlStatement dqlStatement = FilterToDqlStatementConverter.toDqlStatement(filter);
-            mergeBuilder.merge(dqlStatement);
+        if (!conditionSelectorChain.isEmpty()) {
+            Object domainClassId = conditionSelectorChain.get(0).getSelectedItem().getClassId();
+            DqlStatementBuilder mergeBuilder = new DqlStatementBuilder(domainClassId);
+            for (EntityButtonSelector<Filter> filterSelector : conditionSelectorChain) {
+                Filter filter = filterSelector.selectedItemProperty().getValue();
+                DqlStatement dqlStatement = FilterToDqlStatementConverter.toDqlStatement(filter);
+                mergeBuilder.merge(dqlStatement);
+            }
+            DqlStatement result = mergeBuilder.build();
+            pm.conditionDqlStatementProperty().setValue(result);
         }
-        DqlStatement result = mergeBuilder.build();
-        pm.conditionDqlStatementProperty().setValue(result);
     }
 }

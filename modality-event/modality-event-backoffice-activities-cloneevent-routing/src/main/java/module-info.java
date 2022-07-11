@@ -6,7 +6,7 @@ module modality.event.backoffice.activities.cloneevent.routing {
     requires modality.base.client.util;
     requires webfx.framework.client.uirouter;
     requires webfx.framework.shared.operation;
-    requires webfx.platform.client.windowhistory;
+    requires webfx.stack.platform.windowhistory;
 
     // Exported packages
     exports org.modality_project.event.backoffice.activities.cloneevent.routing;

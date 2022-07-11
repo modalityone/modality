@@ -7,12 +7,12 @@ module modality.base.client.aggregates {
     requires modality.base.shared.entities;
     requires webfx.framework.shared.orm.domainmodel;
     requires webfx.framework.shared.orm.entity;
-    requires webfx.platform.client.websocketbus;
-    requires webfx.platform.shared.async;
-    requires webfx.platform.shared.bus;
     requires webfx.platform.shared.log;
-    requires webfx.platform.shared.query;
     requires webfx.platform.shared.util;
+    requires webfx.stack.async;
+    requires webfx.stack.com.bus;
+    requires webfx.stack.com.websocketbus;
+    requires webfx.stack.db.query;
 
     // Exported packages
     exports org.modality_project.base.client.aggregates.cart;

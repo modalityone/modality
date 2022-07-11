@@ -3,7 +3,7 @@ package org.modality_project.ecommerce.backoffice.operations.entities.documentli
 import javafx.scene.layout.Pane;
 import org.modality_project.base.shared.entities.DocumentLine;
 import dev.webfx.stack.framework.client.ui.controls.entity.sheet.EntityPropertiesSheet;
-import dev.webfx.stack.platform.async.Future;
+import dev.webfx.stack.async.Future;
 
 final class EditDocumentLineExecutor {
 

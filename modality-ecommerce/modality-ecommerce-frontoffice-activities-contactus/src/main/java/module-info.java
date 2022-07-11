@@ -17,12 +17,12 @@ module modality.ecommerce.frontoffice.activities.contactus {
     requires webfx.framework.client.util;
     requires webfx.framework.shared.orm.entity;
     requires webfx.platform.client.uischeduler;
-    requires webfx.platform.client.windowhistory;
-    requires webfx.platform.client.windowlocation;
-    requires webfx.platform.shared.async;
     requires webfx.platform.shared.log;
-    requires webfx.platform.shared.submit;
     requires webfx.platform.shared.util;
+    requires webfx.stack.async;
+    requires webfx.stack.db.submit;
+    requires webfx.stack.platform.windowhistory;
+    requires webfx.stack.platform.windowlocation;
 
     // Exported packages
     exports org.modality_project.ecommerce.frontoffice.activities.contactus;

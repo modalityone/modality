@@ -23,14 +23,14 @@ module modality.ecommerce.frontoffice.activities.payment {
     requires webfx.framework.client.util;
     requires webfx.framework.shared.orm.entity;
     requires webfx.platform.client.uischeduler;
-    requires webfx.platform.client.websocketbus;
-    requires webfx.platform.client.windowhistory;
-    requires webfx.platform.client.windowlocation;
-    requires webfx.platform.shared.async;
-    requires webfx.platform.shared.bus;
     requires webfx.platform.shared.log;
-    requires webfx.platform.shared.submit;
     requires webfx.platform.shared.util;
+    requires webfx.stack.async;
+    requires webfx.stack.com.bus;
+    requires webfx.stack.com.websocketbus;
+    requires webfx.stack.db.submit;
+    requires webfx.stack.platform.windowhistory;
+    requires webfx.stack.platform.windowlocation;
 
     // Exported packages
     exports org.modality_project.ecommerce.frontoffice.activities.payment;

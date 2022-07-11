@@ -5,8 +5,8 @@ import dev.webfx.stack.framework.server.services.push.UnresponsivePushClientList
 import dev.webfx.stack.framework.shared.services.datasourcemodel.DataSourceModelService;
 import dev.webfx.platform.shared.services.boot.spi.ApplicationJob;
 import dev.webfx.platform.shared.services.log.Logger;
-import dev.webfx.stack.platform.shared.services.submit.SubmitArgument;
-import dev.webfx.stack.platform.shared.services.submit.SubmitService;
+import dev.webfx.stack.db.submit.SubmitArgument;
+import dev.webfx.stack.db.submit.SubmitService;
 
 /**
  * @author Bruno Salmon

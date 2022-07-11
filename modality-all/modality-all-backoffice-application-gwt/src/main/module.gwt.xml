@@ -180,8 +180,8 @@
     <resource path="org/modality_project/base/client/images"/>
     <public includes="org/modality_project/base/client/images/" path=""/>
     <!--=========================< modality-base-client-busconfig >=========================-->
-    <resource path="dev/webfx/stack/platform/websocketbus/conf"/>
-    <public includes="dev/webfx/stack/platform/websocketbus/conf/" path=""/>
+    <resource path="dev/webfx/stack/com/websocketbus/conf"/>
+    <public includes="dev/webfx/stack/com/websocketbus/conf/" path=""/>
     <!--=========================< modality-base-client-entities >==========================-->
     <source path="org/modality_project/base/client/entities/util"/>
     <source path="org/modality_project/base/client/entities/util/filters"/>
@@ -656,23 +656,8 @@
     <source path="dev/webfx/platform/client/services/uischeduler"/>
     <source path="dev/webfx/platform/client/services/uischeduler/spi"/>
     <source path="dev/webfx/platform/client/services/uischeduler/spi/impl"/>
-    <!--========================< webfx-platform-client-websocket >=========================-->
-    <source path="dev/webfx/stack/platform/websocket"/>
-    <source path="dev/webfx/stack/platform/websocket/spi"/>
-    <!--=======================< webfx-platform-client-websocketbus >=======================-->
-    <source path="dev/webfx/stack/platform/websocketbus"/>
-    <!--======================< webfx-platform-client-windowhistory >=======================-->
-    <source path="dev/webfx/stack/platform/windowhistory"/>
-    <source path="dev/webfx/stack/platform/windowhistory/spi"/>
-    <source path="dev/webfx/stack/platform/windowhistory/spi/impl"/>
-    <!--======================< webfx-platform-client-windowlocation >======================-->
-    <source path="dev/webfx/stack/platform/windowlocation"/>
-    <source path="dev/webfx/stack/platform/windowlocation/spi"/>
-    <source path="dev/webfx/stack/platform/windowlocation/spi/impl"/>
     <!--==========================< webfx-platform-gwt-boot-impl >==========================-->
     <source path="dev/webfx/platform/gwt/services/boot/spi/impl"/>
-    <!--==========================< webfx-platform-gwt-json-impl >==========================-->
-    <source path="dev/webfx/stack/platform/json/spi/impl/gwt"/>
     <!--==========================< webfx-platform-gwt-log-impl >===========================-->
     <source path="dev/webfx/platform/gwt/services/log/spi/impl"/>
     <!--========================< webfx-platform-gwt-resource-impl >========================-->
@@ -683,75 +668,23 @@
     <source path="dev/webfx/platform/gwt/services/storage/spi/impl"/>
     <!--======================< webfx-platform-gwt-uischeduler-impl >=======================-->
     <source path="dev/webfx/platform/gwt/services/uischeduler/spi/impl"/>
-    <!--=======================< webfx-platform-gwt-websocket-impl >========================-->
-    <source path="dev/webfx/stack/platform/websocket/spi/impl/gwt"/>
-    <!--=====================< webfx-platform-gwt-windowhistory-impl >======================-->
-    <source path="dev/webfx/stack/platform/windowhistory/spi/impl/gwt"/>
-    <source path="dev/webfx/stack/platform/windowhistory/spi/impl/gwt/jsinterop"/>
-    <!--=====================< webfx-platform-gwt-windowlocation-impl >=====================-->
-    <source path="dev/webfx/stack/platform/windowlocation/spi/impl/gwt"/>
-    <source path="dev/webfx/stack/platform/windowlocation/spi/impl/gwt/jsinterop"/>
-    <!--==========================< webfx-platform-shared-async >===========================-->
-    <source path="dev/webfx/stack/platform/async"/>
-    <source path="dev/webfx/stack/platform/async/impl"/>
     <!--===========================< webfx-platform-shared-boot >===========================-->
     <source path="dev/webfx/platform/shared/services/boot"/>
     <source path="dev/webfx/platform/shared/services/boot/spi"/>
     <source path="dev/webfx/platform/shared/services/boot/spi/impl"/>
-    <!--===========================< webfx-platform-shared-bus >============================-->
-    <source path="dev/webfx/stack/platform/shared/services/bus"/>
-    <source path="dev/webfx/stack/platform/shared/services/bus/spi"/>
-    <source path="dev/webfx/stack/platform/shared/services/bus/spi/impl"/>
-    <!--=========================< webfx-platform-shared-buscall >==========================-->
-    <source path="dev/webfx/stack/platform/shared/services/buscall"/>
-    <source path="dev/webfx/stack/platform/shared/services/buscall/spi"/>
-    <!--========================< webfx-platform-shared-datascope >=========================-->
-    <source path="dev/webfx/stack/platform/shared/datascope"/>
-    <source path="dev/webfx/stack/platform/shared/datascope/aggregate"/>
-    <source path="dev/webfx/stack/platform/shared/datascope/schema"/>
-    <!--========================< webfx-platform-shared-datasource >========================-->
-    <source path="dev/webfx/stack/platform/shared/services/datasource"/>
-    <source path="dev/webfx/stack/platform/shared/services/datasource/jdbc"/>
-    <source path="dev/webfx/stack/platform/shared/services/datasource/spi"/>
-    <source path="dev/webfx/stack/platform/shared/services/datasource/spi/simple"/>
-    <!--===========================< webfx-platform-shared-json >===========================-->
-    <source path="dev/webfx/stack/platform/json"/>
-    <source path="dev/webfx/stack/platform/json/parser"/>
-    <source path="dev/webfx/stack/platform/json/parser/javacup"/>
-    <source path="dev/webfx/stack/platform/json/parser/jflex"/>
-    <source path="dev/webfx/stack/platform/json/spi"/>
-    <source path="dev/webfx/stack/platform/json/spi/impl/listmap"/>
     <!--===========================< webfx-platform-shared-log >============================-->
     <source path="dev/webfx/platform/shared/services/log"/>
     <source path="dev/webfx/platform/shared/services/log/spi"/>
-    <!--==========================< webfx-platform-shared-query >===========================-->
-    <source path="dev/webfx/stack/platform/shared/services/query"/>
-    <source path="dev/webfx/stack/platform/shared/services/query/compression"/>
-    <source path="dev/webfx/stack/platform/shared/services/query/compression/repeat"/>
-    <source path="dev/webfx/stack/platform/shared/services/query/spi"/>
-    <source path="dev/webfx/stack/platform/shared/services/query/spi/impl"/>
-    <!--====================< webfx-platform-shared-query-impl-remote >=====================-->
-    <source path="dev/webfx/stack/platform/shared/services/query/spi/impl/remote"/>
     <!--=========================< webfx-platform-shared-resource >=========================-->
     <source path="dev/webfx/platform/shared/services/resource"/>
     <source path="dev/webfx/platform/shared/services/resource/spi"/>
     <!--========================< webfx-platform-shared-scheduler >=========================-->
     <source path="dev/webfx/platform/shared/services/scheduler"/>
     <source path="dev/webfx/platform/shared/services/scheduler/spi"/>
-    <!--==========================< webfx-platform-shared-serial >==========================-->
-    <source path="dev/webfx/stack/com/serial"/>
-    <source path="dev/webfx/stack/com/serial/spi"/>
-    <source path="dev/webfx/stack/com/serial/spi/impl"/>
     <!--=========================< webfx-platform-shared-shutdown >=========================-->
     <source path="dev/webfx/platform/shared/services/shutdown"/>
     <source path="dev/webfx/platform/shared/services/shutdown/spi"/>
     <source path="dev/webfx/platform/shared/services/shutdown/spi/impl"/>
-    <!--==========================< webfx-platform-shared-submit >==========================-->
-    <source path="dev/webfx/stack/platform/shared/services/submit"/>
-    <source path="dev/webfx/stack/platform/shared/services/submit/spi"/>
-    <source path="dev/webfx/stack/platform/shared/services/submit/spi/impl"/>
-    <!--====================< webfx-platform-shared-submit-impl-remote >====================-->
-    <source path="dev/webfx/stack/platform/shared/services/submit/spi/impl/remote"/>
     <!--===========================< webfx-platform-shared-util >===========================-->
     <source path="dev/webfx/platform/shared/util"/>
     <source path="dev/webfx/platform/shared/util/collection"/>
@@ -760,10 +693,77 @@
     <source path="dev/webfx/platform/shared/util/serviceloader"/>
     <source path="dev/webfx/platform/shared/util/tuples"/>
     <source path="dev/webfx/platform/shared/util/uuid"/>
-    <!--========================< webfx-platform-web-websocketbus >=========================-->
-    <source path="dev/webfx/stack/platform/websocketbus/web"/>
-    <!--=====================< webfx-platform-web-windowhistory-impl >======================-->
+    <!--===============================< webfx-stack-async >================================-->
+    <source path="dev/webfx/stack/async"/>
+    <source path="dev/webfx/stack/async/impl"/>
+    <!--==============================< webfx-stack-com-bus >===============================-->
+    <source path="dev/webfx/stack/com/bus"/>
+    <source path="dev/webfx/stack/com/bus/spi"/>
+    <source path="dev/webfx/stack/com/bus/spi/impl"/>
+    <!--============================< webfx-stack-com-buscall >=============================-->
+    <source path="dev/webfx/stack/com/buscall"/>
+    <source path="dev/webfx/stack/com/buscall/spi"/>
+    <!--=============================< webfx-stack-com-serial >=============================-->
+    <source path="dev/webfx/stack/com/serial"/>
+    <source path="dev/webfx/stack/com/serial/spi"/>
+    <source path="dev/webfx/stack/com/serial/spi/impl"/>
+    <!--===========================< webfx-stack-com-websocket >============================-->
+    <source path="dev/webfx/stack/com/websocket"/>
+    <source path="dev/webfx/stack/com/websocket/spi"/>
+    <!--=========================< webfx-stack-com-websocket-gwt >==========================-->
+    <source path="dev/webfx/stack/com/websocket/spi/impl/gwt"/>
+    <!--==========================< webfx-stack-com-websocketbus >==========================-->
+    <source path="dev/webfx/stack/com/websocketbus"/>
+    <!--========================< webfx-stack-com-websocketbus-web >========================-->
+    <source path="dev/webfx/stack/com/websocketbus/web"/>
+    <!--============================< webfx-stack-db-datascope >============================-->
+    <source path="dev/webfx/stack/db/datascope"/>
+    <source path="dev/webfx/stack/db/datascope/aggregate"/>
+    <source path="dev/webfx/stack/db/datascope/schema"/>
+    <!--===========================< webfx-stack-db-datasource >============================-->
+    <source path="dev/webfx/stack/db/datasource"/>
+    <source path="dev/webfx/stack/db/datasource/jdbc"/>
+    <source path="dev/webfx/stack/db/datasource/spi"/>
+    <source path="dev/webfx/stack/db/datasource/spi/simple"/>
+    <!--==============================< webfx-stack-db-query >==============================-->
+    <source path="dev/webfx/stack/db/query"/>
+    <source path="dev/webfx/stack/db/query/compression"/>
+    <source path="dev/webfx/stack/db/query/compression/repeat"/>
+    <source path="dev/webfx/stack/db/query/spi"/>
+    <source path="dev/webfx/stack/db/query/spi/impl"/>
+    <!--==========================< webfx-stack-db-query-remote >===========================-->
+    <source path="dev/webfx/stack/db/query/spi/impl/remote"/>
+    <!--=============================< webfx-stack-db-submit >==============================-->
+    <source path="dev/webfx/stack/db/submit"/>
+    <source path="dev/webfx/stack/db/submit/spi"/>
+    <source path="dev/webfx/stack/db/submit/spi/impl"/>
+    <!--==========================< webfx-stack-db-submit-remote >==========================-->
+    <source path="dev/webfx/stack/db/submit/spi/impl/remote"/>
+    <!--===========================< webfx-stack-platform-json >============================-->
+    <source path="dev/webfx/stack/platform/json"/>
+    <source path="dev/webfx/stack/platform/json/parser"/>
+    <source path="dev/webfx/stack/platform/json/parser/javacup"/>
+    <source path="dev/webfx/stack/platform/json/parser/jflex"/>
+    <source path="dev/webfx/stack/platform/json/spi"/>
+    <source path="dev/webfx/stack/platform/json/spi/impl/listmap"/>
+    <!--=========================< webfx-stack-platform-json-gwt >==========================-->
+    <source path="dev/webfx/stack/platform/json/spi/impl/gwt"/>
+    <!--=======================< webfx-stack-platform-windowhistory >=======================-->
+    <source path="dev/webfx/stack/platform/windowhistory"/>
+    <source path="dev/webfx/stack/platform/windowhistory/spi"/>
+    <source path="dev/webfx/stack/platform/windowhistory/spi/impl"/>
+    <!--=====================< webfx-stack-platform-windowhistory-gwt >=====================-->
+    <source path="dev/webfx/stack/platform/windowhistory/spi/impl/gwt"/>
+    <source path="dev/webfx/stack/platform/windowhistory/spi/impl/gwt/jsinterop"/>
+    <!--=====================< webfx-stack-platform-windowhistory-web >=====================-->
     <source path="dev/webfx/stack/platform/windowhistory/spi/impl/web"/>
+    <!--======================< webfx-stack-platform-windowlocation >=======================-->
+    <source path="dev/webfx/stack/platform/windowlocation"/>
+    <source path="dev/webfx/stack/platform/windowlocation/spi"/>
+    <source path="dev/webfx/stack/platform/windowlocation/spi/impl"/>
+    <!--====================< webfx-stack-platform-windowlocation-gwt >=====================-->
+    <source path="dev/webfx/stack/platform/windowlocation/spi/impl/gwt"/>
+    <source path="dev/webfx/stack/platform/windowlocation/spi/impl/gwt/jsinterop"/>
     <set-property name="user.agent" value="safari"/> <!-- to make only 1 permutation for testing with Chrome -->
     <set-property name="jre.checks.checkLevel" value="MINIMAL"/>
 

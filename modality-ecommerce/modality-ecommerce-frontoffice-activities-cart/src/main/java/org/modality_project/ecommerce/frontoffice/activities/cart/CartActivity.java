@@ -46,7 +46,7 @@ import dev.webfx.extras.type.PrimType;
 import dev.webfx.platform.client.services.uischeduler.UiScheduler;
 import dev.webfx.platform.shared.services.log.Logger;
 import dev.webfx.platform.shared.util.Arrays;
-import dev.webfx.stack.platform.async.Future;
+import dev.webfx.stack.async.Future;
 import dev.webfx.platform.shared.util.collection.Collections;
 
 import java.util.List;

@@ -23,8 +23,8 @@ module modality.base.client.application {
     requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.client.uischeduler;
-    requires webfx.platform.shared.buscall;
     requires webfx.platform.shared.util;
+    requires webfx.stack.com.buscall;
 
     // Exported packages
     exports org.modality_project.base.client.application;

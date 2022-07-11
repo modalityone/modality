@@ -22,8 +22,8 @@ module modality.crm.backoffice.activities.users {
     requires webfx.framework.shared.orm.dql;
     requires webfx.framework.shared.orm.expression;
     requires webfx.framework.shared.router;
-    requires webfx.platform.client.windowhistory;
     requires webfx.platform.shared.util;
+    requires webfx.stack.platform.windowhistory;
 
     // Exported packages
     exports org.modality_project.crm.backoffice.activities.users;

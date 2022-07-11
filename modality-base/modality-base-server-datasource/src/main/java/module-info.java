@@ -6,10 +6,10 @@ module modality.base.server.datasource {
     requires webfx.framework.shared.orm.datasourcemodelservice;
     requires webfx.framework.shared.orm.domainmodel;
     requires webfx.framework.shared.orm.dql;
-    requires webfx.platform.shared.datasource;
-    requires webfx.platform.shared.json;
     requires webfx.platform.shared.log;
     requires webfx.platform.shared.resource;
+    requires webfx.stack.db.datasource;
+    requires webfx.stack.platform.json;
 
     // Exported packages
     exports org.modality_project.base.server.services.datasource;
@@ -18,6 +18,6 @@ module modality.base.server.datasource {
     opens org.modality_project.base.server.datasource.MDS;
 
     // Provided services
-    provides dev.webfx.stack.platform.shared.services.datasource.spi.LocalDataSourceProvider with org.modality_project.base.server.services.datasource.ModalityLocalDataSourceProvider;
+    provides dev.webfx.stack.db.datasource.spi.LocalDataSourceProvider with org.modality_project.base.server.services.datasource.ModalityLocalDataSourceProvider;
 
 }

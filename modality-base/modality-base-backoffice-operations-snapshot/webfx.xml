@@ -8,7 +8,7 @@
     <dependencies>
         <used-by-source-modules>
             <undetected-module>webfx-extras-visual-controls-grid</undetected-module>
-            <undetected-module>webfx-platform-shared-submit</undetected-module>
+            <undetected-module>webfx-stack-db-submit</undetected-module>
         </used-by-source-modules>
     </dependencies>
 

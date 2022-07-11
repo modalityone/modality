@@ -6,8 +6,8 @@ module modality.crm.client.authn {
     requires webfx.framework.shared.authn;
     requires webfx.framework.shared.orm.datasourcemodelservice;
     requires webfx.framework.shared.orm.domainmodel;
-    requires webfx.platform.shared.async;
-    requires webfx.platform.shared.query;
+    requires webfx.stack.async;
+    requires webfx.stack.db.query;
 
     // Exported packages
     exports org.modality_project.crm.client.services.authn;

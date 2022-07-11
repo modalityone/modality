@@ -3,7 +3,7 @@ package org.modality_project.catering.backoffice.operations.entities.allocationr
 import javafx.scene.layout.Pane;
 import dev.webfx.stack.framework.client.ui.controls.entity.sheet.EntityPropertiesSheet;
 import dev.webfx.stack.framework.shared.orm.entity.Entity;
-import dev.webfx.stack.platform.async.Future;
+import dev.webfx.stack.async.Future;
 
 final class EditAllocationRuleExecutor {
 

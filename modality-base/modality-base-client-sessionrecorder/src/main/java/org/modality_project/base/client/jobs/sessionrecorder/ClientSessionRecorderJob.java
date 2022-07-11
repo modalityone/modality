@@ -11,10 +11,10 @@ import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.stack.framework.client.services.push.PushClientService;
 import dev.webfx.platform.client.services.storage.LocalStorage;
 import dev.webfx.platform.shared.services.boot.spi.ApplicationJob;
-import dev.webfx.stack.platform.shared.services.bus.Bus;
-import dev.webfx.stack.platform.shared.services.bus.BusHook;
-import dev.webfx.stack.platform.shared.services.bus.BusService;
-import dev.webfx.stack.platform.shared.services.bus.Registration;
+import dev.webfx.stack.com.bus.Bus;
+import dev.webfx.stack.com.bus.BusHook;
+import dev.webfx.stack.com.bus.BusService;
+import dev.webfx.stack.com.bus.Registration;
 import dev.webfx.platform.shared.services.log.Logger;
 
 import java.time.Instant;

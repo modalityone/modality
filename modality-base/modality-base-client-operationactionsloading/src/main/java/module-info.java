@@ -11,9 +11,9 @@ module modality.base.client.operationactionsloading {
     requires webfx.framework.client.uirouter;
     requires webfx.framework.shared.orm.datasourcemodelservice;
     requires webfx.framework.shared.orm.entity;
-    requires webfx.platform.shared.async;
     requires webfx.platform.shared.boot;
     requires webfx.platform.shared.log;
+    requires webfx.stack.async;
 
     // Exported packages
     exports org.modality_project.base.client.operationactionsloading;

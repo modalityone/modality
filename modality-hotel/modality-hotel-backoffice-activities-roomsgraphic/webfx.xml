@@ -15,9 +15,9 @@
             <undetected-module>webfx-framework-client-action</undetected-module>
             <undetected-module>webfx-framework-client-activity</undetected-module>
             <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
-            <undetected-module>webfx-platform-shared-async</undetected-module>
+            <undetected-module>webfx-stack-async</undetected-module>
             <undetected-module>webfx-platform-shared-util</undetected-module>
-            <undetected-module>webfx-platform-shared-json</undetected-module>
+            <undetected-module>webfx-stack-platform-json</undetected-module>
         </used-by-source-modules>
     </dependencies>
 

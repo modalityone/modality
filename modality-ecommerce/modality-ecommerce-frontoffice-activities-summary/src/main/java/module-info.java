@@ -21,10 +21,10 @@ module modality.ecommerce.frontoffice.activities.summary {
     requires webfx.framework.client.orm.domainmodel.activity;
     requires webfx.framework.client.uirouter;
     requires webfx.kit.util;
-    requires webfx.platform.client.windowhistory;
-    requires webfx.platform.shared.async;
     requires webfx.platform.shared.log;
     requires webfx.platform.shared.util;
+    requires webfx.stack.async;
+    requires webfx.stack.platform.windowhistory;
 
     // Exported packages
     exports org.modality_project.ecommerce.frontoffice.activities.summary;

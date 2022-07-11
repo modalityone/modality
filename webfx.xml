@@ -357,7 +357,7 @@
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
-                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -401,7 +401,7 @@
                 <module>webfx-framework-shared-router</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -420,7 +420,7 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -442,8 +442,8 @@
                 <module>webfx-framework-shared-router</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-launcher</module>
-                <module>webfx-platform-client-windowhistory</module>
                 <module>webfx-platform-shared-util</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -499,7 +499,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-platform-shared-submit</undetected-module>
+                    <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -520,8 +520,8 @@
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
-                <module>webfx-platform-shared-async</module>
                 <module>webfx-platform-shared-util</module>
+                <module>webfx-stack-async</module>
             </used-by-source-modules>
 
         </project>
@@ -547,8 +547,8 @@
                 <module>webfx-framework-shared-operation</module>
                 <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-platform-shared-async</module>
-                <module>webfx-platform-shared-submit</module>
+                <module>webfx-stack-async</module>
+                <module>webfx-stack-db-submit</module>
             </used-by-source-modules>
 
         </project>
@@ -562,7 +562,7 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-extras-visual-controls-grid</undetected-module>
-                    <undetected-module>webfx-platform-shared-submit</undetected-module>
+                    <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -582,8 +582,8 @@
                 <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-framework-shared-orm-expression</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-platform-shared-async</module>
-                <module>webfx-platform-shared-submit</module>
+                <module>webfx-stack-async</module>
+                <module>webfx-stack-db-submit</module>
             </used-by-source-modules>
 
         </project>
@@ -597,7 +597,7 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-extras-visual-controls-grid</undetected-module>
-                    <undetected-module>webfx-platform-shared-submit</undetected-module>
+                    <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -610,7 +610,7 @@
                 <module>webfx-framework-client-orm-reactive-entities</module>
                 <module>webfx-framework-shared-operation</module>
                 <module>webfx-framework-shared-orm-entity</module>
-                <module>webfx-platform-shared-async</module>
+                <module>webfx-stack-async</module>
             </used-by-source-modules>
 
         </project>
@@ -651,11 +651,11 @@
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
-                <module>webfx-platform-shared-async</module>
-                <module>webfx-platform-shared-json</module>
                 <module>webfx-platform-shared-log</module>
-                <module>webfx-platform-shared-query</module>
                 <module>webfx-platform-shared-util</module>
+                <module>webfx-stack-async</module>
+                <module>webfx-stack-db-query</module>
+                <module>webfx-stack-platform-json</module>
             </used-by-source-modules>
 
         </project>
@@ -681,12 +681,12 @@
                 <module>modality-base-shared-entities</module>
                 <module>webfx-framework-shared-orm-domainmodel</module>
                 <module>webfx-framework-shared-orm-entity</module>
-                <module>webfx-platform-client-websocketbus</module>
-                <module>webfx-platform-shared-async</module>
-                <module>webfx-platform-shared-bus</module>
                 <module>webfx-platform-shared-log</module>
-                <module>webfx-platform-shared-query</module>
                 <module>webfx-platform-shared-util</module>
+                <module>webfx-stack-async</module>
+                <module>webfx-stack-com-bus</module>
+                <module>webfx-stack-com-websocketbus</module>
+                <module>webfx-stack-db-query</module>
             </used-by-source-modules>
 
         </project>
@@ -746,8 +746,8 @@
                 <module>webfx-kit-launcher</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-client-uischeduler</module>
-                <module>webfx-platform-shared-buscall</module>
                 <module>webfx-platform-shared-util</module>
+                <module>webfx-stack-com-buscall</module>
             </used-by-source-modules>
 
         </project>
@@ -756,7 +756,7 @@
 
             <exported-packages>
                 <source-packages/>
-                <resource-package>dev.webfx.stack.platform.websocketbus.conf</resource-package>
+                <resource-package>dev.webfx.stack.com.websocketbus.conf</resource-package>
             </exported-packages>
 
             <dependencies>
@@ -764,7 +764,7 @@
             </dependencies>
 
             <embed-resources>
-                <resource>dev/webfx/stack/platform/websocketbus/conf/BusOptions.json</resource>
+                <resource>dev/webfx/stack/com/websocketbus/conf/BusOptions.json</resource>
             </embed-resources>
 
             <used-by-source-modules/>
@@ -982,7 +982,7 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>javafx-base</undetected-module>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1038,8 +1038,8 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>javafx-base</undetected-module>
-                    <undetected-module>webfx-platform-shared-submit</undetected-module>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
+                    <undetected-module>webfx-stack-db-submit</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1065,8 +1065,8 @@
                 <module>webfx-kit-launcher</module>
                 <module>webfx-platform-client-storage</module>
                 <module>webfx-platform-shared-boot</module>
-                <module>webfx-platform-shared-bus</module>
                 <module>webfx-platform-shared-log</module>
+                <module>webfx-stack-com-bus</module>
             </used-by-source-modules>
 
         </project>
@@ -1142,7 +1142,7 @@
         <plugin-module>modality-base-server-systemmetrics</plugin-module>
 -->
                 <plugin-module>webfx-framework-shared-querypush</plugin-module>
-                <plugin-module>webfx-platform-shared-buscalljob</plugin-module>
+                <plugin-module>webfx-stack-com-buscalljob</plugin-module>
             </dependencies>
 
             <used-by-source-modules/>
@@ -1187,7 +1187,7 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.platform.shared.services.datasource.spi.LocalDataSourceProvider">org.modality_project.base.server.services.datasource.ModalityLocalDataSourceProvider</provider>
+                <provider interface="dev.webfx.stack.db.datasource.spi.LocalDataSourceProvider">org.modality_project.base.server.services.datasource.ModalityLocalDataSourceProvider</provider>
             </providers>
 
             <dependencies>
@@ -1287,10 +1287,10 @@
 
             <used-by-source-modules>
                 <module>webfx-framework-shared-orm-datasourcemodelservice</module>
-                <module>webfx-platform-shared-datasource</module>
-                <module>webfx-platform-shared-json</module>
                 <module>webfx-platform-shared-log</module>
                 <module>webfx-platform-shared-resource</module>
+                <module>webfx-stack-db-datasource</module>
+                <module>webfx-stack-platform-json</module>
             </used-by-source-modules>
 
         </project>
@@ -1308,7 +1308,7 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1321,7 +1321,7 @@
                 <module>webfx-framework-shared-orm-datasourcemodelservice</module>
                 <module>webfx-platform-shared-boot</module>
                 <module>webfx-platform-shared-log</module>
-                <module>webfx-platform-shared-submit</module>
+                <module>webfx-stack-db-submit</module>
             </used-by-source-modules>
 
         </project>
@@ -1338,7 +1338,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1357,8 +1357,8 @@
                 <module>webfx-platform-shared-boot</module>
                 <module>webfx-platform-shared-log</module>
                 <module>webfx-platform-shared-scheduler</module>
-                <module>webfx-platform-shared-submit</module>
                 <module>webfx-platform-shared-util</module>
+                <module>webfx-stack-db-submit</module>
             </used-by-source-modules>
 
             <used-services>
@@ -1430,12 +1430,12 @@
                 <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-framework-shared-orm-expression</module>
                 <module>webfx-kit-javafxbase-emul</module>
-                <module>webfx-platform-shared-async</module>
-                <module>webfx-platform-shared-json</module>
-                <module>webfx-platform-shared-query</module>
                 <module>webfx-platform-shared-resource</module>
-                <module>webfx-platform-shared-serial</module>
                 <module>webfx-platform-shared-util</module>
+                <module>webfx-stack-async</module>
+                <module>webfx-stack-com-serial</module>
+                <module>webfx-stack-db-query</module>
+                <module>webfx-stack-platform-json</module>
             </used-by-source-modules>
 
         </project>
@@ -1559,7 +1559,7 @@
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -1572,7 +1572,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-platform-shared-submit</undetected-module>
+                    <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1588,7 +1588,7 @@
                 <module>webfx-framework-shared-operation</module>
                 <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-platform-shared-async</module>
+                <module>webfx-stack-async</module>
             </used-by-source-modules>
 
         </project>
@@ -1625,7 +1625,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
@@ -1652,7 +1652,7 @@
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -1689,7 +1689,7 @@
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
-                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -1709,7 +1709,7 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-framework-shared-orm-entity</undetected-module>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
                     <undetected-module>webfx-kit-javafxgraphics-emul</undetected-module>
                 </used-by-source-modules>
@@ -1731,7 +1731,7 @@
                 <module>webfx-framework-shared-operation</module>
                 <module>webfx-framework-shared-orm-dql</module>
                 <module>webfx-framework-shared-router</module>
-                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -1751,7 +1751,7 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-framework-shared-orm-entity</undetected-module>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1774,8 +1774,8 @@
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-platform-client-windowhistory</module>
                 <module>webfx-platform-shared-util</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -1823,7 +1823,7 @@
                 <module>webfx-framework-shared-router</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -1836,7 +1836,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1892,7 +1892,7 @@
                 <module>modality-base-shared-entities</module>
                 <module>webfx-framework-shared-operation</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-platform-shared-async</module>
+                <module>webfx-stack-async</module>
             </used-by-source-modules>
 
         </project>
@@ -1906,7 +1906,7 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -1988,8 +1988,8 @@
                 <module>webfx-framework-shared-authn</module>
                 <module>webfx-framework-shared-orm-datasourcemodelservice</module>
                 <module>webfx-framework-shared-orm-domainmodel</module>
-                <module>webfx-platform-shared-async</module>
-                <module>webfx-platform-shared-query</module>
+                <module>webfx-stack-async</module>
+                <module>webfx-stack-db-query</module>
             </used-by-source-modules>
 
         </project>
@@ -2006,7 +2006,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2150,8 +2150,8 @@
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-platform-client-windowhistory</module>
-                <module>webfx-platform-shared-async</module>
+                <module>webfx-stack-async</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -2202,7 +2202,7 @@
                 <module>webfx-framework-shared-router</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -2222,7 +2222,7 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-client-action</undetected-module>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2259,8 +2259,8 @@
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
-                <module>webfx-platform-client-windowhistory</module>
-                <module>webfx-platform-shared-submit</module>
+                <module>webfx-stack-db-submit</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -2314,7 +2314,7 @@
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -2365,7 +2365,7 @@
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -2424,8 +2424,8 @@
                 <module>webfx-framework-shared-router</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-platform-client-windowhistory</module>
                 <module>webfx-platform-shared-util</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -2439,7 +2439,7 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
-                    <undetected-module>webfx-platform-shared-submit</undetected-module>
+                    <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2460,7 +2460,7 @@
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-launcher</module>
-                <module>webfx-platform-shared-async</module>
+                <module>webfx-stack-async</module>
             </used-by-source-modules>
 
         </project>
@@ -2473,7 +2473,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-platform-shared-submit</undetected-module>
+                    <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2489,7 +2489,7 @@
                 <module>webfx-framework-shared-operation</module>
                 <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-platform-shared-async</module>
+                <module>webfx-stack-async</module>
             </used-by-source-modules>
 
         </project>
@@ -2517,8 +2517,8 @@
                 <module>webfx-framework-shared-operation</module>
                 <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-platform-shared-async</module>
-                <module>webfx-platform-shared-submit</module>
+                <module>webfx-stack-async</module>
+                <module>webfx-stack-db-submit</module>
             </used-by-source-modules>
 
         </project>
@@ -2531,7 +2531,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-platform-shared-submit</undetected-module>
+                    <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2546,7 +2546,7 @@
                 <module>webfx-framework-shared-operation</module>
                 <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-platform-shared-async</module>
+                <module>webfx-stack-async</module>
             </used-by-source-modules>
 
         </project>
@@ -2598,8 +2598,8 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-platform-client-windowhistory</undetected-module>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
+                    <undetected-module>webfx-stack-platform-windowhistory</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2656,10 +2656,10 @@
                 <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-platform-shared-async</module>
-                <module>webfx-platform-shared-query</module>
-                <module>webfx-platform-shared-submit</module>
                 <module>webfx-platform-shared-util</module>
+                <module>webfx-stack-async</module>
+                <module>webfx-stack-db-query</module>
+                <module>webfx-stack-db-submit</module>
             </used-by-source-modules>
 
         </project>
@@ -2675,7 +2675,7 @@
                     <undetected-module>modality-base-client-aggregates</undetected-module>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
-                    <undetected-module>webfx-platform-shared-submit</undetected-module>
+                    <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2718,9 +2718,9 @@
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-platform-client-uischeduler</module>
-                <module>webfx-platform-shared-async</module>
                 <module>webfx-platform-shared-log</module>
                 <module>webfx-platform-shared-util</module>
+                <module>webfx-stack-async</module>
             </used-by-source-modules>
 
         </project>
@@ -2733,7 +2733,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2756,9 +2756,9 @@
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
-                <module>webfx-platform-client-windowhistory</module>
-                <module>webfx-platform-shared-json</module>
                 <module>webfx-platform-shared-util</module>
+                <module>webfx-stack-platform-json</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -2776,8 +2776,8 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
-                    <undetected-module>webfx-platform-shared-submit</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2801,10 +2801,10 @@
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-platform-client-uischeduler</module>
-                <module>webfx-platform-client-windowhistory</module>
-                <module>webfx-platform-client-windowlocation</module>
                 <module>webfx-platform-shared-log</module>
                 <module>webfx-platform-shared-util</module>
+                <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-platform-windowlocation</module>
             </used-by-source-modules>
 
         </project>
@@ -2823,8 +2823,8 @@
                 <used-by-source-modules>
                     <undetected-module>modality-base-client-aggregates</undetected-module>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
-                    <undetected-module>webfx-platform-shared-submit</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2854,12 +2854,12 @@
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-platform-client-uischeduler</module>
-                <module>webfx-platform-client-websocketbus</module>
-                <module>webfx-platform-client-windowhistory</module>
-                <module>webfx-platform-client-windowlocation</module>
-                <module>webfx-platform-shared-bus</module>
                 <module>webfx-platform-shared-log</module>
                 <module>webfx-platform-shared-util</module>
+                <module>webfx-stack-com-bus</module>
+                <module>webfx-stack-com-websocketbus</module>
+                <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-platform-windowlocation</module>
             </used-by-source-modules>
 
         </project>
@@ -2902,7 +2902,7 @@
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
-                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -2920,7 +2920,7 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2948,9 +2948,9 @@
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
-                <module>webfx-platform-client-windowhistory</module>
                 <module>webfx-platform-shared-log</module>
                 <module>webfx-platform-shared-util</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -2988,7 +2988,7 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-framework-shared-orm-entity</undetected-module>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -3012,7 +3012,7 @@
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-client-uischeduler</module>
-                <module>webfx-platform-shared-submit</module>
+                <module>webfx-stack-db-submit</module>
             </used-by-source-modules>
 
         </project>
@@ -3036,7 +3036,7 @@
                 <module>modality-base-client-util</module>
                 <module>webfx-framework-client-uirouter</module>
                 <module>webfx-framework-shared-operation</module>
-                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -3057,7 +3057,7 @@
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-framework-shared-orm-entity</undetected-module>
                     <undetected-module>webfx-kit-javafxgraphics-emul</undetected-module>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -3078,8 +3078,8 @@
                 <module>webfx-framework-shared-orm-dql</module>
                 <module>webfx-framework-shared-router</module>
                 <module>webfx-kit-javafxbase-emul</module>
-                <module>webfx-platform-client-windowhistory</module>
                 <module>webfx-platform-shared-util</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -3098,7 +3098,7 @@
                 <used-by-source-modules>
                     <undetected-module>modality-base-client-aggregates</undetected-module>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -3129,7 +3129,7 @@
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
-                <module>webfx-platform-shared-submit</module>
+                <module>webfx-stack-db-submit</module>
             </used-by-source-modules>
 
         </project>
@@ -3142,7 +3142,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -3239,8 +3239,8 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
-                    <undetected-module>webfx-platform-shared-query</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-stack-db-query</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -3278,10 +3278,10 @@
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-client-uischeduler</module>
-                <module>webfx-platform-client-windowhistory</module>
-                <module>webfx-platform-shared-json</module>
                 <module>webfx-platform-shared-log</module>
                 <module>webfx-platform-shared-util</module>
+                <module>webfx-stack-platform-json</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -3300,7 +3300,7 @@
                 <used-by-source-modules>
                     <undetected-module>modality-base-client-aggregates</undetected-module>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -3336,9 +3336,9 @@
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-client-uischeduler</module>
-                <module>webfx-platform-client-windowhistory</module>
                 <module>webfx-platform-shared-log</module>
                 <module>webfx-platform-shared-util</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -3356,7 +3356,7 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                 </used-by-source-modules>
@@ -3379,8 +3379,8 @@
                 <module>webfx-framework-client-uirouter</module>
                 <module>webfx-framework-client-util</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-platform-client-windowhistory</module>
                 <module>webfx-platform-shared-log</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -3399,7 +3399,7 @@
                 <used-by-source-modules>
                     <undetected-module>modality-base-shared-entities</undetected-module>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -3428,7 +3428,7 @@
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-client-uischeduler</module>
-                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -3472,7 +3472,7 @@
                 <module>webfx-framework-shared-orm-dql</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-platform-client-windowhistory</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -3503,9 +3503,9 @@
                     <undetected-module>webfx-framework-client-action</undetected-module>
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
-                    <undetected-module>webfx-platform-shared-async</undetected-module>
+                    <undetected-module>webfx-stack-async</undetected-module>
                     <undetected-module>webfx-platform-shared-util</undetected-module>
-                    <undetected-module>webfx-platform-shared-json</undetected-module>
+                    <undetected-module>webfx-stack-platform-json</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -3541,10 +3541,10 @@
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
-                <module>webfx-platform-client-windowhistory</module>
-                <module>webfx-platform-shared-datascope</module>
-                <module>webfx-platform-shared-json</module>
-                <module>webfx-platform-shared-serial</module>
+                <module>webfx-stack-com-serial</module>
+                <module>webfx-stack-db-datascope</module>
+                <module>webfx-stack-platform-json</module>
+                <module>webfx-stack-platform-windowhistory</module>
             </used-by-source-modules>
 
         </project>
@@ -3571,8 +3571,8 @@
                 <module>webfx-framework-shared-orm-domainmodel</module>
                 <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-platform-shared-async</module>
-                <module>webfx-platform-shared-submit</module>
+                <module>webfx-stack-async</module>
+                <module>webfx-stack-db-submit</module>
             </used-by-source-modules>
 
         </project>
@@ -3593,8 +3593,8 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>webfx-platform-shared-json</module>
                 <module>webfx-platform-shared-util</module>
+                <module>webfx-stack-platform-json</module>
             </used-by-source-modules>
 
         </project>
@@ -3612,6 +3612,46 @@
         </project>
 
         <usages>
+
+            <java-package name="dev.webfx.stack.db.query">
+                <module>modality-base-client-activity</module>
+                <module>modality-base-client-aggregates</module>
+                <module>modality-base-shared-domainmodel</module>
+                <module>modality-crm-client-authn</module>
+                <module>modality-ecommerce-client-businesslogic</module>
+                <module>webfx-framework-client-orm-reactive-dql</module>
+                <module>webfx-framework-client-orm-reactive-entities</module>
+                <module>webfx-framework-server-querypush</module>
+                <module>webfx-framework-server-querypush-simple</module>
+                <module>webfx-framework-shared-orm-domainmodelservice</module>
+                <module>webfx-framework-shared-orm-dql-query-interceptor</module>
+                <module>webfx-framework-shared-orm-dql-querypush-interceptor</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-framework-shared-querypush</module>
+                <module>webfx-stack-db-query</module>
+                <module>webfx-stack-db-querysubmit-java-jdbc</module>
+                <module>webfx-stack-db-querysubmit-vertx</module>
+            </java-package>
+
+            <java-package name="dev.webfx.stack.db.submit">
+                <module>modality-base-backoffice-operations-filters</module>
+                <module>modality-base-backoffice-operations-generic</module>
+                <module>modality-base-server-sessioncloser</module>
+                <module>modality-base-server-systemmetrics</module>
+                <module>modality-ecommerce-backoffice-activities-moneyflows</module>
+                <module>modality-ecommerce-backoffice-operations-moneyflow</module>
+                <module>modality-ecommerce-client-businesslogic</module>
+                <module>modality-event-backoffice-activities-cloneevent</module>
+                <module>modality-event-backoffice-activities-options</module>
+                <module>modality-hotel-backoffice-operations-resourceconfiguration</module>
+                <module>webfx-framework-server-querypush</module>
+                <module>webfx-framework-shared-orm-dql-submit-interceptor</module>
+                <module>webfx-framework-shared-orm-entity</module>
+                <module>webfx-stack-db-querysubmit-java-jdbc</module>
+                <module>webfx-stack-db-querysubmit-vertx</module>
+                <module>webfx-stack-db-submit</module>
+                <module>webfx-stack-db-submitlistener</module>
+            </java-package>
 
             <java-package name="dev.webfx.stack.framework.shared.orm.domainmodel">
                 <module>modality-base-backoffice-activities-filters</module>
@@ -3647,46 +3687,6 @@
                 <module>webfx-framework-server-querypush-simple</module>
                 <module>webfx-framework-shared-orm-dql-querypush-interceptor</module>
                 <module>webfx-framework-shared-querypush</module>
-            </java-package>
-
-            <java-package name="dev.webfx.stack.platform.shared.services.query">
-                <module>modality-base-client-activity</module>
-                <module>modality-base-client-aggregates</module>
-                <module>modality-base-shared-domainmodel</module>
-                <module>modality-crm-client-authn</module>
-                <module>modality-ecommerce-client-businesslogic</module>
-                <module>webfx-framework-client-orm-reactive-dql</module>
-                <module>webfx-framework-client-orm-reactive-entities</module>
-                <module>webfx-framework-server-querypush</module>
-                <module>webfx-framework-server-querypush-simple</module>
-                <module>webfx-framework-shared-orm-domainmodelservice</module>
-                <module>webfx-framework-shared-orm-dql-query-interceptor</module>
-                <module>webfx-framework-shared-orm-dql-querypush-interceptor</module>
-                <module>webfx-framework-shared-orm-entity</module>
-                <module>webfx-framework-shared-querypush</module>
-                <module>webfx-platform-java-queryupdate</module>
-                <module>webfx-platform-shared-query</module>
-                <module>webfx-platform-vertx-queryupdate</module>
-            </java-package>
-
-            <java-package name="dev.webfx.stack.platform.shared.services.submit">
-                <module>modality-base-backoffice-operations-filters</module>
-                <module>modality-base-backoffice-operations-generic</module>
-                <module>modality-base-server-sessioncloser</module>
-                <module>modality-base-server-systemmetrics</module>
-                <module>modality-ecommerce-backoffice-activities-moneyflows</module>
-                <module>modality-ecommerce-backoffice-operations-moneyflow</module>
-                <module>modality-ecommerce-client-businesslogic</module>
-                <module>modality-event-backoffice-activities-cloneevent</module>
-                <module>modality-event-backoffice-activities-options</module>
-                <module>modality-hotel-backoffice-operations-resourceconfiguration</module>
-                <module>webfx-framework-server-querypush</module>
-                <module>webfx-framework-shared-orm-dql-submit-interceptor</module>
-                <module>webfx-framework-shared-orm-entity</module>
-                <module>webfx-platform-java-queryupdate</module>
-                <module>webfx-platform-shared-submit</module>
-                <module>webfx-platform-shared-submitlistener</module>
-                <module>webfx-platform-vertx-queryupdate</module>
             </java-package>
 
             <java-package name="java.util.regex">

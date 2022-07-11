@@ -4,7 +4,7 @@ import org.modality_project.ecommerce.client.businesslogic.feesgroup.FeesGroupLo
 import org.modality_project.base.client.aggregates.event.EventAggregate;
 import org.modality_project.base.shared.entities.Event;
 import dev.webfx.stack.framework.shared.orm.entity.EntityId;
-import dev.webfx.stack.platform.async.Future;
+import dev.webfx.stack.async.Future;
 
 import java.util.HashMap;
 import java.util.Map;

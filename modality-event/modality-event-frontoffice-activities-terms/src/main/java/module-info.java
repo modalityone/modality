@@ -19,8 +19,8 @@ module modality.event.frontoffice.activities.terms {
     requires webfx.framework.client.uirouter;
     requires webfx.framework.client.util;
     requires webfx.framework.shared.orm.dql;
-    requires webfx.platform.client.windowhistory;
     requires webfx.platform.shared.util;
+    requires webfx.stack.platform.windowhistory;
 
     // Exported packages
     exports org.modality_project.event.frontoffice.activities.terms;

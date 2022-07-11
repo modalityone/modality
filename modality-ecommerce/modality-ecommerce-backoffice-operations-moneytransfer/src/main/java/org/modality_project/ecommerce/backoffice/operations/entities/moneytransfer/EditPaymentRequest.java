@@ -4,7 +4,7 @@ import javafx.scene.layout.Pane;
 import org.modality_project.base.shared.entities.MoneyTransfer;
 import dev.webfx.stack.framework.shared.operation.HasOperationCode;
 import dev.webfx.stack.framework.shared.operation.HasOperationExecutor;
-import dev.webfx.stack.platform.async.AsyncFunction;
+import dev.webfx.stack.async.AsyncFunction;
 
 public final class EditPaymentRequest implements HasOperationCode,
         HasOperationExecutor<EditPaymentRequest, Void> {

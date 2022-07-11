@@ -35,18 +35,6 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-shared-datasource</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-shared-json</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-shared-log</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
@@ -54,6 +42,18 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-shared-resource</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-db-datasource</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-platform-json</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

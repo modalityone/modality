@@ -9,8 +9,8 @@ import dev.webfx.platform.shared.services.boot.spi.ApplicationJob;
 import dev.webfx.platform.shared.services.log.Logger;
 import dev.webfx.platform.shared.services.scheduler.Scheduled;
 import dev.webfx.platform.shared.services.scheduler.Scheduler;
-import dev.webfx.stack.platform.shared.services.submit.SubmitArgument;
-import dev.webfx.stack.platform.shared.services.submit.SubmitService;
+import dev.webfx.stack.db.submit.SubmitArgument;
+import dev.webfx.stack.db.submit.SubmitService;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;

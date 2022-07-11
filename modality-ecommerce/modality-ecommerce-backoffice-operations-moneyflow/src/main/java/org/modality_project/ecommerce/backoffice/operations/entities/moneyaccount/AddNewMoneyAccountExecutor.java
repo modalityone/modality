@@ -2,7 +2,7 @@ package org.modality_project.ecommerce.backoffice.operations.entities.moneyaccou
 
 import dev.webfx.stack.framework.client.ui.controls.entity.sheet.EntityPropertiesSheet;
 import dev.webfx.stack.framework.shared.orm.entity.UpdateStore;
-import dev.webfx.stack.platform.async.Future;
+import dev.webfx.stack.async.Future;
 import javafx.scene.layout.Pane;
 import org.modality_project.base.shared.entities.MoneyAccount;
 import org.modality_project.base.shared.entities.Organization;

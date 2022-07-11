@@ -14,7 +14,7 @@ import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.extras.webtext.controls.HtmlTextEditor;
 import dev.webfx.platform.shared.util.Objects;
 import dev.webfx.platform.shared.util.Strings;
-import dev.webfx.stack.platform.async.Handler;
+import dev.webfx.stack.async.Handler;
 import dev.webfx.platform.shared.util.function.Callable;
 import dev.webfx.platform.shared.util.tuples.Pair;
 import org.modality_project.base.client.icons.ModalityIcons;

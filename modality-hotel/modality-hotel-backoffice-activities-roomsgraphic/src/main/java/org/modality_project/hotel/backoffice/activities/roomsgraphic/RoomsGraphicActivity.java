@@ -13,7 +13,7 @@ import dev.webfx.stack.framework.client.ui.action.operation.OperationActionFacto
 import dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil;
 import dev.webfx.stack.framework.shared.orm.entity.Entity;
 import dev.webfx.kit.util.properties.Properties;
-import dev.webfx.stack.platform.shared.datascope.aggregate.AggregateScope;
+import dev.webfx.stack.db.datascope.aggregate.AggregateScope;
 import dev.webfx.stack.platform.json.Json;
 import dev.webfx.stack.com.serial.SerialCodecManager;
 import javafx.beans.property.ObjectProperty;

@@ -29,12 +29,12 @@ module modality.hotel.backoffice.activities.roomsgraphic {
     requires webfx.framework.shared.orm.entity;
     requires webfx.framework.shared.router;
     requires webfx.kit.util;
-    requires webfx.platform.client.windowhistory;
-    requires webfx.platform.shared.async;
-    requires webfx.platform.shared.datascope;
-    requires webfx.platform.shared.json;
-    requires webfx.platform.shared.serial;
     requires webfx.platform.shared.util;
+    requires webfx.stack.async;
+    requires webfx.stack.com.serial;
+    requires webfx.stack.db.datascope;
+    requires webfx.stack.platform.json;
+    requires webfx.stack.platform.windowhistory;
 
     // Exported packages
     exports org.modality_project.hotel.backoffice.activities.roomsgraphic;

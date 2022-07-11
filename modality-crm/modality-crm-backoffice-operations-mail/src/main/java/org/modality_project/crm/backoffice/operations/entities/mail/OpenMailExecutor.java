@@ -2,7 +2,7 @@ package org.modality_project.crm.backoffice.operations.entities.mail;
 
 import javafx.scene.layout.Pane;
 import org.modality_project.base.shared.entities.Mail;
-import dev.webfx.stack.platform.async.Future;
+import dev.webfx.stack.async.Future;
 
 final class OpenMailExecutor {
 

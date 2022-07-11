@@ -13,7 +13,7 @@
         <plugin-module>modality-base-server-systemmetrics</plugin-module>
 -->
         <plugin-module>webfx-framework-shared-querypush</plugin-module>
-        <plugin-module>webfx-platform-shared-buscalljob</plugin-module>
+        <plugin-module>webfx-stack-com-buscalljob</plugin-module>
     </dependencies>
 
 </project>

@@ -25,8 +25,8 @@ import dev.webfx.stack.framework.client.ui.controls.dialog.DialogUtil;
 import dev.webfx.stack.framework.shared.orm.entity.Entity;
 import dev.webfx.stack.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.kit.util.properties.Properties;
-import dev.webfx.stack.platform.shared.services.submit.SubmitArgument;
-import dev.webfx.stack.platform.shared.services.submit.SubmitService;
+import dev.webfx.stack.db.submit.SubmitArgument;
+import dev.webfx.stack.db.submit.SubmitService;
 
 import java.util.ArrayList;
 import java.util.Collections;
