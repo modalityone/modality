@@ -9,8 +9,8 @@ module modality.base.client.activity {
     requires modality.base.client.aggregates;
     requires modality.base.client.presentationmodel;
     requires modality.ecommerce.client.businesslogic;
-    requires webfx.extras.visual.base;
-    requires webfx.extras.visual.controls.grid;
+    requires webfx.extras.visual;
+    requires webfx.extras.visual.grid;
     requires webfx.framework.client.controls;
     requires webfx.framework.client.orm.domainmodel.activity;
     requires webfx.framework.client.orm.reactive.dql;

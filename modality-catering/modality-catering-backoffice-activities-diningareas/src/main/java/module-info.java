@@ -13,8 +13,8 @@ module modality.catering.backoffice.activities.diningareas {
     requires modality.base.shared.entities;
     requires modality.catering.backoffice.operations.allocationrule;
     requires modality.ecommerce.backoffice.activities.statistics;
-    requires webfx.extras.visual.base;
-    requires webfx.extras.visual.controls.grid;
+    requires webfx.extras.visual;
+    requires webfx.extras.visual.grid;
     requires webfx.framework.client.action;
     requires webfx.framework.client.activity;
     requires webfx.framework.client.operationaction;

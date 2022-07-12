@@ -12,7 +12,7 @@ module modality.ecommerce.backoffice.activities.statements {
     requires modality.base.client.util;
     requires modality.base.shared.domainmodel;
     requires modality.base.shared.entities;
-    requires webfx.extras.visual.base;
+    requires webfx.extras.visual;
     requires webfx.framework.client.activity;
     requires webfx.framework.client.orm.domainmodel.activity;
     requires webfx.framework.client.orm.entity.controls;

@@ -10,10 +10,10 @@ module modality.base.backoffice.masterslave {
     requires modality.base.client.entities;
     requires webfx.extras.imagestore;
     requires webfx.extras.type;
-    requires webfx.extras.visual.base;
+    requires webfx.extras.visual;
+    requires webfx.extras.visual.charts;
     requires webfx.extras.visual.controls;
-    requires webfx.extras.visual.controls.charts;
-    requires webfx.extras.visual.controls.grid;
+    requires webfx.extras.visual.grid;
     requires webfx.framework.client.controls;
     requires webfx.framework.client.orm.reactive.dql;
     requires webfx.framework.client.orm.reactive.entities;

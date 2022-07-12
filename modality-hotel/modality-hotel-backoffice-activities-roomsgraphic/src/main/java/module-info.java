@@ -15,7 +15,7 @@ module modality.hotel.backoffice.activities.roomsgraphic {
     requires modality.hotel.backoffice.operations.resourceconfiguration;
     requires webfx.extras.flexbox;
     requires webfx.extras.imagestore;
-    requires webfx.extras.visual.controls.grid;
+    requires webfx.extras.visual.grid;
     requires webfx.framework.client.action;
     requires webfx.framework.client.activity;
     requires webfx.framework.client.operationaction;

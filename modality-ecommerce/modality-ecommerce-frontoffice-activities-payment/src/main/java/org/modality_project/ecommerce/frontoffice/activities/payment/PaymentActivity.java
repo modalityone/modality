@@ -1,6 +1,6 @@
 package org.modality_project.ecommerce.frontoffice.activities.payment;
 
-import dev.webfx.extras.webtext.controls.HtmlText;
+import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.framework.client.services.i18n.I18n;
 import dev.webfx.stack.framework.client.ui.action.Action;

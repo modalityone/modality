@@ -10,8 +10,8 @@ module modality.event.frontoffice.activities.terms {
     requires modality.base.client.util;
     requires modality.ecommerce.client.bookingprocess;
     requires modality.event.client.sectionpanel;
-    requires webfx.extras.visual.base;
-    requires webfx.extras.visual.controls.grid.peers.base;
+    requires webfx.extras.visual;
+    requires webfx.extras.visual.grid.peers.base;
     requires webfx.framework.client.activity;
     requires webfx.framework.client.i18n;
     requires webfx.framework.client.orm.domainmodel.activity;

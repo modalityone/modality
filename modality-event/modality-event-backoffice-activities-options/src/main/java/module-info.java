@@ -16,7 +16,7 @@ module modality.event.backoffice.activities.options {
     requires modality.event.client.calendar;
     requires modality.event.frontoffice.activities.options;
     requires modality.hotel.shared.time;
-    requires webfx.extras.visual.controls.grid;
+    requires webfx.extras.visual.grid;
     requires webfx.framework.client.activity;
     requires webfx.framework.client.controls;
     requires webfx.framework.client.orm.domainmodel.activity;

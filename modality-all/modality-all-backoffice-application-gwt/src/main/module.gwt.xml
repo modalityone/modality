@@ -416,36 +416,36 @@
     <source path="dev/webfx/extras/materialdesign/util/scene"/>
     <!--===============================< webfx-extras-type >================================-->
     <source path="dev/webfx/extras/type"/>
-    <!--============================< webfx-extras-visual-base >============================-->
+    <!--==============================< webfx-extras-visual >===============================-->
     <source path="dev/webfx/extras/visual"/>
     <source path="dev/webfx/extras/visual/impl"/>
-    <!--==========================< webfx-extras-visual-controls >==========================-->
-    <source path="dev/webfx/extras/visual/controls"/>
-    <!--======================< webfx-extras-visual-controls-charts >=======================-->
+    <!--===========================< webfx-extras-visual-charts >===========================-->
     <source path="dev/webfx/extras/visual/controls/charts"/>
-    <!--=================< webfx-extras-visual-controls-charts-peers-base >=================-->
+    <!--=====================< webfx-extras-visual-charts-peers-base >======================-->
     <source path="dev/webfx/extras/visual/controls/charts/peers/base"/>
-    <!--==============< webfx-extras-visual-controls-charts-peers-gwt-charba >==============-->
+    <!--==================< webfx-extras-visual-charts-peers-gwt-charba >===================-->
     <source path="dev/webfx/extras/visual/controls/charts/peers/gwt/charba"/>
     <source path="dev/webfx/extras/visual/controls/charts/registry"/>
-    <!--=======================< webfx-extras-visual-controls-grid >========================-->
+    <!--==========================< webfx-extras-visual-controls >==========================-->
+    <source path="dev/webfx/extras/visual/controls"/>
+    <!--============================< webfx-extras-visual-grid >============================-->
     <source path="dev/webfx/extras/visual/controls/grid"/>
-    <!--==================< webfx-extras-visual-controls-grid-peers-gwt >===================-->
+    <!--=======================< webfx-extras-visual-grid-peers-gwt >=======================-->
     <source path="dev/webfx/extras/cell/collator/grid"/>
     <source path="dev/webfx/extras/visual/controls/grid/peers/gwt/html"/>
     <source path="dev/webfx/extras/visual/controls/grid/registry"/>
-    <!--==================< webfx-extras-visual-controls-grid-peers-base >==================-->
+    <!--======================< webfx-extras-visual-grid-peers-base >=======================-->
     <source path="dev/webfx/extras/cell/collator/grid"/>
     <source path="dev/webfx/extras/visual/controls/grid/peers/base"/>
-    <!--====================< webfx-extras-visual-controls-peers-base >=====================-->
+    <!--=========================< webfx-extras-visual-peers-base >=========================-->
     <source path="dev/webfx/extras/visual/controls/peers/base"/>
-    <!--=========================< webfx-extras-webtext-controls >==========================-->
-    <source path="dev/webfx/extras/webtext/controls"/>
-    <!--====================< webfx-extras-webtext-controls-peers-base >====================-->
-    <source path="dev/webfx/extras/webtext/controls/peers/base"/>
-    <!--====================< webfx-extras-webtext-controls-peers-gwt >=====================-->
-    <source path="dev/webfx/extras/webtext/controls/peers/gwt/html"/>
-    <source path="dev/webfx/extras/webtext/controls/registry"/>
+    <!--==============================< webfx-extras-webtext >==============================-->
+    <source path="dev/webfx/extras/webtext"/>
+    <!--========================< webfx-extras-webtext-peers-base >=========================-->
+    <source path="dev/webfx/extras/webtext/peers/base"/>
+    <!--=========================< webfx-extras-webtext-peers-gwt >=========================-->
+    <source path="dev/webfx/extras/webtext/peers/gwt/html"/>
+    <source path="dev/webfx/extras/webtext/registry"/>
     <!--=========================< webfx-framework-client-action >==========================-->
     <source path="dev/webfx/stack/framework/client/ui/action"/>
     <source path="dev/webfx/stack/framework/client/ui/action/impl"/>

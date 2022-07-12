@@ -7,7 +7,7 @@ module modality.base.backoffice.operations.generic {
     requires javafx.graphics;
     requires modality.base.shared.entities;
     requires webfx.extras.type;
-    requires webfx.extras.visual.controls.grid;
+    requires webfx.extras.visual.grid;
     requires webfx.framework.client.controls;
     requires webfx.framework.client.orm.entity.controls;
     requires webfx.framework.client.orm.reactive.entities;

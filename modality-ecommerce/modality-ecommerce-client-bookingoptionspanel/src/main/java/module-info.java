@@ -13,8 +13,8 @@ module modality.ecommerce.client.bookingoptionspanel {
     requires modality.event.client.sectionpanel;
     requires modality.hotel.shared.time;
     requires webfx.extras.type;
-    requires webfx.extras.visual.base;
-    requires webfx.extras.visual.controls.grid;
+    requires webfx.extras.visual;
+    requires webfx.extras.visual.grid;
     requires webfx.framework.client.i18n;
     requires webfx.framework.client.orm.reactive.visual;
     requires webfx.framework.shared.orm.domainmodel;

@@ -14,8 +14,8 @@ module modality.crm.client.personaldetails {
     requires modality.event.client.sectionpanel;
     requires webfx.extras.materialdesign;
     requires webfx.extras.type;
-    requires webfx.extras.visual.base;
-    requires webfx.extras.visual.controls.grid;
+    requires webfx.extras.visual;
+    requires webfx.extras.visual.grid;
     requires webfx.framework.client.controls;
     requires webfx.framework.client.i18n;
     requires webfx.framework.client.orm.entity.controls;

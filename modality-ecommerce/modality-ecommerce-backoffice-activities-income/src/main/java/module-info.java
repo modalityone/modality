@@ -11,8 +11,8 @@ module modality.ecommerce.backoffice.activities.income {
     requires modality.base.client.entities;
     requires modality.base.client.util;
     requires modality.base.shared.entities;
-    requires webfx.extras.visual.base;
-    requires webfx.extras.visual.controls.grid;
+    requires webfx.extras.visual;
+    requires webfx.extras.visual.grid;
     requires webfx.framework.client.activity;
     requires webfx.framework.client.operationaction;
     requires webfx.framework.client.orm.domainmodel.activity;

@@ -340,8 +340,8 @@
                 <module>modality-base-client-activity</module>
                 <module>modality-base-shared-entities</module>
                 <module>webfx-extras-cell</module>
-                <module>webfx-extras-visual-base</module>
-                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-extras-visual</module>
+                <module>webfx-extras-visual-grid</module>
                 <module>webfx-framework-client-action</module>
                 <module>webfx-framework-client-operationaction</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
@@ -389,8 +389,8 @@
 
             <used-by-source-modules>
                 <module>modality-base-client-activity</module>
-                <module>webfx-extras-visual-base</module>
-                <module>webfx-extras-visual-controls-charts</module>
+                <module>webfx-extras-visual</module>
+                <module>webfx-extras-visual-charts</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-orm-reactive-entities</module>
                 <module>webfx-framework-client-orm-reactive-visual</module>
@@ -470,10 +470,10 @@
                 <module>modality-base-client-entities</module>
                 <module>webfx-extras-imagestore</module>
                 <module>webfx-extras-type</module>
-                <module>webfx-extras-visual-base</module>
+                <module>webfx-extras-visual</module>
+                <module>webfx-extras-visual-charts</module>
                 <module>webfx-extras-visual-controls</module>
-                <module>webfx-extras-visual-controls-charts</module>
-                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-extras-visual-grid</module>
                 <module>webfx-framework-client-controls</module>
                 <module>webfx-framework-client-orm-reactive-dql</module>
                 <module>webfx-framework-client-orm-reactive-entities</module>
@@ -510,7 +510,7 @@
             <used-by-source-modules>
                 <module>java.base</module>
                 <module>modality-base-client-icons</module>
-                <module>webfx-extras-webtext-controls</module>
+                <module>webfx-extras-webtext</module>
                 <module>webfx-framework-client-action</module>
                 <module>webfx-framework-client-controls</module>
                 <module>webfx-framework-client-i18n</module>
@@ -561,7 +561,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-extras-visual-controls-grid</undetected-module>
+                    <undetected-module>webfx-extras-visual-grid</undetected-module>
                     <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -596,7 +596,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-extras-visual-controls-grid</undetected-module>
+                    <undetected-module>webfx-extras-visual-grid</undetected-module>
                     <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -639,8 +639,8 @@
                 <module>modality-base-client-aggregates</module>
                 <module>modality-base-client-presentationmodel</module>
                 <module>modality-ecommerce-client-businesslogic</module>
-                <module>webfx-extras-visual-base</module>
-                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-extras-visual</module>
+                <module>webfx-extras-visual-grid</module>
                 <module>webfx-framework-client-controls</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-orm-reactive-dql</module>
@@ -1546,8 +1546,8 @@
                 <module>modality-base-shared-entities</module>
                 <module>modality-catering-backoffice-operations-allocationrule</module>
                 <module>modality-ecommerce-backoffice-activities-statistics</module>
-                <module>webfx-extras-visual-base</module>
-                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-extras-visual</module>
+                <module>webfx-extras-visual-grid</module>
                 <module>webfx-framework-client-operationaction</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-orm-reactive-visual</module>
@@ -1640,7 +1640,7 @@
 
             <used-by-source-modules>
                 <module>modality-crm-client-authn</module>
-                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-extras-visual-grid</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-orm-entity-controls</module>
                 <module>webfx-framework-client-orm-reactive-visual</module>
@@ -1811,7 +1811,7 @@
                 <module>modality-base-shared-domainmodel</module>
                 <module>modality-base-shared-entities</module>
                 <module>modality-ecommerce-backoffice-operations-document</module>
-                <module>webfx-extras-visual-base</module>
+                <module>webfx-extras-visual</module>
                 <module>webfx-framework-client-action</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-orm-reactive-dql</module>
@@ -1856,7 +1856,7 @@
                 <module>modality-ecommerce-backoffice-operations-moneytransfer</module>
                 <module>webfx-extras-imagestore</module>
                 <module>webfx-extras-label</module>
-                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-extras-visual-grid</module>
                 <module>webfx-framework-client-action</module>
                 <module>webfx-framework-client-activity</module>
                 <module>webfx-framework-client-controls</module>
@@ -2051,8 +2051,8 @@
                 <module>modality-event-client-sectionpanel</module>
                 <module>webfx-extras-materialdesign</module>
                 <module>webfx-extras-type</module>
-                <module>webfx-extras-visual-base</module>
-                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-extras-visual</module>
+                <module>webfx-extras-visual-grid</module>
                 <module>webfx-framework-client-controls</module>
                 <module>webfx-framework-client-i18n</module>
                 <module>webfx-framework-client-orm-entity-controls</module>
@@ -2134,8 +2134,8 @@
                 <module>modality-ecommerce-backoffice-operations-document</module>
                 <module>modality-event-backoffice-activities-cloneevent-routing</module>
                 <module>modality-event-frontoffice-activities-fees</module>
-                <module>webfx-extras-visual-base</module>
-                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-extras-visual</module>
+                <module>webfx-extras-visual-grid</module>
                 <module>webfx-framework-client-action</module>
                 <module>webfx-framework-client-operationaction</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
@@ -2172,7 +2172,7 @@
                     <undetected-module>webfx-framework-client-activity</undetected-module>
                     <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
-                    <undetected-module>webfx-extras-visual-controls-grid</undetected-module>
+                    <undetected-module>webfx-extras-visual-grid</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2189,8 +2189,8 @@
                 <module>modality-base-client-entities</module>
                 <module>modality-base-client-util</module>
                 <module>modality-base-shared-entities</module>
-                <module>webfx-extras-visual-base</module>
-                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-extras-visual</module>
+                <module>webfx-extras-visual-grid</module>
                 <module>webfx-framework-client-operationaction</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-orm-entity-controls</module>
@@ -2241,8 +2241,8 @@
                 <module>modality-base-shared-domainmodel</module>
                 <module>modality-base-shared-entities</module>
                 <module>modality-ecommerce-backoffice-operations-moneyflow</module>
-                <module>webfx-extras-visual-base</module>
-                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-extras-visual</module>
+                <module>webfx-extras-visual-grid</module>
                 <module>webfx-framework-client-action</module>
                 <module>webfx-framework-client-controls</module>
                 <module>webfx-framework-client-operationaction</module>
@@ -2299,8 +2299,8 @@
                 <module>modality-base-shared-domainmodel</module>
                 <module>modality-base-shared-entities</module>
                 <module>modality-ecommerce-backoffice-operations-moneytransfer</module>
-                <module>webfx-extras-visual-base</module>
-                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-extras-visual</module>
+                <module>webfx-extras-visual-grid</module>
                 <module>webfx-framework-client-operationaction</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-orm-reactive-dql</module>
@@ -2351,7 +2351,7 @@
                 <module>modality-base-client-util</module>
                 <module>modality-base-shared-domainmodel</module>
                 <module>modality-base-shared-entities</module>
-                <module>webfx-extras-visual-base</module>
+                <module>webfx-extras-visual</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-orm-entity-controls</module>
                 <module>webfx-framework-client-orm-reactive-dql</module>
@@ -2408,8 +2408,8 @@
                 <module>modality-ecommerce-backoffice-operations-document</module>
                 <module>modality-ecommerce-backoffice-operations-documentline</module>
                 <module>webfx-extras-type</module>
-                <module>webfx-extras-visual-base</module>
-                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-extras-visual</module>
+                <module>webfx-extras-visual-grid</module>
                 <module>webfx-framework-client-operationaction</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-orm-reactive-dql</module>
@@ -2576,8 +2576,8 @@
                 <module>modality-event-client-sectionpanel</module>
                 <module>modality-hotel-shared-time</module>
                 <module>webfx-extras-type</module>
-                <module>webfx-extras-visual-base</module>
-                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-extras-visual</module>
+                <module>webfx-extras-visual-grid</module>
                 <module>webfx-framework-client-i18n</module>
                 <module>webfx-framework-client-orm-reactive-visual</module>
                 <module>webfx-framework-shared-orm-domainmodel</module>
@@ -2702,8 +2702,8 @@
                 <module>modality-event-frontoffice-activities-startbooking</module>
                 <module>webfx-extras-flexbox</module>
                 <module>webfx-extras-type</module>
-                <module>webfx-extras-visual-base</module>
-                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-extras-visual</module>
+                <module>webfx-extras-visual-grid</module>
                 <module>webfx-framework-client-action</module>
                 <module>webfx-framework-client-controls</module>
                 <module>webfx-framework-client-i18n</module>
@@ -2843,7 +2843,7 @@
                 <module>modality-base-shared-entities</module>
                 <module>modality-ecommerce-frontoffice-activities-cart-routing</module>
                 <module>modality-event-client-sectionpanel</module>
-                <module>webfx-extras-webtext-controls</module>
+                <module>webfx-extras-webtext</module>
                 <module>webfx-framework-client-action</module>
                 <module>webfx-framework-client-controls</module>
                 <module>webfx-framework-client-i18n</module>
@@ -3117,7 +3117,7 @@
                 <module>modality-event-client-calendar</module>
                 <module>modality-event-frontoffice-activities-options</module>
                 <module>modality-hotel-shared-time</module>
-                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-extras-visual-grid</module>
                 <module>webfx-framework-client-controls</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-orm-reactive-visual</module>
@@ -3265,9 +3265,9 @@
                 <module>webfx-extras-cell</module>
                 <module>webfx-extras-imagestore</module>
                 <module>webfx-extras-type</module>
-                <module>webfx-extras-visual-base</module>
-                <module>webfx-extras-visual-controls-grid</module>
-                <module>webfx-extras-visual-controls-grid-peers-base</module>
+                <module>webfx-extras-visual</module>
+                <module>webfx-extras-visual-grid</module>
+                <module>webfx-extras-visual-grid-peers-base</module>
                 <module>webfx-framework-client-i18n</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-uirouter</module>
@@ -3462,8 +3462,8 @@
                 <module>modality-base-client-util</module>
                 <module>modality-ecommerce-client-bookingprocess</module>
                 <module>modality-event-client-sectionpanel</module>
-                <module>webfx-extras-visual-base</module>
-                <module>webfx-extras-visual-controls-grid-peers-base</module>
+                <module>webfx-extras-visual</module>
+                <module>webfx-extras-visual-grid-peers-base</module>
                 <module>webfx-framework-client-i18n</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
                 <module>webfx-framework-client-orm-reactive-visual</module>
@@ -3525,7 +3525,7 @@
                 <module>modality-hotel-backoffice-operations-resourceconfiguration</module>
                 <module>webfx-extras-flexbox</module>
                 <module>webfx-extras-imagestore</module>
-                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-extras-visual-grid</module>
                 <module>webfx-framework-client-action</module>
                 <module>webfx-framework-client-operationaction</module>
                 <module>webfx-framework-client-orm-domainmodel-activity</module>
@@ -3697,7 +3697,7 @@
             <java-class name="javafx.scene.control.ScrollPane">
                 <module>modality-ecommerce-backoffice-operations-document</module>
                 <module>modality-ecommerce-client-bookingprocess</module>
-                <module>webfx-extras-visual-controls-grid</module>
+                <module>webfx-extras-visual-grid</module>
                 <module>webfx-framework-client-controls</module>
                 <module>webfx-framework-client-util</module>
             </java-class>

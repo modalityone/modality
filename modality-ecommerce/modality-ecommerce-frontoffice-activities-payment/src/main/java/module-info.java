@@ -13,7 +13,7 @@ module modality.ecommerce.frontoffice.activities.payment {
     requires modality.base.shared.entities;
     requires modality.ecommerce.frontoffice.activities.cart.routing;
     requires modality.event.client.sectionpanel;
-    requires webfx.extras.webtext.controls;
+    requires webfx.extras.webtext;
     requires webfx.framework.client.action;
     requires webfx.framework.client.activity;
     requires webfx.framework.client.controls;

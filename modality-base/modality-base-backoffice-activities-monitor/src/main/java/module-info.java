@@ -7,8 +7,8 @@ module modality.base.backoffice.activities.monitor {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.activity;
-    requires webfx.extras.visual.base;
-    requires webfx.extras.visual.controls.charts;
+    requires webfx.extras.visual;
+    requires webfx.extras.visual.charts;
     requires webfx.framework.client.activity;
     requires webfx.framework.client.orm.domainmodel.activity;
     requires webfx.framework.client.orm.reactive.entities;

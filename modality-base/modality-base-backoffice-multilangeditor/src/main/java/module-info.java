@@ -7,7 +7,7 @@ module modality.base.backoffice.multilangeditor {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.icons;
-    requires webfx.extras.webtext.controls;
+    requires webfx.extras.webtext;
     requires webfx.framework.client.action;
     requires webfx.framework.client.controls;
     requires webfx.framework.client.i18n;

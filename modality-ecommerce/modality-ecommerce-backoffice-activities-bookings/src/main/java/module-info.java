@@ -19,8 +19,8 @@ module modality.ecommerce.backoffice.activities.bookings {
     requires modality.ecommerce.backoffice.operations.document;
     requires modality.event.backoffice.activities.cloneevent.routing;
     requires modality.event.frontoffice.activities.fees;
-    requires webfx.extras.visual.base;
-    requires webfx.extras.visual.controls.grid;
+    requires webfx.extras.visual;
+    requires webfx.extras.visual.grid;
     requires webfx.framework.client.action;
     requires webfx.framework.client.activity;
     requires webfx.framework.client.operationaction;

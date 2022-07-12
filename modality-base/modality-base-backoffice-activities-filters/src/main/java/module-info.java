@@ -12,8 +12,8 @@ module modality.base.backoffice.activities.filters {
     requires modality.base.client.activity;
     requires modality.base.shared.entities;
     requires webfx.extras.cell;
-    requires webfx.extras.visual.base;
-    requires webfx.extras.visual.controls.grid;
+    requires webfx.extras.visual;
+    requires webfx.extras.visual.grid;
     requires webfx.framework.client.action;
     requires webfx.framework.client.activity;
     requires webfx.framework.client.controls;
