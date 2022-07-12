@@ -59,19 +59,19 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-client-storage</artifactId>
+            <artifactId>webfx-platform-boot</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-shared-boot</artifactId>
+            <artifactId>webfx-platform-console</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-shared-log</artifactId>
+            <artifactId>webfx-platform-storage</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

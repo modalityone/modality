@@ -14,7 +14,7 @@ import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_grid.En
 import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.framework.shared.orm.entity.EntityList;
 import dev.webfx.stack.framework.shared.orm.expression.Expression;
-import dev.webfx.platform.shared.util.Dates;
+import dev.webfx.platform.util.Dates;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

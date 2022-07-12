@@ -18,7 +18,7 @@ module modality.ecommerce.frontoffice.activities.person {
     requires webfx.framework.client.uirouter;
     requires webfx.framework.client.util;
     requires webfx.kit.util;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.util;
     requires webfx.stack.platform.windowhistory;
 
     // Exported packages

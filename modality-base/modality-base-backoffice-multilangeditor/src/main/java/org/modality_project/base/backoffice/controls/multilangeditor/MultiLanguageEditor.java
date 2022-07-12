@@ -12,11 +12,11 @@ import dev.webfx.stack.framework.client.ui.controls.button.ButtonFactoryMixin;
 import dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.extras.webtext.controls.HtmlTextEditor;
-import dev.webfx.platform.shared.util.Objects;
-import dev.webfx.platform.shared.util.Strings;
+import dev.webfx.platform.util.Objects;
+import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.async.Handler;
-import dev.webfx.platform.shared.util.function.Callable;
-import dev.webfx.platform.shared.util.tuples.Pair;
+import dev.webfx.platform.util.function.Callable;
+import dev.webfx.platform.util.tuples.Pair;
 import org.modality_project.base.client.icons.ModalityIcons;
 
 import java.util.HashMap;

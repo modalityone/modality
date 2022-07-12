@@ -9,8 +9,8 @@ module modality.crm.client.authz {
     requires webfx.framework.shared.orm.domainmodel;
     requires webfx.framework.shared.orm.entity;
     requires webfx.framework.shared.router;
-    requires webfx.platform.shared.log;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.console;
+    requires webfx.platform.util;
     requires webfx.stack.async;
 
     // Exported packages

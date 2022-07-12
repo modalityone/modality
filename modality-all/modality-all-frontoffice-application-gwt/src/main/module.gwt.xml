@@ -492,50 +492,50 @@
     <source path="dev/webfx/kit/util/properties/conversion"/>
     <!--============================< webfx-lib-javacupruntime >============================-->
     <source path="java_cup/runtime"/>
-    <!--=========================< webfx-platform-client-storage >==========================-->
-    <source path="dev/webfx/platform/client/services/storage"/>
-    <source path="dev/webfx/platform/client/services/storage/spi"/>
-    <!--=======================< webfx-platform-client-uischeduler >========================-->
-    <source path="dev/webfx/platform/client/services/uischeduler"/>
-    <source path="dev/webfx/platform/client/services/uischeduler/spi"/>
-    <source path="dev/webfx/platform/client/services/uischeduler/spi/impl"/>
-    <!--==========================< webfx-platform-gwt-boot-impl >==========================-->
-    <source path="dev/webfx/platform/gwt/services/boot/spi/impl"/>
-    <!--==========================< webfx-platform-gwt-log-impl >===========================-->
-    <source path="dev/webfx/platform/gwt/services/log/spi/impl"/>
-    <!--========================< webfx-platform-gwt-resource-impl >========================-->
-    <source path="dev/webfx/platform/gwt/services/resource/spi/impl"/>
-    <!--========================< webfx-platform-gwt-shutdown-impl >========================-->
-    <source path="dev/webfx/platform/gwt/services/shutdown/spi/impl"/>
-    <!--========================< webfx-platform-gwt-storage-impl >=========================-->
-    <source path="dev/webfx/platform/gwt/services/storage/spi/impl"/>
-    <!--======================< webfx-platform-gwt-uischeduler-impl >=======================-->
-    <source path="dev/webfx/platform/gwt/services/uischeduler/spi/impl"/>
-    <!--===========================< webfx-platform-shared-boot >===========================-->
-    <source path="dev/webfx/platform/shared/services/boot"/>
-    <source path="dev/webfx/platform/shared/services/boot/spi"/>
-    <source path="dev/webfx/platform/shared/services/boot/spi/impl"/>
-    <!--===========================< webfx-platform-shared-log >============================-->
-    <source path="dev/webfx/platform/shared/services/log"/>
-    <source path="dev/webfx/platform/shared/services/log/spi"/>
-    <!--=========================< webfx-platform-shared-resource >=========================-->
-    <source path="dev/webfx/platform/shared/services/resource"/>
-    <source path="dev/webfx/platform/shared/services/resource/spi"/>
-    <!--========================< webfx-platform-shared-scheduler >=========================-->
-    <source path="dev/webfx/platform/shared/services/scheduler"/>
-    <source path="dev/webfx/platform/shared/services/scheduler/spi"/>
-    <!--=========================< webfx-platform-shared-shutdown >=========================-->
-    <source path="dev/webfx/platform/shared/services/shutdown"/>
-    <source path="dev/webfx/platform/shared/services/shutdown/spi"/>
-    <source path="dev/webfx/platform/shared/services/shutdown/spi/impl"/>
-    <!--===========================< webfx-platform-shared-util >===========================-->
-    <source path="dev/webfx/platform/shared/util"/>
-    <source path="dev/webfx/platform/shared/util/collection"/>
-    <source path="dev/webfx/platform/shared/util/function"/>
-    <source path="dev/webfx/platform/shared/util/noreflect"/>
-    <source path="dev/webfx/platform/shared/util/serviceloader"/>
-    <source path="dev/webfx/platform/shared/util/tuples"/>
-    <source path="dev/webfx/platform/shared/util/uuid"/>
+    <!--==============================< webfx-platform-boot >===============================-->
+    <source path="dev/webfx/platform/boot"/>
+    <source path="dev/webfx/platform/boot/spi"/>
+    <source path="dev/webfx/platform/boot/spi/impl"/>
+    <!--============================< webfx-platform-boot-gwt >=============================-->
+    <source path="dev/webfx/platform/boot/spi/impl/gwt"/>
+    <!--=============================< webfx-platform-console >=============================-->
+    <source path="dev/webfx/platform/console"/>
+    <source path="dev/webfx/platform/console/spi"/>
+    <!--===========================< webfx-platform-console-gwt >===========================-->
+    <source path="dev/webfx/platform/console/spi/impl/gwt"/>
+    <!--============================< webfx-platform-resource >=============================-->
+    <source path="dev/webfx/platform/resource"/>
+    <source path="dev/webfx/platform/resource/spi"/>
+    <!--==========================< webfx-platform-resource-gwt >===========================-->
+    <source path="dev/webfx/platform/resource/spi/impl/gwt"/>
+    <!--============================< webfx-platform-scheduler >============================-->
+    <source path="dev/webfx/platform/scheduler"/>
+    <source path="dev/webfx/platform/scheduler/spi"/>
+    <!--============================< webfx-platform-shutdown >=============================-->
+    <source path="dev/webfx/platform/shutdown"/>
+    <source path="dev/webfx/platform/shutdown/spi"/>
+    <source path="dev/webfx/platform/shutdown/spi/impl"/>
+    <!--==========================< webfx-platform-shutdown-gwt >===========================-->
+    <source path="dev/webfx/platform/shutdown/spi/impl/gwt"/>
+    <!--=============================< webfx-platform-storage >=============================-->
+    <source path="dev/webfx/platform/storage"/>
+    <source path="dev/webfx/platform/storage/spi"/>
+    <!--===========================< webfx-platform-storage-gwt >===========================-->
+    <source path="dev/webfx/platform/storage/spi/impl/gwt"/>
+    <!--===========================< webfx-platform-uischeduler >===========================-->
+    <source path="dev/webfx/platform/uischeduler"/>
+    <source path="dev/webfx/platform/uischeduler/spi"/>
+    <source path="dev/webfx/platform/uischeduler/spi/impl"/>
+    <!--=========================< webfx-platform-uischeduler-gwt >=========================-->
+    <source path="dev/webfx/platform/uischeduler/spi/impl/gwt"/>
+    <!--==============================< webfx-platform-util >===============================-->
+    <source path="dev/webfx/platform/util"/>
+    <source path="dev/webfx/platform/util/collection"/>
+    <source path="dev/webfx/platform/util/function"/>
+    <source path="dev/webfx/platform/util/noreflect"/>
+    <source path="dev/webfx/platform/util/serviceloader"/>
+    <source path="dev/webfx/platform/util/tuples"/>
+    <source path="dev/webfx/platform/util/uuid"/>
     <!--===============================< webfx-stack-async >================================-->
     <source path="dev/webfx/stack/async"/>
     <source path="dev/webfx/stack/async/impl"/>
@@ -611,7 +611,7 @@
     <set-property name="jre.checks.checkLevel" value="MINIMAL"/>
 
     <!-- Specify the app entry point class. -->
-    <entry-point class="dev.webfx.platform.gwt.services.boot.spi.impl.GwtApplicationBooterProvider"/>
+    <entry-point class="dev.webfx.platform.boot.spi.impl.gwt.GwtApplicationBooterProvider"/>
 
     <super-source path="super"/>
     <super-source includes="java/io/" path=""/>

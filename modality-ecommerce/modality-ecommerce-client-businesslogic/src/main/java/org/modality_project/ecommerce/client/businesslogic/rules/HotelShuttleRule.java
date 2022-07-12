@@ -7,7 +7,7 @@ import org.modality_project.ecommerce.client.businessdata.workingdocument.Workin
 import org.modality_project.ecommerce.client.businessdata.workingdocument.WorkingDocumentLine;
 import org.modality_project.base.shared.entities.Option;
 import org.modality_project.base.shared.entities.Site;
-import dev.webfx.platform.shared.util.collection.Collections;
+import dev.webfx.platform.util.collection.Collections;
 
 import java.util.ArrayList;
 import java.util.List;

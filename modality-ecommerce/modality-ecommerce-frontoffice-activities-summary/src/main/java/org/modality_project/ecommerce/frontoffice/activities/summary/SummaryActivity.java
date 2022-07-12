@@ -1,9 +1,9 @@
 package org.modality_project.ecommerce.frontoffice.activities.summary;
 
+import dev.webfx.platform.console.Console;
 import dev.webfx.stack.framework.client.services.i18n.I18n;
 import dev.webfx.kit.util.properties.Properties;
-import dev.webfx.platform.shared.services.log.Logger;
-import dev.webfx.platform.shared.util.Strings;
+import dev.webfx.platform.util.Strings;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableStringValue;
 import javafx.event.ActionEvent;
@@ -131,7 +131,7 @@ final class SummaryActivity extends BookingProcessActivity {
     protected void onNextButtonPressed(ActionEvent event) {
         if (validationSupport.isValid())
             WorkingDocumentSubmitter.submit(getEventActiveWorkingDocument(), commentTextArea.getText())
-                    .onFailure(cause -> Logger.log("Error submitting booking", cause))
+                    .onFailure(cause -> Console.log("Error submitting booking", cause))
                     .onSuccess(document -> {
                         Cart cart = document.getCart();
                         if (cart == null) {

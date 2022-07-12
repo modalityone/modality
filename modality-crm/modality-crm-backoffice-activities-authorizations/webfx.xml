@@ -13,7 +13,7 @@
     <dependencies>
         <used-by-source-modules>
             <undetected-module>webfx-stack-async</undetected-module>
-            <undetected-module>webfx-platform-shared-util</undetected-module>
+            <undetected-module>webfx-platform-util</undetected-module>
             <undetected-module>webfx-framework-client-activity</undetected-module>
             <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
         </used-by-source-modules>

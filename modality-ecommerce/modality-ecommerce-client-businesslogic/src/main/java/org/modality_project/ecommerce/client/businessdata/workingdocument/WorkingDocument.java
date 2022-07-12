@@ -15,7 +15,7 @@ import org.modality_project.base.shared.entities.Person;
 import org.modality_project.base.shared.entities.markers.EntityHasPersonalDetails;
 import org.modality_project.base.shared.entities.markers.HasPersonalDetails;
 import dev.webfx.stack.framework.shared.orm.entity.*;
-import dev.webfx.platform.shared.util.collection.Collections;
+import dev.webfx.platform.util.collection.Collections;
 
 import java.util.ArrayList;
 import java.util.HashMap;

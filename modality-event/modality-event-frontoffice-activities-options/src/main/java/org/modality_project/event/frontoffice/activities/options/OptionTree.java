@@ -7,8 +7,8 @@ import org.modality_project.ecommerce.client.businessdata.workingdocument.Workin
 import org.modality_project.ecommerce.client.businessdata.workingdocument.WorkingDocumentTransaction;
 import org.modality_project.base.client.util.functions.TranslateFunction;
 import org.modality_project.base.client.validation.ModalityValidationSupport;
-import dev.webfx.platform.client.services.uischeduler.UiScheduler;
-import dev.webfx.platform.shared.util.collection.Collections;
+import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.util.collection.Collections;
 
 import java.util.HashMap;
 import java.util.List;

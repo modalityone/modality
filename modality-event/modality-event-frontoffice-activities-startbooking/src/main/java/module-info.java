@@ -21,8 +21,8 @@ module modality.event.frontoffice.activities.startbooking {
     requires webfx.framework.client.uirouter;
     requires webfx.framework.client.util;
     requires webfx.kit.util;
-    requires webfx.platform.client.uischeduler;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.uischeduler;
+    requires webfx.platform.util;
     requires webfx.stack.async;
     requires webfx.stack.platform.windowhistory;
 

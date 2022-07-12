@@ -10,22 +10,22 @@ import dev.webfx.extras.type.SpecializedTextType;
 import dev.webfx.extras.visual.*;
 import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.platform.console.Console;
 import dev.webfx.stack.framework.client.services.i18n.Dictionary;
 import dev.webfx.stack.framework.client.services.i18n.I18n;
 import dev.webfx.stack.framework.client.services.i18n.I18nControls;
 import dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil;
 import dev.webfx.stack.framework.shared.orm.entity.EntityList;
 import dev.webfx.kit.util.properties.Properties;
-import dev.webfx.platform.client.services.uischeduler.UiScheduler;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.platform.json.Json;
 import dev.webfx.stack.platform.json.JsonObject;
 import dev.webfx.stack.platform.json.WritableJsonObject;
-import dev.webfx.platform.shared.services.log.Logger;
-import dev.webfx.platform.shared.util.Arrays;
-import dev.webfx.platform.shared.util.Booleans;
-import dev.webfx.platform.shared.util.Numbers;
-import dev.webfx.platform.shared.util.Objects;
-import dev.webfx.platform.shared.util.tuples.Pair;
+import dev.webfx.platform.util.Arrays;
+import dev.webfx.platform.util.Booleans;
+import dev.webfx.platform.util.Numbers;
+import dev.webfx.platform.util.Objects;
+import dev.webfx.platform.util.tuples.Pair;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
@@ -116,7 +116,7 @@ final class FeesActivity extends BookingProcessActivity {
     private void loadAndDisplayFeesGroups() {
         lastLoadedEventOptions = null;
         onEventFeesGroups()
-                .onFailure(Logger::log)
+                .onFailure(Console::log)
                 .onSuccess(this::displayFeesGroupsAndRefreshAvailabilities);
     }
 

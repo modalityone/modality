@@ -26,7 +26,7 @@ module modality.event.backoffice.activities.options {
     requires webfx.framework.shared.orm.dql;
     requires webfx.framework.shared.orm.entity;
     requires webfx.kit.util;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.util;
     requires webfx.stack.async;
     requires webfx.stack.db.submit;
 

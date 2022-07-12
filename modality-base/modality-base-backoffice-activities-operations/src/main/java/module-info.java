@@ -15,7 +15,7 @@ module modality.base.backoffice.activities.operations {
     requires webfx.framework.shared.orm.entity;
     requires webfx.framework.shared.router;
     requires webfx.kit.launcher;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.util;
     requires webfx.stack.async;
     requires webfx.stack.platform.windowhistory;
 

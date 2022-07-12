@@ -1,8 +1,8 @@
 package org.modality_project.hotel.shared.businessdata.time;
 
-import dev.webfx.platform.shared.util.Objects;
-import dev.webfx.platform.shared.util.Strings;
-import dev.webfx.platform.shared.util.collection.Collections;
+import dev.webfx.platform.util.Objects;
+import dev.webfx.platform.util.Strings;
+import dev.webfx.platform.util.collection.Collections;
 
 import java.util.ArrayList;
 import java.util.List;

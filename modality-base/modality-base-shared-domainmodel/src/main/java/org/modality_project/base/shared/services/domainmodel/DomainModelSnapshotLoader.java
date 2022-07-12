@@ -13,7 +13,7 @@ import dev.webfx.stack.async.Batch;
 import dev.webfx.stack.platform.json.Json;
 import dev.webfx.stack.platform.json.JsonElement;
 import dev.webfx.stack.db.query.QueryResult;
-import dev.webfx.platform.shared.services.resource.ResourceService;
+import dev.webfx.platform.resource.Resource;
 import dev.webfx.stack.com.serial.SerialCodecManager;
 import org.modality_project.base.shared.domainmodel.formatters.DateFormatter;
 import org.modality_project.base.shared.domainmodel.formatters.DateTimeFormatter;
@@ -43,7 +43,7 @@ final class DomainModelSnapshotLoader {
             // Registering entity java classes
             EntityFactoryRegistry.registerProvidedEntityFactories();
             // Loading the model from the resource snapshot
-            String jsonString = ResourceService.getText("org/modality_project/base/shared/domainmodel/DomainModelSnapshot.json");
+            String jsonString = Resource.getText("org/modality_project/base/shared/domainmodel/DomainModelSnapshot.json");
             JsonElement json = Json.parseObject(jsonString);
             Batch<QueryResult> snapshotBatch = SerialCodecManager.decodeFromJson(json);
             DomainModel domainModel = new DomainModelLoader(1).generateDomainModel(snapshotBatch);

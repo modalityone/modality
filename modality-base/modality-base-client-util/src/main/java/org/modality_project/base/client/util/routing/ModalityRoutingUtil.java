@@ -1,7 +1,7 @@
 package org.modality_project.base.client.util.routing;
 
 import dev.webfx.stack.framework.shared.orm.entity.Entities;
-import dev.webfx.platform.shared.util.Strings;
+import dev.webfx.platform.util.Strings;
 
 /**
  * @author Bruno Salmon

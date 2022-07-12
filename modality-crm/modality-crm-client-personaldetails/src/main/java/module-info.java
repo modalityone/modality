@@ -24,8 +24,8 @@ module modality.crm.client.personaldetails {
     requires webfx.framework.shared.orm.domainmodel;
     requires webfx.framework.shared.orm.entity;
     requires webfx.kit.util;
-    requires webfx.platform.client.uischeduler;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.uischeduler;
+    requires webfx.platform.util;
 
     // Exported packages
     exports org.modality_project.crm.client.controls.personaldetails;

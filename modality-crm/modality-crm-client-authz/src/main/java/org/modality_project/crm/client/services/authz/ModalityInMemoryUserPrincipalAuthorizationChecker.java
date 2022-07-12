@@ -1,5 +1,6 @@
 package org.modality_project.crm.client.services.authz;
 
+import dev.webfx.platform.console.Console;
 import org.modality_project.crm.client.services.authn.ModalityUserPrincipal;
 import dev.webfx.stack.framework.shared.operation.authz.OperationAuthorizationRuleParser;
 import dev.webfx.stack.framework.shared.orm.domainmodel.DataSourceModel;
@@ -9,8 +10,7 @@ import dev.webfx.stack.framework.shared.router.auth.authz.RoutingAuthorizationRu
 import dev.webfx.stack.framework.shared.router.auth.authz.RoutingAuthorizationRuleParser;
 import dev.webfx.stack.framework.shared.services.authz.spi.impl.inmemory.AuthorizationRuleType;
 import dev.webfx.stack.framework.shared.services.authz.spi.impl.inmemory.InMemoryUserPrincipalAuthorizationChecker;
-import dev.webfx.platform.shared.services.log.Logger;
-import dev.webfx.platform.shared.util.Strings;
+import dev.webfx.platform.util.Strings;
 
 /**
  * @author Bruno Salmon
@@ -27,7 +27,7 @@ final class ModalityInMemoryUserPrincipalAuthorizationChecker extends InMemoryUs
         if (userPrincipal != null)
             setUpInMemoryAsyncRulesLoading(EntityStore.create(dataSourceModel).executeQuery("select rule.rule,activityState.route from AuthorizationAssignment where active and management.user=?", principal.getUserPersonId()), ar -> {
                 if (ar.failed())
-                    Logger.log(ar.cause());
+                    Console.log(ar.cause());
                 else // When successfully loaded, iterating over the assignments
                     for (Entity assignment: ar.result()) {
                         // If it is an authorization rule assignment, registering it

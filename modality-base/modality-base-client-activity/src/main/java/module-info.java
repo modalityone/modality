@@ -19,8 +19,8 @@ module modality.base.client.activity {
     requires webfx.framework.client.util;
     requires webfx.framework.shared.orm.domainmodel;
     requires webfx.kit.util;
-    requires webfx.platform.shared.log;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.console;
+    requires webfx.platform.util;
     requires webfx.stack.async;
     requires webfx.stack.db.query;
     requires webfx.stack.platform.json;

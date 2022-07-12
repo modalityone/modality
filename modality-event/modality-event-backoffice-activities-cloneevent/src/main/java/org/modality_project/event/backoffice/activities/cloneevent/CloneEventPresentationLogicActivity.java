@@ -4,7 +4,7 @@ import org.modality_project.base.client.activity.eventdependent.EventDependentPr
 import org.modality_project.base.shared.entities.Event;
 import org.modality_project.ecommerce.backoffice.operations.routes.bookings.RouteToBookingsRequest;
 import dev.webfx.kit.util.properties.Properties;
-import dev.webfx.platform.client.services.uischeduler.UiScheduler;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.db.submit.SubmitArgument;
 import dev.webfx.stack.db.submit.SubmitService;
 

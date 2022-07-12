@@ -8,7 +8,7 @@ package org.modality_project.ecommerce.frontoffice.activities.payment;
  * details.
  */
 
-import dev.webfx.platform.shared.services.log.Logger;
+import dev.webfx.platform.console.Console;
 
 import java.nio.charset.StandardCharsets;
 
@@ -28,7 +28,7 @@ final class Sha1 {
 */
             return hash(bytes); // alternative algorithm implementation that works with GWT
         } catch (Exception e) { // UnsupportedEncodingException or NoSuchAlgorithmException
-            Logger.log("Error while computing SHA-1", e);
+            Console.log("Error while computing SHA-1", e);
             return msg;
         }
     }

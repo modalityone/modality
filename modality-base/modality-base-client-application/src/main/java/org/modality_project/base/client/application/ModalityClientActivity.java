@@ -7,7 +7,7 @@ import dev.webfx.stack.framework.client.activity.impl.combinations.viewdomain.Vi
 import dev.webfx.stack.framework.client.activity.impl.combinations.viewdomain.ViewDomainActivityContextMixin;
 import dev.webfx.stack.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.framework.client.ui.uirouter.UiRouter;
-import dev.webfx.platform.shared.util.function.Factory;
+import dev.webfx.platform.util.function.Factory;
 
 /**
  * @author Bruno Salmon

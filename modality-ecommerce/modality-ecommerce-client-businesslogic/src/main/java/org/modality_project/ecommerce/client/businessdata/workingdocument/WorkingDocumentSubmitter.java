@@ -9,8 +9,8 @@ import org.modality_project.base.shared.entities.DocumentLine;
 import dev.webfx.stack.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.stack.db.submit.SubmitArgument;
 import dev.webfx.stack.async.Future;
-import dev.webfx.platform.shared.util.collection.Collections;
-import dev.webfx.platform.shared.util.uuid.Uuid;
+import dev.webfx.platform.util.collection.Collections;
+import dev.webfx.platform.util.uuid.Uuid;
 
 import java.time.LocalDate;
 import java.util.List;

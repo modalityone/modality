@@ -12,7 +12,7 @@ module modality.crm.backoffice.activities.letter {
     requires webfx.framework.client.orm.domainmodel.activity;
     requires webfx.framework.client.uirouter;
     requires webfx.kit.util;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.util;
     requires webfx.stack.platform.windowhistory;
 
     // Exported packages

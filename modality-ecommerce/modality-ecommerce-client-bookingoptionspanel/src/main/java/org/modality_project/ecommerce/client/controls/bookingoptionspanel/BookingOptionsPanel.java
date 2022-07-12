@@ -23,8 +23,8 @@ import dev.webfx.extras.visual.VisualResult;
 import dev.webfx.extras.visual.SelectionMode;
 import dev.webfx.extras.type.PrimType;
 import dev.webfx.kit.util.properties.Properties;
-import dev.webfx.platform.shared.util.Objects;
-import dev.webfx.platform.shared.util.collection.Collections;
+import dev.webfx.platform.util.Objects;
+import dev.webfx.platform.util.collection.Collections;
 
 import java.util.List;
 

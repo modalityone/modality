@@ -2,7 +2,7 @@ package org.modality_project.event.client.controls.calendargraphic.impl;
 
 import org.modality_project.event.client.businessdata.calendar.Calendar;
 import org.modality_project.hotel.shared.businessdata.time.TimeInterval;
-import dev.webfx.platform.shared.util.collection.Collections;
+import dev.webfx.platform.util.collection.Collections;
 
 import java.util.ArrayList;
 import java.util.List;

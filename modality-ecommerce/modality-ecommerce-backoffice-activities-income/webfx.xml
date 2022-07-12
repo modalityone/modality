@@ -16,7 +16,7 @@
             <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
             <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
             <undetected-module>webfx-extras-visual-controls-grid</undetected-module>
-            <undetected-module>webfx-platform-shared-util</undetected-module>
+            <undetected-module>webfx-platform-util</undetected-module>
         </used-by-source-modules>
     </dependencies>
 

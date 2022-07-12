@@ -10,7 +10,7 @@ module modality.base.client.i18n {
     requires webfx.framework.client.util;
     requires webfx.framework.shared.operation;
     requires webfx.framework.shared.orm.entity;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.util;
 
     // Exported packages
     exports org.modality_project.base.client.operations.i18n;

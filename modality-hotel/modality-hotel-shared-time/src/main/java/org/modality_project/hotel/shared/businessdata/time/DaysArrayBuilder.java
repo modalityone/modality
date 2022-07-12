@@ -1,7 +1,7 @@
 package org.modality_project.hotel.shared.businessdata.time;
 
-import dev.webfx.platform.shared.util.collection.Collections;
-import dev.webfx.platform.shared.util.collection.HashList;
+import dev.webfx.platform.util.collection.Collections;
+import dev.webfx.platform.util.collection.HashList;
 
 import java.time.LocalDate;
 import java.util.Arrays;

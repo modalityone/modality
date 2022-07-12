@@ -32,7 +32,7 @@ import dev.webfx.stack.framework.shared.orm.dql.sqlcompiler.terms.ConstantSqlCom
 import dev.webfx.stack.framework.shared.orm.expression.terms.As;
 import dev.webfx.stack.framework.shared.orm.expression.terms.ExpressionArray;
 import dev.webfx.stack.framework.shared.orm.expression.terms.function.Call;
-import dev.webfx.platform.shared.util.Numbers;
+import dev.webfx.platform.util.Numbers;
 
 import java.util.Arrays;
 

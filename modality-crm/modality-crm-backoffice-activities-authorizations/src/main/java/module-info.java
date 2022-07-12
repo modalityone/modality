@@ -17,7 +17,7 @@ module modality.crm.backoffice.activities.authorizations {
     requires webfx.framework.shared.orm.dql;
     requires webfx.framework.shared.orm.entity;
     requires webfx.framework.shared.router;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.util;
     requires webfx.stack.async;
     requires webfx.stack.platform.windowhistory;
 

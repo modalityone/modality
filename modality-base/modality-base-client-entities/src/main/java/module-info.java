@@ -17,7 +17,7 @@ module modality.base.client.entities {
     requires webfx.framework.shared.orm.domainmodel;
     requires webfx.framework.shared.orm.dql;
     requires webfx.kit.util;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.util;
 
     // Exported packages
     exports org.modality_project.base.client.entities.util;

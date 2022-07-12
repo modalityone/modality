@@ -43,11 +43,11 @@ import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
 import dev.webfx.extras.visual.VisualResult;
 import dev.webfx.extras.visual.VisualSelection;
 import dev.webfx.extras.type.PrimType;
-import dev.webfx.platform.client.services.uischeduler.UiScheduler;
-import dev.webfx.platform.shared.services.log.Logger;
-import dev.webfx.platform.shared.util.Arrays;
+import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.console.Console;
+import dev.webfx.platform.util.Arrays;
 import dev.webfx.stack.async.Future;
-import dev.webfx.platform.shared.util.collection.Collections;
+import dev.webfx.platform.util.collection.Collections;
 
 import java.util.List;
 
@@ -300,7 +300,7 @@ final class CartActivity extends CartBasedActivity {
     }
 
     private void explainStatus() {
-        Logger.log("Explaining status");
+        Console.log("Explaining status");
     }
 
     private void modifyBooking() {

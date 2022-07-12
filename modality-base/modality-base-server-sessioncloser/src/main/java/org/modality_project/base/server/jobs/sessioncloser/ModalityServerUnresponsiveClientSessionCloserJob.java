@@ -1,10 +1,10 @@
 package org.modality_project.base.server.jobs.sessioncloser;
 
+import dev.webfx.platform.console.Console;
 import dev.webfx.stack.framework.server.services.push.PushServerService;
 import dev.webfx.stack.framework.server.services.push.UnresponsivePushClientListener;
 import dev.webfx.stack.framework.shared.services.datasourcemodel.DataSourceModelService;
-import dev.webfx.platform.shared.services.boot.spi.ApplicationJob;
-import dev.webfx.platform.shared.services.log.Logger;
+import dev.webfx.platform.boot.spi.ApplicationJob;
 import dev.webfx.stack.db.submit.SubmitArgument;
 import dev.webfx.stack.db.submit.SubmitService;
 
@@ -24,8 +24,8 @@ public final class ModalityServerUnresponsiveClientSessionCloserJob implements A
                         .setParameters(pushClientId)
                         .setDataSourceId(DataSourceModelService.getDefaultDataSourceId())
                         .build())
-                        .onFailure(cause -> Logger.log("Error while closing session for pushClientId=" + pushClientId, cause))
-                        .onSuccess(result -> Logger.log("Closed session for pushClientId=" + pushClientId)));
+                        .onFailure(cause -> Console.log("Error while closing session for pushClientId=" + pushClientId, cause))
+                        .onSuccess(result -> Console.log("Closed session for pushClientId=" + pushClientId)));
     }
 
     @Override

@@ -13,8 +13,8 @@ module modality.event.client.bookingcalendar {
     requires modality.event.client.calendar;
     requires modality.hotel.shared.time;
     requires webfx.framework.shared.orm.entity;
-    requires webfx.platform.client.uischeduler;
-    requires webfx.platform.shared.log;
+    requires webfx.platform.console;
+    requires webfx.platform.uischeduler;
     requires webfx.stack.async;
 
     // Exported packages

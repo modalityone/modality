@@ -30,9 +30,9 @@ module modality.event.frontoffice.activities.fees {
     requires webfx.framework.client.util;
     requires webfx.framework.shared.orm.entity;
     requires webfx.kit.util;
-    requires webfx.platform.client.uischeduler;
-    requires webfx.platform.shared.log;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.console;
+    requires webfx.platform.uischeduler;
+    requires webfx.platform.util;
     requires webfx.stack.async;
     requires webfx.stack.db.query;
     requires webfx.stack.platform.json;

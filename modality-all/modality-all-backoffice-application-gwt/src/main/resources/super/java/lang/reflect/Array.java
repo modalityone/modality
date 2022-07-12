@@ -1,7 +1,7 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 package java.lang.reflect;
 
-import dev.webfx.platform.shared.services.log.Logger;
+import dev.webfx.platform.console.Console;
 
 public final class Array {
 
@@ -12,7 +12,7 @@ public final class Array {
 
             // TYPE NOT FOUND
             default:
-               Logger.log("GWT super source Array.newInstance() has no case for type " + componentType + ", so new Object[] is returned but this may cause a ClassCastException.");
+               Console.log("GWT super source Array.newInstance() has no case for type " + componentType + ", so new Object[] is returned but this may cause a ClassCastException.");
                return new Object[length];
         }
     }

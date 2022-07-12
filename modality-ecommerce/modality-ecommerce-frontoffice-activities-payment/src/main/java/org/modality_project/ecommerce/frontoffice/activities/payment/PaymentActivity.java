@@ -1,6 +1,7 @@
 package org.modality_project.ecommerce.frontoffice.activities.payment;
 
 import dev.webfx.extras.webtext.controls.HtmlText;
+import dev.webfx.platform.console.Console;
 import dev.webfx.stack.framework.client.services.i18n.I18n;
 import dev.webfx.stack.framework.client.ui.action.Action;
 import dev.webfx.stack.framework.client.ui.controls.dialog.DialogUtil;
@@ -9,14 +10,13 @@ import dev.webfx.stack.framework.shared.orm.entity.EntityList;
 import dev.webfx.stack.framework.shared.orm.entity.EntityStore;
 import dev.webfx.stack.framework.shared.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.framework.shared.orm.entity.UpdateStore;
-import dev.webfx.platform.client.services.uischeduler.UiScheduler;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.com.websocketbus.WebSocketBus;
 import dev.webfx.stack.platform.windowlocation.WindowLocation;
 import dev.webfx.stack.com.bus.BusService;
-import dev.webfx.platform.shared.services.log.Logger;
-import dev.webfx.platform.shared.util.Dates;
-import dev.webfx.platform.shared.util.Strings;
-import dev.webfx.platform.shared.util.collection.Collections;
+import dev.webfx.platform.util.Dates;
+import dev.webfx.platform.util.Strings;
+import dev.webfx.platform.util.collection.Collections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -241,7 +241,7 @@ final class PaymentActivity extends CartBasedActivity {
             }
         }
         updateStore.submitChanges()
-                .onFailure(cause -> Logger.log("Error submitting payment", cause))
+                .onFailure(cause -> Console.log("Error submitting payment", cause))
                 .onSuccess(submitBatch -> {
                     cartAggregate().unload();
                     Object[] paymentIdParameter = { submitBatch.getArray()[0].getGeneratedKeys()[0] };
@@ -249,7 +249,7 @@ final class PaymentActivity extends CartBasedActivity {
                                     new EntityStoreQuery("select <frontoffice_loadEvent> from GatewayParameter gp where exists(select MoneyTransfer mt where mt=? and (gp.account=mt.toMoneyAccount or gp.account=null and gp.company=mt.toMoneyAccount.gatewayCompany)) order by company", paymentIdParameter, "gatewayParameters"),
                                     new EntityStoreQuery("select <frontoffice_cart> from MoneyTransfer where id=?", paymentIdParameter, "lastPayment")
                             )
-                            .onFailure(cause -> Logger.log("Error submitting payment", cause))
+                            .onFailure(cause -> Console.log("Error submitting payment", cause))
                             .onSuccess(entityLists -> {
                                 EntityList<GatewayParameter> gatewayParameters = entityLists[0];
                                 lastPayment = (MoneyTransfer) entityLists[1].get(0);

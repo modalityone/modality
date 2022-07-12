@@ -3,7 +3,7 @@ package org.modality_project.ecommerce.client.businessdata.workingdocument;
 import org.modality_project.hotel.shared.businessdata.time.DateTimeRange;
 import org.modality_project.hotel.shared.businessdata.time.TimeInterval;
 import org.modality_project.base.shared.entities.Option;
-import dev.webfx.platform.shared.util.collection.Collections;
+import dev.webfx.platform.util.collection.Collections;
 
 /**
  * A transaction for a working document to be used for a very short time such as reacting to a click in the booking form.

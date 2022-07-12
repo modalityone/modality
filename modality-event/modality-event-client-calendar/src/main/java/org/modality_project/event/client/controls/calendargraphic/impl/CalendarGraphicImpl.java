@@ -1,8 +1,8 @@
 package org.modality_project.event.client.controls.calendargraphic.impl;
 
 import dev.webfx.kit.util.properties.Properties;
-import dev.webfx.platform.shared.util.collection.Collections;
-import dev.webfx.platform.shared.util.tuples.Unit;
+import dev.webfx.platform.util.collection.Collections;
+import dev.webfx.platform.util.tuples.Unit;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;

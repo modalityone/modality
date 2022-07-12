@@ -1,7 +1,7 @@
 package org.modality_project.hotel.shared.businessdata.time;
 
-import dev.webfx.platform.shared.util.Dates;
-import dev.webfx.platform.shared.util.Numbers;
+import dev.webfx.platform.util.Dates;
+import dev.webfx.platform.util.Numbers;
 
 import java.time.LocalDateTime;
 import java.time.Month;

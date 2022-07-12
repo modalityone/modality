@@ -3,7 +3,7 @@ package org.modality_project.crm.backoffice.activities.organizations;
 import org.modality_project.event.backoffice.operations.routes.events.RouteToEventsRequest;
 import org.modality_project.base.client.activity.ModalityDomainPresentationLogicActivityBase;
 import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.platform.shared.util.function.Factory;
+import dev.webfx.platform.util.function.Factory;
 
 import static dev.webfx.stack.framework.shared.orm.dql.DqlStatement.limit;
 import static dev.webfx.stack.framework.shared.orm.dql.DqlStatement.where;

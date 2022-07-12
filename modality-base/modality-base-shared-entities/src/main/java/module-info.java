@@ -8,7 +8,7 @@ module modality.base.shared.entities {
     requires modality.hotel.shared.time;
     requires webfx.framework.shared.orm.dql;
     requires webfx.framework.shared.orm.entity;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.util;
 
     // Exported packages
     exports org.modality_project.base.shared.entities;

@@ -1,8 +1,7 @@
 package org.modality_project.ecommerce.client.businesslogic.workingdocument;
 
-import dev.webfx.platform.shared.util.Arrays;
+import dev.webfx.platform.util.Arrays;
 import org.modality_project.ecommerce.client.businessdata.workingdocument.WorkingDocument;
-import org.modality_project.ecommerce.client.businesslogic.rules.*;
 import org.modality_project.ecommerce.client.businesslogic.rules.*;
 
 /**

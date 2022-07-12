@@ -2,7 +2,7 @@ package org.modality_project.ecommerce.client.activity.bookingprocess;
 
 import javafx.event.ActionEvent;
 import org.modality_project.base.client.activity.eventdependent.EventDependentPresentationLogicActivity;
-import dev.webfx.platform.shared.util.function.Factory;
+import dev.webfx.platform.util.function.Factory;
 
 /**
  * @author Bruno Salmon

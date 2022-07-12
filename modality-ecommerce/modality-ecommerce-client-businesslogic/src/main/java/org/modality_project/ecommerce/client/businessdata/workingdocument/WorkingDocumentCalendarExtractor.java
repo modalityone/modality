@@ -15,7 +15,7 @@ import org.modality_project.base.shared.entities.ItemFamilyType;
 import org.modality_project.base.shared.entities.Label;
 import org.modality_project.base.shared.entities.Option;
 import org.modality_project.base.shared.entities.markers.HasItemFamilyType;
-import dev.webfx.platform.shared.util.Objects;
+import dev.webfx.platform.util.Objects;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;

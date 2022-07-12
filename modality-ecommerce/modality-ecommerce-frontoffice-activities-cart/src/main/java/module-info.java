@@ -34,9 +34,9 @@ module modality.ecommerce.frontoffice.activities.cart {
     requires webfx.framework.shared.orm.domainmodel;
     requires webfx.framework.shared.orm.entity;
     requires webfx.framework.shared.orm.expression;
-    requires webfx.platform.client.uischeduler;
-    requires webfx.platform.shared.log;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.console;
+    requires webfx.platform.uischeduler;
+    requires webfx.platform.util;
     requires webfx.stack.async;
     requires webfx.stack.db.submit;
 

@@ -35,8 +35,8 @@ import dev.webfx.extras.visual.VisualStyle;
 import dev.webfx.extras.visual.SelectionMode;
 import dev.webfx.extras.type.PrimType;
 import dev.webfx.kit.util.properties.Properties;
-import dev.webfx.platform.client.services.uischeduler.UiScheduler;
-import dev.webfx.platform.shared.util.Booleans;
+import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.util.Booleans;
 
 import java.time.LocalDate;
 

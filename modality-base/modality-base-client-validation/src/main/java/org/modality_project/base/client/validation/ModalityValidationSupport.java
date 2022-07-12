@@ -36,8 +36,8 @@ import dev.webfx.stack.framework.client.ui.util.border.BorderFactory;
 import dev.webfx.stack.framework.client.ui.util.scene.SceneUtil;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.extras.imagestore.ImageStore;
-import dev.webfx.platform.client.services.uischeduler.UiScheduler;
-import dev.webfx.platform.shared.util.collection.Collections;
+import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.util.collection.Collections;
 
 import java.util.ArrayList;
 import java.util.Collection;

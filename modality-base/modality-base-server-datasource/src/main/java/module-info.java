@@ -6,8 +6,8 @@ module modality.base.server.datasource {
     requires webfx.framework.shared.orm.datasourcemodelservice;
     requires webfx.framework.shared.orm.domainmodel;
     requires webfx.framework.shared.orm.dql;
-    requires webfx.platform.shared.log;
-    requires webfx.platform.shared.resource;
+    requires webfx.platform.console;
+    requires webfx.platform.resource;
     requires webfx.stack.db.datasource;
     requires webfx.stack.platform.json;
 

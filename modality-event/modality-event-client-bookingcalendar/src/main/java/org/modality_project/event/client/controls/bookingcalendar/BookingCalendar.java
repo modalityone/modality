@@ -1,5 +1,6 @@
 package org.modality_project.event.client.controls.bookingcalendar;
 
+import dev.webfx.platform.console.Console;
 import javafx.beans.property.Property;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -22,8 +23,7 @@ import org.modality_project.base.shared.entities.formatters.EventPriceFormatter;
 import org.modality_project.base.client.aggregates.event.EventAggregate;
 import org.modality_project.base.client.util.log.PerformanceLogger;
 import dev.webfx.stack.framework.shared.orm.entity.Entities;
-import dev.webfx.platform.shared.services.log.Logger;
-import dev.webfx.platform.client.services.uischeduler.UiScheduler;
+import dev.webfx.platform.uischeduler.UiScheduler;
 
 import java.util.concurrent.TimeUnit;
 
@@ -123,7 +123,7 @@ public class BookingCalendar {
                     return optionsPreselection;
             }
         }
-        Logger.log("Warning: no OptionsPreselection found for this working document");
+        Console.log("Warning: no OptionsPreselection found for this working document");
         return null;
     }
 

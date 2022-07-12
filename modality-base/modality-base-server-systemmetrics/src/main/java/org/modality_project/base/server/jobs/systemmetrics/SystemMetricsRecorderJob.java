@@ -1,14 +1,14 @@
 package org.modality_project.base.server.jobs.systemmetrics;
 
+import dev.webfx.platform.console.Console;
 import org.modality_project.base.server.services.systemmetrics.SystemMetricsService;
 import org.modality_project.base.shared.entities.SystemMetricsEntity;
 import dev.webfx.stack.framework.shared.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.framework.shared.orm.entity.UpdateStore;
 import dev.webfx.stack.framework.shared.services.datasourcemodel.DataSourceModelService;
-import dev.webfx.platform.shared.services.boot.spi.ApplicationJob;
-import dev.webfx.platform.shared.services.log.Logger;
-import dev.webfx.platform.shared.services.scheduler.Scheduled;
-import dev.webfx.platform.shared.services.scheduler.Scheduler;
+import dev.webfx.platform.boot.spi.ApplicationJob;
+import dev.webfx.platform.scheduler.Scheduled;
+import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.stack.db.submit.SubmitArgument;
 import dev.webfx.stack.db.submit.SubmitService;
 
@@ -39,7 +39,7 @@ public final class SystemMetricsRecorderJob implements ApplicationJob {
             SystemMetricsService.takeSystemMetricsSnapshot(store.insertEntity(SystemMetricsEntity.class));
             // Submitting this new record into the database
             store.submitChanges()
-                    .onFailure(cause -> Logger.log("Inserting metrics in database failed!", cause));
+                    .onFailure(cause -> Console.log("Inserting metrics in database failed!", cause));
         });
 
         // Deleting old metrics records (older than 1 day) regularly (every 12h)
@@ -50,8 +50,8 @@ public final class SystemMetricsRecorderJob implements ApplicationJob {
                         .setParameters(Instant.now().minus(1, ChronoUnit.DAYS))
                         .setDataSourceId(dataSourceModel.getDataSourceId())
                         .build())
-                        .onFailure(cause -> Logger.log("Deleting metrics in database failed!", cause))
-                        .onSuccess(submitResult -> Logger.log(submitResult.getRowCount() + " metrics records have been deleted from the database")));
+                        .onFailure(cause -> Console.log("Deleting metrics in database failed!", cause))
+                        .onSuccess(submitResult -> Console.log(submitResult.getRowCount() + " metrics records have been deleted from the database")));
     }
 
     @Override

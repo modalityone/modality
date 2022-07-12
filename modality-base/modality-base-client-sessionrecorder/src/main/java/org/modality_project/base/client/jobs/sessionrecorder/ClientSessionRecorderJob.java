@@ -9,13 +9,13 @@ import dev.webfx.stack.framework.client.ui.uirouter.uisession.UiSession;
 import dev.webfx.stack.framework.shared.services.datasourcemodel.DataSourceModelService;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.stack.framework.client.services.push.PushClientService;
-import dev.webfx.platform.client.services.storage.LocalStorage;
-import dev.webfx.platform.shared.services.boot.spi.ApplicationJob;
+import dev.webfx.platform.storage.LocalStorage;
+import dev.webfx.platform.boot.spi.ApplicationJob;
 import dev.webfx.stack.com.bus.Bus;
 import dev.webfx.stack.com.bus.BusHook;
 import dev.webfx.stack.com.bus.BusService;
 import dev.webfx.stack.com.bus.Registration;
-import dev.webfx.platform.shared.services.log.Logger;
+import dev.webfx.platform.console.Console;
 
 import java.time.Instant;
 
@@ -44,12 +44,12 @@ public final class ClientSessionRecorderJob implements ApplicationJob {
 
     @Override
     public void onStart() {
-        Logger.log("User Agent = " + getUserAgent());
-        Logger.log("application.name = " + getApplicationName());
-        Logger.log("application.version = " + getApplicationVersion());
-        Logger.log("application.build.tool = " + getApplicationBuildTool());
-        Logger.log("application.build.timestamp = " + getApplicationBuildTimestampString());
-        Logger.log("application.build.number = " + getApplicationBuildNumberString());
+        Console.log("User Agent = " + getUserAgent());
+        Console.log("application.name = " + getApplicationName());
+        Console.log("application.version = " + getApplicationVersion());
+        Console.log("application.build.tool = " + getApplicationBuildTool());
+        Console.log("application.build.timestamp = " + getApplicationBuildTimestampString());
+        Console.log("application.build.number = " + getApplicationBuildNumberString());
         bus.setHook(new BusHook() {
             @Override
             public void handleOpened() {
@@ -208,12 +208,12 @@ public final class ClientSessionRecorderJob implements ApplicationJob {
                 })
                 .onFailure(cause -> {
                     if (tryRestoreSessionFromLocalStorage) {
-                        Logger.log("Client session couldn't be restored (inconsistent state between the local storage and the database) - Restarting a brand-new client session");
+                        Console.log("Client session couldn't be restored (inconsistent state between the local storage and the database) - Restarting a brand-new client session");
                         tryRestoreSessionFromLocalStorage = false;
                         clearSessionInfo();
                         onConnectionOpened();
                     } else
-                        Logger.log("Client Session Recorder error", cause);
+                        Console.log("Client Session Recorder error", cause);
                 });
     }
 

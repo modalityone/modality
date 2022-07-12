@@ -13,7 +13,7 @@ import org.modality_project.base.shared.entities.Event;
 import dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil;
 import dev.webfx.stack.framework.client.ui.util.background.BackgroundFactory;
 import dev.webfx.kit.util.properties.Properties;
-import dev.webfx.platform.shared.util.Strings;
+import dev.webfx.platform.util.Strings;
 
 /**
  * @author Bruno Salmon

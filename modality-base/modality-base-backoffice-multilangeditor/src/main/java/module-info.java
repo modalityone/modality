@@ -15,7 +15,7 @@ module modality.base.backoffice.multilangeditor {
     requires webfx.framework.shared.orm.domainmodel;
     requires webfx.framework.shared.orm.entity;
     requires webfx.kit.util;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.util;
     requires webfx.stack.async;
     requires webfx.stack.db.submit;
 

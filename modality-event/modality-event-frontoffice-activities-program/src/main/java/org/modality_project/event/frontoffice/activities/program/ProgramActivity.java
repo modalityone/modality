@@ -8,7 +8,7 @@ import org.modality_project.event.client.controls.sectionpanel.SectionPanelFacto
 import org.modality_project.event.client.controls.bookingcalendar.BookingCalendar;
 import org.modality_project.ecommerce.client.activity.bookingprocess.BookingProcessActivity;
 import dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil;
-import dev.webfx.platform.shared.services.log.Logger;
+import dev.webfx.platform.console.Console;
 
 /**
  * @author Bruno Salmon
@@ -36,7 +36,7 @@ final class ProgramActivity extends BookingProcessActivity {
     @Override
     protected void startLogic() {
         onEventFeesGroups()
-                .onFailure(Logger::log)
+                .onFailure(Console::log)
                 .onSuccess(result -> {
                     noAccommodationOptionsPreselection = findNoAccommodationOptionsPreselection(result);
                     showBookingCalendarIfReady();

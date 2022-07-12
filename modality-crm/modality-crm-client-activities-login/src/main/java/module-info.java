@@ -17,7 +17,7 @@ module modality.crm.client.activities.login {
     requires webfx.framework.client.util;
     requires webfx.framework.shared.authn;
     requires webfx.kit.util;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.util;
     requires webfx.stack.async;
 
     // Exported packages

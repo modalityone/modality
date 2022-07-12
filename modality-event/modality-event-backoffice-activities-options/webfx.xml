@@ -14,7 +14,7 @@
             <undetected-module>modality-base-client-aggregates</undetected-module>
             <undetected-module>webfx-framework-client-activity</undetected-module>
             <undetected-module>webfx-stack-async</undetected-module>
-            <undetected-module>webfx-platform-shared-util</undetected-module>
+            <undetected-module>webfx-platform-util</undetected-module>
         </used-by-source-modules>
     </dependencies>
 

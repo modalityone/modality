@@ -7,8 +7,8 @@ import org.modality_project.base.shared.entities.Item;
 import org.modality_project.base.shared.entities.Rate;
 import org.modality_project.base.shared.entities.Site;
 import dev.webfx.stack.framework.shared.orm.entity.Entities;
-import dev.webfx.platform.shared.util.Booleans;
-import dev.webfx.platform.shared.util.Objects;
+import dev.webfx.platform.util.Booleans;
+import dev.webfx.platform.util.Objects;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

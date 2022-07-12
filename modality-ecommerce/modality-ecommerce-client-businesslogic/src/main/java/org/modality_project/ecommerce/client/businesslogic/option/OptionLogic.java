@@ -6,7 +6,7 @@ import org.modality_project.base.client.aggregates.event.EventAggregate;
 import org.modality_project.base.shared.entities.Event;
 import org.modality_project.base.shared.entities.Option;
 import org.modality_project.base.shared.entities.Site;
-import dev.webfx.platform.shared.util.Numbers;
+import dev.webfx.platform.util.Numbers;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;

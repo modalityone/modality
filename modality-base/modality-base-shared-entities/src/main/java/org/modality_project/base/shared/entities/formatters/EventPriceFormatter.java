@@ -3,7 +3,7 @@ package org.modality_project.base.shared.entities.formatters;
 import org.modality_project.base.shared.domainmodel.formatters.PriceFormatter;
 import org.modality_project.base.shared.entities.Event;
 import dev.webfx.stack.framework.shared.orm.entity.EntityId;
-import dev.webfx.platform.shared.util.Numbers;
+import dev.webfx.platform.util.Numbers;
 
 /**
  * @author Bruno Salmon

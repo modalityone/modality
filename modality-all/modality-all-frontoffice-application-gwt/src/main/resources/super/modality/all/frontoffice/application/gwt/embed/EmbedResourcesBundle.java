@@ -4,7 +4,7 @@ package modality.all.frontoffice.application.gwt.embed;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.TextResource;
-import dev.webfx.platform.gwt.services.resource.spi.impl.GwtResourceBundleBase;
+import dev.webfx.platform.resource.spi.impl.gwt.GwtResourceBundleBase;
 
 public interface EmbedResourcesBundle extends ClientBundle {
 

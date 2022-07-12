@@ -7,7 +7,7 @@ module modality.crm.client.activities.unauthorized {
     requires webfx.framework.client.activity;
     requires webfx.framework.client.orm.domainmodel.activity;
     requires webfx.framework.client.uirouter;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.util;
 
     // Exported packages
     exports org.modality_project.crm.client.activities.unauthorized;

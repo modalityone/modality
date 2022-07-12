@@ -1,6 +1,6 @@
 package org.modality_project.base.client.util.log;
 
-import dev.webfx.platform.shared.services.log.Logger;
+import dev.webfx.platform.console.Console;
 
 /**
  * @author Bruno Salmon
@@ -11,7 +11,7 @@ public final class PerformanceLogger {
 
     public void log(String message) {
         long t1 = System.currentTimeMillis();
-        Logger.log(message + ": " + (t1 - t0) + "ms");
+        Console.log(message + ": " + (t1 - t0) + "ms");
         t0 = t1;
     }
 }

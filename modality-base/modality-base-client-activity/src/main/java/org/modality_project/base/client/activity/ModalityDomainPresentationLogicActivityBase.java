@@ -1,13 +1,13 @@
 package org.modality_project.base.client.activity;
 
+import dev.webfx.platform.console.Console;
 import dev.webfx.stack.framework.client.activity.impl.combinations.domainpresentationlogic.impl.DomainPresentationLogicActivityImpl;
 import dev.webfx.stack.platform.json.Json;
 import dev.webfx.stack.platform.json.JsonObject;
 import dev.webfx.stack.platform.json.WritableJsonObject;
-import dev.webfx.platform.shared.services.log.Logger;
 import dev.webfx.stack.db.query.QueryArgument;
 import dev.webfx.stack.db.query.QueryService;
-import dev.webfx.platform.shared.util.function.Factory;
+import dev.webfx.platform.util.function.Factory;
 
 /**
  * @author Bruno Salmon
@@ -35,7 +35,7 @@ public abstract class ModalityDomainPresentationLogicActivityBase<PM>
                 .setParameters(activityStateId)
                 .setDataSourceId(getDataSourceId())
                 .build())
-                .onFailure(Logger::log)
+                .onFailure(Console::log)
                 .onSuccess(queryResult -> {
                     // Parsing the read parameters (json string expected) into a Json object
                     JsonObject stateParameters = Json.parseObject(queryResult.getValue(0, 1));

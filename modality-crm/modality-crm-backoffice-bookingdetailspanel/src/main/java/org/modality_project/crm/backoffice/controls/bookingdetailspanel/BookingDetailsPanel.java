@@ -44,7 +44,7 @@ import dev.webfx.stack.framework.shared.orm.domainmodel.HasDataSourceModel;
 import dev.webfx.stack.framework.shared.orm.entity.Entity;
 import dev.webfx.stack.framework.shared.orm.entity.EntityId;
 import dev.webfx.kit.util.properties.Properties;
-import dev.webfx.platform.shared.util.Strings;
+import dev.webfx.platform.util.Strings;
 
 import java.util.function.Supplier;
 

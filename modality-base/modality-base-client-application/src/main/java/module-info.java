@@ -22,8 +22,8 @@ module modality.base.client.application {
     requires webfx.framework.shared.router;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
-    requires webfx.platform.client.uischeduler;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.uischeduler;
+    requires webfx.platform.util;
     requires webfx.stack.com.buscall;
 
     // Exported packages

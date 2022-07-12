@@ -7,8 +7,8 @@ import dev.webfx.stack.framework.shared.orm.entity.EntityStore;
 import dev.webfx.stack.framework.shared.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.async.Future;
 import dev.webfx.stack.async.Promise;
-import dev.webfx.platform.shared.services.log.Logger;
-import dev.webfx.platform.shared.util.Strings;
+import dev.webfx.platform.console.Console;
+import dev.webfx.platform.util.Strings;
 import org.modality_project.base.client.aggregates.event.EventAggregate;
 import org.modality_project.base.shared.entities.*;
 
@@ -146,7 +146,7 @@ public final class CartAggregateImpl implements CartAggregate {
             Promise<Cart> promise = Promise.promise();
             eventAggregate.onEventOptions().onComplete(ar -> {
                 if (!cartDocuments.isEmpty()) {
-                    Logger.log("Warning: CartAggregate.onCart() has been called again before the first call is finished");
+                    Console.log("Warning: CartAggregate.onCart() has been called again before the first call is finished");
                     cartDocuments.clear();
                 }
                 Document currentDocument = null;

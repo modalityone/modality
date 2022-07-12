@@ -4,8 +4,8 @@ import org.modality_project.ecommerce.client.businessdata.workingdocument.Workin
 import org.modality_project.ecommerce.client.businessdata.workingdocument.WorkingDocumentLine;
 import org.modality_project.base.shared.entities.Item;
 import org.modality_project.base.shared.entities.Site;
-import dev.webfx.platform.shared.util.Objects;
-import dev.webfx.platform.shared.util.collection.HashList;
+import dev.webfx.platform.util.Objects;
+import dev.webfx.platform.util.collection.HashList;
 
 /**
  * @author Bruno Salmon

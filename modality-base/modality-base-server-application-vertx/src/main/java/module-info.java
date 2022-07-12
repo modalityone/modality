@@ -12,10 +12,10 @@ module modality.base.server.application.vertx {
     requires webfx.framework.shared.orm.dql.querypush.interceptor;
     requires webfx.framework.shared.orm.dql.submit.interceptor;
     requires webfx.platform.boot.vertx;
-    requires webfx.platform.java.resource.impl;
-    requires webfx.platform.java.shutdown.impl;
+    requires webfx.platform.console.java;
+    requires webfx.platform.resource.java;
     requires webfx.platform.scheduler.vertx;
-    requires webfx.platform.shared.log.impl.simple;
+    requires webfx.platform.shutdown.java;
     requires webfx.stack.com.bus.vertx;
     requires webfx.stack.db.querysubmit.vertx;
     requires webfx.stack.platform.json.vertx;

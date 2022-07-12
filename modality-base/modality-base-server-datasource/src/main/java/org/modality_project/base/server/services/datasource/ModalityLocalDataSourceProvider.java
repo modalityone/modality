@@ -8,8 +8,8 @@ import dev.webfx.stack.db.datasource.spi.LocalDataSourceProvider;
 import dev.webfx.stack.db.datasource.spi.simple.SimpleLocalDataSource;
 import dev.webfx.stack.platform.json.Json;
 import dev.webfx.stack.platform.json.JsonObject;
-import dev.webfx.platform.shared.services.log.Logger;
-import dev.webfx.platform.shared.services.resource.ResourceService;
+import dev.webfx.platform.console.Console;
+import dev.webfx.platform.resource.Resource;
 
 /**
  * @author Bruno Salmon
@@ -22,7 +22,7 @@ public final class ModalityLocalDataSourceProvider implements LocalDataSourcePro
         Object dataSourceId = DataSourceModelService.getDefaultDataSourceId();
         DBMS dbms = DBMS.POSTGRES;
         String connectionPath = "org/modality_project/base/server/datasource/" + dataSourceId + "/ConnectionDetails.json";
-        String connectionContent = ResourceService.getText(connectionPath);
+        String connectionContent = Resource.getText(connectionPath);
         JsonObject json = connectionContent == null ? null : Json.parseObject(connectionContent);
         //getProperty(json);
 
@@ -36,7 +36,7 @@ public final class ModalityLocalDataSourceProvider implements LocalDataSourcePro
                 json.getString("password")
         );
         if (connectionDetails == null)
-            Logger.log("WARNING: No connection details found for Modality data source (please check " + connectionPath + ")");
+            Console.log("WARNING: No connection details found for Modality data source (please check " + connectionPath + ")");
         MODALITY_DATA_SOURCE = new SimpleLocalDataSource(dataSourceId, dbms, connectionDetails);
     }
 

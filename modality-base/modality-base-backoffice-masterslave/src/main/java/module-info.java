@@ -24,7 +24,7 @@ module modality.base.backoffice.masterslave {
     requires webfx.framework.shared.orm.entity;
     requires webfx.framework.shared.orm.expression;
     requires webfx.kit.util;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.util;
 
     // Exported packages
     exports org.modality_project.base.backoffice.controls.masterslave;

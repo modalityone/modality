@@ -4,8 +4,8 @@ import org.modality_project.base.client.entities.util.Labels;
 import org.modality_project.ecommerce.client.businessdata.preselection.OptionsPreselection;
 import org.modality_project.base.shared.entities.Event;
 import org.modality_project.base.shared.entities.Label;
-import dev.webfx.platform.shared.util.Numbers;
-import dev.webfx.platform.shared.util.Objects;
+import dev.webfx.platform.util.Numbers;
+import dev.webfx.platform.util.Objects;
 
 /**
  * @author Bruno Salmon

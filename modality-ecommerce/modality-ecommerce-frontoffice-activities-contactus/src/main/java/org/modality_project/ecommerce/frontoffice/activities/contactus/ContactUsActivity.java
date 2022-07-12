@@ -7,10 +7,10 @@ import dev.webfx.stack.framework.client.ui.util.background.BackgroundFactory;
 import dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil;
 import dev.webfx.stack.framework.shared.orm.entity.EntityStore;
 import dev.webfx.stack.framework.shared.orm.entity.UpdateStore;
-import dev.webfx.platform.client.services.uischeduler.UiScheduler;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.platform.windowlocation.WindowLocation;
-import dev.webfx.platform.shared.services.log.Logger;
-import dev.webfx.platform.shared.util.Strings;
+import dev.webfx.platform.console.Console;
+import dev.webfx.platform.util.Strings;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -71,7 +71,7 @@ final class ContactUsActivity extends ViewDomainActivityBase
         // Loading the document in order to prepare
         EntityStore loadStore = EntityStore.create(getDataSourceModel());
         loadStore.<Document>executeQuery(DOCUMENT_LOAD_QUERY, documentId)
-                .onFailure(Logger::log)
+                .onFailure(Console::log)
                 .onSuccess(documents -> {
                     document = documents.get(0);
                     applyEventCssBackgroundIfProvided();
@@ -118,7 +118,7 @@ final class ContactUsActivity extends ViewDomainActivityBase
         history.setUsername("online");
         history.setComment("Sent '" + subjectTextField.getText() + "'");
         updateStore.submitChanges()
-                .onFailure(Logger::log)
+                .onFailure(Console::log)
                 .onSuccess(submitResultBatch -> {
                     // Going back (probably to booking cart)
                     new RouteBackwardRequest(getHistory()).execute();

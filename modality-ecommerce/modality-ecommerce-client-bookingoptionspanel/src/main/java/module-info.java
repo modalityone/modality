@@ -21,7 +21,7 @@ module modality.ecommerce.client.bookingoptionspanel {
     requires webfx.framework.shared.orm.entity;
     requires webfx.framework.shared.orm.expression;
     requires webfx.kit.util;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.util;
 
     // Exported packages
     exports org.modality_project.ecommerce.client.controls.bookingoptionspanel;

@@ -8,10 +8,10 @@ module modality.base.server.systemmetrics {
     requires webfx.framework.shared.orm.datasourcemodelservice;
     requires webfx.framework.shared.orm.domainmodel;
     requires webfx.framework.shared.orm.entity;
-    requires webfx.platform.shared.boot;
-    requires webfx.platform.shared.log;
-    requires webfx.platform.shared.scheduler;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.boot;
+    requires webfx.platform.console;
+    requires webfx.platform.scheduler;
+    requires webfx.platform.util;
     requires webfx.stack.async;
     requires webfx.stack.db.submit;
 
@@ -24,6 +24,6 @@ module modality.base.server.systemmetrics {
     uses org.modality_project.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider;
 
     // Provided services
-    provides dev.webfx.platform.shared.services.boot.spi.ApplicationJob with org.modality_project.base.server.jobs.systemmetrics.SystemMetricsRecorderJob;
+    provides dev.webfx.platform.boot.spi.ApplicationJob with org.modality_project.base.server.jobs.systemmetrics.SystemMetricsRecorderJob;
 
 }

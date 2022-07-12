@@ -6,7 +6,7 @@ import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.
 import dev.webfx.stack.framework.client.ui.controls.entity.sheet.EntityPropertiesSheet;
 import dev.webfx.stack.framework.shared.orm.entity.Entity;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
-import dev.webfx.platform.shared.util.function.Factory;
+import dev.webfx.platform.util.function.Factory;
 
 import static dev.webfx.stack.framework.shared.orm.dql.DqlStatement.limit;
 import static dev.webfx.stack.framework.shared.orm.dql.DqlStatement.where;

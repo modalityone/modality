@@ -15,8 +15,8 @@ module modality.event.frontoffice.activities.program {
     requires webfx.framework.client.orm.domainmodel.activity;
     requires webfx.framework.client.uirouter;
     requires webfx.framework.client.util;
-    requires webfx.platform.shared.log;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.console;
+    requires webfx.platform.util;
     requires webfx.stack.async;
     requires webfx.stack.platform.windowhistory;
 

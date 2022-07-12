@@ -86,37 +86,37 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-java-boot-impl</artifactId>
+            <artifactId>webfx-platform-boot-java</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-java-resource-impl</artifactId>
+            <artifactId>webfx-platform-console-java</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-java-scheduler-impl</artifactId>
+            <artifactId>webfx-platform-resource-java</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-java-shutdown-impl</artifactId>
+            <artifactId>webfx-platform-scheduler-java</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-java-storage-impl</artifactId>
+            <artifactId>webfx-platform-shutdown-java</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-shared-log-impl-simple</artifactId>
+            <artifactId>webfx-platform-storage-java</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

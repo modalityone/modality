@@ -27,7 +27,7 @@ module modality.crm.backoffice.bookingdetailspanel {
     requires webfx.framework.shared.orm.domainmodel;
     requires webfx.framework.shared.orm.entity;
     requires webfx.kit.util;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.util;
     requires webfx.stack.async;
 
     // Exported packages

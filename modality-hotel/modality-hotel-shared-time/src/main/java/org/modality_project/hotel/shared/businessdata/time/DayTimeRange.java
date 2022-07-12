@@ -1,6 +1,6 @@
 package org.modality_project.hotel.shared.businessdata.time;
 
-import dev.webfx.platform.shared.util.collection.Collections;
+import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.platform.json.Json;
 import dev.webfx.stack.platform.json.JsonArray;
 import dev.webfx.stack.platform.json.JsonObject;

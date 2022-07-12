@@ -8,7 +8,7 @@ import org.modality_project.base.shared.entities.Event;
 import org.modality_project.base.shared.entities.Label;
 import org.modality_project.base.shared.entities.Option;
 import org.modality_project.base.client.aggregates.event.EventAggregate;
-import dev.webfx.platform.shared.util.collection.Collections;
+import dev.webfx.platform.util.collection.Collections;
 
 import java.util.ArrayList;
 import java.util.List;

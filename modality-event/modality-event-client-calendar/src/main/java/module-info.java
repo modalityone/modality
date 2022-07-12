@@ -11,7 +11,7 @@ module modality.event.client.calendar {
     requires webfx.framework.client.i18n;
     requires webfx.framework.client.util;
     requires webfx.kit.util;
-    requires webfx.platform.shared.util;
+    requires webfx.platform.util;
 
     // Exported packages
     exports org.modality_project.event.client.businessdata.calendar;

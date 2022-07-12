@@ -13,7 +13,7 @@ import dev.webfx.stack.framework.client.activity.impl.elementals.presentation.vi
 import dev.webfx.stack.framework.client.ui.util.background.BackgroundFactory;
 import dev.webfx.stack.framework.shared.services.datasourcemodel.DataSourceModelService;
 import dev.webfx.kit.util.properties.Properties;
-import dev.webfx.platform.shared.util.Strings;
+import dev.webfx.platform.util.Strings;
 
 /**
  * @author Bruno Salmon

@@ -1,5 +1,6 @@
 package org.modality_project.base.client.operationactionsloading;
 
+import dev.webfx.platform.console.Console;
 import dev.webfx.stack.framework.client.services.i18n.I18n;
 import dev.webfx.stack.framework.client.ui.action.Action;
 import dev.webfx.stack.framework.client.ui.action.ActionFactoryMixin;
@@ -9,8 +10,7 @@ import dev.webfx.stack.framework.client.ui.uirouter.uisession.UiSession;
 import dev.webfx.stack.framework.shared.orm.entity.Entity;
 import dev.webfx.stack.framework.shared.orm.entity.EntityStore;
 import dev.webfx.stack.framework.shared.services.datasourcemodel.DataSourceModelService;
-import dev.webfx.platform.shared.services.boot.spi.ApplicationModuleBooter;
-import dev.webfx.platform.shared.services.log.Logger;
+import dev.webfx.platform.boot.spi.ApplicationModuleBooter;
 
 /**
  * @author Bruno Salmon
@@ -34,7 +34,7 @@ public class ModalityClientOperationActionsLoader implements ApplicationModuleBo
         // Temporary load only the operations for the backend (ie back-office) for the demo (because backend and frontend fields are not considered by authz so far)
         EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
                 .executeQuery("select operationCode,i18nCode,public from Operation where backend")
-                .onFailure(cause -> Logger.log("Failed loading operations", cause))
+                .onFailure(cause -> Console.log("Failed loading operations", cause))
                 .onSuccess(operations -> {
                     OperationActionRegistry registry = getOperationActionRegistry();
                     // Registering graphical properties for all loaded operations

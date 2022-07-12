@@ -23,7 +23,7 @@ import dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil;
 import dev.webfx.stack.framework.client.ui.util.anim.Animations;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.extras.imagestore.ImageStore;
-import dev.webfx.platform.client.services.uischeduler.UiScheduler;
+import dev.webfx.platform.uischeduler.UiScheduler;
 
 /**
  * @author Bruno Salmon

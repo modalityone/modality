@@ -6,7 +6,7 @@
     </exported-packages>
 
     <providers>
-        <provider interface="dev.webfx.platform.shared.services.boot.spi.ApplicationJob">org.modality_project.base.server.jobs.sessioncloser.ModalityServerUnresponsiveClientSessionCloserJob</provider>
+        <provider interface="dev.webfx.platform.boot.spi.ApplicationJob">org.modality_project.base.server.jobs.sessioncloser.ModalityServerUnresponsiveClientSessionCloserJob</provider>
     </providers>
 
     <dependencies>

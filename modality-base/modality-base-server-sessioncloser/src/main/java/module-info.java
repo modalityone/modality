@@ -6,8 +6,8 @@ module modality.base.server.sessioncloser {
     requires webfx.framework.server.push;
     requires webfx.framework.shared.orm.datasourcemodelservice;
     requires webfx.framework.shared.orm.domainmodel;
-    requires webfx.platform.shared.boot;
-    requires webfx.platform.shared.log;
+    requires webfx.platform.boot;
+    requires webfx.platform.console;
     requires webfx.stack.async;
     requires webfx.stack.db.submit;
 
@@ -15,6 +15,6 @@ module modality.base.server.sessioncloser {
     exports org.modality_project.base.server.jobs.sessioncloser;
 
     // Provided services
-    provides dev.webfx.platform.shared.services.boot.spi.ApplicationJob with org.modality_project.base.server.jobs.sessioncloser.ModalityServerUnresponsiveClientSessionCloserJob;
+    provides dev.webfx.platform.boot.spi.ApplicationJob with org.modality_project.base.server.jobs.sessioncloser.ModalityServerUnresponsiveClientSessionCloserJob;
 
 }

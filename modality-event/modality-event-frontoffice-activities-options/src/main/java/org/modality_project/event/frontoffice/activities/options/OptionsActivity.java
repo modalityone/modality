@@ -17,9 +17,9 @@ import org.modality_project.event.client.controls.bookingcalendar.BookingCalenda
 import org.modality_project.event.client.controls.sectionpanel.SectionPanelFactory;
 import org.modality_project.ecommerce.frontoffice.operations.person.RouteToPersonRequest;
 import dev.webfx.extras.flexbox.FlexBox;
-import dev.webfx.platform.client.services.uischeduler.UiScheduler;
-import dev.webfx.platform.shared.services.log.Logger;
-import dev.webfx.platform.shared.util.Arrays;
+import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.console.Console;
+import dev.webfx.platform.util.Arrays;
 
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +47,7 @@ public class OptionsActivity extends BookingProcessActivity {
     protected void startLogic() {
         boolean forceRefresh = true; //getEventOptions() == null; // forcing refresh in case the working document has changed (ex: going back from the personal details after having changed the age)
         onEventFeesGroups()
-                .onFailure(Logger::log)
+                .onFailure(Console::log)
                 .onSuccess(feesGroups -> {
                     OptionsPreselection selectedOptionsPreselection = getEventActiveOptionsPreselection();
                     WorkingDocument workingDocument = getEventActiveWorkingDocument();

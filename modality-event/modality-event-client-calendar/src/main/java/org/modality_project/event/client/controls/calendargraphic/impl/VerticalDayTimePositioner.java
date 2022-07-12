@@ -3,8 +3,8 @@ package org.modality_project.event.client.controls.calendargraphic.impl;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.text.Font;
 import org.modality_project.hotel.shared.businessdata.time.TimeInterval;
-import dev.webfx.platform.shared.util.collection.Collections;
-import dev.webfx.platform.shared.util.collection.HashList;
+import dev.webfx.platform.util.collection.Collections;
+import dev.webfx.platform.util.collection.HashList;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -11,9 +11,9 @@ module modality.base.client.sessionrecorder {
     requires webfx.framework.shared.orm.datasourcemodelservice;
     requires webfx.framework.shared.orm.entity;
     requires webfx.kit.launcher;
-    requires webfx.platform.client.storage;
-    requires webfx.platform.shared.boot;
-    requires webfx.platform.shared.log;
+    requires webfx.platform.boot;
+    requires webfx.platform.console;
+    requires webfx.platform.storage;
     requires webfx.stack.async;
     requires webfx.stack.com.bus;
     requires webfx.stack.db.submit;
@@ -22,6 +22,6 @@ module modality.base.client.sessionrecorder {
     exports org.modality_project.base.client.jobs.sessionrecorder;
 
     // Provided services
-    provides dev.webfx.platform.shared.services.boot.spi.ApplicationJob with org.modality_project.base.client.jobs.sessionrecorder.ClientSessionRecorderJob;
+    provides dev.webfx.platform.boot.spi.ApplicationJob with org.modality_project.base.client.jobs.sessionrecorder.ClientSessionRecorderJob;
 
 }
