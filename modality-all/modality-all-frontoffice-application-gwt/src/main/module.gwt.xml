@@ -49,7 +49,7 @@
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics/emul_coupling"/>
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics/emul_coupling/base"/>
     <source path="dev/webfx/kit/mapper/spi"/>
-    <source path="dev/webfx/kit/mapper/spi/base"/>
+    <source path="dev/webfx/kit/mapper/spi/impl/base"/>
     <source path="javafx/animation"/>
     <source path="javafx/application"/>
     <source path="javafx/css"/>
@@ -462,8 +462,8 @@
     <source path="dev/webfx/stack/framework/shared/router/session/impl"/>
     <source path="dev/webfx/stack/framework/shared/router/util"/>
     <!--=================================< webfx-kit-gwt >==================================-->
-    <source path="dev/webfx/kit/launcher/spi/gwt"/>
-    <source path="dev/webfx/kit/mapper/spi/gwt"/>
+    <source path="dev/webfx/kit/launcher/spi/impl/gwt"/>
+    <source path="dev/webfx/kit/mapper/spi/impl/gwt"/>
     <!--======================< webfx-kit-javafxcontrols-peers-base >=======================-->
     <source path="dev/webfx/kit/mapper/peers/javafxcontrols/base"/>
     <!--=======================< webfx-kit-javafxcontrols-peers-gwt >=======================-->
@@ -486,7 +486,7 @@
     <!--===============================< webfx-kit-launcher >===============================-->
     <source path="dev/webfx/kit/launcher"/>
     <source path="dev/webfx/kit/launcher/spi"/>
-    <source path="dev/webfx/kit/launcher/spi/base"/>
+    <source path="dev/webfx/kit/launcher/spi/impl/base"/>
     <!--=================================< webfx-kit-util >=================================-->
     <source path="dev/webfx/kit/util/properties"/>
     <source path="dev/webfx/kit/util/properties/conversion"/>

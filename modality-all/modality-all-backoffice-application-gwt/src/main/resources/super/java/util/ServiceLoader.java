@@ -9,8 +9,8 @@ public class ServiceLoader<S> implements Iterable<S> {
 
     public static <S> ServiceLoader<S> load(Class<S> serviceClass) {
         switch (serviceClass.getName()) {
-            case "dev.webfx.kit.launcher.spi.WebFxKitLauncherProvider": return new ServiceLoader<S>(dev.webfx.kit.launcher.spi.gwt.GwtWebFxKitLauncherProvider::new);
-            case "dev.webfx.kit.mapper.spi.WebFxKitMapperProvider": return new ServiceLoader<S>(dev.webfx.kit.mapper.spi.gwt.GwtWebFxKitHtmlMapperProvider::new);
+            case "dev.webfx.kit.launcher.spi.WebFxKitLauncherProvider": return new ServiceLoader<S>(dev.webfx.kit.launcher.spi.impl.gwt.GwtWebFxKitLauncherProvider::new);
+            case "dev.webfx.kit.mapper.spi.WebFxKitMapperProvider": return new ServiceLoader<S>(dev.webfx.kit.mapper.spi.impl.gwt.GwtWebFxKitHtmlMapperProvider::new);
             case "dev.webfx.platform.boot.spi.ApplicationBooterProvider": return new ServiceLoader<S>(dev.webfx.platform.boot.spi.impl.gwt.GwtApplicationBooterProvider::new);
             case "dev.webfx.platform.boot.spi.ApplicationJob": return new ServiceLoader<S>(dev.webfx.stack.framework.client.jobs.querypush.QueryPushClientJob::new, org.modality_project.base.client.jobs.sessionrecorder.ClientSessionRecorderJob::new);
             case "dev.webfx.platform.boot.spi.ApplicationModuleBooter": return new ServiceLoader<S>(dev.webfx.kit.launcher.WebFxKitLauncherModuleBooter::new, dev.webfx.platform.boot.spi.impl.ApplicationJobsBooter::new, dev.webfx.platform.resource.spi.impl.gwt.GwtResourceModuleBooter::new, dev.webfx.stack.com.buscall.BusCallModuleBooter::new, dev.webfx.stack.com.serial.SerialCodecModuleBooter::new, dev.webfx.stack.framework.shared.interceptors.dqlquery.DqlQueryInterceptorModuleBooter::new, dev.webfx.stack.framework.shared.interceptors.dqlquerypush.DqlQueryPushInterceptorModuleBooter::new, dev.webfx.stack.framework.shared.interceptors.dqlsubmit.DqlSubmitInterceptorModuleBooter::new, org.modality_project.base.client.operationactionsloading.ModalityClientOperationActionsLoader::new);
