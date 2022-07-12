@@ -79,7 +79,7 @@ public final class LoginPanel implements ModalityButtonFactoryMixin {
     }
 
     public void prepareShowing() {
-        // Resetting the default button (required for JavaFx if displayed a second time)
+        // Resetting the default button (required for JavaFX if displayed a second time)
         ButtonFactory.resetDefaultButton(button);
         SceneUtil.autoFocusIfEnabled(usernameField);
     }

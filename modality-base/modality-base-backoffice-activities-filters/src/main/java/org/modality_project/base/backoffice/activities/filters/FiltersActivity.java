@@ -63,7 +63,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         ButtonSelector<DomainClass> classSelector = new ButtonSelector<>(this, outerVerticalBox) {
             private final List<DomainClass> allClasses = getDomainModel().getAllClasses();
             private List<DomainClass> searchedClasses;
-            private final VisualGrid dialogVisualGrid = new SkinnedVisualGrid(); // Better rendering in desktop JavaFx (but might be slower in web version)
+            private final VisualGrid dialogVisualGrid = new SkinnedVisualGrid(); // Better rendering in desktop JavaFX (but might be slower in web version)
             {
                 dialogVisualGrid.setHeaderVisible(false);
                 dialogVisualGrid.setCursor(Cursor.HAND);
