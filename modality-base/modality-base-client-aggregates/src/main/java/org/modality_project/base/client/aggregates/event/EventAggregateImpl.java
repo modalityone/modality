@@ -1,12 +1,12 @@
 package org.modality_project.base.client.aggregates.event;
 
+import dev.webfx.stack.orm.entity.*;
 import org.modality_project.base.client.aggregates.person.PersonAggregate;
 import org.modality_project.base.shared.entities.Cart;
 import org.modality_project.base.shared.entities.Event;
 import org.modality_project.base.shared.entities.Option;
 import org.modality_project.base.shared.entities.Rate;
-import dev.webfx.stack.framework.shared.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.framework.shared.orm.entity.*;
+import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.com.websocketbus.WebSocketBusOptions;
 import dev.webfx.stack.com.bus.BusService;
 import dev.webfx.stack.db.query.QueryArgument;

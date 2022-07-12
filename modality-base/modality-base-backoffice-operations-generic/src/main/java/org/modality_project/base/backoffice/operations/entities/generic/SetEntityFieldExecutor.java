@@ -1,12 +1,12 @@
 package org.modality_project.base.backoffice.operations.entities.generic;
 
-import dev.webfx.stack.framework.client.ui.controls.alert.AlertUtil;
-import dev.webfx.stack.framework.client.ui.controls.dialog.DialogCallback;
-import dev.webfx.stack.framework.client.ui.controls.dialog.DialogContent;
-import dev.webfx.stack.framework.client.ui.controls.dialog.DialogUtil;
-import dev.webfx.stack.framework.shared.orm.entity.Entity;
-import dev.webfx.stack.framework.shared.orm.entity.UpdateStore;
-import dev.webfx.stack.framework.shared.orm.expression.Expression;
+import dev.webfx.stack.ui.controls.alert.AlertUtil;
+import dev.webfx.stack.ui.controls.dialog.DialogCallback;
+import dev.webfx.stack.ui.controls.dialog.DialogContent;
+import dev.webfx.stack.ui.controls.dialog.DialogUtil;
+import dev.webfx.stack.orm.entity.Entity;
+import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.expression.Expression;
 import dev.webfx.stack.db.submit.SubmitArgument;
 import dev.webfx.stack.async.Future;
 import dev.webfx.stack.async.Promise;

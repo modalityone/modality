@@ -1,9 +1,9 @@
 package org.modality_project.base.client.activity.table;
 
 import javafx.beans.property.*;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasGenericVisualResultProperty;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasGenericVisualSelectionProperty;
-import dev.webfx.stack.framework.client.orm.reactive.dql.statement.conventions.HasLimitProperty;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasGenericVisualResultProperty;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasGenericVisualSelectionProperty;
+import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasLimitProperty;
 import org.modality_project.base.client.presentationmodel.HasSearchTextProperty;
 import dev.webfx.extras.visual.VisualResult;
 import dev.webfx.extras.visual.VisualSelection;

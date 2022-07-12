@@ -3,8 +3,8 @@ package org.modality_project.base.shared.domainmodel.functions;
 import dev.webfx.extras.type.PrimType;
 import dev.webfx.extras.type.Type;
 import dev.webfx.platform.util.Dates;
-import dev.webfx.stack.framework.shared.orm.expression.lci.DomainReader;
-import dev.webfx.stack.framework.shared.orm.expression.terms.function.Function;
+import dev.webfx.stack.orm.expression.lci.DomainReader;
+import dev.webfx.stack.orm.expression.terms.function.Function;
 
 import java.time.LocalDate;
 import java.time.Month;

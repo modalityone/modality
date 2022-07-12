@@ -1,11 +1,11 @@
 package org.modality_project.event.frontoffice.activities.terms;
 
 import org.modality_project.ecommerce.client.activity.bookingprocess.BookingProcessPresentationLogicActivity;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.stack.framework.client.services.i18n.I18n;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.i18n.I18n;
 
-import static dev.webfx.stack.framework.shared.orm.dql.DqlStatement.parse;
-import static dev.webfx.stack.framework.shared.orm.dql.DqlStatement.where;
+import static dev.webfx.stack.orm.dql.DqlStatement.parse;
+import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
 /**
  * @author Bruno Salmon

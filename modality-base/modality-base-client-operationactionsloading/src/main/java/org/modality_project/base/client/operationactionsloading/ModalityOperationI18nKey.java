@@ -1,8 +1,8 @@
 package org.modality_project.base.client.operationactionsloading;
 
-import dev.webfx.stack.framework.client.services.i18n.spi.HasDictionaryMessageKey;
-import dev.webfx.stack.framework.shared.orm.entity.Entity;
-import dev.webfx.stack.framework.shared.orm.entity.HasEntity;
+import dev.webfx.stack.i18n.spi.HasDictionaryMessageKey;
+import dev.webfx.stack.orm.entity.Entity;
+import dev.webfx.stack.orm.entity.HasEntity;
 
 import java.util.Objects;
 

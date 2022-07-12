@@ -6,14 +6,14 @@
     </exported-packages>
 
     <providers>
-        <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.ecommerce.backoffice.activities.statistics.StatisticsUiRoute</provider>
-        <provider interface="dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter">org.modality_project.ecommerce.backoffice.activities.statistics.RouteToStatisticsRequestEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.ecommerce.backoffice.activities.statistics.StatisticsUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">org.modality_project.ecommerce.backoffice.activities.statistics.RouteToStatisticsRequestEmitter</provider>
     </providers>
 
     <dependencies>
         <used-by-source-modules>
-            <undetected-module>webfx-framework-client-action</undetected-module>
-            <undetected-module>webfx-framework-client-activity</undetected-module>
+            <undetected-module>webfx-stack-ui-action</undetected-module>
+            <undetected-module>webfx-stack-routing-activity</undetected-module>
             <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
             <undetected-module>webfx-platform-util</undetected-module>
         </used-by-source-modules>

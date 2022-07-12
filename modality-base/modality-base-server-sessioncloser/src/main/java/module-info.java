@@ -3,13 +3,13 @@
 module modality.base.server.sessioncloser {
 
     // Direct dependencies modules
-    requires webfx.framework.server.push;
-    requires webfx.framework.shared.orm.datasourcemodelservice;
-    requires webfx.framework.shared.orm.domainmodel;
     requires webfx.platform.boot;
     requires webfx.platform.console;
     requires webfx.stack.async;
     requires webfx.stack.db.submit;
+    requires webfx.stack.orm.datasourcemodel.service;
+    requires webfx.stack.orm.domainmodel;
+    requires webfx.stack.push.server;
 
     // Exported packages
     exports org.modality_project.base.server.jobs.sessioncloser;

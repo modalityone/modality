@@ -18,17 +18,17 @@ module modality.crm.backoffice.bookingdetailspanel {
     requires webfx.extras.imagestore;
     requires webfx.extras.label;
     requires webfx.extras.visual.grid;
-    requires webfx.framework.client.action;
-    requires webfx.framework.client.activity;
-    requires webfx.framework.client.controls;
-    requires webfx.framework.client.i18n;
-    requires webfx.framework.client.operationaction;
-    requires webfx.framework.client.orm.reactive.visual;
-    requires webfx.framework.shared.orm.domainmodel;
-    requires webfx.framework.shared.orm.entity;
     requires webfx.kit.util;
     requires webfx.platform.util;
     requires webfx.stack.async;
+    requires webfx.stack.i18n;
+    requires webfx.stack.orm.domainmodel;
+    requires webfx.stack.orm.entity;
+    requires webfx.stack.orm.reactive.visual;
+    requires webfx.stack.routing.activity;
+    requires webfx.stack.ui.action;
+    requires webfx.stack.ui.controls;
+    requires webfx.stack.ui.operation.action;
 
     // Exported packages
     exports org.modality_project.crm.backoffice.controls.bookingdetailspanel;

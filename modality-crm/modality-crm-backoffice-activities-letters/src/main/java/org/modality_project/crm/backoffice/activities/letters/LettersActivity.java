@@ -1,6 +1,6 @@
 package org.modality_project.crm.backoffice.activities.letters;
 
-import dev.webfx.stack.framework.client.activity.impl.combinations.domainpresentation.impl.DomainPresentationActivityImpl;
+import dev.webfx.stack.orm.domainmodel.activity.domainpresentation.impl.DomainPresentationActivityImpl;
 
 /**
  * @author Bruno Salmon

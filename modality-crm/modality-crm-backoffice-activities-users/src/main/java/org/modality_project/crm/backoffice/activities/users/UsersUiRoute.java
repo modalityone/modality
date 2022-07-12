@@ -1,10 +1,10 @@
 package org.modality_project.crm.backoffice.activities.users;
 
 import org.modality_project.crm.backoffice.activities.users.routing.UsersRouting;
-import dev.webfx.stack.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
-import dev.webfx.stack.framework.client.ui.uirouter.UiRoute;
-import dev.webfx.stack.framework.client.ui.uirouter.impl.UiRouteImpl;
-import dev.webfx.stack.framework.shared.router.util.PathBuilder;
+import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
+import dev.webfx.stack.routing.uirouter.UiRoute;
+import dev.webfx.stack.routing.uirouter.impl.UiRouteImpl;
+import dev.webfx.stack.routing.router.util.PathBuilder;
 
 /**
  * @author Bruno Salmon

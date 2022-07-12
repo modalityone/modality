@@ -22,7 +22,7 @@ import org.modality_project.event.client.businessdata.calendar.Calendar;
 import org.modality_project.base.shared.entities.formatters.EventPriceFormatter;
 import org.modality_project.base.client.aggregates.event.EventAggregate;
 import org.modality_project.base.client.util.log.PerformanceLogger;
-import dev.webfx.stack.framework.shared.orm.entity.Entities;
+import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.platform.uischeduler.UiScheduler;
 
 import java.util.concurrent.TimeUnit;

@@ -1,8 +1,8 @@
 package org.modality_project.ecommerce.backoffice.activities.moneyflows;
 
-import dev.webfx.stack.framework.client.ui.action.ActionGroup;
-import dev.webfx.stack.framework.client.ui.action.operation.OperationActionFactoryMixin;
-import dev.webfx.stack.framework.client.ui.controls.ControlFactoryMixin;
+import dev.webfx.stack.ui.action.ActionGroup;
+import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
+import dev.webfx.stack.ui.controls.ControlFactoryMixin;
 import dev.webfx.kit.util.properties.Properties;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;

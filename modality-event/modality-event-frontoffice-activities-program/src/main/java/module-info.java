@@ -11,14 +11,14 @@ module modality.event.frontoffice.activities.program {
     requires modality.ecommerce.client.businesslogic;
     requires modality.event.client.bookingcalendar;
     requires modality.event.client.sectionpanel;
-    requires webfx.framework.client.activity;
-    requires webfx.framework.client.orm.domainmodel.activity;
-    requires webfx.framework.client.uirouter;
-    requires webfx.framework.client.util;
     requires webfx.platform.console;
     requires webfx.platform.util;
     requires webfx.stack.async;
+    requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.platform.windowhistory;
+    requires webfx.stack.routing.activity;
+    requires webfx.stack.routing.uirouter;
+    requires webfx.stack.ui.util;
 
     // Exported packages
     exports org.modality_project.event.frontoffice.activities.program;
@@ -26,6 +26,6 @@ module modality.event.frontoffice.activities.program {
     exports org.modality_project.event.frontoffice.operations.program;
 
     // Provided services
-    provides dev.webfx.stack.framework.client.ui.uirouter.UiRoute with org.modality_project.event.frontoffice.activities.program.ProgramUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.event.frontoffice.activities.program.ProgramUiRoute;
 
 }

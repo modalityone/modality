@@ -12,18 +12,18 @@ module modality.crm.backoffice.activities.users {
     requires modality.base.shared.entities;
     requires modality.ecommerce.backoffice.operations.document;
     requires webfx.extras.visual;
-    requires webfx.framework.client.action;
-    requires webfx.framework.client.activity;
-    requires webfx.framework.client.orm.domainmodel.activity;
-    requires webfx.framework.client.orm.reactive.dql;
-    requires webfx.framework.client.orm.reactive.visual;
-    requires webfx.framework.client.uirouter;
-    requires webfx.framework.shared.operation;
-    requires webfx.framework.shared.orm.dql;
-    requires webfx.framework.shared.orm.expression;
-    requires webfx.framework.shared.router;
     requires webfx.platform.util;
+    requires webfx.stack.orm.domainmodel.activity;
+    requires webfx.stack.orm.dql;
+    requires webfx.stack.orm.expression;
+    requires webfx.stack.orm.reactive.dql;
+    requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.platform.windowhistory;
+    requires webfx.stack.routing.activity;
+    requires webfx.stack.routing.router;
+    requires webfx.stack.routing.uirouter;
+    requires webfx.stack.ui.action;
+    requires webfx.stack.ui.operation;
 
     // Exported packages
     exports org.modality_project.crm.backoffice.activities.users;
@@ -31,7 +31,7 @@ module modality.crm.backoffice.activities.users {
     exports org.modality_project.crm.backoffice.operations.routes.users;
 
     // Provided services
-    provides dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter with org.modality_project.crm.backoffice.activities.users.RouteToUsersRequestEmitter;
-    provides dev.webfx.stack.framework.client.ui.uirouter.UiRoute with org.modality_project.crm.backoffice.activities.users.UsersUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.crm.backoffice.activities.users.UsersUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with org.modality_project.crm.backoffice.activities.users.RouteToUsersRequestEmitter;
 
 }

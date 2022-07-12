@@ -1,15 +1,15 @@
 package org.modality_project.base.client.operationactionsloading;
 
 import dev.webfx.platform.console.Console;
-import dev.webfx.stack.framework.client.services.i18n.I18n;
-import dev.webfx.stack.framework.client.ui.action.Action;
-import dev.webfx.stack.framework.client.ui.action.ActionFactoryMixin;
-import dev.webfx.stack.framework.client.ui.action.operation.OperationActionFactoryMixin;
-import dev.webfx.stack.framework.client.ui.action.operation.OperationActionRegistry;
-import dev.webfx.stack.framework.client.ui.uirouter.uisession.UiSession;
-import dev.webfx.stack.framework.shared.orm.entity.Entity;
-import dev.webfx.stack.framework.shared.orm.entity.EntityStore;
-import dev.webfx.stack.framework.shared.services.datasourcemodel.DataSourceModelService;
+import dev.webfx.stack.i18n.I18n;
+import dev.webfx.stack.ui.action.Action;
+import dev.webfx.stack.ui.action.ActionFactoryMixin;
+import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
+import dev.webfx.stack.ui.operation.action.OperationActionRegistry;
+import dev.webfx.stack.routing.uirouter.uisession.UiSession;
+import dev.webfx.stack.orm.entity.Entity;
+import dev.webfx.stack.orm.entity.EntityStore;
+import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.platform.boot.spi.ApplicationModuleBooter;
 
 /**

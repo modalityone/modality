@@ -1,12 +1,12 @@
 package org.modality_project.ecommerce.frontoffice.activities.contactus;
 
-import dev.webfx.stack.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
-import dev.webfx.stack.framework.client.operations.route.RouteBackwardRequest;
-import dev.webfx.stack.framework.client.ui.action.Action;
-import dev.webfx.stack.framework.client.ui.util.background.BackgroundFactory;
-import dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil;
-import dev.webfx.stack.framework.shared.orm.entity.EntityStore;
-import dev.webfx.stack.framework.shared.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.stack.routing.uirouter.operations.RouteBackwardRequest;
+import dev.webfx.stack.ui.action.Action;
+import dev.webfx.stack.ui.util.background.BackgroundFactory;
+import dev.webfx.stack.ui.util.layout.LayoutUtil;
+import dev.webfx.stack.orm.entity.EntityStore;
+import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.platform.windowlocation.WindowLocation;
 import dev.webfx.platform.console.Console;

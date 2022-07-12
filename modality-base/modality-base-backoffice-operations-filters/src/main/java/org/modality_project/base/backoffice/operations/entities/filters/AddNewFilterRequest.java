@@ -1,8 +1,8 @@
 package org.modality_project.base.backoffice.operations.entities.filters;
 
-import dev.webfx.stack.framework.shared.operation.HasOperationCode;
-import dev.webfx.stack.framework.shared.operation.HasOperationExecutor;
-import dev.webfx.stack.framework.shared.orm.entity.EntityStore;
+import dev.webfx.stack.ui.operation.HasOperationCode;
+import dev.webfx.stack.ui.operation.HasOperationExecutor;
+import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.async.AsyncFunction;
 import javafx.scene.layout.Pane;
 

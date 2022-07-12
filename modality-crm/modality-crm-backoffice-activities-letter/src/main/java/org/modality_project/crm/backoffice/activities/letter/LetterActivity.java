@@ -4,8 +4,8 @@ import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import org.modality_project.base.backoffice.controls.multilangeditor.MultiLanguageEditor;
-import dev.webfx.stack.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
-import dev.webfx.stack.framework.client.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import dev.webfx.kit.util.properties.Properties;
 
 /**

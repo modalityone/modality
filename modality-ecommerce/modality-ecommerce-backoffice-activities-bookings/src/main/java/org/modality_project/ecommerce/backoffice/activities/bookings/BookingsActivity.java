@@ -1,11 +1,11 @@
 package org.modality_project.ecommerce.backoffice.activities.bookings;
 
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.stack.framework.client.ui.action.ActionGroup;
-import dev.webfx.stack.framework.client.ui.action.operation.OperationActionFactoryMixin;
-import dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil;
-import dev.webfx.stack.framework.shared.orm.dql.DqlStatement;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.ui.action.ActionGroup;
+import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
+import dev.webfx.stack.ui.util.layout.LayoutUtil;
+import dev.webfx.stack.orm.dql.DqlStatement;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
@@ -27,9 +27,9 @@ import org.modality_project.base.backoffice.operations.entities.generic.AddNewSn
 import org.modality_project.base.client.activity.eventdependent.EventDependentViewDomainActivity;
 import org.modality_project.base.shared.entities.Document;
 
-import static dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil.setUnmanagedWhenInvisible;
-import static dev.webfx.stack.framework.shared.orm.dql.DqlStatement.fields;
-import static dev.webfx.stack.framework.shared.orm.dql.DqlStatement.where;
+import static dev.webfx.stack.ui.util.layout.LayoutUtil.setUnmanagedWhenInvisible;
+import static dev.webfx.stack.orm.dql.DqlStatement.fields;
+import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
 final class BookingsActivity extends EventDependentViewDomainActivity implements
         OperationActionFactoryMixin,

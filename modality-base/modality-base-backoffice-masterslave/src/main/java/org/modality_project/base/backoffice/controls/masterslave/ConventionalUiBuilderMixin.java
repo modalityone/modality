@@ -1,9 +1,9 @@
 package org.modality_project.base.backoffice.controls.masterslave;
 
 import org.modality_project.base.client.entities.util.filters.FilterButtonSelectorFactoryMixin;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualResultProperty;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
-import dev.webfx.stack.framework.client.orm.reactive.dql.statement.conventions.HasSelectedMasterProperty;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualResultProperty;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
+import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasSelectedMasterProperty;
 
 public interface ConventionalUiBuilderMixin extends FilterButtonSelectorFactoryMixin {
 

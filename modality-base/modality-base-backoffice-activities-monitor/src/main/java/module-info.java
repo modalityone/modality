@@ -9,17 +9,17 @@ module modality.base.backoffice.activities.monitor {
     requires modality.base.client.activity;
     requires webfx.extras.visual;
     requires webfx.extras.visual.charts;
-    requires webfx.framework.client.activity;
-    requires webfx.framework.client.orm.domainmodel.activity;
-    requires webfx.framework.client.orm.reactive.entities;
-    requires webfx.framework.client.orm.reactive.visual;
-    requires webfx.framework.client.uirouter;
-    requires webfx.framework.client.util;
-    requires webfx.framework.shared.operation;
-    requires webfx.framework.shared.orm.entity;
-    requires webfx.framework.shared.router;
     requires webfx.platform.util;
+    requires webfx.stack.orm.domainmodel.activity;
+    requires webfx.stack.orm.entity;
+    requires webfx.stack.orm.reactive.entities;
+    requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.platform.windowhistory;
+    requires webfx.stack.routing.activity;
+    requires webfx.stack.routing.router;
+    requires webfx.stack.routing.uirouter;
+    requires webfx.stack.ui.operation;
+    requires webfx.stack.ui.util;
 
     // Exported packages
     exports org.modality_project.base.backoffice.activities.monitor;
@@ -27,7 +27,7 @@ module modality.base.backoffice.activities.monitor {
     exports org.modality_project.base.backoffice.operations.routes.monitor;
 
     // Provided services
-    provides dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter with org.modality_project.base.backoffice.activities.monitor.RouteToMonitorRequestEmitter;
-    provides dev.webfx.stack.framework.client.ui.uirouter.UiRoute with org.modality_project.base.backoffice.activities.monitor.MonitorUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.base.backoffice.activities.monitor.MonitorUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with org.modality_project.base.backoffice.activities.monitor.RouteToMonitorRequestEmitter;
 
 }

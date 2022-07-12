@@ -1,9 +1,9 @@
 package org.modality_project.base.client.validation;
 
-import dev.webfx.stack.framework.client.ui.validation.mvvmfx.ObservableRuleBasedValidator;
-import dev.webfx.stack.framework.client.ui.validation.mvvmfx.ValidationMessage;
-import dev.webfx.stack.framework.client.ui.validation.mvvmfx.Validator;
-import dev.webfx.stack.framework.client.ui.validation.mvvmfx.visualization.ControlsFxVisualizer;
+import dev.webfx.stack.ui.validation.mvvmfx.ObservableRuleBasedValidator;
+import dev.webfx.stack.ui.validation.mvvmfx.ValidationMessage;
+import dev.webfx.stack.ui.validation.mvvmfx.Validator;
+import dev.webfx.stack.ui.validation.mvvmfx.visualization.ControlsFxVisualizer;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
@@ -28,12 +28,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
-import dev.webfx.stack.framework.client.ui.validation.controlsfx.control.decoration.Decoration;
-import dev.webfx.stack.framework.client.ui.validation.controlsfx.control.decoration.GraphicDecoration;
-import dev.webfx.stack.framework.client.ui.validation.controlsfx.validation.decoration.GraphicValidationDecoration;
-import dev.webfx.stack.framework.client.ui.util.background.BackgroundFactory;
-import dev.webfx.stack.framework.client.ui.util.border.BorderFactory;
-import dev.webfx.stack.framework.client.ui.util.scene.SceneUtil;
+import dev.webfx.stack.ui.validation.controlsfx.control.decoration.Decoration;
+import dev.webfx.stack.ui.validation.controlsfx.control.decoration.GraphicDecoration;
+import dev.webfx.stack.ui.validation.controlsfx.validation.decoration.GraphicValidationDecoration;
+import dev.webfx.stack.ui.util.background.BackgroundFactory;
+import dev.webfx.stack.ui.util.border.BorderFactory;
+import dev.webfx.stack.ui.util.scene.SceneUtil;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.extras.imagestore.ImageStore;
 import dev.webfx.platform.uischeduler.UiScheduler;
@@ -117,7 +117,7 @@ public final class ModalityValidationSupport {
                 }
 
                 @Override
-                protected Collection<Decoration> createValidationDecorations(dev.webfx.stack.framework.client.ui.validation.controlsfx.validation.ValidationMessage message) {
+                protected Collection<Decoration> createValidationDecorations(dev.webfx.stack.ui.validation.controlsfx.validation.ValidationMessage message) {
                     boolean isTextInput = node instanceof TextInputControl;
                     boolean isButton = node instanceof Button;
                     // isInside flag will determine if we position the decoration inside the node or not (ie outside)

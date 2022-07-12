@@ -5,8 +5,8 @@ import org.modality_project.ecommerce.client.businessdata.preselection.OptionsPr
 import org.modality_project.ecommerce.client.businessdata.workingdocument.ActiveWorkingDocumentsByEventStore;
 import org.modality_project.ecommerce.client.businessdata.workingdocument.WorkingDocument;
 import org.modality_project.event.frontoffice.activities.options.routing.OptionsRouting;
-import dev.webfx.stack.framework.client.operations.route.RoutePushRequest;
-import dev.webfx.stack.framework.shared.orm.entity.EntityId;
+import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
+import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.platform.windowhistory.spi.BrowsingHistory;
 
 /**

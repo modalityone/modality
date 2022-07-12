@@ -13,7 +13,7 @@
 
     <dependencies>
         <used-by-source-modules>
-            <undetected-module>webfx-framework-shared-router</undetected-module>
+            <undetected-module>webfx-stack-routing-router</undetected-module>
             <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
         </used-by-source-modules>
 
@@ -27,8 +27,8 @@
         <plugin-module>modality-base-client-sessionrecorder</plugin-module>
         <plugin-module>modality-crm-client-activities-login</plugin-module>
         <plugin-module>modality-crm-client-activities-unauthorized</plugin-module>
-        <plugin-module>webfx-framework-client-push-simple</plugin-module>
-        <plugin-module>webfx-framework-client-querypush-simple</plugin-module>
+        <plugin-module>webfx-stack-push-client-simple</plugin-module>
+        <plugin-module>webfx-stack-querypush-client-simple</plugin-module>
     </dependencies>
 
 </project>

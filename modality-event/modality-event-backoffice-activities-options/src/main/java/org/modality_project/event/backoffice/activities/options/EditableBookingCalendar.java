@@ -6,7 +6,7 @@ import org.modality_project.event.client.controls.calendargraphic.CalendarClickE
 import org.modality_project.event.client.businessdata.calendar.CalendarTimeline;
 import org.modality_project.event.client.controls.bookingcalendar.BookingCalendar;
 import org.modality_project.base.shared.entities.Option;
-import dev.webfx.stack.framework.shared.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.UpdateStore;
 
 /**
  * @author Bruno Salmon

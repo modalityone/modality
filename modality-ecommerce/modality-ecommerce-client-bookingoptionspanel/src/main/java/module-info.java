@@ -15,13 +15,13 @@ module modality.ecommerce.client.bookingoptionspanel {
     requires webfx.extras.type;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
-    requires webfx.framework.client.i18n;
-    requires webfx.framework.client.orm.reactive.visual;
-    requires webfx.framework.shared.orm.domainmodel;
-    requires webfx.framework.shared.orm.entity;
-    requires webfx.framework.shared.orm.expression;
     requires webfx.kit.util;
     requires webfx.platform.util;
+    requires webfx.stack.i18n;
+    requires webfx.stack.orm.domainmodel;
+    requires webfx.stack.orm.entity;
+    requires webfx.stack.orm.expression;
+    requires webfx.stack.orm.reactive.visual;
 
     // Exported packages
     exports org.modality_project.ecommerce.client.controls.bookingoptionspanel;

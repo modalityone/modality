@@ -1,9 +1,9 @@
 package org.modality_project.base.backoffice.operations.entities.generic;
 
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_grid.EntityColumn;
-import dev.webfx.stack.framework.shared.operation.HasOperationCode;
-import dev.webfx.stack.framework.shared.operation.HasOperationExecutor;
-import dev.webfx.stack.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.orm.reactive.entities.entities_to_grid.EntityColumn;
+import dev.webfx.stack.ui.operation.HasOperationCode;
+import dev.webfx.stack.ui.operation.HasOperationExecutor;
+import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.async.AsyncFunction;
 
 import java.util.Collection;

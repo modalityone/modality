@@ -1,7 +1,7 @@
 package org.modality_project.ecommerce.frontoffice.activities.summary;
 
 import dev.webfx.platform.console.Console;
-import dev.webfx.stack.framework.client.services.i18n.I18n;
+import dev.webfx.stack.i18n.I18n;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.platform.util.Strings;
 import javafx.application.Platform;

@@ -7,14 +7,14 @@
 
     <dependencies>
         <used-by-source-modules>
-            <undetected-module>webfx-framework-client-activity</undetected-module>
+            <undetected-module>webfx-stack-routing-activity</undetected-module>
             <undetected-module>webfx-stack-async</undetected-module>
             <undetected-module>webfx-platform-util</undetected-module>
         </used-by-source-modules>
     </dependencies>
 
     <providers>
-        <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.crm.client.activities.login.LoginUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.crm.client.activities.login.LoginUiRoute</provider>
     </providers>
 
 </project>

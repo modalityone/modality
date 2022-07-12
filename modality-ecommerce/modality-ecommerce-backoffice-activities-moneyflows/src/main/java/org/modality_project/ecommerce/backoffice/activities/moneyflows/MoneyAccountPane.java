@@ -1,6 +1,6 @@
 package org.modality_project.ecommerce.backoffice.activities.moneyflows;
 
-import dev.webfx.stack.framework.client.ui.controls.entity.sheet.EntityRenderer;
+import dev.webfx.stack.orm.entity.controls.entity.sheet.EntityRenderer;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.geometry.Insets;
 import javafx.scene.Node;

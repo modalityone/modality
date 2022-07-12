@@ -3,16 +3,16 @@
 module modality.crm.client.authn {
 
     // Direct dependencies modules
-    requires webfx.framework.shared.authn;
-    requires webfx.framework.shared.orm.datasourcemodelservice;
-    requires webfx.framework.shared.orm.domainmodel;
     requires webfx.stack.async;
+    requires webfx.stack.authn;
     requires webfx.stack.db.query;
+    requires webfx.stack.orm.datasourcemodel.service;
+    requires webfx.stack.orm.domainmodel;
 
     // Exported packages
     exports org.modality_project.crm.client.services.authn;
 
     // Provided services
-    provides dev.webfx.stack.framework.shared.services.authn.spi.AuthenticationServiceProvider with org.modality_project.crm.client.services.authn.ModalityAuthenticationServiceProvider;
+    provides dev.webfx.stack.authn.spi.AuthenticationServiceProvider with org.modality_project.crm.client.services.authn.ModalityAuthenticationServiceProvider;
 
 }

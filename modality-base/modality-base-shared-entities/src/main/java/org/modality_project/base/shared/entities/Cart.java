@@ -1,6 +1,6 @@
 package org.modality_project.base.shared.entities;
 
-import dev.webfx.stack.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.orm.entity.Entity;
 
 /**
  * @author Bruno Salmon

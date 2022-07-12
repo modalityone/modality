@@ -10,10 +10,10 @@ import dev.webfx.extras.visual.VisualColumn;
 import dev.webfx.extras.visual.VisualResult;
 import dev.webfx.extras.visual.VisualResultBuilder;
 import dev.webfx.extras.visual.VisualStyle;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_grid.EntityColumn;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.stack.framework.shared.orm.entity.EntityList;
-import dev.webfx.stack.framework.shared.orm.expression.Expression;
+import dev.webfx.stack.orm.reactive.entities.entities_to_grid.EntityColumn;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.orm.entity.EntityList;
+import dev.webfx.stack.orm.expression.Expression;
 import dev.webfx.platform.util.Dates;
 
 import java.time.LocalDate;

@@ -7,13 +7,13 @@ module modality.crm.backoffice.activities.letter {
     requires javafx.graphics;
     requires modality.base.backoffice.multilangeditor;
     requires modality.base.client.util;
-    requires webfx.framework.client.activity;
-    requires webfx.framework.client.controls;
-    requires webfx.framework.client.orm.domainmodel.activity;
-    requires webfx.framework.client.uirouter;
     requires webfx.kit.util;
     requires webfx.platform.util;
+    requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.platform.windowhistory;
+    requires webfx.stack.routing.activity;
+    requires webfx.stack.routing.uirouter;
+    requires webfx.stack.ui.controls;
 
     // Exported packages
     exports org.modality_project.crm.backoffice.activities.letter;
@@ -21,6 +21,6 @@ module modality.crm.backoffice.activities.letter {
     exports org.modality_project.crm.backoffice.operations.routes.letter;
 
     // Provided services
-    provides dev.webfx.stack.framework.client.ui.uirouter.UiRoute with org.modality_project.crm.backoffice.activities.letter.LetterUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.crm.backoffice.activities.letter.LetterUiRoute;
 
 }

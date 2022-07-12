@@ -1,8 +1,8 @@
 package org.modality_project.base.client.activity.eventdependent;
 
 import org.modality_project.base.client.activity.ModalityButtonFactoryMixin;
-import dev.webfx.stack.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityContextFinal;
-import dev.webfx.stack.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
+import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 
 /**
  * @author Bruno Salmon

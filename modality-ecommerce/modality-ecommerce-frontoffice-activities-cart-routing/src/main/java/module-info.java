@@ -10,15 +10,15 @@ module modality.ecommerce.frontoffice.activities.cart.routing {
     requires modality.base.client.aggregates;
     requires modality.base.client.util;
     requires modality.base.shared.entities;
-    requires webfx.framework.client.i18n;
-    requires webfx.framework.client.orm.domainmodel.activity;
-    requires webfx.framework.client.uirouter;
-    requires webfx.framework.client.util;
     requires webfx.kit.util;
     requires webfx.platform.util;
     requires webfx.stack.async;
+    requires webfx.stack.i18n;
+    requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.platform.json;
     requires webfx.stack.platform.windowhistory;
+    requires webfx.stack.routing.uirouter;
+    requires webfx.stack.ui.util;
 
     // Exported packages
     exports org.modality_project.ecommerce.frontoffice.activities.cart.base;

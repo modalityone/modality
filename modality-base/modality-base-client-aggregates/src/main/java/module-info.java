@@ -5,14 +5,14 @@ module modality.base.client.aggregates {
     // Direct dependencies modules
     requires java.base;
     requires modality.base.shared.entities;
-    requires webfx.framework.shared.orm.domainmodel;
-    requires webfx.framework.shared.orm.entity;
     requires webfx.platform.console;
     requires webfx.platform.util;
     requires webfx.stack.async;
     requires webfx.stack.com.bus;
     requires webfx.stack.com.websocketbus;
     requires webfx.stack.db.query;
+    requires webfx.stack.orm.domainmodel;
+    requires webfx.stack.orm.entity;
 
     // Exported packages
     exports org.modality_project.base.client.aggregates.cart;

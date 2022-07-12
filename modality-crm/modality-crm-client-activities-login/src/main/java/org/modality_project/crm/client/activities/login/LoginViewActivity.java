@@ -1,7 +1,7 @@
 package org.modality_project.crm.client.activities.login;
 
 import javafx.scene.Node;
-import dev.webfx.stack.framework.client.activity.impl.combinations.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 
 /**
  * @author Bruno Salmon

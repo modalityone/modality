@@ -14,22 +14,22 @@ module modality.base.backoffice.activities.filters {
     requires webfx.extras.cell;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
-    requires webfx.framework.client.action;
-    requires webfx.framework.client.activity;
-    requires webfx.framework.client.controls;
-    requires webfx.framework.client.operationaction;
-    requires webfx.framework.client.orm.domainmodel.activity;
-    requires webfx.framework.client.orm.entity.controls;
-    requires webfx.framework.client.orm.reactive.visual;
-    requires webfx.framework.client.uirouter;
-    requires webfx.framework.shared.operation;
-    requires webfx.framework.shared.orm.domainmodel;
-    requires webfx.framework.shared.orm.dql;
-    requires webfx.framework.shared.orm.entity;
-    requires webfx.framework.shared.router;
     requires webfx.kit.util;
     requires webfx.platform.util;
+    requires webfx.stack.orm.domainmodel;
+    requires webfx.stack.orm.domainmodel.activity;
+    requires webfx.stack.orm.dql;
+    requires webfx.stack.orm.entity;
+    requires webfx.stack.orm.entity.controls;
+    requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.platform.windowhistory;
+    requires webfx.stack.routing.activity;
+    requires webfx.stack.routing.router;
+    requires webfx.stack.routing.uirouter;
+    requires webfx.stack.ui.action;
+    requires webfx.stack.ui.controls;
+    requires webfx.stack.ui.operation;
+    requires webfx.stack.ui.operation.action;
 
     // Exported packages
     exports org.modality_project.base.backoffice.activities.filters;
@@ -37,7 +37,7 @@ module modality.base.backoffice.activities.filters {
     exports org.modality_project.base.backoffice.operations.routes.filters;
 
     // Provided services
-    provides dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter with org.modality_project.base.backoffice.activities.filters.RouteToFiltersRequestEmitter;
-    provides dev.webfx.stack.framework.client.ui.uirouter.UiRoute with org.modality_project.base.backoffice.activities.filters.FiltersUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.base.backoffice.activities.filters.FiltersUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with org.modality_project.base.backoffice.activities.filters.RouteToFiltersRequestEmitter;
 
 }

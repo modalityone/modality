@@ -5,15 +5,15 @@ module modality.base.client.operationactionsloading {
     // Direct dependencies modules
     requires java.base;
     requires javafx.base;
-    requires webfx.framework.client.action;
-    requires webfx.framework.client.i18n;
-    requires webfx.framework.client.operationaction;
-    requires webfx.framework.client.uirouter;
-    requires webfx.framework.shared.orm.datasourcemodelservice;
-    requires webfx.framework.shared.orm.entity;
     requires webfx.platform.boot;
     requires webfx.platform.console;
     requires webfx.stack.async;
+    requires webfx.stack.i18n;
+    requires webfx.stack.orm.datasourcemodel.service;
+    requires webfx.stack.orm.entity;
+    requires webfx.stack.routing.uirouter;
+    requires webfx.stack.ui.action;
+    requires webfx.stack.ui.operation.action;
 
     // Exported packages
     exports org.modality_project.base.client.operationactionsloading;

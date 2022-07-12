@@ -12,11 +12,11 @@ module modality.ecommerce.client.businesslogic {
     requires modality.base.shared.entities;
     requires modality.event.client.calendar;
     requires modality.hotel.shared.time;
-    requires webfx.framework.shared.orm.entity;
     requires webfx.platform.util;
     requires webfx.stack.async;
     requires webfx.stack.db.query;
     requires webfx.stack.db.submit;
+    requires webfx.stack.orm.entity;
 
     // Exported packages
     exports org.modality_project.ecommerce.client.businessdata.feesgroup;

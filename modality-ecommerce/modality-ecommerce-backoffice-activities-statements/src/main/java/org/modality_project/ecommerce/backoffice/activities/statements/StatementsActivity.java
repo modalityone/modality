@@ -1,6 +1,6 @@
 package org.modality_project.ecommerce.backoffice.activities.statements;
 
-import dev.webfx.stack.framework.shared.orm.dql.DqlStatement;
+import dev.webfx.stack.orm.dql.DqlStatement;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import org.modality_project.base.shared.domainmodel.functions.AbcNames;
@@ -8,12 +8,12 @@ import org.modality_project.base.backoffice.controls.masterslave.ConventionalUiB
 import org.modality_project.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
 import org.modality_project.base.client.activity.eventdependent.EventDependentViewDomainActivity;
 import org.modality_project.base.shared.entities.MoneyTransfer;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.stack.framework.client.ui.controls.entity.selector.ButtonSelector;
-import dev.webfx.stack.framework.client.ui.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.stack.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
+import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
+import dev.webfx.stack.orm.entity.Entity;
 
-import static dev.webfx.stack.framework.shared.orm.dql.DqlStatement.where;
+import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
 final class StatementsActivity extends EventDependentViewDomainActivity implements
         ConventionalUiBuilderMixin {

@@ -1,14 +1,14 @@
 package org.modality_project.hotel.backoffice.operations.entities.resourceconfiguration;
 
-import dev.webfx.stack.framework.client.ui.controls.button.ButtonFactoryMixin;
-import dev.webfx.stack.framework.client.ui.controls.dialog.DialogContent;
-import dev.webfx.stack.framework.client.ui.controls.dialog.DialogUtil;
-import dev.webfx.stack.framework.client.ui.controls.entity.selector.ButtonSelector;
-import dev.webfx.stack.framework.client.ui.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.stack.framework.shared.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.framework.shared.orm.entity.Entity;
-import dev.webfx.stack.framework.shared.orm.entity.EntityId;
-import dev.webfx.stack.framework.shared.orm.entity.UpdateStore;
+import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.stack.ui.controls.dialog.DialogContent;
+import dev.webfx.stack.ui.controls.dialog.DialogUtil;
+import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
+import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
+import dev.webfx.stack.orm.domainmodel.DataSourceModel;
+import dev.webfx.stack.orm.entity.Entity;
+import dev.webfx.stack.orm.entity.EntityId;
+import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.db.submit.SubmitArgument;
 import dev.webfx.stack.async.Future;
 import dev.webfx.stack.async.Promise;

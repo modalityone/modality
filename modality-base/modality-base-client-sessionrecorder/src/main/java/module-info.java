@@ -6,10 +6,6 @@ module modality.base.client.sessionrecorder {
     requires java.base;
     requires javafx.base;
     requires modality.crm.client.authn;
-    requires webfx.framework.client.push;
-    requires webfx.framework.client.uirouter;
-    requires webfx.framework.shared.orm.datasourcemodelservice;
-    requires webfx.framework.shared.orm.entity;
     requires webfx.kit.launcher;
     requires webfx.platform.boot;
     requires webfx.platform.console;
@@ -17,6 +13,10 @@ module modality.base.client.sessionrecorder {
     requires webfx.stack.async;
     requires webfx.stack.com.bus;
     requires webfx.stack.db.submit;
+    requires webfx.stack.orm.datasourcemodel.service;
+    requires webfx.stack.orm.entity;
+    requires webfx.stack.push.client;
+    requires webfx.stack.routing.uirouter;
 
     // Exported packages
     exports org.modality_project.base.client.jobs.sessionrecorder;

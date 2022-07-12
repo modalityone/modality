@@ -23,20 +23,20 @@ module modality.event.frontoffice.activities.fees {
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
     requires webfx.extras.visual.grid.peers.base;
-    requires webfx.framework.client.activity;
-    requires webfx.framework.client.i18n;
-    requires webfx.framework.client.orm.domainmodel.activity;
-    requires webfx.framework.client.uirouter;
-    requires webfx.framework.client.util;
-    requires webfx.framework.shared.orm.entity;
     requires webfx.kit.util;
     requires webfx.platform.console;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
     requires webfx.stack.async;
     requires webfx.stack.db.query;
+    requires webfx.stack.i18n;
+    requires webfx.stack.orm.domainmodel.activity;
+    requires webfx.stack.orm.entity;
     requires webfx.stack.platform.json;
     requires webfx.stack.platform.windowhistory;
+    requires webfx.stack.routing.activity;
+    requires webfx.stack.routing.uirouter;
+    requires webfx.stack.ui.util;
 
     // Exported packages
     exports org.modality_project.event.frontoffice.activities.fees;
@@ -44,6 +44,6 @@ module modality.event.frontoffice.activities.fees {
     exports org.modality_project.event.frontoffice.operations.fees;
 
     // Provided services
-    provides dev.webfx.stack.framework.client.ui.uirouter.UiRoute with org.modality_project.event.frontoffice.activities.fees.FeesUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.event.frontoffice.activities.fees.FeesUiRoute;
 
 }

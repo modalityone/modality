@@ -1,8 +1,8 @@
 package org.modality_project.base.shared.entities.converters;
 
-import dev.webfx.stack.framework.shared.orm.dql.DqlClause;
-import dev.webfx.stack.framework.shared.orm.dql.DqlStatement;
-import dev.webfx.stack.framework.shared.orm.dql.DqlStatementBuilder;
+import dev.webfx.stack.orm.dql.DqlClause;
+import dev.webfx.stack.orm.dql.DqlStatement;
+import dev.webfx.stack.orm.dql.DqlStatementBuilder;
 import org.modality_project.base.shared.entities.Filter;
 
 /**

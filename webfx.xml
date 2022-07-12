@@ -172,7 +172,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -185,9 +185,9 @@
                 <module>modality-base-shared-domainmodel</module>
                 <module>modality-event-backoffice-activities-cloneevent</module>
                 <module>modality-event-backoffice-activities-cloneevent-routing</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-uirouter</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-routing-uirouter</module>
             </used-by-source-modules>
 
         </project>
@@ -314,16 +314,16 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.base.backoffice.activities.filters.FiltersUiRoute</provider>
-                <provider interface="dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter">org.modality_project.base.backoffice.activities.filters.RouteToFiltersRequestEmitter</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.base.backoffice.activities.filters.FiltersUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">org.modality_project.base.backoffice.activities.filters.RouteToFiltersRequestEmitter</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-action</undetected-module>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-stack-ui-action</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
-                    <undetected-module>webfx-framework-client-controls</undetected-module>
+                    <undetected-module>webfx-stack-ui-controls</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -342,22 +342,22 @@
                 <module>webfx-extras-cell</module>
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-grid</module>
-                <module>webfx-framework-client-action</module>
-                <module>webfx-framework-client-operationaction</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-orm-entity-controls</module>
-                <module>webfx-framework-client-orm-reactive-visual</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-domainmodel</module>
-                <module>webfx-framework-shared-orm-dql</module>
-                <module>webfx-framework-shared-orm-entity</module>
-                <module>webfx-framework-shared-router</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
+                <module>webfx-stack-orm-domainmodel</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-dql</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-entity-controls</module>
+                <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-action</module>
+                <module>webfx-stack-ui-operation</module>
+                <module>webfx-stack-ui-operation-action</module>
             </used-by-source-modules>
 
         </project>
@@ -369,13 +369,13 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.base.backoffice.activities.monitor.MonitorUiRoute</provider>
-                <provider interface="dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter">org.modality_project.base.backoffice.activities.monitor.RouteToMonitorRequestEmitter</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.base.backoffice.activities.monitor.MonitorUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">org.modality_project.base.backoffice.activities.monitor.RouteToMonitorRequestEmitter</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                 </used-by-source-modules>
@@ -391,17 +391,17 @@
                 <module>modality-base-client-activity</module>
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-charts</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-orm-reactive-entities</module>
-                <module>webfx-framework-client-orm-reactive-visual</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-client-util</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-entity</module>
-                <module>webfx-framework-shared-router</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-reactive-entities</module>
+                <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-operation</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -413,13 +413,13 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.base.backoffice.activities.operations.OperationsUiRoute</provider>
-                <provider interface="dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter">org.modality_project.base.backoffice.activities.operations.RouteToOperationsRequestEmitter</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.base.backoffice.activities.operations.OperationsUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">org.modality_project.base.backoffice.activities.operations.RouteToOperationsRequestEmitter</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -432,18 +432,18 @@
 
             <used-by-source-modules>
                 <module>modality-base-client-activity</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-orm-entity-controls</module>
-                <module>webfx-framework-client-orm-reactive-visual</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-dql</module>
-                <module>webfx-framework-shared-orm-entity</module>
-                <module>webfx-framework-shared-router</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-launcher</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-dql</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-entity-controls</module>
+                <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
 
         </project>
@@ -456,7 +456,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
+                    <undetected-module>webfx-stack-orm-domainmodel</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -474,19 +474,19 @@
                 <module>webfx-extras-visual-charts</module>
                 <module>webfx-extras-visual-controls</module>
                 <module>webfx-extras-visual-grid</module>
-                <module>webfx-framework-client-controls</module>
-                <module>webfx-framework-client-orm-reactive-dql</module>
-                <module>webfx-framework-client-orm-reactive-entities</module>
-                <module>webfx-framework-client-orm-reactive-visual</module>
-                <module>webfx-framework-client-util</module>
-                <module>webfx-framework-shared-orm-dql</module>
-                <module>webfx-framework-shared-orm-entity</module>
-                <module>webfx-framework-shared-orm-expression</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-stack-orm-dql</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-expression</module>
+                <module>webfx-stack-orm-reactive-dql</module>
+                <module>webfx-stack-orm-reactive-entities</module>
+                <module>webfx-stack-orm-reactive-visual</module>
+                <module>webfx-stack-ui-controls</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -511,17 +511,17 @@
                 <module>java.base</module>
                 <module>modality-base-client-icons</module>
                 <module>webfx-extras-webtext</module>
-                <module>webfx-framework-client-action</module>
-                <module>webfx-framework-client-controls</module>
-                <module>webfx-framework-client-i18n</module>
-                <module>webfx-framework-client-util</module>
-                <module>webfx-framework-shared-orm-domainmodel</module>
-                <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-util</module>
                 <module>webfx-stack-async</module>
+                <module>webfx-stack-i18n</module>
+                <module>webfx-stack-orm-domainmodel</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-ui-action</module>
+                <module>webfx-stack-ui-controls</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -542,13 +542,13 @@
 
             <used-by-source-modules>
                 <module>modality-base-shared-entities</module>
-                <module>webfx-framework-client-controls</module>
-                <module>webfx-framework-client-orm-entity-controls</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-stack-async</module>
                 <module>webfx-stack-db-submit</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-entity-controls</module>
+                <module>webfx-stack-ui-controls</module>
+                <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
 
         </project>
@@ -574,16 +574,16 @@
                 <module>java.base</module>
                 <module>modality-base-shared-entities</module>
                 <module>webfx-extras-type</module>
-                <module>webfx-framework-client-controls</module>
-                <module>webfx-framework-client-orm-entity-controls</module>
-                <module>webfx-framework-client-orm-reactive-entities</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-domainmodel</module>
-                <module>webfx-framework-shared-orm-entity</module>
-                <module>webfx-framework-shared-orm-expression</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-stack-async</module>
                 <module>webfx-stack-db-submit</module>
+                <module>webfx-stack-orm-domainmodel</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-entity-controls</module>
+                <module>webfx-stack-orm-expression</module>
+                <module>webfx-stack-orm-reactive-entities</module>
+                <module>webfx-stack-ui-controls</module>
+                <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
 
         </project>
@@ -607,10 +607,10 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>webfx-framework-client-orm-reactive-entities</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-stack-async</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-reactive-entities</module>
+                <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
 
         </project>
@@ -623,7 +623,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
+                    <undetected-module>webfx-stack-orm-domainmodel</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -641,12 +641,6 @@
                 <module>modality-ecommerce-client-businesslogic</module>
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-grid</module>
-                <module>webfx-framework-client-controls</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-orm-reactive-dql</module>
-                <module>webfx-framework-client-orm-reactive-visual</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-client-util</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
@@ -655,7 +649,13 @@
                 <module>webfx-platform-util</module>
                 <module>webfx-stack-async</module>
                 <module>webfx-stack-db-query</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-reactive-dql</module>
+                <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-platform-json</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-controls</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -679,14 +679,14 @@
             <used-by-source-modules>
                 <module>java.base</module>
                 <module>modality-base-shared-entities</module>
-                <module>webfx-framework-shared-orm-domainmodel</module>
-                <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-platform-console</module>
                 <module>webfx-platform-util</module>
                 <module>webfx-stack-async</module>
                 <module>webfx-stack-com-bus</module>
                 <module>webfx-stack-com-websocketbus</module>
                 <module>webfx-stack-db-query</module>
+                <module>webfx-stack-orm-domainmodel</module>
+                <module>webfx-stack-orm-entity</module>
             </used-by-source-modules>
 
         </project>
@@ -705,7 +705,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-shared-router</undetected-module>
+                    <undetected-module>webfx-stack-routing-router</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                 </used-by-source-modules>
 
@@ -719,8 +719,8 @@
                 <plugin-module>modality-base-client-sessionrecorder</plugin-module>
                 <plugin-module>modality-crm-client-activities-login</plugin-module>
                 <plugin-module>modality-crm-client-activities-unauthorized</plugin-module>
-                <plugin-module>webfx-framework-client-push-simple</plugin-module>
-                <plugin-module>webfx-framework-client-querypush-simple</plugin-module>
+                <plugin-module>webfx-stack-push-client-simple</plugin-module>
+                <plugin-module>webfx-stack-querypush-client-simple</plugin-module>
             </dependencies>
 
             <source-packages>
@@ -732,15 +732,6 @@
                 <module>modality-base-client-activity</module>
                 <module>modality-base-client-icons</module>
                 <module>webfx-extras-imagestore</module>
-                <module>webfx-framework-client-action</module>
-                <module>webfx-framework-client-activity</module>
-                <module>webfx-framework-client-i18n</module>
-                <module>webfx-framework-client-operationaction</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-client-util</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-datasourcemodelservice</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-launcher</module>
@@ -748,6 +739,15 @@
                 <module>webfx-platform-uischeduler</module>
                 <module>webfx-platform-util</module>
                 <module>webfx-stack-com-buscall</module>
+                <module>webfx-stack-i18n</module>
+                <module>webfx-stack-orm-datasourcemodel-service</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-routing-activity</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-action</module>
+                <module>webfx-stack-ui-operation</module>
+                <module>webfx-stack-ui-operation-action</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -837,18 +837,18 @@
                 <module>java.base</module>
                 <module>modality-base-client-presentationmodel</module>
                 <module>modality-base-shared-entities</module>
-                <module>webfx-framework-client-controls</module>
-                <module>webfx-framework-client-i18n</module>
-                <module>webfx-framework-client-orm-entity-controls</module>
-                <module>webfx-framework-client-orm-reactive-dql</module>
-                <module>webfx-framework-client-util</module>
-                <module>webfx-framework-shared-orm-domainmodel</module>
-                <module>webfx-framework-shared-orm-dql</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-stack-i18n</module>
+                <module>webfx-stack-orm-domainmodel</module>
+                <module>webfx-stack-orm-dql</module>
+                <module>webfx-stack-orm-entity-controls</module>
+                <module>webfx-stack-orm-reactive-dql</module>
+                <module>webfx-stack-ui-controls</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -861,9 +861,9 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.operations.i18n.ChangeLanguageRequestEmitter">org.modality_project.base.client.operations.i18n.ChangeLanguageToEnglishRequest$ProvidedEmitter</provider>
-                <provider interface="dev.webfx.stack.framework.client.operations.i18n.ChangeLanguageRequestEmitter">org.modality_project.base.client.operations.i18n.ChangeLanguageToFrenchRequest$ProvidedEmitter</provider>
-                <provider interface="dev.webfx.stack.framework.client.services.i18n.spi.I18nProvider">org.modality_project.base.client.services.i18n.ModalityI18nProvider</provider>
+                <provider interface="dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter">org.modality_project.base.client.operations.i18n.ChangeLanguageToEnglishRequest$ProvidedEmitter</provider>
+                <provider interface="dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter">org.modality_project.base.client.operations.i18n.ChangeLanguageToFrenchRequest$ProvidedEmitter</provider>
+                <provider interface="dev.webfx.stack.i18n.spi.I18nProvider">org.modality_project.base.client.services.i18n.ModalityI18nProvider</provider>
             </providers>
 
             <dependencies>
@@ -884,12 +884,12 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>webfx-framework-client-i18n</module>
-                <module>webfx-framework-client-i18n-json</module>
-                <module>webfx-framework-client-util</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-stack-i18n</module>
+                <module>webfx-stack-i18n-json</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-ui-operation</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -937,8 +937,8 @@
             <used-by-source-modules>
                 <module>modality-base-shared-entities</module>
                 <module>webfx-extras-imagestore</module>
-                <module>webfx-framework-client-action</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-stack-ui-action</module>
             </used-by-source-modules>
 
         </project>
@@ -950,8 +950,8 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter">org.modality_project.base.client.navigationarrows.RouteBackwardRequestEmitter</provider>
-                <provider interface="dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter">org.modality_project.base.client.navigationarrows.RouteForwardRequestEmitter</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">org.modality_project.base.client.navigationarrows.RouteBackwardRequestEmitter</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">org.modality_project.base.client.navigationarrows.RouteForwardRequestEmitter</provider>
             </providers>
 
             <dependencies>
@@ -963,8 +963,8 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-shared-router</module>
+                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-uirouter</module>
             </used-by-source-modules>
 
         </project>
@@ -992,14 +992,14 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>webfx-framework-client-action</module>
-                <module>webfx-framework-client-i18n</module>
-                <module>webfx-framework-client-operationaction</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-shared-orm-datasourcemodelservice</module>
-                <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-platform-boot</module>
                 <module>webfx-platform-console</module>
+                <module>webfx-stack-i18n</module>
+                <module>webfx-stack-orm-datasourcemodel-service</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-action</module>
+                <module>webfx-stack-ui-operation-action</module>
             </used-by-source-modules>
 
         </project>
@@ -1058,15 +1058,15 @@
             <used-by-source-modules>
                 <module>java.base</module>
                 <module>modality-crm-client-authn</module>
-                <module>webfx-framework-client-push</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-shared-orm-datasourcemodelservice</module>
-                <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-launcher</module>
                 <module>webfx-platform-boot</module>
                 <module>webfx-platform-console</module>
                 <module>webfx-platform-storage</module>
                 <module>webfx-stack-com-bus</module>
+                <module>webfx-stack-orm-datasourcemodel-service</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-push-client</module>
+                <module>webfx-stack-routing-uirouter</module>
             </used-by-source-modules>
 
         </project>
@@ -1090,11 +1090,11 @@
             <used-by-source-modules>
                 <module>modality-base-client-entities</module>
                 <module>webfx-extras-type</module>
-                <module>webfx-framework-client-i18n</module>
-                <module>webfx-framework-shared-orm-entity</module>
-                <module>webfx-framework-shared-orm-expression</module>
                 <module>webfx-platform-console</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-stack-i18n</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-expression</module>
             </used-by-source-modules>
 
         </project>
@@ -1116,14 +1116,14 @@
             <used-by-source-modules>
                 <module>java.base</module>
                 <module>webfx-extras-imagestore</module>
-                <module>webfx-framework-client-util</module>
-                <module>webfx-framework-client-validation</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-uischeduler</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-stack-ui-util</module>
+                <module>webfx-stack-ui-validation</module>
             </used-by-source-modules>
 
         </project>
@@ -1141,7 +1141,7 @@
                 <!-- Commented while it's not necessary during the development phase (and creates logs on the server every second which may pollute other logs)
         <plugin-module>modality-base-server-systemmetrics</plugin-module>
 -->
-                <plugin-module>webfx-framework-shared-querypush</plugin-module>
+                <plugin-module>webfx-stack-querypush</plugin-module>
                 <plugin-module>webfx-stack-com-buscalljob</plugin-module>
             </dependencies>
 
@@ -1192,8 +1192,8 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
-                    <undetected-module>webfx-framework-shared-orm-dql</undetected-module>
+                    <undetected-module>webfx-stack-orm-domainmodel</undetected-module>
+                    <undetected-module>webfx-stack-orm-dql</undetected-module>
                     <!-- Temporarily commented for Modality refactoring (was causing build error otherwise)
             <undetected-module scope="test">junit-jupiter</undetected-module>
             <undetected-module scope="test">mockito-inline</undetected-module>
@@ -1286,10 +1286,10 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>webfx-framework-shared-orm-datasourcemodelservice</module>
                 <module>webfx-platform-console</module>
                 <module>webfx-platform-resource</module>
                 <module>webfx-stack-db-datasource</module>
+                <module>webfx-stack-orm-datasourcemodel-service</module>
                 <module>webfx-stack-platform-json</module>
             </used-by-source-modules>
 
@@ -1307,7 +1307,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
+                    <undetected-module>webfx-stack-orm-domainmodel</undetected-module>
                     <undetected-module>webfx-stack-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -1317,11 +1317,11 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>webfx-framework-server-push</module>
-                <module>webfx-framework-shared-orm-datasourcemodelservice</module>
                 <module>webfx-platform-boot</module>
                 <module>webfx-platform-console</module>
                 <module>webfx-stack-db-submit</module>
+                <module>webfx-stack-orm-datasourcemodel-service</module>
+                <module>webfx-stack-push-server</module>
             </used-by-source-modules>
 
         </project>
@@ -1351,14 +1351,14 @@
             <used-by-source-modules>
                 <module>java.base</module>
                 <module>modality-base-shared-entities</module>
-                <module>webfx-framework-shared-orm-datasourcemodelservice</module>
-                <module>webfx-framework-shared-orm-domainmodel</module>
-                <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-platform-boot</module>
                 <module>webfx-platform-console</module>
                 <module>webfx-platform-scheduler</module>
                 <module>webfx-platform-util</module>
                 <module>webfx-stack-db-submit</module>
+                <module>webfx-stack-orm-datasourcemodel-service</module>
+                <module>webfx-stack-orm-domainmodel</module>
+                <module>webfx-stack-orm-entity</module>
             </used-by-source-modules>
 
             <used-services>
@@ -1401,8 +1401,8 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.shared.services.domainmodel.spi.DomainModelProvider">org.modality_project.base.shared.services.domainmodel.ModalityDomainModelProvider</provider>
-                <provider interface="dev.webfx.stack.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider">org.modality_project.base.shared.services.datasourcemodel.ModalityDataSourceModelProvider</provider>
+                <provider interface="dev.webfx.stack.orm.domainmodel.service.spi.DomainModelProvider">org.modality_project.base.shared.services.domainmodel.ModalityDomainModelProvider</provider>
+                <provider interface="dev.webfx.stack.orm.datasourcemodel.service.spi.DataSourceModelProvider">org.modality_project.base.shared.services.datasourcemodel.ModalityDataSourceModelProvider</provider>
             </providers>
 
             <embed-resources>
@@ -1423,18 +1423,18 @@
             <used-by-source-modules>
                 <module>java.base</module>
                 <module>webfx-extras-type</module>
-                <module>webfx-framework-shared-orm-datasourcemodelservice</module>
-                <module>webfx-framework-shared-orm-domainmodel</module>
-                <module>webfx-framework-shared-orm-domainmodelservice</module>
-                <module>webfx-framework-shared-orm-dql</module>
-                <module>webfx-framework-shared-orm-entity</module>
-                <module>webfx-framework-shared-orm-expression</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-platform-resource</module>
                 <module>webfx-platform-util</module>
                 <module>webfx-stack-async</module>
                 <module>webfx-stack-com-serial</module>
                 <module>webfx-stack-db-query</module>
+                <module>webfx-stack-orm-datasourcemodel-service</module>
+                <module>webfx-stack-orm-domainmodel</module>
+                <module>webfx-stack-orm-domainmodel-service</module>
+                <module>webfx-stack-orm-dql</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-expression</module>
                 <module>webfx-stack-platform-json</module>
             </used-by-source-modules>
 
@@ -1447,36 +1447,36 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.AttendanceImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.CartImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.CountryImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.CurrencyImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.DateInfoImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.DocumentImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.DocumentLineImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.EventImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.FilterImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.GatewayParameterImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.HistoryImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.ImageImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.ItemFamilyImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.ItemImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.LabelImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.MailImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.MethodImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.MoneyTransferImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.MoneyAccountImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.MoneyAccountTypeImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.MoneyFlowImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.OptionImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.OrganizationImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.OrganizationTypeImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.PersonImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.RateImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.SiteImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.SnapshotImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.SystemMetricsEntityImpl$ProvidedFactory</provider>
-                <provider interface="dev.webfx.stack.framework.shared.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.TeacherImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.AttendanceImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.CartImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.CountryImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.CurrencyImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.DateInfoImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.DocumentImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.DocumentLineImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.EventImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.FilterImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.GatewayParameterImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.HistoryImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.ImageImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.ItemFamilyImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.ItemImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.LabelImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.MailImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.MethodImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.MoneyTransferImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.MoneyAccountImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.MoneyAccountTypeImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.MoneyFlowImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.OptionImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.OrganizationImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.OrganizationTypeImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.PersonImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.RateImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.SiteImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.SnapshotImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.SystemMetricsEntityImpl$ProvidedFactory</provider>
+                <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.TeacherImpl$ProvidedFactory</provider>
             </providers>
 
             <dependencies>
@@ -1496,9 +1496,9 @@
                 <module>java.base</module>
                 <module>modality-base-shared-domainmodel</module>
                 <module>modality-hotel-shared-time</module>
-                <module>webfx-framework-shared-orm-dql</module>
-                <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-stack-orm-dql</module>
+                <module>webfx-stack-orm-entity</module>
             </used-by-source-modules>
 
         </project>
@@ -1519,14 +1519,14 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.catering.backoffice.activities.diningareas.DiningAreasUiRoute</provider>
-                <provider interface="dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter">org.modality_project.catering.backoffice.activities.diningareas.RouteToDiningAreasRequestEmitter</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.catering.backoffice.activities.diningareas.DiningAreasUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">org.modality_project.catering.backoffice.activities.diningareas.RouteToDiningAreasRequestEmitter</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-action</undetected-module>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-stack-ui-action</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
@@ -1548,18 +1548,18 @@
                 <module>modality-ecommerce-backoffice-activities-statistics</module>
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-grid</module>
-                <module>webfx-framework-client-operationaction</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-orm-reactive-visual</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-dql</module>
-                <module>webfx-framework-shared-orm-entity</module>
-                <module>webfx-framework-shared-router</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-dql</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-operation</module>
+                <module>webfx-stack-ui-operation-action</module>
             </used-by-source-modules>
 
         </project>
@@ -1583,12 +1583,12 @@
             <used-by-source-modules>
                 <module>modality-base-backoffice-operations-generic</module>
                 <module>modality-base-shared-entities</module>
-                <module>webfx-framework-client-controls</module>
-                <module>webfx-framework-client-orm-entity-controls</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-stack-async</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-entity-controls</module>
+                <module>webfx-stack-ui-controls</module>
+                <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
 
         </project>
@@ -1619,15 +1619,15 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.crm.backoffice.activities.authorizations.AuthorizationsUiRoute</provider>
-                <provider interface="dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter">org.modality_project.crm.backoffice.activities.authorizations.RouteToAuthorizationsRequestEmitter</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.crm.backoffice.activities.authorizations.AuthorizationsUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">org.modality_project.crm.backoffice.activities.authorizations.RouteToAuthorizationsRequestEmitter</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -1641,18 +1641,18 @@
             <used-by-source-modules>
                 <module>modality-crm-client-authn</module>
                 <module>webfx-extras-visual-grid</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-orm-entity-controls</module>
-                <module>webfx-framework-client-orm-reactive-visual</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-dql</module>
-                <module>webfx-framework-shared-orm-entity</module>
-                <module>webfx-framework-shared-router</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-dql</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-entity-controls</module>
+                <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
 
         </project>
@@ -1664,12 +1664,12 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.crm.backoffice.activities.letter.LetterUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.crm.backoffice.activities.letter.LetterUiRoute</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -1683,13 +1683,13 @@
             <used-by-source-modules>
                 <module>modality-base-backoffice-multilangeditor</module>
                 <module>modality-base-client-util</module>
-                <module>webfx-framework-client-controls</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-uirouter</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-controls</module>
             </used-by-source-modules>
 
         </project>
@@ -1701,14 +1701,14 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.crm.backoffice.activities.letters.LettersUiRoute</provider>
-                <provider interface="dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter">org.modality_project.crm.backoffice.activities.letters.RouteToLettersRequestEmitter</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.crm.backoffice.activities.letters.LettersUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">org.modality_project.crm.backoffice.activities.letters.RouteToLettersRequestEmitter</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
-                    <undetected-module>webfx-framework-shared-orm-entity</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
+                    <undetected-module>webfx-stack-orm-entity</undetected-module>
                     <undetected-module>webfx-stack-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                     <undetected-module>webfx-kit-javafxgraphics-emul</undetected-module>
@@ -1725,13 +1725,13 @@
                 <module>modality-base-client-activity</module>
                 <module>modality-base-client-util</module>
                 <module>modality-crm-backoffice-activities-letter</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-orm-reactive-visual</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-dql</module>
-                <module>webfx-framework-shared-router</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-dql</module>
+                <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
 
         </project>
@@ -1743,14 +1743,14 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.crm.backoffice.activities.organizations.OrganizationsUiRoute</provider>
-                <provider interface="dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter">org.modality_project.crm.backoffice.activities.organizations.RouteToOrganizationsRequestEmitter</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.crm.backoffice.activities.organizations.OrganizationsUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">org.modality_project.crm.backoffice.activities.organizations.RouteToOrganizationsRequestEmitter</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
-                    <undetected-module>webfx-framework-shared-orm-entity</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
+                    <undetected-module>webfx-stack-orm-entity</undetected-module>
                     <undetected-module>webfx-stack-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -1764,18 +1764,18 @@
             <used-by-source-modules>
                 <module>modality-base-client-activity</module>
                 <module>modality-event-backoffice-activities-events</module>
-                <module>webfx-framework-client-i18n</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-orm-reactive-visual</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-dql</module>
-                <module>webfx-framework-shared-router</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-stack-i18n</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-dql</module>
+                <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
 
         </project>
@@ -1787,13 +1787,13 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.crm.backoffice.activities.users.UsersUiRoute</provider>
-                <provider interface="dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter">org.modality_project.crm.backoffice.activities.users.RouteToUsersRequestEmitter</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.crm.backoffice.activities.users.UsersUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">org.modality_project.crm.backoffice.activities.users.RouteToUsersRequestEmitter</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -1812,18 +1812,18 @@
                 <module>modality-base-shared-entities</module>
                 <module>modality-ecommerce-backoffice-operations-document</module>
                 <module>webfx-extras-visual</module>
-                <module>webfx-framework-client-action</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-orm-reactive-dql</module>
-                <module>webfx-framework-client-orm-reactive-visual</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-dql</module>
-                <module>webfx-framework-shared-orm-expression</module>
-                <module>webfx-framework-shared-router</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-dql</module>
+                <module>webfx-stack-orm-expression</module>
+                <module>webfx-stack-orm-reactive-dql</module>
+                <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-action</module>
+                <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
 
         </project>
@@ -1857,19 +1857,19 @@
                 <module>webfx-extras-imagestore</module>
                 <module>webfx-extras-label</module>
                 <module>webfx-extras-visual-grid</module>
-                <module>webfx-framework-client-action</module>
-                <module>webfx-framework-client-activity</module>
-                <module>webfx-framework-client-controls</module>
-                <module>webfx-framework-client-i18n</module>
-                <module>webfx-framework-client-operationaction</module>
-                <module>webfx-framework-client-orm-reactive-visual</module>
-                <module>webfx-framework-shared-orm-domainmodel</module>
-                <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-stack-i18n</module>
+                <module>webfx-stack-orm-domainmodel</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-reactive-visual</module>
+                <module>webfx-stack-routing-activity</module>
+                <module>webfx-stack-ui-action</module>
+                <module>webfx-stack-ui-controls</module>
+                <module>webfx-stack-ui-operation-action</module>
             </used-by-source-modules>
 
         </project>
@@ -1890,9 +1890,9 @@
 
             <used-by-source-modules>
                 <module>modality-base-shared-entities</module>
-                <module>webfx-framework-shared-operation</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-stack-async</module>
+                <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
 
         </project>
@@ -1905,14 +1905,14 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.crm.client.activities.login.LoginUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.crm.client.activities.login.LoginUiRoute</provider>
             </providers>
 
             <source-packages>
@@ -1923,16 +1923,16 @@
                 <module>modality-base-client-activity</module>
                 <module>modality-base-client-validation</module>
                 <module>modality-event-client-sectionpanel</module>
-                <module>webfx-framework-client-controls</module>
-                <module>webfx-framework-client-i18n</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-client-util</module>
-                <module>webfx-framework-shared-authn</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
+                <module>webfx-stack-authn</module>
+                <module>webfx-stack-i18n</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-controls</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -1944,12 +1944,12 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.crm.client.activities.unauthorized.UnauthorizedUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.crm.client.activities.unauthorized.UnauthorizedUiRoute</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -1959,9 +1959,9 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-uirouter</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-routing-uirouter</module>
             </used-by-source-modules>
 
         </project>
@@ -1973,7 +1973,7 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.shared.services.authn.spi.AuthenticationServiceProvider">org.modality_project.crm.client.services.authn.ModalityAuthenticationServiceProvider</provider>
+                <provider interface="dev.webfx.stack.authn.spi.AuthenticationServiceProvider">org.modality_project.crm.client.services.authn.ModalityAuthenticationServiceProvider</provider>
             </providers>
 
             <dependencies>
@@ -1985,11 +1985,11 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>webfx-framework-shared-authn</module>
-                <module>webfx-framework-shared-orm-datasourcemodelservice</module>
-                <module>webfx-framework-shared-orm-domainmodel</module>
                 <module>webfx-stack-async</module>
+                <module>webfx-stack-authn</module>
                 <module>webfx-stack-db-query</module>
+                <module>webfx-stack-orm-datasourcemodel-service</module>
+                <module>webfx-stack-orm-domainmodel</module>
             </used-by-source-modules>
 
         </project>
@@ -2001,7 +2001,7 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.shared.services.authz.spi.AuthorizationServiceProvider">org.modality_project.crm.client.services.authz.ModalityAuthorizationServiceProvider</provider>
+                <provider interface="dev.webfx.stack.authz.spi.AuthorizationServiceProvider">org.modality_project.crm.client.services.authz.ModalityAuthorizationServiceProvider</provider>
             </providers>
 
             <dependencies>
@@ -2016,13 +2016,13 @@
 
             <used-by-source-modules>
                 <module>modality-crm-client-authn</module>
-                <module>webfx-framework-shared-authz</module>
-                <module>webfx-framework-shared-orm-datasourcemodelservice</module>
-                <module>webfx-framework-shared-orm-domainmodel</module>
-                <module>webfx-framework-shared-orm-entity</module>
-                <module>webfx-framework-shared-router</module>
                 <module>webfx-platform-console</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-stack-authz</module>
+                <module>webfx-stack-orm-datasourcemodel-service</module>
+                <module>webfx-stack-orm-domainmodel</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-routing-router</module>
             </used-by-source-modules>
 
         </project>
@@ -2053,18 +2053,18 @@
                 <module>webfx-extras-type</module>
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-grid</module>
-                <module>webfx-framework-client-controls</module>
-                <module>webfx-framework-client-i18n</module>
-                <module>webfx-framework-client-orm-entity-controls</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-client-util</module>
-                <module>webfx-framework-shared-orm-domainmodel</module>
-                <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-uischeduler</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-stack-i18n</module>
+                <module>webfx-stack-orm-domainmodel</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-entity-controls</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-controls</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -2102,14 +2102,14 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.ecommerce.backoffice.activities.bookings.BookingsUiRoute</provider>
-                <provider interface="dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter">org.modality_project.ecommerce.backoffice.activities.bookings.RouteToBookingsRequestEmitter</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.ecommerce.backoffice.activities.bookings.BookingsUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">org.modality_project.ecommerce.backoffice.activities.bookings.RouteToBookingsRequestEmitter</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-action</undetected-module>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-stack-ui-action</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2136,22 +2136,22 @@
                 <module>modality-event-frontoffice-activities-fees</module>
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-grid</module>
-                <module>webfx-framework-client-action</module>
-                <module>webfx-framework-client-operationaction</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-orm-reactive-dql</module>
-                <module>webfx-framework-client-orm-reactive-visual</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-client-util</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-dql</module>
-                <module>webfx-framework-shared-orm-expression</module>
-                <module>webfx-framework-shared-router</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-stack-async</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-dql</module>
+                <module>webfx-stack-orm-expression</module>
+                <module>webfx-stack-orm-reactive-dql</module>
+                <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-action</module>
+                <module>webfx-stack-ui-operation</module>
+                <module>webfx-stack-ui-operation-action</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -2163,14 +2163,14 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.ecommerce.backoffice.activities.income.IncomeUiRoute</provider>
-                <provider interface="dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter">org.modality_project.ecommerce.backoffice.activities.income.RouteToIncomeRequestEmitter</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.ecommerce.backoffice.activities.income.IncomeUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">org.modality_project.ecommerce.backoffice.activities.income.RouteToIncomeRequestEmitter</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
-                    <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
+                    <undetected-module>webfx-stack-orm-domainmodel</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                     <undetected-module>webfx-extras-visual-grid</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
@@ -2191,18 +2191,18 @@
                 <module>modality-base-shared-entities</module>
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-grid</module>
-                <module>webfx-framework-client-operationaction</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-orm-entity-controls</module>
-                <module>webfx-framework-client-orm-reactive-dql</module>
-                <module>webfx-framework-client-orm-reactive-visual</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-dql</module>
-                <module>webfx-framework-shared-router</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-dql</module>
+                <module>webfx-stack-orm-entity-controls</module>
+                <module>webfx-stack-orm-reactive-dql</module>
+                <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-operation</module>
+                <module>webfx-stack-ui-operation-action</module>
             </used-by-source-modules>
 
         </project>
@@ -2214,14 +2214,14 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.ecommerce.backoffice.activities.moneyflows.MoneyFlowsUiRoute</provider>
-                <provider interface="dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter">org.modality_project.ecommerce.backoffice.activities.moneyflows.RouteToMoneyFlowsRequestEmitter</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.ecommerce.backoffice.activities.moneyflows.MoneyFlowsUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">org.modality_project.ecommerce.backoffice.activities.moneyflows.RouteToMoneyFlowsRequestEmitter</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-action</undetected-module>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-stack-ui-action</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
@@ -2243,24 +2243,24 @@
                 <module>modality-ecommerce-backoffice-operations-moneyflow</module>
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-grid</module>
-                <module>webfx-framework-client-action</module>
-                <module>webfx-framework-client-controls</module>
-                <module>webfx-framework-client-operationaction</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-orm-entity-controls</module>
-                <module>webfx-framework-client-orm-reactive-entities</module>
-                <module>webfx-framework-client-orm-reactive-visual</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-dql</module>
-                <module>webfx-framework-shared-orm-entity</module>
-                <module>webfx-framework-shared-router</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-stack-db-submit</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-dql</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-entity-controls</module>
+                <module>webfx-stack-orm-reactive-entities</module>
+                <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-action</module>
+                <module>webfx-stack-ui-controls</module>
+                <module>webfx-stack-ui-operation</module>
+                <module>webfx-stack-ui-operation-action</module>
             </used-by-source-modules>
 
         </project>
@@ -2272,14 +2272,14 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.ecommerce.backoffice.activities.payments.PaymentsUiRoute</provider>
-                <provider interface="dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter">org.modality_project.ecommerce.backoffice.activities.payments.RouteToPaymentsRequestEmitter</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.ecommerce.backoffice.activities.payments.PaymentsUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">org.modality_project.ecommerce.backoffice.activities.payments.RouteToPaymentsRequestEmitter</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-action</undetected-module>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-stack-ui-action</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2301,20 +2301,20 @@
                 <module>modality-ecommerce-backoffice-operations-moneytransfer</module>
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-grid</module>
-                <module>webfx-framework-client-operationaction</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-orm-reactive-dql</module>
-                <module>webfx-framework-client-orm-reactive-visual</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-client-util</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-dql</module>
-                <module>webfx-framework-shared-orm-expression</module>
-                <module>webfx-framework-shared-router</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-dql</module>
+                <module>webfx-stack-orm-expression</module>
+                <module>webfx-stack-orm-reactive-dql</module>
+                <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-operation</module>
+                <module>webfx-stack-ui-operation-action</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -2326,13 +2326,13 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.ecommerce.backoffice.activities.statements.StatementsUiRoute</provider>
-                <provider interface="dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter">org.modality_project.ecommerce.backoffice.activities.statements.RouteToStatementsRequestEmitter</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.ecommerce.backoffice.activities.statements.StatementsUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">org.modality_project.ecommerce.backoffice.activities.statements.RouteToStatementsRequestEmitter</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
@@ -2352,20 +2352,20 @@
                 <module>modality-base-shared-domainmodel</module>
                 <module>modality-base-shared-entities</module>
                 <module>webfx-extras-visual</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-orm-entity-controls</module>
-                <module>webfx-framework-client-orm-reactive-dql</module>
-                <module>webfx-framework-client-orm-reactive-visual</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-dql</module>
-                <module>webfx-framework-shared-orm-entity</module>
-                <module>webfx-framework-shared-orm-expression</module>
-                <module>webfx-framework-shared-router</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-dql</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-entity-controls</module>
+                <module>webfx-stack-orm-expression</module>
+                <module>webfx-stack-orm-reactive-dql</module>
+                <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
 
         </project>
@@ -2377,14 +2377,14 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.ecommerce.backoffice.activities.statistics.StatisticsUiRoute</provider>
-                <provider interface="dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter">org.modality_project.ecommerce.backoffice.activities.statistics.RouteToStatisticsRequestEmitter</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.ecommerce.backoffice.activities.statistics.StatisticsUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">org.modality_project.ecommerce.backoffice.activities.statistics.RouteToStatisticsRequestEmitter</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-action</undetected-module>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-stack-ui-action</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
@@ -2410,22 +2410,22 @@
                 <module>webfx-extras-type</module>
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-grid</module>
-                <module>webfx-framework-client-operationaction</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-orm-reactive-dql</module>
-                <module>webfx-framework-client-orm-reactive-entities</module>
-                <module>webfx-framework-client-orm-reactive-visual</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-client-util</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-dql</module>
-                <module>webfx-framework-shared-orm-entity</module>
-                <module>webfx-framework-shared-orm-expression</module>
-                <module>webfx-framework-shared-router</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-dql</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-expression</module>
+                <module>webfx-stack-orm-reactive-dql</module>
+                <module>webfx-stack-orm-reactive-entities</module>
+                <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-operation</module>
+                <module>webfx-stack-ui-operation-action</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -2438,7 +2438,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
+                    <undetected-module>webfx-stack-orm-domainmodel</undetected-module>
                     <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2455,12 +2455,12 @@
                 <module>modality-base-backoffice-operations-generic</module>
                 <module>modality-base-shared-entities</module>
                 <module>modality-crm-client-personaldetails</module>
-                <module>webfx-framework-client-controls</module>
-                <module>webfx-framework-shared-operation</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-launcher</module>
                 <module>webfx-stack-async</module>
+                <module>webfx-stack-ui-controls</module>
+                <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
 
         </project>
@@ -2484,12 +2484,12 @@
             <used-by-source-modules>
                 <module>modality-base-backoffice-operations-generic</module>
                 <module>modality-base-shared-entities</module>
-                <module>webfx-framework-client-controls</module>
-                <module>webfx-framework-client-orm-entity-controls</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-stack-async</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-entity-controls</module>
+                <module>webfx-stack-ui-controls</module>
+                <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
 
         </project>
@@ -2512,13 +2512,13 @@
             <used-by-source-modules>
                 <module>java.base</module>
                 <module>modality-base-shared-entities</module>
-                <module>webfx-framework-client-controls</module>
-                <module>webfx-framework-client-orm-entity-controls</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-stack-async</module>
                 <module>webfx-stack-db-submit</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-entity-controls</module>
+                <module>webfx-stack-ui-controls</module>
+                <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
 
         </project>
@@ -2541,12 +2541,12 @@
 
             <used-by-source-modules>
                 <module>modality-base-shared-entities</module>
-                <module>webfx-framework-client-controls</module>
-                <module>webfx-framework-client-orm-entity-controls</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-stack-async</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-entity-controls</module>
+                <module>webfx-stack-ui-controls</module>
+                <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
 
         </project>
@@ -2578,14 +2578,14 @@
                 <module>webfx-extras-type</module>
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-grid</module>
-                <module>webfx-framework-client-i18n</module>
-                <module>webfx-framework-client-orm-reactive-visual</module>
-                <module>webfx-framework-shared-orm-domainmodel</module>
-                <module>webfx-framework-shared-orm-entity</module>
-                <module>webfx-framework-shared-orm-expression</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-stack-i18n</module>
+                <module>webfx-stack-orm-domainmodel</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-expression</module>
+                <module>webfx-stack-orm-reactive-visual</module>
             </used-by-source-modules>
 
         </project>
@@ -2611,14 +2611,14 @@
                 <module>modality-base-client-activity</module>
                 <module>modality-base-client-aggregates</module>
                 <module>modality-base-shared-entities</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-client-util</module>
-                <module>webfx-framework-shared-orm-datasourcemodelservice</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-stack-orm-datasourcemodel-service</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -2653,13 +2653,13 @@
                 <module>modality-base-shared-entities</module>
                 <module>modality-event-client-calendar</module>
                 <module>modality-hotel-shared-time</module>
-                <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-platform-util</module>
                 <module>webfx-stack-async</module>
                 <module>webfx-stack-db-query</module>
                 <module>webfx-stack-db-submit</module>
+                <module>webfx-stack-orm-entity</module>
             </used-by-source-modules>
 
         </project>
@@ -2673,14 +2673,14 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>modality-base-client-aggregates</undetected-module>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
-                    <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
+                    <undetected-module>webfx-stack-orm-domainmodel</undetected-module>
                     <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.ecommerce.frontoffice.activities.cart.CartUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.ecommerce.frontoffice.activities.cart.CartUiRoute</provider>
             </providers>
 
             <source-packages>
@@ -2704,16 +2704,6 @@
                 <module>webfx-extras-type</module>
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-grid</module>
-                <module>webfx-framework-client-action</module>
-                <module>webfx-framework-client-controls</module>
-                <module>webfx-framework-client-i18n</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-orm-reactive-visual</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-client-util</module>
-                <module>webfx-framework-shared-orm-domainmodel</module>
-                <module>webfx-framework-shared-orm-entity</module>
-                <module>webfx-framework-shared-orm-expression</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
@@ -2721,6 +2711,16 @@
                 <module>webfx-platform-uischeduler</module>
                 <module>webfx-platform-util</module>
                 <module>webfx-stack-async</module>
+                <module>webfx-stack-i18n</module>
+                <module>webfx-stack-orm-domainmodel</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-expression</module>
+                <module>webfx-stack-orm-reactive-visual</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-action</module>
+                <module>webfx-stack-ui-controls</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -2749,16 +2749,16 @@
                 <module>modality-base-client-aggregates</module>
                 <module>modality-base-client-util</module>
                 <module>modality-base-shared-entities</module>
-                <module>webfx-framework-client-i18n</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-client-util</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-stack-i18n</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-platform-json</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -2770,12 +2770,12 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.ecommerce.frontoffice.activities.contactus.ContactUsUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.ecommerce.frontoffice.activities.contactus.ContactUsUiRoute</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-async</undetected-module>
                     <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
@@ -2793,18 +2793,18 @@
                 <module>modality-base-client-validation</module>
                 <module>modality-base-shared-entities</module>
                 <module>modality-ecommerce-frontoffice-activities-cart-routing</module>
-                <module>webfx-framework-client-action</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-client-util</module>
-                <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-platform-console</module>
                 <module>webfx-platform-uischeduler</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-platform-windowlocation</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-action</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -2816,13 +2816,13 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.ecommerce.frontoffice.activities.payment.PaymentUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.ecommerce.frontoffice.activities.payment.PaymentUiRoute</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>modality-base-client-aggregates</undetected-module>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-async</undetected-module>
                     <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
@@ -2844,13 +2844,6 @@
                 <module>modality-ecommerce-frontoffice-activities-cart-routing</module>
                 <module>modality-event-client-sectionpanel</module>
                 <module>webfx-extras-webtext</module>
-                <module>webfx-framework-client-action</module>
-                <module>webfx-framework-client-controls</module>
-                <module>webfx-framework-client-i18n</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-client-util</module>
-                <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-platform-console</module>
@@ -2858,8 +2851,15 @@
                 <module>webfx-platform-util</module>
                 <module>webfx-stack-com-bus</module>
                 <module>webfx-stack-com-websocketbus</module>
+                <module>webfx-stack-i18n</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-platform-windowlocation</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-action</module>
+                <module>webfx-stack-ui-controls</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -2871,13 +2871,13 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.ecommerce.frontoffice.activities.person.PersonUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.ecommerce.frontoffice.activities.person.PersonUiRoute</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
-                    <undetected-module>webfx-framework-client-action</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
+                    <undetected-module>webfx-stack-ui-action</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2895,14 +2895,14 @@
                 <module>modality-ecommerce-client-bookingprocess</module>
                 <module>modality-ecommerce-client-businesslogic</module>
                 <module>modality-ecommerce-frontoffice-activities-summary</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-client-util</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -2914,12 +2914,12 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.ecommerce.frontoffice.activities.summary.SummaryUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.ecommerce.frontoffice.activities.summary.SummaryUiRoute</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2941,16 +2941,16 @@
                 <module>modality-ecommerce-frontoffice-activities-cart-routing</module>
                 <module>modality-event-client-bookingcalendar</module>
                 <module>modality-event-client-sectionpanel</module>
-                <module>webfx-framework-client-i18n</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-uirouter</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-console</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-stack-i18n</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-uirouter</module>
             </used-by-source-modules>
 
         </project>
@@ -2981,13 +2981,13 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.event.backoffice.activities.cloneevent.CloneEventUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.event.backoffice.activities.cloneevent.CloneEventUiRoute</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
-                    <undetected-module>webfx-framework-shared-orm-entity</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
+                    <undetected-module>webfx-stack-orm-entity</undetected-module>
                     <undetected-module>webfx-stack-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
@@ -3004,15 +3004,15 @@
                 <module>modality-base-shared-entities</module>
                 <module>modality-ecommerce-backoffice-activities-bookings</module>
                 <module>modality-event-backoffice-activities-cloneevent-routing</module>
-                <module>webfx-framework-client-controls</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-uirouter</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-uischeduler</module>
                 <module>webfx-stack-db-submit</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-controls</module>
             </used-by-source-modules>
 
         </project>
@@ -3034,9 +3034,9 @@
 
             <used-by-source-modules>
                 <module>modality-base-client-util</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-shared-operation</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
 
         </project>
@@ -3048,14 +3048,14 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.event.backoffice.activities.events.EventsUiRoute</provider>
-                <provider interface="dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter">org.modality_project.event.backoffice.activities.events.RouteToEventsRequestEmitter</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.event.backoffice.activities.events.EventsUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">org.modality_project.event.backoffice.activities.events.RouteToEventsRequestEmitter</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
-                    <undetected-module>webfx-framework-shared-orm-entity</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
+                    <undetected-module>webfx-stack-orm-entity</undetected-module>
                     <undetected-module>webfx-kit-javafxgraphics-emul</undetected-module>
                     <undetected-module>webfx-stack-async</undetected-module>
                 </used-by-source-modules>
@@ -3071,15 +3071,15 @@
                 <module>modality-base-client-activity</module>
                 <module>modality-base-client-util</module>
                 <module>modality-ecommerce-backoffice-activities-bookings</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-orm-reactive-visual</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-dql</module>
-                <module>webfx-framework-shared-router</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-dql</module>
+                <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
 
         </project>
@@ -3091,13 +3091,13 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.event.backoffice.activities.options.EditableOptionsUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.event.backoffice.activities.options.EditableOptionsUiRoute</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>modality-base-client-aggregates</undetected-module>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
@@ -3118,18 +3118,18 @@
                 <module>modality-event-frontoffice-activities-options</module>
                 <module>modality-hotel-shared-time</module>
                 <module>webfx-extras-visual-grid</module>
-                <module>webfx-framework-client-controls</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-orm-reactive-visual</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-client-util</module>
-                <module>webfx-framework-shared-orm-dql</module>
-                <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-stack-db-submit</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-dql</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-reactive-visual</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-controls</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -3158,11 +3158,11 @@
                 <module>modality-ecommerce-client-businesslogic</module>
                 <module>modality-event-client-calendar</module>
                 <module>modality-hotel-shared-time</module>
-                <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-platform-console</module>
                 <module>webfx-platform-uischeduler</module>
+                <module>webfx-stack-orm-entity</module>
             </used-by-source-modules>
 
         </project>
@@ -3189,12 +3189,12 @@
             <used-by-source-modules>
                 <module>java.base</module>
                 <module>modality-hotel-shared-time</module>
-                <module>webfx-framework-client-i18n</module>
-                <module>webfx-framework-client-util</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-stack-i18n</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -3217,11 +3217,11 @@
                 <module>modality-base-client-icons</module>
                 <module>modality-event-client-bookingcalendar</module>
                 <module>webfx-extras-cell</module>
-                <module>webfx-framework-client-i18n</module>
-                <module>webfx-framework-client-util</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-stack-i18n</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -3233,12 +3233,12 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.event.frontoffice.activities.fees.FeesUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.event.frontoffice.activities.fees.FeesUiRoute</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-async</undetected-module>
                     <undetected-module>webfx-stack-db-query</undetected-module>
                 </used-by-source-modules>
@@ -3268,11 +3268,6 @@
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-grid</module>
                 <module>webfx-extras-visual-grid-peers-base</module>
-                <module>webfx-framework-client-i18n</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-client-util</module>
-                <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
@@ -3280,8 +3275,13 @@
                 <module>webfx-platform-console</module>
                 <module>webfx-platform-uischeduler</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-stack-i18n</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-platform-json</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -3293,13 +3293,13 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.event.frontoffice.activities.options.OptionsUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.event.frontoffice.activities.options.OptionsUiRoute</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>modality-base-client-aggregates</undetected-module>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -3325,12 +3325,6 @@
                 <module>modality-hotel-shared-time</module>
                 <module>webfx-extras-flexbox</module>
                 <module>webfx-extras-imagestore</module>
-                <module>webfx-framework-client-i18n</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-orm-entity-controls</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-client-util</module>
-                <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
@@ -3338,7 +3332,13 @@
                 <module>webfx-platform-console</module>
                 <module>webfx-platform-uischeduler</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-stack-i18n</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-entity-controls</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -3350,12 +3350,12 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.event.frontoffice.activities.program.ProgramUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.event.frontoffice.activities.program.ProgramUiRoute</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
@@ -3375,12 +3375,12 @@
                 <module>modality-ecommerce-client-businesslogic</module>
                 <module>modality-event-client-bookingcalendar</module>
                 <module>modality-event-client-sectionpanel</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-client-util</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-platform-console</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -3392,13 +3392,13 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.event.frontoffice.activities.startbooking.StartBookingUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.event.frontoffice.activities.startbooking.StartBookingUiRoute</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>modality-base-shared-entities</undetected-module>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
@@ -3420,15 +3420,15 @@
                 <module>modality-event-frontoffice-activities-program</module>
                 <module>modality-event-frontoffice-activities-terms</module>
                 <module>webfx-extras-imagestore</module>
-                <module>webfx-framework-client-action</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-client-util</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-uischeduler</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-action</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -3440,12 +3440,12 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.event.frontoffice.activities.terms.TermsUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.event.frontoffice.activities.terms.TermsUiRoute</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                 </used-by-source-modules>
@@ -3464,15 +3464,15 @@
                 <module>modality-event-client-sectionpanel</module>
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-grid-peers-base</module>
-                <module>webfx-framework-client-i18n</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-orm-reactive-visual</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-client-util</module>
-                <module>webfx-framework-shared-orm-dql</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-stack-i18n</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-dql</module>
+                <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -3494,14 +3494,14 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.hotel.backoffice.activities.roomsgraphic.RoomsGraphicUiRoute</provider>
-                <provider interface="dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter">org.modality_project.hotel.backoffice.activities.roomsgraphic.RouteToRoomsGraphicRequestEmitter</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.hotel.backoffice.activities.roomsgraphic.RoomsGraphicUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">org.modality_project.hotel.backoffice.activities.roomsgraphic.RouteToRoomsGraphicRequestEmitter</provider>
             </providers>
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-framework-client-action</undetected-module>
-                    <undetected-module>webfx-framework-client-activity</undetected-module>
+                    <undetected-module>webfx-stack-ui-action</undetected-module>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                     <undetected-module>webfx-stack-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
@@ -3526,25 +3526,25 @@
                 <module>webfx-extras-flexbox</module>
                 <module>webfx-extras-imagestore</module>
                 <module>webfx-extras-visual-grid</module>
-                <module>webfx-framework-client-action</module>
-                <module>webfx-framework-client-operationaction</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-orm-reactive-entities</module>
-                <module>webfx-framework-client-orm-reactive-visual</module>
-                <module>webfx-framework-client-uirouter</module>
-                <module>webfx-framework-client-util</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-dql</module>
-                <module>webfx-framework-shared-orm-entity</module>
-                <module>webfx-framework-shared-router</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-stack-com-serial</module>
                 <module>webfx-stack-db-datascope</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-dql</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-reactive-entities</module>
+                <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-platform-json</module>
                 <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-action</module>
+                <module>webfx-stack-ui-operation</module>
+                <module>webfx-stack-ui-operation-action</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -3565,14 +3565,14 @@
 
             <used-by-source-modules>
                 <module>modality-base-shared-entities</module>
-                <module>webfx-framework-client-controls</module>
-                <module>webfx-framework-client-orm-entity-controls</module>
-                <module>webfx-framework-shared-operation</module>
-                <module>webfx-framework-shared-orm-domainmodel</module>
-                <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-stack-async</module>
                 <module>webfx-stack-db-submit</module>
+                <module>webfx-stack-orm-domainmodel</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-entity-controls</module>
+                <module>webfx-stack-ui-controls</module>
+                <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
 
         </project>
@@ -3619,18 +3619,19 @@
                 <module>modality-base-shared-domainmodel</module>
                 <module>modality-crm-client-authn</module>
                 <module>modality-ecommerce-client-businesslogic</module>
-                <module>webfx-framework-client-orm-reactive-dql</module>
-                <module>webfx-framework-client-orm-reactive-entities</module>
-                <module>webfx-framework-server-querypush</module>
-                <module>webfx-framework-server-querypush-simple</module>
-                <module>webfx-framework-shared-orm-domainmodelservice</module>
-                <module>webfx-framework-shared-orm-dql-query-interceptor</module>
-                <module>webfx-framework-shared-orm-dql-querypush-interceptor</module>
-                <module>webfx-framework-shared-orm-entity</module>
-                <module>webfx-framework-shared-querypush</module>
                 <module>webfx-stack-db-query</module>
                 <module>webfx-stack-db-querysubmit-java-jdbc</module>
                 <module>webfx-stack-db-querysubmit-vertx</module>
+                <module>webfx-stack-orm-domainmodel-service</module>
+                <module>webfx-stack-orm-dql-query-interceptor</module>
+                <module>webfx-stack-orm-dql-querypush-interceptor</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-reactive-call</module>
+                <module>webfx-stack-orm-reactive-dql</module>
+                <module>webfx-stack-orm-reactive-entities</module>
+                <module>webfx-stack-querypush</module>
+                <module>webfx-stack-querypush-server</module>
+                <module>webfx-stack-querypush-server-simple</module>
             </java-package>
 
             <java-package name="dev.webfx.stack.db.submit">
@@ -3644,16 +3645,18 @@
                 <module>modality-event-backoffice-activities-cloneevent</module>
                 <module>modality-event-backoffice-activities-options</module>
                 <module>modality-hotel-backoffice-operations-resourceconfiguration</module>
-                <module>webfx-framework-server-querypush</module>
-                <module>webfx-framework-shared-orm-dql-submit-interceptor</module>
-                <module>webfx-framework-shared-orm-entity</module>
                 <module>webfx-stack-db-querysubmit-java-jdbc</module>
                 <module>webfx-stack-db-querysubmit-vertx</module>
                 <module>webfx-stack-db-submit</module>
                 <module>webfx-stack-db-submitlistener</module>
+                <module>webfx-stack-orm-dql-submit-interceptor</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-querypush-server</module>
             </java-package>
 
-            <java-package name="dev.webfx.stack.framework.shared.orm.domainmodel">
+            <java-package name="dev.webfx.stack.framework.shared.services.querypush"/>
+
+            <java-package name="dev.webfx.stack.orm.domainmodel">
                 <module>modality-base-backoffice-activities-filters</module>
                 <module>modality-base-backoffice-multilangeditor</module>
                 <module>modality-base-backoffice-operations-generic</module>
@@ -3666,40 +3669,31 @@
                 <module>modality-crm-client-authz</module>
                 <module>modality-crm-client-personaldetails</module>
                 <module>modality-hotel-backoffice-operations-resourceconfiguration</module>
-                <module>webfx-framework-client-orm-domainmodel-activity</module>
-                <module>webfx-framework-client-orm-entity-controls</module>
-                <module>webfx-framework-client-orm-reactive-dql</module>
-                <module>webfx-framework-client-orm-reactive-entities</module>
-                <module>webfx-framework-client-orm-reactive-visual</module>
-                <module>webfx-framework-shared-orm-datasourcemodelservice</module>
-                <module>webfx-framework-shared-orm-domainmodel</module>
-                <module>webfx-framework-shared-orm-domainmodelservice</module>
-                <module>webfx-framework-shared-orm-dql-query-interceptor</module>
-                <module>webfx-framework-shared-orm-dql-querypush-interceptor</module>
-                <module>webfx-framework-shared-orm-dql-submit-interceptor</module>
-                <module>webfx-framework-shared-orm-entity</module>
-            </java-package>
-
-            <java-package name="dev.webfx.stack.framework.shared.services.querypush">
-                <module>webfx-framework-client-orm-reactive-dql</module>
-                <module>webfx-framework-client-querypush</module>
-                <module>webfx-framework-server-querypush</module>
-                <module>webfx-framework-server-querypush-simple</module>
-                <module>webfx-framework-shared-orm-dql-querypush-interceptor</module>
-                <module>webfx-framework-shared-querypush</module>
+                <module>webfx-stack-orm-datasourcemodel-service</module>
+                <module>webfx-stack-orm-domainmodel</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-domainmodel-service</module>
+                <module>webfx-stack-orm-dql-query-interceptor</module>
+                <module>webfx-stack-orm-dql-querypush-interceptor</module>
+                <module>webfx-stack-orm-dql-submit-interceptor</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-entity-controls</module>
+                <module>webfx-stack-orm-reactive-dql</module>
+                <module>webfx-stack-orm-reactive-entities</module>
+                <module>webfx-stack-orm-reactive-visual</module>
             </java-package>
 
             <java-package name="java.util.regex">
                 <module>webdrivermanager</module>
-                <module>webfx-framework-shared-router</module>
+                <module>webfx-stack-routing-router</module>
             </java-package>
 
             <java-class name="javafx.scene.control.ScrollPane">
                 <module>modality-ecommerce-backoffice-operations-document</module>
                 <module>modality-ecommerce-client-bookingprocess</module>
                 <module>webfx-extras-visual-grid</module>
-                <module>webfx-framework-client-controls</module>
-                <module>webfx-framework-client-util</module>
+                <module>webfx-stack-ui-controls</module>
+                <module>webfx-stack-ui-util</module>
             </java-class>
 
         </usages>

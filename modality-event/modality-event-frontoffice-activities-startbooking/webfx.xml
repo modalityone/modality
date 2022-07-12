@@ -6,13 +6,13 @@
     </exported-packages>
 
     <providers>
-        <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.event.frontoffice.activities.startbooking.StartBookingUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.event.frontoffice.activities.startbooking.StartBookingUiRoute</provider>
     </providers>
 
     <dependencies>
         <used-by-source-modules>
             <undetected-module>modality-base-shared-entities</undetected-module>
-            <undetected-module>webfx-framework-client-activity</undetected-module>
+            <undetected-module>webfx-stack-routing-activity</undetected-module>
             <undetected-module>webfx-stack-async</undetected-module>
             <undetected-module>webfx-platform-util</undetected-module>
         </used-by-source-modules>

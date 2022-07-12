@@ -1,8 +1,8 @@
 package org.modality_project.ecommerce.backoffice.operations.entities.documentline;
 
-import dev.webfx.stack.framework.client.ui.controls.dialog.DialogContent;
-import dev.webfx.stack.framework.client.ui.controls.dialog.DialogUtil;
-import dev.webfx.stack.framework.shared.orm.entity.UpdateStore;
+import dev.webfx.stack.ui.controls.dialog.DialogContent;
+import dev.webfx.stack.ui.controls.dialog.DialogUtil;
+import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.async.Future;
 import dev.webfx.stack.async.Promise;
 import javafx.scene.layout.Pane;

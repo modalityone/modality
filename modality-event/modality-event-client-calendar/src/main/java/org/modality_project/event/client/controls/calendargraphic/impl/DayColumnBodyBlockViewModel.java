@@ -16,7 +16,7 @@ import org.modality_project.event.client.controls.calendargraphic.CalendarCell;
 import org.modality_project.event.client.controls.calendargraphic.CalendarClickEvent;
 import org.modality_project.event.client.controls.calendargraphic.CalendarGraphic;
 import org.modality_project.hotel.shared.businessdata.time.TimeInterval;
-import dev.webfx.stack.framework.client.ui.util.background.BackgroundFactory;
+import dev.webfx.stack.ui.util.background.BackgroundFactory;
 
 import java.util.concurrent.TimeUnit;
 

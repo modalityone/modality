@@ -12,10 +12,10 @@ module modality.event.client.bookingcalendar {
     requires modality.ecommerce.client.businesslogic;
     requires modality.event.client.calendar;
     requires modality.hotel.shared.time;
-    requires webfx.framework.shared.orm.entity;
     requires webfx.platform.console;
     requires webfx.platform.uischeduler;
     requires webfx.stack.async;
+    requires webfx.stack.orm.entity;
 
     // Exported packages
     exports org.modality_project.event.client.controls.bookingcalendar;

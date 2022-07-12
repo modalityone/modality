@@ -6,13 +6,13 @@
     </exported-packages>
 
     <providers>
-        <provider interface="dev.webfx.stack.framework.client.ui.uirouter.UiRoute">org.modality_project.event.frontoffice.activities.options.OptionsUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.event.frontoffice.activities.options.OptionsUiRoute</provider>
     </providers>
 
     <dependencies>
         <used-by-source-modules>
             <undetected-module>modality-base-client-aggregates</undetected-module>
-            <undetected-module>webfx-framework-client-activity</undetected-module>
+            <undetected-module>webfx-stack-routing-activity</undetected-module>
             <undetected-module>webfx-stack-async</undetected-module>
         </used-by-source-modules>
     </dependencies>

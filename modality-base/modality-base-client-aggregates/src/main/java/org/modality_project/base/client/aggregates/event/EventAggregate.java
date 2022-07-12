@@ -1,10 +1,10 @@
 package org.modality_project.base.client.aggregates.event;
 
-import dev.webfx.stack.framework.shared.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.framework.shared.orm.domainmodel.HasDataSourceModel;
-import dev.webfx.stack.framework.shared.orm.entity.Entity;
-import dev.webfx.stack.framework.shared.orm.entity.EntityList;
-import dev.webfx.stack.framework.shared.orm.entity.EntityStore;
+import dev.webfx.stack.orm.domainmodel.DataSourceModel;
+import dev.webfx.stack.orm.domainmodel.HasDataSourceModel;
+import dev.webfx.stack.orm.entity.Entity;
+import dev.webfx.stack.orm.entity.EntityList;
+import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.async.Future;
 import dev.webfx.stack.db.query.QueryResult;
 import dev.webfx.platform.util.collection.Collections;

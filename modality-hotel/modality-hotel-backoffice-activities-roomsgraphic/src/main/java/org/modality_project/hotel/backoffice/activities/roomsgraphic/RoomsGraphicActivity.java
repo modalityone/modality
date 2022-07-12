@@ -4,14 +4,14 @@ import dev.webfx.extras.flexbox.FlexBox;
 import dev.webfx.extras.imagestore.ImageStore;
 import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.dql_to_entities.ReactiveEntitiesMapper;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_objects.IndividualEntityToObjectMapper;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_objects.ReactiveObjectsMapper;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.stack.framework.client.ui.action.ActionGroup;
-import dev.webfx.stack.framework.client.ui.action.operation.OperationActionFactoryMixin;
-import dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil;
-import dev.webfx.stack.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
+import dev.webfx.stack.orm.reactive.entities.entities_to_objects.IndividualEntityToObjectMapper;
+import dev.webfx.stack.orm.reactive.entities.entities_to_objects.ReactiveObjectsMapper;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.ui.action.ActionGroup;
+import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
+import dev.webfx.stack.ui.util.layout.LayoutUtil;
+import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.stack.db.datascope.aggregate.AggregateScope;
 import dev.webfx.stack.platform.json.Json;
@@ -41,7 +41,7 @@ import org.modality_project.hotel.backoffice.operations.entities.resourceconfigu
 import java.util.List;
 import java.util.Objects;
 
-import static dev.webfx.stack.framework.shared.orm.dql.DqlStatement.where;
+import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
 final class RoomsGraphicActivity extends EventDependentViewDomainActivity implements
         HasSelectedDocumentProperty,

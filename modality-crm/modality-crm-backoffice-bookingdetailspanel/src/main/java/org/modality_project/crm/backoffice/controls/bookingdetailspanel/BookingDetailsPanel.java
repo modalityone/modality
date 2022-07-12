@@ -33,16 +33,16 @@ import org.modality_project.base.client.presentationmodel.HasSelectedDocumentPro
 import org.modality_project.base.shared.entities.Document;
 import dev.webfx.extras.imagestore.ImageStore;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
-import dev.webfx.stack.framework.client.activity.impl.elementals.activeproperty.HasActiveProperty;
-import dev.webfx.stack.framework.client.ui.action.operation.OperationActionFactoryMixin;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.stack.framework.client.services.i18n.I18nControls;
-import dev.webfx.stack.framework.client.ui.action.ActionGroup;
-import dev.webfx.stack.framework.client.ui.controls.button.ButtonFactoryMixin;
-import dev.webfx.stack.framework.shared.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.framework.shared.orm.domainmodel.HasDataSourceModel;
-import dev.webfx.stack.framework.shared.orm.entity.Entity;
-import dev.webfx.stack.framework.shared.orm.entity.EntityId;
+import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
+import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.i18n.I18nControls;
+import dev.webfx.stack.ui.action.ActionGroup;
+import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.stack.orm.domainmodel.DataSourceModel;
+import dev.webfx.stack.orm.domainmodel.HasDataSourceModel;
+import dev.webfx.stack.orm.entity.Entity;
+import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.platform.util.Strings;
 

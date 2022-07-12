@@ -3,7 +3,7 @@ package org.modality_project.ecommerce.client.businessdata.feesgroup;
 import org.modality_project.ecommerce.client.businesslogic.feesgroup.FeesGroupLogic;
 import org.modality_project.base.client.aggregates.event.EventAggregate;
 import org.modality_project.base.shared.entities.Event;
-import dev.webfx.stack.framework.shared.orm.entity.EntityId;
+import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.async.Future;
 
 import java.util.HashMap;

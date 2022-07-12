@@ -7,9 +7,9 @@
     </exported-packages>
 
     <providers>
-        <provider interface="dev.webfx.stack.framework.client.operations.i18n.ChangeLanguageRequestEmitter">org.modality_project.base.client.operations.i18n.ChangeLanguageToEnglishRequest$ProvidedEmitter</provider>
-        <provider interface="dev.webfx.stack.framework.client.operations.i18n.ChangeLanguageRequestEmitter">org.modality_project.base.client.operations.i18n.ChangeLanguageToFrenchRequest$ProvidedEmitter</provider>
-        <provider interface="dev.webfx.stack.framework.client.services.i18n.spi.I18nProvider">org.modality_project.base.client.services.i18n.ModalityI18nProvider</provider>
+        <provider interface="dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter">org.modality_project.base.client.operations.i18n.ChangeLanguageToEnglishRequest$ProvidedEmitter</provider>
+        <provider interface="dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter">org.modality_project.base.client.operations.i18n.ChangeLanguageToFrenchRequest$ProvidedEmitter</provider>
+        <provider interface="dev.webfx.stack.i18n.spi.I18nProvider">org.modality_project.base.client.services.i18n.ModalityI18nProvider</provider>
     </providers>
 
     <dependencies>

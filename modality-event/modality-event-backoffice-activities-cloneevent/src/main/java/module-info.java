@@ -12,21 +12,21 @@ module modality.event.backoffice.activities.cloneevent {
     requires modality.base.shared.entities;
     requires modality.ecommerce.backoffice.activities.bookings;
     requires modality.event.backoffice.activities.cloneevent.routing;
-    requires webfx.framework.client.activity;
-    requires webfx.framework.client.controls;
-    requires webfx.framework.client.orm.domainmodel.activity;
-    requires webfx.framework.client.uirouter;
-    requires webfx.framework.shared.orm.entity;
     requires webfx.kit.util;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
     requires webfx.stack.async;
     requires webfx.stack.db.submit;
+    requires webfx.stack.orm.domainmodel.activity;
+    requires webfx.stack.orm.entity;
+    requires webfx.stack.routing.activity;
+    requires webfx.stack.routing.uirouter;
+    requires webfx.stack.ui.controls;
 
     // Exported packages
     exports org.modality_project.event.backoffice.activities.cloneevent;
 
     // Provided services
-    provides dev.webfx.stack.framework.client.ui.uirouter.UiRoute with org.modality_project.event.backoffice.activities.cloneevent.CloneEventUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.event.backoffice.activities.cloneevent.CloneEventUiRoute;
 
 }

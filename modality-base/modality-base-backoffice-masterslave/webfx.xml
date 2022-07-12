@@ -7,7 +7,7 @@
 
     <dependencies>
         <used-by-source-modules>
-            <undetected-module>webfx-framework-shared-orm-domainmodel</undetected-module>
+            <undetected-module>webfx-stack-orm-domainmodel</undetected-module>
         </used-by-source-modules>
     </dependencies>
 

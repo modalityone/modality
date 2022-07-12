@@ -2,13 +2,13 @@ package org.modality_project.base.client.entities.util.filters;
 
 import javafx.beans.property.Property;
 import javafx.scene.layout.Pane;
-import dev.webfx.stack.framework.client.orm.reactive.dql.statement.conventions.HasColumnsDqlStatementProperty;
-import dev.webfx.stack.framework.client.orm.reactive.dql.statement.conventions.HasGroupDqlStatementProperty;
+import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasColumnsDqlStatementProperty;
+import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasGroupDqlStatementProperty;
 import org.modality_project.base.shared.entities.Filter;
-import dev.webfx.stack.framework.shared.orm.dql.DqlStatement;
-import dev.webfx.stack.framework.client.ui.controls.button.ButtonFactoryMixin;
-import dev.webfx.stack.framework.client.ui.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.stack.framework.shared.orm.domainmodel.HasDataSourceModel;
+import dev.webfx.stack.orm.dql.DqlStatement;
+import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
+import dev.webfx.stack.orm.domainmodel.HasDataSourceModel;
 import dev.webfx.kit.util.properties.Properties;
 
 import java.util.function.Predicate;

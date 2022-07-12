@@ -1,7 +1,7 @@
 package org.modality_project.base.client.activity.eventdependent;
 
-import dev.webfx.stack.framework.client.activity.impl.elementals.domain.DomainActivityContext;
-import dev.webfx.stack.framework.client.activity.impl.elementals.uiroute.UiRouteActivityContext;
+import dev.webfx.stack.orm.domainmodel.activity.domain.DomainActivityContext;
+import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
 import dev.webfx.stack.async.Future;
 import org.modality_project.base.client.activity.organizationdependent.OrganizationDependentActivityMixin;
 import org.modality_project.ecommerce.client.businessdata.feesgroup.FeesGroup;

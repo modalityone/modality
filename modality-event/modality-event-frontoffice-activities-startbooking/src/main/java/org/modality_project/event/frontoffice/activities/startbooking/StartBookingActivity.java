@@ -18,9 +18,9 @@ import org.modality_project.event.frontoffice.operations.fees.RouteToFeesRequest
 import org.modality_project.event.frontoffice.operations.options.RouteToOptionsRequest;
 import org.modality_project.event.frontoffice.operations.program.RouteToProgramRequest;
 import org.modality_project.event.frontoffice.operations.terms.RouteToTermsRequest;
-import dev.webfx.stack.framework.client.ui.action.Action;
-import dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil;
-import dev.webfx.stack.framework.client.ui.util.anim.Animations;
+import dev.webfx.stack.ui.action.Action;
+import dev.webfx.stack.ui.util.layout.LayoutUtil;
+import dev.webfx.stack.ui.util.anim.Animations;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.extras.imagestore.ImageStore;
 import dev.webfx.platform.uischeduler.UiScheduler;

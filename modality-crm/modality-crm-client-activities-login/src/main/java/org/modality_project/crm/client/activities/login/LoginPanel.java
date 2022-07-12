@@ -1,14 +1,14 @@
 package org.modality_project.crm.client.activities.login;
 
-import dev.webfx.stack.framework.client.services.i18n.I18nControls;
-import dev.webfx.stack.framework.client.ui.controls.button.ButtonFactory;
-import dev.webfx.stack.framework.client.ui.controls.dialog.GridPaneBuilder;
-import dev.webfx.stack.framework.client.ui.uirouter.uisession.UiSession;
-import dev.webfx.stack.framework.client.ui.util.anim.Animations;
-import dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil;
-import dev.webfx.stack.framework.client.ui.util.scene.SceneUtil;
-import dev.webfx.stack.framework.shared.services.authn.AuthenticationRequest;
-import dev.webfx.stack.framework.shared.services.authn.UsernamePasswordCredentials;
+import dev.webfx.stack.i18n.I18nControls;
+import dev.webfx.stack.ui.controls.button.ButtonFactory;
+import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
+import dev.webfx.stack.routing.uirouter.uisession.UiSession;
+import dev.webfx.stack.ui.util.anim.Animations;
+import dev.webfx.stack.ui.util.layout.LayoutUtil;
+import dev.webfx.stack.ui.util.scene.SceneUtil;
+import dev.webfx.stack.authn.AuthenticationRequest;
+import dev.webfx.stack.authn.UsernamePasswordCredentials;
 import dev.webfx.kit.util.properties.Properties;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;

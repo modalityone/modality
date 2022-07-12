@@ -1,7 +1,7 @@
 package org.modality_project.base.shared.entities.markers;
 
 import org.modality_project.hotel.shared.businessdata.time.DateTimeRange;
-import dev.webfx.stack.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.orm.entity.Entity;
 
 /**
  * @author Bruno Salmon

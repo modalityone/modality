@@ -16,15 +16,15 @@ module modality.ecommerce.frontoffice.activities.summary {
     requires modality.ecommerce.frontoffice.activities.cart.routing;
     requires modality.event.client.bookingcalendar;
     requires modality.event.client.sectionpanel;
-    requires webfx.framework.client.activity;
-    requires webfx.framework.client.i18n;
-    requires webfx.framework.client.orm.domainmodel.activity;
-    requires webfx.framework.client.uirouter;
     requires webfx.kit.util;
     requires webfx.platform.console;
     requires webfx.platform.util;
     requires webfx.stack.async;
+    requires webfx.stack.i18n;
+    requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.platform.windowhistory;
+    requires webfx.stack.routing.activity;
+    requires webfx.stack.routing.uirouter;
 
     // Exported packages
     exports org.modality_project.ecommerce.frontoffice.activities.summary;
@@ -32,6 +32,6 @@ module modality.ecommerce.frontoffice.activities.summary {
     exports org.modality_project.ecommerce.frontoffice.operations.summary;
 
     // Provided services
-    provides dev.webfx.stack.framework.client.ui.uirouter.UiRoute with org.modality_project.ecommerce.frontoffice.activities.summary.SummaryUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.ecommerce.frontoffice.activities.summary.SummaryUiRoute;
 
 }

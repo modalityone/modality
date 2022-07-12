@@ -15,16 +15,16 @@ module modality.event.frontoffice.activities.startbooking {
     requires modality.event.frontoffice.activities.program;
     requires modality.event.frontoffice.activities.terms;
     requires webfx.extras.imagestore;
-    requires webfx.framework.client.action;
-    requires webfx.framework.client.activity;
-    requires webfx.framework.client.orm.domainmodel.activity;
-    requires webfx.framework.client.uirouter;
-    requires webfx.framework.client.util;
     requires webfx.kit.util;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
     requires webfx.stack.async;
+    requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.platform.windowhistory;
+    requires webfx.stack.routing.activity;
+    requires webfx.stack.routing.uirouter;
+    requires webfx.stack.ui.action;
+    requires webfx.stack.ui.util;
 
     // Exported packages
     exports org.modality_project.event.frontoffice.activities.startbooking;
@@ -32,6 +32,6 @@ module modality.event.frontoffice.activities.startbooking {
     exports org.modality_project.event.frontoffice.operations.startbooking;
 
     // Provided services
-    provides dev.webfx.stack.framework.client.ui.uirouter.UiRoute with org.modality_project.event.frontoffice.activities.startbooking.StartBookingUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.event.frontoffice.activities.startbooking.StartBookingUiRoute;
 
 }

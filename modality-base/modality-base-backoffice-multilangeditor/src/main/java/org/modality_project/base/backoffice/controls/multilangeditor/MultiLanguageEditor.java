@@ -3,13 +3,13 @@ package org.modality_project.base.backoffice.controls.multilangeditor;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import dev.webfx.stack.framework.shared.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.framework.shared.orm.entity.Entity;
-import dev.webfx.stack.framework.shared.orm.entity.EntityStore;
-import dev.webfx.stack.framework.shared.orm.entity.UpdateStore;
-import dev.webfx.stack.framework.client.services.i18n.I18n;
-import dev.webfx.stack.framework.client.ui.controls.button.ButtonFactoryMixin;
-import dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil;
+import dev.webfx.stack.orm.domainmodel.DataSourceModel;
+import dev.webfx.stack.orm.entity.Entity;
+import dev.webfx.stack.orm.entity.EntityStore;
+import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.i18n.I18n;
+import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.stack.ui.util.layout.LayoutUtil;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.extras.webtext.HtmlTextEditor;
 import dev.webfx.platform.util.Objects;
@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import static dev.webfx.stack.framework.client.ui.action.StandardActionKeys.*;
-import static dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil.setMaxPrefSizeToInfinite;
+import static dev.webfx.stack.ui.action.StandardActionKeys.*;
+import static dev.webfx.stack.ui.util.layout.LayoutUtil.setMaxPrefSizeToInfinite;
 
 /**
  * @author Bruno Salmon

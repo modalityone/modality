@@ -10,7 +10,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import org.modality_project.base.backoffice.controls.masterslave.group.GroupView;
-import dev.webfx.stack.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.kit.util.properties.Properties;
 
 import java.util.ArrayList;

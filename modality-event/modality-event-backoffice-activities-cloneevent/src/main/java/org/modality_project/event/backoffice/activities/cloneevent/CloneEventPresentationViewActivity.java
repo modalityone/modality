@@ -10,9 +10,9 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import org.modality_project.base.client.activity.themes.Theme;
 import org.modality_project.base.shared.domainmodel.formatters.DateFormatter;
-import dev.webfx.stack.framework.client.activity.impl.elementals.presentation.view.impl.PresentationViewActivityImpl;
-import dev.webfx.stack.framework.client.ui.controls.button.ButtonFactoryMixin;
-import dev.webfx.stack.framework.client.ui.controls.dialog.DialogUtil;
+import dev.webfx.stack.routing.uirouter.activity.presentation.view.impl.PresentationViewActivityImpl;
+import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.stack.ui.controls.dialog.DialogUtil;
 
 import static javafx.scene.layout.Region.USE_PREF_SIZE;
 

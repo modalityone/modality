@@ -23,27 +23,27 @@ module modality.ecommerce.frontoffice.activities.cart {
     requires webfx.extras.type;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
-    requires webfx.framework.client.action;
-    requires webfx.framework.client.activity;
-    requires webfx.framework.client.controls;
-    requires webfx.framework.client.i18n;
-    requires webfx.framework.client.orm.domainmodel.activity;
-    requires webfx.framework.client.orm.reactive.visual;
-    requires webfx.framework.client.uirouter;
-    requires webfx.framework.client.util;
-    requires webfx.framework.shared.orm.domainmodel;
-    requires webfx.framework.shared.orm.entity;
-    requires webfx.framework.shared.orm.expression;
     requires webfx.platform.console;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
     requires webfx.stack.async;
     requires webfx.stack.db.submit;
+    requires webfx.stack.i18n;
+    requires webfx.stack.orm.domainmodel;
+    requires webfx.stack.orm.domainmodel.activity;
+    requires webfx.stack.orm.entity;
+    requires webfx.stack.orm.expression;
+    requires webfx.stack.orm.reactive.visual;
+    requires webfx.stack.routing.activity;
+    requires webfx.stack.routing.uirouter;
+    requires webfx.stack.ui.action;
+    requires webfx.stack.ui.controls;
+    requires webfx.stack.ui.util;
 
     // Exported packages
     exports org.modality_project.ecommerce.frontoffice.activities.cart;
 
     // Provided services
-    provides dev.webfx.stack.framework.client.ui.uirouter.UiRoute with org.modality_project.ecommerce.frontoffice.activities.cart.CartUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.ecommerce.frontoffice.activities.cart.CartUiRoute;
 
 }

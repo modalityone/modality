@@ -2,11 +2,11 @@ package org.modality_project.base.backoffice.operations.entities.generic;
 
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_grid.EntityColumn;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_grid.EntityColumnFactory;
-import dev.webfx.stack.framework.shared.orm.entity.Entity;
-import dev.webfx.stack.framework.shared.orm.expression.Expression;
-import dev.webfx.stack.framework.shared.orm.domainmodel.formatter.ValueFormatter;
+import dev.webfx.stack.orm.reactive.entities.entities_to_grid.EntityColumn;
+import dev.webfx.stack.orm.reactive.entities.entities_to_grid.EntityColumnFactory;
+import dev.webfx.stack.orm.entity.Entity;
+import dev.webfx.stack.orm.expression.Expression;
+import dev.webfx.stack.orm.domainmodel.formatter.ValueFormatter;
 import dev.webfx.stack.async.Future;
 
 import java.util.ArrayList;

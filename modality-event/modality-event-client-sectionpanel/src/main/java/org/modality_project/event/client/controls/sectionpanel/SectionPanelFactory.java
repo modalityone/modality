@@ -9,12 +9,12 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import org.modality_project.event.client.controls.bookingcalendar.BookingCalendar;
 import org.modality_project.base.client.icons.ModalityIcons;
-import dev.webfx.stack.framework.client.services.i18n.I18nControls;
-import dev.webfx.stack.framework.client.ui.util.background.BackgroundFactory;
-import dev.webfx.stack.framework.client.ui.util.border.BorderFactory;
+import dev.webfx.stack.i18n.I18nControls;
+import dev.webfx.stack.ui.util.background.BackgroundFactory;
+import dev.webfx.stack.ui.util.border.BorderFactory;
 import dev.webfx.extras.cell.collator.NodeCollatorRegistry;
 
-import static dev.webfx.stack.framework.client.ui.util.image.JsonImageViews.createImageView;
+import static dev.webfx.stack.ui.util.image.JsonImageViews.createImageView;
 
 /**
  * @author Bruno Salmon

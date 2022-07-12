@@ -1,8 +1,8 @@
 package org.modality_project.ecommerce.backoffice.operations.entities.document;
 
-import dev.webfx.stack.framework.client.ui.controls.button.ButtonFactoryMixin;
-import dev.webfx.stack.framework.shared.operation.HasOperationCode;
-import dev.webfx.stack.framework.shared.operation.HasOperationExecutor;
+import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.stack.ui.operation.HasOperationCode;
+import dev.webfx.stack.ui.operation.HasOperationExecutor;
 import dev.webfx.stack.async.AsyncFunction;
 import javafx.scene.layout.Pane;
 import org.modality_project.base.shared.entities.Person;

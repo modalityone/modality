@@ -9,9 +9,9 @@ import javafx.scene.layout.Region;
 import org.modality_project.base.client.activity.ModalityButtonFactoryMixin;
 import org.modality_project.base.client.aggregates.event.EventAggregate;
 import org.modality_project.base.shared.entities.Event;
-import dev.webfx.stack.framework.client.activity.impl.elementals.presentation.view.impl.PresentationViewActivityImpl;
-import dev.webfx.stack.framework.client.ui.util.background.BackgroundFactory;
-import dev.webfx.stack.framework.shared.services.datasourcemodel.DataSourceModelService;
+import dev.webfx.stack.routing.uirouter.activity.presentation.view.impl.PresentationViewActivityImpl;
+import dev.webfx.stack.ui.util.background.BackgroundFactory;
+import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.platform.util.Strings;
 

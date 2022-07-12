@@ -1,7 +1,7 @@
 package org.modality_project.base.backoffice.operations.entities.generic;
 
 import javafx.scene.layout.Pane;
-import dev.webfx.stack.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.orm.entity.Entity;
 
 public abstract class ToggleBooleanEntityFieldRequest extends SetEntityFieldRequest {
 

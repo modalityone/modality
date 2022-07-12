@@ -1,7 +1,7 @@
 package org.modality_project.base.shared.entities.markers;
 
-import dev.webfx.stack.framework.shared.orm.entity.Entity;
-import dev.webfx.stack.framework.shared.orm.entity.EntityId;
+import dev.webfx.stack.orm.entity.Entity;
+import dev.webfx.stack.orm.entity.EntityId;
 
 /**
  * @author Bruno Salmon

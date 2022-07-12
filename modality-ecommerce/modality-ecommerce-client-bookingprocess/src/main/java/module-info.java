@@ -9,13 +9,13 @@ module modality.ecommerce.client.bookingprocess {
     requires modality.base.client.activity;
     requires modality.base.client.aggregates;
     requires modality.base.shared.entities;
-    requires webfx.framework.client.uirouter;
-    requires webfx.framework.client.util;
-    requires webfx.framework.shared.orm.datasourcemodelservice;
     requires webfx.kit.util;
     requires webfx.platform.util;
     requires webfx.stack.async;
+    requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.platform.windowhistory;
+    requires webfx.stack.routing.uirouter;
+    requires webfx.stack.ui.util;
 
     // Exported packages
     exports org.modality_project.ecommerce.client.activity.bookingprocess;

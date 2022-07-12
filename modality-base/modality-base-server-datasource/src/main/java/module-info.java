@@ -3,12 +3,12 @@
 module modality.base.server.datasource {
 
     // Direct dependencies modules
-    requires webfx.framework.shared.orm.datasourcemodelservice;
-    requires webfx.framework.shared.orm.domainmodel;
-    requires webfx.framework.shared.orm.dql;
     requires webfx.platform.console;
     requires webfx.platform.resource;
     requires webfx.stack.db.datasource;
+    requires webfx.stack.orm.datasourcemodel.service;
+    requires webfx.stack.orm.domainmodel;
+    requires webfx.stack.orm.dql;
     requires webfx.stack.platform.json;
 
     // Exported packages

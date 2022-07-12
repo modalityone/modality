@@ -6,17 +6,17 @@ module modality.base.shared.domainmodel {
     requires java.base;
     requires javafx.base;
     requires webfx.extras.type;
-    requires webfx.framework.shared.orm.datasourcemodelservice;
-    requires webfx.framework.shared.orm.domainmodel;
-    requires webfx.framework.shared.orm.domainmodelservice;
-    requires webfx.framework.shared.orm.dql;
-    requires webfx.framework.shared.orm.entity;
-    requires webfx.framework.shared.orm.expression;
     requires webfx.platform.resource;
     requires webfx.platform.util;
     requires webfx.stack.async;
     requires webfx.stack.com.serial;
     requires webfx.stack.db.query;
+    requires webfx.stack.orm.datasourcemodel.service;
+    requires webfx.stack.orm.domainmodel;
+    requires webfx.stack.orm.domainmodel.service;
+    requires webfx.stack.orm.dql;
+    requires webfx.stack.orm.entity;
+    requires webfx.stack.orm.expression;
     requires webfx.stack.platform.json;
 
     // Exported packages
@@ -29,7 +29,7 @@ module modality.base.shared.domainmodel {
     opens org.modality_project.base.shared.domainmodel;
 
     // Provided services
-    provides dev.webfx.stack.framework.shared.services.datasourcemodel.spi.DataSourceModelProvider with org.modality_project.base.shared.services.datasourcemodel.ModalityDataSourceModelProvider;
-    provides dev.webfx.stack.framework.shared.services.domainmodel.spi.DomainModelProvider with org.modality_project.base.shared.services.domainmodel.ModalityDomainModelProvider;
+    provides dev.webfx.stack.orm.datasourcemodel.service.spi.DataSourceModelProvider with org.modality_project.base.shared.services.datasourcemodel.ModalityDataSourceModelProvider;
+    provides dev.webfx.stack.orm.domainmodel.service.spi.DomainModelProvider with org.modality_project.base.shared.services.domainmodel.ModalityDomainModelProvider;
 
 }

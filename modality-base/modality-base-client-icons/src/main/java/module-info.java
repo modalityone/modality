@@ -6,7 +6,7 @@ module modality.base.client.icons {
     requires javafx.graphics;
     requires modality.base.shared.entities;
     requires webfx.extras.imagestore;
-    requires webfx.framework.client.action;
+    requires webfx.stack.ui.action;
 
     // Exported packages
     exports org.modality_project.base.client.actions;

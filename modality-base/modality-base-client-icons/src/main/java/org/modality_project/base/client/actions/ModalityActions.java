@@ -1,10 +1,10 @@
 package org.modality_project.base.client.actions;
 
 import org.modality_project.base.client.icons.ModalityIcons;
-import dev.webfx.stack.framework.client.ui.action.Action;
-import dev.webfx.stack.framework.client.ui.action.ActionBuilder;
-import dev.webfx.stack.framework.client.ui.action.ActionBuilderRegistry;
-import dev.webfx.stack.framework.client.ui.action.StandardActionKeys;
+import dev.webfx.stack.ui.action.Action;
+import dev.webfx.stack.ui.action.ActionBuilder;
+import dev.webfx.stack.ui.action.ActionBuilderRegistry;
+import dev.webfx.stack.ui.action.StandardActionKeys;
 
 /**
  * @author Bruno Salmon

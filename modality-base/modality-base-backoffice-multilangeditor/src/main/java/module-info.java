@@ -8,16 +8,16 @@ module modality.base.backoffice.multilangeditor {
     requires javafx.graphics;
     requires modality.base.client.icons;
     requires webfx.extras.webtext;
-    requires webfx.framework.client.action;
-    requires webfx.framework.client.controls;
-    requires webfx.framework.client.i18n;
-    requires webfx.framework.client.util;
-    requires webfx.framework.shared.orm.domainmodel;
-    requires webfx.framework.shared.orm.entity;
     requires webfx.kit.util;
     requires webfx.platform.util;
     requires webfx.stack.async;
     requires webfx.stack.db.submit;
+    requires webfx.stack.i18n;
+    requires webfx.stack.orm.domainmodel;
+    requires webfx.stack.orm.entity;
+    requires webfx.stack.ui.action;
+    requires webfx.stack.ui.controls;
+    requires webfx.stack.ui.util;
 
     // Exported packages
     exports org.modality_project.base.backoffice.controls.multilangeditor;

@@ -3,13 +3,13 @@
 module modality.base.client.navigationarrows.java {
 
     // Direct dependencies modules
-    requires webfx.framework.client.uirouter;
-    requires webfx.framework.shared.router;
+    requires webfx.stack.routing.router;
+    requires webfx.stack.routing.uirouter;
 
     // Exported packages
     exports org.modality_project.base.client.navigationarrows;
 
     // Provided services
-    provides dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter with org.modality_project.base.client.navigationarrows.RouteBackwardRequestEmitter, org.modality_project.base.client.navigationarrows.RouteForwardRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with org.modality_project.base.client.navigationarrows.RouteBackwardRequestEmitter, org.modality_project.base.client.navigationarrows.RouteForwardRequestEmitter;
 
 }

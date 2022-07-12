@@ -5,15 +5,15 @@ module modality.base.server.systemmetrics {
     // Direct dependencies modules
     requires java.base;
     requires modality.base.shared.entities;
-    requires webfx.framework.shared.orm.datasourcemodelservice;
-    requires webfx.framework.shared.orm.domainmodel;
-    requires webfx.framework.shared.orm.entity;
     requires webfx.platform.boot;
     requires webfx.platform.console;
     requires webfx.platform.scheduler;
     requires webfx.platform.util;
     requires webfx.stack.async;
     requires webfx.stack.db.submit;
+    requires webfx.stack.orm.datasourcemodel.service;
+    requires webfx.stack.orm.domainmodel;
+    requires webfx.stack.orm.entity;
 
     // Exported packages
     exports org.modality_project.base.server.jobs.systemmetrics;

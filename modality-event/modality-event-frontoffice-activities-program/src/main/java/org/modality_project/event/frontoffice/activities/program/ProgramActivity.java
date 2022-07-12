@@ -7,7 +7,7 @@ import org.modality_project.ecommerce.client.businessdata.preselection.OptionsPr
 import org.modality_project.event.client.controls.sectionpanel.SectionPanelFactory;
 import org.modality_project.event.client.controls.bookingcalendar.BookingCalendar;
 import org.modality_project.ecommerce.client.activity.bookingprocess.BookingProcessActivity;
-import dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil;
+import dev.webfx.stack.ui.util.layout.LayoutUtil;
 import dev.webfx.platform.console.Console;
 
 /**

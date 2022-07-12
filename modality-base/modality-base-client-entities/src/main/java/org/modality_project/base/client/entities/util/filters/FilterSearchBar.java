@@ -5,16 +5,16 @@ import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import dev.webfx.stack.framework.client.orm.reactive.dql.statement.conventions.HasColumnsDqlStatementProperty;
-import dev.webfx.stack.framework.client.orm.reactive.dql.statement.conventions.HasConditionDqlStatementProperty;
-import dev.webfx.stack.framework.client.orm.reactive.dql.statement.conventions.HasGroupDqlStatementProperty;
+import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasColumnsDqlStatementProperty;
+import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasConditionDqlStatementProperty;
+import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasGroupDqlStatementProperty;
 import org.modality_project.base.client.presentationmodel.HasSearchTextProperty;
 import org.modality_project.base.shared.entities.Filter;
-import dev.webfx.stack.framework.client.ui.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.stack.framework.client.ui.util.scene.SceneUtil;
+import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
+import dev.webfx.stack.ui.util.scene.SceneUtil;
 
-import static dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil.setHGrowable;
-import static dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil.setMaxHeightToInfinite;
+import static dev.webfx.stack.ui.util.layout.LayoutUtil.setHGrowable;
+import static dev.webfx.stack.ui.util.layout.LayoutUtil.setMaxHeightToInfinite;
 
 public final class FilterSearchBar {
 

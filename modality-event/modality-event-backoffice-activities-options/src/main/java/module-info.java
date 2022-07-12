@@ -17,23 +17,23 @@ module modality.event.backoffice.activities.options {
     requires modality.event.frontoffice.activities.options;
     requires modality.hotel.shared.time;
     requires webfx.extras.visual.grid;
-    requires webfx.framework.client.activity;
-    requires webfx.framework.client.controls;
-    requires webfx.framework.client.orm.domainmodel.activity;
-    requires webfx.framework.client.orm.reactive.visual;
-    requires webfx.framework.client.uirouter;
-    requires webfx.framework.client.util;
-    requires webfx.framework.shared.orm.dql;
-    requires webfx.framework.shared.orm.entity;
     requires webfx.kit.util;
     requires webfx.platform.util;
     requires webfx.stack.async;
     requires webfx.stack.db.submit;
+    requires webfx.stack.orm.domainmodel.activity;
+    requires webfx.stack.orm.dql;
+    requires webfx.stack.orm.entity;
+    requires webfx.stack.orm.reactive.visual;
+    requires webfx.stack.routing.activity;
+    requires webfx.stack.routing.uirouter;
+    requires webfx.stack.ui.controls;
+    requires webfx.stack.ui.util;
 
     // Exported packages
     exports org.modality_project.event.backoffice.activities.options;
 
     // Provided services
-    provides dev.webfx.stack.framework.client.ui.uirouter.UiRoute with org.modality_project.event.backoffice.activities.options.EditableOptionsUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.event.backoffice.activities.options.EditableOptionsUiRoute;
 
 }

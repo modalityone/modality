@@ -446,178 +446,6 @@
     <!--=========================< webfx-extras-webtext-peers-gwt >=========================-->
     <source path="dev/webfx/extras/webtext/peers/gwt/html"/>
     <source path="dev/webfx/extras/webtext/registry"/>
-    <!--=========================< webfx-framework-client-action >==========================-->
-    <source path="dev/webfx/stack/framework/client/ui/action"/>
-    <source path="dev/webfx/stack/framework/client/ui/action/impl"/>
-    <!--========================< webfx-framework-client-activity >=========================-->
-    <source path="dev/webfx/stack/framework/client/activity"/>
-    <source path="dev/webfx/stack/framework/client/activity/impl"/>
-    <source path="dev/webfx/stack/framework/client/activity/impl/composition"/>
-    <source path="dev/webfx/stack/framework/client/activity/impl/composition/impl"/>
-    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/activeproperty"/>
-    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/activeproperty/impl"/>
-    <!--========================< webfx-framework-client-controls >=========================-->
-    <source path="dev/webfx/stack/framework/client/ui/controls"/>
-    <source path="dev/webfx/stack/framework/client/ui/controls/alert"/>
-    <source path="dev/webfx/stack/framework/client/ui/controls/button"/>
-    <source path="dev/webfx/stack/framework/client/ui/controls/dialog"/>
-    <resource path="images/s16/controls"/>
-    <public includes="images/s16/controls/" path=""/>
-    <!--==========================< webfx-framework-client-i18n >===========================-->
-    <source path="dev/webfx/stack/framework/client/operations/i18n"/>
-    <source path="dev/webfx/stack/framework/client/services/i18n"/>
-    <source path="dev/webfx/stack/framework/client/services/i18n/spi"/>
-    <source path="dev/webfx/stack/framework/client/services/i18n/spi/impl"/>
-    <!--========================< webfx-framework-client-i18n-json >========================-->
-    <source path="dev/webfx/stack/framework/client/services/i18n/spi/impl/json"/>
-    <!--=====================< webfx-framework-client-operationaction >=====================-->
-    <source path="dev/webfx/stack/framework/client/ui/action/operation"/>
-    <!--================< webfx-framework-client-orm-domainmodel-activity >=================-->
-    <source path="dev/webfx/stack/framework/client/activity/impl/combinations/domainpresentation"/>
-    <source path="dev/webfx/stack/framework/client/activity/impl/combinations/domainpresentation/impl"/>
-    <source path="dev/webfx/stack/framework/client/activity/impl/combinations/domainpresentationlogic/impl"/>
-    <source path="dev/webfx/stack/framework/client/activity/impl/combinations/viewdomain"/>
-    <source path="dev/webfx/stack/framework/client/activity/impl/combinations/viewdomain/impl"/>
-    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/domain"/>
-    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/domain/impl"/>
-    <!--===================< webfx-framework-client-orm-entity-controls >===================-->
-    <source path="dev/webfx/stack/framework/client/ui/controls/entity/selector"/>
-    <source path="dev/webfx/stack/framework/client/ui/controls/entity/sheet"/>
-    <!--====================< webfx-framework-client-orm-reactive-dql >=====================-->
-    <source path="dev/webfx/stack/framework/client/orm/reactive/call"/>
-    <source path="dev/webfx/stack/framework/client/orm/reactive/call/query"/>
-    <source path="dev/webfx/stack/framework/client/orm/reactive/call/query/push"/>
-    <source path="dev/webfx/stack/framework/client/orm/reactive/dql/query"/>
-    <source path="dev/webfx/stack/framework/client/orm/reactive/dql/querypush"/>
-    <source path="dev/webfx/stack/framework/client/orm/reactive/dql/statement"/>
-    <source path="dev/webfx/stack/framework/client/orm/reactive/dql/statement/conventions"/>
-    <!--==================< webfx-framework-client-orm-reactive-entities >==================-->
-    <source path="dev/webfx/stack/framework/client/orm/reactive/mapping/dql_to_entities"/>
-    <source path="dev/webfx/stack/framework/client/orm/reactive/mapping/entities_to_grid"/>
-    <source path="dev/webfx/stack/framework/client/orm/reactive/mapping/entities_to_objects"/>
-    <!--===================< webfx-framework-client-orm-reactive-visual >===================-->
-    <source path="dev/webfx/stack/framework/client/orm/reactive/mapping/entities_to_visual"/>
-    <source path="dev/webfx/stack/framework/client/orm/reactive/mapping/entities_to_visual/conventions"/>
-    <!--==========================< webfx-framework-client-push >===========================-->
-    <source path="dev/webfx/stack/framework/client/services/push"/>
-    <source path="dev/webfx/stack/framework/client/services/push/spi"/>
-    <!--=======================< webfx-framework-client-push-simple >=======================-->
-    <source path="dev/webfx/stack/framework/client/services/push/spi/impl/simple"/>
-    <!--========================< webfx-framework-client-querypush >========================-->
-    <source path="dev/webfx/stack/framework/client/services/querypush"/>
-    <!--====================< webfx-framework-client-querypush-simple >=====================-->
-    <source path="dev/webfx/stack/framework/client/jobs/querypush"/>
-    <!--========================< webfx-framework-client-uirouter >=========================-->
-    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/presentation"/>
-    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/presentation/impl"/>
-    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/presentation/logic"/>
-    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/presentation/logic/impl"/>
-    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/presentation/view"/>
-    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/presentation/view/impl"/>
-    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/uiroute"/>
-    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/uiroute/impl"/>
-    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/view"/>
-    <source path="dev/webfx/stack/framework/client/activity/impl/elementals/view/impl"/>
-    <source path="dev/webfx/stack/framework/client/operations/route"/>
-    <source path="dev/webfx/stack/framework/client/ui/uirouter"/>
-    <source path="dev/webfx/stack/framework/client/ui/uirouter/impl"/>
-    <source path="dev/webfx/stack/framework/client/ui/uirouter/uisession"/>
-    <source path="dev/webfx/stack/framework/client/ui/uirouter/uisession/impl"/>
-    <!--==========================< webfx-framework-client-util >===========================-->
-    <source path="dev/webfx/stack/framework/client/ui/util/anim"/>
-    <source path="dev/webfx/stack/framework/client/ui/util/background"/>
-    <source path="dev/webfx/stack/framework/client/ui/util/border"/>
-    <source path="dev/webfx/stack/framework/client/ui/util/image"/>
-    <source path="dev/webfx/stack/framework/client/ui/util/layout"/>
-    <source path="dev/webfx/stack/framework/client/ui/util/paint"/>
-    <source path="dev/webfx/stack/framework/client/ui/util/scene"/>
-    <!--=======================< webfx-framework-client-validation >========================-->
-    <source path="dev/webfx/stack/framework/client/ui/validation/controlsfx/control/decoration"/>
-    <source path="dev/webfx/stack/framework/client/ui/validation/controlsfx/impl"/>
-    <source path="dev/webfx/stack/framework/client/ui/validation/controlsfx/impl/skin"/>
-    <source path="dev/webfx/stack/framework/client/ui/validation/controlsfx/tools"/>
-    <source path="dev/webfx/stack/framework/client/ui/validation/controlsfx/validation"/>
-    <source path="dev/webfx/stack/framework/client/ui/validation/controlsfx/validation/decoration"/>
-    <source path="dev/webfx/stack/framework/client/ui/validation/mvvmfx"/>
-    <source path="dev/webfx/stack/framework/client/ui/validation/mvvmfx/visualization"/>
-    <resource path="dev/webfx/stack/framework/client/ui/validation/controlsfx/images"/>
-    <public includes="dev/webfx/stack/framework/client/ui/validation/controlsfx/images/" path=""/>
-    <!--==========================< webfx-framework-shared-authn >==========================-->
-    <source path="dev/webfx/stack/framework/shared/services/authn"/>
-    <source path="dev/webfx/stack/framework/shared/services/authn/spi"/>
-    <!--==========================< webfx-framework-shared-authz >==========================-->
-    <source path="dev/webfx/stack/framework/shared/operation/authz"/>
-    <source path="dev/webfx/stack/framework/shared/services/authz"/>
-    <source path="dev/webfx/stack/framework/shared/services/authz/mixin"/>
-    <source path="dev/webfx/stack/framework/shared/services/authz/spi"/>
-    <source path="dev/webfx/stack/framework/shared/services/authz/spi/impl"/>
-    <source path="dev/webfx/stack/framework/shared/services/authz/spi/impl/inmemory"/>
-    <source path="dev/webfx/stack/framework/shared/services/authz/spi/impl/inmemory/parser"/>
-    <!--========================< webfx-framework-shared-operation >========================-->
-    <source path="dev/webfx/stack/framework/shared/operation"/>
-    <!--===============< webfx-framework-shared-orm-datasourcemodelservice >================-->
-    <source path="dev/webfx/stack/framework/shared/services/datasourcemodel"/>
-    <source path="dev/webfx/stack/framework/shared/services/datasourcemodel/spi"/>
-    <!--=====================< webfx-framework-shared-orm-domainmodel >=====================-->
-    <source path="dev/webfx/stack/framework/shared/orm/domainmodel"/>
-    <source path="dev/webfx/stack/framework/shared/orm/domainmodel/builder"/>
-    <source path="dev/webfx/stack/framework/shared/orm/domainmodel/formatter"/>
-    <source path="dev/webfx/stack/framework/shared/orm/domainmodel/lciimpl"/>
-    <!--=================< webfx-framework-shared-orm-domainmodelservice >==================-->
-    <source path="dev/webfx/stack/framework/shared/services/domainmodel"/>
-    <source path="dev/webfx/stack/framework/shared/services/domainmodel/spi"/>
-    <!--=========================< webfx-framework-shared-orm-dql >=========================-->
-    <source path="dev/webfx/stack/framework/shared/orm/dql"/>
-    <source path="dev/webfx/stack/framework/shared/orm/dql/sqlcompiler"/>
-    <source path="dev/webfx/stack/framework/shared/orm/dql/sqlcompiler/lci"/>
-    <source path="dev/webfx/stack/framework/shared/orm/dql/sqlcompiler/lci/mock"/>
-    <source path="dev/webfx/stack/framework/shared/orm/dql/sqlcompiler/mapping"/>
-    <source path="dev/webfx/stack/framework/shared/orm/dql/sqlcompiler/sql"/>
-    <source path="dev/webfx/stack/framework/shared/orm/dql/sqlcompiler/sql/dbms"/>
-    <source path="dev/webfx/stack/framework/shared/orm/dql/sqlcompiler/terms"/>
-    <!--================< webfx-framework-shared-orm-dql-query-interceptor >================-->
-    <source path="dev/webfx/stack/framework/shared/interceptors/dqlquery"/>
-    <!--==============< webfx-framework-shared-orm-dql-querypush-interceptor >==============-->
-    <source path="dev/webfx/stack/framework/shared/interceptors/dqlquerypush"/>
-    <!--===============< webfx-framework-shared-orm-dql-submit-interceptor >================-->
-    <source path="dev/webfx/stack/framework/shared/interceptors/dqlsubmit"/>
-    <!--=======================< webfx-framework-shared-orm-entity >========================-->
-    <source path="dev/webfx/stack/framework/shared/orm/entity"/>
-    <source path="dev/webfx/stack/framework/shared/orm/entity/impl"/>
-    <source path="dev/webfx/stack/framework/shared/orm/entity/lciimpl"/>
-    <source path="dev/webfx/stack/framework/shared/orm/entity/query_result_to_entities"/>
-    <source path="dev/webfx/stack/framework/shared/orm/entity/result"/>
-    <source path="dev/webfx/stack/framework/shared/orm/entity/result/impl"/>
-    <!--=====================< webfx-framework-shared-orm-expression >======================-->
-    <source path="dev/webfx/stack/framework/shared/orm/expression"/>
-    <source path="dev/webfx/stack/framework/shared/orm/expression/builder"/>
-    <source path="dev/webfx/stack/framework/shared/orm/expression/builder/terms"/>
-    <source path="dev/webfx/stack/framework/shared/orm/expression/lci"/>
-    <source path="dev/webfx/stack/framework/shared/orm/expression/parser"/>
-    <source path="dev/webfx/stack/framework/shared/orm/expression/parser/javacup"/>
-    <source path="dev/webfx/stack/framework/shared/orm/expression/parser/jflex"/>
-    <source path="dev/webfx/stack/framework/shared/orm/expression/parser/lci"/>
-    <source path="dev/webfx/stack/framework/shared/orm/expression/parser/lci/mock"/>
-    <source path="dev/webfx/stack/framework/shared/orm/expression/terms"/>
-    <source path="dev/webfx/stack/framework/shared/orm/expression/terms/function"/>
-    <source path="dev/webfx/stack/framework/shared/orm/expression/terms/function/java"/>
-    <!--==========================< webfx-framework-shared-push >===========================-->
-    <source path="dev/webfx/stack/framework/shared/services/push"/>
-    <!--========================< webfx-framework-shared-querypush >========================-->
-    <source path="dev/webfx/stack/framework/shared/services/querypush"/>
-    <source path="dev/webfx/stack/framework/shared/services/querypush/diff"/>
-    <source path="dev/webfx/stack/framework/shared/services/querypush/diff/impl"/>
-    <source path="dev/webfx/stack/framework/shared/services/querypush/spi"/>
-    <source path="dev/webfx/stack/framework/shared/services/querypush/spi/impl"/>
-    <!--=========================< webfx-framework-shared-router >==========================-->
-    <source path="dev/webfx/stack/framework/shared/router"/>
-    <source path="dev/webfx/stack/framework/shared/router/auth"/>
-    <source path="dev/webfx/stack/framework/shared/router/auth/authz"/>
-    <source path="dev/webfx/stack/framework/shared/router/auth/impl"/>
-    <source path="dev/webfx/stack/framework/shared/router/impl"/>
-    <source path="dev/webfx/stack/framework/shared/router/session"/>
-    <source path="dev/webfx/stack/framework/shared/router/session/impl"/>
-    <source path="dev/webfx/stack/framework/shared/router/util"/>
     <!--=================================< webfx-kit-gwt >==================================-->
     <source path="dev/webfx/kit/launcher/spi/impl/gwt"/>
     <source path="dev/webfx/kit/mapper/spi/impl/gwt"/>
@@ -700,6 +528,17 @@
     <!--===============================< webfx-stack-async >================================-->
     <source path="dev/webfx/stack/async"/>
     <source path="dev/webfx/stack/async/impl"/>
+    <!--===============================< webfx-stack-authn >================================-->
+    <source path="dev/webfx/stack/authn"/>
+    <source path="dev/webfx/stack/authn/spi"/>
+    <!--===============================< webfx-stack-authz >================================-->
+    <source path="dev/webfx/stack/authz"/>
+    <source path="dev/webfx/stack/authz/mixin"/>
+    <source path="dev/webfx/stack/authz/operation"/>
+    <source path="dev/webfx/stack/authz/spi"/>
+    <source path="dev/webfx/stack/authz/spi/impl"/>
+    <source path="dev/webfx/stack/authz/spi/impl/inmemory"/>
+    <source path="dev/webfx/stack/authz/spi/impl/inmemory/parser"/>
     <!--==============================< webfx-stack-com-bus >===============================-->
     <source path="dev/webfx/stack/com/bus"/>
     <source path="dev/webfx/stack/com/bus/spi"/>
@@ -743,6 +582,84 @@
     <source path="dev/webfx/stack/db/submit/spi/impl"/>
     <!--==========================< webfx-stack-db-submit-remote >==========================-->
     <source path="dev/webfx/stack/db/submit/spi/impl/remote"/>
+    <!--================================< webfx-stack-i18n >================================-->
+    <source path="dev/webfx/stack/i18n"/>
+    <source path="dev/webfx/stack/i18n/operations"/>
+    <source path="dev/webfx/stack/i18n/spi"/>
+    <source path="dev/webfx/stack/i18n/spi/impl"/>
+    <!--=============================< webfx-stack-i18n-json >==============================-->
+    <source path="dev/webfx/stack/i18n/spi/impl/json"/>
+    <!--====================< webfx-stack-orm-datasourcemodel-service >=====================-->
+    <source path="dev/webfx/stack/orm/datasourcemodel/service"/>
+    <source path="dev/webfx/stack/orm/datasourcemodel/service/spi"/>
+    <!--==========================< webfx-stack-orm-domainmodel >===========================-->
+    <source path="dev/webfx/stack/orm/domainmodel"/>
+    <source path="dev/webfx/stack/orm/domainmodel/builder"/>
+    <source path="dev/webfx/stack/orm/domainmodel/formatter"/>
+    <source path="dev/webfx/stack/orm/domainmodel/lciimpl"/>
+    <!--======================< webfx-stack-orm-domainmodel-activity >======================-->
+    <source path="dev/webfx/stack/orm/domainmodel/activity/domain"/>
+    <source path="dev/webfx/stack/orm/domainmodel/activity/domain/impl"/>
+    <source path="dev/webfx/stack/orm/domainmodel/activity/domainpresentation"/>
+    <source path="dev/webfx/stack/orm/domainmodel/activity/domainpresentation/impl"/>
+    <source path="dev/webfx/stack/orm/domainmodel/activity/domainpresentationlogic/impl"/>
+    <source path="dev/webfx/stack/orm/domainmodel/activity/viewdomain"/>
+    <source path="dev/webfx/stack/orm/domainmodel/activity/viewdomain/impl"/>
+    <!--======================< webfx-stack-orm-domainmodel-service >=======================-->
+    <source path="dev/webfx/stack/orm/domainmodel/service"/>
+    <source path="dev/webfx/stack/orm/domainmodel/service/spi"/>
+    <!--==============================< webfx-stack-orm-dql >===============================-->
+    <source path="dev/webfx/stack/orm/dql"/>
+    <source path="dev/webfx/stack/orm/dql/sqlcompiler"/>
+    <source path="dev/webfx/stack/orm/dql/sqlcompiler/lci"/>
+    <source path="dev/webfx/stack/orm/dql/sqlcompiler/lci/mock"/>
+    <source path="dev/webfx/stack/orm/dql/sqlcompiler/mapping"/>
+    <source path="dev/webfx/stack/orm/dql/sqlcompiler/sql"/>
+    <source path="dev/webfx/stack/orm/dql/sqlcompiler/sql/dbms"/>
+    <source path="dev/webfx/stack/orm/dql/sqlcompiler/terms"/>
+    <!--=====================< webfx-stack-orm-dql-query-interceptor >======================-->
+    <source path="dev/webfx/stack/orm/dql/query/interceptor"/>
+    <!--=====================< webfx-stack-orm-dql-submit-interceptor >=====================-->
+    <source path="dev/webfx/stack/orm/dql/submit/interceptor"/>
+    <!--=============================< webfx-stack-orm-entity >=============================-->
+    <source path="dev/webfx/stack/orm/entity"/>
+    <source path="dev/webfx/stack/orm/entity/impl"/>
+    <source path="dev/webfx/stack/orm/entity/lciimpl"/>
+    <source path="dev/webfx/stack/orm/entity/query_result_to_entities"/>
+    <source path="dev/webfx/stack/orm/entity/result"/>
+    <source path="dev/webfx/stack/orm/entity/result/impl"/>
+    <!--========================< webfx-stack-orm-entity-controls >=========================-->
+    <source path="dev/webfx/stack/orm/entity/controls/entity/selector"/>
+    <source path="dev/webfx/stack/orm/entity/controls/entity/sheet"/>
+    <!--===========================< webfx-stack-orm-expression >===========================-->
+    <source path="dev/webfx/stack/orm/expression"/>
+    <source path="dev/webfx/stack/orm/expression/builder"/>
+    <source path="dev/webfx/stack/orm/expression/builder/terms"/>
+    <source path="dev/webfx/stack/orm/expression/lci"/>
+    <source path="dev/webfx/stack/orm/expression/parser"/>
+    <source path="dev/webfx/stack/orm/expression/parser/javacup"/>
+    <source path="dev/webfx/stack/orm/expression/parser/jflex"/>
+    <source path="dev/webfx/stack/orm/expression/parser/lci"/>
+    <source path="dev/webfx/stack/orm/expression/parser/lci/mock"/>
+    <source path="dev/webfx/stack/orm/expression/terms"/>
+    <source path="dev/webfx/stack/orm/expression/terms/function"/>
+    <source path="dev/webfx/stack/orm/expression/terms/function/java"/>
+    <!--=========================< webfx-stack-orm-reactive-call >==========================-->
+    <source path="dev/webfx/stack/orm/reactive/call"/>
+    <source path="dev/webfx/stack/orm/reactive/call/query"/>
+    <source path="dev/webfx/stack/orm/reactive/call/query/push"/>
+    <!--==========================< webfx-stack-orm-reactive-dql >==========================-->
+    <source path="dev/webfx/stack/orm/reactive/dql/query"/>
+    <source path="dev/webfx/stack/orm/reactive/dql/querypush"/>
+    <source path="dev/webfx/stack/orm/reactive/dql/statement"/>
+    <source path="dev/webfx/stack/orm/reactive/dql/statement/conventions"/>
+    <!--=======================< webfx-stack-orm-reactive-entities >========================-->
+    <source path="dev/webfx/stack/orm/reactive/entities/dql_to_entities"/>
+    <source path="dev/webfx/stack/orm/reactive/entities/entities_to_grid"/>
+    <source path="dev/webfx/stack/orm/reactive/entities/entities_to_objects"/>
+    <!--========================< webfx-stack-orm-reactive-visual >=========================-->
+    <source path="dev/webfx/stack/orm/reactive/mapping/entities_to_visual"/>
+    <source path="dev/webfx/stack/orm/reactive/mapping/entities_to_visual/conventions"/>
     <!--===========================< webfx-stack-platform-json >============================-->
     <source path="dev/webfx/stack/platform/json"/>
     <source path="dev/webfx/stack/platform/json/parser"/>
@@ -768,6 +685,88 @@
     <!--====================< webfx-stack-platform-windowlocation-gwt >=====================-->
     <source path="dev/webfx/stack/platform/windowlocation/spi/impl/gwt"/>
     <source path="dev/webfx/stack/platform/windowlocation/spi/impl/gwt/jsinterop"/>
+    <!--================================< webfx-stack-push >================================-->
+    <source path="dev/webfx/stack/push"/>
+    <!--============================< webfx-stack-push-client >=============================-->
+    <source path="dev/webfx/stack/orm/push/client"/>
+    <source path="dev/webfx/stack/orm/push/client/spi"/>
+    <!--=========================< webfx-stack-push-client-simple >=========================-->
+    <source path="dev/webfx/stack/orm/push/client/spi/impl/simple"/>
+    <!--=============================< webfx-stack-querypush >==============================-->
+    <source path="dev/webfx/stack/querypush"/>
+    <source path="dev/webfx/stack/querypush/diff"/>
+    <source path="dev/webfx/stack/querypush/diff/impl"/>
+    <source path="dev/webfx/stack/querypush/spi"/>
+    <source path="dev/webfx/stack/querypush/spi/impl"/>
+    <!--==========================< webfx-stack-querypush-client >==========================-->
+    <source path="dev/webfx/stack/querypush/client"/>
+    <!--======================< webfx-stack-querypush-client-simple >=======================-->
+    <source path="dev/webfx/stack/querypush/client/simple"/>
+    <!--==========================< webfx-stack-routing-activity >==========================-->
+    <source path="dev/webfx/stack/routing/activity"/>
+    <source path="dev/webfx/stack/routing/activity/impl"/>
+    <source path="dev/webfx/stack/routing/activity/impl/composition"/>
+    <source path="dev/webfx/stack/routing/activity/impl/composition/impl"/>
+    <source path="dev/webfx/stack/routing/activity/impl/elementals/activeproperty"/>
+    <source path="dev/webfx/stack/routing/activity/impl/elementals/activeproperty/impl"/>
+    <!--===========================< webfx-stack-routing-router >===========================-->
+    <source path="dev/webfx/stack/routing/router"/>
+    <source path="dev/webfx/stack/routing/router/auth"/>
+    <source path="dev/webfx/stack/routing/router/auth/authz"/>
+    <source path="dev/webfx/stack/routing/router/auth/impl"/>
+    <source path="dev/webfx/stack/routing/router/impl"/>
+    <source path="dev/webfx/stack/routing/router/session"/>
+    <source path="dev/webfx/stack/routing/router/session/impl"/>
+    <source path="dev/webfx/stack/routing/router/util"/>
+    <!--==========================< webfx-stack-routing-uirouter >==========================-->
+    <source path="dev/webfx/stack/routing/uirouter"/>
+    <source path="dev/webfx/stack/routing/uirouter/activity/presentation"/>
+    <source path="dev/webfx/stack/routing/uirouter/activity/presentation/impl"/>
+    <source path="dev/webfx/stack/routing/uirouter/activity/presentation/logic"/>
+    <source path="dev/webfx/stack/routing/uirouter/activity/presentation/logic/impl"/>
+    <source path="dev/webfx/stack/routing/uirouter/activity/presentation/view"/>
+    <source path="dev/webfx/stack/routing/uirouter/activity/presentation/view/impl"/>
+    <source path="dev/webfx/stack/routing/uirouter/activity/uiroute"/>
+    <source path="dev/webfx/stack/routing/uirouter/activity/uiroute/impl"/>
+    <source path="dev/webfx/stack/routing/uirouter/activity/view"/>
+    <source path="dev/webfx/stack/routing/uirouter/activity/view/impl"/>
+    <source path="dev/webfx/stack/routing/uirouter/impl"/>
+    <source path="dev/webfx/stack/routing/uirouter/operations"/>
+    <source path="dev/webfx/stack/routing/uirouter/uisession"/>
+    <source path="dev/webfx/stack/routing/uirouter/uisession/impl"/>
+    <!--=============================< webfx-stack-ui-action >==============================-->
+    <source path="dev/webfx/stack/ui/action"/>
+    <source path="dev/webfx/stack/ui/action/impl"/>
+    <!--============================< webfx-stack-ui-controls >=============================-->
+    <source path="dev/webfx/stack/ui/controls"/>
+    <source path="dev/webfx/stack/ui/controls/alert"/>
+    <source path="dev/webfx/stack/ui/controls/button"/>
+    <source path="dev/webfx/stack/ui/controls/dialog"/>
+    <resource path="images/s16/controls"/>
+    <public includes="images/s16/controls/" path=""/>
+    <!--============================< webfx-stack-ui-operation >============================-->
+    <source path="dev/webfx/stack/ui/operation"/>
+    <!--========================< webfx-stack-ui-operation-action >=========================-->
+    <source path="dev/webfx/stack/ui/operation/action"/>
+    <!--==============================< webfx-stack-ui-util >===============================-->
+    <source path="dev/webfx/stack/ui/util/anim"/>
+    <source path="dev/webfx/stack/ui/util/background"/>
+    <source path="dev/webfx/stack/ui/util/border"/>
+    <source path="dev/webfx/stack/ui/util/image"/>
+    <source path="dev/webfx/stack/ui/util/layout"/>
+    <source path="dev/webfx/stack/ui/util/paint"/>
+    <source path="dev/webfx/stack/ui/util/scene"/>
+    <!--===========================< webfx-stack-ui-validation >============================-->
+    <source path="dev/webfx/stack/ui/validation/controlsfx/control/decoration"/>
+    <source path="dev/webfx/stack/ui/validation/controlsfx/impl"/>
+    <source path="dev/webfx/stack/ui/validation/controlsfx/impl/skin"/>
+    <source path="dev/webfx/stack/ui/validation/controlsfx/tools"/>
+    <source path="dev/webfx/stack/ui/validation/controlsfx/validation"/>
+    <source path="dev/webfx/stack/ui/validation/controlsfx/validation/decoration"/>
+    <source path="dev/webfx/stack/ui/validation/mvvmfx"/>
+    <source path="dev/webfx/stack/ui/validation/mvvmfx/visualization"/>
+    <resource path="dev/webfx/stack/ui/validation/controlsfx/images"/>
+    <public includes="dev/webfx/stack/ui/validation/controlsfx/images/" path=""/>
     <set-property name="user.agent" value="safari"/> <!-- to make only 1 permutation for testing with Chrome -->
     <set-property name="jre.checks.checkLevel" value="MINIMAL"/>
 

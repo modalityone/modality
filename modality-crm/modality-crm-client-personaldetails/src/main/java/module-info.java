@@ -16,16 +16,16 @@ module modality.crm.client.personaldetails {
     requires webfx.extras.type;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
-    requires webfx.framework.client.controls;
-    requires webfx.framework.client.i18n;
-    requires webfx.framework.client.orm.entity.controls;
-    requires webfx.framework.client.uirouter;
-    requires webfx.framework.client.util;
-    requires webfx.framework.shared.orm.domainmodel;
-    requires webfx.framework.shared.orm.entity;
     requires webfx.kit.util;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
+    requires webfx.stack.i18n;
+    requires webfx.stack.orm.domainmodel;
+    requires webfx.stack.orm.entity;
+    requires webfx.stack.orm.entity.controls;
+    requires webfx.stack.routing.uirouter;
+    requires webfx.stack.ui.controls;
+    requires webfx.stack.ui.util;
 
     // Exported packages
     exports org.modality_project.crm.client.controls.personaldetails;

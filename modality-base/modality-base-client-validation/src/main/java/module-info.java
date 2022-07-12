@@ -8,11 +8,11 @@ module modality.base.client.validation {
     requires javafx.controls;
     requires javafx.graphics;
     requires webfx.extras.imagestore;
-    requires webfx.framework.client.util;
-    requires webfx.framework.client.validation;
     requires webfx.kit.util;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
+    requires webfx.stack.ui.util;
+    requires webfx.stack.ui.validation;
 
     // Exported packages
     exports org.modality_project.base.client.validation;

@@ -1,9 +1,9 @@
 package org.modality_project.crm.client.services.authz;
 
-import dev.webfx.stack.framework.shared.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.framework.shared.services.authz.spi.impl.AuthorizationServiceProviderBase;
-import dev.webfx.stack.framework.shared.services.authz.spi.impl.UserPrincipalAuthorizationChecker;
-import dev.webfx.stack.framework.shared.services.datasourcemodel.DataSourceModelService;
+import dev.webfx.stack.orm.domainmodel.DataSourceModel;
+import dev.webfx.stack.authz.spi.impl.AuthorizationServiceProviderBase;
+import dev.webfx.stack.authz.spi.impl.UserPrincipalAuthorizationChecker;
+import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 
 /**
  * @author Bruno Salmon

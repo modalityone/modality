@@ -4,8 +4,8 @@ import org.modality_project.base.client.aggregates.event.EventAggregate;
 import org.modality_project.base.shared.entities.Cart;
 import org.modality_project.base.shared.entities.Document;
 import org.modality_project.base.shared.entities.MoneyTransfer;
-import dev.webfx.stack.framework.shared.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.framework.shared.orm.entity.EntityList;
+import dev.webfx.stack.orm.domainmodel.DataSourceModel;
+import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.async.Future;
 
 import java.util.List;

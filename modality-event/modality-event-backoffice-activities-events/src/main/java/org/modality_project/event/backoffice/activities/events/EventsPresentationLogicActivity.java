@@ -2,11 +2,11 @@ package org.modality_project.event.backoffice.activities.events;
 
 import org.modality_project.ecommerce.backoffice.operations.routes.bookings.RouteToBookingsRequest;
 import org.modality_project.base.client.activity.ModalityDomainPresentationLogicActivityBase;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.platform.util.function.Factory;
 
-import static dev.webfx.stack.framework.shared.orm.dql.DqlStatement.limit;
-import static dev.webfx.stack.framework.shared.orm.dql.DqlStatement.where;
+import static dev.webfx.stack.orm.dql.DqlStatement.limit;
+import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
 /**
  * @author Bruno Salmon

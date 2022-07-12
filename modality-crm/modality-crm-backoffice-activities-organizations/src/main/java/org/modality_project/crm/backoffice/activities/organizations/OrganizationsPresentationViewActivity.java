@@ -5,7 +5,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.modality_project.base.client.activity.table.GenericTablePresentationViewActivity;
-import dev.webfx.stack.framework.client.services.i18n.I18nControls;
+import dev.webfx.stack.i18n.I18nControls;
 
 /**
  * @author Bruno Salmon

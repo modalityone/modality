@@ -6,8 +6,8 @@
     </exported-packages>
 
     <providers>
-        <provider interface="dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter">org.modality_project.base.client.navigationarrows.RouteBackwardRequestEmitter</provider>
-        <provider interface="dev.webfx.stack.framework.client.operations.route.RouteRequestEmitter">org.modality_project.base.client.navigationarrows.RouteForwardRequestEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">org.modality_project.base.client.navigationarrows.RouteBackwardRequestEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">org.modality_project.base.client.navigationarrows.RouteForwardRequestEmitter</provider>
     </providers>
 
     <dependencies>

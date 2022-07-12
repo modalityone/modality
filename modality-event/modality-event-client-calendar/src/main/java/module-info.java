@@ -8,10 +8,10 @@ module modality.event.client.calendar {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.hotel.shared.time;
-    requires webfx.framework.client.i18n;
-    requires webfx.framework.client.util;
     requires webfx.kit.util;
     requires webfx.platform.util;
+    requires webfx.stack.i18n;
+    requires webfx.stack.ui.util;
 
     // Exported packages
     exports org.modality_project.event.client.businessdata.calendar;

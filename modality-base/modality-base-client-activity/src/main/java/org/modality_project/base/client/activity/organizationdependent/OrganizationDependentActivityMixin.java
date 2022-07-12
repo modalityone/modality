@@ -1,9 +1,9 @@
 package org.modality_project.base.client.activity.organizationdependent;
 
-import dev.webfx.stack.framework.client.activity.impl.elementals.domain.DomainActivityContext;
-import dev.webfx.stack.framework.client.activity.impl.elementals.domain.DomainActivityContextMixin;
-import dev.webfx.stack.framework.client.activity.impl.elementals.uiroute.UiRouteActivityContext;
-import dev.webfx.stack.framework.client.activity.impl.elementals.uiroute.UiRouteActivityContextMixin;
+import dev.webfx.stack.orm.domainmodel.activity.domain.DomainActivityContext;
+import dev.webfx.stack.orm.domainmodel.activity.domain.DomainActivityContextMixin;
+import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
+import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContextMixin;
 
 public interface OrganizationDependentActivityMixin
         <C extends DomainActivityContext<C> & UiRouteActivityContext<C>>

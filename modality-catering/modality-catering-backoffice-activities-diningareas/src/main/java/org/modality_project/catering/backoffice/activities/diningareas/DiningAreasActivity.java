@@ -17,11 +17,11 @@ import org.modality_project.base.client.activity.eventdependent.EventDependentVi
 import org.modality_project.base.shared.entities.Attendance;
 import org.modality_project.base.shared.entities.DocumentLine;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
-import dev.webfx.stack.framework.client.ui.action.operation.OperationActionFactoryMixin;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.stack.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.orm.entity.Entity;
 
-import static dev.webfx.stack.framework.shared.orm.dql.DqlStatement.where;
+import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
 final class DiningAreasActivity extends EventDependentViewDomainActivity implements
         OperationActionFactoryMixin,

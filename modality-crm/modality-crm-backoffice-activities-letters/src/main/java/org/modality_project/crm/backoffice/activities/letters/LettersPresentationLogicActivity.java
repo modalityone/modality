@@ -2,10 +2,10 @@ package org.modality_project.crm.backoffice.activities.letters;
 
 import org.modality_project.crm.backoffice.operations.routes.letter.RouteToLetterRequest;
 import org.modality_project.base.client.activity.eventdependent.EventDependentPresentationLogicActivity;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 
-import static dev.webfx.stack.framework.shared.orm.dql.DqlStatement.limit;
-import static dev.webfx.stack.framework.shared.orm.dql.DqlStatement.where;
+import static dev.webfx.stack.orm.dql.DqlStatement.limit;
+import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
 /**
  * @author Bruno Salmon

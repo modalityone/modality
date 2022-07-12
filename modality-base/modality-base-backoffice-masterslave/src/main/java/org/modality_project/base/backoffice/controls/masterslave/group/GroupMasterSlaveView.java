@@ -10,13 +10,13 @@ import org.modality_project.base.backoffice.controls.masterslave.MasterSlaveView
 import org.modality_project.base.backoffice.controls.masterslave.MasterTableView;
 import org.modality_project.base.backoffice.controls.masterslave.SlaveTableView;
 import org.modality_project.base.backoffice.controls.masterslave.UiBuilder;
-import dev.webfx.stack.framework.client.orm.reactive.dql.statement.conventions.HasSelectedMasterProperty;
-import dev.webfx.stack.framework.client.orm.reactive.dql.statement.conventions.HasSlaveVisibilityCondition;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasSlaveVisualResultProperty;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualResultProperty;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
-import dev.webfx.stack.framework.client.ui.controls.ControlFactoryMixin;
-import dev.webfx.stack.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasSelectedMasterProperty;
+import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasSlaveVisibilityCondition;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasSlaveVisualResultProperty;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualResultProperty;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
+import dev.webfx.stack.ui.controls.ControlFactoryMixin;
+import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.kit.util.properties.Properties;
 
 import java.util.function.Function;

@@ -1,8 +1,8 @@
 package org.modality_project.crm.backoffice.operations.routes.users;
 
 import org.modality_project.crm.backoffice.activities.users.routing.UsersRouting;
-import dev.webfx.stack.framework.client.operations.route.RoutePushRequest;
-import dev.webfx.stack.framework.shared.operation.HasOperationCode;
+import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
+import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.platform.windowhistory.spi.BrowsingHistory;
 
 /**

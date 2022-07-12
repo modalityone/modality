@@ -1,6 +1,6 @@
 package org.modality_project.base.server.services.datasource;
 
-import dev.webfx.stack.framework.shared.services.datasourcemodel.DataSourceModelService;
+import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.db.datasource.ConnectionDetails;
 import dev.webfx.stack.db.datasource.DBMS;
 import dev.webfx.stack.db.datasource.LocalDataSource;

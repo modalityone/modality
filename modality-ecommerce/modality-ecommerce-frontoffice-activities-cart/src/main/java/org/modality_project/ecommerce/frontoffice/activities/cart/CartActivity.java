@@ -23,21 +23,21 @@ import org.modality_project.event.frontoffice.operations.startbooking.RouteToSta
 import org.modality_project.base.shared.entities.formatters.EventPriceFormatter;
 import org.modality_project.base.shared.entities.Document;
 import org.modality_project.base.shared.entities.Event;
-import dev.webfx.stack.framework.client.services.i18n.I18n;
-import dev.webfx.stack.framework.client.ui.action.Action;
-import dev.webfx.stack.framework.client.ui.action.ActionBinder;
-import dev.webfx.stack.framework.client.ui.action.impl.WritableAction;
-import dev.webfx.stack.framework.client.ui.controls.dialog.DialogCallback;
-import dev.webfx.stack.framework.client.ui.controls.dialog.DialogUtil;
-import dev.webfx.stack.framework.client.ui.controls.dialog.GridPaneBuilder;
+import dev.webfx.stack.i18n.I18n;
+import dev.webfx.stack.ui.action.Action;
+import dev.webfx.stack.ui.action.ActionBinder;
+import dev.webfx.stack.ui.action.impl.WritableAction;
+import dev.webfx.stack.ui.controls.dialog.DialogCallback;
+import dev.webfx.stack.ui.controls.dialog.DialogUtil;
+import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
 import dev.webfx.extras.flexbox.FlexBox;
-import dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil;
-import dev.webfx.stack.framework.shared.orm.expression.lci.DomainReader;
-import dev.webfx.stack.framework.shared.orm.expression.terms.function.Function;
-import dev.webfx.stack.framework.shared.orm.entity.Entities;
-import dev.webfx.stack.framework.shared.orm.entity.Entity;
-import dev.webfx.stack.framework.shared.orm.entity.UpdateStore;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.EntitiesToVisualResultMapper;
+import dev.webfx.stack.ui.util.layout.LayoutUtil;
+import dev.webfx.stack.orm.expression.lci.DomainReader;
+import dev.webfx.stack.orm.expression.terms.function.Function;
+import dev.webfx.stack.orm.entity.Entities;
+import dev.webfx.stack.orm.entity.Entity;
+import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.EntitiesToVisualResultMapper;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
 import dev.webfx.extras.visual.VisualResult;
@@ -51,7 +51,7 @@ import dev.webfx.platform.util.collection.Collections;
 
 import java.util.List;
 
-import static dev.webfx.stack.framework.shared.orm.domainmodel.formatter.FormatterRegistry.registerFormatter;
+import static dev.webfx.stack.orm.domainmodel.formatter.FormatterRegistry.registerFormatter;
 
 /**
  * @author Bruno Salmon

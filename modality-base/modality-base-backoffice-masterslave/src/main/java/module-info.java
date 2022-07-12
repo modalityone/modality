@@ -14,17 +14,17 @@ module modality.base.backoffice.masterslave {
     requires webfx.extras.visual.charts;
     requires webfx.extras.visual.controls;
     requires webfx.extras.visual.grid;
-    requires webfx.framework.client.controls;
-    requires webfx.framework.client.orm.reactive.dql;
-    requires webfx.framework.client.orm.reactive.entities;
-    requires webfx.framework.client.orm.reactive.visual;
-    requires webfx.framework.client.util;
-    requires webfx.framework.shared.orm.domainmodel;
-    requires webfx.framework.shared.orm.dql;
-    requires webfx.framework.shared.orm.entity;
-    requires webfx.framework.shared.orm.expression;
     requires webfx.kit.util;
     requires webfx.platform.util;
+    requires webfx.stack.orm.domainmodel;
+    requires webfx.stack.orm.dql;
+    requires webfx.stack.orm.entity;
+    requires webfx.stack.orm.expression;
+    requires webfx.stack.orm.reactive.dql;
+    requires webfx.stack.orm.reactive.entities;
+    requires webfx.stack.orm.reactive.visual;
+    requires webfx.stack.ui.controls;
+    requires webfx.stack.ui.util;
 
     // Exported packages
     exports org.modality_project.base.backoffice.controls.masterslave;

@@ -9,9 +9,9 @@ import org.modality_project.hotel.shared.businessdata.time.DayTimeRange;
 import org.modality_project.event.client.businessdata.calendar.CalendarTimeline;
 import org.modality_project.event.client.controls.calendargraphic.impl.DayColumnBodyBlockViewModel;
 import org.modality_project.event.client.controls.calendargraphic.impl.DayColumnHeaderViewModel;
-import dev.webfx.stack.framework.client.ui.controls.dialog.DialogCallback;
-import dev.webfx.stack.framework.client.ui.controls.dialog.DialogUtil;
-import dev.webfx.stack.framework.client.ui.controls.dialog.GridPaneBuilder;
+import dev.webfx.stack.ui.controls.dialog.DialogCallback;
+import dev.webfx.stack.ui.controls.dialog.DialogUtil;
+import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
 
 import java.util.function.BiConsumer;
 

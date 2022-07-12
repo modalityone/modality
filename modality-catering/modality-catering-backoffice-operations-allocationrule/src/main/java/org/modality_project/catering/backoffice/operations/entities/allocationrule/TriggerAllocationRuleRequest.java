@@ -2,7 +2,7 @@ package org.modality_project.catering.backoffice.operations.entities.allocationr
 
 import javafx.scene.layout.Pane;
 import org.modality_project.base.backoffice.operations.entities.generic.SetEntityFieldRequest;
-import dev.webfx.stack.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.orm.entity.Entity;
 
 public final class TriggerAllocationRuleRequest extends SetEntityFieldRequest {
 

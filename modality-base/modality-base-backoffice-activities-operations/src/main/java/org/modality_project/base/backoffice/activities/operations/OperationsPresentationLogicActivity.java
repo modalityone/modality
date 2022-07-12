@@ -2,14 +2,14 @@ package org.modality_project.base.backoffice.activities.operations;
 
 import javafx.scene.layout.Pane;
 import org.modality_project.base.client.activity.ModalityDomainPresentationLogicActivityBase;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.stack.framework.client.ui.controls.entity.sheet.EntityPropertiesSheet;
-import dev.webfx.stack.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.orm.entity.controls.entity.sheet.EntityPropertiesSheet;
+import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.platform.util.function.Factory;
 
-import static dev.webfx.stack.framework.shared.orm.dql.DqlStatement.limit;
-import static dev.webfx.stack.framework.shared.orm.dql.DqlStatement.where;
+import static dev.webfx.stack.orm.dql.DqlStatement.limit;
+import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
 /**
  * @author Bruno Salmon

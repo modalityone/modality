@@ -6,7 +6,7 @@ import org.modality_project.base.shared.entities.Attendance;
 import org.modality_project.base.shared.entities.Cart;
 import org.modality_project.base.shared.entities.Document;
 import org.modality_project.base.shared.entities.DocumentLine;
-import dev.webfx.stack.framework.shared.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.db.submit.SubmitArgument;
 import dev.webfx.stack.async.Future;
 import dev.webfx.platform.util.collection.Collections;

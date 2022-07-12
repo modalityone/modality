@@ -25,9 +25,9 @@ import org.modality_project.ecommerce.client.businessdata.workingdocument.Workin
 import org.modality_project.ecommerce.client.businessdata.workingdocument.WorkingDocumentTransaction;
 import org.modality_project.event.client.controls.sectionpanel.SectionPanelFactory;
 import org.modality_project.hotel.shared.businessdata.time.DateTimeRange;
-import dev.webfx.stack.framework.client.services.i18n.I18n;
-import dev.webfx.stack.framework.client.ui.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil;
+import dev.webfx.stack.i18n.I18n;
+import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
+import dev.webfx.stack.ui.util.layout.LayoutUtil;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.extras.imagestore.ImageStore;
 import dev.webfx.platform.util.Booleans;

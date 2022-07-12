@@ -1,8 +1,8 @@
 package org.modality_project.hotel.backoffice.operations.entities.resourceconfiguration;
 
-import dev.webfx.stack.framework.shared.operation.HasOperationCode;
-import dev.webfx.stack.framework.shared.operation.HasOperationExecutor;
-import dev.webfx.stack.framework.shared.orm.entity.Entity;
+import dev.webfx.stack.ui.operation.HasOperationCode;
+import dev.webfx.stack.ui.operation.HasOperationExecutor;
+import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.db.submit.SubmitResult;
 import dev.webfx.stack.async.AsyncFunction;
 import dev.webfx.stack.async.Batch;

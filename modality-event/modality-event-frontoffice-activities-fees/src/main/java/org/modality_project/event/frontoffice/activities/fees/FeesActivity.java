@@ -11,11 +11,11 @@ import dev.webfx.extras.visual.*;
 import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.platform.console.Console;
-import dev.webfx.stack.framework.client.services.i18n.Dictionary;
-import dev.webfx.stack.framework.client.services.i18n.I18n;
-import dev.webfx.stack.framework.client.services.i18n.I18nControls;
-import dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil;
-import dev.webfx.stack.framework.shared.orm.entity.EntityList;
+import dev.webfx.stack.i18n.Dictionary;
+import dev.webfx.stack.i18n.I18n;
+import dev.webfx.stack.i18n.I18nControls;
+import dev.webfx.stack.ui.util.layout.LayoutUtil;
+import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.platform.json.Json;
@@ -53,7 +53,7 @@ import org.modality_project.event.frontoffice.operations.options.RouteToOptionsR
 
 import java.util.function.Consumer;
 
-import static dev.webfx.stack.framework.client.ui.util.image.JsonImageViews.createImageView;
+import static dev.webfx.stack.ui.util.image.JsonImageViews.createImageView;
 
 /**
  * @author Bruno Salmon

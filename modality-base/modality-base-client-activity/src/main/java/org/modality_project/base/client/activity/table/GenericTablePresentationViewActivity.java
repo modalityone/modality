@@ -6,9 +6,9 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import org.modality_project.base.client.activity.themes.Theme;
-import dev.webfx.stack.framework.client.activity.impl.elementals.presentation.view.impl.PresentationViewActivityImpl;
-import dev.webfx.stack.framework.client.ui.controls.button.ButtonFactoryMixin;
-import dev.webfx.stack.framework.client.ui.util.scene.SceneUtil;
+import dev.webfx.stack.routing.uirouter.activity.presentation.view.impl.PresentationViewActivityImpl;
+import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.stack.ui.util.scene.SceneUtil;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 

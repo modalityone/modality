@@ -5,9 +5,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import org.modality_project.crm.client.controls.personaldetails.PersonalDetailsPanel;
 import org.modality_project.base.shared.entities.Document;
-import dev.webfx.stack.framework.client.ui.controls.button.ButtonFactoryMixin;
-import dev.webfx.stack.framework.client.ui.controls.dialog.DialogContent;
-import dev.webfx.stack.framework.client.ui.controls.dialog.DialogUtil;
+import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.stack.ui.controls.dialog.DialogContent;
+import dev.webfx.stack.ui.controls.dialog.DialogUtil;
 import dev.webfx.stack.async.Future;
 
 final class EditDocumentPersonalDetailsExecutor {

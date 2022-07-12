@@ -1,23 +1,23 @@
 package org.modality_project.ecommerce.backoffice.activities.statements;
 
+import dev.webfx.stack.orm.reactive.dql.statement.conventions.*;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import org.modality_project.base.client.activity.eventdependent.EventDependentGenericTablePresentationModel;
 import org.modality_project.base.client.presentationmodel.HasSelectedPaymentProperty;
-import dev.webfx.stack.framework.client.orm.reactive.dql.statement.conventions.*;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasSlaveVisualResultProperty;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasSlaveVisualResultProperty;
 import org.modality_project.base.shared.entities.MoneyTransfer;
 import dev.webfx.extras.visual.VisualResult;
 import dev.webfx.extras.visual.VisualSelection;
-import dev.webfx.stack.framework.shared.orm.dql.DqlStatement;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualResultProperty;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualSelectionProperty;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualSelectionProperty;
-import dev.webfx.stack.framework.shared.orm.entity.Entity;
-import dev.webfx.stack.framework.shared.orm.expression.builder.ReferenceResolver;
+import dev.webfx.stack.orm.dql.DqlStatement;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualResultProperty;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualSelectionProperty;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualSelectionProperty;
+import dev.webfx.stack.orm.entity.Entity;
+import dev.webfx.stack.orm.expression.builder.ReferenceResolver;
 
 /**
  * @author Bruno Salmon

@@ -1,14 +1,14 @@
 package org.modality_project.base.client.jobs.sessionrecorder;
 
 import org.modality_project.crm.client.services.authn.ModalityUserPrincipal;
-import dev.webfx.stack.framework.shared.orm.entity.Entities;
-import dev.webfx.stack.framework.shared.orm.entity.Entity;
-import dev.webfx.stack.framework.shared.orm.entity.EntityId;
-import dev.webfx.stack.framework.shared.orm.entity.UpdateStore;
-import dev.webfx.stack.framework.client.ui.uirouter.uisession.UiSession;
-import dev.webfx.stack.framework.shared.services.datasourcemodel.DataSourceModelService;
+import dev.webfx.stack.orm.entity.Entities;
+import dev.webfx.stack.orm.entity.Entity;
+import dev.webfx.stack.orm.entity.EntityId;
+import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.routing.uirouter.uisession.UiSession;
+import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
-import dev.webfx.stack.framework.client.services.push.PushClientService;
+import dev.webfx.stack.orm.push.client.PushClientService;
 import dev.webfx.platform.storage.LocalStorage;
 import dev.webfx.platform.boot.spi.ApplicationJob;
 import dev.webfx.stack.com.bus.Bus;

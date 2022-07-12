@@ -18,12 +18,12 @@ import org.modality_project.event.frontoffice.activities.options.OptionsActivity
 import org.modality_project.base.shared.entities.Label;
 import org.modality_project.base.shared.entities.Option;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
-import dev.webfx.stack.framework.client.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.stack.framework.client.ui.controls.dialog.DialogCallback;
-import dev.webfx.stack.framework.client.ui.controls.dialog.DialogContent;
-import dev.webfx.stack.framework.client.ui.controls.dialog.DialogUtil;
-import dev.webfx.stack.framework.shared.orm.entity.Entity;
-import dev.webfx.stack.framework.shared.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.ui.controls.dialog.DialogCallback;
+import dev.webfx.stack.ui.controls.dialog.DialogContent;
+import dev.webfx.stack.ui.controls.dialog.DialogUtil;
+import dev.webfx.stack.orm.entity.Entity;
+import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.stack.db.submit.SubmitArgument;
 import dev.webfx.stack.db.submit.SubmitService;
@@ -32,8 +32,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static dev.webfx.stack.framework.shared.orm.dql.DqlStatement.where;
-import static dev.webfx.stack.framework.client.ui.util.layout.LayoutUtil.*;
+import static dev.webfx.stack.orm.dql.DqlStatement.where;
+import static dev.webfx.stack.ui.util.layout.LayoutUtil.*;
 
 /**
  * @author Bruno Salmon
