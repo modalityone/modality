@@ -660,6 +660,10 @@
     <source path="dev/webfx/platform/console/spi"/>
     <!--===========================< webfx-platform-console-gwt >===========================-->
     <source path="dev/webfx/platform/console/spi/impl/gwt"/>
+    <!--========================< webfx-platform-javabase-emul-gwt >========================-->
+    <source path="emul/java/lang/ref"/>
+    <source path="emul/java/util"/>
+    <source path="emul/java/util/regex"/>
     <!--============================< webfx-platform-resource >=============================-->
     <source path="dev/webfx/platform/resource"/>
     <source path="dev/webfx/platform/resource/spi"/>
