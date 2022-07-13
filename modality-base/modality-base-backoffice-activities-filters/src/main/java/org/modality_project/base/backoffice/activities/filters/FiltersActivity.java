@@ -5,22 +5,24 @@ import dev.webfx.extras.visual.VisualColumn;
 import dev.webfx.extras.visual.VisualResultBuilder;
 import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.stack.orm.domainmodel.DomainClass;
+import dev.webfx.stack.orm.entity.Entity;
+import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
-import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
-import dev.webfx.stack.orm.domainmodel.DomainClass;
-import dev.webfx.stack.orm.entity.Entity;
-import dev.webfx.kit.util.properties.Properties;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -49,18 +51,15 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
     private final ObjectProperty<Filter> selectedFilter = new SimpleObjectProperty<>();
     private final ObjectProperty<Filter> selectedFields = new SimpleObjectProperty<>();
 
-    private Label statusLabel = new Label();
-    private VBox outerVerticalBox;
+    private final Label statusLabel = new Label();
+    private final StackPane container = new StackPane();
 
     @Override
     public Node buildUi() {
-        // The outer box of components.
-        outerVerticalBox = new VBox();
-
         // FilterPane components
         Label filterSearchLabel = new Label("Select search filter");
         Label classLabel = new Label("Class: ");
-        ButtonSelector<DomainClass> classSelector = new ButtonSelector<>(this, outerVerticalBox) {
+        ButtonSelector<DomainClass> classSelector = new ButtonSelector<>(this, container) {
             private final List<DomainClass> allClasses = getDomainModel().getAllClasses();
             private List<DomainClass> searchedClasses;
             private final VisualGrid dialogVisualGrid = new SkinnedVisualGrid(); // Better rendering in desktop JavaFX (but might be slower in web version)
@@ -70,7 +69,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                 BorderPane.setAlignment(dialogVisualGrid, Pos.TOP_LEFT);
                 updateDialogVisualGrid();
                 dialogVisualGrid.visualSelectionProperty().addListener((observable, oldValue, vs) -> {
-                    setSelectedItem(vs.getSelectedRow() == 0 ? null : searchedClasses.get(vs.getSelectedRow() - 1));
+                    setSelectedItem(vs == null || vs.getSelectedRow() == 0 ? null : searchedClasses.get(vs.getSelectedRow() - 1));
                     pm.filterClassProperty().set(toText(getSelectedItem()));
                     closeDialog();
                 });
@@ -105,7 +104,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         };
         TextField filterSearchField = new TextField();
         pm.searchTextProperty().bind(filterSearchField.textProperty());
-        Button addNewFilterButton = newButton(newOperationAction(() -> new AddNewFilterRequest(getEventStore(), outerVerticalBox)));
+        Button addNewFilterButton = newButton(newOperationAction(() -> new AddNewFilterRequest(getEventStore(), container)));
         HBox filterSearchRow = new HBox(classLabel, classSelector.getButton(), filterSearchField, addNewFilterButton);
         HBox.setHgrow(filterSearchField, Priority.ALWAYS);
         filterSearchRow.setAlignment(Pos.CENTER);
@@ -114,10 +113,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         filterGrid.visualResultProperty().bind(pm.filtersVisualResultProperty());
         setUpContextMenu(filterGrid, this::createFilterGridContextMenuActionGroup);
 
-        VBox filterPane = new VBox();
-        filterPane.getChildren().add(filterSearchLabel);
-        filterPane.getChildren().add(filterSearchRow);
-        filterPane.getChildren().add(filterGrid);
+        VBox filterPane = new VBox(filterSearchLabel, filterSearchRow, filterGrid);
         filterPane.setSpacing(10);
         VBox.setMargin(filterPane, new Insets(20, 20, 20, 20));
 
@@ -127,7 +123,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         //BooleanBinding isSelectedFilterNull = selectedFilter.isNull(); // Not yet emulated by WebFX
         ObservableValue<Boolean> isSelectedFilterNull = Properties.compute(selectedFilter, Objects::isNull); // WebFX replacement
         fieldSearchField.disableProperty().bind(isSelectedFilterNull);
-        Button addNewFieldsButton = newButton(newOperationAction(() -> new AddNewFieldsRequest(getEventStore(), outerVerticalBox)));
+        Button addNewFieldsButton = newButton(newOperationAction(() -> new AddNewFieldsRequest(getEventStore(), container)));
         HBox fieldsSearchRow = new HBox(fieldSearchField, addNewFieldsButton);
         HBox.setHgrow(fieldSearchField, Priority.ALWAYS);
         pm.fieldsSearchTextProperty().bind(fieldSearchField.textProperty());
@@ -141,10 +137,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         setUpContextMenu(fieldGrid, this::createFieldsGridContextMenuActionGroup);
 
         // The FieldPane container of components
-        VBox fieldPane = new VBox();
-        fieldPane.getChildren().add(fieldSearchLabel);
-        fieldPane.getChildren().add(fieldsSearchRow);
-        fieldPane.getChildren().add(fieldGrid);
+        VBox fieldPane = new VBox(fieldSearchLabel, fieldsSearchRow, fieldGrid);
         fieldPane.setSpacing(10);
         VBox.setMargin(fieldPane, new Insets(20, 20, 20, 20));
 
@@ -156,7 +149,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         ColumnConstraints rightColumn = new ColumnConstraints();
         rightColumn.setPercentWidth(50);
 
-        filterAndFieldPanes.getColumnConstraints().addAll(leftColumn,rightColumn);
+        filterAndFieldPanes.getColumnConstraints().addAll(leftColumn, rightColumn);
         filterAndFieldPanes.setHgap(30);
         filterAndFieldPanes.add(filterPane, 0, 0);
         filterAndFieldPanes.add(fieldPane, 1, 0);
@@ -169,7 +162,6 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
 
         // ResultPane components
         Label resultLabel = new Label("Returned results");
-        statusLabel = new Label();
         statusLabel.setPadding(new Insets(0, 0, 0, 8));
         HBox resultAndStatusRow = new HBox(resultLabel, statusLabel);
         VisualGrid resultsGrid = new VisualGrid();
@@ -188,9 +180,10 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         resultPaneBorder.setBorder(new Border(new BorderStroke(Color.LIGHTGRAY, BorderStrokeStyle.SOLID, null, null)));
         VBox.setMargin(resultPaneBorder, new Insets(20, 20, 20, 20));
 
-        outerVerticalBox.getChildren().add(filterAndFieldPaneBorder);
-        outerVerticalBox.getChildren().add(resultPaneBorder);
-        return outerVerticalBox;
+        SplitPane splitPane = new SplitPane(filterAndFieldPaneBorder, resultPaneBorder);
+        splitPane.setOrientation(Orientation.VERTICAL);
+        container.getChildren().add(splitPane);
+        return container;
     }
 
 /*
@@ -223,15 +216,15 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
 */
     private ActionGroup createFilterGridContextMenuActionGroup() {
         return newActionGroup(
-                newOperationAction(() -> new EditFilterRequest(selectedFilter.get(), outerVerticalBox)),
-                newOperationAction(() -> new DeleteFilterRequest(selectedFilter.get(), outerVerticalBox))
+                newOperationAction(() -> new EditFilterRequest(selectedFilter.get(), container)),
+                newOperationAction(() -> new DeleteFilterRequest(selectedFilter.get(), container))
         );
     }
 
     private ActionGroup createFieldsGridContextMenuActionGroup() {
         return newActionGroup(
-                newOperationAction(() -> new EditFieldsRequest(selectedFields.get(), outerVerticalBox)),
-                newOperationAction(() -> new DeleteFieldsRequest(selectedFields.get(), outerVerticalBox))
+                newOperationAction(() -> new EditFieldsRequest(selectedFields.get(), container)),
+                newOperationAction(() -> new DeleteFieldsRequest(selectedFields.get(), container))
         );
     }
 
@@ -277,7 +270,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .visualizeResultInto(pm.filtersVisualResultProperty())
                 .setVisualSelectionProperty(pm.filtersVisualSelectionProperty())
-                .setSelectedEntityHandler(entity -> selectedFilter.set(entity))
+                .setSelectedEntityHandler(selectedFilter::set)
                 .addEntitiesHandler(entities -> {
                     // If the filter table is cleared (e.g. by the user entering text in the search field) set the selected filter property to null
                     if (entities.isEmpty()) {
@@ -309,9 +302,9 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .visualizeResultInto(pm.fieldsVisualResultProperty())
                 .setVisualSelectionProperty(pm.fieldsVisualSelectionProperty())
-                .setSelectedEntityHandler(entity -> selectedFields.set(entity))
+                .setSelectedEntityHandler(selectedFields::set)
                 .addEntitiesHandler(entities -> {
-                    // If the fields table is cleared (e.g. by the user entering text in the search field) set the selected fields property to null
+                    // If the fields' table is cleared (e.g. by the user entering text in the search field) set the selected fields property to null
                     if (entities.isEmpty()) {
                         selectedFields.set(null);
                     }
