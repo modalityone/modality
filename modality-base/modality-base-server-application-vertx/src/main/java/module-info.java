@@ -14,6 +14,7 @@ module modality.base.server.application.vertx {
     requires webfx.stack.com.bus.vertx;
     requires webfx.stack.db.querysubmit.vertx;
     requires webfx.stack.orm.dql.query.interceptor;
+    requires webfx.stack.orm.dql.querypush.interceptor;
     requires webfx.stack.orm.dql.submit.interceptor;
     requires webfx.stack.platform.json.vertx;
     requires webfx.stack.push.server.simple;

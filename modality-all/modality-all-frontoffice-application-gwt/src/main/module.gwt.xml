@@ -462,6 +462,8 @@
     <source path="dev/webfx/stack/orm/dql/sqlcompiler/terms"/>
     <!--=====================< webfx-stack-orm-dql-query-interceptor >======================-->
     <source path="dev/webfx/stack/orm/dql/query/interceptor"/>
+    <!--===================< webfx-stack-orm-dql-querypush-interceptor >====================-->
+    <source path="dev/webfx/stack/orm/dql/querypush/interceptor"/>
     <!--=====================< webfx-stack-orm-dql-submit-interceptor >=====================-->
     <source path="dev/webfx/stack/orm/dql/submit/interceptor"/>
     <!--=============================< webfx-stack-orm-entity >=============================-->

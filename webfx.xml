@@ -37,7 +37,7 @@
 
     <export-snapshot>
 
-        <project name="mongoose">
+        <project name="modality">
 
             <parent name="webfx-stack-parent"/>
 
@@ -3654,8 +3654,6 @@
                 <module>webfx-stack-querypush-server</module>
             </java-package>
 
-            <java-package name="dev.webfx.stack.framework.shared.services.querypush"/>
-
             <java-package name="dev.webfx.stack.orm.domainmodel">
                 <module>modality-base-backoffice-activities-filters</module>
                 <module>modality-base-backoffice-multilangeditor</module>
@@ -3681,6 +3679,15 @@
                 <module>webfx-stack-orm-reactive-dql</module>
                 <module>webfx-stack-orm-reactive-entities</module>
                 <module>webfx-stack-orm-reactive-visual</module>
+            </java-package>
+
+            <java-package name="dev.webfx.stack.querypush">
+                <module>webfx-stack-orm-dql-querypush-interceptor</module>
+                <module>webfx-stack-orm-reactive-call</module>
+                <module>webfx-stack-querypush</module>
+                <module>webfx-stack-querypush-client</module>
+                <module>webfx-stack-querypush-server</module>
+                <module>webfx-stack-querypush-server-simple</module>
             </java-package>
 
             <java-package name="java.util.regex">
