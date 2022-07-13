@@ -683,7 +683,7 @@
                 <module>webfx-platform-util</module>
                 <module>webfx-stack-async</module>
                 <module>webfx-stack-com-bus</module>
-                <module>webfx-stack-com-websocketbus</module>
+                <module>webfx-stack-com-websocket-bus</module>
                 <module>webfx-stack-db-query</module>
                 <module>webfx-stack-orm-domainmodel</module>
                 <module>webfx-stack-orm-entity</module>
@@ -738,7 +738,7 @@
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-uischeduler</module>
                 <module>webfx-platform-util</module>
-                <module>webfx-stack-com-buscall</module>
+                <module>webfx-stack-com-bus-call</module>
                 <module>webfx-stack-i18n</module>
                 <module>webfx-stack-orm-datasourcemodel-service</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
@@ -756,7 +756,7 @@
 
             <exported-packages>
                 <source-packages/>
-                <resource-package>dev.webfx.stack.com.websocketbus.conf</resource-package>
+                <resource-package>dev.webfx.stack.com.websocket.bus.conf</resource-package>
             </exported-packages>
 
             <dependencies>
@@ -764,7 +764,7 @@
             </dependencies>
 
             <embed-resources>
-                <resource>dev/webfx/stack/com/websocketbus/conf/BusOptions.json</resource>
+                <resource>dev/webfx/stack/com/websocket/bus/conf/BusOptions.json</resource>
             </embed-resources>
 
             <used-by-source-modules/>
@@ -1142,7 +1142,7 @@
         <plugin-module>modality-base-server-systemmetrics</plugin-module>
 -->
                 <plugin-module>webfx-stack-querypush</plugin-module>
-                <plugin-module>webfx-stack-com-buscalljob</plugin-module>
+                <plugin-module>webfx-stack-com-bus-call-job</plugin-module>
             </dependencies>
 
             <used-by-source-modules/>
@@ -2850,7 +2850,7 @@
                 <module>webfx-platform-uischeduler</module>
                 <module>webfx-platform-util</module>
                 <module>webfx-stack-com-bus</module>
-                <module>webfx-stack-com-websocketbus</module>
+                <module>webfx-stack-com-websocket-bus</module>
                 <module>webfx-stack-i18n</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-orm-entity</module>
@@ -3648,7 +3648,7 @@
                 <module>webfx-stack-db-querysubmit-java-jdbc</module>
                 <module>webfx-stack-db-querysubmit-vertx</module>
                 <module>webfx-stack-db-submit</module>
-                <module>webfx-stack-db-submitlistener</module>
+                <module>webfx-stack-db-submit-listener</module>
                 <module>webfx-stack-orm-dql-submit-interceptor</module>
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-querypush-server</module>

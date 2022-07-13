@@ -180,8 +180,8 @@
     <resource path="org/modality_project/base/client/images"/>
     <public includes="org/modality_project/base/client/images/" path=""/>
     <!--=========================< modality-base-client-busconfig >=========================-->
-    <resource path="dev/webfx/stack/com/websocketbus/conf"/>
-    <public includes="dev/webfx/stack/com/websocketbus/conf/" path=""/>
+    <resource path="dev/webfx/stack/com/websocket/bus/conf"/>
+    <public includes="dev/webfx/stack/com/websocket/bus/conf/" path=""/>
     <!--=========================< modality-base-client-entities >==========================-->
     <source path="org/modality_project/base/client/entities/util"/>
     <source path="org/modality_project/base/client/entities/util/filters"/>
@@ -543,9 +543,9 @@
     <source path="dev/webfx/stack/com/bus"/>
     <source path="dev/webfx/stack/com/bus/spi"/>
     <source path="dev/webfx/stack/com/bus/spi/impl"/>
-    <!--============================< webfx-stack-com-buscall >=============================-->
-    <source path="dev/webfx/stack/com/buscall"/>
-    <source path="dev/webfx/stack/com/buscall/spi"/>
+    <!--============================< webfx-stack-com-bus-call >============================-->
+    <source path="dev/webfx/stack/com/bus/call"/>
+    <source path="dev/webfx/stack/com/bus/call/spi"/>
     <!--=============================< webfx-stack-com-serial >=============================-->
     <source path="dev/webfx/stack/com/serial"/>
     <source path="dev/webfx/stack/com/serial/spi"/>
@@ -553,12 +553,12 @@
     <!--===========================< webfx-stack-com-websocket >============================-->
     <source path="dev/webfx/stack/com/websocket"/>
     <source path="dev/webfx/stack/com/websocket/spi"/>
+    <!--=========================< webfx-stack-com-websocket-bus >==========================-->
+    <source path="dev/webfx/stack/com/websocket/bus"/>
+    <!--=======================< webfx-stack-com-websocket-bus-web >========================-->
+    <source path="dev/webfx/stack/com/websocket/bus/web"/>
     <!--=========================< webfx-stack-com-websocket-gwt >==========================-->
     <source path="dev/webfx/stack/com/websocket/spi/impl/gwt"/>
-    <!--==========================< webfx-stack-com-websocketbus >==========================-->
-    <source path="dev/webfx/stack/com/websocketbus"/>
-    <!--========================< webfx-stack-com-websocketbus-web >========================-->
-    <source path="dev/webfx/stack/com/websocketbus/web"/>
     <!--============================< webfx-stack-db-datascope >============================-->
     <source path="dev/webfx/stack/db/datascope"/>
     <source path="dev/webfx/stack/db/datascope/aggregate"/>

@@ -14,7 +14,7 @@ module modality.base.client.application {
     requires webfx.kit.util;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
-    requires webfx.stack.com.buscall;
+    requires webfx.stack.com.bus.call;
     requires webfx.stack.i18n;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel.activity;

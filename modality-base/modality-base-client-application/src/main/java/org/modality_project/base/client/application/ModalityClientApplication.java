@@ -19,7 +19,7 @@ import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.Properties;
 import dev.webfx.platform.uischeduler.UiScheduler;
-import dev.webfx.stack.com.buscall.PendingBusCall;
+import dev.webfx.stack.com.bus.call.PendingBusCall;
 
 import java.util.function.Consumer;
 

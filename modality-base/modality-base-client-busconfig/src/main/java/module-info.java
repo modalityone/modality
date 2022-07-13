@@ -3,6 +3,6 @@
 module modality.base.client.busconfig {
 
     // Resources packages
-    opens dev.webfx.stack.com.websocketbus.conf;
+    opens dev.webfx.stack.com.websocket.bus.conf;
 
 }
