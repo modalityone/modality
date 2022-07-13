@@ -25,7 +25,7 @@ name: Multi-OS builds
 
 on:
   push:
-    branches: [ refactor-modality ]
+    branches: [ main ]
   pull_request:
      branches: [ main ]
 
