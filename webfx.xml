@@ -17,6 +17,7 @@
 
     <required-libraries>
         <webfx-library artifact="dev.webfx:webfx-stack:0.1.0-SNAPSHOT"/>
+        <webfx-library artifact="dev.webfx:webfx-extras:0.1.0-SNAPSHOT"/>
     </required-libraries>
 
     <!--
@@ -59,6 +60,7 @@
 
             <required-libraries>
                 <webfx-library artifact="dev.webfx:webfx-stack:0.1.0-SNAPSHOT"/>
+                <webfx-library artifact="dev.webfx:webfx-extras:0.1.0-SNAPSHOT"/>
             </required-libraries>
 
         </project>
