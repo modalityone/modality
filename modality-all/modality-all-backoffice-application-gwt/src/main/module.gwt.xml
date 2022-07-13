@@ -140,6 +140,8 @@
     <inherits name="com.google.gwt.user.User"/>
     <!--=================================< java-nio-emul >==================================-->
     <inherits name="org.gwtproject.nio.GwtNioSupport"/>
+    <!--================================< javafx-controls >=================================-->
+    <source path="javafx/scene/chart"/>
     <!--======================< modality-all-backoffice-application >=======================-->
     <source path="org/modality_project/all/backoffice/application"/>
     <!--==================< modality-base-backoffice-activities-filters >===================-->

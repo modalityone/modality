@@ -73,6 +73,8 @@
     <inherits name="com.google.gwt.user.User"/>
     <!--=================================< java-nio-emul >==================================-->
     <inherits name="org.gwtproject.nio.GwtNioSupport"/>
+    <!--================================< javafx-controls >=================================-->
+    <source path="javafx/scene/chart"/>
     <!--======================< modality-all-frontoffice-application >======================-->
     <source path="org/modality_project/all/frontoffice/application"/>
     <!--=========================< modality-base-client-activity >==========================-->
