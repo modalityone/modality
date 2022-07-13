@@ -9,7 +9,7 @@ import org.modality_project.base.backoffice.controls.masterslave.MasterSlaveView
  */
 final class ModalityBackOfficeActivity extends ModalityClientActivity {
 
-    private static final String DEFAULT_START_PATH = "/money-flows/organization/151";
+    private static final String DEFAULT_START_PATH = "/organizations";
 
     ModalityBackOfficeActivity() {
         super(DEFAULT_START_PATH);
