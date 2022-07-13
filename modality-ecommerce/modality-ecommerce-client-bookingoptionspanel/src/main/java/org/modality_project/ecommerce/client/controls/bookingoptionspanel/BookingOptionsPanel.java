@@ -22,7 +22,7 @@ import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
 import dev.webfx.extras.visual.VisualResult;
 import dev.webfx.extras.visual.SelectionMode;
 import dev.webfx.extras.type.PrimType;
-import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.Objects;
 import dev.webfx.platform.util.collection.Collections;
 
@@ -56,7 +56,7 @@ public final class BookingOptionsPanel {
             }
         }.register();
         new TranslateFunction().register();
-        Properties.runOnPropertiesChange(this::updateGrid, I18n.dictionaryProperty());
+        FXProperties.runOnPropertiesChange(this::updateGrid, I18n.dictionaryProperty());
     }
 
     public void syncUiFromModel(WorkingDocument workingDocument) {

@@ -21,7 +21,7 @@ import org.modality_project.event.frontoffice.operations.terms.RouteToTermsReque
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.util.layout.LayoutUtil;
 import dev.webfx.stack.ui.util.anim.Animations;
-import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.extras.imagestore.ImageStore;
 import dev.webfx.platform.uischeduler.UiScheduler;
 
@@ -84,7 +84,7 @@ final class StartBookingActivity extends BookingProcessActivity {
                     eventImageView.setImage(image);
                     eventImageView.setPreserveRatio(true);
                     if (image != null)
-                        eventImageView.fitWidthProperty().bind(Properties.combine(eventImageViewContainer.widthProperty(), image.widthProperty(),
+                        eventImageView.fitWidthProperty().bind(FXProperties.combine(eventImageViewContainer.widthProperty(), image.widthProperty(),
                                 (w1, w2) -> Math.min(w1.doubleValue(), w2.doubleValue())));
                     if (image == null || !image.isBackgroundLoading())
                         runFadeInAnimation();

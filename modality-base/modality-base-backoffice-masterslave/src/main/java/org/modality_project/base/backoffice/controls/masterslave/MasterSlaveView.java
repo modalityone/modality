@@ -11,7 +11,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import org.modality_project.base.backoffice.controls.masterslave.group.GroupView;
 import dev.webfx.stack.orm.entity.Entity;
-import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.kit.util.properties.FXProperties;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -118,7 +118,7 @@ public class MasterSlaveView implements UiBuilder {
     ==================================================================================================================*/
 
     public <E extends Entity> void doVisibilityBinding(GroupView<E> groupView, ObjectProperty<E> masterSelectedEntityProperty, Function<E, Boolean> additionalSlaveVisibilityCondition) {
-        slaveVisibleProperty().bind(Properties.compute(masterSelectedEntityProperty, selectedEntity -> selectedEntity != null && (additionalSlaveVisibilityCondition == null || additionalSlaveVisibilityCondition.apply(selectedEntity))));
+        slaveVisibleProperty().bind(FXProperties.compute(masterSelectedEntityProperty, selectedEntity -> selectedEntity != null && (additionalSlaveVisibilityCondition == null || additionalSlaveVisibilityCondition.apply(selectedEntity))));
     }
 
 

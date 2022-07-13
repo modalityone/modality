@@ -2,7 +2,7 @@ package org.modality_project.ecommerce.frontoffice.activities.person;
 
 import dev.webfx.stack.routing.uirouter.uisession.UiSession;
 import dev.webfx.stack.ui.util.layout.LayoutUtil;
-import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.kit.util.properties.FXProperties;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.value.ObservableBooleanValue;
@@ -63,7 +63,7 @@ final class PersonActivity extends BookingProcessActivity {
                 loginPanel.prepareShowing();
         } );
         accountToggleGroup.selectToggle(accountToggleGroup.getToggles().get(0));
-        Properties.runNowAndOnPropertiesChange(() -> {
+        FXProperties.runNowAndOnPropertiesChange(() -> {
             if (loggedInProperty.getValue())
                 Platform.runLater(() -> accountToggleGroup.selectToggle(accountToggleGroup.getToggles().get(0)));
         }, loggedInProperty);

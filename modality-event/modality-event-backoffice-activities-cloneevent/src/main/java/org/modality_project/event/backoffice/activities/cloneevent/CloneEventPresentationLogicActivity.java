@@ -3,7 +3,7 @@ package org.modality_project.event.backoffice.activities.cloneevent;
 import org.modality_project.base.client.activity.eventdependent.EventDependentPresentationLogicActivity;
 import org.modality_project.base.shared.entities.Event;
 import org.modality_project.ecommerce.backoffice.operations.routes.bookings.RouteToBookingsRequest;
-import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.db.submit.SubmitArgument;
 import dev.webfx.stack.db.submit.SubmitService;
@@ -22,7 +22,7 @@ public final class CloneEventPresentationLogicActivity extends EventDependentPre
     @Override
     protected void startLogic(CloneEventPresentationModel pm) {
         // Load and display fees groups now but also on event change
-        Properties.runNowAndOnPropertiesChange(() -> {
+        FXProperties.runNowAndOnPropertiesChange(() -> {
             pm.setName(null);
             pm.setDate(null);
             onEventOptions().onSuccess(options -> {

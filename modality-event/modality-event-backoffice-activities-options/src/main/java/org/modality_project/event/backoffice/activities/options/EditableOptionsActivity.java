@@ -24,7 +24,7 @@ import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.controls.dialog.DialogUtil;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.UpdateStore;
-import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.db.submit.SubmitArgument;
 import dev.webfx.stack.db.submit.SubmitService;
 
@@ -46,7 +46,7 @@ final class EditableOptionsActivity extends OptionsActivity {
     protected void createViewNodes() {
         CheckBox editModeCheckBox = newCheckBox("EditMode");
         editModeProperty = editModeCheckBox.selectedProperty();
-        Properties.runOnPropertiesChange(() -> ((EditableBookingCalendar) bookingCalendar).setEditMode(editModeProperty.getValue()), editModeProperty);
+        FXProperties.runOnPropertiesChange(() -> ((EditableBookingCalendar) bookingCalendar).setEditMode(editModeProperty.getValue()), editModeProperty);
         Button addOptionButton = newButton(ModalityActions.newAddOptionAction(this::showAddOptionDialog));
         addOptionButton.visibleProperty().bind(editModeProperty);
         super.createViewNodes();

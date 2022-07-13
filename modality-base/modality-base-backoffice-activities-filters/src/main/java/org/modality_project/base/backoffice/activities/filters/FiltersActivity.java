@@ -5,7 +5,7 @@ import dev.webfx.extras.visual.VisualColumn;
 import dev.webfx.extras.visual.VisualResultBuilder;
 import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
-import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.domainmodel.DomainClass;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
@@ -73,7 +73,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
                     pm.filterClassProperty().set(toText(getSelectedItem()));
                     closeDialog();
                 });
-                Properties.runOnPropertiesChange(this::updateDialogVisualGrid, searchTextProperty());
+                FXProperties.runOnPropertiesChange(this::updateDialogVisualGrid, searchTextProperty());
             }
             @Override
             protected Node getOrCreateButtonContentFromSelectedItem() {
@@ -121,7 +121,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         Label fieldSearchLabel = new Label("Search fields");
         TextField fieldSearchField = new TextField();
         //BooleanBinding isSelectedFilterNull = selectedFilter.isNull(); // Not yet emulated by WebFX
-        ObservableValue<Boolean> isSelectedFilterNull = Properties.compute(selectedFilter, Objects::isNull); // WebFX replacement
+        ObservableValue<Boolean> isSelectedFilterNull = FXProperties.compute(selectedFilter, Objects::isNull); // WebFX replacement
         fieldSearchField.disableProperty().bind(isSelectedFilterNull);
         Button addNewFieldsButton = newButton(newOperationAction(() -> new AddNewFieldsRequest(getEventStore(), container)));
         HBox fieldsSearchRow = new HBox(fieldSearchField, addNewFieldsButton);

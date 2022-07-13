@@ -12,7 +12,7 @@ import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import dev.webfx.stack.ui.util.layout.LayoutUtil;
 import dev.webfx.stack.orm.entity.Entity;
-import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.db.datascope.aggregate.AggregateScope;
 import dev.webfx.stack.platform.json.Json;
 import dev.webfx.stack.com.serial.SerialCodecManager;
@@ -73,7 +73,7 @@ final class RoomsGraphicActivity extends EventDependentViewDomainActivity implem
                 .storeMappedObjectsInto(sitesTabPane.getTabs())
                 .start();
         MasterSlaveView masterSlaveView = new MasterSlaveView(sitesTabPane, MasterSlaveView.createAndBindSlaveViewIfApplicable(this, this, () -> container).buildUi());
-        masterSlaveView.slaveVisibleProperty().bind(Properties.compute(selectedDocumentProperty(), Objects::nonNull));
+        masterSlaveView.slaveVisibleProperty().bind(FXProperties.compute(selectedDocumentProperty(), Objects::nonNull));
         return container = masterSlaveView.buildUi();
     }
 

@@ -10,7 +10,7 @@ import org.modality_project.base.client.aggregates.event.EventAggregate;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.ui.util.background.BackgroundFactory;
-import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.Strings;
 
 /**
@@ -38,8 +38,8 @@ public abstract class CartBasedActivity
     }
 
     protected void startLogic() {
-        Properties.runOnPropertiesChange(this::onCartUuidChange, cartUuidProperty);
-        Properties.runOnPropertiesChange(this::onDictionaryChange, I18n.dictionaryProperty());
+        FXProperties.runOnPropertiesChange(this::onCartUuidChange, cartUuidProperty);
+        FXProperties.runOnPropertiesChange(this::onDictionaryChange, I18n.dictionaryProperty());
     }
 
     protected void onCartUuidChange() {

@@ -3,7 +3,7 @@ package org.modality_project.ecommerce.backoffice.activities.moneyflows;
 import dev.webfx.stack.orm.reactive.entities.entities_to_objects.IndividualEntityToObjectMapper;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import dev.webfx.stack.ui.controls.ControlFactoryMixin;
-import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.kit.util.properties.FXProperties;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -82,8 +82,8 @@ public class MoneyTransferEntityGraph extends Pane implements ControlFactoryMixi
 			for (MoneyAccount moneyAccount : alphabetizedMoneyAccounts) {
 				final int finalIndex = index;
 				Pane pane = getPaneForMoneyAccount(moneyAccount);
-				pane.layoutXProperty().bind(Properties.compute(widthProperty(), width -> width.doubleValue() * widthNumerator / widthDenominator));
-				pane.layoutYProperty().bind(Properties.compute(heightProperty(), height -> height.doubleValue() * finalIndex / heightDenominator));
+				pane.layoutXProperty().bind(FXProperties.compute(widthProperty(), width -> width.doubleValue() * widthNumerator / widthDenominator));
+				pane.layoutYProperty().bind(FXProperties.compute(heightProperty(), height -> height.doubleValue() * finalIndex / heightDenominator));
 				index++;
 			}
 		}

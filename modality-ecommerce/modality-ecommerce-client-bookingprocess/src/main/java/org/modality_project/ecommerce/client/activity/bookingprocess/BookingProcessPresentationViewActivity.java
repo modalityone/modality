@@ -12,7 +12,7 @@ import org.modality_project.base.shared.entities.Event;
 import dev.webfx.stack.routing.uirouter.activity.presentation.view.impl.PresentationViewActivityImpl;
 import dev.webfx.stack.ui.util.background.BackgroundFactory;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
-import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.Strings;
 
 /**
@@ -43,7 +43,7 @@ public abstract class BookingProcessPresentationViewActivity<PM extends BookingP
     @Override
     protected Node styleUi(Node uiNode, PM pm) {
         if (uiNode instanceof Region)
-            Properties.runNowAndOnPropertiesChange(() -> EventAggregate.getOrCreate(pm.getEventId(), DataSourceModelService.getDefaultDataSourceModel()).onEvent()
+            FXProperties.runNowAndOnPropertiesChange(() -> EventAggregate.getOrCreate(pm.getEventId(), DataSourceModelService.getDefaultDataSourceModel()).onEvent()
                     .onComplete(ar -> {
                         Event event = ar.result();
                         if (event != null) {

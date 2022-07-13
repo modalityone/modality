@@ -10,7 +10,7 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import dev.webfx.stack.ui.util.layout.LayoutUtil;
-import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.extras.webtext.HtmlTextEditor;
 import dev.webfx.platform.util.Objects;
 import dev.webfx.platform.util.Strings;
@@ -91,7 +91,7 @@ public final class MultiLanguageEditor {
 
     public BorderPane getUiNode() {
         if (toggleGroup.getSelectedToggle() == null) {
-            Properties.runOnPropertiesChange(this::onEntityChanged, toggleGroup.selectedToggleProperty());
+            FXProperties.runOnPropertiesChange(this::onEntityChanged, toggleGroup.selectedToggleProperty());
             toggleGroup.selectToggle(languageButtons.get(I18n.getLanguage()));
         }
         return borderPane;
@@ -157,7 +157,7 @@ public final class MultiLanguageEditor {
         MonoLanguageEditor(Object lang) {
             subjectField = subjectFieldGetter == null ? null : subjectFieldGetter.apply(lang);
             bodyField = bodyFieldGetter.apply(lang);
-            Properties.runOnPropertiesChange(this::syncEntityFromUi, subjectTextField.textProperty(), editor.textProperty());
+            FXProperties.runOnPropertiesChange(this::syncEntityFromUi, subjectTextField.textProperty(), editor.textProperty());
         }
 
         void syncEntityFromUi() {

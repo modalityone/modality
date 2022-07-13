@@ -43,7 +43,7 @@ import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.domainmodel.HasDataSourceModel;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
-import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.Strings;
 
 import java.util.function.Supplier;
@@ -112,7 +112,7 @@ public final class BookingDetailsPanel implements
         VisualGrid table = new VisualGrid();
         Tab tab = createTab(i18nKey, table);
         // The following is required only for gwt version for any reason (otherwise the table height is not resized when growing)
-        Properties.runOnPropertiesChange(() -> {
+        FXProperties.runOnPropertiesChange(() -> {
             TabPane tabPane = tab.getTabPane();
             if (tabPane != null)
                 tabPane.requestLayout();
@@ -245,7 +245,7 @@ public final class BookingDetailsPanel implements
 
     private void addFieldLabelAndValue(int rowIndex, int columnIndex, int columnSpan, String fieldName) {
         dev.webfx.extras.label.Label fieldLabel = dataSourceModel.getDomainModel().getClass("Document").getField(fieldName).getLabel();
-        ObservableValue<String> fieldValueProperty = Properties.compute(selectedDocumentProperty, document -> {
+        ObservableValue<String> fieldValueProperty = FXProperties.compute(selectedDocumentProperty, document -> {
             Object fieldValue = document == null ? null : document.getFieldValue(fieldName);
             if (fieldValue instanceof EntityId)
                 fieldValue = document.getForeignEntity(fieldName).getFieldValue("name");
@@ -290,7 +290,7 @@ public final class BookingDetailsPanel implements
 
     private Node createComment(String title, String commentField) {
         TextArea textArea = new TextArea();
-        textArea.textProperty().bind(Properties.compute(selectedDocumentProperty, document -> document == null ? null : document.getStringFieldValue(commentField)));
+        textArea.textProperty().bind(FXProperties.compute(selectedDocumentProperty, document -> document == null ? null : document.getStringFieldValue(commentField)));
         textArea.setEditable(false);
         TitledPane titledPane = new TitledPane(title, textArea);
         titledPane.setCollapsible(false);

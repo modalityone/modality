@@ -3,7 +3,7 @@ package org.modality_project.ecommerce.backoffice.activities.moneyflows;
 import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import dev.webfx.stack.ui.controls.ControlFactoryMixin;
-import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.kit.util.properties.FXProperties;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
@@ -55,11 +55,11 @@ public class MoneyFlowArrowView extends Pane {
         }
 
         arrowLine = new ArrowLine();
-        ObservableValue<Double> lineLayoutXProperty = Properties.combine(sourceVertex.layoutXProperty(), sourceVertex.widthProperty(), (x, width) -> x.doubleValue() + width.doubleValue());
-        ObservableValue<Double> lineLayoutYProperty = Properties.combine(sourceVertex.layoutYProperty(), sourceVertex.heightProperty(), (y, height) -> y.doubleValue() + height.doubleValue() / 2);
-        ObservableValue<Double> lineEndXProperty = Properties.combine(destVertex.layoutXProperty(), arrowLine.layoutXProperty(), (destX, arrowX) -> destX.doubleValue() - arrowX.doubleValue());
-        ObservableValue<Double> lineEndYProperty = Properties.combine(
-                Properties.combine(destVertex.layoutYProperty(), arrowLine.layoutYProperty(), (destY, arrowY) -> destY.doubleValue() - arrowY.doubleValue()),
+        ObservableValue<Double> lineLayoutXProperty = FXProperties.combine(sourceVertex.layoutXProperty(), sourceVertex.widthProperty(), (x, width) -> x.doubleValue() + width.doubleValue());
+        ObservableValue<Double> lineLayoutYProperty = FXProperties.combine(sourceVertex.layoutYProperty(), sourceVertex.heightProperty(), (y, height) -> y.doubleValue() + height.doubleValue() / 2);
+        ObservableValue<Double> lineEndXProperty = FXProperties.combine(destVertex.layoutXProperty(), arrowLine.layoutXProperty(), (destX, arrowX) -> destX.doubleValue() - arrowX.doubleValue());
+        ObservableValue<Double> lineEndYProperty = FXProperties.combine(
+                FXProperties.combine(destVertex.layoutYProperty(), arrowLine.layoutYProperty(), (destY, arrowY) -> destY.doubleValue() - arrowY.doubleValue()),
                 destVertex.heightProperty(),
                 (a, b) -> a + b.doubleValue() / 2);
 
@@ -68,8 +68,8 @@ public class MoneyFlowArrowView extends Pane {
         arrowLine.endXProperty().bind(lineEndXProperty);
         arrowLine.endYProperty().bind(lineEndYProperty);
 
-        ObservableValue<Double> arrowHeadXProperty = Properties.combine(lineLayoutXProperty, lineEndXProperty, Double::sum);
-        ObservableValue<Double> arrowHeadYProperty = Properties.combine(lineLayoutYProperty, lineEndYProperty, Double::sum);
+        ObservableValue<Double> arrowHeadXProperty = FXProperties.combine(lineLayoutXProperty, lineEndXProperty, Double::sum);
+        ObservableValue<Double> arrowHeadYProperty = FXProperties.combine(lineLayoutYProperty, lineEndYProperty, Double::sum);
         arrowHeadLeft = new ArrowLine();
         arrowHeadLeft.layoutXProperty().bind(arrowHeadXProperty);
         arrowHeadLeft.layoutYProperty().bind(arrowHeadYProperty);

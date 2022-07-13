@@ -34,7 +34,7 @@ import dev.webfx.extras.visual.VisualResultBuilder;
 import dev.webfx.extras.visual.VisualStyle;
 import dev.webfx.extras.visual.SelectionMode;
 import dev.webfx.extras.type.PrimType;
-import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Booleans;
 
@@ -103,8 +103,8 @@ public final class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         } else {
             personSelector = createEntityButtonSelector(null, buttonFactoryMixin, parent, dataSourceModel);
             personButton = personSelector.toMaterialButton("PersonToBook");
-            Properties.runOnPropertiesChange(p -> syncUiFromModel((Person) p.getValue()), personSelector.selectedItemProperty());
-            Properties.runNowAndOnPropertiesChange(userProperty -> {
+            FXProperties.runOnPropertiesChange(p -> syncUiFromModel((Person) p.getValue()), personSelector.selectedItemProperty());
+            FXProperties.runNowAndOnPropertiesChange(userProperty -> {
                 Object user = userProperty.getValue();
                 boolean loggedIn = user instanceof ModalityUserPrincipal;
                 if (loggedIn) {
@@ -300,7 +300,7 @@ public final class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         countrySelector.setSelectedItem(p.getCountry());
         updateUiEditable();
         if (sectionPanel.getCenter() == null)
-            Properties.runNowAndOnPropertiesChange(this::updatePanelBody, childRadioButton.selectedProperty(), I18n.dictionaryProperty());
+            FXProperties.runNowAndOnPropertiesChange(this::updatePanelBody, childRadioButton.selectedProperty(), I18n.dictionaryProperty());
         if (!editable)
             UiScheduler.runInUiThread(this::updatePanelBody);
     }

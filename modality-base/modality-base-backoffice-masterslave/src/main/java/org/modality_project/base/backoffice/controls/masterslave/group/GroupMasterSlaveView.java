@@ -17,7 +17,7 @@ import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasGr
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
 import dev.webfx.stack.ui.controls.ControlFactoryMixin;
 import dev.webfx.stack.orm.entity.Entity;
-import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.kit.util.properties.FXProperties;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -108,9 +108,9 @@ public class GroupMasterSlaveView extends MasterSlaveView {
 
     @Override
     public <E extends Entity> void doVisibilityBinding(GroupView<E> groupView, ObjectProperty<E> masterSelectedEntityProperty, Function<E, Boolean> additionalSlaveVisibilityCondition) {
-        groupVisibleProperty() .bind(Properties.compute(groupView.groupDqlStatementProperty(), statement -> statement != null && statement.getGroupBy() != null));
-        masterVisibleProperty().bind(Properties.combine(groupVisibleProperty(),  groupView.selectedGroupProperty(), (groupVisible, selectedGroup) -> !groupVisible || selectedGroup != null));
-        slaveVisibleProperty() .bind(Properties.combine(masterVisibleProperty(), masterSelectedEntityProperty, (masterVisible, selectedEntity) -> masterVisible && selectedEntity != null && (additionalSlaveVisibilityCondition == null || additionalSlaveVisibilityCondition.apply(selectedEntity))));
+        groupVisibleProperty() .bind(FXProperties.compute(groupView.groupDqlStatementProperty(), statement -> statement != null && statement.getGroupBy() != null));
+        masterVisibleProperty().bind(FXProperties.combine(groupVisibleProperty(),  groupView.selectedGroupProperty(), (groupVisible, selectedGroup) -> !groupVisible || selectedGroup != null));
+        slaveVisibleProperty() .bind(FXProperties.combine(masterVisibleProperty(), masterSelectedEntityProperty, (masterVisible, selectedEntity) -> masterVisible && selectedEntity != null && (additionalSlaveVisibilityCondition == null || additionalSlaveVisibilityCondition.apply(selectedEntity))));
     }
 
 

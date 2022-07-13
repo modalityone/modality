@@ -16,7 +16,7 @@ import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.I18nControls;
 import dev.webfx.stack.ui.util.layout.LayoutUtil;
 import dev.webfx.stack.orm.entity.EntityList;
-import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.platform.json.Json;
 import dev.webfx.stack.platform.json.JsonObject;
@@ -92,10 +92,10 @@ final class FeesActivity extends BookingProcessActivity {
     @Override
     protected void startLogic() {
         // Load and display fees groups now but also on event change
-        Properties.runNowAndOnPropertiesChange(this::loadAndDisplayFeesGroups, eventIdProperty());
+        FXProperties.runNowAndOnPropertiesChange(this::loadAndDisplayFeesGroups, eventIdProperty());
 
         lastDictionary = I18n.getDictionary();
-        Properties.consume(Properties.filter(Properties.combine(I18n.dictionaryProperty(), activeProperty(),
+        FXProperties.consume(FXProperties.filter(FXProperties.combine(I18n.dictionaryProperty(), activeProperty(),
                 Pair::new), // combine function
                 pair -> pair.get2()), // filter function (GWT doesn't compile method reference in this case)
                 pair -> refreshOnDictionaryChanged());

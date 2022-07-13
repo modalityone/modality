@@ -28,7 +28,7 @@ import org.modality_project.hotel.shared.businessdata.time.DateTimeRange;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.ui.util.layout.LayoutUtil;
-import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.extras.imagestore.ImageStore;
 import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.Objects;
@@ -172,7 +172,7 @@ final class OptionTreeNode {
         ImageView checkBoxView = new ImageView();
         checkBoxView.setFitWidth(16d);
         checkBoxView.setFitHeight(16d);
-        checkBoxView.imageProperty().bind(Properties.compute(optionButtonSelectedProperty, selected ->
+        checkBoxView.imageProperty().bind(FXProperties.compute(optionButtonSelectedProperty, selected ->
                 ImageStore.getOrCreateImage(selected ? ModalityIcons.checkedIcon16Url : ModalityIcons.uncheckedIcon16Url)));
         ObservableList<Node> hBoxChildren = ((HBox) topLevelOptionButton.getTop()).getChildren();
         // Adding the checkbox before the already present icon and text
@@ -242,7 +242,7 @@ final class OptionTreeNode {
                 Node selectNode = childrenOptionSelector.toMaterialButton(null, Labels.translateLabel(option.getChildrenPromptLabel()));
                 optionBodyChildren.add(selectNode);
                 bindToVisibleProperty(selectNode);
-                Properties.runOnPropertiesChange(childrenOptionSelector::updateButtonContentOnNewSelectedItem, I18n.languageProperty());
+                FXProperties.runOnPropertiesChange(childrenOptionSelector::updateButtonContentOnNewSelectedItem, I18n.languageProperty());
                 tree.getValidationSupport().addRequiredInput(childrenOptionSelector.selectedItemProperty(), childrenOptionSelector.getButton());
             } else if (option.isChildrenRadio())
                 childrenToggleGroup = new ToggleGroup();
@@ -290,7 +290,7 @@ final class OptionTreeNode {
                         //Logger.log(bestTranslationOrName(option) + ": " + getValue());
                     }
                 };
-                Properties.runOnPropertiesChange(p -> setOptionButtonSelected(p.getValue() == option), optionSelector.selectedItemProperty());
+                FXProperties.runOnPropertiesChange(p -> setOptionButtonSelected(p.getValue() == option), optionSelector.selectedItemProperty());
                 optionButton = null;
             } else {
                 CheckBox checkBox = new CheckBox();
@@ -305,7 +305,7 @@ final class OptionTreeNode {
                 Labels.translateLabel(optionButton, buttonLabel);
             }
         }
-        Properties.runOnPropertiesChange(this::onUiOptionButtonChanged, optionButtonSelectedProperty);
+        FXProperties.runOnPropertiesChange(this::onUiOptionButtonChanged, optionButtonSelectedProperty);
     }
 
 

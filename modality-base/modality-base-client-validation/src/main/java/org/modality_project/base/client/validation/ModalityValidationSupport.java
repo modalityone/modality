@@ -34,7 +34,7 @@ import dev.webfx.stack.ui.validation.controlsfx.validation.decoration.GraphicVal
 import dev.webfx.stack.ui.util.background.BackgroundFactory;
 import dev.webfx.stack.ui.util.border.BorderFactory;
 import dev.webfx.stack.ui.util.scene.SceneUtil;
-import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.extras.imagestore.ImageStore;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.collection.Collections;
@@ -176,7 +176,7 @@ public final class ModalityValidationSupport {
             label.setBorder(BorderFactory.newBorder(Color.WHITE, 5, 2));
             Rectangle diamond = new Rectangle(10, 10, Color.RED);
             diamond.getTransforms().add(new Rotate(45, 5, 5));
-            diamond.layoutYProperty().bind(Properties.compute(label.heightProperty(), n -> n.doubleValue() - 7));
+            diamond.layoutYProperty().bind(FXProperties.compute(label.heightProperty(), n -> n.doubleValue() - 7));
             diamond.setLayoutX(20d);
             popOverContentNode = new Group(label, diamond);
             //popOverContentNode.setOpacity(0.75);

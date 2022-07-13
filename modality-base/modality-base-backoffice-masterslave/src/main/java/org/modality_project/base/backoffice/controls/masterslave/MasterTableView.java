@@ -9,7 +9,7 @@ import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMa
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualSelectionProperty;
 import dev.webfx.stack.ui.controls.ControlFactoryMixin;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
-import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.kit.util.properties.FXProperties;
 
 public final class MasterTableView implements UiBuilder {
 
@@ -23,7 +23,7 @@ public final class MasterTableView implements UiBuilder {
         if (pm instanceof HasLimitProperty) {
             masterLimitCheckBox = mixin.newCheckBox("LimitTo100");
             masterLimitCheckBox.setSelected(true);
-            Properties.runNowAndOnPropertiesChange(() -> ((HasLimitProperty) pm).limitProperty().setValue(masterLimitCheckBox.isSelected() ? 30 : -1), masterLimitCheckBox.selectedProperty());
+            FXProperties.runNowAndOnPropertiesChange(() -> ((HasLimitProperty) pm).limitProperty().setValue(masterLimitCheckBox.isSelected() ? 30 : -1), masterLimitCheckBox.selectedProperty());
             masterTable.fullHeightProperty().bind(masterLimitCheckBox.selectedProperty());
         }
     }

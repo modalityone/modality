@@ -12,7 +12,7 @@ import dev.webfx.stack.ui.controls.dialog.DialogUtil;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
-import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.db.submit.SubmitArgument;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -121,8 +121,8 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
     private void createAddNewMoneyAccountButton() {
         Button addNewMoneyAccountButton = newButton(newOperationAction(() -> new AddNewMoneyAccountRequest(getOrganization(), graph)));
         addNewMoneyAccountButton.setFont(new Font(32));
-        addNewMoneyAccountButton.layoutXProperty().bind(Properties.combine(graph.widthProperty(), addNewMoneyAccountButton.widthProperty(), (nodeWidth, buttonWidth) -> nodeWidth.doubleValue() - buttonWidth.doubleValue()));
-        addNewMoneyAccountButton.layoutYProperty().bind(Properties.combine(graph.heightProperty(), addNewMoneyAccountButton.heightProperty(), (nodeHeight, buttonHeight) -> nodeHeight.doubleValue() - buttonHeight.doubleValue()));
+        addNewMoneyAccountButton.layoutXProperty().bind(FXProperties.combine(graph.widthProperty(), addNewMoneyAccountButton.widthProperty(), (nodeWidth, buttonWidth) -> nodeWidth.doubleValue() - buttonWidth.doubleValue()));
+        addNewMoneyAccountButton.layoutYProperty().bind(FXProperties.combine(graph.heightProperty(), addNewMoneyAccountButton.heightProperty(), (nodeHeight, buttonHeight) -> nodeHeight.doubleValue() - buttonHeight.doubleValue()));
         graph.getChildren().add(addNewMoneyAccountButton);
     }
 

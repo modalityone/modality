@@ -1,6 +1,6 @@
 package org.modality_project.event.client.controls.calendargraphic.impl;
 
-import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.platform.util.tuples.Unit;
 import javafx.animation.Animation;
@@ -104,7 +104,7 @@ public final class CalendarGraphicImpl implements CalendarGraphic {
             Rotate rotate = null; // Rotate.create();
             if (rotate != null) {
                 calendarGroup.getTransforms().setAll(rotate);
-                Properties.runOnPropertiesChange(() -> {
+                FXProperties.runOnPropertiesChange(() -> {
                     rotate.setPivotX(rootNode.getWidth() / 2);
                     rotate.setPivotY(rootNode.getHeight() / 2);
                 }, rootNode.widthProperty(), rootNode.heightProperty());

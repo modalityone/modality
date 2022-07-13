@@ -6,7 +6,7 @@ import javafx.scene.Node;
 import org.modality_project.base.backoffice.controls.multilangeditor.MultiLanguageEditor;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
-import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.kit.util.properties.FXProperties;
 
 /**
  * @author Bruno Salmon
@@ -18,7 +18,7 @@ final class LetterActivity extends ViewDomainActivityBase implements ButtonFacto
     @Override
     public void onStart() {
         super.onStart();
-        Properties.runOnPropertiesChange(() -> {
+        FXProperties.runOnPropertiesChange(() -> {
             if (isActive())
                 onLetterChanged();
         }, routeLetterIdProperty, activeProperty());

@@ -2,7 +2,7 @@ package org.modality_project.ecommerce.frontoffice.activities.summary;
 
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.i18n.I18n;
-import dev.webfx.kit.util.properties.Properties;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.Strings;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableStringValue;
@@ -58,7 +58,7 @@ final class SummaryActivity extends BookingProcessActivity {
         BorderPane.setAlignment(termsCheckBox, Pos.CENTER_LEFT);
         BorderPane.setMargin(termsCheckBox, new Insets(10));
         agreeTCTranslationProperty = I18n.i18nTextProperty("AgreeTC");
-        Properties.runNowAndOnPropertiesChange(p -> setTermsCheckBoxText(Strings.toSafeString(p.getValue())), agreeTCTranslationProperty);
+        FXProperties.runNowAndOnPropertiesChange(p -> setTermsCheckBoxText(Strings.toSafeString(p.getValue())), agreeTCTranslationProperty);
 
         verticalStack.getChildren().setAll(
                 bookingOptionsPanel.getOptionsPanel(),
