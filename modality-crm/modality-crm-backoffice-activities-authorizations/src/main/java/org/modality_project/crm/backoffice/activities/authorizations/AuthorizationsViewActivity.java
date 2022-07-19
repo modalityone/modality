@@ -41,7 +41,7 @@ final class AuthorizationsViewActivity extends ViewDomainActivityBase {
 
     protected void startLogic() {
 
-        ReactiveVisualMapper.createReactiveChain(this)
+        ReactiveVisualMapper.createPushReactiveChain(this)
                 .always("{class: 'AuthorizationManagement', orderBy: 'id'}")
                 .ifNotNullOtherwiseEmpty(userPrincipalProperty(), principal -> where("manager=?", ModalityUserPrincipal.getUserPersonId(principal)))
                 .setEntityColumns(manageeColumns)
@@ -49,7 +49,7 @@ final class AuthorizationsViewActivity extends ViewDomainActivityBase {
                 .setSelectedEntityHandler(selectedManagementProperty::setValue)
                 .start();
 
-        assignmentVisualMapper = ReactiveVisualMapper.createReactiveChain(this)
+        assignmentVisualMapper = ReactiveVisualMapper.createPushReactiveChain(this)
                 .always("{class: 'AuthorizationAssignment', orderBy: 'id'}")
                 .ifNotNullOtherwiseEmpty(selectedManagementProperty, management -> where("management=?", management))
                 .setEntityColumns(assignmentColumns)
