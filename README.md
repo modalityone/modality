@@ -1,12 +1,28 @@
 # Modality
-Modality is an open-source, Java-based, hospitality-oriented booking system. Multiple organisations, events and properties are supported, together with a wide range of hospitality-related add-ons, such as meals, transport, translation, special needs and more.
+Modality is an open-source, Java-based, hospitality-oriented booking system. It has been implemented to support significant event complexity, currently unmatched by any existing open or closed-source solution. Modality supports:
+
+* organisations (any type, not just hotels)
+* fixed- and variable-period events at multiple locations
+* recurring events at multiple locations
+* multiple accommodation locations and types
+* catering options: meals, meal types, meal times, meal sittings
+* transportion to accommodations and events
+* translations of events
+
+Modality has the potential to support the following:
+
+* shops (products, billing, stock)
+* restaurants
+* cafes
+
+Modality is entirely modular. Choose all the modules, or just the modules you want.
 
 
 ## Why the name?
 'Modality' is a fusion of two words, 'modular' and 'hospitality', a nod to both the software’s design and purpose.
 
 
-## Key features
+## Key technology features
 * Developed entirely in Java, on both the server-side and client-side
 * Uses the same UI toolkit across all clients apps
 * Native web, mobile and desktop clients generated from the same codebase
