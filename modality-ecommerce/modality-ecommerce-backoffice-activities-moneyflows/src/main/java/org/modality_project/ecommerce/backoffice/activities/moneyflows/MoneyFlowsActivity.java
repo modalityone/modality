@@ -26,7 +26,6 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import org.modality_project.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
 import org.modality_project.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
@@ -96,7 +95,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                 pm.moneyFlowsVisualSelectionProperty().set(value);
             }
         });
-        graph.setBackground(BackgroundFactory.newBackground(Color.DARKVIOLET));
+        graph.setBackground(BackgroundFactory.newLinearGradientBackground("to bottom right, #eaafc8, #654ea3"));
 
         createAddNewMoneyAccountButton();
 
@@ -123,9 +122,9 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
 
     private void createAddNewMoneyAccountButton() {
         Button addNewMoneyAccountButton = newButton(newOperationAction(() -> new AddNewMoneyAccountRequest(getOrganization(), graph)));
-        addNewMoneyAccountButton.setFont(new Font(32));
-        addNewMoneyAccountButton.layoutXProperty().bind(FXProperties.combine(graph.widthProperty(), addNewMoneyAccountButton.widthProperty(), (nodeWidth, buttonWidth) -> nodeWidth.doubleValue() - buttonWidth.doubleValue()));
-        addNewMoneyAccountButton.layoutYProperty().bind(FXProperties.combine(graph.heightProperty(), addNewMoneyAccountButton.heightProperty(), (nodeHeight, buttonHeight) -> nodeHeight.doubleValue() - buttonHeight.doubleValue()));
+        addNewMoneyAccountButton.setFont(new Font(18));
+        addNewMoneyAccountButton.layoutXProperty().bind(FXProperties.combine(graph.widthProperty(), addNewMoneyAccountButton.widthProperty(), (nodeWidth, buttonWidth) -> nodeWidth.doubleValue() - buttonWidth.doubleValue() - 10));
+        addNewMoneyAccountButton.layoutYProperty().bind(FXProperties.combine(graph.heightProperty(), addNewMoneyAccountButton.heightProperty(), (nodeHeight, buttonHeight) -> nodeHeight.doubleValue() - buttonHeight.doubleValue() - 10));
         graph.getChildren().add(addNewMoneyAccountButton);
     }
 
@@ -149,7 +148,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
     protected void startLogic() {
         // Setting up the master mapper that build the content displayed in the master view
         moneyAccountVisualMapper = ReactiveVisualMapper.<MoneyAccount>createPushReactiveChain(this)
-                .always("{class: 'MoneyAccount', alias: 'ma', columns: 'name,closed,currency,event,gatewayCompany,type', fields: 'id', orderBy: 'name desc'}")
+                .always("{class: 'MoneyAccount', alias: 'ma', columns: 'name,closed,currency,event,gatewayCompany,type', fields: 'id', where: 'event=null', orderBy: 'name desc'}")
                 .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
                 .ifTrimNotEmpty(pm.searchTextProperty(), s -> DqlStatement.where("name like ?", AbcNames.evaluate(s, true)))
                 .applyDomainModelRowStyle() // Colorizing the rows
@@ -160,7 +159,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                 .start();
 
         moneyFlowVisualMapper = ReactiveVisualMapper.<MoneyFlow>createPushReactiveChain(this)
-                .always("{class: 'MoneyFlow', alias: 'mf', fields: 'organization'}")
+                .always("{class: 'MoneyFlow', alias: 'mf', fields: 'organization', where: 'fromMoneyAccount.event=null && toMoneyAccount.event=null'}")
                 .setEntityColumns("[" +
                         "{label: 'From', expression: 'fromMoneyAccount'}," +
                         "{label: 'To', expression: 'toMoneyAccount'}," +
@@ -178,7 +177,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                 .start();
 
         ReactiveObjectsMapper.<MoneyAccount, MoneyAccountPane>createPushReactiveChain(this)
-                .always("{class: 'MoneyAccount', alias: 'ma', fields: 'name,type,organization'}")
+                .always("{class: 'MoneyAccount', alias: 'ma', fields: 'name,type,organization', where: 'event=null'}")
                 .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
                 .setIndividualEntityToObjectMapperFactory(MoneyAccountToPaneMapper::new)
                 .setStore(moneyAccountVisualMapper.getStore())
@@ -186,7 +185,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                 .start();
 
         ReactiveObjectsMapper.<MoneyFlow, MoneyFlowArrowView>createPushReactiveChain(this)
-                .always("{class: 'MoneyFlow', alias: 'mf', fields: 'fromMoneyAccount,toMoneyAccount'}")
+                .always("{class: 'MoneyFlow', alias: 'mf', fields: 'fromMoneyAccount,toMoneyAccount', where: 'fromMoneyAccount.event=null && toMoneyAccount.event=null'}")
                 .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
                 .setIndividualEntityToObjectMapperFactory(graph::newMoneyFlowToArrowMapper)
                 .setStore(moneyAccountVisualMapper.getStore())
