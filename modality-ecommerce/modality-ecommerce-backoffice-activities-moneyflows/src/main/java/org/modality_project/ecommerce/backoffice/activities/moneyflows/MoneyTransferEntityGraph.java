@@ -1,13 +1,11 @@
 package org.modality_project.ecommerce.backoffice.activities.moneyflows;
 
-import dev.webfx.stack.orm.reactive.entities.entities_to_objects.IndividualEntityToObjectMapper;
-import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
-import dev.webfx.stack.ui.controls.ControlFactoryMixin;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.stack.orm.reactive.entities.entities_to_objects.IndividualEntityToObjectMapper;
+import dev.webfx.stack.ui.controls.ControlFactoryMixin;
+import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -38,26 +36,11 @@ public class MoneyTransferEntityGraph extends Pane implements ControlFactoryMixi
 	public ObjectProperty<MoneyFlow> selectedMoneyFlow() { return selectedMoneyFlow; }
 
 	public MoneyTransferEntityGraph() {
-		moneyAccountPanes.addListener(new ListChangeListener<MoneyAccountPane>() {
-			@Override
-			public void onChanged(Change<? extends MoneyAccountPane> c) {
-				updateLayout();
-			}
-		});
-		moneyFlowArrowViews.addListener(new ListChangeListener<MoneyFlowArrowView>() {
-			@Override
-			public void onChanged(Change<? extends MoneyFlowArrowView> c) {
-				updateLayout();
-			}
-		});
-		selectedMoneyFlow.addListener(new ChangeListener<MoneyFlow>() {
-			@Override
-			public void changed(ObservableValue<? extends MoneyFlow> observable, MoneyFlow oldValue, MoneyFlow newValue) {
-				moneyFlowArrowViews().forEach(arrow -> {
-					arrow.setHighlighted(newValue != null && newValue.equals(arrow.moneyFlowProperty().get()));
-				});
-			}
-		});
+		moneyAccountPanes.addListener((ListChangeListener<MoneyAccountPane>) c -> updateLayout());
+		moneyFlowArrowViews.addListener((ListChangeListener<MoneyFlowArrowView>) c -> updateLayout());
+		selectedMoneyFlow.addListener((observable, oldValue, newValue) -> moneyFlowArrowViews().forEach(arrow -> {
+			arrow.setHighlighted(newValue != null && newValue.equals(arrow.moneyFlowProperty().get()));
+		}));
 	}
 
 	private void updateLayout() {
@@ -82,7 +65,7 @@ public class MoneyTransferEntityGraph extends Pane implements ControlFactoryMixi
 			for (MoneyAccount moneyAccount : alphabetizedMoneyAccounts) {
 				final int finalIndex = index;
 				Pane pane = getPaneForMoneyAccount(moneyAccount);
-				pane.layoutXProperty().bind(FXProperties.compute(widthProperty(), width -> width.doubleValue() * widthNumerator / widthDenominator));
+				pane.layoutXProperty().bind(FXProperties.compute(widthProperty(), width -> 20 + width.doubleValue() * widthNumerator / widthDenominator));
 				pane.layoutYProperty().bind(FXProperties.compute(heightProperty(), height -> height.doubleValue() * finalIndex / heightDenominator));
 				index++;
 			}

@@ -2,18 +2,19 @@ package org.modality_project.ecommerce.backoffice.activities.moneyflows;
 
 import dev.webfx.extras.visual.VisualSelection;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.stack.db.submit.SubmitArgument;
+import dev.webfx.stack.orm.dql.DqlStatement;
+import dev.webfx.stack.orm.entity.EntityStore;
+import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.reactive.entities.entities_to_objects.IndividualEntityToObjectMapper;
 import dev.webfx.stack.orm.reactive.entities.entities_to_objects.ReactiveObjectsMapper;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.ui.action.ActionGroup;
-import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.controls.dialog.DialogUtil;
-import dev.webfx.stack.orm.dql.DqlStatement;
-import dev.webfx.stack.orm.entity.EntityStore;
-import dev.webfx.stack.orm.entity.UpdateStore;
-import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.stack.db.submit.SubmitArgument;
+import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
+import dev.webfx.stack.ui.util.background.BackgroundFactory;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -25,10 +26,11 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import org.modality_project.base.shared.domainmodel.functions.AbcNames;
 import org.modality_project.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
 import org.modality_project.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
+import org.modality_project.base.shared.domainmodel.functions.AbcNames;
 import org.modality_project.base.shared.entities.MoneyAccount;
 import org.modality_project.base.shared.entities.MoneyFlow;
 import org.modality_project.base.shared.entities.Organization;
@@ -94,6 +96,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                 pm.moneyFlowsVisualSelectionProperty().set(value);
             }
         });
+        graph.setBackground(BackgroundFactory.newBackground(Color.DARKVIOLET));
 
         createAddNewMoneyAccountButton();
 

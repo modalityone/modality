@@ -1,12 +1,14 @@
 package org.modality_project.ecommerce.backoffice.activities.moneyflows;
 
-import dev.webfx.stack.ui.action.ActionGroup;
-import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
-import dev.webfx.stack.ui.controls.ControlFactoryMixin;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.stack.ui.action.ActionGroup;
+import dev.webfx.stack.ui.controls.ControlFactoryMixin;
+import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.Cursor;
+import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -17,7 +19,7 @@ import org.modality_project.ecommerce.backoffice.operations.entities.moneyflow.D
 /**
  * @author Dan Newman
  */
-public class MoneyFlowArrowView extends Pane {
+public class MoneyFlowArrowView extends Group {
 
     private static final int ARROW_HEAD_LENGTH = 30;
     private static final double ARROW_HEAD_ANGLE_IN_RADIANS = Math.PI / 6.0;
@@ -85,6 +87,7 @@ public class MoneyFlowArrowView extends Pane {
         updateArrowHead(arrowLine, arrowHeadLeft, arrowHeadRight);
 
         getChildren().addAll(arrowLine, arrowHeadLeft, arrowHeadRight);
+        setHighlighted(false);
     }
 
     private void updateArrowHead(Line arrow, Line arrowHeadLeft, Line arrowHeadRight) {
@@ -98,7 +101,7 @@ public class MoneyFlowArrowView extends Pane {
     }
 
     public void setHighlighted(boolean highlighted) {
-        Paint color = highlighted ? Color.YELLOW : Color.BLACK;
+        Paint color = highlighted ? Color.ORANGE : Color.INDIGO;
         arrowLine.setStroke(color);
         arrowHeadLeft.setStroke(color);
         arrowHeadRight.setStroke(color);
@@ -107,10 +110,10 @@ public class MoneyFlowArrowView extends Pane {
     private class ArrowLine extends Line implements ControlFactoryMixin, OperationActionFactoryMixin {
 
         public ArrowLine() {
-            setStroke(Color.BLACK);
-            setStrokeWidth(7);
+            setStrokeWidth(5);
             setUpContextMenu(this, this::createContextMenuActionGroup);
             setOnMouseClicked(e -> selectedMoneyFlow.set(moneyFlowProperty.get()));
+            setCursor(Cursor.HAND);
         }
 
         private ActionGroup createContextMenuActionGroup() {

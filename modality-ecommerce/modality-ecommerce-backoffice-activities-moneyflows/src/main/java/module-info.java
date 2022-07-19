@@ -33,6 +33,7 @@ module modality.ecommerce.backoffice.activities.moneyflows {
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.operation;
     requires webfx.stack.ui.operation.action;
+    requires webfx.stack.ui.util;
 
     // Exported packages
     exports org.modality_project.ecommerce.backoffice.activities.moneyflows;
