@@ -54,7 +54,8 @@ public class ModalityClientContainerActivity extends ViewDomainActivityBase
                 "RouteToUsers",
                 "RouteToOperations",
                 "RouteToAuthorizations",
-                "RouteToFilters"
+                "RouteToMoneyFlows",
+                "RouteToFilters",
         };
         Collection<RouteRequestEmitter> providedEmitters = RouteRequestEmitter.getProvidedEmitters();
         return Arrays.stream(sortedPossibleNavigationOperations)

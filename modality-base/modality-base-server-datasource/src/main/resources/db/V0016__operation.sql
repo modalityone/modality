@@ -70,3 +70,4 @@ INSERT INTO public.operation VALUES (58, 'TriggerAllocationRule', 'Trigger...', 
 INSERT INTO public.operation VALUES (59, 'EditAllocationRule', 'Edit...', 'Edit allocation rule', NULL, true, false, true, false);
 INSERT INTO public.operation VALUES (60, 'DeleteAllocationRule', 'Delete...', 'Delete allocation rule', NULL, true, false, true, false);
 INSERT INTO public.operation VALUES (61, 'RouteToFilters', 'Filters', 'Filter builder', NULL, true, true, true, false);
+INSERT INTO public.operation VALUES (62, 'RouteToMoneyFlows', 'MoneyFlows', 'Money flows', NULL, true, true, true, false);

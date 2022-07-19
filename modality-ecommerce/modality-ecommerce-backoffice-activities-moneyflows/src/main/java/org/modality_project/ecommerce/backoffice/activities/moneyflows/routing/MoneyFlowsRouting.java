@@ -14,7 +14,7 @@ public final class MoneyFlowsRouting {
     }
 
     public static String getOrganizationIncomePath(Object organizationId) {
-        return ModalityRoutingUtil.interpolateEventIdInPath(organizationId, PATH);
+        return ModalityRoutingUtil.interpolateOrganizationIdInPath(organizationId, PATH);
     }
 
 }

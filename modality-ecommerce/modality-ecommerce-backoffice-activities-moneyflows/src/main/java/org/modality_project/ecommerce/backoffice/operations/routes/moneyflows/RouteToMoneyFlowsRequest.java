@@ -10,7 +10,7 @@ import org.modality_project.ecommerce.backoffice.activities.moneyflows.routing.M
  */
 public final class RouteToMoneyFlowsRequest extends RoutePushRequest implements HasOperationCode {
 
-    private final static String OPERATION_CODE = "RouteToIncome";
+    private final static String OPERATION_CODE = "RouteToMoneyFlows";
 
     public RouteToMoneyFlowsRequest(Object organizationId, BrowsingHistory history) {
         super(MoneyFlowsRouting.getOrganizationIncomePath(organizationId), history);
