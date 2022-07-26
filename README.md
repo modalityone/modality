@@ -1,5 +1,5 @@
 # Modality
-Modality is an open-source, hospitality-oriented booking system. It has been implemented to support significant event complexity, currently unmatched by any existing open or closed-source solution. 
+Modality is a free, open-source, hospitality-oriented booking system, currently in development. It will support significant event complexity, unmatched by any existing open or closed-source solution. 
 
 Modality will support:
 
@@ -33,7 +33,7 @@ Modality has the potential to support the following:
 * shops (time-limited or permanent, with online option)
 * cafes/restaurants (time-limited or permanent, with online option)
 
-The Modality server can support a single organisation, multiple different organisations, and parent organisations comprising many child/spin-off organisations, (all organising their own events)
+The Modality server can support single organisations, multiple different organisations, and parent organisations comprising many child/spin-off organisations (each organising their own events)
 
 Modality is entirely modular. Choose all the modules, or just the modules you want (even the events module is optional).
 
