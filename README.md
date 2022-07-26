@@ -55,11 +55,8 @@ Modality is entirely modular. Choose all the modules, or just the modules you wa
 
 ## Documentation
 * [Getting started](https://docs.modality-project.org) - stand up Modality on your local machine
-* Developer guide - coming soon
-
-
-## Contribution
-We are in the process of producing a contribution guide, after which we will be delighed to welcome all constructive contributions, particularly unit tests, enhancements and bug fixes!
+* [Contribute](CONTRIBUTING.md) - participate in the Modality development community
+* [Roadmap](ROADMAP.md) - mapping out the implementation of Modality
 
 
 ## License

@@ -1,6 +1,6 @@
 # How to contribute to Modality
 
-Thank you so much for your wish to contribute to Modality. There are many areas where help is needed, and we have listed here some suggestions, but we are open to your own suggestions too.
+Thank you so much for your wish to contribute to Modality! There are many areas where help is needed, and we have listed some suggestions below, but we are also open to your own suggestions.
 
 
 ## Reporting bugs
@@ -17,7 +17,7 @@ If you find a bug, you can fork [Modality](https://github.com/mongoose-project/m
 
 ## Branding
 
-Modality would benefit from a clean and distinctive branding, initial within the app itself, and later extending to associated external artefacts such as the website etc.
+Modality would benefit from a clean and distinctive branding, initially within the app itself, and later extending to associated external artefacts such as the website etc.
 
 - **If you have any Modality branding ideas or drafts, including logo, color palette and font suggestions, you can [send them to us][modality-contactus]. We will be delighted to consider your propositions.**
 
@@ -26,7 +26,7 @@ Modality would benefit from a clean and distinctive branding, initial within the
 
 Modality urgently needs useful, well-written JavaDoc.
 
-- **Please [contact us][modality-contactus] if you would like to write some JavaDoc.**
+- **Please [contact us][modality-contactus] if you would like to get involved with this.**
 
 
 ## Writing unit tests
