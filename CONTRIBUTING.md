@@ -5,7 +5,7 @@ Thank you so much for your wish to contribute to Modality! There are many areas 
 
 ## Adding JavaDoc
 
-Modality is almost entirely uncommented, and urgently needs useful, well-written JavaDoc.
+Modality is now starting to transition from the prototyping phase into MVP development, and the newly stable code is ready to benefit from comprehensive JavaDoc.
 
 - **Please [contact us][modality-contactus] if you would like to get involved with this.**
 
