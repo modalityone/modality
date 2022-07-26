@@ -16,8 +16,8 @@
     </modules>
 
     <required-libraries>
-        <webfx-library artifact="dev.webfx:webfx-stack:0.1.0-SNAPSHOT"/>
-        <webfx-library artifact="dev.webfx:webfx-extras:0.1.0-SNAPSHOT"/>
+        <webfx-library artifact="dev.webfx:webfx-stack-private:0.1.0-SNAPSHOT"/>
+        <webfx-library artifact="dev.webfx:webfx-extras-private:0.1.0-SNAPSHOT"/>
     </required-libraries>
 
     <!--
@@ -59,8 +59,8 @@
             </modules>
 
             <required-libraries>
-                <webfx-library artifact="dev.webfx:webfx-stack:0.1.0-SNAPSHOT"/>
-                <webfx-library artifact="dev.webfx:webfx-extras:0.1.0-SNAPSHOT"/>
+                <webfx-library artifact="dev.webfx:webfx-stack-private:0.1.0-SNAPSHOT"/>
+                <webfx-library artifact="dev.webfx:webfx-extras-private:0.1.0-SNAPSHOT"/>
             </required-libraries>
 
         </project>
@@ -72,10 +72,6 @@
                 <module>modality-all-backoffice-application-gluon</module>
                 <module>modality-all-backoffice-application-gwt</module>
                 <module>modality-all-backoffice-application-openjfx</module>
-                <module>modality-all-frontoffice-application</module>
-                <module>modality-all-frontoffice-application-gluon</module>
-                <module>modality-all-frontoffice-application-gwt</module>
-                <module>modality-all-frontoffice-application-openjfx</module>
             </modules>
 
         </project>
@@ -191,82 +187,6 @@
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-routing-uirouter</module>
             </used-by-source-modules>
-
-        </project>
-
-        <project name="modality-all-frontoffice-application">
-
-            <exported-packages>
-                <source-packages/>
-            </exported-packages>
-
-            <providers>
-                <provider interface="javafx.application.Application">org.modality_project.all.frontoffice.application.ModalityFrontOfficeApplication</provider>
-            </providers>
-
-            <dependencies>
-                <used-by-source-modules/>
-
-                <!-- Ecommerce activities -->
-                <plugin-module>modality-ecommerce-frontoffice-activities-person</plugin-module>
-                <plugin-module>modality-ecommerce-frontoffice-activities-summary</plugin-module>
-                <plugin-module>modality-ecommerce-frontoffice-activities-cart</plugin-module>
-                <plugin-module>modality-ecommerce-frontoffice-activities-payment</plugin-module>
-                <plugin-module>modality-ecommerce-frontoffice-activities-contactus</plugin-module>
-
-                <!-- Event activities -->
-                <plugin-module>modality-event-frontoffice-activities-startbooking</plugin-module>
-                <plugin-module>modality-event-frontoffice-activities-terms</plugin-module>
-                <plugin-module>modality-event-frontoffice-activities-program</plugin-module>
-                <plugin-module>modality-event-frontoffice-activities-fees</plugin-module>
-                <plugin-module>modality-event-frontoffice-activities-options</plugin-module>
-
-            </dependencies>
-
-            <source-packages>
-                <package>org.modality_project.all.frontoffice.application</package>
-            </source-packages>
-
-            <used-by-source-modules>
-                <module>modality-base-client-application</module>
-                <module>webfx-kit-javafxgraphics-emul</module>
-            </used-by-source-modules>
-
-        </project>
-
-        <project executable="true" name="modality-all-frontoffice-application-gluon">
-
-            <dependencies>
-                <used-by-source-modules/>
-            </dependencies>
-
-            <used-by-source-modules/>
-
-        </project>
-
-        <project executable="true" name="modality-all-frontoffice-application-gwt">
-
-            <dependencies>
-                <used-by-source-modules/>
-            </dependencies>
-
-            <html>
-                <head>
-                    <title>Modality Front-Office</title>
-                </head>
-            </html>
-
-            <used-by-source-modules/>
-
-        </project>
-
-        <project executable="true" name="modality-all-frontoffice-application-openjfx">
-
-            <dependencies>
-                <used-by-source-modules/>
-            </dependencies>
-
-            <used-by-source-modules/>
 
         </project>
 
@@ -2263,6 +2183,7 @@
                 <module>webfx-stack-ui-controls</module>
                 <module>webfx-stack-ui-operation</module>
                 <module>webfx-stack-ui-operation-action</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
