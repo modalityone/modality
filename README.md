@@ -50,17 +50,14 @@ Modality is entirely modular. Choose all the modules, or just the modules you wa
 
 
 ## Powered by WebFX
-[Webfx](https://webfx.dev) provides a unique JavaFX to JavaScript transpiler, powered by GWT, which generates pure JS that runs directly in the browser without a plugin.
+[WebFX](https://webfx.dev) provides a unique JavaFX to JavaScript transpiler, powered by GWT, which generates pure JS that runs directly in the browser without a plugin.
 
 
 ## Documentation
 * [Getting started](https://docs.modality-project.org) - stand up Modality on your local machine
-* Developer guide - coming soon
-
-
-## Contribution
-We are in the process of producing a contribution guide, after which we will be delighed to welcome all constructive contributions, particularly unit tests, enhancements and bug fixes!
+* [Contribute](CONTRIBUTING.md) - participate in the Modality development community
+* [Roadmap](ROADMAP.md) - mapping out the implementation of Modality
 
 
 ## License
-Modality is free, open-source software licensed under the [Apache License Version 2.0](https://github.com/mongoose-project/modality/blob/main/LICENSE).
+Modality is free, open-source software licensed under the [Apache License Version 2.0](LICENSE).
