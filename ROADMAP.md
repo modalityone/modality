@@ -3,6 +3,7 @@
 - [x] Proof of Concept
 - [x] Back-Office Prototype
 - [x] [Modality Docs][modality-docs]
+- [ ] Define coding standards
 - [ ] JavaDoc
 - [ ] Automated testing coverage
   - [ ] Unit testing
