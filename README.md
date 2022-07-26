@@ -50,7 +50,7 @@ Modality is entirely modular. Choose all the modules, or just the modules you wa
 
 
 ## Powered by WebFX
-[Webfx](https://webfx.dev) provides a unique JavaFX to JavaScript transpiler, powered by GWT, which generates pure JS that runs directly in the browser without a plugin.
+[WebFX](https://webfx.dev) provides a unique JavaFX to JavaScript transpiler, powered by GWT, which generates pure JS that runs directly in the browser without a plugin.
 
 
 ## Documentation
