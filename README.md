@@ -60,4 +60,4 @@ Modality is entirely modular. Choose all the modules, or just the modules you wa
 
 
 ## License
-Modality is free, open-source software licensed under the [Apache License Version 2.0](https://github.com/mongoose-project/modality/blob/main/LICENSE).
+Modality is free, open-source software licensed under the [Apache License Version 2.0](LICENSE).
