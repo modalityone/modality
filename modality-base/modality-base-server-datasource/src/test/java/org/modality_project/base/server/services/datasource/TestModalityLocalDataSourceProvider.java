@@ -1,9 +1,14 @@
 package org.modality_project.base.server.services.datasource;
 
+import dev.webfx.platform.resource.Resource;
+import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
+import dev.webfx.stack.platform.json.Json;
 import dev.webfx.stack.platform.json.spi.impl.listmap.MapJsonObject;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
-import java.util.HashMap;
-import java.util.Map;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mockStatic;
 
 public class TestModalityLocalDataSourceProvider {
 
@@ -18,7 +23,6 @@ public class TestModalityLocalDataSourceProvider {
     }
 
     public MapJsonObject jsonMap() {
-        Map<String,String> map = new HashMap<>();
         MapJsonObject mapJsonObject = new MapJsonObject();
         mapJsonObject.setNativeElement("host", "localhost");
         mapJsonObject.setNativeElement("port", "5432");
@@ -27,16 +31,16 @@ public class TestModalityLocalDataSourceProvider {
         mapJsonObject.setNativeElement("password","modality");
         return mapJsonObject;
     }
-/* Temporarily commented for Modality refactoring (was causing build error otherwise)
+
     @Test
     public void loadsPropertyFromEnvironment() {
         try(
                 MockedStatic<DataSourceModelService> mockModelSvc = mockStatic(DataSourceModelService.class);
-                MockedStatic<ResourceService> mockResourceSvc = mockStatic(ResourceService.class);
-                MockedStatic<Json> mockJsonParser = mockStatic(Json.class);
+                MockedStatic<Resource> mockResourceSvc = mockStatic(Resource.class);
+                MockedStatic<Json> mockJsonParser = mockStatic(Json.class)
         ) {
             mockModelSvc.when(DataSourceModelService::getDefaultDataSourceId).thenReturn("id");
-            mockResourceSvc.when(() -> ResourceService
+            mockResourceSvc.when(() -> Resource
                     .getText("org/modality_project/base/server/datasource/id/ConnectionDetails.json"))
                     .thenReturn(connectionJson());
 
@@ -56,13 +60,13 @@ public class TestModalityLocalDataSourceProvider {
     public void loadsPropertyFromConfig() {
         try(
                 MockedStatic<DataSourceModelService> mockModelSvc = mockStatic(DataSourceModelService.class);
-                MockedStatic<ResourceService> mockResourceSvc = mockStatic(ResourceService.class);
+                MockedStatic<Resource> mockResourceSvc = mockStatic(Resource.class);
                 MockedStatic<Json> mockJsonParser = mockStatic(Json.class);
         ) {
             mockModelSvc.when(DataSourceModelService::getDefaultDataSourceId)
                     .thenReturn("id");
 
-            mockResourceSvc.when(() -> ResourceService
+            mockResourceSvc.when(() -> Resource
                     .getText("org/modality_project/base/server/datasource/id/ConnectionDetails.json"))
                     .thenReturn(connectionJson());
 
@@ -74,5 +78,4 @@ public class TestModalityLocalDataSourceProvider {
         }
     }
 
- */
 }

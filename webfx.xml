@@ -18,6 +18,17 @@
     <required-libraries>
         <webfx-library artifact="dev.webfx:webfx-stack-private:0.1.0-SNAPSHOT"/>
         <webfx-library artifact="dev.webfx:webfx-extras-private:0.1.0-SNAPSHOT"/>
+
+        <!-- For unit testing -->
+        <library artifact="org.junit.jupiter:junit-jupiter:5.9.0"/>
+        <library artifact="org.mockito:mockito-inline:4.6.1"/>
+
+        <!-- For integration testing -->
+        <!-- Not used right now
+        <library artifact="org.seleniumhq.selenium:selenium-java:4.1.4"/>
+        <library artifact="io.github.bonigarcia:webdrivermanager:5.1.1"/>
+        -->
+
     </required-libraries>
 
     <!--
@@ -61,6 +72,17 @@
             <required-libraries>
                 <webfx-library artifact="dev.webfx:webfx-stack-private:0.1.0-SNAPSHOT"/>
                 <webfx-library artifact="dev.webfx:webfx-extras-private:0.1.0-SNAPSHOT"/>
+
+                <!-- For unit testing -->
+                <library artifact="org.junit.jupiter:junit-jupiter:5.9.0"/>
+                <library artifact="org.mockito:mockito-inline:4.6.1"/>
+
+                <!-- For integration testing -->
+                <!-- Not used right now
+        <library artifact="org.seleniumhq.selenium:selenium-java:4.1.4"/>
+        <library artifact="io.github.bonigarcia:webdrivermanager:5.1.1"/>
+        -->
+
             </required-libraries>
 
         </project>
@@ -1082,26 +1104,6 @@
         </project>
 
         <project name="modality-base-server-datasource">
-
-            <required-libraries>
-                <library artifact="org.junit.jupiter:junit-jupiter:5.8.2"/>
-                <library artifact="org.mockito:mockito-inline:3.5.13"/>
-                <library artifact="org.seleniumhq.selenium:selenium-java:4.1.4"/>
-                <library artifact="io.github.bonigarcia:webdrivermanager:5.1.1">
-
-                    <exported-packages>
-                        <package>io.github.bonigarcia.wdm</package>
-                        <package>io.github.bonigarcia.wdm.config</package>
-                        <package>io.github.bonigarcia.wdm.managers</package>
-                        <package>io.github.bonigarcia.wdm.docker</package>
-                        <package>io.github.bonigarcia.wdm.online</package>
-                        <package>io.github.bonigarcia.wdm.cache</package>
-                        <package>io.github.bonigarcia.wdm.versions</package>
-                        <package>io.github.bonigarcia.wdm.webdriver</package>
-                    </exported-packages>
-
-                </library>
-            </required-libraries>
 
             <exported-packages>
                 <source-packages/>
@@ -3574,6 +3576,7 @@
                 <module>webfx-stack-db-submit-listener</module>
                 <module>webfx-stack-orm-dql-submit-interceptor</module>
                 <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-orm-entity-controls</module>
                 <module>webfx-stack-querypush-server</module>
             </java-package>
 
@@ -3614,7 +3617,6 @@
             </java-package>
 
             <java-package name="java.util.regex">
-                <module>webdrivermanager</module>
                 <module>webfx-stack-routing-router</module>
             </java-package>
 

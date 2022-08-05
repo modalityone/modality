@@ -5,93 +5,93 @@
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1" />
         <title>Modality Back-Office</title>
         <style>
-            /*********************************************
-            *** Page loading spinner (Material Design) ***
-            *********************************************/
+    /*********************************************
+    *** Page loading spinner (Material Design) ***
+    *********************************************/
 
-            #loadingSpinner {
-                position: fixed;
-                width: 100%;
-                height: 90%;
-                z-index: 100;
-                pointer-events: none;
-            }
+    #loadingSpinner {
+        position: fixed;
+        width: 100%;
+        height: 90%;
+        z-index: 100;
+        pointer-events: none;
+    }
 
-            #loadingSpinner, #loadingSpinner tr, #loadingSpinner td {
-                border: none;
-                background: transparent;
-            }
+    #loadingSpinner, #loadingSpinner tr, #loadingSpinner td {
+        border: none;
+        background: transparent;
+    }
 
-            .loader {
-                position: relative;
-                margin: 0 auto;
-                width: 100px;
-            }
+    .loader {
+        position: relative;
+        margin: 0 auto;
+        width: 100px;
+    }
 
-            .loader:before {
-                content: '';
-                display: block;
-                padding-top: 100%;
-            }
+    .loader:before {
+        content: '';
+        display: block;
+        padding-top: 100%;
+    }
 
-            .circular {
-                height: 100%;
-                width: 100%;
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                margin: auto;
-                animation: rotate 2s linear infinite;
-                transform-origin: center center;
-            }
+    .circular {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        animation: rotate 2s linear infinite;
+        transform-origin: center center;
+    }
 
-            .path {
-                stroke-dasharray: 1, 200;
-                stroke-dashoffset: 0;
-                animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
-                stroke-linecap: round;
-            }
+    .path {
+        stroke-dasharray: 1, 200;
+        stroke-dashoffset: 0;
+        animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
+        stroke-linecap: round;
+    }
 
-            @keyframes rotate {
-                100% {
-                transform: rotate(360deg);
-                }
-            }
+    @keyframes rotate {
+        100% {
+        transform: rotate(360deg);
+        }
+    }
 
-            @keyframes dash {
-                0% {
-                    stroke-dasharray: 1, 200;
-                    stroke-dashoffset: 0;
-                }
-                50% {
-                    stroke-dasharray: 89, 200;
-                    stroke-dashoffset: -35px;
-                }
-                100% {
-                    stroke-dasharray: 89, 200;
-                    stroke-dashoffset: -124px;
-                }
-            }
+    @keyframes dash {
+        0% {
+            stroke-dasharray: 1, 200;
+            stroke-dashoffset: 0;
+        }
+        50% {
+            stroke-dasharray: 89, 200;
+            stroke-dashoffset: -35px;
+        }
+        100% {
+            stroke-dasharray: 89, 200;
+            stroke-dashoffset: -124px;
+        }
+    }
 
-            @keyframes color {
-                100%,
-                0% {
-                    stroke: #d62d20;
-                }
-                40% {
-                    stroke: #0057e7;
-                }
-                66% {
-                    stroke: #008744;
-                }
-                80%,
-                90% {
-                    stroke: #ffa700;
-                }
-            }
-        </style>
+    @keyframes color {
+        100%,
+        0% {
+            stroke: #d62d20;
+        }
+        40% {
+            stroke: #0057e7;
+        }
+        66% {
+            stroke: #008744;
+        }
+        80%,
+        90% {
+            stroke: #ffa700;
+        }
+    }
+</style>
         <link href="dev/webfx/kit/mapper/peers/javafxcontrols/gwt/html/perfect-scrollbar.css" rel="stylesheet" type="text/css">
 
     </head>
