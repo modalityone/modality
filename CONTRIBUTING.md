@@ -12,7 +12,7 @@ Modality is now starting to transition from the prototyping phase into MVP devel
 
 ## Writing unit tests
 
-We are now in a better position to start writing new and retrospective tests for Modality, and have incorporated the [JUnit](https://junit.org/junit5/) and [Mockito](https://site.mockito.org/) test frameworks into the codebase.
+We are now in a position to start writing new and retrospective tests for Modality, and have incorporated the [JUnit](https://junit.org/junit5/) and [Mockito](https://site.mockito.org/) test frameworks into the codebase.
 
 - **If you would like to write new (or modify existing) JUnit tests, you could fork Modality for this purpose, then raise a pull request for us to merge your changes into main.**
 
@@ -29,7 +29,6 @@ Large parts of Modality are already operational, principally in the Back-Office,
 The highest [layer](https://docs.modality-project.org/#_layers) of the Modality architecture consists of business-specific modules implementing logic for events, hotels, restaurants etc. Code written here is usually directly represented on-screen. 
 
 - **If you would like to contribute business layer code, feel free to assign yourself to one of our GitHub [issues](https://github.com/modalityproject/modality/issues?q=is%3Aissue+is%3Aopen+label%3A%22business+layer+code%22).**
-- **You may also be interested in raising new, relevant business layer issues, for yourself or others to subsequently implement.**
 
 
 ## Writing ecommerce layer code
@@ -37,7 +36,6 @@ The highest [layer](https://docs.modality-project.org/#_layers) of the Modality 
 The next [layer](https://docs.modality-project.org/#_layers) down is the ecommerce layer. This provides a generic domain model for ecommerce, which models sales, accounts etc. It is the location for payment gateway integration and ecommerce-specific UIs.
 
 - **If you would like to contribute ecommerce layer code, feel free to assign yourself to one of our GitHub [issues](https://github.com/modalityproject/modality/issues?q=is%3Aissue+is%3Aopen+label%3A%22ecommerce+layer+code%22+).**
-- **You may also be interested in raising new, relevant ecommerce layer issues, for yourself or others to subsequently implement.**
 
 
 ## Writing CRM layer code
@@ -45,7 +43,6 @@ The next [layer](https://docs.modality-project.org/#_layers) down is the ecommer
 The CRM [layer](https://docs.modality-project.org/#_layers) provides the essential CRM features, including customer accounts, integrated mailing system etc.
 
 - **If you would like to contribute CRM layer code, take a look at our GitHub [issues](https://github.com/modalityproject/modality/issues?q=is%3Aissue+is%3Aopen+label%3A%22crm+layer+code%22).**
-- **You may also be interested in raising new, relevant CRM layer issues, for yourself or others to subsequently implement.**
 
 
 ## Writing Base layer code
@@ -53,7 +50,6 @@ The CRM [layer](https://docs.modality-project.org/#_layers) provides the essenti
 The Base [layer](https://docs.modality-project.org/#_layers) is a fully operational implementation of the [WebFX](https://webfx.dev) stack layer beneath, based on the Postgres database. This layer is a pure technical solution that isn’t bound to any specific domain.
 
 - **If you would like to contribute base layer code, take a look at our GitHub [issues](https://github.com/modalityproject/modality/issues?q=is%3Aissue+is%3Aopen+label%3A%22base+layer+code%22+).**
-- **You may also be interested in raising new, relevant base layer issues, for yourself or others to subsequently implement.**
 
 
 ## Reporting bugs
