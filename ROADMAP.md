@@ -3,6 +3,9 @@
 - [x] Proof of Concept
 - [x] Back-Office Prototype
 - [x] [Modality Docs][modality-docs]
+- [ ] Populate modality-dev-db
+- [ ] Streamline import of modality-dev-db
+- [ ] Define the features and issues necessary for MVP
 - [ ] Define coding standards
 - [ ] JavaDoc
 - [ ] Automated testing coverage
