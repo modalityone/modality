@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
 
-    <required-libraries>
-        <library artifact="org.junit.jupiter:junit-jupiter:5.8.2"/>
-        <library artifact="org.mockito:mockito-inline:3.5.13"/>
-        <library artifact="org.seleniumhq.selenium:selenium-java:4.1.4"/>
-        <library artifact="io.github.bonigarcia:webdrivermanager:5.1.1"/>
-    </required-libraries>
-
     <exported-packages>
         <source-packages/>
         <resource-package>org.modality_project.base.server.datasource.MDS</resource-package>
