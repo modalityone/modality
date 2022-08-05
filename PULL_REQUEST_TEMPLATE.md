@@ -1,6 +1,3 @@
-# Pull Request Template
-
-
 ## Pre-PR checklist
 
 - [ ] PR is not a duplicate
