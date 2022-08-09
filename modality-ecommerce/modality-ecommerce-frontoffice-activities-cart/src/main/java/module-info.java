@@ -23,10 +23,10 @@ module modality.ecommerce.frontoffice.activities.cart {
     requires webfx.extras.type;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
+    requires webfx.platform.async;
     requires webfx.platform.console;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
-    requires webfx.stack.async;
     requires webfx.stack.db.submit;
     requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel;

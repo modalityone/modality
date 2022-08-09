@@ -507,29 +507,29 @@
     <!--========================< webfx-stack-orm-reactive-visual >=========================-->
     <source path="dev/webfx/stack/orm/reactive/mapping/entities_to_visual"/>
     <source path="dev/webfx/stack/orm/reactive/mapping/entities_to_visual/conventions"/>
-    <!--===========================< webfx-stack-platform-json >============================-->
+    <!--===========================< webfx-platform-json >============================-->
     <source path="dev/webfx/stack/platform/json"/>
     <source path="dev/webfx/stack/platform/json/parser"/>
     <source path="dev/webfx/stack/platform/json/parser/javacup"/>
     <source path="dev/webfx/stack/platform/json/parser/jflex"/>
     <source path="dev/webfx/stack/platform/json/spi"/>
     <source path="dev/webfx/stack/platform/json/spi/impl/listmap"/>
-    <!--=========================< webfx-stack-platform-json-gwt >==========================-->
+    <!--=========================< webfx-platform-json-gwt >==========================-->
     <source path="dev/webfx/stack/platform/json/spi/impl/gwt"/>
-    <!--=======================< webfx-stack-platform-windowhistory >=======================-->
+    <!--=======================< webfx-platform-windowhistory >=======================-->
     <source path="dev/webfx/stack/platform/windowhistory"/>
     <source path="dev/webfx/stack/platform/windowhistory/spi"/>
     <source path="dev/webfx/stack/platform/windowhistory/spi/impl"/>
-    <!--=====================< webfx-stack-platform-windowhistory-gwt >=====================-->
+    <!--=====================< webfx-platform-windowhistory-gwt >=====================-->
     <source path="dev/webfx/stack/platform/windowhistory/spi/impl/gwt"/>
     <source path="dev/webfx/stack/platform/windowhistory/spi/impl/gwt/jsinterop"/>
-    <!--=====================< webfx-stack-platform-windowhistory-web >=====================-->
+    <!--=====================< webfx-platform-windowhistory-web >=====================-->
     <source path="dev/webfx/stack/platform/windowhistory/spi/impl/web"/>
-    <!--======================< webfx-stack-platform-windowlocation >=======================-->
+    <!--======================< webfx-platform-windowlocation >=======================-->
     <source path="dev/webfx/stack/platform/windowlocation"/>
     <source path="dev/webfx/stack/platform/windowlocation/spi"/>
     <source path="dev/webfx/stack/platform/windowlocation/spi/impl"/>
-    <!--====================< webfx-stack-platform-windowlocation-gwt >=====================-->
+    <!--====================< webfx-platform-windowlocation-gwt >=====================-->
     <source path="dev/webfx/stack/platform/windowlocation/spi/impl/gwt"/>
     <source path="dev/webfx/stack/platform/windowlocation/spi/impl/gwt/jsinterop"/>
     <!--================================< webfx-stack-push >================================-->

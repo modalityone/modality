@@ -11,11 +11,11 @@ module modality.event.frontoffice.activities.program {
     requires modality.ecommerce.client.businesslogic;
     requires modality.event.client.bookingcalendar;
     requires modality.event.client.sectionpanel;
+    requires webfx.platform.async;
     requires webfx.platform.console;
     requires webfx.platform.util;
-    requires webfx.stack.async;
+    requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
-    requires webfx.stack.platform.windowhistory;
     requires webfx.stack.routing.activity;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.util;

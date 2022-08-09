@@ -5,7 +5,7 @@ module modality.crm.backoffice.operations.mail {
     // Direct dependencies modules
     requires javafx.graphics;
     requires modality.base.shared.entities;
-    requires webfx.stack.async;
+    requires webfx.platform.async;
     requires webfx.stack.ui.operation;
 
     // Exported packages

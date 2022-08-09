@@ -5,7 +5,7 @@ module modality.ecommerce.backoffice.operations.moneytransfer {
     // Direct dependencies modules
     requires javafx.graphics;
     requires modality.base.shared.entities;
-    requires webfx.stack.async;
+    requires webfx.platform.async;
     requires webfx.stack.db.submit;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;

@@ -29,7 +29,7 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-async</artifactId>
+            <artifactId>webfx-platform-async</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

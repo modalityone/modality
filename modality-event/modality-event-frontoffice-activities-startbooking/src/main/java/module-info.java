@@ -16,11 +16,11 @@ module modality.event.frontoffice.activities.startbooking {
     requires modality.event.frontoffice.activities.terms;
     requires webfx.extras.imagestore;
     requires webfx.kit.util;
+    requires webfx.platform.async;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
-    requires webfx.stack.async;
+    requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
-    requires webfx.stack.platform.windowhistory;
     requires webfx.stack.routing.activity;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.action;

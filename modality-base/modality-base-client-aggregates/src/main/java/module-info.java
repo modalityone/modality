@@ -5,9 +5,9 @@ module modality.base.client.aggregates {
     // Direct dependencies modules
     requires java.base;
     requires modality.base.shared.entities;
+    requires webfx.platform.async;
     requires webfx.platform.console;
     requires webfx.platform.util;
-    requires webfx.stack.async;
     requires webfx.stack.com.bus;
     requires webfx.stack.com.websocket.bus;
     requires webfx.stack.db.query;

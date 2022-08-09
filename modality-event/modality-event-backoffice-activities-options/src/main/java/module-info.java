@@ -18,8 +18,8 @@ module modality.event.backoffice.activities.options {
     requires modality.hotel.shared.time;
     requires webfx.extras.visual.grid;
     requires webfx.kit.util;
+    requires webfx.platform.async;
     requires webfx.platform.util;
-    requires webfx.stack.async;
     requires webfx.stack.db.submit;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;

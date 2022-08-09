@@ -21,14 +21,14 @@ module modality.ecommerce.backoffice.activities.bookings {
     requires modality.event.frontoffice.activities.fees;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
+    requires webfx.platform.async;
     requires webfx.platform.util;
-    requires webfx.stack.async;
+    requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.expression;
     requires webfx.stack.orm.reactive.dql;
     requires webfx.stack.orm.reactive.visual;
-    requires webfx.stack.platform.windowhistory;
     requires webfx.stack.routing.activity;
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.uirouter;

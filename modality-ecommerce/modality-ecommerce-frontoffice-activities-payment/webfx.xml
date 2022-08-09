@@ -13,7 +13,7 @@
         <used-by-source-modules>
             <undetected-module>modality-base-client-aggregates</undetected-module>
             <undetected-module>webfx-stack-routing-activity</undetected-module>
-            <undetected-module>webfx-stack-async</undetected-module>
+            <undetected-module>webfx-platform-async</undetected-module>
             <undetected-module>webfx-stack-db-submit</undetected-module>
         </used-by-source-modules>
     </dependencies>

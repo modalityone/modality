@@ -6,14 +6,14 @@ module modality.base.backoffice.activities.operations {
     requires javafx.graphics;
     requires modality.base.client.activity;
     requires webfx.kit.launcher;
+    requires webfx.platform.async;
     requires webfx.platform.util;
-    requires webfx.stack.async;
+    requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
     requires webfx.stack.orm.reactive.visual;
-    requires webfx.stack.platform.windowhistory;
     requires webfx.stack.routing.activity;
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.uirouter;

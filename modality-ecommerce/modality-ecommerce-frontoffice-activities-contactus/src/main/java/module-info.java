@@ -10,15 +10,15 @@ module modality.ecommerce.frontoffice.activities.contactus {
     requires modality.base.client.validation;
     requires modality.base.shared.entities;
     requires modality.ecommerce.frontoffice.activities.cart.routing;
+    requires webfx.platform.async;
     requires webfx.platform.console;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
-    requires webfx.stack.async;
+    requires webfx.platform.windowhistory;
+    requires webfx.platform.windowlocation;
     requires webfx.stack.db.submit;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.entity;
-    requires webfx.stack.platform.windowhistory;
-    requires webfx.stack.platform.windowlocation;
     requires webfx.stack.routing.activity;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.action;

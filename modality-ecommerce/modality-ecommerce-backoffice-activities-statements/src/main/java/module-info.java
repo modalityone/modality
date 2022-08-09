@@ -14,6 +14,7 @@ module modality.ecommerce.backoffice.activities.statements {
     requires modality.base.shared.entities;
     requires webfx.extras.visual;
     requires webfx.platform.util;
+    requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
@@ -21,7 +22,6 @@ module modality.ecommerce.backoffice.activities.statements {
     requires webfx.stack.orm.expression;
     requires webfx.stack.orm.reactive.dql;
     requires webfx.stack.orm.reactive.visual;
-    requires webfx.stack.platform.windowhistory;
     requires webfx.stack.routing.activity;
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.uirouter;

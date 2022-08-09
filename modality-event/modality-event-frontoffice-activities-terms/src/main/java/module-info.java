@@ -13,11 +13,11 @@ module modality.event.frontoffice.activities.terms {
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid.peers.base;
     requires webfx.platform.util;
+    requires webfx.platform.windowhistory;
     requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.reactive.visual;
-    requires webfx.stack.platform.windowhistory;
     requires webfx.stack.routing.activity;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.util;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
 
-    <parent name="webfx-stack-parent"/>
+    <parent name="webfx-parent"/>
 
     <groupId>dev.webfx</groupId>
     <artifactId>modality</artifactId>
@@ -51,7 +51,7 @@
 
         <project name="modality">
 
-            <parent name="webfx-stack-parent"/>
+            <parent name="webfx-parent"/>
 
             <groupId>dev.webfx</groupId>
             <artifactId>modality</artifactId>
@@ -290,13 +290,13 @@
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-orm-domainmodel</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-orm-dql</module>
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-orm-entity-controls</module>
                 <module>webfx-stack-orm-reactive-visual</module>
-                <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-routing-router</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-action</module>
@@ -337,11 +337,11 @@
                 <module>webfx-extras-visual-charts</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-orm-reactive-entities</module>
                 <module>webfx-stack-orm-reactive-visual</module>
-                <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-routing-router</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
@@ -364,7 +364,7 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -379,12 +379,12 @@
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-launcher</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-orm-dql</module>
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-orm-entity-controls</module>
                 <module>webfx-stack-orm-reactive-visual</module>
-                <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-routing-router</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
@@ -458,8 +458,8 @@
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
+                <module>webfx-platform-async</module>
                 <module>webfx-platform-util</module>
-                <module>webfx-stack-async</module>
                 <module>webfx-stack-i18n</module>
                 <module>webfx-stack-orm-domainmodel</module>
                 <module>webfx-stack-orm-entity</module>
@@ -487,7 +487,7 @@
             <used-by-source-modules>
                 <module>modality-base-shared-entities</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-stack-async</module>
+                <module>webfx-platform-async</module>
                 <module>webfx-stack-db-submit</module>
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-orm-entity-controls</module>
@@ -519,7 +519,7 @@
                 <module>modality-base-shared-entities</module>
                 <module>webfx-extras-type</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-stack-async</module>
+                <module>webfx-platform-async</module>
                 <module>webfx-stack-db-submit</module>
                 <module>webfx-stack-orm-domainmodel</module>
                 <module>webfx-stack-orm-entity</module>
@@ -551,7 +551,7 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>webfx-stack-async</module>
+                <module>webfx-platform-async</module>
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-orm-reactive-entities</module>
                 <module>webfx-stack-ui-operation</module>
@@ -589,14 +589,14 @@
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
+                <module>webfx-platform-async</module>
                 <module>webfx-platform-console</module>
+                <module>webfx-platform-json</module>
                 <module>webfx-platform-util</module>
-                <module>webfx-stack-async</module>
                 <module>webfx-stack-db-query</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-orm-reactive-dql</module>
                 <module>webfx-stack-orm-reactive-visual</module>
-                <module>webfx-stack-platform-json</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-controls</module>
                 <module>webfx-stack-ui-util</module>
@@ -623,9 +623,9 @@
             <used-by-source-modules>
                 <module>java.base</module>
                 <module>modality-base-shared-entities</module>
+                <module>webfx-platform-async</module>
                 <module>webfx-platform-console</module>
                 <module>webfx-platform-util</module>
-                <module>webfx-stack-async</module>
                 <module>webfx-stack-com-bus</module>
                 <module>webfx-stack-com-websocket-bus</module>
                 <module>webfx-stack-db-query</module>
@@ -926,7 +926,7 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>javafx-base</undetected-module>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -983,7 +983,7 @@
                 <used-by-source-modules>
                     <undetected-module>javafx-base</undetected-module>
                     <undetected-module>webfx-stack-db-submit</undetected-module>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1211,10 +1211,10 @@
 
             <used-by-source-modules>
                 <module>webfx-platform-console</module>
+                <module>webfx-platform-json</module>
                 <module>webfx-platform-resource</module>
                 <module>webfx-stack-db-datasource</module>
                 <module>webfx-stack-orm-datasourcemodel-service</module>
-                <module>webfx-stack-platform-json</module>
             </used-by-source-modules>
 
         </project>
@@ -1232,7 +1232,7 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-orm-domainmodel</undetected-module>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1262,7 +1262,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1348,9 +1348,10 @@
                 <module>java.base</module>
                 <module>webfx-extras-type</module>
                 <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-platform-async</module>
+                <module>webfx-platform-json</module>
                 <module>webfx-platform-resource</module>
                 <module>webfx-platform-util</module>
-                <module>webfx-stack-async</module>
                 <module>webfx-stack-com-serial</module>
                 <module>webfx-stack-db-query</module>
                 <module>webfx-stack-orm-datasourcemodel-service</module>
@@ -1359,7 +1360,6 @@
                 <module>webfx-stack-orm-dql</module>
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-orm-expression</module>
-                <module>webfx-stack-platform-json</module>
             </used-by-source-modules>
 
         </project>
@@ -1475,11 +1475,11 @@
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-orm-dql</module>
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-orm-reactive-visual</module>
-                <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-routing-router</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
@@ -1508,7 +1508,7 @@
                 <module>modality-base-backoffice-operations-generic</module>
                 <module>modality-base-shared-entities</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-stack-async</module>
+                <module>webfx-platform-async</module>
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-orm-entity-controls</module>
                 <module>webfx-stack-ui-controls</module>
@@ -1549,7 +1549,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
@@ -1568,12 +1568,12 @@
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-orm-dql</module>
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-orm-entity-controls</module>
                 <module>webfx-stack-orm-reactive-visual</module>
-                <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-routing-router</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
@@ -1610,8 +1610,8 @@
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
-                <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-controls</module>
             </used-by-source-modules>
@@ -1633,7 +1633,7 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-orm-entity</undetected-module>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                     <undetected-module>webfx-kit-javafxgraphics-emul</undetected-module>
                 </used-by-source-modules>
@@ -1649,10 +1649,10 @@
                 <module>modality-base-client-activity</module>
                 <module>modality-base-client-util</module>
                 <module>modality-crm-backoffice-activities-letter</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-orm-dql</module>
                 <module>webfx-stack-orm-reactive-visual</module>
-                <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-routing-router</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
@@ -1675,7 +1675,7 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-orm-entity</undetected-module>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1692,11 +1692,11 @@
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-i18n</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-orm-dql</module>
                 <module>webfx-stack-orm-reactive-visual</module>
-                <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-routing-router</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
@@ -1738,12 +1738,12 @@
                 <module>webfx-extras-visual</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-orm-dql</module>
                 <module>webfx-stack-orm-expression</module>
                 <module>webfx-stack-orm-reactive-dql</module>
                 <module>webfx-stack-orm-reactive-visual</module>
-                <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-routing-router</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-action</module>
@@ -1760,7 +1760,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1815,7 +1815,7 @@
             <used-by-source-modules>
                 <module>modality-base-shared-entities</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-stack-async</module>
+                <module>webfx-platform-async</module>
                 <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
 
@@ -1830,7 +1830,7 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -1909,7 +1909,7 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>webfx-stack-async</module>
+                <module>webfx-platform-async</module>
                 <module>webfx-stack-authn</module>
                 <module>webfx-stack-db-query</module>
                 <module>webfx-stack-orm-datasourcemodel-service</module>
@@ -1930,7 +1930,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2063,13 +2063,13 @@
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-stack-async</module>
+                <module>webfx-platform-async</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-orm-dql</module>
                 <module>webfx-stack-orm-expression</module>
                 <module>webfx-stack-orm-reactive-dql</module>
                 <module>webfx-stack-orm-reactive-visual</module>
-                <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-routing-router</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-action</module>
@@ -2117,12 +2117,12 @@
                 <module>webfx-extras-visual-grid</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-orm-dql</module>
                 <module>webfx-stack-orm-entity-controls</module>
                 <module>webfx-stack-orm-reactive-dql</module>
                 <module>webfx-stack-orm-reactive-visual</module>
-                <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-routing-router</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
@@ -2146,7 +2146,7 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-ui-action</undetected-module>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2171,6 +2171,7 @@
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-db-submit</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-orm-dql</module>
@@ -2178,7 +2179,6 @@
                 <module>webfx-stack-orm-entity-controls</module>
                 <module>webfx-stack-orm-reactive-entities</module>
                 <module>webfx-stack-orm-reactive-visual</module>
-                <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-routing-router</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-action</module>
@@ -2229,12 +2229,12 @@
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-orm-dql</module>
                 <module>webfx-stack-orm-expression</module>
                 <module>webfx-stack-orm-reactive-dql</module>
                 <module>webfx-stack-orm-reactive-visual</module>
-                <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-routing-router</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
@@ -2280,6 +2280,7 @@
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-orm-dql</module>
                 <module>webfx-stack-orm-entity</module>
@@ -2287,7 +2288,6 @@
                 <module>webfx-stack-orm-expression</module>
                 <module>webfx-stack-orm-reactive-dql</module>
                 <module>webfx-stack-orm-reactive-visual</module>
-                <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-routing-router</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
@@ -2338,6 +2338,7 @@
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-orm-dql</module>
                 <module>webfx-stack-orm-entity</module>
@@ -2345,7 +2346,6 @@
                 <module>webfx-stack-orm-reactive-dql</module>
                 <module>webfx-stack-orm-reactive-entities</module>
                 <module>webfx-stack-orm-reactive-visual</module>
-                <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-routing-router</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
@@ -2383,7 +2383,7 @@
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-launcher</module>
-                <module>webfx-stack-async</module>
+                <module>webfx-platform-async</module>
                 <module>webfx-stack-ui-controls</module>
                 <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
@@ -2410,7 +2410,7 @@
                 <module>modality-base-backoffice-operations-generic</module>
                 <module>modality-base-shared-entities</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-stack-async</module>
+                <module>webfx-platform-async</module>
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-orm-entity-controls</module>
                 <module>webfx-stack-ui-controls</module>
@@ -2438,7 +2438,7 @@
                 <module>java.base</module>
                 <module>modality-base-shared-entities</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-stack-async</module>
+                <module>webfx-platform-async</module>
                 <module>webfx-stack-db-submit</module>
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-orm-entity-controls</module>
@@ -2467,7 +2467,7 @@
             <used-by-source-modules>
                 <module>modality-base-shared-entities</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-stack-async</module>
+                <module>webfx-platform-async</module>
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-orm-entity-controls</module>
                 <module>webfx-stack-ui-controls</module>
@@ -2523,8 +2523,8 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-platform-windowhistory</undetected-module>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-windowhistory</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2580,8 +2580,8 @@
                 <module>modality-hotel-shared-time</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-async</module>
                 <module>webfx-platform-util</module>
-                <module>webfx-stack-async</module>
                 <module>webfx-stack-db-query</module>
                 <module>webfx-stack-db-submit</module>
                 <module>webfx-stack-orm-entity</module>
@@ -2632,10 +2632,10 @@
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-async</module>
                 <module>webfx-platform-console</module>
                 <module>webfx-platform-uischeduler</module>
                 <module>webfx-platform-util</module>
-                <module>webfx-stack-async</module>
                 <module>webfx-stack-i18n</module>
                 <module>webfx-stack-orm-domainmodel</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
@@ -2658,7 +2658,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2677,11 +2677,11 @@
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
+                <module>webfx-platform-json</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-i18n</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
-                <module>webfx-stack-platform-json</module>
-                <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
@@ -2701,7 +2701,7 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                     <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2723,10 +2723,10 @@
                 <module>webfx-platform-console</module>
                 <module>webfx-platform-uischeduler</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-platform-windowhistory</module>
+                <module>webfx-platform-windowlocation</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-orm-entity</module>
-                <module>webfx-stack-platform-windowhistory</module>
-                <module>webfx-stack-platform-windowlocation</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-action</module>
                 <module>webfx-stack-ui-util</module>
@@ -2748,7 +2748,7 @@
                 <used-by-source-modules>
                     <undetected-module>modality-base-client-aggregates</undetected-module>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                     <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2774,13 +2774,13 @@
                 <module>webfx-platform-console</module>
                 <module>webfx-platform-uischeduler</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-platform-windowhistory</module>
+                <module>webfx-platform-windowlocation</module>
                 <module>webfx-stack-com-bus</module>
                 <module>webfx-stack-com-websocket-bus</module>
                 <module>webfx-stack-i18n</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-orm-entity</module>
-                <module>webfx-stack-platform-windowhistory</module>
-                <module>webfx-stack-platform-windowlocation</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-action</module>
                 <module>webfx-stack-ui-controls</module>
@@ -2824,8 +2824,8 @@
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
-                <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
@@ -2845,7 +2845,7 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2872,9 +2872,9 @@
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-console</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-i18n</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
-                <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-routing-uirouter</module>
             </used-by-source-modules>
 
@@ -2913,7 +2913,7 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-orm-entity</undetected-module>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2959,7 +2959,7 @@
 
             <used-by-source-modules>
                 <module>modality-base-client-util</module>
-                <module>webfx-stack-platform-windowhistory</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
@@ -2982,7 +2982,7 @@
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-orm-entity</undetected-module>
                     <undetected-module>webfx-kit-javafxgraphics-emul</undetected-module>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2998,10 +2998,10 @@
                 <module>modality-ecommerce-backoffice-activities-bookings</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-orm-dql</module>
                 <module>webfx-stack-orm-reactive-visual</module>
-                <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-routing-router</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
@@ -3023,7 +3023,7 @@
                 <used-by-source-modules>
                     <undetected-module>modality-base-client-aggregates</undetected-module>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -3067,7 +3067,7 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -3164,7 +3164,7 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                     <undetected-module>webfx-stack-db-query</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -3198,13 +3198,13 @@
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-console</module>
+                <module>webfx-platform-json</module>
                 <module>webfx-platform-uischeduler</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-i18n</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-orm-entity</module>
-                <module>webfx-stack-platform-json</module>
-                <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
@@ -3225,7 +3225,7 @@
                 <used-by-source-modules>
                     <undetected-module>modality-base-client-aggregates</undetected-module>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -3257,11 +3257,11 @@
                 <module>webfx-platform-console</module>
                 <module>webfx-platform-uischeduler</module>
                 <module>webfx-platform-util</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-i18n</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-orm-entity-controls</module>
-                <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
@@ -3281,7 +3281,7 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                 </used-by-source-modules>
@@ -3302,8 +3302,8 @@
                 <module>modality-event-client-sectionpanel</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-platform-console</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
-                <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
@@ -3324,7 +3324,7 @@
                 <used-by-source-modules>
                     <undetected-module>modality-base-shared-entities</undetected-module>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -3349,8 +3349,8 @@
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-uischeduler</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
-                <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-action</module>
                 <module>webfx-stack-ui-util</module>
@@ -3391,11 +3391,11 @@
                 <module>webfx-extras-visual-grid-peers-base</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-i18n</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-orm-dql</module>
                 <module>webfx-stack-orm-reactive-visual</module>
-                <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
@@ -3428,9 +3428,9 @@
                     <undetected-module>webfx-stack-ui-action</undetected-module>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
-                    <undetected-module>webfx-stack-async</undetected-module>
+                    <undetected-module>webfx-platform-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
-                    <undetected-module>webfx-stack-platform-json</undetected-module>
+                    <undetected-module>webfx-platform-json</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -3455,6 +3455,8 @@
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
+                <module>webfx-platform-json</module>
+                <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-com-serial</module>
                 <module>webfx-stack-db-datascope</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
@@ -3462,8 +3464,6 @@
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-orm-reactive-entities</module>
                 <module>webfx-stack-orm-reactive-visual</module>
-                <module>webfx-stack-platform-json</module>
-                <module>webfx-stack-platform-windowhistory</module>
                 <module>webfx-stack-routing-router</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-action</module>
@@ -3491,7 +3491,7 @@
             <used-by-source-modules>
                 <module>modality-base-shared-entities</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-stack-async</module>
+                <module>webfx-platform-async</module>
                 <module>webfx-stack-db-submit</module>
                 <module>webfx-stack-orm-domainmodel</module>
                 <module>webfx-stack-orm-entity</module>
@@ -3518,8 +3518,8 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
+                <module>webfx-platform-json</module>
                 <module>webfx-platform-util</module>
-                <module>webfx-stack-platform-json</module>
             </used-by-source-modules>
 
         </project>

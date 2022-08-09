@@ -8,6 +8,7 @@ module modality.base.server.application.vertx {
     requires modality.base.shared.domainmodel;
     requires webfx.platform.boot.vertx;
     requires webfx.platform.console.java;
+    requires webfx.platform.json.vertx;
     requires webfx.platform.resource.java;
     requires webfx.platform.scheduler.vertx;
     requires webfx.platform.shutdown.java;
@@ -16,7 +17,6 @@ module modality.base.server.application.vertx {
     requires webfx.stack.orm.dql.query.interceptor;
     requires webfx.stack.orm.dql.querypush.interceptor;
     requires webfx.stack.orm.dql.submit.interceptor;
-    requires webfx.stack.platform.json.vertx;
     requires webfx.stack.push.server.simple;
     requires webfx.stack.querypush.server.simple;
 

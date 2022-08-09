@@ -132,19 +132,19 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-platform-json-java</artifactId>
+            <artifactId>webfx-platform-json-java</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-platform-windowhistory-java</artifactId>
+            <artifactId>webfx-platform-windowhistory-java</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-platform-windowlocation-java</artifactId>
+            <artifactId>webfx-platform-windowlocation-java</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

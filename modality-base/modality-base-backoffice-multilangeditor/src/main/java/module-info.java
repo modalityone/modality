@@ -9,8 +9,8 @@ module modality.base.backoffice.multilangeditor {
     requires modality.base.client.icons;
     requires webfx.extras.webtext;
     requires webfx.kit.util;
+    requires webfx.platform.async;
     requires webfx.platform.util;
-    requires webfx.stack.async;
     requires webfx.stack.db.submit;
     requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel;

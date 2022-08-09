@@ -17,8 +17,10 @@ module modality.hotel.backoffice.activities.roomsgraphic {
     requires webfx.extras.imagestore;
     requires webfx.extras.visual.grid;
     requires webfx.kit.util;
+    requires webfx.platform.async;
+    requires webfx.platform.json;
     requires webfx.platform.util;
-    requires webfx.stack.async;
+    requires webfx.platform.windowhistory;
     requires webfx.stack.com.serial;
     requires webfx.stack.db.datascope;
     requires webfx.stack.orm.domainmodel.activity;
@@ -26,8 +28,6 @@ module modality.hotel.backoffice.activities.roomsgraphic {
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.reactive.entities;
     requires webfx.stack.orm.reactive.visual;
-    requires webfx.stack.platform.json;
-    requires webfx.stack.platform.windowhistory;
     requires webfx.stack.routing.activity;
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.uirouter;

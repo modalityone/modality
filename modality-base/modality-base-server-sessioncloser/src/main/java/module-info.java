@@ -3,9 +3,9 @@
 module modality.base.server.sessioncloser {
 
     // Direct dependencies modules
+    requires webfx.platform.async;
     requires webfx.platform.boot;
     requires webfx.platform.console;
-    requires webfx.stack.async;
     requires webfx.stack.db.submit;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel;

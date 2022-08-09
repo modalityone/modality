@@ -8,13 +8,13 @@ module modality.event.backoffice.activities.events {
     requires modality.base.client.activity;
     requires modality.base.client.util;
     requires modality.ecommerce.backoffice.activities.bookings;
+    requires webfx.platform.async;
     requires webfx.platform.util;
-    requires webfx.stack.async;
+    requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.reactive.visual;
-    requires webfx.stack.platform.windowhistory;
     requires webfx.stack.routing.activity;
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.uirouter;

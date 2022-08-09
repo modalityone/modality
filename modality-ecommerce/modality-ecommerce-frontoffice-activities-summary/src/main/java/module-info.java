@@ -17,12 +17,12 @@ module modality.ecommerce.frontoffice.activities.summary {
     requires modality.event.client.bookingcalendar;
     requires modality.event.client.sectionpanel;
     requires webfx.kit.util;
+    requires webfx.platform.async;
     requires webfx.platform.console;
     requires webfx.platform.util;
-    requires webfx.stack.async;
+    requires webfx.platform.windowhistory;
     requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel.activity;
-    requires webfx.stack.platform.windowhistory;
     requires webfx.stack.routing.activity;
     requires webfx.stack.routing.uirouter;
 

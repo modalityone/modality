@@ -9,7 +9,7 @@ module modality.ecommerce.backoffice.operations.document {
     requires modality.base.shared.entities;
     requires modality.crm.client.personaldetails;
     requires webfx.kit.launcher;
-    requires webfx.stack.async;
+    requires webfx.platform.async;
     requires webfx.stack.db.submit;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.ui.controls;

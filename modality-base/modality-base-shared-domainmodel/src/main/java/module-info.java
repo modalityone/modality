@@ -6,9 +6,10 @@ module modality.base.shared.domainmodel {
     requires java.base;
     requires javafx.base;
     requires webfx.extras.type;
+    requires webfx.platform.async;
+    requires webfx.platform.json;
     requires webfx.platform.resource;
     requires webfx.platform.util;
-    requires webfx.stack.async;
     requires webfx.stack.com.serial;
     requires webfx.stack.db.query;
     requires webfx.stack.orm.datasourcemodel.service;
@@ -17,7 +18,6 @@ module modality.base.shared.domainmodel {
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.expression;
-    requires webfx.stack.platform.json;
 
     // Exported packages
     exports org.modality_project.base.shared.domainmodel.formatters;

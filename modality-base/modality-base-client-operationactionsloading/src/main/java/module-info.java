@@ -5,9 +5,9 @@ module modality.base.client.operationactionsloading {
     // Direct dependencies modules
     requires java.base;
     requires javafx.base;
+    requires webfx.platform.async;
     requires webfx.platform.boot;
     requires webfx.platform.console;
-    requires webfx.stack.async;
     requires webfx.stack.i18n;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.entity;

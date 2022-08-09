@@ -15,9 +15,9 @@
             <undetected-module>webfx-stack-ui-action</undetected-module>
             <undetected-module>webfx-stack-routing-activity</undetected-module>
             <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
-            <undetected-module>webfx-stack-async</undetected-module>
+            <undetected-module>webfx-platform-async</undetected-module>
             <undetected-module>webfx-platform-util</undetected-module>
-            <undetected-module>webfx-stack-platform-json</undetected-module>
+            <undetected-module>webfx-platform-json</undetected-module>
         </used-by-source-modules>
     </dependencies>
 

@@ -8,7 +8,7 @@ module modality.base.backoffice.operations.generic {
     requires modality.base.shared.entities;
     requires webfx.extras.type;
     requires webfx.extras.visual.grid;
-    requires webfx.stack.async;
+    requires webfx.platform.async;
     requires webfx.stack.db.submit;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.entity;
