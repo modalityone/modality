@@ -5,7 +5,7 @@ import dev.webfx.stack.orm.domainmodel.HasDataSourceModel;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
-import dev.webfx.stack.async.Future;
+import dev.webfx.platform.async.Future;
 import dev.webfx.stack.db.query.QueryResult;
 import dev.webfx.platform.util.collection.Collections;
 import org.modality_project.base.client.aggregates.person.PersonAggregate;

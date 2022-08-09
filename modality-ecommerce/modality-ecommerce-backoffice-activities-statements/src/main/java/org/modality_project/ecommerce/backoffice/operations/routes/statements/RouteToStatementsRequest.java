@@ -3,7 +3,7 @@ package org.modality_project.ecommerce.backoffice.operations.routes.statements;
 import org.modality_project.ecommerce.backoffice.activities.statements.routing.StatementsRouting;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.ui.operation.HasOperationCode;
-import dev.webfx.stack.platform.windowhistory.spi.BrowsingHistory;
+import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 
 /**
  * @author Bruno Salmon

@@ -480,8 +480,8 @@
     <!--============================< webfx-lib-javacupruntime >============================-->
     <source path="java_cup/runtime"/>
     <!--==============================< webfx-platform-async >==============================-->
-    <source path="dev/webfx/stack/async"/>
-    <source path="dev/webfx/stack/async/impl"/>
+    <source path="dev/webfx/platform/async"/>
+    <source path="dev/webfx/platform/async/impl"/>
     <!--==============================< webfx-platform-boot >===============================-->
     <source path="dev/webfx/platform/boot"/>
     <source path="dev/webfx/platform/boot/spi"/>
@@ -498,14 +498,14 @@
     <source path="emul/java/util"/>
     <source path="emul/java/util/regex"/>
     <!--==============================< webfx-platform-json >===============================-->
-    <source path="dev/webfx/stack/platform/json"/>
-    <source path="dev/webfx/stack/platform/json/parser"/>
-    <source path="dev/webfx/stack/platform/json/parser/javacup"/>
-    <source path="dev/webfx/stack/platform/json/parser/jflex"/>
-    <source path="dev/webfx/stack/platform/json/spi"/>
-    <source path="dev/webfx/stack/platform/json/spi/impl/listmap"/>
+    <source path="dev/webfx/platform/json"/>
+    <source path="dev/webfx/platform/json/parser"/>
+    <source path="dev/webfx/platform/json/parser/javacup"/>
+    <source path="dev/webfx/platform/json/parser/jflex"/>
+    <source path="dev/webfx/platform/json/spi"/>
+    <source path="dev/webfx/platform/json/spi/impl/listmap"/>
     <!--============================< webfx-platform-json-gwt >=============================-->
-    <source path="dev/webfx/stack/platform/json/spi/impl/gwt"/>
+    <source path="dev/webfx/platform/json/spi/impl/gwt"/>
     <!--============================< webfx-platform-resource >=============================-->
     <source path="dev/webfx/platform/resource"/>
     <source path="dev/webfx/platform/resource/spi"/>
@@ -540,21 +540,21 @@
     <source path="dev/webfx/platform/util/tuples"/>
     <source path="dev/webfx/platform/util/uuid"/>
     <!--==========================< webfx-platform-windowhistory >==========================-->
-    <source path="dev/webfx/stack/platform/windowhistory"/>
-    <source path="dev/webfx/stack/platform/windowhistory/spi"/>
-    <source path="dev/webfx/stack/platform/windowhistory/spi/impl"/>
+    <source path="dev/webfx/platform/windowhistory"/>
+    <source path="dev/webfx/platform/windowhistory/spi"/>
+    <source path="dev/webfx/platform/windowhistory/spi/impl"/>
     <!--========================< webfx-platform-windowhistory-gwt >========================-->
-    <source path="dev/webfx/stack/platform/windowhistory/spi/impl/gwt"/>
-    <source path="dev/webfx/stack/platform/windowhistory/spi/impl/gwt/jsinterop"/>
+    <source path="dev/webfx/platform/windowhistory/spi/impl/gwt"/>
+    <source path="dev/webfx/platform/windowhistory/spi/impl/gwt/jsinterop"/>
     <!--========================< webfx-platform-windowhistory-web >========================-->
-    <source path="dev/webfx/stack/platform/windowhistory/spi/impl/web"/>
+    <source path="dev/webfx/platform/windowhistory/spi/impl/web"/>
     <!--=========================< webfx-platform-windowlocation >==========================-->
-    <source path="dev/webfx/stack/platform/windowlocation"/>
-    <source path="dev/webfx/stack/platform/windowlocation/spi"/>
-    <source path="dev/webfx/stack/platform/windowlocation/spi/impl"/>
+    <source path="dev/webfx/platform/windowlocation"/>
+    <source path="dev/webfx/platform/windowlocation/spi"/>
+    <source path="dev/webfx/platform/windowlocation/spi/impl"/>
     <!--=======================< webfx-platform-windowlocation-gwt >========================-->
-    <source path="dev/webfx/stack/platform/windowlocation/spi/impl/gwt"/>
-    <source path="dev/webfx/stack/platform/windowlocation/spi/impl/gwt/jsinterop"/>
+    <source path="dev/webfx/platform/windowlocation/spi/impl/gwt"/>
+    <source path="dev/webfx/platform/windowlocation/spi/impl/gwt/jsinterop"/>
     <!--===============================< webfx-stack-authn >================================-->
     <source path="dev/webfx/stack/authn"/>
     <source path="dev/webfx/stack/authn/spi"/>

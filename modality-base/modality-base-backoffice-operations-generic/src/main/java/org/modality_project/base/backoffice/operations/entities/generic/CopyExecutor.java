@@ -7,7 +7,7 @@ import dev.webfx.stack.orm.reactive.entities.entities_to_grid.EntityColumnFactor
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.expression.Expression;
 import dev.webfx.stack.orm.domainmodel.formatter.ValueFormatter;
-import dev.webfx.stack.async.Future;
+import dev.webfx.platform.async.Future;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -3,7 +3,7 @@ package org.modality_project.hotel.backoffice.operations.routes.roomsgraphic;
 import org.modality_project.hotel.backoffice.activities.roomsgraphic.routing.RoomsGraphicRouting;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.ui.operation.HasOperationCode;
-import dev.webfx.stack.platform.windowhistory.spi.BrowsingHistory;
+import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 
 /**
  * @author Bruno Salmon

@@ -14,8 +14,8 @@ import dev.webfx.stack.db.query.QueryResult;
 import dev.webfx.stack.db.query.QueryService;
 import dev.webfx.platform.util.Numbers;
 import dev.webfx.platform.util.Objects;
-import dev.webfx.stack.async.Future;
-import dev.webfx.stack.async.FutureBroadcaster;
+import dev.webfx.platform.async.Future;
+import dev.webfx.platform.async.FutureBroadcaster;
 import dev.webfx.platform.util.collection.Collections;
 
 import java.util.HashMap;

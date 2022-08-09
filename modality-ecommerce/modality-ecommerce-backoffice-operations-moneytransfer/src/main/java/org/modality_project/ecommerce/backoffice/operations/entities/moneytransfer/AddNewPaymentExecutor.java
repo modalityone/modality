@@ -2,7 +2,7 @@ package org.modality_project.ecommerce.backoffice.operations.entities.moneytrans
 
 import javafx.scene.layout.Pane;
 import org.modality_project.base.shared.entities.Document;
-import dev.webfx.stack.async.Future;
+import dev.webfx.platform.async.Future;
 
 final class AddNewPaymentExecutor {
 

@@ -6,8 +6,8 @@ import dev.webfx.stack.db.datasource.DBMS;
 import dev.webfx.stack.db.datasource.LocalDataSource;
 import dev.webfx.stack.db.datasource.spi.LocalDataSourceProvider;
 import dev.webfx.stack.db.datasource.spi.simple.SimpleLocalDataSource;
-import dev.webfx.stack.platform.json.Json;
-import dev.webfx.stack.platform.json.JsonObject;
+import dev.webfx.platform.json.Json;
+import dev.webfx.platform.json.JsonObject;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.resource.Resource;
 

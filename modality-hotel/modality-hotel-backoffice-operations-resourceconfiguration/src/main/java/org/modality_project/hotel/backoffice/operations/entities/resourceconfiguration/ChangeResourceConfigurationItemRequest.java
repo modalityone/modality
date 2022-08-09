@@ -5,7 +5,7 @@ import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
-import dev.webfx.stack.async.AsyncFunction;
+import dev.webfx.platform.async.AsyncFunction;
 
 public final class ChangeResourceConfigurationItemRequest implements HasOperationCode,
         HasOperationExecutor<ChangeResourceConfigurationItemRequest, Void> {

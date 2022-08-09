@@ -4,7 +4,7 @@ import javafx.scene.layout.Pane;
 import org.modality_project.base.shared.entities.DocumentLine;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
-import dev.webfx.stack.async.AsyncFunction;
+import dev.webfx.platform.async.AsyncFunction;
 
 public final class EditDocumentLineRequest implements HasOperationCode,
         HasOperationExecutor<EditDocumentLineRequest, Void> {

@@ -46,7 +46,7 @@ import dev.webfx.extras.type.PrimType;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Arrays;
-import dev.webfx.stack.async.Future;
+import dev.webfx.platform.async.Future;
 import dev.webfx.platform.util.collection.Collections;
 
 import java.util.List;

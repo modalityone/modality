@@ -4,7 +4,7 @@ import javafx.scene.layout.Pane;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
 import dev.webfx.stack.orm.entity.Entity;
-import dev.webfx.stack.async.AsyncFunction;
+import dev.webfx.platform.async.AsyncFunction;
 
 public final class DeleteAllocationRuleRequest implements HasOperationCode,
         HasOperationExecutor<DeleteAllocationRuleRequest, Void> {

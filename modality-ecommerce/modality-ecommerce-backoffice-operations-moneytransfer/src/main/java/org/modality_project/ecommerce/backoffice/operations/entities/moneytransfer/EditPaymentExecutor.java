@@ -3,7 +3,7 @@ package org.modality_project.ecommerce.backoffice.operations.entities.moneytrans
 import javafx.scene.layout.Pane;
 import org.modality_project.base.shared.entities.MoneyTransfer;
 import dev.webfx.stack.orm.entity.controls.entity.sheet.EntityPropertiesSheet;
-import dev.webfx.stack.async.Future;
+import dev.webfx.platform.async.Future;
 
 final class EditPaymentExecutor {
 

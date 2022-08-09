@@ -12,7 +12,7 @@ import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.com.websocket.bus.WebSocketBus;
-import dev.webfx.stack.platform.windowlocation.WindowLocation;
+import dev.webfx.platform.windowlocation.WindowLocation;
 import dev.webfx.stack.com.bus.BusService;
 import dev.webfx.platform.util.Dates;
 import dev.webfx.platform.util.Strings;

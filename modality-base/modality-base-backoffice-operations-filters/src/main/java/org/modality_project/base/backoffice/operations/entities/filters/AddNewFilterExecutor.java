@@ -3,7 +3,7 @@ package org.modality_project.base.backoffice.operations.entities.filters;
 import dev.webfx.stack.orm.entity.controls.entity.sheet.EntityPropertiesSheet;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
-import dev.webfx.stack.async.Future;
+import dev.webfx.platform.async.Future;
 import javafx.scene.layout.Pane;
 import org.modality_project.base.shared.entities.Filter;
 

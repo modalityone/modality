@@ -1,6 +1,6 @@
 package org.modality_project.ecommerce.client.businessdata.workingdocument;
 
-import dev.webfx.stack.async.AsyncUtil;
+import dev.webfx.platform.async.AsyncUtil;
 import org.modality_project.base.client.aggregates.cart.CartAggregateImpl;
 import org.modality_project.base.client.aggregates.event.EventAggregate;
 import org.modality_project.base.shared.entities.Attendance;
@@ -9,7 +9,7 @@ import org.modality_project.base.shared.entities.DocumentLine;
 import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
-import dev.webfx.stack.async.Future;
+import dev.webfx.platform.async.Future;
 import dev.webfx.platform.util.collection.Collections;
 
 import java.util.ArrayList;

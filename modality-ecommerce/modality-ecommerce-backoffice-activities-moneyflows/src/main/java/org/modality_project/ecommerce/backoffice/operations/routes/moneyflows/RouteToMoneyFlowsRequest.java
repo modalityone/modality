@@ -2,7 +2,7 @@ package org.modality_project.ecommerce.backoffice.operations.routes.moneyflows;
 
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.ui.operation.HasOperationCode;
-import dev.webfx.stack.platform.windowhistory.spi.BrowsingHistory;
+import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import org.modality_project.ecommerce.backoffice.activities.moneyflows.routing.MoneyFlowsRouting;
 
 /**

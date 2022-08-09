@@ -4,7 +4,7 @@ import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.controls.dialog.DialogUtil;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.db.submit.SubmitArgument;
-import dev.webfx.stack.async.Future;
+import dev.webfx.platform.async.Future;
 import javafx.scene.layout.Pane;
 import org.modality_project.base.shared.entities.MoneyAccount;
 import org.modality_project.base.shared.entities.MoneyFlow;

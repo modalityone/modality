@@ -4,8 +4,8 @@ import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.db.submit.SubmitResult;
-import dev.webfx.stack.async.AsyncFunction;
-import dev.webfx.stack.async.Batch;
+import dev.webfx.platform.async.AsyncFunction;
+import dev.webfx.platform.async.Batch;
 
 public final class ToggleResourceConfigurationOnlineOfflineRequest implements HasOperationCode,
         HasOperationExecutor<ToggleResourceConfigurationOnlineOfflineRequest, Batch<SubmitResult>> {

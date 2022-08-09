@@ -3,7 +3,7 @@ package org.modality_project.base.shared.services.domainmodel;
 import org.modality_project.base.shared.services.datasourcemodel.ModalityDataSourceModelProvider;
 import dev.webfx.stack.orm.domainmodel.DomainModel;
 import dev.webfx.stack.orm.domainmodel.service.spi.DomainModelProvider;
-import dev.webfx.stack.async.Future;
+import dev.webfx.platform.async.Future;
 
 /**
  * @author Bruno Salmon

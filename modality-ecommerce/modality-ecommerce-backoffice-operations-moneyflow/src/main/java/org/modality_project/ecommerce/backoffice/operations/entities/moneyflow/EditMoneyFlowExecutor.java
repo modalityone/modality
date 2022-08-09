@@ -1,7 +1,7 @@
 package org.modality_project.ecommerce.backoffice.operations.entities.moneyflow;
 
 import dev.webfx.stack.orm.entity.controls.entity.sheet.EntityPropertiesSheet;
-import dev.webfx.stack.async.Future;
+import dev.webfx.platform.async.Future;
 import javafx.scene.layout.Pane;
 import org.modality_project.base.shared.entities.MoneyFlow;
 

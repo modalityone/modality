@@ -8,7 +8,7 @@ import org.modality_project.base.shared.entities.Document;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.controls.dialog.DialogUtil;
-import dev.webfx.stack.async.Future;
+import dev.webfx.platform.async.Future;
 
 final class EditDocumentPersonalDetailsExecutor {
 

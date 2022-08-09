@@ -4,7 +4,7 @@ import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.dql.sqlcompiler.sql.dbms.PostgresSyntax;
 import dev.webfx.stack.orm.datasourcemodel.service.spi.DataSourceModelProvider;
 import dev.webfx.stack.orm.domainmodel.service.DomainModelService;
-import dev.webfx.stack.async.Future;
+import dev.webfx.platform.async.Future;
 
 /**
  * @author Bruno Salmon

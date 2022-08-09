@@ -2,7 +2,7 @@ package org.modality_project.base.backoffice.operations.snapshot;
 
 import dev.webfx.stack.orm.reactive.entities.entities_to_grid.EntityColumn;
 import dev.webfx.stack.orm.entity.Entity;
-import dev.webfx.stack.async.Future;
+import dev.webfx.platform.async.Future;
 
 import java.util.Collection;
 

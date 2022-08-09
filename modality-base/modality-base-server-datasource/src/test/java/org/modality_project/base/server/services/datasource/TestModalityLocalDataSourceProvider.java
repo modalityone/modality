@@ -2,8 +2,8 @@ package org.modality_project.base.server.services.datasource;
 
 import dev.webfx.platform.resource.Resource;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
-import dev.webfx.stack.platform.json.Json;
-import dev.webfx.stack.platform.json.spi.impl.listmap.MapJsonObject;
+import dev.webfx.platform.json.Json;
+import dev.webfx.platform.json.spi.impl.listmap.MapJsonObject;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 

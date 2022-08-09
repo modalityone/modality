@@ -3,8 +3,8 @@ package org.modality_project.ecommerce.backoffice.operations.entities.documentli
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.controls.dialog.DialogUtil;
 import dev.webfx.stack.orm.entity.UpdateStore;
-import dev.webfx.stack.async.Future;
-import dev.webfx.stack.async.Promise;
+import dev.webfx.platform.async.Future;
+import dev.webfx.platform.async.Promise;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import org.modality_project.base.shared.entities.DocumentLine;

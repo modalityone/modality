@@ -5,7 +5,7 @@ import org.modality_project.base.shared.entities.Document;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
-import dev.webfx.stack.async.AsyncFunction;
+import dev.webfx.platform.async.AsyncFunction;
 
 public final class EditDocumentPersonalDetailsRequest implements HasOperationCode,
         HasOperationExecutor<EditDocumentPersonalDetailsRequest, Void> {

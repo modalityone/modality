@@ -8,7 +8,7 @@ import dev.webfx.stack.ui.util.layout.LayoutUtil;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.platform.uischeduler.UiScheduler;
-import dev.webfx.stack.platform.windowlocation.WindowLocation;
+import dev.webfx.platform.windowlocation.WindowLocation;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Strings;
 import javafx.scene.Node;
