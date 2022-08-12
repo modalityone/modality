@@ -3,11 +3,11 @@
 Thank you so much for your wish to contribute to Modality! There are many areas where help is needed, and we have listed some suggestions below, but we are also open to your own suggestions.
 
 
-## Adding JavaDoc
+## Adding Javadoc
 
-Modality is now starting to transition from the prototyping phase into MVP development, and the newly stable code is ready to benefit from comprehensive JavaDoc.
+Modality is now starting to transition from the prototyping phase into MVP development, and the newly stable code is ready to benefit from comprehensive Javadoc.
 
-- **If you would like to add useful JavaDoc to the codebase, please fork Modality for this purpose, then raise a pull request for us to merge your changes into main.**
+- **If you would like to add useful Javadoc to the codebase, please fork Modality for this purpose, then raise a pull request for us to merge your changes into main.**
 
 
 ## Writing unit tests
