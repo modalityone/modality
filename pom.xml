@@ -33,6 +33,17 @@
 
     </repositories>
 
+
+    <distributionManagement>
+
+        <!-- To tell mvn deploy to deploy snapshots to Sonatype repository  -->
+        <snapshotRepository>
+            <id>modality-sonatype-deploy</id>            <!-- server username & password must be set in settings.xml -->
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+
+    </distributionManagement>
+
     <packaging>pom</packaging>
 
     <modules>

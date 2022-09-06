@@ -22,7 +22,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: ${{ env.jdk-version }}
-          server-id: sonatype-deploy
+          server-id: modality-sonatype-deploy
           server-username: SONATYPE_USERNAME
           server-password: SONATYPE_PASSWORD
 
