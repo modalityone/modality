@@ -6,7 +6,7 @@
     </exported-packages>
 
     <providers>
-        <provider interface="javafx.application.Application">org.modality_project.all.backoffice.application.ModalityBackOfficeApplication</provider>
+        <provider interface="javafx.application.Application">one.modality.all.backoffice.application.ModalityBackOfficeApplication</provider>
     </providers>
 
     <dependencies>

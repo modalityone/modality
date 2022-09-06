@@ -26,12 +26,12 @@ module modality.crm.backoffice.activities.users {
     requires webfx.stack.ui.operation;
 
     // Exported packages
-    exports org.modality_project.crm.backoffice.activities.users;
-    exports org.modality_project.crm.backoffice.activities.users.routing;
-    exports org.modality_project.crm.backoffice.operations.routes.users;
+    exports one.modality.crm.backoffice.activities.users;
+    exports one.modality.crm.backoffice.activities.users.routing;
+    exports one.modality.crm.backoffice.operations.routes.users;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.crm.backoffice.activities.users.UsersUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with org.modality_project.crm.backoffice.activities.users.RouteToUsersRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.crm.backoffice.activities.users.UsersUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.crm.backoffice.activities.users.RouteToUsersRequestEmitter;
 
 }

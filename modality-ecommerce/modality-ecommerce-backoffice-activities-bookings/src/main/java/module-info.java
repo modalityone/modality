@@ -38,12 +38,12 @@ module modality.ecommerce.backoffice.activities.bookings {
     requires webfx.stack.ui.util;
 
     // Exported packages
-    exports org.modality_project.ecommerce.backoffice.activities.bookings;
-    exports org.modality_project.ecommerce.backoffice.activities.bookings.routing;
-    exports org.modality_project.ecommerce.backoffice.operations.routes.bookings;
+    exports one.modality.ecommerce.backoffice.activities.bookings;
+    exports one.modality.ecommerce.backoffice.activities.bookings.routing;
+    exports one.modality.ecommerce.backoffice.operations.routes.bookings;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.ecommerce.backoffice.activities.bookings.BookingsUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with org.modality_project.ecommerce.backoffice.activities.bookings.RouteToBookingsRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.ecommerce.backoffice.activities.bookings.BookingsUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.ecommerce.backoffice.activities.bookings.RouteToBookingsRequestEmitter;
 
 }

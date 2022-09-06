@@ -20,12 +20,12 @@ module modality.base.backoffice.activities.operations {
     requires webfx.stack.ui.operation;
 
     // Exported packages
-    exports org.modality_project.base.backoffice.activities.operations;
-    exports org.modality_project.base.backoffice.activities.operations.routing;
-    exports org.modality_project.base.backoffice.operations.routes.operations;
+    exports one.modality.base.backoffice.activities.operations;
+    exports one.modality.base.backoffice.activities.operations.routing;
+    exports one.modality.base.backoffice.operations.routes.operations;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.base.backoffice.activities.operations.OperationsUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with org.modality_project.base.backoffice.activities.operations.RouteToOperationsRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.base.backoffice.activities.operations.OperationsUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.base.backoffice.activities.operations.RouteToOperationsRequestEmitter;
 
 }

@@ -20,7 +20,7 @@ module modality.base.client.entities {
     requires webfx.stack.ui.util;
 
     // Exported packages
-    exports org.modality_project.base.client.entities.util;
-    exports org.modality_project.base.client.entities.util.filters;
+    exports one.modality.base.client.entities.util;
+    exports one.modality.base.client.entities.util.filters;
 
 }

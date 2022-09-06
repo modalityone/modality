@@ -22,12 +22,12 @@ module modality.crm.backoffice.activities.organizations {
     requires webfx.stack.ui.operation;
 
     // Exported packages
-    exports org.modality_project.crm.backoffice.activities.organizations;
-    exports org.modality_project.crm.backoffice.activities.organizations.routing;
-    exports org.modality_project.crm.backoffice.operations.routes.organizations;
+    exports one.modality.crm.backoffice.activities.organizations;
+    exports one.modality.crm.backoffice.activities.organizations.routing;
+    exports one.modality.crm.backoffice.operations.routes.organizations;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.crm.backoffice.activities.organizations.OrganizationsUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with org.modality_project.crm.backoffice.activities.organizations.RouteToOrganizationsRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.crm.backoffice.activities.organizations.OrganizationsUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.crm.backoffice.activities.organizations.RouteToOrganizationsRequestEmitter;
 
 }

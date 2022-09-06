@@ -14,6 +14,6 @@ module modality.hotel.backoffice.operations.resourceconfiguration {
     requires webfx.stack.ui.operation;
 
     // Exported packages
-    exports org.modality_project.hotel.backoffice.operations.entities.resourceconfiguration;
+    exports one.modality.hotel.backoffice.operations.entities.resourceconfiguration;
 
 }

@@ -21,8 +21,8 @@ module modality.ecommerce.frontoffice.activities.cart.routing {
     requires webfx.stack.ui.util;
 
     // Exported packages
-    exports org.modality_project.ecommerce.frontoffice.activities.cart.base;
-    exports org.modality_project.ecommerce.frontoffice.activities.cart.routing;
-    exports org.modality_project.ecommerce.frontoffice.operations.cart;
+    exports one.modality.ecommerce.frontoffice.activities.cart.base;
+    exports one.modality.ecommerce.frontoffice.activities.cart.routing;
+    exports one.modality.ecommerce.frontoffice.operations.cart;
 
 }

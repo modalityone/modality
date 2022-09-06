@@ -15,6 +15,6 @@ module modality.base.client.validation {
     requires webfx.stack.ui.validation;
 
     // Exported packages
-    exports org.modality_project.base.client.validation;
+    exports one.modality.base.client.validation;
 
 }

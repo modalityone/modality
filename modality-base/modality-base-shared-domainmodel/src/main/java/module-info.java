@@ -20,16 +20,16 @@ module modality.base.shared.domainmodel {
     requires webfx.stack.orm.expression;
 
     // Exported packages
-    exports org.modality_project.base.shared.domainmodel.formatters;
-    exports org.modality_project.base.shared.domainmodel.functions;
-    exports org.modality_project.base.shared.services.datasourcemodel;
-    exports org.modality_project.base.shared.services.domainmodel;
+    exports one.modality.base.shared.domainmodel.formatters;
+    exports one.modality.base.shared.domainmodel.functions;
+    exports one.modality.base.shared.services.datasourcemodel;
+    exports one.modality.base.shared.services.domainmodel;
 
     // Resources packages
-    opens org.modality_project.base.shared.domainmodel;
+    opens one.modality.base.shared.domainmodel;
 
     // Provided services
-    provides dev.webfx.stack.orm.datasourcemodel.service.spi.DataSourceModelProvider with org.modality_project.base.shared.services.datasourcemodel.ModalityDataSourceModelProvider;
-    provides dev.webfx.stack.orm.domainmodel.service.spi.DomainModelProvider with org.modality_project.base.shared.services.domainmodel.ModalityDomainModelProvider;
+    provides dev.webfx.stack.orm.datasourcemodel.service.spi.DataSourceModelProvider with one.modality.base.shared.services.datasourcemodel.ModalityDataSourceModelProvider;
+    provides dev.webfx.stack.orm.domainmodel.service.spi.DomainModelProvider with one.modality.base.shared.services.domainmodel.ModalityDomainModelProvider;
 
 }

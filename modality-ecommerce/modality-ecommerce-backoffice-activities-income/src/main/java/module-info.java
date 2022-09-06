@@ -28,12 +28,12 @@ module modality.ecommerce.backoffice.activities.income {
     requires webfx.stack.ui.operation.action;
 
     // Exported packages
-    exports org.modality_project.ecommerce.backoffice.activities.income;
-    exports org.modality_project.ecommerce.backoffice.activities.income.routing;
-    exports org.modality_project.ecommerce.backoffice.operations.routes.income;
+    exports one.modality.ecommerce.backoffice.activities.income;
+    exports one.modality.ecommerce.backoffice.activities.income.routing;
+    exports one.modality.ecommerce.backoffice.operations.routes.income;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.ecommerce.backoffice.activities.income.IncomeUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with org.modality_project.ecommerce.backoffice.activities.income.RouteToIncomeRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.ecommerce.backoffice.activities.income.IncomeUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.ecommerce.backoffice.activities.income.RouteToIncomeRequestEmitter;
 
 }

@@ -24,6 +24,6 @@ module modality.ecommerce.client.bookingoptionspanel {
     requires webfx.stack.orm.reactive.visual;
 
     // Exported packages
-    exports org.modality_project.ecommerce.client.controls.bookingoptionspanel;
+    exports one.modality.ecommerce.client.controls.bookingoptionspanel;
 
 }

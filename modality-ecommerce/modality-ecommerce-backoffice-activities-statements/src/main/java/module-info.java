@@ -28,12 +28,12 @@ module modality.ecommerce.backoffice.activities.statements {
     requires webfx.stack.ui.operation;
 
     // Exported packages
-    exports org.modality_project.ecommerce.backoffice.activities.statements;
-    exports org.modality_project.ecommerce.backoffice.activities.statements.routing;
-    exports org.modality_project.ecommerce.backoffice.operations.routes.statements;
+    exports one.modality.ecommerce.backoffice.activities.statements;
+    exports one.modality.ecommerce.backoffice.activities.statements.routing;
+    exports one.modality.ecommerce.backoffice.operations.routes.statements;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.ecommerce.backoffice.activities.statements.StatementsUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with org.modality_project.ecommerce.backoffice.activities.statements.RouteToStatementsRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.ecommerce.backoffice.activities.statements.StatementsUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.ecommerce.backoffice.activities.statements.RouteToStatementsRequestEmitter;
 
 }

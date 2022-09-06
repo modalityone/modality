@@ -14,6 +14,6 @@ module modality.ecommerce.backoffice.operations.documentline {
     requires webfx.stack.ui.operation;
 
     // Exported packages
-    exports org.modality_project.ecommerce.backoffice.operations.entities.documentline;
+    exports one.modality.ecommerce.backoffice.operations.entities.documentline;
 
 }

@@ -6,7 +6,7 @@
     </exported-packages>
 
     <providers>
-        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.ecommerce.frontoffice.activities.person.PersonUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.ecommerce.frontoffice.activities.person.PersonUiRoute</provider>
     </providers>
 
     <dependencies>

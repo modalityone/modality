@@ -31,9 +31,9 @@ module modality.event.backoffice.activities.options {
     requires webfx.stack.ui.util;
 
     // Exported packages
-    exports org.modality_project.event.backoffice.activities.options;
+    exports one.modality.event.backoffice.activities.options;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.event.backoffice.activities.options.EditableOptionsUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.backoffice.activities.options.EditableOptionsUiRoute;
 
 }

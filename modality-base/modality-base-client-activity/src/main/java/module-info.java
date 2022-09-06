@@ -26,10 +26,10 @@ module modality.base.client.activity {
     requires webfx.stack.ui.util;
 
     // Exported packages
-    exports org.modality_project.base.client.activity;
-    exports org.modality_project.base.client.activity.eventdependent;
-    exports org.modality_project.base.client.activity.organizationdependent;
-    exports org.modality_project.base.client.activity.table;
-    exports org.modality_project.base.client.activity.themes;
+    exports one.modality.base.client.activity;
+    exports one.modality.base.client.activity.eventdependent;
+    exports one.modality.base.client.activity.organizationdependent;
+    exports one.modality.base.client.activity.table;
+    exports one.modality.base.client.activity.themes;
 
 }

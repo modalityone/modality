@@ -14,9 +14,9 @@ module modality.event.client.calendar {
     requires webfx.stack.ui.util;
 
     // Exported packages
-    exports org.modality_project.event.client.businessdata.calendar;
-    exports org.modality_project.event.client.businessdata.calendar.impl;
-    exports org.modality_project.event.client.controls.calendargraphic;
-    exports org.modality_project.event.client.controls.calendargraphic.impl;
+    exports one.modality.event.client.businessdata.calendar;
+    exports one.modality.event.client.businessdata.calendar.impl;
+    exports one.modality.event.client.controls.calendargraphic;
+    exports one.modality.event.client.controls.calendargraphic.impl;
 
 }

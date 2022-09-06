@@ -12,12 +12,12 @@ module modality.base.server.datasource {
     requires webfx.stack.orm.dql;
 
     // Exported packages
-    exports org.modality_project.base.server.services.datasource;
+    exports one.modality.base.server.services.datasource;
 
     // Resources packages
-    opens org.modality_project.base.server.datasource.MDS;
+    opens one.modality.base.server.datasource.MDS;
 
     // Provided services
-    provides dev.webfx.stack.db.datasource.spi.LocalDataSourceProvider with org.modality_project.base.server.services.datasource.ModalityLocalDataSourceProvider;
+    provides dev.webfx.stack.db.datasource.spi.LocalDataSourceProvider with one.modality.base.server.services.datasource.ModalityLocalDataSourceProvider;
 
 }

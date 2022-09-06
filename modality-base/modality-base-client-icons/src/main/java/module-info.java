@@ -9,8 +9,8 @@ module modality.base.client.icons {
     requires webfx.stack.ui.action;
 
     // Exported packages
-    exports org.modality_project.base.client.actions;
-    exports org.modality_project.base.client.icons;
+    exports one.modality.base.client.actions;
+    exports one.modality.base.client.icons;
 
     // Resources packages
     opens images.s16;

@@ -10,9 +10,9 @@ module modality.crm.client.authn {
     requires webfx.stack.orm.domainmodel;
 
     // Exported packages
-    exports org.modality_project.crm.client.services.authn;
+    exports one.modality.crm.client.services.authn;
 
     // Provided services
-    provides dev.webfx.stack.authn.spi.AuthenticationServiceProvider with org.modality_project.crm.client.services.authn.ModalityAuthenticationServiceProvider;
+    provides dev.webfx.stack.authn.spi.AuthenticationServiceProvider with one.modality.crm.client.services.authn.ModalityAuthenticationServiceProvider;
 
 }

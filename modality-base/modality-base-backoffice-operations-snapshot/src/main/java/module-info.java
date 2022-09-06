@@ -12,6 +12,6 @@ module modality.base.backoffice.operations.snapshot {
     requires webfx.stack.ui.operation;
 
     // Exported packages
-    exports org.modality_project.base.backoffice.operations.snapshot;
+    exports one.modality.base.backoffice.operations.snapshot;
 
 }

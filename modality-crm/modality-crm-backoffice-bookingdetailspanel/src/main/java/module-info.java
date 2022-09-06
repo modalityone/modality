@@ -31,6 +31,6 @@ module modality.crm.backoffice.bookingdetailspanel {
     requires webfx.stack.ui.operation.action;
 
     // Exported packages
-    exports org.modality_project.crm.backoffice.controls.bookingdetailspanel;
+    exports one.modality.crm.backoffice.controls.bookingdetailspanel;
 
 }

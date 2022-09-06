@@ -27,11 +27,11 @@ module modality.ecommerce.frontoffice.activities.summary {
     requires webfx.stack.routing.uirouter;
 
     // Exported packages
-    exports org.modality_project.ecommerce.frontoffice.activities.summary;
-    exports org.modality_project.ecommerce.frontoffice.activities.summary.routing;
-    exports org.modality_project.ecommerce.frontoffice.operations.summary;
+    exports one.modality.ecommerce.frontoffice.activities.summary;
+    exports one.modality.ecommerce.frontoffice.activities.summary.routing;
+    exports one.modality.ecommerce.frontoffice.operations.summary;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.ecommerce.frontoffice.activities.summary.SummaryUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.ecommerce.frontoffice.activities.summary.SummaryUiRoute;
 
 }

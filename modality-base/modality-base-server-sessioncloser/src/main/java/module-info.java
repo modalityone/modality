@@ -12,9 +12,9 @@ module modality.base.server.sessioncloser {
     requires webfx.stack.push.server;
 
     // Exported packages
-    exports org.modality_project.base.server.jobs.sessioncloser;
+    exports one.modality.base.server.jobs.sessioncloser;
 
     // Provided services
-    provides dev.webfx.platform.boot.spi.ApplicationJob with org.modality_project.base.server.jobs.sessioncloser.ModalityServerUnresponsiveClientSessionCloserJob;
+    provides dev.webfx.platform.boot.spi.ApplicationJob with one.modality.base.server.jobs.sessioncloser.ModalityServerUnresponsiveClientSessionCloserJob;
 
 }

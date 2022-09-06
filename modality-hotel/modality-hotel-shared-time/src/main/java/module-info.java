@@ -8,6 +8,6 @@ module modality.hotel.shared.time {
     requires webfx.platform.util;
 
     // Exported packages
-    exports org.modality_project.hotel.shared.businessdata.time;
+    exports one.modality.hotel.shared.businessdata.time;
 
 }

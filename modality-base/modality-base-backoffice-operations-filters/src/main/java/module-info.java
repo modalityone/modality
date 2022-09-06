@@ -13,6 +13,6 @@ module modality.base.backoffice.operations.filters {
     requires webfx.stack.ui.operation;
 
     // Exported packages
-    exports org.modality_project.base.backoffice.operations.entities.filters;
+    exports one.modality.base.backoffice.operations.entities.filters;
 
 }

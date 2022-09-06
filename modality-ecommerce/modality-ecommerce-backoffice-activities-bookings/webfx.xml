@@ -6,8 +6,8 @@
     </exported-packages>
 
     <providers>
-        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.ecommerce.backoffice.activities.bookings.BookingsUiRoute</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">org.modality_project.ecommerce.backoffice.activities.bookings.RouteToBookingsRequestEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.ecommerce.backoffice.activities.bookings.BookingsUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.ecommerce.backoffice.activities.bookings.RouteToBookingsRequestEmitter</provider>
     </providers>
 
     <dependencies>

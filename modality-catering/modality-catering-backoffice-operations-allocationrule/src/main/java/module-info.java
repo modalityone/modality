@@ -14,6 +14,6 @@ module modality.catering.backoffice.operations.allocationrule {
     requires webfx.stack.ui.operation;
 
     // Exported packages
-    exports org.modality_project.catering.backoffice.operations.entities.allocationrule;
+    exports one.modality.catering.backoffice.operations.entities.allocationrule;
 
 }

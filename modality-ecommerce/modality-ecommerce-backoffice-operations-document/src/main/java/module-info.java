@@ -16,10 +16,10 @@ module modality.ecommerce.backoffice.operations.document {
     requires webfx.stack.ui.operation;
 
     // Exported packages
-    exports org.modality_project.ecommerce.backoffice.operations.entities.document;
-    exports org.modality_project.ecommerce.backoffice.operations.entities.document.cart;
-    exports org.modality_project.ecommerce.backoffice.operations.entities.document.multiplebookings;
-    exports org.modality_project.ecommerce.backoffice.operations.entities.document.registration;
-    exports org.modality_project.ecommerce.backoffice.operations.entities.document.security;
+    exports one.modality.ecommerce.backoffice.operations.entities.document;
+    exports one.modality.ecommerce.backoffice.operations.entities.document.cart;
+    exports one.modality.ecommerce.backoffice.operations.entities.document.multiplebookings;
+    exports one.modality.ecommerce.backoffice.operations.entities.document.registration;
+    exports one.modality.ecommerce.backoffice.operations.entities.document.security;
 
 }

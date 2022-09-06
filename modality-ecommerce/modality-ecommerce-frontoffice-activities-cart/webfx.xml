@@ -15,7 +15,7 @@
     </dependencies>
 
     <providers>
-        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">org.modality_project.ecommerce.frontoffice.activities.cart.CartUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.ecommerce.frontoffice.activities.cart.CartUiRoute</provider>
     </providers>
 
 </project>

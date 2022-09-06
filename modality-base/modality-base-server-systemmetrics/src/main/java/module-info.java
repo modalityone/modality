@@ -16,14 +16,14 @@ module modality.base.server.systemmetrics {
     requires webfx.stack.orm.entity;
 
     // Exported packages
-    exports org.modality_project.base.server.jobs.systemmetrics;
-    exports org.modality_project.base.server.services.systemmetrics;
-    exports org.modality_project.base.server.services.systemmetrics.spi;
+    exports one.modality.base.server.jobs.systemmetrics;
+    exports one.modality.base.server.services.systemmetrics;
+    exports one.modality.base.server.services.systemmetrics.spi;
 
     // Used services
-    uses org.modality_project.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider;
+    uses one.modality.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider;
 
     // Provided services
-    provides dev.webfx.platform.boot.spi.ApplicationJob with org.modality_project.base.server.jobs.systemmetrics.SystemMetricsRecorderJob;
+    provides dev.webfx.platform.boot.spi.ApplicationJob with one.modality.base.server.jobs.systemmetrics.SystemMetricsRecorderJob;
 
 }

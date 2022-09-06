@@ -6,7 +6,7 @@
     </exported-packages>
 
     <providers>
-        <provider interface="org.modality_project.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider">org.modality_project.base.server.services.systemmetrics.spi.java.JavaSystemMetricsServiceProvider</provider>
+        <provider interface="one.modality.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider">one.modality.base.server.services.systemmetrics.spi.java.JavaSystemMetricsServiceProvider</provider>
     </providers>
 
     <dependencies>

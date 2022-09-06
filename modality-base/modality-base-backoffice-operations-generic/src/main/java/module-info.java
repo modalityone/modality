@@ -19,6 +19,6 @@ module modality.base.backoffice.operations.generic {
     requires webfx.stack.ui.operation;
 
     // Exported packages
-    exports org.modality_project.base.backoffice.operations.entities.generic;
+    exports one.modality.base.backoffice.operations.entities.generic;
 
 }

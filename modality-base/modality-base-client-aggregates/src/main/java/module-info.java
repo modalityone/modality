@@ -15,8 +15,8 @@ module modality.base.client.aggregates {
     requires webfx.stack.orm.entity;
 
     // Exported packages
-    exports org.modality_project.base.client.aggregates.cart;
-    exports org.modality_project.base.client.aggregates.event;
-    exports org.modality_project.base.client.aggregates.person;
+    exports one.modality.base.client.aggregates.cart;
+    exports one.modality.base.client.aggregates.event;
+    exports one.modality.base.client.aggregates.person;
 
 }

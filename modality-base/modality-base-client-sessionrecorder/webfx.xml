@@ -6,7 +6,7 @@
     </exported-packages>
 
     <providers>
-        <provider interface="dev.webfx.platform.boot.spi.ApplicationJob">org.modality_project.base.client.jobs.sessionrecorder.ClientSessionRecorderJob</provider>
+        <provider interface="dev.webfx.platform.boot.spi.ApplicationJob">one.modality.base.client.jobs.sessionrecorder.ClientSessionRecorderJob</provider>
     </providers>
 
     <dependencies>

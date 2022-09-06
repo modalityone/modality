@@ -30,6 +30,6 @@ module modality.all.backoffice.application.openjfx {
     requires webfx.stack.routing.uirouter;
 
     // Exported packages
-    exports org.modality_project.all.backoffice.activities.event.clone.openjfx;
+    exports one.modality.all.backoffice.activities.event.clone.openjfx;
 
 }

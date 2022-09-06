@@ -14,7 +14,7 @@ module modality.ecommerce.backoffice.operations.moneyflow {
     requires webfx.stack.ui.operation;
 
     // Exported packages
-    exports org.modality_project.ecommerce.backoffice.operations.entities.moneyaccount;
-    exports org.modality_project.ecommerce.backoffice.operations.entities.moneyflow;
+    exports one.modality.ecommerce.backoffice.operations.entities.moneyaccount;
+    exports one.modality.ecommerce.backoffice.operations.entities.moneyflow;
 
 }

@@ -12,8 +12,8 @@ module modality.base.client.util {
     requires webfx.stack.orm.expression;
 
     // Exported packages
-    exports org.modality_project.base.client.util.functions;
-    exports org.modality_project.base.client.util.log;
-    exports org.modality_project.base.client.util.routing;
+    exports one.modality.base.client.util.functions;
+    exports one.modality.base.client.util.log;
+    exports one.modality.base.client.util.routing;
 
 }

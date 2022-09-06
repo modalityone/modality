@@ -10,9 +10,9 @@ module modality.crm.client.activities.unauthorized {
     requires webfx.stack.routing.uirouter;
 
     // Exported packages
-    exports org.modality_project.crm.client.activities.unauthorized;
+    exports one.modality.crm.client.activities.unauthorized;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.crm.client.activities.unauthorized.UnauthorizedUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.crm.client.activities.unauthorized.UnauthorizedUiRoute;
 
 }

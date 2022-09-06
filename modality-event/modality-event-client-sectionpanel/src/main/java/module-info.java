@@ -13,6 +13,6 @@ module modality.event.client.sectionpanel {
     requires webfx.stack.ui.util;
 
     // Exported packages
-    exports org.modality_project.event.client.controls.sectionpanel;
+    exports one.modality.event.client.controls.sectionpanel;
 
 }

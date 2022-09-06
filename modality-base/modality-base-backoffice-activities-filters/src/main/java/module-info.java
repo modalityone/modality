@@ -32,12 +32,12 @@ module modality.base.backoffice.activities.filters {
     requires webfx.stack.ui.operation.action;
 
     // Exported packages
-    exports org.modality_project.base.backoffice.activities.filters;
-    exports org.modality_project.base.backoffice.activities.filters.routing;
-    exports org.modality_project.base.backoffice.operations.routes.filters;
+    exports one.modality.base.backoffice.activities.filters;
+    exports one.modality.base.backoffice.activities.filters.routing;
+    exports one.modality.base.backoffice.operations.routes.filters;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.base.backoffice.activities.filters.FiltersUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with org.modality_project.base.backoffice.activities.filters.RouteToFiltersRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.base.backoffice.activities.filters.FiltersUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.base.backoffice.activities.filters.RouteToFiltersRequestEmitter;
 
 }

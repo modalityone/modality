@@ -28,6 +28,6 @@ module modality.crm.client.personaldetails {
     requires webfx.stack.ui.util;
 
     // Exported packages
-    exports org.modality_project.crm.client.controls.personaldetails;
+    exports one.modality.crm.client.controls.personaldetails;
 
 }

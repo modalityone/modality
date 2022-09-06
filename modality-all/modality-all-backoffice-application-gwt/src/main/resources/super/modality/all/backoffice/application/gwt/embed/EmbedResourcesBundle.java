@@ -24,13 +24,13 @@ public interface EmbedResourcesBundle extends ClientBundle {
     @Source("images/svg/mono/price-tag.svg")
     TextResource r5();
 
-    @Source("org/modality_project/base/client/services/i18n/dictionaries/en.json")
+    @Source("one/modality/base/client/services/i18n/dictionaries/en.json")
     TextResource r6();
 
-    @Source("org/modality_project/base/client/services/i18n/dictionaries/fr.json")
+    @Source("one/modality/base/client/services/i18n/dictionaries/fr.json")
     TextResource r7();
 
-    @Source("org/modality_project/base/shared/domainmodel/DomainModelSnapshot.json")
+    @Source("one/modality/base/shared/domainmodel/DomainModelSnapshot.json")
     TextResource r8();
 
 
@@ -42,9 +42,9 @@ public interface EmbedResourcesBundle extends ClientBundle {
             registerResource("images/svg/mono/calendar.svg", R.r3());
             registerResource("images/svg/mono/certificate.svg", R.r4());
             registerResource("images/svg/mono/price-tag.svg", R.r5());
-            registerResource("org/modality_project/base/client/services/i18n/dictionaries/en.json", R.r6());
-            registerResource("org/modality_project/base/client/services/i18n/dictionaries/fr.json", R.r7());
-            registerResource("org/modality_project/base/shared/domainmodel/DomainModelSnapshot.json", R.r8());
+            registerResource("one/modality/base/client/services/i18n/dictionaries/en.json", R.r6());
+            registerResource("one/modality/base/client/services/i18n/dictionaries/fr.json", R.r7());
+            registerResource("one/modality/base/shared/domainmodel/DomainModelSnapshot.json", R.r8());
 
         }
     }

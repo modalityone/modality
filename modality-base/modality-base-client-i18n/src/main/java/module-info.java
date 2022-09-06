@@ -13,14 +13,14 @@ module modality.base.client.i18n {
     requires webfx.stack.ui.util;
 
     // Exported packages
-    exports org.modality_project.base.client.operations.i18n;
-    exports org.modality_project.base.client.services.i18n;
+    exports one.modality.base.client.operations.i18n;
+    exports one.modality.base.client.services.i18n;
 
     // Resources packages
-    opens org.modality_project.base.client.services.i18n.dictionaries;
+    opens one.modality.base.client.services.i18n.dictionaries;
 
     // Provided services
-    provides dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter with org.modality_project.base.client.operations.i18n.ChangeLanguageToEnglishRequest.ProvidedEmitter, org.modality_project.base.client.operations.i18n.ChangeLanguageToFrenchRequest.ProvidedEmitter;
-    provides dev.webfx.stack.i18n.spi.I18nProvider with org.modality_project.base.client.services.i18n.ModalityI18nProvider;
+    provides dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter with one.modality.base.client.operations.i18n.ChangeLanguageToEnglishRequest.ProvidedEmitter, one.modality.base.client.operations.i18n.ChangeLanguageToFrenchRequest.ProvidedEmitter;
+    provides dev.webfx.stack.i18n.spi.I18nProvider with one.modality.base.client.services.i18n.ModalityI18nProvider;
 
 }

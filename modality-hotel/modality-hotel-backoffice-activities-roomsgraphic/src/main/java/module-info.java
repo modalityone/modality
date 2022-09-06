@@ -37,12 +37,12 @@ module modality.hotel.backoffice.activities.roomsgraphic {
     requires webfx.stack.ui.util;
 
     // Exported packages
-    exports org.modality_project.hotel.backoffice.activities.roomsgraphic;
-    exports org.modality_project.hotel.backoffice.activities.roomsgraphic.routing;
-    exports org.modality_project.hotel.backoffice.operations.routes.roomsgraphic;
+    exports one.modality.hotel.backoffice.activities.roomsgraphic;
+    exports one.modality.hotel.backoffice.activities.roomsgraphic.routing;
+    exports one.modality.hotel.backoffice.operations.routes.roomsgraphic;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.hotel.backoffice.activities.roomsgraphic.RoomsGraphicUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with org.modality_project.hotel.backoffice.activities.roomsgraphic.RouteToRoomsGraphicRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.hotel.backoffice.activities.roomsgraphic.RoomsGraphicUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.hotel.backoffice.activities.roomsgraphic.RouteToRoomsGraphicRequestEmitter;
 
 }

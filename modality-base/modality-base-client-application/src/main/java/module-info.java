@@ -27,10 +27,10 @@ module modality.base.client.application {
     requires webfx.stack.ui.util;
 
     // Exported packages
-    exports org.modality_project.base.client.application;
+    exports one.modality.base.client.application;
 
     // Resources packages
     opens images.buddhas;
-    opens org.modality_project.base.client.images;
+    opens one.modality.base.client.images;
 
 }

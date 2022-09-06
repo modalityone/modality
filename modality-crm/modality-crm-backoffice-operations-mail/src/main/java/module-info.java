@@ -9,6 +9,6 @@ module modality.crm.backoffice.operations.mail {
     requires webfx.stack.ui.operation;
 
     // Exported packages
-    exports org.modality_project.crm.backoffice.operations.entities.mail;
+    exports one.modality.crm.backoffice.operations.entities.mail;
 
 }

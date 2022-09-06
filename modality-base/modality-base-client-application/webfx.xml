@@ -7,7 +7,7 @@
 
     <exported-packages>
         <source-packages/>
-        <resource-package>org.modality_project.base.client.images</resource-package>
+        <resource-package>one.modality.base.client.images</resource-package>
         <resource-package>images.buddhas</resource-package>
     </exported-packages>
 

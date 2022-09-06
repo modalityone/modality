@@ -27,7 +27,7 @@ module modality.base.backoffice.masterslave {
     requires webfx.stack.ui.util;
 
     // Exported packages
-    exports org.modality_project.base.backoffice.controls.masterslave;
-    exports org.modality_project.base.backoffice.controls.masterslave.group;
+    exports one.modality.base.backoffice.controls.masterslave;
+    exports one.modality.base.backoffice.controls.masterslave.group;
 
 }

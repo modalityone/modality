@@ -25,11 +25,11 @@ module modality.ecommerce.frontoffice.activities.contactus {
     requires webfx.stack.ui.util;
 
     // Exported packages
-    exports org.modality_project.ecommerce.frontoffice.activities.contactus;
-    exports org.modality_project.ecommerce.frontoffice.activities.contactus.routing;
-    exports org.modality_project.ecommerce.frontoffice.operations.contactus;
+    exports one.modality.ecommerce.frontoffice.activities.contactus;
+    exports one.modality.ecommerce.frontoffice.activities.contactus.routing;
+    exports one.modality.ecommerce.frontoffice.operations.contactus;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.ecommerce.frontoffice.activities.contactus.ContactUsUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.ecommerce.frontoffice.activities.contactus.ContactUsUiRoute;
 
 }

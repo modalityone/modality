@@ -21,11 +21,11 @@ module modality.event.frontoffice.activities.program {
     requires webfx.stack.ui.util;
 
     // Exported packages
-    exports org.modality_project.event.frontoffice.activities.program;
-    exports org.modality_project.event.frontoffice.activities.program.routing;
-    exports org.modality_project.event.frontoffice.operations.program;
+    exports one.modality.event.frontoffice.activities.program;
+    exports one.modality.event.frontoffice.activities.program.routing;
+    exports one.modality.event.frontoffice.operations.program;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.event.frontoffice.activities.program.ProgramUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.program.ProgramUiRoute;
 
 }

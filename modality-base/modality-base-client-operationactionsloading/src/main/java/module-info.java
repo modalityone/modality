@@ -16,9 +16,9 @@ module modality.base.client.operationactionsloading {
     requires webfx.stack.ui.operation.action;
 
     // Exported packages
-    exports org.modality_project.base.client.operationactionsloading;
+    exports one.modality.base.client.operationactionsloading;
 
     // Provided services
-    provides dev.webfx.platform.boot.spi.ApplicationModuleBooter with org.modality_project.base.client.operationactionsloading.ModalityClientOperationActionsLoader;
+    provides dev.webfx.platform.boot.spi.ApplicationModuleBooter with one.modality.base.client.operationactionsloading.ModalityClientOperationActionsLoader;
 
 }

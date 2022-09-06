@@ -22,11 +22,11 @@ module modality.ecommerce.frontoffice.activities.person {
     requires webfx.stack.ui.util;
 
     // Exported packages
-    exports org.modality_project.ecommerce.frontoffice.activities.person;
-    exports org.modality_project.ecommerce.frontoffice.activities.person.routing;
-    exports org.modality_project.ecommerce.frontoffice.operations.person;
+    exports one.modality.ecommerce.frontoffice.activities.person;
+    exports one.modality.ecommerce.frontoffice.activities.person.routing;
+    exports one.modality.ecommerce.frontoffice.operations.person;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.ecommerce.frontoffice.activities.person.PersonUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.ecommerce.frontoffice.activities.person.PersonUiRoute;
 
 }

@@ -19,13 +19,13 @@ module modality.ecommerce.client.businesslogic {
     requires webfx.stack.orm.entity;
 
     // Exported packages
-    exports org.modality_project.ecommerce.client.businessdata.feesgroup;
-    exports org.modality_project.ecommerce.client.businessdata.preselection;
-    exports org.modality_project.ecommerce.client.businessdata.workingdocument;
-    exports org.modality_project.ecommerce.client.businesslogic.feesgroup;
-    exports org.modality_project.ecommerce.client.businesslogic.option;
-    exports org.modality_project.ecommerce.client.businesslogic.pricing;
-    exports org.modality_project.ecommerce.client.businesslogic.rules;
-    exports org.modality_project.ecommerce.client.businesslogic.workingdocument;
+    exports one.modality.ecommerce.client.businessdata.feesgroup;
+    exports one.modality.ecommerce.client.businessdata.preselection;
+    exports one.modality.ecommerce.client.businessdata.workingdocument;
+    exports one.modality.ecommerce.client.businesslogic.feesgroup;
+    exports one.modality.ecommerce.client.businesslogic.option;
+    exports one.modality.ecommerce.client.businesslogic.pricing;
+    exports one.modality.ecommerce.client.businesslogic.rules;
+    exports one.modality.ecommerce.client.businesslogic.workingdocument;
 
 }

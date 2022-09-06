@@ -7,9 +7,9 @@ module modality.all.frontoffice.application {
     requires modality.base.client.application;
 
     // Exported packages
-    exports org.modality_project.all.frontoffice.application;
+    exports one.modality.all.frontoffice.application;
 
     // Provided services
-    provides javafx.application.Application with org.modality_project.all.frontoffice.application.ModalityFrontOfficeApplication;
+    provides javafx.application.Application with one.modality.all.frontoffice.application.ModalityFrontOfficeApplication;
 
 }

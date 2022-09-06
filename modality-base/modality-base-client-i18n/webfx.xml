@@ -3,13 +3,13 @@
 
     <exported-packages>
         <source-packages/>
-        <resource-package>org.modality_project.base.client.services.i18n.dictionaries</resource-package>
+        <resource-package>one.modality.base.client.services.i18n.dictionaries</resource-package>
     </exported-packages>
 
     <providers>
-        <provider interface="dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter">org.modality_project.base.client.operations.i18n.ChangeLanguageToEnglishRequest$ProvidedEmitter</provider>
-        <provider interface="dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter">org.modality_project.base.client.operations.i18n.ChangeLanguageToFrenchRequest$ProvidedEmitter</provider>
-        <provider interface="dev.webfx.stack.i18n.spi.I18nProvider">org.modality_project.base.client.services.i18n.ModalityI18nProvider</provider>
+        <provider interface="dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter">one.modality.base.client.operations.i18n.ChangeLanguageToEnglishRequest$ProvidedEmitter</provider>
+        <provider interface="dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter">one.modality.base.client.operations.i18n.ChangeLanguageToFrenchRequest$ProvidedEmitter</provider>
+        <provider interface="dev.webfx.stack.i18n.spi.I18nProvider">one.modality.base.client.services.i18n.ModalityI18nProvider</provider>
     </providers>
 
     <dependencies>
@@ -20,8 +20,8 @@
     </dependencies>
 
     <embed-resources>
-        <resource>org/modality_project/base/client/services/i18n/dictionaries/en.json</resource>
-        <resource>org/modality_project/base/client/services/i18n/dictionaries/fr.json</resource>
+        <resource>one/modality/base/client/services/i18n/dictionaries/en.json</resource>
+        <resource>one/modality/base/client/services/i18n/dictionaries/fr.json</resource>
     </embed-resources>
 
 </project>

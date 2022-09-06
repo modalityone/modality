@@ -18,6 +18,6 @@ module modality.ecommerce.client.bookingprocess {
     requires webfx.stack.ui.util;
 
     // Exported packages
-    exports org.modality_project.ecommerce.client.activity.bookingprocess;
+    exports one.modality.ecommerce.client.activity.bookingprocess;
 
 }

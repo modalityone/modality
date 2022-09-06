@@ -9,7 +9,7 @@ module modality.event.backoffice.activities.cloneevent.routing {
     requires webfx.stack.ui.operation;
 
     // Exported packages
-    exports org.modality_project.event.backoffice.activities.cloneevent.routing;
-    exports org.modality_project.event.backoffice.operations.routes.cloneevent;
+    exports one.modality.event.backoffice.activities.cloneevent.routing;
+    exports one.modality.event.backoffice.operations.routes.cloneevent;
 
 }

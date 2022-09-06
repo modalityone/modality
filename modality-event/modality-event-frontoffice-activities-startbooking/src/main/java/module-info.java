@@ -27,11 +27,11 @@ module modality.event.frontoffice.activities.startbooking {
     requires webfx.stack.ui.util;
 
     // Exported packages
-    exports org.modality_project.event.frontoffice.activities.startbooking;
-    exports org.modality_project.event.frontoffice.activities.startbooking.routing;
-    exports org.modality_project.event.frontoffice.operations.startbooking;
+    exports one.modality.event.frontoffice.activities.startbooking;
+    exports one.modality.event.frontoffice.activities.startbooking.routing;
+    exports one.modality.event.frontoffice.operations.startbooking;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.event.frontoffice.activities.startbooking.StartBookingUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.startbooking.StartBookingUiRoute;
 
 }

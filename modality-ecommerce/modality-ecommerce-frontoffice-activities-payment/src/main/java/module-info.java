@@ -33,11 +33,11 @@ module modality.ecommerce.frontoffice.activities.payment {
     requires webfx.stack.ui.util;
 
     // Exported packages
-    exports org.modality_project.ecommerce.frontoffice.activities.payment;
-    exports org.modality_project.ecommerce.frontoffice.activities.payment.routing;
-    exports org.modality_project.ecommerce.frontoffice.operations.payment;
+    exports one.modality.ecommerce.frontoffice.activities.payment;
+    exports one.modality.ecommerce.frontoffice.activities.payment.routing;
+    exports one.modality.ecommerce.frontoffice.operations.payment;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.ecommerce.frontoffice.activities.payment.PaymentUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.ecommerce.frontoffice.activities.payment.PaymentUiRoute;
 
 }

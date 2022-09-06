@@ -18,6 +18,6 @@ module modality.event.client.bookingcalendar {
     requires webfx.stack.orm.entity;
 
     // Exported packages
-    exports org.modality_project.event.client.controls.bookingcalendar;
+    exports one.modality.event.client.controls.bookingcalendar;
 
 }

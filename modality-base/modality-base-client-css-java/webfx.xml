@@ -6,8 +6,8 @@
     </implements>
 
     <exported-packages>
-        <resource-package>org.modality_project.base.client.css</resource-package>
-        <resource-package>org.modality_project.base.client.fonts</resource-package>
+        <resource-package>one.modality.base.client.css</resource-package>
+        <resource-package>one.modality.base.client.fonts</resource-package>
     </exported-packages>
 
     <dependencies>

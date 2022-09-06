@@ -21,9 +21,9 @@ module modality.crm.client.activities.login {
     requires webfx.stack.ui.util;
 
     // Exported packages
-    exports org.modality_project.crm.client.activities.login;
+    exports one.modality.crm.client.activities.login;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.crm.client.activities.login.LoginUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.crm.client.activities.login.LoginUiRoute;
 
 }

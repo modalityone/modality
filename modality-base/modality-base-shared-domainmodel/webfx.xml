@@ -3,16 +3,16 @@
 
     <exported-packages>
         <source-packages/>
-        <resource-package>org.modality_project.base.shared.domainmodel</resource-package>
+        <resource-package>one.modality.base.shared.domainmodel</resource-package>
     </exported-packages>
 
     <providers>
-        <provider interface="dev.webfx.stack.orm.domainmodel.service.spi.DomainModelProvider">org.modality_project.base.shared.services.domainmodel.ModalityDomainModelProvider</provider>
-        <provider interface="dev.webfx.stack.orm.datasourcemodel.service.spi.DataSourceModelProvider">org.modality_project.base.shared.services.datasourcemodel.ModalityDataSourceModelProvider</provider>
+        <provider interface="dev.webfx.stack.orm.domainmodel.service.spi.DomainModelProvider">one.modality.base.shared.services.domainmodel.ModalityDomainModelProvider</provider>
+        <provider interface="dev.webfx.stack.orm.datasourcemodel.service.spi.DataSourceModelProvider">one.modality.base.shared.services.datasourcemodel.ModalityDataSourceModelProvider</provider>
     </providers>
 
     <embed-resources>
-        <resource>org/modality_project/base/shared/domainmodel/DomainModelSnapshot.json</resource>
+        <resource>one/modality/base/shared/domainmodel/DomainModelSnapshot.json</resource>
     </embed-resources>
 
     <dependencies>

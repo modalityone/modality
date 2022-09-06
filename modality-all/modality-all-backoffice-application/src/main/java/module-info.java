@@ -9,9 +9,9 @@ module modality.all.backoffice.application {
     requires modality.crm.backoffice.bookingdetailspanel;
 
     // Exported packages
-    exports org.modality_project.all.backoffice.application;
+    exports one.modality.all.backoffice.application;
 
     // Provided services
-    provides javafx.application.Application with org.modality_project.all.backoffice.application.ModalityBackOfficeApplication;
+    provides javafx.application.Application with one.modality.all.backoffice.application.ModalityBackOfficeApplication;
 
 }

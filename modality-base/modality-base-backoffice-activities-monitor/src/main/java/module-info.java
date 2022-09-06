@@ -22,12 +22,12 @@ module modality.base.backoffice.activities.monitor {
     requires webfx.stack.ui.util;
 
     // Exported packages
-    exports org.modality_project.base.backoffice.activities.monitor;
-    exports org.modality_project.base.backoffice.activities.monitor.routing;
-    exports org.modality_project.base.backoffice.operations.routes.monitor;
+    exports one.modality.base.backoffice.activities.monitor;
+    exports one.modality.base.backoffice.activities.monitor.routing;
+    exports one.modality.base.backoffice.operations.routes.monitor;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.base.backoffice.activities.monitor.MonitorUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with org.modality_project.base.backoffice.activities.monitor.RouteToMonitorRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.base.backoffice.activities.monitor.MonitorUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.base.backoffice.activities.monitor.RouteToMonitorRequestEmitter;
 
 }

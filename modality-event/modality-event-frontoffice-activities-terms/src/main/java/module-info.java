@@ -23,11 +23,11 @@ module modality.event.frontoffice.activities.terms {
     requires webfx.stack.ui.util;
 
     // Exported packages
-    exports org.modality_project.event.frontoffice.activities.terms;
-    exports org.modality_project.event.frontoffice.activities.terms.routing;
-    exports org.modality_project.event.frontoffice.operations.terms;
+    exports one.modality.event.frontoffice.activities.terms;
+    exports one.modality.event.frontoffice.activities.terms.routing;
+    exports one.modality.event.frontoffice.operations.terms;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.event.frontoffice.activities.terms.TermsUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.terms.TermsUiRoute;
 
 }

@@ -14,9 +14,9 @@ module modality.crm.client.authz {
     requires webfx.stack.routing.router;
 
     // Exported packages
-    exports org.modality_project.crm.client.services.authz;
+    exports one.modality.crm.client.services.authz;
 
     // Provided services
-    provides dev.webfx.stack.authz.spi.AuthorizationServiceProvider with org.modality_project.crm.client.services.authz.ModalityAuthorizationServiceProvider;
+    provides dev.webfx.stack.authz.spi.AuthorizationServiceProvider with one.modality.crm.client.services.authz.ModalityAuthorizationServiceProvider;
 
 }

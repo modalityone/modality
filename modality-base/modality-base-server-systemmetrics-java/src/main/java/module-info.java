@@ -8,9 +8,9 @@ module modality.base.server.systemmetrics.java {
     requires modality.base.shared.entities;
 
     // Exported packages
-    exports org.modality_project.base.server.services.systemmetrics.spi.java;
+    exports one.modality.base.server.services.systemmetrics.spi.java;
 
     // Provided services
-    provides org.modality_project.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider with org.modality_project.base.server.services.systemmetrics.spi.java.JavaSystemMetricsServiceProvider;
+    provides one.modality.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider with one.modality.base.server.services.systemmetrics.spi.java.JavaSystemMetricsServiceProvider;
 
 }

@@ -16,11 +16,11 @@ module modality.crm.backoffice.activities.letter {
     requires webfx.stack.ui.controls;
 
     // Exported packages
-    exports org.modality_project.crm.backoffice.activities.letter;
-    exports org.modality_project.crm.backoffice.activities.letter.routing;
-    exports org.modality_project.crm.backoffice.operations.routes.letter;
+    exports one.modality.crm.backoffice.activities.letter;
+    exports one.modality.crm.backoffice.activities.letter.routing;
+    exports one.modality.crm.backoffice.operations.routes.letter;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.crm.backoffice.activities.letter.LetterUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.crm.backoffice.activities.letter.LetterUiRoute;
 
 }

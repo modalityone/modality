@@ -36,11 +36,11 @@ module modality.event.frontoffice.activities.options {
     requires webfx.stack.ui.util;
 
     // Exported packages
-    exports org.modality_project.event.frontoffice.activities.options;
-    exports org.modality_project.event.frontoffice.activities.options.routing;
-    exports org.modality_project.event.frontoffice.operations.options;
+    exports one.modality.event.frontoffice.activities.options;
+    exports one.modality.event.frontoffice.activities.options.routing;
+    exports one.modality.event.frontoffice.operations.options;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with org.modality_project.event.frontoffice.activities.options.OptionsUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.options.OptionsUiRoute;
 
 }

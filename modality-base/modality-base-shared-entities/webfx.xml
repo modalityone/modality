@@ -6,36 +6,36 @@
     </exported-packages>
 
     <providers>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.AttendanceImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.CartImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.CountryImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.CurrencyImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.DateInfoImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.DocumentImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.DocumentLineImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.EventImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.FilterImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.GatewayParameterImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.HistoryImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.ImageImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.ItemFamilyImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.ItemImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.LabelImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.MailImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.MethodImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.MoneyTransferImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.MoneyAccountImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.MoneyAccountTypeImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.MoneyFlowImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.OptionImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.OrganizationImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.OrganizationTypeImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.PersonImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.RateImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.SiteImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.SnapshotImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.SystemMetricsEntityImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">org.modality_project.base.shared.entities.impl.TeacherImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.AttendanceImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.CartImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.CountryImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.CurrencyImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.DateInfoImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.DocumentImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.DocumentLineImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.EventImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.FilterImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.GatewayParameterImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.HistoryImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.ImageImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.ItemFamilyImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.ItemImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.LabelImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.MailImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.MethodImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.MoneyTransferImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.MoneyAccountImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.MoneyAccountTypeImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.MoneyFlowImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.OptionImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.OrganizationImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.OrganizationTypeImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.PersonImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.RateImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.SiteImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.SnapshotImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.SystemMetricsEntityImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.TeacherImpl$ProvidedFactory</provider>
     </providers>
 
     <dependencies>

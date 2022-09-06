@@ -20,6 +20,6 @@ module modality.base.backoffice.multilangeditor {
     requires webfx.stack.ui.util;
 
     // Exported packages
-    exports org.modality_project.base.backoffice.controls.multilangeditor;
+    exports one.modality.base.backoffice.controls.multilangeditor;
 
 }
