@@ -3,7 +3,7 @@
 
     <parent name="webfx-parent"/>
 
-    <groupId>dev.webfx</groupId>
+    <groupId>one.modality</groupId>
     <artifactId>modality</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
@@ -53,7 +53,7 @@
 
             <parent name="webfx-parent"/>
 
-            <groupId>dev.webfx</groupId>
+            <groupId>one.modality</groupId>
             <artifactId>modality</artifactId>
             <version>1.0.0-SNAPSHOT</version>
     

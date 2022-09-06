@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>dev.webfx</groupId>
+        <groupId>one.modality</groupId>
         <artifactId>modality-crm</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
@@ -34,7 +34,7 @@
         </dependency>
 
         <dependency>
-            <groupId>dev.webfx</groupId>
+            <groupId>one.modality</groupId>
             <artifactId>modality-crm-client-authn</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>

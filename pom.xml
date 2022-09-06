@@ -11,6 +11,8 @@
         <version>0.1.0-SNAPSHOT</version>
     </parent>
 
+    <groupId>one.modality</groupId>
+
     <artifactId>modality</artifactId>
 
     <version>1.0.0-SNAPSHOT</version>
