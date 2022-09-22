@@ -91,6 +91,7 @@
     <source path="org/pepstock/charba/client/dom"/>
     <source path="org/pepstock/charba/client/dom/elements"/>
     <source path="org/pepstock/charba/client/dom/enums"/>
+    <source path="org/pepstock/charba/client/dom/events"/>
     <source path="org/pepstock/charba/client/dom/safehtml"/>
     <source path="org/pepstock/charba/client/enums"/>
     <source path="org/pepstock/charba/client/events"/>
