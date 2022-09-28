@@ -99,8 +99,6 @@
     <source path="org/pepstock/charba/client/geo/callbacks"/>
     <source path="org/pepstock/charba/client/geo/enums"/>
     <source path="org/pepstock/charba/client/gradient"/>
-    <source path="org/pepstock/charba/client/gwt"/>
-    <source path="org/pepstock/charba/client/gwt/widgets"/>
     <source path="org/pepstock/charba/client/impl/callbacks"/>
     <source path="org/pepstock/charba/client/impl/charts"/>
     <source path="org/pepstock/charba/client/impl/plugins"/>
