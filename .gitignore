@@ -154,10 +154,8 @@ docker/data/
 modality-base/modality-base-server-datasource/src/test/resources/docker/.env
 modality-base/modality-base-server-datasource/src/test/resources/docker/data/
 
-# Mongoose development database
-# Note that this is only ever manually added to the codebase, when developers need to run the code
-# against a fully populated database
-V0001__mongoose_dev_db.sql
+# Modality database deployment folder:
+modality-base/modality-base-server-datasource/src/main/resources/db/
 
 # Mac files
 .DS_Store
