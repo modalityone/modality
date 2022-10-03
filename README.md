@@ -54,7 +54,7 @@ Modality is entirely modular. Choose all the modules, or just the modules you wa
 
 
 ## Documentation
-* [Getting started](https://docs.modality-project.org) - stand up Modality on your local machine
+* [Getting started](https://docs.modality.one) - stand up Modality on your local machine
 * [Contribute](CONTRIBUTING.md) - participate in the Modality development community
 * [Wireframes](https://www.figma.com/file/Rlz2ur7ZhgaCdnWdd9VzU8/Modality-business-system) - the set of UI designs
 * [Roadmap](ROADMAP.md) - mapping out the implementation of Modality

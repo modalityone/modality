@@ -3,9 +3,9 @@
 - [x] Proof of Concept
 - [x] Back-Office Prototype
 - [x] [Modality Docs][modality-docs]
-- [ ] Populate modality-dev-db
+- [x] Populate modality-dev-db
+- [x] Define the features and issues necessary for MVP
 - [ ] Streamline import of modality-dev-db
-- [ ] Define the features and issues necessary for MVP
 - [ ] Define coding standards
 - [ ] JavaDoc
 - [ ] Automated testing coverage
@@ -20,4 +20,4 @@
 - [ ] App customization (logo, icons, palatte, fonts, etc...)
 - [ ] Official Modality website
 
-[modality-docs]: https://docs.modality-project.org
+[modality-docs]: https://docs.modality.one
