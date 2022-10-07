@@ -1,15 +1,15 @@
 package one.modality.all.frontoffice.application;
 
-import one.modality.base.client.application.ModalityClientActivity;
+import one.modality.base.client.application.ModalityClientStarterActivity;
 
 /**
  * @author Bruno Salmon
  */
-final class ModalityFrontOfficeActivity extends ModalityClientActivity {
+final class ModalityFrontOfficeStarterActivity extends ModalityClientStarterActivity {
 
     private static final String DEFAULT_START_PATH = "/book/event/357/start";
 
-    ModalityFrontOfficeActivity() {
+    ModalityFrontOfficeStarterActivity() {
         super(DEFAULT_START_PATH);
     }
 

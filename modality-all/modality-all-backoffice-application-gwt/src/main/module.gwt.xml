@@ -149,6 +149,10 @@
     <source path="one/modality/base/backoffice/activities/filters"/>
     <source path="one/modality/base/backoffice/activities/filters/routing"/>
     <source path="one/modality/base/backoffice/operations/routes/filters"/>
+    <!--====================< modality-base-backoffice-activities-home >====================-->
+    <source path="one/modality/catering/backoffice/activities/home"/>
+    <source path="one/modality/catering/backoffice/activities/home/routing"/>
+    <source path="one/modality/catering/backoffice/operations/routes/home"/>
     <!--==================< modality-base-backoffice-activities-monitor >===================-->
     <source path="one/modality/base/backoffice/activities/monitor"/>
     <source path="one/modality/base/backoffice/activities/monitor/routing"/>
@@ -267,6 +271,10 @@
     <source path="one/modality/catering/backoffice/activities/diningareas"/>
     <source path="one/modality/catering/backoffice/activities/diningareas/routing"/>
     <source path="one/modality/catering/backoffice/operations/routes/diningareas"/>
+    <!--================< modality-catering-backoffice-activities-kitchen >=================-->
+    <source path="one/modality/catering/backoffice/activities/kitchen"/>
+    <source path="one/modality/catering/backoffice/activities/kitchen/routing"/>
+    <source path="one/modality/catering/backoffice/operations/routes/kitchen"/>
     <!--=============< modality-catering-backoffice-operations-allocationrule >=============-->
     <source path="one/modality/catering/backoffice/operations/entities/allocationrule"/>
     <!--===============< modality-crm-backoffice-activities-authorizations >================-->

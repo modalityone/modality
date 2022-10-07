@@ -15,6 +15,7 @@
         <used-by-source-modules>
             <undetected-module>webfx-stack-routing-router</undetected-module>
             <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
+            <undetected-module>webfx-platform-util</undetected-module>
         </used-by-source-modules>
 
         <resource-module>modality-base-client-css</resource-module>

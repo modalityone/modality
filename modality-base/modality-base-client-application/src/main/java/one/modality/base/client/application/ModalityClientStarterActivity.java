@@ -5,21 +5,19 @@ import dev.webfx.stack.routing.activity.Activity;
 import dev.webfx.stack.routing.activity.ActivityContext;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.ViewDomainActivityContext;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.ViewDomainActivityContextMixin;
-import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.routing.uirouter.UiRouter;
-import dev.webfx.platform.util.function.Factory;
 
 /**
  * @author Bruno Salmon
  */
-public abstract class ModalityClientActivity
+public abstract class ModalityClientStarterActivity
         implements Activity<ViewDomainActivityContext>
         , ViewDomainActivityContextMixin {
 
     private final String defaultInitialHistoryPath;
     private ViewDomainActivityContext context;
 
-    public ModalityClientActivity(String defaultInitialHistoryPath) {
+    public ModalityClientStarterActivity(String defaultInitialHistoryPath) {
         this.defaultInitialHistoryPath = defaultInitialHistoryPath;
     }
 
@@ -31,11 +29,7 @@ public abstract class ModalityClientActivity
     @Override
     public void onCreate(ViewDomainActivityContext context) {
         this.context = context;
-        getUiRouter().routeAndMount("/", getContainerActivityFactory(), setupContainedRouter(UiRouter.createSubRouter(context)));
-    }
-
-    protected Factory<Activity<ViewDomainActivityContextFinal>> getContainerActivityFactory() {
-        return ModalityClientContainerActivity::new;
+        getUiRouter().routeAndMount("/", ModalityClientFrameContainerActivity::new, setupContainedRouter(UiRouter.createSubRouter(context)));
     }
 
     protected UiRouter setupContainedRouter(UiRouter containedRouter) {

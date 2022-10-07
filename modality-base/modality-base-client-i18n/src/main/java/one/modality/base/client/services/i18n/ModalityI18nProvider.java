@@ -20,7 +20,7 @@ public final class ModalityI18nProvider extends JsonI18nProvider {
 
     @Override
     public Node createI18nGraphic(String graphicUrl) {
-        return JsonImageViews.createImageView(graphicUrl);
+        return JsonImageViews.createImageViewOrSVGPath(graphicUrl);
     }
 
     @Override

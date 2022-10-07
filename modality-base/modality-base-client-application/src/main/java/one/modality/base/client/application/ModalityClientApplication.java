@@ -28,15 +28,15 @@ import java.util.function.Consumer;
  */
 public class ModalityClientApplication extends Application {
 
-    private final ModalityClientActivity modalityClientActivity;
+    private final ModalityClientStarterActivity modalityClientStarterActivity;
 
-    public ModalityClientApplication(ModalityClientActivity modalityClientActivity) {
-        this.modalityClientActivity = modalityClientActivity;
+    public ModalityClientApplication(ModalityClientStarterActivity modalityClientStarterActivity) {
+        this.modalityClientStarterActivity = modalityClientStarterActivity;
     }
 
     @Override
     public void init() {
-        ActivityManager.runActivity(modalityClientActivity,
+        ActivityManager.runActivity(modalityClientStarterActivity,
                 ViewDomainActivityContext.createViewDomainActivityContext(DataSourceModelService.getDefaultDataSourceModel())
         );
     }
@@ -50,7 +50,7 @@ public class ModalityClientApplication extends Application {
         Scene scene = new Scene(root, width, height);
         scene.getStylesheets().addAll("one/modality/base/client/css/modality.css");
         //root.centerProperty().bind(modalityClientActivity.nodeProperty()); //
-        scene.rootProperty().bind(FXProperties.compute(modalityClientActivity.nodeProperty(), n -> (Parent) n));
+        scene.rootProperty().bind(FXProperties.compute(modalityClientStarterActivity.nodeProperty(), n -> (Parent) n));
         // Activating focus owner auto scroll
         SceneUtil.installSceneFocusOwnerAutoScroll(scene);
         primaryStage.setScene(scene);

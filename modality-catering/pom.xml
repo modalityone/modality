@@ -17,6 +17,7 @@
 
     <modules>
         <module>modality-catering-backoffice-activities-diningareas</module>
+        <module>modality-catering-backoffice-activities-kitchen</module>
         <module>modality-catering-backoffice-operations-allocationrule</module>
     </modules>
 

@@ -1,6 +1,6 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
-module modality.base.client.application {
+module modality.base.backoffice.activities.home {
 
     // Direct dependencies modules
     requires java.base;
@@ -8,16 +8,10 @@ module modality.base.client.application {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.activity;
-    requires modality.base.client.icons;
-    requires webfx.extras.imagestore;
-    requires webfx.extras.materialdesign;
-    requires webfx.kit.launcher;
+    requires webfx.extras.webtext;
     requires webfx.kit.util;
-    requires webfx.platform.uischeduler;
     requires webfx.platform.util;
-    requires webfx.stack.com.bus.call;
-    requires webfx.stack.i18n;
-    requires webfx.stack.orm.datasourcemodel.service;
+    requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.routing.activity;
     requires webfx.stack.routing.router;
@@ -28,10 +22,12 @@ module modality.base.client.application {
     requires webfx.stack.ui.util;
 
     // Exported packages
-    exports one.modality.base.client.application;
+    exports one.modality.catering.backoffice.activities.home;
+    exports one.modality.catering.backoffice.activities.home.routing;
+    exports one.modality.catering.backoffice.operations.routes.home;
 
-    // Resources packages
-    opens images.buddhas;
-    opens one.modality.base.client.images;
+    // Provided services
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.catering.backoffice.activities.home.HomeUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.catering.backoffice.activities.home.RouteToHomeRequestEmitter;
 
 }

@@ -13,6 +13,7 @@
         <used-by-source-modules/>
 
         <!-- Base activities -->
+        <plugin-module>modality-base-backoffice-activities-home</plugin-module>
         <plugin-module>modality-base-backoffice-activities-monitor</plugin-module>
         <plugin-module>modality-base-backoffice-activities-filters</plugin-module>
         <plugin-module>modality-base-backoffice-activities-operations</plugin-module>
@@ -41,6 +42,7 @@
         <plugin-module>modality-event-backoffice-activities-options</plugin-module>
 
         <!-- Catering activities -->
+        <plugin-module>modality-catering-backoffice-activities-kitchen</plugin-module>
         <plugin-module>modality-catering-backoffice-activities-diningareas</plugin-module>
 
     </dependencies>

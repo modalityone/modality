@@ -8,6 +8,6 @@ import one.modality.base.client.application.ModalityClientApplication;
 public class ModalityBackOfficeApplication extends ModalityClientApplication {
 
     public ModalityBackOfficeApplication() {
-        super(new ModalityBackOfficeActivity());
+        super(new ModalityBackOfficeStarterActivity());
     }
 }

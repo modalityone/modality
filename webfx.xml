@@ -129,6 +129,7 @@
                 <used-by-source-modules/>
 
                 <!-- Base activities -->
+                <plugin-module>modality-base-backoffice-activities-home</plugin-module>
                 <plugin-module>modality-base-backoffice-activities-monitor</plugin-module>
                 <plugin-module>modality-base-backoffice-activities-filters</plugin-module>
                 <plugin-module>modality-base-backoffice-activities-operations</plugin-module>
@@ -157,6 +158,7 @@
                 <plugin-module>modality-event-backoffice-activities-options</plugin-module>
 
                 <!-- Catering activities -->
+                <plugin-module>modality-catering-backoffice-activities-kitchen</plugin-module>
                 <plugin-module>modality-catering-backoffice-activities-diningareas</plugin-module>
 
             </dependencies>
@@ -309,6 +311,7 @@
 
             <modules>
                 <module>modality-base-backoffice-activities-filters</module>
+                <module>modality-base-backoffice-activities-home</module>
                 <module>modality-base-backoffice-activities-monitor</module>
                 <module>modality-base-backoffice-activities-operations</module>
                 <module>modality-base-backoffice-masterslave</module>
@@ -395,6 +398,50 @@
                 <module>webfx-stack-ui-action</module>
                 <module>webfx-stack-ui-operation</module>
                 <module>webfx-stack-ui-operation-action</module>
+            </used-by-source-modules>
+
+        </project>
+
+        <project name="modality-base-backoffice-activities-home">
+
+            <providers>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.catering.backoffice.activities.home.HomeUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.catering.backoffice.activities.home.RouteToHomeRequestEmitter</provider>
+            </providers>
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
+                    <undetected-module>webfx-platform-util</undetected-module>
+                </used-by-source-modules>
+            </dependencies>
+
+            <source-packages>
+                <package>one.modality.catering.backoffice.activities.home</package>
+                <package>one.modality.catering.backoffice.activities.home.routing</package>
+                <package>one.modality.catering.backoffice.operations.routes.home</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>modality-base-client-activity</module>
+                <module>webfx-extras-webtext</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-platform-windowhistory</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-action</module>
+                <module>webfx-stack-ui-operation</module>
+                <module>webfx-stack-ui-operation-action</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -744,6 +791,7 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-routing-router</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
+                    <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
 
                 <resource-module>modality-base-client-css</resource-module>
@@ -769,12 +817,12 @@
                 <module>modality-base-client-activity</module>
                 <module>modality-base-client-icons</module>
                 <module>webfx-extras-imagestore</module>
+                <module>webfx-extras-materialdesign</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-launcher</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-uischeduler</module>
-                <module>webfx-platform-util</module>
                 <module>webfx-stack-com-bus-call</module>
                 <module>webfx-stack-i18n</module>
                 <module>webfx-stack-orm-datasourcemodel-service</module>
@@ -1524,6 +1572,7 @@
 
             <modules>
                 <module>modality-catering-backoffice-activities-diningareas</module>
+                <module>modality-catering-backoffice-activities-kitchen</module>
                 <module>modality-catering-backoffice-operations-allocationrule</module>
             </modules>
 
@@ -1577,6 +1626,42 @@
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
                 <module>webfx-stack-ui-operation-action</module>
+            </used-by-source-modules>
+
+        </project>
+
+        <project name="modality-catering-backoffice-activities-kitchen">
+
+            <providers>
+                <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.catering.backoffice.activities.kitchen.KitchenUiRoute</provider>
+                <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.catering.backoffice.activities.kitchen.RouteToKitchenRequestEmitter</provider>
+            </providers>
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules>
+                    <undetected-module>webfx-stack-routing-activity</undetected-module>
+                    <undetected-module>webfx-platform-util</undetected-module>
+                </used-by-source-modules>
+            </dependencies>
+
+            <source-packages>
+                <package>one.modality.catering.backoffice.activities.kitchen</package>
+                <package>one.modality.catering.backoffice.activities.kitchen.routing</package>
+                <package>one.modality.catering.backoffice.operations.routes.kitchen</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>modality-base-client-activity</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-windowhistory</module>
+                <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
 
         </project>
