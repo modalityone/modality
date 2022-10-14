@@ -20,5 +20,6 @@ module modality.all.backoffice.application.gluon {
     requires webfx.stack.orm.dql.query.interceptor;
     requires webfx.stack.orm.dql.querypush.interceptor;
     requires webfx.stack.orm.dql.submit.interceptor;
+    requires webfx.stack.ui.fxraiser.json;
 
 }

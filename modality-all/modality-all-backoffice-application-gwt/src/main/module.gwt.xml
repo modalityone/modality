@@ -762,6 +762,8 @@
     <source path="dev/webfx/stack/ui/fxraiser/impl"/>
     <source path="dev/webfx/stack/ui/fxraiser/impl/converters"/>
     <source path="dev/webfx/stack/ui/fxraiser/impl/formatters"/>
+    <!--==========================< webfx-stack-ui-fxraiser-json >==========================-->
+    <source path="dev/webfx/stack/ui/fxraiser/json"/>
     <!--============================< webfx-stack-ui-operation >============================-->
     <source path="dev/webfx/stack/ui/operation"/>
     <!--========================< webfx-stack-ui-operation-action >=========================-->

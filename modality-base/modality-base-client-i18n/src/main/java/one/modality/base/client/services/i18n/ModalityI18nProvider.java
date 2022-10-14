@@ -1,19 +1,11 @@
 package one.modality.base.client.services.i18n;
 
-
-import dev.webfx.platform.json.Json;
-import dev.webfx.platform.json.WritableJsonArray;
-import dev.webfx.platform.json.WritableJsonObject;
 import dev.webfx.stack.i18n.Dictionary;
 import dev.webfx.stack.i18n.TokenKey;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import dev.webfx.stack.i18n.spi.impl.json.JsonI18nProvider;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.HasEntity;
-import dev.webfx.stack.ui.fxraiser.FXValueRaiser;
-import dev.webfx.stack.ui.fxraiser.impl.ValueConverterRegistry;
-
-import static dev.webfx.platform.util.Objects.isAssignableFrom;
 
 /**
  * @author Bruno Salmon
@@ -22,19 +14,6 @@ public final class ModalityI18nProvider extends JsonI18nProvider {
 
     public ModalityI18nProvider() {
         super("one/modality/base/client/services/i18n/dictionaries/{lang}.json");
-        ValueConverterRegistry.registerValueConverter(new FXValueRaiser() {
-            @Override
-            public <T> T raiseValue(Object value, Class<T> raisedClass, Object... args) {
-                if (value instanceof String) {
-                    String s = (String) value;
-                    if (s.startsWith("{") && s.endsWith("}") && isAssignableFrom(raisedClass, WritableJsonObject.class))
-                        return (T) Json.parseObjectSilently(s);
-                    if (s.startsWith("[") && s.endsWith("]") && isAssignableFrom(raisedClass, WritableJsonArray.class))
-                        return (T) Json.parseArraySilently(s);
-                }
-                return null;
-            }
-        });
     }
 
     @Override

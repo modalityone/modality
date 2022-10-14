@@ -28,6 +28,7 @@ module modality.all.backoffice.application.openjfx {
     requires webfx.stack.orm.dql.submit.interceptor;
     requires webfx.stack.routing.activity;
     requires webfx.stack.routing.uirouter;
+    requires webfx.stack.ui.fxraiser.json;
 
     // Exported packages
     exports one.modality.all.backoffice.activities.event.clone.openjfx;

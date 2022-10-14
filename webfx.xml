@@ -969,15 +969,10 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>webfx-kit-javafxgraphics-emul</module>
-                <module>webfx-platform-json</module>
-                <module>webfx-platform-util</module>
                 <module>webfx-stack-i18n</module>
                 <module>webfx-stack-i18n-json</module>
                 <module>webfx-stack-orm-entity</module>
-                <module>webfx-stack-ui-fxraiser</module>
                 <module>webfx-stack-ui-operation</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -3795,6 +3790,12 @@
                 <module>webfx-stack-querypush-client</module>
                 <module>webfx-stack-querypush-server</module>
                 <module>webfx-stack-querypush-server-simple</module>
+            </java-package>
+
+            <java-package name="dev.webfx.stack.ui.fxraiser">
+                <module>webfx-stack-i18n</module>
+                <module>webfx-stack-ui-fxraiser</module>
+                <module>webfx-stack-ui-fxraiser-json</module>
             </java-package>
 
             <java-package name="java.util.regex">

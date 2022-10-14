@@ -168,6 +168,12 @@
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-ui-fxraiser-json</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
 
     <!-- Redefining the gluon profiles here, so they can be activated when invoking this pom directly -->
