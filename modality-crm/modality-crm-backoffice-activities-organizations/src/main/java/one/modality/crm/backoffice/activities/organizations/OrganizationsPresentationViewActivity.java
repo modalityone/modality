@@ -1,11 +1,11 @@
 package one.modality.crm.backoffice.activities.organizations;
 
+import dev.webfx.stack.i18n.I18n;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import one.modality.base.client.activity.table.GenericTablePresentationViewActivity;
-import dev.webfx.stack.i18n.I18nControls;
 
 /**
  * @author Bruno Salmon
@@ -18,7 +18,7 @@ final class OrganizationsPresentationViewActivity extends GenericTablePresentati
     protected void createViewNodes(OrganizationsPresentationModel pm) {
         super.createViewNodes(pm);
 
-        I18nControls.bindI18nProperties(searchBox, "YourCentre"); // Will translate the prompt
+        I18n.bindI18nProperties(searchBox, "YourCentre"); // Will translate the prompt
 
         withEventsCheckBox = newCheckBox("WithEvents");
 

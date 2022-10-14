@@ -172,7 +172,8 @@ public class HomeActivity extends ViewDomainActivityBase
             @Override
             protected void layoutChildren() {
                 double width = getWidth(), height = getHeight(), h2 = height / 2, h4 = h2 / 2, h8 = h4 / 2;
-                layoutInArea(scaledGraphic, 0, h4, width, h4, 0, HPos.CENTER, VPos.CENTER);
+                if (scaledGraphic != null)
+                    layoutInArea(scaledGraphic, 0, h4, width, h4, 0, HPos.CENTER, VPos.CENTER);
                 setFontSize(Math.min(width * 0.125, h4 * 0.6));
                 layoutInArea(htmlText, 0, h2 + h8, width, h4, 0, HPos.CENTER, VPos.CENTER);
                 clip.setWidth(width);

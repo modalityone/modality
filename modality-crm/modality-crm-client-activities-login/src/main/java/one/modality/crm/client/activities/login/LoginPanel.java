@@ -1,6 +1,6 @@
 package one.modality.crm.client.activities.login;
 
-import dev.webfx.stack.i18n.I18nControls;
+import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.ui.controls.button.ButtonFactory;
 import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
 import dev.webfx.stack.routing.uirouter.uisession.UiSession;
@@ -54,7 +54,7 @@ public final class LoginPanel implements ModalityButtonFactoryMixin {
         hyperLink.setOnAction(e -> signInMode.setValue(!signInMode.getValue()));
         LayoutUtil.setUnmanagedWhenInvisible(passwordField, signInMode);
         FXProperties.runNowAndOnPropertiesChange(() ->
-                        I18nControls.bindI18nProperties(button, signInMode.getValue() ? "SignIn>>" : "SendPassword>>")
+                        I18n.bindI18nProperties(button, signInMode.getValue() ? "SignIn>>" : "SendPassword>>")
                 , signInMode);
         node = LayoutUtil.createGoldLayout(loginWindow);
         initValidation();

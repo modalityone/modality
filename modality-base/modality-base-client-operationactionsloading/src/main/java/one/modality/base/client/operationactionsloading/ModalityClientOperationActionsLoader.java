@@ -62,7 +62,7 @@ public class ModalityClientOperationActionsLoader implements ApplicationModuleBo
                             Object i18nKey = graphicalAction.getUserData();
                             if (i18nKey instanceof ModalityOperationI18nKey)
                                 ((ModalityOperationI18nKey) i18nKey).setOperationRequest(operationRequest);
-                            I18n.refreshMessageTranslations(i18nKey);
+                            I18n.refreshMessageTokenProperties(i18nKey);
                         }
                     });
                 });

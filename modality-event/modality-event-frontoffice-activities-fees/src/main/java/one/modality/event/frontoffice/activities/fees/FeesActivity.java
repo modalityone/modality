@@ -13,7 +13,6 @@ import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.i18n.Dictionary;
 import dev.webfx.stack.i18n.I18n;
-import dev.webfx.stack.i18n.I18nControls;
 import dev.webfx.stack.ui.util.layout.LayoutUtil;
 import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -165,8 +164,7 @@ final class FeesActivity extends BookingProcessActivity {
         OptionsPreselection[] optionsPreselections = feesGroup.getOptionsPreselections();
         int optionsCount = optionsPreselections.length;
         boolean singleOption = optionsCount == 1;
-        VisualResultBuilder rsb = VisualResultBuilder.create(optionsCount, new VisualColumn[]{
-                VisualColumnBuilder.create(I18n.getI18nText(singleOption ? (feesGroup.isFestival() ? "Festival" : "Course") : "Accommodation"), PrimType.STRING).setCumulator(cumulators[0]).build(),
+        VisualResultBuilder rsb = VisualResultBuilder.create(optionsCount, VisualColumnBuilder.create(I18n.getI18nText(singleOption ? (feesGroup.isFestival() ? "Festival" : "Course") : "Accommodation"), PrimType.STRING).setCumulator(cumulators[0]).build(),
                 VisualColumnBuilder.create(I18n.getI18nText("Fee"), PrimType.INTEGER).setStyle(VisualStyle.CENTER_STYLE).setCumulator(cumulators[1]).build(),
                 VisualColumnBuilder.create(I18n.getI18nText("Availability")).setStyle(VisualStyle.CENTER_STYLE).setCumulator(cumulators[2])
                         .setValueRenderer((p, context) -> {
@@ -190,7 +188,7 @@ final class FeesActivity extends BookingProcessActivity {
                             HBox hBox = (HBox) NodeCollatorRegistry.hBoxCollator().collateNodes(createBadge(TextRenderer.SINGLETON.renderValue(availability, ValueRenderingContext.DEFAULT_READONLY_CONTEXT)), button);
                             hBox.setAlignment(Pos.CENTER);
                             return hBox;
-                        }).build()});
+                        }).build());
         int rowIndex = 0;
         for (OptionsPreselection optionsPreselection : optionsPreselections) {
             rsb.setValue(rowIndex,   0, singleOption ? /* Showing course name instead of 'NoAccommodation' when single line */ Labels.instantTranslateLabel(Objects.coalesce(feesGroup.getLabel(), Labels.bestLabelOrName(feesGroup.getEvent()))) : /* Otherwise showing accommodation type */ optionsPreselection.getDisplayName());
@@ -209,9 +207,9 @@ final class FeesActivity extends BookingProcessActivity {
         boolean hasUnemployedRate = hasUnemployedRate();
         boolean hasFacilityFeeRate = hasFacilityFeeRate();
         boolean hasDiscountRates = hasUnemployedRate || hasFacilityFeeRate;
-        RadioButton noDiscountRadio  = hasDiscountRates   ? I18nControls.setI18nProperties(new RadioButton(), "NoDiscount") : null;
-        RadioButton unemployedRadio  = hasUnemployedRate  ? I18nControls.setI18nProperties(new RadioButton(), "UnemployedDiscount") : null;
-        RadioButton facilityFeeRadio = hasFacilityFeeRate ? I18nControls.setI18nProperties(new RadioButton(), "FacilityFeeDiscount") : null;
+        RadioButton noDiscountRadio  = hasDiscountRates   ? I18n.setI18nProperties(new RadioButton(), "NoDiscount") : null;
+        RadioButton unemployedRadio  = hasUnemployedRate  ? I18n.setI18nProperties(new RadioButton(), "UnemployedDiscount") : null;
+        RadioButton facilityFeeRadio = hasFacilityFeeRate ? I18n.setI18nProperties(new RadioButton(), "FacilityFeeDiscount") : null;
         Person person = getPersonAggregate().getPreselectionProfilePerson();
         if (unemployedRadio != null) {
             unemployedRadio.setSelected(Booleans.isTrue(person.isUnemployed()));

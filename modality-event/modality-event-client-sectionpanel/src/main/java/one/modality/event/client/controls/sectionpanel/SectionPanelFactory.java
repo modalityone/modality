@@ -9,7 +9,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import one.modality.event.client.controls.bookingcalendar.BookingCalendar;
 import one.modality.base.client.icons.ModalityIcons;
-import dev.webfx.stack.i18n.I18nControls;
+import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.ui.util.background.BackgroundFactory;
 import dev.webfx.stack.ui.util.border.BorderFactory;
 import dev.webfx.extras.cell.collator.NodeCollatorRegistry;
@@ -48,7 +48,7 @@ public final class SectionPanelFactory {
     }
 
     public static BorderPane createSectionPanel(String iconImageUrl, Object i18nKey) {
-        return createSectionPanelWithHeaderNodes(createImageView(iconImageUrl), I18nControls.bindI18nProperties(new Label(), i18nKey));
+        return createSectionPanelWithHeaderNodes(createImageView(iconImageUrl), I18n.bindI18nProperties(new Label(), i18nKey));
     }
 
     public static BorderPane createSectionPanelWithHeaderNodes(Node... headerNodes) {

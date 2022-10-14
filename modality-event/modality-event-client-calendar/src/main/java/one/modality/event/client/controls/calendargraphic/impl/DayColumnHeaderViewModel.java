@@ -1,5 +1,6 @@
 package one.modality.event.client.controls.calendargraphic.impl;
 
+import dev.webfx.stack.i18n.I18n;
 import javafx.geometry.VPos;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -8,7 +9,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Translate;
-import dev.webfx.stack.i18n.I18nControls;
 import dev.webfx.stack.ui.util.background.BackgroundFactory;
 
 import java.time.LocalDate;
@@ -79,9 +79,9 @@ public final class DayColumnHeaderViewModel implements HorizontalDayPositioned {
     }
 
     private void setDate(LocalDate date) {
-        I18nControls.bindI18nProperties(dayOfWeekText, date.getDayOfWeek().name());
+        I18n.bindI18nProperties(dayOfWeekText, date.getDayOfWeek().name());
         dayOfMonthText.setText("" + date.getDayOfMonth());
-        I18nControls.bindI18nProperties(monthText, date.getMonth().name());
+        I18n.bindI18nProperties(monthText, date.getMonth().name());
     }
 
 

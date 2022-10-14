@@ -1,13 +1,19 @@
 package one.modality.base.client.services.i18n;
 
 
-import javafx.scene.Node;
-import dev.webfx.stack.i18n.I18nPart;
+import dev.webfx.platform.json.Json;
+import dev.webfx.platform.json.WritableJsonArray;
+import dev.webfx.platform.json.WritableJsonObject;
+import dev.webfx.stack.i18n.Dictionary;
+import dev.webfx.stack.i18n.TokenKey;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import dev.webfx.stack.i18n.spi.impl.json.JsonI18nProvider;
-import dev.webfx.stack.ui.util.image.JsonImageViews;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.HasEntity;
+import dev.webfx.stack.ui.fxraiser.FXValueRaiser;
+import dev.webfx.stack.ui.fxraiser.impl.ValueConverterRegistry;
+
+import static dev.webfx.platform.util.Objects.isAssignableFrom;
 
 /**
  * @author Bruno Salmon
@@ -16,21 +22,38 @@ public final class ModalityI18nProvider extends JsonI18nProvider {
 
     public ModalityI18nProvider() {
         super("one/modality/base/client/services/i18n/dictionaries/{lang}.json");
+        ValueConverterRegistry.registerValueConverter(new FXValueRaiser() {
+            @Override
+            public <T> T raiseValue(Object value, Class<T> raisedClass, Object... args) {
+                if (value instanceof String) {
+                    String s = (String) value;
+                    if (s.startsWith("{") && s.endsWith("}") && isAssignableFrom(raisedClass, WritableJsonObject.class))
+                        return (T) Json.parseObjectSilently(s);
+                    if (s.startsWith("[") && s.endsWith("]") && isAssignableFrom(raisedClass, WritableJsonArray.class))
+                        return (T) Json.parseArraySilently(s);
+                }
+                return null;
+            }
+        });
     }
 
     @Override
-    public Node createI18nGraphic(String graphicUrl) {
-        return JsonImageViews.createImageViewOrSVGPath(graphicUrl);
-    }
-
-    @Override
-    public String interpretToken(Object i18nKey, I18nPart part, String token) {
-        if (token.startsWith("expression:")) {
-            Entity entity = findEntity(i18nKey);
-            if (entity != null)
-                return (String) entity.evaluate(token.substring(11));
+    protected <TK extends Enum<?> & TokenKey> Object getDictionaryTokenValueImpl(Object i18nKey, TK tokenKey, Dictionary dictionary, boolean skipDefaultDictionary, boolean skipMessageKeyInterpretation, boolean skipMessageLoading) {
+        Object messageKey = i18nKeyToDictionaryMessageKey(i18nKey);
+        if (messageKey instanceof String) {
+            String s = (String) messageKey;
+            if (s.startsWith("expression:")) {
+                Entity entity = findEntity(i18nKey);
+                if (entity != null) {
+                    Object tokenValue = entity.evaluate(s.substring(11));
+                    if (tokenValue instanceof String)
+                        i18nKey = new I18nSubKey(tokenValue, i18nKey);
+                    else
+                        return tokenValue;
+                }
+            }
         }
-        return super.interpretToken(i18nKey, part, token);
+        return super.getDictionaryTokenValueImpl(i18nKey, tokenKey, dictionary, skipDefaultDictionary, skipMessageKeyInterpretation, skipMessageLoading);
     }
 
     private Entity findEntity(Object i18nKey) {

@@ -5,10 +5,12 @@ module modality.base.client.i18n {
     // Direct dependencies modules
     requires javafx.base;
     requires javafx.graphics;
+    requires webfx.platform.json;
     requires webfx.platform.util;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.json;
     requires webfx.stack.orm.entity;
+    requires webfx.stack.ui.fxraiser;
     requires webfx.stack.ui.operation;
     requires webfx.stack.ui.util;
 
