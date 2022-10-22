@@ -1,5 +1,6 @@
 package one.modality.catering.backoffice.activities.home;
 
+import dev.webfx.extras.scalepane.ScalePane;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;

@@ -425,6 +425,8 @@
     <source path="dev/webfx/extras/materialdesign/util/background"/>
     <source path="dev/webfx/extras/materialdesign/util/layout"/>
     <source path="dev/webfx/extras/materialdesign/util/scene"/>
+    <!--=============================< webfx-extras-scalepane >=============================-->
+    <source path="dev/webfx/extras/scalepane"/>
     <!--===============================< webfx-extras-type >================================-->
     <source path="dev/webfx/extras/type"/>
     <!--==============================< webfx-extras-visual >===============================-->

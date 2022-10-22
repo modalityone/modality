@@ -429,6 +429,7 @@
             <used-by-source-modules>
                 <module>java.base</module>
                 <module>modality-base-client-activity</module>
+                <module>webfx-extras-scalepane</module>
                 <module>webfx-extras-webtext</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
