@@ -1224,6 +1224,8 @@
                 <!-- Commented while it's not necessary during the development phase (and creates logs on the server every second which may pollute other logs)
         <plugin-module>modality-base-server-systemmetrics</plugin-module>
 -->
+                <plugin-module>modality-ecommerce-payment-direct</plugin-module>
+                <plugin-module>modality-ecommerce-payment-gateway-direct-authorizedotnet</plugin-module>
                 <plugin-module>webfx-stack-querypush</plugin-module>
                 <plugin-module>webfx-stack-com-bus-call-job</plugin-module>
             </dependencies>
@@ -2191,6 +2193,12 @@
                 <module>modality-ecommerce-frontoffice-activities-payment</module>
                 <module>modality-ecommerce-frontoffice-activities-person</module>
                 <module>modality-ecommerce-frontoffice-activities-summary</module>
+                <module>modality-ecommerce-payment-direct</module>
+                <module>modality-ecommerce-payment-direct-remote</module>
+                <module>modality-ecommerce-payment-direct-server</module>
+                <module>modality-ecommerce-payment-direct-ui</module>
+                <module>modality-ecommerce-payment-gateway-direct</module>
+                <module>modality-ecommerce-payment-gateway-direct-authorizedotnet</module>
             </modules>
 
         </project>
@@ -3056,6 +3064,237 @@
 
         </project>
 
+        <project name="modality-ecommerce-payment-direct">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <providers>
+                <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.payment.direct.buscall.MakeDirectPaymentMethodEndpoint</provider>
+                <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.payment.direct.buscall.GetDirectPaymentGatewayInfosMethodEndpoint</provider>
+                <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.payment.direct.MakeDirectPaymentArgument$ProvidedSerialCodec</provider>
+                <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.payment.direct.MakeDirectPaymentResult$ProvidedSerialCodec</provider>
+            </providers>
+
+            <dependencies>
+                <used-by-source-modules/>
+            </dependencies>
+
+            <source-packages>
+                <package>one.modality.ecommerce.payment.direct</package>
+                <package>one.modality.ecommerce.payment.direct.buscall</package>
+                <package>one.modality.ecommerce.payment.direct.spi</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>webfx-platform-async</module>
+                <module>webfx-platform-json</module>
+                <module>webfx-platform-util</module>
+                <module>webfx-stack-com-bus-call</module>
+                <module>webfx-stack-com-serial</module>
+            </used-by-source-modules>
+
+            <used-services>
+                <required-service>one.modality.ecommerce.payment.direct.spi.DirectPaymentProvider</required-service>
+            </used-services>
+
+        </project>
+
+        <project name="modality-ecommerce-payment-direct-remote">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+            </dependencies>
+
+            <providers>
+                <provider interface="one.modality.ecommerce.payment.direct.spi.DirectPaymentProvider">one.modality.ecommerce.payment.direct.spi.impl.remote.RemoteDirectPaymentProvider</provider>
+            </providers>
+
+            <source-packages>
+                <package>one.modality.ecommerce.payment.direct.spi.impl.remote</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>modality-ecommerce-payment-direct</module>
+                <module>webfx-platform-async</module>
+                <module>webfx-stack-com-bus-call</module>
+            </used-by-source-modules>
+
+        </project>
+
+        <project name="modality-ecommerce-payment-direct-server">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+            </dependencies>
+
+            <providers>
+                <provider interface="one.modality.ecommerce.payment.direct.spi.DirectPaymentProvider">one.modality.ecommerce.payment.direct.spi.impl.server.ServerDirectPaymentProvider</provider>
+            </providers>
+
+            <source-packages>
+                <package>one.modality.ecommerce.payment.direct.spi.impl.server</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>modality-ecommerce-payment-direct</module>
+                <module>modality-ecommerce-payment-gateway-direct</module>
+                <module>webfx-platform-async</module>
+            </used-by-source-modules>
+
+            <used-services>
+                <optional-service>one.modality.ecommerce.payment.gateway.direct.spi.DirectPaymentGatewayProvider</optional-service>
+            </used-services>
+
+        </project>
+
+        <project name="modality-ecommerce-payment-direct-ui">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules>
+                    <undetected-module>webfx-platform-async</undetected-module>
+                </used-by-source-modules>
+            </dependencies>
+
+            <source-packages>
+                <package>one.modality.ecommerce.payment.direct.ui</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>modality-ecommerce-payment-direct</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-console</module>
+            </used-by-source-modules>
+
+        </project>
+
+        <project name="modality-ecommerce-payment-gateway-direct">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+            </dependencies>
+
+            <source-packages>
+                <package>one.modality.ecommerce.payment.gateway.direct.spi</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>modality-ecommerce-payment-direct</module>
+                <module>webfx-platform-async</module>
+            </used-by-source-modules>
+
+        </project>
+
+        <project name="modality-ecommerce-payment-gateway-direct-authorizedotnet">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+                <plugin-module>jakarta.xml.bind-api</plugin-module>
+                <plugin-module>jaxb-runtime</plugin-module>
+            </dependencies>
+
+            <providers>
+                <provider interface="one.modality.ecommerce.payment.gateway.direct.spi.DirectPaymentGatewayProvider">one.modality.ecommerce.payment.gateway.direct.spi.impl.authorizedotnet.AuthorizeDotNetDirectPaymentGatewayProvider</provider>
+            </providers>
+
+            <required-libraries>
+                <library artifact="net.authorize:anet-java-sdk:2.0.6">
+
+                    <exported-packages>
+                        <package>net.authorize</package>
+                        <package>net.authorize.util</package>
+                        <package>net.authorize.api.controller</package>
+                        <package>net.authorize.api.controller.base</package>
+                        <package>net.authorize.api.contract.v1</package>
+                    </exported-packages>
+
+                </library>
+                <library artifact="jakarta.xml.bind:jakarta.xml.bind-api:2.3.2">
+
+                    <exported-packages>
+                        <package>javax.xml.bind</package>
+                        <package>javax.xml.bind.util</package>
+                        <package>javax.xml.bind.helpers</package>
+                        <package>javax.xml.bind.attachment</package>
+                        <package>javax.xml.bind.annotation</package>
+                        <package>javax.xml.bind.annotation.adapters</package>
+                        <package>META-INF.versions.9.javax.xml.bind</package>
+                    </exported-packages>
+
+                </library>
+                <library artifact="org.glassfish.jaxb:jaxb-runtime:2.3.2">
+
+                    <exported-packages>
+                        <package>com.sun.xml.bind</package>
+                        <package>com.sun.xml.bind.v2</package>
+                        <package>com.sun.xml.bind.v2.util</package>
+                        <package>com.sun.xml.bind.v2.schemagen</package>
+                        <package>com.sun.xml.bind.v2.schemagen.xmlschema</package>
+                        <package>com.sun.xml.bind.v2.schemagen.episode</package>
+                        <package>com.sun.xml.bind.v2.runtime</package>
+                        <package>com.sun.xml.bind.v2.runtime.unmarshaller</package>
+                        <package>com.sun.xml.bind.v2.runtime.reflect</package>
+                        <package>com.sun.xml.bind.v2.runtime.reflect.opt</package>
+                        <package>com.sun.xml.bind.v2.runtime.property</package>
+                        <package>com.sun.xml.bind.v2.runtime.output</package>
+                        <package>com.sun.xml.bind.v2.model.util</package>
+                        <package>com.sun.xml.bind.v2.model.runtime</package>
+                        <package>com.sun.xml.bind.v2.model.nav</package>
+                        <package>com.sun.xml.bind.v2.model.impl</package>
+                        <package>com.sun.xml.bind.v2.model.core</package>
+                        <package>com.sun.xml.bind.v2.model.annotation</package>
+                        <package>com.sun.xml.bind.v2.bytecode</package>
+                        <package>com.sun.xml.bind.util</package>
+                        <package>com.sun.xml.bind.unmarshaller</package>
+                        <package>com.sun.xml.bind.marshaller</package>
+                        <package>com.sun.xml.bind.api</package>
+                        <package>com.sun.xml.bind.api.impl</package>
+                        <package>com.sun.xml.bind.annotation</package>
+                    </exported-packages>
+
+                </library>
+            </required-libraries>
+
+
+            <source-packages>
+                <package>one.modality.ecommerce.payment.gateway.direct.spi.impl.authorizedotnet</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>anet-java-sdk</module>
+                <module>java.base</module>
+                <module>modality-ecommerce-payment-direct</module>
+                <module>modality-ecommerce-payment-gateway-direct</module>
+                <module>webfx-platform-async</module>
+                <module>webfx-platform-scheduler</module>
+            </used-by-source-modules>
+
+        </project>
+
         <project name="modality-event">
 
             <modules>
@@ -3799,6 +4038,7 @@
             </java-package>
 
             <java-package name="java.util.regex">
+                <module>anet-java-sdk</module>
                 <module>webfx-stack-routing-router</module>
             </java-package>
 

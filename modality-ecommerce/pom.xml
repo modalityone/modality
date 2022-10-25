@@ -35,6 +35,12 @@
         <module>modality-ecommerce-frontoffice-activities-payment</module>
         <module>modality-ecommerce-frontoffice-activities-person</module>
         <module>modality-ecommerce-frontoffice-activities-summary</module>
+        <module>modality-ecommerce-payment-direct</module>
+        <module>modality-ecommerce-payment-direct-remote</module>
+        <module>modality-ecommerce-payment-direct-server</module>
+        <module>modality-ecommerce-payment-direct-ui</module>
+        <module>modality-ecommerce-payment-gateway-direct</module>
+        <module>modality-ecommerce-payment-gateway-direct-authorizedotnet</module>
     </modules>
 
 </project>
