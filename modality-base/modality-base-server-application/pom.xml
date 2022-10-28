@@ -30,20 +30,6 @@
         </dependency>
 
         <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-payment-direct</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-payment-gateway-direct-authorizedotnet</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-com-bus-call-job</artifactId>
             <version>0.1.0-SNAPSHOT</version>

@@ -33,12 +33,6 @@
         </dependency>
 
         <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-payment-direct-server</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-boot-vertx</artifactId>
             <version>0.1.0-SNAPSHOT</version>

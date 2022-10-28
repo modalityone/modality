@@ -20,7 +20,7 @@ public class ServerDirectPaymentProvider implements DirectPaymentProvider {
         Iterator<DirectPaymentGatewayProvider> it = getDirectPaymentGatewayProviders().iterator();
         if (it.hasNext())
             return it.next().makeDirectPayment(argument);
-        throw new IllegalStateException("No direct payment gateway found!");
+        return Future.failedFuture(new IllegalStateException("No direct payment gateway found!"));
     }
 
     @Override

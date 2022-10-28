@@ -6,7 +6,6 @@ module modality.base.server.application.vertx {
     requires javafx.base;
     requires modality.base.server.application;
     requires modality.base.shared.domainmodel;
-    requires modality.ecommerce.payment.direct.server;
     requires webfx.platform.boot.vertx;
     requires webfx.platform.console.java;
     requires webfx.platform.json.vertx;

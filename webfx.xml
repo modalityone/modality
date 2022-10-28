@@ -16,6 +16,7 @@
     </modules>
 
     <required-libraries>
+        <webfx-library artifact="dev.webfx:webfx-extras:0.1.0-SNAPSHOT"/>        <!-- for ScalePane -->
         <webfx-library artifact="dev.webfx:webfx-stack-private:0.1.0-SNAPSHOT"/>
         <webfx-library artifact="dev.webfx:webfx-extras-private:0.1.0-SNAPSHOT"/>
 
@@ -83,6 +84,7 @@
             </modules>
 
             <required-libraries>
+                <webfx-library artifact="dev.webfx:webfx-extras:0.1.0-SNAPSHOT"/>                <!-- for ScalePane -->
                 <webfx-library artifact="dev.webfx:webfx-stack-private:0.1.0-SNAPSHOT"/>
                 <webfx-library artifact="dev.webfx:webfx-extras-private:0.1.0-SNAPSHOT"/>
 
@@ -1225,8 +1227,6 @@
                 <!-- Commented while it's not necessary during the development phase (and creates logs on the server every second which may pollute other logs)
         <plugin-module>modality-base-server-systemmetrics</plugin-module>
 -->
-                <plugin-module>modality-ecommerce-payment-direct</plugin-module>
-                <plugin-module>modality-ecommerce-payment-gateway-direct-authorizedotnet</plugin-module>
                 <plugin-module>webfx-stack-querypush</plugin-module>
                 <plugin-module>webfx-stack-com-bus-call-job</plugin-module>
             </dependencies>
@@ -2194,12 +2194,20 @@
                 <module>modality-ecommerce-frontoffice-activities-payment</module>
                 <module>modality-ecommerce-frontoffice-activities-person</module>
                 <module>modality-ecommerce-frontoffice-activities-summary</module>
+                <module>modality-ecommerce-payment-delegated</module>
+                <module>modality-ecommerce-payment-delegated-remote</module>
+                <module>modality-ecommerce-payment-delegated-server</module>
                 <module>modality-ecommerce-payment-direct</module>
                 <module>modality-ecommerce-payment-direct-remote</module>
                 <module>modality-ecommerce-payment-direct-server</module>
                 <module>modality-ecommerce-payment-direct-ui</module>
+                <module>modality-ecommerce-payment-gateway-delegated</module>
+                <module>modality-ecommerce-payment-gateway-delegated-stripe</module>
+                <module>modality-ecommerce-payment-gateway-delegated-ui</module>
                 <module>modality-ecommerce-payment-gateway-direct</module>
                 <module>modality-ecommerce-payment-gateway-direct-authorizedotnet</module>
+                <module>modality-ecommerce-server-application</module>
+                <module>modality-ecommerce-server-application-vertx</module>
             </modules>
 
         </project>
@@ -3065,6 +3073,100 @@
 
         </project>
 
+        <project name="modality-ecommerce-payment-delegated">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <providers>
+                <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.payment.delegated.buscall.InitiateDelegatedPaymentMethodEndpoint</provider>
+                <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.payment.delegated.InitiateDelegatedPaymentArgument$ProvidedSerialCodec</provider>
+                <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.payment.delegated.InitiateDelegatedPaymentResult$ProvidedSerialCodec</provider>
+            </providers>
+
+            <dependencies>
+                <used-by-source-modules/>
+            </dependencies>
+
+            <source-packages>
+                <package>one.modality.ecommerce.payment.delegated</package>
+                <package>one.modality.ecommerce.payment.delegated.buscall</package>
+                <package>one.modality.ecommerce.payment.delegated.spi</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>webfx-platform-async</module>
+                <module>webfx-platform-json</module>
+                <module>webfx-platform-util</module>
+                <module>webfx-stack-com-bus-call</module>
+                <module>webfx-stack-com-serial</module>
+            </used-by-source-modules>
+
+            <used-services>
+                <required-service>one.modality.ecommerce.payment.delegated.spi.DelegatedPaymentProvider</required-service>
+            </used-services>
+
+        </project>
+
+        <project name="modality-ecommerce-payment-delegated-remote">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+            </dependencies>
+
+            <providers>
+                <provider interface="one.modality.ecommerce.payment.delegated.spi.DelegatedPaymentProvider">one.modality.ecommerce.payment.delegated.spi.impl.remote.RemoteDelegatedPaymentProvider</provider>
+            </providers>
+
+            <source-packages>
+                <package>one.modality.ecommerce.payment.delegated.spi.impl.remote</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>modality-ecommerce-payment-delegated</module>
+                <module>webfx-platform-async</module>
+                <module>webfx-stack-com-bus-call</module>
+            </used-by-source-modules>
+
+        </project>
+
+        <project name="modality-ecommerce-payment-delegated-server">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+            </dependencies>
+
+            <providers>
+                <provider interface="one.modality.ecommerce.payment.delegated.spi.DelegatedPaymentProvider">one.modality.ecommerce.payment.delegated.spi.impl.server.ServerDelegatedPaymentProvider</provider>
+            </providers>
+
+            <source-packages>
+                <package>one.modality.ecommerce.payment.delegated.spi.impl.server</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>modality-ecommerce-payment-delegated</module>
+                <module>modality-ecommerce-payment-gateway-delegated</module>
+                <module>webfx-platform-async</module>
+            </used-by-source-modules>
+
+            <used-services>
+                <optional-service>one.modality.ecommerce.payment.gateway.delegated.spi.DelegatedPaymentGatewayProvider</optional-service>
+            </used-services>
+
+        </project>
+
         <project name="modality-ecommerce-payment-direct">
 
             <exported-packages>
@@ -3185,6 +3287,122 @@
 
         </project>
 
+        <project name="modality-ecommerce-payment-gateway-delegated">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+            </dependencies>
+
+            <source-packages>
+                <package>one.modality.ecommerce.payment.gateway.delegated.spi</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>modality-ecommerce-payment-delegated</module>
+                <module>webfx-platform-async</module>
+            </used-by-source-modules>
+
+        </project>
+
+        <project name="modality-ecommerce-payment-gateway-delegated-stripe">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+            </dependencies>
+
+            <providers>
+                <provider interface="one.modality.ecommerce.payment.gateway.delegated.spi.DelegatedPaymentGatewayProvider">one.modality.ecommerce.payment.gateway.delegated.spi.impl.stripe.StripeDelegatedPaymentGatewayProvider</provider>
+            </providers>
+
+            <required-libraries>
+                <library artifact="com.stripe:stripe-java:21.0.0">
+
+                    <exported-packages>
+                        <package>com.stripe.util</package>
+                        <package>com.stripe.model</package>
+                        <package>com.stripe.model.treasury</package>
+                        <package>com.stripe.model.financialconnections</package>
+                        <package>com.stripe.model.billingportal</package>
+                        <package>com.stripe.model.testhelpers</package>
+                        <package>com.stripe.model.terminal</package>
+                        <package>com.stripe.model.apps</package>
+                        <package>com.stripe.model.checkout</package>
+                        <package>com.stripe.model.identity</package>
+                        <package>com.stripe.model.radar</package>
+                        <package>com.stripe.model.sigma</package>
+                        <package>com.stripe.model.reporting</package>
+                        <package>com.stripe.model.oauth</package>
+                        <package>com.stripe.model.issuing</package>
+                        <package>com.stripe.param</package>
+                        <package>com.stripe.param.treasury</package>
+                        <package>com.stripe.param.financialconnections</package>
+                        <package>com.stripe.param.billingportal</package>
+                        <package>com.stripe.param.testhelpers</package>
+                        <package>com.stripe.param.terminal</package>
+                        <package>com.stripe.param.apps</package>
+                        <package>com.stripe.param.checkout</package>
+                        <package>com.stripe.param.common</package>
+                        <package>com.stripe.param.identity</package>
+                        <package>com.stripe.param.radar</package>
+                        <package>com.stripe.param.sigma</package>
+                        <package>com.stripe.param.reporting</package>
+                        <package>com.stripe.param.issuing</package>
+                        <package>com.stripe.net</package>
+                        <package>com.stripe</package>
+                        <package>com.stripe.exception</package>
+                        <package>com.stripe.exception.oauth</package>
+                    </exported-packages>
+
+                </library>
+            </required-libraries>
+
+            <source-packages>
+                <package>one.modality.ecommerce.payment.gateway.delegated.spi.impl.stripe</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>modality-ecommerce-payment-delegated</module>
+                <module>modality-ecommerce-payment-gateway-delegated</module>
+                <module>stripe-java</module>
+                <module>webfx-platform-async</module>
+            </used-by-source-modules>
+
+        </project>
+
+        <project name="modality-ecommerce-payment-gateway-delegated-ui">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules>
+                    <undetected-module>webfx-platform-async</undetected-module>
+                </used-by-source-modules>
+            </dependencies>
+
+            <source-packages>
+                <package>one.modality.ecommerce.payment.delegated.ui</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>modality-ecommerce-payment-delegated</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-javafxweb-emul</module>
+                <module>webfx-platform-console</module>
+            </used-by-source-modules>
+
+        </project>
+
         <project name="modality-ecommerce-payment-gateway-direct">
 
             <exported-packages>
@@ -3293,6 +3511,41 @@
                 <module>webfx-platform-async</module>
                 <module>webfx-platform-scheduler</module>
             </used-by-source-modules>
+
+        </project>
+
+        <project name="modality-ecommerce-server-application">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+
+                <plugin-module>modality-base-server-application</plugin-module>
+
+                <plugin-module>modality-ecommerce-payment-direct</plugin-module>
+                <plugin-module>modality-ecommerce-payment-gateway-direct-authorizedotnet</plugin-module>
+                <plugin-module>modality-ecommerce-payment-delegated</plugin-module>
+                <plugin-module>modality-ecommerce-payment-gateway-delegated-stripe</plugin-module>
+            </dependencies>
+
+            <used-by-source-modules/>
+
+        </project>
+
+        <project executable="true" name="modality-ecommerce-server-application-vertx">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+            </dependencies>
+
+            <used-by-source-modules/>
 
         </project>
 
@@ -4040,6 +4293,7 @@
 
             <java-package name="java.util.regex">
                 <module>anet-java-sdk</module>
+                <module>stripe-java</module>
                 <module>webfx-stack-routing-router</module>
             </java-package>
 

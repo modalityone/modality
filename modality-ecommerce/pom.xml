@@ -35,12 +35,20 @@
         <module>modality-ecommerce-frontoffice-activities-payment</module>
         <module>modality-ecommerce-frontoffice-activities-person</module>
         <module>modality-ecommerce-frontoffice-activities-summary</module>
+        <module>modality-ecommerce-payment-delegated</module>
+        <module>modality-ecommerce-payment-delegated-remote</module>
+        <module>modality-ecommerce-payment-delegated-server</module>
         <module>modality-ecommerce-payment-direct</module>
         <module>modality-ecommerce-payment-direct-remote</module>
         <module>modality-ecommerce-payment-direct-server</module>
         <module>modality-ecommerce-payment-direct-ui</module>
+        <module>modality-ecommerce-payment-gateway-delegated</module>
+        <module>modality-ecommerce-payment-gateway-delegated-stripe</module>
+        <module>modality-ecommerce-payment-gateway-delegated-ui</module>
         <module>modality-ecommerce-payment-gateway-direct</module>
         <module>modality-ecommerce-payment-gateway-direct-authorizedotnet</module>
+        <module>modality-ecommerce-server-application</module>
+        <module>modality-ecommerce-server-application-vertx</module>
     </modules>
 
 </project>
