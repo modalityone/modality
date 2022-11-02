@@ -4,7 +4,7 @@ module modality.ecommerce.payment.direct {
 
     // Direct dependencies modules
     requires java.base;
-    requires webfx.platform.async;
+    requires transitive webfx.platform.async;
     requires webfx.platform.json;
     requires webfx.platform.util;
     requires webfx.stack.com.bus.call;

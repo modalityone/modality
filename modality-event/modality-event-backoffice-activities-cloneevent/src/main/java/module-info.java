@@ -13,7 +13,6 @@ module modality.event.backoffice.activities.cloneevent {
     requires modality.ecommerce.backoffice.activities.bookings;
     requires modality.event.backoffice.activities.cloneevent.routing;
     requires webfx.kit.util;
-    requires webfx.platform.async;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
     requires webfx.stack.db.submit;

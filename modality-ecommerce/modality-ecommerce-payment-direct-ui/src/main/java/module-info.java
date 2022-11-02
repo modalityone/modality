@@ -6,7 +6,6 @@ module modality.ecommerce.payment.direct.ui {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.ecommerce.payment.direct;
-    requires webfx.platform.async;
     requires webfx.platform.console;
 
     // Exported packages

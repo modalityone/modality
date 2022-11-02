@@ -507,7 +507,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
-                    <undetected-module>webfx-platform-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -710,6 +709,7 @@
 
             <dependencies>
                 <used-by-source-modules>
+                    <module transitive="true">webfx-platform-async</module>
                     <undetected-module>webfx-stack-orm-domainmodel</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -754,7 +754,9 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules/>
+                <used-by-source-modules>
+                    <module transitive="true">webfx-platform-async</module>
+                </used-by-source-modules>
             </dependencies>
 
             <source-packages>
@@ -1068,7 +1070,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>javafx-base</undetected-module>
-                    <undetected-module>webfx-platform-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1125,7 +1126,6 @@
                 <used-by-source-modules>
                     <undetected-module>javafx-base</undetected-module>
                     <undetected-module>webfx-stack-db-submit</undetected-module>
-                    <undetected-module>webfx-platform-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1374,7 +1374,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-orm-domainmodel</undetected-module>
-                    <undetected-module>webfx-platform-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1403,9 +1402,7 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>webfx-platform-async</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -1728,7 +1725,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-platform-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
@@ -1812,7 +1808,6 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-orm-entity</undetected-module>
-                    <undetected-module>webfx-platform-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                     <undetected-module>webfx-kit-javafxgraphics-emul</undetected-module>
                 </used-by-source-modules>
@@ -1854,7 +1849,6 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-orm-entity</undetected-module>
-                    <undetected-module>webfx-platform-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1938,9 +1932,7 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>webfx-platform-async</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -2009,7 +2001,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
-                    <undetected-module>webfx-platform-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2108,9 +2099,7 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>webfx-platform-async</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -2339,7 +2328,6 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-ui-action</undetected-module>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
-                    <undetected-module>webfx-platform-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2716,8 +2704,8 @@
 
             <dependencies>
                 <used-by-source-modules>
+                    <module transitive="true">modality-base-client-activity</module>
                     <undetected-module>webfx-platform-windowhistory</undetected-module>
-                    <undetected-module>webfx-platform-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2749,6 +2737,7 @@
 
             <dependencies>
                 <used-by-source-modules>
+                    <module transitive="true">webfx-platform-async</module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2850,9 +2839,7 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>webfx-platform-async</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -2894,7 +2881,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
-                    <undetected-module>webfx-platform-async</undetected-module>
                     <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2941,7 +2927,6 @@
                 <used-by-source-modules>
                     <undetected-module>modality-base-client-aggregates</undetected-module>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
-                    <undetected-module>webfx-platform-async</undetected-module>
                     <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -3038,7 +3023,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
-                    <undetected-module>webfx-platform-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -3086,7 +3070,9 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules/>
+                <used-by-source-modules>
+                    <module transitive="true">webfx-platform-async</module>
+                </used-by-source-modules>
             </dependencies>
 
             <source-packages>
@@ -3181,7 +3167,9 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules/>
+                <used-by-source-modules>
+                    <module transitive="true">webfx-platform-async</module>
+                </used-by-source-modules>
             </dependencies>
 
             <source-packages>
@@ -3269,9 +3257,7 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>webfx-platform-async</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -3384,9 +3370,7 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>webfx-platform-async</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -3582,7 +3566,6 @@
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-orm-entity</undetected-module>
-                    <undetected-module>webfx-platform-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -3651,7 +3634,6 @@
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-orm-entity</undetected-module>
                     <undetected-module>webfx-kit-javafxgraphics-emul</undetected-module>
-                    <undetected-module>webfx-platform-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -3692,7 +3674,6 @@
                 <used-by-source-modules>
                     <undetected-module>modality-base-client-aggregates</undetected-module>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
-                    <undetected-module>webfx-platform-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -3735,9 +3716,7 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>webfx-platform-async</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -3833,7 +3812,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
-                    <undetected-module>webfx-platform-async</undetected-module>
                     <undetected-module>webfx-stack-db-query</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -3894,7 +3872,6 @@
                 <used-by-source-modules>
                     <undetected-module>modality-base-client-aggregates</undetected-module>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
-                    <undetected-module>webfx-platform-async</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -3950,7 +3927,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
-                    <undetected-module>webfx-platform-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                 </used-by-source-modules>
@@ -3993,7 +3969,6 @@
                 <used-by-source-modules>
                     <undetected-module>modality-base-shared-entities</undetected-module>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
-                    <undetected-module>webfx-platform-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -4097,7 +4072,6 @@
                     <undetected-module>webfx-stack-ui-action</undetected-module>
                     <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
-                    <undetected-module>webfx-platform-async</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                     <undetected-module>webfx-platform-json</undetected-module>
                 </used-by-source-modules>

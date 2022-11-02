@@ -5,7 +5,6 @@ module modality.base.server.systemmetrics {
     // Direct dependencies modules
     requires java.base;
     requires modality.base.shared.entities;
-    requires webfx.platform.async;
     requires webfx.platform.boot;
     requires webfx.platform.console;
     requires webfx.platform.scheduler;

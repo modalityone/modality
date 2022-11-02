@@ -12,7 +12,7 @@ module modality.base.client.activity {
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
     requires webfx.kit.util;
-    requires webfx.platform.async;
+    requires transitive webfx.platform.async;
     requires webfx.platform.console;
     requires webfx.platform.json;
     requires webfx.platform.util;

@@ -8,7 +8,6 @@ module modality.event.backoffice.activities.events {
     requires modality.base.client.activity;
     requires modality.base.client.util;
     requires modality.ecommerce.backoffice.activities.bookings;
-    requires webfx.platform.async;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;

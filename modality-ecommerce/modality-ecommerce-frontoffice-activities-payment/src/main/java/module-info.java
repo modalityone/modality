@@ -14,7 +14,6 @@ module modality.ecommerce.frontoffice.activities.payment {
     requires modality.ecommerce.frontoffice.activities.cart.routing;
     requires modality.event.client.sectionpanel;
     requires webfx.extras.webtext;
-    requires webfx.platform.async;
     requires webfx.platform.console;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;

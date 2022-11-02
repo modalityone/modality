@@ -17,7 +17,6 @@ module modality.ecommerce.frontoffice.activities.summary {
     requires modality.event.client.bookingcalendar;
     requires modality.event.client.sectionpanel;
     requires webfx.kit.util;
-    requires webfx.platform.async;
     requires webfx.platform.console;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;

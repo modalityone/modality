@@ -12,7 +12,7 @@ module modality.ecommerce.client.businesslogic {
     requires modality.base.shared.entities;
     requires modality.event.client.calendar;
     requires modality.hotel.shared.time;
-    requires webfx.platform.async;
+    requires transitive webfx.platform.async;
     requires webfx.platform.util;
     requires webfx.stack.db.query;
     requires webfx.stack.db.submit;

@@ -11,7 +11,6 @@ module modality.ecommerce.frontoffice.activities.cart.routing {
     requires modality.base.client.util;
     requires modality.base.shared.entities;
     requires webfx.kit.util;
-    requires webfx.platform.async;
     requires webfx.platform.json;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;

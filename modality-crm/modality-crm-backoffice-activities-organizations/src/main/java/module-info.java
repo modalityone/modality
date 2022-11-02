@@ -8,7 +8,6 @@ module modality.crm.backoffice.activities.organizations {
     requires javafx.graphics;
     requires modality.base.client.activity;
     requires modality.event.backoffice.activities.events;
-    requires webfx.platform.async;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.i18n;

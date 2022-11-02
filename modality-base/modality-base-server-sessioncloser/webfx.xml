@@ -12,7 +12,6 @@
     <dependencies>
         <used-by-source-modules>
             <undetected-module>webfx-stack-orm-domainmodel</undetected-module>
-            <undetected-module>webfx-platform-async</undetected-module>
         </used-by-source-modules>
     </dependencies>
 

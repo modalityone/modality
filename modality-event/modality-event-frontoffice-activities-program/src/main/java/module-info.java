@@ -11,7 +11,6 @@ module modality.event.frontoffice.activities.program {
     requires modality.ecommerce.client.businesslogic;
     requires modality.event.client.bookingcalendar;
     requires modality.event.client.sectionpanel;
-    requires webfx.platform.async;
     requires webfx.platform.console;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;

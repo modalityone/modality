@@ -24,7 +24,6 @@ module modality.event.frontoffice.activities.fees {
     requires webfx.extras.visual.grid;
     requires webfx.extras.visual.grid.peers.base;
     requires webfx.kit.util;
-    requires webfx.platform.async;
     requires webfx.platform.console;
     requires webfx.platform.json;
     requires webfx.platform.uischeduler;

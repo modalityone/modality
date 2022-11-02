@@ -7,7 +7,6 @@ module modality.base.client.sessionrecorder {
     requires javafx.base;
     requires modality.crm.client.authn;
     requires webfx.kit.launcher;
-    requires webfx.platform.async;
     requires webfx.platform.boot;
     requires webfx.platform.console;
     requires webfx.platform.storage;

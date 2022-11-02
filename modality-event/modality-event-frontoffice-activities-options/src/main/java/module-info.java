@@ -22,7 +22,6 @@ module modality.event.frontoffice.activities.options {
     requires webfx.extras.flexbox;
     requires webfx.extras.imagestore;
     requires webfx.kit.util;
-    requires webfx.platform.async;
     requires webfx.platform.console;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;

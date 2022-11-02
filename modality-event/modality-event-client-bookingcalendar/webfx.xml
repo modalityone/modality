@@ -6,9 +6,7 @@
     </exported-packages>
 
     <dependencies>
-        <used-by-source-modules>
-            <undetected-module>webfx-platform-async</undetected-module>
-        </used-by-source-modules>
+        <used-by-source-modules/>
     </dependencies>
 
 </project>

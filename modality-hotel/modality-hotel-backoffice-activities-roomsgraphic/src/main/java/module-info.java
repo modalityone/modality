@@ -17,7 +17,6 @@ module modality.hotel.backoffice.activities.roomsgraphic {
     requires webfx.extras.imagestore;
     requires webfx.extras.visual.grid;
     requires webfx.kit.util;
-    requires webfx.platform.async;
     requires webfx.platform.json;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;

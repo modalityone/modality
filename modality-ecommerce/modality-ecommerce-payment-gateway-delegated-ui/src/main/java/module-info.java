@@ -7,7 +7,6 @@ module modality.ecommerce.payment.gateway.delegated.ui {
     requires javafx.graphics;
     requires javafx.web;
     requires modality.ecommerce.payment.delegated;
-    requires webfx.platform.async;
     requires webfx.platform.console;
 
     // Exported packages
