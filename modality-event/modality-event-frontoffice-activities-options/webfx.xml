@@ -12,7 +12,6 @@
     <dependencies>
         <used-by-source-modules>
             <undetected-module>modality-base-client-aggregates</undetected-module>
-            <undetected-module>webfx-stack-routing-activity</undetected-module>
         </used-by-source-modules>
     </dependencies>
 

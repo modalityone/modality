@@ -25,7 +25,6 @@ module modality.ecommerce.frontoffice.activities.payment {
     requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.entity;
-    requires webfx.stack.routing.activity;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.action;
     requires webfx.stack.ui.controls;

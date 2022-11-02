@@ -19,7 +19,6 @@ module modality.crm.backoffice.activities.users {
     requires webfx.stack.orm.expression;
     requires webfx.stack.orm.reactive.dql;
     requires webfx.stack.orm.reactive.visual;
-    requires webfx.stack.routing.activity;
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.action;

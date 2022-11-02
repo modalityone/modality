@@ -13,7 +13,6 @@
     <dependencies>
         <used-by-source-modules>
             <undetected-module>webfx-stack-ui-action</undetected-module>
-            <undetected-module>webfx-stack-routing-activity</undetected-module>
             <undetected-module>webfx-platform-util</undetected-module>
         </used-by-source-modules>
     </dependencies>

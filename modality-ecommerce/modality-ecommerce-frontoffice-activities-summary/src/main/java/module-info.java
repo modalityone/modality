@@ -22,7 +22,6 @@ module modality.ecommerce.frontoffice.activities.summary {
     requires webfx.platform.windowhistory;
     requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel.activity;
-    requires webfx.stack.routing.activity;
     requires webfx.stack.routing.uirouter;
 
     // Exported packages

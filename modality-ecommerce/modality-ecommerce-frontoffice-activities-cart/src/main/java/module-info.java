@@ -34,7 +34,6 @@ module modality.ecommerce.frontoffice.activities.cart {
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.expression;
     requires webfx.stack.orm.reactive.visual;
-    requires webfx.stack.routing.activity;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.action;
     requires webfx.stack.ui.controls;

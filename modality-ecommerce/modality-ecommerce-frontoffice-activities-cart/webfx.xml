@@ -8,7 +8,6 @@
     <dependencies>
         <used-by-source-modules>
             <undetected-module>modality-base-client-aggregates</undetected-module>
-            <undetected-module>webfx-stack-routing-activity</undetected-module>
             <undetected-module>webfx-stack-orm-domainmodel</undetected-module>
             <undetected-module>webfx-stack-db-submit</undetected-module>
         </used-by-source-modules>

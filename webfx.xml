@@ -213,7 +213,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -363,7 +362,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-ui-action</undetected-module>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                     <undetected-module>webfx-stack-ui-controls</undetected-module>
                 </used-by-source-modules>
@@ -417,7 +415,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -462,7 +459,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                 </used-by-source-modules>
@@ -505,9 +501,7 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -1590,7 +1584,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-ui-action</undetected-module>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
@@ -1641,7 +1634,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -1726,7 +1718,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-platform-util</undetected-module>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -1768,7 +1759,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -1806,7 +1796,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-orm-entity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                     <undetected-module>webfx-kit-javafxgraphics-emul</undetected-module>
@@ -1847,7 +1836,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-orm-entity</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -1890,7 +1878,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2000,7 +1987,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2043,7 +2029,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2215,7 +2200,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-ui-action</undetected-module>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2275,7 +2259,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-orm-domainmodel</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                     <undetected-module>webfx-extras-visual-grid</undetected-module>
@@ -2327,7 +2310,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-ui-action</undetected-module>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2385,7 +2367,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-ui-action</undetected-module>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2438,7 +2419,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
@@ -2490,7 +2470,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-ui-action</undetected-module>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
@@ -2780,7 +2759,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>modality-base-client-aggregates</undetected-module>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-orm-domainmodel</undetected-module>
                     <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
@@ -2880,7 +2858,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2926,7 +2903,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>modality-base-client-aggregates</undetected-module>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2979,7 +2955,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-ui-action</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
@@ -3021,9 +2996,7 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -3564,7 +3537,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-orm-entity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
@@ -3631,7 +3603,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-orm-entity</undetected-module>
                     <undetected-module>webfx-kit-javafxgraphics-emul</undetected-module>
                 </used-by-source-modules>
@@ -3673,7 +3644,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>modality-base-client-aggregates</undetected-module>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -3811,7 +3781,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-stack-db-query</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -3871,7 +3840,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>modality-base-client-aggregates</undetected-module>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -3926,7 +3894,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                 </used-by-source-modules>
@@ -3968,7 +3935,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>modality-base-shared-entities</undetected-module>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -4014,7 +3980,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                 </used-by-source-modules>
@@ -4070,10 +4035,8 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-stack-ui-action</undetected-module>
-                    <undetected-module>webfx-stack-routing-activity</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                     <undetected-module>webfx-platform-util</undetected-module>
-                    <undetected-module>webfx-platform-json</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 

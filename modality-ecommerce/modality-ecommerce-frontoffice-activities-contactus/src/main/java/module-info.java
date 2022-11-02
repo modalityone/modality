@@ -18,7 +18,6 @@ module modality.ecommerce.frontoffice.activities.contactus {
     requires webfx.stack.db.submit;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.entity;
-    requires webfx.stack.routing.activity;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.action;
     requires webfx.stack.ui.util;
