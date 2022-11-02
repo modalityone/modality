@@ -24,7 +24,6 @@ module modality.ecommerce.backoffice.activities.payments {
     requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.uirouter;
-    requires webfx.stack.ui.action;
     requires webfx.stack.ui.operation;
     requires webfx.stack.ui.operation.action;
     requires webfx.stack.ui.util;

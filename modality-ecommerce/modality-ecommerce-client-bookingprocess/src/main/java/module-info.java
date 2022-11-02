@@ -11,7 +11,6 @@ module modality.ecommerce.client.bookingprocess {
     requires modality.base.shared.entities;
     requires webfx.kit.util;
     requires webfx.platform.util;
-    requires webfx.platform.windowhistory;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.util;

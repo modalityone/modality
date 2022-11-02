@@ -359,7 +359,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-ui-action</undetected-module>
                     <undetected-module>webfx-stack-ui-controls</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -1575,7 +1574,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-ui-action</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2177,9 +2175,7 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>webfx-stack-ui-action</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -2285,9 +2281,7 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>webfx-stack-ui-action</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -2341,9 +2335,7 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>webfx-stack-ui-action</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -2443,7 +2435,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-ui-action</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2657,7 +2648,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <module transitive="true">modality-base-client-activity</module>
-                    <undetected-module>webfx-platform-windowhistory</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2927,9 +2917,7 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>webfx-stack-ui-action</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -4001,7 +3989,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-ui-action</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                 </used-by-source-modules>
             </dependencies>
