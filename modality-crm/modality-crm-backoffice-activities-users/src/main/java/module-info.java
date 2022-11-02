@@ -12,7 +12,6 @@ module modality.crm.backoffice.activities.users {
     requires modality.base.shared.entities;
     requires modality.ecommerce.backoffice.operations.document;
     requires webfx.extras.visual;
-    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;

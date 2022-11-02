@@ -9,7 +9,6 @@ module modality.base.backoffice.activities.monitor {
     requires modality.base.client.activity;
     requires webfx.extras.visual;
     requires webfx.extras.visual.charts;
-    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.entity;

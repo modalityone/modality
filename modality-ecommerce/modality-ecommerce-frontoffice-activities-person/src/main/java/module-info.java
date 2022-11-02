@@ -13,7 +13,6 @@ module modality.ecommerce.frontoffice.activities.person {
     requires modality.ecommerce.client.businesslogic;
     requires modality.ecommerce.frontoffice.activities.summary;
     requires webfx.kit.util;
-    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.routing.uirouter;

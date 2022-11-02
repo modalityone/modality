@@ -7,7 +7,6 @@ module modality.crm.backoffice.activities.letters {
     requires modality.base.client.activity;
     requires modality.base.client.util;
     requires modality.crm.backoffice.activities.letter;
-    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;

@@ -15,7 +15,6 @@
             <undetected-module>webfx-stack-orm-domainmodel</undetected-module>
             <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
             <undetected-module>webfx-extras-visual-grid</undetected-module>
-            <undetected-module>webfx-platform-util</undetected-module>
         </used-by-source-modules>
     </dependencies>
 

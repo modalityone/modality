@@ -16,7 +16,6 @@ module modality.ecommerce.backoffice.activities.payments {
     requires modality.ecommerce.backoffice.operations.moneytransfer;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
-    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;

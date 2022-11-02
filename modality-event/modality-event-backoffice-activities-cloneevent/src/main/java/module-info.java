@@ -14,7 +14,6 @@ module modality.event.backoffice.activities.cloneevent {
     requires modality.event.backoffice.activities.cloneevent.routing;
     requires webfx.kit.util;
     requires webfx.platform.uischeduler;
-    requires webfx.platform.util;
     requires webfx.stack.db.submit;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.entity;

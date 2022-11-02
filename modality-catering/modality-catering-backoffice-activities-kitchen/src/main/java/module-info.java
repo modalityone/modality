@@ -5,7 +5,6 @@ module modality.catering.backoffice.activities.kitchen {
     // Direct dependencies modules
     requires javafx.graphics;
     requires modality.base.client.activity;
-    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.routing.router;

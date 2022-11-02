@@ -11,7 +11,6 @@ module modality.base.backoffice.activities.home {
     requires webfx.extras.scalepane;
     requires webfx.extras.webtext;
     requires webfx.kit.util;
-    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.routing.router;

@@ -12,7 +12,6 @@ module modality.event.frontoffice.activities.terms {
     requires modality.event.client.sectionpanel;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid.peers.base;
-    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel.activity;

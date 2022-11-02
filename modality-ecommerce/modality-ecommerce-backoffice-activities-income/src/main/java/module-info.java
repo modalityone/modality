@@ -13,7 +13,6 @@ module modality.ecommerce.backoffice.activities.income {
     requires modality.base.shared.entities;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
-    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.domainmodel.activity;

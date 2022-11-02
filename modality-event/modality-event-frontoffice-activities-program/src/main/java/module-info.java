@@ -12,7 +12,6 @@ module modality.event.frontoffice.activities.program {
     requires modality.event.client.bookingcalendar;
     requires modality.event.client.sectionpanel;
     requires webfx.platform.console;
-    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.routing.uirouter;

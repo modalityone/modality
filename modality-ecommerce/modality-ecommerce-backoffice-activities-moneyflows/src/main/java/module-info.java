@@ -16,7 +16,6 @@ module modality.ecommerce.backoffice.activities.moneyflows {
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
     requires webfx.kit.util;
-    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.db.submit;
     requires webfx.stack.orm.domainmodel.activity;

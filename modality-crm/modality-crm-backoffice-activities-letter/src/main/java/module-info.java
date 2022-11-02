@@ -8,7 +8,6 @@ module modality.crm.backoffice.activities.letter {
     requires modality.base.backoffice.multilangeditor;
     requires modality.base.client.util;
     requires webfx.kit.util;
-    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.routing.uirouter;

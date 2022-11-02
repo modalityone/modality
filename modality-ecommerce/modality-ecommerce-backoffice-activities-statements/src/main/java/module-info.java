@@ -13,7 +13,6 @@ module modality.ecommerce.backoffice.activities.statements {
     requires modality.base.shared.domainmodel;
     requires modality.base.shared.entities;
     requires webfx.extras.visual;
-    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;

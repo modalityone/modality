@@ -16,7 +16,6 @@ module modality.all.backoffice.application.openjfx {
     requires webfx.platform.scheduler.java;
     requires webfx.platform.shutdown.java;
     requires webfx.platform.storage.java;
-    requires webfx.platform.util;
     requires webfx.platform.windowhistory.java;
     requires webfx.platform.windowlocation.java;
     requires webfx.stack.com.websocket.bus.java;

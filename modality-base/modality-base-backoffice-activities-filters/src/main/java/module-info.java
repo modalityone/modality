@@ -15,7 +15,6 @@ module modality.base.backoffice.activities.filters {
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
     requires webfx.kit.util;
-    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.domainmodel.activity;

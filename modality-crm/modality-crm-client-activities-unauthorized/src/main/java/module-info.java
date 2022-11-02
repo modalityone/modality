@@ -4,7 +4,6 @@ module modality.crm.client.activities.unauthorized {
 
     // Direct dependencies modules
     requires javafx.graphics;
-    requires webfx.platform.util;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.routing.uirouter;
 

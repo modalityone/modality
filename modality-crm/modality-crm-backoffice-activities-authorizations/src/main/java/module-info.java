@@ -8,7 +8,6 @@ module modality.crm.backoffice.activities.authorizations {
     requires javafx.graphics;
     requires modality.crm.client.authn;
     requires webfx.extras.visual.grid;
-    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
