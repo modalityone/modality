@@ -8,7 +8,6 @@
     <dependencies>
         <used-by-source-modules>
             <module transitive="true">modality-base-client-activity</module>
-            <undetected-module>webfx-platform-windowhistory</undetected-module>
         </used-by-source-modules>
     </dependencies>
 
