@@ -4,7 +4,6 @@ module modality.base.backoffice.operations.snapshot {
 
     // Direct dependencies modules
     requires java.base;
-    requires webfx.extras.visual.grid;
     requires webfx.platform.async;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.reactive.entities;

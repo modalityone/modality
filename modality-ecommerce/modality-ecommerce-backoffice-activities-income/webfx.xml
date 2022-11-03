@@ -13,7 +13,6 @@
     <dependencies>
         <used-by-source-modules>
             <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
-            <undetected-module>webfx-extras-visual-grid</undetected-module>
         </used-by-source-modules>
     </dependencies>
 
