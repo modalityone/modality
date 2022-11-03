@@ -19,7 +19,6 @@ module modality.base.client.application {
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.routing.activity;
-    requires webfx.stack.routing.router;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.action;
     requires webfx.stack.ui.operation;

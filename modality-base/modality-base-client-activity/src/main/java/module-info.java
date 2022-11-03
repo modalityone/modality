@@ -6,7 +6,7 @@ module modality.base.client.activity {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
-    requires modality.base.client.aggregates;
+    requires transitive modality.base.client.aggregates;
     requires modality.base.client.presentationmodel;
     requires modality.ecommerce.client.businesslogic;
     requires webfx.extras.visual;
@@ -17,7 +17,6 @@ module modality.base.client.activity {
     requires webfx.platform.json;
     requires webfx.platform.util;
     requires webfx.stack.db.query;
-    requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.reactive.dql;
     requires webfx.stack.orm.reactive.visual;

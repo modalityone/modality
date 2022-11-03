@@ -358,9 +358,7 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>webfx-stack-ui-controls</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -528,9 +526,7 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>webfx-stack-orm-domainmodel</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -571,9 +567,7 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>webfx-stack-db-submit</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -635,7 +629,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-extras-visual-grid</undetected-module>
-                    <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -670,7 +663,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>webfx-extras-visual-grid</undetected-module>
-                    <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -697,7 +689,7 @@
             <dependencies>
                 <used-by-source-modules>
                     <module transitive="true">webfx-platform-async</module>
-                    <undetected-module>webfx-stack-orm-domainmodel</undetected-module>
+                    <module transitive="true">modality-base-client-aggregates</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -743,6 +735,7 @@
             <dependencies>
                 <used-by-source-modules>
                     <module transitive="true">webfx-platform-async</module>
+                    <module transitive="true">webfx-stack-orm-entity</module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -781,7 +774,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-routing-router</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                 </used-by-source-modules>
 
@@ -1110,7 +1102,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>javafx-base</undetected-module>
-                    <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -1243,8 +1234,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-orm-domainmodel</undetected-module>
-                    <undetected-module>webfx-stack-orm-dql</undetected-module>
                     <!-- Temporarily commented for Modality refactoring (was causing build error otherwise)
             <undetected-module scope="test">junit-jupiter</undetected-module>
             <undetected-module scope="test">mockito-inline</undetected-module>
@@ -1357,9 +1346,7 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>webfx-stack-orm-domainmodel</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -1650,9 +1637,7 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>webfx-stack-db-submit</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -1780,7 +1765,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-orm-entity</undetected-module>
                     <undetected-module>webfx-kit-javafxgraphics-emul</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -1818,9 +1802,7 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>webfx-stack-orm-entity</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -2233,7 +2215,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-orm-domainmodel</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                     <undetected-module>webfx-extras-visual-grid</undetected-module>
                 </used-by-source-modules>
@@ -2486,10 +2467,7 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>webfx-stack-orm-domainmodel</undetected-module>
-                    <undetected-module>webfx-stack-db-submit</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -2521,9 +2499,7 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>webfx-stack-db-submit</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -2579,9 +2555,7 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>webfx-stack-db-submit</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -2722,8 +2696,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>modality-base-client-aggregates</undetected-module>
-                    <undetected-module>webfx-stack-orm-domainmodel</undetected-module>
-                    <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -2820,9 +2792,7 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>webfx-stack-db-submit</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -2866,7 +2836,6 @@
             <dependencies>
                 <used-by-source-modules>
                     <undetected-module>modality-base-client-aggregates</undetected-module>
-                    <undetected-module>webfx-stack-db-submit</undetected-module>
                 </used-by-source-modules>
             </dependencies>
 
@@ -3496,9 +3465,7 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>webfx-stack-orm-entity</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -3562,7 +3529,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>webfx-stack-orm-entity</undetected-module>
                     <undetected-module>webfx-kit-javafxgraphics-emul</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -3738,9 +3704,7 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>webfx-stack-db-query</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>

@@ -8,8 +8,6 @@ module modality.base.server.datasource {
     requires webfx.platform.resource;
     requires webfx.stack.db.datasource;
     requires webfx.stack.orm.datasourcemodel.service;
-    requires webfx.stack.orm.domainmodel;
-    requires webfx.stack.orm.dql;
 
     // Exported packages
     exports one.modality.base.server.services.datasource;

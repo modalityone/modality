@@ -27,7 +27,6 @@ module modality.ecommerce.frontoffice.activities.cart {
     requires webfx.platform.console;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
-    requires webfx.stack.db.submit;
     requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.domainmodel.activity;

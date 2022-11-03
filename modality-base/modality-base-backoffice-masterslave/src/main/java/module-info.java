@@ -16,7 +16,6 @@ module modality.base.backoffice.masterslave {
     requires webfx.extras.visual.grid;
     requires webfx.kit.util;
     requires webfx.platform.util;
-    requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.expression;

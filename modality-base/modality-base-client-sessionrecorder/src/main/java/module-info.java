@@ -11,7 +11,6 @@ module modality.base.client.sessionrecorder {
     requires webfx.platform.console;
     requires webfx.platform.storage;
     requires webfx.stack.com.bus;
-    requires webfx.stack.db.submit;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.entity;
     requires webfx.stack.push.client;

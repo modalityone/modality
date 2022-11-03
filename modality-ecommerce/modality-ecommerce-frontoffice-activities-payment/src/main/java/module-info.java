@@ -21,7 +21,6 @@ module modality.ecommerce.frontoffice.activities.payment {
     requires webfx.platform.windowlocation;
     requires webfx.stack.com.bus;
     requires webfx.stack.com.websocket.bus;
-    requires webfx.stack.db.submit;
     requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.entity;

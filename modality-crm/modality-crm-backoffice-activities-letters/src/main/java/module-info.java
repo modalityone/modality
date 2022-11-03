@@ -10,7 +10,6 @@ module modality.crm.backoffice.activities.letters {
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
-    requires webfx.stack.orm.entity;
     requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.uirouter;

@@ -12,7 +12,6 @@
 
     <dependencies>
         <used-by-source-modules>
-            <undetected-module>webfx-stack-orm-entity</undetected-module>
             <undetected-module>webfx-kit-javafxgraphics-emul</undetected-module>
         </used-by-source-modules>
     </dependencies>

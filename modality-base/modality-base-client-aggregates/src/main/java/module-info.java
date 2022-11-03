@@ -12,7 +12,7 @@ module modality.base.client.aggregates {
     requires webfx.stack.com.websocket.bus;
     requires webfx.stack.db.query;
     requires webfx.stack.orm.domainmodel;
-    requires webfx.stack.orm.entity;
+    requires transitive webfx.stack.orm.entity;
 
     // Exported packages
     exports one.modality.base.client.aggregates.cart;

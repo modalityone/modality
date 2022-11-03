@@ -13,7 +13,6 @@
 
     <dependencies>
         <used-by-source-modules>
-            <undetected-module>webfx-stack-routing-router</undetected-module>
             <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
         </used-by-source-modules>
 

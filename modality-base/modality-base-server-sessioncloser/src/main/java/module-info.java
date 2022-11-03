@@ -7,7 +7,6 @@ module modality.base.server.sessioncloser {
     requires webfx.platform.console;
     requires webfx.stack.db.submit;
     requires webfx.stack.orm.datasourcemodel.service;
-    requires webfx.stack.orm.domainmodel;
     requires webfx.stack.push.server;
 
     // Exported packages

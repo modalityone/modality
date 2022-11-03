@@ -11,9 +11,7 @@
     </providers>
 
     <dependencies>
-        <used-by-source-modules>
-            <undetected-module>webfx-stack-ui-controls</undetected-module>
-        </used-by-source-modules>
+        <used-by-source-modules/>
     </dependencies>
 
 </project>

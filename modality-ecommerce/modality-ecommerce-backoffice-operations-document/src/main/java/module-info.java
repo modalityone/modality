@@ -10,8 +10,6 @@ module modality.ecommerce.backoffice.operations.document {
     requires modality.crm.client.personaldetails;
     requires webfx.kit.launcher;
     requires webfx.platform.async;
-    requires webfx.stack.db.submit;
-    requires webfx.stack.orm.domainmodel;
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.operation;
 

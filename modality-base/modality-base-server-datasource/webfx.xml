@@ -12,8 +12,6 @@
 
     <dependencies>
         <used-by-source-modules>
-            <undetected-module>webfx-stack-orm-domainmodel</undetected-module>
-            <undetected-module>webfx-stack-orm-dql</undetected-module>
 <!-- Temporarily commented for Modality refactoring (was causing build error otherwise)
             <undetected-module scope="test">junit-jupiter</undetected-module>
             <undetected-module scope="test">mockito-inline</undetected-module>
