@@ -6,7 +6,6 @@ module modality.ecommerce.client.bookingoptionspanel {
     requires java.base;
     requires javafx.controls;
     requires javafx.graphics;
-    requires modality.base.client.aggregates;
     requires modality.base.client.util;
     requires modality.base.shared.entities;
     requires modality.ecommerce.client.businesslogic;

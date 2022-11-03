@@ -6,9 +6,7 @@
     </exported-packages>
 
     <dependencies>
-        <used-by-source-modules>
-            <undetected-module>modality-base-client-aggregates</undetected-module>
-        </used-by-source-modules>
+        <used-by-source-modules/>
     </dependencies>
 
     <providers>

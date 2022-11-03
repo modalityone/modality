@@ -8,7 +8,6 @@ module modality.event.backoffice.activities.options {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.backoffice.multilangeditor;
-    requires modality.base.client.aggregates;
     requires modality.base.client.icons;
     requires modality.base.shared.entities;
     requires modality.ecommerce.client.businesslogic;

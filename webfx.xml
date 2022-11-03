@@ -730,6 +730,7 @@
 
             <dependencies>
                 <used-by-source-modules>
+                    <module transitive="true">modality-base-shared-entities</module>
                     <module transitive="true">webfx-platform-async</module>
                     <module transitive="true">webfx-stack-orm-entity</module>
                 </used-by-source-modules>
@@ -2577,7 +2578,6 @@
 
             <dependencies>
                 <used-by-source-modules>
-                    <undetected-module>modality-base-client-aggregates</undetected-module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2649,6 +2649,7 @@
             <dependencies>
                 <used-by-source-modules>
                     <module transitive="true">webfx-platform-async</module>
+                    <module transitive="true">modality-base-client-aggregates</module>
                     <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
                 </used-by-source-modules>
             </dependencies>
@@ -2689,9 +2690,7 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>modality-base-client-aggregates</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <providers>
@@ -2747,7 +2746,9 @@
             </exported-packages>
 
             <dependencies>
-                <used-by-source-modules/>
+                <used-by-source-modules>
+                    <module transitive="true">modality-base-client-aggregates</module>
+                </used-by-source-modules>
             </dependencies>
 
             <source-packages>
@@ -2829,9 +2830,7 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>modality-base-client-aggregates</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -3562,9 +3561,7 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>modality-base-client-aggregates</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -3755,9 +3752,7 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>modality-base-client-aggregates</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>
@@ -3849,9 +3844,7 @@
             </providers>
 
             <dependencies>
-                <used-by-source-modules>
-                    <undetected-module>modality-base-shared-entities</undetected-module>
-                </used-by-source-modules>
+                <used-by-source-modules/>
             </dependencies>
 
             <source-packages>

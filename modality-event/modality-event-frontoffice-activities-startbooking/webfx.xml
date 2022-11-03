@@ -10,9 +10,7 @@
     </providers>
 
     <dependencies>
-        <used-by-source-modules>
-            <undetected-module>modality-base-shared-entities</undetected-module>
-        </used-by-source-modules>
+        <used-by-source-modules/>
     </dependencies>
 
 </project>

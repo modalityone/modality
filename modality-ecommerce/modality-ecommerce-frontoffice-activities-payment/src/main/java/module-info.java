@@ -6,7 +6,6 @@ module modality.ecommerce.frontoffice.activities.payment {
     requires java.base;
     requires javafx.controls;
     requires javafx.graphics;
-    requires modality.base.client.aggregates;
     requires modality.base.client.entities;
     requires modality.base.client.util;
     requires modality.base.shared.domainmodel;

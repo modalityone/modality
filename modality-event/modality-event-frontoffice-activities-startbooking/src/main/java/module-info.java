@@ -8,7 +8,6 @@ module modality.event.frontoffice.activities.startbooking {
     requires modality.base.client.entities;
     requires modality.base.client.icons;
     requires modality.base.client.util;
-    requires modality.base.shared.entities;
     requires modality.ecommerce.client.bookingprocess;
     requires modality.event.frontoffice.activities.fees;
     requires modality.event.frontoffice.activities.options;

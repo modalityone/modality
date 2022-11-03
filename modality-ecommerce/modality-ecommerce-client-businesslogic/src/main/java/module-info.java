@@ -7,7 +7,7 @@ module modality.ecommerce.client.businesslogic {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
-    requires modality.base.client.aggregates;
+    requires transitive modality.base.client.aggregates;
     requires modality.base.client.entities;
     requires modality.base.shared.entities;
     requires modality.event.client.calendar;

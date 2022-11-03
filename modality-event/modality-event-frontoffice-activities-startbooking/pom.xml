@@ -47,12 +47,6 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-shared-entities</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
             <artifactId>modality-ecommerce-client-bookingprocess</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>

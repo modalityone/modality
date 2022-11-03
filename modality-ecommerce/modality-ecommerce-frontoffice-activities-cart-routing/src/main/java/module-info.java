@@ -7,7 +7,7 @@ module modality.ecommerce.frontoffice.activities.cart.routing {
     requires javafx.base;
     requires javafx.graphics;
     requires modality.base.client.activity;
-    requires modality.base.client.aggregates;
+    requires transitive modality.base.client.aggregates;
     requires modality.base.client.util;
     requires modality.base.shared.entities;
     requires webfx.kit.util;

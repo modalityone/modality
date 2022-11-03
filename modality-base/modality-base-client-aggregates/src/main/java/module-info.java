@@ -4,7 +4,7 @@ module modality.base.client.aggregates {
 
     // Direct dependencies modules
     requires java.base;
-    requires modality.base.shared.entities;
+    requires transitive modality.base.shared.entities;
     requires transitive webfx.platform.async;
     requires webfx.platform.console;
     requires webfx.platform.util;

@@ -7,7 +7,6 @@ module modality.event.frontoffice.activities.options {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
-    requires modality.base.client.aggregates;
     requires modality.base.client.entities;
     requires modality.base.client.icons;
     requires modality.base.client.util;

@@ -7,7 +7,6 @@ module modality.ecommerce.frontoffice.activities.cart {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
-    requires modality.base.client.aggregates;
     requires modality.base.client.util;
     requires modality.base.shared.domainmodel;
     requires modality.base.shared.entities;
