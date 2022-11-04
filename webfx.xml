@@ -2125,9 +2125,11 @@
                 <module>modality-ecommerce-frontoffice-activities-person</module>
                 <module>modality-ecommerce-frontoffice-activities-summary</module>
                 <module>modality-ecommerce-payment-delegated</module>
+                <module>modality-ecommerce-payment-delegated-buscall</module>
                 <module>modality-ecommerce-payment-delegated-remote</module>
                 <module>modality-ecommerce-payment-delegated-server</module>
                 <module>modality-ecommerce-payment-direct</module>
+                <module>modality-ecommerce-payment-direct-buscall</module>
                 <module>modality-ecommerce-payment-direct-remote</module>
                 <module>modality-ecommerce-payment-direct-server</module>
                 <module>modality-ecommerce-payment-direct-ui</module>
@@ -2959,12 +2961,6 @@
                 <source-packages/>
             </exported-packages>
 
-            <providers>
-                <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.payment.delegated.buscall.InitiateDelegatedPaymentMethodEndpoint</provider>
-                <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.payment.delegated.InitiateDelegatedPaymentArgument$ProvidedSerialCodec</provider>
-                <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.payment.delegated.InitiateDelegatedPaymentResult$ProvidedSerialCodec</provider>
-            </providers>
-
             <dependencies>
                 <used-by-source-modules>
                     <module transitive="true">webfx-platform-async</module>
@@ -2973,22 +2969,48 @@
 
             <source-packages>
                 <package>one.modality.ecommerce.payment.delegated</package>
-                <package>one.modality.ecommerce.payment.delegated.buscall</package>
                 <package>one.modality.ecommerce.payment.delegated.spi</package>
             </source-packages>
 
             <used-by-source-modules>
                 <module>java.base</module>
                 <module>webfx-platform-async</module>
-                <module>webfx-platform-json</module>
                 <module>webfx-platform-util</module>
-                <module>webfx-stack-com-bus-call</module>
-                <module>webfx-stack-com-serial</module>
             </used-by-source-modules>
 
             <used-services>
                 <required-service>one.modality.ecommerce.payment.delegated.spi.DelegatedPaymentProvider</required-service>
             </used-services>
+
+        </project>
+
+        <project name="modality-ecommerce-payment-delegated-buscall">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+            </dependencies>
+
+            <providers>
+                <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.payment.delegated.buscall.InitiateDelegatedPaymentMethodEndpoint</provider>
+                <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.payment.delegated.buscall.serial.InitiateDelegatedPaymentArgumentSerialCodec</provider>
+                <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.payment.delegated.buscall.serial.InitiateDelegatedPaymentResultSerialCodec</provider>
+            </providers>
+
+            <source-packages>
+                <package>one.modality.ecommerce.payment.delegated.buscall</package>
+                <package>one.modality.ecommerce.payment.delegated.buscall.serial</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>modality-ecommerce-payment-delegated</module>
+                <module>webfx-platform-json</module>
+                <module>webfx-stack-com-bus-call</module>
+                <module>webfx-stack-com-serial</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -3012,6 +3034,7 @@
 
             <used-by-source-modules>
                 <module>modality-ecommerce-payment-delegated</module>
+                <module>modality-ecommerce-payment-delegated-buscall</module>
                 <module>webfx-platform-async</module>
                 <module>webfx-stack-com-bus-call</module>
             </used-by-source-modules>
@@ -3055,13 +3078,6 @@
                 <source-packages/>
             </exported-packages>
 
-            <providers>
-                <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.payment.direct.buscall.MakeDirectPaymentMethodEndpoint</provider>
-                <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.payment.direct.buscall.GetDirectPaymentGatewayInfosMethodEndpoint</provider>
-                <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.payment.direct.MakeDirectPaymentArgument$ProvidedSerialCodec</provider>
-                <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.payment.direct.MakeDirectPaymentResult$ProvidedSerialCodec</provider>
-            </providers>
-
             <dependencies>
                 <used-by-source-modules>
                     <module transitive="true">webfx-platform-async</module>
@@ -3070,22 +3086,49 @@
 
             <source-packages>
                 <package>one.modality.ecommerce.payment.direct</package>
-                <package>one.modality.ecommerce.payment.direct.buscall</package>
                 <package>one.modality.ecommerce.payment.direct.spi</package>
             </source-packages>
 
             <used-by-source-modules>
                 <module>java.base</module>
                 <module>webfx-platform-async</module>
-                <module>webfx-platform-json</module>
                 <module>webfx-platform-util</module>
-                <module>webfx-stack-com-bus-call</module>
-                <module>webfx-stack-com-serial</module>
             </used-by-source-modules>
 
             <used-services>
                 <required-service>one.modality.ecommerce.payment.direct.spi.DirectPaymentProvider</required-service>
             </used-services>
+
+        </project>
+
+        <project name="modality-ecommerce-payment-direct-buscall">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+            </dependencies>
+
+            <providers>
+                <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.payment.direct.buscall.MakeDirectPaymentMethodEndpoint</provider>
+                <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.payment.direct.buscall.GetDirectPaymentGatewayInfosMethodEndpoint</provider>
+                <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.payment.direct.buscall.serial.MakeDirectPaymentArgumentSerialCodec</provider>
+                <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.payment.direct.buscall.serial.MakeDirectPaymentResultSerialCodec</provider>
+            </providers>
+
+            <source-packages>
+                <package>one.modality.ecommerce.payment.direct.buscall</package>
+                <package>one.modality.ecommerce.payment.direct.buscall.serial</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>modality-ecommerce-payment-direct</module>
+                <module>webfx-platform-json</module>
+                <module>webfx-stack-com-bus-call</module>
+                <module>webfx-stack-com-serial</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -3109,6 +3152,7 @@
 
             <used-by-source-modules>
                 <module>modality-ecommerce-payment-direct</module>
+                <module>modality-ecommerce-payment-direct-buscall</module>
                 <module>webfx-platform-async</module>
                 <module>webfx-stack-com-bus-call</module>
             </used-by-source-modules>
@@ -3405,9 +3449,9 @@
 
                 <plugin-module>modality-base-server-application</plugin-module>
 
-                <plugin-module>modality-ecommerce-payment-direct</plugin-module>
+                <plugin-module>modality-ecommerce-payment-direct-buscall</plugin-module>
                 <plugin-module>modality-ecommerce-payment-gateway-direct-authorizedotnet</plugin-module>
-                <plugin-module>modality-ecommerce-payment-delegated</plugin-module>
+                <plugin-module>modality-ecommerce-payment-delegated-buscall</plugin-module>
                 <plugin-module>modality-ecommerce-payment-gateway-delegated-stripe</plugin-module>
             </dependencies>
 

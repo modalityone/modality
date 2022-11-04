@@ -608,18 +608,22 @@
     <source path="dev/webfx/stack/db/datasource/spi/simple"/>
     <!--==============================< webfx-stack-db-query >==============================-->
     <source path="dev/webfx/stack/db/query"/>
-    <source path="dev/webfx/stack/db/query/buscall"/>
-    <source path="dev/webfx/stack/db/query/compression"/>
-    <source path="dev/webfx/stack/db/query/compression/repeat"/>
     <source path="dev/webfx/stack/db/query/spi"/>
     <source path="dev/webfx/stack/db/query/spi/impl"/>
+    <!--==========================< webfx-stack-db-query-buscall >==========================-->
+    <source path="dev/webfx/stack/db/query/buscall"/>
+    <source path="dev/webfx/stack/db/query/buscall/serial"/>
+    <source path="dev/webfx/stack/db/query/buscall/serial/compression"/>
+    <source path="dev/webfx/stack/db/query/buscall/serial/compression/repeat"/>
     <!--==========================< webfx-stack-db-query-remote >===========================-->
     <source path="dev/webfx/stack/db/query/spi/impl/remote"/>
     <!--=============================< webfx-stack-db-submit >==============================-->
     <source path="dev/webfx/stack/db/submit"/>
-    <source path="dev/webfx/stack/db/submit/buscall"/>
     <source path="dev/webfx/stack/db/submit/spi"/>
     <source path="dev/webfx/stack/db/submit/spi/impl"/>
+    <!--=========================< webfx-stack-db-submit-buscall >==========================-->
+    <source path="dev/webfx/stack/db/submit/buscall"/>
+    <source path="dev/webfx/stack/db/submit/buscall/serial"/>
     <!--==========================< webfx-stack-db-submit-remote >==========================-->
     <source path="dev/webfx/stack/db/submit/spi/impl/remote"/>
     <!--================================< webfx-stack-i18n >================================-->
@@ -711,15 +715,19 @@
     <source path="dev/webfx/stack/orm/push/client/spi/impl/simple"/>
     <!--=============================< webfx-stack-querypush >==============================-->
     <source path="dev/webfx/stack/querypush"/>
-    <source path="dev/webfx/stack/querypush/buscall"/>
     <source path="dev/webfx/stack/querypush/diff"/>
     <source path="dev/webfx/stack/querypush/diff/impl"/>
     <source path="dev/webfx/stack/querypush/spi"/>
     <source path="dev/webfx/stack/querypush/spi/impl"/>
+    <!--=========================< webfx-stack-querypush-buscall >==========================-->
+    <source path="dev/webfx/stack/querypush/buscall"/>
+    <source path="dev/webfx/stack/querypush/buscall/serial"/>
     <!--==========================< webfx-stack-querypush-client >==========================-->
     <source path="dev/webfx/stack/querypush/client"/>
     <!--======================< webfx-stack-querypush-client-simple >=======================-->
     <source path="dev/webfx/stack/querypush/client/simple"/>
+    <!--==========================< webfx-stack-querypush-remote >==========================-->
+    <source path="dev/webfx/stack/querypush/spi/impl/remote"/>
     <!--==========================< webfx-stack-routing-activity >==========================-->
     <source path="dev/webfx/stack/routing/activity"/>
     <source path="dev/webfx/stack/routing/activity/impl"/>

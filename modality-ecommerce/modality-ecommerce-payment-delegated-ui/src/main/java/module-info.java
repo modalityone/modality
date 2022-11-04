@@ -1,6 +1,6 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
-module modality.ecommerce.payment.gateway.delegated.ui {
+module modality.ecommerce.payment.delegated.ui {
 
     // Direct dependencies modules
     requires javafx.controls;

@@ -10,9 +10,9 @@
 
         <plugin-module>modality-base-server-application</plugin-module>
 
-        <plugin-module>modality-ecommerce-payment-direct</plugin-module>
+        <plugin-module>modality-ecommerce-payment-direct-buscall</plugin-module>
         <plugin-module>modality-ecommerce-payment-gateway-direct-authorizedotnet</plugin-module>
-        <plugin-module>modality-ecommerce-payment-delegated</plugin-module>
+        <plugin-module>modality-ecommerce-payment-delegated-buscall</plugin-module>
         <plugin-module>modality-ecommerce-payment-gateway-delegated-stripe</plugin-module>
     </dependencies>
 

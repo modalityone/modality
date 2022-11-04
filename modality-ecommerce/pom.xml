@@ -36,9 +36,11 @@
         <module>modality-ecommerce-frontoffice-activities-person</module>
         <module>modality-ecommerce-frontoffice-activities-summary</module>
         <module>modality-ecommerce-payment-delegated</module>
+        <module>modality-ecommerce-payment-delegated-buscall</module>
         <module>modality-ecommerce-payment-delegated-remote</module>
         <module>modality-ecommerce-payment-delegated-server</module>
         <module>modality-ecommerce-payment-direct</module>
+        <module>modality-ecommerce-payment-direct-buscall</module>
         <module>modality-ecommerce-payment-direct-remote</module>
         <module>modality-ecommerce-payment-direct-server</module>
         <module>modality-ecommerce-payment-direct-ui</module>

@@ -12,7 +12,9 @@
 <!-- Commented while it's not necessary during the development phase (and creates logs on the server every second which may pollute other logs)
         <plugin-module>modality-base-server-systemmetrics</plugin-module>
 -->
-        <plugin-module>webfx-stack-querypush</plugin-module>
+        <plugin-module>webfx-stack-db-query-buscall</plugin-module>
+        <plugin-module>webfx-stack-db-submit-buscall</plugin-module>
+        <plugin-module>webfx-stack-querypush-buscall</plugin-module>
         <plugin-module>webfx-stack-com-bus-call-job</plugin-module>
     </dependencies>
 

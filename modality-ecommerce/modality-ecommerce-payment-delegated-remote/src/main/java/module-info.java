@@ -4,6 +4,7 @@ module modality.ecommerce.payment.delegated.remote {
 
     // Direct dependencies modules
     requires modality.ecommerce.payment.delegated;
+    requires modality.ecommerce.payment.delegated.buscall;
     requires webfx.platform.async;
     requires webfx.stack.com.bus.call;
 
