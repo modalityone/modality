@@ -5,6 +5,7 @@ module modality.ecommerce.server.application.vertx {
     // Direct dependencies modules
     requires javafx.base;
     requires modality.base.shared.domainmodel;
+    requires modality.ecommerce.payment.custom.server;
     requires modality.ecommerce.payment.delegated.server;
     requires modality.ecommerce.payment.direct.server;
     requires modality.ecommerce.server.application;

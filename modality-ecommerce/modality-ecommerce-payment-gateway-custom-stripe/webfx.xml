@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-package>one.modality.ecommerce.payment.gateway.custom.spi.impl.stripe</resource-package>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+    </dependencies>
+
+    <providers>
+        <provider interface="one.modality.ecommerce.payment.gateway.custom.spi.CustomPaymentGatewayProvider">one.modality.ecommerce.payment.gateway.custom.spi.impl.stripe.StripeCustomPaymentGatewayProvider</provider>
+    </providers>
+
+</project>

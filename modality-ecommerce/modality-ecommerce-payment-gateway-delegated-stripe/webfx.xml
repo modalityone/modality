@@ -13,8 +13,4 @@
         <provider interface="one.modality.ecommerce.payment.gateway.delegated.spi.DelegatedPaymentGatewayProvider">one.modality.ecommerce.payment.gateway.delegated.spi.impl.stripe.StripeDelegatedPaymentGatewayProvider</provider>
     </providers>
 
-    <required-libraries>
-        <library artifact="com.stripe:stripe-java:21.0.0"/>
-    </required-libraries>
-
 </project>
