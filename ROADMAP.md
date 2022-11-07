@@ -2,16 +2,16 @@
 
 - [x] Proof of Concept
 - [x] Back-Office Prototype
-- [x] [Modality Docs][modality-docs]
-- [x] Populate modality-dev-db
 - [x] Define the features and issues necessary for MVP
-- [ ] Streamline import of modality-dev-db
+- [x] Establish [Modality Docs][modality-docs]
+- [x] Incorporate modality-dev-db
+- [x] Streamline import of modality-dev-db
 - [ ] Define coding standards
-- [ ] JavaDoc
-- [ ] Automated testing coverage
+- [ ] JavaDoc existing code
+- [ ] Add automated testing coverage
   - [ ] Unit testing
   - [ ] Integration testing
-- [ ] CI/CD pipeline (using GitHub workflow)
+- [ ] Establish CI/CD pipeline (using GitHub workflow)
 - [ ] Back-Office online demo
 - [ ] Back-Office MVPs
 - [ ] Front-office mobile and desktop prototypes
