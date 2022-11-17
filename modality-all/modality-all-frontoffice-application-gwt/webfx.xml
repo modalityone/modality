@@ -11,11 +11,12 @@
         </head>
     </html>
 
+<!--
     <maven-pom-manual>
         <build>
             <plugins>
 
-                <!-- Calling the GWT maven plugin to compile the gwt module into javascript -->
+                &lt;!&ndash; Calling the GWT maven plugin to compile the gwt module into javascript &ndash;&gt;
                 <plugin>
                     <groupId>net.ltgt.gwt.maven</groupId>
                     <artifactId>gwt-maven-plugin</artifactId>
@@ -27,52 +28,53 @@
                         <optimize>${plugin.gwt.param.optimize}</optimize>
                         <sourceLevel>${gwt.sourceLevel}</sourceLevel>
                         <compilerArgs>
-                            <!-- Setting value to return when compiling System.getProperty("application.name") -->
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.name") &ndash;&gt;
                             <compilerArg>-setProperty</compilerArg>
                             <compilerArg>application.name=${application.name}</compilerArg>
-                            <!-- Setting value to return when compiling System.getProperty("application.version") -->
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.version") &ndash;&gt;
                             <compilerArg>-setProperty</compilerArg>
                             <compilerArg>application.version=${application.version}</compilerArg>
-                            <!-- Setting value to return when compiling System.getProperty("application.build.tool") -->
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.build.tool") &ndash;&gt;
                             <compilerArg>-setProperty</compilerArg>
                             <compilerArg>application.build.tool=${application.build.tool}</compilerArg>
-                            <!-- Setting value to return when compiling System.getProperty("application.build.number") -->
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.build.number") &ndash;&gt;
                             <compilerArg>-setProperty</compilerArg>
                             <compilerArg>application.build.number=${application.build.number}</compilerArg>
-                            <!-- Setting value to return when compiling System.getProperty("application.build.timestamp") -->
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.build.timestamp") &ndash;&gt;
                             <compilerArg>-setProperty</compilerArg>
                             <compilerArg>application.build.timestamp=${application.build.timestamp}</compilerArg>
-                            <!--compilerArg>-style</compilerArg>
-                            <compilerArg>DETAILED</compilerArg-->
+                            &lt;!&ndash;compilerArg>-style</compilerArg>
+                            <compilerArg>DETAILED</compilerArg&ndash;&gt;
                         </compilerArgs>
-                        <!-- Doing the same for the code server (when compiling in super dev mode) -->
+                        &lt;!&ndash; Doing the same for the code server (when compiling in super dev mode) &ndash;&gt;
                         <codeserverArgs>
-                            <!-- Setting value to return when compiling System.getProperty("application.name") -->
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.name") &ndash;&gt;
                             <codeserverArg>-setProperty</codeserverArg>
                             <codeserverArg>application.name=${application.name}</codeserverArg>
-                            <!-- Setting value to return when compiling System.getProperty("application.version") -->
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.version") &ndash;&gt;
                             <codeserverArg>-setProperty</codeserverArg>
                             <codeserverArg>application.version=${application.version}</codeserverArg>
-                            <!-- Setting value to return when compiling System.getProperty("application.build.tool") -->
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.build.tool") &ndash;&gt;
                             <codeserverArg>-setProperty</codeserverArg>
                             <codeserverArg>application.build.tool=${application.build.tool}</codeserverArg>
-                            <!-- Setting value to return when compiling System.getProperty("application.build.number") -->
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.build.number") &ndash;&gt;
                             <codeserverArg>-setProperty</codeserverArg>
                             <codeserverArg>application.build.number=${application.build.number}</codeserverArg>
-                            <!-- Setting value to return when compiling System.getProperty("application.build.timestamp") -->
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.build.timestamp") &ndash;&gt;
                             <codeserverArg>-setProperty</codeserverArg>
                             <codeserverArg>application.build.timestamp=${application.build.timestamp}</codeserverArg>
                         </codeserverArgs>
-                        <!-- Trying to solve a java heap OutOfMemoryError on the server -->
+                        &lt;!&ndash; Trying to solve a java heap OutOfMemoryError on the server &ndash;&gt;
                         <jvmArgs>
                             <jvmArg>-Xmx1024m</jvmArg>
                         </jvmArgs>
-                        <!--<localWorkers>1</localWorkers>-->
+                        &lt;!&ndash;<localWorkers>1</localWorkers>&ndash;&gt;
                     </configuration>
                 </plugin>
 
             </plugins>
         </build>
     </maven-pom-manual>
+-->
 
 </project>

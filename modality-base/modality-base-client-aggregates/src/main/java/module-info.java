@@ -9,7 +9,7 @@ module modality.base.client.aggregates {
     requires webfx.platform.console;
     requires webfx.platform.util;
     requires webfx.stack.com.bus;
-    requires webfx.stack.com.websocket.bus;
+    requires webfx.stack.com.bus.json.client.websocket;
     requires webfx.stack.db.query;
     requires webfx.stack.orm.domainmodel;
     requires transitive webfx.stack.orm.entity;

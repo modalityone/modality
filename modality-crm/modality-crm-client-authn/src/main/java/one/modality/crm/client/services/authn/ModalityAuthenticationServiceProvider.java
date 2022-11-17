@@ -2,8 +2,8 @@ package one.modality.crm.client.services.authn;
 
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.domainmodel.HasDataSourceModel;
-import dev.webfx.stack.authn.UsernamePasswordCredentials;
-import dev.webfx.stack.authn.spi.AuthenticationServiceProvider;
+import dev.webfx.stack.auth.authn.UsernamePasswordCredentials;
+import dev.webfx.stack.auth.authn.spi.AuthenticationServiceProvider;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.db.query.QueryArgument;
 import dev.webfx.stack.db.query.QueryService;

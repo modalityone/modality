@@ -8,6 +8,7 @@ module modality.catering.backoffice.activities.kitchen {
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.routing.router;
+    requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.operation;
 

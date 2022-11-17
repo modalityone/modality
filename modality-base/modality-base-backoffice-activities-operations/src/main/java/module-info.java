@@ -13,7 +13,7 @@ module modality.base.backoffice.activities.operations {
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
     requires webfx.stack.orm.reactive.visual;
-    requires webfx.stack.routing.router;
+    requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.operation;
 

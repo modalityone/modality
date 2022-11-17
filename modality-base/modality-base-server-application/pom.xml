@@ -23,9 +23,16 @@
         </dependency>
 
         <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-base-server-sessioncloser</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-auth-authn-buscall</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-auth-login-buscall</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -45,14 +52,14 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-db-submit-buscall</artifactId>
+            <artifactId>webfx-stack-db-querypush-buscall</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-querypush-buscall</artifactId>
+            <artifactId>webfx-stack-db-submit-buscall</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>

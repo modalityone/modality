@@ -201,6 +201,73 @@
                 </head>
             </html>
 
+            <!--
+    <maven-pom-manual>
+        <build>
+            <plugins>
+
+                &lt;!&ndash; Calling the GWT maven plugin to compile the gwt module into javascript &ndash;&gt;
+                <plugin>
+                    <groupId>net.ltgt.gwt.maven</groupId>
+                    <artifactId>gwt-maven-plugin</artifactId>
+                    <configuration>
+                        <skipCompilation>${plugin.gwt.param.skipCompilation}</skipCompilation>
+                        <moduleName>${plugin.gwt.param.module}</moduleName>
+                        <failOnError>true</failOnError>
+                        <draftCompile>${plugin.gwt.param.draftCompile}</draftCompile>
+                        <optimize>${plugin.gwt.param.optimize}</optimize>
+                        <sourceLevel>${gwt.sourceLevel}</sourceLevel>
+                        <compilerArgs>
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.name") &ndash;&gt;
+                            <compilerArg>-setProperty</compilerArg>
+                            <compilerArg>application.name=${application.name}</compilerArg>
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.version") &ndash;&gt;
+                            <compilerArg>-setProperty</compilerArg>
+                            <compilerArg>application.version=${application.version}</compilerArg>
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.build.tool") &ndash;&gt;
+                            <compilerArg>-setProperty</compilerArg>
+                            <compilerArg>application.build.tool=${application.build.tool}</compilerArg>
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.build.number") &ndash;&gt;
+                            <compilerArg>-setProperty</compilerArg>
+                            <compilerArg>application.build.number=${application.build.number}</compilerArg>
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.build.timestamp") &ndash;&gt;
+                            <compilerArg>-setProperty</compilerArg>
+                            <compilerArg>application.build.timestamp=${application.build.timestamp}</compilerArg>
+                            &lt;!&ndash;compilerArg>-style</compilerArg>
+                            <compilerArg>DETAILED</compilerArg&ndash;&gt;
+                        </compilerArgs>
+                        &lt;!&ndash; Doing the same for the code server (when compiling in super dev mode) &ndash;&gt;
+                        <codeserverArgs>
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.name") &ndash;&gt;
+                            <codeserverArg>-setProperty</codeserverArg>
+                            <codeserverArg>application.name=${application.name}</codeserverArg>
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.version") &ndash;&gt;
+                            <codeserverArg>-setProperty</codeserverArg>
+                            <codeserverArg>application.version=${application.version}</codeserverArg>
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.build.tool") &ndash;&gt;
+                            <codeserverArg>-setProperty</codeserverArg>
+                            <codeserverArg>application.build.tool=${application.build.tool}</codeserverArg>
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.build.number") &ndash;&gt;
+                            <codeserverArg>-setProperty</codeserverArg>
+                            <codeserverArg>application.build.number=${application.build.number}</codeserverArg>
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.build.timestamp") &ndash;&gt;
+                            <codeserverArg>-setProperty</codeserverArg>
+                            <codeserverArg>application.build.timestamp=${application.build.timestamp}</codeserverArg>
+                        </codeserverArgs>
+                        &lt;!&ndash; Trying to solve a java heap OutOfMemoryError on the server &ndash;&gt;
+                        <jvmArgs>
+                            <jvmArg>-Xmx1024m</jvmArg>
+                        </jvmArgs>
+                        &lt;!&ndash;<localWorkers>1</localWorkers>&ndash;&gt;
+                    </configuration>
+                </plugin>
+
+            </plugins>
+        </build>
+
+    </maven-pom-manual>
+-->
+
             <used-by-source-modules/>
 
         </project>
@@ -291,6 +358,72 @@
                     <title>Modality Front-Office</title>
                 </head>
             </html>
+
+            <!--
+    <maven-pom-manual>
+        <build>
+            <plugins>
+
+                &lt;!&ndash; Calling the GWT maven plugin to compile the gwt module into javascript &ndash;&gt;
+                <plugin>
+                    <groupId>net.ltgt.gwt.maven</groupId>
+                    <artifactId>gwt-maven-plugin</artifactId>
+                    <configuration>
+                        <skipCompilation>${plugin.gwt.param.skipCompilation}</skipCompilation>
+                        <moduleName>${plugin.gwt.param.module}</moduleName>
+                        <failOnError>true</failOnError>
+                        <draftCompile>${plugin.gwt.param.draftCompile}</draftCompile>
+                        <optimize>${plugin.gwt.param.optimize}</optimize>
+                        <sourceLevel>${gwt.sourceLevel}</sourceLevel>
+                        <compilerArgs>
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.name") &ndash;&gt;
+                            <compilerArg>-setProperty</compilerArg>
+                            <compilerArg>application.name=${application.name}</compilerArg>
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.version") &ndash;&gt;
+                            <compilerArg>-setProperty</compilerArg>
+                            <compilerArg>application.version=${application.version}</compilerArg>
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.build.tool") &ndash;&gt;
+                            <compilerArg>-setProperty</compilerArg>
+                            <compilerArg>application.build.tool=${application.build.tool}</compilerArg>
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.build.number") &ndash;&gt;
+                            <compilerArg>-setProperty</compilerArg>
+                            <compilerArg>application.build.number=${application.build.number}</compilerArg>
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.build.timestamp") &ndash;&gt;
+                            <compilerArg>-setProperty</compilerArg>
+                            <compilerArg>application.build.timestamp=${application.build.timestamp}</compilerArg>
+                            &lt;!&ndash;compilerArg>-style</compilerArg>
+                            <compilerArg>DETAILED</compilerArg&ndash;&gt;
+                        </compilerArgs>
+                        &lt;!&ndash; Doing the same for the code server (when compiling in super dev mode) &ndash;&gt;
+                        <codeserverArgs>
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.name") &ndash;&gt;
+                            <codeserverArg>-setProperty</codeserverArg>
+                            <codeserverArg>application.name=${application.name}</codeserverArg>
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.version") &ndash;&gt;
+                            <codeserverArg>-setProperty</codeserverArg>
+                            <codeserverArg>application.version=${application.version}</codeserverArg>
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.build.tool") &ndash;&gt;
+                            <codeserverArg>-setProperty</codeserverArg>
+                            <codeserverArg>application.build.tool=${application.build.tool}</codeserverArg>
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.build.number") &ndash;&gt;
+                            <codeserverArg>-setProperty</codeserverArg>
+                            <codeserverArg>application.build.number=${application.build.number}</codeserverArg>
+                            &lt;!&ndash; Setting value to return when compiling System.getProperty("application.build.timestamp") &ndash;&gt;
+                            <codeserverArg>-setProperty</codeserverArg>
+                            <codeserverArg>application.build.timestamp=${application.build.timestamp}</codeserverArg>
+                        </codeserverArgs>
+                        &lt;!&ndash; Trying to solve a java heap OutOfMemoryError on the server &ndash;&gt;
+                        <jvmArgs>
+                            <jvmArg>-Xmx1024m</jvmArg>
+                        </jvmArgs>
+                        &lt;!&ndash;<localWorkers>1</localWorkers>&ndash;&gt;
+                    </configuration>
+                </plugin>
+
+            </plugins>
+        </build>
+    </maven-pom-manual>
+-->
 
             <used-by-source-modules/>
 
@@ -388,6 +521,7 @@
                 <module>webfx-stack-orm-entity-controls</module>
                 <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-router-client</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-action</module>
                 <module>webfx-stack-ui-operation</module>
@@ -429,6 +563,7 @@
                 <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-router-client</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-action</module>
                 <module>webfx-stack-ui-operation</module>
@@ -472,7 +607,7 @@
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-orm-reactive-entities</module>
                 <module>webfx-stack-orm-reactive-visual</module>
-                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-router-client</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
                 <module>webfx-stack-ui-util</module>
@@ -512,7 +647,7 @@
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-orm-entity-controls</module>
                 <module>webfx-stack-orm-reactive-visual</module>
-                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-router-client</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
@@ -749,7 +884,7 @@
                 <module>webfx-platform-console</module>
                 <module>webfx-platform-util</module>
                 <module>webfx-stack-com-bus</module>
-                <module>webfx-stack-com-websocket-bus</module>
+                <module>webfx-stack-com-bus-json-client-websocket</module>
                 <module>webfx-stack-db-query</module>
                 <module>webfx-stack-orm-domainmodel</module>
                 <module>webfx-stack-orm-entity</module>
@@ -781,11 +916,10 @@
                 <plugin-module>modality-base-client-i18n</plugin-module>
                 <plugin-module>modality-crm-client-authz</plugin-module>
                 <plugin-module>modality-base-client-operationactionsloading</plugin-module>
-                <plugin-module>modality-base-client-sessionrecorder</plugin-module>
                 <plugin-module>modality-crm-client-activities-login</plugin-module>
                 <plugin-module>modality-crm-client-activities-unauthorized</plugin-module>
                 <plugin-module>webfx-stack-push-client-simple</plugin-module>
-                <plugin-module>webfx-stack-querypush-client-simple</plugin-module>
+                <plugin-module>webfx-stack-db-querypush-client-simple</plugin-module>
             </dependencies>
 
             <source-packages>
@@ -1025,7 +1159,7 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-router-client</module>
                 <module>webfx-stack-routing-uirouter</module>
             </used-by-source-modules>
 
@@ -1124,8 +1258,8 @@
                 <module>webfx-stack-com-bus</module>
                 <module>webfx-stack-orm-datasourcemodel-service</module>
                 <module>webfx-stack-orm-entity</module>
-                <module>webfx-stack-push-client</module>
                 <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-session-state-client-fx</module>
             </used-by-source-modules>
 
         </project>
@@ -1196,14 +1330,17 @@
             <dependencies>
                 <used-by-source-modules/>
                 <plugin-module>modality-base-server-datasource</plugin-module>
-                <plugin-module>modality-base-server-sessioncloser</plugin-module>
+                <!--<plugin-module>modality-base-server-sessioncloser</plugin-module>-->
+
                 <!-- Commented while it's not necessary during the development phase (and creates logs on the server every second which may pollute other logs)
         <plugin-module>modality-base-server-systemmetrics</plugin-module>
 -->
+                <plugin-module>webfx-stack-auth-login-buscall</plugin-module>
+                <plugin-module>webfx-stack-auth-authn-buscall</plugin-module>
+                <plugin-module>webfx-stack-com-bus-call-job</plugin-module>
                 <plugin-module>webfx-stack-db-query-buscall</plugin-module>
                 <plugin-module>webfx-stack-db-submit-buscall</plugin-module>
-                <plugin-module>webfx-stack-querypush-buscall</plugin-module>
-                <plugin-module>webfx-stack-com-bus-call-job</plugin-module>
+                <plugin-module>webfx-stack-db-querypush-buscall</plugin-module>
             </dependencies>
 
             <used-by-source-modules/>
@@ -1589,6 +1726,7 @@
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-router-client</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
                 <module>webfx-stack-ui-operation-action</module>
@@ -1623,6 +1761,7 @@
                 <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-router-client</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
@@ -1710,7 +1849,7 @@
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-orm-entity-controls</module>
                 <module>webfx-stack-orm-reactive-visual</module>
-                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-router-client</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
@@ -1783,6 +1922,7 @@
                 <module>webfx-stack-orm-dql</module>
                 <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-router-client</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
@@ -1822,7 +1962,7 @@
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-orm-dql</module>
                 <module>webfx-stack-orm-reactive-visual</module>
-                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-router-client</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
@@ -1867,6 +2007,7 @@
                 <module>webfx-stack-orm-reactive-dql</module>
                 <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-router-client</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-action</module>
                 <module>webfx-stack-ui-operation</module>
@@ -1967,7 +2108,7 @@
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
-                <module>webfx-stack-authn</module>
+                <module>webfx-stack-auth-authn</module>
                 <module>webfx-stack-i18n</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-routing-uirouter</module>
@@ -2009,9 +2150,11 @@
                 <source-packages/>
             </exported-packages>
 
-            <providers>
-                <provider interface="dev.webfx.stack.authn.spi.AuthenticationServiceProvider">one.modality.crm.client.services.authn.ModalityAuthenticationServiceProvider</provider>
-            </providers>
+            <!--
+    <providers>
+        <provider interface="spi.dev.webfx.stack.auth.authn.AuthenticationServiceProvider">one.modality.crm.client.services.authn.ModalityAuthenticationServiceProvider</provider>
+    </providers>
+-->
 
             <dependencies>
                 <used-by-source-modules/>
@@ -2023,7 +2166,7 @@
 
             <used-by-source-modules>
                 <module>webfx-platform-async</module>
-                <module>webfx-stack-authn</module>
+                <module>webfx-stack-auth-authn</module>
                 <module>webfx-stack-db-query</module>
                 <module>webfx-stack-orm-datasourcemodel-service</module>
                 <module>webfx-stack-orm-domainmodel</module>
@@ -2038,7 +2181,7 @@
             </exported-packages>
 
             <providers>
-                <provider interface="dev.webfx.stack.authz.spi.AuthorizationServiceProvider">one.modality.crm.client.services.authz.ModalityAuthorizationServiceProvider</provider>
+                <provider interface="dev.webfx.stack.auth.authz.spi.AuthorizationServiceProvider">one.modality.crm.client.services.authz.ModalityAuthorizationServiceProvider</provider>
             </providers>
 
             <dependencies>
@@ -2053,11 +2196,11 @@
                 <module>modality-crm-client-authn</module>
                 <module>webfx-platform-console</module>
                 <module>webfx-platform-util</module>
-                <module>webfx-stack-authz</module>
+                <module>webfx-stack-auth-authz</module>
                 <module>webfx-stack-orm-datasourcemodel-service</module>
                 <module>webfx-stack-orm-domainmodel</module>
                 <module>webfx-stack-orm-entity</module>
-                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-router-client</module>
             </used-by-source-modules>
 
         </project>
@@ -2243,6 +2386,7 @@
                 <module>webfx-stack-orm-reactive-dql</module>
                 <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-router-client</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-action</module>
                 <module>webfx-stack-ui-operation</module>
@@ -2291,7 +2435,7 @@
                 <module>webfx-stack-orm-entity-controls</module>
                 <module>webfx-stack-orm-reactive-dql</module>
                 <module>webfx-stack-orm-reactive-visual</module>
-                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-router-client</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
                 <module>webfx-stack-ui-operation-action</module>
@@ -2342,7 +2486,7 @@
                 <module>webfx-stack-orm-entity-controls</module>
                 <module>webfx-stack-orm-reactive-entities</module>
                 <module>webfx-stack-orm-reactive-visual</module>
-                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-router-client</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-action</module>
                 <module>webfx-stack-ui-controls</module>
@@ -2395,6 +2539,7 @@
                 <module>webfx-stack-orm-reactive-dql</module>
                 <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-router-client</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
                 <module>webfx-stack-ui-operation-action</module>
@@ -2446,6 +2591,7 @@
                 <module>webfx-stack-orm-reactive-dql</module>
                 <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-router-client</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
@@ -2500,7 +2646,7 @@
                 <module>webfx-stack-orm-reactive-dql</module>
                 <module>webfx-stack-orm-reactive-entities</module>
                 <module>webfx-stack-orm-reactive-visual</module>
-                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-router-client</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
                 <module>webfx-stack-ui-operation-action</module>
@@ -2909,12 +3055,11 @@
                 <module>webfx-platform-util</module>
                 <module>webfx-platform-windowhistory</module>
                 <module>webfx-platform-windowlocation</module>
-                <module>webfx-stack-com-bus</module>
-                <module>webfx-stack-com-websocket-bus</module>
                 <module>webfx-stack-i18n</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-session-state-client-fx</module>
                 <module>webfx-stack-ui-action</module>
                 <module>webfx-stack-ui-controls</module>
                 <module>webfx-stack-ui-util</module>
@@ -3790,6 +3935,7 @@
                 <module>webfx-stack-orm-dql</module>
                 <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-router-client</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
@@ -4222,6 +4368,7 @@
                 <module>webfx-stack-orm-reactive-entities</module>
                 <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-router-client</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-action</module>
                 <module>webfx-stack-ui-operation</module>
@@ -4295,6 +4442,61 @@
 
         <usages>
 
+            <java-package name="dev.webfx.platform.json">
+                <module>modality-base-client-activity</module>
+                <module>modality-base-server-datasource</module>
+                <module>modality-base-shared-domainmodel</module>
+                <module>modality-ecommerce-frontoffice-activities-cart-routing</module>
+                <module>modality-ecommerce-payment-custom-buscall</module>
+                <module>modality-ecommerce-payment-delegated-buscall</module>
+                <module>modality-ecommerce-payment-direct-buscall</module>
+                <module>modality-event-frontoffice-activities-fees</module>
+                <module>modality-hotel-backoffice-activities-roomsgraphic</module>
+                <module>modality-hotel-shared-time</module>
+                <module>webfx-platform-fetch</module>
+                <module>webfx-platform-fetch-gwt</module>
+                <module>webfx-platform-fetch-java</module>
+                <module>webfx-platform-json</module>
+                <module>webfx-platform-json-gwt</module>
+                <module>webfx-platform-json-teavm</module>
+                <module>webfx-platform-json-vertx</module>
+                <module>webfx-platform-webassembly-teavm</module>
+                <module>webfx-platform-webworker-java</module>
+                <module>webfx-platform-windowhistory</module>
+                <module>webfx-platform-windowhistory-gwt</module>
+                <module>webfx-platform-windowhistory-web</module>
+                <module>webfx-stack-auth-authn</module>
+                <module>webfx-stack-com-bus</module>
+                <module>webfx-stack-com-bus-call</module>
+                <module>webfx-stack-com-bus-json-client</module>
+                <module>webfx-stack-com-bus-json-client-websocket</module>
+                <module>webfx-stack-com-bus-json-client-websocket-web</module>
+                <module>webfx-stack-com-bus-json-server</module>
+                <module>webfx-stack-com-bus-json-vertx</module>
+                <module>webfx-stack-com-serial</module>
+                <module>webfx-stack-com-websocket</module>
+                <module>webfx-stack-com-websocket-gwt</module>
+                <module>webfx-stack-com-websocket-java</module>
+                <module>webfx-stack-db-datascope</module>
+                <module>webfx-stack-db-query-buscall</module>
+                <module>webfx-stack-db-querypush-buscall</module>
+                <module>webfx-stack-db-submit-buscall</module>
+                <module>webfx-stack-i18n-json</module>
+                <module>webfx-stack-orm-dql</module>
+                <module>webfx-stack-orm-entity-controls</module>
+                <module>webfx-stack-orm-expression</module>
+                <module>webfx-stack-orm-reactive-dql</module>
+                <module>webfx-stack-orm-reactive-entities</module>
+                <module>webfx-stack-orm-reactive-visual</module>
+                <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-router-client</module>
+                <module>webfx-stack-routing-router-vertx</module>
+                <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-session-state</module>
+                <module>webfx-stack-ui-fxraiser-json</module>
+                <module>webfx-stack-ui-util</module>
+            </java-package>
+
             <java-package name="dev.webfx.stack.db.query">
                 <module>modality-base-client-activity</module>
                 <module>modality-base-client-aggregates</module>
@@ -4304,6 +4506,9 @@
                 <module>webfx-stack-db-query</module>
                 <module>webfx-stack-db-query-buscall</module>
                 <module>webfx-stack-db-query-remote</module>
+                <module>webfx-stack-db-querypush</module>
+                <module>webfx-stack-db-querypush-server</module>
+                <module>webfx-stack-db-querypush-server-simple</module>
                 <module>webfx-stack-db-querysubmit-java-jdbc</module>
                 <module>webfx-stack-db-querysubmit-vertx</module>
                 <module>webfx-stack-orm-domainmodel-service</module>
@@ -4313,9 +4518,17 @@
                 <module>webfx-stack-orm-reactive-call</module>
                 <module>webfx-stack-orm-reactive-dql</module>
                 <module>webfx-stack-orm-reactive-entities</module>
-                <module>webfx-stack-querypush</module>
-                <module>webfx-stack-querypush-server</module>
-                <module>webfx-stack-querypush-server-simple</module>
+            </java-package>
+
+            <java-package name="dev.webfx.stack.db.querypush">
+                <module>webfx-stack-db-querypush</module>
+                <module>webfx-stack-db-querypush-buscall</module>
+                <module>webfx-stack-db-querypush-client</module>
+                <module>webfx-stack-db-querypush-remote</module>
+                <module>webfx-stack-db-querypush-server</module>
+                <module>webfx-stack-db-querypush-server-simple</module>
+                <module>webfx-stack-orm-dql-querypush-interceptor</module>
+                <module>webfx-stack-orm-reactive-call</module>
             </java-package>
 
             <java-package name="dev.webfx.stack.db.submit">
@@ -4329,6 +4542,7 @@
                 <module>modality-event-backoffice-activities-cloneevent</module>
                 <module>modality-event-backoffice-activities-options</module>
                 <module>modality-hotel-backoffice-operations-resourceconfiguration</module>
+                <module>webfx-stack-db-querypush-server</module>
                 <module>webfx-stack-db-querysubmit-java-jdbc</module>
                 <module>webfx-stack-db-querysubmit-vertx</module>
                 <module>webfx-stack-db-submit</module>
@@ -4338,7 +4552,6 @@
                 <module>webfx-stack-orm-dql-submit-interceptor</module>
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-orm-entity-controls</module>
-                <module>webfx-stack-querypush-server</module>
             </java-package>
 
             <java-package name="dev.webfx.stack.orm.domainmodel">
@@ -4368,17 +4581,6 @@
                 <module>webfx-stack-orm-reactive-visual</module>
             </java-package>
 
-            <java-package name="dev.webfx.stack.querypush">
-                <module>webfx-stack-orm-dql-querypush-interceptor</module>
-                <module>webfx-stack-orm-reactive-call</module>
-                <module>webfx-stack-querypush</module>
-                <module>webfx-stack-querypush-buscall</module>
-                <module>webfx-stack-querypush-client</module>
-                <module>webfx-stack-querypush-remote</module>
-                <module>webfx-stack-querypush-server</module>
-                <module>webfx-stack-querypush-server-simple</module>
-            </java-package>
-
             <java-package name="dev.webfx.stack.ui.fxraiser">
                 <module>webfx-stack-i18n</module>
                 <module>webfx-stack-ui-fxraiser</module>
@@ -4389,6 +4591,7 @@
                 <module>anet-java-sdk</module>
                 <module>stripe-java</module>
                 <module>webfx-stack-routing-router</module>
+                <module>webfx-stack-routing-router-client</module>
             </java-package>
 
             <java-class name="javafx.scene.control.ScrollPane">

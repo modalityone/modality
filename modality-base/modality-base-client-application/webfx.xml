@@ -23,11 +23,10 @@
         <plugin-module>modality-base-client-i18n</plugin-module>
         <plugin-module>modality-crm-client-authz</plugin-module>
         <plugin-module>modality-base-client-operationactionsloading</plugin-module>
-        <plugin-module>modality-base-client-sessionrecorder</plugin-module>
         <plugin-module>modality-crm-client-activities-login</plugin-module>
         <plugin-module>modality-crm-client-activities-unauthorized</plugin-module>
         <plugin-module>webfx-stack-push-client-simple</plugin-module>
-        <plugin-module>webfx-stack-querypush-client-simple</plugin-module>
+        <plugin-module>webfx-stack-db-querypush-client-simple</plugin-module>
     </dependencies>
 
 </project>

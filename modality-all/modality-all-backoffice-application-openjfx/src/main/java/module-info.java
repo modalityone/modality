@@ -18,7 +18,9 @@ module modality.all.backoffice.application.openjfx {
     requires webfx.platform.storage.java;
     requires webfx.platform.windowhistory.java;
     requires webfx.platform.windowlocation.java;
-    requires webfx.stack.com.websocket.bus.java;
+    requires webfx.stack.auth.authn.buscall;
+    requires webfx.stack.auth.authn.remote;
+    requires webfx.stack.com.bus.json.client.websocket.java;
     requires webfx.stack.com.websocket.java;
     requires webfx.stack.db.query.buscall;
     requires webfx.stack.db.querysubmit.java.jdbc;
@@ -28,6 +30,7 @@ module modality.all.backoffice.application.openjfx {
     requires webfx.stack.orm.dql.querypush.interceptor;
     requires webfx.stack.orm.dql.submit.interceptor;
     requires webfx.stack.routing.uirouter;
+    requires webfx.stack.session.client;
     requires webfx.stack.ui.fxraiser.json;
 
     // Exported packages

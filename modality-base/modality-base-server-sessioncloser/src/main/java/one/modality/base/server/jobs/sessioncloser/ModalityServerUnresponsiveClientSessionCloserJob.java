@@ -17,15 +17,15 @@ public final class ModalityServerUnresponsiveClientSessionCloserJob implements A
 
     @Override
     public void onStart() {
-        PushServerService.addUnresponsivePushClientListener(disconnectListener = pushClientId ->
+        PushServerService.addUnresponsivePushClientListener(disconnectListener = clientRunId ->
                 SubmitService.executeSubmit(SubmitArgument.builder()
                         .setLanguage("DQL")
                         .setStatement("update SessionConnection set end=now() where process=?")
-                        .setParameters(pushClientId)
+                        .setParameters(clientRunId)
                         .setDataSourceId(DataSourceModelService.getDefaultDataSourceId())
                         .build())
-                        .onFailure(cause -> Console.log("Error while closing session for pushClientId=" + pushClientId, cause))
-                        .onSuccess(result -> Console.log("Closed session for pushClientId=" + pushClientId)));
+                        .onFailure(cause -> Console.log("Error while closing session for pushClientId=" + clientRunId, cause))
+                        .onSuccess(result -> Console.log("Closed session for pushClientId=" + clientRunId)));
     }
 
     @Override

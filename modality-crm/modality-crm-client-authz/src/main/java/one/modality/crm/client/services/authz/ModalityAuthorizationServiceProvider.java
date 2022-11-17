@@ -1,8 +1,8 @@
 package one.modality.crm.client.services.authz;
 
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.authz.spi.impl.AuthorizationServiceProviderBase;
-import dev.webfx.stack.authz.spi.impl.UserPrincipalAuthorizationChecker;
+import dev.webfx.stack.auth.authz.spi.impl.AuthorizationServiceProviderBase;
+import dev.webfx.stack.auth.authz.spi.impl.UserPrincipalAuthorizationChecker;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 
 /**

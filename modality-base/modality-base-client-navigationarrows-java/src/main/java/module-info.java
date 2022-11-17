@@ -3,7 +3,7 @@
 module modality.base.client.navigationarrows.java {
 
     // Direct dependencies modules
-    requires webfx.stack.routing.router;
+    requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
 
     // Exported packages

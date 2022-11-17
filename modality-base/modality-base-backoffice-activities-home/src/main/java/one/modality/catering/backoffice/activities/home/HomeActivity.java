@@ -153,7 +153,7 @@ public class HomeActivity extends ViewDomainActivityBase
         }
     }
 
-    class Tile extends Pane {
+    static class Tile extends Pane {
         private final Action action;
         private final HtmlText htmlText = new HtmlText();
         private double fontSize;

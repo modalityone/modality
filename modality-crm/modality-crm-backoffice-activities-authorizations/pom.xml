@@ -83,7 +83,7 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-routing-router</artifactId>
+            <artifactId>webfx-stack-routing-router-client</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

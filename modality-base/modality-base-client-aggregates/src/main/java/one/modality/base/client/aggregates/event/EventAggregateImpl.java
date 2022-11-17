@@ -7,7 +7,7 @@ import one.modality.base.shared.entities.Option;
 import one.modality.base.shared.entities.Rate;
 import one.modality.base.client.aggregates.person.PersonAggregate;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.com.websocket.bus.WebSocketBusOptions;
+import dev.webfx.stack.com.bus.spi.impl.json.client.websocket.WebSocketBusOptions;
 import dev.webfx.stack.com.bus.BusService;
 import dev.webfx.stack.db.query.QueryArgument;
 import dev.webfx.stack.db.query.QueryResult;

@@ -201,13 +201,6 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-client-sessionrecorder</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <classifier>sources</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
             <artifactId>modality-base-client-util</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
@@ -908,14 +901,28 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-authn</artifactId>
+            <artifactId>webfx-stack-auth-authn</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-authz</artifactId>
+            <artifactId>webfx-stack-auth-authn-buscall</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-auth-authn-remote</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-auth-authz</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
@@ -936,6 +943,34 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-com-bus-json</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-com-bus-json-client</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-com-bus-json-client-websocket</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-com-bus-json-client-websocket-web</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-com-serial</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
@@ -944,20 +979,6 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-com-websocket</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-            <classifier>sources</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-com-websocket-bus</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-            <classifier>sources</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-com-websocket-bus-web</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
@@ -1000,6 +1021,41 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-db-query-remote</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-db-querypush</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-db-querypush-buscall</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-db-querypush-client</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-db-querypush-client-simple</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-db-querypush-remote</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
@@ -1167,41 +1223,6 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-querypush</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-            <classifier>sources</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-querypush-buscall</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-            <classifier>sources</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-querypush-client</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-            <classifier>sources</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-querypush-client-simple</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-            <classifier>sources</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-querypush-remote</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-            <classifier>sources</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-routing-activity</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
@@ -1216,7 +1237,49 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-routing-router-client</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-routing-uirouter</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-session</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-session-client</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-session-state</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-session-state-client</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-session-state-client-fx</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
@@ -1286,68 +1349,5 @@
             <id>gwt-compile</id>
         </profile>
     </profiles>
-
-
-    <build>
-        <plugins>
-
-            <!-- Calling the GWT maven plugin to compile the gwt module into javascript -->
-            <plugin>
-                <groupId>net.ltgt.gwt.maven</groupId>
-                <artifactId>gwt-maven-plugin</artifactId>
-                <configuration>
-                    <skipCompilation>${plugin.gwt.param.skipCompilation}</skipCompilation>
-                    <moduleName>${plugin.gwt.param.module}</moduleName>
-                    <failOnError>true</failOnError>
-                    <draftCompile>${plugin.gwt.param.draftCompile}</draftCompile>
-                    <optimize>${plugin.gwt.param.optimize}</optimize>
-                    <sourceLevel>${gwt.sourceLevel}</sourceLevel>
-                    <compilerArgs>
-                        <!-- Setting value to return when compiling System.getProperty("application.name") -->
-                        <compilerArg>-setProperty</compilerArg>
-                        <compilerArg>application.name=${application.name}</compilerArg>
-                        <!-- Setting value to return when compiling System.getProperty("application.version") -->
-                        <compilerArg>-setProperty</compilerArg>
-                        <compilerArg>application.version=${application.version}</compilerArg>
-                        <!-- Setting value to return when compiling System.getProperty("application.build.tool") -->
-                        <compilerArg>-setProperty</compilerArg>
-                        <compilerArg>application.build.tool=${application.build.tool}</compilerArg>
-                        <!-- Setting value to return when compiling System.getProperty("application.build.number") -->
-                        <compilerArg>-setProperty</compilerArg>
-                        <compilerArg>application.build.number=${application.build.number}</compilerArg>
-                        <!-- Setting value to return when compiling System.getProperty("application.build.timestamp") -->
-                        <compilerArg>-setProperty</compilerArg>
-                        <compilerArg>application.build.timestamp=${application.build.timestamp}</compilerArg>
-                        <!--compilerArg>-style</compilerArg>
-                            <compilerArg>DETAILED</compilerArg-->
-                    </compilerArgs>
-                    <!-- Doing the same for the code server (when compiling in super dev mode) -->
-                    <codeserverArgs>
-                        <!-- Setting value to return when compiling System.getProperty("application.name") -->
-                        <codeserverArg>-setProperty</codeserverArg>
-                        <codeserverArg>application.name=${application.name}</codeserverArg>
-                        <!-- Setting value to return when compiling System.getProperty("application.version") -->
-                        <codeserverArg>-setProperty</codeserverArg>
-                        <codeserverArg>application.version=${application.version}</codeserverArg>
-                        <!-- Setting value to return when compiling System.getProperty("application.build.tool") -->
-                        <codeserverArg>-setProperty</codeserverArg>
-                        <codeserverArg>application.build.tool=${application.build.tool}</codeserverArg>
-                        <!-- Setting value to return when compiling System.getProperty("application.build.number") -->
-                        <codeserverArg>-setProperty</codeserverArg>
-                        <codeserverArg>application.build.number=${application.build.number}</codeserverArg>
-                        <!-- Setting value to return when compiling System.getProperty("application.build.timestamp") -->
-                        <codeserverArg>-setProperty</codeserverArg>
-                        <codeserverArg>application.build.timestamp=${application.build.timestamp}</codeserverArg>
-                    </codeserverArgs>
-                    <!-- Trying to solve a java heap OutOfMemoryError on the server -->
-                    <jvmArgs>
-                        <jvmArg>-Xmx1024m</jvmArg>
-                    </jvmArgs>
-                    <!--<localWorkers>1</localWorkers>-->
-                </configuration>
-            </plugin>
-
-        </plugins>
-    </build>
 
 </project>

@@ -70,7 +70,31 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-com-bus-vertx</artifactId>
+            <artifactId>webfx-stack-auth-authn-server-mojoauth</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-auth-login-server-mojoauth</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-com-bus-json-vertx</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-db-querypush-server</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-db-querypush-server-simple</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -112,13 +136,13 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-querypush-server</artifactId>
+            <artifactId>webfx-stack-routing-router-vertx</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-querypush-server-simple</artifactId>
+            <artifactId>webfx-stack-session-vertx</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

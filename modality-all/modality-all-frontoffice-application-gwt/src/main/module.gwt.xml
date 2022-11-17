@@ -149,13 +149,6 @@
     <source path="one/modality/base/client/operationactionsloading"/>
     <!--=====================< modality-base-client-presentationmodel >=====================-->
     <source path="one/modality/base/client/presentationmodel"/>
-    <!--======================< modality-base-client-sessionrecorder >======================-->
-    <source path="one/modality/base/client/jobs/sessionrecorder"/>
-    <define-configuration-property is_multi_valued="false" name="application.build.number"/>
-    <define-configuration-property is_multi_valued="false" name="application.build.timestamp"/>
-    <define-configuration-property is_multi_valued="false" name="application.build.tool"/>
-    <define-configuration-property is_multi_valued="false" name="application.name"/>
-    <define-configuration-property is_multi_valued="false" name="application.version"/>
     <!--===========================< modality-base-client-util >============================-->
     <source path="one/modality/base/client/util/functions"/>
     <source path="one/modality/base/client/util/log"/>
@@ -400,17 +393,22 @@
     <!--=======================< webfx-platform-windowlocation-gwt >========================-->
     <source path="dev/webfx/platform/windowlocation/spi/impl/gwt"/>
     <source path="dev/webfx/platform/windowlocation/spi/impl/gwt/jsinterop"/>
-    <!--===============================< webfx-stack-authn >================================-->
-    <source path="dev/webfx/stack/authn"/>
-    <source path="dev/webfx/stack/authn/spi"/>
-    <!--===============================< webfx-stack-authz >================================-->
-    <source path="dev/webfx/stack/authz"/>
-    <source path="dev/webfx/stack/authz/mixin"/>
-    <source path="dev/webfx/stack/authz/operation"/>
-    <source path="dev/webfx/stack/authz/spi"/>
-    <source path="dev/webfx/stack/authz/spi/impl"/>
-    <source path="dev/webfx/stack/authz/spi/impl/inmemory"/>
-    <source path="dev/webfx/stack/authz/spi/impl/inmemory/parser"/>
+    <!--=============================< webfx-stack-auth-authn >=============================-->
+    <source path="dev/webfx/stack/auth/authn"/>
+    <source path="dev/webfx/stack/auth/authn/serial"/>
+    <source path="dev/webfx/stack/auth/authn/spi"/>
+    <!--=========================< webfx-stack-auth-authn-buscall >=========================-->
+    <source path="dev/webfx/stack/auth/authn/buscall"/>
+    <!--=========================< webfx-stack-auth-authn-remote >==========================-->
+    <source path="dev/webfx/stack/auth/authn/spi/impl/remote"/>
+    <!--=============================< webfx-stack-auth-authz >=============================-->
+    <source path="dev/webfx/stack/auth/authz"/>
+    <source path="dev/webfx/stack/auth/authz/mixin"/>
+    <source path="dev/webfx/stack/auth/authz/operation"/>
+    <source path="dev/webfx/stack/auth/authz/spi"/>
+    <source path="dev/webfx/stack/auth/authz/spi/impl"/>
+    <source path="dev/webfx/stack/auth/authz/spi/impl/inmemory"/>
+    <source path="dev/webfx/stack/auth/authz/spi/impl/inmemory/parser"/>
     <!--==============================< webfx-stack-com-bus >===============================-->
     <source path="dev/webfx/stack/com/bus"/>
     <source path="dev/webfx/stack/com/bus/spi"/>
@@ -418,6 +416,14 @@
     <!--============================< webfx-stack-com-bus-call >============================-->
     <source path="dev/webfx/stack/com/bus/call"/>
     <source path="dev/webfx/stack/com/bus/call/spi"/>
+    <!--============================< webfx-stack-com-bus-json >============================-->
+    <source path="dev/webfx/stack/com/bus/spi/impl/json"/>
+    <!--========================< webfx-stack-com-bus-json-client >=========================-->
+    <source path="dev/webfx/stack/com/bus/spi/impl/json/client"/>
+    <!--===================< webfx-stack-com-bus-json-client-websocket >====================-->
+    <source path="dev/webfx/stack/com/bus/spi/impl/json/client/websocket"/>
+    <!--=================< webfx-stack-com-bus-json-client-websocket-web >==================-->
+    <source path="dev/webfx/stack/com/bus/spi/impl/json/client/websocket/web"/>
     <!--=============================< webfx-stack-com-serial >=============================-->
     <source path="dev/webfx/stack/com/serial"/>
     <source path="dev/webfx/stack/com/serial/spi"/>
@@ -425,10 +431,6 @@
     <!--===========================< webfx-stack-com-websocket >============================-->
     <source path="dev/webfx/stack/com/websocket"/>
     <source path="dev/webfx/stack/com/websocket/spi"/>
-    <!--=========================< webfx-stack-com-websocket-bus >==========================-->
-    <source path="dev/webfx/stack/com/websocket/bus"/>
-    <!--=======================< webfx-stack-com-websocket-bus-web >========================-->
-    <source path="dev/webfx/stack/com/websocket/bus/web"/>
     <!--=========================< webfx-stack-com-websocket-gwt >==========================-->
     <source path="dev/webfx/stack/com/websocket/spi/impl/gwt"/>
     <!--============================< webfx-stack-db-datascope >============================-->
@@ -451,6 +453,21 @@
     <source path="dev/webfx/stack/db/query/buscall/serial/compression/repeat"/>
     <!--==========================< webfx-stack-db-query-remote >===========================-->
     <source path="dev/webfx/stack/db/query/spi/impl/remote"/>
+    <!--============================< webfx-stack-db-querypush >============================-->
+    <source path="dev/webfx/stack/db/querypush"/>
+    <source path="dev/webfx/stack/db/querypush/diff"/>
+    <source path="dev/webfx/stack/db/querypush/diff/impl"/>
+    <source path="dev/webfx/stack/db/querypush/spi"/>
+    <source path="dev/webfx/stack/db/querypush/spi/impl"/>
+    <!--========================< webfx-stack-db-querypush-buscall >========================-->
+    <source path="dev/webfx/stack/db/querypush/buscall"/>
+    <source path="dev/webfx/stack/db/querypush/buscall/serial"/>
+    <!--========================< webfx-stack-db-querypush-client >=========================-->
+    <source path="dev/webfx/stack/db/querypush/client"/>
+    <!--=====================< webfx-stack-db-querypush-client-simple >=====================-->
+    <source path="dev/webfx/stack/db/querypush/client/simple"/>
+    <!--========================< webfx-stack-db-querypush-remote >=========================-->
+    <source path="dev/webfx/stack/db/querypush/spi/impl/remote"/>
     <!--=============================< webfx-stack-db-submit >==============================-->
     <source path="dev/webfx/stack/db/submit"/>
     <source path="dev/webfx/stack/db/submit/spi"/>
@@ -547,21 +564,6 @@
     <source path="dev/webfx/stack/orm/push/client/spi"/>
     <!--=========================< webfx-stack-push-client-simple >=========================-->
     <source path="dev/webfx/stack/orm/push/client/spi/impl/simple"/>
-    <!--=============================< webfx-stack-querypush >==============================-->
-    <source path="dev/webfx/stack/querypush"/>
-    <source path="dev/webfx/stack/querypush/diff"/>
-    <source path="dev/webfx/stack/querypush/diff/impl"/>
-    <source path="dev/webfx/stack/querypush/spi"/>
-    <source path="dev/webfx/stack/querypush/spi/impl"/>
-    <!--=========================< webfx-stack-querypush-buscall >==========================-->
-    <source path="dev/webfx/stack/querypush/buscall"/>
-    <source path="dev/webfx/stack/querypush/buscall/serial"/>
-    <!--==========================< webfx-stack-querypush-client >==========================-->
-    <source path="dev/webfx/stack/querypush/client"/>
-    <!--======================< webfx-stack-querypush-client-simple >=======================-->
-    <source path="dev/webfx/stack/querypush/client/simple"/>
-    <!--==========================< webfx-stack-querypush-remote >==========================-->
-    <source path="dev/webfx/stack/querypush/spi/impl/remote"/>
     <!--==========================< webfx-stack-routing-activity >==========================-->
     <source path="dev/webfx/stack/routing/activity"/>
     <source path="dev/webfx/stack/routing/activity/impl"/>
@@ -571,13 +573,15 @@
     <source path="dev/webfx/stack/routing/activity/impl/elementals/activeproperty/impl"/>
     <!--===========================< webfx-stack-routing-router >===========================-->
     <source path="dev/webfx/stack/routing/router"/>
+    <source path="dev/webfx/stack/routing/router/session"/>
+    <source path="dev/webfx/stack/routing/router/session/impl"/>
+    <source path="dev/webfx/stack/routing/router/spi"/>
+    <source path="dev/webfx/stack/routing/router/util"/>
+    <!--=======================< webfx-stack-routing-router-client >========================-->
     <source path="dev/webfx/stack/routing/router/auth"/>
     <source path="dev/webfx/stack/routing/router/auth/authz"/>
     <source path="dev/webfx/stack/routing/router/auth/impl"/>
-    <source path="dev/webfx/stack/routing/router/impl"/>
-    <source path="dev/webfx/stack/routing/router/session"/>
-    <source path="dev/webfx/stack/routing/router/session/impl"/>
-    <source path="dev/webfx/stack/routing/router/util"/>
+    <source path="dev/webfx/stack/routing/router/spi/impl/client"/>
     <!--==========================< webfx-stack-routing-uirouter >==========================-->
     <source path="dev/webfx/stack/routing/uirouter"/>
     <source path="dev/webfx/stack/routing/uirouter/activity/presentation"/>
@@ -594,6 +598,17 @@
     <source path="dev/webfx/stack/routing/uirouter/operations"/>
     <source path="dev/webfx/stack/routing/uirouter/uisession"/>
     <source path="dev/webfx/stack/routing/uirouter/uisession/impl"/>
+    <!--==============================< webfx-stack-session >===============================-->
+    <source path="dev/webfx/stack/session"/>
+    <source path="dev/webfx/stack/session/spi"/>
+    <!--===========================< webfx-stack-session-client >===========================-->
+    <source path="dev/webfx/stack/session/spi/impl/client"/>
+    <!--===========================< webfx-stack-session-state >============================-->
+    <source path="dev/webfx/stack/session/state"/>
+    <!--========================< webfx-stack-session-state-client >========================-->
+    <source path="dev/webfx/stack/session/state/client"/>
+    <!--======================< webfx-stack-session-state-client-fx >=======================-->
+    <source path="dev/webfx/stack/session/state/client/fx"/>
     <!--=============================< webfx-stack-ui-action >==============================-->
     <source path="dev/webfx/stack/ui/action"/>
     <source path="dev/webfx/stack/ui/action/impl"/>

@@ -1,21 +1,20 @@
 package one.modality.base.client.jobs.sessionrecorder;
 
-import one.modality.crm.client.services.authn.ModalityUserPrincipal;
+import dev.webfx.kit.launcher.WebFxKitLauncher;
+import dev.webfx.platform.boot.spi.ApplicationJob;
+import dev.webfx.platform.console.Console;
+import dev.webfx.platform.storage.LocalStorage;
+import dev.webfx.stack.com.bus.Bus;
+import dev.webfx.stack.com.bus.BusHook;
+import dev.webfx.stack.com.bus.BusService;
+import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.routing.uirouter.uisession.UiSession;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
-import dev.webfx.kit.launcher.WebFxKitLauncher;
-import dev.webfx.stack.orm.push.client.PushClientService;
-import dev.webfx.platform.storage.LocalStorage;
-import dev.webfx.platform.boot.spi.ApplicationJob;
-import dev.webfx.stack.com.bus.Bus;
-import dev.webfx.stack.com.bus.BusHook;
-import dev.webfx.stack.com.bus.BusService;
-import dev.webfx.stack.com.bus.Registration;
-import dev.webfx.platform.console.Console;
+import dev.webfx.stack.session.state.client.fx.FxClientRunId;
+import one.modality.crm.client.services.authn.ModalityUserPrincipal;
 
 import java.time.Instant;
 
@@ -27,7 +26,6 @@ public final class ClientSessionRecorderJob implements ApplicationJob {
     private static ClientSessionRecorderJob INSTANCE;
 
     private final Bus bus;
-    private Registration pushClientRegistration;
 
     public ClientSessionRecorderJob() {
         this(BusService.bus());
@@ -87,7 +85,6 @@ public final class ClientSessionRecorderJob implements ApplicationJob {
         sessionProcess = null;
         sessionConnection = null;
         sessionUser = null;
-        pushClientRegistration = null;
     }
 
     private Entity getSessionAgent() {
@@ -218,18 +215,15 @@ public final class ClientSessionRecorderJob implements ApplicationJob {
     }
 
     private void listenServerPushCallsIfReady() {
-        if (pushClientRegistration == null && Entities.isNotNew(sessionProcess))
-            pushClientRegistration = PushClientService.listenServerPushCalls(sessionProcess.getPrimaryKey());
+        if (FxClientRunId.getClientRunId() == null && Entities.isNotNew(sessionProcess))
+            FxClientRunId.setClientRunId(sessionProcess.getPrimaryKey());
     }
 
     private void stopListeningServerPushCalls() {
-        if (pushClientRegistration != null && bus.isOpen())
-            pushClientRegistration.unregister();
-        pushClientRegistration = null;
         // Resetting the push client id property to null (will be reassigned when connected again). The purpose is to
         // make the reactive expression filters in push mode react when the connection is open again (this property
         // change should make them send the query push info sent to the server again).
-        PushClientService.pushClientIdProperty().setValue(null);
+        FxClientRunId.setClientRunId(null);
     }
 
     private Entity insertSessionEntity(Object domainClassId, Entity previousEntity) {

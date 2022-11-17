@@ -5,9 +5,11 @@
         <source-packages/>
     </exported-packages>
 
+<!--
     <providers>
-        <provider interface="dev.webfx.stack.authn.spi.AuthenticationServiceProvider">one.modality.crm.client.services.authn.ModalityAuthenticationServiceProvider</provider>
+        <provider interface="spi.dev.webfx.stack.auth.authn.AuthenticationServiceProvider">one.modality.crm.client.services.authn.ModalityAuthenticationServiceProvider</provider>
     </providers>
+-->
 
     <dependencies>
         <used-by-source-modules/>

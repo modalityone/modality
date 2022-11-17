@@ -2,14 +2,14 @@ package one.modality.crm.client.services.authz;
 
 import dev.webfx.platform.console.Console;
 import one.modality.crm.client.services.authn.ModalityUserPrincipal;
-import dev.webfx.stack.authz.operation.OperationAuthorizationRuleParser;
+import dev.webfx.stack.auth.authz.operation.OperationAuthorizationRuleParser;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.routing.router.auth.authz.RoutingAuthorizationRule;
 import dev.webfx.stack.routing.router.auth.authz.RoutingAuthorizationRuleParser;
-import dev.webfx.stack.authz.spi.impl.inmemory.AuthorizationRuleType;
-import dev.webfx.stack.authz.spi.impl.inmemory.InMemoryUserPrincipalAuthorizationChecker;
+import dev.webfx.stack.auth.authz.spi.impl.inmemory.AuthorizationRuleType;
+import dev.webfx.stack.auth.authz.spi.impl.inmemory.InMemoryUserPrincipalAuthorizationChecker;
 import dev.webfx.platform.util.Strings;
 
 /**

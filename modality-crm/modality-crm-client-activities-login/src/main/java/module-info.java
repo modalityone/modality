@@ -10,7 +10,7 @@ module modality.crm.client.activities.login {
     requires modality.base.client.validation;
     requires modality.event.client.sectionpanel;
     requires webfx.kit.util;
-    requires webfx.stack.authn;
+    requires webfx.stack.auth.authn;
     requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.routing.uirouter;
