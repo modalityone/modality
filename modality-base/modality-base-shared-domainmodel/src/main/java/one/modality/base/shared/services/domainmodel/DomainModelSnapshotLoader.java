@@ -11,7 +11,7 @@ import dev.webfx.stack.orm.expression.terms.function.InlineFunction;
 import dev.webfx.stack.orm.domainmodel.service.spi.DomainModelLoader;
 import dev.webfx.platform.async.Batch;
 import dev.webfx.platform.json.Json;
-import dev.webfx.platform.json.JsonElement;
+import dev.webfx.platform.json.ReadOnlyJsonElement;
 import dev.webfx.stack.db.query.QueryResult;
 import dev.webfx.platform.resource.Resource;
 import dev.webfx.stack.com.serial.SerialCodecManager;
@@ -44,7 +44,7 @@ final class DomainModelSnapshotLoader {
             EntityFactoryRegistry.registerProvidedEntityFactories();
             // Loading the model from the resource snapshot
             String jsonString = Resource.getText("one/modality/base/shared/domainmodel/DomainModelSnapshot.json");
-            JsonElement json = Json.parseObject(jsonString);
+            ReadOnlyJsonElement json = Json.parseObject(jsonString);
             Batch<QueryResult> snapshotBatch = SerialCodecManager.decodeFromJson(json);
             DomainModel domainModel = new DomainModelLoader(1).generateDomainModel(snapshotBatch);
             // Registering aggregates TODO: Move this into the framework model (aggregate boolean field of domain class)

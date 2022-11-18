@@ -11,6 +11,7 @@ import dev.webfx.extras.visual.*;
 import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.json.JsonObject;
 import dev.webfx.stack.i18n.Dictionary;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.ui.util.layout.LayoutUtil;
@@ -18,8 +19,7 @@ import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.json.Json;
-import dev.webfx.platform.json.JsonObject;
-import dev.webfx.platform.json.WritableJsonObject;
+import dev.webfx.platform.json.ReadOnlyJsonObject;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.Numbers;
@@ -141,10 +141,10 @@ final class FeesActivity extends BookingProcessActivity {
     private void displayFeesGroupsNow() {
         int n = feesGroups.length;
         VisualResultBuilder rsb = VisualResultBuilder.create(n, new VisualColumn[]{
-                VisualColumn.create((value, context) -> renderFeesGroupHeader((Pair<JsonObject, String>) value)),
+                VisualColumn.create((value, context) -> renderFeesGroupHeader((Pair<ReadOnlyJsonObject, String>) value)),
                 VisualColumn.create((value, context) -> renderFeesGroupBody((VisualResult) value)),
                 VisualColumn.create(null, SpecializedTextType.HTML)});
-        WritableJsonObject jsonImage = Json.parseObject(ModalityIcons.priceTagColorSvg16JsonUrl);
+        JsonObject jsonImage = Json.parseObject(ModalityIcons.priceTagColorSvg16JsonUrl);
         ColumnWidthCumulator[] cumulators = {new ColumnWidthCumulator(), new ColumnWidthCumulator(), new ColumnWidthCumulator()};
         for (int i = 0; i < n; i++) {
             FeesGroup feesGroup = feesGroups[i];
@@ -203,7 +203,7 @@ final class FeesActivity extends BookingProcessActivity {
     }
 
 
-    private Node renderFeesGroupHeader(Pair<JsonObject, String> pair) {
+    private Node renderFeesGroupHeader(Pair<ReadOnlyJsonObject, String> pair) {
         boolean hasUnemployedRate = hasUnemployedRate();
         boolean hasFacilityFeeRate = hasFacilityFeeRate();
         boolean hasDiscountRates = hasUnemployedRate || hasFacilityFeeRate;

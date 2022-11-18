@@ -1,7 +1,7 @@
 package one.modality.ecommerce.payment.delegated.buscall.serial;
 
+import dev.webfx.platform.json.ReadOnlyJsonObject;
 import dev.webfx.platform.json.JsonObject;
-import dev.webfx.platform.json.WritableJsonObject;
 import dev.webfx.stack.com.serial.spi.impl.SerialCodecBase;
 import one.modality.ecommerce.payment.delegated.InitiateDelegatedPaymentArgument;
 
@@ -17,14 +17,14 @@ public final class InitiateDelegatedPaymentArgumentSerialCodec extends SerialCod
     }
 
     @Override
-    public void encodeToJson(InitiateDelegatedPaymentArgument arg, WritableJsonObject json) {
+    public void encodeToJson(InitiateDelegatedPaymentArgument arg, JsonObject json) {
         json.set(DESCRIPTION_KEY, arg.getDescription());
         json.set(AMOUNT_KEY, arg.getAmount());
         json.set(CURRENCY_KEY, arg.getCurrency());
     }
 
     @Override
-    public InitiateDelegatedPaymentArgument decodeFromJson(JsonObject json) {
+    public InitiateDelegatedPaymentArgument decodeFromJson(ReadOnlyJsonObject json) {
         return new InitiateDelegatedPaymentArgument(
                 json.getString(DESCRIPTION_KEY),
                 json.get(AMOUNT_KEY),

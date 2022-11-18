@@ -1,7 +1,7 @@
 package one.modality.ecommerce.payment.direct.buscall.serial;
 
 import dev.webfx.platform.json.JsonObject;
-import dev.webfx.platform.json.WritableJsonObject;
+import dev.webfx.platform.json.ReadOnlyJsonObject;
 import dev.webfx.stack.com.serial.spi.impl.SerialCodecBase;
 import one.modality.ecommerce.payment.direct.MakeDirectPaymentResult;
 
@@ -19,12 +19,12 @@ public final class MakeDirectPaymentResultSerialCodec extends SerialCodecBase<Ma
     }
 
     @Override
-    public void encodeToJson(MakeDirectPaymentResult arg, WritableJsonObject json) {
+    public void encodeToJson(MakeDirectPaymentResult arg, JsonObject json) {
         json.set(SUCCESS_KEY, arg.isSuccess());
     }
 
     @Override
-    public MakeDirectPaymentResult decodeFromJson(JsonObject json) {
+    public MakeDirectPaymentResult decodeFromJson(ReadOnlyJsonObject json) {
         return new MakeDirectPaymentResult(
                 json.getBoolean(SUCCESS_KEY)
         );

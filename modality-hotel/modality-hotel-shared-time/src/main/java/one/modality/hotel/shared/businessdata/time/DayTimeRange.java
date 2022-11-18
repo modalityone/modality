@@ -2,8 +2,8 @@ package one.modality.hotel.shared.businessdata.time;
 
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.platform.json.Json;
-import dev.webfx.platform.json.JsonArray;
-import dev.webfx.platform.json.JsonObject;
+import dev.webfx.platform.json.ReadOnlyJsonArray;
+import dev.webfx.platform.json.ReadOnlyJsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +30,8 @@ public class DayTimeRange {
         } else {
             TimeRangeRule _generalRule = null;
             exceptionRules = new ArrayList<>();
-            JsonObject json = Json.parseObject(text);
-            JsonArray keys = json.keys();
+            ReadOnlyJsonObject json = Json.parseObject(text);
+            ReadOnlyJsonArray keys = json.keys();
             for (int i = 0; i < keys.size(); i++) {
                 String key = keys.getString(i);
                 String value = json.getString(key);

@@ -7,7 +7,7 @@ import dev.webfx.stack.db.datasource.LocalDataSource;
 import dev.webfx.stack.db.datasource.spi.LocalDataSourceProvider;
 import dev.webfx.stack.db.datasource.spi.simple.SimpleLocalDataSource;
 import dev.webfx.platform.json.Json;
-import dev.webfx.platform.json.JsonObject;
+import dev.webfx.platform.json.ReadOnlyJsonObject;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.resource.Resource;
 
@@ -23,7 +23,7 @@ public final class ModalityLocalDataSourceProvider implements LocalDataSourcePro
         DBMS dbms = DBMS.POSTGRES;
         String connectionPath = "one/modality/base/server/datasource/" + dataSourceId + "/ConnectionDetails.json";
         String connectionContent = Resource.getText(connectionPath);
-        JsonObject json = connectionContent == null ? null : Json.parseObject(connectionContent);
+        ReadOnlyJsonObject json = connectionContent == null ? null : Json.parseObject(connectionContent);
         //getProperty(json);
 
         ConnectionDetails connectionDetails = json == null ? null : new ConnectionDetails(
@@ -40,7 +40,7 @@ public final class ModalityLocalDataSourceProvider implements LocalDataSourcePro
         MODALITY_DATA_SOURCE = new SimpleLocalDataSource(dataSourceId, dbms, connectionDetails);
     }
 
-    protected String getProperty(JsonObject json, String key) {
+    protected String getProperty(ReadOnlyJsonObject json, String key) {
         String value = System.getProperty(key);
         if (value == null || value.isEmpty())
              value = json.getString(key);
