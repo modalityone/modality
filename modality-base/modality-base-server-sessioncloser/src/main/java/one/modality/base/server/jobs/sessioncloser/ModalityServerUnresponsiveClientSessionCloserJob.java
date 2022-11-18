@@ -24,8 +24,8 @@ public final class ModalityServerUnresponsiveClientSessionCloserJob implements A
                         .setParameters(clientRunId)
                         .setDataSourceId(DataSourceModelService.getDefaultDataSourceId())
                         .build())
-                        .onFailure(cause -> Console.log("Error while closing session for pushClientId=" + clientRunId, cause))
-                        .onSuccess(result -> Console.log("Closed session for pushClientId=" + clientRunId)));
+                        .onFailure(cause -> Console.log("Error while closing session for clientRunId=" + clientRunId, cause))
+                        .onSuccess(result -> Console.log("Closed session for clientRunId=" + clientRunId)));
     }
 
     @Override
