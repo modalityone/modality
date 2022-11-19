@@ -1341,6 +1341,9 @@
                 <plugin-module>webfx-stack-db-query-buscall</plugin-module>
                 <plugin-module>webfx-stack-db-submit-buscall</plugin-module>
                 <plugin-module>webfx-stack-db-querypush-buscall</plugin-module>
+
+                <!-- Injection auto-conditions don't work, so adding it manually for now (TODO: REMOVE THIS ONCE FIXED -->
+                <plugin-module>webfx-stack-push-server-liveclient-interceptor</plugin-module>
             </dependencies>
 
             <used-by-source-modules/>
@@ -4492,9 +4495,16 @@
                 <module>webfx-stack-routing-router-client</module>
                 <module>webfx-stack-routing-router-vertx</module>
                 <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-session-client</module>
                 <module>webfx-stack-session-state</module>
                 <module>webfx-stack-ui-fxraiser-json</module>
                 <module>webfx-stack-ui-util</module>
+            </java-package>
+
+            <java-package name="dev.webfx.stack.com.bus.spi.impl.json.server">
+                <module>webfx-stack-com-bus-json-server</module>
+                <module>webfx-stack-com-bus-json-vertx</module>
+                <module>webfx-stack-push-server-liveclient-interceptor</module>
             </java-package>
 
             <java-package name="dev.webfx.stack.db.query">
@@ -4579,6 +4589,15 @@
                 <module>webfx-stack-orm-reactive-dql</module>
                 <module>webfx-stack-orm-reactive-entities</module>
                 <module>webfx-stack-orm-reactive-visual</module>
+            </java-package>
+
+            <java-package name="dev.webfx.stack.push.server">
+                <module>modality-base-server-sessioncloser</module>
+                <module>webfx-stack-auth-login-server-mojoauth</module>
+                <module>webfx-stack-db-querypush-server</module>
+                <module>webfx-stack-push-server</module>
+                <module>webfx-stack-push-server-liveclient-interceptor</module>
+                <module>webfx-stack-push-server-simple</module>
             </java-package>
 
             <java-package name="dev.webfx.stack.ui.fxraiser">

@@ -13,7 +13,7 @@ import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.routing.uirouter.uisession.UiSession;
-import dev.webfx.stack.session.state.client.fx.FxClientRunId;
+import dev.webfx.stack.session.state.client.fx.FXRunId;
 import one.modality.crm.client.services.authn.ModalityUserPrincipal;
 
 import java.time.Instant;
@@ -215,15 +215,15 @@ public final class ClientSessionRecorderJob implements ApplicationJob {
     }
 
     private void listenServerPushCallsIfReady() {
-        if (FxClientRunId.getClientRunId() == null && Entities.isNotNew(sessionProcess))
-            FxClientRunId.setClientRunId(sessionProcess.getPrimaryKey());
+        if (FXRunId.getRunId() == null && Entities.isNotNew(sessionProcess))
+            FXRunId.setRunId(sessionProcess.getPrimaryKey());
     }
 
     private void stopListeningServerPushCalls() {
         // Resetting the push client id property to null (will be reassigned when connected again). The purpose is to
         // make the reactive expression filters in push mode react when the connection is open again (this property
         // change should make them send the query push info sent to the server again).
-        FxClientRunId.setClientRunId(null);
+        FXRunId.setRunId(null);
     }
 
     private Entity insertSessionEntity(Object domainClassId, Entity previousEntity) {

@@ -12,7 +12,7 @@ import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
-import dev.webfx.stack.session.state.client.fx.FxSessionId;
+import dev.webfx.stack.session.state.client.fx.FXServerSessionId;
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.controls.dialog.DialogUtil;
 import dev.webfx.stack.ui.util.layout.LayoutUtil;
@@ -324,7 +324,7 @@ final class PaymentActivity extends CartBasedActivity {
         value = Strings.replaceAllSafe(value, "[frontofficeUrl]", WindowLocation.getOrigin());
         String cartUrl = Strings.removeSuffix(WindowLocation.getHref(), "/payment");
         value = Strings.replaceAllSafe(value, "[cartUrl]", cartUrl);
-        value = Strings.replaceAllSafe(value, "[session]", FxSessionId.getClientSessionId());
+        value = Strings.replaceAllSafe(value, "[session]", FXServerSessionId.getServerSessionId());
         value = Strings.replaceAllSafe(value, "[lang]", I18n.getLanguage().toString());
         value = Strings.replaceAllSafe(value, "[paymentId]", lastPayment.getPrimaryKey().toString());
         value = Strings.replaceAllSafe(value, "[paymentId6]", digits(lastPayment.getPrimaryKey().toString(), 6, false));
