@@ -1,16 +1,17 @@
 package one.modality.crm.backoffice.activities.authorizations;
 
+import dev.webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.stack.orm.entity.Entity;
+import dev.webfx.stack.orm.entity.controls.entity.sheet.EntityPropertiesSheet;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.session.state.client.fx.FXUserPrincipal;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.Pane;
 import one.modality.crm.client.services.authn.ModalityUserPrincipal;
-import dev.webfx.extras.visual.controls.grid.VisualGrid;
-import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
-import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.stack.orm.entity.controls.entity.sheet.EntityPropertiesSheet;
-import dev.webfx.stack.orm.entity.Entity;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
@@ -19,8 +20,8 @@ import static dev.webfx.stack.orm.dql.DqlStatement.where;
  */
 final class AuthorizationsViewActivity extends ViewDomainActivityBase {
 
-    private final String manageeColumns = "[{label: 'Managee', expression: `active,user.genderIcon,user.firstName,user.lastName`}]";
-    private final String assignmentColumns = "[`active`,`operation`,{expression: `rule`, foreignColumns: null, foreignSearchCondition: null, foreignWhere: null},`activityState`]";
+    private final static String manageeColumns = "[{label: 'Managee', expression: `active,user.genderIcon,user.firstName,user.lastName`}]";
+    private final static String assignmentColumns = "[`active`,`operation`,{expression: `rule`, foreignColumns: null, foreignSearchCondition: null, foreignWhere: null},`activityState`]";
 
     private final VisualGrid usersGrid = new VisualGrid();
     private final VisualGrid assignmentsGrid = new VisualGrid();
@@ -43,7 +44,7 @@ final class AuthorizationsViewActivity extends ViewDomainActivityBase {
 
         ReactiveVisualMapper.createPushReactiveChain(this)
                 .always("{class: 'AuthorizationManagement', orderBy: 'id'}")
-                .ifNotNullOtherwiseEmpty(userPrincipalProperty(), principal -> where("manager=?", ModalityUserPrincipal.getUserPersonId(principal)))
+                .ifNotNullOtherwiseEmpty(FXUserPrincipal.userPrincipalProperty(), principal -> where("manager=?", ModalityUserPrincipal.getUserPersonId(principal)))
                 .setEntityColumns(manageeColumns)
                 .visualizeResultInto(usersGrid)
                 .setSelectedEntityHandler(selectedManagementProperty::setValue)

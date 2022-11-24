@@ -16,6 +16,7 @@ module modality.ecommerce.frontoffice.activities.person {
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.routing.uirouter;
+    requires webfx.stack.session.state.client.fx;
     requires webfx.stack.ui.util;
 
     // Exported packages

@@ -28,6 +28,7 @@
         <module>modality-crm-client-authn</module>
         <module>modality-crm-client-authz</module>
         <module>modality-crm-client-personaldetails</module>
+        <module>modality-crm-server-authz</module>
     </modules>
 
 </project>

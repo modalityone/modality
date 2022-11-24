@@ -16,6 +16,9 @@ module modality.all.backoffice.application.gluon {
     requires webfx.platform.windowlocation.java;
     requires webfx.stack.auth.authn.buscall;
     requires webfx.stack.auth.authn.remote;
+    requires webfx.stack.auth.login.buscall;
+    requires webfx.stack.auth.login.remote;
+    requires webfx.stack.auth.login.ui.webthirdpary;
     requires webfx.stack.com.bus.json.client.websocket.java;
     requires webfx.stack.com.websocket.java;
     requires webfx.stack.db.query.buscall;

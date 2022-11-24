@@ -1,5 +1,24 @@
 package one.modality.crm.client.controls.personaldetails;
 
+import dev.webfx.extras.materialdesign.textfield.MaterialTextFieldPane;
+import dev.webfx.extras.type.PrimType;
+import dev.webfx.extras.visual.SelectionMode;
+import dev.webfx.extras.visual.VisualColumn;
+import dev.webfx.extras.visual.VisualResultBuilder;
+import dev.webfx.extras.visual.VisualStyle;
+import dev.webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.util.Booleans;
+import dev.webfx.stack.i18n.I18n;
+import dev.webfx.stack.orm.domainmodel.DataSourceModel;
+import dev.webfx.stack.orm.entity.Entity;
+import dev.webfx.stack.orm.entity.EntityStore;
+import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
+import dev.webfx.stack.session.state.client.fx.FXUserPrincipal;
+import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
+import dev.webfx.stack.ui.util.layout.LayoutUtil;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.DatePicker;
@@ -7,36 +26,17 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.*;
-import one.modality.base.shared.domainmodel.formatters.DateFormatter;
-import one.modality.base.shared.domainmodel.functions.AbcNames;
-import one.modality.crm.client.services.authn.ModalityUserPrincipal;
-import one.modality.event.client.controls.sectionpanel.SectionPanelFactory;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.validation.ModalityValidationSupport;
+import one.modality.base.shared.domainmodel.formatters.DateFormatter;
+import one.modality.base.shared.domainmodel.functions.AbcNames;
 import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Organization;
 import one.modality.base.shared.entities.Person;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
-import dev.webfx.stack.i18n.I18n;
-import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
-import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
-import dev.webfx.stack.ui.util.layout.LayoutUtil;
-import dev.webfx.extras.materialdesign.textfield.MaterialTextFieldPane;
-import dev.webfx.stack.routing.uirouter.uisession.UiSession;
-import dev.webfx.stack.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.orm.entity.Entity;
-import dev.webfx.stack.orm.entity.EntityStore;
-import dev.webfx.extras.visual.controls.grid.VisualGrid;
-import dev.webfx.extras.visual.VisualColumn;
-import dev.webfx.extras.visual.VisualResultBuilder;
-import dev.webfx.extras.visual.VisualStyle;
-import dev.webfx.extras.visual.SelectionMode;
-import dev.webfx.extras.type.PrimType;
-import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.platform.uischeduler.UiScheduler;
-import dev.webfx.platform.util.Booleans;
+import one.modality.crm.client.services.authn.ModalityUserPrincipal;
+import one.modality.event.client.controls.sectionpanel.SectionPanelFactory;
 
 import java.time.LocalDate;
 
@@ -62,10 +62,6 @@ public final class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
     private final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
 
     public PersonalDetailsPanel(Event event, ButtonFactoryMixin buttonFactoryMixin, Pane parent) {
-        this(event, buttonFactoryMixin, parent, null);
-    }
-
-    public PersonalDetailsPanel(Event event, ButtonFactoryMixin buttonFactoryMixin, Pane parent, UiSession uiSession) {
         this.event = event;
         sectionPanel = SectionPanelFactory.createSectionPanel("YourPersonalDetails");
 
@@ -97,25 +93,20 @@ public final class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         countryButton = countrySelector.toMaterialButton("Country");
         organizationSelector = createEntityButtonSelector("{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name'}", buttonFactoryMixin, parent, dataSourceModel);
         organizationButton = organizationSelector.toMaterialButton("Centre");
-        if (uiSession == null) {
-            personSelector = null;
-            personButton = null;
-        } else {
-            personSelector = createEntityButtonSelector(null, buttonFactoryMixin, parent, dataSourceModel);
-            personButton = personSelector.toMaterialButton("PersonToBook");
-            FXProperties.runOnPropertiesChange(p -> syncUiFromModel((Person) p.getValue()), personSelector.selectedItemProperty());
-            FXProperties.runNowAndOnPropertiesChange(userProperty -> {
-                Object user = userProperty.getValue();
-                boolean loggedIn = user instanceof ModalityUserPrincipal;
-                if (loggedIn) {
-                    Object userAccountId = ((ModalityUserPrincipal) user).getUserAccountId();
-                    personSelector.setJsonOrClass("{class: 'Person', alias: 'p', fields: 'genderIcon,firstName,lastName,birthdate,email,phone,street,postCode,cityName,organization,country', columns: `[{expression: 'genderIcon,firstName,lastName'}]`, where: '!removed and frontendAccount=" + userAccountId + "', orderBy: 'id'}");
-                    personSelector.autoSelectFirstEntity();
-                } else
-                    personSelector.setJsonOrClass(null);
-                personButton.setVisible(loggedIn);
-            }, uiSession.userPrincipalProperty());
-        }
+        personSelector = createEntityButtonSelector(null, buttonFactoryMixin, parent, dataSourceModel);
+        personButton = personSelector.toMaterialButton("PersonToBook");
+        FXProperties.runOnPropertiesChange(p -> syncUiFromModel((Person) p.getValue()), personSelector.selectedItemProperty());
+        FXProperties.runNowAndOnPropertiesChange(userProperty -> {
+            Object user = userProperty.getValue();
+            boolean loggedIn = user instanceof ModalityUserPrincipal;
+            if (loggedIn) {
+                Object userAccountId = ((ModalityUserPrincipal) user).getUserAccountId();
+                personSelector.setJsonOrClass("{class: 'Person', alias: 'p', fields: 'genderIcon,firstName,lastName,birthdate,email,phone,street,postCode,cityName,organization,country', columns: `[{expression: 'genderIcon,firstName,lastName'}]`, where: '!removed and frontendAccount=" + userAccountId + "', orderBy: 'id'}");
+                personSelector.autoSelectFirstEntity();
+            } else
+                personSelector.setJsonOrClass(null);
+            personButton.setVisible(loggedIn);
+        }, FXUserPrincipal.userPrincipalProperty());
         initValidation();
     }
 

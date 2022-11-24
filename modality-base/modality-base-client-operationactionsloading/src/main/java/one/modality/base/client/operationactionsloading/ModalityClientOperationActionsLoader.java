@@ -1,16 +1,17 @@
 package one.modality.base.client.operationactionsloading;
 
+import dev.webfx.platform.boot.spi.ApplicationModuleBooter;
 import dev.webfx.platform.console.Console;
+import dev.webfx.stack.auth.authz.client.factory.AuthorizationFactory;
 import dev.webfx.stack.i18n.I18n;
+import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
+import dev.webfx.stack.orm.entity.Entity;
+import dev.webfx.stack.orm.entity.EntityStore;
+import dev.webfx.stack.session.state.client.fx.FXUserPrincipal;
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionFactoryMixin;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import dev.webfx.stack.ui.operation.action.OperationActionRegistry;
-import dev.webfx.stack.routing.uirouter.uisession.UiSession;
-import dev.webfx.stack.orm.entity.Entity;
-import dev.webfx.stack.orm.entity.EntityStore;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
-import dev.webfx.platform.boot.spi.ApplicationModuleBooter;
 
 /**
  * @author Bruno Salmon
@@ -26,7 +27,7 @@ public class ModalityClientOperationActionsLoader implements ApplicationModuleBo
 
     @Override
     public int getBootLevel() {
-        return APPLICATION_BOOT_LEVEL;
+        return COMMUNICATION_ANY_BOOT_LEVEL;
     }
 
     @Override
@@ -43,7 +44,7 @@ public class ModalityClientOperationActionsLoader implements ApplicationModuleBo
                         String i18nCode = operation.getStringFieldValue("i18nCode");
                         boolean isPublic = operation.getBooleanFieldValue("public");
                         Object i18nKey = new ModalityOperationI18nKey(i18nCode);
-                        Action operationGraphicalAction = isPublic ? newAction(i18nKey) : newAuthAction(i18nKey, registry.authorizedOperationActionProperty(operationCode, UiSession.get().userPrincipalProperty(), UiSession.get()::isAuthorized));
+                        Action operationGraphicalAction = isPublic ? newAction(i18nKey) : newAuthAction(i18nKey, registry.authorizedOperationActionProperty(operationCode, FXUserPrincipal.userPrincipalProperty(), AuthorizationFactory::isAuthorized));
                         operationGraphicalAction.setUserData(i18nKey);
                         registry.registerOperationGraphicalAction(operationCode, operationGraphicalAction);
                     }

@@ -13,6 +13,7 @@
 <!-- Commented while it's not necessary during the development phase (and creates logs on the server every second which may pollute other logs)
         <plugin-module>modality-base-server-systemmetrics</plugin-module>
 -->
+        <plugin-module>webfx-stack-auth-authz-server</plugin-module>
         <plugin-module>webfx-stack-auth-login-buscall</plugin-module>
         <plugin-module>webfx-stack-auth-authn-buscall</plugin-module>
         <plugin-module>webfx-stack-com-bus-call-job</plugin-module>

@@ -65,6 +65,8 @@
     <source path="javafx/scene/text"/>
     <source path="javafx/scene/transform"/>
     <source path="javafx/stage"/>
+    <!--============================< webfx-kit-javafxweb-emul >============================-->
+    <source path="javafx/scene/web"/>
     <!--================================< elemental2-core >=================================-->
     <inherits name="elemental2.core.Core"/>
     <!--=================================< elemental2-dom >=================================-->
@@ -308,6 +310,12 @@
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics/gwt/util"/>
     <!--=====================< webfx-kit-javafxgraphics-registry-gwt >======================-->
     <source path="dev/webfx/kit/registry/javafxgraphics"/>
+    <!--=========================< webfx-kit-javafxweb-peers-base >=========================-->
+    <source path="dev/webfx/kit/mapper/peers/javafxweb/base"/>
+    <!--=========================< webfx-kit-javafxweb-peers-gwt >==========================-->
+    <source path="dev/webfx/kit/mapper/peers/javafxweb/spi/gwt"/>
+    <!--========================< webfx-kit-javafxweb-registry-gwt >========================-->
+    <source path="dev/webfx/kit/registry/javafxweb"/>
     <!--===============================< webfx-kit-launcher >===============================-->
     <source path="dev/webfx/kit/launcher"/>
     <source path="dev/webfx/kit/launcher/spi"/>
@@ -401,14 +409,26 @@
     <source path="dev/webfx/stack/auth/authn/buscall"/>
     <!--=========================< webfx-stack-auth-authn-remote >==========================-->
     <source path="dev/webfx/stack/auth/authn/spi/impl/remote"/>
-    <!--=============================< webfx-stack-auth-authz >=============================-->
-    <source path="dev/webfx/stack/auth/authz"/>
-    <source path="dev/webfx/stack/auth/authz/mixin"/>
-    <source path="dev/webfx/stack/auth/authz/operation"/>
-    <source path="dev/webfx/stack/auth/authz/spi"/>
-    <source path="dev/webfx/stack/auth/authz/spi/impl"/>
-    <source path="dev/webfx/stack/auth/authz/spi/impl/inmemory"/>
-    <source path="dev/webfx/stack/auth/authz/spi/impl/inmemory/parser"/>
+    <!--=========================< webfx-stack-auth-authz-client >==========================-->
+    <source path="dev/webfx/stack/auth/authz/client"/>
+    <source path="dev/webfx/stack/auth/authz/client/factory"/>
+    <source path="dev/webfx/stack/auth/authz/client/operation"/>
+    <source path="dev/webfx/stack/auth/authz/client/spi"/>
+    <source path="dev/webfx/stack/auth/authz/client/spi/impl"/>
+    <source path="dev/webfx/stack/auth/authz/client/spi/impl/inmemory"/>
+    <source path="dev/webfx/stack/auth/authz/client/spi/impl/inmemory/parser"/>
+    <!--=============================< webfx-stack-auth-login >=============================-->
+    <source path="dev/webfx/stack/auth/login"/>
+    <source path="dev/webfx/stack/auth/login/spi"/>
+    <!--=========================< webfx-stack-auth-login-buscall >=========================-->
+    <source path="dev/webfx/stack/auth/login/buscall"/>
+    <!--=========================< webfx-stack-auth-login-remote >==========================-->
+    <source path="dev/webfx/stack/auth/login/spi/impl/remote"/>
+    <!--===========================< webfx-stack-auth-login-ui >============================-->
+    <source path="dev/webfx/stack/auth/login/ui"/>
+    <source path="dev/webfx/stack/auth/login/ui/spi"/>
+    <!--=====================< webfx-stack-auth-login-ui-webthirdpary >=====================-->
+    <source path="dev/webfx/stack/auth/login/ui/spi/impl/webthirdparty"/>
     <!--==============================< webfx-stack-com-bus >===============================-->
     <source path="dev/webfx/stack/com/bus"/>
     <source path="dev/webfx/stack/com/bus/spi"/>
@@ -573,8 +593,6 @@
     <source path="dev/webfx/stack/routing/activity/impl/elementals/activeproperty/impl"/>
     <!--===========================< webfx-stack-routing-router >===========================-->
     <source path="dev/webfx/stack/routing/router"/>
-    <source path="dev/webfx/stack/routing/router/session"/>
-    <source path="dev/webfx/stack/routing/router/session/impl"/>
     <source path="dev/webfx/stack/routing/router/spi"/>
     <source path="dev/webfx/stack/routing/router/util"/>
     <!--=======================< webfx-stack-routing-router-client >========================-->
@@ -596,8 +614,6 @@
     <source path="dev/webfx/stack/routing/uirouter/activity/view/impl"/>
     <source path="dev/webfx/stack/routing/uirouter/impl"/>
     <source path="dev/webfx/stack/routing/uirouter/operations"/>
-    <source path="dev/webfx/stack/routing/uirouter/uisession"/>
-    <source path="dev/webfx/stack/routing/uirouter/uisession/impl"/>
     <!--==============================< webfx-stack-session >===============================-->
     <source path="dev/webfx/stack/session"/>
     <source path="dev/webfx/stack/session/spi"/>

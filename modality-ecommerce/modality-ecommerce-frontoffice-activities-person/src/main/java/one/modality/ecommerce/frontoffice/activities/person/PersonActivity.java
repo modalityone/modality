@@ -1,8 +1,8 @@
 package one.modality.ecommerce.frontoffice.activities.person;
 
-import dev.webfx.stack.routing.uirouter.uisession.UiSession;
-import dev.webfx.stack.ui.util.layout.LayoutUtil;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.stack.session.state.client.fx.FXLoggedIn;
+import dev.webfx.stack.ui.util.layout.LayoutUtil;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.value.ObservableBooleanValue;
@@ -49,11 +49,10 @@ final class PersonActivity extends BookingProcessActivity {
 */
         ToggleGroup accountToggleGroup = new ToggleGroup();
         FlowPane accountTabs = new FlowPane(new Button(null, newRadioButton("IDontHaveAnAccount", accountToggleGroup)), new Button(null, newRadioButton("IAlreadyHaveAnAccount", accountToggleGroup)));
-        UiSession uiSession = getUiSession();
-        ObservableBooleanValue loggedInProperty = loggedInProperty();
+        ObservableBooleanValue loggedInProperty = FXLoggedIn.loggedInProperty();
         ObservableBooleanValue notLoggedIn = BooleanExpression.booleanExpression(loggedInProperty).not();
-        LoginPanel loginPanel = new LoginPanel(uiSession);
-        personalDetailsPanel = new PersonalDetailsPanel(getEvent(), this, pageContainer, uiSession);
+        LoginPanel loginPanel = new LoginPanel();
+        personalDetailsPanel = new PersonalDetailsPanel(getEvent(), this, pageContainer);
         Node[] tabContents = {new VBox(10, personalDetailsPanel.getSectionPanel(), nextButton), loginPanel.getNode() };
         BorderPane accountPane = new BorderPane();
         accountToggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {

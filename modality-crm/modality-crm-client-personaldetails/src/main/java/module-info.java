@@ -23,7 +23,7 @@ module modality.crm.client.personaldetails {
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
-    requires webfx.stack.routing.uirouter;
+    requires webfx.stack.session.state.client.fx;
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.util;
 

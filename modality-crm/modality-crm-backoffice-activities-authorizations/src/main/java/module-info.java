@@ -16,6 +16,7 @@ module modality.crm.backoffice.activities.authorizations {
     requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
+    requires webfx.stack.session.state.client.fx;
     requires webfx.stack.ui.operation;
 
     // Exported packages

@@ -1,15 +1,15 @@
 package one.modality.crm.client.activities.login;
 
+import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.stack.auth.authn.AuthenticationRequest;
+import dev.webfx.stack.auth.authn.UsernamePasswordCredentials;
 import dev.webfx.stack.i18n.I18n;
+import dev.webfx.stack.session.state.client.fx.FXUserPrincipal;
 import dev.webfx.stack.ui.controls.button.ButtonFactory;
 import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
-import dev.webfx.stack.routing.uirouter.uisession.UiSession;
 import dev.webfx.stack.ui.util.anim.Animations;
 import dev.webfx.stack.ui.util.layout.LayoutUtil;
 import dev.webfx.stack.ui.util.scene.SceneUtil;
-import dev.webfx.stack.auth.authn.AuthenticationRequest;
-import dev.webfx.stack.auth.authn.UsernamePasswordCredentials;
-import dev.webfx.kit.util.properties.FXProperties;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.HPos;
@@ -21,9 +21,9 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import one.modality.event.client.controls.sectionpanel.SectionPanelFactory;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.validation.ModalityValidationSupport;
+import one.modality.event.client.controls.sectionpanel.SectionPanelFactory;
 
 
 /**
@@ -37,7 +37,7 @@ public final class LoginPanel implements ModalityButtonFactoryMixin {
     private final Property<Boolean> signInMode = new SimpleObjectProperty<>(true);
     private final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
 
-    public LoginPanel(UiSession uiSession) {
+    public LoginPanel() {
         BorderPane loginWindow = SectionPanelFactory.createSectionPanel("SignInWindowTitle");
         Hyperlink hyperLink = newHyperlink("ForgotPassword?", e -> signInMode.setValue(!signInMode.getValue()));
         GridPane gridPane;
@@ -64,7 +64,7 @@ public final class LoginPanel implements ModalityButtonFactoryMixin {
                         .setUserCredentials(new UsernamePasswordCredentials(usernameField.getText(), passwordField.getText()))
                         .executeAsync()
                         .onFailure(cause -> Animations.shake(loginWindow))
-                        .onSuccess(uiSession::setUserPrincipal);
+                        .onSuccess(FXUserPrincipal::setUserPrincipal);
         });
         prepareShowing();
     }

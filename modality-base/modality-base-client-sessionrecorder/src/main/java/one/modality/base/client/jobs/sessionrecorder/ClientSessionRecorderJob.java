@@ -12,8 +12,8 @@ import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.UpdateStore;
-import dev.webfx.stack.routing.uirouter.uisession.UiSession;
 import dev.webfx.stack.session.state.client.fx.FXRunId;
+import dev.webfx.stack.session.state.client.fx.FXUserPrincipal;
 import one.modality.crm.client.services.authn.ModalityUserPrincipal;
 
 import java.time.Instant;
@@ -67,7 +67,7 @@ public final class ClientSessionRecorderJob implements ApplicationJob {
         });
         if (bus.isOpen())
             onConnectionOpened();
-        UiSession.get().userPrincipalProperty().addListener((observable, oldValue, userPrincipal) -> {
+        FXUserPrincipal.userPrincipalProperty().addListener((observable, oldValue, userPrincipal) -> {
             if (userPrincipal instanceof ModalityUserPrincipal && INSTANCE != null)
                 INSTANCE.recordNewSessionUser(((ModalityUserPrincipal) userPrincipal).getUserPersonId());
         });

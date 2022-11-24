@@ -11,9 +11,11 @@ module modality.crm.client.activities.login {
     requires modality.event.client.sectionpanel;
     requires webfx.kit.util;
     requires webfx.stack.auth.authn;
+    requires webfx.stack.auth.login.ui;
     requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.routing.uirouter;
+    requires webfx.stack.session.state.client.fx;
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.util;
 

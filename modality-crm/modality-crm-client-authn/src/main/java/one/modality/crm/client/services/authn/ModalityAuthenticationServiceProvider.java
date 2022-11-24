@@ -1,5 +1,6 @@
 package one.modality.crm.client.services.authn;
 
+import dev.webfx.stack.auth.authn.UserClaims;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.domainmodel.HasDataSourceModel;
 import dev.webfx.stack.auth.authn.UsernamePasswordCredentials;
@@ -43,5 +44,17 @@ public final class ModalityAuthenticationServiceProvider implements Authenticati
         ).compose(result -> result.getRowCount() != 1 ? Future.failedFuture("Wrong user or password")
                 : Future.succeededFuture(new ModalityUserPrincipal(result.getValue(0, 0), result.getValue(0, 1)))
         );
+    }
+
+    @Override
+    public Future<?> verifyAuthenticated(Object userId) {
+        if (userId instanceof ModalityUserPrincipal)
+            return Future.succeededFuture(userId);
+        return Future.failedFuture("Unauthenticated");
+    }
+
+    @Override
+    public Future<UserClaims> getUserClaims(Object userId) {
+        return Future.failedFuture("Not yet implemented");
     }
 }
