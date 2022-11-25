@@ -10,7 +10,7 @@
     </dependencies>
 
     <providers>
-        <provider interface="dev.webfx.stack.auth.authz.server.spi.AuthorizationServerServiceProvider">one.modality.crm.server.services.authz.ModalityAuthorizationServerServiceProvider</provider>
+        <provider interface="dev.webfx.stack.authz.server.spi.AuthorizationServerServiceProvider">one.modality.crm.server.services.authz.ModalityAuthorizationServerServiceProvider</provider>
     </providers>
 
 </project>

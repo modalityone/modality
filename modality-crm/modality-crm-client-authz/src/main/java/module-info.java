@@ -5,7 +5,7 @@ module modality.crm.client.authz {
     // Direct dependencies modules
     requires webfx.platform.boot;
     requires webfx.platform.util;
-    requires webfx.stack.auth.authz.client;
+    requires webfx.stack.authz.client;
     requires webfx.stack.com.bus.call;
     requires webfx.stack.db.query;
     requires webfx.stack.orm.datasourcemodel.service;
@@ -20,6 +20,6 @@ module modality.crm.client.authz {
 
     // Provided services
     provides dev.webfx.platform.boot.spi.ApplicationModuleBooter with one.modality.crm.client.services.authz.ModalityAuthorizationClientModuleBooter;
-    provides dev.webfx.stack.auth.authz.client.spi.AuthorizationClientServiceProvider with one.modality.crm.client.services.authz.ModalityAuthorizationClientServiceProvider;
+    provides dev.webfx.stack.authz.client.spi.AuthorizationClientServiceProvider with one.modality.crm.client.services.authz.ModalityAuthorizationClientServiceProvider;
 
 }

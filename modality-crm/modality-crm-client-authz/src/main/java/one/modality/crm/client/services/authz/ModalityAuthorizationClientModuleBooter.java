@@ -1,7 +1,7 @@
 package one.modality.crm.client.services.authz;
 
 import dev.webfx.platform.boot.spi.ApplicationModuleBooter;
-import dev.webfx.stack.auth.authz.client.AuthorizationClientService;
+import dev.webfx.stack.authz.client.AuthorizationClientService;
 import dev.webfx.stack.com.bus.call.BusCallService;
 
 /**

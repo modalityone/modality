@@ -1,9 +1,9 @@
 package one.modality.crm.client.services.authz;
 
 import dev.webfx.platform.util.Strings;
-import dev.webfx.stack.auth.authz.client.operation.OperationAuthorizationRuleParser;
-import dev.webfx.stack.auth.authz.client.spi.impl.inmemory.AuthorizationRuleType;
-import dev.webfx.stack.auth.authz.client.spi.impl.inmemory.InMemoryUserPrincipalAuthorizationChecker;
+import dev.webfx.stack.authz.client.operation.OperationAuthorizationRuleParser;
+import dev.webfx.stack.authz.client.spi.impl.inmemory.AuthorizationRuleType;
+import dev.webfx.stack.authz.client.spi.impl.inmemory.InMemoryUserPrincipalAuthorizationChecker;
 import dev.webfx.stack.db.query.QueryResult;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.dql.sqlcompiler.mapping.QueryRowToEntityMapping;

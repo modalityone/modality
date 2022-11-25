@@ -2,7 +2,7 @@ package one.modality.base.client.operationactionsloading;
 
 import dev.webfx.platform.boot.spi.ApplicationModuleBooter;
 import dev.webfx.platform.console.Console;
-import dev.webfx.stack.auth.authz.client.factory.AuthorizationFactory;
+import dev.webfx.stack.authz.client.factory.AuthorizationFactory;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.Entity;

@@ -1,8 +1,8 @@
 package one.modality.crm.server.services.authz;
 
 import dev.webfx.platform.async.Future;
-import dev.webfx.stack.auth.authn.AuthenticationService;
-import dev.webfx.stack.auth.authz.server.spi.AuthorizationServerServiceProvider;
+import dev.webfx.stack.authn.AuthenticationService;
+import dev.webfx.stack.authz.server.spi.AuthorizationServerServiceProvider;
 import dev.webfx.stack.com.bus.DeliveryOptions;
 import dev.webfx.stack.db.query.QueryArgument;
 import dev.webfx.stack.db.query.QueryService;

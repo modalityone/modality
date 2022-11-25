@@ -1,6 +1,6 @@
 package one.modality.crm.client.activities.login;
 
-import dev.webfx.stack.auth.login.ui.LoginUi;
+import dev.webfx.stack.authn.login.ui.LoginUi;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import javafx.scene.Node;
 

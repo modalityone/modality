@@ -567,34 +567,34 @@
     <!--=======================< webfx-platform-windowlocation-gwt >========================-->
     <source path="dev/webfx/platform/windowlocation/spi/impl/gwt"/>
     <source path="dev/webfx/platform/windowlocation/spi/impl/gwt/jsinterop"/>
-    <!--=============================< webfx-stack-auth-authn >=============================-->
-    <source path="dev/webfx/stack/auth/authn"/>
-    <source path="dev/webfx/stack/auth/authn/serial"/>
-    <source path="dev/webfx/stack/auth/authn/spi"/>
-    <!--=========================< webfx-stack-auth-authn-buscall >=========================-->
-    <source path="dev/webfx/stack/auth/authn/buscall"/>
-    <!--=========================< webfx-stack-auth-authn-remote >==========================-->
-    <source path="dev/webfx/stack/auth/authn/spi/impl/remote"/>
-    <!--=========================< webfx-stack-auth-authz-client >==========================-->
-    <source path="dev/webfx/stack/auth/authz/client"/>
-    <source path="dev/webfx/stack/auth/authz/client/factory"/>
-    <source path="dev/webfx/stack/auth/authz/client/operation"/>
-    <source path="dev/webfx/stack/auth/authz/client/spi"/>
-    <source path="dev/webfx/stack/auth/authz/client/spi/impl"/>
-    <source path="dev/webfx/stack/auth/authz/client/spi/impl/inmemory"/>
-    <source path="dev/webfx/stack/auth/authz/client/spi/impl/inmemory/parser"/>
-    <!--=============================< webfx-stack-auth-login >=============================-->
-    <source path="dev/webfx/stack/auth/login"/>
-    <source path="dev/webfx/stack/auth/login/spi"/>
-    <!--=========================< webfx-stack-auth-login-buscall >=========================-->
-    <source path="dev/webfx/stack/auth/login/buscall"/>
-    <!--=========================< webfx-stack-auth-login-remote >==========================-->
-    <source path="dev/webfx/stack/auth/login/spi/impl/remote"/>
-    <!--===========================< webfx-stack-auth-login-ui >============================-->
-    <source path="dev/webfx/stack/auth/login/ui"/>
-    <source path="dev/webfx/stack/auth/login/ui/spi"/>
-    <!--=====================< webfx-stack-auth-login-ui-webthirdpary >=====================-->
-    <source path="dev/webfx/stack/auth/login/ui/spi/impl/webthirdparty"/>
+    <!--===============================< webfx-stack-authn >================================-->
+    <source path="dev/webfx/stack/authn"/>
+    <source path="dev/webfx/stack/authn/serial"/>
+    <source path="dev/webfx/stack/authn/spi"/>
+    <!--===========================< webfx-stack-authn-buscall >============================-->
+    <source path="dev/webfx/stack/authn/buscall"/>
+    <!--============================< webfx-stack-authn-login >=============================-->
+    <source path="dev/webfx/stack/authn/login"/>
+    <source path="dev/webfx/stack/authn/login/spi"/>
+    <!--========================< webfx-stack-authn-login-buscall >=========================-->
+    <source path="dev/webfx/stack/authn/login/buscall"/>
+    <!--=========================< webfx-stack-authn-login-remote >=========================-->
+    <source path="dev/webfx/stack/authn/login/spi/impl/remote"/>
+    <!--===========================< webfx-stack-authn-login-ui >===========================-->
+    <source path="dev/webfx/stack/authn/login/ui"/>
+    <source path="dev/webfx/stack/authn/login/ui/spi"/>
+    <!--====================< webfx-stack-authn-login-ui-webthirdpary >=====================-->
+    <source path="dev/webfx/stack/authn/login/ui/spi/impl/webthirdparty"/>
+    <!--============================< webfx-stack-authn-remote >============================-->
+    <source path="dev/webfx/stack/authn/spi/impl/remote"/>
+    <!--============================< webfx-stack-authz-client >============================-->
+    <source path="dev/webfx/stack/authz/client"/>
+    <source path="dev/webfx/stack/authz/client/factory"/>
+    <source path="dev/webfx/stack/authz/client/operation"/>
+    <source path="dev/webfx/stack/authz/client/spi"/>
+    <source path="dev/webfx/stack/authz/client/spi/impl"/>
+    <source path="dev/webfx/stack/authz/client/spi/impl/inmemory"/>
+    <source path="dev/webfx/stack/authz/client/spi/impl/inmemory/parser"/>
     <!--==============================< webfx-stack-com-bus >===============================-->
     <source path="dev/webfx/stack/com/bus"/>
     <source path="dev/webfx/stack/com/bus/spi"/>

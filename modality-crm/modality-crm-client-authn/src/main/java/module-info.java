@@ -4,7 +4,7 @@ module modality.crm.client.authn {
 
     // Direct dependencies modules
     requires webfx.platform.async;
-    requires webfx.stack.auth.authn;
+    requires webfx.stack.authn;
     requires webfx.stack.db.query;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel;

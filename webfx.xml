@@ -1189,7 +1189,7 @@
                 <module>java.base</module>
                 <module>webfx-platform-boot</module>
                 <module>webfx-platform-console</module>
-                <module>webfx-stack-auth-authz-client</module>
+                <module>webfx-stack-authz-client</module>
                 <module>webfx-stack-i18n</module>
                 <module>webfx-stack-orm-datasourcemodel-service</module>
                 <module>webfx-stack-orm-entity</module>
@@ -1335,9 +1335,9 @@
                 <!-- Commented while it's not necessary during the development phase (and creates logs on the server every second which may pollute other logs)
         <plugin-module>modality-base-server-systemmetrics</plugin-module>
 -->
-                <plugin-module>webfx-stack-auth-authz-server</plugin-module>
-                <plugin-module>webfx-stack-auth-login-buscall</plugin-module>
-                <plugin-module>webfx-stack-auth-authn-buscall</plugin-module>
+                <plugin-module>webfx-stack-authz-server</plugin-module>
+                <plugin-module>webfx-stack-authn-login-buscall</plugin-module>
+                <plugin-module>webfx-stack-authn-buscall</plugin-module>
                 <plugin-module>webfx-stack-com-bus-call-job</plugin-module>
                 <plugin-module>webfx-stack-db-query-buscall</plugin-module>
                 <plugin-module>webfx-stack-db-submit-buscall</plugin-module>
@@ -2114,8 +2114,8 @@
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
-                <module>webfx-stack-auth-authn</module>
-                <module>webfx-stack-auth-login-ui</module>
+                <module>webfx-stack-authn</module>
+                <module>webfx-stack-authn-login-ui</module>
                 <module>webfx-stack-i18n</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-routing-uirouter</module>
@@ -2174,7 +2174,7 @@
 
             <used-by-source-modules>
                 <module>webfx-platform-async</module>
-                <module>webfx-stack-auth-authn</module>
+                <module>webfx-stack-authn</module>
                 <module>webfx-stack-db-query</module>
                 <module>webfx-stack-orm-datasourcemodel-service</module>
                 <module>webfx-stack-orm-domainmodel</module>
@@ -2190,7 +2190,7 @@
 
             <providers>
                 <provider interface="dev.webfx.platform.boot.spi.ApplicationModuleBooter">one.modality.crm.client.services.authz.ModalityAuthorizationClientModuleBooter</provider>
-                <provider interface="dev.webfx.stack.auth.authz.client.spi.AuthorizationClientServiceProvider">one.modality.crm.client.services.authz.ModalityAuthorizationClientServiceProvider</provider>
+                <provider interface="dev.webfx.stack.authz.client.spi.AuthorizationClientServiceProvider">one.modality.crm.client.services.authz.ModalityAuthorizationClientServiceProvider</provider>
             </providers>
 
             <dependencies>
@@ -2204,7 +2204,7 @@
             <used-by-source-modules>
                 <module>webfx-platform-boot</module>
                 <module>webfx-platform-util</module>
-                <module>webfx-stack-auth-authz-client</module>
+                <module>webfx-stack-authz-client</module>
                 <module>webfx-stack-com-bus-call</module>
                 <module>webfx-stack-db-query</module>
                 <module>webfx-stack-orm-datasourcemodel-service</module>
@@ -2270,7 +2270,7 @@
             </dependencies>
 
             <providers>
-                <provider interface="dev.webfx.stack.auth.authz.server.spi.AuthorizationServerServiceProvider">one.modality.crm.server.services.authz.ModalityAuthorizationServerServiceProvider</provider>
+                <provider interface="dev.webfx.stack.authz.server.spi.AuthorizationServerServiceProvider">one.modality.crm.server.services.authz.ModalityAuthorizationServerServiceProvider</provider>
             </providers>
 
             <source-packages>
@@ -2279,8 +2279,8 @@
 
             <used-by-source-modules>
                 <module>webfx-platform-async</module>
-                <module>webfx-stack-auth-authn</module>
-                <module>webfx-stack-auth-authz-server</module>
+                <module>webfx-stack-authn</module>
+                <module>webfx-stack-authz-server</module>
                 <module>webfx-stack-com-bus</module>
                 <module>webfx-stack-db-query</module>
                 <module>webfx-stack-orm-datasourcemodel-service</module>
@@ -4509,8 +4509,8 @@
                 <module>webfx-platform-windowhistory</module>
                 <module>webfx-platform-windowhistory-gwt</module>
                 <module>webfx-platform-windowhistory-web</module>
-                <module>webfx-stack-auth-authn</module>
-                <module>webfx-stack-auth-authn-server-mojoauth</module>
+                <module>webfx-stack-authn</module>
+                <module>webfx-stack-authn-server-mojoauth</module>
                 <module>webfx-stack-com-bus</module>
                 <module>webfx-stack-com-bus-call</module>
                 <module>webfx-stack-com-bus-json-client</module>
@@ -4543,16 +4543,16 @@
                 <module>webfx-stack-ui-util</module>
             </java-package>
 
-            <java-package name="dev.webfx.stack.auth.authn">
+            <java-package name="dev.webfx.stack.authn">
                 <module>modality-crm-client-activities-login</module>
                 <module>modality-crm-client-authn</module>
                 <module>modality-crm-server-authz</module>
-                <module>webfx-stack-auth-authn</module>
-                <module>webfx-stack-auth-authn-buscall</module>
-                <module>webfx-stack-auth-authn-remote</module>
-                <module>webfx-stack-auth-authn-server</module>
-                <module>webfx-stack-auth-authn-server-mojoauth</module>
-                <module>webfx-stack-auth-login-server-mojoauth</module>
+                <module>webfx-stack-authn</module>
+                <module>webfx-stack-authn-buscall</module>
+                <module>webfx-stack-authn-login-server-mojoauth</module>
+                <module>webfx-stack-authn-remote</module>
+                <module>webfx-stack-authn-server</module>
+                <module>webfx-stack-authn-server-mojoauth</module>
             </java-package>
 
             <java-package name="dev.webfx.stack.com.bus.spi.impl.json.server">
@@ -4650,7 +4650,7 @@
             <java-package name="dev.webfx.stack.push.server">
                 <module>modality-base-server-sessioncloser</module>
                 <module>modality-crm-server-authz</module>
-                <module>webfx-stack-auth-login-server-mojoauth</module>
+                <module>webfx-stack-authn-login-server-mojoauth</module>
                 <module>webfx-stack-db-querypush-server</module>
                 <module>webfx-stack-push-server</module>
                 <module>webfx-stack-push-server-liveclient-interceptor</module>
@@ -4658,8 +4658,8 @@
             </java-package>
 
             <java-package name="dev.webfx.stack.session.state.server">
-                <module>webfx-stack-auth-authn-server</module>
-                <module>webfx-stack-auth-authz-server</module>
+                <module>webfx-stack-authn-server</module>
+                <module>webfx-stack-authz-server</module>
                 <module>webfx-stack-com-bus-json-server</module>
                 <module>webfx-stack-session-state-server</module>
             </java-package>

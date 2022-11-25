@@ -7,7 +7,7 @@
 
     <providers>
         <provider interface="dev.webfx.platform.boot.spi.ApplicationModuleBooter">one.modality.crm.client.services.authz.ModalityAuthorizationClientModuleBooter</provider>
-        <provider interface="dev.webfx.stack.auth.authz.client.spi.AuthorizationClientServiceProvider">one.modality.crm.client.services.authz.ModalityAuthorizationClientServiceProvider</provider>
+        <provider interface="dev.webfx.stack.authz.client.spi.AuthorizationClientServiceProvider">one.modality.crm.client.services.authz.ModalityAuthorizationClientServiceProvider</provider>
     </providers>
 
     <dependencies>

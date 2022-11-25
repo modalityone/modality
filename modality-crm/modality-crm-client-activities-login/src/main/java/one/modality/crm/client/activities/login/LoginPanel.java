@@ -1,8 +1,8 @@
 package one.modality.crm.client.activities.login;
 
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.stack.auth.authn.AuthenticationRequest;
-import dev.webfx.stack.auth.authn.UsernamePasswordCredentials;
+import dev.webfx.stack.authn.AuthenticationRequest;
+import dev.webfx.stack.authn.UsernamePasswordCredentials;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.session.state.client.fx.FXUserPrincipal;
 import dev.webfx.stack.ui.controls.button.ButtonFactory;

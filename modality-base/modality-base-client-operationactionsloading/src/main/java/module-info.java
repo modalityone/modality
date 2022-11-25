@@ -7,7 +7,7 @@ module modality.base.client.operationactionsloading {
     requires javafx.base;
     requires webfx.platform.boot;
     requires webfx.platform.console;
-    requires webfx.stack.auth.authz.client;
+    requires webfx.stack.authz.client;
     requires webfx.stack.i18n;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.entity;

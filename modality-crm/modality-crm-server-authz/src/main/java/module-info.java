@@ -4,8 +4,8 @@ module modality.crm.server.authz {
 
     // Direct dependencies modules
     requires webfx.platform.async;
-    requires webfx.stack.auth.authn;
-    requires webfx.stack.auth.authz.server;
+    requires webfx.stack.authn;
+    requires webfx.stack.authz.server;
     requires webfx.stack.com.bus;
     requires webfx.stack.db.query;
     requires webfx.stack.orm.datasourcemodel.service;
@@ -15,6 +15,6 @@ module modality.crm.server.authz {
     exports one.modality.crm.server.services.authz;
 
     // Provided services
-    provides dev.webfx.stack.auth.authz.server.spi.AuthorizationServerServiceProvider with one.modality.crm.server.services.authz.ModalityAuthorizationServerServiceProvider;
+    provides dev.webfx.stack.authz.server.spi.AuthorizationServerServiceProvider with one.modality.crm.server.services.authz.ModalityAuthorizationServerServiceProvider;
 
 }

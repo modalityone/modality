@@ -23,13 +23,13 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-auth-authn</artifactId>
+            <artifactId>webfx-stack-authn</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-auth-authz-server</artifactId>
+            <artifactId>webfx-stack-authz-server</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

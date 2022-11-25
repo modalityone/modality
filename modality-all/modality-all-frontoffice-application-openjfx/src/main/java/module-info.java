@@ -14,11 +14,11 @@ module modality.all.frontoffice.application.openjfx {
     requires webfx.platform.storage.java;
     requires webfx.platform.windowhistory.java;
     requires webfx.platform.windowlocation.java;
-    requires webfx.stack.auth.authn.buscall;
-    requires webfx.stack.auth.authn.remote;
-    requires webfx.stack.auth.login.buscall;
-    requires webfx.stack.auth.login.remote;
-    requires webfx.stack.auth.login.ui.webthirdpary;
+    requires webfx.stack.authn.buscall;
+    requires webfx.stack.authn.login.buscall;
+    requires webfx.stack.authn.login.remote;
+    requires webfx.stack.authn.login.ui.webthirdpary;
+    requires webfx.stack.authn.remote;
     requires webfx.stack.com.bus.json.client.websocket.java;
     requires webfx.stack.com.websocket.java;
     requires webfx.stack.db.query.buscall;
