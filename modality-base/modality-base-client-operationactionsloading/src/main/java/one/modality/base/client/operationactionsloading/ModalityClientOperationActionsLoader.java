@@ -7,7 +7,6 @@ import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityStore;
-import dev.webfx.stack.session.state.client.fx.FXUserPrincipal;
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionFactoryMixin;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
@@ -27,7 +26,7 @@ public class ModalityClientOperationActionsLoader implements ApplicationModuleBo
 
     @Override
     public int getBootLevel() {
-        return COMMUNICATION_ANY_BOOT_LEVEL;
+        return COMMUNICATION_ALL_BOOT_LEVEL;
     }
 
     @Override
@@ -44,7 +43,7 @@ public class ModalityClientOperationActionsLoader implements ApplicationModuleBo
                         String i18nCode = operation.getStringFieldValue("i18nCode");
                         boolean isPublic = operation.getBooleanFieldValue("public");
                         Object i18nKey = new ModalityOperationI18nKey(i18nCode);
-                        Action operationGraphicalAction = isPublic ? newAction(i18nKey) : newAuthAction(i18nKey, registry.authorizedOperationActionProperty(operationCode, FXUserPrincipal.userPrincipalProperty(), AuthorizationFactory::isAuthorized));
+                        Action operationGraphicalAction = isPublic ? newAction(i18nKey) : newAuthAction(i18nKey, registry.authorizedOperationActionProperty(operationCode, AuthorizationFactory::isAuthorized));
                         operationGraphicalAction.setUserData(i18nKey);
                         registry.registerOperationGraphicalAction(operationCode, operationGraphicalAction);
                     }

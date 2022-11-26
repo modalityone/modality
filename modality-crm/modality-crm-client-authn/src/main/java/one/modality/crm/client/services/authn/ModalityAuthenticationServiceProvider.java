@@ -47,14 +47,17 @@ public final class ModalityAuthenticationServiceProvider implements Authenticati
     }
 
     @Override
-    public Future<?> verifyAuthenticated(Object userId) {
-        if (userId instanceof ModalityUserPrincipal)
-            return Future.succeededFuture(userId);
-        return Future.failedFuture("Unauthenticated");
+    public Future<?> verifyAuthenticated() {
+        return Future.failedFuture("Not yet implemented");
     }
 
     @Override
-    public Future<UserClaims> getUserClaims(Object userId) {
+    public Future<UserClaims> getUserClaims() {
+        return Future.failedFuture("Not yet implemented");
+    }
+
+    @Override
+    public Future<Void> logout() {
         return Future.failedFuture("Not yet implemented");
     }
 }

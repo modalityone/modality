@@ -3,7 +3,7 @@ package one.modality.crm.client.services.authz;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.authz.client.operation.OperationAuthorizationRuleParser;
 import dev.webfx.stack.authz.client.spi.impl.inmemory.AuthorizationRuleType;
-import dev.webfx.stack.authz.client.spi.impl.inmemory.InMemoryUserPrincipalAuthorizationChecker;
+import dev.webfx.stack.authz.client.spi.impl.inmemory.InMemoryUserAuthorizationChecker;
 import dev.webfx.stack.db.query.QueryResult;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.dql.sqlcompiler.mapping.QueryRowToEntityMapping;
@@ -18,46 +18,20 @@ import dev.webfx.stack.session.state.client.fx.FXAuthorizationsChanged;
 /**
  * @author Bruno Salmon
  */
-final class ModalityInMemoryUserPrincipalAuthorizationChecker extends InMemoryUserPrincipalAuthorizationChecker {
+final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthorizationChecker {
 
     // TODO: share this constant with the server counterpart.
-    private final static String AUTHZ_QUERY_BASE = "select rule.rule,activityState.route from AuthorizationAssignment";
+    private final static String AUTHZ_QUERY_BASE = "select rule.rule,activityState.route,operation.operationCode from AuthorizationAssignment";
 
     private final DataSourceModel dataSourceModel;
     //private final Promise<Void> promise = Promise.promise();
 
-    ModalityInMemoryUserPrincipalAuthorizationChecker(Object userPrincipal, DataSourceModel dataSourceModel) {
-        super(userPrincipal);
+    ModalityInMemoryUserAuthorizationChecker(DataSourceModel dataSourceModel) {
+        super();
         this.dataSourceModel = dataSourceModel;
-        // userPrincipal must be a ModalityUserPrincipal
-        //ModalityUserPrincipal principal = (ModalityUserPrincipal) userPrincipal;
         // Registering the authorization (requests and rules) parsers
         ruleRegistry.addAuthorizationRuleParser(new RoutingAuthorizationRuleParser());
         ruleRegistry.addAuthorizationRuleParser(new OperationAuthorizationRuleParser());
-        //setUpInMemoryAsyncRulesLoading(promise.future(), ar -> {});
-/*
-        if (userPrincipal != null)
-            setUpInMemoryAsyncRulesLoading(EntityStore.create(dataSourceModel).executeQuery(AUTHZ_QUERY_BASE + " where active and management.user=?", principal.getUserPersonId()), ar -> {
-                if (ar.failed())
-                    Console.log(ar.cause());
-                else // When successfully loaded, iterating over the assignments
-                    for (Entity assignment: ar.result()) {
-                        // If it is an authorization rule assignment, registering it
-                        Entity authorizationRule = assignment.getForeignEntity("rule");
-                        if (authorizationRule != null) // if yes, passing the rule as a string (will be parsed)
-                            ruleRegistry.registerAuthorizationRule(authorizationRule.getStringFieldValue("rule"));
-                        // If it is a shared activity state, automatically granting the route to it (when provided)
-                        Entity activityState = assignment.getForeignEntity("activityState");
-                        if (activityState != null) {
-                            String route = activityState.getStringFieldValue("route");
-                            if (route != null) {
-                                route = Strings.replaceAll(route, "[id]", activityState.getPrimaryKey());
-                                ruleRegistry.registerAuthorizationRule(new RoutingAuthorizationRule(AuthorizationRuleType.GRANT, route, false));
-                            }
-                        }
-                    }
-            });
-*/
     }
 
     void onAuthorizationPush(Object pushObject) {
@@ -80,8 +54,10 @@ final class ModalityInMemoryUserPrincipalAuthorizationChecker extends InMemoryUs
                     ruleRegistry.registerAuthorizationRule(new RoutingAuthorizationRule(AuthorizationRuleType.GRANT, route, false));
                 }
             }
+            Entity operation = assignment.getForeignEntity("operation");
+            if (operation != null)
+                ruleRegistry.registerAuthorizationRule("grant operation:" + operation.getStringFieldValue("operationCode"));
         }
         FXAuthorizationsChanged.fireAuthorizationsChanged();
-        //promise.complete();
     }
 }

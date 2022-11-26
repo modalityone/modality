@@ -1,11 +1,9 @@
 package one.modality.crm.client.services.authz;
 
 import dev.webfx.stack.authz.client.spi.impl.AuthorizationClientServiceProviderBase;
-import dev.webfx.stack.authz.client.spi.impl.UserPrincipalAuthorizationChecker;
+import dev.webfx.stack.authz.client.spi.impl.UserAuthorizationChecker;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.session.state.client.fx.FXUserId;
-import dev.webfx.stack.session.state.client.fx.FXUserPrincipal;
 
 /**
  * @author Bruno Salmon
@@ -23,16 +21,16 @@ public final class ModalityAuthorizationClientServiceProvider extends Authorizat
     }
 
     @Override
-    protected UserPrincipalAuthorizationChecker createUserPrincipalAuthorizationChecker(Object userPrincipal) {
-        return new ModalityInMemoryUserPrincipalAuthorizationChecker(userPrincipal, dataSourceModel);
+    protected UserAuthorizationChecker createUserAuthorizationChecker() {
+        return new ModalityInMemoryUserAuthorizationChecker(dataSourceModel);
     }
 
     @Override
     public Void onAuthorizationsPush(Object pushObject) {
-        ModalityInMemoryUserPrincipalAuthorizationChecker checker = (ModalityInMemoryUserPrincipalAuthorizationChecker)
-                getOrCreateUserPrincipalAuthorizationChecker(FXUserId.getUserId());
+        //FXUserPrincipal.setUserPrincipal(FXUserId.getUserId());
+        ModalityInMemoryUserAuthorizationChecker checker = (ModalityInMemoryUserAuthorizationChecker)
+                getOrCreateUserAuthorizationChecker();
         checker.onAuthorizationPush(pushObject);
-        FXUserPrincipal.setUserPrincipal(FXUserId.getUserId());
         return null;
     }
 }

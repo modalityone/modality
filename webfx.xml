@@ -937,6 +937,7 @@
                 <module>webfx-kit-launcher</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-uischeduler</module>
+                <module>webfx-stack-authn-logout-client</module>
                 <module>webfx-stack-com-bus-call</module>
                 <module>webfx-stack-i18n</module>
                 <module>webfx-stack-orm-datasourcemodel-service</module>
@@ -1193,7 +1194,6 @@
                 <module>webfx-stack-i18n</module>
                 <module>webfx-stack-orm-datasourcemodel-service</module>
                 <module>webfx-stack-orm-entity</module>
-                <module>webfx-stack-session-state-client-fx</module>
                 <module>webfx-stack-ui-action</module>
                 <module>webfx-stack-ui-operation-action</module>
             </used-by-source-modules>
@@ -2285,6 +2285,7 @@
                 <module>webfx-stack-db-query</module>
                 <module>webfx-stack-orm-datasourcemodel-service</module>
                 <module>webfx-stack-push-server</module>
+                <module>webfx-stack-session-state</module>
             </used-by-source-modules>
 
         </project>
@@ -4550,6 +4551,7 @@
                 <module>webfx-stack-authn</module>
                 <module>webfx-stack-authn-buscall</module>
                 <module>webfx-stack-authn-login-server-mojoauth</module>
+                <module>webfx-stack-authn-logout-client</module>
                 <module>webfx-stack-authn-remote</module>
                 <module>webfx-stack-authn-server</module>
                 <module>webfx-stack-authn-server-mojoauth</module>
@@ -4655,10 +4657,12 @@
                 <module>webfx-stack-push-server</module>
                 <module>webfx-stack-push-server-liveclient-interceptor</module>
                 <module>webfx-stack-push-server-simple</module>
+                <module>webfx-stack-session-state-server</module>
             </java-package>
 
             <java-package name="dev.webfx.stack.session.state.server">
                 <module>webfx-stack-authn-server</module>
+                <module>webfx-stack-authn-server-mojoauth</module>
                 <module>webfx-stack-authz-server</module>
                 <module>webfx-stack-com-bus-json-server</module>
                 <module>webfx-stack-session-state-server</module>

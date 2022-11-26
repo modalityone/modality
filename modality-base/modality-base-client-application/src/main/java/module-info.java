@@ -14,6 +14,7 @@ module modality.base.client.application {
     requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.uischeduler;
+    requires webfx.stack.authn.logout.client;
     requires webfx.stack.com.bus.call;
     requires webfx.stack.i18n;
     requires webfx.stack.orm.datasourcemodel.service;

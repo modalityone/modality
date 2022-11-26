@@ -10,6 +10,7 @@ module modality.crm.server.authz {
     requires webfx.stack.db.query;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.push.server;
+    requires webfx.stack.session.state;
 
     // Exported packages
     exports one.modality.crm.server.services.authz;

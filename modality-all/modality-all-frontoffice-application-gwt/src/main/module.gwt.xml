@@ -419,6 +419,8 @@
     <source path="dev/webfx/stack/authn/login/ui/spi"/>
     <!--====================< webfx-stack-authn-login-ui-webthirdpary >=====================-->
     <source path="dev/webfx/stack/authn/login/ui/spi/impl/webthirdparty"/>
+    <!--========================< webfx-stack-authn-logout-client >=========================-->
+    <source path="dev/webfx/stack/authn/logout/client/operation"/>
     <!--============================< webfx-stack-authn-remote >============================-->
     <source path="dev/webfx/stack/authn/spi/impl/remote"/>
     <!--============================< webfx-stack-authz-client >============================-->
