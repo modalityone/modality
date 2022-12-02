@@ -14,7 +14,7 @@ import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.session.state.client.fx.FXRunId;
 import dev.webfx.stack.session.state.client.fx.FXUserPrincipal;
-import one.modality.crm.client.services.authn.ModalityUserPrincipal;
+import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 
 import java.time.Instant;
 

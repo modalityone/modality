@@ -5,7 +5,7 @@ module modality.base.client.sessionrecorder {
     // Direct dependencies modules
     requires java.base;
     requires javafx.base;
-    requires modality.crm.client.authn;
+    requires modality.crm.shared.authn;
     requires webfx.kit.launcher;
     requires webfx.platform.boot;
     requires webfx.platform.console;

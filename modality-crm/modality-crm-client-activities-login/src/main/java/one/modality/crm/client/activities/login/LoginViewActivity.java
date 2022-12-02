@@ -1,6 +1,6 @@
 package one.modality.crm.client.activities.login;
 
-import dev.webfx.stack.authn.login.ui.LoginUi;
+import dev.webfx.stack.authn.login.ui.LoginUiService;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import javafx.scene.Node;
 
@@ -13,7 +13,7 @@ final class LoginViewActivity extends ViewDomainActivityBase {
 
     @Override
     public Node buildUi() {
-        return LoginUi.createLoginUI();
+        return LoginUiService.createLoginUI();
 /*
         loginPanel = new LoginPanel(getUiSession());
         return loginPanel.getNode();
