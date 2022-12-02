@@ -16,6 +16,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>modality-base-backoffice-activities-all</module>
         <module>modality-base-backoffice-activities-filters</module>
         <module>modality-base-backoffice-activities-home</module>
         <module>modality-base-backoffice-activities-monitor</module>
@@ -41,8 +42,8 @@
         <module>modality-base-client-sessionrecorder</module>
         <module>modality-base-client-util</module>
         <module>modality-base-client-validation</module>
-        <module>modality-base-server-application</module>
-        <module>modality-base-server-application-vertx</module>
+        <module>modality-base-server-application-all</module>
+        <module>modality-base-server-application-min</module>
         <module>modality-base-server-datasource</module>
         <module>modality-base-server-sessioncloser</module>
         <module>modality-base-server-systemmetrics</module>

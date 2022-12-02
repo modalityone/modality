@@ -24,6 +24,8 @@
         <module>modality-all-frontoffice-application-gluon</module>
         <module>modality-all-frontoffice-application-gwt</module>
         <module>modality-all-frontoffice-application-openjfx</module>
+        <module>modality-all-server-application</module>
+        <module>modality-all-server-application-vertx</module>
     </modules>
 
 </project>

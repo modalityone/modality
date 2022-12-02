@@ -189,8 +189,9 @@
     <resource path="one/modality/base/client/images"/>
     <public includes="one/modality/base/client/images/" path=""/>
     <!--=========================< modality-base-client-busconfig >=========================-->
-    <resource path="dev/webfx/stack/com/websocket/bus/conf"/>
-    <public includes="dev/webfx/stack/com/websocket/bus/conf/" path=""/>
+    <source path="one/modality/base/client/busconfig"/>
+    <resource path="one/modality/base/client/busconfig"/>
+    <public includes="one/modality/base/client/busconfig/" path=""/>
     <!--=========================< modality-base-client-entities >==========================-->
     <source path="one/modality/base/client/entities/util"/>
     <source path="one/modality/base/client/entities/util/filters"/>
@@ -300,12 +301,13 @@
     <source path="one/modality/crm/client/activities/login"/>
     <!--==================< modality-crm-client-activities-unauthorized >===================-->
     <source path="one/modality/crm/client/activities/unauthorized"/>
-    <!--===========================< modality-crm-client-authn >============================-->
-    <source path="one/modality/crm/client/services/authn"/>
     <!--===========================< modality-crm-client-authz >============================-->
     <source path="one/modality/crm/client/services/authz"/>
     <!--======================< modality-crm-client-personaldetails >=======================-->
     <source path="one/modality/crm/client/controls/personaldetails"/>
+    <!--===========================< modality-crm-shared-authn >============================-->
+    <source path="one/modality/crm/shared/services/authn"/>
+    <source path="one/modality/crm/shared/services/authn/serial"/>
     <!--===============< modality-ecommerce-backoffice-activities-bookings >================-->
     <source path="one/modality/ecommerce/backoffice/activities/bookings"/>
     <source path="one/modality/ecommerce/backoffice/activities/bookings/routing"/>
@@ -547,7 +549,7 @@
     <source path="dev/webfx/platform/util"/>
     <source path="dev/webfx/platform/util/collection"/>
     <source path="dev/webfx/platform/util/function"/>
-    <source path="dev/webfx/platform/util/noreflect"/>
+    <source path="dev/webfx/platform/util/keyobject"/>
     <source path="dev/webfx/platform/util/serviceloader"/>
     <source path="dev/webfx/platform/util/tuples"/>
     <source path="dev/webfx/platform/util/uuid"/>
@@ -583,8 +585,24 @@
     <!--===========================< webfx-stack-authn-login-ui >===========================-->
     <source path="dev/webfx/stack/authn/login/ui"/>
     <source path="dev/webfx/stack/authn/login/ui/spi"/>
-    <!--====================< webfx-stack-authn-login-ui-webthirdpary >=====================-->
-    <source path="dev/webfx/stack/authn/login/ui/spi/impl/webthirdparty"/>
+    <!--=======================< webfx-stack-authn-login-ui-gateway >=======================-->
+    <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway"/>
+    <!--==================< webfx-stack-authn-login-ui-gateway-facebook >===================-->
+    <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/facebook"/>
+    <resource path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/facebook"/>
+    <public includes="dev/webfx/stack/authn/login/ui/spi/impl/gateway/facebook/" path=""/>
+    <!--===================< webfx-stack-authn-login-ui-gateway-google >====================-->
+    <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/google"/>
+    <resource path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/google"/>
+    <public includes="dev/webfx/stack/authn/login/ui/spi/impl/gateway/google/" path=""/>
+    <!--==================< webfx-stack-authn-login-ui-gateway-mojoauth >===================-->
+    <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/mojoauth"/>
+    <!--==================< webfx-stack-authn-login-ui-gateway-password >===================-->
+    <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/password"/>
+    <!--================< webfx-stack-authn-login-ui-gateway-webviewbased >=================-->
+    <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/webview"/>
+    <!--=======================< webfx-stack-authn-login-ui-portal >========================-->
+    <source path="dev/webfx/stack/authn/login/ui/spi/impl/portal"/>
     <!--========================< webfx-stack-authn-logout-client >=========================-->
     <source path="dev/webfx/stack/authn/logout/client/operation"/>
     <!--============================< webfx-stack-authn-remote >============================-->
@@ -621,6 +639,14 @@
     <source path="dev/webfx/stack/com/websocket/spi"/>
     <!--=========================< webfx-stack-com-websocket-gwt >==========================-->
     <source path="dev/webfx/stack/com/websocket/spi/impl/gwt"/>
+    <!--================================< webfx-stack-conf >================================-->
+    <source path="dev/webfx/stack/conf"/>
+    <source path="dev/webfx/stack/conf/spi"/>
+    <source path="dev/webfx/stack/conf/spi/impl"/>
+    <!--==========================< webfx-stack-conf-format-json >==========================-->
+    <source path="dev/webfx/stack/conf/spi/impl/format/json"/>
+    <!--===========================< webfx-stack-conf-resource >============================-->
+    <source path="dev/webfx/stack/conf/spi/impl/resource"/>
     <!--============================< webfx-stack-db-datascope >============================-->
     <source path="dev/webfx/stack/db/datascope"/>
     <source path="dev/webfx/stack/db/datascope/aggregate"/>

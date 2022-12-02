@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+
+        <plugin-module>modality-ecommerce-backoffice-activities-bookings</plugin-module>
+        <plugin-module>modality-ecommerce-backoffice-activities-income</plugin-module>
+        <plugin-module>modality-ecommerce-backoffice-activities-moneyflows</plugin-module>
+        <plugin-module>modality-ecommerce-backoffice-activities-payments</plugin-module>
+        <plugin-module>modality-ecommerce-backoffice-activities-statistics</plugin-module>
+        <plugin-module>modality-ecommerce-backoffice-activities-statements</plugin-module>
+
+    </dependencies>
+
+</project>

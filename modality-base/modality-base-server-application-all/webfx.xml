@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+        <plugin-module>modality-base-server-application-min</plugin-module>
+
+<!-- Commented while it's not necessary during the development phase (and creates logs on the server every second which may pollute other logs)
+        <plugin-module>modality-base-server-systemmetrics</plugin-module>
+-->
+
+        <!-- Facebook SSO -->
+        <plugin-module>webfx-stack-authn-login-server-gateway-facebook</plugin-module>
+        <plugin-module>webfx-stack-authn-server-gateway-facebook</plugin-module>
+
+        <!-- Google SSO -->
+        <plugin-module>webfx-stack-authn-login-server-gateway-google</plugin-module>
+        <plugin-module>webfx-stack-authn-server-gateway-google</plugin-module>
+
+        <!-- MojoAuth SSO -->
+        <plugin-module>webfx-stack-authn-login-server-gateway-mojoauth</plugin-module>
+        <plugin-module>webfx-stack-authn-server-gateway-mojoauth</plugin-module>
+
+    </dependencies>
+
+</project>

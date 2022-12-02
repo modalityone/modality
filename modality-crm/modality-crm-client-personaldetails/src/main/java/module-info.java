@@ -10,7 +10,7 @@ module modality.crm.client.personaldetails {
     requires modality.base.client.validation;
     requires modality.base.shared.domainmodel;
     requires modality.base.shared.entities;
-    requires modality.crm.client.authn;
+    requires modality.crm.shared.authn;
     requires modality.event.client.sectionpanel;
     requires webfx.extras.materialdesign;
     requires webfx.extras.type;

@@ -113,6 +113,8 @@
                 <module>modality-all-frontoffice-application-gluon</module>
                 <module>modality-all-frontoffice-application-gwt</module>
                 <module>modality-all-frontoffice-application-openjfx</module>
+                <module>modality-all-server-application</module>
+                <module>modality-all-server-application-vertx</module>
             </modules>
 
         </project>
@@ -131,37 +133,22 @@
                 <used-by-source-modules/>
 
                 <!-- Base activities -->
-                <plugin-module>modality-base-backoffice-activities-home</plugin-module>
-                <plugin-module>modality-base-backoffice-activities-monitor</plugin-module>
-                <plugin-module>modality-base-backoffice-activities-filters</plugin-module>
-                <plugin-module>modality-base-backoffice-activities-operations</plugin-module>
+                <plugin-module>modality-base-backoffice-activities-all</plugin-module>
 
                 <!-- CRM activities -->
-                <plugin-module>modality-crm-backoffice-activities-authorizations</plugin-module>
-                <plugin-module>modality-crm-backoffice-activities-letters</plugin-module>
-                <plugin-module>modality-crm-backoffice-activities-letter</plugin-module>
-                <plugin-module>modality-crm-backoffice-activities-users</plugin-module>
-                <plugin-module>modality-crm-backoffice-activities-organizations</plugin-module>
+                <plugin-module>modality-crm-backoffice-activities-all</plugin-module>
 
                 <!-- Ecommerce activities -->
-                <plugin-module>modality-ecommerce-backoffice-activities-bookings</plugin-module>
-                <plugin-module>modality-ecommerce-backoffice-activities-income</plugin-module>
-                <plugin-module>modality-ecommerce-backoffice-activities-moneyflows</plugin-module>
-                <plugin-module>modality-ecommerce-backoffice-activities-payments</plugin-module>
-                <plugin-module>modality-ecommerce-backoffice-activities-statistics</plugin-module>
-                <plugin-module>modality-ecommerce-backoffice-activities-statements</plugin-module>
+                <plugin-module>modality-ecommerce-backoffice-activities-all</plugin-module>
 
                 <!-- Hotel activities -->
-                <plugin-module>modality-hotel-backoffice-activities-roomsgraphic</plugin-module>
+                <plugin-module>modality-hotel-backoffice-activities-all</plugin-module>
 
                 <!-- Event activities -->
-                <plugin-module>modality-event-backoffice-activities-cloneevent</plugin-module>
-                <plugin-module>modality-event-backoffice-activities-events</plugin-module>
-                <plugin-module>modality-event-backoffice-activities-options</plugin-module>
+                <plugin-module>modality-event-backoffice-activities-all</plugin-module>
 
                 <!-- Catering activities -->
-                <plugin-module>modality-catering-backoffice-activities-kitchen</plugin-module>
-                <plugin-module>modality-catering-backoffice-activities-diningareas</plugin-module>
+                <plugin-module>modality-catering-backoffice-activities-all</plugin-module>
 
             </dependencies>
 
@@ -311,18 +298,10 @@
                 <used-by-source-modules/>
 
                 <!-- Ecommerce activities -->
-                <plugin-module>modality-ecommerce-frontoffice-activities-person</plugin-module>
-                <plugin-module>modality-ecommerce-frontoffice-activities-summary</plugin-module>
-                <plugin-module>modality-ecommerce-frontoffice-activities-cart</plugin-module>
-                <plugin-module>modality-ecommerce-frontoffice-activities-payment</plugin-module>
-                <plugin-module>modality-ecommerce-frontoffice-activities-contactus</plugin-module>
+                <plugin-module>modality-ecommerce-frontoffice-activities-all</plugin-module>
 
                 <!-- Event activities -->
-                <plugin-module>modality-event-frontoffice-activities-startbooking</plugin-module>
-                <plugin-module>modality-event-frontoffice-activities-terms</plugin-module>
-                <plugin-module>modality-event-frontoffice-activities-program</plugin-module>
-                <plugin-module>modality-event-frontoffice-activities-fees</plugin-module>
-                <plugin-module>modality-event-frontoffice-activities-options</plugin-module>
+                <plugin-module>modality-event-frontoffice-activities-all</plugin-module>
 
             </dependencies>
 
@@ -439,9 +418,54 @@
 
         </project>
 
+        <project name="modality-all-server-application">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+
+                <plugin-module>modality-base-server-application-all</plugin-module>
+                <plugin-module>modality-crm-server-application-all</plugin-module>
+                <plugin-module>modality-ecommerce-server-application-all</plugin-module>
+
+            </dependencies>
+
+            <providers>
+                <provider interface="dev.webfx.stack.conf.spi.ConfigurationSupplier">one.modality.all.server.application.ModalityAllDirectoryConfigurationSupplier</provider>
+            </providers>
+
+            <source-packages>
+                <package>one.modality.all.server.application</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>webfx-stack-conf</module>
+                <module>webfx-stack-conf-file-java</module>
+            </used-by-source-modules>
+
+        </project>
+
+        <project executable="true" name="modality-all-server-application-vertx">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+            </dependencies>
+
+            <used-by-source-modules/>
+
+        </project>
+
         <project name="modality-base">
 
             <modules>
+                <module>modality-base-backoffice-activities-all</module>
                 <module>modality-base-backoffice-activities-filters</module>
                 <module>modality-base-backoffice-activities-home</module>
                 <module>modality-base-backoffice-activities-monitor</module>
@@ -467,8 +491,8 @@
                 <module>modality-base-client-sessionrecorder</module>
                 <module>modality-base-client-util</module>
                 <module>modality-base-client-validation</module>
-                <module>modality-base-server-application</module>
-                <module>modality-base-server-application-vertx</module>
+                <module>modality-base-server-application-all</module>
+                <module>modality-base-server-application-min</module>
                 <module>modality-base-server-datasource</module>
                 <module>modality-base-server-sessioncloser</module>
                 <module>modality-base-server-systemmetrics</module>
@@ -476,6 +500,26 @@
                 <module>modality-base-shared-domainmodel</module>
                 <module>modality-base-shared-entities</module>
             </modules>
+
+        </project>
+
+        <project name="modality-base-backoffice-activities-all">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+
+                <plugin-module>modality-base-backoffice-activities-home</plugin-module>
+                <plugin-module>modality-base-backoffice-activities-monitor</plugin-module>
+                <plugin-module>modality-base-backoffice-activities-filters</plugin-module>
+                <plugin-module>modality-base-backoffice-activities-operations</plugin-module>
+
+            </dependencies>
+
+            <used-by-source-modules/>
 
         </project>
 
@@ -910,14 +954,18 @@
                 </used-by-source-modules>
 
                 <resource-module>modality-base-client-css</resource-module>
-                <resource-module>modality-base-client-busconfig</resource-module>
 
                 <plugin-module executable-target="java">modality-base-client-navigationarrows-java</plugin-module>
+                <plugin-module>modality-base-client-busconfig</plugin-module>
                 <plugin-module>modality-base-client-i18n</plugin-module>
                 <plugin-module>modality-crm-client-authz</plugin-module>
                 <plugin-module>modality-base-client-operationactionsloading</plugin-module>
                 <plugin-module>modality-crm-client-activities-login</plugin-module>
                 <plugin-module>modality-crm-client-activities-unauthorized</plugin-module>
+                <plugin-module>webfx-stack-authn-login-ui-gateway-facebook</plugin-module>
+                <plugin-module>webfx-stack-authn-login-ui-gateway-google</plugin-module>
+                <plugin-module>webfx-stack-authn-login-ui-gateway-mojoauth</plugin-module>
+                <plugin-module>webfx-stack-authn-login-ui-gateway-password</plugin-module>
                 <plugin-module>webfx-stack-push-client-simple</plugin-module>
                 <plugin-module>webfx-stack-db-querypush-client-simple</plugin-module>
             </dependencies>
@@ -956,7 +1004,7 @@
 
             <exported-packages>
                 <source-packages/>
-                <resource-package>dev.webfx.stack.com.websocket.bus.conf</resource-package>
+                <resource-package>one.modality.base.client.busconfig</resource-package>
             </exported-packages>
 
             <dependencies>
@@ -964,10 +1012,21 @@
             </dependencies>
 
             <embed-resources>
-                <resource>dev/webfx/stack/com/websocket/bus/conf/BusOptions.json</resource>
+                <resource>one/modality/base/client/busconfig/ClientBusOptions.default.json</resource>
             </embed-resources>
 
-            <used-by-source-modules/>
+            <providers>
+                <provider interface="dev.webfx.stack.conf.spi.ConfigurationSupplier">one.modality.base.client.busconfig.ModalityClientBusOptionsConfigurationSupplier</provider>
+            </providers>
+
+            <source-packages>
+                <package>one.modality.base.client.busconfig</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>webfx-stack-conf</module>
+                <module>webfx-stack-conf-resource</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -1251,7 +1310,7 @@
 
             <used-by-source-modules>
                 <module>java.base</module>
-                <module>modality-crm-client-authn</module>
+                <module>modality-crm-shared-authn</module>
                 <module>webfx-kit-launcher</module>
                 <module>webfx-platform-boot</module>
                 <module>webfx-platform-console</module>
@@ -1321,7 +1380,7 @@
 
         </project>
 
-        <project name="modality-base-server-application">
+        <project name="modality-base-server-application-all">
 
             <exported-packages>
                 <source-packages/>
@@ -1329,32 +1388,49 @@
 
             <dependencies>
                 <used-by-source-modules/>
-                <plugin-module>modality-base-server-datasource</plugin-module>
-                <!--<plugin-module>modality-base-server-sessioncloser</plugin-module>-->
+                <plugin-module>modality-base-server-application-min</plugin-module>
 
                 <!-- Commented while it's not necessary during the development phase (and creates logs on the server every second which may pollute other logs)
         <plugin-module>modality-base-server-systemmetrics</plugin-module>
 -->
-                <plugin-module>webfx-stack-authz-server</plugin-module>
-                <plugin-module>webfx-stack-authn-login-buscall</plugin-module>
-                <plugin-module>webfx-stack-authn-buscall</plugin-module>
-                <plugin-module>webfx-stack-com-bus-call-job</plugin-module>
-                <plugin-module>webfx-stack-db-query-buscall</plugin-module>
-                <plugin-module>webfx-stack-db-submit-buscall</plugin-module>
-                <plugin-module>webfx-stack-db-querypush-buscall</plugin-module>
 
-                <!-- Injection auto-conditions don't work, so adding it manually for now (TODO: REMOVE THIS ONCE FIXED -->
-                <plugin-module>webfx-stack-push-server-liveclient-interceptor</plugin-module>
+                <!-- Facebook SSO -->
+                <plugin-module>webfx-stack-authn-login-server-gateway-facebook</plugin-module>
+                <plugin-module>webfx-stack-authn-server-gateway-facebook</plugin-module>
+
+                <!-- Google SSO -->
+                <plugin-module>webfx-stack-authn-login-server-gateway-google</plugin-module>
+                <plugin-module>webfx-stack-authn-server-gateway-google</plugin-module>
+
+                <!-- MojoAuth SSO -->
+                <plugin-module>webfx-stack-authn-login-server-gateway-mojoauth</plugin-module>
+                <plugin-module>webfx-stack-authn-server-gateway-mojoauth</plugin-module>
+
             </dependencies>
 
             <used-by-source-modules/>
 
         </project>
 
-        <project executable="true" name="modality-base-server-application-vertx">
+        <project name="modality-base-server-application-min">
 
             <dependencies>
                 <used-by-source-modules/>
+
+                <plugin-module>modality-base-server-datasource</plugin-module>
+                <!--<plugin-module>modality-base-server-sessioncloser</plugin-module>-->
+
+                <plugin-module>webfx-stack-authn-buscall</plugin-module>
+                <plugin-module>webfx-stack-authn-login-buscall</plugin-module>
+                <plugin-module>webfx-stack-authz-server</plugin-module>
+                <plugin-module>webfx-stack-com-bus-call-job</plugin-module>
+                <plugin-module>webfx-stack-db-query-buscall</plugin-module>
+                <plugin-module>webfx-stack-db-submit-buscall</plugin-module>
+                <plugin-module>webfx-stack-db-querypush-buscall</plugin-module>
+
+                <!-- Injection auto-conditions don't work, so adding it manually for now TODO: REMOVE THIS ONCE FIXED -->
+                <plugin-module>webfx-stack-push-server-liveclient-interceptor</plugin-module>
+
             </dependencies>
 
             <used-by-source-modules/>
@@ -1365,10 +1441,11 @@
 
             <exported-packages>
                 <source-packages/>
-                <resource-package>one.modality.base.server.datasource.MDS</resource-package>
+                <resource-package>one.modality.base.server.services.datasource</resource-package>
             </exported-packages>
 
             <providers>
+                <provider interface="dev.webfx.stack.conf.spi.ConfigurationConsumer">one.modality.base.server.services.datasource.ModalityLocalDataSourceConfigurationConsumer</provider>
                 <provider interface="dev.webfx.stack.db.datasource.spi.LocalDataSourceProvider">one.modality.base.server.services.datasource.ModalityLocalDataSourceProvider</provider>
             </providers>
 
@@ -1466,9 +1543,10 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>webfx-platform-console</module>
-                <module>webfx-platform-json</module>
-                <module>webfx-platform-resource</module>
+                <module>webfx-platform-async</module>
+                <module>webfx-platform-util</module>
+                <module>webfx-stack-conf</module>
+                <module>webfx-stack-conf-resource</module>
                 <module>webfx-stack-db-datasource</module>
                 <module>webfx-stack-orm-datasourcemodel-service</module>
             </used-by-source-modules>
@@ -1681,10 +1759,29 @@
         <project name="modality-catering">
 
             <modules>
+                <module>modality-catering-backoffice-activities-all</module>
                 <module>modality-catering-backoffice-activities-diningareas</module>
                 <module>modality-catering-backoffice-activities-kitchen</module>
                 <module>modality-catering-backoffice-operations-allocationrule</module>
             </modules>
+
+        </project>
+
+        <project name="modality-catering-backoffice-activities-all">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+
+                <plugin-module>modality-catering-backoffice-activities-kitchen</plugin-module>
+                <plugin-module>modality-catering-backoffice-activities-diningareas</plugin-module>
+
+            </dependencies>
+
+            <used-by-source-modules/>
 
         </project>
 
@@ -1802,6 +1899,7 @@
         <project name="modality-crm">
 
             <modules>
+                <module>modality-crm-backoffice-activities-all</module>
                 <module>modality-crm-backoffice-activities-authorizations</module>
                 <module>modality-crm-backoffice-activities-letter</module>
                 <module>modality-crm-backoffice-activities-letters</module>
@@ -1811,11 +1909,35 @@
                 <module>modality-crm-backoffice-operations-mail</module>
                 <module>modality-crm-client-activities-login</module>
                 <module>modality-crm-client-activities-unauthorized</module>
-                <module>modality-crm-client-authn</module>
                 <module>modality-crm-client-authz</module>
                 <module>modality-crm-client-personaldetails</module>
+                <module>modality-crm-server-application-all</module>
+                <module>modality-crm-server-application-min</module>
+                <module>modality-crm-server-authn-gateway</module>
                 <module>modality-crm-server-authz</module>
+                <module>modality-crm-shared-authn</module>
             </modules>
+
+        </project>
+
+        <project name="modality-crm-backoffice-activities-all">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+
+                <plugin-module>modality-crm-backoffice-activities-authorizations</plugin-module>
+                <plugin-module>modality-crm-backoffice-activities-letters</plugin-module>
+                <plugin-module>modality-crm-backoffice-activities-letter</plugin-module>
+                <plugin-module>modality-crm-backoffice-activities-users</plugin-module>
+                <plugin-module>modality-crm-backoffice-activities-organizations</plugin-module>
+
+            </dependencies>
+
+            <used-by-source-modules/>
 
         </project>
 
@@ -1843,7 +1965,7 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>modality-crm-client-authn</module>
+                <module>modality-crm-shared-authn</module>
                 <module>webfx-extras-visual-grid</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
@@ -2152,36 +2274,6 @@
 
         </project>
 
-        <project name="modality-crm-client-authn">
-
-            <exported-packages>
-                <source-packages/>
-            </exported-packages>
-
-            <!--
-    <providers>
-        <provider interface="spi.dev.webfx.stack.auth.authn.AuthenticationServiceProvider">one.modality.crm.client.services.authn.ModalityAuthenticationServiceProvider</provider>
-    </providers>
--->
-
-            <dependencies>
-                <used-by-source-modules/>
-            </dependencies>
-
-            <source-packages>
-                <package>one.modality.crm.client.services.authn</package>
-            </source-packages>
-
-            <used-by-source-modules>
-                <module>webfx-platform-async</module>
-                <module>webfx-stack-authn</module>
-                <module>webfx-stack-db-query</module>
-                <module>webfx-stack-orm-datasourcemodel-service</module>
-                <module>webfx-stack-orm-domainmodel</module>
-            </used-by-source-modules>
-
-        </project>
-
         <project name="modality-crm-client-authz">
 
             <exported-packages>
@@ -2237,7 +2329,7 @@
                 <module>modality-base-client-validation</module>
                 <module>modality-base-shared-domainmodel</module>
                 <module>modality-base-shared-entities</module>
-                <module>modality-crm-client-authn</module>
+                <module>modality-crm-shared-authn</module>
                 <module>modality-event-client-sectionpanel</module>
                 <module>webfx-extras-materialdesign</module>
                 <module>webfx-extras-type</module>
@@ -2255,6 +2347,75 @@
                 <module>webfx-stack-session-state-client-fx</module>
                 <module>webfx-stack-ui-controls</module>
                 <module>webfx-stack-ui-util</module>
+            </used-by-source-modules>
+
+        </project>
+
+        <project name="modality-crm-server-application-all">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+
+                <plugin-module>modality-crm-server-application-min</plugin-module>
+
+                <plugin-module>modality-crm-server-authn-gateway</plugin-module>
+
+            </dependencies>
+
+            <used-by-source-modules/>
+
+        </project>
+
+        <project name="modality-crm-server-application-min">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+
+                <plugin-module>modality-base-server-application-min</plugin-module>
+
+            </dependencies>
+
+            <used-by-source-modules/>
+
+        </project>
+
+        <project name="modality-crm-server-authn-gateway">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+            </dependencies>
+
+            <providers>
+                <provider interface="dev.webfx.stack.authn.spi.impl.server.gateway.ServerAuthenticationGatewayProvider">one.modality.crm.server.authn.gateway.ModalityUsernamePasswordAuthenticationGatewayProvider</provider>
+            </providers>
+
+            <source-packages>
+                <package>one.modality.crm.server.authn.gateway</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>modality-crm-shared-authn</module>
+                <module>webfx-platform-async</module>
+                <module>webfx-stack-authn</module>
+                <module>webfx-stack-authn-logout-server</module>
+                <module>webfx-stack-authn-server-gateway</module>
+                <module>webfx-stack-db-query</module>
+                <module>webfx-stack-orm-datasourcemodel-service</module>
+                <module>webfx-stack-orm-domainmodel</module>
+                <module>webfx-stack-push-server</module>
+                <module>webfx-stack-session-state</module>
             </used-by-source-modules>
 
         </project>
@@ -2290,9 +2451,37 @@
 
         </project>
 
+        <project name="modality-crm-shared-authn">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+            </dependencies>
+
+            <providers>
+                <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.crm.shared.services.authn.serial.ModalityUserPrincipalSerialCodec</provider>
+            </providers>
+
+            <source-packages>
+                <package>one.modality.crm.shared.services.authn</package>
+                <package>one.modality.crm.shared.services.authn.serial</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>webfx-platform-json</module>
+                <module>webfx-stack-com-serial</module>
+            </used-by-source-modules>
+
+        </project>
+
         <project name="modality-ecommerce">
 
             <modules>
+                <module>modality-ecommerce-backoffice-activities-all</module>
                 <module>modality-ecommerce-backoffice-activities-bookings</module>
                 <module>modality-ecommerce-backoffice-activities-income</module>
                 <module>modality-ecommerce-backoffice-activities-moneyflows</module>
@@ -2306,6 +2495,7 @@
                 <module>modality-ecommerce-client-bookingoptionspanel</module>
                 <module>modality-ecommerce-client-bookingprocess</module>
                 <module>modality-ecommerce-client-businesslogic</module>
+                <module>modality-ecommerce-frontoffice-activities-all</module>
                 <module>modality-ecommerce-frontoffice-activities-cart</module>
                 <module>modality-ecommerce-frontoffice-activities-cart-routing</module>
                 <module>modality-ecommerce-frontoffice-activities-contactus</module>
@@ -2333,8 +2523,8 @@
                 <module>modality-ecommerce-payment-gateway-delegated-stripe</module>
                 <module>modality-ecommerce-payment-gateway-direct</module>
                 <module>modality-ecommerce-payment-gateway-direct-authorizedotnet</module>
-                <module>modality-ecommerce-server-application</module>
-                <module>modality-ecommerce-server-application-vertx</module>
+                <module>modality-ecommerce-server-application-all</module>
+                <module>modality-ecommerce-server-application-min</module>
             </modules>
 
             <required-libraries>
@@ -2378,6 +2568,28 @@
 
                 </library>
             </required-libraries>
+
+        </project>
+
+        <project name="modality-ecommerce-backoffice-activities-all">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+
+                <plugin-module>modality-ecommerce-backoffice-activities-bookings</plugin-module>
+                <plugin-module>modality-ecommerce-backoffice-activities-income</plugin-module>
+                <plugin-module>modality-ecommerce-backoffice-activities-moneyflows</plugin-module>
+                <plugin-module>modality-ecommerce-backoffice-activities-payments</plugin-module>
+                <plugin-module>modality-ecommerce-backoffice-activities-statistics</plugin-module>
+                <plugin-module>modality-ecommerce-backoffice-activities-statements</plugin-module>
+
+            </dependencies>
+
+            <used-by-source-modules/>
 
         </project>
 
@@ -2922,6 +3134,27 @@
                 <module>webfx-stack-db-submit</module>
                 <module>webfx-stack-orm-entity</module>
             </used-by-source-modules>
+
+        </project>
+
+        <project name="modality-ecommerce-frontoffice-activities-all">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+
+                <plugin-module>modality-ecommerce-frontoffice-activities-person</plugin-module>
+                <plugin-module>modality-ecommerce-frontoffice-activities-summary</plugin-module>
+                <plugin-module>modality-ecommerce-frontoffice-activities-cart</plugin-module>
+                <plugin-module>modality-ecommerce-frontoffice-activities-payment</plugin-module>
+                <plugin-module>modality-ecommerce-frontoffice-activities-contactus</plugin-module>
+
+            </dependencies>
+
+            <used-by-source-modules/>
 
         </project>
 
@@ -3827,7 +4060,7 @@
 
         </project>
 
-        <project name="modality-ecommerce-server-application">
+        <project name="modality-ecommerce-server-application-all">
 
             <exported-packages>
                 <source-packages/>
@@ -3836,21 +4069,19 @@
             <dependencies>
                 <used-by-source-modules/>
 
-                <plugin-module>modality-base-server-application</plugin-module>
+                <plugin-module>modality-ecommerce-server-application-min</plugin-module>
 
-                <plugin-module>modality-ecommerce-payment-direct-buscall</plugin-module>
                 <plugin-module>modality-ecommerce-payment-gateway-direct-authorizedotnet</plugin-module>
-                <plugin-module>modality-ecommerce-payment-delegated-buscall</plugin-module>
                 <plugin-module>modality-ecommerce-payment-gateway-delegated-stripe</plugin-module>
-                <plugin-module>modality-ecommerce-payment-custom-buscall</plugin-module>
                 <plugin-module>modality-ecommerce-payment-gateway-custom-stripe</plugin-module>
+
             </dependencies>
 
             <used-by-source-modules/>
 
         </project>
 
-        <project executable="true" name="modality-ecommerce-server-application-vertx">
+        <project name="modality-ecommerce-server-application-min">
 
             <exported-packages>
                 <source-packages/>
@@ -3858,6 +4089,13 @@
 
             <dependencies>
                 <used-by-source-modules/>
+
+                <plugin-module>modality-crm-server-application-min</plugin-module>
+
+                <plugin-module>modality-ecommerce-payment-direct-buscall</plugin-module>
+                <plugin-module>modality-ecommerce-payment-delegated-buscall</plugin-module>
+                <plugin-module>modality-ecommerce-payment-custom-buscall</plugin-module>
+
             </dependencies>
 
             <used-by-source-modules/>
@@ -3867,6 +4105,7 @@
         <project name="modality-event">
 
             <modules>
+                <module>modality-event-backoffice-activities-all</module>
                 <module>modality-event-backoffice-activities-cloneevent</module>
                 <module>modality-event-backoffice-activities-cloneevent-routing</module>
                 <module>modality-event-backoffice-activities-events</module>
@@ -3874,12 +4113,30 @@
                 <module>modality-event-client-bookingcalendar</module>
                 <module>modality-event-client-calendar</module>
                 <module>modality-event-client-sectionpanel</module>
+                <module>modality-event-frontoffice-activities-all</module>
                 <module>modality-event-frontoffice-activities-fees</module>
                 <module>modality-event-frontoffice-activities-options</module>
                 <module>modality-event-frontoffice-activities-program</module>
                 <module>modality-event-frontoffice-activities-startbooking</module>
                 <module>modality-event-frontoffice-activities-terms</module>
             </modules>
+
+        </project>
+
+        <project name="modality-event-backoffice-activities-all">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+                <plugin-module>modality-event-backoffice-activities-cloneevent</plugin-module>
+                <plugin-module>modality-event-backoffice-activities-events</plugin-module>
+                <plugin-module>modality-event-backoffice-activities-options</plugin-module>
+            </dependencies>
+
+            <used-by-source-modules/>
 
         </project>
 
@@ -4121,6 +4378,27 @@
 
         </project>
 
+        <project name="modality-event-frontoffice-activities-all">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+
+                <plugin-module>modality-event-frontoffice-activities-startbooking</plugin-module>
+                <plugin-module>modality-event-frontoffice-activities-terms</plugin-module>
+                <plugin-module>modality-event-frontoffice-activities-program</plugin-module>
+                <plugin-module>modality-event-frontoffice-activities-fees</plugin-module>
+                <plugin-module>modality-event-frontoffice-activities-options</plugin-module>
+
+            </dependencies>
+
+            <used-by-source-modules/>
+
+        </project>
+
         <project name="modality-event-frontoffice-activities-fees">
 
             <exported-packages>
@@ -4357,10 +4635,28 @@
         <project name="modality-hotel">
 
             <modules>
+                <module>modality-hotel-backoffice-activities-all</module>
                 <module>modality-hotel-backoffice-activities-roomsgraphic</module>
                 <module>modality-hotel-backoffice-operations-resourceconfiguration</module>
                 <module>modality-hotel-shared-time</module>
             </modules>
+
+        </project>
+
+        <project name="modality-hotel-backoffice-activities-all">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+
+                <plugin-module>modality-hotel-backoffice-activities-roomsgraphic</plugin-module>
+
+            </dependencies>
+
+            <used-by-source-modules/>
 
         </project>
 
@@ -4488,8 +4784,8 @@
 
             <java-package name="dev.webfx.platform.json">
                 <module>modality-base-client-activity</module>
-                <module>modality-base-server-datasource</module>
                 <module>modality-base-shared-domainmodel</module>
+                <module>modality-crm-shared-authn</module>
                 <module>modality-ecommerce-frontoffice-activities-cart-routing</module>
                 <module>modality-ecommerce-payment-custom-buscall</module>
                 <module>modality-ecommerce-payment-delegated-buscall</module>
@@ -4511,18 +4807,19 @@
                 <module>webfx-platform-windowhistory-gwt</module>
                 <module>webfx-platform-windowhistory-web</module>
                 <module>webfx-stack-authn</module>
-                <module>webfx-stack-authn-server-mojoauth</module>
+                <module>webfx-stack-authn-server-gateway-mojoauth</module>
                 <module>webfx-stack-com-bus</module>
                 <module>webfx-stack-com-bus-call</module>
                 <module>webfx-stack-com-bus-json-client</module>
                 <module>webfx-stack-com-bus-json-client-websocket</module>
-                <module>webfx-stack-com-bus-json-client-websocket-web</module>
                 <module>webfx-stack-com-bus-json-server</module>
                 <module>webfx-stack-com-bus-json-vertx</module>
                 <module>webfx-stack-com-serial</module>
                 <module>webfx-stack-com-websocket</module>
                 <module>webfx-stack-com-websocket-gwt</module>
                 <module>webfx-stack-com-websocket-java</module>
+                <module>webfx-stack-conf</module>
+                <module>webfx-stack-conf-format-json</module>
                 <module>webfx-stack-db-datascope</module>
                 <module>webfx-stack-db-query-buscall</module>
                 <module>webfx-stack-db-querypush-buscall</module>
@@ -4546,15 +4843,19 @@
 
             <java-package name="dev.webfx.stack.authn">
                 <module>modality-crm-client-activities-login</module>
-                <module>modality-crm-client-authn</module>
+                <module>modality-crm-server-authn-gateway</module>
                 <module>modality-crm-server-authz</module>
                 <module>webfx-stack-authn</module>
                 <module>webfx-stack-authn-buscall</module>
-                <module>webfx-stack-authn-login-server-mojoauth</module>
+                <module>webfx-stack-authn-login-server-gateway-mojoauth</module>
+                <module>webfx-stack-authn-login-ui-gateway-password</module>
                 <module>webfx-stack-authn-logout-client</module>
                 <module>webfx-stack-authn-remote</module>
-                <module>webfx-stack-authn-server</module>
-                <module>webfx-stack-authn-server-mojoauth</module>
+                <module>webfx-stack-authn-server-gateway</module>
+                <module>webfx-stack-authn-server-gateway-facebook</module>
+                <module>webfx-stack-authn-server-gateway-google</module>
+                <module>webfx-stack-authn-server-gateway-mojoauth</module>
+                <module>webfx-stack-authn-server-portal</module>
             </java-package>
 
             <java-package name="dev.webfx.stack.com.bus.spi.impl.json.server">
@@ -4563,12 +4864,23 @@
                 <module>webfx-stack-push-server-liveclient-interceptor</module>
             </java-package>
 
+            <java-package name="dev.webfx.stack.conf">
+                <module>webfx-stack-authn-login-server-gateway-facebook</module>
+                <module>webfx-stack-authn-login-server-gateway-google</module>
+                <module>webfx-stack-authn-login-server-gateway-mojoauth</module>
+                <module>webfx-stack-com-bus-json-vertx</module>
+                <module>webfx-stack-conf</module>
+                <module>webfx-stack-conf-file-java</module>
+                <module>webfx-stack-conf-resource</module>
+                <module>webfx-stack-http-server-vertx</module>
+            </java-package>
+
             <java-package name="dev.webfx.stack.db.query">
                 <module>modality-base-client-activity</module>
                 <module>modality-base-client-aggregates</module>
                 <module>modality-base-shared-domainmodel</module>
-                <module>modality-crm-client-authn</module>
                 <module>modality-crm-client-authz</module>
+                <module>modality-crm-server-authn-gateway</module>
                 <module>modality-crm-server-authz</module>
                 <module>modality-ecommerce-client-businesslogic</module>
                 <module>webfx-stack-db-query</module>
@@ -4631,9 +4943,9 @@
                 <module>modality-base-server-systemmetrics</module>
                 <module>modality-base-shared-domainmodel</module>
                 <module>modality-crm-backoffice-bookingdetailspanel</module>
-                <module>modality-crm-client-authn</module>
                 <module>modality-crm-client-authz</module>
                 <module>modality-crm-client-personaldetails</module>
+                <module>modality-crm-server-authn-gateway</module>
                 <module>modality-hotel-backoffice-operations-resourceconfiguration</module>
                 <module>webfx-stack-orm-datasourcemodel-service</module>
                 <module>webfx-stack-orm-domainmodel</module>
@@ -4651,18 +4963,18 @@
 
             <java-package name="dev.webfx.stack.push.server">
                 <module>modality-base-server-sessioncloser</module>
+                <module>modality-crm-server-authn-gateway</module>
                 <module>modality-crm-server-authz</module>
-                <module>webfx-stack-authn-login-server-mojoauth</module>
+                <module>webfx-stack-authn-login-server-gateway-mojoauth</module>
+                <module>webfx-stack-authn-logout-server</module>
                 <module>webfx-stack-db-querypush-server</module>
                 <module>webfx-stack-push-server</module>
                 <module>webfx-stack-push-server-liveclient-interceptor</module>
                 <module>webfx-stack-push-server-simple</module>
-                <module>webfx-stack-session-state-server</module>
             </java-package>
 
             <java-package name="dev.webfx.stack.session.state.server">
-                <module>webfx-stack-authn-server</module>
-                <module>webfx-stack-authn-server-mojoauth</module>
+                <module>webfx-stack-authn-server-portal</module>
                 <module>webfx-stack-authz-server</module>
                 <module>webfx-stack-com-bus-json-server</module>
                 <module>webfx-stack-session-state-server</module>
@@ -4677,6 +4989,7 @@
             <java-package name="java.util.regex">
                 <module>anet-java-sdk</module>
                 <module>stripe-java</module>
+                <module>webfx-stack-conf</module>
                 <module>webfx-stack-routing-router</module>
                 <module>webfx-stack-routing-router-client</module>
             </java-package>

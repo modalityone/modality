@@ -35,7 +35,7 @@ import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Organization;
 import one.modality.base.shared.entities.Person;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
-import one.modality.crm.client.services.authn.ModalityUserPrincipal;
+import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 import one.modality.event.client.controls.sectionpanel.SectionPanelFactory;
 
 import java.time.LocalDate;

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+
+        <plugin-module>modality-crm-server-application-min</plugin-module>
+
+        <plugin-module>modality-ecommerce-payment-direct-buscall</plugin-module>
+        <plugin-module>modality-ecommerce-payment-delegated-buscall</plugin-module>
+        <plugin-module>modality-ecommerce-payment-custom-buscall</plugin-module>
+
+    </dependencies>
+
+</project>

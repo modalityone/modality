@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+
+        <plugin-module>modality-base-backoffice-activities-home</plugin-module>
+        <plugin-module>modality-base-backoffice-activities-monitor</plugin-module>
+        <plugin-module>modality-base-backoffice-activities-filters</plugin-module>
+        <plugin-module>modality-base-backoffice-activities-operations</plugin-module>
+
+    </dependencies>
+
+</project>

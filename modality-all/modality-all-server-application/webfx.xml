@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+
+        <plugin-module>modality-base-server-application-all</plugin-module>
+        <plugin-module>modality-crm-server-application-all</plugin-module>
+        <plugin-module>modality-ecommerce-server-application-all</plugin-module>
+
+    </dependencies>
+
+    <providers>
+        <provider interface="dev.webfx.stack.conf.spi.ConfigurationSupplier">one.modality.all.server.application.ModalityAllDirectoryConfigurationSupplier</provider>
+    </providers>
+
+</project>

@@ -16,6 +16,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>modality-ecommerce-backoffice-activities-all</module>
         <module>modality-ecommerce-backoffice-activities-bookings</module>
         <module>modality-ecommerce-backoffice-activities-income</module>
         <module>modality-ecommerce-backoffice-activities-moneyflows</module>
@@ -29,6 +30,7 @@
         <module>modality-ecommerce-client-bookingoptionspanel</module>
         <module>modality-ecommerce-client-bookingprocess</module>
         <module>modality-ecommerce-client-businesslogic</module>
+        <module>modality-ecommerce-frontoffice-activities-all</module>
         <module>modality-ecommerce-frontoffice-activities-cart</module>
         <module>modality-ecommerce-frontoffice-activities-cart-routing</module>
         <module>modality-ecommerce-frontoffice-activities-contactus</module>
@@ -56,8 +58,8 @@
         <module>modality-ecommerce-payment-gateway-delegated-stripe</module>
         <module>modality-ecommerce-payment-gateway-direct</module>
         <module>modality-ecommerce-payment-gateway-direct-authorizedotnet</module>
-        <module>modality-ecommerce-server-application</module>
-        <module>modality-ecommerce-server-application-vertx</module>
+        <module>modality-ecommerce-server-application-all</module>
+        <module>modality-ecommerce-server-application-min</module>
     </modules>
 
 </project>

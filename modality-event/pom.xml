@@ -16,6 +16,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>modality-event-backoffice-activities-all</module>
         <module>modality-event-backoffice-activities-cloneevent</module>
         <module>modality-event-backoffice-activities-cloneevent-routing</module>
         <module>modality-event-backoffice-activities-events</module>
@@ -23,6 +24,7 @@
         <module>modality-event-client-bookingcalendar</module>
         <module>modality-event-client-calendar</module>
         <module>modality-event-client-sectionpanel</module>
+        <module>modality-event-frontoffice-activities-all</module>
         <module>modality-event-frontoffice-activities-fees</module>
         <module>modality-event-frontoffice-activities-options</module>
         <module>modality-event-frontoffice-activities-program</module>

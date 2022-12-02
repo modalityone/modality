@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+
+        <plugin-module>modality-catering-backoffice-activities-kitchen</plugin-module>
+        <plugin-module>modality-catering-backoffice-activities-diningareas</plugin-module>
+
+    </dependencies>
+
+</project>

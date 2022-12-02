@@ -11,7 +11,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.Pane;
-import one.modality.crm.client.services.authn.ModalityUserPrincipal;
+import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
