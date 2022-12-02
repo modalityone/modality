@@ -24,7 +24,7 @@ public final class ModalityAuthorizationServerServiceProvider implements Authori
     @Override
     public Future<Void> pushAuthorizations() {
         // Capturing userId and runId from the thread local state holder (won't be present on subsequent async callbacks)
-        String userId = ThreadLocalStateHolder.getUserId();
+        Object userId = ThreadLocalStateHolder.getUserId();
         String runId = ThreadLocalStateHolder.getRunId();
         // Returning an empty result set when user is logged out or null (ie not logged in)
         if (LogoutUserId.isLogoutUserIdOrNull(userId)) {
