@@ -3,7 +3,7 @@
 
     <exported-packages>
         <source-packages/>
-        <resource-package>dev.webfx.stack.com.websocket.bus.conf</resource-package>
+        <resource-package>one.modality.base.client.busconfig</resource-package>
     </exported-packages>
 
     <dependencies>
@@ -11,7 +11,11 @@
     </dependencies>
 
     <embed-resources>
-        <resource>dev/webfx/stack/com/websocket/bus/conf/BusOptions.json</resource>
+        <resource>one/modality/base/client/busconfig/ClientBusOptions.default.json</resource>
     </embed-resources>
+
+    <providers>
+        <provider interface="dev.webfx.stack.conf.spi.ConfigurationSupplier">one.modality.base.client.busconfig.ModalityClientBusOptionsConfigurationSupplier</provider>
+    </providers>
 
 </project>
