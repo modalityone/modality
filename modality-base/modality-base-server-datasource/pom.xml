@@ -17,19 +17,25 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-console</artifactId>
+            <artifactId>webfx-platform-async</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-json</artifactId>
+            <artifactId>webfx-platform-util</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-resource</artifactId>
+            <artifactId>webfx-stack-conf</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-conf-resource</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -43,20 +49,6 @@
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-orm-datasourcemodel-service</artifactId>
             <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>5.9.0</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-inline</artifactId>
-            <version>4.6.1</version>
-            <scope>test</scope>
         </dependency>
 
     </dependencies>

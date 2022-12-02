@@ -3,10 +3,11 @@
 
     <exported-packages>
         <source-packages/>
-        <resource-package>one.modality.base.server.datasource.MDS</resource-package>
+        <resource-package>one.modality.base.server.services.datasource</resource-package>
     </exported-packages>
 
     <providers>
+        <provider interface="dev.webfx.stack.conf.spi.ConfigurationConsumer">one.modality.base.server.services.datasource.ModalityLocalDataSourceConfigurationConsumer</provider>
         <provider interface="dev.webfx.stack.db.datasource.spi.LocalDataSourceProvider">one.modality.base.server.services.datasource.ModalityLocalDataSourceProvider</provider>
     </providers>
 

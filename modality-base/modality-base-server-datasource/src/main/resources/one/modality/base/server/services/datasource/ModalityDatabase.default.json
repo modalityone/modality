@@ -1,5 +1,5 @@
 {
-  "host": "localhost",
+  "host": "${{ SERVER_HOST | 'localhost' }}",
   "port": "5432",
   "databaseName": "modality",
   "username": "modality",
