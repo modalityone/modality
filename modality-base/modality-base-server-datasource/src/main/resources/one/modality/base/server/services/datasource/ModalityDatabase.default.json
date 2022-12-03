@@ -1,7 +1,7 @@
 {
-  "host": "${{ SERVER_HOST | 'localhost' }}",
-  "port": "5432",
-  "databaseName": "modality",
-  "username": "modality",
-  "password": "modality"
+  "host": "${{ MODALITY_DATABASE_HOST | 'localhost' }}",
+  "port": "${{ MODALITY_DATABASE_PORT | 5432 }}",
+  "databaseName": "${{ MODALITY_DATABASE_NAME | 'modality' }}",
+  "username": "${{ MODALITY_DATABASE_USERNAME | 'modality' }}",
+  "password": "${{ MODALITY_DATABASE_PASSWORD | 'modality' }}"
 }
