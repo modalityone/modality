@@ -11,6 +11,11 @@ module modality.catering.backoffice.activities.kitchen {
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.operation;
+    requires webfx.stack.orm.reactive.visual;
+    requires webfx.extras.visual;
+    requires webfx.stack.orm.reactive.entities;
+    requires webfx.stack.orm.reactive.dql;
+    requires javafx.controls;
 
     // Exported packages
     exports one.modality.catering.backoffice.activities.kitchen;
