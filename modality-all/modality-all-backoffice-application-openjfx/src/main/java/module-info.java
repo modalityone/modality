@@ -25,6 +25,8 @@ module modality.all.backoffice.application.openjfx {
     requires webfx.stack.authn.remote;
     requires webfx.stack.com.bus.json.client.websocket.java;
     requires webfx.stack.com.websocket.java;
+    requires webfx.stack.conf;
+    requires webfx.stack.conf.env.java;
     requires webfx.stack.conf.format.json;
     requires webfx.stack.db.query.buscall;
     requires webfx.stack.db.querysubmit.java.jdbc;
@@ -39,5 +41,9 @@ module modality.all.backoffice.application.openjfx {
 
     // Exported packages
     exports one.modality.all.backoffice.activities.event.clone.openjfx;
+    exports one.modality.all.backoffice.conf.openjfx;
+
+    // Provided services
+    provides dev.webfx.stack.conf.spi.ConfigurationSupplier with one.modality.all.backoffice.conf.openjfx.ModalityAllBackOfficeEnvironmentConfigurationSupplier;
 
 }

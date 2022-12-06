@@ -15,7 +15,8 @@
     </dependencies>
 
     <providers>
-        <provider interface="dev.webfx.stack.conf.spi.ConfigurationSupplier">one.modality.all.server.application.ModalityAllDirectoryConfigurationSupplier</provider>
+        <provider interface="dev.webfx.stack.conf.spi.ConfigurationSupplier">one.modality.all.server.application.conf.ModalityAllServerEnvironmentConfigurationSupplier</provider>
+        <provider interface="dev.webfx.stack.conf.spi.ConfigurationSupplier">one.modality.all.server.application.conf.ModalityAllServerDirectoryConfigurationSupplier</provider>
     </providers>
 
 </project>
