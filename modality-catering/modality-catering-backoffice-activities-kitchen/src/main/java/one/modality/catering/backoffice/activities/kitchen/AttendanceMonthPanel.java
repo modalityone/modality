@@ -14,8 +14,10 @@ public class AttendanceMonthPanel extends GridPane {
     private static final List<String> DAY_NAMES = Arrays.asList("MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN");
 
     public AttendanceMonthPanel(AttendanceCounts attendanceCounts, LocalDate month) {
-        addDayNames();
-        addDayPanels(attendanceCounts, month);
+        if (attendanceCounts != null) {
+            addDayNames();
+            addDayPanels(attendanceCounts, month);
+        }
     }
 
     private void addDayNames() {
