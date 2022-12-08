@@ -3,19 +3,22 @@ package one.modality.catering.backoffice.activities.kitchen;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import one.modality.base.shared.entities.Item;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class AttendanceDayPanel extends GridPane {
 
     private static final Color DAY_NUMBER_TEXT_COLOR = Color.web("#0096d6");
 
-    public AttendanceDayPanel(AttendanceCounts attendanceCounts, LocalDate date) {
+    public AttendanceDayPanel(AttendanceCounts attendanceCounts, LocalDate date, List<Item> displayedMeals) {
         addDayOfMonthNumber(date);
-        addMealTitles(attendanceCounts);
+        addMealTitles(displayedMeals);
         addDietaryOptions(attendanceCounts);
-        addMealCounts(attendanceCounts, date);
+        addMealCounts(attendanceCounts, date, displayedMeals);
     }
 
     private void addDayOfMonthNumber(LocalDate date) {
@@ -29,13 +32,23 @@ public class AttendanceDayPanel extends GridPane {
         return dayNumber > 9 ? String.valueOf(dayNumber) : "0" + String.valueOf(dayNumber);
     }
 
-    private void addMealTitles(AttendanceCounts attendanceCounts) {
-        List<String> meals = attendanceCounts.getSortedMeals();
+    private void addMealTitles(List<Item> displayedMeals) {
         int columnIndex = 1;
-        for (String meal : meals) {
-            Label mealLabel = new Label(meal);
+        for (Item meal : displayedMeals) {
+            String mealTitle = getMealAbbreviation(meal.getName());
+            Label mealLabel = new Label(mealTitle);
             add(mealLabel, columnIndex, 0);
             columnIndex++;
+        }
+    }
+
+    private static String getMealAbbreviation(String mealName) {
+        try {
+            return Stream.of(mealName.split(" "))
+                    .map(s -> String.valueOf(s.charAt(0)))
+                    .collect(Collectors.joining());
+        } catch (Exception e) {
+            return mealName;
         }
     }
 
@@ -49,14 +62,13 @@ public class AttendanceDayPanel extends GridPane {
         }
     }
 
-    private void addMealCounts(AttendanceCounts attendanceCounts, LocalDate date) {
-        List<String> meals = attendanceCounts.getSortedMeals();
+    private void addMealCounts(AttendanceCounts attendanceCounts, LocalDate date, List<Item> displayedMeals) {
         List<String> dietaryOptions = attendanceCounts.getSortedDietaryOptions();
         int columnIndex = 1;
-        for (String meal : meals) {
+        for (Item meal : displayedMeals) {
             int rowIndex = 1;
             for (String dietaryOption : dietaryOptions) {
-                int count = attendanceCounts.getCount(date, meal, dietaryOption);
+                int count = attendanceCounts.getCount(date, meal.getName(), dietaryOption);
                 Label countLabel = new Label(String.valueOf(count));
                 add(countLabel, columnIndex, rowIndex);
                 rowIndex++;

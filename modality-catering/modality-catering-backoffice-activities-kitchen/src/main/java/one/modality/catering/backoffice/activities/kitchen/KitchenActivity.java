@@ -8,8 +8,6 @@ import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivi
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContextMixin;
 import javafx.application.Platform;
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -18,6 +16,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
+import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.Organization;
 
 import java.time.LocalDate;
@@ -54,16 +53,20 @@ public class KitchenActivity extends ViewDomainActivityBase
             "group by si.date, i.code, di.code, i.ord, di.ord\n" +
             "order by si.date, i.ord, di.ord;";
 
-    private final AttendancePresentationModel pm = new AttendancePresentationModel();
-
-    private final Property<AttendanceCounts> attendanceCountsProperty = new SimpleObjectProperty<>();
-
     private VBox body = new VBox();
     private ComboBox<Organization> organizationComboBox = new ComboBox<>();
+    private MealsSelectionPane mealsSelectionPane = new MealsSelectionPane();
     private MonthSelectionPanel monthSelectionPanel = new MonthSelectionPanel(this::updateAttendanceMonthPanel);
     private AttendanceMonthPanel attendanceMonthPanel;
     private VBox attendanceCountsPanelContainer = new VBox();
     private AttendanceCounts attendanceCounts;
+
+    public KitchenActivity() {
+        mealsSelectionPane.selectedItemsProperty().addListener((observableValue, oldValue, newValue) -> {
+            LocalDate selectedMonth = monthSelectionPanel.getSelectedMonth();
+            refreshAttendanceMonthPanel(selectedMonth);
+        });
+    }
 
     @Override
     public Node buildUi() {
@@ -81,10 +84,11 @@ public class KitchenActivity extends ViewDomainActivityBase
         organizationComboBox.valueProperty().addListener(new ChangeListener<Organization>() {
             @Override
             public void changed(ObservableValue<? extends Organization> observableValue, Organization oldValue, Organization newValue) {
+                mealsSelectionPane.setOrganization(newValue);
                 loadAttendance();
             }
         });
-        body.getChildren().addAll(organizationComboBox, monthSelectionPanel, attendanceCountsPanelContainer);
+        body.getChildren().addAll(organizationComboBox, mealsSelectionPane, monthSelectionPanel, attendanceCountsPanelContainer);
         return body;
     }
 
@@ -106,7 +110,7 @@ public class KitchenActivity extends ViewDomainActivityBase
         QueryService.executeQuery(query)
                 .onFailure(System.out::println)
                 .onSuccess(result -> {
-                    for (int row = 0; row < Math.min(10, result.getRowCount()); row++) {
+                    for (int row = 0; row < result.getRowCount(); row++) {
                         String dateString = result.getValue(row, 0);
                         LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ISO_ZONED_DATE_TIME);
                         String meal = result.getValue(row, 1);
@@ -124,19 +128,9 @@ public class KitchenActivity extends ViewDomainActivityBase
     }
 
     private void refreshAttendanceMonthPanel(LocalDate month) {
-        attendanceMonthPanel = new AttendanceMonthPanel(attendanceCounts, month);
+        List<Item> displayedMeals = mealsSelectionPane.selectedItemsProperty().get();
+        attendanceMonthPanel = new AttendanceMonthPanel(attendanceCounts, month, displayedMeals);
         attendanceCountsPanelContainer.getChildren().setAll(attendanceMonthPanel);
-    }
-
-    public KitchenActivity() {
-        pm.setEventId(Integer.valueOf(734));
-        attendanceCountsProperty.addListener(new ChangeListener<AttendanceCounts>() {
-            @Override
-            public void changed(ObservableValue<? extends AttendanceCounts> observableValue, AttendanceCounts oldValue, AttendanceCounts newValue) {
-                System.out.println(newValue);
-            }
-        });
-
     }
 
     @Override

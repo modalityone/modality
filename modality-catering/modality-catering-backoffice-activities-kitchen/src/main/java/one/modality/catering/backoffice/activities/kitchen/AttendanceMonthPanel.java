@@ -5,6 +5,7 @@ import javafx.geometry.Pos;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import one.modality.base.shared.entities.Item;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -18,10 +19,10 @@ public class AttendanceMonthPanel extends GridPane {
     private static final Color DAY_NAME_TEXT_COLOR = Color.web("#0096d6");
     private static final double HORIZONTAL_GAP = 16;
 
-    public AttendanceMonthPanel(AttendanceCounts attendanceCounts, LocalDate month) {
+    public AttendanceMonthPanel(AttendanceCounts attendanceCounts, LocalDate month, List<Item> displayedMeals) {
         if (attendanceCounts != null) {
             addDayNames();
-            addDayPanels(attendanceCounts, month);
+            addDayPanels(attendanceCounts, month, displayedMeals);
             setHgap(HORIZONTAL_GAP);
         }
     }
@@ -41,13 +42,13 @@ public class AttendanceMonthPanel extends GridPane {
         }
     }
 
-    private void addDayPanels(AttendanceCounts attendanceCounts, LocalDate month) {
+    private void addDayPanels(AttendanceCounts attendanceCounts, LocalDate month, List<Item> displayedMeals) {
         int numDaysInMonth = YearMonth.of(month.getYear(), month.getMonth()).lengthOfMonth();
         int rowIndex = 1;
         for (int day = 0; day < numDaysInMonth; day++) {
             LocalDate dayDate = LocalDate.of(month.getYear(), month.getMonth(), day + 1);
             int columnIndex = dayDate.getDayOfWeek().ordinal();
-            AttendanceDayPanel dayPanel = new AttendanceDayPanel(attendanceCounts, dayDate);
+            AttendanceDayPanel dayPanel = new AttendanceDayPanel(attendanceCounts, dayDate, displayedMeals);
             add(dayPanel, columnIndex, rowIndex);
             if (columnIndex == 6) {
                 rowIndex++;
