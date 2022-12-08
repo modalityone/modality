@@ -1,57 +1,69 @@
 package one.modality.catering.backoffice.activities.kitchen;
 
-import one.modality.base.shared.entities.Attendance;
-
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AttendanceCounts {
 
-    @Deprecated
-    List<LocalDate> dates;
-    private Map<LocalDate, Map<String, Integer>> countsForDate = new HashMap<>();
+    private Map<LocalDate, List<Row>> rows = new HashMap<>();
 
-    public void add(LocalDate date, String item) {
-        if (!countsForDate.containsKey(date)) {
-            countsForDate.put(date, new HashMap<>());
+    public void add(LocalDate date, String meal, String dietaryOption, int count) {
+        if (!rows.containsKey(date)) {
+            rows.put(date, new ArrayList<>());
         }
-        Map<String, Integer> map = countsForDate.get(date);
-        int previousCount = map.getOrDefault(item, Integer.valueOf(0));
-        map.put(item, Integer.valueOf(previousCount + 1));
+        rows.get(date).add(new Row(meal, dietaryOption, count));
     }
 
-    public void remove(LocalDate date, String item) {
-        if (countsForDate.containsKey(date)) {
-            Map<String, Integer> map = countsForDate.get(date);
-            int previousCount = map.getOrDefault(item, Integer.valueOf(1));
-            map.put(item, Integer.valueOf(previousCount - 1));
-        }
-    }
 
-    public List<LocalDate> getSortedDates() {
-        return countsForDate.keySet().stream()
-                .sorted()
-                .collect(Collectors.toList());
-    }
-
-    public List<String> getSortedKeys() {
-        return countsForDate.values().stream()
-                .map(entry -> entry.keySet())
+    public List<String> getSortedMeals() {
+        return rows.values().stream()
                 .flatMap(Collection::stream)
+                .map(Row::getMeal)
                 .distinct()
                 .sorted()
                 .collect(Collectors.toList());
     }
 
-    public int getCount(LocalDate date, String item) {
-        if (!countsForDate.containsKey(date)) {
-            return 0;
+    public List<String> getSortedDietaryOptions() {
+        return rows.values().stream()
+                .flatMap(Collection::stream)
+                .map(Row::getDietaryOption)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    public int getCount(LocalDate date, String meal, String dietaryOption) {
+        for (Row row : rows.getOrDefault(date, Collections.emptyList())) {
+            if (row.getMeal().equals(meal) && row.getDietaryOption().equals(dietaryOption)) {
+                return row.getCount();
+            }
         }
-        Map<String, Integer> map = countsForDate.get(date);
-        return map.getOrDefault(item, Integer.valueOf(0));
+        return 0;
+    }
+
+    private static class Row {
+        private String meal;
+        private String dietaryOption;
+        private int count;
+
+        public Row(String meal, String dietaryOption, int count) {
+            this.meal = meal;
+            this.dietaryOption = dietaryOption;
+            this.count = count;
+        }
+
+        public String getMeal() {
+            return meal;
+        }
+
+        public String getDietaryOption() {
+            return dietaryOption;
+        }
+
+        public int getCount() {
+            return count;
+        }
     }
 }

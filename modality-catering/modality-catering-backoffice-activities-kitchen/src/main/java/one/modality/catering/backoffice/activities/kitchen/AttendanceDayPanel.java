@@ -14,6 +14,7 @@ public class AttendanceDayPanel extends GridPane {
     public AttendanceDayPanel(AttendanceCounts attendanceCounts, LocalDate date) {
         addDayOfMonthNumber(date);
         addMealTitles(attendanceCounts);
+        addDietaryOptions(attendanceCounts);
         addMealCounts(attendanceCounts, date);
     }
 
@@ -29,23 +30,38 @@ public class AttendanceDayPanel extends GridPane {
     }
 
     private void addMealTitles(AttendanceCounts attendanceCounts) {
-        List<String> titles = attendanceCounts.getSortedKeys();
-        int titleColumnIndex = 1;
-        for (String title : titles) {
-            Label titleLabel = new Label(title);
-            add(titleLabel, titleColumnIndex, 0);
-            titleColumnIndex++;
+        List<String> meals = attendanceCounts.getSortedMeals();
+        int columnIndex = 1;
+        for (String meal : meals) {
+            Label mealLabel = new Label(meal);
+            add(mealLabel, columnIndex, 0);
+            columnIndex++;
+        }
+    }
+
+    private void addDietaryOptions(AttendanceCounts attendanceCounts) {
+        List<String> dietaryOptions = attendanceCounts.getSortedDietaryOptions();
+        int rowIndex = 1;
+        for (String dietaryOption : dietaryOptions) {
+            Label dietaryOptionLabel = new Label(dietaryOption);
+            add(dietaryOptionLabel, 0, rowIndex);
+            rowIndex++;
         }
     }
 
     private void addMealCounts(AttendanceCounts attendanceCounts, LocalDate date) {
-        List<String> titles = attendanceCounts.getSortedKeys();
-        int countColumnIndex = 1;
-        for (String title : titles) {
-            int count = attendanceCounts.getCount(date, title);
-            Label countLabel = new Label(String.valueOf(count));
-            add(countLabel, countColumnIndex, 1);
-            countColumnIndex++;
+        List<String> meals = attendanceCounts.getSortedMeals();
+        List<String> dietaryOptions = attendanceCounts.getSortedDietaryOptions();
+        int columnIndex = 1;
+        for (String meal : meals) {
+            int rowIndex = 1;
+            for (String dietaryOption : dietaryOptions) {
+                int count = attendanceCounts.getCount(date, meal, dietaryOption);
+                Label countLabel = new Label(String.valueOf(count));
+                add(countLabel, columnIndex, rowIndex);
+                rowIndex++;
+            }
+            columnIndex++;
         }
     }
 

@@ -71,6 +71,10 @@ public class MonthSelectionPanel extends HBox {
         return selectedMonth != null && month.getMonth().equals(selectedMonth.getMonth()) && month.getYear() == selectedMonth.getYear();
     }
 
+    public LocalDate getSelectedMonth() {
+        return selectedMonth != null ? selectedMonth : LocalDate.now();
+    }
+
     public interface MonthSelectionPanelListener {
         void onMonthSelected(LocalDate month);
     }
