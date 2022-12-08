@@ -22,12 +22,19 @@ public class AttendanceDayPanel extends GridPane {
     private DoubleProperty firstColumnWidthProperty = new SimpleDoubleProperty(0);
 
     public AttendanceDayPanel(AttendanceCounts attendanceCounts, LocalDate date, List<Item> displayedMeals) {
+        List<Item> sortedDisplayedMeals = sortMeals(displayedMeals);
         setBackground(BACKGROUND);
         setPadding(new Insets(4));
         addDayOfMonthNumber(date);
-        addMealTitles(displayedMeals);
+        addMealTitles(sortedDisplayedMeals);
         addDietaryOptions(attendanceCounts);
-        addMealCounts(attendanceCounts, date, displayedMeals);
+        addMealCounts(attendanceCounts, date, sortedDisplayedMeals);
+    }
+
+    private List<Item> sortMeals(List<Item> meals) {
+        return meals.stream()
+                .sorted((meal1, meal2) -> Integer.compare(meal1.getOrd(), meal2.getOrd()))
+                .collect(Collectors.toList());
     }
 
     private void addDayOfMonthNumber(LocalDate date) {

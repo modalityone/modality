@@ -17,7 +17,7 @@ public class AttendanceMonthPanel extends GridPane {
     private static final List<String> DAY_NAMES = Arrays.asList("MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN");
     private static final String DAY_NAME_TEXT_BOX_STYLE = "-fx-border-color: lightgray; -fx-border-radius: 5;";
     private static final Color DAY_NAME_TEXT_COLOR = Color.web("#0096d6");
-    private static final double HORIZONTAL_GAP = 8;
+    private static final double HORIZONTAL_GAP = 4;
     private static final double VERTICAL_GAP = 4;
 
     public AttendanceMonthPanel(AttendanceCounts attendanceCounts, LocalDate month, List<Item> displayedMeals) {

@@ -28,6 +28,10 @@ public interface Item extends
         return getForeignEntity("family");
     }
 
+    default int getOrd() {
+        return getIntegerFieldValue("ord");
+    }
+
     default void setRateAliasItem(Object rateAliasItem) {
         setForeignField("rateAliasItem", rateAliasItem);
     }
