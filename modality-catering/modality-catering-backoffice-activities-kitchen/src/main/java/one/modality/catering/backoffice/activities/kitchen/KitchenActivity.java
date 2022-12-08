@@ -130,7 +130,7 @@ public class KitchenActivity extends ViewDomainActivityBase
     private void refreshAttendanceMonthPanel(LocalDate month) {
         List<Item> displayedMeals = mealsSelectionPane.selectedItemsProperty().get();
         attendanceMonthPanel = new AttendanceMonthPanel(attendanceCounts, month, displayedMeals);
-        attendanceCountsPanelContainer.getChildren().setAll(attendanceMonthPanel);
+        Platform.runLater(() -> attendanceCountsPanelContainer.getChildren().setAll(attendanceMonthPanel));
     }
 
     @Override

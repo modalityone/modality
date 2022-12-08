@@ -1,7 +1,11 @@
 package one.modality.catering.backoffice.activities.kitchen;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import one.modality.base.shared.entities.Item;
 
@@ -12,9 +16,14 @@ import java.util.stream.Stream;
 
 public class AttendanceDayPanel extends GridPane {
 
+    private static final Background BACKGROUND = new Background (new BackgroundFill(Color.LIGHTGRAY, new CornerRadii(5), Insets.EMPTY));
     private static final Color DAY_NUMBER_TEXT_COLOR = Color.web("#0096d6");
 
+    private DoubleProperty firstColumnWidthProperty = new SimpleDoubleProperty(0);
+
     public AttendanceDayPanel(AttendanceCounts attendanceCounts, LocalDate date, List<Item> displayedMeals) {
+        setBackground(BACKGROUND);
+        setPadding(new Insets(4));
         addDayOfMonthNumber(date);
         addMealTitles(displayedMeals);
         addDietaryOptions(attendanceCounts);
@@ -37,9 +46,15 @@ public class AttendanceDayPanel extends GridPane {
         for (Item meal : displayedMeals) {
             String mealTitle = getMealAbbreviation(meal.getName());
             Label mealLabel = new Label(mealTitle);
+            mealLabel.setAlignment(Pos.CENTER);
+            bindMealLabelWidth(mealLabel, displayedMeals);
             add(mealLabel, columnIndex, 0);
             columnIndex++;
         }
+    }
+
+    private void bindMealLabelWidth(Label label, List<Item> displayedMeals) {
+        label.prefWidthProperty().bind(widthProperty().subtract(firstColumnWidthProperty).divide(displayedMeals.size()));
     }
 
     private static String getMealAbbreviation(String mealName) {
@@ -57,6 +72,12 @@ public class AttendanceDayPanel extends GridPane {
         int rowIndex = 1;
         for (String dietaryOption : dietaryOptions) {
             Label dietaryOptionLabel = new Label(dietaryOption);
+            dietaryOptionLabel.widthProperty().addListener((observableValue, oldValue, newValue) -> {
+                if (newValue.doubleValue() > firstColumnWidthProperty.doubleValue()) {
+                    firstColumnWidthProperty.set(newValue.doubleValue());
+                }
+            });
+            dietaryOptionLabel.setMinWidth(Region.USE_PREF_SIZE);
             add(dietaryOptionLabel, 0, rowIndex);
             rowIndex++;
         }
@@ -68,8 +89,10 @@ public class AttendanceDayPanel extends GridPane {
         for (Item meal : displayedMeals) {
             int rowIndex = 1;
             for (String dietaryOption : dietaryOptions) {
-                int count = attendanceCounts.getCount(date, meal.getName(), dietaryOption);
+                int count = attendanceCounts.getCount(date, meal.getCode(), dietaryOption);
                 Label countLabel = new Label(String.valueOf(count));
+                countLabel.setAlignment(Pos.CENTER);
+                bindMealLabelWidth(countLabel, displayedMeals);
                 add(countLabel, columnIndex, rowIndex);
                 rowIndex++;
             }
