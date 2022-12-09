@@ -31,7 +31,7 @@ public class KitchenActivity extends ViewDomainActivityBase
         implements UiRouteActivityContextMixin<ViewDomainActivityContextFinal>,
         ModalityButtonFactoryMixin  {
 
-    private static final String MEAL_COUNT_SQL = "select si.date, i.name, di.code, count(*)\n" +
+    private static final String MEAL_COUNT_SQL = "select si.date, i.name, di.code, count(*), di.ord\n" +
             "from attendance a\n" +
             "  join scheduled_item si on si.id = a.scheduled_item_id\n" +
             "  join document_line dl on dl.id=a.document_line_id\n" +
@@ -40,7 +40,7 @@ public class KitchenActivity extends ViewDomainActivityBase
             "  join item_family f on f.id=i.family_id  \n" +
             "  , ( select i.id,i.code,i.ord from item i join item_family f on f.id=i.family_id where i.organization_id = $1 and f.code='diet'\n" +
             "    union\n" +
-            "    select * from (values (-1, 'Total', -1), (-2, '?', 10000)) vitem(id, code, ord)\n" +
+            "    select * from (values (-1, 'Total', 10001), (-2, '?', 10000)) vitem(id, code, ord)\n" +
             "    ) di\n" +
             "where not dl.cancelled\n" +
             "  and s.organization_id = $2\n" +
@@ -117,6 +117,8 @@ public class KitchenActivity extends ViewDomainActivityBase
                         String dietaryOption = result.getValue(row, 2);
                         int count = result.getValue(row, 3);
                         attendanceCounts.add(date, meal, dietaryOption, count);
+                        int dietaryOptionOrdinal = result.getValue(row, 4);
+                        attendanceCounts.storeDietaryOptionOrder(dietaryOption, dietaryOptionOrdinal);
                     }
                     Platform.runLater(() -> refreshAttendanceMonthPanel(selectedMonth));
                 });

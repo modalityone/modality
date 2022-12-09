@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 public class AttendanceCounts {
 
     private Map<LocalDate, List<Row>> rows = new HashMap<>();
+    private Map<String, Integer> dietaryOptionOrders = new HashMap<>();
 
     public void add(LocalDate date, String meal, String dietaryOption, int count) {
         if (!rows.containsKey(date)) {
@@ -15,12 +16,20 @@ public class AttendanceCounts {
         rows.get(date).add(new Row(meal, dietaryOption, count));
     }
 
+    public void storeDietaryOptionOrder(String dietaryOption, int order) {
+        dietaryOptionOrders.put(dietaryOption, order);
+    }
+
     public List<String> getSortedDietaryOptions() {
         return rows.values().stream()
                 .flatMap(Collection::stream)
                 .map(Row::getDietaryOption)
                 .distinct()
-                .sorted()
+                .sorted((dietaryOption1, dietaryOption2) -> {
+                    int ordinal1 = dietaryOptionOrders.getOrDefault(dietaryOption1, Integer.MAX_VALUE);
+                    int ordinal2 = dietaryOptionOrders.getOrDefault(dietaryOption2, Integer.MAX_VALUE);
+                    return Integer.compare(ordinal1, ordinal2);
+                })
                 .collect(Collectors.toList());
     }
 
