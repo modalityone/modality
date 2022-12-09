@@ -15,16 +15,6 @@ public class AttendanceCounts {
         rows.get(date).add(new Row(meal, dietaryOption, count));
     }
 
-
-    public List<String> getSortedMeals() {
-        return rows.values().stream()
-                .flatMap(Collection::stream)
-                .map(Row::getMeal)
-                .distinct()
-                .sorted()
-                .collect(Collectors.toList());
-    }
-
     public List<String> getSortedDietaryOptions() {
         return rows.values().stream()
                 .flatMap(Collection::stream)

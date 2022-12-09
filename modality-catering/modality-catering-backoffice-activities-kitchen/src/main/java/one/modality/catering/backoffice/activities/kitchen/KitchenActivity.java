@@ -31,7 +31,7 @@ public class KitchenActivity extends ViewDomainActivityBase
         implements UiRouteActivityContextMixin<ViewDomainActivityContextFinal>,
         ModalityButtonFactoryMixin  {
 
-    private static final String MEAL_COUNT_SQL = "select si.date, i.code, di.code, count(*)\n" +
+    private static final String MEAL_COUNT_SQL = "select si.date, i.name, di.code, count(*)\n" +
             "from attendance a\n" +
             "  join scheduled_item si on si.id = a.scheduled_item_id\n" +
             "  join document_line dl on dl.id=a.document_line_id\n" +
@@ -50,7 +50,7 @@ public class KitchenActivity extends ViewDomainActivityBase
             "       when di.id=-2 then not exists(select * from document_line dl2 join item i2 on i2.id=dl2.item_id join item_family f2 on f2.id=i2.family_id where dl2.document_id=dl.document_id and not dl2.cancelled and f2.code='diet')\n" +
             "       else exists(select * from document_line dl2 where dl2.document_id=dl.document_id and not dl2.cancelled and dl2.item_id=di.id)\n" +
             "        end\n" +
-            "group by si.date, i.code, di.code, i.ord, di.ord\n" +
+            "group by si.date, i.name, di.code, i.ord, di.ord\n" +
             "order by si.date, i.ord, di.ord;";
 
     private VBox body = new VBox();

@@ -34,7 +34,7 @@ public class AttendanceDayPanel extends GridPane {
 
     private List<Item> sortMeals(AttendanceCounts attendanceCounts, LocalDate date, List<Item> meals) {
         return meals.stream()
-                .filter(meal -> attendanceCounts.getCount(date, meal.getCode(), DIETARY_OPTION_TOTAL) > 0)
+                .filter(meal -> attendanceCounts.getCount(date, meal.getName(), DIETARY_OPTION_TOTAL) > 0)
                 .sorted((meal1, meal2) -> Integer.compare(meal1.getOrd(), meal2.getOrd()))
                 .collect(Collectors.toList());
     }
@@ -98,7 +98,7 @@ public class AttendanceDayPanel extends GridPane {
         for (Item meal : displayedMeals) {
             int rowIndex = 1;
             for (String dietaryOption : dietaryOptions) {
-                int count = attendanceCounts.getCount(date, meal.getCode(), dietaryOption);
+                int count = attendanceCounts.getCount(date, meal.getName(), dietaryOption);
                 Label countLabel = new Label(String.valueOf(count));
                 countLabel.setAlignment(Pos.CENTER);
                 bindMealLabelWidth(countLabel, displayedMeals);
