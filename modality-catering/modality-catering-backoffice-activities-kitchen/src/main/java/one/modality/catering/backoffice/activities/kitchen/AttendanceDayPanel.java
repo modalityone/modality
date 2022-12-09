@@ -18,11 +18,12 @@ public class AttendanceDayPanel extends GridPane {
 
     private static final Background BACKGROUND = new Background (new BackgroundFill(Color.LIGHTGRAY, new CornerRadii(5), Insets.EMPTY));
     private static final Color DAY_NUMBER_TEXT_COLOR = Color.web("#0096d6");
+     private static final String DIETARY_OPTION_TOTAL = "Total";
 
     private DoubleProperty firstColumnWidthProperty = new SimpleDoubleProperty(0);
 
     public AttendanceDayPanel(AttendanceCounts attendanceCounts, LocalDate date, List<Item> displayedMeals) {
-        List<Item> sortedDisplayedMeals = sortMeals(displayedMeals);
+        List<Item> sortedDisplayedMeals = sortMeals(attendanceCounts, date, displayedMeals);
         setBackground(BACKGROUND);
         setPadding(new Insets(4));
         addDayOfMonthNumber(date);
@@ -31,8 +32,9 @@ public class AttendanceDayPanel extends GridPane {
         addMealCounts(attendanceCounts, date, sortedDisplayedMeals);
     }
 
-    private List<Item> sortMeals(List<Item> meals) {
+    private List<Item> sortMeals(AttendanceCounts attendanceCounts, LocalDate date, List<Item> meals) {
         return meals.stream()
+                .filter(meal -> attendanceCounts.getCount(date, meal.getCode(), DIETARY_OPTION_TOTAL) > 0)
                 .sorted((meal1, meal2) -> Integer.compare(meal1.getOrd(), meal2.getOrd()))
                 .collect(Collectors.toList());
     }
