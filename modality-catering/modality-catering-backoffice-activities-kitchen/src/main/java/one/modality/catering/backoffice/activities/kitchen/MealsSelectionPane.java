@@ -70,7 +70,7 @@ public class MealsSelectionPane extends VBox {
 
         Object organizationIdPk = organization.getId().getPrimaryKey();
         organization.getStore()
-                .executeQuery("select id,name,code from Item i where i.family.code = 'meals' and organization = " + organizationIdPk)
+                .executeQuery("select id,name,code,ord from Item i where i.family.code = 'meals' and organization = " + organizationIdPk + " order by ord")
                 .onSuccess(entities -> {
                     List<Item> items = entities.stream()
                             .map(Item.class::cast)
