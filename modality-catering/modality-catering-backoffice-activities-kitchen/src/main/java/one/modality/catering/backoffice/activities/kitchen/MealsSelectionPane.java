@@ -41,14 +41,22 @@ public class MealsSelectionPane extends VBox {
             return;
         }
 
+        AbbreviationGenerator abbreviationGenerator = buildAbbreviationGenerator();
         for (Item item : allOrganizationItemsProperty.get()) {
-            CheckBox itemCheckBox = new CheckBox(item.getName());
+            CheckBox itemCheckBox = new CheckBox(item.getName() + " (" + abbreviationGenerator.getAbbreviation(item.getName()) + ")");
             itemCheckBox.selectedProperty().addListener((observableValue, oldValue, newValue) -> updateSelectedItems());
             itemCheckBox.setSelected(true);
             itemCheckBoxMap.put(item, itemCheckBox);
             Platform.runLater(() -> getChildren().add(itemCheckBox));
         }
         updateSelectedItems();
+    }
+
+    private AbbreviationGenerator buildAbbreviationGenerator() {
+        List<String> mealNames = allOrganizationItemsProperty.get().stream()
+                .map(Item::getName)
+                .collect(Collectors.toList());
+        return new AbbreviationGenerator(mealNames);
     }
 
     private void updateSelectedItems() {
@@ -77,6 +85,10 @@ public class MealsSelectionPane extends VBox {
                             .collect(Collectors.toList());
                     allOrganizationItemsProperty.set(items);
                 });
+    }
+
+    public AbbreviationGenerator getAbbreviationGenerator() {
+        return buildAbbreviationGenerator();
     }
 
 }

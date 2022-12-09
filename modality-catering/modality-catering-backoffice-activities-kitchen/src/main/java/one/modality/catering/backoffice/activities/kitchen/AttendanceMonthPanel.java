@@ -20,10 +20,10 @@ public class AttendanceMonthPanel extends GridPane {
     private static final double HORIZONTAL_GAP = 4;
     private static final double VERTICAL_GAP = 4;
 
-    public AttendanceMonthPanel(AttendanceCounts attendanceCounts, LocalDate month, List<Item> displayedMeals) {
+    public AttendanceMonthPanel(AttendanceCounts attendanceCounts, LocalDate month, List<Item> displayedMeals, AbbreviationGenerator abbreviationGenerator) {
         if (attendanceCounts != null) {
             addDayNames();
-            addDayPanels(attendanceCounts, month, displayedMeals);
+            addDayPanels(attendanceCounts, month, displayedMeals, abbreviationGenerator);
             setHgap(HORIZONTAL_GAP);
             setVgap(VERTICAL_GAP);
         }
@@ -44,13 +44,13 @@ public class AttendanceMonthPanel extends GridPane {
         }
     }
 
-    private void addDayPanels(AttendanceCounts attendanceCounts, LocalDate month, List<Item> displayedMeals) {
+    private void addDayPanels(AttendanceCounts attendanceCounts, LocalDate month, List<Item> displayedMeals, AbbreviationGenerator abbreviationGenerator) {
         int numDaysInMonth = YearMonth.of(month.getYear(), month.getMonth()).lengthOfMonth();
         int rowIndex = 1;
         for (int day = 0; day < numDaysInMonth; day++) {
             LocalDate dayDate = LocalDate.of(month.getYear(), month.getMonth(), day + 1);
             int columnIndex = dayDate.getDayOfWeek().ordinal();
-            AttendanceDayPanel dayPanel = new AttendanceDayPanel(attendanceCounts, dayDate, displayedMeals);
+            AttendanceDayPanel dayPanel = new AttendanceDayPanel(attendanceCounts, dayDate, displayedMeals, abbreviationGenerator);
             add(dayPanel, columnIndex, rowIndex);
             if (columnIndex == 6) {
                 rowIndex++;

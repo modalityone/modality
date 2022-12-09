@@ -12,7 +12,6 @@ import one.modality.base.shared.entities.Item;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class AttendanceDayPanel extends GridPane {
 
@@ -22,12 +21,12 @@ public class AttendanceDayPanel extends GridPane {
 
     private DoubleProperty firstColumnWidthProperty = new SimpleDoubleProperty(0);
 
-    public AttendanceDayPanel(AttendanceCounts attendanceCounts, LocalDate date, List<Item> displayedMeals) {
+    public AttendanceDayPanel(AttendanceCounts attendanceCounts, LocalDate date, List<Item> displayedMeals, AbbreviationGenerator abbreviationGenerator) {
         List<Item> sortedDisplayedMeals = sortMeals(attendanceCounts, date, displayedMeals);
         setBackground(BACKGROUND);
         setPadding(new Insets(4));
         addDayOfMonthNumber(date);
-        addMealTitles(sortedDisplayedMeals);
+        addMealTitles(sortedDisplayedMeals, abbreviationGenerator);
         addDietaryOptions(attendanceCounts);
         addMealCounts(attendanceCounts, date, sortedDisplayedMeals);
     }
@@ -50,10 +49,10 @@ public class AttendanceDayPanel extends GridPane {
         return dayNumber > 9 ? String.valueOf(dayNumber) : "0" + String.valueOf(dayNumber);
     }
 
-    private void addMealTitles(List<Item> displayedMeals) {
+    private void addMealTitles(List<Item> displayedMeals, AbbreviationGenerator abbreviationGenerator) {
         int columnIndex = 1;
         for (Item meal : displayedMeals) {
-            String mealTitle = getMealAbbreviation(meal.getName());
+            String mealTitle = abbreviationGenerator.getAbbreviation(meal.getName());
             Label mealLabel = new Label(mealTitle);
             mealLabel.setAlignment(Pos.CENTER);
             bindMealLabelWidth(mealLabel, displayedMeals);
@@ -64,16 +63,6 @@ public class AttendanceDayPanel extends GridPane {
 
     private void bindMealLabelWidth(Label label, List<Item> displayedMeals) {
         label.prefWidthProperty().bind(widthProperty().subtract(firstColumnWidthProperty).divide(displayedMeals.size()));
-    }
-
-    private static String getMealAbbreviation(String mealName) {
-        try {
-            return Stream.of(mealName.split(" "))
-                    .map(s -> String.valueOf(s.charAt(0)))
-                    .collect(Collectors.joining());
-        } catch (Exception e) {
-            return mealName;
-        }
     }
 
     private void addDietaryOptions(AttendanceCounts attendanceCounts) {
