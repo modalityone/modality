@@ -161,7 +161,12 @@ public class KitchenActivity extends ViewDomainActivityBase
                             .map(entity -> (Organization) entity)
                             .sorted((org1, org2) -> org1.getName().compareTo(org2.getName()))
                             .collect(Collectors.toList());
-                    organizationComboBox.setItems(FXCollections.observableArrayList(organizationList));
+                    Platform.runLater(() -> {
+                        organizationComboBox.setItems(FXCollections.observableArrayList(organizationList));
+                        if (!organizationList.isEmpty()) {
+                            Platform.runLater(() -> organizationComboBox.setValue(organizationList.get(0)));
+                        }
+                    });
                 });
     }
 
