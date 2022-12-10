@@ -1,12 +1,17 @@
 package one.modality.catering.backoffice.activities.kitchen;
 
+import dev.webfx.extras.scalepane.ScalePane;
+import dev.webfx.platform.json.Json;
+import dev.webfx.stack.ui.fxraiser.FXRaiser;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.SVGPath;
 import one.modality.base.shared.entities.Item;
 
 import java.time.LocalDate;
@@ -17,7 +22,7 @@ public class AttendanceDayPanel extends GridPane {
 
     private static final Background BACKGROUND = new Background (new BackgroundFill(Color.LIGHTGRAY, new CornerRadii(5), Insets.EMPTY));
     private static final Color DAY_NUMBER_TEXT_COLOR = Color.web("#0096d6");
-     private static final String DIETARY_OPTION_TOTAL = "Total";
+    private static final String DIETARY_OPTION_TOTAL = "Total";
 
     private DoubleProperty firstColumnWidthProperty = new SimpleDoubleProperty(0);
 
@@ -70,13 +75,26 @@ public class AttendanceDayPanel extends GridPane {
         int rowIndex = 1;
         for (String dietaryOption : dietaryOptions) {
             Label dietaryOptionLabel = new Label(dietaryOption);
-            dietaryOptionLabel.widthProperty().addListener((observableValue, oldValue, newValue) -> {
+            dietaryOptionLabel.setMinWidth(Region.USE_PREF_SIZE);
+            HBox dietaryOptionBox = new HBox(dietaryOptionLabel);
+            String svg = attendanceCounts.getSvgForDietaryOption(dietaryOption);
+            if (svg != null) {
+                Node node = FXRaiser.raiseToNode(Json.parseObject(svg));
+                if (node instanceof SVGPath) {
+                    ((SVGPath) node).setFill(Color.BLACK);
+                }
+                ScalePane scalePane = new ScalePane(node);
+                dietaryOptionBox.getChildren().add(0, scalePane);
+            }
+            dietaryOptionBox.widthProperty().addListener((observableValue, oldValue, newValue) -> {
                 if (newValue.doubleValue() > firstColumnWidthProperty.doubleValue()) {
                     firstColumnWidthProperty.set(newValue.doubleValue());
                 }
             });
-            dietaryOptionLabel.setMinWidth(Region.USE_PREF_SIZE);
-            add(dietaryOptionLabel, 0, rowIndex);
+            firstColumnWidthProperty.addListener((observableValue, oldValue, newValue) -> {
+                dietaryOptionBox.setPrefWidth(newValue.doubleValue());
+            });
+            add(dietaryOptionBox, 0, rowIndex);
             rowIndex++;
         }
     }

@@ -31,16 +31,16 @@ public class KitchenActivity extends ViewDomainActivityBase
         implements UiRouteActivityContextMixin<ViewDomainActivityContextFinal>,
         ModalityButtonFactoryMixin  {
 
-    private static final String MEAL_COUNT_SQL = "select si.date, i.name, di.code, count(*), di.ord\n" +
+    private static final String MEAL_COUNT_SQL = "select si.date, i.name, di.code, count(*), di.ord, di.graphic\n" +
             "from attendance a\n" +
             "  join scheduled_item si on si.id = a.scheduled_item_id\n" +
             "  join document_line dl on dl.id=a.document_line_id\n" +
             "  join site s on s.id=si.site_id\n" +
             "  join item i on i.id=si.item_id\n" +
             "  join item_family f on f.id=i.family_id  \n" +
-            "  , ( select i.id,i.code,i.ord from item i join item_family f on f.id=i.family_id where i.organization_id = $1 and f.code='diet'\n" +
+            "  , ( select i.id,i.code,i.ord,i.graphic from item i join item_family f on f.id=i.family_id where i.organization_id = $1 and f.code='diet'\n" +
             "    union\n" +
-            "    select * from (values (-1, 'Total', 10001), (-2, '?', 10000)) vitem(id, code, ord)\n" +
+            "    select * from (values (-1, 'Total', 10001, null), (-2, '?', 10000, null)) vitem(id, code, ord)\n" +
             "    ) di\n" +
             "where not dl.cancelled\n" +
             "  and s.organization_id = $2\n" +
@@ -50,7 +50,7 @@ public class KitchenActivity extends ViewDomainActivityBase
             "       when di.id=-2 then not exists(select * from document_line dl2 join item i2 on i2.id=dl2.item_id join item_family f2 on f2.id=i2.family_id where dl2.document_id=dl.document_id and not dl2.cancelled and f2.code='diet')\n" +
             "       else exists(select * from document_line dl2 where dl2.document_id=dl.document_id and not dl2.cancelled and dl2.item_id=di.id)\n" +
             "        end\n" +
-            "group by si.date, i.name, di.code, i.ord, di.ord\n" +
+            "group by si.date, i.name, di.code, i.ord, di.ord, di.graphic\n" +
             "order by si.date, i.ord, di.ord;";
 
     private VBox body = new VBox();
@@ -119,6 +119,8 @@ public class KitchenActivity extends ViewDomainActivityBase
                         attendanceCounts.add(date, meal, dietaryOption, count);
                         int dietaryOptionOrdinal = result.getValue(row, 4);
                         attendanceCounts.storeDietaryOptionOrder(dietaryOption, dietaryOptionOrdinal);
+                        String svg = result.getValue(row, 5);
+                        attendanceCounts.storeDietaryOptionSvg(dietaryOption, svg);
                     }
                     Platform.runLater(() -> refreshAttendanceMonthPanel(selectedMonth));
                 });

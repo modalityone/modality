@@ -8,6 +8,7 @@ public class AttendanceCounts {
 
     private Map<LocalDate, List<Row>> rows = new HashMap<>();
     private Map<String, Integer> dietaryOptionOrders = new HashMap<>();
+    private Map<String, String> dietaryOptionSvgs = new HashMap<>();
 
     public void add(LocalDate date, String meal, String dietaryOption, int count) {
         if (!rows.containsKey(date)) {
@@ -31,6 +32,14 @@ public class AttendanceCounts {
                     return Integer.compare(ordinal1, ordinal2);
                 })
                 .collect(Collectors.toList());
+    }
+
+    public void storeDietaryOptionSvg(String dietaryOption, String svg) {
+        dietaryOptionSvgs.put(dietaryOption, svg);
+    }
+
+    public String getSvgForDietaryOption(String dietaryOption) {
+        return dietaryOptionSvgs.get(dietaryOption);
     }
 
     public int getCount(LocalDate date, String meal, String dietaryOption) {
