@@ -52,8 +52,9 @@ public class AttendanceDayPanel extends GridPane {
     private void addDayOfMonthNumber(LocalDate date) {
         int dayNumber = date.getDayOfMonth();
         Label dayNumberLabel = new Label(padWithLeadingZero(dayNumber));
+        dayNumberLabel.setFont(MEAL_TEXT_FONT);
         dayNumberLabel.setTextFill(DAY_NUMBER_TEXT_COLOR);
-        add(dayNumberLabel, 0, 0);
+        add(dayNumberLabel, 1, 0);
     }
 
     private String padWithLeadingZero(int dayNumber) {
@@ -89,6 +90,7 @@ public class AttendanceDayPanel extends GridPane {
                     ((SVGPath) node).setFill(DIETARY_OPTION_TEXT_COLOR);
                 }
                 ScalePane scalePane = new ScalePane(node);
+                scalePane.setPadding(new Insets(0, 4, 0, 0));
                 scalePane.widthProperty().addListener((observableValue, oldValue, newValue) -> {
                     if (newValue.doubleValue() > graphicColumnWidthProperty.doubleValue()) {
                         graphicColumnWidthProperty.set(newValue.doubleValue());
