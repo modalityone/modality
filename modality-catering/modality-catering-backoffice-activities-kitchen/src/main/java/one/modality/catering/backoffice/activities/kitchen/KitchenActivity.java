@@ -13,6 +13,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
@@ -21,6 +22,7 @@ import one.modality.base.shared.entities.Organization;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,16 +33,16 @@ public class KitchenActivity extends ViewDomainActivityBase
         implements UiRouteActivityContextMixin<ViewDomainActivityContextFinal>,
         ModalityButtonFactoryMixin  {
 
-    private static final String MEAL_COUNT_SQL = "select si.date, i.name, di.code, count(*), di.ord, di.graphic\n" +
+    private static final String MEAL_COUNT_SQL = "select si.date, i.name, di.code, di.name, count(*), di.ord, di.graphic\n" +
             "from attendance a\n" +
             "  join scheduled_item si on si.id = a.scheduled_item_id\n" +
             "  join document_line dl on dl.id=a.document_line_id\n" +
             "  join site s on s.id=si.site_id\n" +
             "  join item i on i.id=si.item_id\n" +
             "  join item_family f on f.id=i.family_id  \n" +
-            "  , ( select i.id,i.code,i.ord,i.graphic from item i join item_family f on f.id=i.family_id where i.organization_id = $1 and f.code='diet'\n" +
+            "  , ( select i.id,i.code,i.name,i.ord,i.graphic from item i join item_family f on f.id=i.family_id where i.organization_id = $1 and f.code='diet'\n" +
             "    union\n" +
-            "    select * from (values (-1, 'Total', 10001, null), (-2, '?', 10000, null)) vitem(id, code, ord)\n" +
+            "    select * from (values (-1, 'Total', null, 10001, null), (-2, '?', null, 10000, null)) vitem(id, code, ord)\n" +
             "    ) di\n" +
             "where not dl.cancelled\n" +
             "  and s.organization_id = $2\n" +
@@ -50,12 +52,13 @@ public class KitchenActivity extends ViewDomainActivityBase
             "       when di.id=-2 then not exists(select * from document_line dl2 join item i2 on i2.id=dl2.item_id join item_family f2 on f2.id=i2.family_id where dl2.document_id=dl.document_id and not dl2.cancelled and f2.code='diet')\n" +
             "       else exists(select * from document_line dl2 where dl2.document_id=dl.document_id and not dl2.cancelled and dl2.item_id=di.id)\n" +
             "        end\n" +
-            "group by si.date, i.name, di.code, i.ord, di.ord, di.graphic\n" +
+            "group by si.date, i.name, di.code, di.name, i.ord, di.ord, di.graphic\n" +
             "order by si.date, i.ord, di.ord;";
 
     private VBox body = new VBox();
     private ComboBox<Organization> organizationComboBox = new ComboBox<>();
     private MealsSelectionPane mealsSelectionPane = new MealsSelectionPane();
+    private DietaryOptionKeyPanel dietaryOptionKeyPanel = new DietaryOptionKeyPanel();
     private MonthSelectionPanel monthSelectionPanel = new MonthSelectionPanel(this::updateAttendanceMonthPanel);
     private AttendanceMonthPanel attendanceMonthPanel;
     private VBox attendanceCountsPanelContainer = new VBox();
@@ -88,7 +91,8 @@ public class KitchenActivity extends ViewDomainActivityBase
                 loadAttendance();
             }
         });
-        body.getChildren().addAll(organizationComboBox, mealsSelectionPane, monthSelectionPanel, attendanceCountsPanelContainer);
+        HBox keyPane = new HBox(mealsSelectionPane, dietaryOptionKeyPanel);
+        body.getChildren().addAll(organizationComboBox, keyPane, monthSelectionPanel, attendanceCountsPanelContainer);
         return body;
     }
 
@@ -110,19 +114,28 @@ public class KitchenActivity extends ViewDomainActivityBase
         QueryService.executeQuery(query)
                 .onFailure(System.out::println)
                 .onSuccess(result -> {
+                    LinkedHashMap<String, String> dietaryOptionSvgs = new LinkedHashMap();
                     for (int row = 0; row < result.getRowCount(); row++) {
                         String dateString = result.getValue(row, 0);
                         LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ISO_ZONED_DATE_TIME);
                         String meal = result.getValue(row, 1);
-                        String dietaryOption = result.getValue(row, 2);
-                        int count = result.getValue(row, 3);
-                        attendanceCounts.add(date, meal, dietaryOption, count);
-                        int dietaryOptionOrdinal = result.getValue(row, 4);
-                        attendanceCounts.storeDietaryOptionOrder(dietaryOption, dietaryOptionOrdinal);
-                        String svg = result.getValue(row, 5);
-                        attendanceCounts.storeDietaryOptionSvg(dietaryOption, svg);
+                        String dietaryOptionCode = result.getValue(row, 2);
+                        String dietaryOptionName = result.getValue(row, 3);
+                        int count = result.getValue(row, 4);
+                        attendanceCounts.add(date, meal, dietaryOptionCode, count);
+                        int dietaryOptionOrdinal = result.getValue(row, 5);
+                        attendanceCounts.storeDietaryOptionOrder(dietaryOptionCode, dietaryOptionOrdinal);
+                        String svg = result.getValue(row, 6);
+                        attendanceCounts.storeDietaryOptionSvg(dietaryOptionCode, svg);
+                        if (dietaryOptionCode != null && dietaryOptionName != null && svg != null) {
+                            String dietaryOptionKeyText = dietaryOptionName + " (" + dietaryOptionCode + ")";
+                            dietaryOptionSvgs.put(dietaryOptionKeyText, svg);
+                        }
                     }
-                    Platform.runLater(() -> refreshAttendanceMonthPanel(selectedMonth));
+                    Platform.runLater(() -> {
+                        dietaryOptionKeyPanel.populate(dietaryOptionSvgs);
+                        refreshAttendanceMonthPanel(selectedMonth);
+                    });
                 });
     }
 
