@@ -12,6 +12,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import one.modality.base.shared.entities.Item;
 
 import java.time.LocalDate;
@@ -22,7 +24,10 @@ public class AttendanceDayPanel extends GridPane {
 
     private static final Background BACKGROUND = new Background (new BackgroundFill(Color.LIGHTGRAY, new CornerRadii(5), Insets.EMPTY));
     private static final Color DAY_NUMBER_TEXT_COLOR = Color.web("#0096d6");
+    private static final Color DIETARY_OPTION_TEXT_COLOR = Color.web("#838788");
     private static final String DIETARY_OPTION_TOTAL = "Total";
+    private static final Color MEAL_TEXT_COLOR = Color.web("#909394");
+    private static final Font MEAL_TEXT_FONT = Font.font(new Label().getFont().getFamily(), FontWeight.BOLD, new Label().getFont().getSize());
 
     private DoubleProperty graphicColumnWidthProperty = new SimpleDoubleProperty(0);
     private DoubleProperty dietaryOptionColumnWidthProperty = new SimpleDoubleProperty(0);
@@ -60,6 +65,8 @@ public class AttendanceDayPanel extends GridPane {
         for (Item meal : displayedMeals) {
             String mealTitle = abbreviationGenerator.getAbbreviation(meal.getName());
             Label mealLabel = new Label(mealTitle);
+            mealLabel.setFont(MEAL_TEXT_FONT);
+            mealLabel.setTextFill(MEAL_TEXT_COLOR);
             mealLabel.setAlignment(Pos.CENTER);
             bindMealLabelWidth(mealLabel, displayedMeals);
             add(mealLabel, columnIndex, 0);
@@ -79,7 +86,7 @@ public class AttendanceDayPanel extends GridPane {
             if (svg != null) {
                 Node node = FXRaiser.raiseToNode(Json.parseObject(svg));
                 if (node instanceof SVGPath) {
-                    ((SVGPath) node).setFill(Color.BLACK);
+                    ((SVGPath) node).setFill(DIETARY_OPTION_TEXT_COLOR);
                 }
                 ScalePane scalePane = new ScalePane(node);
                 scalePane.widthProperty().addListener((observableValue, oldValue, newValue) -> {
@@ -91,6 +98,7 @@ public class AttendanceDayPanel extends GridPane {
             }
 
             Label dietaryOptionLabel = new Label(dietaryOption);
+            dietaryOptionLabel.setTextFill(DIETARY_OPTION_TEXT_COLOR);
             dietaryOptionLabel.setMinWidth(Region.USE_PREF_SIZE);
             dietaryOptionLabel.widthProperty().addListener((observableValue, oldValue, newValue) -> {
                 if (newValue.doubleValue() > dietaryOptionColumnWidthProperty.doubleValue()) {
