@@ -24,7 +24,8 @@ public class AttendanceDayPanel extends GridPane {
     private static final Color DAY_NUMBER_TEXT_COLOR = Color.web("#0096d6");
     private static final String DIETARY_OPTION_TOTAL = "Total";
 
-    private DoubleProperty firstColumnWidthProperty = new SimpleDoubleProperty(0);
+    private DoubleProperty graphicColumnWidthProperty = new SimpleDoubleProperty(0);
+    private DoubleProperty dietaryOptionColumnWidthProperty = new SimpleDoubleProperty(0);
 
     public AttendanceDayPanel(AttendanceCounts attendanceCounts, LocalDate date, List<Item> displayedMeals, AbbreviationGenerator abbreviationGenerator) {
         List<Item> sortedDisplayedMeals = sortMeals(attendanceCounts, date, displayedMeals);
@@ -55,7 +56,7 @@ public class AttendanceDayPanel extends GridPane {
     }
 
     private void addMealTitles(List<Item> displayedMeals, AbbreviationGenerator abbreviationGenerator) {
-        int columnIndex = 1;
+        int columnIndex = 2;
         for (Item meal : displayedMeals) {
             String mealTitle = abbreviationGenerator.getAbbreviation(meal.getName());
             Label mealLabel = new Label(mealTitle);
@@ -67,16 +68,13 @@ public class AttendanceDayPanel extends GridPane {
     }
 
     private void bindMealLabelWidth(Label label, List<Item> displayedMeals) {
-        label.prefWidthProperty().bind(widthProperty().subtract(firstColumnWidthProperty).divide(displayedMeals.size()));
+        label.prefWidthProperty().bind(widthProperty().subtract(graphicColumnWidthProperty).subtract(dietaryOptionColumnWidthProperty).divide(displayedMeals.size()));
     }
 
     private void addDietaryOptions(AttendanceCounts attendanceCounts) {
         List<String> dietaryOptions = attendanceCounts.getSortedDietaryOptions();
         int rowIndex = 1;
         for (String dietaryOption : dietaryOptions) {
-            Label dietaryOptionLabel = new Label(dietaryOption);
-            dietaryOptionLabel.setMinWidth(Region.USE_PREF_SIZE);
-            HBox dietaryOptionBox = new HBox(dietaryOptionLabel);
             String svg = attendanceCounts.getSvgForDietaryOption(dietaryOption);
             if (svg != null) {
                 Node node = FXRaiser.raiseToNode(Json.parseObject(svg));
@@ -84,24 +82,30 @@ public class AttendanceDayPanel extends GridPane {
                     ((SVGPath) node).setFill(Color.BLACK);
                 }
                 ScalePane scalePane = new ScalePane(node);
-                dietaryOptionBox.getChildren().add(0, scalePane);
+                scalePane.widthProperty().addListener((observableValue, oldValue, newValue) -> {
+                    if (newValue.doubleValue() > graphicColumnWidthProperty.doubleValue()) {
+                        graphicColumnWidthProperty.set(newValue.doubleValue());
+                    }
+                });
+                add(scalePane, 0, rowIndex);
             }
-            dietaryOptionBox.widthProperty().addListener((observableValue, oldValue, newValue) -> {
-                if (newValue.doubleValue() > firstColumnWidthProperty.doubleValue()) {
-                    firstColumnWidthProperty.set(newValue.doubleValue());
+
+            Label dietaryOptionLabel = new Label(dietaryOption);
+            dietaryOptionLabel.setMinWidth(Region.USE_PREF_SIZE);
+            dietaryOptionLabel.widthProperty().addListener((observableValue, oldValue, newValue) -> {
+                if (newValue.doubleValue() > dietaryOptionColumnWidthProperty.doubleValue()) {
+                    dietaryOptionColumnWidthProperty.set(newValue.doubleValue());
                 }
             });
-            firstColumnWidthProperty.addListener((observableValue, oldValue, newValue) -> {
-                dietaryOptionBox.setPrefWidth(newValue.doubleValue());
-            });
-            add(dietaryOptionBox, 0, rowIndex);
+            add(dietaryOptionLabel, 1, rowIndex);
+
             rowIndex++;
         }
     }
 
     private void addMealCounts(AttendanceCounts attendanceCounts, LocalDate date, List<Item> displayedMeals) {
         List<String> dietaryOptions = attendanceCounts.getSortedDietaryOptions();
-        int columnIndex = 1;
+        int columnIndex = 2;
         for (Item meal : displayedMeals) {
             int rowIndex = 1;
             for (String dietaryOption : dietaryOptions) {
