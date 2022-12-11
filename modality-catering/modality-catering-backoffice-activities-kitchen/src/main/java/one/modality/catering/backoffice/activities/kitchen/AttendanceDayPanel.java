@@ -23,11 +23,14 @@ import java.util.stream.Collectors;
 public class AttendanceDayPanel extends GridPane {
 
     private static final Background BACKGROUND_DEFAULT = new Background (new BackgroundFill(Color.LIGHTGRAY, new CornerRadii(5), Insets.EMPTY));
-    private static final Background BACKGROUND_TODAY = new Background (new BackgroundFill(Color.YELLOW, new CornerRadii(5), Insets.EMPTY));
-    private static final Color DAY_NUMBER_TEXT_COLOR = Color.web("#0096d6");
-    private static final Color DIETARY_OPTION_TEXT_COLOR = Color.web("#838788");
+    private static final Background BACKGROUND_TODAY = new Background (new BackgroundFill(Color.web("#0096d6"), new CornerRadii(5), Insets.EMPTY));
+    private static final Color DAY_NUMBER_TEXT_COLOR_DEFAULT = Color.web("#0096d6");
+    private static final Color DAY_NUMBER_TEXT_COLOR_TODAY = Color.LIGHTGRAY;
+    private static final Color DIETARY_OPTION_TEXT_COLOR_DEFAULT = Color.web("#838788");
+    private static final Color DIETARY_OPTION_TEXT_COLOR_TODAY = Color.LIGHTGRAY;
     private static final String DIETARY_OPTION_TOTAL = "Total";
-    private static final Color MEAL_TEXT_COLOR = Color.web("#909394");
+    private static final Color MEAL_TEXT_COLOR_DEFAULT = Color.web("#909394");
+    private static final Color MEAL_TEXT_COLOR_TODAY = Color.LIGHTGRAY;
     private static final Font MEAL_TEXT_FONT = Font.font(new Label().getFont().getFamily(), FontWeight.BOLD, new Label().getFont().getSize());
 
     private DoubleProperty graphicColumnWidthProperty = new SimpleDoubleProperty(0);
@@ -35,21 +38,17 @@ public class AttendanceDayPanel extends GridPane {
 
     public AttendanceDayPanel(AttendanceCounts attendanceCounts, LocalDate date, List<Item> displayedMeals, AbbreviationGenerator abbreviationGenerator) {
         List<Item> sortedDisplayedMeals = sortMeals(attendanceCounts, date, displayedMeals);
-        chooseBackgroundFromDate(date);
+        setBackground(isToday(date) ? BACKGROUND_TODAY : BACKGROUND_DEFAULT);
         setPadding(new Insets(4));
         addDayOfMonthNumber(date);
-        addMealTitles(sortedDisplayedMeals, abbreviationGenerator);
-        addDietaryOptions(attendanceCounts);
+        addMealTitles(date, sortedDisplayedMeals, abbreviationGenerator);
+        addDietaryOptions(date, attendanceCounts);
         addMealCounts(attendanceCounts, date, sortedDisplayedMeals);
     }
 
-    private void chooseBackgroundFromDate(LocalDate date) {
+    private static boolean isToday(LocalDate date) {
         LocalDate now = LocalDate.now();
-        if (date.getDayOfMonth() == now.getDayOfMonth() && date.getMonthValue() == now.getMonthValue() && date.getYear() == now.getYear()) {
-            setBackground(BACKGROUND_TODAY);
-        } else {
-            setBackground(BACKGROUND_DEFAULT);
-        }
+        return date.getDayOfMonth() == now.getDayOfMonth() && date.getMonthValue() == now.getMonthValue() && date.getYear() == now.getYear();
     }
 
     private List<Item> sortMeals(AttendanceCounts attendanceCounts, LocalDate date, List<Item> meals) {
@@ -63,7 +62,7 @@ public class AttendanceDayPanel extends GridPane {
         int dayNumber = date.getDayOfMonth();
         Label dayNumberLabel = new Label(padWithLeadingZero(dayNumber));
         dayNumberLabel.setFont(MEAL_TEXT_FONT);
-        dayNumberLabel.setTextFill(DAY_NUMBER_TEXT_COLOR);
+        dayNumberLabel.setTextFill(isToday(date) ? DAY_NUMBER_TEXT_COLOR_TODAY : DAY_NUMBER_TEXT_COLOR_DEFAULT);
         add(dayNumberLabel, 1, 0);
     }
 
@@ -71,13 +70,13 @@ public class AttendanceDayPanel extends GridPane {
         return dayNumber > 9 ? String.valueOf(dayNumber) : "0" + String.valueOf(dayNumber);
     }
 
-    private void addMealTitles(List<Item> displayedMeals, AbbreviationGenerator abbreviationGenerator) {
+    private void addMealTitles(LocalDate date, List<Item> displayedMeals, AbbreviationGenerator abbreviationGenerator) {
         int columnIndex = 2;
         for (Item meal : displayedMeals) {
             String mealTitle = abbreviationGenerator.getAbbreviation(meal.getName());
             Label mealLabel = new Label(mealTitle);
             mealLabel.setFont(MEAL_TEXT_FONT);
-            mealLabel.setTextFill(MEAL_TEXT_COLOR);
+            mealLabel.setTextFill(isToday(date) ? MEAL_TEXT_COLOR_TODAY : MEAL_TEXT_COLOR_DEFAULT);
             mealLabel.setAlignment(Pos.CENTER);
             bindMealLabelWidth(mealLabel, displayedMeals);
             add(mealLabel, columnIndex, 0);
@@ -89,7 +88,8 @@ public class AttendanceDayPanel extends GridPane {
         label.prefWidthProperty().bind(widthProperty().subtract(graphicColumnWidthProperty).subtract(dietaryOptionColumnWidthProperty).divide(displayedMeals.size()));
     }
 
-    private void addDietaryOptions(AttendanceCounts attendanceCounts) {
+    private void addDietaryOptions(LocalDate date, AttendanceCounts attendanceCounts) {
+        Color color = isToday(date) ? DIETARY_OPTION_TEXT_COLOR_TODAY : DIETARY_OPTION_TEXT_COLOR_DEFAULT;
         List<String> dietaryOptions = attendanceCounts.getSortedDietaryOptions();
         int rowIndex = 1;
         for (String dietaryOption : dietaryOptions) {
@@ -97,7 +97,7 @@ public class AttendanceDayPanel extends GridPane {
             if (svg != null) {
                 Node node = FXRaiser.raiseToNode(Json.parseObject(svg));
                 if (node instanceof SVGPath) {
-                    ((SVGPath) node).setFill(DIETARY_OPTION_TEXT_COLOR);
+                    ((SVGPath) node).setFill(color);
                 }
                 ScalePane scalePane = new ScalePane(node);
                 scalePane.setPadding(new Insets(0, 4, 0, 0));
@@ -110,7 +110,7 @@ public class AttendanceDayPanel extends GridPane {
             }
 
             Label dietaryOptionLabel = new Label(dietaryOption);
-            dietaryOptionLabel.setTextFill(DIETARY_OPTION_TEXT_COLOR);
+            dietaryOptionLabel.setTextFill(color);
             dietaryOptionLabel.setMinWidth(Region.USE_PREF_SIZE);
             dietaryOptionLabel.widthProperty().addListener((observableValue, oldValue, newValue) -> {
                 if (newValue.doubleValue() > dietaryOptionColumnWidthProperty.doubleValue()) {
