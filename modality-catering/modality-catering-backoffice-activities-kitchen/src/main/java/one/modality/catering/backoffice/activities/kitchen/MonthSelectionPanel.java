@@ -17,11 +17,11 @@ public class MonthSelectionPanel extends HBox {
 
     private static final Color BG_COLOR_SELECTED = Color.web("#0096d6");
     private static final Color BG_COLOR_UNSELECTED = Color.web("#838788");
+
     private final MonthSelectionPanelListener listener;
     private final Map<LocalDate, VBox> monthBoxes = new HashMap<>();
 
     private LocalDate selectedMonth;
-    private ScrollPane scrollPane;
 
     public MonthSelectionPanel(MonthSelectionPanelListener listener) {
         this.listener = listener;
@@ -36,7 +36,8 @@ public class MonthSelectionPanel extends HBox {
             month = month.plusMonths(1);
         }
         showSelection();
-        scrollPane = new ScrollPane(body);
+        ScrollPane scrollPane = new ScrollPane(body);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         getChildren().add(scrollPane);
     }
 
