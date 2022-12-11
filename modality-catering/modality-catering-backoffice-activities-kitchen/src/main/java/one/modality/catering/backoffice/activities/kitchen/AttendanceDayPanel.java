@@ -29,6 +29,7 @@ public class AttendanceDayPanel extends GridPane {
     private static final Color DIETARY_OPTION_TEXT_COLOR_DEFAULT = Color.web("#838788");
     private static final Color DIETARY_OPTION_TEXT_COLOR_TODAY = Color.LIGHTGRAY;
     private static final String DIETARY_OPTION_TOTAL = "Total";
+    private static final Color MEAL_COUNT_COLOR = Color.web("#317437");
     private static final Color MEAL_TEXT_COLOR_DEFAULT = Color.web("#909394");
     private static final Color MEAL_TEXT_COLOR_TODAY = Color.LIGHTGRAY;
     private static final Font MEAL_TEXT_FONT = Font.font(new Label().getFont().getFamily(), FontWeight.BOLD, new Label().getFont().getSize());
@@ -131,6 +132,7 @@ public class AttendanceDayPanel extends GridPane {
             for (String dietaryOption : dietaryOptions) {
                 int count = attendanceCounts.getCount(date, meal.getName(), dietaryOption);
                 Label countLabel = new Label(String.valueOf(count));
+                countLabel.setTextFill(MEAL_COUNT_COLOR);
                 countLabel.setAlignment(Pos.CENTER);
                 bindMealLabelWidth(countLabel, displayedMeals);
                 add(countLabel, columnIndex, rowIndex);
