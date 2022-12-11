@@ -6,7 +6,9 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.Organization;
 
@@ -17,6 +19,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MealsSelectionPane extends VBox {
+
+    private static final Color TITLE_TEXT_COLOR = Color.web("#0096d6");
 
     private final ObjectProperty<List<Item>> allOrganizationItemsProperty = new SimpleObjectProperty<>();
 
@@ -41,6 +45,10 @@ public class MealsSelectionPane extends VBox {
             return;
         }
 
+        if (!allOrganizationItemsProperty.get().isEmpty()) {
+            addTitle();
+        }
+
         AbbreviationGenerator abbreviationGenerator = buildAbbreviationGenerator();
         for (Item item : allOrganizationItemsProperty.get()) {
             CheckBox itemCheckBox = new CheckBox(item.getName() + " (" + abbreviationGenerator.getAbbreviation(item.getName()) + ")");
@@ -50,6 +58,12 @@ public class MealsSelectionPane extends VBox {
             Platform.runLater(() -> getChildren().add(itemCheckBox));
         }
         updateSelectedItems();
+    }
+
+    private void addTitle() {
+        Label titleLabel = new Label("Meals");
+        titleLabel.setTextFill(TITLE_TEXT_COLOR);
+        Platform.runLater(() -> getChildren().add(titleLabel));
     }
 
     private AbbreviationGenerator buildAbbreviationGenerator() {
