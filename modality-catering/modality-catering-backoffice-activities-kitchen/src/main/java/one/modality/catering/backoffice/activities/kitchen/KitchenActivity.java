@@ -72,7 +72,7 @@ public class KitchenActivity extends ViewDomainActivityBase
 
     @Override
     public Node buildUi() {
-        organizationComboBox.setConverter(new StringConverter<Organization>() {
+        organizationComboBox.setConverter(new StringConverter<>() {
             @Override
             public String toString(Organization organization) {
                 return organization != null ? organization.getName() : null;
@@ -83,12 +83,9 @@ public class KitchenActivity extends ViewDomainActivityBase
                 return null;
             }
         });
-        organizationComboBox.valueProperty().addListener(new ChangeListener<Organization>() {
-            @Override
-            public void changed(ObservableValue<? extends Organization> observableValue, Organization oldValue, Organization newValue) {
-                mealsSelectionPane.setOrganization(newValue);
-                loadAttendance();
-            }
+        organizationComboBox.valueProperty().addListener((observableValue, oldValue, newValue) -> {
+            mealsSelectionPane.setOrganization(newValue);
+            loadAttendance();
         });
         HBox keyPane = new HBox(mealsSelectionPane, dietaryOptionKeyPanel);
         body.getChildren().addAll(organizationComboBox, keyPane, monthSelectionPanel, attendanceCountsPanelContainer);
