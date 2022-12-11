@@ -41,7 +41,7 @@ public class MonthSelectionPanel extends HBox {
     }
 
     private VBox createMonthBox(LocalDate month) {
-        String text = month.getMonth().getDisplayName (TextStyle.FULL_STANDALONE, Locale.getDefault()) + " " + (month.getYear() % 1000);
+        String text = buildMonthDisplayText(month);
         Label monthLabel = new Label(text);
         monthLabel.setTextFill(Color.WHITE);
         VBox monthBox = new VBox(monthLabel);
@@ -55,6 +55,10 @@ public class MonthSelectionPanel extends HBox {
         monthBox.setPrefWidth(130);
         monthBoxes.put(month, monthBox);
         return monthBox;
+    }
+
+    public static String buildMonthDisplayText(LocalDate month) {
+        return month.getMonth().getDisplayName (TextStyle.FULL_STANDALONE, Locale.getDefault()) + " " + (month.getYear() % 1000);
     }
 
     private void showSelection() {

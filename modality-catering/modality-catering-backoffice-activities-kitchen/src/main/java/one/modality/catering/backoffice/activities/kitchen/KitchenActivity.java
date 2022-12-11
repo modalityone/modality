@@ -133,7 +133,11 @@ public class KitchenActivity extends ViewDomainActivityBase
                         }
                     }
                     Platform.runLater(() -> {
-                        dietaryOptionKeyPanel.populate(dietaryOptionSvgs);
+                        if (dietaryOptionSvgs.isEmpty()) {
+                            dietaryOptionKeyPanel.showNoDataMsg(organization, selectedMonth);
+                        } else {
+                            dietaryOptionKeyPanel.populate(dietaryOptionSvgs);
+                        }
                         refreshAttendanceMonthPanel(selectedMonth);
                     });
                 });
