@@ -8,13 +8,13 @@ import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivi
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContextMixin;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.shared.entities.Item;
@@ -54,6 +54,8 @@ public class KitchenActivity extends ViewDomainActivityBase
             "group by si.date, i.name, di.code, di.name, i.ord, di.ord, di.graphic\n" +
             "order by si.date, i.ord, di.ord;";
 
+    private static final Color TITLE_TEXT_COLOR = Color.web("#0096d6");
+
     private VBox body = new VBox();
     private ComboBox<Organization> organizationComboBox = new ComboBox<>();
     private MealsSelectionPane mealsSelectionPane = new MealsSelectionPane();
@@ -87,8 +89,14 @@ public class KitchenActivity extends ViewDomainActivityBase
             mealsSelectionPane.setOrganization(newValue);
             loadAttendance();
         });
-        HBox keyPane = new HBox(mealsSelectionPane, dietaryOptionKeyPanel);
-        body.getChildren().addAll(organizationComboBox, keyPane, monthSelectionPanel, attendanceCountsPanelContainer);
+        Label organizationLabel = new Label("Organization");
+        organizationLabel.setTextFill(TITLE_TEXT_COLOR);
+        VBox organizationPane = new VBox(organizationLabel, organizationComboBox);
+        HBox topPane = new HBox(organizationPane, mealsSelectionPane, dietaryOptionKeyPanel);
+        body.getChildren().addAll(topPane, monthSelectionPanel, attendanceCountsPanelContainer);
+        organizationComboBox.prefWidthProperty().bind(body.widthProperty().divide(3));
+        mealsSelectionPane.prefWidthProperty().bind(body.widthProperty().divide(3));
+        dietaryOptionKeyPanel.prefWidthProperty().bind(body.widthProperty().divide(3));
         return body;
     }
 
