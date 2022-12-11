@@ -119,7 +119,7 @@ public class KitchenActivity extends ViewDomainActivityBase
                 .onFailure(System.out::println)
                 .onSuccess(result -> {
                     Set<String> displayedMealNames = new HashSet<>();
-                    LinkedHashMap<String, String> dietaryOptionSvgs = new LinkedHashMap();
+                    LinkedHashMap<String, String> dietaryOptionSvgs = new LinkedHashMap<>();
                     for (int row = 0; row < result.getRowCount(); row++) {
                         String dateString = result.getValue(row, 0);
                         LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ISO_ZONED_DATE_TIME);
