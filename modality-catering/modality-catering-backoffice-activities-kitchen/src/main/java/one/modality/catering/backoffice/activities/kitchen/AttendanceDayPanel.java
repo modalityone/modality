@@ -22,7 +22,8 @@ import java.util.stream.Collectors;
 
 public class AttendanceDayPanel extends GridPane {
 
-    private static final Background BACKGROUND = new Background (new BackgroundFill(Color.LIGHTGRAY, new CornerRadii(5), Insets.EMPTY));
+    private static final Background BACKGROUND_DEFAULT = new Background (new BackgroundFill(Color.LIGHTGRAY, new CornerRadii(5), Insets.EMPTY));
+    private static final Background BACKGROUND_TODAY = new Background (new BackgroundFill(Color.YELLOW, new CornerRadii(5), Insets.EMPTY));
     private static final Color DAY_NUMBER_TEXT_COLOR = Color.web("#0096d6");
     private static final Color DIETARY_OPTION_TEXT_COLOR = Color.web("#838788");
     private static final String DIETARY_OPTION_TOTAL = "Total";
@@ -34,12 +35,21 @@ public class AttendanceDayPanel extends GridPane {
 
     public AttendanceDayPanel(AttendanceCounts attendanceCounts, LocalDate date, List<Item> displayedMeals, AbbreviationGenerator abbreviationGenerator) {
         List<Item> sortedDisplayedMeals = sortMeals(attendanceCounts, date, displayedMeals);
-        setBackground(BACKGROUND);
+        chooseBackgroundFromDate(date);
         setPadding(new Insets(4));
         addDayOfMonthNumber(date);
         addMealTitles(sortedDisplayedMeals, abbreviationGenerator);
         addDietaryOptions(attendanceCounts);
         addMealCounts(attendanceCounts, date, sortedDisplayedMeals);
+    }
+
+    private void chooseBackgroundFromDate(LocalDate date) {
+        LocalDate now = LocalDate.now();
+        if (date.getDayOfMonth() == now.getDayOfMonth() && date.getMonthValue() == now.getMonthValue() && date.getYear() == now.getYear()) {
+            setBackground(BACKGROUND_TODAY);
+        } else {
+            setBackground(BACKGROUND_DEFAULT);
+        }
     }
 
     private List<Item> sortMeals(AttendanceCounts attendanceCounts, LocalDate date, List<Item> meals) {
