@@ -3,8 +3,6 @@ package one.modality.catering.backoffice.activities.kitchen;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -30,12 +28,7 @@ public class MealsSelectionPane extends VBox {
     private Map<Item, CheckBox> itemCheckBoxMap = Collections.emptyMap();
 
     public MealsSelectionPane() {
-        allOrganizationItemsProperty.addListener(new ChangeListener<List<Item>>() {
-            @Override
-            public void changed(ObservableValue<? extends List<Item>> observableValue, List<Item> items, List<Item> t1) {
-                populate();
-            }
-        });
+        allOrganizationItemsProperty.addListener((observableValue, oldValue, newValue) -> populate());
     }
 
     private void populate() {
