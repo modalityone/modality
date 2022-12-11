@@ -38,6 +38,7 @@ public class MonthSelectionPanel extends HBox {
         showSelection();
         ScrollPane scrollPane = new ScrollPane(body);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setHvalue(0.5); // Scroll to the centre to show the initially selected month
         getChildren().add(scrollPane);
     }
 
