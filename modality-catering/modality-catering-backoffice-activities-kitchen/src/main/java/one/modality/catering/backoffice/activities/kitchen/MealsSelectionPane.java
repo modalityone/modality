@@ -10,10 +10,7 @@ import javafx.scene.paint.Color;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.Organization;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MealsSelectionPane extends VBox {
@@ -23,9 +20,11 @@ public class MealsSelectionPane extends VBox {
     private final ObjectProperty<List<Item>> allOrganizationItemsProperty = new SimpleObjectProperty<>();
 
     private final ObjectProperty<List<Item>> selectedItemsProperty = new SimpleObjectProperty<>(Collections.emptyList());
+
     public ObjectProperty<List<Item>> selectedItemsProperty() { return selectedItemsProperty; }
 
     private Map<Item, CheckBox> itemCheckBoxMap = Collections.emptyMap();
+    private VBox itemCheckBoxPane = new VBox();
 
     public MealsSelectionPane() {
         allOrganizationItemsProperty.addListener((observableValue, oldValue, newValue) -> populate());
@@ -48,8 +47,8 @@ public class MealsSelectionPane extends VBox {
             itemCheckBox.selectedProperty().addListener((observableValue, oldValue, newValue) -> updateSelectedItems());
             itemCheckBox.setSelected(true);
             itemCheckBoxMap.put(item, itemCheckBox);
-            Platform.runLater(() -> getChildren().add(itemCheckBox));
         }
+        Platform.runLater(() -> getChildren().add(itemCheckBoxPane));
         updateSelectedItems();
     }
 
@@ -98,4 +97,13 @@ public class MealsSelectionPane extends VBox {
         return buildAbbreviationGenerator();
     }
 
+    public void setDisplayedMealNames(Set<String> displayedMealNames) {
+        List<CheckBox> displayedCheckBoxes = itemCheckBoxMap.entrySet().stream()
+                .filter(entry -> displayedMealNames.contains(entry.getKey().getName()))
+                .sorted((e1, e2) -> e1.getKey().getName().compareTo(e2.getKey().getName()))
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toList());
+
+        Platform.runLater(() -> itemCheckBoxPane.getChildren().setAll(displayedCheckBoxes));
+    }
 }

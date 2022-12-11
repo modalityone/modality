@@ -22,8 +22,7 @@ import one.modality.base.shared.entities.Organization;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -114,11 +113,13 @@ public class KitchenActivity extends ViewDomainActivityBase
         QueryService.executeQuery(query)
                 .onFailure(System.out::println)
                 .onSuccess(result -> {
+                    Set<String> displayedMealNames = new HashSet<>();
                     LinkedHashMap<String, String> dietaryOptionSvgs = new LinkedHashMap();
                     for (int row = 0; row < result.getRowCount(); row++) {
                         String dateString = result.getValue(row, 0);
                         LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ISO_ZONED_DATE_TIME);
                         String meal = result.getValue(row, 1);
+                        displayedMealNames.add(meal);
                         String dietaryOptionCode = result.getValue(row, 2);
                         String dietaryOptionName = result.getValue(row, 3);
                         int count = result.getValue(row, 4);
@@ -139,6 +140,7 @@ public class KitchenActivity extends ViewDomainActivityBase
                             dietaryOptionKeyPanel.populate(dietaryOptionSvgs);
                         }
                         refreshAttendanceMonthPanel(selectedMonth);
+                        mealsSelectionPane.setDisplayedMealNames(displayedMealNames);
                     });
                 });
     }
