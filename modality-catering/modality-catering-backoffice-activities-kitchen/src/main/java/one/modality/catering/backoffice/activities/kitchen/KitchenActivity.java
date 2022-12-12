@@ -15,6 +15,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.util.StringConverter;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.shared.entities.Item;
@@ -54,6 +56,8 @@ public class KitchenActivity extends ViewDomainActivityBase
             "group by si.date, i.name, di.code, di.name, i.ord, di.ord, di.graphic\n" +
             "order by si.date, i.ord, di.ord;";
 
+    private static final Font NO_DATA_MSG_FONT = Font.font(new Label().getFont().getFamily(), FontWeight.BOLD, 28);
+    private static final Color NO_DATA_MSG_TEXT_COLOR = Color.web("#0096d6");
     private static final Color TITLE_TEXT_COLOR = Color.web("#0096d6");
 
     private VBox body = new VBox();
@@ -62,6 +66,7 @@ public class KitchenActivity extends ViewDomainActivityBase
     private DietaryOptionKeyPanel dietaryOptionKeyPanel = new DietaryOptionKeyPanel();
     private MonthSelectionPanel monthSelectionPanel = new MonthSelectionPanel(this::updateAttendanceMonthPanel);
     private AttendanceMonthPanel attendanceMonthPanel;
+    private HBox keyPane = new HBox();
     private VBox attendanceCountsPanelContainer = new VBox();
     private AttendanceCounts attendanceCounts;
 
@@ -92,7 +97,7 @@ public class KitchenActivity extends ViewDomainActivityBase
         Label organizationLabel = new Label("Organization");
         organizationLabel.setTextFill(TITLE_TEXT_COLOR);
         VBox organizationPane = new VBox(organizationLabel, organizationComboBox);
-        HBox topPane = new HBox(organizationPane, mealsSelectionPane, dietaryOptionKeyPanel);
+        HBox topPane = new HBox(organizationPane, keyPane);
         body.getChildren().addAll(topPane, monthSelectionPanel, attendanceCountsPanelContainer);
         organizationComboBox.prefWidthProperty().bind(body.widthProperty().divide(3));
         mealsSelectionPane.prefWidthProperty().bind(body.widthProperty().divide(3));
@@ -140,8 +145,15 @@ public class KitchenActivity extends ViewDomainActivityBase
                     }
                     Platform.runLater(() -> {
                         if (dietaryOptionSvgs.isEmpty()) {
-                            dietaryOptionKeyPanel.showNoDataMsg(organization, selectedMonth);
+                            String monthString = MonthSelectionPanel.buildMonthDisplayText(selectedMonth);
+                            String msg = "No meal data for " + monthString + " for " + organization.getName();
+                            Label noDataLabel = new Label(msg);
+                            noDataLabel.setTextFill(NO_DATA_MSG_TEXT_COLOR);
+                            noDataLabel.setFont(NO_DATA_MSG_FONT);
+                            noDataLabel.setWrapText(true);
+                            keyPane.getChildren().setAll(noDataLabel);
                         } else {
+                            keyPane.getChildren().setAll(mealsSelectionPane, dietaryOptionKeyPanel);
                             dietaryOptionKeyPanel.populate(dietaryOptionSvgs);
                         }
                         refreshAttendanceMonthPanel(selectedMonth);
