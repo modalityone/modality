@@ -5,3 +5,4 @@ for = "/*"
 [headers.values]
 X-Frame-Options = "SAMEORIGIN"
 Cross-Origin-Opener-Policy = "same-origin-allow-popups"
+Content-Security-Policy = "frame-src https://localhost/login/google/iframe;"
