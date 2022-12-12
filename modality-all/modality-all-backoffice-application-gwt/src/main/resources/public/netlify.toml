@@ -13,6 +13,7 @@ to = "https://localhost/login/google/iframe"
 status = 200
 force = true
 
+[[redirects]]
 from = "/login/google/callback"
 to = "https://localhost/login/google/callback"
 status = 200
