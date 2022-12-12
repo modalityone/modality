@@ -479,6 +479,8 @@
     <source path="dev/webfx/stack/conf/spi/impl"/>
     <!--==========================< webfx-stack-conf-format-json >==========================-->
     <source path="dev/webfx/stack/conf/spi/impl/format/json"/>
+    <!--=========================< webfx-stack-conf-localstorage >==========================-->
+    <source path="dev/webfx/stack/conf/spi/impl/localstorage"/>
     <!--===========================< webfx-stack-conf-resource >============================-->
     <source path="dev/webfx/stack/conf/spi/impl/resource"/>
     <!--============================< webfx-stack-db-datascope >============================-->

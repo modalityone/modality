@@ -440,20 +440,7 @@
 
             </dependencies>
 
-            <providers>
-                <provider interface="dev.webfx.stack.conf.spi.ConfigurationSupplier">one.modality.all.server.application.conf.ModalityAllServerEnvironmentConfigurationSupplier</provider>
-                <provider interface="dev.webfx.stack.conf.spi.ConfigurationSupplier">one.modality.all.server.application.conf.ModalityAllServerDirectoryConfigurationSupplier</provider>
-            </providers>
-
-            <source-packages>
-                <package>one.modality.all.server.application.conf</package>
-            </source-packages>
-
-            <used-by-source-modules>
-                <module>webfx-stack-conf</module>
-                <module>webfx-stack-conf-env-java</module>
-                <module>webfx-stack-conf-file-java</module>
-            </used-by-source-modules>
+            <used-by-source-modules/>
 
         </project>
 
@@ -1368,6 +1355,9 @@
 
             <dependencies>
                 <used-by-source-modules/>
+
+                <plugin-module>webfx-stack-conf-localstorage</plugin-module>
+
             </dependencies>
 
             <source-packages>
@@ -1442,7 +1432,20 @@
 
             </dependencies>
 
-            <used-by-source-modules/>
+            <providers>
+                <provider interface="dev.webfx.stack.conf.spi.ConfigurationSupplier">one.modality.base.server.application.min.conf.ModalityServerEnvironmentConfigurationSupplier</provider>
+                <provider interface="dev.webfx.stack.conf.spi.ConfigurationSupplier">one.modality.base.server.application.min.conf.ModalityServerDirectoryConfigurationSupplier</provider>
+            </providers>
+
+            <source-packages>
+                <package>one.modality.base.server.application.min.conf</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>webfx-stack-conf</module>
+                <module>webfx-stack-conf-env-java</module>
+                <module>webfx-stack-conf-file-java</module>
+            </used-by-source-modules>
 
         </project>
 

@@ -37,7 +37,7 @@ public class ServiceLoader<S> implements Iterable<S> {
             case "dev.webfx.stack.com.websocket.spi.WebSocketServiceProvider": return new ServiceLoader<S>(dev.webfx.stack.com.websocket.spi.impl.gwt.GwtWebSocketServiceProvider::new);
             case "dev.webfx.stack.conf.spi.ConfigurationConsumer": return new ServiceLoader<S>(dev.webfx.stack.com.bus.spi.impl.BusOptionsConfigurationConsumer::new);
             case "dev.webfx.stack.conf.spi.ConfigurationFormat": return new ServiceLoader<S>(dev.webfx.stack.conf.spi.impl.format.json.JsonConfigurationFormat::new);
-            case "dev.webfx.stack.conf.spi.ConfigurationSupplier": return new ServiceLoader<S>(one.modality.base.client.busconfig.ModalityClientBusOptionsConfigurationSupplier::new);
+            case "dev.webfx.stack.conf.spi.ConfigurationSupplier": return new ServiceLoader<S>(dev.webfx.stack.conf.spi.impl.localstorage.LocalStorageConfigurationSupplier::new, one.modality.base.client.busconfig.ModalityClientBusOptionsConfigurationSupplier::new);
             case "dev.webfx.stack.db.query.spi.QueryServiceProvider": return new ServiceLoader<S>(dev.webfx.stack.db.query.spi.impl.remote.RemoteQueryServiceProvider::new);
             case "dev.webfx.stack.db.querypush.spi.QueryPushServiceProvider": return new ServiceLoader<S>(dev.webfx.stack.db.querypush.client.simple.SimpleQueryPushClientServiceProvider::new);
             case "dev.webfx.stack.db.submit.spi.SubmitServiceProvider": return new ServiceLoader<S>(dev.webfx.stack.db.submit.spi.impl.remote.RemoteSubmitServiceProvider::new);
