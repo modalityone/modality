@@ -1,0 +1,7 @@
+[[headers]]
+# Define which paths this specific [[headers]] block will cover.
+for = "/*"
+
+[headers.values]
+X-Frame-Options = "SAMEORIGIN"
+Cross-Origin-Opener-Policy = "same-origin-allow-popups"
