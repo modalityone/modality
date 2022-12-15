@@ -5,7 +5,7 @@ import dev.webfx.stack.authn.UserClaims;
 import dev.webfx.stack.authn.UsernamePasswordCredentials;
 import dev.webfx.stack.authn.logout.server.LogoutPush;
 import dev.webfx.stack.authn.spi.AuthenticatorInfo;
-import dev.webfx.stack.authn.spi.impl.server.gateway.ServerAuthenticationGatewayProvider;
+import dev.webfx.stack.authn.server.gateway.spi.ServerAuthenticationGatewayProvider;
 import dev.webfx.stack.db.query.QueryArgument;
 import dev.webfx.stack.db.query.QueryResult;
 import dev.webfx.stack.db.query.QueryService;
@@ -56,7 +56,7 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
         UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials) userCredentials;
         return QueryService.executeQuery(QueryArgument.builder()
                 .setLanguage("DQL")
-                .setStatement("select id,frontendAccount.id from Person where frontendAccount.(corporation=? and username=? and password=?) order by id limit 1")
+                .setStatement("select id,frontendAccount.id from Person where frontendAccount.(corporation=? and username=? and 'password'=?) order by id limit 1")
                 .setParameters(1, usernamePasswordCredentials.getUsername(), usernamePasswordCredentials.getPassword()) // "or true" is temporary to bypass the password checking which is now encrypted TODO: implement encrypted version of password checking
                 .setDataSourceId(getDataSourceId())
                 .build()
@@ -68,6 +68,12 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
             ModalityUserPrincipal modalityUserPrincipal = new ModalityUserPrincipal(personId, accountId);
             return PushServerService.pushState(StateAccessor.setUserId(null, modalityUserPrincipal), runId);
         });
+    }
+
+    @Override
+    public boolean acceptsUserId() {
+        Object userId = ThreadLocalStateHolder.getUserId();
+        return userId instanceof ModalityUserPrincipal;
     }
 
     @Override

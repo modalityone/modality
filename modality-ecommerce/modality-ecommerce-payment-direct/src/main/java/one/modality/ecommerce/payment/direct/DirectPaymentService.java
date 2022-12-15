@@ -20,7 +20,7 @@ public final class DirectPaymentService {
     }
 
     public static Future<GetDirectPaymentGatewayInfosResult> getDirectPaymentGatewayInfos(GetDirectPaymentGatewayInfosArgument argument) {
-        return null;
+        return getProvider().getDirectPaymentGatewayInfos(argument);
     }
 
 }

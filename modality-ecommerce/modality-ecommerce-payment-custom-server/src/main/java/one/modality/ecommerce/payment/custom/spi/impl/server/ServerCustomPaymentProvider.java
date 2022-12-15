@@ -1,12 +1,13 @@
 package one.modality.ecommerce.payment.custom.spi.impl.server;
 
 import dev.webfx.platform.async.Future;
+import dev.webfx.platform.util.serviceloader.MultipleServiceProviders;
 import one.modality.ecommerce.payment.custom.InitiateCustomPaymentArgument;
 import one.modality.ecommerce.payment.custom.InitiateCustomPaymentResult;
 import one.modality.ecommerce.payment.custom.spi.CustomPaymentProvider;
 import one.modality.ecommerce.payment.gateway.custom.spi.CustomPaymentGatewayProvider;
 
-import java.util.Iterator;
+import java.util.List;
 import java.util.ServiceLoader;
 
 /**
@@ -14,16 +15,17 @@ import java.util.ServiceLoader;
  */
 public class ServerCustomPaymentProvider implements CustomPaymentProvider {
 
-    @Override
-    public Future<InitiateCustomPaymentResult> initiateCustomPayment(InitiateCustomPaymentArgument argument) {
-        Iterator<CustomPaymentGatewayProvider> it = getDelegatedPaymentGatewayProviders().iterator();
-        if (it.hasNext())
-            return it.next().initiateCustomPayment(argument);
-        return Future.failedFuture(new IllegalStateException("No delegated payment gateway found!"));
+    private static List<CustomPaymentGatewayProvider> getProviders() {
+        return MultipleServiceProviders.getProviders(CustomPaymentGatewayProvider.class, () -> ServiceLoader.load(CustomPaymentGatewayProvider.class));
     }
 
-    protected ServiceLoader<CustomPaymentGatewayProvider> getDelegatedPaymentGatewayProviders() {
-        return ServiceLoader.load(CustomPaymentGatewayProvider.class);
+    @Override
+    public Future<InitiateCustomPaymentResult> initiateCustomPayment(InitiateCustomPaymentArgument argument) {
+        List<CustomPaymentGatewayProvider> providers = getProviders();
+        if (providers.isEmpty())
+            return Future.failedFuture(new IllegalStateException("No delegated payment gateway found!"));
+        return providers.get(0) // Temporary
+                .initiateCustomPayment(argument);
     }
 
 }

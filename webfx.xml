@@ -440,20 +440,7 @@
 
             </dependencies>
 
-            <providers>
-                <provider interface="dev.webfx.stack.conf.spi.ConfigurationSupplier">one.modality.all.server.application.conf.ModalityAllServerEnvironmentConfigurationSupplier</provider>
-                <provider interface="dev.webfx.stack.conf.spi.ConfigurationSupplier">one.modality.all.server.application.conf.ModalityAllServerDirectoryConfigurationSupplier</provider>
-            </providers>
-
-            <source-packages>
-                <package>one.modality.all.server.application.conf</package>
-            </source-packages>
-
-            <used-by-source-modules>
-                <module>webfx-stack-conf</module>
-                <module>webfx-stack-conf-env-java</module>
-                <module>webfx-stack-conf-file-java</module>
-            </used-by-source-modules>
+            <used-by-source-modules/>
 
         </project>
 
@@ -1368,6 +1355,10 @@
 
             <dependencies>
                 <used-by-source-modules/>
+
+                <!-- Temporary for DEBUG, we use the local storage as possible configuration supplier, so we can manually change the bus options (BUS_SERVER_HOST, etc... variables) -->
+                <plugin-module>webfx-stack-conf-localstorage</plugin-module>
+
             </dependencies>
 
             <source-packages>
@@ -1442,7 +1433,20 @@
 
             </dependencies>
 
-            <used-by-source-modules/>
+            <providers>
+                <provider interface="dev.webfx.stack.conf.spi.ConfigurationSupplier">one.modality.base.server.application.min.conf.ModalityServerEnvironmentConfigurationSupplier</provider>
+                <provider interface="dev.webfx.stack.conf.spi.ConfigurationSupplier">one.modality.base.server.application.min.conf.ModalityServerDirectoryConfigurationSupplier</provider>
+            </providers>
+
+            <source-packages>
+                <package>one.modality.base.server.application.min.conf</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>webfx-stack-conf</module>
+                <module>webfx-stack-conf-env-java</module>
+                <module>webfx-stack-conf-file-java</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -2407,7 +2411,7 @@
             </dependencies>
 
             <providers>
-                <provider interface="dev.webfx.stack.authn.spi.impl.server.gateway.ServerAuthenticationGatewayProvider">one.modality.crm.server.authn.gateway.ModalityUsernamePasswordAuthenticationGatewayProvider</provider>
+                <provider interface="dev.webfx.stack.authn.server.gateway.spi.ServerAuthenticationGatewayProvider">one.modality.crm.server.authn.gateway.ModalityUsernamePasswordAuthenticationGatewayProvider</provider>
             </providers>
 
             <source-packages>
@@ -3546,6 +3550,7 @@
                 <module>modality-ecommerce-payment-custom</module>
                 <module>modality-ecommerce-payment-gateway-custom</module>
                 <module>webfx-platform-async</module>
+                <module>webfx-platform-util</module>
             </used-by-source-modules>
 
             <used-services>
@@ -3687,6 +3692,7 @@
                 <module>modality-ecommerce-payment-delegated</module>
                 <module>modality-ecommerce-payment-gateway-delegated</module>
                 <module>webfx-platform-async</module>
+                <module>webfx-platform-util</module>
             </used-by-source-modules>
 
             <used-services>
@@ -3829,6 +3835,7 @@
                 <module>modality-ecommerce-payment-direct</module>
                 <module>modality-ecommerce-payment-gateway-direct</module>
                 <module>webfx-platform-async</module>
+                <module>webfx-platform-util</module>
             </used-by-source-modules>
 
             <used-services>
@@ -4816,6 +4823,10 @@
                 <module>webfx-platform-windowhistory-gwt</module>
                 <module>webfx-platform-windowhistory-web</module>
                 <module>webfx-stack-authn</module>
+                <module>webfx-stack-authn-login-buscall</module>
+                <module>webfx-stack-authn-server-gateway</module>
+                <module>webfx-stack-authn-server-gateway-facebook</module>
+                <module>webfx-stack-authn-server-gateway-google</module>
                 <module>webfx-stack-authn-server-gateway-mojoauth</module>
                 <module>webfx-stack-com-bus</module>
                 <module>webfx-stack-com-bus-call</module>
@@ -4856,6 +4867,8 @@
                 <module>modality-crm-server-authz</module>
                 <module>webfx-stack-authn</module>
                 <module>webfx-stack-authn-buscall</module>
+                <module>webfx-stack-authn-login-server-gateway-facebook</module>
+                <module>webfx-stack-authn-login-server-gateway-google</module>
                 <module>webfx-stack-authn-login-server-gateway-mojoauth</module>
                 <module>webfx-stack-authn-login-ui-gateway-password</module>
                 <module>webfx-stack-authn-logout-client</module>
@@ -4974,6 +4987,8 @@
                 <module>modality-base-server-sessioncloser</module>
                 <module>modality-crm-server-authn-gateway</module>
                 <module>modality-crm-server-authz</module>
+                <module>webfx-stack-authn-login-server-gateway-facebook</module>
+                <module>webfx-stack-authn-login-server-gateway-google</module>
                 <module>webfx-stack-authn-login-server-gateway-mojoauth</module>
                 <module>webfx-stack-authn-logout-server</module>
                 <module>webfx-stack-db-querypush-server</module>

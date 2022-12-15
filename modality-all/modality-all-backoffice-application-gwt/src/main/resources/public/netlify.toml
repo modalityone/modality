@@ -1,0 +1,37 @@
+[[headers]]
+# Define which paths this specific [[headers]] block will cover.
+for = "/*"
+
+[headers.values]
+X-Frame-Options = "SAMEORIGIN"
+Cross-Origin-Opener-Policy = "same-origin-allow-popups"
+Content-Security-Policy = "frame-src https://backoffice.modality.one/login/google https://backoffice.modality.one/login/google/callback https://backoffice.modality.one/login/facebook https://backoffice.modality.one/login/facebook/callback;"
+
+# Temporary redirects for DEBUG (server running on development machine, accessible through telebit tunneling)
+[[redirects]]
+from = "/login/google"
+to = "https://young-earwig-80.telebit.io/login/google?sessionId=:sessionId"
+query = {sessionId = ":sessionId"}
+status = 200
+force = true
+
+[[redirects]]
+from = "/login/google/callback"
+to = "https://young-earwig-80.telebit.io/login/google/callback?sessionId=:sessionId"
+query = {sessionId = ":sessionId"}
+status = 200
+force = true
+
+[[redirects]]
+from = "/login/facebook"
+to = "https://young-earwig-80.telebit.io/login/facebook?sessionId=:sessionId"
+query = {sessionId = ":sessionId"}
+status = 200
+force = true
+
+[[redirects]]
+from = "/login/facebook/callback"
+to = "https://young-earwig-80.telebit.io/login/facebook/callback?code=:code&state=:state"
+query = {state = ":state", code = ":code"}
+status = 200
+force = true
