@@ -7,6 +7,7 @@ module modality.ecommerce.payment.delegated.server {
     requires modality.ecommerce.payment.delegated;
     requires modality.ecommerce.payment.gateway.delegated;
     requires webfx.platform.async;
+    requires webfx.platform.util;
 
     // Exported packages
     exports one.modality.ecommerce.payment.delegated.spi.impl.server;
