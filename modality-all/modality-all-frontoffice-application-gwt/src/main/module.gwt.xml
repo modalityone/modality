@@ -414,6 +414,7 @@
     <source path="dev/webfx/stack/authn/login/spi"/>
     <!--========================< webfx-stack-authn-login-buscall >=========================-->
     <source path="dev/webfx/stack/authn/login/buscall"/>
+    <source path="dev/webfx/stack/authn/login/buscall/serial"/>
     <!--=========================< webfx-stack-authn-login-remote >=========================-->
     <source path="dev/webfx/stack/authn/login/spi/impl/remote"/>
     <!--===========================< webfx-stack-authn-login-ui >===========================-->
@@ -435,6 +436,9 @@
     <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/password"/>
     <!--================< webfx-stack-authn-login-ui-gateway-webviewbased >=================-->
     <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/webview"/>
+    <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/webview/spi"/>
+    <!--==============< webfx-stack-authn-login-ui-gateway-webviewbased-gwt >===============-->
+    <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/webview/spi/impl/gwt"/>
     <!--=======================< webfx-stack-authn-login-ui-portal >========================-->
     <source path="dev/webfx/stack/authn/login/ui/spi/impl/portal"/>
     <!--========================< webfx-stack-authn-logout-client >=========================-->

@@ -5,7 +5,7 @@ import dev.webfx.stack.authn.UserClaims;
 import dev.webfx.stack.authn.UsernamePasswordCredentials;
 import dev.webfx.stack.authn.logout.server.LogoutPush;
 import dev.webfx.stack.authn.spi.AuthenticatorInfo;
-import dev.webfx.stack.authn.spi.impl.server.gateway.ServerAuthenticationGatewayProvider;
+import dev.webfx.stack.authn.server.gateway.spi.ServerAuthenticationGatewayProvider;
 import dev.webfx.stack.db.query.QueryArgument;
 import dev.webfx.stack.db.query.QueryResult;
 import dev.webfx.stack.db.query.QueryService;
