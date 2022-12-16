@@ -17,7 +17,7 @@ public final class KitchenUiRoute extends UiRouteImpl {
 
     public static UiRoute<?> uiRoute() {
         return UiRoute.createRegex(PathBuilder.toRegexPath(KitchenRouting.getPath())
-                , true
+                , false
                 , KitchenActivity::new
                 , ViewDomainActivityContextFinal::new
         );

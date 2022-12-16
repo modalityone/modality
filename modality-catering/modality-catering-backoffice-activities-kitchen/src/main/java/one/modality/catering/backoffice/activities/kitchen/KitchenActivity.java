@@ -1,32 +1,32 @@
 package one.modality.catering.backoffice.activities.kitchen;
 
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.db.query.QueryArgument;
 import dev.webfx.stack.db.query.QueryArgumentBuilder;
 import dev.webfx.stack.db.query.QueryService;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
-import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContextMixin;
+import dev.webfx.stack.ui.util.background.BackgroundFactory;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
 import javafx.scene.Node;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.util.StringConverter;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.Organization;
-import one.modality.base.shared.entities.markers.EntityHasName;
+import one.modality.crm.backoffice.organization.fx.FXOrganization;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Bruno Salmon
@@ -62,7 +62,6 @@ public class KitchenActivity extends ViewDomainActivityBase
     private static final Color TITLE_TEXT_COLOR = Color.web("#0096d6");
 
     private VBox body = new VBox();
-    private ComboBox<Organization> organizationComboBox = new ComboBox<>();
     private MealsSelectionPane mealsSelectionPane = new MealsSelectionPane();
     private DietaryOptionKeyPanel dietaryOptionKeyPanel = new DietaryOptionKeyPanel();
     private MonthSelectionPanel monthSelectionPanel = new MonthSelectionPanel(this::updateAttendanceMonthPanel);
@@ -80,35 +79,19 @@ public class KitchenActivity extends ViewDomainActivityBase
 
     @Override
     public Node buildUi() {
-        organizationComboBox.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(Organization organization) {
-                return organization != null ? organization.getName() : null;
-            }
-
-            @Override
-            public Organization fromString(String s) {
-                return null;
-            }
-        });
-        organizationComboBox.valueProperty().addListener((observableValue, oldValue, newValue) -> {
-            mealsSelectionPane.setOrganization(newValue);
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            mealsSelectionPane.setOrganization(FXOrganization.getOrganization());
             loadAttendance();
-        });
-        Label organizationLabel = new Label("Organization");
-        organizationLabel.setTextFill(TITLE_TEXT_COLOR);
-        VBox organizationPane = new VBox(organizationLabel, organizationComboBox);
-        HBox topPane = new HBox(organizationPane, keyPane);
-        body.getChildren().addAll(topPane, monthSelectionPanel, attendanceCountsPanelContainer);
-        organizationComboBox.prefWidthProperty().bind(body.widthProperty().divide(3));
+        }, FXOrganization.organizationProperty());
+        body.getChildren().addAll(keyPane, monthSelectionPanel, attendanceCountsPanelContainer);
         mealsSelectionPane.prefWidthProperty().bind(body.widthProperty().divide(3));
         dietaryOptionKeyPanel.prefWidthProperty().bind(body.widthProperty().divide(3));
-        body.setBackground(dev.webfx.stack.ui.util.background.BackgroundFactory.newBackground(Color.WHITE));
+        body.setBackground(BackgroundFactory.newBackground(Color.WHITE));
         return body;
     }
 
     private void loadAttendance() {
-        Organization organization = organizationComboBox.getValue();
+        Organization organization = FXOrganization.getOrganization();
         attendanceCounts = new AttendanceCounts();
         if (organization == null || organization.getId() == null) {
             return;
@@ -181,21 +164,6 @@ public class KitchenActivity extends ViewDomainActivityBase
 
     @Override
     protected void startLogic() {
-        // Populate organization combo box
-        EntityStore.create(getDataSourceModel())
-                .executeQuery("select name from Organization where !closed and name!=`ISC`")
-                .onSuccess(organizations -> {
-                    List<Organization> organizationList = organizations.stream()
-                            .map(entity -> (Organization) entity)
-                            .sorted(Comparator.comparing(EntityHasName::getName))
-                            .collect(Collectors.toList());
-                    Platform.runLater(() -> {
-                        organizationComboBox.setItems(FXCollections.observableArrayList(organizationList));
-                        if (!organizationList.isEmpty()) {
-                            Platform.runLater(() -> organizationComboBox.setValue(organizationList.get(0)));
-                        }
-                    });
-                });
     }
 
 }
