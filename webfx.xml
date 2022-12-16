@@ -1047,6 +1047,7 @@
             </implements>
 
             <exported-packages>
+                <source-packages/>
                 <resource-package>one.modality.base.client.css</resource-package>
                 <resource-package>one.modality.base.client.fonts</resource-package>
             </exported-packages>
@@ -1055,7 +1056,18 @@
                 <used-by-source-modules/>
             </dependencies>
 
-            <used-by-source-modules/>
+            <providers>
+                <provider interface="dev.webfx.platform.boot.spi.ApplicationJob">one.modality.base.client.fonts.ModalityFontsLoader</provider>
+            </providers>
+
+            <source-packages>
+                <package>one.modality.base.client.fonts</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-boot</module>
+            </used-by-source-modules>
 
         </project>
 
@@ -1870,14 +1882,24 @@
             </source-packages>
 
             <used-by-source-modules>
+                <module>java.base</module>
                 <module>modality-base-client-activity</module>
+                <module>modality-base-shared-entities</module>
+                <module>webfx-extras-scalepane</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-platform-json</module>
                 <module>webfx-platform-windowhistory</module>
+                <module>webfx-stack-db-query</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
+                <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-routing-router</module>
                 <module>webfx-stack-routing-router-client</module>
                 <module>webfx-stack-routing-uirouter</module>
+                <module>webfx-stack-ui-fxraiser</module>
                 <module>webfx-stack-ui-operation</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -4801,6 +4823,7 @@
             <java-package name="dev.webfx.platform.json">
                 <module>modality-base-client-activity</module>
                 <module>modality-base-shared-domainmodel</module>
+                <module>modality-catering-backoffice-activities-kitchen</module>
                 <module>modality-crm-shared-authn</module>
                 <module>modality-ecommerce-frontoffice-activities-cart-routing</module>
                 <module>modality-ecommerce-payment-custom-buscall</module>
@@ -4901,6 +4924,7 @@
                 <module>modality-base-client-activity</module>
                 <module>modality-base-client-aggregates</module>
                 <module>modality-base-shared-domainmodel</module>
+                <module>modality-catering-backoffice-activities-kitchen</module>
                 <module>modality-crm-client-authz</module>
                 <module>modality-crm-server-authn-gateway</module>
                 <module>modality-crm-server-authz</module>
@@ -5005,6 +5029,7 @@
             </java-package>
 
             <java-package name="dev.webfx.stack.ui.fxraiser">
+                <module>modality-catering-backoffice-activities-kitchen</module>
                 <module>webfx-stack-i18n</module>
                 <module>webfx-stack-ui-fxraiser</module>
                 <module>webfx-stack-ui-fxraiser-json</module>
@@ -5019,6 +5044,7 @@
             </java-package>
 
             <java-class name="javafx.scene.control.ScrollPane">
+                <module>modality-catering-backoffice-activities-kitchen</module>
                 <module>modality-ecommerce-backoffice-operations-document</module>
                 <module>modality-ecommerce-client-bookingprocess</module>
                 <module>webfx-extras-visual-grid</module>

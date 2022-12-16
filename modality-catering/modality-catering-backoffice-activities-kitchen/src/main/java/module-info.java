@@ -3,21 +3,24 @@
 module modality.catering.backoffice.activities.kitchen {
 
     // Direct dependencies modules
+    requires java.base;
+    requires javafx.base;
+    requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.activity;
+    requires modality.base.shared.entities;
+    requires webfx.extras.scalepane;
+    requires webfx.platform.json;
     requires webfx.platform.windowhistory;
+    requires webfx.stack.db.query;
     requires webfx.stack.orm.domainmodel.activity;
+    requires webfx.stack.orm.entity;
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.fxraiser;
     requires webfx.stack.ui.operation;
-    requires webfx.stack.orm.reactive.visual;
-    requires webfx.extras.visual;
-    requires webfx.stack.orm.reactive.entities;
-    requires webfx.stack.orm.reactive.dql;
-    requires javafx.controls;
-    requires webfx.extras.scalepane;
+    requires webfx.stack.ui.util;
 
     // Exported packages
     exports one.modality.catering.backoffice.activities.kitchen;

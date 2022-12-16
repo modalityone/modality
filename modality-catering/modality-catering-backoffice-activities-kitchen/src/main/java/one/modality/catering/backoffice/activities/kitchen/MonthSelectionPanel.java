@@ -29,8 +29,8 @@ public class MonthSelectionPanel extends HBox {
         HBox body = new HBox();
         body.setPadding(new Insets(0, 0, 16, 0));
         body.setSpacing(8);
-        LocalDate month = LocalDate.now().minusYears(2);
-        LocalDate latestDate = LocalDate.now().plusYears(2);
+        LocalDate month = LocalDate.now().minusMonths(3);
+        LocalDate latestDate = LocalDate.now().plusMonths(6);
         while (!month.isAfter(latestDate)) {
             body.getChildren().add(createMonthBox(month));
             month = month.plusMonths(1);
