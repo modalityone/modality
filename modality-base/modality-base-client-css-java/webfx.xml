@@ -6,6 +6,7 @@
     </implements>
 
     <exported-packages>
+        <source-packages/>
         <resource-package>one.modality.base.client.css</resource-package>
         <resource-package>one.modality.base.client.fonts</resource-package>
     </exported-packages>
@@ -13,5 +14,9 @@
     <dependencies>
         <used-by-source-modules/>
     </dependencies>
+
+    <providers>
+        <provider interface="dev.webfx.platform.boot.spi.ApplicationJob">one.modality.base.client.fonts.ModalityFontsLoader</provider>
+    </providers>
 
 </project>

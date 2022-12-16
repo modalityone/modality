@@ -27,6 +27,31 @@ VisualGrid, VisualLineChart, VisualPieChart, VisualBarChart, VisualAreaChart, Gr
     src: url('../fonts/Roboto-BoldItalic.ttf');
 }
 
+@font-face {
+    font-family: 'Montserrat';
+    font-style: normal;
+    src: url('../fonts/Montserrat-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    font-weight: bold;
+    src: url('../fonts/Montserrat-Italic.ttf');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    font-style: italic;
+    src: url('../fonts/Montserrat-Italic.ttf');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    font-weight: bold;
+    font-style: italic;
+    src: url('../fonts/Montserrat-BoldItalic.ttf');
+}
+
 .scroll-pane > .viewport {
    -fx-background-color: transparent;
 }
