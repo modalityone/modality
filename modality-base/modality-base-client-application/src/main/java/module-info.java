@@ -14,12 +14,13 @@ module modality.base.client.application {
     requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.uischeduler;
+    requires transitive webfx.platform.util;
     requires webfx.stack.authn.logout.client;
     requires webfx.stack.com.bus.call;
     requires webfx.stack.i18n;
     requires webfx.stack.orm.datasourcemodel.service;
-    requires webfx.stack.orm.domainmodel.activity;
-    requires webfx.stack.routing.activity;
+    requires transitive webfx.stack.orm.domainmodel.activity;
+    requires transitive webfx.stack.routing.activity;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.action;
     requires webfx.stack.ui.operation;

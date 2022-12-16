@@ -13,6 +13,7 @@ import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import dev.webfx.stack.ui.util.layout.LayoutUtil;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -29,27 +30,40 @@ public class ModalityClientFrameContainerActivity extends ViewDomainActivityBase
         implements ModalityButtonFactoryMixin
         , OperationActionFactoryMixin {
 
-    private final BorderPane borderPane = new BorderPane();
+    protected final BorderPane containerPane = new BorderPane();
 
     @Override
     public Node buildUi() {
-        HBox topPane = new HBox(
+        containerPane.setTop(createContainerHeader());
+        containerPane.centerProperty().bind(mountNodeProperty());
+        return containerPane;
+    }
+
+    protected Node createContainerHeader() {
+        HBox containerHeader = new HBox(
                 // Home button
                 ActionBinder.bindButtonToAction(newButton(), routeOperationCodeToAction("RouteToHome")),
+                LayoutUtil.createHSpace(6),
                 // Back navigation button (will be hidden in browsers as they already have one)
                 ActionBinder.bindButtonToAction(newButton(), routeOperationCodeToAction("RouteBackward")),
+                LayoutUtil.createHSpace(3),
                 // Forward navigation button (will be hidden in browsers as they already have one)
                 ActionBinder.bindButtonToAction(newButton(), routeOperationCodeToAction("RouteForward")),
                 // Horizontal space
                 LayoutUtil.createHGrowable(),
+                createContainerHeaderCenterItem(),
+                LayoutUtil.createHGrowable(),
                 // Logout button
                 ActionBinder.bindButtonToAction(newButton(), newOperationAction(LogoutRequest::new))
         );
-        topPane.setBackground(BackgroundUtil.newBackground(Color.web("#D9D9D9")));
-        borderPane.setTop(topPane);
-        setUpContextMenu(topPane, this::contextMenuActionGroup);
-        borderPane.centerProperty().bind(mountNodeProperty());
-        return borderPane;
+        containerHeader.setPadding(new Insets(5));
+        containerHeader.setBackground(BackgroundUtil.newBackground(Color.web("#D9D9D9")));
+        setUpContextMenu(containerHeader, this::contextMenuActionGroup);
+        return containerHeader;
+    }
+
+    protected Node createContainerHeaderCenterItem() {
+        return LayoutUtil.createHSpace(0);
     }
 
     private final Collection<RouteRequestEmitter> providedEmitters = RouteRequestEmitter.getProvidedEmitters();

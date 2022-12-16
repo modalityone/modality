@@ -297,6 +297,8 @@
     <source path="one/modality/crm/backoffice/controls/bookingdetailspanel"/>
     <!--====================< modality-crm-backoffice-operations-mail >=====================-->
     <source path="one/modality/crm/backoffice/operations/entities/mail"/>
+    <!--====================< modality-crm-backoffice-organization-fx >=====================-->
+    <source path="one/modality/crm/backoffice/organization/fx"/>
     <!--======================< modality-crm-client-activities-login >======================-->
     <source path="one/modality/crm/client/activities/login"/>
     <!--==================< modality-crm-client-activities-unauthorized >===================-->

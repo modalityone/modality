@@ -13,6 +13,9 @@
 
     <dependencies>
         <used-by-source-modules>
+            <module transitive="true">webfx-stack-orm-domainmodel-activity</module> <!-- for Activity in constructor -->
+            <module transitive="true">webfx-stack-routing-activity</module> <!-- for Activity in constructor -->
+            <module transitive="true">webfx-platform-util</module> <!-- for Factory in constructor -->
             <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
         </used-by-source-modules>
 
