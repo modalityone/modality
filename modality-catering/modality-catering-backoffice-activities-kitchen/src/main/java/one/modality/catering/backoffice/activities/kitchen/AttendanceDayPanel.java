@@ -1,13 +1,11 @@
 package one.modality.catering.backoffice.activities.kitchen;
 
 import dev.webfx.extras.scalepane.ScalePane;
-import dev.webfx.platform.json.Json;
 import dev.webfx.stack.ui.fxraiser.FXRaiser;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
@@ -25,8 +23,10 @@ import java.util.stream.Collectors;
 
 public class AttendanceDayPanel extends GridPane {
 
+    private final static String FONT_FAMILY = "Montserrat";
+
     private static final Background BACKGROUND_DEFAULT = new Background (new BackgroundFill(Color.web("#F3F3F3"), new CornerRadii(10), Insets.EMPTY));
-    private static final Background BACKGROUND_TODAY = new Background (new BackgroundFill(Color.web("#e7dfe8"), new CornerRadii(10), Insets.EMPTY));
+    private static final Background BACKGROUND_TODAY = new Background (new BackgroundFill(Color.web("#d0f8d0"), new CornerRadii(10), Insets.EMPTY));
     private static final DropShadow DROP_SHADOW = new DropShadow(5, 3, 3, Color.LIGHTGRAY);
     private static final Color DAY_NUMBER_TEXT_COLOR_DEFAULT = Color.web("#0096d6");
     private static final Color DAY_NUMBER_TEXT_COLOR_TODAY = Color.LIGHTGRAY;
@@ -34,12 +34,12 @@ public class AttendanceDayPanel extends GridPane {
     private static final Color DIETARY_OPTION_TEXT_COLOR_TODAY = Color.LIGHTGRAY;
     private static final String DIETARY_OPTION_TOTAL = "Total";
     private static final Color MEAL_COUNT_COLOR = Color.web("#115F18");
-    private static final Font MEAL_COUNT_FONT = Font.font("Montserrat", FontWeight.BOLD, 14);
+    private static final Font MEAL_COUNT_FONT = Font.font(FONT_FAMILY, FontWeight.BOLD, 14);
     private static final Color MEAL_TOTAL_COUNT_COLOR = Color.web("#838788");
-    private static final Font MEAL_TOTAL_COUNT_FONT = Font.font("Montserrat", FontWeight.NORMAL, 14);
+    private static final Font MEAL_TOTAL_COUNT_FONT = Font.font(FONT_FAMILY, FontWeight.NORMAL, 14);
     private static final Color MEAL_TEXT_COLOR_DEFAULT = Color.web("#909394");
     private static final Color MEAL_TEXT_COLOR_TODAY = Color.LIGHTGRAY;
-    private static final Font MEAL_TEXT_FONT = Font.font("Montserrat", FontWeight.BOLD, 15);
+    private static final Font MEAL_TEXT_FONT = Font.font(FONT_FAMILY, FontWeight.BOLD, 15);
 
     private final DoubleProperty graphicColumnWidthProperty = new SimpleDoubleProperty(0);
     private final DoubleProperty dietaryOptionColumnWidthProperty = new SimpleDoubleProperty(0);
@@ -47,13 +47,12 @@ public class AttendanceDayPanel extends GridPane {
     public AttendanceDayPanel(AttendanceCounts attendanceCounts, LocalDate date, List<Item> displayedMeals, AbbreviationGenerator abbreviationGenerator) {
         List<Item> sortedDisplayedMeals = sortMeals(attendanceCounts, date, displayedMeals);
         setBackground(isToday(date) ? BACKGROUND_TODAY : BACKGROUND_DEFAULT);
-        setPadding(new Insets(8));
+        setPadding(new Insets(4));
         setEffect(DROP_SHADOW);
         addDayOfMonthNumber(date);
         addMealTitles(date, sortedDisplayedMeals, abbreviationGenerator);
         addDietaryOptions(date, attendanceCounts);
         addMealCounts(attendanceCounts, date, sortedDisplayedMeals);
-        //setHgap(2);
         setVgap(2); // To avoid SVGs to touch each others
     }
 
@@ -74,7 +73,9 @@ public class AttendanceDayPanel extends GridPane {
         Label dayNumberLabel = new Label(padWithLeadingZero(dayNumber));
         dayNumberLabel.setFont(MEAL_TEXT_FONT);
         dayNumberLabel.setTextFill(/*isToday(date) ? DAY_NUMBER_TEXT_COLOR_TODAY :*/ DAY_NUMBER_TEXT_COLOR_DEFAULT);
-        add(dayNumberLabel, 1, 0);
+        GridPane.setHalignment(dayNumberLabel, HPos.CENTER);
+        GridPane.setColumnSpan(dayNumberLabel, 2);
+        add(dayNumberLabel, 0, 0);
     }
 
     private String padWithLeadingZero(int dayNumber) {
@@ -83,20 +84,23 @@ public class AttendanceDayPanel extends GridPane {
 
     private void addMealTitles(LocalDate date, List<Item> displayedMeals, AbbreviationGenerator abbreviationGenerator) {
         int columnIndex = 2;
+        ColumnConstraints percentConstraints = new ColumnConstraints();
+        percentConstraints.setPercentWidth(100d / (displayedMeals.size() + 2));
+        getColumnConstraints().clear();
+        ColumnConstraints hGrowConstraints = new ColumnConstraints();
+        hGrowConstraints.setHgrow(Priority.ALWAYS);
+        getColumnConstraints().add(hGrowConstraints);
+        getColumnConstraints().add(hGrowConstraints);
         for (Item meal : displayedMeals) {
             String mealTitle = abbreviationGenerator.getAbbreviation(meal.getName());
             Label mealLabel = new Label(mealTitle);
             mealLabel.setFont(MEAL_TEXT_FONT);
             mealLabel.setTextFill(/*isToday(date) ? MEAL_TEXT_COLOR_TODAY :*/ MEAL_TEXT_COLOR_DEFAULT);
-            mealLabel.setAlignment(Pos.CENTER);
-            bindMealLabelWidth(mealLabel, displayedMeals);
+            GridPane.setHalignment(mealLabel, HPos.CENTER);
             add(mealLabel, columnIndex, 0);
+            getColumnConstraints().add(percentConstraints);
             columnIndex++;
         }
-    }
-
-    private void bindMealLabelWidth(Label label, List<Item> displayedMeals) {
-        label.prefWidthProperty().bind(widthProperty().subtract(graphicColumnWidthProperty).subtract(dietaryOptionColumnWidthProperty).divide(displayedMeals.size()));
     }
 
     private void addDietaryOptions(LocalDate date, AttendanceCounts attendanceCounts) {
@@ -106,29 +110,19 @@ public class AttendanceDayPanel extends GridPane {
         for (String dietaryOption : dietaryOptions) {
             String svg = attendanceCounts.getSvgForDietaryOption(dietaryOption);
             if (svg != null) {
-                Node node = FXRaiser.raiseToNode(Json.parseObject(svg));
+                Node node = FXRaiser.raiseToNode(svg);
                 if (node instanceof SVGPath) {
                     ((SVGPath) node).setFill(color);
                 }
                 ScalePane scalePane = new ScalePane(node);
                 scalePane.setPadding(new Insets(0, 4, 0, 0));
-                scalePane.widthProperty().addListener((observableValue, oldValue, newValue) -> {
-                    if (newValue.doubleValue() > graphicColumnWidthProperty.doubleValue()) {
-                        graphicColumnWidthProperty.set(newValue.doubleValue());
-                    }
-                });
                 add(scalePane, 0, rowIndex);
             }
 
             if (!"Total".equals(dietaryOption)) {
                 Label dietaryOptionLabel = new Label(dietaryOption);
+                //dietaryOptionLabel.setFont(MEAL_COUNT_FONT);
                 dietaryOptionLabel.setTextFill(color);
-                dietaryOptionLabel.setMinWidth(Region.USE_PREF_SIZE);
-                dietaryOptionLabel.widthProperty().addListener((observableValue, oldValue, newValue) -> {
-                    if (newValue.doubleValue() > dietaryOptionColumnWidthProperty.doubleValue()) {
-                        dietaryOptionColumnWidthProperty.set(newValue.doubleValue());
-                    }
-                });
                 boolean unspecifiedDiet = "?" .equals(dietaryOption);
                 if (unspecifiedDiet) {
                     GridPane.setHalignment(dietaryOptionLabel, HPos.CENTER);
@@ -155,8 +149,7 @@ public class AttendanceDayPanel extends GridPane {
                 Label countLabel = new Label(String.valueOf(count));
                 countLabel.setFont(isTotal ? MEAL_TOTAL_COUNT_FONT : MEAL_COUNT_FONT);
                 countLabel.setTextFill(isTotal ? MEAL_TOTAL_COUNT_COLOR : MEAL_COUNT_COLOR);
-                countLabel.setAlignment(Pos.CENTER);
-                bindMealLabelWidth(countLabel, displayedMeals);
+                GridPane.setHalignment(countLabel, HPos.CENTER);
                 add(countLabel, columnIndex, rowIndex);
                 rowIndex++;
             }

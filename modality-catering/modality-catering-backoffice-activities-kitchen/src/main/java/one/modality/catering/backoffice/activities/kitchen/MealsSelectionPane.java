@@ -1,8 +1,11 @@
 package one.modality.catering.backoffice.activities.kitchen;
 
+import dev.webfx.stack.i18n.I18n;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -24,16 +27,18 @@ public class MealsSelectionPane extends VBox {
     public ObjectProperty<List<Item>> selectedItemsProperty() { return selectedItemsProperty; }
 
     private Map<Item, CheckBox> itemCheckBoxMap = Collections.emptyMap();
-    private VBox itemCheckBoxPane = new VBox();
+    private final VBox itemCheckBoxPane = new VBox();
 
     public MealsSelectionPane() {
         allOrganizationItemsProperty.addListener((observableValue, oldValue, newValue) -> populate());
+        setAlignment(Pos.CENTER);
+        setFillWidth(false);
     }
 
     private void populate() {
         itemCheckBoxMap = new HashMap<>();
         Platform.runLater(() -> getChildren().clear());
-        if (allOrganizationItemsProperty.isNull().get()) {
+        if (allOrganizationItemsProperty.get() == null) {
             return;
         }
 
@@ -44,16 +49,21 @@ public class MealsSelectionPane extends VBox {
         AbbreviationGenerator abbreviationGenerator = buildAbbreviationGenerator();
         for (Item item : allOrganizationItemsProperty.get()) {
             CheckBox itemCheckBox = new CheckBox(item.getName() + " (" + abbreviationGenerator.getAbbreviation(item.getName()) + ")");
-            itemCheckBox.selectedProperty().addListener((observableValue, oldValue, newValue) -> updateSelectedItems());
             itemCheckBox.setSelected(true);
+            itemCheckBox.selectedProperty().addListener((observableValue, oldValue, newValue) -> updateSelectedItems());
+            itemCheckBox.setCursor(Cursor.HAND);
             itemCheckBoxMap.put(item, itemCheckBox);
         }
-        Platform.runLater(() -> getChildren().add(itemCheckBoxPane));
-        updateSelectedItems();
+
+        Platform.runLater(() -> {
+            getChildren().add(itemCheckBoxPane);
+            updateSelectedItems();
+        });
     }
 
     private void addTitle() {
-        Label titleLabel = new Label("Meals");
+        Label titleLabel = new Label();
+        I18n.bindI18nTextProperty(titleLabel.textProperty(),"Meals");
         titleLabel.setTextFill(TITLE_TEXT_COLOR);
         Platform.runLater(() -> getChildren().add(titleLabel));
     }
@@ -84,13 +94,8 @@ public class MealsSelectionPane extends VBox {
 
         Object organizationIdPk = organization.getId().getPrimaryKey();
         organization.getStore()
-                .executeQuery("select id,name,code,ord from Item i where i.family.code = 'meals' and organization = " + organizationIdPk + " order by ord")
-                .onSuccess(entities -> {
-                    List<Item> items = entities.stream()
-                            .map(Item.class::cast)
-                            .collect(Collectors.toList());
-                    allOrganizationItemsProperty.set(items);
-                });
+                .<Item>executeQuery("select id,name,code,ord from Item i where i.family.code = 'meals' and organization = " + organizationIdPk + " order by ord")
+                .onSuccess(allOrganizationItemsProperty::set);
     }
 
     public AbbreviationGenerator getAbbreviationGenerator() {
@@ -100,7 +105,7 @@ public class MealsSelectionPane extends VBox {
     public void setDisplayedMealNames(Set<String> displayedMealNames) {
         List<CheckBox> displayedCheckBoxes = itemCheckBoxMap.entrySet().stream()
                 .filter(entry -> displayedMealNames.contains(entry.getKey().getName()))
-                .sorted((e1, e2) -> e1.getKey().getName().compareTo(e2.getKey().getName()))
+                .sorted(Comparator.comparing(e -> e.getKey().getName()))
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toList());
 

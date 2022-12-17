@@ -1,16 +1,15 @@
 package one.modality.catering.backoffice.activities.kitchen;
 
+import dev.webfx.stack.i18n.I18n;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
 import java.time.LocalDate;
-import java.time.format.TextStyle;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 public class MonthSelectionPanel extends HBox {
@@ -27,24 +26,21 @@ public class MonthSelectionPanel extends HBox {
         this.listener = listener;
         selectedMonth = LocalDate.now();
         HBox body = new HBox();
-        body.setPadding(new Insets(0, 0, 16, 0));
+        //body.setPadding(new Insets(0, 0, 16, 0));
         body.setSpacing(8);
         LocalDate month = LocalDate.now().minusMonths(3);
-        LocalDate latestDate = LocalDate.now().plusMonths(6);
+        LocalDate latestDate = LocalDate.now().plusMonths(12);
         while (!month.isAfter(latestDate)) {
             body.getChildren().add(createMonthBox(month));
             month = month.plusMonths(1);
         }
         showSelection();
-        ScrollPane scrollPane = new ScrollPane(body);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setHvalue(0.5); // Scroll to the centre to show the initially selected month
-        getChildren().add(scrollPane);
+        getChildren().add(body);
     }
 
     private VBox createMonthBox(LocalDate month) {
-        String text = buildMonthDisplayText(month);
-        Label monthLabel = new Label(text);
+        Label monthLabel = new Label();
+        I18n.bindI18nTextProperty(monthLabel.textProperty(), "[" + month.getMonth().name()+ "] " + (month.getYear() % 1000));
         monthLabel.setTextFill(Color.WHITE);
         VBox monthBox = new VBox(monthLabel);
         monthBox.setAlignment(Pos.CENTER);
@@ -54,13 +50,14 @@ public class MonthSelectionPanel extends HBox {
             showSelection();
             listener.onMonthSelected(month);
         });
+        monthBox.setCursor(Cursor.HAND);
         monthBox.setPrefWidth(130);
         monthBoxes.put(month, monthBox);
         return monthBox;
     }
 
     public static String buildMonthDisplayText(LocalDate month) {
-        return month.getMonth().getDisplayName (TextStyle.FULL_STANDALONE, Locale.getDefault()) + " " + (month.getYear() % 1000);
+        return I18n.getI18nText(month.getMonth().name()) + " " + (month.getYear() % 1000);
     }
 
     private void showSelection() {

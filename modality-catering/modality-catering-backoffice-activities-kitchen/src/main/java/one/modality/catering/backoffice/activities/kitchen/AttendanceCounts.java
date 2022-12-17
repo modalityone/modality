@@ -6,9 +6,9 @@ import java.util.stream.Collectors;
 
 public class AttendanceCounts {
 
-    private Map<LocalDate, List<Row>> rows = new HashMap<>();
-    private Map<String, Integer> dietaryOptionOrders = new HashMap<>();
-    private Map<String, String> dietaryOptionSvgs = new HashMap<>();
+    private final Map<LocalDate, List<Row>> rows = new HashMap<>();
+    private final Map<String, Integer> dietaryOptionOrders = new HashMap<>();
+    private final Map<String, String> dietaryOptionSvgs = new HashMap<>();
 
     public void add(LocalDate date, String meal, String dietaryOption, int count) {
         if (!rows.containsKey(date)) {
@@ -52,9 +52,9 @@ public class AttendanceCounts {
     }
 
     private static class Row {
-        private String meal;
-        private String dietaryOption;
-        private int count;
+        private final String meal;
+        private final String dietaryOption;
+        private final int count;
 
         public Row(String meal, String dietaryOption, int count) {
             this.meal = meal;

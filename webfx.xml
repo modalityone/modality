@@ -1894,14 +1894,17 @@
                 <module>modality-base-client-activity</module>
                 <module>modality-base-shared-entities</module>
                 <module>modality-crm-backoffice-organization-fx</module>
+                <module>webfx-extras-flexbox</module>
                 <module>webfx-extras-scalepane</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-launcher</module>
                 <module>webfx-kit-util</module>
-                <module>webfx-platform-json</module>
+                <module>webfx-platform-util</module>
                 <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-db-query</module>
+                <module>webfx-stack-i18n</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-routing-router</module>
                 <module>webfx-stack-routing-router-client</module>
@@ -4855,7 +4858,6 @@
             <java-package name="dev.webfx.platform.json">
                 <module>modality-base-client-activity</module>
                 <module>modality-base-shared-domainmodel</module>
-                <module>modality-catering-backoffice-activities-kitchen</module>
                 <module>modality-crm-shared-authn</module>
                 <module>modality-ecommerce-frontoffice-activities-cart-routing</module>
                 <module>modality-ecommerce-payment-custom-buscall</module>
@@ -5074,7 +5076,6 @@
             </java-package>
 
             <java-class name="javafx.scene.control.ScrollPane">
-                <module>modality-catering-backoffice-activities-kitchen</module>
                 <module>modality-ecommerce-backoffice-operations-document</module>
                 <module>modality-ecommerce-client-bookingprocess</module>
                 <module>webfx-extras-visual-grid</module>

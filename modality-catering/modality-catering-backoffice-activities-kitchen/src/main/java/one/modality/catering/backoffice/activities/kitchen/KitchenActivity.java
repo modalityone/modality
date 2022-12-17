@@ -1,6 +1,9 @@
 package one.modality.catering.backoffice.activities.kitchen;
 
+import dev.webfx.extras.flexbox.FlexBox;
+import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.util.Dates;
 import dev.webfx.stack.db.query.QueryArgument;
 import dev.webfx.stack.db.query.QueryArgumentBuilder;
 import dev.webfx.stack.db.query.QueryService;
@@ -8,10 +11,13 @@ import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivi
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContextMixin;
 import dev.webfx.stack.ui.util.background.BackgroundFactory;
+import dev.webfx.stack.ui.util.layout.LayoutUtil;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -22,7 +28,6 @@ import one.modality.base.shared.entities.Organization;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -59,21 +64,21 @@ public class KitchenActivity extends ViewDomainActivityBase
 
     private static final Font NO_DATA_MSG_FONT = Font.font("Monserrat", FontWeight.BOLD, 24);
     private static final Color NO_DATA_MSG_TEXT_COLOR = Color.web("#0096d6");
-    private static final Color TITLE_TEXT_COLOR = Color.web("#0096d6");
 
-    private VBox body = new VBox();
-    private MealsSelectionPane mealsSelectionPane = new MealsSelectionPane();
-    private DietaryOptionKeyPanel dietaryOptionKeyPanel = new DietaryOptionKeyPanel();
-    private MonthSelectionPanel monthSelectionPanel = new MonthSelectionPanel(this::updateAttendanceMonthPanel);
-    private AttendanceMonthPanel attendanceMonthPanel;
-    private HBox keyPane = new HBox();
-    private VBox attendanceCountsPanelContainer = new VBox();
+    private final BorderPane body = new BorderPane();
+    private final MealsSelectionPane mealsSelectionPane = new MealsSelectionPane();
+    private final DietaryOptionKeyPanel dietaryOptionKeyPanel = new DietaryOptionKeyPanel();
+    private final MonthSelectionPanel monthSelectionPanel = new MonthSelectionPanel(this::updateAttendanceMonthPanel);
+    private final Pane keyPane = new FlexBox();
+    private final VBox attendanceCountsPanelContainer = new VBox();
     private AttendanceCounts attendanceCounts;
 
     public KitchenActivity() {
         mealsSelectionPane.selectedItemsProperty().addListener((observableValue, oldValue, newValue) -> {
-            LocalDate selectedMonth = monthSelectionPanel.getSelectedMonth();
-            refreshAttendanceMonthPanel(selectedMonth);
+            if (pendingQuery == null) {
+                LocalDate selectedMonth = monthSelectionPanel.getSelectedMonth();
+                refreshAttendanceMonthPanel(selectedMonth);
+            }
         });
     }
 
@@ -83,12 +88,17 @@ public class KitchenActivity extends ViewDomainActivityBase
             mealsSelectionPane.setOrganization(FXOrganization.getOrganization());
             loadAttendance();
         }, FXOrganization.organizationProperty());
-        body.getChildren().addAll(keyPane, monthSelectionPanel, attendanceCountsPanelContainer);
-        mealsSelectionPane.prefWidthProperty().bind(body.widthProperty().divide(3));
-        dietaryOptionKeyPanel.prefWidthProperty().bind(body.widthProperty().divide(3));
+        AttendanceMonthPanel weekDays = new AttendanceMonthPanel(null, monthSelectionPanel.getSelectedMonth(), null, null);
+        weekDays.setPadding(new Insets(0, WebFxKitLauncher.getVerticalScrollbarExtraWidth(), 0, 0));
+        body.setTop(new VBox(5, monthSelectionPanel, weekDays));
+        body.setCenter(LayoutUtil.createVerticalScrollPane(attendanceCountsPanelContainer));
+        body.setBottom(keyPane);
         body.setBackground(BackgroundFactory.newBackground(Color.WHITE));
+        body.setPadding(new Insets(5));
         return body;
     }
+
+    QueryArgument pendingQuery;
 
     private void loadAttendance() {
         Organization organization = FXOrganization.getOrganization();
@@ -107,6 +117,10 @@ public class KitchenActivity extends ViewDomainActivityBase
                 .setParameters(organizationId, organizationId, startDate, endDate)
                 .build();
 
+        if (query.equals(pendingQuery))
+            return;
+        pendingQuery = query;
+
         QueryService.executeQuery(query)
                 .onFailure(System.err::println)
                 .onSuccess(result -> {
@@ -114,14 +128,14 @@ public class KitchenActivity extends ViewDomainActivityBase
                     LinkedHashMap<String, String> dietaryOptionSvgs = new LinkedHashMap<>();
                     for (int row = 0; row < result.getRowCount(); row++) {
                         String dateString = result.getValue(row, 0);
-                        LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ISO_ZONED_DATE_TIME);
+                        LocalDate date = Dates.toLocalDate(dateString); // LocalDate.parse(dateString, DateTimeFormatter.ISO_ZONED_DATE_TIME);
                         String meal = result.getValue(row, 1);
                         displayedMealNames.add(meal);
                         String dietaryOptionCode = result.getValue(row, 2);
                         String dietaryOptionName = result.getValue(row, 3);
-                        int count = result.getValue(row, 4);
+                        int count = result.getInt(row, 4, 0);
                         attendanceCounts.add(date, meal, dietaryOptionCode, count);
-                        int dietaryOptionOrdinal = result.getValue(row, 5);
+                        int dietaryOptionOrdinal = result.getInt(row, 5, 0);
                         attendanceCounts.storeDietaryOptionOrder(dietaryOptionCode, dietaryOptionOrdinal);
                         String svg = result.getValue(row, 6);
                         if (svg != null)
@@ -141,25 +155,34 @@ public class KitchenActivity extends ViewDomainActivityBase
                             noDataLabel.setWrapText(true);
                             keyPane.getChildren().setAll(noDataLabel);
                         } else {
-                            keyPane.getChildren().setAll(mealsSelectionPane, dietaryOptionKeyPanel);
+                            keyPane.getChildren().setAll(mealsSelectionPane, dietaryOptionKeyPanel, LayoutUtil.createHGrowable());
                             dietaryOptionKeyPanel.populate(dietaryOptionSvgs);
                         }
                         refreshAttendanceMonthPanel(selectedMonth);
                         mealsSelectionPane.setDisplayedMealNames(displayedMealNames);
                     });
+                    pendingQuery = null;
                 });
     }
 
     private void updateAttendanceMonthPanel(LocalDate month) {
         loadAttendance();
-        refreshAttendanceMonthPanel(month);
+        //refreshAttendanceMonthPanel(month);
     }
 
+    Runnable refreshAttendanceMonthPanelRunnable;
+
     private void refreshAttendanceMonthPanel(LocalDate month) {
-        List<Item> displayedMeals = mealsSelectionPane.selectedItemsProperty().get();
-        AbbreviationGenerator abbreviationGenerator = mealsSelectionPane.getAbbreviationGenerator();
-        attendanceMonthPanel = new AttendanceMonthPanel(attendanceCounts, month, displayedMeals, abbreviationGenerator);
-        Platform.runLater(() -> attendanceCountsPanelContainer.getChildren().setAll(attendanceMonthPanel));
+        if (refreshAttendanceMonthPanelRunnable == null) {
+            Platform.runLater(refreshAttendanceMonthPanelRunnable = () -> {
+                //System.out.println("refreshAttendanceMonthPanel()");
+                List<Item> displayedMeals = mealsSelectionPane.selectedItemsProperty().get();
+                AbbreviationGenerator abbreviationGenerator = mealsSelectionPane.getAbbreviationGenerator();
+                AttendanceMonthPanel attendanceMonthPanel = new AttendanceMonthPanel(attendanceCounts, month, displayedMeals, abbreviationGenerator);
+                attendanceCountsPanelContainer.getChildren().setAll(attendanceMonthPanel);
+                refreshAttendanceMonthPanelRunnable = null;
+            });
+        }
     }
 
     @Override
