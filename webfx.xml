@@ -2276,6 +2276,11 @@
                 <module>java.base</module>
                 <module>modality-base-shared-entities</module>
                 <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-stack-orm-datasourcemodel-service</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-session</module>
+                <module>webfx-stack-session-state-client-fx</module>
             </used-by-source-modules>
 
         </project>

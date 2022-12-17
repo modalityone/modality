@@ -13,11 +13,14 @@ public class ModalityBackOfficeFrameContainerActivity extends ModalityClientFram
 
     @Override
     protected Button createContainerHeaderCenterItem() {
+        // Creating the organization selector
         EntityButtonSelector<Organization> organizationSelector = new EntityButtonSelector<>(
                 "{class: 'Organization', alias: 'o', where: 'exists(select Event where organization=o)'}",
                 this, containerPane, getDataSourceModel()
         );
-        FXOrganization.organizationProperty().bind(organizationSelector.selectedItemProperty());
+        // Doing a bidirectional binding with FXOrganization
+        FXOrganization.organizationProperty().bindBidirectional(organizationSelector.selectedItemProperty());
+        // Returning the button of that organization selector
         return organizationSelector.getButton();
     }
 }
