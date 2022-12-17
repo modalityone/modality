@@ -14,6 +14,7 @@ import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import dev.webfx.stack.ui.util.layout.LayoutUtil;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -56,6 +57,7 @@ public class ModalityClientFrameContainerActivity extends ViewDomainActivityBase
                 // Logout button
                 ActionBinder.bindButtonToAction(newButton(), newOperationAction(LogoutRequest::new))
         );
+        containerHeader.setAlignment(Pos.CENTER_LEFT);
         containerHeader.setPadding(new Insets(5));
         containerHeader.setBackground(BackgroundUtil.newBackground(Color.web("#D9D9D9")));
         setUpContextMenu(containerHeader, this::contextMenuActionGroup);
