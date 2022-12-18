@@ -46,45 +46,60 @@ public class HomeActivity extends ViewDomainActivityBase
 
     private final static String[] sortedPossibleHomeRoutingOperations = {
             // New tiles (from wireframes)
-            "RouteToKitchen",
-            "RouteToUserAccount",
-            "RouteToReception",
-            "RouteToTranslationAndRecordings",
+            "RouteToKitchen", // routed
+            "RouteToUserAccount", // temporarily redirected to RouteToUsers
+            "RouteToReception", // temporarily redirected to RouteToFilters
+            "RouteToTranslationAndRecordings", // temporarily redirected to RouteToLetters
             "RouteToCafe",
-            "RouteToBookingsAndSearch",
-            "RouteToAdmin",
-            "RouteToFinancesAndStats",
+            "RouteToBookingsAndSearch", // temporarily redirected to RouteToBookings
+            "RouteToAdmin", // temporarily redirected to RouteToAuthorizations
+            "RouteToFinancesAndStats", // temporarily redirected to RouteToMoneyFlows
             "RouteToVolunteering",
             "RouteToShop",
             "RouteToMarketing",
             "RouteToRecurringClasses",
-            "RouteToEventsPlanner",
+            "RouteToEventsPlanner", // temporarily redirected to RouteToEvents
             "RouteToHousehold",
             "RouteToQR",
             "RouteToTransportation",
-            "RouteToOrganizations", // routed
-            "RouteToHumanResources",
-            "RouteToAccommodation",
-            "RouteToExtras",
+            "RouteToOrganizations", // temporarily routed
+            "RouteToHumanResources", // temporarily redirected to RouteToStatistics
+            "RouteToAccommodation", // temporarily redirected to RouteToRoomsGraphic
+            "RouteToExtras", // temporarily redirected to RouteToRoomsGraphic
             "---",
             // Old tiles (from prototype)
-            "RouteToEvents",
-            "RouteToBookings",
-            "RouteToStatistics",
+            "RouteToEvents", // Shown in RouteToEventsPlanner
+            "RouteToBookings", // Shown in RouteToBookingsAndSearch
+            "RouteToStatistics", // Shown in RouteToHumanResources
             "RouteToPayments",
             "RouteToStatements",
             "RouteToIncome",
-            "RouteToLetters",
-            "RouteToRoomsGraphic",
+            "RouteToLetters", // Shown in RouteToTranslationAndRecordings
+            "RouteToRoomsGraphic", // Shown in RouteToAccommodation
             "RouteToDiningAreas",
             "RouteToMonitor",
             "RouteToTester",
-            "RouteToUsers",
-            "RouteToOperations",
-            "RouteToAuthorizations",
-            "RouteToMoneyFlows",
-            "RouteToFilters",
+            "RouteToUsers", // Shown in RouteToUserAccount
+            "RouteToOperations", // Shown in RouteToExtras
+            "RouteToAuthorizations", // Shown in RouteToAdmin
+            "RouteToMoneyFlows", // Shown in RouteToFinancesAndStats
+            "RouteToFilters", // Shown in RouteToReception
     };
+
+    // Temporary redirects from new wireframes area to old prototype activities
+    private final Map<String, String> redirects = new HashMap<>();
+    {
+        redirects.put("RouteToUserAccount", "RouteToUsers");
+        redirects.put("RouteToEventsPlanner", "RouteToEvents");
+        redirects.put("RouteToBookingsAndSearch", "RouteToBookings");
+        redirects.put("RouteToAdmin", "RouteToAuthorizations");
+        redirects.put("RouteToAccommodation", "RouteToRoomsGraphic");
+        redirects.put("RouteToTranslationAndRecordings", "RouteToLetters");
+        redirects.put("RouteToFinancesAndStats", "RouteToMoneyFlows");
+        redirects.put("RouteToHumanResources", "RouteToStatistics");
+        redirects.put("RouteToReception", "RouteToFilters");
+        redirects.put("RouteToExtras", "RouteToOperations");
+    }
 
     @Override
     public Node buildUi() {
@@ -98,26 +113,39 @@ public class HomeActivity extends ViewDomainActivityBase
                 .collect(Collectors.toList());
     }
 
-    private final Collection<RouteRequestEmitter> providedEmitters = RouteRequestEmitter.getProvidedEmitters();
     private Action operationCodeToAction(String operationCode) {
-        Optional<RouteRequestEmitter> routeRequestEmitter = providedEmitters.stream()
-                .filter(instantiator -> hasRequestOperationCode(instantiator.instantiateRouteRequest(this), operationCode))
-                .findFirst();
+        RouteRequestEmitter routeRequestEmitter = findRouteRequestEmitter(operationCode);
         // Temporary code for main areas that don't have a route yet
         List<String> sortedPossibleHomeRoutingOperationsList = Arrays.asList(sortedPossibleHomeRoutingOperations);
         int operationIndex = sortedPossibleHomeRoutingOperationsList.indexOf(operationCode);
         int areaLastIndex = sortedPossibleHomeRoutingOperationsList.indexOf("---");
         if (operationIndex < areaLastIndex) {
-            if (routeRequestEmitter.isEmpty())
-                return new ActionBuilder().setI18nKey(operationCode.substring(7)).build();
+            if (routeRequestEmitter == null) {
+                String redirect = redirects.get(operationCode);
+                Action redirectAction = redirect == null ? null : getRouteEmitterAction(findRouteRequestEmitter(redirect));
+                return new ActionBuilder()
+                        .setI18nKey(operationCode.substring(7))
+                        .setActionHandler(redirectAction)
+                        .build();
+            } else
+                return getRouteEmitterAction(routeRequestEmitter);
         } else
             return null;
-        return routeRequestEmitter.isEmpty() ? null : newOperationAction(() -> {
-            RouteRequest routeRequest = routeRequestEmitter.get().instantiateRouteRequest(this);
+    }
+
+    private Action getRouteEmitterAction(RouteRequestEmitter routeRequestEmitter) {
+        return newOperationAction(() -> {
+            RouteRequest routeRequest = routeRequestEmitter.instantiateRouteRequest(this);
             if (routeRequest instanceof RoutePushRequest)
                 ((RoutePushRequest) routeRequest).setReplace(true);
             return routeRequest;
         });
+    }
+
+    private RouteRequestEmitter findRouteRequestEmitter(String operationCode) {
+        return RouteRequestEmitter.getProvidedEmitters().stream()
+                .filter(instantiator -> hasRequestOperationCode(instantiator.instantiateRouteRequest(this), operationCode))
+                .findFirst().orElse(null);
     }
 
     private static boolean hasRequestOperationCode(Object request, Object operationCode) {
