@@ -10,6 +10,9 @@ module modality.all.backoffice.application {
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.bookingdetailspanel;
     requires modality.crm.backoffice.organization.fx;
+    requires modality.event.backoffice.event.fx;
+    requires webfx.kit.util;
+    requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
 
     // Exported packages
