@@ -18,11 +18,7 @@ final class AddNewMoneyAccountExecutor {
         MoneyAccount insertEntity = updateStore.insertEntity(MoneyAccount.class);
         insertEntity.setOrganization(organization);
 
-        Pane propertiesSheetPane = new Pane();
-        propertiesSheetPane.prefWidthProperty().bind(parentContainer.widthProperty());
-        propertiesSheetPane.prefHeightProperty().bind(parentContainer.heightProperty());
-        EntityPropertiesSheet.editEntity(insertEntity, "name,closed,currency,event,gatewayCompany,type", propertiesSheetPane);
-        parentContainer.getChildren().add(propertiesSheetPane);
+        EntityPropertiesSheet.editEntity(insertEntity, "name,closed,currency,event,gatewayCompany,type", parentContainer);
 
         return Future.succeededFuture();
     }
