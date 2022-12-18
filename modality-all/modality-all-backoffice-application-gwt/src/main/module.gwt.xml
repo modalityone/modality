@@ -383,6 +383,8 @@
     <source path="one/modality/event/backoffice/operations/routes/events"/>
     <!--==================< modality-event-backoffice-activities-options >==================-->
     <source path="one/modality/event/backoffice/activities/options"/>
+    <!--=======================< modality-event-backoffice-event-fx >=======================-->
+    <source path="one/modality/event/backoffice/event/fx"/>
     <!--=====================< modality-event-client-bookingcalendar >======================-->
     <source path="one/modality/event/client/controls/bookingcalendar"/>
     <!--=========================< modality-event-client-calendar >=========================-->

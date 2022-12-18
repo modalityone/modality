@@ -1,5 +1,6 @@
 package one.modality.event.backoffice.activities.events;
 
+import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.ecommerce.backoffice.operations.routes.bookings.RouteToBookingsRequest;
 import one.modality.base.client.activity.ModalityDomainPresentationLogicActivityBase;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
@@ -12,7 +13,8 @@ import static dev.webfx.stack.orm.dql.DqlStatement.where;
  * @author Bruno Salmon
  */
 final class EventsPresentationLogicActivity
-        extends ModalityDomainPresentationLogicActivityBase<EventsPresentationModel> {
+        extends ModalityDomainPresentationLogicActivityBase<EventsPresentationModel>
+{
 
     EventsPresentationLogicActivity() {
         this(EventsPresentationModel::new);
@@ -24,7 +26,11 @@ final class EventsPresentationLogicActivity
 
     @Override
     protected void updatePresentationModelFromContextParameters(EventsPresentationModel pm) {
-        pm.setOrganizationId(getParameter("organizationId"));
+        Object organizationId = getParameter("organizationId");
+        if (organizationId != null)
+            pm.setOrganizationId(organizationId);
+        else
+            pm.organizationIdProperty().bind(FXOrganizationId.organizationIdProperty());
     }
 
     @Override

@@ -99,11 +99,17 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
 
         createAddNewMoneyAccountButton();
 
-        TabPane tabPane = new TabPane();
-        tabPane.getTabs().add(new Tab("Graph", graph));
-        tabPane.getTabs().add(new Tab("Money Account Table", moneyAccountTableContainer));
-        tabPane.getTabs().add(new Tab("Money Flow Table", moneyFlowTableContainer));
-        return tabPane;
+        return new TabPane(
+                createTab("Graph", graph),
+                createTab("Money Account Table", moneyAccountTableContainer),
+                createTab("Money Flow Table", moneyFlowTableContainer)
+        );
+    }
+
+    private static Tab createTab(String name, Node content) {
+        Tab tab = new Tab(name, content);
+        tab.setClosable(false);
+        return tab;
     }
 
     private ActionGroup createMoneyAccountTableContextMenuActionGroup() {
@@ -131,7 +137,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
     private Organization getOrganization() {
         Object organizationId = getOrganizationId();
         EntityStore entityStore = EntityStore.createAbove(moneyAccountVisualMapper.getStore());
-        return entityStore.getEntity(Organization.class, organizationId);
+        return entityStore.getOrCreateEntity(Organization.class, organizationId);
     }
 
     private MoneyAccount getSelectedMoneyAccount() {

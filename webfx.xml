@@ -162,8 +162,11 @@
                 <module>modality-base-shared-entities</module>
                 <module>modality-crm-backoffice-bookingdetailspanel</module>
                 <module>modality-crm-backoffice-organization-fx</module>
+                <module>modality-event-backoffice-event-fx</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-orm-entity-controls</module>
             </used-by-source-modules>
 
@@ -879,7 +882,9 @@
             <used-by-source-modules>
                 <module>modality-base-client-aggregates</module>
                 <module>modality-base-client-presentationmodel</module>
+                <module>modality-crm-backoffice-organization-fx</module>
                 <module>modality-ecommerce-client-businesslogic</module>
+                <module>modality-event-backoffice-event-fx</module>
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-grid</module>
                 <module>webfx-kit-javafxbase-emul</module>
@@ -2013,7 +2018,6 @@
             </source-packages>
 
             <used-by-source-modules>
-                <module>modality-crm-shared-authn</module>
                 <module>webfx-extras-visual-grid</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
@@ -2026,7 +2030,6 @@
                 <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-routing-router-client</module>
                 <module>webfx-stack-routing-uirouter</module>
-                <module>webfx-stack-session-state-client-fx</module>
                 <module>webfx-stack-ui-operation</module>
             </used-by-source-modules>
 
@@ -2816,6 +2819,7 @@
                 <module>webfx-stack-orm-entity-controls</module>
                 <module>webfx-stack-orm-reactive-entities</module>
                 <module>webfx-stack-orm-reactive-visual</module>
+                <module>webfx-stack-routing-router</module>
                 <module>webfx-stack-routing-router-client</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-action</module>
@@ -2976,6 +2980,7 @@
                 <module>webfx-stack-orm-reactive-dql</module>
                 <module>webfx-stack-orm-reactive-entities</module>
                 <module>webfx-stack-orm-reactive-visual</module>
+                <module>webfx-stack-routing-router</module>
                 <module>webfx-stack-routing-router-client</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
@@ -4188,6 +4193,7 @@
                 <module>modality-event-backoffice-activities-cloneevent-routing</module>
                 <module>modality-event-backoffice-activities-events</module>
                 <module>modality-event-backoffice-activities-options</module>
+                <module>modality-event-backoffice-event-fx</module>
                 <module>modality-event-client-bookingcalendar</module>
                 <module>modality-event-client-calendar</module>
                 <module>modality-event-client-sectionpanel</module>
@@ -4306,6 +4312,7 @@
             <used-by-source-modules>
                 <module>modality-base-client-activity</module>
                 <module>modality-base-client-util</module>
+                <module>modality-crm-backoffice-organization-fx</module>
                 <module>modality-ecommerce-backoffice-activities-bookings</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-platform-util</module>
@@ -4362,6 +4369,33 @@
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-controls</module>
                 <module>webfx-stack-ui-util</module>
+            </used-by-source-modules>
+
+        </project>
+
+        <project name="modality-event-backoffice-event-fx">
+
+            <exported-packages>
+                <source-packages/>
+            </exported-packages>
+
+            <dependencies>
+                <used-by-source-modules/>
+            </dependencies>
+
+            <source-packages>
+                <package>one.modality.event.backoffice.event.fx</package>
+            </source-packages>
+
+            <used-by-source-modules>
+                <module>java.base</module>
+                <module>modality-base-shared-entities</module>
+                <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-util</module>
+                <module>webfx-stack-orm-datasourcemodel-service</module>
+                <module>webfx-stack-orm-entity</module>
+                <module>webfx-stack-session</module>
+                <module>webfx-stack-session-state-client-fx</module>
             </used-by-source-modules>
 
         </project>

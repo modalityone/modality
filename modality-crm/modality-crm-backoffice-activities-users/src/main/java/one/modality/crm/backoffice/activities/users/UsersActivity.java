@@ -1,9 +1,10 @@
 package one.modality.crm.backoffice.activities.users;
 
+import dev.webfx.stack.orm.dql.DqlStatement;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.action.ActionGroupBuilder;
-import dev.webfx.stack.orm.dql.DqlStatement;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -14,12 +15,11 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
-import one.modality.base.shared.domainmodel.functions.AbcNames;
-import one.modality.base.shared.entities.Person;
 import one.modality.base.backoffice.controls.masterslave.ConventionalUiBuilder;
 import one.modality.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
-import one.modality.base.client.activity.eventdependent.EventDependentViewDomainActivity;
-import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import one.modality.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
+import one.modality.base.shared.domainmodel.functions.AbcNames;
+import one.modality.base.shared.entities.Person;
 import one.modality.ecommerce.backoffice.operations.entities.document.EditUsersPersonalDetailsRequest;
 
 import java.util.Arrays;
@@ -27,7 +27,7 @@ import java.util.Collection;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
-final class UsersActivity extends EventDependentViewDomainActivity implements
+final class UsersActivity extends OrganizationDependentViewDomainActivity implements
         ConventionalUiBuilderMixin {
 
     /*==================================================================================================================
@@ -67,7 +67,7 @@ final class UsersActivity extends EventDependentViewDomainActivity implements
 
     private Person getPerson() {
         Person person = pm.selectedMasterProperty().get();
-        person.setEvent(getEvent());
+        //person.setEvent(getEvent());
         return person;
     }
 

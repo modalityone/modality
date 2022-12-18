@@ -4,6 +4,7 @@ import dev.webfx.stack.orm.domainmodel.activity.domain.DomainActivityContext;
 import dev.webfx.stack.orm.domainmodel.activity.domain.DomainActivityContextMixin;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContextMixin;
+import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 
 public interface OrganizationDependentActivityMixin
         <C extends DomainActivityContext<C> & UiRouteActivityContext<C>>
@@ -13,6 +14,10 @@ public interface OrganizationDependentActivityMixin
         OrganizationDependentPresentationModelMixin {
 
     default void updateOrganizationDependentPresentationModelFromContextParameters() {
-        setOrganizationId(getParameter("organizationId"));
+        Object organizationId = getParameter("organizationId");
+        if (organizationId != null)
+            setOrganizationId(organizationId);
+        else
+            organizationIdProperty().bind(FXOrganizationId.organizationIdProperty());
     }
 }

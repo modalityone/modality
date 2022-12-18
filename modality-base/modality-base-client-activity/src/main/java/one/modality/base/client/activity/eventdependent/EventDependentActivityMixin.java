@@ -12,6 +12,8 @@ import one.modality.ecommerce.client.businessdata.preselection.ActiveOptionsPres
 import one.modality.ecommerce.client.businessdata.preselection.OptionsPreselection;
 import one.modality.ecommerce.client.businessdata.workingdocument.ActiveWorkingDocumentsByEventStore;
 import one.modality.ecommerce.client.businessdata.workingdocument.WorkingDocument;
+import one.modality.event.backoffice.event.fx.FXEventId;
+import one.modality.event.backoffice.event.fx.FXShowEvent;
 
 /**
  * @author Bruno Salmon
@@ -29,7 +31,13 @@ public interface EventDependentActivityMixin
     }
 
     default void updateEventDependentPresentationModelFromContextParameters() {
-        setEventId(getParameter("eventId"));
+        Object eventId = getParameter("eventId");
+        if (eventId != null)
+            setEventId(eventId);
+        else {
+            eventIdProperty().bind(FXEventId.eventIdProperty());
+            FXShowEvent.setShowEvent(true);
+        }
         updateOrganizationDependentPresentationModelFromContextParameters();
     }
 

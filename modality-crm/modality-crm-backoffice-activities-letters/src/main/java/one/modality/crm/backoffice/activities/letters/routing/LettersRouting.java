@@ -15,7 +15,7 @@ public final class LettersRouting {
     }
 
     public static String getEventLettersPath(Object eventId) {
-        return ModalityRoutingUtil.interpolateEventIdInPath(eventId, EVENT_PATH);
+        return eventId == null ? "/letters" : ModalityRoutingUtil.interpolateEventIdInPath(eventId, EVENT_PATH);
     }
 
 }

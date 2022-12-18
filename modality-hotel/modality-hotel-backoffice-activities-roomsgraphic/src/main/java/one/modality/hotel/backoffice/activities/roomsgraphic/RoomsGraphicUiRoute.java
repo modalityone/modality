@@ -16,7 +16,7 @@ public final class RoomsGraphicUiRoute extends UiRouteImpl {
     }
 
     public static UiRoute<?> uiRoute() {
-        return UiRoute.createRegex(PathBuilder.toRegexPath(RoomsGraphicRouting.getPath())
+        return UiRoute.createRegex(PathBuilder.toRegexPath(RoomsGraphicRouting.getAnyPath())
                 , false
                 , RoomsGraphicActivity::new
                 , ViewDomainActivityContextFinal::new

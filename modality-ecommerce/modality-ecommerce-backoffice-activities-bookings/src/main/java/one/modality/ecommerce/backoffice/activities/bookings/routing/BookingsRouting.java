@@ -18,7 +18,7 @@ public final class BookingsRouting {
     }
 
     public static String getEventBookingsPath(Object eventId) {
-        return ModalityRoutingUtil.interpolateEventIdInPath(eventId, EVENT_PATH);
+        return eventId == null ? "/bookings" : ModalityRoutingUtil.interpolateEventIdInPath(eventId, EVENT_PATH);
     }
 
     public static LocalDate parseDayParam(String parameterValue) {

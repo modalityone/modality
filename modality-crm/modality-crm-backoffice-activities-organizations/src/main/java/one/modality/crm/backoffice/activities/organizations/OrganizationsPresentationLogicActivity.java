@@ -1,9 +1,8 @@
 package one.modality.crm.backoffice.activities.organizations;
 
-import one.modality.event.backoffice.operations.routes.events.RouteToEventsRequest;
-import one.modality.base.client.activity.ModalityDomainPresentationLogicActivityBase;
-import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.platform.util.function.Factory;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import one.modality.base.client.activity.ModalityDomainPresentationLogicActivityBase;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.limit;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
@@ -38,7 +37,7 @@ final class OrganizationsPresentationLogicActivity
                 .applyDomainModelRowStyle()
                 .visualizeResultInto(pm.genericVisualResultProperty())
                 .setVisualSelectionProperty(pm.genericVisualSelectionProperty())
-                .setSelectedEntityHandler(organization -> new RouteToEventsRequest(organization, getHistory()).execute())
+                //.setSelectedEntityHandler(organization -> new RouteToEventsRequest(organization, getHistory()).execute())
                 .start();
     }
 }

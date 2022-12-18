@@ -7,14 +7,16 @@ import one.modality.base.client.util.routing.ModalityRoutingUtil;
  */
 public final class MoneyFlowsRouting {
 
-    private final static String PATH = "/money-flows/organization/:organizationId";
+    private final static String ANY_PATH = "/money-flows(/organization/:organizationId)?";
 
-    public static String getPath() {
-        return PATH;
+    private final static String ORGANIZATION_PATH = "/money-flows/organization/:organizationId";
+
+    public static String getAnyPath() {
+        return ANY_PATH;
     }
 
     public static String getOrganizationIncomePath(Object organizationId) {
-        return ModalityRoutingUtil.interpolateOrganizationIdInPath(organizationId, PATH);
+        return organizationId == null ? "/money-flows" : ModalityRoutingUtil.interpolateOrganizationIdInPath(organizationId, ORGANIZATION_PATH);
     }
 
 }

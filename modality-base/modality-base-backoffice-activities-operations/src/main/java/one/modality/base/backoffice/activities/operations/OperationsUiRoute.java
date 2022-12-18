@@ -16,7 +16,7 @@ public final class OperationsUiRoute extends UiRouteImpl {
 
     public static UiRoute<?> uiRoute() {
         return UiRoute.create(OperationsRouting.getPath()
-                , false
+                , true
                 , OperationsActivity::new
                 , DomainPresentationActivityContextFinal::new
         );

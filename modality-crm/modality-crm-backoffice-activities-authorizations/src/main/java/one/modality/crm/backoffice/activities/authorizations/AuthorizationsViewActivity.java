@@ -5,13 +5,11 @@ import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivi
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.controls.entity.sheet.EntityPropertiesSheet;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.stack.session.state.client.fx.FXUserPrincipal;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.Pane;
-import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
@@ -44,7 +42,7 @@ final class AuthorizationsViewActivity extends ViewDomainActivityBase {
 
         ReactiveVisualMapper.createPushReactiveChain(this)
                 .always("{class: 'AuthorizationManagement', orderBy: 'id'}")
-                .ifNotNullOtherwiseEmpty(FXUserPrincipal.userPrincipalProperty(), principal -> where("manager=?", ModalityUserPrincipal.getUserPersonId(principal)))
+                //.ifNotNullOtherwiseEmpty(FXUserPrincipal.userPrincipalProperty(), principal -> where("manager=?", ModalityUserPrincipal.getUserPersonId(principal)))
                 .setEntityColumns(manageeColumns)
                 .visualizeResultInto(usersGrid)
                 .setSelectedEntityHandler(selectedManagementProperty::setValue)

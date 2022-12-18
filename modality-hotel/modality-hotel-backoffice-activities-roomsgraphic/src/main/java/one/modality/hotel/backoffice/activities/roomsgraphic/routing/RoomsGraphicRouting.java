@@ -7,14 +7,15 @@ import one.modality.base.client.util.routing.ModalityRoutingUtil;
  */
 public final class RoomsGraphicRouting {
 
-    private final static String PATH = "/rooms-graphic/event/:eventId";
+    private final static String ANY_PATH = "/rooms-graphic(/event/:eventId)?";
+    private final static String EVENT_PATH = "/rooms-graphic/event/:eventId";
 
-    public static String getPath() {
-        return PATH;
+    public static String getAnyPath() {
+        return ANY_PATH;
     }
 
     public static String getEventPath(Object eventId) {
-        return ModalityRoutingUtil.interpolateEventIdInPath(eventId, PATH);
+        return eventId == null ? "/rooms-graphic" : ModalityRoutingUtil.interpolateEventIdInPath(eventId, EVENT_PATH);
     }
 
 }

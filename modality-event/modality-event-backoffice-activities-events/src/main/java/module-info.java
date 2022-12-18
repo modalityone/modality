@@ -7,6 +7,7 @@ module modality.event.backoffice.activities.events {
     requires javafx.graphics;
     requires modality.base.client.activity;
     requires modality.base.client.util;
+    requires modality.crm.backoffice.organization.fx;
     requires modality.ecommerce.backoffice.activities.bookings;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;

@@ -17,7 +17,7 @@ public final class UsersUiRoute extends UiRouteImpl {
 
     public static UiRoute<?> uiRoute() {
         return UiRoute.createRegex(PathBuilder.toRegexPath(UsersRouting.getPath())
-                , false
+                , true
                 , UsersActivity::new
                 , ViewDomainActivityContextFinal::new
         );
