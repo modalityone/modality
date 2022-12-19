@@ -7,7 +7,7 @@ import one.modality.ecommerce.payment.custom.InitiateCustomPaymentResult;
 
 public final class InitiateCustomPaymentResultSerialCodec extends SerialCodecBase<InitiateCustomPaymentResult> {
 
-    private static final String CODEC_ID = "InitiateDelegatedPaymentResult";
+    private static final String CODEC_ID = "InitiateCustomPaymentResult";
     private static final String HTML_CONTENT_KEY = "htmlContent";
 
     public InitiateCustomPaymentResultSerialCodec() {
