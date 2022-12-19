@@ -372,6 +372,14 @@
     <source path="one/modality/ecommerce/frontoffice/activities/summary"/>
     <source path="one/modality/ecommerce/frontoffice/activities/summary/routing"/>
     <source path="one/modality/ecommerce/frontoffice/operations/summary"/>
+    <!--=======================< modality-ecommerce-payment-custom >========================-->
+    <source path="one/modality/ecommerce/payment/custom"/>
+    <source path="one/modality/ecommerce/payment/custom/spi"/>
+    <!--===================< modality-ecommerce-payment-custom-buscall >====================-->
+    <source path="one/modality/ecommerce/payment/custom/buscall"/>
+    <source path="one/modality/ecommerce/payment/custom/buscall/serial"/>
+    <!--====================< modality-ecommerce-payment-custom-remote >====================-->
+    <source path="one/modality/ecommerce/payment/custom/spi/impl/remote"/>
     <!--================< modality-event-backoffice-activities-cloneevent >=================-->
     <source path="one/modality/event/backoffice/activities/cloneevent"/>
     <!--============< modality-event-backoffice-activities-cloneevent-routing >=============-->

@@ -4,6 +4,8 @@ module modality.all.backoffice.application.gluon {
 
     // Direct dependencies modules
     requires modality.all.backoffice.application;
+    requires modality.ecommerce.payment.custom.buscall;
+    requires modality.ecommerce.payment.custom.remote;
     requires webfx.kit.openjfx;
     requires webfx.platform.boot.java;
     requires webfx.platform.console.java;

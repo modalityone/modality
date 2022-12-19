@@ -2131,7 +2131,6 @@
 
             <used-by-source-modules>
                 <module>modality-base-client-activity</module>
-                <module>modality-event-backoffice-activities-events</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
@@ -3094,12 +3093,16 @@
 
             <used-by-source-modules>
                 <module>modality-base-shared-entities</module>
+                <module>modality-ecommerce-payment-custom</module>
+                <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
+                <module>webfx-kit-javafxweb-emul</module>
                 <module>webfx-platform-async</module>
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-orm-entity-controls</module>
                 <module>webfx-stack-ui-controls</module>
                 <module>webfx-stack-ui-operation</module>
+                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>

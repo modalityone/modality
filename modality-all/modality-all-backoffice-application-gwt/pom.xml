@@ -488,6 +488,27 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-ecommerce-payment-custom</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-ecommerce-payment-custom-buscall</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-ecommerce-payment-custom-remote</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-event-backoffice-activities-all</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>

@@ -6,6 +6,8 @@ module modality.all.backoffice.application.openjfx {
     requires javafx.controls;
     requires modality.all.backoffice.application;
     requires modality.base.shared.domainmodel;
+    requires modality.ecommerce.payment.custom.buscall;
+    requires modality.ecommerce.payment.custom.remote;
     requires modality.event.backoffice.activities.cloneevent;
     requires modality.event.backoffice.activities.cloneevent.routing;
     requires webfx.kit.openjfx;
