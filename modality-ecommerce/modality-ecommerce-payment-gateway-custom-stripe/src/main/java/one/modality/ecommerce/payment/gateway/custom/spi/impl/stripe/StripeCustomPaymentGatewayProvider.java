@@ -29,7 +29,7 @@ public class StripeCustomPaymentGatewayProvider implements CustomPaymentGatewayP
                     )
                     .build();
             String clientSecret = PaymentIntent.create(params).getClientSecret();
-            String html = Resource.getText("one/modality/ecommerce/payment/gateway/custom/spi/impl/stripe/stripe-checkout.html")
+            String html = Resource.getText(Resource.toUrl("stripe-checkout.html", getClass()))
                     .replace("{{API_KEY}}", API_PUBLIC_KEY)
                     .replace("{{CLIENT_SECRET}}", clientSecret)
                     .replace("{{RETURN_URL}}", "http://127.0.0.1:8080/checkout/success/");
