@@ -358,6 +358,8 @@
     <source path="dev/webfx/platform/json/spi/impl/listmap"/>
     <!--============================< webfx-platform-json-gwt >=============================-->
     <source path="dev/webfx/platform/json/spi/impl/gwt"/>
+    <!--==============================< webfx-platform-meta >===============================-->
+    <source path="dev/webfx/platform/meta"/>
     <!--============================< webfx-platform-resource >=============================-->
     <source path="dev/webfx/platform/resource"/>
     <source path="dev/webfx/platform/resource/spi"/>

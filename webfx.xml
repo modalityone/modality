@@ -4923,6 +4923,7 @@
                 <module>webfx-platform-windowhistory-web</module>
                 <module>webfx-stack-authn</module>
                 <module>webfx-stack-authn-login-buscall</module>
+                <module>webfx-stack-authn-login-ui-gateway-webviewbased-openjfx</module>
                 <module>webfx-stack-authn-server-gateway</module>
                 <module>webfx-stack-authn-server-gateway-facebook</module>
                 <module>webfx-stack-authn-server-gateway-google</module>
@@ -4980,6 +4981,7 @@
             </java-package>
 
             <java-package name="dev.webfx.stack.com.bus.spi.impl.json.server">
+                <module>webfx-stack-com-bus-json-server</module>
                 <module>webfx-stack-com-bus-json-vertx</module>
                 <module>webfx-stack-push-server-liveclient-interceptor</module>
             </java-package>
@@ -5100,6 +5102,7 @@
                 <module>webfx-stack-authn-server-portal</module>
                 <module>webfx-stack-authz-server</module>
                 <module>webfx-stack-com-bus-json-server</module>
+                <module>webfx-stack-session-state-server</module>
             </java-package>
 
             <java-package name="dev.webfx.stack.ui.fxraiser">

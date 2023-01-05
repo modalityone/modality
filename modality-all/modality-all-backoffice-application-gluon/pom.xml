@@ -146,13 +146,19 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-shutdown-java</artifactId>
+            <artifactId>webfx-platform-shutdown-gluon</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-storage-java</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-storagelocation-gluon</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

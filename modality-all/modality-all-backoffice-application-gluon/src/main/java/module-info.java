@@ -12,8 +12,9 @@ module modality.all.backoffice.application.gluon {
     requires webfx.platform.json.java;
     requires webfx.platform.resource.java;
     requires webfx.platform.scheduler.java;
-    requires webfx.platform.shutdown.java;
+    requires webfx.platform.shutdown.gluon;
     requires webfx.platform.storage.java;
+    requires webfx.platform.storagelocation.gluon;
     requires webfx.platform.windowhistory.java;
     requires webfx.platform.windowlocation.java;
     requires webfx.stack.authn.buscall;
@@ -33,5 +34,8 @@ module modality.all.backoffice.application.gluon {
     requires webfx.stack.orm.dql.submit.interceptor;
     requires webfx.stack.session.client;
     requires webfx.stack.ui.fxraiser.json;
+
+    // Meta Resource package
+    opens dev.webfx.platform.meta.exe;
 
 }

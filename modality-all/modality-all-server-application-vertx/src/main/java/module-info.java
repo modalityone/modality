@@ -35,4 +35,7 @@ module modality.all.server.application.vertx {
     requires webfx.stack.routing.router.vertx;
     requires webfx.stack.session.vertx;
 
+    // Meta Resource package
+    opens dev.webfx.platform.meta.exe;
+
 }

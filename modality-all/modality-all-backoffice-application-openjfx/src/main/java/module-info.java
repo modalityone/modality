@@ -18,6 +18,7 @@ module modality.all.backoffice.application.openjfx {
     requires webfx.platform.scheduler.java;
     requires webfx.platform.shutdown.java;
     requires webfx.platform.storage.java;
+    requires webfx.platform.storagelocation.java;
     requires webfx.platform.windowhistory.java;
     requires webfx.platform.windowlocation.java;
     requires webfx.stack.authn.buscall;
@@ -45,6 +46,9 @@ module modality.all.backoffice.application.openjfx {
     // Exported packages
     exports one.modality.all.backoffice.activities.event.clone.openjfx;
     exports one.modality.all.backoffice.conf.openjfx;
+
+    // Meta Resource package
+    opens dev.webfx.platform.meta.exe;
 
     // Provided services
     provides dev.webfx.stack.conf.spi.ConfigurationSupplier with one.modality.all.backoffice.conf.openjfx.ModalityAllBackOfficeEnvironmentConfigurationSupplier;
