@@ -89,7 +89,7 @@ jobs:
       web-push-repository-owner: ${{ github.repository_owner }}
       web-push-username: ${{ github.actor }}
       web-push-email: ${{ secrets.API_GITHUB_EMAIL }}
-      jdk-version: '18'
+      jdk-version: '19'
       xcode-version: '11.7.0'
       API_GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
       GLUON_LICENSE: ${{ secrets.GLUON_LICENSE }}
