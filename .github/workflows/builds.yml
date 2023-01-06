@@ -90,7 +90,7 @@ jobs:
       web-push-username: ${{ github.actor }}
       web-push-email: ${{ secrets.API_GITHUB_EMAIL }}
       jdk-version: '19'
-      xcode-version: '11.7.0'
+      xcode-version: '14.2.0'
       API_GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
       GLUON_LICENSE: ${{ secrets.GLUON_LICENSE }}
       GLUON_IOS_CERTIFICATES_FILE_BASE64: ${{ secrets.GLUON_IOS_CERTIFICATES_FILE_BASE64 }}
