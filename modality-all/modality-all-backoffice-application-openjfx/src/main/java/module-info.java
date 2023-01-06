@@ -11,6 +11,7 @@ module modality.all.backoffice.application.openjfx {
     requires modality.event.backoffice.activities.cloneevent;
     requires modality.event.backoffice.activities.cloneevent.routing;
     requires webfx.kit.openjfx;
+    requires webfx.kit.platform.visibility.openjfx;
     requires webfx.platform.boot.java;
     requires webfx.platform.console.java;
     requires webfx.platform.json.java;
