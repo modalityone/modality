@@ -4981,7 +4981,6 @@
             </java-package>
 
             <java-package name="dev.webfx.stack.com.bus.spi.impl.json.server">
-                <module>webfx-stack-com-bus-json-server</module>
                 <module>webfx-stack-com-bus-json-vertx</module>
                 <module>webfx-stack-push-server-liveclient-interceptor</module>
             </java-package>
@@ -5102,7 +5101,6 @@
                 <module>webfx-stack-authn-server-portal</module>
                 <module>webfx-stack-authz-server</module>
                 <module>webfx-stack-com-bus-json-server</module>
-                <module>webfx-stack-session-state-server</module>
             </java-package>
 
             <java-package name="dev.webfx.stack.ui.fxraiser">
