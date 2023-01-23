@@ -35,8 +35,8 @@ jobs:
     strategy:
       matrix:
         app: [
-          { name: 'ModalityBackOffice',  parent-module: "modality-all", module-token: 'modality-all-backoffice',  gwt-token: 'modality_all_backoffice',  gluon-token: 'ModalityAllBackoffice',  web-push-branch: 'backoffice',  ios-bundle-id: 'org.modality.backoffice',  version: '1.0.0-SNAPSHOT' },
-          { name: 'ModalityFrontOffice', parent-module: "modality-all", module-token: 'modality-all-frontoffice', gwt-token: 'modality_all_frontoffice', gluon-token: 'ModalityAllFrontoffice', web-push-branch: 'frontoffice', ios-bundle-id: 'org.modality.frontoffice', version: '1.0.0-SNAPSHOT' }
+          { name: 'ModalityBackOffice',  parent-module: "modality-all", module-token: 'modality-all-backoffice',  gwt-token: 'modality_all_backoffice',  gluon-token: 'ModalityAllBackoffice',  web-push-branch: 'backoffice',  android-package-name: 'one.modality.backoffice',  android-track: 'beta', ios-bundle-id: 'one.modality.backoffice',  version: '1.0.0-SNAPSHOT' },
+          { name: 'ModalityFrontOffice', parent-module: "modality-all", module-token: 'modality-all-frontoffice', gwt-token: 'modality_all_frontoffice', gluon-token: 'ModalityAllFrontoffice', web-push-branch: 'frontoffice', android-package-name: 'one.modality.frontoffice', android-track: 'beta', ios-bundle-id: 'one.modality.frontoffice', version: '1.0.0-SNAPSHOT' }
         ]
         os-config:  [1, 2, 3, 4]
         include:
@@ -53,7 +53,8 @@ jobs:
           - os-config: 2 # Generates build 6) - Could be in os-config 1 but moved it a separate config to speed up (parallel run)
             os: ubuntu-latest
             gluon-android-arch-token:      'aarch64-android'                    # build 6)
-            gluon-android-artifact-suffix: 'Android-aarch64-native-package.apk' # build 6)
+            gluon-android-apk-suffix:      'Android-aarch64.apk'                # build 6)
+            gluon-android-aab-suffix:      'Android-aarch64.aab'                # build 6)
 
           - os-config: 3 # Generates builds 7) 8) 9) & 10)
             os: windows-latest
@@ -93,8 +94,18 @@ jobs:
       xcode-version: '14.2.0'
       API_GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
       GLUON_LICENSE: ${{ secrets.GLUON_LICENSE }}
-      GLUON_IOS_CERTIFICATES_FILE_BASE64: ${{ secrets.GLUON_IOS_CERTIFICATES_FILE_BASE64 }}
+      GLUON_ANDROID_VERSION_CODE: ${{ vars.GLUON_ANDROID_VERSION_CODE }}
+      GLUON_ANDROID_VERSION_NAME: ${{ vars.GLUON_ANDROID_VERSION_NAME }}
+      GLUON_ANDROID_KEYSTORE_BASE64: ${{ secrets.GLUON_ANDROID_KEYSTORE_BASE64 }}
+      GLUON_ANDROID_KEYSTORE_PASSWORD: ${{ secrets.GLUON_ANDROID_KEYSTORE_PASSWORD }}
+      GLUON_ANDROID_KEYALIAS: ${{ secrets.GLUON_ANDROID_KEYALIAS }}
+      GLUON_ANDROID_KEYALIAS_PASSWORD: ${{ secrets.GLUON_ANDROID_KEYALIAS_PASSWORD }}
+      GLUON_ANDROID_SERVICE_ACCOUNT_JSON: ${{ secrets.GLUON_ANDROID_SERVICE_ACCOUNT_JSON }}
+      GLUON_IOS_CERTIFICATES_BASE64: ${{ secrets.GLUON_IOS_CERTIFICATES_BASE64 }}
+      GLUON_IOS_CERTIFICATES_PASSWORD: ${{ secrets.GLUON_IOS_CERTIFICATES_PASSWORD }}
       GLUON_IOS_APPSTORE_KEY_ID: ${{ secrets.GLUON_IOS_APPSTORE_KEY_ID }}
+      GLUON_IOS_APPSTORE_PRIVATE_KEY: ${{ secrets.GLUON_IOS_APPSTORE_PRIVATE_KEY }}
+      GLUON_IOS_APPSTORE_ISSUER_ID: ${{ secrets.GLUON_IOS_APPSTORE_ISSUER_ID }}
 
     steps:
 
@@ -145,21 +156,20 @@ jobs:
 
       # Building this repository with JDK 13+ (Java 11 target)
       - name: Build this repository (no OpenJFX fat jar - no GWT build)
-        run: mvn -B -P '!gwt-compile,!openjfx-fatjar,!javapackager' install
+        run: mvn -B -P '!gwt-compile,!openjfx-fatjar,!openjfx-desktop' install
         working-directory: ${{ env.app-repo-dir }}
 
       # Building this repository with JDK 13+ (Java 11 target) including a GWT compilation (if required)
       - if: matrix.web-artifact-suffix != null
         name: Build this application (OpenJFX fat jar + GWT build)
-        # Note: profile javapackager removed due to module error with Java-WebSocket
-        run: mvn -B -P 'gwt-compile,openjfx-fatjar,!javapackager' package
+        run: mvn -B -P 'gwt-compile,openjfx-fatjar,openjfx-desktop' package
         working-directory: ${{ env.app-parent-module-dir }}
 
       # Or building this repository with JDK 13+ (Java 11 target) excluding a GWT compilation
       - if: matrix.web-artifact-suffix == null
         name: Build this application (OpenJFX fat jar - no GWT build)
-        # Note: profile javapackager removed due to module error with Java-WebSocket
-        run: mvn -B -P '!gwt-compile,openjfx-fatjar,!javapackager' package
+        run: mvn -B -P '!gwt-compile,openjfx-fatjar,openjfx-desktop' package
+        working-directory: ${{ env.app-parent-module-dir }}
 
 
       ##################################################################################################################
@@ -170,7 +180,7 @@ jobs:
         name: Push GWT build to ${{ matrix.app.web-push-branch }} branch
         uses: cpina/github-action-push-to-another-repository@master
         env:
-          API_TOKEN_GITHUB: ${{ secrets.API_GITHUB_TOKEN }}
+          API_TOKEN_GITHUB: ${{ env.API_GITHUB_TOKEN }}
         with:
           source-directory: ${{ env.app-gwt-build-dir }}
           destination-repository-username: ${{ env.web-push-repository-owner }}
@@ -285,7 +295,7 @@ jobs:
       - uses: gluonhq/setup-graalvm@master
         # set GITHUB_TOKEN to avoid exceeding GitHub's API rate limit
         env:
-          GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ env.API_GITHUB_TOKEN }}
 
       # Gluon needs additional libraries on Linux
       - if: runner.os == 'Linux'
@@ -297,7 +307,7 @@ jobs:
         name: Gluon License
         uses: gluonhq/gluon-build-license@v1
         with:
-          gluon-license: ${{ secrets.GLUON_LICENSE }}
+          gluon-license: ${{ env.GLUON_LICENSE }}
 
       # Invoking the Gluon Client Maven plugin to build the native Desktop app (chaining build & package goals)
       - if: matrix.gluon-desktop-artifact-suffix != null
@@ -333,21 +343,53 @@ jobs:
       #  6) App-Android-aarch64-native-package.apk : Android native app (Gluon)                                        #
       ##################################################################################################################
 
-      # All prerequisite have already be done when building the Desktop qpps
+      # Importing the Android keystore if provided
+      - if: matrix.gluon-android-arch-token != null && env.GLUON_ANDROID_KEYSTORE_BASE64 != '' && env.GLUON_ANDROID_KEYALIAS != ''
+        name: Setup Android Keystore
+        id: android_keystore_file
+        uses: timheuer/base64-to-file@v1.2
+        with:
+          fileName: 'android.keystore'
+          encodedString: ${{ env.GLUON_ANDROID_KEYSTORE_BASE64 }}
+
 
       # Invoking the Gluon Client Maven plugin to build the native Android app (chaining build & package goals)
       - if: matrix.gluon-android-arch-token != null
+        id: android_gluon_build
         name: Gluon Build for Android
-        run: mvn -B -P 'gluon-android' clean gluonfx:build gluonfx:package # May take a while
+        run: |
+          export ANDROID_SDK=$ANDROID_HOME # Otherwise GluonFX 1.0.16 package task is failing
+          mvn -B -P 'gluon-android' clean gluonfx:build gluonfx:package # May take a while
         env:
           GRAALVM_HOME: ${{ env.JAVA_HOME }}
+          GLUON_ANDROID_KEYSTOREPATH: ${{ steps.android_keystore_file.outputs.filePath }}
         working-directory: ${{ env.app-gluon-module-dir }}
+        continue-on-error: true # So that we print the Gluon logs in the next step to help investigating the error
+
+      - if: matrix.gluon-android-arch-token != null
+        name: Print Android Gluon build logs (for debug)
+        run: tail -n+1 ${{ env.app-gluon-module-dir }}/target/gluonfx/log/*.log
+
+      - if: steps.android_gluon_build.outcome == 'failure'
+        name: Exit if Android Gluon build failed
+        run: exit 1
 
       # Staging 6)
       - if: matrix.gluon-android-arch-token != null
-        name: Copy Android native application to staging
-        run: cp ${{ env.app-gluon-module-dir }}/target/gluonfx/${{ matrix.gluon-android-arch-token }}/gvm/*.apk staging/${{ env.app-name }}-${{ matrix.gluon-android-artifact-suffix }}
+        name: Copy Android APK & AAB to staging
+        run: |
+          cp ${{ env.app-gluon-module-dir }}/target/gluonfx/${{ matrix.gluon-android-arch-token }}/gvm/*.apk staging/${{ env.app-name }}-${{ matrix.gluon-android-apk-suffix }}
+          cp ${{ env.app-gluon-module-dir }}/target/gluonfx/${{ matrix.gluon-android-arch-token }}/gvm/*.aab staging/${{ env.app-name }}-${{ matrix.gluon-android-aab-suffix }}
 
+      # Uploading to Google Play (if json provided)
+      - if: matrix.gluon-ios-arch-token != null && env.GLUON_ANDROID_SERVICE_ACCOUNT_JSON != ''
+        name: Upload to Google Play
+        uses: r0adkll/upload-google-play@v1.0.19
+        with:
+          serviceAccountJsonPlainText: ${{ env.GLUON_ANDROID_SERVICE_ACCOUNT_JSON }}
+          packageName: ${{ matrix.android-package-name }}
+          releaseFiles: ${{ env.app-gluon-module-dir }}/target/gluonfx/${{ matrix.gluon-android-arch-token }}/gvm/*.aab
+          track: ${{ matrix.android-track }}
 
       ##################################################################################################################
       #                        Building and staging the native iOS app using Gluon/GraalVM                             #
@@ -356,23 +398,23 @@ jobs:
       ##################################################################################################################
 
       # Importing the Apple codesign certificates
-      - if: env.GLUON_IOS_CERTIFICATES_FILE_BASE64 != ''
+      - if: env.GLUON_IOS_CERTIFICATES_BASE64 != ''
         uses: Apple-Actions/import-codesign-certs@v1
         with:
-          p12-file-base64: ${{ secrets.GLUON_IOS_CERTIFICATES_FILE_BASE64 }}
-          p12-password: ${{ secrets.GLUON_IOS_CERTIFICATES_PASSWORD }}
+          p12-file-base64: ${{ env.GLUON_IOS_CERTIFICATES_BASE64 }}
+          p12-password: ${{ env.GLUON_IOS_CERTIFICATES_PASSWORD }}
 
       # Importing the Apple codesign certificates
       - if: env.GLUON_IOS_APPSTORE_KEY_ID != ''
         uses: Apple-Actions/download-provisioning-profiles@v1
         with:
           ios-bundle-id: ${{ matrix.app.ios-bundle-id }}
-          issuer-id: ${{ secrets.GLUON_IOS_APPSTORE_ISSUER_ID }}
-          api-key-id: ${{ secrets.GLUON_IOS_APPSTORE_KEY_ID }}
-          api-private-key: ${{ secrets.GLUON_IOS_APPSTORE_PRIVATE_KEY }}
+          issuer-id: ${{ env.GLUON_IOS_APPSTORE_ISSUER_ID }}
+          api-key-id: ${{ env.GLUON_IOS_APPSTORE_KEY_ID }}
+          api-private-key: ${{ env.GLUON_IOS_APPSTORE_PRIVATE_KEY }}
 
       # Invoking the Gluon Client Maven plugin to build the native iOS app (chaining build & package goals)
-      - if: matrix.gluon-ios-arch-token != null && env.GLUON_IOS_CERTIFICATES_FILE_BASE64 != ''
+      - if: matrix.gluon-ios-arch-token != null && env.GLUON_IOS_CERTIFICATES_BASE64 != ''
         name: Gluon Build for iOS
         run: mvn -B -P 'gluon-ios' clean gluonfx:build gluonfx:package # May take a while
         env:
@@ -380,7 +422,7 @@ jobs:
         working-directory: ${{ env.app-gluon-module-dir }}
 
       # Staging 10)
-      - if: matrix.gluon-ios-arch-token != null && env.GLUON_IOS_CERTIFICATES_FILE_BASE64 != ''
+      - if: matrix.gluon-ios-arch-token != null && env.GLUON_IOS_CERTIFICATES_BASE64 != ''
         name: Copy iOS native application to staging
         run: cp ${{ env.app-gluon-module-dir }}/target/gluonfx/${{ matrix.gluon-ios-arch-token }}/gvm/*.ipa staging/${{ env.app-name }}-${{ matrix.gluon-ios-artifact-suffix }}
 
@@ -395,9 +437,9 @@ jobs:
         uses: Apple-Actions/upload-testflight-build@master
         with:
           app-path: staging/${{ env.app-name }}-${{ matrix.gluon-ios-artifact-suffix }}
-          issuer-id: ${{ secrets.GLUON_IOS_APPSTORE_ISSUER_ID }}
-          api-key-id: ${{ secrets.GLUON_IOS_APPSTORE_KEY_ID }}
-          api-private-key: ${{ secrets.GLUON_IOS_APPSTORE_PRIVATE_KEY }}
+          issuer-id: ${{ env.GLUON_IOS_APPSTORE_ISSUER_ID }}
+          api-key-id: ${{ env.GLUON_IOS_APPSTORE_KEY_ID }}
+          api-private-key: ${{ env.GLUON_IOS_APPSTORE_PRIVATE_KEY }}
 
 
       ##################################################################################################################
@@ -425,8 +467,8 @@ jobs:
       ##################################################################################################################
 
       # Uploading all artifacts in the assets of this workflow run
-      - name: Upload artifacts in the assets of this worflow run
-        uses: actions/upload-artifact@v2
+      - name: Upload artifacts in the assets of this workflow run
+        uses: actions/upload-artifact@v3
         with:
           name: build-${{ matrix.os-config }}-assets
           path: staging/*
@@ -470,7 +512,7 @@ jobs:
           tag: SNAPSHOT
           assets: '*'
           fail-if-no-assets: false
-          token: ${{ secrets.API_GITHUB_TOKEN }}
+          token: ${{ env.API_GITHUB_TOKEN }}
 
       # Upload all artifacts into the SNAPSHOT release assets
       - if: env.API_GITHUB_TOKEN != ''
@@ -479,4 +521,4 @@ jobs:
         with:
           release-tag: SNAPSHOT
           files: upload/*
-          repo-token: ${{ secrets.API_GITHUB_TOKEN }}
+          repo-token: ${{ env.API_GITHUB_TOKEN }}
