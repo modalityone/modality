@@ -1332,10 +1332,10 @@
             <used-by-source-modules>
                 <module>java.base</module>
                 <module>modality-crm-shared-authn</module>
-                <module>webfx-kit-launcher</module>
                 <module>webfx-platform-boot</module>
                 <module>webfx-platform-console</module>
                 <module>webfx-platform-storage</module>
+                <module>webfx-platform-useragent</module>
                 <module>webfx-stack-com-bus</module>
                 <module>webfx-stack-orm-datasourcemodel-service</module>
                 <module>webfx-stack-orm-entity</module>

@@ -8,6 +8,7 @@ module modality.base.client.application {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.activity;
+    requires modality.base.client.css;
     requires modality.base.client.icons;
     requires webfx.extras.imagestore;
     requires webfx.extras.materialdesign;

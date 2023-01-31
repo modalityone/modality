@@ -1,9 +1,9 @@
 package one.modality.base.client.jobs.sessionrecorder;
 
-import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.platform.boot.spi.ApplicationJob;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.storage.LocalStorage;
+import dev.webfx.platform.useragent.UserAgent;
 import dev.webfx.stack.com.bus.Bus;
 import dev.webfx.stack.com.bus.BusHook;
 import dev.webfx.stack.com.bus.BusService;
@@ -268,7 +268,7 @@ public final class ClientSessionRecorderJob implements ApplicationJob {
     }
 
     private static String getUserAgent() {
-        return WebFxKitLauncher.getUserAgent();
+        return UserAgent.getUserAgentName();
     }
 
     private static String getApplicationName() {
