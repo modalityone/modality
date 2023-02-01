@@ -329,6 +329,8 @@
     <!--=================================< webfx-kit-util >=================================-->
     <source path="dev/webfx/kit/util/properties"/>
     <source path="dev/webfx/kit/util/properties/conversion"/>
+    <!--==============================< webfx-kit-util-scene >==============================-->
+    <source path="dev/webfx/kit/util/scene"/>
     <!--============================< webfx-lib-javacupruntime >============================-->
     <source path="java_cup/runtime"/>
     <!--==============================< webfx-platform-async >==============================-->
@@ -360,6 +362,12 @@
     <source path="dev/webfx/platform/json/spi/impl/gwt"/>
     <!--==============================< webfx-platform-meta >===============================-->
     <source path="dev/webfx/platform/meta"/>
+    <!--===============================< webfx-platform-os >================================-->
+    <source path="dev/webfx/platform/os"/>
+    <source path="dev/webfx/platform/os/spi"/>
+    <source path="dev/webfx/platform/os/spi/impl"/>
+    <!--=============================< webfx-platform-os-gwt >==============================-->
+    <source path="dev/webfx/platform/os/spi/impl/gwt"/>
     <!--============================< webfx-platform-resource >=============================-->
     <source path="dev/webfx/platform/resource"/>
     <source path="dev/webfx/platform/resource/spi"/>

@@ -14,6 +14,7 @@ module modality.base.client.application {
     requires webfx.extras.materialdesign;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
+    requires webfx.kit.util.scene;
     requires webfx.platform.uischeduler;
     requires transitive webfx.platform.util;
     requires webfx.stack.authn.logout.client;

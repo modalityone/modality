@@ -992,6 +992,7 @@
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-launcher</module>
                 <module>webfx-kit-util</module>
+                <module>webfx-kit-util-scene</module>
                 <module>webfx-platform-uischeduler</module>
                 <module>webfx-platform-util</module>
                 <module>webfx-stack-authn-logout-client</module>
