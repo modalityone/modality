@@ -1,0 +1,13 @@
+FROM 765878394194.dkr.ecr.us-east-1.amazonaws.com/oracle_java
+
+RUN set -eux; \
+        mkdir -p /opt/modality/conf
+
+COPY modality-all-server-application-vertx-1.0.0-SNAPSHOT-fat.jar /opt/modality
+COPY HttpOptions.json /opt/modality/conf
+
+WORKDIR /opt/modality
+
+EXPOSE 80
+
+CMD ["java", "-jar", "/opt/modality/modality-all-server-application-vertx-1.0.0-SNAPSHOT-fat.jar"]

@@ -28,3 +28,22 @@ jobs:
         release: 19
     - name: Build with Maven
       run: mvn package -P vertx-fatjar
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+    - name: Build, tag, and push image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: modality
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        cp modality-all/modality-all-server-application-vertx/target/modality-all-server-application-vertx-1.0.0-SNAPSHOT-fat.jar docker/aws-service/modality-service
+        cd docker/aws-service/modality-service
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
