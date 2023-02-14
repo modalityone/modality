@@ -1,4 +1,4 @@
-FROM 765878394194.dkr.ecr.us-east-1.amazonaws.com/oracle_java
+FROM __ECR_ACCOUNT_ID__.dkr.ecr.us-east-1.amazonaws.com/oracle_java
 
 RUN set -eux; \
         mkdir -p /opt/modality/conf
