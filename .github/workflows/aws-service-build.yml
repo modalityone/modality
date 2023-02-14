@@ -40,10 +40,10 @@ jobs:
     - name: Build, tag, and push image to Amazon ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ variables.MODALITY_REPOSITORY }}
-        ECR_ACCOUNT_ID: ${{ variables.ECR_ACCOUNT_ID }}
-        ECS_CLUSTER: ${{ variables.ECS_CLUSTER }}
-        ECS_SERVICE: ${{ variables.ECS_SERVICE }}
+        ECR_REPOSITORY: ${{ vars.MODALITY_REPOSITORY }}
+        ECR_ACCOUNT_ID: ${{ vars.ECR_ACCOUNT_ID }}
+        ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
+        ECS_SERVICE: ${{ vars.ECS_SERVICE }}
         IMAGE_TAG: ${{ github.sha }}
       run: |
         cp modality-all/modality-all-server-application-vertx/target/modality-all-server-application-vertx-1.0.0-SNAPSHOT-fat.jar docker/aws-service/modality-service
