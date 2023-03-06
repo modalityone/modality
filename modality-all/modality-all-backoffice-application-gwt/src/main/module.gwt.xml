@@ -105,6 +105,7 @@
     <source path="org/pepstock/charba/client/impl/charts"/>
     <source path="org/pepstock/charba/client/impl/plugins"/>
     <source path="org/pepstock/charba/client/impl/plugins/enums"/>
+    <source path="org/pepstock/charba/client/interaction"/>
     <source path="org/pepstock/charba/client/intl"/>
     <source path="org/pepstock/charba/client/intl/enums"/>
     <source path="org/pepstock/charba/client/items"/>
@@ -270,6 +271,7 @@
     <!--================< modality-catering-backoffice-activities-kitchen >=================-->
     <source path="one/modality/catering/backoffice/activities/kitchen"/>
     <source path="one/modality/catering/backoffice/activities/kitchen/routing"/>
+    <source path="one/modality/catering/backoffice/activities/kitchen/theme"/>
     <source path="one/modality/catering/backoffice/operations/routes/kitchen"/>
     <!--=============< modality-catering-backoffice-operations-allocationrule >=============-->
     <source path="one/modality/catering/backoffice/operations/entities/allocationrule"/>
@@ -436,8 +438,21 @@
     <source path="dev/webfx/extras/materialdesign/util/scene"/>
     <!--=============================< webfx-extras-scalepane >=============================-->
     <source path="dev/webfx/extras/scalepane"/>
+    <!--===============================< webfx-extras-theme >===============================-->
+    <source path="dev/webfx/extras/theme"/>
+    <source path="dev/webfx/extras/theme/luminance"/>
+    <source path="dev/webfx/extras/theme/palette"/>
+    <source path="dev/webfx/extras/theme/shape"/>
+    <source path="dev/webfx/extras/theme/text"/>
+    <!--============================< webfx-extras-timelayout >=============================-->
+    <source path="dev/webfx/extras/timelayout"/>
+    <source path="dev/webfx/extras/timelayout/impl"/>
+    <!--========================< webfx-extras-timelayout-calendar >========================-->
+    <source path="dev/webfx/extras/timelayout/impl/calendar"/>
     <!--===============================< webfx-extras-type >================================-->
     <source path="dev/webfx/extras/type"/>
+    <!--============================< webfx-extras-util-colors >============================-->
+    <source path="dev/webfx/extras/util/colors"/>
     <!--==============================< webfx-extras-visual >===============================-->
     <source path="dev/webfx/extras/visual"/>
     <source path="dev/webfx/extras/visual/impl"/>

@@ -269,8 +269,16 @@
     <source path="dev/webfx/extras/materialdesign/util/background"/>
     <source path="dev/webfx/extras/materialdesign/util/layout"/>
     <source path="dev/webfx/extras/materialdesign/util/scene"/>
+    <!--===============================< webfx-extras-theme >===============================-->
+    <source path="dev/webfx/extras/theme"/>
+    <source path="dev/webfx/extras/theme/luminance"/>
+    <source path="dev/webfx/extras/theme/palette"/>
+    <source path="dev/webfx/extras/theme/shape"/>
+    <source path="dev/webfx/extras/theme/text"/>
     <!--===============================< webfx-extras-type >================================-->
     <source path="dev/webfx/extras/type"/>
+    <!--============================< webfx-extras-util-colors >============================-->
+    <source path="dev/webfx/extras/util/colors"/>
     <!--==============================< webfx-extras-visual >===============================-->
     <source path="dev/webfx/extras/visual"/>
     <source path="dev/webfx/extras/visual/impl"/>

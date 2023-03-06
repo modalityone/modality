@@ -9,6 +9,7 @@ module modality.base.backoffice.activities.home {
     requires javafx.graphics;
     requires modality.base.client.activity;
     requires webfx.extras.scalepane;
+    requires webfx.extras.theme;
     requires webfx.extras.webtext;
     requires webfx.kit.util;
     requires webfx.platform.windowhistory;

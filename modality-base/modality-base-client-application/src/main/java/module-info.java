@@ -11,7 +11,7 @@ module modality.base.client.application {
     requires modality.base.client.css;
     requires modality.base.client.icons;
     requires webfx.extras.imagestore;
-    requires webfx.extras.materialdesign;
+    requires webfx.extras.theme;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.kit.util.scene;
