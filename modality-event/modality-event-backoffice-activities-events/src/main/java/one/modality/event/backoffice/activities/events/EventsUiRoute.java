@@ -1,10 +1,10 @@
 package one.modality.event.backoffice.activities.events;
 
-import one.modality.event.backoffice.activities.events.routing.EventsRouting;
-import dev.webfx.stack.orm.domainmodel.activity.domainpresentation.impl.DomainPresentationActivityContextFinal;
+import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
+import dev.webfx.stack.routing.router.util.PathBuilder;
 import dev.webfx.stack.routing.uirouter.UiRoute;
 import dev.webfx.stack.routing.uirouter.impl.UiRouteImpl;
-import dev.webfx.stack.routing.router.util.PathBuilder;
+import one.modality.event.backoffice.activities.events.routing.EventsRouting;
 
 /**
  * @author Bruno Salmon
@@ -20,7 +20,7 @@ public final class EventsUiRoute extends UiRouteImpl {
                 PathBuilder.toRegexPath(EventsRouting.getAnyPath())
                 , false
                 , EventsActivity::new
-                , DomainPresentationActivityContextFinal::new
+                , ViewDomainActivityContextFinal::new
         );
     }
 }
