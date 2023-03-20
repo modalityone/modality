@@ -14,7 +14,10 @@ module modality.catering.backoffice.activities.kitchen {
     requires webfx.extras.theme;
     requires webfx.extras.timelayout;
     requires webfx.extras.timelayout.calendar;
-    requires webfx.extras.util.colors;
+    requires webfx.extras.util.background;
+    requires webfx.extras.util.border;
+    requires webfx.extras.util.color;
+    requires webfx.extras.util.layout;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.uischeduler;
@@ -30,7 +33,6 @@ module modality.catering.backoffice.activities.kitchen {
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.fxraiser;
     requires webfx.stack.ui.operation;
-    requires webfx.stack.ui.util;
 
     // Exported packages
     exports one.modality.catering.backoffice.activities.kitchen;

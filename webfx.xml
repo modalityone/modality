@@ -605,6 +605,7 @@
                 <module>modality-base-client-activity</module>
                 <module>webfx-extras-scalepane</module>
                 <module>webfx-extras-theme</module>
+                <module>webfx-extras-util-layout</module>
                 <module>webfx-extras-webtext</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
@@ -617,7 +618,6 @@
                 <module>webfx-stack-ui-action</module>
                 <module>webfx-stack-ui-operation</module>
                 <module>webfx-stack-ui-operation-action</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -647,6 +647,7 @@
 
             <used-by-source-modules>
                 <module>modality-base-client-activity</module>
+                <module>webfx-extras-util-layout</module>
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-charts</module>
                 <module>webfx-kit-javafxbase-emul</module>
@@ -659,7 +660,6 @@
                 <module>webfx-stack-routing-router-client</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -723,6 +723,7 @@
                 <module>modality-base-client-entities</module>
                 <module>webfx-extras-imagestore</module>
                 <module>webfx-extras-type</module>
+                <module>webfx-extras-util-layout</module>
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-charts</module>
                 <module>webfx-extras-visual-controls</module>
@@ -739,7 +740,6 @@
                 <module>webfx-stack-orm-reactive-entities</module>
                 <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-ui-controls</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -761,6 +761,7 @@
             <used-by-source-modules>
                 <module>java.base</module>
                 <module>modality-base-client-icons</module>
+                <module>webfx-extras-util-layout</module>
                 <module>webfx-extras-webtext</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
@@ -772,7 +773,6 @@
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-ui-action</module>
                 <module>webfx-stack-ui-controls</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -887,6 +887,9 @@
                 <module>modality-crm-backoffice-organization-fx</module>
                 <module>modality-ecommerce-client-businesslogic</module>
                 <module>modality-event-backoffice-event-fx</module>
+                <module>webfx-extras-util-background</module>
+                <module>webfx-extras-util-border</module>
+                <module>webfx-extras-util-scene</module>
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-grid</module>
                 <module>webfx-kit-javafxbase-emul</module>
@@ -903,7 +906,6 @@
                 <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-controls</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -990,6 +992,8 @@
                 <module>modality-base-client-icons</module>
                 <module>webfx-extras-imagestore</module>
                 <module>webfx-extras-theme</module>
+                <module>webfx-extras-util-layout</module>
+                <module>webfx-extras-util-scene</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-launcher</module>
@@ -1007,7 +1011,6 @@
                 <module>webfx-stack-ui-action</module>
                 <module>webfx-stack-ui-operation</module>
                 <module>webfx-stack-ui-operation-action</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -1120,6 +1123,8 @@
                 <module>java.base</module>
                 <module>modality-base-client-presentationmodel</module>
                 <module>modality-base-shared-entities</module>
+                <module>webfx-extras-util-layout</module>
+                <module>webfx-extras-util-scene</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
@@ -1131,7 +1136,6 @@
                 <module>webfx-stack-orm-entity-controls</module>
                 <module>webfx-stack-orm-reactive-dql</module>
                 <module>webfx-stack-ui-controls</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -1396,13 +1400,15 @@
             <used-by-source-modules>
                 <module>java.base</module>
                 <module>webfx-extras-imagestore</module>
+                <module>webfx-extras-util-background</module>
+                <module>webfx-extras-util-border</module>
+                <module>webfx-extras-util-scene</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-uischeduler</module>
                 <module>webfx-platform-util</module>
-                <module>webfx-stack-ui-util</module>
                 <module>webfx-stack-ui-validation</module>
             </used-by-source-modules>
 
@@ -1907,7 +1913,10 @@
                 <module>webfx-extras-theme</module>
                 <module>webfx-extras-timelayout</module>
                 <module>webfx-extras-timelayout-calendar</module>
-                <module>webfx-extras-util-colors</module>
+                <module>webfx-extras-util-background</module>
+                <module>webfx-extras-util-border</module>
+                <module>webfx-extras-util-color</module>
+                <module>webfx-extras-util-layout</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
@@ -1926,7 +1935,6 @@
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-fxraiser</module>
                 <module>webfx-stack-ui-operation</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -2319,6 +2327,9 @@
                 <module>modality-base-client-activity</module>
                 <module>modality-base-client-validation</module>
                 <module>modality-event-client-sectionpanel</module>
+                <module>webfx-extras-util-animation</module>
+                <module>webfx-extras-util-layout</module>
+                <module>webfx-extras-util-scene</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
@@ -2330,7 +2341,6 @@
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-session-state-client-fx</module>
                 <module>webfx-stack-ui-controls</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -2420,6 +2430,7 @@
                 <module>modality-event-client-sectionpanel</module>
                 <module>webfx-extras-materialdesign</module>
                 <module>webfx-extras-type</module>
+                <module>webfx-extras-util-layout</module>
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-grid</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
@@ -2433,7 +2444,6 @@
                 <module>webfx-stack-orm-entity-controls</module>
                 <module>webfx-stack-session-state-client-fx</module>
                 <module>webfx-stack-ui-controls</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -2715,6 +2725,7 @@
                 <module>modality-ecommerce-backoffice-operations-document</module>
                 <module>modality-event-backoffice-activities-cloneevent-routing</module>
                 <module>modality-event-frontoffice-activities-fees</module>
+                <module>webfx-extras-util-layout</module>
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-grid</module>
                 <module>webfx-kit-javafxbase-emul</module>
@@ -2733,7 +2744,6 @@
                 <module>webfx-stack-ui-action</module>
                 <module>webfx-stack-ui-operation</module>
                 <module>webfx-stack-ui-operation-action</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -2814,6 +2824,8 @@
                 <module>modality-base-shared-domainmodel</module>
                 <module>modality-base-shared-entities</module>
                 <module>modality-ecommerce-backoffice-operations-moneyflow</module>
+                <module>webfx-extras-util-background</module>
+                <module>webfx-extras-util-border</module>
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-grid</module>
                 <module>webfx-kit-javafxbase-emul</module>
@@ -2835,7 +2847,6 @@
                 <module>webfx-stack-ui-controls</module>
                 <module>webfx-stack-ui-operation</module>
                 <module>webfx-stack-ui-operation-action</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -2870,6 +2881,7 @@
                 <module>modality-base-shared-domainmodel</module>
                 <module>modality-base-shared-entities</module>
                 <module>modality-ecommerce-backoffice-operations-moneytransfer</module>
+                <module>webfx-extras-util-layout</module>
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-grid</module>
                 <module>webfx-kit-javafxbase-emul</module>
@@ -2886,7 +2898,6 @@
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
                 <module>webfx-stack-ui-operation-action</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -2976,6 +2987,7 @@
                 <module>modality-ecommerce-backoffice-operations-document</module>
                 <module>modality-ecommerce-backoffice-operations-documentline</module>
                 <module>webfx-extras-type</module>
+                <module>webfx-extras-util-layout</module>
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-grid</module>
                 <module>webfx-kit-javafxbase-emul</module>
@@ -2994,7 +3006,6 @@
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-operation</module>
                 <module>webfx-stack-ui-operation-action</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -3104,6 +3115,7 @@
             <used-by-source-modules>
                 <module>modality-base-shared-entities</module>
                 <module>modality-ecommerce-payment-custom</module>
+                <module>webfx-extras-util-layout</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-javafxweb-emul</module>
@@ -3112,7 +3124,6 @@
                 <module>webfx-stack-orm-entity-controls</module>
                 <module>webfx-stack-ui-controls</module>
                 <module>webfx-stack-ui-operation</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -3175,6 +3186,8 @@
                 <module>modality-base-client-activity</module>
                 <module>modality-base-client-aggregates</module>
                 <module>modality-base-shared-entities</module>
+                <module>webfx-extras-util-background</module>
+                <module>webfx-extras-util-layout</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
@@ -3182,7 +3195,6 @@
                 <module>webfx-platform-util</module>
                 <module>webfx-stack-orm-datasourcemodel-service</module>
                 <module>webfx-stack-routing-uirouter</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -3284,6 +3296,7 @@
                 <module>modality-event-frontoffice-activities-startbooking</module>
                 <module>webfx-extras-flexbox</module>
                 <module>webfx-extras-type</module>
+                <module>webfx-extras-util-layout</module>
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-grid</module>
                 <module>webfx-kit-javafxbase-emul</module>
@@ -3302,7 +3315,6 @@
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-action</module>
                 <module>webfx-stack-ui-controls</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -3331,6 +3343,7 @@
                 <module>modality-base-client-aggregates</module>
                 <module>modality-base-client-util</module>
                 <module>modality-base-shared-entities</module>
+                <module>webfx-extras-util-background</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
@@ -3340,7 +3353,6 @@
                 <module>webfx-stack-i18n</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-routing-uirouter</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -3371,6 +3383,8 @@
                 <module>modality-base-client-validation</module>
                 <module>modality-base-shared-entities</module>
                 <module>modality-ecommerce-frontoffice-activities-cart-routing</module>
+                <module>webfx-extras-util-background</module>
+                <module>webfx-extras-util-layout</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-platform-console</module>
@@ -3382,7 +3396,6 @@
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-action</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -3416,6 +3429,7 @@
                 <module>modality-base-shared-entities</module>
                 <module>modality-ecommerce-frontoffice-activities-cart-routing</module>
                 <module>modality-event-client-sectionpanel</module>
+                <module>webfx-extras-util-layout</module>
                 <module>webfx-extras-webtext</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
@@ -3431,7 +3445,6 @@
                 <module>webfx-stack-session-state-client-fx</module>
                 <module>webfx-stack-ui-action</module>
                 <module>webfx-stack-ui-controls</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -3463,6 +3476,7 @@
                 <module>modality-ecommerce-client-bookingprocess</module>
                 <module>modality-ecommerce-client-businesslogic</module>
                 <module>modality-ecommerce-frontoffice-activities-summary</module>
+                <module>webfx-extras-util-layout</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
@@ -3471,7 +3485,6 @@
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-session-state-client-fx</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -4328,6 +4341,7 @@
                 <module>modality-crm-backoffice-organization-fx</module>
                 <module>modality-ecommerce-backoffice-activities-bookings</module>
                 <module>webfx-kit-javafxbase-emul</module>
+                <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-platform-util</module>
                 <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
@@ -4369,6 +4383,7 @@
                 <module>modality-event-client-calendar</module>
                 <module>modality-event-frontoffice-activities-options</module>
                 <module>modality-hotel-shared-time</module>
+                <module>webfx-extras-util-layout</module>
                 <module>webfx-extras-visual-grid</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
@@ -4381,7 +4396,6 @@
                 <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-controls</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -4466,12 +4480,13 @@
             <used-by-source-modules>
                 <module>java.base</module>
                 <module>modality-hotel-shared-time</module>
+                <module>webfx-extras-util-background</module>
+                <module>webfx-extras-util-layout</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
                 <module>webfx-platform-util</module>
                 <module>webfx-stack-i18n</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -4494,11 +4509,13 @@
                 <module>modality-base-client-icons</module>
                 <module>modality-event-client-bookingcalendar</module>
                 <module>webfx-extras-cell</module>
+                <module>webfx-extras-util-background</module>
+                <module>webfx-extras-util-border</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-stack-i18n</module>
-                <module>webfx-stack-ui-util</module>
+                <module>webfx-stack-ui-json</module>
             </used-by-source-modules>
 
         </project>
@@ -4559,6 +4576,7 @@
                 <module>webfx-extras-cell</module>
                 <module>webfx-extras-imagestore</module>
                 <module>webfx-extras-type</module>
+                <module>webfx-extras-util-layout</module>
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-grid</module>
                 <module>webfx-extras-visual-grid-peers-base</module>
@@ -4575,7 +4593,7 @@
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-routing-uirouter</module>
-                <module>webfx-stack-ui-util</module>
+                <module>webfx-stack-ui-json</module>
             </used-by-source-modules>
 
         </project>
@@ -4615,6 +4633,7 @@
                 <module>modality-hotel-shared-time</module>
                 <module>webfx-extras-flexbox</module>
                 <module>webfx-extras-imagestore</module>
+                <module>webfx-extras-util-layout</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
@@ -4628,7 +4647,6 @@
                 <module>webfx-stack-orm-entity</module>
                 <module>webfx-stack-orm-entity-controls</module>
                 <module>webfx-stack-routing-uirouter</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -4662,12 +4680,12 @@
                 <module>modality-ecommerce-client-businesslogic</module>
                 <module>modality-event-client-bookingcalendar</module>
                 <module>modality-event-client-sectionpanel</module>
+                <module>webfx-extras-util-layout</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-platform-console</module>
                 <module>webfx-platform-windowhistory</module>
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-routing-uirouter</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -4702,6 +4720,8 @@
                 <module>modality-event-frontoffice-activities-program</module>
                 <module>modality-event-frontoffice-activities-terms</module>
                 <module>webfx-extras-imagestore</module>
+                <module>webfx-extras-util-animation</module>
+                <module>webfx-extras-util-layout</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
                 <module>webfx-kit-javafxgraphics-emul</module>
                 <module>webfx-kit-util</module>
@@ -4710,7 +4730,6 @@
                 <module>webfx-stack-orm-domainmodel-activity</module>
                 <module>webfx-stack-routing-uirouter</module>
                 <module>webfx-stack-ui-action</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -4742,6 +4761,7 @@
                 <module>modality-base-client-util</module>
                 <module>modality-ecommerce-client-bookingprocess</module>
                 <module>modality-event-client-sectionpanel</module>
+                <module>webfx-extras-util-layout</module>
                 <module>webfx-extras-visual</module>
                 <module>webfx-extras-visual-grid-peers-base</module>
                 <module>webfx-kit-javafxbase-emul</module>
@@ -4752,7 +4772,6 @@
                 <module>webfx-stack-orm-dql</module>
                 <module>webfx-stack-orm-reactive-visual</module>
                 <module>webfx-stack-routing-uirouter</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -4818,6 +4837,7 @@
                 <module>modality-hotel-backoffice-operations-resourceconfiguration</module>
                 <module>webfx-extras-flexbox</module>
                 <module>webfx-extras-imagestore</module>
+                <module>webfx-extras-util-layout</module>
                 <module>webfx-extras-visual-grid</module>
                 <module>webfx-kit-javafxbase-emul</module>
                 <module>webfx-kit-javafxcontrols-emul</module>
@@ -4838,7 +4858,6 @@
                 <module>webfx-stack-ui-action</module>
                 <module>webfx-stack-ui-operation</module>
                 <module>webfx-stack-ui-operation-action</module>
-                <module>webfx-stack-ui-util</module>
             </used-by-source-modules>
 
         </project>
@@ -4968,7 +4987,7 @@
                 <module>webfx-stack-session-client</module>
                 <module>webfx-stack-session-state</module>
                 <module>webfx-stack-ui-fxraiser-json</module>
-                <module>webfx-stack-ui-util</module>
+                <module>webfx-stack-ui-json</module>
             </java-package>
 
             <java-package name="dev.webfx.stack.authn">
@@ -5132,9 +5151,10 @@
                 <module>modality-catering-backoffice-activities-kitchen</module>
                 <module>modality-ecommerce-backoffice-operations-document</module>
                 <module>modality-ecommerce-client-bookingprocess</module>
+                <module>webfx-extras-util-layout</module>
+                <module>webfx-extras-util-scene</module>
                 <module>webfx-extras-visual-grid</module>
                 <module>webfx-stack-ui-controls</module>
-                <module>webfx-stack-ui-util</module>
             </java-class>
 
         </usages>

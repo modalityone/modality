@@ -20,6 +20,7 @@ module modality.ecommerce.frontoffice.activities.cart {
     requires modality.event.frontoffice.activities.startbooking;
     requires webfx.extras.flexbox;
     requires webfx.extras.type;
+    requires webfx.extras.util.layout;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
     requires webfx.platform.async;
@@ -35,7 +36,6 @@ module modality.ecommerce.frontoffice.activities.cart {
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.action;
     requires webfx.stack.ui.controls;
-    requires webfx.stack.ui.util;
 
     // Exported packages
     exports one.modality.ecommerce.frontoffice.activities.cart;

@@ -32,8 +32,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static dev.webfx.extras.util.layout.LayoutUtil.*;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
-import static dev.webfx.stack.ui.util.layout.LayoutUtil.*;
 
 /**
  * @author Bruno Salmon

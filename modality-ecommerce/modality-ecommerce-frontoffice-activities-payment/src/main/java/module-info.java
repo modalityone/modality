@@ -12,6 +12,7 @@ module modality.ecommerce.frontoffice.activities.payment {
     requires modality.base.shared.entities;
     requires modality.ecommerce.frontoffice.activities.cart.routing;
     requires modality.event.client.sectionpanel;
+    requires webfx.extras.util.layout;
     requires webfx.extras.webtext;
     requires webfx.platform.console;
     requires webfx.platform.uischeduler;
@@ -25,7 +26,6 @@ module modality.ecommerce.frontoffice.activities.payment {
     requires webfx.stack.session.state.client.fx;
     requires webfx.stack.ui.action;
     requires webfx.stack.ui.controls;
-    requires webfx.stack.ui.util;
 
     // Exported packages
     exports one.modality.ecommerce.frontoffice.activities.payment;

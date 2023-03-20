@@ -6,7 +6,7 @@ import dev.webfx.stack.routing.uirouter.activity.presentation.view.impl.Presenta
 import dev.webfx.extras.visual.controls.charts.VisualChart;
 import dev.webfx.extras.visual.controls.charts.VisualLineChart;
 
-import static dev.webfx.stack.ui.util.layout.LayoutUtil.setVGrowable;
+import static dev.webfx.extras.util.layout.LayoutUtil.setVGrowable;
 
 /**
  * @author Bruno Salmon

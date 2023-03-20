@@ -12,6 +12,8 @@ module modality.base.client.application {
     requires modality.base.client.icons;
     requires webfx.extras.imagestore;
     requires webfx.extras.theme;
+    requires webfx.extras.util.layout;
+    requires webfx.extras.util.scene;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.kit.util.scene;
@@ -27,7 +29,6 @@ module modality.base.client.application {
     requires webfx.stack.ui.action;
     requires webfx.stack.ui.operation;
     requires webfx.stack.ui.operation.action;
-    requires webfx.stack.ui.util;
 
     // Exported packages
     exports one.modality.base.client.application;

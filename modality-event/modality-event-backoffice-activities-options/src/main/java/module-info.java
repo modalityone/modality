@@ -15,6 +15,7 @@ module modality.event.backoffice.activities.options {
     requires modality.event.client.calendar;
     requires modality.event.frontoffice.activities.options;
     requires modality.hotel.shared.time;
+    requires webfx.extras.util.layout;
     requires webfx.extras.visual.grid;
     requires webfx.kit.util;
     requires webfx.stack.db.submit;
@@ -24,7 +25,6 @@ module modality.event.backoffice.activities.options {
     requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.controls;
-    requires webfx.stack.ui.util;
 
     // Exported packages
     exports one.modality.event.backoffice.activities.options;

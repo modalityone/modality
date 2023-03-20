@@ -20,6 +20,7 @@ module modality.event.frontoffice.activities.fees {
     requires webfx.extras.cell;
     requires webfx.extras.imagestore;
     requires webfx.extras.type;
+    requires webfx.extras.util.layout;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
     requires webfx.extras.visual.grid.peers.base;
@@ -33,7 +34,7 @@ module modality.event.frontoffice.activities.fees {
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.entity;
     requires webfx.stack.routing.uirouter;
-    requires webfx.stack.ui.util;
+    requires webfx.stack.ui.json;
 
     // Exported packages
     exports one.modality.event.frontoffice.activities.fees;

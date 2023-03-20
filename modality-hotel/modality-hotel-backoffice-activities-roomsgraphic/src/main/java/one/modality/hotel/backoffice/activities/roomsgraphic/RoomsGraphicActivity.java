@@ -10,7 +10,7 @@ import dev.webfx.stack.orm.reactive.entities.entities_to_objects.ReactiveObjects
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
-import dev.webfx.stack.ui.util.layout.LayoutUtil;
+import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.db.datascope.aggregate.AggregateScope;
@@ -37,7 +37,6 @@ import one.modality.hotel.backoffice.operations.entities.resourceconfiguration.*
 import one.modality.base.client.activity.eventdependent.EventDependentPresentationModel;
 import one.modality.base.client.activity.eventdependent.EventDependentViewDomainActivity;
 import one.modality.base.client.presentationmodel.HasSelectedDocumentProperty;
-import one.modality.hotel.backoffice.operations.entities.resourceconfiguration.*;
 
 import java.util.List;
 import java.util.Objects;

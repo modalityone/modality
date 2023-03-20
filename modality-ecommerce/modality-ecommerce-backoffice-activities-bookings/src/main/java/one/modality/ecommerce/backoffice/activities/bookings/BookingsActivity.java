@@ -4,7 +4,7 @@ import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
-import dev.webfx.stack.ui.util.layout.LayoutUtil;
+import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -27,7 +27,7 @@ import one.modality.base.backoffice.operations.entities.generic.AddNewSnapshotRe
 import one.modality.base.client.activity.eventdependent.EventDependentViewDomainActivity;
 import one.modality.base.shared.entities.Document;
 
-import static dev.webfx.stack.ui.util.layout.LayoutUtil.setUnmanagedWhenInvisible;
+import static dev.webfx.extras.util.layout.LayoutUtil.setUnmanagedWhenInvisible;
 import static dev.webfx.stack.orm.dql.DqlStatement.fields;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 

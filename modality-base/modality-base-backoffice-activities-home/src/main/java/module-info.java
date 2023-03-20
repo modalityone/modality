@@ -10,6 +10,7 @@ module modality.base.backoffice.activities.home {
     requires modality.base.client.activity;
     requires webfx.extras.scalepane;
     requires webfx.extras.theme;
+    requires webfx.extras.util.layout;
     requires webfx.extras.webtext;
     requires webfx.kit.util;
     requires webfx.platform.windowhistory;
@@ -20,7 +21,6 @@ module modality.base.backoffice.activities.home {
     requires webfx.stack.ui.action;
     requires webfx.stack.ui.operation;
     requires webfx.stack.ui.operation.action;
-    requires webfx.stack.ui.util;
 
     // Exported packages
     exports one.modality.catering.backoffice.activities.home;

@@ -14,7 +14,7 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.platform.json.JsonObject;
 import dev.webfx.stack.i18n.Dictionary;
 import dev.webfx.stack.i18n.I18n;
-import dev.webfx.stack.ui.util.layout.LayoutUtil;
+import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
@@ -52,7 +52,7 @@ import one.modality.event.frontoffice.operations.options.RouteToOptionsRequest;
 
 import java.util.function.Consumer;
 
-import static dev.webfx.stack.ui.util.image.JsonImageViews.createImageView;
+import static dev.webfx.stack.ui.json.JsonImageView.createImageView;
 
 /**
  * @author Bruno Salmon

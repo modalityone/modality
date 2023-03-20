@@ -277,8 +277,20 @@
     <source path="dev/webfx/extras/theme/text"/>
     <!--===============================< webfx-extras-type >================================-->
     <source path="dev/webfx/extras/type"/>
-    <!--============================< webfx-extras-util-colors >============================-->
-    <source path="dev/webfx/extras/util/colors"/>
+    <!--==========================< webfx-extras-util-animation >===========================-->
+    <source path="dev/webfx/extras/util/animation"/>
+    <!--==========================< webfx-extras-util-background >==========================-->
+    <source path="dev/webfx/extras/util/background"/>
+    <!--============================< webfx-extras-util-border >============================-->
+    <source path="dev/webfx/extras/util/border"/>
+    <!--============================< webfx-extras-util-color >=============================-->
+    <source path="dev/webfx/extras/util/color"/>
+    <!--============================< webfx-extras-util-layout >============================-->
+    <source path="dev/webfx/extras/util/layout"/>
+    <!--============================< webfx-extras-util-paint >=============================-->
+    <source path="dev/webfx/extras/util/paint"/>
+    <!--============================< webfx-extras-util-scene >=============================-->
+    <source path="dev/webfx/extras/util/scene"/>
     <!--==============================< webfx-extras-visual >===============================-->
     <source path="dev/webfx/extras/visual"/>
     <source path="dev/webfx/extras/visual/impl"/>
@@ -698,18 +710,12 @@
     <source path="dev/webfx/stack/ui/fxraiser/impl/formatters"/>
     <!--==========================< webfx-stack-ui-fxraiser-json >==========================-->
     <source path="dev/webfx/stack/ui/fxraiser/json"/>
+    <!--==============================< webfx-stack-ui-json >===============================-->
+    <source path="dev/webfx/stack/ui/json"/>
     <!--============================< webfx-stack-ui-operation >============================-->
     <source path="dev/webfx/stack/ui/operation"/>
     <!--========================< webfx-stack-ui-operation-action >=========================-->
     <source path="dev/webfx/stack/ui/operation/action"/>
-    <!--==============================< webfx-stack-ui-util >===============================-->
-    <source path="dev/webfx/stack/ui/util/anim"/>
-    <source path="dev/webfx/stack/ui/util/background"/>
-    <source path="dev/webfx/stack/ui/util/border"/>
-    <source path="dev/webfx/stack/ui/util/image"/>
-    <source path="dev/webfx/stack/ui/util/layout"/>
-    <source path="dev/webfx/stack/ui/util/paint"/>
-    <source path="dev/webfx/stack/ui/util/scene"/>
     <!--===========================< webfx-stack-ui-validation >============================-->
     <source path="dev/webfx/stack/ui/validation/controlsfx/control/decoration"/>
     <source path="dev/webfx/stack/ui/validation/controlsfx/impl"/>

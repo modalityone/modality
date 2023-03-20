@@ -9,7 +9,7 @@ import one.modality.base.client.aggregates.cart.CartAggregate;
 import one.modality.base.client.aggregates.event.EventAggregate;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.i18n.I18n;
-import dev.webfx.stack.ui.util.background.BackgroundFactory;
+import dev.webfx.extras.util.background.BackgroundFactory;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.Strings;
 

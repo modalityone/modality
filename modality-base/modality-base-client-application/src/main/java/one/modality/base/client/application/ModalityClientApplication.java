@@ -15,7 +15,7 @@ import javafx.stage.Stage;
 import dev.webfx.extras.imagestore.ImageStore;
 import dev.webfx.stack.routing.activity.ActivityManager;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.ViewDomainActivityContext;
-import dev.webfx.stack.ui.util.scene.SceneUtil;
+import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;

@@ -14,7 +14,7 @@ import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.controls.dialog.DialogUtil;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
-import dev.webfx.stack.ui.util.background.BackgroundFactory;
+import dev.webfx.extras.util.background.BackgroundFactory;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;

@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import static dev.webfx.stack.ui.util.layout.LayoutUtil.setMinSizeToZeroAndPrefSizeToInfinite;
+import static dev.webfx.extras.util.layout.LayoutUtil.setMinSizeToZeroAndPrefSizeToInfinite;
 
 /**
  * @author Bruno Salmon

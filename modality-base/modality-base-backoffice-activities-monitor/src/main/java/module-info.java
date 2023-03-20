@@ -7,6 +7,7 @@ module modality.base.backoffice.activities.monitor {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.activity;
+    requires webfx.extras.util.layout;
     requires webfx.extras.visual;
     requires webfx.extras.visual.charts;
     requires webfx.platform.windowhistory;
@@ -17,7 +18,6 @@ module modality.base.backoffice.activities.monitor {
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.operation;
-    requires webfx.stack.ui.util;
 
     // Exported packages
     exports one.modality.base.backoffice.activities.monitor;

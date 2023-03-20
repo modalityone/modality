@@ -20,6 +20,7 @@ module modality.event.frontoffice.activities.options {
     requires modality.hotel.shared.time;
     requires webfx.extras.flexbox;
     requires webfx.extras.imagestore;
+    requires webfx.extras.util.layout;
     requires webfx.kit.util;
     requires webfx.platform.console;
     requires webfx.platform.uischeduler;
@@ -30,7 +31,6 @@ module modality.event.frontoffice.activities.options {
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
     requires webfx.stack.routing.uirouter;
-    requires webfx.stack.ui.util;
 
     // Exported packages
     exports one.modality.event.frontoffice.activities.options;

@@ -10,7 +10,7 @@ import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.aggregates.event.EventAggregate;
 import one.modality.base.shared.entities.Event;
 import dev.webfx.stack.routing.uirouter.activity.presentation.view.impl.PresentationViewActivityImpl;
-import dev.webfx.stack.ui.util.background.BackgroundFactory;
+import dev.webfx.extras.util.background.BackgroundFactory;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.Strings;
