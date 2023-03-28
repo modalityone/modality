@@ -42,6 +42,7 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: ${{ vars.MODALITY_REPOSITORY }}
         ECR_ACCOUNT_ID: ${{ vars.ECR_ACCOUNT_ID }}
+        AWS_REGION: ${{ vars.AWS_REGION }}
         ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
         ECS_SERVICE: ${{ vars.ECS_SERVICE }}
         IMAGE_TAG: ${{ github.sha }}
@@ -49,6 +50,7 @@ jobs:
         cp modality-all/modality-all-server-application-vertx/target/modality-all-server-application-vertx-1.0.0-SNAPSHOT-fat.jar docker/aws-service/modality-service
         cd docker/aws-service/modality-service
         sed -i "s/__ECR_ACCOUNT_ID__/${ECR_ACCOUNT_ID}/g" Dockerfile
+        sed -i "s/__AWS_REGION__/${AWS_REGION}/g" Dockerfile
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         aws ecs update-service --cluster ${ECS_CLUSTER} --service ${ECS_SERVICE} --force-new-deployment
