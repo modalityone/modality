@@ -45,12 +45,24 @@ jobs:
         AWS_REGION: ${{ vars.AWS_REGION }}
         ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
         ECS_SERVICE: ${{ vars.ECS_SERVICE }}
+        MODALITY_DATABASE_HOST: ${{ secrets.MODALITY_DATABASE_HOST }}
+        MODALITY_DATABASE_PORT: ${{ secrets.MODALITY_DATABASE_PORT }}
+        MODALITY_DATABASE_NAME: ${{ secrets.MODALITY_DATABASE_NAME }}
+        MODALITY_DATABASE_USERNAME: ${{ secrets.MODALITY_DATABASE_USERNAME }}
+        MODALITY_DATABASE_PASSWORD: ${{ secrets.MODALITY_DATABASE_PASSWORD }}
         IMAGE_TAG: ${{ github.sha }}
       run: |
         cp modality-all/modality-all-server-application-vertx/target/modality-all-server-application-vertx-1.0.0-SNAPSHOT-fat.jar docker/aws-service/modality-service
         cd docker/aws-service/modality-service
         sed -i "s/__ECR_ACCOUNT_ID__/${ECR_ACCOUNT_ID}/g" Dockerfile
         sed -i "s/__AWS_REGION__/${AWS_REGION}/g" Dockerfile
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        sed -i "s/__MODALITY_DATABASE_HOST__/${MODALITY_DATABASE_HOST}/g" ModalityDatabase.json
+        sed -i "s/__MODALITY_DATABASE_PORT__/${MODALITY_DATABASE_PORT}/g" ModalityDatabase.json
+        sed -i "s/__MODALITY_DATABASE_NAME__/${MODALITY_DATABASE_NAME}/g" ModalityDatabase.json
+        sed -i "s/__MODALITY_DATABASE_USERNAME__/${MODALITY_DATABASE_USERNAME}/g" ModalityDatabase.json
+        sed -i "s/__MODALITY_DATABASE_PASSWORD__/${MODALITY_DATABASE_PASSWORD}/g" ModalityDatabase.json
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY
+        docker tag  $ECR_REGISTRY/$ECR_REPOSITORY $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         aws ecs update-service --cluster ${ECS_CLUSTER} --service ${ECS_SERVICE} --force-new-deployment

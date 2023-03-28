@@ -5,6 +5,7 @@ RUN set -eux; \
 
 COPY modality-all-server-application-vertx-1.0.0-SNAPSHOT-fat.jar /opt/modality
 COPY HttpOptions.json /opt/modality/conf
+COPY ModalityDatabase.json /opt/modality/conf
 
 WORKDIR /opt/modality
 
