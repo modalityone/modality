@@ -1,0 +1,56 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Modality AWS environment CI
+
+on:
+  push:
+    branches: [ "main", "feature/aws-pipeline" ]
+  pull_request:
+    branches: [ "main", "feature/aws-pipeline" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 19
+      uses: oracle-actions/setup-java@v1
+      with:
+        website: oracle.com
+        release: 19
+    - name: Build with Maven
+      run: mvn package -P vertx-fatjar
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+    - name: Build, tag, and push image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ vars.MODALITY_REPOSITORY }}
+        ECR_ACCOUNT_ID: ${{ vars.ECR_ACCOUNT_ID }}
+        AWS_REGION: ${{ vars.AWS_REGION }}
+        ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
+        ECS_SERVICE: ${{ vars.ECS_SERVICE }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        cp modality-all/modality-all-server-application-vertx/target/modality-all-server-application-vertx-1.0.0-SNAPSHOT-fat.jar docker/aws-service/modality-service
+        cd docker/aws-service/modality-service
+        sed -i "s/__ECR_ACCOUNT_ID__/${ECR_ACCOUNT_ID}/g" Dockerfile
+        sed -i "s/__AWS_REGION__/${AWS_REGION}/g" Dockerfile
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        aws ecs update-service --cluster ${ECS_CLUSTER} --service ${ECS_SERVICE} --force-new-deployment
