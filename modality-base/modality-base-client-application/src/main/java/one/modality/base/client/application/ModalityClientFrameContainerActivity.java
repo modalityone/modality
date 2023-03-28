@@ -1,6 +1,8 @@
 package one.modality.base.client.application;
 
-import dev.webfx.extras.materialdesign.util.background.BackgroundUtil;
+import dev.webfx.extras.theme.luminance.LuminanceTheme;
+import dev.webfx.extras.theme.luminance.LuminanceMode;
+import dev.webfx.extras.theme.palette.PaletteMode;
 import dev.webfx.stack.authn.logout.client.operation.LogoutRequest;
 import dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
@@ -11,14 +13,13 @@ import dev.webfx.stack.ui.action.ActionBuilder;
 import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
-import dev.webfx.stack.ui.util.layout.LayoutUtil;
+import dev.webfx.extras.util.layout.LayoutUtil;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 
 import java.util.Collection;
@@ -59,8 +60,15 @@ public class ModalityClientFrameContainerActivity extends ViewDomainActivityBase
         );
         containerHeader.setAlignment(Pos.CENTER_LEFT);
         containerHeader.setPadding(new Insets(5));
-        containerHeader.setBackground(BackgroundUtil.newBackground(Color.web("#D9D9D9")));
         setUpContextMenu(containerHeader, this::contextMenuActionGroup);
+        LuminanceTheme.createApplicationFrameFacet(containerHeader)
+                .setOnMouseClicked(e -> { // Temporary for testing
+                    if (e.isAltDown())
+                        PaletteMode.setVariedPalette(!PaletteMode.isVariedPalette());
+                    if (e.isShiftDown())
+                        LuminanceMode.setDarkMode(!LuminanceMode.isDarkMode());
+                })
+                .style();
         return containerHeader;
     }
 

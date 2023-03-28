@@ -1,5 +1,6 @@
 package one.modality.base.client.application;
 
+import dev.webfx.kit.util.scene.DeviceSceneUtil;
 import javafx.application.Application;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Rectangle2D;
@@ -14,7 +15,7 @@ import javafx.stage.Stage;
 import dev.webfx.extras.imagestore.ImageStore;
 import dev.webfx.stack.routing.activity.ActivityManager;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.ViewDomainActivityContext;
-import dev.webfx.stack.ui.util.scene.SceneUtil;
+import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -47,7 +48,7 @@ public class ModalityClientApplication extends Application {
         Rectangle2D screenVisualBounds = Screen.getPrimary().getVisualBounds();
         double width = screenVisualBounds.getWidth() * 0.8;
         double height = screenVisualBounds.getHeight() * 0.9;
-        Scene scene = new Scene(root, width, height);
+        Scene scene = DeviceSceneUtil.newScene(root, width, height);
         scene.getStylesheets().addAll("one/modality/base/client/css/modality.css");
         //root.centerProperty().bind(modalityClientActivity.nodeProperty()); //
         scene.rootProperty().bind(FXProperties.compute(modalityClientStarterActivity.nodeProperty(), n -> (Parent) n));

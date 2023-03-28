@@ -19,7 +19,7 @@ import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import dev.webfx.stack.orm.dql.DqlClause;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.stack.ui.util.layout.LayoutUtil;
+import dev.webfx.extras.util.layout.LayoutUtil;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 

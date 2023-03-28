@@ -17,6 +17,7 @@ module modality.ecommerce.backoffice.activities.statistics {
     requires modality.ecommerce.backoffice.operations.document;
     requires modality.ecommerce.backoffice.operations.documentline;
     requires webfx.extras.type;
+    requires webfx.extras.util.layout;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
     requires webfx.platform.util;
@@ -33,7 +34,6 @@ module modality.ecommerce.backoffice.activities.statistics {
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.operation;
     requires webfx.stack.ui.operation.action;
-    requires webfx.stack.ui.util;
 
     // Exported packages
     exports one.modality.ecommerce.backoffice.activities.statistics;

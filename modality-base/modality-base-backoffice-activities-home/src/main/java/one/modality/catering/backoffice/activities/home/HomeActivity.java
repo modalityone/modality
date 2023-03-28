@@ -1,6 +1,10 @@
 package one.modality.catering.backoffice.activities.home;
 
 import dev.webfx.extras.scalepane.ScalePane;
+import dev.webfx.extras.theme.Facet;
+import dev.webfx.extras.theme.FontDef;
+import dev.webfx.extras.theme.luminance.LuminanceTheme;
+import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
@@ -14,7 +18,7 @@ import dev.webfx.stack.ui.action.ActionBinder;
 import dev.webfx.stack.ui.action.ActionBuilder;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
-import dev.webfx.stack.ui.util.layout.LayoutUtil;
+import dev.webfx.extras.util.layout.LayoutUtil;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
@@ -22,19 +26,12 @@ import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.SVGPath;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 
 import java.util.*;
 import java.util.stream.Collectors;
-//webfx import javafx.scene.control.Control
 
 /**
  * @author Bruno Salmon
@@ -103,7 +100,9 @@ public class HomeActivity extends ViewDomainActivityBase
 
     @Override
     public Node buildUi() {
-        return ActionBinder.bindChildrenToVisibleActions(new HomePane(), homeRoutingActions(), Tile::new);
+        HomePane homePane = new HomePane();
+        LuminanceTheme.createPrimaryPanelFacet(homePane).style();
+        return ActionBinder.bindChildrenToVisibleActions(homePane, homeRoutingActions(), Tile::new);
     }
 
     protected Collection<Action> homeRoutingActions() {
@@ -187,11 +186,8 @@ public class HomeActivity extends ViewDomainActivityBase
         private double fontSize;
         private Node graphic;
         private ScalePane scaledGraphic;
-        private boolean hover;
-        private Paint textFill = Color.web("#0096D6");
-        private Paint graphicFill = textFill;
-        private Paint graphicStroke = null;
-        private final Rectangle shadowRectangle = new Rectangle(0, 0);
+        private final Facet luminanceFacet, textFacet;
+
         private final Pane clippedTextGraphicPane = new Pane() {
             private final Rectangle clip = new Rectangle();
             {
@@ -203,7 +199,7 @@ public class HomeActivity extends ViewDomainActivityBase
                 double width = getWidth(), height = getHeight(), h2 = height / 2, h4 = h2 / 2, h8 = h4 / 2;
                 if (scaledGraphic != null)
                     layoutInArea(scaledGraphic, 0, h4, width, h4, 0, HPos.CENTER, VPos.CENTER);
-                setFontSize(Math.min(width * 0.125, h4 * 0.6));
+                setFontSize(Math.min(width * 0.125, h4 * 0.55));
                 layoutInArea(htmlText, 0, h2 + h8, width, h4, 0, HPos.CENTER, VPos.CENTER);
                 clip.setWidth(width);
                 clip.setHeight(height);
@@ -212,41 +208,31 @@ public class HomeActivity extends ViewDomainActivityBase
 
         public Tile(Action action) {
             this.action = action;
+            luminanceFacet = LuminanceTheme.createSecondaryPanelFacet(this)
+                    .setShadowed(true)
+                    .style();
+            textFacet = TextTheme.createPrimaryTextFacet(htmlText)
+                    .setFillProperty(htmlText.fillProperty())
+                    .setFontProperty(htmlText.fontProperty())
+                    .style();
             LayoutUtil.setMaxWidthToInfinite(this);
             LayoutUtil.setMaxHeightToInfinite(this);
             setOnMouseClicked(e -> action.handle(new ActionEvent()));
-            onHover(false);
             setOnMouseEntered(e -> onHover(true));
             setOnMouseExited(e -> onHover(false));
-            shadowRectangle.setEffect(new DropShadow(10, 5, 5, Color.LIGHTGRAY));
             FXProperties.runNowAndOnPropertiesChange(this::onActionPropertiesChanged, action.textProperty(), action.graphicProperty());
         }
 
         private void setFontSize(double fontSize) {
             if (this.fontSize != fontSize) {
                 this.fontSize = fontSize;
-                htmlText.setFont(Font.font("Helvetica", FontWeight.NORMAL, fontSize));
+                textFacet.requestedFont(FontDef.font(fontSize));
             }
         }
 
         private void onHover(boolean hover) {
-            this.hover = hover;
-            updateColors();
-        }
-
-        private void updateColors() {
-            Color white = Color.WHITE;
-            Paint textColor = hover ? white : textFill;
-            Paint backgroundColor = hover ? textFill : white;
-            htmlText.setFill(textColor);
-            shadowRectangle.setFill(backgroundColor);
-            if (graphic instanceof SVGPath) {
-                SVGPath svgPath = (SVGPath) graphic;
-                if (graphicFill != null)
-                    svgPath.setFill(hover ? white : graphicFill);
-                if (graphicStroke != null)
-                    svgPath.setStroke(hover ? white : graphicStroke);
-            }
+            luminanceFacet.setInverted(hover);
+            textFacet.setInverted(hover);
         }
 
         private void onActionPropertiesChanged() {
@@ -254,35 +240,19 @@ public class HomeActivity extends ViewDomainActivityBase
             Node newGraphic = action.getGraphic();
             if (graphic != newGraphic) {
                 graphic = action.getGraphic();
-                if (graphic instanceof SVGPath) {
-                    SVGPath svgPath = (SVGPath) graphic;
-                    graphicFill = svgPath.getFill();
-                    graphicStroke = svgPath.getStroke();
-                    if (graphicFill != null && !Color.BLACK.equals(graphicFill))
-                        textFill = graphicFill;
-                    else if (graphicStroke != null && !Color.BLACK.equals(graphicStroke))
-                        textFill = graphicStroke;
-                    if (Color.BLACK.equals(graphicFill) || graphicFill == null && graphicStroke == null)
-                        graphicFill = textFill;
-                    if (Color.BLACK.equals(graphicStroke))
-                        graphicStroke = textFill;
-                }
                 scaledGraphic = graphic == null ? null : new ScalePane(graphic);
             }
             if (scaledGraphic == null)
                 clippedTextGraphicPane.getChildren().setAll(htmlText);
             else
                 clippedTextGraphicPane.getChildren().setAll(htmlText, scaledGraphic);
-            getChildren().setAll(shadowRectangle, clippedTextGraphicPane);
-            updateColors();
+            getChildren().setAll(clippedTextGraphicPane);
+            textFacet.setGraphicNode(graphic);
         }
 
         @Override
         public void layoutChildren() {
             double width = getWidth(), height = getHeight();
-            shadowRectangle.setWidth(width);
-            shadowRectangle.setHeight(height);
-            layoutInArea(shadowRectangle, 0, 0, width, height, 0, HPos.LEFT, VPos.TOP);
             layoutInArea(clippedTextGraphicPane, 0, 0, width, height, 0, HPos.LEFT, VPos.TOP);
         }
     }

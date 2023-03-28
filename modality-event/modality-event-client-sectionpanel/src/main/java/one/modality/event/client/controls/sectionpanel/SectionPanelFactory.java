@@ -10,11 +10,11 @@ import javafx.scene.paint.Color;
 import one.modality.event.client.controls.bookingcalendar.BookingCalendar;
 import one.modality.base.client.icons.ModalityIcons;
 import dev.webfx.stack.i18n.I18n;
-import dev.webfx.stack.ui.util.background.BackgroundFactory;
-import dev.webfx.stack.ui.util.border.BorderFactory;
+import dev.webfx.extras.util.background.BackgroundFactory;
+import dev.webfx.extras.util.border.BorderFactory;
 import dev.webfx.extras.cell.collator.NodeCollatorRegistry;
 
-import static dev.webfx.stack.ui.util.image.JsonImageViews.createImageView;
+import static dev.webfx.stack.ui.json.JsonImageView.createImageView;
 
 /**
  * @author Bruno Salmon

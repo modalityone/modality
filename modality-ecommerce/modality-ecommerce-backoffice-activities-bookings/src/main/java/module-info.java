@@ -19,6 +19,7 @@ module modality.ecommerce.backoffice.activities.bookings {
     requires modality.ecommerce.backoffice.operations.document;
     requires modality.event.backoffice.activities.cloneevent.routing;
     requires modality.event.frontoffice.activities.fees;
+    requires webfx.extras.util.layout;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
     requires webfx.platform.async;
@@ -34,7 +35,6 @@ module modality.ecommerce.backoffice.activities.bookings {
     requires webfx.stack.ui.action;
     requires webfx.stack.ui.operation;
     requires webfx.stack.ui.operation.action;
-    requires webfx.stack.ui.util;
 
     // Exported packages
     exports one.modality.ecommerce.backoffice.activities.bookings;

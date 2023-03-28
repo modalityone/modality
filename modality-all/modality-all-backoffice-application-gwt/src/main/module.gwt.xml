@@ -105,6 +105,7 @@
     <source path="org/pepstock/charba/client/impl/charts"/>
     <source path="org/pepstock/charba/client/impl/plugins"/>
     <source path="org/pepstock/charba/client/impl/plugins/enums"/>
+    <source path="org/pepstock/charba/client/interaction"/>
     <source path="org/pepstock/charba/client/intl"/>
     <source path="org/pepstock/charba/client/intl/enums"/>
     <source path="org/pepstock/charba/client/items"/>
@@ -270,6 +271,7 @@
     <!--================< modality-catering-backoffice-activities-kitchen >=================-->
     <source path="one/modality/catering/backoffice/activities/kitchen"/>
     <source path="one/modality/catering/backoffice/activities/kitchen/routing"/>
+    <source path="one/modality/catering/backoffice/activities/kitchen/theme"/>
     <source path="one/modality/catering/backoffice/operations/routes/kitchen"/>
     <!--=============< modality-catering-backoffice-operations-allocationrule >=============-->
     <source path="one/modality/catering/backoffice/operations/entities/allocationrule"/>
@@ -436,8 +438,33 @@
     <source path="dev/webfx/extras/materialdesign/util/scene"/>
     <!--=============================< webfx-extras-scalepane >=============================-->
     <source path="dev/webfx/extras/scalepane"/>
+    <!--===============================< webfx-extras-theme >===============================-->
+    <source path="dev/webfx/extras/theme"/>
+    <source path="dev/webfx/extras/theme/luminance"/>
+    <source path="dev/webfx/extras/theme/palette"/>
+    <source path="dev/webfx/extras/theme/shape"/>
+    <source path="dev/webfx/extras/theme/text"/>
+    <!--============================< webfx-extras-timelayout >=============================-->
+    <source path="dev/webfx/extras/timelayout"/>
+    <source path="dev/webfx/extras/timelayout/impl"/>
+    <!--========================< webfx-extras-timelayout-calendar >========================-->
+    <source path="dev/webfx/extras/timelayout/impl/calendar"/>
     <!--===============================< webfx-extras-type >================================-->
     <source path="dev/webfx/extras/type"/>
+    <!--==========================< webfx-extras-util-animation >===========================-->
+    <source path="dev/webfx/extras/util/animation"/>
+    <!--==========================< webfx-extras-util-background >==========================-->
+    <source path="dev/webfx/extras/util/background"/>
+    <!--============================< webfx-extras-util-border >============================-->
+    <source path="dev/webfx/extras/util/border"/>
+    <!--============================< webfx-extras-util-color >=============================-->
+    <source path="dev/webfx/extras/util/color"/>
+    <!--============================< webfx-extras-util-layout >============================-->
+    <source path="dev/webfx/extras/util/layout"/>
+    <!--============================< webfx-extras-util-paint >=============================-->
+    <source path="dev/webfx/extras/util/paint"/>
+    <!--============================< webfx-extras-util-scene >=============================-->
+    <source path="dev/webfx/extras/util/scene"/>
     <!--==============================< webfx-extras-visual >===============================-->
     <source path="dev/webfx/extras/visual"/>
     <source path="dev/webfx/extras/visual/impl"/>
@@ -503,6 +530,8 @@
     <!--=================================< webfx-kit-util >=================================-->
     <source path="dev/webfx/kit/util/properties"/>
     <source path="dev/webfx/kit/util/properties/conversion"/>
+    <!--==============================< webfx-kit-util-scene >==============================-->
+    <source path="dev/webfx/kit/util/scene"/>
     <!--============================< webfx-lib-javacupruntime >============================-->
     <source path="java_cup/runtime"/>
     <!--==============================< webfx-platform-async >==============================-->
@@ -534,6 +563,12 @@
     <source path="dev/webfx/platform/json/spi/impl/gwt"/>
     <!--==============================< webfx-platform-meta >===============================-->
     <source path="dev/webfx/platform/meta"/>
+    <!--===============================< webfx-platform-os >================================-->
+    <source path="dev/webfx/platform/os"/>
+    <source path="dev/webfx/platform/os/spi"/>
+    <source path="dev/webfx/platform/os/spi/impl"/>
+    <!--=============================< webfx-platform-os-gwt >==============================-->
+    <source path="dev/webfx/platform/os/spi/impl/gwt"/>
     <!--============================< webfx-platform-resource >=============================-->
     <source path="dev/webfx/platform/resource"/>
     <source path="dev/webfx/platform/resource/spi"/>
@@ -856,18 +891,12 @@
     <source path="dev/webfx/stack/ui/fxraiser/impl/formatters"/>
     <!--==========================< webfx-stack-ui-fxraiser-json >==========================-->
     <source path="dev/webfx/stack/ui/fxraiser/json"/>
+    <!--==============================< webfx-stack-ui-json >===============================-->
+    <source path="dev/webfx/stack/ui/json"/>
     <!--============================< webfx-stack-ui-operation >============================-->
     <source path="dev/webfx/stack/ui/operation"/>
     <!--========================< webfx-stack-ui-operation-action >=========================-->
     <source path="dev/webfx/stack/ui/operation/action"/>
-    <!--==============================< webfx-stack-ui-util >===============================-->
-    <source path="dev/webfx/stack/ui/util/anim"/>
-    <source path="dev/webfx/stack/ui/util/background"/>
-    <source path="dev/webfx/stack/ui/util/border"/>
-    <source path="dev/webfx/stack/ui/util/image"/>
-    <source path="dev/webfx/stack/ui/util/layout"/>
-    <source path="dev/webfx/stack/ui/util/paint"/>
-    <source path="dev/webfx/stack/ui/util/scene"/>
     <!--===========================< webfx-stack-ui-validation >============================-->
     <source path="dev/webfx/stack/ui/validation/controlsfx/control/decoration"/>
     <source path="dev/webfx/stack/ui/validation/controlsfx/impl"/>

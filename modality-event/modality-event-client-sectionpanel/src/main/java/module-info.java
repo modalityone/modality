@@ -9,8 +9,10 @@ module modality.event.client.sectionpanel {
     requires modality.base.client.icons;
     requires modality.event.client.bookingcalendar;
     requires webfx.extras.cell;
+    requires webfx.extras.util.background;
+    requires webfx.extras.util.border;
     requires webfx.stack.i18n;
-    requires webfx.stack.ui.util;
+    requires webfx.stack.ui.json;
 
     // Exported packages
     exports one.modality.event.client.controls.sectionpanel;

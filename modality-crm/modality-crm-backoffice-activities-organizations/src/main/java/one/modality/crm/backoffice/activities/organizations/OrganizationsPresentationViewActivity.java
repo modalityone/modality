@@ -18,7 +18,7 @@ final class OrganizationsPresentationViewActivity extends GenericTablePresentati
     protected void createViewNodes(OrganizationsPresentationModel pm) {
         super.createViewNodes(pm);
 
-        I18n.bindI18nProperties(searchBox, "YourCentre"); // Will translate the prompt
+        I18n.bindI18nProperties(genericTable.getSearchBox(), "YourCentre"); // Will translate the prompt
 
         withEventsCheckBox = newCheckBox("WithEvents");
 
@@ -32,7 +32,7 @@ final class OrganizationsPresentationViewActivity extends GenericTablePresentati
 
     @Override
     protected Node assemblyViewNodes() {
-        return new BorderPane(table, searchBox, null, new HBox(10, withEventsCheckBox, limitCheckBox), null);
+        return new BorderPane(genericTable.getTable(), genericTable.getSearchBox(), null, new HBox(10, withEventsCheckBox, genericTable.getLimitCheckBox()), null);
     }
 
 }

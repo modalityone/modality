@@ -10,6 +10,7 @@ module modality.ecommerce.frontoffice.activities.cart.routing {
     requires transitive modality.base.client.aggregates;
     requires modality.base.client.util;
     requires modality.base.shared.entities;
+    requires webfx.extras.util.background;
     requires webfx.kit.util;
     requires webfx.platform.json;
     requires webfx.platform.util;
@@ -17,7 +18,6 @@ module modality.ecommerce.frontoffice.activities.cart.routing {
     requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.routing.uirouter;
-    requires webfx.stack.ui.util;
 
     // Exported packages
     exports one.modality.ecommerce.frontoffice.activities.cart.base;

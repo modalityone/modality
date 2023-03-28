@@ -8,12 +8,12 @@ module modality.ecommerce.backoffice.operations.moneytransfer {
     requires javafx.web;
     requires modality.base.shared.entities;
     requires modality.ecommerce.payment.custom;
+    requires webfx.extras.util.layout;
     requires webfx.platform.async;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.operation;
-    requires webfx.stack.ui.util;
 
     // Exported packages
     exports one.modality.ecommerce.backoffice.operations.entities.moneytransfer;

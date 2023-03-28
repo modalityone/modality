@@ -10,6 +10,7 @@ module modality.event.frontoffice.activities.terms {
     requires modality.base.client.util;
     requires modality.ecommerce.client.bookingprocess;
     requires modality.event.client.sectionpanel;
+    requires webfx.extras.util.layout;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid.peers.base;
     requires webfx.platform.windowhistory;
@@ -18,7 +19,6 @@ module modality.event.frontoffice.activities.terms {
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.routing.uirouter;
-    requires webfx.stack.ui.util;
 
     // Exported packages
     exports one.modality.event.frontoffice.activities.terms;

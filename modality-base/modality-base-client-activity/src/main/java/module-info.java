@@ -11,6 +11,9 @@ module modality.base.client.activity {
     requires modality.crm.backoffice.organization.fx;
     requires modality.ecommerce.client.businesslogic;
     requires modality.event.backoffice.event.fx;
+    requires webfx.extras.util.background;
+    requires webfx.extras.util.border;
+    requires webfx.extras.util.scene;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
     requires webfx.kit.util;
@@ -24,7 +27,6 @@ module modality.base.client.activity {
     requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.controls;
-    requires webfx.stack.ui.util;
 
     // Exported packages
     exports one.modality.base.client.activity;

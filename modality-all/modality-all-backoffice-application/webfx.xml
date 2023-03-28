@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project>
+<project applicationId="one.modality.backoffice" applicationLabel="Modality BackOffice">
 
     <exported-packages>
         <source-packages/>

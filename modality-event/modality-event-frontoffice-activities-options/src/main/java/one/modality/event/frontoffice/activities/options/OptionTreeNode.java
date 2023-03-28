@@ -27,7 +27,7 @@ import one.modality.event.client.controls.sectionpanel.SectionPanelFactory;
 import one.modality.hotel.shared.businessdata.time.DateTimeRange;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.stack.ui.util.layout.LayoutUtil;
+import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.extras.imagestore.ImageStore;
 import dev.webfx.platform.util.Booleans;

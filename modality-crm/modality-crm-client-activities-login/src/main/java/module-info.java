@@ -9,6 +9,9 @@ module modality.crm.client.activities.login {
     requires modality.base.client.activity;
     requires modality.base.client.validation;
     requires modality.event.client.sectionpanel;
+    requires webfx.extras.util.animation;
+    requires webfx.extras.util.layout;
+    requires webfx.extras.util.scene;
     requires webfx.kit.util;
     requires webfx.stack.authn;
     requires webfx.stack.authn.login.ui;
@@ -17,7 +20,6 @@ module modality.crm.client.activities.login {
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.session.state.client.fx;
     requires webfx.stack.ui.controls;
-    requires webfx.stack.ui.util;
 
     // Exported packages
     exports one.modality.crm.client.activities.login;

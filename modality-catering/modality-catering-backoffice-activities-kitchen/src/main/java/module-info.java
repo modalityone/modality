@@ -10,25 +10,34 @@ module modality.catering.backoffice.activities.kitchen {
     requires modality.base.client.activity;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
-    requires webfx.extras.flexbox;
     requires webfx.extras.scalepane;
+    requires webfx.extras.theme;
+    requires webfx.extras.timelayout;
+    requires webfx.extras.timelayout.calendar;
+    requires webfx.extras.util.background;
+    requires webfx.extras.util.border;
+    requires webfx.extras.util.color;
+    requires webfx.extras.util.layout;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
+    requires webfx.platform.uischeduler;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.db.query;
     requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel.activity;
+    requires webfx.stack.orm.entity;
+    requires webfx.stack.orm.reactive.call;
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.fxraiser;
     requires webfx.stack.ui.operation;
-    requires webfx.stack.ui.util;
 
     // Exported packages
     exports one.modality.catering.backoffice.activities.kitchen;
     exports one.modality.catering.backoffice.activities.kitchen.routing;
+    exports one.modality.catering.backoffice.activities.kitchen.theme;
     exports one.modality.catering.backoffice.operations.routes.kitchen;
 
     // Provided services

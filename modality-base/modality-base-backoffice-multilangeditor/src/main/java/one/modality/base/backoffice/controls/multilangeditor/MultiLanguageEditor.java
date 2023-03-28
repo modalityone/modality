@@ -9,7 +9,7 @@ import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
-import dev.webfx.stack.ui.util.layout.LayoutUtil;
+import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.extras.webtext.HtmlTextEditor;
 import dev.webfx.platform.util.Objects;
@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import static dev.webfx.stack.ui.action.StandardActionKeys.*;
-import static dev.webfx.stack.ui.util.layout.LayoutUtil.setMaxPrefSizeToInfinite;
+import static dev.webfx.extras.util.layout.LayoutUtil.setMaxPrefSizeToInfinite;
 
 /**
  * @author Bruno Salmon

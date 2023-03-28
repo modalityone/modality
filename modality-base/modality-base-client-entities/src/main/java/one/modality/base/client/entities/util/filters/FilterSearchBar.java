@@ -11,10 +11,10 @@ import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasGroupDqlStateme
 import one.modality.base.client.presentationmodel.HasSearchTextProperty;
 import one.modality.base.shared.entities.Filter;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.stack.ui.util.scene.SceneUtil;
+import dev.webfx.extras.util.scene.SceneUtil;
 
-import static dev.webfx.stack.ui.util.layout.LayoutUtil.setHGrowable;
-import static dev.webfx.stack.ui.util.layout.LayoutUtil.setMaxHeightToInfinite;
+import static dev.webfx.extras.util.layout.LayoutUtil.setHGrowable;
+import static dev.webfx.extras.util.layout.LayoutUtil.setMaxHeightToInfinite;
 
 public final class FilterSearchBar {
 

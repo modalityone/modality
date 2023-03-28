@@ -1,8 +1,8 @@
 package one.modality.ecommerce.backoffice.activities.moneyflows;
 
 import dev.webfx.stack.orm.entity.controls.entity.sheet.EntityRenderer;
-import dev.webfx.stack.ui.util.background.BackgroundFactory;
-import dev.webfx.stack.ui.util.border.BorderFactory;
+import dev.webfx.extras.util.background.BackgroundFactory;
+import dev.webfx.extras.util.border.BorderFactory;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;

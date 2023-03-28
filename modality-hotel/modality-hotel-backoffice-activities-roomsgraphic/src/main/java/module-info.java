@@ -15,6 +15,7 @@ module modality.hotel.backoffice.activities.roomsgraphic {
     requires modality.hotel.backoffice.operations.resourceconfiguration;
     requires webfx.extras.flexbox;
     requires webfx.extras.imagestore;
+    requires webfx.extras.util.layout;
     requires webfx.extras.visual.grid;
     requires webfx.kit.util;
     requires webfx.platform.json;
@@ -32,7 +33,6 @@ module modality.hotel.backoffice.activities.roomsgraphic {
     requires webfx.stack.ui.action;
     requires webfx.stack.ui.operation;
     requires webfx.stack.ui.operation.action;
-    requires webfx.stack.ui.util;
 
     // Exported packages
     exports one.modality.hotel.backoffice.activities.roomsgraphic;

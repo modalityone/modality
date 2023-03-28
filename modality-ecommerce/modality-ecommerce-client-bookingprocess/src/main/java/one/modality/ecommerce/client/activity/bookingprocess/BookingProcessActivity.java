@@ -10,8 +10,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.activity.eventdependent.EventDependentViewDomainActivity;
 import one.modality.base.shared.entities.Event;
-import dev.webfx.stack.ui.util.layout.LayoutUtil;
-import dev.webfx.stack.ui.util.background.BackgroundFactory;
+import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.extras.util.background.BackgroundFactory;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.Strings;
 

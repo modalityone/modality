@@ -2,7 +2,7 @@ package one.modality.ecommerce.frontoffice.activities.person;
 
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.session.state.client.fx.FXLoggedIn;
-import dev.webfx.stack.ui.util.layout.LayoutUtil;
+import dev.webfx.extras.util.layout.LayoutUtil;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.value.ObservableBooleanValue;

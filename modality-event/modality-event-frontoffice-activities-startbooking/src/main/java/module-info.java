@@ -14,13 +14,14 @@ module modality.event.frontoffice.activities.startbooking {
     requires modality.event.frontoffice.activities.program;
     requires modality.event.frontoffice.activities.terms;
     requires webfx.extras.imagestore;
+    requires webfx.extras.util.animation;
+    requires webfx.extras.util.layout;
     requires webfx.kit.util;
     requires webfx.platform.uischeduler;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.action;
-    requires webfx.stack.ui.util;
 
     // Exported packages
     exports one.modality.event.frontoffice.activities.startbooking;

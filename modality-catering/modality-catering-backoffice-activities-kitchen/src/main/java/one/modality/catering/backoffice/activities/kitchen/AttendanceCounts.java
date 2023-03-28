@@ -21,6 +21,10 @@ public class AttendanceCounts {
         dietaryOptionOrders.put(dietaryOption, order);
     }
 
+    public Set<LocalDate> getDates() {
+        return rows.keySet();
+    }
+
     public List<String> getSortedDietaryOptions() {
         return rows.values().stream()
                 .flatMap(Collection::stream)
