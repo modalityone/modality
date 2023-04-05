@@ -1,4 +1,4 @@
-package one.modality.catering.backoffice.activities.kitchen.theme;
+package one.modality.base.client.time.theme;
 
 import dev.webfx.extras.theme.Facet;
 import dev.webfx.stack.i18n.I18n;
@@ -17,11 +17,13 @@ import java.time.YearMonth;
  */
 public enum TimeFacet {
 
-    YEAR_MONTH_FACET,
+    MONTH_FACET,
 
     DAY_OF_WEEK_FACET,
 
-    DATE_PANEL_FACET;
+    DATE_PANEL_FACET,
+
+    DAY_OF_WEEK_STRIP_FACET; // Used for canvas drawing only
 
     static {
         TimeTheme.register();
@@ -63,7 +65,7 @@ public enum TimeFacet {
     }
 
     public static Facet createYearMonthFacet(YearMonth yearMonth, Text text, Region container) {
-        return new Facet(YEAR_MONTH_FACET, container)
+        return new Facet(MONTH_FACET, container)
                 .setLogicValue(yearMonth)
                 .setTextNode(text);
     }

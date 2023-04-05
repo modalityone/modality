@@ -3,9 +3,9 @@ package one.modality.catering.backoffice.activities.kitchen;
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
 import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.extras.timelayout.TimeGridPane;
-import dev.webfx.extras.timelayout.TimePane;
-import dev.webfx.extras.timelayout.TimeUtil;
+import dev.webfx.extras.timelayout.node.TimeGridPane;
+import dev.webfx.extras.timelayout.node.TimePane;
+import dev.webfx.extras.timelayout.util.TimeUtil;
 import dev.webfx.extras.timelayout.impl.calendar.CalendarLayout;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -31,7 +31,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.FontWeight;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.shared.entities.Item;
-import one.modality.catering.backoffice.activities.kitchen.theme.TimeFacet;
+import one.modality.base.client.time.theme.TimeFacet;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 
@@ -70,14 +70,13 @@ public class KitchenActivity extends ViewDomainActivityBase
         // Building the box (TimePane with just 1 row) that will show the days of the week (horizontally)
         CalendarLayout<DayOfWeek, DayOfWeek> daysOfWeekLayout = new CalendarLayout<>();
         daysOfWeekLayout.getChildren().setAll(TimeUtil.generateDaysOfWeek());
-        daysOfWeekLayout.setChildTimeReader(TimeUtil.dayOfWeekReader());
         daysOfWeekLayout.setChildFixedHeight(40);
+        daysOfWeekLayout.setHSpacing(2);
         TimePane<DayOfWeek, DayOfWeek> daysOfWeekPane = new TimePane<>(daysOfWeekLayout, this::createDayOfWeekNode);
         VBox.setMargin(daysOfWeekPane, new Insets(0, WebFxKitLauncher.getVerticalScrollbarExtraWidth(), 0, 0));
 
         // Building the box (TimeGridPane with several rows) that will show each day of the month (calendar layout)
         daysOfMonthLayout = new CalendarLayout<>();
-        daysOfMonthLayout.setChildTimeReader(TimeUtil.localDateReader());
         //daysOfMonthLayout.setFillHeight(true);
         TimeGridPane<LocalDate, LocalDate> daysOfMonthPane = new TimeGridPane<>(daysOfMonthLayout, this::createDateNode);
         LuminanceTheme.createPrimaryPanelFacet(daysOfMonthPane).style();

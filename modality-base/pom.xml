@@ -40,6 +40,7 @@
         <module>modality-base-client-operationactionsloading</module>
         <module>modality-base-client-presentationmodel</module>
         <module>modality-base-client-sessionrecorder</module>
+        <module>modality-base-client-time-theme</module>
         <module>modality-base-client-util</module>
         <module>modality-base-client-validation</module>
         <module>modality-base-server-application-all</module>
