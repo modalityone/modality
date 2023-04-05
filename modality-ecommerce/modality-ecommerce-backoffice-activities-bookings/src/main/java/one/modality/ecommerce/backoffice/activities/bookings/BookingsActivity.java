@@ -1,19 +1,21 @@
 package one.modality.ecommerce.backoffice.activities.bookings;
 
+import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
-import dev.webfx.extras.util.layout.LayoutUtil;
-import dev.webfx.stack.orm.dql.DqlStatement;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import one.modality.base.backoffice.controls.masterslave.ConventionalUiBuilder;
 import one.modality.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
+import one.modality.base.backoffice.operations.entities.generic.AddNewSnapshotRequest;
 import one.modality.base.backoffice.operations.entities.generic.CopyAllRequest;
 import one.modality.base.backoffice.operations.entities.generic.CopySelectionRequest;
+import one.modality.base.client.activity.eventdependent.EventDependentViewDomainActivity;
 import one.modality.base.shared.domainmodel.functions.AbcNames;
+import one.modality.base.shared.entities.Document;
 import one.modality.crm.backoffice.controls.bookingdetailspanel.BookingDetailsPanel;
 import one.modality.ecommerce.backoffice.operations.entities.document.SendLetterRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.registration.*;
@@ -23,9 +25,6 @@ import one.modality.ecommerce.backoffice.operations.entities.document.security.T
 import one.modality.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsVerifiedRequest;
 import one.modality.ecommerce.backoffice.operations.routes.bookings.RouteToNewBackOfficeBookingRequest;
 import one.modality.event.backoffice.operations.routes.cloneevent.RouteToCloneEventRequest;
-import one.modality.base.backoffice.operations.entities.generic.AddNewSnapshotRequest;
-import one.modality.base.client.activity.eventdependent.EventDependentViewDomainActivity;
-import one.modality.base.shared.entities.Document;
 
 import static dev.webfx.extras.util.layout.LayoutUtil.setUnmanagedWhenInvisible;
 import static dev.webfx.stack.orm.dql.DqlStatement.fields;
@@ -129,7 +128,7 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
                 .ifTrimNotEmpty(pm.searchTextProperty(), s ->
                         Character.isDigit(s.charAt(0)) ? where("ref = ?", Integer.parseInt(s))
                                 : s.contains("@") ? where("lower(person_email) like ?", "%" + s.toLowerCase() + "%")
-                                : DqlStatement.where("person_abcNames like ?", AbcNames.evaluate(s, true)))
+                                : where("person_abcNames like ?", AbcNames.evaluate(s, true)))
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .start();
