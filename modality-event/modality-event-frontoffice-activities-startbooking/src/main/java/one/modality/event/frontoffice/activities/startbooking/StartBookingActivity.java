@@ -1,5 +1,6 @@
 package one.modality.event.frontoffice.activities.startbooking;
 
+import dev.webfx.platform.console.Console;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -13,6 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import one.modality.base.client.actions.ModalityActions;
 import one.modality.base.client.entities.util.Labels;
+import one.modality.base.shared.entities.Event;
 import one.modality.ecommerce.client.activity.bookingprocess.BookingProcessActivity;
 import one.modality.event.frontoffice.operations.fees.RouteToFeesRequest;
 import one.modality.event.frontoffice.operations.options.RouteToOptionsRequest;
@@ -74,9 +76,11 @@ final class StartBookingActivity extends BookingProcessActivity {
             UiScheduler.runInUiThread(() -> {
                 String imageUrl = null;
                 if (ar.succeeded()) {
-                    Labels.translateLabel(eventTitle, Labels.bestLabelOrName(ar.result()));
-                    imageUrl = (String) ar.result().evaluate("buddha.image.url");
-                }
+                    Event event = ar.result();
+                    Labels.translateLabel(eventTitle, Labels.bestLabelOrName(event));
+                    imageUrl = (String) event.evaluate("buddha.image.url");
+                } else
+                    Console.log(ar.cause());
                 if (imageUrl == null)
                     runFadeInAnimation();
                 else {
