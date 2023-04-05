@@ -20,7 +20,7 @@ module modality.crm.backoffice.bookingdetailspanel {
     requires webfx.extras.visual.grid;
     requires webfx.kit.util;
     requires webfx.platform.util;
-    requires webfx.stack.i18n;
+    requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.reactive.visual;

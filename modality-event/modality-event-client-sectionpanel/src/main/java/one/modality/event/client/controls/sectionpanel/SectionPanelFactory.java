@@ -1,5 +1,6 @@
 package one.modality.event.client.controls.sectionpanel;
 
+import dev.webfx.stack.i18n.controls.I18nControls;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -9,7 +10,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import one.modality.event.client.controls.bookingcalendar.BookingCalendar;
 import one.modality.base.client.icons.ModalityIcons;
-import dev.webfx.stack.i18n.I18n;
 import dev.webfx.extras.util.background.BackgroundFactory;
 import dev.webfx.extras.util.border.BorderFactory;
 import dev.webfx.extras.cell.collator.NodeCollatorRegistry;
@@ -48,7 +48,7 @@ public final class SectionPanelFactory {
     }
 
     public static BorderPane createSectionPanel(String iconImageUrl, Object i18nKey) {
-        return createSectionPanelWithHeaderNodes(createImageView(iconImageUrl), I18n.bindI18nProperties(new Label(), i18nKey));
+        return createSectionPanelWithHeaderNodes(createImageView(iconImageUrl), I18nControls.bindI18nProperties(new Label(), i18nKey));
     }
 
     public static BorderPane createSectionPanelWithHeaderNodes(Node... headerNodes) {

@@ -31,6 +31,7 @@ module modality.event.frontoffice.activities.fees {
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.i18n;
+    requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.entity;
     requires webfx.stack.routing.uirouter;

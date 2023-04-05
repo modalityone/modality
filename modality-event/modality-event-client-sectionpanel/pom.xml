@@ -65,7 +65,7 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-i18n</artifactId>
+            <artifactId>webfx-stack-i18n-controls</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

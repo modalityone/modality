@@ -11,7 +11,7 @@ module modality.event.client.sectionpanel {
     requires webfx.extras.cell;
     requires webfx.extras.util.background;
     requires webfx.extras.util.border;
-    requires webfx.stack.i18n;
+    requires webfx.stack.i18n.controls;
     requires webfx.stack.ui.json;
 
     // Exported packages
