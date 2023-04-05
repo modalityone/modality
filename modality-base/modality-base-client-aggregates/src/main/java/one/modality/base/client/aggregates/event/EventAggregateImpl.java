@@ -1,22 +1,22 @@
 package one.modality.base.client.aggregates.event;
 
+import dev.webfx.platform.async.Future;
+import dev.webfx.platform.async.FutureBroadcaster;
+import dev.webfx.platform.util.Numbers;
+import dev.webfx.platform.util.Objects;
+import dev.webfx.platform.util.collection.Collections;
+import dev.webfx.stack.com.bus.BusService;
+import dev.webfx.stack.com.bus.spi.impl.json.client.websocket.WebSocketBusOptions;
+import dev.webfx.stack.db.query.QueryArgument;
+import dev.webfx.stack.db.query.QueryResult;
+import dev.webfx.stack.db.query.QueryService;
+import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.*;
+import one.modality.base.client.aggregates.person.PersonAggregate;
 import one.modality.base.shared.entities.Cart;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Option;
 import one.modality.base.shared.entities.Rate;
-import one.modality.base.client.aggregates.person.PersonAggregate;
-import dev.webfx.stack.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.com.bus.spi.impl.json.client.websocket.WebSocketBusOptions;
-import dev.webfx.stack.com.bus.BusService;
-import dev.webfx.stack.db.query.QueryArgument;
-import dev.webfx.stack.db.query.QueryResult;
-import dev.webfx.stack.db.query.QueryService;
-import dev.webfx.platform.util.Numbers;
-import dev.webfx.platform.util.Objects;
-import dev.webfx.platform.async.Future;
-import dev.webfx.platform.async.FutureBroadcaster;
-import dev.webfx.platform.util.collection.Collections;
 
 import java.util.HashMap;
 import java.util.List;
@@ -64,7 +64,8 @@ final class EventAggregateImpl implements EventAggregate {
     private PersonAggregate personAggregate;
 
     private EventAggregateImpl(Object eventId, EntityStore store) {
-        this.eventId = eventId;
+        // eventId must be transformed as a number, as it will be used as parameter for Postgres
+        this.eventId = Numbers.toShortestNumber(Numbers.toInteger(eventId));
         this.store = store;
     }
 
