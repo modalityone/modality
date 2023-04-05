@@ -5,4 +5,8 @@
         <used-by-source-modules/>
     </dependencies>
 
+    <providers>
+        <provider interface="dev.webfx.stack.conf.spi.ConfigurationSupplier">one.modality.all.frontoffice.conf.openjfx.ModalityAllFrontOfficeEnvironmentConfigurationSupplier</provider>
+    </providers>
+
 </project>

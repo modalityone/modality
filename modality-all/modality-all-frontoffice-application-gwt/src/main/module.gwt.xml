@@ -8,7 +8,7 @@
     <set-property name="gwt.logging.logLevel" value="FINEST"/>
     <set-property name="gwt.logging.consoleHandler" value="ENABLED"/>
 
-    <!-- Speeding up GWT compilation time in development mode -->
+    <!-- Speeding up GWT compilation and execution times -->
     <!--===========================< webfx-kit-javafxbase-emul >============================-->
     <source path="com/sun/javafx"/>
     <source path="com/sun/javafx/binding"/>
@@ -30,6 +30,8 @@
     <source path="javafx/scene/control/skin"/>
     <resource path="images/checkbox"/>
     <public includes="images/checkbox/" path=""/>
+    <!--================================< javafx-controls >=================================-->
+    <source path="javafx/scene/chart"/>
     <!--=========================< webfx-kit-javafxgraphics-emul >==========================-->
     <source path="com/sun/javafx/application"/>
     <source path="com/sun/javafx/cursor"/>
@@ -77,8 +79,6 @@
     <inherits name="com.google.gwt.user.User"/>
     <!--=================================< java-nio-emul >==================================-->
     <inherits name="org.gwtproject.nio.GwtNioSupport"/>
-    <!--================================< javafx-controls >=================================-->
-    <source path="javafx/scene/chart"/>
     <!--======================< modality-all-frontoffice-application >======================-->
     <source path="one/modality/all/frontoffice/application"/>
     <!--=========================< modality-base-client-activity >==========================-->
@@ -570,6 +570,8 @@
     <source path="dev/webfx/stack/i18n/operations"/>
     <source path="dev/webfx/stack/i18n/spi"/>
     <source path="dev/webfx/stack/i18n/spi/impl"/>
+    <!--===========================< webfx-stack-i18n-controls >============================-->
+    <source path="dev/webfx/stack/i18n/controls"/>
     <!--=============================< webfx-stack-i18n-json >==============================-->
     <source path="dev/webfx/stack/i18n/spi/impl/json"/>
     <!--====================< webfx-stack-orm-datasourcemodel-service >=====================-->
@@ -727,8 +729,9 @@
     <source path="dev/webfx/stack/ui/validation/mvvmfx/visualization"/>
     <resource path="dev/webfx/stack/ui/validation/controlsfx/images"/>
     <public includes="dev/webfx/stack/ui/validation/controlsfx/images/" path=""/>
-    <set-property name="user.agent" value="safari"/> <!-- to make only 1 permutation for testing with Chrome -->
-    <set-property name="jre.checks.checkLevel" value="MINIMAL"/>
+    <set-property name="user.agent" value="safari"/> <!-- to speed up GWT compilation - this single permutation is now working ok in all modern browsers -->
+    <set-configuration-property name="user.agent.runtimeWarning" value="false"/> <!-- removing irrelevant warning in other browsers -->
+    <set-property name="jre.checks.checkLevel" value="MINIMAL"/> <!-- to speed up execution time -->
 
     <!-- Specify the app entry point class. -->
     <entry-point class="dev.webfx.platform.boot.spi.impl.gwt.GwtApplicationBooterProvider"/>
