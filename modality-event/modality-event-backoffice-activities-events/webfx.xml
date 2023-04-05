@@ -12,7 +12,7 @@
 
     <dependencies>
         <used-by-source-modules>
-            <undetected-module>webfx-kit-javafxgraphics-emul</undetected-module>
+            <undetected-module>javafx-graphics</undetected-module>
         </used-by-source-modules>
     </dependencies>
 
