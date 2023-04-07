@@ -1,8 +1,10 @@
 package one.modality.base.client.application;
 
+import dev.webfx.extras.theme.layout.FXLayoutMode;
+import dev.webfx.extras.theme.luminance.FXLuminanceMode;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
-import dev.webfx.extras.theme.luminance.LuminanceMode;
-import dev.webfx.extras.theme.palette.PaletteMode;
+import dev.webfx.extras.theme.palette.FXPaletteMode;
+import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.stack.authn.logout.client.operation.LogoutRequest;
 import dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
@@ -13,13 +15,15 @@ import dev.webfx.stack.ui.action.ActionBuilder;
 import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
-import dev.webfx.extras.util.layout.LayoutUtil;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 
 import java.util.Collection;
@@ -32,16 +36,42 @@ public class ModalityClientFrameContainerActivity extends ViewDomainActivityBase
         implements ModalityButtonFactoryMixin
         , OperationActionFactoryMixin {
 
-    protected final BorderPane containerPane = new BorderPane();
+    protected Pane containerPane;
+    private Region containerHeader;
 
     @Override
     public Node buildUi() {
-        containerPane.setTop(createContainerHeader());
-        containerPane.centerProperty().bind(mountNodeProperty());
+        containerPane = new Pane() {
+            @Override
+            protected void layoutChildren() {
+                double width = getWidth();
+                double headerHeight = containerHeader.prefHeight(width);
+                layoutInArea(containerHeader, 0, 0, width, headerHeight, 0, HPos.CENTER, VPos.TOP);
+                Node mountNode = getMountNode();
+                if (mountNode != null) {
+                    double y = FXLayoutMode.isCompactMode() ? 0 : headerHeight;
+                    layoutInArea(mountNode, 0, y, width, getHeight() - y, 0, HPos.CENTER, VPos.TOP);
+                }
+            }
+        };
+        containerHeader = createContainerHeader();
+        updateMountNode();
+        mountNodeProperty().addListener(observable -> updateMountNode());
+        // Requesting a layout for containerPane on layout mode changes
+        FXLayoutMode.layoutModeProperty().addListener(observable -> containerPane.requestLayout());
         return containerPane;
     }
 
-    protected Node createContainerHeader() {
+    private void updateMountNode() {
+        Node mountNode = getMountNode();
+        if (mountNode == null)
+            containerPane.getChildren().setAll(containerHeader);
+        else
+            containerPane.getChildren().setAll(mountNode, containerHeader);
+    }
+
+    protected Region createContainerHeader() {
+        Node headerCenterItem = createContainerHeaderCenterItem();
         HBox containerHeader = new HBox(
                 // Home button
                 ActionBinder.bindButtonToAction(newButton(), routeOperationCodeToAction("RouteToHome")),
@@ -53,7 +83,7 @@ public class ModalityClientFrameContainerActivity extends ViewDomainActivityBase
                 ActionBinder.bindButtonToAction(newButton(), routeOperationCodeToAction("RouteForward")),
                 // Horizontal space
                 LayoutUtil.createHGrowable(),
-                createContainerHeaderCenterItem(),
+                headerCenterItem,
                 LayoutUtil.createHGrowable(),
                 // Logout button
                 ActionBinder.bindButtonToAction(newButton(), newOperationAction(LogoutRequest::new))
@@ -64,11 +94,15 @@ public class ModalityClientFrameContainerActivity extends ViewDomainActivityBase
         LuminanceTheme.createApplicationFrameFacet(containerHeader)
                 .setOnMouseClicked(e -> { // Temporary for testing
                     if (e.isAltDown())
-                        PaletteMode.setVariedPalette(!PaletteMode.isVariedPalette());
+                        FXPaletteMode.setVariedPalette(!FXPaletteMode.isVariedPalette());
                     if (e.isShiftDown())
-                        LuminanceMode.setDarkMode(!LuminanceMode.isDarkMode());
+                        FXLuminanceMode.setDarkMode(!FXLuminanceMode.isDarkMode());
+                    if (e.isMetaDown())
+                        FXLayoutMode.setCompactMode(!FXLayoutMode.isCompactMode());
                 })
                 .style();
+        // Hiding the center item in compact mode
+        FXLayoutMode.layoutModeProperty().addListener(observable -> headerCenterItem.setVisible(!FXLayoutMode.isCompactMode()));
         return containerHeader;
     }
 

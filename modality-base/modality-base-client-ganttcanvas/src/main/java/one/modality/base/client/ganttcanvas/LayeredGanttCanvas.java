@@ -2,6 +2,7 @@ package one.modality.base.client.ganttcanvas;
 
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.ThemeRegistry;
+import dev.webfx.extras.theme.layout.FXLayoutMode;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.timelayout.ChildPosition;
 import dev.webfx.extras.timelayout.ChildTimeReader;
@@ -12,6 +13,8 @@ import dev.webfx.extras.timelayout.canvas.LayeredTimeCanvasDrawer;
 import dev.webfx.extras.timelayout.canvas.TimeCanvasUtil;
 import dev.webfx.extras.timelayout.gantt.GanttLayout;
 import dev.webfx.extras.timelayout.util.TimeUtil;
+import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
@@ -30,6 +33,7 @@ import java.time.YearMonth;
 public final class LayeredGanttCanvas {
 
     private final Canvas canvas = new Canvas();
+    private Pane canvasPane;
     private final GanttLayout<YearMonth, LocalDate> monthsLayout = new GanttLayout<>();
     private final GanttLayout<LocalDate, LocalDate> daysLayout = new GanttLayout<>();
     private final LayeredTimeLayout<LocalDate> layeredTimeLayout = LayeredTimeLayout.create();
@@ -38,8 +42,6 @@ public final class LayeredGanttCanvas {
     private final FontDef DAY_FONT_DEF = FontDef.font(14);
 
     public LayeredGanttCanvas() {
-
-        monthsLayout.setChildFixedHeight(20);
         monthsLayout.setChildTimeReader(new ChildTimeReader<>() {
             @Override
             public LocalDate getStartTime(YearMonth child) {
@@ -51,16 +53,15 @@ public final class LayeredGanttCanvas {
                 return child.atEndOfMonth();
             }
         });
-        layeredTimeLayout.addLayer(monthsLayout);
-        layeredTimeCanvasDrawer.setLayerChildCanvasDrawer(monthsLayout, this::drawMonth);
+        addLayer(monthsLayout, this::drawMonth);
 
-        daysLayout.setTopY(20);
         daysLayout.setFillHeight(true);
-        layeredTimeLayout.addLayer(daysLayout);
-        layeredTimeCanvasDrawer.setLayerChildCanvasDrawer(daysLayout, this::drawDay);
+        addLayer(daysLayout, this::drawDay);
 
         // Redrawing the canvas on theme mode changes
-        ThemeRegistry.addModeChangeListener(this::redrawCanvas);
+        ThemeRegistry.addModeChangeListener(this::markCanvasAsDirty);
+        // Recomputing layout on layout mode changes (compact / standard mode)
+        FXLayoutMode.layoutModeProperty().addListener(observable -> markLayoutAsDirty());
     }
 
     public void setTimeWindow(LocalDate timeWindowStart, LocalDate timeWindowEnd) {
@@ -72,24 +73,52 @@ public final class LayeredGanttCanvas {
     public <C> void addLayer(TimeLayout<C, LocalDate> timeLayout, ChildCanvasDrawer<C, LocalDate> childCanvasDrawer) {
         layeredTimeLayout.addLayer(timeLayout);
         layeredTimeCanvasDrawer.setLayerChildCanvasDrawer(timeLayout, childCanvasDrawer);
+        markLayoutAsDirty();
     }
 
-    public Pane createCanvasPane() {
-        return new Pane(canvas) {
-            @Override
-            protected void layoutChildren() {
-                double width = getWidth();
-                double height = getHeight();
-                canvas.setWidth(width);
-                canvas.setHeight(height);
-                layoutInArea(canvas, 0, 0, width, height, 0, HPos.LEFT, VPos.TOP);
-                redrawCanvas();
+    public Canvas getCanvas() {
+        return canvas;
+    }
+
+    public Pane getCanvasPane() {
+        if (canvasPane == null) {
+            canvasPane = new Pane(canvas) {
+                @Override
+                protected void layoutChildren() {
+                    double width = getWidth();
+                    double height = getHeight();
+                    canvas.setWidth(width);
+                    canvas.setHeight(height);
+                    layoutInArea(canvas, 0, 0, width, height, 0, HPos.LEFT, VPos.TOP);
+                    markCanvasAsDirty();
+                }
+            };
+        }
+        return canvasPane;
+    }
+
+    public void markLayoutAsDirty() {
+        Platform.runLater(() -> {
+            boolean compactMode = FXLayoutMode.isCompactMode();
+            double y = compactMode ? 40 : 20;
+            monthsLayout.setChildFixedHeight(y);
+            daysLayout.setTopY(y);
+            y += 21; // The height of the day boxes + 1
+            layeredTimeLayout.markLayoutAsDirty();
+            layeredTimeLayout.layout(canvas.getWidth(), canvas.getHeight());
+            ObservableList<TimeLayout<?, LocalDate>> layers = layeredTimeLayout.getLayers();
+            for (int i = 2; i < layers.size(); i++) {
+                TimeLayout<?, LocalDate> layer = layers.get(i);
+                layer.setTopY(y);
+                y += layer.getRowsCount() * layer.getChildFixedHeight();
             }
-        };
+            getCanvasPane().setPrefHeight(y);
+            canvasPane.requestLayout();
+        });
     }
 
-    public void redrawCanvas() {
-        layeredTimeCanvasDrawer.draw(true);
+    public void markCanvasAsDirty() {
+        Platform.runLater(() -> layeredTimeCanvasDrawer.draw(true));
     }
 
     private void drawMonth(YearMonth yearMonth, ChildPosition<LocalDate> p, GraphicsContext gc) {

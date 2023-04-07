@@ -2,8 +2,8 @@ package one.modality.base.client.time.theme;
 
 import dev.webfx.extras.theme.*;
 import dev.webfx.extras.theme.luminance.LuminanceFacetCategory;
-import dev.webfx.extras.theme.luminance.LuminanceMode;
-import dev.webfx.extras.theme.palette.PaletteMode;
+import dev.webfx.extras.theme.luminance.FXLuminanceMode;
+import dev.webfx.extras.theme.palette.FXPaletteMode;
 import dev.webfx.extras.theme.text.TextFacetCategory;
 import dev.webfx.extras.util.color.ColorSeries;
 import dev.webfx.extras.util.color.Colors;
@@ -100,7 +100,7 @@ public class TimeTheme implements Theme {
             case DAY_OF_WEEK_FACET: {
                 ThemeRegistry.styleFacetNow(facet, TextFacetCategory.PRIMARY_TEXT_FACET);
                 ThemeRegistry.styleFacetNow(facet, LuminanceFacetCategory.SECONDARY_PANEL_FACET);
-                if (PaletteMode.isVariedPalette()) {
+                if (FXPaletteMode.isVariedPalette()) {
                     textFill = getVariedDayOfWeekTextColor();
                     Object logicValue = facet.getLogicValue();
                     if (logicValue instanceof LocalDate)
@@ -113,7 +113,7 @@ public class TimeTheme implements Theme {
 
             case DATE_PANEL_FACET: {
                 ThemeRegistry.styleFacetNow(facet, LuminanceFacetCategory.SECONDARY_PANEL_FACET);
-                if (PaletteMode.isVariedPalette()) {
+                if (FXPaletteMode.isVariedPalette()) {
                     textFill = getMonthTextColor();
                     backgroundColor = getDatePanelBackgroundColor((Object) facet.getLogicValue());
                 }
@@ -122,10 +122,10 @@ public class TimeTheme implements Theme {
 
             case DAY_OF_WEEK_STRIP_FACET: {
                 ThemeRegistry.styleFacetNow(facet, LuminanceFacetCategory.PRIMARY_PANEL_FACET);
-                if (PaletteMode.isVariedPalette()) {
+                if (FXPaletteMode.isVariedPalette()) {
                     textFill = getMonthTextColor();
                     backgroundColor = getDatePanelBackgroundColor((Object) facet.getLogicValue());
-                } else if (LuminanceMode.isLightMode())
+                } else if (FXLuminanceMode.isLightMode())
                     backgroundColor = Color.ANTIQUEWHITE;
                 break;
             }
@@ -149,7 +149,7 @@ public class TimeTheme implements Theme {
     // =================================================================================================================
 
     public static Color getMonthTextColor() {
-        return PaletteMode.isVariedPalette() ? // Varied palette mode
+        return FXPaletteMode.isVariedPalette() ? // Varied palette mode
                 VARIED_MONTH_BACKGROUND_TEXT_COLOR
                 // Essential palette mode
                 : ESSENTIAL_MONTH_BACKGROUND_TEXT_COLOR;
@@ -164,8 +164,8 @@ public class TimeTheme implements Theme {
     }
 
     public static Color getMonthBackgroundColor(Month month, boolean selected) {
-        return PaletteMode.isVariedPalette() ? // Varied palette mode
-                (selected ? VARIED_MONTH_BACKGROUND_COLORS_SELECTED : LuminanceMode.isLightMode() ? VARIED_LIGHT_MONTH_BACKGROUND_COLORS_UNSELECTED : VARIED_DARK_MONTH_BACKGROUND_COLORS_UNSELECTED)[month.ordinal()]
+        return FXPaletteMode.isVariedPalette() ? // Varied palette mode
+                (selected ? VARIED_MONTH_BACKGROUND_COLORS_SELECTED : FXLuminanceMode.isLightMode() ? VARIED_LIGHT_MONTH_BACKGROUND_COLORS_UNSELECTED : VARIED_DARK_MONTH_BACKGROUND_COLORS_UNSELECTED)[month.ordinal()]
                 // Essential palette mode
                 : selected ? ESSENTIAL_MONTH_BACKGROUND_COLOR_SELECTED : ESSENTIAL_MONTH_BACKGROUND_COLOR_UNSELECTED;
     }
@@ -181,7 +181,7 @@ public class TimeTheme implements Theme {
     }
 
     private static Color getVariedDayOfWeekBackgroundColor(DayOfWeek dayOfWeek) {
-        return (LuminanceMode.isLightMode() ? VARIED_LIGHT_DAY_OF_WEEK_BACKGROUND_COLORS : VARIED_DARK_DAY_OF_WEEK_BACKGROUND_COLORS)[dayOfWeek.ordinal()];
+        return (FXLuminanceMode.isLightMode() ? VARIED_LIGHT_DAY_OF_WEEK_BACKGROUND_COLORS : VARIED_DARK_DAY_OF_WEEK_BACKGROUND_COLORS)[dayOfWeek.ordinal()];
     }
 
     private static Color getVariedDayOfWeekBorderColor() {
@@ -203,8 +203,8 @@ public class TimeTheme implements Theme {
     }
 
     private static Color getDatePanelBackgroundColor(DayOfWeek dayOfWeek, boolean isToday) {
-        return PaletteMode.isVariedPalette() ? // Varied palette mode
-                (isToday ? VARIED_DATE_PANEL_BACKGROUND_COLOR_TODAY : (LuminanceMode.isLightMode() ? VARIED_LIGHT_DATE_PANEL_BACKGROUND_COLORS : VARIED_DARK_DATE_PANEL_BACKGROUND_COLORS)[dayOfWeek.ordinal()])
+        return FXPaletteMode.isVariedPalette() ? // Varied palette mode
+                (isToday ? VARIED_DATE_PANEL_BACKGROUND_COLOR_TODAY : (FXLuminanceMode.isLightMode() ? VARIED_LIGHT_DATE_PANEL_BACKGROUND_COLORS : VARIED_DARK_DATE_PANEL_BACKGROUND_COLORS)[dayOfWeek.ordinal()])
                 // Essential palette mode
                 : isToday ? ESSENTIAL_DATE_PANEL_BACKGROUND_COLOR_TODAY : ESSENTIAL_DATE_PANEL_BACKGROUND_COLOR;
     }

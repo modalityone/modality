@@ -7,6 +7,7 @@ import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import one.modality.base.backoffice.controls.masterslave.ConventionalUiBuilder;
 import one.modality.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
@@ -24,6 +25,8 @@ import one.modality.ecommerce.backoffice.operations.entities.document.security.T
 import one.modality.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsUnknownRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsVerifiedRequest;
 import one.modality.ecommerce.backoffice.operations.routes.bookings.RouteToNewBackOfficeBookingRequest;
+import one.modality.event.backoffice.events.ganttcanvas.EventsGanttCanvas;
+import one.modality.event.backoffice.events.pm.EventsPresentationModel;
 import one.modality.event.backoffice.operations.routes.cloneevent.RouteToCloneEventRequest;
 
 import static dev.webfx.extras.util.layout.LayoutUtil.setUnmanagedWhenInvisible;
@@ -39,6 +42,8 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
     ==================================================================================================================*/
 
     private final BookingsPresentationModel pm = new BookingsPresentationModel();
+
+    private final EventsGanttCanvas eventsGanttCanvas = new EventsGanttCanvas(new EventsPresentationModel());
 
     @Override
     public BookingsPresentationModel getPresentationModel() {
@@ -84,7 +89,12 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
                 )
         ));
 
-        return container;
+        BorderPane borderPane = new BorderPane(container);
+        borderPane.setTop(eventsGanttCanvas.getCanvasPane());
+        eventsGanttCanvas.bindFXEventToSelection();
+        eventsGanttCanvas.bindFXOrganization();
+
+        return borderPane;
     }
 
     // TODO move this into an interface
@@ -110,6 +120,7 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
 
     @Override
     protected void startLogic() {
+        eventsGanttCanvas.startLogic(this);
         // Setting up the group mapper that build the content displayed in the group view
         groupVisualMapper = ReactiveVisualMapper.<Document>createGroupReactiveChain(this, pm)
                 .always("{class: 'Document', alias: 'd'}")

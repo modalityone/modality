@@ -271,6 +271,7 @@
     <source path="dev/webfx/extras/materialdesign/util/scene"/>
     <!--===============================< webfx-extras-theme >===============================-->
     <source path="dev/webfx/extras/theme"/>
+    <source path="dev/webfx/extras/theme/layout"/>
     <source path="dev/webfx/extras/theme/luminance"/>
     <source path="dev/webfx/extras/theme/palette"/>
     <source path="dev/webfx/extras/theme/shape"/>

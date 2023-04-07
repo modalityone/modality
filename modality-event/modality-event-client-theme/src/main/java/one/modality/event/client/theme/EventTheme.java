@@ -1,6 +1,6 @@
 package one.modality.event.client.theme;
 
-import dev.webfx.extras.theme.luminance.LuminanceMode;
+import dev.webfx.extras.theme.luminance.FXLuminanceMode;
 import javafx.scene.paint.Color;
 
 /**
@@ -13,9 +13,9 @@ public final class EventTheme { // Used for canvas operations only so far but sh
                 Color.WHITE;
     }
 
-    public static Color getEventBackgroundColor() {
-        return //PaletteMode.isEssentialPalette() ? LuminanceTheme.getSecondaryBackgroundColor(false) :
-                LuminanceMode.isLightMode() ? Color.rgb(154, 77, 152) : Color.rgb(123, 61, 122);
+    public static Color getEventBackgroundColor(boolean selected) {
+        return  selected ? Color.RED :
+                FXLuminanceMode.isLightMode() ? Color.rgb(154, 77, 152) : Color.rgb(123, 61, 122);
     }
 
     public static Color getEventBorderColor() {
