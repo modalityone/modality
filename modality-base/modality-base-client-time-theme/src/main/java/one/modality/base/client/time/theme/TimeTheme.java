@@ -199,7 +199,7 @@ public class TimeTheme implements Theme {
     }
 
     private static Color getDatePanelBackgroundColor(LocalDate date) {
-        return getDatePanelBackgroundColor(date.getDayOfWeek(), false /* date.equals(LocalDate.now() */);
+        return getDatePanelBackgroundColor(date == null ? DayOfWeek.MONDAY : date.getDayOfWeek(), false /* date.equals(LocalDate.now() */);
     }
 
     private static Color getDatePanelBackgroundColor(DayOfWeek dayOfWeek, boolean isToday) {
@@ -243,7 +243,7 @@ public class TimeTheme implements Theme {
         return getDayOfWeekCanvasBackgroundColor((Object) dayOfWeek);
     }
 
-    private static Paint getDayOfWeekCanvasBackgroundColor(Object logicalValue) {
+    public static Paint getDayOfWeekCanvasBackgroundColor(Object logicalValue) {
         return StyleCapture.captureStyle(TIME_THEME, logicalValue, DAY_OF_WEEK_STRIP_FACET).getBackgroundFill();
     }
 

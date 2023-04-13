@@ -1,11 +1,11 @@
 package one.modality.base.client.activity.eventdependent;
 
+import dev.webfx.platform.async.Future;
 import dev.webfx.stack.orm.domainmodel.activity.domain.DomainActivityContext;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
-import dev.webfx.platform.async.Future;
+import one.modality.base.client.activity.organizationdependent.OrganizationDependentActivityMixin;
 import one.modality.base.client.aggregates.event.EventAggregate;
 import one.modality.base.client.aggregates.event.EventAggregateMixin;
-import one.modality.base.client.activity.organizationdependent.OrganizationDependentActivityMixin;
 import one.modality.ecommerce.client.businessdata.feesgroup.FeesGroup;
 import one.modality.ecommerce.client.businessdata.feesgroup.FeesGroupsByEventStore;
 import one.modality.ecommerce.client.businessdata.preselection.ActiveOptionsPreselectionsByEventStore;
@@ -13,7 +13,6 @@ import one.modality.ecommerce.client.businessdata.preselection.OptionsPreselecti
 import one.modality.ecommerce.client.businessdata.workingdocument.ActiveWorkingDocumentsByEventStore;
 import one.modality.ecommerce.client.businessdata.workingdocument.WorkingDocument;
 import one.modality.event.backoffice.event.fx.FXEventId;
-import one.modality.event.backoffice.event.fx.FXShowEvent;
 
 /**
  * @author Bruno Salmon
@@ -34,10 +33,8 @@ public interface EventDependentActivityMixin
         Object eventId = getParameter("eventId");
         if (eventId != null)
             setEventId(eventId);
-        else {
+        else
             eventIdProperty().bind(FXEventId.eventIdProperty());
-            FXShowEvent.setShowEvent(true);
-        }
         updateOrganizationDependentPresentationModelFromContextParameters();
     }
 

@@ -59,6 +59,12 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-gantt-visibility-fx</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-base-client-presentationmodel</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
@@ -96,18 +102,6 @@
         <dependency>
             <groupId>one.modality</groupId>
             <artifactId>modality-event-backoffice-activities-cloneevent-routing</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-event-backoffice-events-ganttcanvas</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-event-backoffice-events-pm</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 

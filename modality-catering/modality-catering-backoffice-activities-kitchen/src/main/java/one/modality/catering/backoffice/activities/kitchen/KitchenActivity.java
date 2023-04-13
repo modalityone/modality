@@ -34,6 +34,8 @@ import one.modality.base.shared.entities.Item;
 import one.modality.base.client.time.theme.TimeFacet;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
+import one.modality.base.client.gantt.visibility.fx.FXGanttVisibility;
+import one.modality.base.client.gantt.visibility.GanttVisibility;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -171,6 +173,18 @@ public class KitchenActivity extends ViewDomainActivityBase
             }
             mealsSelectionPane.setDisplayedMealNames(displayedMealNames);
         });
+    }
+
+    @Override
+    public void onResume() {
+        FXGanttVisibility.setGanttVisibility(GanttVisibility.MONTHS);
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        FXGanttVisibility.setGanttVisibility(GanttVisibility.HIDDEN);
+        super.onPause();
     }
 
     // LOGIC

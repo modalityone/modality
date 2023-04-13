@@ -8,6 +8,7 @@ module modality.catering.backoffice.activities.kitchen {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.activity;
+    requires modality.base.client.gantt.visibility.fx;
     requires modality.base.client.time.theme;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;

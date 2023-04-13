@@ -16,13 +16,11 @@ import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.Node;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 
@@ -36,38 +34,12 @@ public class ModalityClientFrameContainerActivity extends ViewDomainActivityBase
         implements ModalityButtonFactoryMixin
         , OperationActionFactoryMixin {
 
-    protected Pane containerPane;
-    private Region containerHeader;
-
     @Override
     public Node buildUi() {
-        containerPane = new Pane() {
-            @Override
-            protected void layoutChildren() {
-                double width = getWidth();
-                double headerHeight = containerHeader.prefHeight(width);
-                layoutInArea(containerHeader, 0, 0, width, headerHeight, 0, HPos.CENTER, VPos.TOP);
-                Node mountNode = getMountNode();
-                if (mountNode != null) {
-                    double y = FXLayoutMode.isCompactMode() ? 0 : headerHeight;
-                    layoutInArea(mountNode, 0, y, width, getHeight() - y, 0, HPos.CENTER, VPos.TOP);
-                }
-            }
-        };
-        containerHeader = createContainerHeader();
-        updateMountNode();
-        mountNodeProperty().addListener(observable -> updateMountNode());
-        // Requesting a layout for containerPane on layout mode changes
-        FXLayoutMode.layoutModeProperty().addListener(observable -> containerPane.requestLayout());
-        return containerPane;
-    }
-
-    private void updateMountNode() {
-        Node mountNode = getMountNode();
-        if (mountNode == null)
-            containerPane.getChildren().setAll(containerHeader);
-        else
-            containerPane.getChildren().setAll(mountNode, containerHeader);
+        BorderPane borderPane = new BorderPane();
+        borderPane.centerProperty().bind(mountNodeProperty());
+        borderPane.setTop(createContainerHeader());
+        return borderPane;
     }
 
     protected Region createContainerHeader() {
