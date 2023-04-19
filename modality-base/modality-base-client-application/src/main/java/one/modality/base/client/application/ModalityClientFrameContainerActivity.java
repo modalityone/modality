@@ -36,10 +36,11 @@ public class ModalityClientFrameContainerActivity extends ViewDomainActivityBase
 
     @Override
     public Node buildUi() {
-        BorderPane borderPane = new BorderPane();
-        borderPane.centerProperty().bind(mountNodeProperty());
-        borderPane.setTop(createContainerHeader());
-        return borderPane;
+        BorderPane frameContainer = new BorderPane();
+        frameContainer.centerProperty().bind(mountNodeProperty());
+        frameContainer.setTop(createContainerHeader());
+        frameContainer.setBottom(createContainerFooter());
+        return frameContainer;
     }
 
     protected Region createContainerHeader() {
@@ -80,6 +81,10 @@ public class ModalityClientFrameContainerActivity extends ViewDomainActivityBase
 
     protected Node createContainerHeaderCenterItem() {
         return LayoutUtil.createHSpace(0);
+    }
+
+    protected Region createContainerFooter() {
+        return null;
     }
 
     private final Collection<RouteRequestEmitter> providedEmitters = RouteRequestEmitter.getProvidedEmitters();
