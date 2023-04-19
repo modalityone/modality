@@ -1,8 +1,9 @@
 package one.modality.base.client.time.theme;
 
 import dev.webfx.extras.theme.*;
-import dev.webfx.extras.theme.luminance.LuminanceFacetCategory;
 import dev.webfx.extras.theme.luminance.FXLuminanceMode;
+import dev.webfx.extras.theme.luminance.LuminanceFacetCategory;
+import dev.webfx.extras.theme.luminance.LuminanceTheme;
 import dev.webfx.extras.theme.palette.FXPaletteMode;
 import dev.webfx.extras.theme.text.TextFacetCategory;
 import dev.webfx.extras.util.color.ColorSeries;
@@ -19,8 +20,8 @@ import java.time.YearMonth;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
-import static one.modality.base.client.time.theme.TimeFacet.DAY_OF_WEEK_STRIP_FACET;
 import static one.modality.base.client.time.theme.TimeFacet.DAY_OF_WEEK_FACET;
+import static one.modality.base.client.time.theme.TimeFacet.DAY_OF_WEEK_CANVAS_FACET;
 
 /**
  * @author Bruno Salmon
@@ -120,13 +121,12 @@ public class TimeTheme implements Theme {
                 break;
             }
 
-            case DAY_OF_WEEK_STRIP_FACET: {
+            case DAY_OF_WEEK_CANVAS_FACET: {
                 ThemeRegistry.styleFacetNow(facet, LuminanceFacetCategory.PRIMARY_PANEL_FACET);
                 if (FXPaletteMode.isVariedPalette()) {
                     textFill = getMonthTextColor();
                     backgroundColor = getDatePanelBackgroundColor((Object) facet.getLogicValue());
-                } else if (FXLuminanceMode.isLightMode())
-                    backgroundColor = Color.ANTIQUEWHITE;
+                }
                 break;
             }
         }
@@ -223,6 +223,10 @@ public class TimeTheme implements Theme {
         return getYearMonthBackgroundColor(yearMonth, yearMonth.equals(YearMonth.now()));
     }
 
+    public static Paint getWeekBackgroundColor() {
+        return getDayOfWeekBackgroundColor(DayOfWeek.MONDAY);
+    }
+
     public static Paint getDayOfWeekTextColor() {
         return StyleCapture.captureStyle(TIME_THEME, DayOfWeek.MONDAY, DAY_OF_WEEK_FACET).getTextFill();
     }
@@ -244,11 +248,15 @@ public class TimeTheme implements Theme {
     }
 
     public static Paint getDayOfWeekCanvasBackgroundColor(Object logicalValue) {
-        return StyleCapture.captureStyle(TIME_THEME, logicalValue, DAY_OF_WEEK_STRIP_FACET).getBackgroundFill();
+        return StyleCapture.captureStyle(TIME_THEME, logicalValue, DAY_OF_WEEK_CANVAS_FACET).getBackgroundFill();
     }
 
     public static Paint getDayOfWeekBorderColor() {
         return StyleCapture.captureStyle(TIME_THEME, DayOfWeek.MONDAY, DAY_OF_WEEK_FACET).getBorderFill();
+    }
+
+    public static Paint getCanvasBackgroundColor() {
+        return FXLuminanceMode.isLightMode() ? Color.ANTIQUEWHITE : LuminanceTheme.getSecondaryBackgroundColor(false);
     }
 
 }

@@ -23,7 +23,7 @@ public enum TimeFacet {
 
     DATE_PANEL_FACET,
 
-    DAY_OF_WEEK_STRIP_FACET; // Used for canvas drawing only
+    DAY_OF_WEEK_CANVAS_FACET; // Used for canvas drawing only
 
     static {
         TimeTheme.register();

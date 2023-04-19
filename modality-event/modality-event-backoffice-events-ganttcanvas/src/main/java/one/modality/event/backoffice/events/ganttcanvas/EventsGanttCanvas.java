@@ -1,6 +1,7 @@
 package one.modality.event.backoffice.events.ganttcanvas;
 
 import dev.webfx.extras.theme.FontDef;
+import dev.webfx.extras.theme.ThemeRegistry;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.timelayout.ChildPosition;
 import dev.webfx.extras.timelayout.canvas.TimeCanvasUtil;
@@ -15,6 +16,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import one.modality.base.client.ganttcanvas.LayeredGanttCanvas;
 import one.modality.base.shared.entities.Event;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
@@ -36,14 +39,17 @@ public final class EventsGanttCanvas {
     private final LayeredGanttCanvas layeredGanttCanvas = new LayeredGanttCanvas();
     private final Canvas canvas = layeredGanttCanvas.getCanvas();
     private final GanttLayout<Event, LocalDate> eventsLayout = new GanttLayout<>();
-
-    private final FontDef EVENT_FONT_DEF = FontDef.font(13);
+    private Font EVENT_FONT;
+    private final double EVENT_HEIGHT = 20;
+    private final double RADIUS = 10;
+    private final double H_SPACING = 2; // Max value, will be reduced when zooming out
+    private final double V_SPACING = 2;
 
     public EventsGanttCanvas(EventsPresentationModel pm) {
         this.pm = pm;
 
-        eventsLayout.setChildFixedHeight(20);
-        eventsLayout.setVSpacing(2);
+        eventsLayout.setChildFixedHeight(EVENT_HEIGHT);
+        eventsLayout.setVSpacing(V_SPACING);
         eventsLayout.setInclusiveChildStartTimeReader(Event::getStartDate);
         eventsLayout.setInclusiveChildEndTimeReader(Event::getEndDate);
 
@@ -60,6 +66,10 @@ public final class EventsGanttCanvas {
         // But then, binding the presentation model to the canvas time window
         pm.timeWindowStartProperty().bind(layeredGanttCanvas.timeWindowStartProperty());
         pm.timeWindowEndProperty().bind(layeredGanttCanvas.timeWindowEndProperty());
+
+        ThemeRegistry.runNowAndOnModeChange(() ->
+                EVENT_FONT = TextTheme.getFont(FontDef.font(FontWeight.BOLD, 13))
+        );
     }
 
     private void setTimeWindow(LocalDate start, LocalDate end) {
@@ -140,10 +150,11 @@ public final class EventsGanttCanvas {
 
     private void drawEvent(Event event, ChildPosition<LocalDate> p, GraphicsContext gc) {
         boolean selected = Entities.sameId(event, eventsLayout.getSelectedChild());
-        TimeCanvasUtil.fillStrokeRect(p, EventTheme.getEventBackgroundColor(event, selected), EventTheme.getEventBorderColor(), gc);
-        if (p.getWidth() > 5) { // Unnecessary to draw text when width < 5px (this skip makes a big performance improvement on big zoom out over many events - because the text clip operation is costly)
-            gc.setFont(TextTheme.getFont(EVENT_FONT_DEF));
-            TimeCanvasUtil.fillCenterText(p, event.getPrimaryKey() + " " + event.getName(), EventTheme.getEventTextColor(), gc);
+        double hPadding = Math.min(p.getWidth() * 0.01, H_SPACING);
+        TimeCanvasUtil.fillRect(p, hPadding, EventTheme.getEventBackgroundColor(event, selected), RADIUS, gc);
+        if (p.getWidth() > 5) { // Unnecessary to draw text when width < 5px (this skip makes a big performance improvement on big zoom out over many events - because the text clip operation is time-consuming)
+            gc.setFont(EVENT_FONT);
+            TimeCanvasUtil.fillCenterText(p, hPadding, event.getPrimaryKey() + " " + event.getName(), EventTheme.getEventTextColor(), gc);
         }
     }
 

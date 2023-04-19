@@ -12,6 +12,7 @@ module modality.base.client.gantt.canvas {
     requires webfx.extras.timelayout;
     requires webfx.extras.timelayout.gantt;
     requires webfx.extras.util.animation;
+    requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.scheduler;
     requires webfx.platform.uischeduler;
