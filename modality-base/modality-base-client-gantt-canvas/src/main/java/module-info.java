@@ -6,7 +6,7 @@ module modality.base.client.gantt.canvas {
     requires java.base;
     requires javafx.base;
     requires javafx.graphics;
-    requires modality.base.client.gantt.visibility.fx;
+    requires modality.base.client.gantt.fx;
     requires modality.base.client.time.theme;
     requires webfx.extras.theme;
     requires webfx.extras.timelayout;
@@ -16,6 +16,7 @@ module modality.base.client.gantt.canvas {
     requires webfx.kit.util;
     requires webfx.platform.scheduler;
     requires webfx.platform.uischeduler;
+    requires webfx.platform.util;
     requires webfx.stack.i18n;
 
     // Exported packages

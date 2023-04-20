@@ -1,5 +1,7 @@
 package one.modality.ecommerce.backoffice.activities.bookings;
 
+import dev.webfx.extras.timelayout.util.TimeUtil;
+import dev.webfx.extras.timelayout.util.YearWeek;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
@@ -14,8 +16,12 @@ import one.modality.base.backoffice.operations.entities.generic.AddNewSnapshotRe
 import one.modality.base.backoffice.operations.entities.generic.CopyAllRequest;
 import one.modality.base.backoffice.operations.entities.generic.CopySelectionRequest;
 import one.modality.base.client.activity.eventdependent.EventDependentViewDomainActivity;
+import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
+import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
+import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.shared.domainmodel.functions.AbcNames;
 import one.modality.base.shared.entities.Document;
+import one.modality.base.shared.entities.Event;
 import one.modality.crm.backoffice.controls.bookingdetailspanel.BookingDetailsPanel;
 import one.modality.ecommerce.backoffice.operations.entities.document.SendLetterRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.registration.*;
@@ -24,9 +30,11 @@ import one.modality.ecommerce.backoffice.operations.entities.document.security.T
 import one.modality.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsUnknownRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsVerifiedRequest;
 import one.modality.ecommerce.backoffice.operations.routes.bookings.RouteToNewBackOfficeBookingRequest;
-import one.modality.base.client.gantt.visibility.fx.FXGanttVisibility;
-import one.modality.base.client.gantt.visibility.GanttVisibility;
 import one.modality.event.backoffice.operations.routes.cloneevent.RouteToCloneEventRequest;
+
+import java.time.LocalDate;
+import java.time.Year;
+import java.time.YearMonth;
 
 import static dev.webfx.extras.util.layout.LayoutUtil.setUnmanagedWhenInvisible;
 import static dev.webfx.stack.orm.dql.DqlStatement.fields;
@@ -86,6 +94,8 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
                 )
         ));
 
+        pm.ganttSelectedObjectProperty().bind(FXGanttSelection.ganttSelectedObjectProperty());
+
         return container;
     }
 
@@ -122,7 +132,14 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
         groupVisualMapper = ReactiveVisualMapper.<Document>createGroupReactiveChain(this, pm)
                 .always("{class: 'Document', alias: 'd'}")
                 // Applying the event condition
-                .ifNotNullOtherwiseEmpty(pm.eventIdProperty(), eventId -> where("event=?", eventId))
+                //.ifNotNullOtherwiseEmpty(pm.eventIdProperty(), eventId -> where("event=?", eventId))
+                .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), organizationId -> where("organization=?", organizationId))
+                .ifNotNullOtherwiseEmpty(pm.ganttSelectedObjectProperty(), x -> where("true"))
+                .ifInstanceOf(pm.ganttSelectedObjectProperty(), LocalDate.class, day   -> where("exists(select Attendance where documentLine.document=d and date = ?)", day))
+                .ifInstanceOf(pm.ganttSelectedObjectProperty(), YearWeek.class,  week  -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfWeek(week),   TimeUtil.getLastDayOfWeek(week)))
+                .ifInstanceOf(pm.ganttSelectedObjectProperty(), YearMonth.class, month -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfMonth(month), TimeUtil.getLastDayOfMonth(month)))
+                .ifInstanceOf(pm.ganttSelectedObjectProperty(), Year.class,      year  -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfYear(year),   TimeUtil.getLastDayOfYear(year)))
+                .ifInstanceOf(pm.ganttSelectedObjectProperty(), Event.class,     event -> where("event=?", event))
                 .start();
 
         // Setting up the master mapper that build the content displayed in the master view
@@ -131,7 +148,14 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
                 // Always loading the fields required for viewing the booking details
                 .always(fields(BookingDetailsPanel.REQUIRED_FIELDS))
                 // Applying the event condition
-                .ifNotNullOtherwiseEmpty(pm.eventIdProperty(), eventId -> where("event=?", eventId))
+                //.ifNotNullOtherwiseEmpty(pm.eventIdProperty(), eventId -> where("event=?", eventId))
+                .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), organizationId -> where("organization=?", organizationId))
+                .ifNotNullOtherwiseEmpty(pm.ganttSelectedObjectProperty(), x -> where("true"))
+                .ifInstanceOf(pm.ganttSelectedObjectProperty(), LocalDate.class, day   -> where("exists(select Attendance where documentLine.document=d and date = ?)", day))
+                .ifInstanceOf(pm.ganttSelectedObjectProperty(), YearWeek.class,  week  -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfWeek(week),   TimeUtil.getLastDayOfWeek(week)))
+                .ifInstanceOf(pm.ganttSelectedObjectProperty(), YearMonth.class, month -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfMonth(month), TimeUtil.getLastDayOfMonth(month)))
+                .ifInstanceOf(pm.ganttSelectedObjectProperty(), Year.class,      year  -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfYear(year),   TimeUtil.getLastDayOfYear(year)))
+                .ifInstanceOf(pm.ganttSelectedObjectProperty(), Event.class,     event -> where("event=?", event))
                 // Applying the user search
                 .ifTrimNotEmpty(pm.searchTextProperty(), s ->
                         Character.isDigit(s.charAt(0)) ? where("ref = ?", Integer.parseInt(s))

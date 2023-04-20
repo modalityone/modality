@@ -20,8 +20,8 @@ import java.time.YearMonth;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
-import static one.modality.base.client.time.theme.TimeFacet.DAY_OF_WEEK_FACET;
 import static one.modality.base.client.time.theme.TimeFacet.DAY_OF_WEEK_CANVAS_FACET;
+import static one.modality.base.client.time.theme.TimeFacet.DAY_OF_WEEK_FACET;
 
 /**
  * @author Bruno Salmon
@@ -91,7 +91,7 @@ public class TimeTheme implements Theme {
                 textFill = getMonthTextColor();
                 Object logicValue = facet.getLogicValue();
                 if (logicValue instanceof YearMonth)
-                    backgroundColor = getYearMonthBackgroundColor((YearMonth) logicValue, facet.isSelected());
+                    backgroundColor = getMonthBackgroundColor((YearMonth) logicValue, facet.isSelected());
                 else if (logicValue instanceof Month)
                     backgroundColor = getMonthBackgroundColor((Month) logicValue, facet.isSelected());
                 borderColor = getMonthBorderColor();
@@ -101,7 +101,10 @@ public class TimeTheme implements Theme {
             case DAY_OF_WEEK_FACET: {
                 ThemeRegistry.styleFacetNow(facet, TextFacetCategory.PRIMARY_TEXT_FACET);
                 ThemeRegistry.styleFacetNow(facet, LuminanceFacetCategory.SECONDARY_PANEL_FACET);
-                if (FXPaletteMode.isVariedPalette()) {
+                if (facet.isSelected()) {
+                    backgroundColor = ESSENTIAL_MONTH_BACKGROUND_COLOR_SELECTED;
+                    textFill = Color.WHITE;
+                } else if (FXPaletteMode.isVariedPalette()) {
                     textFill = getVariedDayOfWeekTextColor();
                     Object logicValue = facet.getLogicValue();
                     if (logicValue instanceof LocalDate)
@@ -123,7 +126,10 @@ public class TimeTheme implements Theme {
 
             case DAY_OF_WEEK_CANVAS_FACET: {
                 ThemeRegistry.styleFacetNow(facet, LuminanceFacetCategory.PRIMARY_PANEL_FACET);
-                if (FXPaletteMode.isVariedPalette()) {
+                if (facet.isSelected()) {
+                    backgroundColor = ESSENTIAL_MONTH_BACKGROUND_COLOR_SELECTED;
+                    textFill = Color.WHITE;
+                } else if (FXPaletteMode.isVariedPalette()) {
                     textFill = getMonthTextColor();
                     backgroundColor = getDatePanelBackgroundColor((Object) facet.getLogicValue());
                 }
@@ -156,10 +162,10 @@ public class TimeTheme implements Theme {
     }
 
     public static Color getMonthBorderColor() {
-        return null;
+        return Color.TRANSPARENT;
     }
 
-    public static Color getYearMonthBackgroundColor(YearMonth yearMonth, boolean selected) {
+    public static Color getMonthBackgroundColor(YearMonth yearMonth, boolean selected) {
         return getMonthBackgroundColor(yearMonth.getMonth(), selected);
     }
 
@@ -219,24 +225,55 @@ public class TimeTheme implements Theme {
     // style, and return the requested value from the captures style.
     // =================================================================================================================
 
-    public static Color getYearMonthBackgroundColor(YearMonth yearMonth) {
-        return getYearMonthBackgroundColor(yearMonth, yearMonth.equals(YearMonth.now()));
+    // Canvas background
+
+    public static Paint getCanvasBackgroundColor() {
+        return FXLuminanceMode.isLightMode() ? Color.ANTIQUEWHITE : LuminanceTheme.getSecondaryBackgroundColor(false);
     }
 
-    public static Paint getWeekBackgroundColor() {
-        return getDayOfWeekBackgroundColor(DayOfWeek.MONDAY);
+    // Year properties
+
+    public static Paint getYearBackgroundColor(boolean selected) {
+        return getDayOfWeekBackgroundColor(DayOfWeek.MONDAY, selected);
     }
 
-    public static Paint getDayOfWeekTextColor() {
-        return StyleCapture.captureStyle(TIME_THEME, DayOfWeek.MONDAY, DAY_OF_WEEK_FACET).getTextFill();
+    public static Paint getYearBorderColor() {
+        return Color.TRANSPARENT;
     }
 
-    public static Paint getDayOfWeekBackgroundColor(LocalDate date) {
-        return getDayOfWeekBackgroundColor(date.getDayOfWeek());
+    public static Paint getYearTextColor(boolean selected) {
+        return getDayOfWeekTextColor(selected);
     }
 
-    public static Paint getDayOfWeekBackgroundColor(DayOfWeek dayOfWeek) {
-        return StyleCapture.captureStyle(TIME_THEME, dayOfWeek, DAY_OF_WEEK_FACET).getBackgroundFill();
+    // Month properties
+
+    // Week properties
+
+    public static Paint getWeekBackgroundColor(boolean selected) {
+        return selected ? ESSENTIAL_MONTH_BACKGROUND_COLOR_SELECTED : getDayOfWeekBackgroundColor(DayOfWeek.MONDAY, false);
+    }
+
+    public static Paint getWeekBorderColor() {
+        return getMonthBorderColor();
+    }
+
+    public static Paint getWeekTextColor(boolean selected) {
+        return getDayOfWeekTextColor(selected);
+    }
+
+
+    // DayOfWeek properties
+
+    public static Paint getDayOfWeekTextColor(boolean selected) {
+        return StyleCapture.captureStyle(TIME_THEME, DayOfWeek.MONDAY, selected, DAY_OF_WEEK_FACET).getTextFill();
+    }
+
+    public static Paint getDayOfWeekBackgroundColor(LocalDate date, boolean selected) {
+        return getDayOfWeekBackgroundColor(date.getDayOfWeek(), selected);
+    }
+
+    public static Paint getDayOfWeekBackgroundColor(DayOfWeek dayOfWeek, boolean selected) {
+        return StyleCapture.captureStyle(TIME_THEME, dayOfWeek, selected, DAY_OF_WEEK_FACET).getBackgroundFill();
     }
 
     public static Paint getDayOfWeekCanvasBackgroundColor(LocalDate date) {
@@ -248,15 +285,19 @@ public class TimeTheme implements Theme {
     }
 
     public static Paint getDayOfWeekCanvasBackgroundColor(Object logicalValue) {
-        return StyleCapture.captureStyle(TIME_THEME, logicalValue, DAY_OF_WEEK_CANVAS_FACET).getBackgroundFill();
+        return getDayOfWeekCanvasBackgroundColor(logicalValue, false);
+    }
+
+    public static Paint getDayOfWeekCanvasBackgroundColor(Object logicalValue, boolean selected) {
+        return StyleCapture.captureStyle(TIME_THEME, logicalValue, selected, DAY_OF_WEEK_CANVAS_FACET).getBackgroundFill();
     }
 
     public static Paint getDayOfWeekBorderColor() {
-        return StyleCapture.captureStyle(TIME_THEME, DayOfWeek.MONDAY, DAY_OF_WEEK_FACET).getBorderFill();
+        return getDayOfWeekBorderColor(false);
     }
 
-    public static Paint getCanvasBackgroundColor() {
-        return FXLuminanceMode.isLightMode() ? Color.ANTIQUEWHITE : LuminanceTheme.getSecondaryBackgroundColor(false);
+    public static Paint getDayOfWeekBorderColor(boolean selected) {
+        return StyleCapture.captureStyle(TIME_THEME, DayOfWeek.MONDAY, selected, DAY_OF_WEEK_FACET).getBorderFill();
     }
 
 }

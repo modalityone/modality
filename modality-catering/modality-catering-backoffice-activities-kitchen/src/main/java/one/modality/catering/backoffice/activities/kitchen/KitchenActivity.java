@@ -30,12 +30,13 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.text.FontWeight;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
+import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.client.time.theme.TimeFacet;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
-import one.modality.base.client.gantt.visibility.fx.FXGanttVisibility;
-import one.modality.base.client.gantt.visibility.GanttVisibility;
+import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
+import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -65,9 +66,11 @@ public class KitchenActivity extends ViewDomainActivityBase
 
     @Override
     public Node buildUi() {
+/*
         // Building the box (HBox) that will show the months to select (horizontally).
         HBox monthsBox = new HBox(2, TimeUtil.generateYearMonthsRelativeToThisMonth(-3, 12).stream().map(this::createYearMonthNode).toArray(Node[]::new));
         monthsBox.setPrefHeight(40);
+*/
 
         // Building the box (TimePane with just 1 row) that will show the days of the week (horizontally)
         CalendarLayout<DayOfWeek, DayOfWeek> daysOfWeekLayout = new CalendarLayout<>();
@@ -90,9 +93,9 @@ public class KitchenActivity extends ViewDomainActivityBase
         BorderPane container = new BorderPane();
         container.setCenter(verticalScrollPane);
 
-        VBox top = new VBox(2, monthsBox, daysOfWeekPane);
-        LuminanceTheme.createTopPanelFacet(top).setShadowed(true).style();
-        container.setTop(top);
+        //VBox top = new VBox(2, monthsBox, daysOfWeekPane);
+        LuminanceTheme.createTopPanelFacet(daysOfWeekPane).setShadowed(true).style();
+        container.setTop(daysOfWeekPane);
 
         LuminanceTheme.createBottomPanelFacet(keyPane).setShadowed(true).style();
         container.setBottom(keyPane);
@@ -103,8 +106,15 @@ public class KitchenActivity extends ViewDomainActivityBase
         FXProperties.runOnPropertiesChange(this::updateQueryArgument, selectedYearMonthProperty, FXOrganizationId.organizationIdProperty());
         FXProperties.runNowAndOnPropertiesChange(() -> mealsSelectionPane.setOrganization(FXOrganization.getOrganization()), FXOrganization.organizationProperty());
         mealsSelectionPane.selectedItemsProperty().addListener((ListChangeListener<Item>) c -> rebuildDayPanels());
+
         // Setting the initial selection = this month
-        setSelectedYearMonth(YearMonth.now());
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            Object ganttSelectedObject = FXGanttSelection.getGanttSelectedObject();
+            if (ganttSelectedObject instanceof YearMonth)
+                selectedYearMonthProperty.set((YearMonth) ganttSelectedObject);
+        }, FXGanttSelection.ganttSelectedObjectProperty());
+        if (selectedYearMonthProperty.get() == null)
+            setSelectedYearMonth(YearMonth.now());
 
         return container;
     }
@@ -119,12 +129,14 @@ public class KitchenActivity extends ViewDomainActivityBase
         );
     }
 
+/*
     private Node createYearMonthNode(YearMonth yearMonth) {
         return TimeFacet.createYearMonthFacet(yearMonth)
                 .setSelectedProperty(FXProperties.compute(selectedYearMonthProperty, yearMonth::equals))
                 .setOnMouseClicked(e -> setSelectedYearMonth(yearMonth))
                 .getContainerNode();
     }
+*/
 
     private Node createDateNode(LocalDate date) {
         AttendanceDayPanel attendanceDayPanel = attendanceDayPanels.get(date);

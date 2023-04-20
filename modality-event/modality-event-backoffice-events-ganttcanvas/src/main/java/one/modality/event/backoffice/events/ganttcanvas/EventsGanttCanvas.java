@@ -18,7 +18,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import one.modality.base.client.ganttcanvas.LayeredGanttCanvas;
+import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
+import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
+import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
+import one.modality.base.client.ganttcanvas.LocalDateLayeredGanttCanvas;
 import one.modality.base.shared.entities.Event;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.event.backoffice.event.fx.FXEvent;
@@ -33,17 +36,20 @@ import static dev.webfx.stack.orm.dql.DqlStatement.where;
 /**
  * @author Bruno Salmon
  */
+@SuppressWarnings("FieldCanBeLocal") // removing warning for constants
 public final class EventsGanttCanvas {
 
-    private final EventsPresentationModel pm;
-    private final LayeredGanttCanvas layeredGanttCanvas = new LayeredGanttCanvas();
-    private final Canvas canvas = layeredGanttCanvas.getCanvas();
-    private final GanttLayout<Event, LocalDate> eventsLayout = new GanttLayout<>();
-    private Font EVENT_FONT;
+    // Constants:
     private final double EVENT_HEIGHT = 20;
     private final double RADIUS = 10;
     private final double H_SPACING = 2; // Max value, will be reduced when zooming out
     private final double V_SPACING = 2;
+
+    private final EventsPresentationModel pm;
+    private final LocalDateLayeredGanttCanvas layeredGanttCanvas = new LocalDateLayeredGanttCanvas();
+    private final Canvas canvas = layeredGanttCanvas.getCanvas();
+    private final GanttLayout<Event, LocalDate> eventsLayout = new GanttLayout<>();
+    private Font eventFont;
 
     public EventsGanttCanvas(EventsPresentationModel pm) {
         this.pm = pm;
@@ -61,14 +67,14 @@ public final class EventsGanttCanvas {
         // Managing user interaction
         setupMouseHandlers();
 
-        // Initializing the canvas time window from the presentation model (if set)
+        // Initializing the canvas time window from the presentation model (pm => timeWindow)
         setTimeWindow(pm.timeWindowStartProperty().getValue(), pm.timeWindowEndProperty().getValue());
-        // But then, binding the presentation model to the canvas time window
+        // But then, binding the presentation model to the canvas time window (timeWindow => pm)
         pm.timeWindowStartProperty().bind(layeredGanttCanvas.timeWindowStartProperty());
         pm.timeWindowEndProperty().bind(layeredGanttCanvas.timeWindowEndProperty());
 
         ThemeRegistry.runNowAndOnModeChange(() ->
-                EVENT_FONT = TextTheme.getFont(FontDef.font(FontWeight.BOLD, 13))
+                eventFont = TextTheme.getFont(FontDef.font(FontWeight.BOLD, 13))
         );
     }
 
@@ -83,15 +89,18 @@ public final class EventsGanttCanvas {
     private double mousePressedX;
     private LocalDate mousePressedStart;
     private long mousePressedDuration;
+    private boolean mouseDragged;
 
     private void setupMouseHandlers() {
         canvas.setOnMousePressed(e -> {
             mousePressedX = e.getX();
             mousePressedStart = layeredGanttCanvas.getTimeWindowStart();
             mousePressedDuration = ChronoUnit.DAYS.between(mousePressedStart, pm.timeWindowEndProperty().getValue());
+            mouseDragged = false;
             updateCanvasCursor(e, true);
         });
         canvas.setOnMouseDragged(e -> {
+            mouseDragged = true;
             double deltaX = mousePressedX - e.getX();
             double dayWidth = canvas.getWidth() / (mousePressedDuration + 1);
             long deltaDay = (long) (deltaX / dayWidth);
@@ -100,8 +109,10 @@ public final class EventsGanttCanvas {
         });
         // Selecting the event when clicked
         canvas.setOnMouseClicked(e -> {
-            if (!wasDragged(e))
-                eventsLayout.selectClickedChild(e.getX(), e.getY());
+            if (!mouseDragged) {
+                if (selectObjectAt(e.getX(), e.getY()))
+                    layeredGanttCanvas.markCanvasAsDirty();
+            }
             updateCanvasCursor(e, false);
             mousePressedStart = null;
         });
@@ -123,12 +134,16 @@ public final class EventsGanttCanvas {
         });
     }
 
-    private boolean wasDragged(MouseEvent e) {
-        return e.getX() != mousePressedX;
+    private void updateCanvasCursor(MouseEvent e, boolean mouseDown) {
+        canvas.setCursor(mouseDown && mouseDragged ? Cursor.CLOSED_HAND : isSelectableObjectPresentAt(e.getX(), e.getY()) ? Cursor.HAND : Cursor.OPEN_HAND);
     }
 
-    private void updateCanvasCursor(MouseEvent e, boolean mouseDown) {
-        canvas.setCursor(mouseDown && wasDragged(e) ? Cursor.CLOSED_HAND : eventsLayout.pickChild(e.getX(), e.getY()) != null ? Cursor.HAND : Cursor.OPEN_HAND);
+    private boolean isSelectableObjectPresentAt(double x, double y) {
+        return layeredGanttCanvas.getGlobalLayout().pickChildAt(x, y) != null;
+    }
+
+    private boolean selectObjectAt(double x, double y) {
+        return layeredGanttCanvas.getGlobalLayout().selectChildAt(x, y) != null;
     }
 
     public ObjectProperty<Event> selectedEventProperty() {
@@ -144,16 +159,20 @@ public final class EventsGanttCanvas {
         pm.organizationIdProperty().bind(FXOrganization.organizationProperty());
     }
 
+    public void bindFXGanttSelection() {
+        FXGanttSelection.ganttSelectedObjectProperty().bindBidirectional(layeredGanttCanvas.getGlobalLayout().selectedChildProperty());
+    }
+
     public Pane getCanvasPane() {
         return layeredGanttCanvas.getCanvasPane();
     }
 
     private void drawEvent(Event event, ChildPosition<LocalDate> p, GraphicsContext gc) {
-        boolean selected = Entities.sameId(event, eventsLayout.getSelectedChild());
         double hPadding = Math.min(p.getWidth() * 0.01, H_SPACING);
+        boolean selected = Entities.sameId(event, eventsLayout.getSelectedChild());
         TimeCanvasUtil.fillRect(p, hPadding, EventTheme.getEventBackgroundColor(event, selected), RADIUS, gc);
         if (p.getWidth() > 5) { // Unnecessary to draw text when width < 5px (this skip makes a big performance improvement on big zoom out over many events - because the text clip operation is time-consuming)
-            gc.setFont(EVENT_FONT);
+            gc.setFont(eventFont);
             TimeCanvasUtil.fillCenterText(p, hPadding, event.getPrimaryKey() + " " + event.getName(), EventTheme.getEventTextColor(), gc);
         }
     }
@@ -163,7 +182,7 @@ public final class EventsGanttCanvas {
                 .always("{class: 'Event', alias: 'e', fields: 'name,startDate,endDate', where: 'active'}")
                 // Search box condition
                 //.ifTrimNotEmpty(pm.searchTextProperty(), s -> where("lower(name) like ?", "%" + s.toLowerCase() + "%"))
-                //.ifNotEquals(FXGanttVisibility.ganttVisibilityProperty(), GanttVisibility.EVENTS, DqlStatement.EMPTY_STATEMENT)
+                .ifNotEquals(FXGanttVisibility.ganttVisibilityProperty(), GanttVisibility.EVENTS, null)
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("e.organization=?", o))
                 .always(pm.timeWindowStartProperty(), startDate -> where("e.endDate >= ?", startDate))
                 .always(pm.timeWindowEndProperty(), endDate -> where("e.startDate <= ?", endDate))

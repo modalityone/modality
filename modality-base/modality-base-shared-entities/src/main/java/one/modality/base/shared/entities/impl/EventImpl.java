@@ -1,5 +1,6 @@
 package one.modality.base.shared.entities.impl;
 
+import dev.webfx.platform.util.Objects;
 import one.modality.base.shared.entities.Event;
 import one.modality.hotel.shared.businessdata.time.DateTimeRange;
 import dev.webfx.stack.orm.entity.EntityId;
@@ -43,6 +44,8 @@ public final class EventImpl extends DynamicEntity implements Event {
     public static final class ProvidedFactory extends EntityFactoryProviderImpl<Event> {
         public ProvidedFactory() {
             super(Event.class, EventImpl::new);
+            // To make ReactiveDqlStatementAPI.ifInstanceOf() work with Event.class (see BookingsActivity)
+            Objects.registerInstanceOf(Event.class, o -> o instanceof Event);
         }
     }
 }

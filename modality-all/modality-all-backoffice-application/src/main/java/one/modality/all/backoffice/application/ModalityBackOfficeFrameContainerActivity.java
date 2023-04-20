@@ -18,8 +18,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Text;
 import one.modality.base.client.application.ModalityClientFrameContainerActivity;
-import one.modality.base.client.gantt.visibility.GanttVisibility;
-import one.modality.base.client.gantt.visibility.fx.FXGanttVisibility;
+import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
+import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Organization;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
@@ -84,6 +84,7 @@ public class ModalityBackOfficeFrameContainerActivity extends ModalityClientFram
     protected void startLogic() {
         eventsGanttCanvas.bindFXEventToSelection();
         eventsGanttCanvas.bindFXOrganization();
+        eventsGanttCanvas.bindFXGanttSelection();
         eventsGanttCanvas.startLogic(this);
     }
 

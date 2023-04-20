@@ -7,6 +7,7 @@ module modality.event.backoffice.events.ganttcanvas {
     requires javafx.base;
     requires javafx.graphics;
     requires modality.base.client.gantt.canvas;
+    requires modality.base.client.gantt.fx;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
     requires modality.event.backoffice.event.fx;

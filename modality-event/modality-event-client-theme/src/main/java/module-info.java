@@ -3,7 +3,6 @@
 module modality.event.client.theme {
 
     // Direct dependencies modules
-    requires java.base;
     requires javafx.graphics;
     requires modality.base.shared.entities;
     requires webfx.extras.theme;

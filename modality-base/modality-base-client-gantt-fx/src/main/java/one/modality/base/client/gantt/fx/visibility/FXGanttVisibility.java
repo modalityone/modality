@@ -1,8 +1,7 @@
-package one.modality.base.client.gantt.visibility.fx;
+package one.modality.base.client.gantt.fx.visibility;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import one.modality.base.client.gantt.visibility.GanttVisibility;
 
 /**
  * @author Bruno Salmon

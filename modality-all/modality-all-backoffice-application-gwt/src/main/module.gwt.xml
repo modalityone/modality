@@ -200,9 +200,9 @@
     <source path="one/modality/base/client/entities/util/filters"/>
     <!--=======================< modality-base-client-gantt-canvas >========================-->
     <source path="one/modality/base/client/ganttcanvas"/>
-    <!--====================< modality-base-client-gantt-visibility-fx >====================-->
-    <source path="one/modality/base/client/gantt/visibility"/>
-    <source path="one/modality/base/client/gantt/visibility/fx"/>
+    <!--=========================< modality-base-client-gantt-fx >==========================-->
+    <source path="one/modality/base/client/gantt/fx/selection"/>
+    <source path="one/modality/base/client/gantt/fx/visibility"/>
     <!--===========================< modality-base-client-i18n >============================-->
     <source path="one/modality/base/client/operations/i18n"/>
     <source path="one/modality/base/client/services/i18n"/>
