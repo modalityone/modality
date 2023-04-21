@@ -19,6 +19,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
+import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.client.ganttcanvas.LocalDateLayeredGanttCanvas;
@@ -100,11 +101,13 @@ public final class EventsGanttCanvas {
             updateCanvasCursor(e, true);
         });
         canvas.setOnMouseDragged(e -> {
-            mouseDragged = true;
             double deltaX = mousePressedX - e.getX();
             double dayWidth = canvas.getWidth() / (mousePressedDuration + 1);
             long deltaDay = (long) (deltaX / dayWidth);
-            setTimeWindow(mousePressedStart.plus(deltaDay, ChronoUnit.DAYS), mousePressedDuration);
+            if (deltaDay != 0) {
+                setTimeWindow(mousePressedStart.plus(deltaDay, ChronoUnit.DAYS), mousePressedDuration);
+                mouseDragged = true;
+            }
             updateCanvasCursor(e, true);
         });
         // Selecting the event when clicked
@@ -157,6 +160,11 @@ public final class EventsGanttCanvas {
 
     public void bindFXOrganization() {
         pm.organizationIdProperty().bind(FXOrganization.organizationProperty());
+    }
+
+    public void bindFXGanttTimeWindow() {
+        FXGanttTimeWindow.ganttTimeWindowStartProperty().bindBidirectional(layeredGanttCanvas.getGlobalLayout().timeWindowStartProperty());
+        FXGanttTimeWindow.ganttTimeWindowEndProperty().bindBidirectional(layeredGanttCanvas.getGlobalLayout().timeWindowEndProperty());
     }
 
     public void bindFXGanttSelection() {

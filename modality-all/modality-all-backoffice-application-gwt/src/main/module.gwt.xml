@@ -69,6 +69,8 @@
     <source path="javafx/stage"/>
     <!--================================< javafx-graphics >=================================-->
     <source path="javafx/concurrent"/>
+    <!--===================================< javafx-web >===================================-->
+    <source path="javafx/scene/web"/>
     <!--============================< webfx-kit-javafxweb-emul >============================-->
     <source path="javafx/scene/web"/>
     <!--=====================================< charba >=====================================-->
@@ -202,6 +204,7 @@
     <source path="one/modality/base/client/ganttcanvas"/>
     <!--=========================< modality-base-client-gantt-fx >==========================-->
     <source path="one/modality/base/client/gantt/fx/selection"/>
+    <source path="one/modality/base/client/gantt/fx/timewindow"/>
     <source path="one/modality/base/client/gantt/fx/visibility"/>
     <!--===========================< modality-base-client-i18n >============================-->
     <source path="one/modality/base/client/operations/i18n"/>

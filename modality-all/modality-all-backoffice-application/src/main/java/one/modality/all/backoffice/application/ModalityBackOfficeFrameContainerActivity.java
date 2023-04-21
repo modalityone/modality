@@ -84,6 +84,7 @@ public class ModalityBackOfficeFrameContainerActivity extends ModalityClientFram
     protected void startLogic() {
         eventsGanttCanvas.bindFXEventToSelection();
         eventsGanttCanvas.bindFXOrganization();
+        eventsGanttCanvas.bindFXGanttTimeWindow();
         eventsGanttCanvas.bindFXGanttSelection();
         eventsGanttCanvas.startLogic(this);
     }
