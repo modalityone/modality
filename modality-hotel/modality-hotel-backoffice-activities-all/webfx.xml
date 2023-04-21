@@ -8,6 +8,7 @@
     <dependencies>
         <used-by-source-modules/>
 
+        <plugin-module>modality-hotel-backoffice-activities-accommodation</plugin-module>
         <plugin-module>modality-hotel-backoffice-activities-roomsgraphic</plugin-module>
         <plugin-module>modality-hotel-backoffice-activities-roomcalendar</plugin-module>
 
