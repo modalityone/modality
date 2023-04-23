@@ -24,11 +24,15 @@ import dev.webfx.platform.util.Objects;
 import dev.webfx.stack.i18n.I18n;
 import javafx.animation.Interpolator;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.Property;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
+import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -36,6 +40,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
+import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
+import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.time.theme.TimeTheme;
 
@@ -137,9 +143,11 @@ public final class LocalDateLayeredGanttCanvas implements TimeWindow<LocalDate> 
         return globalLayout;
     }
 
-    public <C> void addLayer(TimeLayout<C, LocalDate> timeLayout, ChildCanvasDrawer<C, LocalDate> childCanvasDrawer) {
-        globalLayout.addLayer(timeLayout);
-        globalCanvasDrawer.setLayerChildCanvasDrawer(timeLayout, childCanvasDrawer);
+    public <C> void addLayer(TimeLayout<C, LocalDate> layer, ChildCanvasDrawer<C, LocalDate> layerCanvasDrawer) {
+        globalLayout.addLayer(layer);
+        layer.getChildren().addListener((ListChangeListener<C>) c -> markLayoutAsDirty());
+        layer.selectedChildProperty().addListener(observable -> markCanvasAsDirty());
+        globalCanvasDrawer.setLayerChildCanvasDrawer(layer, layerCanvasDrawer);
         markLayoutAsDirty();
     }
 
@@ -449,6 +457,97 @@ public final class LocalDateLayeredGanttCanvas implements TimeWindow<LocalDate> 
     private void strokeStrip(ChildPosition<LocalDate> p, GraphicsContext gc) {
         double canvasHeight = gc.getCanvas().getHeight();
         TimeCanvasUtil.strokeRect(p.getX(), 0, p.getWidth(), canvasHeight, 0, canvasHeight > p.getY() + p.getHeight() ? stripStroke : Color.TRANSPARENT, 0, gc);
+    }
+
+    private double mousePressedX;
+    private LocalDate mousePressedStart;
+    private long mousePressedDuration;
+    private boolean mouseDragged;
+
+    public void makeInteractive() {
+        canvas.setOnMousePressed(e -> {
+            mousePressedX = e.getX();
+            mousePressedStart = getTimeWindowStart();
+            mousePressedDuration = ChronoUnit.DAYS.between(mousePressedStart, getTimeWindowEnd());
+            mouseDragged = false;
+            updateCanvasCursor(e, true);
+        });
+        canvas.setOnMouseDragged(e -> {
+            double deltaX = mousePressedX - e.getX();
+            double dayWidth = canvas.getWidth() / (mousePressedDuration + 1);
+            long deltaDay = (long) (deltaX / dayWidth);
+            if (deltaDay != 0) {
+                setTimeWindow(mousePressedStart.plus(deltaDay, ChronoUnit.DAYS), mousePressedDuration);
+                mouseDragged = true;
+            }
+            updateCanvasCursor(e, true);
+        });
+        // Selecting the event when clicked
+        canvas.setOnMouseClicked(e -> {
+            if (!mouseDragged) {
+                if (selectObjectAt(e.getX(), e.getY()))
+                    markCanvasAsDirty();
+            }
+            updateCanvasCursor(e, false);
+            mousePressedStart = null;
+        });
+        // Changing cursor to hand cursor when hovering an event (to indicate it's clickable)
+        canvas.setOnMouseMoved(e -> updateCanvasCursor(e, false));
+        canvas.setOnScroll(e -> {
+            if (e.isControlDown()) {
+                LocalDate start = getTimeWindowStart();
+                LocalDate end = getTimeWindowEnd();
+                long duration = ChronoUnit.DAYS.between(start, end);
+                LocalDate middle = start.plus(duration / 2, ChronoUnit.DAYS);
+                if (e.getDeltaY() > 0) // Mouse wheel up => Zoom in
+                    duration = (long) (duration / 1.10);
+                else // Mouse wheel down => Zoom out
+                    duration = Math.max(duration + 1, (long) (duration * 1.10));
+                duration = Math.min(duration, 10_000);
+                setTimeWindow(middle.minus(duration / 2, ChronoUnit.DAYS), duration);
+            }
+        });
+    }
+
+    private void setTimeWindow(LocalDate start, long duration) {
+        setTimeWindow(start, start.plus(duration, ChronoUnit.DAYS));
+    }
+
+    private void updateCanvasCursor(MouseEvent e, boolean mouseDown) {
+        canvas.setCursor(mouseDown && mouseDragged ? Cursor.CLOSED_HAND : isSelectableObjectPresentAt(e.getX(), e.getY()) ? Cursor.HAND : Cursor.OPEN_HAND);
+    }
+
+    private boolean isSelectableObjectPresentAt(double x, double y) {
+        return getGlobalLayout().pickChildAt(x, y) != null;
+    }
+
+    private boolean selectObjectAt(double x, double y) {
+        return getGlobalLayout().selectChildAt(x, y) != null;
+    }
+
+    public void bindTimeWindow(Property<LocalDate> startProperty, Property<LocalDate> endProperty, boolean applyInitialValues, boolean bidirectional) {
+        if (applyInitialValues)
+            setTimeWindow(startProperty.getValue(), endProperty.getValue());
+        if (bidirectional) {
+            startProperty.bindBidirectional(timeWindowStartProperty());
+            endProperty.bindBidirectional(timeWindowEndProperty());
+        } else {
+            startProperty.bind(timeWindowStartProperty());
+            endProperty.bind(timeWindowEndProperty());
+        }
+    }
+
+    public void setupFXBindings() {
+        bindFXGanttTimeWindow();
+        bindFXGanttSelection();
+    }
+
+    private void bindFXGanttTimeWindow() {
+        bindTimeWindow(FXGanttTimeWindow.ganttTimeWindowStartProperty(), FXGanttTimeWindow.ganttTimeWindowEndProperty(), false, true);
+    }
+
+    private void bindFXGanttSelection() {
+        FXGanttSelection.ganttSelectedObjectProperty().bindBidirectional(getGlobalLayout().selectedChildProperty());
     }
 
 }

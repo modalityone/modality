@@ -82,11 +82,7 @@ public class ModalityBackOfficeFrameContainerActivity extends ModalityClientFram
 
     @Override
     protected void startLogic() {
-        eventsGanttCanvas.bindFXEventToSelection();
-        eventsGanttCanvas.bindFXOrganization();
-        eventsGanttCanvas.bindFXGanttTimeWindow();
-        eventsGanttCanvas.bindFXGanttSelection();
-        eventsGanttCanvas.startLogic(this);
+        eventsGanttCanvas.setupFXBindingsAndStartLogic(this);
     }
 
     private void updateMountNode() {
