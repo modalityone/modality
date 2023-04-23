@@ -30,7 +30,7 @@ import static dev.webfx.stack.orm.dql.DqlStatement.where;
 /**
  * @author Bruno Salmon
  */
-@SuppressWarnings("FieldCanBeLocal") // To remove IntelliJ IDEA warnings regarding the constants
+@SuppressWarnings("FieldCanBeLocal") // To remove IntelliJ IDEA warnings regarding constants
 public final class EventsGanttCanvas {
 
     // Constants:
@@ -59,10 +59,10 @@ public final class EventsGanttCanvas {
         layeredGanttCanvas.addLayer(eventsLayer, this::drawEvent);
 
         // Binding the presentation model with the canvas time window (first applying pm => timeWindow, then binding timeWindow => pm)
-        layeredGanttCanvas.bindTimeWindow(pm.timeWindowStartProperty(), pm.timeWindowEndProperty(), true, false);
+        layeredGanttCanvas.bindTimeWindow(pm.timeWindowStartProperty(), pm.timeWindowEndProperty(), true, true);
 
         // Activating user interaction (user can move & zoom in/out the time window)
-        layeredGanttCanvas.makeInteractive();
+        layeredGanttCanvas.setInteractive(true);
 
         // Updating the events font on any theme mode change (light/dark mode, etc...)
         ThemeRegistry.runNowAndOnModeChange(() ->
