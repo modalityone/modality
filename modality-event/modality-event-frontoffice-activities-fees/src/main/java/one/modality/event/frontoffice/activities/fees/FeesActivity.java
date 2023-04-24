@@ -15,6 +15,7 @@ import dev.webfx.platform.json.JsonObject;
 import dev.webfx.stack.i18n.Dictionary;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
@@ -207,9 +208,9 @@ final class FeesActivity extends BookingProcessActivity {
         boolean hasUnemployedRate = hasUnemployedRate();
         boolean hasFacilityFeeRate = hasFacilityFeeRate();
         boolean hasDiscountRates = hasUnemployedRate || hasFacilityFeeRate;
-        RadioButton noDiscountRadio  = hasDiscountRates   ? I18n.setI18nProperties(new RadioButton(), "NoDiscount") : null;
-        RadioButton unemployedRadio  = hasUnemployedRate  ? I18n.setI18nProperties(new RadioButton(), "UnemployedDiscount") : null;
-        RadioButton facilityFeeRadio = hasFacilityFeeRate ? I18n.setI18nProperties(new RadioButton(), "FacilityFeeDiscount") : null;
+        RadioButton noDiscountRadio  = hasDiscountRates   ? I18nControls.setI18nProperties(new RadioButton(), "NoDiscount") : null;
+        RadioButton unemployedRadio  = hasUnemployedRate  ? I18nControls.setI18nProperties(new RadioButton(), "UnemployedDiscount") : null;
+        RadioButton facilityFeeRadio = hasFacilityFeeRate ? I18nControls.setI18nProperties(new RadioButton(), "FacilityFeeDiscount") : null;
         Person person = getPersonAggregate().getPreselectionProfilePerson();
         if (unemployedRadio != null) {
             unemployedRadio.setSelected(Booleans.isTrue(person.isUnemployed()));

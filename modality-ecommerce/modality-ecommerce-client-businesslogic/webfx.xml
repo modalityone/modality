@@ -9,7 +9,7 @@
         <used-by-source-modules>
             <module transitive="true">webfx-platform-async</module>
             <module transitive="true">modality-base-client-aggregates</module>
-            <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
+            <undetected-module>javafx-controls</undetected-module>
         </used-by-source-modules>
     </dependencies>
 

@@ -9,7 +9,7 @@ module modality.crm.backoffice.activities.organizations {
     requires modality.base.client.activity;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
-    requires webfx.stack.i18n;
+    requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.reactive.visual;

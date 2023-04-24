@@ -22,9 +22,12 @@
         <module>modality-event-backoffice-activities-events</module>
         <module>modality-event-backoffice-activities-options</module>
         <module>modality-event-backoffice-event-fx</module>
+        <module>modality-event-backoffice-events-ganttcanvas</module>
+        <module>modality-event-backoffice-events-pm</module>
         <module>modality-event-client-bookingcalendar</module>
         <module>modality-event-client-calendar</module>
         <module>modality-event-client-sectionpanel</module>
+        <module>modality-event-client-theme</module>
         <module>modality-event-frontoffice-activities-all</module>
         <module>modality-event-frontoffice-activities-fees</module>
         <module>modality-event-frontoffice-activities-options</module>

@@ -11,6 +11,7 @@ module modality.ecommerce.backoffice.activities.bookings {
     requires modality.base.backoffice.operations.generic;
     requires modality.base.client.activity;
     requires modality.base.client.aggregates;
+    requires modality.base.client.gantt.fx;
     requires modality.base.client.presentationmodel;
     requires modality.base.client.util;
     requires modality.base.shared.domainmodel;
@@ -19,6 +20,7 @@ module modality.ecommerce.backoffice.activities.bookings {
     requires modality.ecommerce.backoffice.operations.document;
     requires modality.event.backoffice.activities.cloneevent.routing;
     requires modality.event.frontoffice.activities.fees;
+    requires webfx.extras.timelayout;
     requires webfx.extras.util.layout;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;

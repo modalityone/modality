@@ -51,11 +51,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jresearch.gwt.time</groupId>
-            <artifactId>org.jresearch.gwt.time</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.gwtproject</groupId>
             <artifactId>gwt-dev</artifactId>
         </dependency>
@@ -358,6 +353,11 @@
             <artifactId>modality-hotel-shared-time</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jresearch.gwt.time</groupId>
+            <artifactId>org.jresearch.gwt.time</artifactId>
         </dependency>
 
         <dependency>
@@ -1112,6 +1112,13 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-i18n</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-i18n-controls</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>

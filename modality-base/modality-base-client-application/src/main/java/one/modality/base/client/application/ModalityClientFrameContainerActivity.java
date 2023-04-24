@@ -1,8 +1,10 @@
 package one.modality.base.client.application;
 
+import dev.webfx.extras.theme.layout.FXLayoutMode;
+import dev.webfx.extras.theme.luminance.FXLuminanceMode;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
-import dev.webfx.extras.theme.luminance.LuminanceMode;
-import dev.webfx.extras.theme.palette.PaletteMode;
+import dev.webfx.extras.theme.palette.FXPaletteMode;
+import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.stack.authn.logout.client.operation.LogoutRequest;
 import dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
@@ -13,13 +15,13 @@ import dev.webfx.stack.ui.action.ActionBuilder;
 import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
-import dev.webfx.extras.util.layout.LayoutUtil;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 
 import java.util.Collection;
@@ -32,16 +34,17 @@ public class ModalityClientFrameContainerActivity extends ViewDomainActivityBase
         implements ModalityButtonFactoryMixin
         , OperationActionFactoryMixin {
 
-    protected final BorderPane containerPane = new BorderPane();
-
     @Override
     public Node buildUi() {
-        containerPane.setTop(createContainerHeader());
-        containerPane.centerProperty().bind(mountNodeProperty());
-        return containerPane;
+        BorderPane frameContainer = new BorderPane();
+        frameContainer.centerProperty().bind(mountNodeProperty());
+        frameContainer.setTop(createContainerHeader());
+        frameContainer.setBottom(createContainerFooter());
+        return frameContainer;
     }
 
-    protected Node createContainerHeader() {
+    protected Region createContainerHeader() {
+        Node headerCenterItem = createContainerHeaderCenterItem();
         HBox containerHeader = new HBox(
                 // Home button
                 ActionBinder.bindButtonToAction(newButton(), routeOperationCodeToAction("RouteToHome")),
@@ -53,7 +56,7 @@ public class ModalityClientFrameContainerActivity extends ViewDomainActivityBase
                 ActionBinder.bindButtonToAction(newButton(), routeOperationCodeToAction("RouteForward")),
                 // Horizontal space
                 LayoutUtil.createHGrowable(),
-                createContainerHeaderCenterItem(),
+                headerCenterItem,
                 LayoutUtil.createHGrowable(),
                 // Logout button
                 ActionBinder.bindButtonToAction(newButton(), newOperationAction(LogoutRequest::new))
@@ -64,16 +67,24 @@ public class ModalityClientFrameContainerActivity extends ViewDomainActivityBase
         LuminanceTheme.createApplicationFrameFacet(containerHeader)
                 .setOnMouseClicked(e -> { // Temporary for testing
                     if (e.isAltDown())
-                        PaletteMode.setVariedPalette(!PaletteMode.isVariedPalette());
+                        FXPaletteMode.setVariedPalette(!FXPaletteMode.isVariedPalette());
                     if (e.isShiftDown())
-                        LuminanceMode.setDarkMode(!LuminanceMode.isDarkMode());
+                        FXLuminanceMode.setDarkMode(!FXLuminanceMode.isDarkMode());
+                    if (e.isMetaDown())
+                        FXLayoutMode.setCompactMode(!FXLayoutMode.isCompactMode());
                 })
                 .style();
+        // Hiding the center item in compact mode
+        FXLayoutMode.layoutModeProperty().addListener(observable -> headerCenterItem.setVisible(!FXLayoutMode.isCompactMode()));
         return containerHeader;
     }
 
     protected Node createContainerHeaderCenterItem() {
         return LayoutUtil.createHSpace(0);
+    }
+
+    protected Region createContainerFooter() {
+        return null;
     }
 
     private final Collection<RouteRequestEmitter> providedEmitters = RouteRequestEmitter.getProvidedEmitters();

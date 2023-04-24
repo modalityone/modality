@@ -4,6 +4,7 @@ import dev.webfx.stack.orm.reactive.dql.statement.conventions.*;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import one.modality.base.client.activity.eventdependent.EventDependentGenericTablePresentationModel;
+import one.modality.base.client.presentationmodel.HasGanttSelectedObjectProperty;
 import one.modality.base.client.presentationmodel.HasSelectedDocumentProperty;
 import one.modality.base.shared.entities.Document;
 import dev.webfx.extras.visual.VisualResult;
@@ -30,7 +31,8 @@ final class BookingsPresentationModel extends EventDependentGenericTablePresenta
         HasMasterVisualResultProperty,
         HasMasterVisualSelectionProperty,
         HasSelectedMasterProperty<Document>,
-        HasSelectedDocumentProperty {
+        HasSelectedDocumentProperty,
+        HasGanttSelectedObjectProperty {
 
     private final ObjectProperty<DqlStatement> conditionDqlStatementProperty = new SimpleObjectProperty<>();
     @Override public ObjectProperty<DqlStatement> conditionDqlStatementProperty() { return conditionDqlStatementProperty; }
@@ -67,5 +69,10 @@ final class BookingsPresentationModel extends EventDependentGenericTablePresenta
     @Override public ObjectProperty<Document> selectedMasterProperty() { return selectedMasterProperty; }
 
     @Override public ObjectProperty<Document> selectedDocumentProperty() { return selectedMasterProperty(); }
+
+    private final ObjectProperty<Object> ganttSelectedObjectProperty = new SimpleObjectProperty<>();
+    @Override public ObjectProperty<Object> ganttSelectedObjectProperty() {
+        return ganttSelectedObjectProperty;
+    }
 
 }

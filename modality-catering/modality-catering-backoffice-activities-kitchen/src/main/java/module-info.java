@@ -8,15 +8,14 @@ module modality.catering.backoffice.activities.kitchen {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.activity;
+    requires modality.base.client.gantt.fx;
+    requires modality.base.client.time.theme;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
     requires webfx.extras.scalepane;
     requires webfx.extras.theme;
     requires webfx.extras.timelayout;
     requires webfx.extras.timelayout.calendar;
-    requires webfx.extras.util.background;
-    requires webfx.extras.util.border;
-    requires webfx.extras.util.color;
     requires webfx.extras.util.layout;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
@@ -37,7 +36,6 @@ module modality.catering.backoffice.activities.kitchen {
     // Exported packages
     exports one.modality.catering.backoffice.activities.kitchen;
     exports one.modality.catering.backoffice.activities.kitchen.routing;
-    exports one.modality.catering.backoffice.activities.kitchen.theme;
     exports one.modality.catering.backoffice.operations.routes.kitchen;
 
     // Provided services

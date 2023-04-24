@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
 public class AttendanceDayPanel extends GridPane {
 
     private static final String DIETARY_OPTION_TOTAL = "Total";
-    private static final FontDef MEAL_COUNT_FONT = FontDef.font(FontWeight.BOLD, 14);
-    private static final FontDef MEAL_TOTAL_COUNT_FONT = FontDef.font(FontWeight.NORMAL, 14);
+    private static final FontDef MEAL_COUNT_FONT = FontDef.font(FontWeight.NORMAL, 14);
+    private static final FontDef MEAL_TOTAL_COUNT_FONT = FontDef.font(FontWeight.BOLD, 14);
     private static final FontDef MEAL_TEXT_FONT = FontDef.font(FontWeight.BOLD, 15);
 
     public AttendanceDayPanel(AttendanceCounts attendanceCounts, LocalDate date, List<Item> displayedMeals, AbbreviationGenerator abbreviationGenerator) {

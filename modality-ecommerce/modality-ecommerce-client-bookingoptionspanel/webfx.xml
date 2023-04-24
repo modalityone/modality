@@ -7,7 +7,7 @@
 
     <dependencies>
         <used-by-source-modules>
-            <undetected-module>webfx-kit-javafxcontrols-emul</undetected-module>
+            <undetected-module>javafx-controls</undetected-module>
         </used-by-source-modules>
     </dependencies>
 

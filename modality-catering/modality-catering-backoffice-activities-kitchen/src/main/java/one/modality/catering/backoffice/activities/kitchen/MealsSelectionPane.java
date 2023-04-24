@@ -111,6 +111,6 @@ public class MealsSelectionPane extends VBox {
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toList());
 
-        Platform.runLater(() -> itemCheckBoxPane.getChildren().addAll(displayedCheckBoxes));
+        Platform.runLater(() -> itemCheckBoxPane.getChildren().setAll(displayedCheckBoxes));
     }
 }

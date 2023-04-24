@@ -9,6 +9,7 @@ import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.activity.table.GenericTable;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.ecommerce.backoffice.operations.routes.bookings.RouteToBookingsRequest;
+import one.modality.event.backoffice.events.pm.EventsPresentationModel;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.limit;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;

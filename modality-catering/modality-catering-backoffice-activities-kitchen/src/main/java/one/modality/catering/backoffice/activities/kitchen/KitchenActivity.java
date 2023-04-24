@@ -3,9 +3,9 @@ package one.modality.catering.backoffice.activities.kitchen;
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
 import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.extras.timelayout.TimeGridPane;
-import dev.webfx.extras.timelayout.TimePane;
-import dev.webfx.extras.timelayout.TimeUtil;
+import dev.webfx.extras.timelayout.node.TimeGridPane;
+import dev.webfx.extras.timelayout.node.TimePane;
+import dev.webfx.extras.timelayout.util.TimeUtil;
 import dev.webfx.extras.timelayout.impl.calendar.CalendarLayout;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -30,10 +30,13 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.text.FontWeight;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
+import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.shared.entities.Item;
-import one.modality.catering.backoffice.activities.kitchen.theme.TimeFacet;
+import one.modality.base.client.time.theme.TimeFacet;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
+import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
+import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -63,21 +66,22 @@ public class KitchenActivity extends ViewDomainActivityBase
 
     @Override
     public Node buildUi() {
+/*
         // Building the box (HBox) that will show the months to select (horizontally).
         HBox monthsBox = new HBox(2, TimeUtil.generateYearMonthsRelativeToThisMonth(-3, 12).stream().map(this::createYearMonthNode).toArray(Node[]::new));
         monthsBox.setPrefHeight(40);
+*/
 
         // Building the box (TimePane with just 1 row) that will show the days of the week (horizontally)
         CalendarLayout<DayOfWeek, DayOfWeek> daysOfWeekLayout = new CalendarLayout<>();
         daysOfWeekLayout.getChildren().setAll(TimeUtil.generateDaysOfWeek());
-        daysOfWeekLayout.setChildTimeReader(TimeUtil.dayOfWeekReader());
         daysOfWeekLayout.setChildFixedHeight(40);
+        daysOfWeekLayout.setHSpacing(2);
         TimePane<DayOfWeek, DayOfWeek> daysOfWeekPane = new TimePane<>(daysOfWeekLayout, this::createDayOfWeekNode);
         VBox.setMargin(daysOfWeekPane, new Insets(0, WebFxKitLauncher.getVerticalScrollbarExtraWidth(), 0, 0));
 
         // Building the box (TimeGridPane with several rows) that will show each day of the month (calendar layout)
         daysOfMonthLayout = new CalendarLayout<>();
-        daysOfMonthLayout.setChildTimeReader(TimeUtil.localDateReader());
         //daysOfMonthLayout.setFillHeight(true);
         TimeGridPane<LocalDate, LocalDate> daysOfMonthPane = new TimeGridPane<>(daysOfMonthLayout, this::createDateNode);
         LuminanceTheme.createPrimaryPanelFacet(daysOfMonthPane).style();
@@ -89,9 +93,9 @@ public class KitchenActivity extends ViewDomainActivityBase
         BorderPane container = new BorderPane();
         container.setCenter(verticalScrollPane);
 
-        VBox top = new VBox(2, monthsBox, daysOfWeekPane);
-        LuminanceTheme.createTopPanelFacet(top).setShadowed(true).style();
-        container.setTop(top);
+        //VBox top = new VBox(2, monthsBox, daysOfWeekPane);
+        LuminanceTheme.createTopPanelFacet(daysOfWeekPane).setShadowed(true).style();
+        container.setTop(daysOfWeekPane);
 
         LuminanceTheme.createBottomPanelFacet(keyPane).setShadowed(true).style();
         container.setBottom(keyPane);
@@ -102,8 +106,15 @@ public class KitchenActivity extends ViewDomainActivityBase
         FXProperties.runOnPropertiesChange(this::updateQueryArgument, selectedYearMonthProperty, FXOrganizationId.organizationIdProperty());
         FXProperties.runNowAndOnPropertiesChange(() -> mealsSelectionPane.setOrganization(FXOrganization.getOrganization()), FXOrganization.organizationProperty());
         mealsSelectionPane.selectedItemsProperty().addListener((ListChangeListener<Item>) c -> rebuildDayPanels());
+
         // Setting the initial selection = this month
-        setSelectedYearMonth(YearMonth.now());
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            Object ganttSelectedObject = FXGanttSelection.getGanttSelectedObject();
+            if (ganttSelectedObject instanceof YearMonth)
+                selectedYearMonthProperty.set((YearMonth) ganttSelectedObject);
+        }, FXGanttSelection.ganttSelectedObjectProperty());
+        if (selectedYearMonthProperty.get() == null)
+            setSelectedYearMonth(YearMonth.now());
 
         return container;
     }
@@ -118,12 +129,14 @@ public class KitchenActivity extends ViewDomainActivityBase
         );
     }
 
+/*
     private Node createYearMonthNode(YearMonth yearMonth) {
         return TimeFacet.createYearMonthFacet(yearMonth)
                 .setSelectedProperty(FXProperties.compute(selectedYearMonthProperty, yearMonth::equals))
                 .setOnMouseClicked(e -> setSelectedYearMonth(yearMonth))
                 .getContainerNode();
     }
+*/
 
     private Node createDateNode(LocalDate date) {
         AttendanceDayPanel attendanceDayPanel = attendanceDayPanels.get(date);
@@ -172,6 +185,18 @@ public class KitchenActivity extends ViewDomainActivityBase
             }
             mealsSelectionPane.setDisplayedMealNames(displayedMealNames);
         });
+    }
+
+    @Override
+    public void onResume() {
+        FXGanttVisibility.setGanttVisibility(GanttVisibility.MONTHS);
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        FXGanttVisibility.setGanttVisibility(GanttVisibility.HIDDEN);
+        super.onPause();
     }
 
     // LOGIC
