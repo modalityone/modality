@@ -20,49 +20,54 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 19
-      uses: oracle-actions/setup-java@v1
-      with:
-        website: oracle.com
-        release: 19
-    - name: Build with Maven
-      run: mvn package -P vertx-fatjar
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ vars.AWS_REGION }}
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
-    - name: Build, tag, and push image to Amazon ECR
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ vars.MODALITY_REPOSITORY }}
-        ECR_ACCOUNT_ID: ${{ vars.ECR_ACCOUNT_ID }}
-        AWS_REGION: ${{ vars.AWS_REGION }}
-        ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
-        ECS_SERVICE: ${{ vars.ECS_SERVICE }}
-        MODALITY_DATABASE_HOST: ${{ secrets.MODALITY_DATABASE_HOST }}
-        MODALITY_DATABASE_PORT: ${{ secrets.MODALITY_DATABASE_PORT }}
-        MODALITY_DATABASE_NAME: ${{ secrets.MODALITY_DATABASE_NAME }}
-        MODALITY_DATABASE_USERNAME: ${{ secrets.MODALITY_DATABASE_USERNAME }}
-        MODALITY_DATABASE_PASSWORD: ${{ secrets.MODALITY_DATABASE_PASSWORD }}
-        IMAGE_TAG: ${{ github.sha }}
-      run: |
-        cp modality-all/modality-all-server-application-vertx/target/modality-all-server-application-vertx-1.0.0-SNAPSHOT-fat.jar docker/aws-service/modality-service
-        cd docker/aws-service/modality-service
-        sed -i "s/__ECR_ACCOUNT_ID__/${ECR_ACCOUNT_ID}/g" Dockerfile
-        sed -i "s/__AWS_REGION__/${AWS_REGION}/g" Dockerfile
-        sed -i "s/__MODALITY_DATABASE_HOST__/${MODALITY_DATABASE_HOST}/g" ModalityDatabase.json
-        sed -i "s/__MODALITY_DATABASE_PORT__/${MODALITY_DATABASE_PORT}/g" ModalityDatabase.json
-        sed -i "s/__MODALITY_DATABASE_NAME__/${MODALITY_DATABASE_NAME}/g" ModalityDatabase.json
-        sed -i "s/__MODALITY_DATABASE_USERNAME__/${MODALITY_DATABASE_USERNAME}/g" ModalityDatabase.json
-        sed -i "s/__MODALITY_DATABASE_PASSWORD__/${MODALITY_DATABASE_PASSWORD}/g" ModalityDatabase.json
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY
-        docker tag  $ECR_REGISTRY/$ECR_REPOSITORY $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        aws ecs update-service --cluster ${ECS_CLUSTER} --service ${ECS_SERVICE} --force-new-deployment
+      - uses: actions/checkout@v3
+      - name: Set up JDK 19
+        uses: oracle-actions/setup-java@v1
+        with:
+          website: oracle.com
+          release: 19
+      - name: Build with Maven
+        run: mvn package -B -P 'vertx-fatjar,gwt-compile'
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ vars.MODALITY_REPOSITORY }}
+          ECR_ACCOUNT_ID: ${{ vars.ECR_ACCOUNT_ID }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+          ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
+          ECS_SERVICE: ${{ vars.ECS_SERVICE }}
+          MODALITY_DATABASE_HOST: ${{ secrets.MODALITY_DATABASE_HOST }}
+          MODALITY_DATABASE_PORT: ${{ secrets.MODALITY_DATABASE_PORT }}
+          MODALITY_DATABASE_NAME: ${{ secrets.MODALITY_DATABASE_NAME }}
+          MODALITY_DATABASE_USERNAME: ${{ secrets.MODALITY_DATABASE_USERNAME }}
+          MODALITY_DATABASE_PASSWORD: ${{ secrets.MODALITY_DATABASE_PASSWORD }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          fat_jar="modality-all/modality-all-server-application-vertx/target/modality-all-server-application-vertx-1.0.0-SNAPSHOT-fat.jar"
+          back_office_war="modality-all/modality-all-backoffice-application-gwt/target/modality-all-backoffice-application-gwt-1.0.0-SNAPSHOT.war"
+          front_office_war="modality-all/modality-all-frontoffice-application-gwt/target/modality-all-frontoffice-application-gwt-1.0.0-SNAPSHOT.war"
+          cp $fat_jar docker/aws-service/modality-service
+          cp back_office_war docker/aws-service/modality-service
+          cp front_office_war docker/aws-service/modality-service
+          cd docker/aws-service/modality-service
+          sed -i "s/__ECR_ACCOUNT_ID__/${ECR_ACCOUNT_ID}/g" Dockerfile
+          sed -i "s/__AWS_REGION__/${AWS_REGION}/g" Dockerfile
+          sed -i "s/__MODALITY_DATABASE_HOST__/${MODALITY_DATABASE_HOST}/g" ModalityDatabase.json
+          sed -i "s/__MODALITY_DATABASE_PORT__/${MODALITY_DATABASE_PORT}/g" ModalityDatabase.json
+          sed -i "s/__MODALITY_DATABASE_NAME__/${MODALITY_DATABASE_NAME}/g" ModalityDatabase.json
+          sed -i "s/__MODALITY_DATABASE_USERNAME__/${MODALITY_DATABASE_USERNAME}/g" ModalityDatabase.json
+          sed -i "s/__MODALITY_DATABASE_PASSWORD__/${MODALITY_DATABASE_PASSWORD}/g" ModalityDatabase.json
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY
+          docker tag  $ECR_REGISTRY/$ECR_REPOSITORY $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          aws ecs update-service --cluster ${ECS_CLUSTER} --service ${ECS_SERVICE} --force-new-deployment
