@@ -58,8 +58,8 @@ jobs:
           back_office_war="modality-all/modality-all-backoffice-application-gwt/target/modality-all-backoffice-application-gwt-1.0.0-SNAPSHOT.war"
           front_office_war="modality-all/modality-all-frontoffice-application-gwt/target/modality-all-frontoffice-application-gwt-1.0.0-SNAPSHOT.war"
           cp $fat_jar docker/aws-service/modality-service
-          cp back_office_war docker/aws-service/modality-service
-          cp front_office_war docker/aws-service/modality-service
+          cp $back_office_war docker/aws-service/modality-service
+          cp $front_office_war docker/aws-service/modality-service
           cd docker/aws-service/modality-service
           sed -i "s/__ECR_ACCOUNT_ID__/${ECR_ACCOUNT_ID}/g" Dockerfile
           sed -i "s/__AWS_REGION__/${AWS_REGION}/g" Dockerfile
