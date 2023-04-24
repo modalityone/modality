@@ -32,6 +32,8 @@
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.OrganizationTypeImpl$ProvidedFactory</provider>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.PersonImpl$ProvidedFactory</provider>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.RateImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.ScheduledItemImpl$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.ScheduledResourceImpl$ProvidedFactory</provider>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.SiteImpl$ProvidedFactory</provider>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.SnapshotImpl$ProvidedFactory</provider>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.SystemMetricsEntityImpl$ProvidedFactory</provider>
