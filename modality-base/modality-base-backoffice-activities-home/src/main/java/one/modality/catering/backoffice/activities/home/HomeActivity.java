@@ -56,7 +56,7 @@ public class HomeActivity extends ViewDomainActivityBase
             "RouteToMarketing",
             "RouteToRecurringClasses",
             "RouteToEventsPlanner", // temporarily redirected to RouteToEvents
-            "RouteToHousehold",
+            "RouteToHousehold", // temporarily redirected to RouteToRoomCalendar
             "RouteToQR",
             "RouteToTransportation",
             "RouteToOrganizations", // temporarily routed
@@ -96,6 +96,7 @@ public class HomeActivity extends ViewDomainActivityBase
         redirects.put("RouteToHumanResources", "RouteToStatistics");
         redirects.put("RouteToReception", "RouteToFilters");
         redirects.put("RouteToExtras", "RouteToOperations");
+        redirects.put("RouteToHousehold", "RouteToRoomCalendar");
     }
 
     @Override
