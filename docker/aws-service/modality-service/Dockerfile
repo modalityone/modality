@@ -7,6 +7,7 @@ COPY modality-all-server-application-vertx-1.0.0-SNAPSHOT-fat.jar /opt/modality
 COPY modality-all-backoffice-application-gwt-1.0.0-SNAPSHOT.war /opt/modality
 COPY modality-all-frontoffice-application-gwt-1.0.0-SNAPSHOT.war /opt/modality
 COPY HttpOptions.json /opt/modality/conf
+COPY HttpStaticRoutes.json /opt/modality/conf
 COPY ModalityDatabase.json /opt/modality/conf
 
 WORKDIR /opt/modality
