@@ -6,7 +6,7 @@ module modality.event.backoffice.events.pm {
     requires java.base;
     requires javafx.base;
     requires modality.base.client.activity;
-    requires modality.base.client.presentationmodel;
+    requires webfx.extras.timelayout;
 
     // Exported packages
     exports one.modality.event.backoffice.events.pm;

@@ -466,6 +466,7 @@
     <source path="dev/webfx/extras/theme/text"/>
     <!--============================< webfx-extras-timelayout >=============================-->
     <source path="dev/webfx/extras/timelayout"/>
+    <source path="dev/webfx/extras/timelayout/bar"/>
     <source path="dev/webfx/extras/timelayout/canvas"/>
     <source path="dev/webfx/extras/timelayout/impl"/>
     <source path="dev/webfx/extras/timelayout/node"/>

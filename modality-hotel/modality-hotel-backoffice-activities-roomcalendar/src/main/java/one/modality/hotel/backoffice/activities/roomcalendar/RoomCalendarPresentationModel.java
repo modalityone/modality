@@ -3,7 +3,7 @@ package one.modality.hotel.backoffice.activities.roomcalendar;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentGenericTablePresentationModel;
-import one.modality.base.client.presentationmodel.HasTimeWindowProperties;
+import dev.webfx.extras.timelayout.TimeWindow;
 
 import java.time.LocalDate;
 
@@ -11,7 +11,7 @@ import java.time.LocalDate;
  * @author Bruno Salmon
  */
 public final class RoomCalendarPresentationModel extends OrganizationDependentGenericTablePresentationModel
-    implements HasTimeWindowProperties<LocalDate> {
+    implements TimeWindow<LocalDate> {
 
     // Display input
 

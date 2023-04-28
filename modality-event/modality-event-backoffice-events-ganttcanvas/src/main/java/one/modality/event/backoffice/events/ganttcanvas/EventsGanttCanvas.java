@@ -5,7 +5,7 @@ import dev.webfx.extras.theme.ThemeRegistry;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.timelayout.ChildPosition;
 import dev.webfx.extras.timelayout.canvas.TimeCanvasUtil;
-import dev.webfx.extras.timelayout.gantt.GanttLayout;
+import dev.webfx.extras.timelayout.gantt.LocalDateGanttLayout;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
@@ -16,7 +16,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
-import one.modality.base.client.ganttcanvas.LocalDateLayeredGanttCanvas;
+import one.modality.base.client.ganttcanvas.DatedGanttCanvas;
 import one.modality.base.shared.entities.Event;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.event.backoffice.event.fx.FXEvent;
@@ -30,23 +30,24 @@ import static dev.webfx.stack.orm.dql.DqlStatement.where;
 /**
  * @author Bruno Salmon
  */
-@SuppressWarnings("FieldCanBeLocal") // To remove IntelliJ IDEA warnings regarding constants
 public final class EventsGanttCanvas {
 
-    // Constants:
-    private final double EVENT_HEIGHT = 20;
-    private final double RADIUS = 10;
-    private final double H_SPACING = 2; // Max value, may be reduced when zooming out
-    private final double V_SPACING = 2;
+    private static final double EVENT_HEIGHT = 20;
+    private static final double RADIUS = 10;
+    private static final double H_SPACING = 2; // Max value, may be reduced when zooming out
+    private static final double V_SPACING = 2;
 
     private final EventsPresentationModel pm;
-    // The layered Gantt canvas that already displays dates, weeks, months & years (depending on zoom level)
-    private final LocalDateLayeredGanttCanvas layeredGanttCanvas = new LocalDateLayeredGanttCanvas();
+    // The dated Gantt canvas that already displays dates, weeks, months & years (depending on zoom level)
+    private final DatedGanttCanvas datedGanttCanvas = new DatedGanttCanvas();
     // The additional layer that will display the events
-    private final GanttLayout<Event, LocalDate> eventsLayer = new GanttLayout<>();
+    private final LocalDateGanttLayout<Event> eventsLayer = new LocalDateGanttLayout<>();
     private Font eventFont;
 
     public EventsGanttCanvas(EventsPresentationModel pm) {
+        // Binding the presentation model time window with the UI, here the dated Gantt canvas - probably bound itself to global FXGanttTimeWindow by application code through setupFXBindings()
+        pm.bindTimeWindow(datedGanttCanvas);
+
         this.pm = pm;
 
         // Setting up the events layer
@@ -54,15 +55,13 @@ public final class EventsGanttCanvas {
         eventsLayer.setVSpacing(V_SPACING);
         eventsLayer.setInclusiveChildStartTimeReader(Event::getStartDate);
         eventsLayer.setInclusiveChildEndTimeReader(Event::getEndDate);
+        eventsLayer.setTetrisPacking(true);
 
-        // Adding it to the layered gantt canvas, and passing the drawEvent method
-        layeredGanttCanvas.addLayer(eventsLayer, this::drawEvent);
-
-        // Binding the presentation model with the canvas time window (first applying pm => timeWindow, then binding timeWindow => pm)
-        layeredGanttCanvas.bindTimeWindow(pm.timeWindowStartProperty(), pm.timeWindowEndProperty(), true, true);
+        // Passing it to the gantt canvas as an additional layer, that will be automatically drawn using the drawEvent method
+        datedGanttCanvas.addLayer(eventsLayer, this::drawEvent);
 
         // Activating user interaction (user can move & zoom in/out the time window)
-        layeredGanttCanvas.setInteractive(true);
+        datedGanttCanvas.setInteractive(true);
 
         // Updating the events font on any theme mode change (light/dark mode, etc...)
         ThemeRegistry.runNowAndOnModeChange(() ->
@@ -80,8 +79,8 @@ public final class EventsGanttCanvas {
         }
     }
 
-    public Pane getCanvasPane() {
-        return layeredGanttCanvas.getCanvasPane();
+    public Pane getCanvasContainer() {
+        return datedGanttCanvas.getCanvasContainer();
     }
 
     public ObjectProperty<Event> selectedEventProperty() {
@@ -96,7 +95,7 @@ public final class EventsGanttCanvas {
     private void setupFXBindings() {
         bindFXEventToSelection();
         bindFXOrganization();
-        layeredGanttCanvas.setupFXBindings();
+        datedGanttCanvas.setupFXBindings();
     }
 
     private void bindFXEventToSelection() {

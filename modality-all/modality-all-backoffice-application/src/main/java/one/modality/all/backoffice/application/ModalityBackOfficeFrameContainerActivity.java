@@ -36,7 +36,7 @@ public class ModalityBackOfficeFrameContainerActivity extends ModalityClientFram
     private Region containerHeader;
     private Region containerFooter;
     private final EventsGanttCanvas eventsGanttCanvas = new EventsGanttCanvas(new EventsPresentationModel());
-    private final Pane canvasPane = eventsGanttCanvas.getCanvasPane();
+    private final Pane ganttCanvasContainer = eventsGanttCanvas.getCanvasContainer();
     private Insets breathingPadding; // actual value will be computed depending on compact mode
 
     @Override
@@ -51,9 +51,9 @@ public class ModalityBackOfficeFrameContainerActivity extends ModalityClientFram
                 layoutInArea(containerFooter, 0, height - footerHeight, width, footerHeight, 0, HPos.CENTER, VPos.BOTTOM);
                 double nodeY = FXLayoutMode.isCompactMode() ? 0 : headerHeight;
                 double nodeHeight = 0;
-                if (canvasPane.isVisible()) {
-                    nodeHeight = canvasPane.prefHeight(width) + breathingPadding.getTop() + breathingPadding.getBottom();
-                    layoutInArea(canvasPane, 0, nodeY, width, nodeHeight, 0, breathingPadding, HPos.CENTER, VPos.TOP);
+                if (ganttCanvasContainer.isVisible()) {
+                    nodeHeight = ganttCanvasContainer.prefHeight(width) + breathingPadding.getTop() + breathingPadding.getBottom();
+                    layoutInArea(ganttCanvasContainer, 0, nodeY, width, nodeHeight, 0, breathingPadding, HPos.CENTER, VPos.TOP);
                 }
                 Node mountNode = getMountNode();
                 if (mountNode != null) {
@@ -89,7 +89,7 @@ public class ModalityBackOfficeFrameContainerActivity extends ModalityClientFram
         // Note: the order of the children is important in compact mode, where the container header overlaps the mount
         // node (as a transparent button bar on top of it) -> so the container header must be after the mount node,
         // otherwise it will be hidden.
-        frameContainer.getChildren().setAll(Collections.listOfRemoveNulls(canvasPane, getMountNode(), containerHeader, containerFooter));
+        frameContainer.getChildren().setAll(Collections.listOfRemoveNulls(ganttCanvasContainer, getMountNode(), containerHeader, containerFooter));
     }
 
     @Override

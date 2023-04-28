@@ -101,8 +101,6 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
 
     // TODO move this into an interface
     private ActionGroup newSnapshotActionGroup(Pane container) {
-        //List<Document> selectedEntities = masterVisualMapper.getSelectedEntities();
-        //System.out.println("selectedEntities.size() = " + selectedEntities.size());
         return newActionGroup("Snapshot", true,
                 newOperationAction(() -> new AddNewSnapshotRequest(masterVisualMapper.getSelectedEntities(), pm.getSelectedMaster().getOrganization(), container),  pm.selectedDocumentProperty()));
     }
@@ -120,7 +118,7 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
         super.onPause();
     }
 
-/*==================================================================================================================
+    /*==================================================================================================================
     =================================================== Logical layer ==================================================
     ==================================================================================================================*/
 

@@ -6,13 +6,12 @@ import dev.webfx.extras.theme.layout.FXLayoutMode;
 import dev.webfx.extras.theme.luminance.FXLuminanceMode;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.timelayout.ChildPosition;
-import dev.webfx.extras.timelayout.LayeredTimeLayout;
+import dev.webfx.extras.timelayout.MultiLayerLocalDateLayout;
 import dev.webfx.extras.timelayout.TimeLayout;
 import dev.webfx.extras.timelayout.TimeWindow;
 import dev.webfx.extras.timelayout.canvas.*;
 import dev.webfx.extras.timelayout.gantt.GanttLayout;
-import dev.webfx.extras.timelayout.util.DirtyMarker;
-import dev.webfx.extras.timelayout.util.TimeUtil;
+import dev.webfx.extras.timelayout.gantt.LocalDateGanttLayout;
 import dev.webfx.extras.timelayout.util.YearWeek;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -20,10 +19,8 @@ import dev.webfx.platform.util.Objects;
 import dev.webfx.stack.i18n.I18n;
 import javafx.animation.Interpolator;
 import javafx.beans.property.ObjectProperty;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.VPos;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -31,7 +28,6 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Screen;
 import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
@@ -39,60 +35,56 @@ import one.modality.base.client.time.theme.TimeTheme;
 
 import java.time.*;
 import java.time.temporal.ChronoUnit;
-import java.util.function.BiConsumer;
 
 /**
  * @author Bruno Salmon
  */
-public final class LocalDateLayeredGanttCanvas implements TimeWindow<LocalDate> {
+public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
 
-    private final CanvasPane canvasPane = new CanvasPane(this::relayout, this::redraw);
-    private final GanttLayout<Year, LocalDate> yearsLayer = GanttLayout.createYearLocalDateGanttLayout();
-    private final GanttLayout<YearMonth, LocalDate> monthsLayer = GanttLayout.createYearMonthLocalDateGanttLayout();
-    private final GanttLayout<YearWeek, LocalDate> weeksLayer = GanttLayout.createYearWeekLocalDateGanttLayout();
-    private final GanttLayout<LocalDate, LocalDate> daysLayer = GanttLayout.createDayLocalDateGanttLayout();
-    private final LayeredTimeLayout<LocalDate> globalLayout = LayeredTimeLayout.create();
-    private final LayeredTimeCanvasDrawer<LocalDate> globalCanvasDrawer = new LayeredTimeCanvasDrawer<>(getCanvas(), globalLayout);
-    private final InteractiveCanvasManager<LocalDate> interactiveCanvasManager = new InteractiveCanvasManager<>(getCanvas(), this, ChronoUnit.DAYS, globalLayout);
+    private final LocalDateGanttLayout<Year> yearsLayer = LocalDateGanttLayout.createYearLocalDateGanttLayout();
+    private final LocalDateGanttLayout<YearMonth> monthsLayer = LocalDateGanttLayout.createYearMonthLocalDateGanttLayout();
+    private final LocalDateGanttLayout<YearWeek> weeksLayer = LocalDateGanttLayout.createYearWeekLocalDateGanttLayout();
+    private final LocalDateGanttLayout<LocalDate> daysLayer = LocalDateGanttLayout.createDayLocalDateGanttLayout();
+    private final MultiLayerLocalDateLayout globalLayout = MultiLayerLocalDateLayout.create();
+    private final MultiLayerLocalDateCanvasDrawer globalCanvasDrawer = new MultiLayerLocalDateCanvasDrawer(globalLayout);
+    private final TimeCanvasPane timeCanvasPane = new TimeCanvasPane(globalLayout, globalCanvasDrawer);
+    private final LocalDateCanvasInteractionManager canvasInteractionManager = new LocalDateCanvasInteractionManager(globalCanvasDrawer, globalLayout);
+    private final String[] i18nMonths = new String[12];
+    private final String[] i18nDaysOfWeek = new String[7];
+    private String i18nWeek;
+    private double i18nWeekWidth;
 
-    private long timeWindowDuration;
-
-    public LocalDateLayeredGanttCanvas() {
-        // Adding these layouts as layers in the gantt canvas.
-        // Note: the order is important regarding the vertical strips, so they are always displayed "in the background".
-        // For example, if days are used to draw the strips, they must be drawn before drawing weeks, months, etc...
-        // otherwise these strips would appear on top of them instead of behind them.
+    public DatedGanttCanvas() {
+        // Adding the layers in the gantt canvas.
         addLayer(daysLayer, this::drawDay);
         addLayer(weeksLayer, this::drawWeek);
         addLayer(monthsLayer, this::drawMonth);
         addLayer(yearsLayer, this::drawYear);
+        // Note: the order is important regarding the vertical strips, so they are always displayed "in the background".
+        // For example, if days are used to draw the strips, they must be drawn before drawing weeks, months, etc...
+        // otherwise these strips would appear on top of them instead of behind.
 
-        globalLayout.setOnTimeWindowChanged((start, end) -> {
-            timeWindowDuration = ChronoUnit.DAYS.between(start, end);
-            markLayoutAsDirty();
-            // TODO: investigate if the following can be moved to GanttLayout.createXXX() factory methods
-            yearsLayer.getChildren().setAll(TimeUtil.generateYears(Year.from(start), Year.from(end)));
-            monthsLayer.getChildren().setAll(TimeUtil.generateYearMonths(YearMonth.from(start), YearMonth.from(end)));
-            weeksLayer.getChildren().setAll(TimeUtil.generateYearWeeks(YearWeek.from(start), YearWeek.from(end)));
-            daysLayer.getChildren().setAll(TimeUtil.generateLocalDates(start, end));
-        });
+        // Some layout properties (such as layer visibilities, vertical position, height...) must be set before the layout pass
+        globalLayout.addOnBeforeLayout(this::setLayoutPropertiesBeforeLayoutPass);
+        // Some draw properties (such as fonts, colors, paddings, radius...) must be set before the draw pass
+        globalCanvasDrawer.addOnBeforeDraw(this::setDrawPropertiesBeforeDrawPass);
 
-        // Redrawing the canvas on theme mode changes (because the graphical properties depend on the theme)
+        // Redrawing the canvas on theme mode changes (because some draw properties depend on the theme)
         ThemeRegistry.addModeChangeListener(this::markCanvasAsDirty);
 
-        // Recomputing layout on layout mode changes (ex: compact mode)
-        FXProperties.runOnPropertiesChange(this::markLayoutAsDirty, FXLayoutMode.layoutModeProperty(), FXGanttVisibility.ganttVisibilityProperty());
+        // Requesting a new layout pass on some events that impact the layout properties:
+        FXProperties.runOnPropertiesChange(this::markLayoutAsDirty,
+                // 1) when the layout mode changes (ex: compact mode) => impact the first layer height
+                FXLayoutMode.layoutModeProperty(),
+                // 2) when the gantt visibility changes (ex: with/without events) => impact layers visibility
+                FXGanttVisibility.ganttVisibilityProperty());
 
         // Updating i18n texts when necessary
-        FXProperties.runNowAndOnPropertiesChange(this::onLanguageChanged, I18n.dictionaryProperty());
+        FXProperties.runNowAndOnPropertiesChange(this::updateI18nTexts, I18n.dictionaryProperty());
     }
 
-    public Canvas getCanvas() {
-        return canvasPane.getCanvas();
-    }
-
-    public Pane getCanvasPane() {
-        return canvasPane;
+    public Pane getCanvasContainer() {
+        return timeCanvasPane;
     }
 
     @Override
@@ -105,13 +97,18 @@ public final class LocalDateLayeredGanttCanvas implements TimeWindow<LocalDate> 
         return globalLayout.timeWindowEndProperty();
     }
 
-    @Override
-    public void setOnTimeWindowChanged(BiConsumer<LocalDate, LocalDate> timeWindowChangedHandler) {
-        // Not used so far, but should be implemented
-    }
 
     public void setTimeWindow(LocalDate timeWindowStart, LocalDate timeWindowEnd) {
         globalLayout.setTimeWindow(timeWindowStart, timeWindowEnd); // see globalLayout.setOnTimeWindowChanged() callback in constructor
+    }
+
+    private void updateI18nTexts() {
+        for (int i = 0; i < 12; i++)
+            i18nMonths[i] = I18n.getI18nText(Month.of(i + 1));
+        i18nWeek = I18n.getI18nText("WEEK");
+        for (int i = 0; i < 7; i++)
+            i18nDaysOfWeek[i] = I18n.getI18nText(DayOfWeek.of(i + 1));
+        markCanvasAsDirty();
     }
 
     public void setupFXBindings() {
@@ -120,7 +117,7 @@ public final class LocalDateLayeredGanttCanvas implements TimeWindow<LocalDate> 
     }
 
     private void bindFXGanttTimeWindow() {
-        bindTimeWindow(FXGanttTimeWindow.ganttTimeWindowStartProperty(), FXGanttTimeWindow.ganttTimeWindowEndProperty(), false, true);
+        bindTimeWindowBidirectional(FXGanttTimeWindow.ganttTimeWindow());
     }
 
     private void bindFXGanttSelection() {
@@ -128,76 +125,20 @@ public final class LocalDateLayeredGanttCanvas implements TimeWindow<LocalDate> 
     }
 
     public void setInteractive(boolean interactive) {
-        interactiveCanvasManager.setInteractive(interactive);
+        canvasInteractionManager.setInteractive(interactive);
     }
 
     public <C> void addLayer(TimeLayout<C, LocalDate> layer, ChildDrawer<C, LocalDate> layerCanvasDrawer) {
         globalLayout.addLayer(layer);
-        layer.getChildren().addListener((ListChangeListener<C>) c -> markLayoutAsDirty());
-        layer.selectedChildProperty().addListener(observable -> markCanvasAsDirty());
         globalCanvasDrawer.setLayerChildDrawer(layer, layerCanvasDrawer);
-        markLayoutAsDirty();
     }
-
-    // When marked as dirty, this layoutDirtyMarker will call relayout() in the next animation frame
-    private final DirtyMarker layoutDirtyMarker = new DirtyMarker(this::relayout);
 
     public void markLayoutAsDirty() { // may be called several times, but only 1 call will happen in the animation frame
-        layoutDirtyMarker.markAsDirty();
+        globalLayout.markLayoutAsDirty();
     }
-
-    // When marked as dirty, this canvasDirtyMarker will call redraw() in the next animation frame
-    private final DirtyMarker canvasDirtyMarker = new DirtyMarker(this::redraw);
 
     public void markCanvasAsDirty() { // may be called several times, but only 1 call will happen in the animation frame
-        canvasDirtyMarker.markAsDirty();
-    }
-
-    private void relayout() {
-        boolean wasCanvasPaneManaged = canvasPane.isManaged();
-        updateLayersDrawingProperties();
-        boolean isCanvasPaneManaged = canvasPane.isManaged();
-        double vSpacing = 10;
-        double y = 0;
-        if (yearsLayer.isVisible()) {
-            yearsLayer.setTopY(y);
-            yearsLayer.setChildFixedHeight(yearHeight);
-            y += yearHeight + vSpacing;
-        }
-        if (monthsLayer.isVisible()) {
-            monthsLayer.setTopY(y);
-            monthsLayer.setChildFixedHeight(monthHeight);
-            y += monthHeight + vSpacing;
-        }
-        if (weeksLayer.isVisible()) {
-            weeksLayer.setTopY(y);
-            weeksLayer.setChildFixedHeight(weekHeight);
-            y += weekHeight + vSpacing;
-        }
-        if (daysLayer.isVisible()) {
-            daysLayer.setTopY(y);
-            daysLayer.setChildFixedHeight(dayHeight);
-            y += dayHeight + vSpacing;
-        }
-        globalLayout.markLayoutAsDirty();
-        globalLayout.layout(getCanvas().getWidth(), getCanvas().getHeight());
-        if (FXGanttVisibility.showEvents()) {
-            ObservableList<TimeLayout<?, LocalDate>> layers = globalLayout.getLayers();
-            for (int i = 4; i < layers.size(); i++) {
-                TimeLayout<?, LocalDate> layer = layers.get(i);
-                layer.setTopY(y);
-                y += layer.getRowsCount() * layer.getChildFixedHeight();
-            }
-            y += vSpacing;
-        }
-        y = Math.min(y - vSpacing, Screen.getPrimary().getVisualBounds().getHeight());
-        canvasPane.setCanvasHeight(y, wasCanvasPaneManaged && isCanvasPaneManaged);
-        globalCanvasDrawer.redraw();
-    }
-
-    private void redraw() {
-        updateLayersDrawingProperties();
-        globalCanvasDrawer.redraw();
+        globalCanvasDrawer.markDrawAreaAsDirty();
     }
 
     // Day graphical properties (general ones, shared by all days)
@@ -244,12 +185,13 @@ public final class LocalDateLayeredGanttCanvas implements TimeWindow<LocalDate> 
         return fontSize(70, 12, 700, 20, 10, 10, 50, 20, width, height);
     }
 
-    private void updateLayersDrawingProperties() {
+    private void setLayoutPropertiesBeforeLayoutPass() {
         boolean isVisible = FXGanttVisibility.isVisible();
-        canvasPane.setVisible(isVisible);
-        canvasPane.setManaged(isVisible);
+        timeCanvasPane.setVisible(isVisible);
+        timeCanvasPane.setManaged(isVisible);
         // Computing widths for day / week / month / year
-        dayWidth = getCanvas().getWidth() / (timeWindowDuration + 1);
+        long timeWindowDuration = ChronoUnit.DAYS.between(getTimeWindowStart(), getTimeWindowEnd());
+        dayWidth = globalLayout.getWidth() / (timeWindowDuration + 1);
         weekWidth = 7 * dayWidth;
         yearWidth = 365 * dayWidth;
         monthWidth = yearWidth / 12;
@@ -266,6 +208,47 @@ public final class LocalDateLayeredGanttCanvas implements TimeWindow<LocalDate> 
             weeksLayer.setVisible(showWeeks);
             daysLayer.setVisible(showDays);
         }
+
+        // Computing heights for day / week / month / year
+        boolean compactMode = FXLayoutMode.isCompactMode();
+        double nodeHeight = compactMode ? 40 : 35; // Height of the top node
+        double vSpacing = 10;
+        double y = 0;
+        if (yearsLayer.isVisible()) {
+            yearHeight = nodeHeight;
+            nodeHeight = 35;
+            yearsLayer.setTopY(y);
+            yearsLayer.setChildFixedHeight(yearHeight);
+            y += yearHeight + vSpacing;
+        }
+        if (monthsLayer.isVisible()) {
+            monthHeight = nodeHeight;
+            monthsLayer.setTopY(y);
+            monthsLayer.setChildFixedHeight(monthHeight);
+            y += monthHeight + vSpacing;
+        }
+        weekHeight = 40;
+        if (weeksLayer.isVisible()) {
+            weeksLayer.setTopY(y);
+            weeksLayer.setChildFixedHeight(weekHeight);
+            y += weekHeight + vSpacing;
+        }
+        dayHeight = 40;
+        if (daysLayer.isVisible()) {
+            daysLayer.setTopY(y);
+            daysLayer.setChildFixedHeight(dayHeight);
+            y += dayHeight + vSpacing;
+        }
+        if (FXGanttVisibility.showEvents()) {
+            ObservableList<TimeLayout<?, LocalDate>> layers = globalLayout.getLayers();
+            for (int i = 4; i < layers.size(); i++) {
+                TimeLayout<?, LocalDate> layer = layers.get(i);
+                layer.setTopY(y);
+            }
+        }
+    }
+
+    private void setDrawPropertiesBeforeDrawPass() {
         // Setting stripLayout (which layout will be used as a based to draw the strips on the canvas)
         if (daysLayer.isVisible())
             stripLayer = daysLayer;
@@ -276,18 +259,6 @@ public final class LocalDateLayeredGanttCanvas implements TimeWindow<LocalDate> 
         else
             stripLayer = yearsLayer;
         stripStroke = FXLuminanceMode.isDarkMode() ? Color.gray(0.2) : Color.gray(0.85);
-        // Computing heights for day / week / month / year
-        boolean compactMode = FXLayoutMode.isCompactMode();
-        double nodeHeight = compactMode ? 40 : 35; // Height of the top node
-        if (yearsLayer.isVisible()) {
-            yearHeight = nodeHeight;
-            nodeHeight = 35;
-        }
-        if (monthsLayer.isVisible()) {
-            monthHeight = nodeHeight;
-        }
-        weekHeight = 40;
-        dayHeight = 40;
         // Computing fonts for day / week / month / year
         //dayFont = TextTheme.getFont(FontDef.font(14));
         double dayFontSize = fontSize(dayWidth, dayHeight / 2);
@@ -326,6 +297,7 @@ public final class LocalDateLayeredGanttCanvas implements TimeWindow<LocalDate> 
         daySelectedTextFill = TimeTheme.getDayOfWeekTextColor(true);
 
         // Week
+        boolean compactMode = FXLayoutMode.isCompactMode();
         weekFill = TimeTheme.getWeekBackgroundColor(false);
         weekSelectedFill = TimeTheme.getWeekBackgroundColor(true);
         weekStroke = compactMode ? TimeTheme.getWeekBorderColor() : Color.TRANSPARENT;
@@ -343,21 +315,7 @@ public final class LocalDateLayeredGanttCanvas implements TimeWindow<LocalDate> 
         yearTextFill = TimeTheme.getYearTextColor(false);
         yearSelectedTextFill = TimeTheme.getYearTextColor(true);
 
-        globalCanvasDrawer.setBackgroundFill(TimeTheme.getCanvasBackgroundColor());
-    }
-
-    private final String[] i18nMonths = new String[12];
-    private final String[] i18nDaysOfWeek = new String[7];
-    private String i18nWeek;
-    private double i18nWeekWidth;
-
-    private void onLanguageChanged() {
-        for (int i = 0; i < 12; i++)
-            i18nMonths[i] = I18n.getI18nText(Month.of(i + 1));
-        i18nWeek = I18n.getI18nText("WEEK");
-        for (int i = 0; i < 7; i++)
-            i18nDaysOfWeek[i] = I18n.getI18nText(DayOfWeek.of(i + 1));
-        markCanvasAsDirty();
+        globalCanvasDrawer.setDrawAreaBackgroundFill(TimeTheme.getCanvasBackgroundColor());
     }
 
     private void drawYear(Year year, ChildPosition<LocalDate> p, GraphicsContext gc) {
@@ -377,6 +335,8 @@ public final class LocalDateLayeredGanttCanvas implements TimeWindow<LocalDate> 
         Color monthFill = TimeTheme.getMonthBackgroundColor(yearMonth, selected);
         TimeCanvasUtil.fillStrokeRect(p, monthHPadding, monthFill, monthStroke, monthRadius, gc);
         String text = i18nMonths[month.ordinal()];
+        if (text == null) // May happen if i18n dictionary is not yet loaded
+            return;
         boolean m, mmm, yy, yyyy;
         if (yearsLayer.isVisible()) {
             yy = yyyy = false;
@@ -406,6 +366,8 @@ public final class LocalDateLayeredGanttCanvas implements TimeWindow<LocalDate> 
         boolean selected = Objects.areEquals(weeksLayer.getSelectedChild(), yearWeek);
         TimeCanvasUtil.fillStrokeRect(p, weekHPadding, selected ? weekSelectedFill : weekFill, weekStroke, weekRadius, gc);
         String week = i18nWeek;
+        if (week == null) // May happen if i18n dictionary is not yet loaded
+            return;
         if (weekWidth - 2 * weekHPadding < i18nWeekWidth + 5)
             week = week.substring(0, 1);
         String weekNumber = (yearWeek.getWeek() < 10 ? "0" : "") + yearWeek.getWeek();
@@ -423,6 +385,8 @@ public final class LocalDateLayeredGanttCanvas implements TimeWindow<LocalDate> 
         boolean selected = Objects.areEquals(daysLayer.getSelectedChild(), day);
         TimeCanvasUtil.fillStrokeRect(p, dayHPadding, TimeTheme.getDayOfWeekBackgroundColor(day, selected), dayStroke, dayRadius, gc);
         String dayOfWeek = i18nDaysOfWeek[day.getDayOfWeek().ordinal()];
+        if (dayOfWeek == null) // May happen if i18n dictionary is not yet loaded
+            return;
         if (dayWidth < 100)
             dayOfWeek = dayOfWeek.substring(0, 3);
         String dayOfMonth = (day.getDayOfMonth() < 10 ? "0" : "") + day.getDayOfMonth();
