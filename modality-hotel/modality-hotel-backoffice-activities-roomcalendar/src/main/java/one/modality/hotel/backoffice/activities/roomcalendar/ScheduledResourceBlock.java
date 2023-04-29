@@ -6,11 +6,11 @@ import one.modality.base.shared.entities.ScheduledResource;
 /**
  * @author Bruno Salmon
  */
-final class ScheduledResourceGraphic {
+final class ScheduledResourceBlock {
     private final Entity resourceConfiguration;
     private final int available;
 
-    public ScheduledResourceGraphic(ScheduledResource sr) {
+    public ScheduledResourceBlock(ScheduledResource sr) {
         resourceConfiguration = sr.getForeignEntity("configuration");
         int booked = sr.getIntegerFieldValue("booked");
         int max = sr.getIntegerFieldValue("max");
@@ -34,7 +34,7 @@ final class ScheduledResourceGraphic {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ScheduledResourceGraphic that = (ScheduledResourceGraphic) o;
+        ScheduledResourceBlock that = (ScheduledResourceBlock) o;
 
         if (available != that.available) return false;
         return resourceConfiguration == that.resourceConfiguration;

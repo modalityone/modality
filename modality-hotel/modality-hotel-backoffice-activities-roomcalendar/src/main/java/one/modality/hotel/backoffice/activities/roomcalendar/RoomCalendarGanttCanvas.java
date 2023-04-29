@@ -38,7 +38,7 @@ import static dev.webfx.stack.orm.dql.DqlStatement.where;
 /**
  * @author Bruno Salmon
  */
-public final class ScheduledResourceGanttCanvas {
+public final class RoomCalendarGanttCanvas {
 
     // Style constants used for drawing bars in the canvas:
     private static final double BAR_HEIGHT = 40;
@@ -55,29 +55,29 @@ public final class ScheduledResourceGanttCanvas {
     private final ObservableList<ScheduledResource> entities = FXCollections.observableArrayList();
 
     /**
-     * We will ask TimeBarUtil to automatically convert those ScheduledResource entities into ScheduledResourceGraphic
-     * instances which are a reduction of those entities to the strictly minimal set of fields required for the graphical
-     * rendering, so here: resourceConfiguration (= parent from gantt point of view) & available (the number displayed)
+     * We will ask TimeBarUtil to automatically convert those ScheduledResource entities first into ScheduledResourceBlock
+     * instances which are a reduction of those entities to the strictly minimal set of fields required for the canvas
+     * draw, so here fields = resourceConfiguration (= parent from gantt point of view) & available (the number displayed)
      * and nothing more (we forget the entityId and other fields). And because at this stage these instances will form
      * blocks (one instance per day), TimeBarUtil will then identify and group all series of identical blocks, and
-     * finally transform them into bars.
+     * finally transform them into bars (in this terminology, a bar can cover several days as opposed to a block).
      *
-     * For example if room 208 has 2 beds available for 5 days, this series of 5 blocks (ie 5 ScheduledResourceGraphic
+     * For example if room 208 has 2 beds available for 5 days, this series of 5 blocks (ie 5 ScheduledResourceBlock
      * instances with identical fields: resourceConfiguration = of 208 & available = 2) will be grouped and transformed
-     * into a 5-days bar (holding 1 single instance of ScheduledResourceGraphic + first & last day of that series).
+     * into a 5-days bar (holding 1 single instance of ScheduledResourceBlock + first & last day of that series).
      *
      * Note that there are 2 conditions for this to work:
-     * 1) ScheduledResourceGraphic must implement equals(), which is used by TimeBarUtil to identify identical blocks
+     * 1) ScheduledResourceBlock must implement equals(), which is used by TimeBarUtil to identify identical blocks
      * 2) The entities must be sorted so that identical blocks will appear in a consecutive order in that list
      *    => see order by configuration,date in startLogic()
      */
 
     // As a result, TimeBarUtil generates a list of bars that will be the input of this barsLayout:
-    private final LocalDateGanttLayout<LocalDateBar<ScheduledResourceGraphic>> barsLayout = new LocalDateGanttLayout<>();
+    private final LocalDateGanttLayout<LocalDateBar<ScheduledResourceBlock>> barsLayout = new LocalDateGanttLayout<>();
 
     // Once the position of the bars are computed by barsLayout, they will be automatically drawn in a canvas by this
     // barsDrawer (each bar will be rendered using the drawBar() method provided in this class)
-    private final LocalDateCanvasDrawer<LocalDateBar<ScheduledResourceGraphic>> barsDrawer
+    private final LocalDateCanvasDrawer<LocalDateBar<ScheduledResourceBlock>> barsDrawer
             = new LocalDateCanvasDrawer<>(barsLayout, this::drawBar);
 
     // The user has the option to enable/disable the blocks grouping (when disabled, TimeBarUtil will stop trying to
@@ -87,7 +87,7 @@ public final class ScheduledResourceGanttCanvas {
     // The font that will be used to draw the bars
     private Font barsFont;
 
-    public ScheduledResourceGanttCanvas() {
+    public RoomCalendarGanttCanvas() {
         // Binding the presentation model and the barsLayout time window
         pm.organizationIdProperty().bind(FXOrganization.organizationProperty());
         pm.bindTimeWindow(barsLayout); // barsLayout will itself be bound to FXGanttTimeWindow (see below)
@@ -97,7 +97,7 @@ public final class ScheduledResourceGanttCanvas {
         TimeBarUtil.setupBarsLayout(
                 entities, // the observable list of ScheduledResource entities to transform
                 ScheduledResource::getDate, // the entity date reader that will be used to date each block
-                ScheduledResourceGraphic::new, // the factory that creates instances, initially one per block
+                ScheduledResourceBlock::new, // the factory that creates instances, initially one per block
                 barsLayout, // the barsLayout that will receive the final list of bars as a result of the blocks grouping
                 blocksGroupingProperty); // optional property to eventually disable that blocks grouping
 
@@ -125,9 +125,9 @@ public final class ScheduledResourceGanttCanvas {
         return sp;
     }
 
-    private void drawBar(LocalDateBar<ScheduledResourceGraphic> bar, ChildPosition<LocalDate> p, GraphicsContext gc) {
+    private void drawBar(LocalDateBar<ScheduledResourceBlock> bar, ChildPosition<LocalDate> p, GraphicsContext gc) {
         double hPadding = Math.min(p.getWidth() * 0.01, BAR_H_SPACING);
-        ScheduledResourceGraphic instance = bar.getInstance();
+        ScheduledResourceBlock instance = bar.getInstance();
         String resourceName = instance.getResourceName();
         int available = instance.getAvailable();
         TimeCanvasUtil.fillRect(p, hPadding, available > 0 ? BAR_AVAILABLE_COLOR : BAR_UNAVAILABLE_COLOR, BAR_RADIUS, gc);

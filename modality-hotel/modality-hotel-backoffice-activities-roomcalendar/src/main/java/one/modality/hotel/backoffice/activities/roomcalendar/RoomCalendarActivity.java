@@ -11,13 +11,13 @@ import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 final class RoomCalendarActivity extends EventDependentViewDomainActivity implements
         OperationActionFactoryMixin {
 
-    private final ScheduledResourceGanttCanvas scheduledResourceGanttCanvas = new ScheduledResourceGanttCanvas();
+    private final RoomCalendarGanttCanvas roomCalendarGanttCanvas = new RoomCalendarGanttCanvas();
 
     @Override
     public Node buildUi() {
-        BorderPane borderPane = new BorderPane(scheduledResourceGanttCanvas.buildCanvasContainer());
+        BorderPane borderPane = new BorderPane(roomCalendarGanttCanvas.buildCanvasContainer());
         CheckBox groupBlocksCheckBox = new CheckBox("Group blocks");
-        scheduledResourceGanttCanvas.blocksGroupingProperty.bind(groupBlocksCheckBox.selectedProperty());
+        roomCalendarGanttCanvas.blocksGroupingProperty.bind(groupBlocksCheckBox.selectedProperty());
         borderPane.setBottom(groupBlocksCheckBox);
         return borderPane;
     }
@@ -40,7 +40,7 @@ final class RoomCalendarActivity extends EventDependentViewDomainActivity implem
 
     @Override
     protected void startLogic() {
-        scheduledResourceGanttCanvas.startLogic(this);
+        roomCalendarGanttCanvas.startLogic(this);
     }
 
 }
