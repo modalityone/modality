@@ -19,12 +19,22 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    env:
+      jdk-version: '19'
+
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 19
-      uses: oracle-actions/setup-java@v1
-      with:
-        website: oracle.com
-        release: 19
-    - name: Build with Maven
-      run: mvn package -P vertx-fatjar
+
+      # Set up the JDK
+      - name: Set up JDK ${{ env.jdk-version }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: ${{ env.jdk-version }}
+
+      # Checkout this repository
+      - name: Checkout this repository
+        uses: actions/checkout@v3
+
+      # Build Modality with the fat jar for Vert.x
+      - name: Build with Maven
+        run: mvn package -P vertx-fatjar
