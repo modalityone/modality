@@ -4,12 +4,12 @@ import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.ThemeRegistry;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.timelayout.ChildPosition;
+import dev.webfx.extras.timelayout.bar.BarDrawer;
 import dev.webfx.extras.timelayout.bar.LocalDateBar;
 import dev.webfx.extras.timelayout.bar.TimeBarUtil;
-import dev.webfx.extras.timelayout.canvas.LocalDateCanvasInteractionManager;
 import dev.webfx.extras.timelayout.canvas.LocalDateCanvasDrawer;
+import dev.webfx.extras.timelayout.canvas.LocalDateCanvasInteractionManager;
 import dev.webfx.extras.timelayout.canvas.TimeCanvasPane;
-import dev.webfx.extras.timelayout.canvas.TimeCanvasUtil;
 import dev.webfx.extras.timelayout.gantt.LocalDateGanttLayout;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
@@ -17,15 +17,11 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextAlignment;
 import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
 import one.modality.base.shared.entities.ScheduledResource;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
@@ -84,8 +80,7 @@ public final class RoomCalendarGanttCanvas {
     // transform all series of blocks into bars, but will simply map each block to a 1-day-long bar instead)
     final BooleanProperty blocksGroupingProperty = new SimpleBooleanProperty();
 
-    // The font that will be used to draw the bars
-    private Font barsFont;
+    private final BarDrawer barDrawer = new BarDrawer();
 
     public RoomCalendarGanttCanvas() {
         // Binding the presentation model and the barsLayout time window
@@ -109,8 +104,12 @@ public final class RoomCalendarGanttCanvas {
         // Activating user interaction on canvas (user can move & zoom in/out the time window)
         LocalDateCanvasInteractionManager.makeCanvasInteractive(barsDrawer, barsLayout);
 
+        barDrawer.setRadius(BAR_RADIUS);
+        barDrawer.setTextFill(Color.WHITE);
         // Updating the blocks font on any theme mode change (light/dark mode, etc...)
-        ThemeRegistry.runNowAndOnModeChange(() -> barsFont = TextTheme.getFont(FontDef.font(FontWeight.BOLD, 13)));
+        ThemeRegistry.runNowAndOnModeChange(() ->
+                barDrawer.setTextFont(TextTheme.getFont(FontDef.font(FontWeight.BOLD, 13)))
+        );
     }
 
     public Node buildCanvasContainer() {
@@ -126,19 +125,13 @@ public final class RoomCalendarGanttCanvas {
     }
 
     private void drawBar(LocalDateBar<ScheduledResourceBlock> bar, ChildPosition<LocalDate> p, GraphicsContext gc) {
-        double hPadding = Math.min(p.getWidth() * 0.01, BAR_H_SPACING);
-        ScheduledResourceBlock instance = bar.getInstance();
-        String resourceName = instance.getResourceName();
-        int available = instance.getAvailable();
-        TimeCanvasUtil.fillRect(p, hPadding, available > 0 ? BAR_AVAILABLE_COLOR : BAR_UNAVAILABLE_COLOR, BAR_RADIUS, gc);
-        if (p.getWidth() > 10) {
-            String availableText = String.valueOf(available);
-            double h = p.getHeight(), h2 = h / 2, vPadding = h / 16;
-            Paint textFill = Color.WHITE;
-            gc.setFont(barsFont);
-            TimeCanvasUtil.fillText(p.getX(), p.getY() + vPadding, p.getWidth(), h2, hPadding, resourceName, textFill, VPos.CENTER, TextAlignment.CENTER, gc);
-            TimeCanvasUtil.fillText(p.getX(), p.getY() + h2, p.getWidth(), h2 - vPadding, hPadding, availableText, textFill, VPos.CENTER, TextAlignment.CENTER, gc);
-        }
+        ScheduledResourceBlock block = bar.getInstance();
+        barDrawer.sethPadding(Math.min(p.getWidth() * 0.01, BAR_H_SPACING));
+        barDrawer.setBackgroundFill(block.getAvailable() > 0 ? BAR_AVAILABLE_COLOR : BAR_UNAVAILABLE_COLOR);
+        barDrawer.setTopText(block.getResourceName());
+        barDrawer.setBottomText(String.valueOf(block.getAvailable()));
+        barDrawer.drawBar(p, gc);
+
     }
 
     public void startLogic(Object mixin) {

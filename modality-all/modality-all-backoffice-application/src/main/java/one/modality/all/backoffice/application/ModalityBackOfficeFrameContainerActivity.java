@@ -18,14 +18,13 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Text;
 import one.modality.base.client.application.ModalityClientFrameContainerActivity;
-import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
+import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Organization;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.event.backoffice.event.fx.FXEvent;
 import one.modality.event.backoffice.events.ganttcanvas.EventsGanttCanvas;
-import one.modality.event.backoffice.events.pm.EventsPresentationModel;
 
 /**
  * @author Bruno Salmon
@@ -35,7 +34,7 @@ public class ModalityBackOfficeFrameContainerActivity extends ModalityClientFram
     protected Pane frameContainer;
     private Region containerHeader;
     private Region containerFooter;
-    private final EventsGanttCanvas eventsGanttCanvas = new EventsGanttCanvas(new EventsPresentationModel());
+    private final EventsGanttCanvas eventsGanttCanvas = new EventsGanttCanvas();
     private final Pane ganttCanvasContainer = eventsGanttCanvas.getCanvasContainer();
     private Insets breathingPadding; // actual value will be computed depending on compact mode
 
@@ -100,7 +99,7 @@ public class ModalityBackOfficeFrameContainerActivity extends ModalityClientFram
                 this, frameContainer, getDataSourceModel()
         );
         // Doing a bidirectional binding with FXOrganization
-        FXOrganization.organizationProperty().bindBidirectional(organizationSelector.selectedItemProperty());
+        organizationSelector.selectedItemProperty().bindBidirectional(FXOrganization.organizationProperty());
         Button organizationButton = organizationSelector.getButton();
         // Creating the event selector
         EntityButtonSelector<Event> eventSelector = new EntityButtonSelector<>(
