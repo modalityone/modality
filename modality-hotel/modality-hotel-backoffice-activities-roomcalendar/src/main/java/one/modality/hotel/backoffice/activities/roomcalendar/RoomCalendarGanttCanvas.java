@@ -82,6 +82,7 @@ public final class RoomCalendarGanttCanvas {
     // blocks, but simply map each block to a 1-day-long bar, so the user will see all these blocks)
     final BooleanProperty blocksGroupingProperty = new SimpleBooleanProperty();
 
+    // We will use the BarDrawer utility class to draw the bars and the rooms
     private final BarDrawer barDrawer = new BarDrawer();
     private final BarDrawer roomDrawer = new BarDrawer();
 
@@ -121,42 +122,60 @@ public final class RoomCalendarGanttCanvas {
     }
 
     public Node buildCanvasContainer() {
-        // We embed everything in a scrollPane because the rooms probably won't all fit on the screen. It will be
-        // responsible for the vertical scrolling only, because the horizontal scrolling is actually already managed by
-        // the interactive canvas itself (which reacts to user dragging to move the gantt dates).
+        // We embed everything in a scrollPane because the rooms probably won't all fit on the screen. This scrollPane
+        // will be responsible for the vertical scrolling only, because the horizontal scrolling is actually already
+        // managed by the interactive canvas itself (which reacts to user dragging to move the gantt dates).
         ScrollPane scrollPane = new ScrollPane();
         // That scrollPane will contain a splitPane showing the list of rooms on its left side, and the blocks/bars on
         // the right side. To show the list of rooms, we just use a ParentCanvasPane which displays the parents of the
         // barsLayout (the parents are ResourceConfiguration instances as set in barsLayout.setChildParentReader() above)
-        ParentCanvasPane<ResourceConfiguration, ?> leftRoomsPane = new ParentCanvasPane<>(barsLayout, this::drawRoom);
+        ParentCanvasPane<ResourceConfiguration> leftRoomsPane = new ParentCanvasPane<>(barsLayout, this::drawRoom);
         leftRoomsPane.setParentHeight(BAR_HEIGHT);
-        // We embed the canvas in a CanvasPane that is responsible for resizing the canvas when the user resizes the UI,
-        // and for calling barsLayout (or sometimes just barsDrawer) to refresh the canvas content after it's resized.
-        VirtualCanvasPane virtualCanvasPane = TimeCanvasUtil.createTimeVirtualCanvasPane(barsLayout, barsDrawer,
+        // We embed the canvas in a VirtualCanvasPane which has 2 functions:
+        // 1) As a CanvasPane it is responsible for automatically resizing the canvas when the user resizes the UI, and
+        // for calling the canvas refresher (the piece of code that redraws the canvas). TimeCanvasUtil will actually
+        // create that refresher using the passed barsLayout & barsDrawer.
+        // 2) in addition, VirtualCanvasPane keeps the canvas size as small as possible when used in a scrollPane to
+        // prevent memory overflow. Whereas the virtual canvas represents the whole canvas that the user seems to watch
+        // and can have a very long height, the real canvas will be only the size of the scrollPane viewport, and when
+        // the user scrolls, VirtualCanvasPane is responsible for redrawing the canvas to the scrolled position.
+        VirtualCanvasPane rightBarsPane = TimeCanvasUtil.createTimeVirtualCanvasPane(barsLayout, barsDrawer,
                 scrollPane.viewportBoundsProperty(), scrollPane.vvalueProperty());
-
-        StackPane stackPaneContainer = StationarySplitPane.createRightStationarySplitPaneAndReturnStackPaneContainer(
-                leftRoomsPane, virtualCanvasPane);
-
-        LayoutUtil.setupVerticalScrollPane(scrollPane, stackPaneContainer);
-        return scrollPane; // the actual top level container
+        // We use the StationarySplitPane utility class to create the splitPane, because a standard split pane would
+        // move the right node when moving the slider, whereas we want the right node to be stationary, so it stays
+        // aligned with the dates of the gantt canvas on top. StationarySplitPane will actually create a StackPane and
+        // put the right bars behind the splitPane, and will set a transparent node on the right side of the split pane.
+        // The right side will therefore reveal the right bars that stay stationary behind the splitPane.
+        StackPane sliderContainer = StationarySplitPane.createRightStationarySplitPaneAndReturnStackPaneContainer(
+                leftRoomsPane, rightBarsPane);
+        // We finally set up the scrollPane for vertical scrolling only (no horizontal scrollbar, etc...), and return it
+        LayoutUtil.setupVerticalScrollPane(scrollPane, sliderContainer);
+        return scrollPane;
     }
 
     private void drawBar(LocalDateBar<ScheduledResourceBlock> bar, ChildPosition<?> p, GraphicsContext gc) {
+        // The bar wraps a block over 1 or several days (or always 1 day if the user hasn't ticked the grouping block
+        // checkbox). So the bar instance is that block that was repeated over that period.
         ScheduledResourceBlock block = bar.getInstance();
+        // The main info we display in the bar is a number which represents how many free beds are remaining for booking
         String remaining = String.valueOf(block.getRemaining());
-        boolean wide = p.getWidth() > 40;
+        // The background will be gray if unavailable, red if sold-out, green if online, orange if offline
         barDrawer.setBackgroundFill(!block.isAvailable() ? BAR_UNAVAILABLE_COLOR : block.getRemaining() <= 0 ? BAR_SOLDOUT_COLOR : block.isOnline() ? BAR_AVAILABLE_ONLINE_COLOR : BAR_AVAILABLE_OFFLINE_COLOR);
-        barDrawer.setTopText(wide && block.isAvailable() ? "Beds" : null);
-        barDrawer.setMiddleText(!wide && block.isAvailable() ? remaining : null);
-        barDrawer.setBottomText(wide && block.isAvailable() ? remaining : null);
+        // If the bar is wide enough we show "Beds" on top and the number on bottom, but if it is too narrow, we just
+        // display the number in the middle. Unavailable gray bars have no text at all by the way.
+        boolean isWideBar = p.getWidth() > 40;
+        barDrawer.setTopText(   isWideBar && block.isAvailable() ? "Beds" :     null);
+        barDrawer.setMiddleText(isWideBar || !block.isAvailable() ? null :      remaining);
+        barDrawer.setBottomText(isWideBar && block.isAvailable() ?  remaining : null);
         barDrawer.drawBar(p, gc);
     }
 
     private void drawRoom(ResourceConfiguration rc, ChildPosition<?> p, GraphicsContext gc) {
+        // The only remaining property that needs to be set here is the room name that we display in the bar middle
         roomDrawer.setMiddleText(rc.getName());
-        roomDrawer.drawBar(p, gc);
-        gc.fillRect(p.getX(), p.getY(), 2, p.getHeight());
+        roomDrawer.drawBar(p, gc); // This also draws a rectangle stroke around the room name as set in the constructor
+        // But the wireframe doesn't show a stroke on the left, so we erase it to match the UX design
+        gc.fillRect(p.getX(), p.getY(), 2, p.getHeight()); // erasing the left side of the stroke rectangle
     }
 
     public void startLogic(Object mixin) {
