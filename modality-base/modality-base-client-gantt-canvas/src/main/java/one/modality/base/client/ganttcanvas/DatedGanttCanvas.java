@@ -11,6 +11,8 @@ import dev.webfx.extras.timelayout.TimeLayout;
 import dev.webfx.extras.timelayout.TimeWindow;
 import dev.webfx.extras.timelayout.bar.BarDrawer;
 import dev.webfx.extras.timelayout.canvas.*;
+import dev.webfx.extras.timelayout.canvas.generic.CanvasPane;
+import dev.webfx.extras.timelayout.canvas.generic.CanvasUtil;
 import dev.webfx.extras.timelayout.gantt.GanttLayout;
 import dev.webfx.extras.timelayout.gantt.LocalDateGanttLayout;
 import dev.webfx.extras.timelayout.util.YearWeek;
@@ -46,7 +48,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
     private final LocalDateGanttLayout<LocalDate> daysLayer = LocalDateGanttLayout.createDayLocalDateGanttLayout();
     private final MultiLayerLocalDateLayout globalLayout = MultiLayerLocalDateLayout.create();
     private final MultiLayerLocalDateCanvasDrawer globalCanvasDrawer = new MultiLayerLocalDateCanvasDrawer(globalLayout);
-    private final TimeCanvasPane timeCanvasPane = new TimeCanvasPane(globalLayout, globalCanvasDrawer);
+    private final CanvasPane canvasPane = TimeCanvasUtil.createTimeCanvasPane(globalLayout, globalCanvasDrawer);
     private final LocalDateCanvasInteractionManager canvasInteractionManager = new LocalDateCanvasInteractionManager(globalCanvasDrawer, globalLayout);
     private final BarDrawer yearBarDrawer = new BarDrawer();
     private final BarDrawer monthBarDrawer = new BarDrawer();
@@ -94,7 +96,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
     }
 
     public Pane getCanvasContainer() {
-        return timeCanvasPane;
+        return canvasPane;
     }
 
     @Override
@@ -168,8 +170,8 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
 
         // Setting global visibility
         boolean isVisible = FXGanttVisibility.isVisible();
-        timeCanvasPane.setVisible(isVisible);
-        timeCanvasPane.setManaged(isVisible);
+        canvasPane.setVisible(isVisible);
+        canvasPane.setManaged(isVisible);
 
         // Setting layers visibility
         globalLayout.getLayers().forEach(l -> l.setVisible(FXGanttVisibility.showEvents()));
@@ -235,7 +237,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
         yearBarDrawer.setTextFont(TextTheme.getFont(FontDef.font(fontSize(yearWidth, yearHeight))));
         yearBarDrawer.sethPadding(10);
         yearBarDrawer.setRadius(10);
-        yearBarDrawer.setStroke(compactMode ? TimeTheme.getYearBorderColor() : Color.TRANSPARENT);
+        yearBarDrawer.setStroke(compactMode ? TimeTheme.getYearBorderColor() : null);
         // 2) Properties that depend on the year selection => drawYear() will set the correct value in yearBarDrawer on each call
         yearFill = TimeTheme.getYearBackgroundColor(false);
         yearSelectedFill = TimeTheme.getYearBackgroundColor(true);
@@ -244,7 +246,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
 
         // ============= Month draw properties =============
         // 1) Properties that apply to all months => set only once here (remain identical for all drawMonth() calls)
-        monthBarDrawer.setStroke(compactMode ? TimeTheme.getMonthBorderColor() : Color.TRANSPARENT);
+        monthBarDrawer.setStroke(compactMode ? TimeTheme.getMonthBorderColor() : null);
         monthBarDrawer.setTextFill(TimeTheme.getMonthTextColor());
         monthBarDrawer.setTextFont(TextTheme.getFont(FontDef.font(fontSize(monthWidth, monthHeight))));
         if (monthWidth < 25) {
@@ -263,7 +265,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
         Font weekFont = TextTheme.getFont(FontDef.font(weekFontSize / 3 * 2));
         weekBarDrawer.setTopTextFont(weekFont); // top = week word
         weekBarDrawer.setBottomTextFont(TextTheme.getFont(FontDef.font(FontWeight.BOLD, weekFontSize))); // bottom = week number
-        weekBarDrawer.setStroke(compactMode ? TimeTheme.getWeekBorderColor() : Color.TRANSPARENT);
+        weekBarDrawer.setStroke(compactMode ? TimeTheme.getWeekBorderColor() : null);
         if (weekWidth < 25) {
             weekBarDrawer.setRadius(0);
             weekBarDrawer.sethPadding(0);
@@ -310,7 +312,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
     // method to draw 1 strip - may be called many times during the draw pass
     private void strokeStrip(ChildPosition<LocalDate> p, GraphicsContext gc) {
         double canvasHeight = gc.getCanvas().getHeight();
-        TimeCanvasUtil.strokeRect(p.getX(), 0, p.getWidth(), canvasHeight, 0, canvasHeight > p.getY() + p.getHeight() ? stripStroke : Color.TRANSPARENT, 0, gc);
+        CanvasUtil.strokeRect(p.getX(), 0, p.getWidth(), canvasHeight, 0, canvasHeight > p.getY() + p.getHeight() ? stripStroke : Color.TRANSPARENT, 0, gc);
     }
 
     // method to draw 1 year - may be called many times during the draw pass

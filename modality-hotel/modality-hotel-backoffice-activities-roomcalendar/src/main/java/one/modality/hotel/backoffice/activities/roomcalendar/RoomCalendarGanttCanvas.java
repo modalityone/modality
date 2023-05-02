@@ -9,9 +9,12 @@ import dev.webfx.extras.timelayout.bar.LocalDateBar;
 import dev.webfx.extras.timelayout.bar.TimeBarUtil;
 import dev.webfx.extras.timelayout.canvas.LocalDateCanvasDrawer;
 import dev.webfx.extras.timelayout.canvas.LocalDateCanvasInteractionManager;
-import dev.webfx.extras.timelayout.canvas.TimeCanvasPane;
+import dev.webfx.extras.timelayout.canvas.TimeCanvasUtil;
+import dev.webfx.extras.timelayout.canvas.generic.VirtualCanvasPane;
 import dev.webfx.extras.timelayout.gantt.LocalDateGanttLayout;
+import dev.webfx.extras.timelayout.gantt.ParentCanvasPane;
 import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.extras.util.layout.StationarySplitPane;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -20,13 +23,13 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.FontWeight;
+import javafx.scene.text.Font;
 import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
+import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.base.shared.entities.ScheduledResource;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
-
-import java.time.LocalDate;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
@@ -38,11 +41,10 @@ public final class RoomCalendarGanttCanvas {
 
     // Style constants used for drawing bars in the canvas:
     private static final double BAR_HEIGHT = 40;
-    private static final double BAR_RADIUS = 0;
-    private static final double BAR_H_SPACING = 0.5; // Max value, may be reduced when zooming out
-    private static final double BAR_V_SPACING = 1;
-    private final static Color BAR_AVAILABLE_COLOR = Color.rgb(65, 186, 77);
-    private final static Color BAR_UNAVAILABLE_COLOR = Color.rgb(255, 3, 5);
+    private final static Color BAR_AVAILABLE_ONLINE_COLOR = Color.rgb(65, 186, 77);
+    private final static Color BAR_AVAILABLE_OFFLINE_COLOR = Color.ORANGE;
+    private final static Color BAR_SOLDOUT_COLOR = Color.rgb(255, 3, 5);
+    private final static Color BAR_UNAVAILABLE_COLOR = Color.rgb(130, 135, 136);
 
     // The presentation model used by the logic code to query the server (see startLogic() method)
     private final RoomCalendarPresentationModel pm = new RoomCalendarPresentationModel();
@@ -76,11 +78,12 @@ public final class RoomCalendarGanttCanvas {
     private final LocalDateCanvasDrawer<LocalDateBar<ScheduledResourceBlock>> barsDrawer
             = new LocalDateCanvasDrawer<>(barsLayout, this::drawBar);
 
-    // The user has the option to enable/disable the blocks grouping (when disabled, TimeBarUtil will stop trying to
-    // transform all series of blocks into bars, but will simply map each block to a 1-day-long bar instead)
+    // The user has the option to enable/disable the blocks grouping (when disabled, TimeBarUtil will not group the
+    // blocks, but simply map each block to a 1-day-long bar, so the user will see all these blocks)
     final BooleanProperty blocksGroupingProperty = new SimpleBooleanProperty();
 
     private final BarDrawer barDrawer = new BarDrawer();
+    private final BarDrawer roomDrawer = new BarDrawer();
 
     public RoomCalendarGanttCanvas() {
         // Binding the presentation model and the barsLayout time window
@@ -90,54 +93,76 @@ public final class RoomCalendarGanttCanvas {
 
         // Asking TimeBarUtil to automatically transform entities into bars that will feed the input of barsLayout
         TimeBarUtil.setupBarsLayout(
-                entities, // the observable list of ScheduledResource entities to transform
+                entities, // the observable list of ScheduledResource entities to take as input
                 ScheduledResource::getDate, // the entity date reader that will be used to date each block
-                ScheduledResourceBlock::new, // the factory that creates instances, initially one per block
-                barsLayout, // the barsLayout that will receive the final list of bars as a result of the blocks grouping
-                blocksGroupingProperty); // optional property to eventually disable that blocks grouping
+                ScheduledResourceBlock::new, // the factory that creates blocks, initially 1 instance per entity, but then grouped into bars
+                barsLayout, // the layout that will receive the final list of bars as a result of the blocks grouping
+                blocksGroupingProperty); // optional property to eventually disable the blocks grouping (=> 1 bar per block if disabled)
 
         // Finishing setting up barsLayout
         barsLayout.setChildFixedHeight(BAR_HEIGHT);
-        barsLayout.setVSpacing(BAR_V_SPACING);
         barsLayout.setChildParentReader(bar -> bar.getInstance().getResourceConfiguration());
 
         // Activating user interaction on canvas (user can move & zoom in/out the time window)
         LocalDateCanvasInteractionManager.makeCanvasInteractive(barsDrawer, barsLayout);
 
-        barDrawer.setRadius(BAR_RADIUS);
+        // Setting the properties of barDrawer & roomDrawer (other properties are set in drawBar() & drawRoom())
+        barDrawer.setStroke(Color.BLACK);
         barDrawer.setTextFill(Color.WHITE);
+        roomDrawer.setTextFill(Color.grayRgb(130));
+        roomDrawer.setStroke(Color.grayRgb(130));
+        roomDrawer.setBackgroundFill(Color.ALICEBLUE);
         // Updating the blocks font on any theme mode change (light/dark mode, etc...)
-        ThemeRegistry.runNowAndOnModeChange(() ->
-                barDrawer.setTextFont(TextTheme.getFont(FontDef.font(FontWeight.BOLD, 13)))
-        );
+        ThemeRegistry.runNowAndOnModeChange(() -> {
+            Font font = TextTheme.getFont(FontDef.font(13));
+            barDrawer.setTextFont(font);
+            roomDrawer.setTextFont(font);
+        });
     }
 
     public Node buildCanvasContainer() {
-        // We embed the canvas in a TimeCanvasPane that takes care of resizing the canvas when the user resizes the UI
-        TimeCanvasPane timeCanvasPane = new TimeCanvasPane(barsLayout, barsDrawer);
-        // We embed it in a ScrollPane to allow scrolling because the height of this canvas probably won't fit in the screen
-        ScrollPane sp = LayoutUtil.createVerticalScrollPane(timeCanvasPane);
-        // And we activate the virtual canvas mode to prevent any memory problems (the canvas will just keep the size of
-        // the ScrollPane viewport and simulate the scroll by automatically redrawing the canvas to the matching location).
-        timeCanvasPane.activateVirtualCanvasMode(sp.viewportBoundsProperty(), sp.vvalueProperty());
-        // We return the ScrollPane as the canvas container
-        return sp;
+        // We embed everything in a scrollPane because the rooms probably won't all fit on the screen. It will be
+        // responsible for the vertical scrolling only, because the horizontal scrolling is actually already managed by
+        // the interactive canvas itself (which reacts to user dragging to move the gantt dates).
+        ScrollPane scrollPane = new ScrollPane();
+        // That scrollPane will contain a splitPane showing the list of rooms on its left side, and the blocks/bars on
+        // the right side. To show the list of rooms, we just use a ParentCanvasPane which displays the parents of the
+        // barsLayout (the parents are ResourceConfiguration instances as set in barsLayout.setChildParentReader() above)
+        ParentCanvasPane<ResourceConfiguration, ?> leftRoomsPane = new ParentCanvasPane<>(barsLayout, this::drawRoom);
+        leftRoomsPane.setParentHeight(BAR_HEIGHT);
+        // We embed the canvas in a CanvasPane that is responsible for resizing the canvas when the user resizes the UI,
+        // and for calling barsLayout (or sometimes just barsDrawer) to refresh the canvas content after it's resized.
+        VirtualCanvasPane virtualCanvasPane = TimeCanvasUtil.createTimeVirtualCanvasPane(barsLayout, barsDrawer,
+                scrollPane.viewportBoundsProperty(), scrollPane.vvalueProperty());
+
+        StackPane stackPaneContainer = StationarySplitPane.createRightStationarySplitPaneAndReturnStackPaneContainer(
+                leftRoomsPane, virtualCanvasPane);
+
+        LayoutUtil.setupVerticalScrollPane(scrollPane, stackPaneContainer);
+        return scrollPane; // the actual top level container
     }
 
-    private void drawBar(LocalDateBar<ScheduledResourceBlock> bar, ChildPosition<LocalDate> p, GraphicsContext gc) {
+    private void drawBar(LocalDateBar<ScheduledResourceBlock> bar, ChildPosition<?> p, GraphicsContext gc) {
         ScheduledResourceBlock block = bar.getInstance();
-        barDrawer.sethPadding(Math.min(p.getWidth() * 0.01, BAR_H_SPACING));
-        barDrawer.setBackgroundFill(block.getAvailable() > 0 ? BAR_AVAILABLE_COLOR : BAR_UNAVAILABLE_COLOR);
-        barDrawer.setTopText(block.getResourceName());
-        barDrawer.setBottomText(String.valueOf(block.getAvailable()));
+        String remaining = String.valueOf(block.getRemaining());
+        boolean wide = p.getWidth() > 40;
+        barDrawer.setBackgroundFill(!block.isAvailable() ? BAR_UNAVAILABLE_COLOR : block.getRemaining() <= 0 ? BAR_SOLDOUT_COLOR : block.isOnline() ? BAR_AVAILABLE_ONLINE_COLOR : BAR_AVAILABLE_OFFLINE_COLOR);
+        barDrawer.setTopText(wide && block.isAvailable() ? "Beds" : null);
+        barDrawer.setMiddleText(!wide && block.isAvailable() ? remaining : null);
+        barDrawer.setBottomText(wide && block.isAvailable() ? remaining : null);
         barDrawer.drawBar(p, gc);
+    }
 
+    private void drawRoom(ResourceConfiguration rc, ChildPosition<?> p, GraphicsContext gc) {
+        roomDrawer.setMiddleText(rc.getName());
+        roomDrawer.drawBar(p, gc);
+        gc.fillRect(p.getX(), p.getY(), 2, p.getHeight());
     }
 
     public void startLogic(Object mixin) {
         ReactiveEntitiesMapper.<ScheduledResource>createPushReactiveChain(mixin)
-                .always("{class: 'ScheduledResource', alias: 'sr', fields: 'date,max,configuration.name,(select count(1) from Attendance where scheduledResource=sr) as booked'}")
-                .always(orderBy("configuration,date")) // Order is important for TimeBarUtil (see comment on barsLayout)
+                .always("{class: 'ScheduledResource', alias: 'sr', fields: 'date,available,online,max,configuration.name,(select count(1) from Attendance where scheduledResource=sr) as booked'}")
+                .always(orderBy("configuration.name,configuration,date")) // Order is important for TimeBarUtil (see comment on barsLayout)
                 // Returning events for the selected organization only (or returning an empty set if no organization is selected)
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("configuration.resource.site.organization=?", o))
                 // Restricting events to those appearing in the time window

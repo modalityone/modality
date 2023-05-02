@@ -122,7 +122,7 @@ public class ModalityBackOfficeFrameContainerActivity extends ModalityClientFram
 
     @Override
     protected Region createContainerFooter() {
-        Text text = new Text(" Status ");
+        Text text = new Text(" ");
         TextTheme.createDefaultTextFacet(text).style();
         HBox containerFooter = new HBox(text);
         containerFooter.setAlignment(Pos.CENTER);

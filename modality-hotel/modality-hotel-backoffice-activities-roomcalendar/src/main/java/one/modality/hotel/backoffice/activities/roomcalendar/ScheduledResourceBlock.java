@@ -1,32 +1,42 @@
 package one.modality.hotel.backoffice.activities.roomcalendar;
 
 import dev.webfx.stack.orm.entity.Entity;
+import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.base.shared.entities.ScheduledResource;
 
 /**
  * @author Bruno Salmon
  */
 final class ScheduledResourceBlock {
-    private final Entity resourceConfiguration;
-    private final int available;
+    private final ResourceConfiguration resourceConfiguration;
+    private final boolean available;
+    private final boolean online;
+    private final int remaining;
 
     public ScheduledResourceBlock(ScheduledResource sr) {
-        resourceConfiguration = sr.getForeignEntity("configuration");
+        resourceConfiguration = sr.getResourceConfiguration();
+        available = sr.isAvailable();
+        online = sr.isOnline();
+        int max = sr.getMax();
+        // The "booked" field is an extra computed fields added by the ReactiveEntitiesMapper in RoomCalendarGanttCanvas
         int booked = sr.getIntegerFieldValue("booked");
-        int max = sr.getIntegerFieldValue("max");
-        available = max - booked;
+        remaining = max - booked;
     }
 
     public Entity getResourceConfiguration() {
         return resourceConfiguration;
     }
 
-    public String getResourceName() {
-        return (String) resourceConfiguration.evaluate("name");
+    public boolean isAvailable() {
+        return available;
     }
 
-    public int getAvailable() {
-        return available;
+    public boolean isOnline() {
+        return online;
+    }
+
+    public int getRemaining() {
+        return remaining;
     }
 
     @Override
@@ -37,13 +47,17 @@ final class ScheduledResourceBlock {
         ScheduledResourceBlock that = (ScheduledResourceBlock) o;
 
         if (available != that.available) return false;
-        return resourceConfiguration == that.resourceConfiguration;
+        if (online != that.online) return false;
+        if (remaining != that.remaining) return false;
+        return resourceConfiguration.equals(that.resourceConfiguration);
     }
 
     @Override
     public int hashCode() {
         int result = resourceConfiguration.hashCode();
-        result = 31 * result + available;
+        result = 31 * result + (available ? 1 : 0);
+        result = 31 * result + (online ? 1 : 0);
+        result = 31 * result + remaining;
         return result;
     }
 }

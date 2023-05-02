@@ -18,6 +18,7 @@ module modality.hotel.backoffice.activities.roomcalendar {
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
+    requires webfx.stack.orm.entity;
     requires webfx.stack.orm.reactive.entities;
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.router.client;

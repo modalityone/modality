@@ -468,6 +468,7 @@
     <source path="dev/webfx/extras/timelayout"/>
     <source path="dev/webfx/extras/timelayout/bar"/>
     <source path="dev/webfx/extras/timelayout/canvas"/>
+    <source path="dev/webfx/extras/timelayout/canvas/generic"/>
     <source path="dev/webfx/extras/timelayout/impl"/>
     <source path="dev/webfx/extras/timelayout/node"/>
     <source path="dev/webfx/extras/timelayout/util"/>
