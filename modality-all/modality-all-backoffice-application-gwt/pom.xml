@@ -662,6 +662,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.jresearch.gwt.time</groupId>
+            <artifactId>org.jresearch.gwt.time.tzdb</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-cell</artifactId>
             <version>0.1.0-SNAPSHOT</version>
