@@ -11,20 +11,17 @@ import dev.webfx.extras.timelayout.canvas.LocalDateCanvasDrawer;
 import dev.webfx.extras.timelayout.canvas.LocalDateCanvasInteractionManager;
 import dev.webfx.extras.timelayout.canvas.TimeCanvasUtil;
 import dev.webfx.extras.timelayout.canvas.generic.VirtualCanvasPane;
-import dev.webfx.extras.timelayout.gantt.canvas.GanttCanvasUtil;
 import dev.webfx.extras.timelayout.gantt.LocalDateGanttLayout;
+import dev.webfx.extras.timelayout.gantt.canvas.GanttCanvasUtil;
 import dev.webfx.extras.util.layout.LayoutUtil;
-import dev.webfx.extras.util.layout.StationarySplitPane;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
@@ -130,8 +127,7 @@ public final class RoomCalendarGanttCanvas {
         // That scrollPane will contain a splitPane showing the list of rooms on its left side, and the blocks/bars on
         // the right side. To show the list of rooms, we just use a ParentCanvasPane which displays the parents of the
         // barsLayout (the parents are ResourceConfiguration instances as set in barsLayout.setChildParentReader() above)
-        VirtualCanvasPane leftRoomsPane = GanttCanvasUtil.createParentVirtualCanvasPane(new Canvas(), barsLayout, this::drawRoom,
-                150, scrollPane.viewportBoundsProperty(), scrollPane.vvalueProperty());
+        GanttCanvasUtil.addParentsDrawing(barsLayout, barsDrawer, this::drawRoom, 150);
         // We embed the canvas in a VirtualCanvasPane which has 2 functions:
         // 1) As a CanvasPane it is responsible for automatically resizing the canvas when the user resizes the UI, and
         // for calling the canvas refresher (the piece of code that redraws the canvas). TimeCanvasUtil will actually
@@ -140,17 +136,10 @@ public final class RoomCalendarGanttCanvas {
         // prevent memory overflow. Whereas the virtual canvas represents the whole canvas that the user seems to watch
         // and can have a very long height, the real canvas will be only the size of the scrollPane viewport, and when
         // the user scrolls, VirtualCanvasPane is responsible for redrawing the canvas to the scrolled position.
-        VirtualCanvasPane rightBarsPane = TimeCanvasUtil.createTimeVirtualCanvasPane(barsLayout, barsDrawer,
+        VirtualCanvasPane roomsAndBarsPane = TimeCanvasUtil.createTimeVirtualCanvasPane(barsLayout, barsDrawer,
                 scrollPane.viewportBoundsProperty(), scrollPane.vvalueProperty());
-        // We use the StationarySplitPane utility class to create the splitPane, because a standard split pane would
-        // move the right node when moving the slider, whereas we want the right node to be stationary, so it stays
-        // aligned with the dates of the gantt canvas on top. StationarySplitPane will actually create a StackPane and
-        // put the right bars behind the splitPane, and will set a transparent node on the right side of the split pane.
-        // The right side will therefore reveal the right bars that stay stationary behind the splitPane.
-        StackPane sliderContainer = StationarySplitPane.createRightStationarySplitPaneAndReturnStackPaneContainer(
-                leftRoomsPane, rightBarsPane);
         // We finally set up the scrollPane for vertical scrolling only (no horizontal scrollbar, etc...), and return it
-        LayoutUtil.setupVerticalScrollPane(scrollPane, sliderContainer);
+        LayoutUtil.setupVerticalScrollPane(scrollPane, roomsAndBarsPane);
         return scrollPane;
     }
 
