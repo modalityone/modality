@@ -11,8 +11,8 @@ import dev.webfx.extras.timelayout.canvas.LocalDateCanvasDrawer;
 import dev.webfx.extras.timelayout.canvas.LocalDateCanvasInteractionManager;
 import dev.webfx.extras.timelayout.canvas.TimeCanvasUtil;
 import dev.webfx.extras.timelayout.canvas.generic.VirtualCanvasPane;
+import dev.webfx.extras.timelayout.gantt.canvas.GanttCanvasUtil;
 import dev.webfx.extras.timelayout.gantt.LocalDateGanttLayout;
-import dev.webfx.extras.timelayout.gantt.ParentCanvasPane;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.extras.util.layout.StationarySplitPane;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
@@ -21,6 +21,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.StackPane;
@@ -83,8 +84,8 @@ public final class RoomCalendarGanttCanvas {
     final BooleanProperty blocksGroupingProperty = new SimpleBooleanProperty();
 
     // We will use the BarDrawer utility class to draw the bars and the rooms
-    private final BarDrawer barDrawer = new BarDrawer();
-    private final BarDrawer roomDrawer = new BarDrawer();
+    private final BarDrawer barDrawer = new BarDrawer();  // unique reusable instance to draw all the bars
+    private final BarDrawer roomDrawer = new BarDrawer(); // unique reusable instance to draw all the rooms
 
     public RoomCalendarGanttCanvas() {
         // Binding the presentation model and the barsLayout time window
@@ -113,7 +114,7 @@ public final class RoomCalendarGanttCanvas {
         roomDrawer.setTextFill(Color.grayRgb(130));
         roomDrawer.setStroke(Color.grayRgb(130));
         roomDrawer.setBackgroundFill(Color.ALICEBLUE);
-        // Updating the blocks font on any theme mode change (light/dark mode, etc...)
+        // Updating the text font on any theme mode change that may impact it (light/dark mode, etc...)
         ThemeRegistry.runNowAndOnModeChange(() -> {
             Font font = TextTheme.getFont(FontDef.font(13));
             barDrawer.setTextFont(font);
@@ -129,8 +130,8 @@ public final class RoomCalendarGanttCanvas {
         // That scrollPane will contain a splitPane showing the list of rooms on its left side, and the blocks/bars on
         // the right side. To show the list of rooms, we just use a ParentCanvasPane which displays the parents of the
         // barsLayout (the parents are ResourceConfiguration instances as set in barsLayout.setChildParentReader() above)
-        ParentCanvasPane<ResourceConfiguration> leftRoomsPane = new ParentCanvasPane<>(barsLayout, this::drawRoom);
-        leftRoomsPane.setParentHeight(BAR_HEIGHT);
+        VirtualCanvasPane leftRoomsPane = GanttCanvasUtil.createParentVirtualCanvasPane(new Canvas(), barsLayout, this::drawRoom,
+                150, scrollPane.viewportBoundsProperty(), scrollPane.vvalueProperty());
         // We embed the canvas in a VirtualCanvasPane which has 2 functions:
         // 1) As a CanvasPane it is responsible for automatically resizing the canvas when the user resizes the UI, and
         // for calling the canvas refresher (the piece of code that redraws the canvas). TimeCanvasUtil will actually
@@ -164,16 +165,16 @@ public final class RoomCalendarGanttCanvas {
         // If the bar is wide enough we show "Beds" on top and the number on bottom, but if it is too narrow, we just
         // display the number in the middle. Unavailable gray bars have no text at all by the way.
         boolean isWideBar = p.getWidth() > 40;
-        barDrawer.setTopText(   isWideBar && block.isAvailable() ? "Beds" :     null);
-        barDrawer.setMiddleText(isWideBar || !block.isAvailable() ? null :      remaining);
-        barDrawer.setBottomText(isWideBar && block.isAvailable() ?  remaining : null);
+        barDrawer.setTopText(   isWideBar && block.isAvailable() ?   "Beds"   :   null    );
+        barDrawer.setMiddleText(isWideBar || !block.isAvailable() ?   null    : remaining );
+        barDrawer.setBottomText(isWideBar && block.isAvailable() ?  remaining :   null    );
         barDrawer.drawBar(p, gc);
     }
 
     private void drawRoom(ResourceConfiguration rc, ChildPosition<?> p, GraphicsContext gc) {
         // The only remaining property that needs to be set here is the room name that we display in the bar middle
         roomDrawer.setMiddleText(rc.getName());
-        roomDrawer.drawBar(p, gc); // This also draws a rectangle stroke around the room name as set in the constructor
+        roomDrawer.drawBar(p, gc); // This also draws a rectangle stroke - see properties set in constructor
         // But the wireframe doesn't show a stroke on the left, so we erase it to match the UX design
         gc.fillRect(p.getX(), p.getY(), 2, p.getHeight()); // erasing the left side of the stroke rectangle
     }
