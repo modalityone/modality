@@ -5,7 +5,7 @@ import dev.webfx.extras.theme.ThemeRegistry;
 import dev.webfx.extras.theme.layout.FXLayoutMode;
 import dev.webfx.extras.theme.luminance.FXLuminanceMode;
 import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.extras.timelayout.ChildPosition;
+import dev.webfx.extras.timelayout.LayoutPosition;
 import dev.webfx.extras.timelayout.MultiLayerLocalDateLayout;
 import dev.webfx.extras.timelayout.TimeLayout;
 import dev.webfx.extras.timelayout.TimeWindow;
@@ -310,13 +310,13 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
     }
 
     // method to draw 1 strip - may be called many times during the draw pass
-    private void strokeStrip(ChildPosition p, GraphicsContext gc) {
+    private void strokeStrip(LayoutPosition p, GraphicsContext gc) {
         double canvasHeight = gc.getCanvas().getHeight();
         CanvasUtil.strokeRect(p.getX(), 0, p.getWidth(), canvasHeight, 0, canvasHeight > p.getY() + p.getHeight() ? stripStroke : Color.TRANSPARENT, 0, gc);
     }
 
     // method to draw 1 year - may be called many times during the draw pass
-    private void drawYear(Year year, ChildPosition p, GraphicsContext gc) {
+    private void drawYear(Year year, LayoutPosition p, GraphicsContext gc) {
         if (stripLayer == yearsLayer)
             strokeStrip(p, gc);
 
@@ -329,7 +329,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
     }
 
     // method to draw 1 month - may be called many times during the draw pass
-    private void drawMonth(YearMonth yearMonth, ChildPosition p, GraphicsContext gc) {
+    private void drawMonth(YearMonth yearMonth, LayoutPosition p, GraphicsContext gc) {
         if (stripLayer == monthsLayer)
             strokeStrip(p, gc);
 
@@ -364,7 +364,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
     }
 
     // method to draw 1 week - may be called many times during the draw pass
-    private void drawWeek(YearWeek yearWeek, ChildPosition p, GraphicsContext gc) {
+    private void drawWeek(YearWeek yearWeek, LayoutPosition p, GraphicsContext gc) {
         if (stripLayer == weeksLayer)
             strokeStrip(p, gc);
 
@@ -384,7 +384,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
     }
 
     // method to draw 1 day - may be called many times during the draw pass
-    private void drawDay(LocalDate day, ChildPosition p, GraphicsContext gc) {
+    private void drawDay(LocalDate day, LayoutPosition p, GraphicsContext gc) {
         if (stripLayer == daysLayer)
             strokeStrip(p, gc);
 

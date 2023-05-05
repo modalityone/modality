@@ -3,7 +3,7 @@ package one.modality.event.backoffice.events.ganttcanvas;
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.ThemeRegistry;
 import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.extras.timelayout.ChildPosition;
+import dev.webfx.extras.timelayout.LayoutPosition;
 import dev.webfx.extras.timelayout.bar.BarDrawer;
 import dev.webfx.extras.timelayout.gantt.LocalDateGanttLayout;
 import dev.webfx.stack.orm.dql.DqlStatement;
@@ -71,7 +71,7 @@ public final class EventsGanttCanvas {
         });
     }
 
-    private void drawEvent(Event event, ChildPosition p, GraphicsContext gc) {
+    private void drawEvent(Event event, LayoutPosition p, GraphicsContext gc) {
         boolean selected = Entities.sameId(event, eventsLayer.getSelectedChild());
         eventBarDrawer.sethPadding(Math.min(p.getWidth() * 0.01, BAR_H_SPACING));
         eventBarDrawer.setBackgroundFill(EventTheme.getEventBackgroundColor(event, selected));
