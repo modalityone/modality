@@ -104,7 +104,7 @@ public final class RoomCalendarGanttCanvas {
         // Finishing setting up barsLayout
         barsLayout.setChildFixedHeight(BAR_HEIGHT);
         barsLayout.setChildParentReader(     bar -> bar.getInstance().getResourceConfiguration());
-        barsLayout.setChildGrandParentReader(bar -> bar.getInstance().getResourceConfiguration().getItem());
+        barsLayout.setChildGrandparentReader(bar -> bar.getInstance().getResourceConfiguration().getItem());
 
         // Activating user interaction on canvas (user can move & zoom in/out the time window)
         LocalDateCanvasInteractionManager.makeCanvasInteractive(barsDrawer, barsLayout);
