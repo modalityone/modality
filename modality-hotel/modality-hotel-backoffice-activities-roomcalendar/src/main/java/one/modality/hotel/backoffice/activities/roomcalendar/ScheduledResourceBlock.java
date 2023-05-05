@@ -1,6 +1,5 @@
 package one.modality.hotel.backoffice.activities.roomcalendar;
 
-import dev.webfx.stack.orm.entity.Entity;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.base.shared.entities.ScheduledResource;
 
@@ -23,7 +22,7 @@ final class ScheduledResourceBlock {
         remaining = max - booked;
     }
 
-    public Entity getResourceConfiguration() {
+    public ResourceConfiguration getResourceConfiguration() {
         return resourceConfiguration;
     }
 

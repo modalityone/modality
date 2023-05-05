@@ -24,7 +24,9 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
+import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.base.shared.entities.ScheduledResource;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
@@ -80,9 +82,10 @@ public final class RoomCalendarGanttCanvas {
     // blocks, but simply map each block to a 1-day-long bar, so the user will see all these blocks)
     final BooleanProperty blocksGroupingProperty = new SimpleBooleanProperty();
 
-    // We will use the BarDrawer utility class to draw the bars and the rooms
-    private final BarDrawer barDrawer = new BarDrawer();  // unique reusable instance to draw all the bars
-    private final BarDrawer roomDrawer = new BarDrawer(); // unique reusable instance to draw all the rooms
+    // We will use the BarDrawer utility class to draw the bars & rooms names & types
+    private final BarDrawer barDrawer = new BarDrawer();  // unique instance to draw all the bars
+    private final BarDrawer parentRoomDrawer = new BarDrawer(); // unique instance to draw all the room names
+    private final BarDrawer grandParentRoomTypeDrawer = new BarDrawer(); // unique instance to draw all the room types
 
     public RoomCalendarGanttCanvas() {
         // Binding the presentation model and the barsLayout time window
@@ -100,7 +103,8 @@ public final class RoomCalendarGanttCanvas {
 
         // Finishing setting up barsLayout
         barsLayout.setChildFixedHeight(BAR_HEIGHT);
-        barsLayout.setChildParentReader(bar -> bar.getInstance().getResourceConfiguration());
+        barsLayout.setChildParentReader(     bar -> bar.getInstance().getResourceConfiguration());
+        barsLayout.setChildGrandParentReader(bar -> bar.getInstance().getResourceConfiguration().getItem());
 
         // Activating user interaction on canvas (user can move & zoom in/out the time window)
         LocalDateCanvasInteractionManager.makeCanvasInteractive(barsDrawer, barsLayout);
@@ -108,14 +112,17 @@ public final class RoomCalendarGanttCanvas {
         // Setting the properties of barDrawer & roomDrawer (other properties are set in drawBar() & drawRoom())
         barDrawer.setStroke(Color.BLACK);
         barDrawer.setTextFill(Color.WHITE);
-        roomDrawer.setTextFill(Color.grayRgb(130));
-        roomDrawer.setStroke(Color.grayRgb(130));
-        roomDrawer.setBackgroundFill(Color.ALICEBLUE);
+        parentRoomDrawer.setTextFill(Color.grayRgb(130));
+        parentRoomDrawer.setStroke(Color.grayRgb(130));
+        parentRoomDrawer.setBackgroundFill(Color.ALICEBLUE);
+        grandParentRoomTypeDrawer.setBackgroundFill(Color.ALICEBLUE);
+        grandParentRoomTypeDrawer.setTextFill(Color.rgb(0, 150, 214));
         // Updating the text font on any theme mode change that may impact it (light/dark mode, etc...)
         ThemeRegistry.runNowAndOnModeChange(() -> {
             Font font = TextTheme.getFont(FontDef.font(13));
             barDrawer.setTextFont(font);
-            roomDrawer.setTextFont(font);
+            parentRoomDrawer.setTextFont(font);
+            grandParentRoomTypeDrawer.setTextFont( TextTheme.getFont(FontDef.font(FontWeight.BOLD,13)));
         });
     }
 
@@ -127,7 +134,8 @@ public final class RoomCalendarGanttCanvas {
         // That scrollPane will contain a splitPane showing the list of rooms on its left side, and the blocks/bars on
         // the right side. To show the list of rooms, we just use a ParentCanvasPane which displays the parents of the
         // barsLayout (the parents are ResourceConfiguration instances as set in barsLayout.setChildParentReader() above)
-        GanttCanvasUtil.addParentsDrawing(barsLayout, barsDrawer, this::drawRoom, 150);
+        GanttCanvasUtil.addParentAndGrandParentsDrawing(barsLayout, barsDrawer, this::drawParentRoom, 150,
+                this::drawGrandParentRoomType);
         // We embed the canvas in a VirtualCanvasPane which has 2 functions:
         // 1) As a CanvasPane it is responsible for automatically resizing the canvas when the user resizes the UI, and
         // for calling the canvas refresher (the piece of code that redraws the canvas). TimeCanvasUtil will actually
@@ -149,8 +157,12 @@ public final class RoomCalendarGanttCanvas {
         ScheduledResourceBlock block = bar.getInstance();
         // The main info we display in the bar is a number which represents how many free beds are remaining for booking
         String remaining = String.valueOf(block.getRemaining());
-        // The background will be gray if unavailable, red if sold-out, green if online, orange if offline
-        barDrawer.setBackgroundFill(!block.isAvailable() ? BAR_UNAVAILABLE_COLOR : block.getRemaining() <= 0 ? BAR_SOLDOUT_COLOR : block.isOnline() ? BAR_AVAILABLE_ONLINE_COLOR : BAR_AVAILABLE_OFFLINE_COLOR);
+        // Setting the background fill:
+        barDrawer.setBackgroundFill(
+                !block.isAvailable() ?      BAR_UNAVAILABLE_COLOR :       // gray if unavailable
+                block.getRemaining() <= 0 ? BAR_SOLDOUT_COLOR :           // red if sold-out
+                block.isOnline() ?          BAR_AVAILABLE_ONLINE_COLOR :  // green if online
+                                            BAR_AVAILABLE_OFFLINE_COLOR); // orange if offline
         // If the bar is wide enough we show "Beds" on top and the number on bottom, but if it is too narrow, we just
         // display the number in the middle. Unavailable gray bars have no text at all by the way.
         boolean isWideBar = p.getWidth() > 40;
@@ -160,18 +172,23 @@ public final class RoomCalendarGanttCanvas {
         barDrawer.drawBar(p, gc);
     }
 
-    private void drawRoom(ResourceConfiguration rc, ChildPosition<?> p, GraphicsContext gc) {
+    private void drawParentRoom(ResourceConfiguration rc, ChildPosition<?> p, GraphicsContext gc) {
         // The only remaining property that needs to be set here is the room name that we display in the bar middle
-        roomDrawer.setMiddleText(rc.getName());
-        roomDrawer.drawBar(p, gc); // This also draws a rectangle stroke - see properties set in constructor
+        parentRoomDrawer.setMiddleText(rc.getName());
+        parentRoomDrawer.drawBar(p, gc); // This also draws a rectangle stroke - see properties set in constructor
         // But the wireframe doesn't show a stroke on the left, so we erase it to match the UX design
         gc.fillRect(p.getX(), p.getY(), 2, p.getHeight()); // erasing the left side of the stroke rectangle
     }
 
+    private void drawGrandParentRoomType(Item item, ChildPosition<?> p, GraphicsContext gc) {
+        grandParentRoomTypeDrawer.setBottomText(item.getName());
+        grandParentRoomTypeDrawer.drawBar(p, gc);
+    }
+
     public void startLogic(Object mixin) {
         ReactiveEntitiesMapper.<ScheduledResource>createPushReactiveChain(mixin)
-                .always("{class: 'ScheduledResource', alias: 'sr', fields: 'date,available,online,max,configuration.name,(select count(1) from Attendance where scheduledResource=sr) as booked'}")
-                .always(orderBy("configuration.name,configuration,date")) // Order is important for TimeBarUtil (see comment on barsLayout)
+                .always("{class: 'ScheduledResource', alias: 'sr', fields: 'date,available,online,max,configuration.(name,item.name),(select count(1) from Attendance where scheduledResource=sr) as booked'}")
+                .always(orderBy("configuration.item.ord,configuration.name,configuration,date")) // Order is important for TimeBarUtil (see comment on barsLayout)
                 // Returning events for the selected organization only (or returning an empty set if no organization is selected)
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("configuration.resource.site.organization=?", o))
                 // Restricting events to those appearing in the time window
