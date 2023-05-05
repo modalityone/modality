@@ -32,7 +32,7 @@ import static dev.webfx.stack.orm.dql.DqlStatement.where;
 public final class EventsGanttCanvas {
 
     // Style constants used for drawing bars in the canvas:
-    private static final double BAR_HEIGHT = 20;
+    private static final double BAR_HEIGHT = 18;
     private static final double BAR_RADIUS = 10;
     private static final double BAR_H_SPACING = 2; // Max value, may be reduced when zooming out
     private static final double BAR_V_SPACING = 2;
