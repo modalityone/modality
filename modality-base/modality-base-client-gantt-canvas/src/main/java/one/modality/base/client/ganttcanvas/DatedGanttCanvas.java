@@ -147,7 +147,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
         yearsLayer.setChildSelectionEnabled(dateSelectionEnabled);
     }
 
-    public <C> void addLayer(TimeLayout<C, LocalDate> layer, ChildDrawer<C, LocalDate> layerCanvasDrawer) {
+    public <C> void addLayer(TimeLayout<C, LocalDate> layer, ChildDrawer<C> layerCanvasDrawer) {
         globalLayout.addLayer(layer);
         globalCanvasDrawer.setLayerChildDrawer(layer, layerCanvasDrawer);
     }
