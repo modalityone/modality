@@ -151,7 +151,7 @@ public final class RoomCalendarGanttCanvas {
         return scrollPane;
     }
 
-    private void drawBar(LocalDateBar<ScheduledResourceBlock> bar, ChildPosition<?> p, GraphicsContext gc) {
+    private void drawBar(LocalDateBar<ScheduledResourceBlock> bar, ChildPosition p, GraphicsContext gc) {
         // The bar wraps a block over 1 or several days (or always 1 day if the user hasn't ticked the grouping block
         // checkbox). So the bar instance is that block that was repeated over that period.
         ScheduledResourceBlock block = bar.getInstance();
@@ -172,7 +172,7 @@ public final class RoomCalendarGanttCanvas {
         barDrawer.drawBar(p, gc);
     }
 
-    private void drawParentRoom(ResourceConfiguration rc, ChildPosition<?> p, GraphicsContext gc) {
+    private void drawParentRoom(ResourceConfiguration rc, ChildPosition p, GraphicsContext gc) {
         // The only remaining property that needs to be set here is the room name that we display in the bar middle
         parentRoomDrawer.setMiddleText(rc.getName());
         parentRoomDrawer.drawBar(p, gc); // This also draws a rectangle stroke - see properties set in constructor
@@ -180,7 +180,7 @@ public final class RoomCalendarGanttCanvas {
         gc.fillRect(p.getX(), p.getY(), 2, p.getHeight()); // erasing the left side of the stroke rectangle
     }
 
-    private void drawGrandParentRoomType(Item item, ChildPosition<?> p, GraphicsContext gc) {
+    private void drawGrandParentRoomType(Item item, ChildPosition p, GraphicsContext gc) {
         grandParentRoomTypeDrawer.setBottomText(item.getName());
         grandParentRoomTypeDrawer.drawBar(p, gc);
     }

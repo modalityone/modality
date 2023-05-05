@@ -22,8 +22,6 @@ import one.modality.event.backoffice.event.fx.FXEvent;
 import one.modality.event.backoffice.events.pm.EventsPresentationModel;
 import one.modality.event.client.theme.EventTheme;
 
-import java.time.LocalDate;
-
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
 /**
@@ -73,7 +71,7 @@ public final class EventsGanttCanvas {
         });
     }
 
-    private void drawEvent(Event event, ChildPosition<LocalDate> p, GraphicsContext gc) {
+    private void drawEvent(Event event, ChildPosition p, GraphicsContext gc) {
         boolean selected = Entities.sameId(event, eventsLayer.getSelectedChild());
         eventBarDrawer.sethPadding(Math.min(p.getWidth() * 0.01, BAR_H_SPACING));
         eventBarDrawer.setBackgroundFill(EventTheme.getEventBackgroundColor(event, selected));
