@@ -3,7 +3,6 @@
 module modality.event.backoffice.events.ganttcanvas {
 
     // Direct dependencies modules
-    requires java.base;
     requires javafx.base;
     requires javafx.graphics;
     requires modality.base.client.gantt.canvas;
@@ -13,6 +12,7 @@ module modality.event.backoffice.events.ganttcanvas {
     requires modality.event.backoffice.event.fx;
     requires modality.event.backoffice.events.pm;
     requires modality.event.client.theme;
+    requires webfx.extras.bounds;
     requires webfx.extras.theme;
     requires webfx.extras.timelayout;
     requires webfx.extras.timelayout.gantt;

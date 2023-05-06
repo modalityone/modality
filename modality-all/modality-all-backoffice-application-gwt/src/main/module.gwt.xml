@@ -439,6 +439,8 @@
     <source path="one/modality/hotel/backoffice/operations/entities/resourceconfiguration"/>
     <!--===========================< modality-hotel-shared-time >===========================-->
     <source path="one/modality/hotel/shared/businessdata/time"/>
+    <!--==============================< webfx-extras-bounds >===============================-->
+    <source path="dev/webfx/extras/bounds"/>
     <!--===============================< webfx-extras-cell >================================-->
     <source path="dev/webfx/extras/cell/collator"/>
     <source path="dev/webfx/extras/cell/renderer"/>
@@ -476,6 +478,7 @@
     <source path="dev/webfx/extras/timelayout/impl/calendar"/>
     <!--=========================< webfx-extras-timelayout-gantt >==========================-->
     <source path="dev/webfx/extras/timelayout/gantt"/>
+    <source path="dev/webfx/extras/timelayout/gantt/canvas"/>
     <!--===============================< webfx-extras-type >================================-->
     <source path="dev/webfx/extras/type"/>
     <!--==========================< webfx-extras-util-animation >===========================-->

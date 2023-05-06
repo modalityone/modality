@@ -3,10 +3,10 @@ package one.modality.hotel.backoffice.activities.roomcalendar;
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.ThemeRegistry;
 import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.extras.timelayout.LayoutPosition;
 import dev.webfx.extras.timelayout.bar.BarDrawer;
 import dev.webfx.extras.timelayout.bar.LocalDateBar;
 import dev.webfx.extras.timelayout.bar.TimeBarUtil;
+import dev.webfx.extras.bounds.Bounds;
 import dev.webfx.extras.timelayout.canvas.LocalDateCanvasDrawer;
 import dev.webfx.extras.timelayout.canvas.LocalDateCanvasInteractionManager;
 import dev.webfx.extras.timelayout.canvas.TimeCanvasUtil;
@@ -151,7 +151,7 @@ public final class RoomCalendarGanttCanvas {
         return scrollPane;
     }
 
-    private void drawBar(LocalDateBar<ScheduledResourceBlock> bar, LayoutPosition p, GraphicsContext gc) {
+    private void drawBar(LocalDateBar<ScheduledResourceBlock> bar, Bounds b, GraphicsContext gc) {
         // The bar wraps a block over 1 or several days (or always 1 day if the user hasn't ticked the grouping block
         // checkbox). So the bar instance is that block that was repeated over that period.
         ScheduledResourceBlock block = bar.getInstance();
@@ -165,24 +165,24 @@ public final class RoomCalendarGanttCanvas {
                                             BAR_AVAILABLE_OFFLINE_COLOR); // orange if offline
         // If the bar is wide enough we show "Beds" on top and the number on bottom, but if it is too narrow, we just
         // display the number in the middle. Unavailable gray bars have no text at all by the way.
-        boolean isWideBar = p.getWidth() > 40;
+        boolean isWideBar = b.getWidth() > 40;
         barDrawer.setTopText(   isWideBar && block.isAvailable() ?   "Beds"   :   null    );
         barDrawer.setMiddleText(isWideBar || !block.isAvailable() ?   null    : remaining );
         barDrawer.setBottomText(isWideBar && block.isAvailable() ?  remaining :   null    );
-        barDrawer.drawBar(p, gc);
+        barDrawer.drawBar(b, gc);
     }
 
-    private void drawParentRoom(ResourceConfiguration rc, LayoutPosition p, GraphicsContext gc) {
+    private void drawParentRoom(ResourceConfiguration rc, Bounds b, GraphicsContext gc) {
         // The only remaining property that needs to be set here is the room name that we display in the bar middle
         parentRoomDrawer.setMiddleText(rc.getName());
-        parentRoomDrawer.drawBar(p, gc); // This also draws a rectangle stroke - see properties set in constructor
+        parentRoomDrawer.drawBar(b, gc); // This also draws a rectangle stroke - see properties set in constructor
         // But the wireframe doesn't show a stroke on the left, so we erase it to match the UX design
-        gc.fillRect(p.getX(), p.getY(), 2, p.getHeight()); // erasing the left side of the stroke rectangle
+        gc.fillRect(b.getMinX(), b.getMinY(), 2, b.getHeight()); // erasing the left side of the stroke rectangle
     }
 
-    private void drawGrandParentRoomType(Item item, LayoutPosition p, GraphicsContext gc) {
+    private void drawGrandParentRoomType(Item item, Bounds b, GraphicsContext gc) {
         grandParentRoomTypeDrawer.setBottomText(item.getName());
-        grandParentRoomTypeDrawer.drawBar(p, gc);
+        grandParentRoomTypeDrawer.drawBar(b, gc);
     }
 
     public void startLogic(Object mixin) {

@@ -3,8 +3,8 @@ package one.modality.event.backoffice.events.ganttcanvas;
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.ThemeRegistry;
 import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.extras.timelayout.LayoutPosition;
 import dev.webfx.extras.timelayout.bar.BarDrawer;
+import dev.webfx.extras.bounds.Bounds;
 import dev.webfx.extras.timelayout.gantt.LocalDateGanttLayout;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.Entities;
@@ -71,12 +71,12 @@ public final class EventsGanttCanvas {
         });
     }
 
-    private void drawEvent(Event event, LayoutPosition p, GraphicsContext gc) {
+    private void drawEvent(Event event, Bounds b, GraphicsContext gc) {
         boolean selected = Entities.sameId(event, eventsLayer.getSelectedChild());
-        eventBarDrawer.sethPadding(Math.min(p.getWidth() * 0.01, BAR_H_SPACING));
+        eventBarDrawer.sethPadding(Math.min(b.getWidth() * 0.01, BAR_H_SPACING));
         eventBarDrawer.setBackgroundFill(EventTheme.getEventBackgroundColor(event, selected));
         eventBarDrawer.setMiddleText(event.getPrimaryKey() + " " + event.getName());
-        eventBarDrawer.drawBar(p, gc);
+        eventBarDrawer.drawBar(b, gc);
     }
 
     public Pane getCanvasContainer() {

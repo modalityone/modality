@@ -5,12 +5,15 @@ import dev.webfx.extras.theme.ThemeRegistry;
 import dev.webfx.extras.theme.layout.FXLayoutMode;
 import dev.webfx.extras.theme.luminance.FXLuminanceMode;
 import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.extras.timelayout.LayoutPosition;
 import dev.webfx.extras.timelayout.MultiLayerLocalDateLayout;
 import dev.webfx.extras.timelayout.TimeLayout;
 import dev.webfx.extras.timelayout.TimeWindow;
 import dev.webfx.extras.timelayout.bar.BarDrawer;
-import dev.webfx.extras.timelayout.canvas.*;
+import dev.webfx.extras.bounds.Bounds;
+import dev.webfx.extras.timelayout.canvas.ChildDrawer;
+import dev.webfx.extras.timelayout.canvas.LocalDateCanvasInteractionManager;
+import dev.webfx.extras.timelayout.canvas.MultiLayerLocalDateCanvasDrawer;
+import dev.webfx.extras.timelayout.canvas.TimeCanvasUtil;
 import dev.webfx.extras.timelayout.canvas.generic.CanvasPane;
 import dev.webfx.extras.timelayout.canvas.generic.CanvasUtil;
 import dev.webfx.extras.timelayout.gantt.GanttLayout;
@@ -310,28 +313,28 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
     }
 
     // method to draw 1 strip - may be called many times during the draw pass
-    private void strokeStrip(LayoutPosition p, GraphicsContext gc) {
+    private void strokeStrip(Bounds b, GraphicsContext gc) {
         double canvasHeight = gc.getCanvas().getHeight();
-        CanvasUtil.strokeRect(p.getX(), 0, p.getWidth(), canvasHeight, 0, canvasHeight > p.getY() + p.getHeight() ? stripStroke : Color.TRANSPARENT, 0, gc);
+        CanvasUtil.strokeRect(b.getMinX(), 0, b.getWidth(), canvasHeight, 0, canvasHeight > b.getMaxY() ? stripStroke : Color.TRANSPARENT, 0, gc);
     }
 
     // method to draw 1 year - may be called many times during the draw pass
-    private void drawYear(Year year, LayoutPosition p, GraphicsContext gc) {
+    private void drawYear(Year year, Bounds b, GraphicsContext gc) {
         if (stripLayer == yearsLayer)
-            strokeStrip(p, gc);
+            strokeStrip(b, gc);
 
         boolean selected = Objects.areEquals(yearsLayer.getSelectedChild(), year);
 
         yearBarDrawer.setBackgroundFill(selected ? yearSelectedFill : yearFill);
         yearBarDrawer.setTextFill(selected ? yearSelectedTextFill : yearTextFill);
         yearBarDrawer.setMiddleText(String.valueOf(year));
-        yearBarDrawer.drawBar(p, gc);
+        yearBarDrawer.drawBar(b, gc);
     }
 
     // method to draw 1 month - may be called many times during the draw pass
-    private void drawMonth(YearMonth yearMonth, LayoutPosition p, GraphicsContext gc) {
+    private void drawMonth(YearMonth yearMonth, Bounds b, GraphicsContext gc) {
         if (stripLayer == monthsLayer)
-            strokeStrip(p, gc);
+            strokeStrip(b, gc);
 
         Month month = yearMonth.getMonth();
         boolean selected = Objects.areEquals(monthsLayer.getSelectedChild(), yearMonth);
@@ -360,18 +363,18 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
 
         monthBarDrawer.setBackgroundFill(TimeTheme.getMonthBackgroundColor(yearMonth, selected));
         monthBarDrawer.setMiddleText(text);
-        monthBarDrawer.drawBar(p, gc);
+        monthBarDrawer.drawBar(b, gc);
     }
 
     // method to draw 1 week - may be called many times during the draw pass
-    private void drawWeek(YearWeek yearWeek, LayoutPosition p, GraphicsContext gc) {
+    private void drawWeek(YearWeek yearWeek, Bounds b, GraphicsContext gc) {
         if (stripLayer == weeksLayer)
-            strokeStrip(p, gc);
+            strokeStrip(b, gc);
 
         boolean selected = Objects.areEquals(weeksLayer.getSelectedChild(), yearWeek);
         String week = i18nWeek;
         if (week != null) { // null may happen if i18n dictionary is not yet loaded
-            if (dayBarDrawer.getTextAreaWidth(p) < i18nWeekWidth)
+            if (dayBarDrawer.getTextAreaWidth(b) < i18nWeekWidth)
                 week = week.substring(0, 1);
         }
         String weekNumber = (yearWeek.getWeek() < 10 ? "0" : "") + yearWeek.getWeek();
@@ -380,13 +383,13 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
         weekBarDrawer.setTopText(week);
         weekBarDrawer.setBottomText(weekNumber);
         weekBarDrawer.setTextFill(selected ? weekSelectedTextFill : weekTextFill);
-        weekBarDrawer.drawBar(p, gc);
+        weekBarDrawer.drawBar(b, gc);
     }
 
     // method to draw 1 day - may be called many times during the draw pass
-    private void drawDay(LocalDate day, LayoutPosition p, GraphicsContext gc) {
+    private void drawDay(LocalDate day, Bounds b, GraphicsContext gc) {
         if (stripLayer == daysLayer)
-            strokeStrip(p, gc);
+            strokeStrip(b, gc);
 
         boolean selected = Objects.areEquals(daysLayer.getSelectedChild(), day);
         String dayOfWeek = i18nDaysOfWeek[day.getDayOfWeek().ordinal()];
@@ -400,7 +403,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
         dayBarDrawer.setTopText(dayOfWeek);
         dayBarDrawer.setBottomText(dayOfMonth);
         dayBarDrawer.setTextFill(selected ? daySelectedTextFill : dayTextFill);
-        dayBarDrawer.drawBar(p, gc);
+        dayBarDrawer.drawBar(b, gc);
     }
 
     // private static utility methods

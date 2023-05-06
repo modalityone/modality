@@ -8,6 +8,7 @@ module modality.base.client.gantt.canvas {
     requires javafx.graphics;
     requires modality.base.client.gantt.fx;
     requires modality.base.client.time.theme;
+    requires webfx.extras.bounds;
     requires webfx.extras.theme;
     requires webfx.extras.timelayout;
     requires webfx.extras.timelayout.gantt;
