@@ -11,10 +11,13 @@ module modality.hotel.backoffice.activities.roomcalendar {
     requires modality.base.client.gantt.fx;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
-    requires webfx.extras.bounds;
+    requires webfx.extras.canvas.bar;
+    requires webfx.extras.canvas.pane;
+    requires webfx.extras.geometry;
     requires webfx.extras.theme;
-    requires webfx.extras.timelayout;
-    requires webfx.extras.timelayout.gantt;
+    requires webfx.extras.time.layout;
+    requires webfx.extras.time.layout.gantt;
+    requires webfx.extras.time.window;
     requires webfx.extras.util.layout;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;

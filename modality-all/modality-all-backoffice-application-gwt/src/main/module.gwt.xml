@@ -439,18 +439,30 @@
     <source path="one/modality/hotel/backoffice/operations/entities/resourceconfiguration"/>
     <!--===========================< modality-hotel-shared-time >===========================-->
     <source path="one/modality/hotel/shared/businessdata/time"/>
-    <!--==============================< webfx-extras-bounds >===============================-->
-    <source path="dev/webfx/extras/bounds"/>
+    <!--==============================< webfx-extras-canvas >===============================-->
+    <source path="dev/webfx/extras/canvas"/>
+    <source path="dev/webfx/extras/canvas/impl"/>
+    <!--============================< webfx-extras-canvas-bar >=============================-->
+    <source path="dev/webfx/extras/canvas/bar"/>
+    <!--===========================< webfx-extras-canvas-layer >============================-->
+    <source path="dev/webfx/extras/canvas/layer"/>
+    <!--============================< webfx-extras-canvas-pane >============================-->
+    <source path="dev/webfx/extras/canvas/pane"/>
     <!--===============================< webfx-extras-cell >================================-->
     <source path="dev/webfx/extras/cell/collator"/>
     <source path="dev/webfx/extras/cell/renderer"/>
     <source path="dev/webfx/extras/cell/rowstyle"/>
     <!--==============================< webfx-extras-flexbox >==============================-->
     <source path="dev/webfx/extras/flexbox"/>
+    <!--=============================< webfx-extras-geometry >==============================-->
+    <source path="dev/webfx/extras/geometry"/>
     <!--============================< webfx-extras-imagestore >=============================-->
     <source path="dev/webfx/extras/imagestore"/>
     <!--===============================< webfx-extras-label >===============================-->
     <source path="dev/webfx/extras/label"/>
+    <!--===============================< webfx-extras-layer >===============================-->
+    <source path="dev/webfx/extras/layer"/>
+    <source path="dev/webfx/extras/layer/interact"/>
     <!--==========================< webfx-extras-materialdesign >===========================-->
     <source path="dev/webfx/extras/materialdesign/textfield"/>
     <source path="dev/webfx/extras/materialdesign/util"/>
@@ -466,21 +478,26 @@
     <source path="dev/webfx/extras/theme/palette"/>
     <source path="dev/webfx/extras/theme/shape"/>
     <source path="dev/webfx/extras/theme/text"/>
-    <!--============================< webfx-extras-timelayout >=============================-->
-    <source path="dev/webfx/extras/timelayout"/>
-    <source path="dev/webfx/extras/timelayout/bar"/>
-    <source path="dev/webfx/extras/timelayout/canvas"/>
-    <source path="dev/webfx/extras/timelayout/canvas/generic"/>
-    <source path="dev/webfx/extras/timelayout/impl"/>
-    <source path="dev/webfx/extras/timelayout/node"/>
-    <source path="dev/webfx/extras/timelayout/util"/>
-    <!--========================< webfx-extras-timelayout-calendar >========================-->
-    <source path="dev/webfx/extras/timelayout/impl/calendar"/>
-    <!--=========================< webfx-extras-timelayout-gantt >==========================-->
-    <source path="dev/webfx/extras/timelayout/gantt"/>
-    <source path="dev/webfx/extras/timelayout/gantt/canvas"/>
+    <!--===============================< webfx-extras-time >================================-->
+    <source path="dev/webfx/extras/time"/>
+    <!--============================< webfx-extras-time-layout >============================-->
+    <source path="dev/webfx/extras/time/layout"/>
+    <source path="dev/webfx/extras/time/layout/bar"/>
+    <source path="dev/webfx/extras/time/layout/canvas"/>
+    <source path="dev/webfx/extras/time/layout/impl"/>
+    <source path="dev/webfx/extras/time/layout/node"/>
+    <!--=======================< webfx-extras-time-layout-calendar >========================-->
+    <source path="dev/webfx/extras/time/layout/calendar"/>
+    <!--=========================< webfx-extras-time-layout-gantt >=========================-->
+    <source path="dev/webfx/extras/time/layout/gantt"/>
+    <source path="dev/webfx/extras/time/layout/gantt/canvas"/>
+    <!--============================< webfx-extras-time-window >============================-->
+    <source path="dev/webfx/extras/time/window"/>
+    <source path="dev/webfx/extras/time/window/impl"/>
     <!--===============================< webfx-extras-type >================================-->
     <source path="dev/webfx/extras/type"/>
+    <!--===============================< webfx-extras-util >================================-->
+    <source path="dev/webfx/extras/util"/>
     <!--==========================< webfx-extras-util-animation >===========================-->
     <source path="dev/webfx/extras/util/animation"/>
     <!--==========================< webfx-extras-util-background >==========================-->

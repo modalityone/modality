@@ -5,7 +5,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentGenericTablePresentationModel;
-import dev.webfx.extras.timelayout.TimeWindow;
+import dev.webfx.extras.time.window.TimeWindow;
 
 import java.time.LocalDate;
 

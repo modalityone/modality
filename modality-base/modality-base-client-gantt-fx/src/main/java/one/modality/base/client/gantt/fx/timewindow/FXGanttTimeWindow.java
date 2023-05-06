@@ -1,6 +1,6 @@
 package one.modality.base.client.gantt.fx.timewindow;
 
-import dev.webfx.extras.timelayout.impl.TimeWindowImpl;
+import dev.webfx.extras.time.window.impl.TimeWindowImpl;
 import dev.webfx.platform.console.Console;
 import javafx.beans.property.ObjectProperty;
 

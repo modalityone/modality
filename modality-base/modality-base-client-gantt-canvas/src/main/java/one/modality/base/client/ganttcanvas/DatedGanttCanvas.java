@@ -5,20 +5,20 @@ import dev.webfx.extras.theme.ThemeRegistry;
 import dev.webfx.extras.theme.layout.FXLayoutMode;
 import dev.webfx.extras.theme.luminance.FXLuminanceMode;
 import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.extras.timelayout.MultiLayerLocalDateLayout;
-import dev.webfx.extras.timelayout.TimeLayout;
-import dev.webfx.extras.timelayout.TimeWindow;
-import dev.webfx.extras.timelayout.bar.BarDrawer;
-import dev.webfx.extras.bounds.Bounds;
-import dev.webfx.extras.timelayout.canvas.ChildDrawer;
-import dev.webfx.extras.timelayout.canvas.LocalDateCanvasInteractionManager;
-import dev.webfx.extras.timelayout.canvas.MultiLayerLocalDateCanvasDrawer;
-import dev.webfx.extras.timelayout.canvas.TimeCanvasUtil;
-import dev.webfx.extras.timelayout.canvas.generic.CanvasPane;
-import dev.webfx.extras.timelayout.canvas.generic.CanvasUtil;
-import dev.webfx.extras.timelayout.gantt.GanttLayout;
-import dev.webfx.extras.timelayout.gantt.LocalDateGanttLayout;
-import dev.webfx.extras.timelayout.util.YearWeek;
+import dev.webfx.extras.time.layout.MultiLayerLocalDateLayout;
+import dev.webfx.extras.time.layout.TimeLayout;
+import dev.webfx.extras.time.window.TimeWindow;
+import dev.webfx.extras.canvas.bar.BarDrawer;
+import dev.webfx.extras.geometry.Bounds;
+import dev.webfx.extras.canvas.layer.ChildDrawer;
+import dev.webfx.extras.time.layout.canvas.LocalDateCanvasInteractionManager;
+import dev.webfx.extras.time.layout.canvas.MultiLayerLocalDateCanvasDrawer;
+import dev.webfx.extras.time.layout.canvas.TimeCanvasUtil;
+import dev.webfx.extras.canvas.pane.CanvasPane;
+import dev.webfx.extras.canvas.bar.BarUtil;
+import dev.webfx.extras.time.layout.gantt.GanttLayout;
+import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
+import dev.webfx.extras.time.YearWeek;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.Objects;
@@ -144,10 +144,10 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
     }
 
     public void setDateSelectionEnabled(boolean dateSelectionEnabled) {
-        daysLayer.setChildSelectionEnabled(dateSelectionEnabled);
-        weeksLayer.setChildSelectionEnabled(dateSelectionEnabled);
-        monthsLayer.setChildSelectionEnabled(dateSelectionEnabled);
-        yearsLayer.setChildSelectionEnabled(dateSelectionEnabled);
+        daysLayer.setSelectionEnabled(dateSelectionEnabled);
+        weeksLayer.setSelectionEnabled(dateSelectionEnabled);
+        monthsLayer.setSelectionEnabled(dateSelectionEnabled);
+        yearsLayer.setSelectionEnabled(dateSelectionEnabled);
     }
 
     public <C> void addLayer(TimeLayout<C, LocalDate> layer, ChildDrawer<C> layerCanvasDrawer) {
@@ -315,7 +315,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
     // method to draw 1 strip - may be called many times during the draw pass
     private void strokeStrip(Bounds b, GraphicsContext gc) {
         double canvasHeight = gc.getCanvas().getHeight();
-        CanvasUtil.strokeRect(b.getMinX(), 0, b.getWidth(), canvasHeight, 0, canvasHeight > b.getMaxY() ? stripStroke : Color.TRANSPARENT, 0, gc);
+        BarUtil.strokeRect(b.getMinX(), 0, b.getWidth(), canvasHeight, 0, canvasHeight > b.getMaxY() ? stripStroke : Color.TRANSPARENT, 0, gc);
     }
 
     // method to draw 1 year - may be called many times during the draw pass

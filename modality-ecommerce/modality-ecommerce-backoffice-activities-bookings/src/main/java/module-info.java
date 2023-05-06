@@ -20,7 +20,7 @@ module modality.ecommerce.backoffice.activities.bookings {
     requires modality.ecommerce.backoffice.operations.document;
     requires modality.event.backoffice.activities.cloneevent.routing;
     requires modality.event.frontoffice.activities.fees;
-    requires webfx.extras.timelayout;
+    requires webfx.extras.time;
     requires webfx.extras.util.layout;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;

@@ -12,10 +12,10 @@ module modality.event.backoffice.events.ganttcanvas {
     requires modality.event.backoffice.event.fx;
     requires modality.event.backoffice.events.pm;
     requires modality.event.client.theme;
-    requires webfx.extras.bounds;
+    requires webfx.extras.canvas.bar;
+    requires webfx.extras.geometry;
     requires webfx.extras.theme;
-    requires webfx.extras.timelayout;
-    requires webfx.extras.timelayout.gantt;
+    requires webfx.extras.time.layout.gantt;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.reactive.entities;
