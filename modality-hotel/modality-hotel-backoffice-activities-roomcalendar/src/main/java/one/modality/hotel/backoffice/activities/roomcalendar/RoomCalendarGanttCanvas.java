@@ -1,16 +1,15 @@
 package one.modality.hotel.backoffice.activities.roomcalendar;
 
+import dev.webfx.extras.canvas.bar.BarDrawer;
+import dev.webfx.extras.canvas.pane.VirtualCanvasPane;
+import dev.webfx.extras.geometry.Bounds;
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.ThemeRegistry;
 import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.extras.canvas.bar.BarDrawer;
 import dev.webfx.extras.time.layout.bar.LocalDateBar;
 import dev.webfx.extras.time.layout.bar.TimeBarUtil;
-import dev.webfx.extras.geometry.Bounds;
 import dev.webfx.extras.time.layout.canvas.LocalDateCanvasDrawer;
-import dev.webfx.extras.time.layout.canvas.LocalDateCanvasInteractionManager;
 import dev.webfx.extras.time.layout.canvas.TimeCanvasUtil;
-import dev.webfx.extras.canvas.pane.VirtualCanvasPane;
 import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
 import dev.webfx.extras.time.layout.gantt.canvas.GanttCanvasUtil;
 import dev.webfx.extras.util.layout.LayoutUtil;
@@ -85,7 +84,7 @@ public final class RoomCalendarGanttCanvas {
     // We will use the BarDrawer utility class to draw the bars & rooms names & types
     private final BarDrawer barDrawer = new BarDrawer();  // unique instance to draw all the bars
     private final BarDrawer parentRoomDrawer = new BarDrawer(); // unique instance to draw all the room names
-    private final BarDrawer grandParentRoomTypeDrawer = new BarDrawer(); // unique instance to draw all the room types
+    private final BarDrawer grandparentRoomTypeDrawer = new BarDrawer(); // unique instance to draw all the room types
 
     public RoomCalendarGanttCanvas() {
         // Binding the presentation model and the barsLayout time window
@@ -106,8 +105,8 @@ public final class RoomCalendarGanttCanvas {
         barsLayout.setChildParentReader(     bar -> bar.getInstance().getResourceConfiguration());
         barsLayout.setChildGrandparentReader(bar -> bar.getInstance().getResourceConfiguration().getItem());
 
-        // Activating user interaction on canvas (user can move & zoom in/out the time window)
-        LocalDateCanvasInteractionManager.makeCanvasInteractive(barsDrawer, barsLayout);
+        // Enabling canvas interaction (user can move & zoom in/out the time window)
+        barsDrawer.enableCanvasInteraction();
 
         // Setting the properties of barDrawer & roomDrawer (other properties are set in drawBar() & drawRoom())
         barDrawer.setStroke(Color.BLACK);
@@ -115,14 +114,14 @@ public final class RoomCalendarGanttCanvas {
         parentRoomDrawer.setTextFill(Color.grayRgb(130));
         parentRoomDrawer.setStroke(Color.grayRgb(130));
         parentRoomDrawer.setBackgroundFill(Color.ALICEBLUE);
-        grandParentRoomTypeDrawer.setBackgroundFill(Color.ALICEBLUE);
-        grandParentRoomTypeDrawer.setTextFill(Color.rgb(0, 150, 214));
+        grandparentRoomTypeDrawer.setBackgroundFill(Color.ALICEBLUE);
+        grandparentRoomTypeDrawer.setTextFill(Color.rgb(0, 150, 214));
         // Updating the text font on any theme mode change that may impact it (light/dark mode, etc...)
         ThemeRegistry.runNowAndOnModeChange(() -> {
             Font font = TextTheme.getFont(FontDef.font(13));
             barDrawer.setTextFont(font);
             parentRoomDrawer.setTextFont(font);
-            grandParentRoomTypeDrawer.setTextFont( TextTheme.getFont(FontDef.font(FontWeight.BOLD,13)));
+            grandparentRoomTypeDrawer.setTextFont(TextTheme.getFont(FontDef.font(FontWeight.BOLD,13)));
         });
     }
 
@@ -181,8 +180,8 @@ public final class RoomCalendarGanttCanvas {
     }
 
     private void drawGrandParentRoomType(Item item, Bounds b, GraphicsContext gc) {
-        grandParentRoomTypeDrawer.setBottomText(item.getName());
-        grandParentRoomTypeDrawer.drawBar(b, gc);
+        grandparentRoomTypeDrawer.setBottomText(item.getName());
+        grandparentRoomTypeDrawer.drawBar(b, gc);
     }
 
     public void startLogic(Object mixin) {

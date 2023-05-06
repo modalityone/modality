@@ -1,24 +1,23 @@
 package one.modality.base.client.ganttcanvas;
 
+import dev.webfx.extras.canvas.bar.BarDrawer;
+import dev.webfx.extras.canvas.bar.BarUtil;
+import dev.webfx.extras.canvas.layer.ChildDrawer;
+import dev.webfx.extras.canvas.pane.CanvasPane;
+import dev.webfx.extras.geometry.Bounds;
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.ThemeRegistry;
 import dev.webfx.extras.theme.layout.FXLayoutMode;
 import dev.webfx.extras.theme.luminance.FXLuminanceMode;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.extras.time.YearWeek;
 import dev.webfx.extras.time.layout.MultiLayerLocalDateLayout;
 import dev.webfx.extras.time.layout.TimeLayout;
-import dev.webfx.extras.time.window.TimeWindow;
-import dev.webfx.extras.canvas.bar.BarDrawer;
-import dev.webfx.extras.geometry.Bounds;
-import dev.webfx.extras.canvas.layer.ChildDrawer;
-import dev.webfx.extras.time.layout.canvas.LocalDateCanvasInteractionManager;
 import dev.webfx.extras.time.layout.canvas.MultiLayerLocalDateCanvasDrawer;
 import dev.webfx.extras.time.layout.canvas.TimeCanvasUtil;
-import dev.webfx.extras.canvas.pane.CanvasPane;
-import dev.webfx.extras.canvas.bar.BarUtil;
 import dev.webfx.extras.time.layout.gantt.GanttLayout;
 import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
-import dev.webfx.extras.time.YearWeek;
+import dev.webfx.extras.time.window.TimeWindow;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.Objects;
@@ -52,7 +51,6 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
     private final MultiLayerLocalDateLayout globalLayout = MultiLayerLocalDateLayout.create();
     private final MultiLayerLocalDateCanvasDrawer globalCanvasDrawer = new MultiLayerLocalDateCanvasDrawer(globalLayout);
     private final CanvasPane canvasPane = TimeCanvasUtil.createTimeCanvasPane(globalLayout, globalCanvasDrawer);
-    private final LocalDateCanvasInteractionManager canvasInteractionManager = new LocalDateCanvasInteractionManager(globalCanvasDrawer, globalLayout);
     private final BarDrawer yearBarDrawer = new BarDrawer();
     private final BarDrawer monthBarDrawer = new BarDrawer();
     private final BarDrawer weekBarDrawer = new BarDrawer();
@@ -140,7 +138,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
     }
 
     public void setInteractive(boolean interactive) {
-        canvasInteractionManager.setInteractive(interactive);
+        globalCanvasDrawer.setInteractive(interactive);
     }
 
     public void setDateSelectionEnabled(boolean dateSelectionEnabled) {

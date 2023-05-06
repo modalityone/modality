@@ -446,6 +446,7 @@
     <source path="dev/webfx/extras/canvas/bar"/>
     <!--===========================< webfx-extras-canvas-layer >============================-->
     <source path="dev/webfx/extras/canvas/layer"/>
+    <source path="dev/webfx/extras/canvas/layer/interact"/>
     <!--============================< webfx-extras-canvas-pane >============================-->
     <source path="dev/webfx/extras/canvas/pane"/>
     <!--===============================< webfx-extras-cell >================================-->
