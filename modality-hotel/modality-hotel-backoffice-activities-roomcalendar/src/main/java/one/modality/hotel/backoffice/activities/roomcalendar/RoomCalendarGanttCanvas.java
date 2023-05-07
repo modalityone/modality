@@ -114,6 +114,7 @@ public final class RoomCalendarGanttCanvas {
         parentRoomDrawer.setTextFill(Color.grayRgb(130));
         parentRoomDrawer.setStroke(Color.grayRgb(130));
         parentRoomDrawer.setBackgroundFill(Color.ALICEBLUE);
+        grandparentRoomTypeDrawer.setClipText(false); // So the text is always visible even when slider is on left
         grandparentRoomTypeDrawer.setBackgroundFill(Color.ALICEBLUE);
         grandparentRoomTypeDrawer.setTextFill(Color.rgb(0, 150, 214));
         // Updating the text font on any theme mode change that may impact it (light/dark mode, etc...)
