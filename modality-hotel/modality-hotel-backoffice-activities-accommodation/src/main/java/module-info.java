@@ -13,6 +13,11 @@ module modality.hotel.backoffice.activities.accommodation {
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.operation;
     requires webfx.stack.ui.operation.action;
+    requires modality.base.client.presentationmodel;
+    requires modality.base.backoffice.masterslave;
+    requires webfx.stack.orm.reactive.visual;
+    requires webfx.extras.timelayout;
+    requires modality.base.client.gantt.fx;
 
     // Exported packages
     exports one.modality.hotel.backoffice.activities.accommodation;
