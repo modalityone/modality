@@ -42,10 +42,7 @@ public class AccommodationGanttCanvas {
 
     private static final double BAR_HEIGHT = 20;
     private static final double BAR_RADIUS = 10;
-    private final static Color BAR_AVAILABLE_ONLINE_COLOR = Color.rgb(65, 186, 77);
-    private final static Color BAR_AVAILABLE_OFFLINE_COLOR = Color.ORANGE;
-    private final static Color BAR_SOLDOUT_COLOR = Color.rgb(255, 3, 5);
-    private final static Color BAR_UNAVAILABLE_COLOR = Color.rgb(130, 135, 136);
+    private final static Color BAR_COLOR = Color.rgb(8, 148, 212);
 
     // The presentation model used by the logic code to query the server (see startLogic() method)
     private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
@@ -158,7 +155,7 @@ public class AccommodationGanttCanvas {
         // The bar wraps a block over 1 or several days (or always 1 day if the user hasn't ticked the grouping block
         // checkbox). So the bar instance is that block that was repeated over that period.
         AttendanceBlock block = bar.getInstance();
-        barDrawer.setBackgroundFill(Color.BLUE);
+        barDrawer.setBackgroundFill(BAR_COLOR);
         barDrawer.drawBar(b, gc);
         centerText(block.getPersonName(), b, gc);
     }
