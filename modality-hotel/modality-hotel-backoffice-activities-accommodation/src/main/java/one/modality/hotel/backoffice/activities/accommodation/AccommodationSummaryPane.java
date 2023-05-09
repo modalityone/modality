@@ -1,10 +1,8 @@
 package one.modality.hotel.backoffice.activities.accommodation;
 
 import javafx.geometry.HPos;
-import javafx.geometry.Pos;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
 import one.modality.base.shared.entities.Attendance;
 
@@ -18,9 +16,13 @@ import java.util.stream.Collectors;
 public class AccommodationSummaryPane extends GridPane {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yy");
+
     private List<Attendance> attendances = Collections.emptyList();
     private LocalDate date = LocalDate.now();
 
+    public AccommodationSummaryPane() {
+        setStyle("-fx-background-color: #e0dcdc");
+    }
     public void setEntities(List<Attendance> attendances) {
         this.attendances = new ArrayList<>(attendances);
         refresh();
