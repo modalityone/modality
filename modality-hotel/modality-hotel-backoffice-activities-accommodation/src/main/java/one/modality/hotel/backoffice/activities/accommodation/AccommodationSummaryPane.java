@@ -1,5 +1,9 @@
 package one.modality.hotel.backoffice.activities.accommodation;
 
+import javafx.geometry.HPos;
+import javafx.geometry.Pos;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
 import one.modality.base.shared.entities.Attendance;
@@ -11,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AccommodationSummaryPane extends HBox {
+public class AccommodationSummaryPane extends GridPane {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yy");
     private List<Attendance> attendances = Collections.emptyList();
@@ -28,9 +32,31 @@ public class AccommodationSummaryPane extends HBox {
         long numGuests = countGuests(attendancesForDate);
 
         getChildren().clear();
-        getChildren().add(new Label("Status, " + formatDate()));
-        getChildren().add(new Label("Rooms occupied: " + numRoomsOccupied));
-        getChildren().add(new Label("Guests: " + numGuests));
+        add(buildLabel("Status, " + formatDate()), 0, 0);
+        add(buildLabel("Rooms occupied: " + numRoomsOccupied), 1, 0);
+        add(buildLabel("Guests: " + numGuests), 2, 0);
+        updateColumnWidths();
+    }
+
+    private Label buildLabel(String text) {
+        Label label = new Label(text);
+        setHalignment(label, HPos.CENTER);
+        return label;
+    }
+
+    private void updateColumnWidths() {
+        int numColumns = getColumnCount();
+        double columnPercentageWidth = 100.0 / numColumns;
+        double percentageRemaining = 100.0;
+        for (int i = 0; i < numColumns - 1; i++) {
+            ColumnConstraints column = new ColumnConstraints();
+            column.setPercentWidth(columnPercentageWidth);
+            getColumnConstraints().add(column);
+            percentageRemaining -= columnPercentageWidth;
+        }
+        ColumnConstraints column = new ColumnConstraints();
+        column.setPercentWidth(percentageRemaining);
+        getColumnConstraints().add(column);
     }
 
     private String formatDate() {

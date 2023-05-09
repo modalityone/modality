@@ -1,9 +1,12 @@
 package one.modality.hotel.backoffice.activities.accommodation;
 
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
@@ -25,15 +28,17 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
     @Override
     public Node buildUi() {
         BorderPane borderPane = new BorderPane(accommodationGanttCanvas.buildCanvasContainer());
-        borderPane.setBottom(accommodationSummaryPane);
         borderPane.setLeft(accommodationKeyPane);
 
-        CheckBox showKeyCheckBox = new CheckBox("Show key");
+        CheckBox showKeyCheckBox = new CheckBox("Show Legend");
         showKeyCheckBox.setSelected(true);
         showKeyCheckBox.setOnAction(e -> {
             borderPane.setLeft(showKeyCheckBox.isSelected() ? accommodationKeyPane : null);
         });
-        borderPane.setTop(showKeyCheckBox);
+        HBox bottomPane = new HBox(showKeyCheckBox, accommodationSummaryPane);
+        bottomPane.setAlignment(Pos.CENTER_LEFT);
+        HBox.setHgrow(accommodationSummaryPane, Priority.ALWAYS);
+        borderPane.setBottom(bottomPane);
 
         return borderPane;
     }
