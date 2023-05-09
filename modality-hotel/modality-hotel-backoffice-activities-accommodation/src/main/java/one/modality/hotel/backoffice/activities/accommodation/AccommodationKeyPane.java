@@ -42,10 +42,13 @@ public class AccommodationKeyPane extends VBox {
 
     private Color getColor(int index) {
         switch (index) {
-            case 0: return Color.BLUE;
-            case 1: return Color.GREEN;
-            case 2: return Color.RED;
-            case 3: return Color.AQUA;
+            case 0: return Color.rgb(8, 148, 212);
+            case 1: return Color.rgb(123, 163, 60);
+            case 2: return Color.rgb(189, 116, 177);
+            case 3: return Color.BLUE;
+            case 4: return Color.GREEN;
+            case 5: return Color.RED;
+            case 6: return Color.AQUA;
             default: return Color.LIGHTGRAY;
         }
     }
