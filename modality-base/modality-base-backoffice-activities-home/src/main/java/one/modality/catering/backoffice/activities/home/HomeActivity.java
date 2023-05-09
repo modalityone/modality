@@ -90,7 +90,7 @@ public class HomeActivity extends ViewDomainActivityBase
         redirects.put("RouteToEventsPlanner", "RouteToEvents");
         redirects.put("RouteToBookingsAndSearch", "RouteToBookings");
         redirects.put("RouteToAdmin", "RouteToAuthorizations");
-        redirects.put("RouteToAccommodation", "RouteToRoomsGraphic");
+        //redirects.put("RouteToAccommodation", "RouteToRoomsGraphic");
         redirects.put("RouteToTranslationAndRecordings", "RouteToLetters");
         redirects.put("RouteToFinancesAndStats", "RouteToMoneyFlows");
         redirects.put("RouteToHumanResources", "RouteToStatistics");

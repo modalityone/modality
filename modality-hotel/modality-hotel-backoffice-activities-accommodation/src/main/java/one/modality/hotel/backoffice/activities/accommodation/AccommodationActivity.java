@@ -1,10 +1,12 @@
 package one.modality.hotel.backoffice.activities.accommodation;
 
-import dev.webfx.extras.timelayout.util.TimeUtil;
-import dev.webfx.extras.timelayout.util.YearWeek;
+import dev.webfx.extras.time.TimeUtil;
+import dev.webfx.extras.time.YearWeek;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 import one.modality.base.backoffice.controls.masterslave.ConventionalUiBuilder;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
@@ -12,6 +14,7 @@ import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
+import one.modality.hotel.backoffice.activities.roomcalendar.RoomCalendarGanttCanvas;
 
 import java.time.LocalDate;
 import java.time.Year;
@@ -23,6 +26,45 @@ import static dev.webfx.stack.orm.dql.DqlStatement.where;
 final class AccommodationActivity extends OrganizationDependentViewDomainActivity implements
         OperationActionFactoryMixin {
 
+    private final AccommodationGanttCanvas accommodationGanttCanvas = new AccommodationGanttCanvas();
+
+    @Override
+    public Node buildUi() {
+        BorderPane borderPane = new BorderPane(accommodationGanttCanvas.buildCanvasContainer());
+        return borderPane;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        FXGanttVisibility.setGanttVisibility(GanttVisibility.EVENTS);
+    }
+
+    @Override
+    public void onPause() {
+        FXGanttVisibility.setGanttVisibility(GanttVisibility.HIDDEN);
+        super.onPause();
+    }
+
+    /*==================================================================================================================
+    =================================================== Logical layer ==================================================
+    ==================================================================================================================*/
+
+    @Override
+    protected void startLogic() {
+        accommodationGanttCanvas.startLogic(this);
+    }
+
+
+
+
+
+
+
+
+
+
+
     private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
 
     @Override
@@ -33,7 +75,7 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
 
     private ConventionalUiBuilder ui; // Keeping this reference for activity resume
 
-    @Override
+    /*@Override
     public Node buildUi() {
         return new Text("Accommodation");
     }
@@ -90,13 +132,13 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
                                 : where("person_abcNames like ?", AbcNames.evaluate(s, true)))
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
-                .start();*/
+                .start();* /
     }
 
     @Override
     protected void refreshDataOnActive() {
         groupVisualMapper.refreshWhenActive();
         masterVisualMapper.refreshWhenActive();
-    }
+    }*/
 
 }
