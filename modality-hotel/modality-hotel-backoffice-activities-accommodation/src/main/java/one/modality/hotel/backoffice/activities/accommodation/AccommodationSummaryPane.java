@@ -50,15 +50,17 @@ public class AccommodationSummaryPane extends GridPane {
         int numColumns = getColumnCount();
         double columnPercentageWidth = 100.0 / numColumns;
         double percentageRemaining = 100.0;
+        List<ColumnConstraints> columnConstraints = new ArrayList<>(numColumns);
         for (int i = 0; i < numColumns - 1; i++) {
             ColumnConstraints column = new ColumnConstraints();
             column.setPercentWidth(columnPercentageWidth);
-            getColumnConstraints().add(column);
+            columnConstraints.add(column);
             percentageRemaining -= columnPercentageWidth;
         }
         ColumnConstraints column = new ColumnConstraints();
         column.setPercentWidth(percentageRemaining);
-        getColumnConstraints().add(column);
+        columnConstraints.add(column);
+        getColumnConstraints().setAll(columnConstraints);
     }
 
     private String formatDate() {
