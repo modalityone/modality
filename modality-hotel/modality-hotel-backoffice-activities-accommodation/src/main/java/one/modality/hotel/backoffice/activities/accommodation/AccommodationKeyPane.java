@@ -55,7 +55,9 @@ public class AccommodationKeyPane extends VBox {
             case 4: return Color.GREEN;
             case 5: return Color.RED;
             case 6: return Color.AQUA;
-            default: return Color.LIGHTGRAY;
+            default:
+                Random random = new Random(index);
+                return Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255));
         }
     }
 }
