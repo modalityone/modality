@@ -18,6 +18,7 @@ import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMap
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.canvas.GraphicsContext;
@@ -28,12 +29,15 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
 import one.modality.base.shared.entities.Attendance;
+import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
@@ -83,8 +87,10 @@ public class AccommodationGanttCanvas {
     private final BarDrawer barDrawer = new BarDrawer();  // unique instance to draw all the bars
     private final BarDrawer parentRoomDrawer = new BarDrawer(); // unique instance to draw all the room names
     private final BarDrawer grandparentRoomTypeDrawer = new BarDrawer(); // unique instance to draw all the room types
+    private final AccommodationController controller;
 
-    public AccommodationGanttCanvas() {
+    public AccommodationGanttCanvas(AccommodationController controller) {
+        this.controller = controller;
         // Binding the presentation model and the barsLayout time window
         pm.organizationIdProperty().bind(FXOrganization.organizationProperty());
         pm.bindTimeWindow(barsLayout); // barsLayout will itself be bound to FXGanttTimeWindow (see below)
@@ -97,6 +103,18 @@ public class AccommodationGanttCanvas {
                 AttendanceBlock::new, // the factory that creates blocks, initially 1 instance per entity, but then grouped into bars
                 barsLayout, // the layout that will receive the final list of bars as a result of the blocks grouping
                 blocksGroupingProperty); // optional property to eventually disable the blocks grouping (=> 1 bar per block if disabled)
+
+        entities.addListener(new ListChangeListener<Attendance>() {
+             @Override
+             public void onChanged(Change<? extends Attendance> change) {
+                 List<Event> events = entities.stream()
+                         .map(Attendance::getEvent)
+                         .distinct()
+                         .sorted((e1, e2) -> e1.getName().compareToIgnoreCase(e2.getName()))
+                         .collect(Collectors.toList());
+                 controller.setEvents(events);
+             }
+         });
 
         // Finishing setting up barsLayout
         barsLayout.setChildFixedHeight(BAR_HEIGHT);
@@ -155,7 +173,9 @@ public class AccommodationGanttCanvas {
         // The bar wraps a block over 1 or several days (or always 1 day if the user hasn't ticked the grouping block
         // checkbox). So the bar instance is that block that was repeated over that period.
         AttendanceBlock block = bar.getInstance();
-        barDrawer.setBackgroundFill(BAR_COLOR);
+        Event event = block.getEvent();
+        Color barColor = controller.getEventColor(event);
+        barDrawer.setBackgroundFill(barColor);
         barDrawer.drawBar(b, gc);
         centerText(block.getPersonName(), b, gc);
     }
@@ -184,7 +204,7 @@ public class AccommodationGanttCanvas {
 
     public void startLogic(Object mixin) {
         ReactiveEntitiesMapper.<Attendance>createPushReactiveChain(mixin)
-                .always("{class: 'Attendance', alias: 'a', fields: 'date,documentLine.document.(person_firstName,person_lastName),scheduledResource.configuration.(name,item.name)'}")
+                .always("{class: 'Attendance', alias: 'a', fields: 'date,documentLine.document.(person_firstName,person_lastName),scheduledResource.configuration.(name,item.name),documentLine.document.event.name'}")
                 .always(where("scheduledResource is not null"))
                 .always(orderBy("scheduledResource.configuration.item.ord,scheduledResource.configuration.name,documentLine.document.person_lastName,documentLine.document.person_firstName,date))")) // Order is important for TimeBarUtil (see comment on barsLayout)
                 // Returning events for the selected organization only (or returning an empty set if no organization is selected)

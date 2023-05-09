@@ -1,6 +1,7 @@
 package one.modality.hotel.backoffice.activities.accommodation;
 
 import one.modality.base.shared.entities.Attendance;
+import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.base.shared.entities.ScheduledResource;
 
@@ -13,9 +14,6 @@ public final class AttendanceBlock {
 
     private final Attendance attendance;
     private final ResourceConfiguration resourceConfiguration;
-    /*private final boolean available;
-    private final boolean online;
-    private final int remaining;*/
 
     public AttendanceBlock(Attendance attendance) {
         this.attendance = attendance;
@@ -26,14 +24,13 @@ public final class AttendanceBlock {
         return attendance.getDocumentLine().getDocument().getFullName();
     }
 
-    public LocalDate getDate() {
-        return attendance.getDate();
-    }
-
     public ResourceConfiguration getResourceConfiguration() {
         return resourceConfiguration;
     }
 
+    public Event getEvent() {
+        return attendance.getEvent();
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

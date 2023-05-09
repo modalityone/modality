@@ -9,4 +9,7 @@ import dev.webfx.stack.orm.entity.Entity;
  */
 public interface Attendance extends Entity, EntityHasDocumentLine, EntityHasDate {
 
+    default Event getEvent() {
+        return getDocumentLine().getDocument().getForeignEntity("event");
+    }
 }
