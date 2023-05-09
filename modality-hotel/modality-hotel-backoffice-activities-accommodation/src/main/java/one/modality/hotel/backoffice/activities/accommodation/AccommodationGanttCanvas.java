@@ -6,6 +6,7 @@ import dev.webfx.extras.geometry.Bounds;
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.ThemeRegistry;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.extras.time.layout.LayoutBounds;
 import dev.webfx.extras.time.layout.bar.LocalDateBar;
 import dev.webfx.extras.time.layout.bar.TimeBarUtil;
 import dev.webfx.extras.time.layout.canvas.LocalDateCanvasDrawer;
@@ -24,28 +25,27 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
 public class AccommodationGanttCanvas {
 
-    private static final double BAR_HEIGHT = 40;
+    private static final double BAR_HEIGHT = 20;
+    private static final double BAR_RADIUS = 10;
     private final static Color BAR_AVAILABLE_ONLINE_COLOR = Color.rgb(65, 186, 77);
     private final static Color BAR_AVAILABLE_OFFLINE_COLOR = Color.ORANGE;
     private final static Color BAR_SOLDOUT_COLOR = Color.rgb(255, 3, 5);
     private final static Color BAR_UNAVAILABLE_COLOR = Color.rgb(130, 135, 136);
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("d MMM");
 
     // The presentation model used by the logic code to query the server (see startLogic() method)
     private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
@@ -113,6 +113,7 @@ public class AccommodationGanttCanvas {
         // Setting the properties of barDrawer & roomDrawer (other properties are set in drawBar() & drawRoom())
         barDrawer.setStroke(Color.BLACK);
         barDrawer.setTextFill(Color.WHITE);
+        barDrawer.setRadius(BAR_RADIUS);
         parentRoomDrawer.setTextFill(Color.grayRgb(130));
         parentRoomDrawer.setStroke(Color.grayRgb(130));
         parentRoomDrawer.setBackgroundFill(Color.ALICEBLUE);
@@ -157,29 +158,18 @@ public class AccommodationGanttCanvas {
         // The bar wraps a block over 1 or several days (or always 1 day if the user hasn't ticked the grouping block
         // checkbox). So the bar instance is that block that was repeated over that period.
         AttendanceBlock block = bar.getInstance();
-        // The main info we display in the bar is a number which represents how many free beds are remaining for booking
-        //String remaining = String.valueOf(block.getRemaining());
-        // Setting the background fill:
-        /*barDrawer.setBackgroundFill(
-                !block.isAvailable() ?      BAR_UNAVAILABLE_COLOR :       // gray if unavailable
-                block.getRemaining() <= 0 ? BAR_SOLDOUT_COLOR :           // red if sold-out
-                block.isOnline() ?          BAR_AVAILABLE_ONLINE_COLOR :  // green if online
-                                            BAR_AVAILABLE_OFFLINE_COLOR); // orange if offline*/
-        barDrawer.setBackgroundFill(Color.RED);
-        // If the bar is wide enough we show "Beds" on top and the number on bottom, but if it is too narrow, we just
-        // display the number in the middle. Unavailable gray bars have no text at all by the way.
-        boolean isWideBar = b.getWidth() > 40;
-        /*barDrawer.setTopText(   isWideBar && block.isAvailable() ?   "Beds"   :   null    );
-        barDrawer.setMiddleText(isWideBar || !block.isAvailable() ?   null    : remaining );
-        barDrawer.setBottomText(isWideBar && block.isAvailable() ?  remaining :   null    );*/
-        barDrawer.setTopText(block.getPersonName());
-        String bottomText = "Check-in " + formatDate(block.getDate());
-        barDrawer.setBottomText(bottomText);
+        barDrawer.setBackgroundFill(Color.BLUE);
         barDrawer.drawBar(b, gc);
+        centerText(block.getPersonName(), b, gc);
     }
 
-    private static String formatDate(LocalDate date) {
-        return date.format(DATE_TIME_FORMATTER);
+    private void centerText(String s, Bounds b, GraphicsContext gc) {
+        Text text = new Text(s);
+        text.setFont(gc.getFont());
+        double x = b.getCenterX() - (text.getLayoutBounds().getWidth() / 2);
+        double y = b.getCenterY() + (text.getLayoutBounds().getHeight() / 2);
+        gc.setFill(Color.BLACK);
+        gc.fillText(s, x, y);
     }
 
     private void drawParentRoom(ResourceConfiguration rc, Bounds b, GraphicsContext gc) {
