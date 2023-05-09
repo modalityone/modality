@@ -9,17 +9,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import one.modality.base.shared.entities.Event;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class AccommodationKeyPane extends VBox {
 
     private static final double COLOR_BLOCK_HEIGHT = 20;
-    private List<Event> events = Collections.emptyList();
+
+    private Map<Event, Color> eventColors = new HashMap<>();
 
     public void setEvents(List<Event> events) {
-        this.events = new ArrayList<>(events);
         List<HBox> rows = new ArrayList<>(events.size());
         for (Event event : events) {
             Rectangle rectangle = new Rectangle(COLOR_BLOCK_HEIGHT, COLOR_BLOCK_HEIGHT);
@@ -34,8 +32,12 @@ public class AccommodationKeyPane extends VBox {
     }
 
     public Color getEventColor(Event event) {
-        int index = events.indexOf(event);
-        return getColor(index);
+        if (!eventColors.containsKey(event)) {
+            int nextColorIndex = eventColors.size();
+            Color color = getColor(nextColorIndex);
+            eventColors.put(event, color);
+        }
+        return eventColors.get(event);
     }
 
     private Color getColor(int index) {
