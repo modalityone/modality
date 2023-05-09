@@ -108,11 +108,7 @@ public class AccommodationGanttCanvas {
         entities.addListener(new ListChangeListener<Attendance>() {
              @Override
              public void onChanged(Change<? extends Attendance> change) {
-                 List<Event> events = entities.stream()
-                         .map(Attendance::getEvent)
-                         .distinct()
-                         .collect(Collectors.toList());
-                 controller.setEvents(events);
+                 controller.setEntities(entities);
              }
          });
 

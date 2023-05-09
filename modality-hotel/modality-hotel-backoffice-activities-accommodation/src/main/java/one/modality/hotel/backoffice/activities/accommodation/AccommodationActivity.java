@@ -8,9 +8,11 @@ import javafx.scene.paint.Color;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
+import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Event;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 final class AccommodationActivity extends OrganizationDependentViewDomainActivity implements
         AccommodationController,
@@ -18,10 +20,12 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
 
     private final AccommodationGanttCanvas accommodationGanttCanvas = new AccommodationGanttCanvas(this);
     private final AccommodationKeyPane accommodationKeyPane = new AccommodationKeyPane();
+    private final AccommodationSummaryPane accommodationSummaryPane = new AccommodationSummaryPane();
 
     @Override
     public Node buildUi() {
         BorderPane borderPane = new BorderPane(accommodationGanttCanvas.buildCanvasContainer());
+        borderPane.setBottom(accommodationSummaryPane);
         borderPane.setLeft(accommodationKeyPane);
 
         CheckBox showKeyCheckBox = new CheckBox("Show key");
@@ -35,8 +39,14 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
     }
 
     @Override
-    public void setEvents(List<Event> events) {
+    public void setEntities(List<Attendance> attendances) {
+        List<Event> events = attendances.stream()
+                .map(Attendance::getEvent)
+                .distinct()
+                .collect(Collectors.toList());
         accommodationKeyPane.setEvents(events);
+
+        accommodationSummaryPane.setEntities(attendances);
     }
 
     @Override

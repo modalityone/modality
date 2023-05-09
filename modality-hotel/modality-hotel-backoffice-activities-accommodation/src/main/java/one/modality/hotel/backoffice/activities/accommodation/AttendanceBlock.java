@@ -17,7 +17,7 @@ public final class AttendanceBlock {
 
     public AttendanceBlock(Attendance attendance) {
         this.attendance = attendance;
-        this.resourceConfiguration = attendance.getForeignEntity("scheduledResource").getForeignEntity("configuration");
+        this.resourceConfiguration = attendance.getResourceConfiguration();
     }
 
     public String getPersonName() {
