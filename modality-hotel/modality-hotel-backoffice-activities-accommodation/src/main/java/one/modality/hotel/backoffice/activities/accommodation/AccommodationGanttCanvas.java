@@ -104,13 +104,13 @@ public class AccommodationGanttCanvas {
                 barsLayout, // the layout that will receive the final list of bars as a result of the blocks grouping
                 blocksGroupingProperty); // optional property to eventually disable the blocks grouping (=> 1 bar per block if disabled)
 
+        // Update key with new colours when the entities change
         entities.addListener(new ListChangeListener<Attendance>() {
              @Override
              public void onChanged(Change<? extends Attendance> change) {
                  List<Event> events = entities.stream()
                          .map(Attendance::getEvent)
                          .distinct()
-                         .sorted((e1, e2) -> e1.getName().compareToIgnoreCase(e2.getName()))
                          .collect(Collectors.toList());
                  controller.setEvents(events);
              }

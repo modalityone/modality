@@ -10,6 +10,7 @@ import javafx.scene.shape.Rectangle;
 import one.modality.base.shared.entities.Event;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class AccommodationKeyPane extends VBox {
 
@@ -18,8 +19,13 @@ public class AccommodationKeyPane extends VBox {
     private Map<Event, Color> eventColors = new HashMap<>();
 
     public void setEvents(List<Event> events) {
-        List<HBox> rows = new ArrayList<>(events.size());
-        for (Event event : events) {
+        List<Event> sortedEvents = events.stream()
+                .distinct()
+                .sorted((e1, e2) -> e1.getName().compareToIgnoreCase(e2.getName()))
+                .collect(Collectors.toList());
+
+        List<HBox> rows = new ArrayList<>(sortedEvents.size());
+        for (Event event : sortedEvents) {
             Rectangle rectangle = new Rectangle(COLOR_BLOCK_HEIGHT, COLOR_BLOCK_HEIGHT);
             rectangle.setFill(getEventColor(event));
             Label label = new Label(event.getName());
