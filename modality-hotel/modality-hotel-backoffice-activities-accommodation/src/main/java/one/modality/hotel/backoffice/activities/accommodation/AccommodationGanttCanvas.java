@@ -32,6 +32,8 @@ import one.modality.crm.backoffice.organization.fx.FXOrganization;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
@@ -106,13 +108,20 @@ public class AccommodationGanttCanvas {
         entities.addListener((ListChangeListener<Attendance>) change -> controller.setEntities(entities));
 
         // Update summary pane when scheduled resources change
-        allScheduledResources.addListener((ListChangeListener<ScheduledResource>) change -> controller.setAllScheduledResource(allScheduledResources));
+        allScheduledResources.addListener((ListChangeListener<ScheduledResource>) change -> {
+            controller.setAllScheduledResource(allScheduledResources);
+            List<ResourceConfiguration> parents = allScheduledResources.stream()
+                    .map(ScheduledResource::getResourceConfiguration)
+                    .distinct()
+                    .collect(Collectors.toList());
+            barsLayout.getParents().setAll(parents);
+        });
 
         // Finishing setting up barsLayout
         barsLayout.setChildFixedHeight(BAR_HEIGHT);
         barsLayout.setChildParentReader(bar -> bar.getInstance().getResourceConfiguration());
-        barsLayout.setChildGrandparentReader(bar -> bar.getInstance().getResourceConfiguration().getItem());
-        barsLayout.setTetrisPacking(true);
+        //barsLayout.setChildGrandparentReader(bar -> bar.getInstance().getResourceConfiguration().getItem());
+        barsLayout.setTetrisPacking(true).setParentsProvided(true).setParentGrandparentReader(ResourceConfiguration::getItem);
         barsLayout.setChildTetrisMinWidthReader(bar -> WebFxKitLauncher.measureText(bar.getInstance().getPersonName(), font).getWidth());
 
         // Enabling canvas interaction (user can move & zoom in/out the time window)
