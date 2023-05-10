@@ -83,6 +83,8 @@ public class AccommodationGanttCanvas {
     private final BarDrawer grandparentRoomTypeDrawer = new BarDrawer(); // unique instance to draw all the room types
     private final AccommodationController controller;
 
+    private Font font;
+
     public AccommodationGanttCanvas(AccommodationController controller) {
         this.controller = controller;
         // Binding the presentation model and the barsLayout time window
@@ -111,6 +113,7 @@ public class AccommodationGanttCanvas {
         barsLayout.setChildParentReader(bar -> bar.getInstance().getResourceConfiguration());
         barsLayout.setChildGrandparentReader(bar -> bar.getInstance().getResourceConfiguration().getItem());
         barsLayout.setTetrisPacking(true);
+        barsLayout.setChildTetrisMinWidthReader(bar -> WebFxKitLauncher.measureText(bar.getInstance().getPersonName(), font).getWidth());
 
         // Enabling canvas interaction (user can move & zoom in/out the time window)
         barsDrawer.enableCanvasInteraction();
@@ -127,7 +130,7 @@ public class AccommodationGanttCanvas {
         grandparentRoomTypeDrawer.setTextFill(Color.rgb(0, 150, 214));
         // Updating the text font on any theme mode change that may impact it (light/dark mode, etc...)
         ThemeRegistry.runNowAndOnModeChange(() -> {
-            Font font = TextTheme.getFont(FontDef.font(13));
+            font = TextTheme.getFont(FontDef.font(13));
             barDrawer.setTextFont(font);
             parentRoomDrawer.setTextFont(font);
             grandparentRoomTypeDrawer.setTextFont(TextTheme.getFont(FontDef.font(FontWeight.BOLD,13)));
