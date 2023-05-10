@@ -19,6 +19,7 @@ module modality.base.client.gantt.canvas {
     requires webfx.extras.time.window;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
+    requires webfx.platform.resource;
     requires webfx.platform.util;
     requires webfx.stack.i18n;
 

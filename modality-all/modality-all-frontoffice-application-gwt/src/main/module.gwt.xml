@@ -142,6 +142,8 @@
     <public includes="images/s16/system/" path=""/>
     <resource path="images/s16/validation"/>
     <public includes="images/s16/validation/" path=""/>
+    <resource path="images/s32"/>
+    <public includes="images/s32/" path=""/>
     <resource path="images/s32/system"/>
     <public includes="images/s32/system/" path=""/>
     <resource path="images/svg/color"/>

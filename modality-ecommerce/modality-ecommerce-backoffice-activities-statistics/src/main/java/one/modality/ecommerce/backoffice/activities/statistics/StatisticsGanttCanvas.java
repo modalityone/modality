@@ -18,6 +18,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import one.modality.base.client.gantt.fx.highlight.FXGanttHighlight;
 import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Item;
@@ -85,6 +86,8 @@ public final class StatisticsGanttCanvas {
                 .setHorizontalStroke(Color.BLACK)
                 .setVerticalStroke(Color.BLACK)
         ;
+
+        FXGanttHighlight.addDayHighlight(barsLayout, barsDrawer);
 
         // Enabling canvas interaction (user can move & zoom in/out the time window)
         barsDrawer.enableCanvasInteraction();

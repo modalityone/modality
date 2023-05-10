@@ -5,10 +5,14 @@ module modality.base.client.gantt.fx {
     // Direct dependencies modules
     requires java.base;
     requires javafx.base;
+    requires javafx.graphics;
+    requires webfx.extras.canvas.layer;
+    requires webfx.extras.time.layout;
     requires webfx.extras.time.window;
     requires webfx.platform.console;
 
     // Exported packages
+    exports one.modality.base.client.gantt.fx.highlight;
     exports one.modality.base.client.gantt.fx.selection;
     exports one.modality.base.client.gantt.fx.timewindow;
     exports one.modality.base.client.gantt.fx.visibility;

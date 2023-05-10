@@ -18,6 +18,7 @@
         <resource-package>images.s16.security</resource-package>
         <resource-package>images.s16.system</resource-package>
         <resource-package>images.s16.validation</resource-package>
+        <resource-package>images.s32</resource-package>
         <resource-package>images.s32.system</resource-package>
         <resource-package>images.svg.color</resource-package>
         <resource-package>images.svg.mono</resource-package>

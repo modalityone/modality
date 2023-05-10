@@ -20,17 +20,20 @@ import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
 import dev.webfx.extras.time.window.TimeWindow;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.resource.Resource;
 import dev.webfx.platform.util.Objects;
 import dev.webfx.stack.i18n.I18n;
 import javafx.animation.Interpolator;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import one.modality.base.client.gantt.fx.highlight.FXGanttHighlight;
 import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
@@ -90,10 +93,14 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
                 // 1) when the layout mode changes (ex: compact mode) => impact the first layer height
                 FXLayoutMode.layoutModeProperty(),
                 // 2) when the gantt visibility changes (ex: with/without events) => impact layers visibility
-                FXGanttVisibility.ganttVisibilityProperty());
+                FXGanttVisibility.ganttVisibilityProperty()
+        );
+        FXProperties.runOnPropertiesChange(this::markCanvasAsDirty, FXGanttHighlight.ganttHighlightedDayProperty());
 
         // Updating i18n texts when necessary
         FXProperties.runNowAndOnPropertiesChange(this::updateI18nTexts, I18n.dictionaryProperty());
+
+        FXGanttHighlight.addDayHighlight(daysLayer, globalCanvasDrawer);
     }
 
     public Pane getCanvasContainer() {
@@ -376,12 +383,19 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
                 .drawBar(b, gc);
     }
 
+    private static final Image TODAY_IMAGE = new Image(Resource.toUrl("/images/s32/sun.png", DatedGanttCanvas.class), true);
+
+
     // method to draw 1 day - may be called many times during the draw pass
     private void drawDay(LocalDate day, Bounds b, GraphicsContext gc) {
         if (stripLayer == daysLayer)
             strokeStrip(b, gc);
 
-        boolean selected = Objects.areEquals(daysLayer.getSelectedChild(), day);
+        boolean today = Objects.areEquals(day, LocalDate.now());
+
+        boolean highlighted = Objects.areEquals(day, FXGanttHighlight.getGanttHighlightedDay());
+
+        boolean selected = Objects.areEquals(day, daysLayer.getSelectedChild());
         String dayOfWeek = i18nDaysOfWeek[day.getDayOfWeek().ordinal()];
         if (dayOfWeek != null) { // null may happen if i18n dictionary is not yet loaded
             if (dayWidth < 100)
@@ -390,7 +404,8 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
         String dayOfMonth = (day.getDayOfMonth() < 10 ? "0" : "") + day.getDayOfMonth();
 
         dayBarDrawer
-                .setBackgroundFill(TimeTheme.getDayOfWeekBackgroundColor(day, selected))
+                .setBackgroundFill(highlighted ? Color.AQUAMARINE : TimeTheme.getDayOfWeekBackgroundColor(day, selected))
+                .setImage(today ? TODAY_IMAGE : null)
                 .setTopText(dayOfWeek)
                 .setBottomText(dayOfMonth)
                 .setTextFill(selected ? daySelectedTextFill : dayTextFill)
