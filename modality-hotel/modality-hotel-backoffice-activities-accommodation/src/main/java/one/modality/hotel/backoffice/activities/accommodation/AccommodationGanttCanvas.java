@@ -103,20 +103,10 @@ public class AccommodationGanttCanvas {
                 blocksGroupingProperty); // optional property to eventually disable the blocks grouping (=> 1 bar per block if disabled)
 
         // Update key with new colours when the entities change
-        entities.addListener(new ListChangeListener<>() {
-             @Override
-             public void onChanged(Change<? extends Attendance> change) {
-                 controller.setEntities(entities);
-             }
-         });
+        entities.addListener((ListChangeListener<Attendance>) change -> controller.setEntities(entities));
 
         // Update summary pane when scheduled resources change
-        allScheduledResources.addListener(new ListChangeListener<>() {
-            @Override
-            public void onChanged(Change<? extends ScheduledResource> change) {
-                controller.setAllScheduledResource(allScheduledResources);
-            }
-        });
+        allScheduledResources.addListener((ListChangeListener<ScheduledResource>) change -> controller.setAllScheduledResource(allScheduledResources));
 
         // Finishing setting up barsLayout
         barsLayout.setChildFixedHeight(BAR_HEIGHT);
