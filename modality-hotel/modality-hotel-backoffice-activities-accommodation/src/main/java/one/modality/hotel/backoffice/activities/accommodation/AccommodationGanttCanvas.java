@@ -30,6 +30,9 @@ import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
 import one.modality.base.shared.entities.*;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
@@ -37,7 +40,7 @@ public class AccommodationGanttCanvas {
 
     private static final double BAR_HEIGHT = 20;
     private static final double BAR_RADIUS = 10;
-    private final static Color BAR_COLOR = Color.rgb(8, 148, 212);
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("d MMM");
 
     // The presentation model used by the logic code to query the server (see startLogic() method)
     private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
@@ -100,7 +103,7 @@ public class AccommodationGanttCanvas {
                 blocksGroupingProperty); // optional property to eventually disable the blocks grouping (=> 1 bar per block if disabled)
 
         // Update key with new colours when the entities change
-        entities.addListener(new ListChangeListener<Attendance>() {
+        entities.addListener(new ListChangeListener<>() {
              @Override
              public void onChanged(Change<? extends Attendance> change) {
                  controller.setEntities(entities);
@@ -108,7 +111,7 @@ public class AccommodationGanttCanvas {
          });
 
         // Update summary pane when scheduled resources change
-        allScheduledResources.addListener(new ListChangeListener<ScheduledResource>() {
+        allScheduledResources.addListener(new ListChangeListener<>() {
             @Override
             public void onChanged(Change<? extends ScheduledResource> change) {
                 controller.setAllScheduledResource(allScheduledResources);
@@ -175,7 +178,7 @@ public class AccommodationGanttCanvas {
         // checkbox). So the bar instance is that block that was repeated over that period.
         AttendanceBlock block = bar.getInstance();
 
-        String fullText = block.getPersonName() + " - Check-out " + bar.getEndTime();
+        String fullText = block.getPersonName() + " - Check-out " + formatDate(bar.getEndTime());
         if (textFitsBoundsWidth(fullText, b, gc)) {
             barDrawer.setMiddleText(fullText);
         } else {
@@ -196,6 +199,10 @@ public class AccommodationGanttCanvas {
         barDrawer.setClipText(true);
         barDrawer.setTextFill(Color.WHITE);
         barDrawer.drawBar(b, gc);
+    }
+
+    private static String formatDate(LocalDate date) {
+        return DATE_FORMATTER.format(date);
     }
 
     private static boolean textFitsBoundsWidth(String s, Bounds b, GraphicsContext gc) {
