@@ -36,6 +36,12 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
+      - name: Retrieve DB endpoint and password
+        uses: aws-actions/aws-secretsmanager-get-secrets@v1
+        with:
+          secret-ids: |
+            MODALITY_DATABASE_HOST, modality-demo-db-endpoint
+            MODALITY_DATABASE_PASSWORD, modality-demo-db-secret
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
@@ -50,11 +56,11 @@ jobs:
           AWS_REGION: ${{ vars.AWS_REGION }}
           ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
           ECS_SERVICE: ${{ vars.ECS_SERVICE }}
-          MODALITY_DATABASE_HOST: ${{ secrets.MODALITY_DATABASE_HOST }}
+          MODALITY_DATABASE_HOST: ${{ env.MODALITY_DATABASE_HOST }}
           MODALITY_DATABASE_PORT: ${{ secrets.MODALITY_DATABASE_PORT }}
           MODALITY_DATABASE_NAME: ${{ secrets.MODALITY_DATABASE_NAME }}
           MODALITY_DATABASE_USERNAME: ${{ secrets.MODALITY_DATABASE_USERNAME }}
-          MODALITY_DATABASE_PASSWORD: ${{ secrets.MODALITY_DATABASE_PASSWORD }}
+          MODALITY_DATABASE_PASSWORD: ${{ env.MODALITY_DATABASE_PASSWORD }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
           cp $FAT_JAR docker/aws-service/modality-service
