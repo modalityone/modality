@@ -13,6 +13,7 @@ import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.ScheduledResource;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,6 +53,11 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
         accommodationKeyPane.setEvents(events);
 
         accommodationSummaryPane.setEntities(attendances);
+    }
+
+    @Override
+    public void setAllScheduledResource(List<ScheduledResource> allScheduledResource) {
+        accommodationSummaryPane.setAllScheduledResource(allScheduledResource);
     }
 
     @Override

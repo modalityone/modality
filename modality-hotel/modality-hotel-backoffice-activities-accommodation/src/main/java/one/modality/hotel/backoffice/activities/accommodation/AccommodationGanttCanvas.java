@@ -27,10 +27,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
-import one.modality.base.shared.entities.Attendance;
-import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.Item;
-import one.modality.base.shared.entities.ResourceConfiguration;
+import one.modality.base.shared.entities.*;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
@@ -45,8 +42,10 @@ public class AccommodationGanttCanvas {
     // The presentation model used by the logic code to query the server (see startLogic() method)
     private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
 
-    // The result returned by the server will be stored in that observable list of Attendance entities:
+    // The results returned by the server will be stored in observable lists of Attendance and ScheduledResource entities:
     private final ObservableList<Attendance> entities = FXCollections.observableArrayList();
+
+    private final ObservableList<ScheduledResource> allScheduledResources = FXCollections.observableArrayList();
 
     /**
      * We will ask TimeBarUtil to automatically convert those Attendance entities first into AttendanceBlock
@@ -107,6 +106,14 @@ public class AccommodationGanttCanvas {
                  controller.setEntities(entities);
              }
          });
+
+        // Update summary pane when scheduled resources change
+        allScheduledResources.addListener(new ListChangeListener<ScheduledResource>() {
+            @Override
+            public void onChanged(Change<? extends ScheduledResource> change) {
+                controller.setAllScheduledResource(allScheduledResources);
+            }
+        });
 
         // Finishing setting up barsLayout
         barsLayout.setChildFixedHeight(BAR_HEIGHT);
@@ -221,6 +228,19 @@ public class AccommodationGanttCanvas {
                 //.always(pm.timeWindowEndProperty(),   endDate   -> where("a.date <= ?", endDate))
                 // Storing the result directly in the events layer
                 .storeEntitiesInto(entities)
+                // We are now ready to start
+                .start();
+
+        ReactiveEntitiesMapper.<ScheduledResource>createPushReactiveChain(mixin)
+                .always("{class: 'ScheduledResource', alias: 'sr', fields: 'date,available,online,max,configuration.(name,item.name),(select count(1) from Attendance where scheduledResource=sr) as booked'}")
+                .always(orderBy("configuration.item.ord,configuration.name,configuration,date")) // Order is important for TimeBarUtil (see comment on barsLayout)
+                // Returning events for the selected organization only (or returning an empty set if no organization is selected)
+                .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("configuration.resource.site.organization=?", o))
+                // Restricting events to those appearing in the time window
+                .always(pm.timeWindowStartProperty(), startDate -> where("sr.date >= ?", startDate))
+                .always(pm.timeWindowEndProperty(),   endDate   -> where("sr.date <= ?", endDate))
+                // Storing the result directly in the events layer
+                .storeEntitiesInto(allScheduledResources)
                 // We are now ready to start
                 .start();
     }

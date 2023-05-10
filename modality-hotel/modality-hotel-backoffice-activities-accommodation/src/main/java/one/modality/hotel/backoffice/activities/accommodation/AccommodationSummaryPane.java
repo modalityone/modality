@@ -8,6 +8,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.control.Label;
 import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.shared.entities.Attendance;
+import one.modality.base.shared.entities.ScheduledResource;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -23,6 +24,7 @@ public class AccommodationSummaryPane extends GridPane {
     private final ObjectProperty<LocalDate> date = new SimpleObjectProperty<>(LocalDate.now());
 
     private List<Attendance> attendances = Collections.emptyList();
+    private List<ScheduledResource> allScheduledResource = Collections.emptyList();
 
     public AccommodationSummaryPane() {
         setStyle("-fx-background-color: #e0dcdc");
@@ -40,15 +42,22 @@ public class AccommodationSummaryPane extends GridPane {
         refresh();
     }
 
+    public void setAllScheduledResource(List<ScheduledResource> allScheduledResource) {
+        this.allScheduledResource = new ArrayList<>(allScheduledResource);
+        refresh();
+    }
+
     private void refresh() {
         List<Attendance> attendancesForDate = filterAttendancesByDate();
         long numRoomsOccupied = countRoomsOccupied(attendancesForDate);
+        long numRoomsAvailable = countAllRooms() - numRoomsOccupied;
         long numGuests = countGuests(attendancesForDate);
 
         getChildren().clear();
         add(buildLabel("Status, " + formatDate()), 0, 0);
         add(buildLabel("Rooms occupied: " + numRoomsOccupied), 1, 0);
-        add(buildLabel("Guests: " + numGuests), 2, 0);
+        add(buildLabel("Rooms available: " + numRoomsAvailable), 2, 0);
+        add(buildLabel("Guests: " + numGuests), 3, 0);
         updateColumnWidths();
     }
 
@@ -95,6 +104,12 @@ public class AccommodationSummaryPane extends GridPane {
         return attendancesForDate.stream()
                 .map(Attendance::getResourceConfiguration)
                 .distinct()
+                .count();
+    }
+
+    private long countAllRooms() {
+        return allScheduledResource.stream()
+                .filter(scheduledResource -> matchesDate(scheduledResource.getDate()))
                 .count();
     }
 
