@@ -3,85 +3,84 @@ package one.modality.event.backoffice.events.ganttcanvas;
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.ThemeRegistry;
 import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.extras.timelayout.ChildPosition;
-import dev.webfx.extras.timelayout.canvas.TimeCanvasUtil;
-import dev.webfx.extras.timelayout.gantt.GanttLayout;
+import dev.webfx.extras.canvas.bar.BarDrawer;
+import dev.webfx.extras.geometry.Bounds;
+import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
-import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
-import one.modality.base.client.ganttcanvas.LocalDateLayeredGanttCanvas;
+import one.modality.base.client.ganttcanvas.DatedGanttCanvas;
 import one.modality.base.shared.entities.Event;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.event.backoffice.event.fx.FXEvent;
 import one.modality.event.backoffice.events.pm.EventsPresentationModel;
 import one.modality.event.client.theme.EventTheme;
 
-import java.time.LocalDate;
-
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
 /**
  * @author Bruno Salmon
  */
-@SuppressWarnings("FieldCanBeLocal") // To remove IntelliJ IDEA warnings regarding constants
 public final class EventsGanttCanvas {
 
-    // Constants:
-    private final double EVENT_HEIGHT = 20;
-    private final double RADIUS = 10;
-    private final double H_SPACING = 2; // Max value, may be reduced when zooming out
-    private final double V_SPACING = 2;
+    // Style constants used for drawing bars in the canvas:
+    private static final double BAR_HEIGHT = 18;
+    private static final double BAR_RADIUS = 10;
+    private static final double BAR_H_SPACING = 2; // Max value, may be reduced when zooming out
+    private static final double BAR_V_SPACING = 2;
 
-    private final EventsPresentationModel pm;
-    // The layered Gantt canvas that already displays dates, weeks, months & years (depending on zoom level)
-    private final LocalDateLayeredGanttCanvas layeredGanttCanvas = new LocalDateLayeredGanttCanvas();
+    private final EventsPresentationModel pm = new EventsPresentationModel();
+    // The dated Gantt canvas that already displays dates, weeks, months & years (depending on zoom level)
+    private final DatedGanttCanvas datedGanttCanvas = new DatedGanttCanvas();
     // The additional layer that will display the events
-    private final GanttLayout<Event, LocalDate> eventsLayer = new GanttLayout<>();
-    private Font eventFont;
+    private final LocalDateGanttLayout<Event> eventsLayer = new LocalDateGanttLayout<>();
+    private final BarDrawer eventBarDrawer = new BarDrawer();
 
-    public EventsGanttCanvas(EventsPresentationModel pm) {
-        this.pm = pm;
+    public EventsGanttCanvas() {
+        // Binding the presentation model time window with the UI, here the dated Gantt canvas - probably bound itself to global FXGanttTimeWindow by application code through setupFXBindings()
+        pm.organizationIdProperty().bind(FXOrganization.organizationProperty());
+        pm.bindTimeWindow(datedGanttCanvas);
 
         // Setting up the events layer
-        eventsLayer.setChildFixedHeight(EVENT_HEIGHT);
-        eventsLayer.setVSpacing(V_SPACING);
+        eventsLayer.setChildFixedHeight(BAR_HEIGHT);
+        eventsLayer.setVSpacing(BAR_V_SPACING);
         eventsLayer.setInclusiveChildStartTimeReader(Event::getStartDate);
         eventsLayer.setInclusiveChildEndTimeReader(Event::getEndDate);
+        eventsLayer.setTetrisPacking(true);
+        eventsLayer.setSelectionEnabled(true);
 
-        // Adding it to the layered gantt canvas, and passing the drawEvent method
-        layeredGanttCanvas.addLayer(eventsLayer, this::drawEvent);
+        // Passing it to the gantt canvas as an additional layer, that will be automatically drawn using the drawEvent method
+        datedGanttCanvas.addLayer(eventsLayer, this::drawEvent);
 
-        // Binding the presentation model with the canvas time window (first applying pm => timeWindow, then binding timeWindow => pm)
-        layeredGanttCanvas.bindTimeWindow(pm.timeWindowStartProperty(), pm.timeWindowEndProperty(), true, true);
+        // Activating user interaction (user can move & zoom in/out the time window) and date selection
+        datedGanttCanvas.setInteractive(true);
+        datedGanttCanvas.setDateSelectionEnabled(true);
 
-        // Activating user interaction (user can move & zoom in/out the time window)
-        layeredGanttCanvas.setInteractive(true);
-
-        // Updating the events font on any theme mode change (light/dark mode, etc...)
-        ThemeRegistry.runNowAndOnModeChange(() ->
-                eventFont = TextTheme.getFont(FontDef.font(FontWeight.BOLD, 13))
-        );
+        // Setting up eventBarDrawer global properties (properties specific to events are set in drawEvent())
+        eventBarDrawer.setRadius(BAR_RADIUS);
+        // The following properties depend on the theme mode (light/dark mode, etc...):
+        ThemeRegistry.runNowAndOnModeChange(() -> {
+            eventBarDrawer.setTextFont(TextTheme.getFont(FontDef.font(FontWeight.BOLD, 13)));
+            eventBarDrawer.setTextFill(EventTheme.getEventTextColor());
+        });
     }
 
-    private void drawEvent(Event event, ChildPosition<LocalDate> p, GraphicsContext gc) {
-        double hPadding = Math.min(p.getWidth() * 0.01, H_SPACING);
+    private void drawEvent(Event event, Bounds b, GraphicsContext gc) {
         boolean selected = Entities.sameId(event, eventsLayer.getSelectedChild());
-        TimeCanvasUtil.fillRect(p, hPadding, EventTheme.getEventBackgroundColor(event, selected), RADIUS, gc);
-        if (p.getWidth() > 5) { // Unnecessary to draw text when width < 5px (this skip makes a big performance improvement on big zoom out over many events - because the text clip operation is time-consuming)
-            gc.setFont(eventFont);
-            TimeCanvasUtil.fillCenterText(p, hPadding, event.getPrimaryKey() + " " + event.getName(), EventTheme.getEventTextColor(), gc);
-        }
+        eventBarDrawer.sethPadding(Math.min(b.getWidth() * 0.01, BAR_H_SPACING));
+        eventBarDrawer.setBackgroundFill(EventTheme.getEventBackgroundColor(event, selected));
+        eventBarDrawer.setMiddleText(event.getPrimaryKey() + " " + event.getName());
+        eventBarDrawer.drawBar(b, gc);
     }
 
-    public Pane getCanvasPane() {
-        return layeredGanttCanvas.getCanvasPane();
+    public Pane getCanvasContainer() {
+        return datedGanttCanvas.getCanvasContainer();
     }
 
     public ObjectProperty<Event> selectedEventProperty() {
@@ -95,17 +94,12 @@ public final class EventsGanttCanvas {
 
     private void setupFXBindings() {
         bindFXEventToSelection();
-        bindFXOrganization();
-        layeredGanttCanvas.setupFXBindings();
+        datedGanttCanvas.setupFXBindings();
     }
 
     private void bindFXEventToSelection() {
         selectedEventProperty().set(FXEvent.getEvent());
         FXEvent.eventProperty().bindBidirectional(selectedEventProperty());
-    }
-
-    private void bindFXOrganization() {
-        pm.organizationIdProperty().bind(FXOrganization.organizationProperty());
     }
 
     private void startLogic(Object mixin) {

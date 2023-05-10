@@ -5,6 +5,7 @@ module modality.base.client.gantt.fx {
     // Direct dependencies modules
     requires java.base;
     requires javafx.base;
+    requires webfx.extras.time.window;
     requires webfx.platform.console;
 
     // Exported packages

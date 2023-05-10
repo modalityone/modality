@@ -13,7 +13,6 @@ module modality.all.backoffice.application {
     requires modality.crm.backoffice.organization.fx;
     requires modality.event.backoffice.event.fx;
     requires modality.event.backoffice.events.ganttcanvas;
-    requires modality.event.backoffice.events.pm;
     requires webfx.extras.theme;
     requires webfx.kit.util;
     requires webfx.platform.util;

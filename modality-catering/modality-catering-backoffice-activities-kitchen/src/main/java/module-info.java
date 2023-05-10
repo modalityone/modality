@@ -14,8 +14,9 @@ module modality.catering.backoffice.activities.kitchen {
     requires modality.crm.backoffice.organization.fx;
     requires webfx.extras.scalepane;
     requires webfx.extras.theme;
-    requires webfx.extras.timelayout;
-    requires webfx.extras.timelayout.calendar;
+    requires webfx.extras.time;
+    requires webfx.extras.time.layout;
+    requires webfx.extras.time.layout.calendar;
     requires webfx.extras.util.layout;
     requires webfx.kit.launcher;
     requires webfx.kit.util;

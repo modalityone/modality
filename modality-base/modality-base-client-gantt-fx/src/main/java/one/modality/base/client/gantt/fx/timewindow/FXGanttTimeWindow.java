@@ -1,55 +1,53 @@
 package one.modality.base.client.gantt.fx.timewindow;
 
+import dev.webfx.extras.time.window.impl.TimeWindowImpl;
+import dev.webfx.platform.console.Console;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 /**
  * @author Bruno Salmon
  */
-public class FXGanttTimeWindow {
+public final class FXGanttTimeWindow extends TimeWindowImpl<LocalDate> {
 
-    private final static ObjectProperty<LocalDate> ganttTimeWindowStartProperty = new SimpleObjectProperty<>() {
-        @Override
-        protected void invalidated() {
-            dev.webfx.platform.console.Console.log("ganttTimeWindowStart = " + get());
-        }
-    };
+    @Override
+    protected void onTimeWindowChanged() {
+        Console.log("ganttTimeWindow = [" + getTimeWindowStart() + ", " + getTimeWindowEnd() + "]");
+    }
 
-    private final static ObjectProperty<LocalDate> ganttTimeWindowEndProperty = new SimpleObjectProperty<>() {
-        @Override
-        protected void invalidated() {
-            dev.webfx.platform.console.Console.log("ganttTimeWindowEnd = " + get());
-        }
-    };
+    private FXGanttTimeWindow() {
+        setTimeWindow(LocalDate.now().minusWeeks(1), LocalDate.now().plusWeeks(3));
+    }
+
+    private final static FXGanttTimeWindow ganttTimeWindow = new FXGanttTimeWindow();
+
+    public static FXGanttTimeWindow ganttTimeWindow() {
+        return ganttTimeWindow;
+    }
 
     public static ObjectProperty<LocalDate> ganttTimeWindowStartProperty() {
-        return ganttTimeWindowStartProperty;
+        return ganttTimeWindow().timeWindowStartProperty();
     }
 
     public static LocalDate getGanttTimeWindowStart() {
-        return ganttTimeWindowStartProperty().get();
+        return ganttTimeWindow().getTimeWindowStart();
     }
 
     public static void setGanttTimeWindowStart(LocalDate timeWindowStart) {
-        if (!Objects.equals(timeWindowStart, getGanttTimeWindowStart()))
-            ganttTimeWindowStartProperty().set(timeWindowStart);
+        ganttTimeWindow().setTimeWindowStart(timeWindowStart);
     }
 
     public static ObjectProperty<LocalDate> ganttTimeWindowEndProperty() {
-        return ganttTimeWindowEndProperty;
+        return ganttTimeWindow().timeWindowEndProperty();
     }
 
     public static LocalDate getGanttTimeWindowEnd() {
-        return ganttTimeWindowEndProperty().get();
+        return ganttTimeWindow().getTimeWindowEnd();
     }
 
     public static void setGanttTimeWindowEnd(LocalDate timeWindowEnd) {
-        if (!Objects.equals(timeWindowEnd, getGanttTimeWindowEnd()))
-            ganttTimeWindowEndProperty().set(timeWindowEnd);
+        ganttTimeWindow().setTimeWindowEnd(timeWindowEnd);
     }
-    
     
 }

@@ -371,6 +371,7 @@
     <!--========================< webfx-platform-javabase-emul-gwt >========================-->
     <source path="emul/java/lang/ref"/>
     <source path="emul/java/util"/>
+    <source path="emul/java/util/function"/>
     <source path="emul/java/util/regex"/>
     <!--==============================< webfx-platform-json >===============================-->
     <source path="dev/webfx/platform/json"/>
