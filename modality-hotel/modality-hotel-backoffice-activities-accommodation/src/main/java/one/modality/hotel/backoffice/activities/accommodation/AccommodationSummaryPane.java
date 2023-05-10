@@ -1,9 +1,12 @@
 package one.modality.hotel.backoffice.activities.accommodation;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.HPos;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.control.Label;
+import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.shared.entities.Attendance;
 
 import java.time.LocalDate;
@@ -17,11 +20,20 @@ public class AccommodationSummaryPane extends GridPane {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yy");
 
+    private final ObjectProperty<LocalDate> date = new SimpleObjectProperty<>(LocalDate.now());
+
     private List<Attendance> attendances = Collections.emptyList();
-    private LocalDate date = LocalDate.now();
 
     public AccommodationSummaryPane() {
         setStyle("-fx-background-color: #e0dcdc");
+
+        // Bind the date to the one selected in the Gantt chart, provided it is a date as opposed to a month
+        FXGanttSelection.ganttSelectedObjectProperty().addListener((observable, oldValue, newValue) -> {
+            if (FXGanttSelection.ganttSelectedObjectProperty().get() instanceof LocalDate) {
+                date.set((LocalDate) FXGanttSelection.ganttSelectedObjectProperty().get());
+            }
+        });
+        date.addListener((observable, oldValue, newValue) -> refresh());
     }
     public void setEntities(List<Attendance> attendances) {
         this.attendances = new ArrayList<>(attendances);
@@ -64,7 +76,7 @@ public class AccommodationSummaryPane extends GridPane {
     }
 
     private String formatDate() {
-        return DATE_FORMATTER.format(date);
+        return DATE_FORMATTER.format(date.get());
     }
 
     private List<Attendance> filterAttendancesByDate() {
@@ -74,9 +86,9 @@ public class AccommodationSummaryPane extends GridPane {
     }
 
     private boolean matchesDate(LocalDate otherDate) {
-        return date.getYear() == otherDate.getYear() &&
-                date.getMonth() == otherDate.getMonth() &&
-                date.getDayOfMonth() == otherDate.getDayOfMonth();
+        return date.get().getYear() == otherDate.getYear() &&
+                date.get().getMonth() == otherDate.getMonth() &&
+                date.get().getDayOfMonth() == otherDate.getDayOfMonth();
     }
 
     private long countRoomsOccupied(List<Attendance> attendancesForDate) {
