@@ -33,6 +33,7 @@ module modality.hotel.backoffice.activities.accommodation {
     requires webfx.extras.canvas.bar;
     requires webfx.extras.util.layout;
     requires webfx.extras.time.window;
+    requires webfx.kit.launcher;
 
     // Exported packages
     exports one.modality.hotel.backoffice.activities.accommodation;

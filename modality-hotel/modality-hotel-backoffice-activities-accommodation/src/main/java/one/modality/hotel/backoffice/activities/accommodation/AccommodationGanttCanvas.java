@@ -6,14 +6,14 @@ import dev.webfx.extras.geometry.Bounds;
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.ThemeRegistry;
 import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.extras.time.layout.LayoutBounds;
 import dev.webfx.extras.time.layout.bar.LocalDateBar;
 import dev.webfx.extras.time.layout.bar.TimeBarUtil;
 import dev.webfx.extras.time.layout.canvas.LocalDateCanvasDrawer;
 import dev.webfx.extras.time.layout.canvas.TimeCanvasUtil;
 import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
-import dev.webfx.extras.time.layout.gantt.canvas.GanttCanvasUtil;
+import dev.webfx.extras.time.layout.gantt.canvas.ParentsCanvasDrawer;
 import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -26,18 +26,12 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
@@ -148,8 +142,9 @@ public class AccommodationGanttCanvas {
         // That scrollPane will contain a splitPane showing the list of rooms on its left side, and the blocks/bars on
         // the right side. To show the list of rooms, we just use a ParentCanvasPane which displays the parents of the
         // barsLayout (the parents are ResourceConfiguration instances as set in barsLayout.setChildParentReader() above)
-        GanttCanvasUtil.addParentAndGrandParentsDrawing(barsLayout, barsDrawer, this::drawParentRoom, 150,
-                this::drawGrandParentRoomType);
+        new ParentsCanvasDrawer(barsLayout, barsDrawer, this::drawParentRoom, this::drawGrandParentRoomType)
+                .setHorizontalStroke(Color.GRAY)
+                .setParentWidth(150);
         // We embed the canvas in a VirtualCanvasPane which has 2 functions:
         // 1) As a CanvasPane it is responsible for automatically resizing the canvas when the user resizes the UI, and
         // for calling the canvas refresher (the piece of code that redraws the canvas). TimeCanvasUtil will actually
@@ -169,20 +164,24 @@ public class AccommodationGanttCanvas {
         // The bar wraps a block over 1 or several days (or always 1 day if the user hasn't ticked the grouping block
         // checkbox). So the bar instance is that block that was repeated over that period.
         AttendanceBlock block = bar.getInstance();
+
+        String fullText = block.getPersonName() + " - Check-out " + block.getEndDate();
+        if (textFitsBoundsWidth(fullText, b, gc)) {
+            barDrawer.setMiddleText(fullText);
+        } else {
+            barDrawer.setMiddleText(block.getPersonName());
+        }
+
         Event event = block.getEvent();
         Color barColor = controller.getEventColor(event);
+
         barDrawer.setBackgroundFill(barColor);
         barDrawer.drawBar(b, gc);
-        centerText(block.getPersonName(), b, gc);
     }
 
-    private void centerText(String s, Bounds b, GraphicsContext gc) {
-        Text text = new Text(s);
-        text.setFont(gc.getFont());
-        double x = b.getCenterX() - (text.getLayoutBounds().getWidth() / 2);
-        double y = b.getCenterY() + (text.getLayoutBounds().getHeight() / 2);
-        gc.setFill(Color.BLACK);
-        gc.fillText(s, x, y);
+    private static boolean textFitsBoundsWidth(String s, Bounds b, GraphicsContext gc) {
+        javafx.geometry.Bounds textBounds = WebFxKitLauncher.measureText(s, gc.getFont());
+        return b.getWidth() >= textBounds.getWidth();
     }
 
     private void drawParentRoom(ResourceConfiguration rc, Bounds b, GraphicsContext gc) {

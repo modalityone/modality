@@ -3,7 +3,6 @@ package one.modality.hotel.backoffice.activities.accommodation;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ResourceConfiguration;
-import one.modality.base.shared.entities.ScheduledResource;
 
 import java.time.LocalDate;
 
@@ -22,6 +21,10 @@ public final class AttendanceBlock {
 
     public String getPersonName() {
         return attendance.getDocumentLine().getDocument().getFullName();
+    }
+
+    public LocalDate getEndDate() {
+        return attendance.getDate();
     }
 
     public ResourceConfiguration getResourceConfiguration() {
