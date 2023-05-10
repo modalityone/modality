@@ -168,7 +168,7 @@ public class AccommodationGanttCanvas {
         // checkbox). So the bar instance is that block that was repeated over that period.
         AttendanceBlock block = bar.getInstance();
 
-        String fullText = block.getPersonName() + " - Check-out " + block.getEndDate();
+        String fullText = block.getPersonName() + " - Check-out " + bar.getEndTime();
         if (textFitsBoundsWidth(fullText, b, gc)) {
             barDrawer.setMiddleText(fullText);
         } else {
@@ -178,8 +178,16 @@ public class AccommodationGanttCanvas {
         Event event = block.getEvent();
         Color barColor = controller.getEventColor(event);
 
-        barDrawer.setBackgroundFill(barColor)
-                .setClipText(false);
+        barDrawer.setBackgroundFill(barColor);
+
+        // First draw the un-clipped text in a dark colour which contrasts with the background of the chart
+        barDrawer.setClipText(false);
+        barDrawer.setTextFill(Color.GRAY);
+        barDrawer.drawBar(b, gc);
+
+        // Second draw the clipped text in a light colour which contrasts with the background of the bar
+        barDrawer.setClipText(true);
+        barDrawer.setTextFill(Color.WHITE);
         barDrawer.drawBar(b, gc);
     }
 
@@ -205,12 +213,12 @@ public class AccommodationGanttCanvas {
         ReactiveEntitiesMapper.<Attendance>createPushReactiveChain(mixin)
                 .always("{class: 'Attendance', alias: 'a', fields: 'date,documentLine.document.(person_firstName,person_lastName),scheduledResource.configuration.(name,item.name),documentLine.document.event.name'}")
                 .always(where("scheduledResource is not null"))
-                .always(orderBy("scheduledResource.configuration.item.ord,scheduledResource.configuration.name,documentLine.document.person_lastName,documentLine.document.person_firstName,date))")) // Order is important for TimeBarUtil (see comment on barsLayout)
+                .always(orderBy("scheduledResource.configuration.item.ord,scheduledResource.configuration.name,documentLine.document.person_lastName,documentLine.document.person_firstName,date")) // Order is important for TimeBarUtil (see comment on barsLayout)
                 // Returning events for the selected organization only (or returning an empty set if no organization is selected)
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("documentLine.document.event.organization=?", o))
                 // Restricting events to those appearing in the time window
                 .always(pm.timeWindowStartProperty(), startDate -> where("a.date >= ?", startDate))
-                .always(pm.timeWindowEndProperty(),   endDate   -> where("a.date <= ?", endDate))
+                //.always(pm.timeWindowEndProperty(),   endDate   -> where("a.date <= ?", endDate))
                 // Storing the result directly in the events layer
                 .storeEntitiesInto(entities)
                 // We are now ready to start

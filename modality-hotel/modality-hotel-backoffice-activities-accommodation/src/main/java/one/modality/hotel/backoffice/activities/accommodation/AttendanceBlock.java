@@ -4,8 +4,6 @@ import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ResourceConfiguration;
 
-import java.time.LocalDate;
-
 /**
  * @author Dan Newman
  */
@@ -21,10 +19,6 @@ public final class AttendanceBlock {
 
     public String getPersonName() {
         return attendance.getDocumentLine().getDocument().getFullName();
-    }
-
-    public LocalDate getEndDate() {
-        return attendance.getDate();
     }
 
     public ResourceConfiguration getResourceConfiguration() {
