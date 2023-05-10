@@ -175,7 +175,8 @@ public class AccommodationGanttCanvas {
         Event event = block.getEvent();
         Color barColor = controller.getEventColor(event);
 
-        barDrawer.setBackgroundFill(barColor);
+        barDrawer.setBackgroundFill(barColor)
+                .setClipText(false);
         barDrawer.drawBar(b, gc);
     }
 
