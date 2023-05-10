@@ -50,14 +50,21 @@ public class AccommodationSummaryPane extends GridPane {
     private void refresh() {
         List<Attendance> attendancesForDate = filterAttendancesByDate();
         long numRoomsOccupied = countRoomsOccupied(attendancesForDate);
-        long numRoomsAvailable = countAllRooms() - numRoomsOccupied;
+
+        List<ScheduledResource> scheduledResourcesForDate = filterScheduledResourcesByDate();
+        long numRoomsAvailable = countAllRooms(scheduledResourcesForDate) - numRoomsOccupied;
+        int numBeds = countAllBeds(scheduledResourcesForDate);
+        long numBedsAvailable = countBedsAvailable(scheduledResourcesForDate);
+        long numBedsOccupied = numBeds - numBedsAvailable;
         long numGuests = countGuests(attendancesForDate);
 
         getChildren().clear();
         add(buildLabel("Status, " + formatDate()), 0, 0);
         add(buildLabel("Rooms occupied: " + numRoomsOccupied), 1, 0);
         add(buildLabel("Rooms available: " + numRoomsAvailable), 2, 0);
-        add(buildLabel("Guests: " + numGuests), 3, 0);
+        add(buildLabel("Beds occupied: " + numBedsOccupied), 3, 0);
+        add(buildLabel("Beds available: " + numBedsAvailable), 4, 0);
+        add(buildLabel("Guests: " + numGuests), 5, 0);
         updateColumnWidths();
     }
 
@@ -100,6 +107,12 @@ public class AccommodationSummaryPane extends GridPane {
                 date.get().getDayOfMonth() == otherDate.getDayOfMonth();
     }
 
+    private List<ScheduledResource> filterScheduledResourcesByDate() {
+        return allScheduledResource.stream()
+                .filter(scheduledResource -> matchesDate(scheduledResource.getDate()))
+                .collect(Collectors.toList());
+    }
+
     private long countRoomsOccupied(List<Attendance> attendancesForDate) {
         return attendancesForDate.stream()
                 .map(Attendance::getResourceConfiguration)
@@ -107,10 +120,25 @@ public class AccommodationSummaryPane extends GridPane {
                 .count();
     }
 
-    private long countAllRooms() {
-        return allScheduledResource.stream()
+    private long countAllRooms(List<ScheduledResource> scheduledResourcesForDate) {
+        return scheduledResourcesForDate.stream()
                 .filter(scheduledResource -> matchesDate(scheduledResource.getDate()))
                 .count();
+    }
+
+    private int countAllBeds(List<ScheduledResource> scheduledResourcesForDate) {
+        return scheduledResourcesForDate.stream()
+                .map(scheduledResource -> scheduledResource.getMax())
+                .mapToInt(Integer::intValue)
+                .sum();
+    }
+
+    private long countBedsAvailable(List<ScheduledResource> scheduledResourcesForDate) {
+        // The "booked" field is an extra computed fields added by the ReactiveEntitiesMapper in AccommodationGanttCanvas
+        return scheduledResourcesForDate.stream()
+                .map(scheduledResource -> scheduledResource.getMax() - scheduledResource.getIntegerFieldValue("booked"))
+                .mapToInt(Integer::intValue)
+                .sum();
     }
 
     private long countGuests(List<Attendance> attendancesForDate) {

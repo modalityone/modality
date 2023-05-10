@@ -233,12 +233,8 @@ public class AccommodationGanttCanvas {
 
         ReactiveEntitiesMapper.<ScheduledResource>createPushReactiveChain(mixin)
                 .always("{class: 'ScheduledResource', alias: 'sr', fields: 'date,available,online,max,configuration.(name,item.name),(select count(1) from Attendance where scheduledResource=sr) as booked'}")
-                .always(orderBy("configuration.item.ord,configuration.name,configuration,date")) // Order is important for TimeBarUtil (see comment on barsLayout)
                 // Returning events for the selected organization only (or returning an empty set if no organization is selected)
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("configuration.resource.site.organization=?", o))
-                // Restricting events to those appearing in the time window
-                .always(pm.timeWindowStartProperty(), startDate -> where("sr.date >= ?", startDate))
-                .always(pm.timeWindowEndProperty(),   endDate   -> where("sr.date <= ?", endDate))
                 // Storing the result directly in the events layer
                 .storeEntitiesInto(allScheduledResources)
                 // We are now ready to start
