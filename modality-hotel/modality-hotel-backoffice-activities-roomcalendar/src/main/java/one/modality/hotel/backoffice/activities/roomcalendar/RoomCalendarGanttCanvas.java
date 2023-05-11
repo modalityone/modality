@@ -89,7 +89,8 @@ public final class RoomCalendarGanttCanvas {
     // We will use the BarDrawer utility class to draw the bars & rooms names & types
     private final BarDrawer barDrawer = new BarDrawer()  // unique instance to draw all the bars
             // Setting the unchanging properties (remaining changing properties will be set in drawBar())
-            .setTextFill(Color.WHITE);
+            .setTextFill(Color.WHITE)
+            .setClipText(false); // doesn't need clipping (better perf)
     private final BarDrawer parentRoomDrawer = new BarDrawer() // unique instance to draw all the room names
             // Setting the unchanging properties (remaining changing properties will be set in drawParentRoom())
             .setTextFill(Color.grayRgb(130))

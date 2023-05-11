@@ -57,7 +57,9 @@ public final class StatisticsGanttCanvas {
     private final BarDrawer attendanceDrawer = new BarDrawer()  // unique instance to draw all the bars
             // Setting the unchanging properties (remaining changing properties will be set in drawBar())
             .setTextFill(Color.WHITE)
-            .setBackgroundFill(Color.rgb(65, 186, 77));
+            .setBackgroundFill(Color.rgb(65, 186, 77))
+            .setClipText(false) // doesn't need clipping (better perf)
+            ;
     private final BarDrawer parentItemDrawer = new BarDrawer() // unique instance to draw all the room names
             // Setting the unchanging properties (remaining changing properties will be set in drawParentItem())
             .setStroke(Color.grayRgb(130))
