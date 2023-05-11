@@ -19,7 +19,7 @@ public class FXGanttHighlight {
     private final static ObjectProperty<LocalDate> ganttHighlightedDayProperty = new SimpleObjectProperty<>() {
         @Override
         protected void invalidated() {
-            System.out.println(get());
+            //System.out.println(get());
         }
     };
 
