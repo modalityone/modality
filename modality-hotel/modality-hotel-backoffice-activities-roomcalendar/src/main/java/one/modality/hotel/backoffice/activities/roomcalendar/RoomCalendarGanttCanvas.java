@@ -74,8 +74,9 @@ public final class RoomCalendarGanttCanvas {
     private final LocalDateGanttLayout<LocalDateBar<ScheduledResourceBlock>> barsLayout
             = new LocalDateGanttLayout<LocalDateBar<ScheduledResourceBlock>>()
                 .setChildFixedHeight(BAR_HEIGHT)
-                .setChildParentReader(     bar -> bar.getInstance().getResourceConfiguration())
-                .setChildGrandparentReader(bar -> bar.getInstance().getResourceConfiguration().getItem());
+                .setChildParentReader(bar -> bar.getInstance().getResourceConfiguration())
+                .setParentGrandparentReader(ResourceConfiguration::getItem)
+                .setParentsProvided(true);
 
     // Once the position of the bars are computed by barsLayout, they will be automatically drawn in a canvas by this
     // barsDrawer (each bar will be rendered using the drawBar() method provided in this class)
@@ -125,8 +126,7 @@ public final class RoomCalendarGanttCanvas {
                 .setGrandparentDrawer(this::drawGrandParentRoomType)
                 .setParentWidth(150)
                 .setHorizontalStroke(Color.BLACK)
-                .setVerticalStroke(Color.BLACK)
-        ;
+                .setVerticalStroke(Color.BLACK);
 
         FXGanttHighlight.addDayHighlight(barsLayout, barsDrawer);
 
@@ -199,6 +199,16 @@ public final class RoomCalendarGanttCanvas {
     }
 
     public void startLogic(Object mixin) {
+        ReactiveEntitiesMapper.<ResourceConfiguration>createPushReactiveChain(mixin)
+                .always("{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,item.name'}")
+                .always(orderBy("item.ord desc,name desc"))
+                // Returning events for the selected organization only (or returning an empty set if no organization is selected)
+                .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("resource.site.(organization=? and event=null)", o))
+                // Restricting events to those appearing in the time window
+                .storeEntitiesInto(barsLayout.getParents())
+                // We are now ready to start
+                .start();
+
         ReactiveEntitiesMapper.<ScheduledResource>createPushReactiveChain(mixin)
                 .always("{class: 'ScheduledResource', alias: 'sr', fields: 'date,available,online,max,configuration.(name,item.name),(select count(1) from Attendance where scheduledResource=sr) as booked'}")
                 .always(orderBy("configuration.item.ord,configuration.name,configuration,date")) // Order is important for TimeBarUtil (see comment on barsLayout)
