@@ -29,10 +29,8 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
     @Override
     public Node buildUi() {
         BorderPane borderPane = new BorderPane(accommodationGanttCanvas.buildCanvasContainer());
-        borderPane.setLeft(accommodationKeyPane);
 
         CheckBox showKeyCheckBox = new CheckBox("Show Legend");
-        showKeyCheckBox.setSelected(true);
         showKeyCheckBox.setOnAction(e -> {
             borderPane.setLeft(showKeyCheckBox.isSelected() ? accommodationKeyPane : null);
         });
