@@ -30,11 +30,17 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
     public Node buildUi() {
         BorderPane borderPane = new BorderPane(accommodationGanttCanvas.buildCanvasContainer());
 
+        CheckBox showAllCheckBox = new CheckBox("Show all");
+        showAllCheckBox.setSelected(true);
+        showAllCheckBox.setOnAction(e -> {
+            accommodationGanttCanvas.setParentsProvided(showAllCheckBox.isSelected());
+        });
+
         CheckBox showKeyCheckBox = new CheckBox("Show Legend");
         showKeyCheckBox.setOnAction(e -> {
             borderPane.setLeft(showKeyCheckBox.isSelected() ? accommodationKeyPane : null);
         });
-        HBox bottomPane = new HBox(showKeyCheckBox, accommodationSummaryPane);
+        HBox bottomPane = new HBox(showAllCheckBox, showKeyCheckBox, accommodationSummaryPane);
         bottomPane.setAlignment(Pos.CENTER_LEFT);
         HBox.setHgrow(accommodationSummaryPane, Priority.ALWAYS);
         borderPane.setBottom(bottomPane);

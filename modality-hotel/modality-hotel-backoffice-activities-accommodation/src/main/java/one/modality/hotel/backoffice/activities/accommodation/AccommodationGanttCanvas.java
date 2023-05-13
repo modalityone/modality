@@ -118,10 +118,10 @@ public class AccommodationGanttCanvas {
         });
 
         // Finishing setting up barsLayout
+        setParentsProvided(true);
         barsLayout.setChildFixedHeight(BAR_HEIGHT);
         barsLayout.setChildParentReader(bar -> bar.getInstance().getResourceConfiguration());
-        //barsLayout.setChildGrandparentReader(bar -> bar.getInstance().getResourceConfiguration().getItem());
-        barsLayout.setTetrisPacking(true).setParentsProvided(true).setParentGrandparentReader(ResourceConfiguration::getItem);
+        barsLayout.setTetrisPacking(true);
         barsLayout.setChildTetrisMinWidthReader(bar -> WebFxKitLauncher.measureText(bar.getInstance().getPersonName(), font).getWidth());
 
         // Enabling canvas interaction (user can move & zoom in/out the time window)
@@ -220,6 +220,16 @@ public class AccommodationGanttCanvas {
     private void drawGrandParentRoomType(Item item, Bounds b, GraphicsContext gc) {
         grandparentRoomTypeDrawer.setBottomText(item.getName());
         grandparentRoomTypeDrawer.drawBar(b, gc);
+    }
+
+    public void setParentsProvided(boolean parentsProvided) {
+        if (parentsProvided) {
+            barsLayout.setParentsProvided(true)
+                    .setParentGrandparentReader(ResourceConfiguration::getItem);
+        } else {
+            barsLayout.setChildGrandparentReader(bar -> bar.getInstance().getResourceConfiguration().getItem())
+                    .setParentsProvided(false);
+        }
     }
 
     public void startLogic(Object mixin) {
