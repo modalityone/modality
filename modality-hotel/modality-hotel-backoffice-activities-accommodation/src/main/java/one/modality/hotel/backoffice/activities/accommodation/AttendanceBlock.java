@@ -11,6 +11,7 @@ public final class AttendanceBlock {
 
     private final Attendance attendance;
     private final ResourceConfiguration resourceConfiguration;
+    private final AttendeeCategory attendeeCategory = AttendeeCategory.random();
 
     public AttendanceBlock(Attendance attendance) {
         this.attendance = attendance;
@@ -25,9 +26,10 @@ public final class AttendanceBlock {
         return resourceConfiguration;
     }
 
-    public Event getEvent() {
-        return attendance.getEvent();
+    public AttendeeCategory getAttendeeCategory() {
+        return attendeeCategory;
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

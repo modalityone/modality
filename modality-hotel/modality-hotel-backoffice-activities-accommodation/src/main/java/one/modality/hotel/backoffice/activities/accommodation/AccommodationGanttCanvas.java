@@ -82,12 +82,10 @@ public class AccommodationGanttCanvas {
     private final BarDrawer barDrawer = new BarDrawer();  // unique instance to draw all the bars
     private final BarDrawer parentRoomDrawer = new BarDrawer(); // unique instance to draw all the room names
     private final BarDrawer grandparentRoomTypeDrawer = new BarDrawer(); // unique instance to draw all the room types
-    private final AccommodationController controller;
 
     private Font font;
 
     public AccommodationGanttCanvas(AccommodationController controller) {
-        this.controller = controller;
         // Binding the presentation model and the barsLayout time window
         pm.organizationIdProperty().bind(FXOrganization.organizationProperty());
         pm.bindTimeWindow(barsLayout); // barsLayout will itself be bound to FXGanttTimeWindow (see below)
@@ -176,9 +174,7 @@ public class AccommodationGanttCanvas {
 
         barDrawer.setMiddleText(block.getPersonName());
 
-        Event event = block.getEvent();
-        Color barColor = controller.getEventColor(event);
-
+        Color barColor = block.getAttendeeCategory().getColor();
         barDrawer.setBackgroundFill(barColor);
 
         // First draw the un-clipped text in a dark colour which contrasts with the background of the chart

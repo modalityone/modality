@@ -7,16 +7,13 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.paint.Color;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.shared.entities.Attendance;
-import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledResource;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 final class AccommodationActivity extends OrganizationDependentViewDomainActivity implements
         AccommodationController,
@@ -50,23 +47,12 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
 
     @Override
     public void setEntities(List<Attendance> attendances) {
-        List<Event> events = attendances.stream()
-                .map(Attendance::getEvent)
-                .distinct()
-                .collect(Collectors.toList());
-        accommodationKeyPane.setEvents(events);
-
         accommodationSummaryPane.setEntities(attendances);
     }
 
     @Override
     public void setAllScheduledResource(List<ScheduledResource> allScheduledResource) {
         accommodationSummaryPane.setAllScheduledResource(allScheduledResource);
-    }
-
-    @Override
-    public Color getEventColor(Event event) {
-        return accommodationKeyPane.getEventColor(event);
     }
 
     @Override

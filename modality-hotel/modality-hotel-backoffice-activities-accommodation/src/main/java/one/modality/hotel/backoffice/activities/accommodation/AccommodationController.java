@@ -9,8 +9,6 @@ import java.util.List;
 
 public interface AccommodationController {
 
-    Color getEventColor(Event event);
-
     void setEntities(List<Attendance> attendances);
 
     void setAllScheduledResource(List<ScheduledResource> allScheduledResource);

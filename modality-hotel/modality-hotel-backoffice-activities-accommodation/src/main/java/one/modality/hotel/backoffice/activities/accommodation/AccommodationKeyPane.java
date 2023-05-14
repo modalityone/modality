@@ -5,30 +5,26 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import one.modality.base.shared.entities.Event;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class AccommodationKeyPane extends VBox {
 
     private static final double COLOR_BLOCK_HEIGHT = 20;
 
-    private Map<Event, Color> eventColors = new HashMap<>();
-
-    public void setEvents(List<Event> events) {
-        List<Event> sortedEvents = events.stream()
-                .distinct()
-                .sorted((e1, e2) -> e1.getName().compareToIgnoreCase(e2.getName()))
+    public AccommodationKeyPane() {
+        List<AttendeeCategory> categories = Stream.of(AttendeeCategory.values())
+                .sorted(Comparator.comparing(AttendeeCategory::getText))
                 .collect(Collectors.toList());
 
-        List<HBox> rows = new ArrayList<>(sortedEvents.size());
-        for (Event event : sortedEvents) {
+        List<HBox> rows = new ArrayList<>(categories.size());
+        for (AttendeeCategory category : categories) {
             Rectangle rectangle = new Rectangle(COLOR_BLOCK_HEIGHT, COLOR_BLOCK_HEIGHT);
-            rectangle.setFill(getEventColor(event));
-            Label label = new Label(event.getName());
+            rectangle.setFill(category.getColor());
+            Label label = new Label(category.getText());
             HBox row = new HBox(rectangle, label);
             row.setPadding(new Insets(8, 0, 0, 0));
             row.setAlignment(Pos.CENTER_LEFT);
@@ -37,27 +33,4 @@ public class AccommodationKeyPane extends VBox {
         getChildren().setAll(rows);
     }
 
-    public Color getEventColor(Event event) {
-        if (!eventColors.containsKey(event)) {
-            int nextColorIndex = eventColors.size();
-            Color color = getColor(nextColorIndex);
-            eventColors.put(event, color);
-        }
-        return eventColors.get(event);
-    }
-
-    private Color getColor(int index) {
-        switch (index) {
-            case 0: return Color.rgb(8, 148, 212);
-            case 1: return Color.rgb(123, 163, 60);
-            case 2: return Color.rgb(189, 116, 177);
-            case 3: return Color.BLUE;
-            case 4: return Color.GREEN;
-            case 5: return Color.RED;
-            case 6: return Color.AQUA;
-            default:
-                Random random = new Random(index);
-                return Color.rgb(random.nextInt(255), random.nextInt(255), random.nextInt(255));
-        }
-    }
 }
