@@ -6,7 +6,7 @@ import one.modality.base.shared.entities.ScheduledResource;
 /**
  * @author Bruno Salmon
  */
-final class ScheduledResourceBlock {
+public final class ScheduledResourceBlock {
     private final ResourceConfiguration resourceConfiguration;
     private final boolean available;
     private final boolean online;

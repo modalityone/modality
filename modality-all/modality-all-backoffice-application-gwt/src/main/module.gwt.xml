@@ -69,6 +69,8 @@
     <source path="javafx/stage"/>
     <!--================================< javafx-graphics >=================================-->
     <source path="javafx/concurrent"/>
+    <!--===================================< javafx-web >===================================-->
+    <source path="javafx/scene/web"/>
     <!--============================< webfx-kit-javafxweb-emul >============================-->
     <source path="javafx/scene/web"/>
     <!--=====================================< charba >=====================================-->
@@ -430,6 +432,10 @@
     <source path="one/modality/event/frontoffice/activities/options"/>
     <source path="one/modality/event/frontoffice/activities/options/routing"/>
     <source path="one/modality/event/frontoffice/operations/options"/>
+    <!--===============< modality-hotel-backoffice-activities-accommodation >===============-->
+    <source path="one/modality/hotel/backoffice/activities/accommodation"/>
+    <source path="one/modality/hotel/backoffice/activities/accommodation/routing"/>
+    <source path="one/modality/hotel/backoffice/operations/routes/accommodation"/>
     <!--===============< modality-hotel-backoffice-activities-roomcalendar >================-->
     <source path="one/modality/hotel/backoffice/activities/roomcalendar"/>
     <source path="one/modality/hotel/backoffice/activities/roomcalendar/routing"/>

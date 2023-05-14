@@ -43,6 +43,7 @@ public class ModalityBackOfficeFrameContainerActivity extends ModalityClientFram
         frameContainer = new Pane() {
             @Override
             protected void layoutChildren() {
+                // TODO determine value to use for canvasPane based on which activity we are in
                 double width = getWidth(), height = getHeight();
                 double headerHeight = containerHeader.prefHeight(width);
                 double footerHeight = containerFooter.prefHeight(width);
