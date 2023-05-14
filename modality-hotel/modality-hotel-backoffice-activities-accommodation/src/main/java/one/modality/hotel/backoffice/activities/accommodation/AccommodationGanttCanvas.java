@@ -30,8 +30,6 @@ import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
 import one.modality.base.shared.entities.*;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,7 +40,6 @@ public class AccommodationGanttCanvas {
 
     private static final double BAR_HEIGHT = 20;
     private static final double BAR_RADIUS = 10;
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("d MMM");
 
     // The presentation model used by the logic code to query the server (see startLogic() method)
     private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
@@ -177,12 +174,7 @@ public class AccommodationGanttCanvas {
         // checkbox). So the bar instance is that block that was repeated over that period.
         AttendanceBlock block = bar.getInstance();
 
-        String fullText = block.getPersonName() + " - Check-out " + formatDate(bar.getEndTime());
-        if (textFitsBoundsWidth(fullText, b, gc)) {
-            barDrawer.setMiddleText(fullText);
-        } else {
-            barDrawer.setMiddleText(block.getPersonName());
-        }
+        barDrawer.setMiddleText(block.getPersonName());
 
         Event event = block.getEvent();
         Color barColor = controller.getEventColor(event);
@@ -198,15 +190,6 @@ public class AccommodationGanttCanvas {
         barDrawer.setClipText(true);
         barDrawer.setTextFill(Color.WHITE);
         barDrawer.drawBar(b, gc);
-    }
-
-    private static String formatDate(LocalDate date) {
-        return DATE_FORMATTER.format(date);
-    }
-
-    private static boolean textFitsBoundsWidth(String s, Bounds b, GraphicsContext gc) {
-        javafx.geometry.Bounds textBounds = WebFxKitLauncher.measureText(s, gc.getFont());
-        return b.getWidth() >= textBounds.getWidth();
     }
 
     private void drawParentRoom(ResourceConfiguration rc, Bounds b, GraphicsContext gc) {
@@ -241,7 +224,7 @@ public class AccommodationGanttCanvas {
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("documentLine.document.event.organization=?", o))
                 // Restricting events to those appearing in the time window
                 .always(pm.timeWindowStartProperty(), startDate -> where("a.date >= ?", startDate))
-                //.always(pm.timeWindowEndProperty(),   endDate   -> where("a.date <= ?", endDate))
+                .always(pm.timeWindowEndProperty(),   endDate   -> where("a.date <= ?", endDate))
                 // Storing the result directly in the events layer
                 .storeEntitiesInto(entities)
                 // We are now ready to start
