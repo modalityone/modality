@@ -43,8 +43,8 @@ jobs:
         uses: aws-actions/aws-secretsmanager-get-secrets@v1
         with:
           secret-ids: |
-            MODALITY_DATABASE_HOST, modality-demo-db-endpoint
-            MODALITY_DATABASE_PASSWORD, modality-demo-db-secret
+            MODALITY_DATABASE_HOST, modality-demo-db-fqdn
+            MODALITY_DATABASE_PASSWORD, modality-demo-db-randompass
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
