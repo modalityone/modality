@@ -4,9 +4,8 @@ import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
@@ -28,16 +27,15 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
         BorderPane borderPane = new BorderPane(accommodationGanttCanvas.buildCanvasContainer());
 
         CheckBox showAllCheckBox = new CheckBox("Show all");
-        showAllCheckBox.setSelected(true);
-        showAllCheckBox.setOnAction(e -> {
-            accommodationGanttCanvas.setParentsProvided(showAllCheckBox.isSelected());
-        });
+        showAllCheckBox.setSelected(false);
+        accommodationGanttCanvas.parentsProvidedProperty().bind(showAllCheckBox.selectedProperty());
 
         CheckBox showKeyCheckBox = new CheckBox("Show Legend");
         showKeyCheckBox.setOnAction(e -> {
             borderPane.setLeft(showKeyCheckBox.isSelected() ? accommodationKeyPane : null);
         });
-        HBox bottomPane = new HBox(showAllCheckBox, showKeyCheckBox, accommodationSummaryPane);
+        HBox bottomPane = new HBox(10, showAllCheckBox, showKeyCheckBox, accommodationSummaryPane);
+        bottomPane.setBackground(new Background(new BackgroundFill(Color.web("#e0dcdc"), null, null)));
         bottomPane.setAlignment(Pos.CENTER_LEFT);
         HBox.setHgrow(accommodationSummaryPane, Priority.ALWAYS);
         borderPane.setBottom(bottomPane);

@@ -3,9 +3,10 @@ package one.modality.hotel.backoffice.activities.accommodation;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.HPos;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.control.Label;
 import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.ScheduledResource;
@@ -27,8 +28,6 @@ public class AccommodationSummaryPane extends GridPane {
     private List<ScheduledResource> allScheduledResource = Collections.emptyList();
 
     public AccommodationSummaryPane() {
-        setStyle("-fx-background-color: #e0dcdc");
-
         // Bind the date to the one selected in the Gantt chart, provided it is a date as opposed to a month
         FXGanttSelection.ganttSelectedObjectProperty().addListener((observable, oldValue, newValue) -> {
             if (FXGanttSelection.ganttSelectedObjectProperty().get() instanceof LocalDate) {
@@ -36,6 +35,7 @@ public class AccommodationSummaryPane extends GridPane {
             }
         });
         date.addListener((observable, oldValue, newValue) -> refresh());
+        setAlignment(Pos.CENTER); // Makes a difference for the Web version (otherwise children appears on top)
     }
     public void setEntities(List<Attendance> attendances) {
         this.attendances = new ArrayList<>(attendances);
@@ -59,7 +59,7 @@ public class AccommodationSummaryPane extends GridPane {
         long numGuests = countGuests(attendancesForDate);
 
         getChildren().clear();
-        add(buildLabel("Status, " + formatDate()), 0, 0);
+        add(buildLabel("Status today " + formatDate()), 0, 0);
         add(buildLabel("Rooms occupied: " + numRoomsOccupied), 1, 0);
         add(buildLabel("Rooms available: " + numRoomsAvailable), 2, 0);
         add(buildLabel("Beds occupied: " + numBedsOccupied), 3, 0);
@@ -128,7 +128,7 @@ public class AccommodationSummaryPane extends GridPane {
 
     private int countAllBeds(List<ScheduledResource> scheduledResourcesForDate) {
         return scheduledResourcesForDate.stream()
-                .map(scheduledResource -> scheduledResource.getMax())
+                .map(ScheduledResource::getMax)
                 .mapToInt(Integer::intValue)
                 .sum();
     }

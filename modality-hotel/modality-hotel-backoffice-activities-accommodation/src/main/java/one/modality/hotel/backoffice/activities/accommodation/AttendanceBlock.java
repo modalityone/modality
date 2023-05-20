@@ -1,7 +1,8 @@
 package one.modality.hotel.backoffice.activities.accommodation;
 
+import dev.webfx.platform.util.Numbers;
 import one.modality.base.shared.entities.Attendance;
-import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.ResourceConfiguration;
 
 /**
@@ -11,15 +12,25 @@ public final class AttendanceBlock {
 
     private final Attendance attendance;
     private final ResourceConfiguration resourceConfiguration;
-    private final AttendeeCategory attendeeCategory = AttendeeCategory.random();
+    private final AttendeeCategory attendeeCategory;
 
     public AttendanceBlock(Attendance attendance) {
         this.attendance = attendance;
         this.resourceConfiguration = attendance.getResourceConfiguration();
+        if (getPersonName().contains("Gen-la") || getPersonName().contains("Birch"))
+            attendeeCategory = AttendeeCategory.SPECIAL_GUEST;
+        else if (Numbers.toInteger(getDocument().getEventId().getPrimaryKey()) == 480) // 480 = Working visit
+            attendeeCategory = AttendeeCategory.VOLUNTEER;
+        else
+            attendeeCategory = AttendeeCategory.GUEST;
+    }
+
+    private Document getDocument() {
+        return attendance.getDocumentLine().getDocument();
     }
 
     public String getPersonName() {
-        return attendance.getDocumentLine().getDocument().getFullName();
+        return getDocument().getFullName();
     }
 
     public ResourceConfiguration getResourceConfiguration() {

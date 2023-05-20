@@ -10,11 +10,11 @@ import java.util.List;
  */
 public enum AttendeeCategory {
 
-    GUEST("Guest", Color.rgb(65,186,77)),
-    RESIDENT("Resident", Color.rgb(131,135,136)),
-    RESIDENTS_FAMILY("Resident's family", Color.rgb(17,95,24)),
-    SPECIAL_GUEST("Special guest", Color.rgb(218,201,46)),
-    VOLUNTEER("Volunteer", Color.rgb(150,124,55));
+    GUEST("Guest", Color.rgb(154, 77, 152)),
+    RESIDENT("Resident", Color.rgb(218,201,46)),
+    RESIDENTS_FAMILY("Resident's family", Color.rgb(65,186,77)),
+    SPECIAL_GUEST("Special guest", Color.web("#F400A1")), // Hollywood cerise // Color.web("#C51E3A")), // Cardinal
+    VOLUNTEER("Volunteer", Color.web("#008B8B")); // Dark cyan // Color.rgb(17,95,24));
 
     private final String text;
     private final Color color;
