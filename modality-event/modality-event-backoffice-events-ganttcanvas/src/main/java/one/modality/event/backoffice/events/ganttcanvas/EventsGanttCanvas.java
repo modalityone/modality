@@ -1,10 +1,10 @@
 package one.modality.event.backoffice.events.ganttcanvas;
 
+import dev.webfx.extras.canvas.bar.BarDrawer;
+import dev.webfx.extras.geometry.Bounds;
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.ThemeRegistry;
 import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.extras.canvas.bar.BarDrawer;
-import dev.webfx.extras.geometry.Bounds;
 import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.Entities;
@@ -12,7 +12,6 @@ import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMap
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
-import javafx.scene.text.FontWeight;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.client.ganttcanvas.DatedGanttCanvas;
@@ -37,46 +36,45 @@ public final class EventsGanttCanvas {
 
     private final EventsPresentationModel pm = new EventsPresentationModel();
     // The dated Gantt canvas that already displays dates, weeks, months & years (depending on zoom level)
-    private final DatedGanttCanvas datedGanttCanvas = new DatedGanttCanvas();
+    private final DatedGanttCanvas datedGanttCanvas = new DatedGanttCanvas()
+            // Activating user interaction (user can move & zoom in/out the time window) and date selection
+            .setInteractive(true)
+            .setDateSelectionEnabled(true);
+
     // The additional layer that will display the events
-    private final LocalDateGanttLayout<Event> eventsLayer = new LocalDateGanttLayout<>();
-    private final BarDrawer eventBarDrawer = new BarDrawer();
+    private final LocalDateGanttLayout<Event> eventsLayer = new LocalDateGanttLayout<Event>()
+            .setChildFixedHeight(BAR_HEIGHT)
+            .setVSpacing(BAR_V_SPACING)
+            .setInclusiveChildStartTimeReader(Event::getStartDate)
+            .setInclusiveChildEndTimeReader(Event::getEndDate)
+            .setTetrisPacking(true)
+            .setSelectionEnabled(true);
+    private final BarDrawer eventBarDrawer = new BarDrawer()
+            // Setting up eventBarDrawer global properties (properties specific to events are set in drawEvent())
+            .setRadius(BAR_RADIUS)
+            .setTextAlignment(null); // auto
 
     public EventsGanttCanvas() {
         // Binding the presentation model time window with the UI, here the dated Gantt canvas - probably bound itself to global FXGanttTimeWindow by application code through setupFXBindings()
         pm.organizationIdProperty().bind(FXOrganization.organizationProperty());
         pm.bindTimeWindow(datedGanttCanvas);
 
-        // Setting up the events layer
-        eventsLayer.setChildFixedHeight(BAR_HEIGHT);
-        eventsLayer.setVSpacing(BAR_V_SPACING);
-        eventsLayer.setInclusiveChildStartTimeReader(Event::getStartDate);
-        eventsLayer.setInclusiveChildEndTimeReader(Event::getEndDate);
-        eventsLayer.setTetrisPacking(true);
-        eventsLayer.setSelectionEnabled(true);
-
         // Passing it to the gantt canvas as an additional layer, that will be automatically drawn using the drawEvent method
         datedGanttCanvas.addLayer(eventsLayer, this::drawEvent);
 
-        // Activating user interaction (user can move & zoom in/out the time window) and date selection
-        datedGanttCanvas.setInteractive(true);
-        datedGanttCanvas.setDateSelectionEnabled(true);
-
-        // Setting up eventBarDrawer global properties (properties specific to events are set in drawEvent())
-        eventBarDrawer.setRadius(BAR_RADIUS);
         // The following properties depend on the theme mode (light/dark mode, etc...):
-        ThemeRegistry.runNowAndOnModeChange(() -> {
-            eventBarDrawer.setTextFont(TextTheme.getFont(FontDef.font(FontWeight.BOLD, 13)));
-            eventBarDrawer.setTextFill(EventTheme.getEventTextColor());
-        });
+        ThemeRegistry.runNowAndOnModeChange(() -> eventBarDrawer
+                .setTextFont(TextTheme.getFont(FontDef.font(13)))
+                .setTextFill(EventTheme.getEventTextColor()));
     }
 
     private void drawEvent(Event event, Bounds b, GraphicsContext gc) {
         boolean selected = Entities.sameId(event, eventsLayer.getSelectedChild());
-        eventBarDrawer.sethPadding(Math.min(b.getWidth() * 0.01, BAR_H_SPACING));
-        eventBarDrawer.setBackgroundFill(EventTheme.getEventBackgroundColor(event, selected));
-        eventBarDrawer.setMiddleText(event.getPrimaryKey() + " " + event.getName());
-        eventBarDrawer.drawBar(b, gc);
+        eventBarDrawer
+                .sethPadding(Math.min(b.getWidth() * 0.01, BAR_H_SPACING))
+                .setBackgroundFill(EventTheme.getEventBackgroundColor(event, selected))
+                .setMiddleText(event.getPrimaryKey() + " " + event.getName())
+                .drawBar(b, gc);
     }
 
     public Pane getCanvasContainer() {
