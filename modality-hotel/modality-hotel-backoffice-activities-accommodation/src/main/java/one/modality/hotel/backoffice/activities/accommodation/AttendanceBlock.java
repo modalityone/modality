@@ -41,6 +41,10 @@ public final class AttendanceBlock {
         return attendeeCategory;
     }
 
+    public boolean isCheckedIn() {
+        return getDocument().getBooleanFieldValue("arrived");
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

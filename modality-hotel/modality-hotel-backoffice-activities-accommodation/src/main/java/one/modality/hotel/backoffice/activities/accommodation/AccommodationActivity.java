@@ -18,7 +18,7 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
         AccommodationController,
         OperationActionFactoryMixin {
 
-    private final AccommodationGanttCanvas accommodationGanttCanvas = new AccommodationGanttCanvas(this);
+    private final HouseholdGanttCanvas accommodationGanttCanvas = new HouseholdGanttCanvas(this);
     private final AccommodationKeyPane accommodationKeyPane = new AccommodationKeyPane();
     private final AccommodationSummaryPane accommodationSummaryPane = new AccommodationSummaryPane();
 
