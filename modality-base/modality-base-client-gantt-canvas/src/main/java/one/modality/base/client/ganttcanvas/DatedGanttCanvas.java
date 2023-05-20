@@ -1,7 +1,6 @@
 package one.modality.base.client.ganttcanvas;
 
 import dev.webfx.extras.canvas.bar.BarDrawer;
-import dev.webfx.extras.canvas.bar.BarUtil;
 import dev.webfx.extras.canvas.layer.ChildDrawer;
 import dev.webfx.extras.canvas.pane.CanvasPane;
 import dev.webfx.extras.geometry.Bounds;
@@ -26,6 +25,9 @@ import dev.webfx.stack.i18n.I18n;
 import javafx.animation.Interpolator;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
+import javafx.geometry.HPos;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
@@ -144,15 +146,17 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
         FXGanttSelection.ganttSelectedObjectProperty().bindBidirectional(globalLayout.selectedChildProperty());
     }
 
-    public void setInteractive(boolean interactive) {
+    public DatedGanttCanvas setInteractive(boolean interactive) {
         globalCanvasDrawer.setInteractive(interactive);
+        return this;
     }
 
-    public void setDateSelectionEnabled(boolean dateSelectionEnabled) {
+    public DatedGanttCanvas setDateSelectionEnabled(boolean dateSelectionEnabled) {
         daysLayer.setSelectionEnabled(dateSelectionEnabled);
         weeksLayer.setSelectionEnabled(dateSelectionEnabled);
         monthsLayer.setSelectionEnabled(dateSelectionEnabled);
         yearsLayer.setSelectionEnabled(dateSelectionEnabled);
+        return this;
     }
 
     public <C> void addLayer(TimeLayout<C, LocalDate> layer, ChildDrawer<C> layerCanvasDrawer) {
@@ -309,7 +313,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
     // method to draw 1 strip - may be called many times during the draw pass
     private void strokeStrip(Bounds b, GraphicsContext gc) {
         double canvasHeight = gc.getCanvas().getHeight();
-        BarUtil.strokeRect(b.getMinX(), 0, b.getWidth(), canvasHeight, 0, canvasHeight > b.getMaxY() ? stripStroke : Color.TRANSPARENT, 0, gc);
+        BarDrawer.strokeRect(b.getMinX(), 0, b.getWidth(), canvasHeight, 0, canvasHeight > b.getMaxY() ? stripStroke : Color.TRANSPARENT, 0, gc);
     }
 
     // method to draw 1 year - may be called many times during the draw pass
@@ -404,8 +408,8 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
         String dayOfMonth = (day.getDayOfMonth() < 10 ? "0" : "") + day.getDayOfMonth();
 
         dayBarDrawer
-                .setBackgroundFill(highlighted ? Color.AQUAMARINE : TimeTheme.getDayOfWeekBackgroundColor(day, selected))
-                .setImage(today ? TODAY_IMAGE : null)
+                .setBackgroundFill(highlighted ? Color.web("#B2FFFF") : TimeTheme.getDayOfWeekBackgroundColor(day, selected))
+                .setIcon(today ? TODAY_IMAGE : null, Pos.TOP_RIGHT, HPos.CENTER, VPos.CENTER)
                 .setTopText(dayOfWeek)
                 .setBottomText(dayOfMonth)
                 .setTextFill(selected ? daySelectedTextFill : dayTextFill)
