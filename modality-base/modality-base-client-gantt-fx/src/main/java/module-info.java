@@ -13,6 +13,7 @@ module modality.base.client.gantt.fx {
 
     // Exported packages
     exports one.modality.base.client.gantt.fx.highlight;
+    exports one.modality.base.client.gantt.fx.interstice;
     exports one.modality.base.client.gantt.fx.selection;
     exports one.modality.base.client.gantt.fx.timewindow;
     exports one.modality.base.client.gantt.fx.visibility;

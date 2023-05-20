@@ -69,8 +69,6 @@
     <source path="javafx/stage"/>
     <!--================================< javafx-graphics >=================================-->
     <source path="javafx/concurrent"/>
-    <!--===================================< javafx-web >===================================-->
-    <source path="javafx/scene/web"/>
     <!--============================< webfx-kit-javafxweb-emul >============================-->
     <source path="javafx/scene/web"/>
     <!--=====================================< charba >=====================================-->
@@ -204,6 +202,7 @@
     <source path="one/modality/base/client/ganttcanvas"/>
     <!--=========================< modality-base-client-gantt-fx >==========================-->
     <source path="one/modality/base/client/gantt/fx/highlight"/>
+    <source path="one/modality/base/client/gantt/fx/interstice"/>
     <source path="one/modality/base/client/gantt/fx/selection"/>
     <source path="one/modality/base/client/gantt/fx/timewindow"/>
     <source path="one/modality/base/client/gantt/fx/visibility"/>
@@ -501,6 +500,7 @@
     <!--=========================< webfx-extras-time-layout-gantt >=========================-->
     <source path="dev/webfx/extras/time/layout/gantt"/>
     <source path="dev/webfx/extras/time/layout/gantt/canvas"/>
+    <source path="dev/webfx/extras/time/layout/gantt/impl"/>
     <!--============================< webfx-extras-time-window >============================-->
     <source path="dev/webfx/extras/time/window"/>
     <source path="dev/webfx/extras/time/window/impl"/>

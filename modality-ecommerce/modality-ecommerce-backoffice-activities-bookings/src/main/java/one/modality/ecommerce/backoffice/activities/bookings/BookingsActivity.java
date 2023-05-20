@@ -16,6 +16,7 @@ import one.modality.base.backoffice.operations.entities.generic.AddNewSnapshotRe
 import one.modality.base.backoffice.operations.entities.generic.CopyAllRequest;
 import one.modality.base.backoffice.operations.entities.generic.CopySelectionRequest;
 import one.modality.base.client.activity.eventdependent.EventDependentViewDomainActivity;
+import one.modality.base.client.gantt.fx.interstice.FXGanttInterstice;
 import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
@@ -110,11 +111,13 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
         super.onResume();
         ui.onResume(); // activate search text focus on activity resume
         FXGanttVisibility.setGanttVisibility(GanttVisibility.EVENTS);
+        FXGanttInterstice.setGanttIntersticeRequired(true);
     }
 
     @Override
     public void onPause() {
         FXGanttVisibility.setGanttVisibility(GanttVisibility.HIDDEN);
+        FXGanttInterstice.setGanttIntersticeRequired(false);
         super.onPause();
     }
 
