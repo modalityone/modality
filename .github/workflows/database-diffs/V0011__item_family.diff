@@ -1,0 +1,17 @@
+--- V0011__item_family.sql	2023-01-22 13:32:03
++++ tmp/V0011__item_family.sql	2022-11-20 16:12:34
+@@ -9,7 +9,7 @@
+ SET client_min_messages = warning;
+ SET row_security = off;
+ 
+-ALTER TABLE public.item_family DISABLE TRIGGER ALL;
++SET session_replication_role = replica;
+ INSERT INTO public.item_family VALUES (17, 10, NULL, 'don', 'Donation', 447, 1000, NULL);
+ INSERT INTO public.item_family VALUES (23, 8, NULL, 'round', 'Rounding', NULL, 10000, NULL);
+ INSERT INTO public.item_family VALUES (18, 11, NULL, 'unrec', 'Unreconciled', NULL, 1001, NULL);
+@@ -26,4 +26,4 @@
+ INSERT INTO public.item_family VALUES (14, 8, NULL, 'diet', 'Diet option', 80, 50, NULL);
+ INSERT INTO public.item_family VALUES (26, 1, NULL, 'tax', 'Tax', 1080, 30, NULL);
+ INSERT INTO public.item_family VALUES (28, 2, NULL, 'misc', 'Misc', 1647, 28, NULL);
+-ALTER TABLE public.item_family ENABLE TRIGGER ALL;
++SET session_replication_role = default;

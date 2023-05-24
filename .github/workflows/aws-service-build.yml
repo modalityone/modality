@@ -82,3 +82,18 @@ jobs:
           docker tag  $ECR_REGISTRY/$ECR_REPOSITORY $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           aws ecs update-service --cluster ${ECS_CLUSTER} --service ${ECS_SERVICE} --force-new-deployment
+      - name: Upload database seed to S3
+        env:
+          AWS_REGION: ${{ vars.AWS_REGION }}
+          DB_PRISTINE_PATH: "modality-base/modality-base-server-datasource/src/main/resources/db-pristine"
+          DIFF_PATH: ".github/workflows/database-diffs"
+        run: |
+          patch ${DB_PRISTINE_PATH}/V0001__base.sql ${DIFF_PATH}/V0001__base.diff
+          patch ${DB_PRISTINE_PATH}/V0009__country.sql ${DIFF_PATH}/V0009__country.diff
+          patch ${DB_PRISTINE_PATH}/V0010__language.sql ${DIFF_PATH}/V0010__language.diff
+          patch ${DB_PRISTINE_PATH}/V0011__item_family.sql ${DIFF_PATH}/V0011__item_family.diff
+          patch ${DB_PRISTINE_PATH}/V0012__label.sql ${DIFF_PATH}/V0012__label.diff
+          patch ${DB_PRISTINE_PATH}/V0014__method.sql ${DIFF_PATH}/V0014__method.diff
+          cd ${DB_PRISTINE_PATH}
+          zip modality-database-seed.zip *.sql
+          aws s3 cp modality-database-seed.zip s3://modality-database-seed/
