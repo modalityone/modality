@@ -28,6 +28,7 @@ module modality.base.client.icons {
     opens images.s16.security;
     opens images.s16.system;
     opens images.s16.validation;
+    opens images.s32;
     opens images.s32.system;
     opens images.svg.color;
     opens images.svg.mono;

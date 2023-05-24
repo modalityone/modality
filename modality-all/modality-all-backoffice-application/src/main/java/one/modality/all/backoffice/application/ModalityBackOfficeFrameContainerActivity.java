@@ -18,6 +18,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Text;
 import one.modality.base.client.application.ModalityClientFrameContainerActivity;
+import one.modality.base.client.gantt.fx.interstice.FXGanttInterstice;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.shared.entities.Event;
@@ -43,6 +44,7 @@ public class ModalityBackOfficeFrameContainerActivity extends ModalityClientFram
         frameContainer = new Pane() {
             @Override
             protected void layoutChildren() {
+                // TODO determine value to use for canvasPane based on which activity we are in
                 double width = getWidth(), height = getHeight();
                 double headerHeight = containerHeader.prefHeight(width);
                 double footerHeight = containerFooter.prefHeight(width);
@@ -51,7 +53,7 @@ public class ModalityBackOfficeFrameContainerActivity extends ModalityClientFram
                 double nodeY = FXLayoutMode.isCompactMode() ? 0 : headerHeight;
                 double nodeHeight = 0;
                 if (ganttCanvasContainer.isVisible()) {
-                    nodeHeight = ganttCanvasContainer.prefHeight(width) + breathingPadding.getTop() + breathingPadding.getBottom();
+                    nodeHeight = ganttCanvasContainer.prefHeight(width) + breathingPadding.getTop() + (FXGanttInterstice.isGanttIntersticeRequired() ? breathingPadding.getBottom() : 0);
                     layoutInArea(ganttCanvasContainer, 0, nodeY, width, nodeHeight, 0, breathingPadding, HPos.CENTER, VPos.TOP);
                 }
                 Node mountNode = getMountNode();
@@ -71,7 +73,7 @@ public class ModalityBackOfficeFrameContainerActivity extends ModalityClientFram
             double vBreathing = compactMode ? 0 : 0.03 * frameContainer.getHeight();
             breathingPadding = new Insets(vBreathing, hBreathing, vBreathing, hBreathing);
             frameContainer.requestLayout();
-        }, FXLayoutMode.layoutModeProperty(), frameContainer.widthProperty(), frameContainer.heightProperty());
+        }, FXLayoutMode.layoutModeProperty(), FXGanttInterstice.ganttIntersticeRequiredProperty(), frameContainer.widthProperty(), frameContainer.heightProperty());
         // When not in compact mode, the nodes don't cover the whole surface of this container, because there are some
         // breathing areas (see breathingPadding) which appear as empty areas but with this container background, so we
         // need to give these areas the same color as the nodes background (seen as primary facets by the LuminanceTheme).

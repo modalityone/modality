@@ -51,7 +51,9 @@ Here are some wireframes of the back-office:
 </tr>
 </table>
 
-For more wireframes, you can visit our [Figma file](https://www.figma.com/file/Rlz2ur7ZhgaCdnWdd9VzU8/Modality-business-system).
+* The full set of Back-Office wireframes can be found [here](https://www.figma.com/file/Rlz2ur7ZhgaCdnWdd9VzU8/Modality-business-system).
+* The full set of Front-Office wireframes can be found [here](https://www.figma.com/file/ywX9YlVstgPSkBjwXW6pje/Front-end-UI---booking-system?type=design&node-id=0-1).
+
 
 ## Status
 Modality is in early-stage development. We intend to release a functioning MVP by late-2023.

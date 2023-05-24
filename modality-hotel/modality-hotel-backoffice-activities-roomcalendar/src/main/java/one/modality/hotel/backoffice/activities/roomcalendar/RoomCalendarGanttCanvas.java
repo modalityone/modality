@@ -11,7 +11,7 @@ import dev.webfx.extras.time.layout.bar.TimeBarUtil;
 import dev.webfx.extras.time.layout.canvas.LocalDateCanvasDrawer;
 import dev.webfx.extras.time.layout.canvas.TimeCanvasUtil;
 import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
-import dev.webfx.extras.time.layout.gantt.canvas.GanttCanvasUtil;
+import dev.webfx.extras.time.layout.gantt.canvas.ParentsCanvasDrawer;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import javafx.beans.property.BooleanProperty;
@@ -24,6 +24,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import one.modality.base.client.gantt.fx.highlight.FXGanttHighlight;
 import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ResourceConfiguration;
@@ -70,7 +71,12 @@ public final class RoomCalendarGanttCanvas {
      */
 
     // As a result, TimeBarUtil generates a list of bars that will be the input of this barsLayout:
-    private final LocalDateGanttLayout<LocalDateBar<ScheduledResourceBlock>> barsLayout = new LocalDateGanttLayout<>();
+    private final LocalDateGanttLayout<LocalDateBar<ScheduledResourceBlock>> barsLayout
+            = new LocalDateGanttLayout<LocalDateBar<ScheduledResourceBlock>>()
+                .setChildFixedHeight(BAR_HEIGHT)
+                .setChildParentReader(bar -> bar.getInstance().getResourceConfiguration())
+                .setParentGrandparentReader(ResourceConfiguration::getItem)
+                .setParentsProvided(true);
 
     // Once the position of the bars are computed by barsLayout, they will be automatically drawn in a canvas by this
     // barsDrawer (each bar will be rendered using the drawBar() method provided in this class)
@@ -79,12 +85,23 @@ public final class RoomCalendarGanttCanvas {
 
     // The user has the option to enable/disable the blocks grouping (when disabled, TimeBarUtil will not group the
     // blocks, but simply map each block to a 1-day-long bar, so the user will see all these blocks)
-    final BooleanProperty blocksGroupingProperty = new SimpleBooleanProperty();
+    public final BooleanProperty blocksGroupingProperty = new SimpleBooleanProperty();
 
     // We will use the BarDrawer utility class to draw the bars & rooms names & types
-    private final BarDrawer barDrawer = new BarDrawer();  // unique instance to draw all the bars
-    private final BarDrawer parentRoomDrawer = new BarDrawer(); // unique instance to draw all the room names
-    private final BarDrawer grandparentRoomTypeDrawer = new BarDrawer(); // unique instance to draw all the room types
+    private final BarDrawer barDrawer = new BarDrawer()  // unique instance to draw all the bars
+            // Setting the unchanging properties (remaining changing properties will be set in drawBar())
+            .setTextFill(Color.WHITE)
+            .setClipText(false); // doesn't need clipping (better perf)
+    private final BarDrawer parentRoomDrawer = new BarDrawer() // unique instance to draw all the room names
+            // Setting the unchanging properties (remaining changing properties will be set in drawParentRoom())
+            .setTextFill(Color.grayRgb(130))
+            .setStroke(Color.grayRgb(130))
+            .setBackgroundFill(Color.ALICEBLUE);
+    private final BarDrawer grandparentRoomTypeDrawer = new BarDrawer() // unique instance to draw all the room types
+            // Setting the unchanging properties (remaining changing properties will be set in drawGrandParentRoomType())
+            .setBackgroundFill(Color.ALICEBLUE)
+            .setTextFill(Color.rgb(0, 150, 214))
+            .setClipText(false); // So the text is always visible even when slider is on left
 
     public RoomCalendarGanttCanvas() {
         // Binding the presentation model and the barsLayout time window
@@ -100,23 +117,22 @@ public final class RoomCalendarGanttCanvas {
                 barsLayout, // the layout that will receive the final list of bars as a result of the blocks grouping
                 blocksGroupingProperty); // optional property to eventually disable the blocks grouping (=> 1 bar per block if disabled)
 
-        // Finishing setting up barsLayout
-        barsLayout.setChildFixedHeight(BAR_HEIGHT);
-        barsLayout.setChildParentReader(     bar -> bar.getInstance().getResourceConfiguration());
-        barsLayout.setChildGrandparentReader(bar -> bar.getInstance().getResourceConfiguration().getItem());
+
+        // That scrollPane will contain a splitPane showing the list of rooms on its left side, and the blocks/bars on
+        // the right side. To show the list of rooms, we just use a ParentCanvasPane which displays the parents of the
+        // barsLayout (the parents are ResourceConfiguration instances as set in barsLayout.setChildParentReader() above)
+        new ParentsCanvasDrawer(barsLayout, barsDrawer)
+                .setParentDrawer(this::drawParentRoom)
+                .setGrandparentDrawer(this::drawGrandParentRoomType)
+                .setParentWidth(150)
+                .setHorizontalStroke(Color.BLACK)
+                .setVerticalStroke(Color.BLACK);
+
+        FXGanttHighlight.addDayHighlight(barsLayout, barsDrawer);
 
         // Enabling canvas interaction (user can move & zoom in/out the time window)
         barsDrawer.enableCanvasInteraction();
 
-        // Setting the properties of barDrawer & roomDrawer (other properties are set in drawBar() & drawRoom())
-        barDrawer.setStroke(Color.BLACK);
-        barDrawer.setTextFill(Color.WHITE);
-        parentRoomDrawer.setTextFill(Color.grayRgb(130));
-        parentRoomDrawer.setStroke(Color.grayRgb(130));
-        parentRoomDrawer.setBackgroundFill(Color.ALICEBLUE);
-        grandparentRoomTypeDrawer.setClipText(false); // So the text is always visible even when slider is on left
-        grandparentRoomTypeDrawer.setBackgroundFill(Color.ALICEBLUE);
-        grandparentRoomTypeDrawer.setTextFill(Color.rgb(0, 150, 214));
         // Updating the text font on any theme mode change that may impact it (light/dark mode, etc...)
         ThemeRegistry.runNowAndOnModeChange(() -> {
             Font font = TextTheme.getFont(FontDef.font(13));
@@ -131,11 +147,6 @@ public final class RoomCalendarGanttCanvas {
         // will be responsible for the vertical scrolling only, because the horizontal scrolling is actually already
         // managed by the interactive canvas itself (which reacts to user dragging to move the gantt dates).
         ScrollPane scrollPane = new ScrollPane();
-        // That scrollPane will contain a splitPane showing the list of rooms on its left side, and the blocks/bars on
-        // the right side. To show the list of rooms, we just use a ParentCanvasPane which displays the parents of the
-        // barsLayout (the parents are ResourceConfiguration instances as set in barsLayout.setChildParentReader() above)
-        GanttCanvasUtil.addParentAndGrandParentsDrawing(barsLayout, barsDrawer, this::drawParentRoom, 150,
-                this::drawGrandParentRoomType);
         // We embed the canvas in a VirtualCanvasPane which has 2 functions:
         // 1) As a CanvasPane it is responsible for automatically resizing the canvas when the user resizes the UI, and
         // for calling the canvas refresher (the piece of code that redraws the canvas). TimeCanvasUtil will actually
@@ -144,10 +155,10 @@ public final class RoomCalendarGanttCanvas {
         // prevent memory overflow. Whereas the virtual canvas represents the whole canvas that the user seems to watch
         // and can have a very long height, the real canvas will be only the size of the scrollPane viewport, and when
         // the user scrolls, VirtualCanvasPane is responsible for redrawing the canvas to the scrolled position.
-        VirtualCanvasPane roomsAndBarsPane = TimeCanvasUtil.createTimeVirtualCanvasPane(barsLayout, barsDrawer,
+        VirtualCanvasPane virtualCanvasPane = TimeCanvasUtil.createTimeVirtualCanvasPane(barsLayout, barsDrawer,
                 scrollPane.viewportBoundsProperty(), scrollPane.vvalueProperty());
         // We finally set up the scrollPane for vertical scrolling only (no horizontal scrollbar, etc...), and return it
-        LayoutUtil.setupVerticalScrollPane(scrollPane, roomsAndBarsPane);
+        LayoutUtil.setupVerticalScrollPane(scrollPane, virtualCanvasPane);
         return scrollPane;
     }
 
@@ -157,35 +168,47 @@ public final class RoomCalendarGanttCanvas {
         ScheduledResourceBlock block = bar.getInstance();
         // The main info we display in the bar is a number which represents how many free beds are remaining for booking
         String remaining = String.valueOf(block.getRemaining());
-        // Setting the background fill:
-        barDrawer.setBackgroundFill(
-                !block.isAvailable() ?      BAR_UNAVAILABLE_COLOR :       // gray if unavailable
-                block.getRemaining() <= 0 ? BAR_SOLDOUT_COLOR :           // red if sold-out
-                block.isOnline() ?          BAR_AVAILABLE_ONLINE_COLOR :  // green if online
-                                            BAR_AVAILABLE_OFFLINE_COLOR); // orange if offline
         // If the bar is wide enough we show "Beds" on top and the number on bottom, but if it is too narrow, we just
         // display the number in the middle. Unavailable gray bars have no text at all by the way.
         boolean isWideBar = b.getWidth() > 40;
-        barDrawer.setTopText(   isWideBar && block.isAvailable() ?   "Beds"   :   null    );
-        barDrawer.setMiddleText(isWideBar || !block.isAvailable() ?   null    : remaining );
-        barDrawer.setBottomText(isWideBar && block.isAvailable() ?  remaining :   null    );
-        barDrawer.drawBar(b, gc);
+        barDrawer
+                .setTopText(   isWideBar && block.isAvailable() ?   "Beds"   :   null    )
+                .setMiddleText(isWideBar || !block.isAvailable() ?   null    : remaining )
+                .setBottomText(isWideBar && block.isAvailable() ?  remaining :   null    )
+                .setBackgroundFill(
+                        !block.isAvailable() ?      BAR_UNAVAILABLE_COLOR :       // gray if unavailable
+                        block.getRemaining() <= 0 ? BAR_SOLDOUT_COLOR :           // red if sold-out
+                        block.isOnline() ?          BAR_AVAILABLE_ONLINE_COLOR :  // green if online
+                                                    BAR_AVAILABLE_OFFLINE_COLOR)  // orange if offline
+                .drawBar(b, gc);
     }
 
     private void drawParentRoom(ResourceConfiguration rc, Bounds b, GraphicsContext gc) {
         // The only remaining property that needs to be set here is the room name that we display in the bar middle
-        parentRoomDrawer.setMiddleText(rc.getName());
-        parentRoomDrawer.drawBar(b, gc); // This also draws a rectangle stroke - see properties set in constructor
+        parentRoomDrawer
+                .setMiddleText(rc.getName())
+                .drawBar(b, gc); // This also draws a rectangle stroke - see properties set in constructor
         // But the wireframe doesn't show a stroke on the left, so we erase it to match the UX design
         gc.fillRect(b.getMinX(), b.getMinY(), 2, b.getHeight()); // erasing the left side of the stroke rectangle
     }
 
     private void drawGrandParentRoomType(Item item, Bounds b, GraphicsContext gc) {
-        grandparentRoomTypeDrawer.setBottomText(item.getName());
-        grandparentRoomTypeDrawer.drawBar(b, gc);
+        grandparentRoomTypeDrawer
+                .setBottomText(item.getName())
+                .drawBar(b, gc);
     }
 
     public void startLogic(Object mixin) {
+        ReactiveEntitiesMapper.<ResourceConfiguration>createPushReactiveChain(mixin)
+                .always("{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,item.name'}")
+                .always(orderBy("item.ord desc,name desc"))
+                // Returning events for the selected organization only (or returning an empty set if no organization is selected)
+                .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("resource.site.(organization=? and event=null)", o))
+                // Restricting events to those appearing in the time window
+                .storeEntitiesInto(barsLayout.getParents())
+                // We are now ready to start
+                .start();
+
         ReactiveEntitiesMapper.<ScheduledResource>createPushReactiveChain(mixin)
                 .always("{class: 'ScheduledResource', alias: 'sr', fields: 'date,available,online,max,configuration.(name,item.name),(select count(1) from Attendance where scheduledResource=sr) as booked'}")
                 .always(orderBy("configuration.item.ord,configuration.name,configuration,date")) // Order is important for TimeBarUtil (see comment on barsLayout)

@@ -330,6 +330,7 @@
                         <list>images/s16/security/[^/]+$</list>
                         <list>images/s16/system/[^/]+$</list>
                         <list>images/s16/validation/[^/]+$</list>
+                        <list>images/s32/[^/]+$</list>
                         <list>images/s32/system/[^/]+$</list>
                         <list>images/svg/color/[^/]+$</list>
                         <list>images/svg/mono/[^/]+$</list>
