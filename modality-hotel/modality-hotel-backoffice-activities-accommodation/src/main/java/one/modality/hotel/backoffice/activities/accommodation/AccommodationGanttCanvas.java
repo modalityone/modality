@@ -11,10 +11,12 @@ import dev.webfx.extras.time.layout.bar.TimeBarUtil;
 import dev.webfx.extras.time.layout.canvas.LocalDateCanvasDrawer;
 import dev.webfx.extras.time.layout.canvas.TimeCanvasUtil;
 import dev.webfx.extras.time.layout.gantt.HeaderPosition;
+import dev.webfx.extras.time.layout.gantt.HeaderRotation;
 import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
 import dev.webfx.extras.time.layout.gantt.canvas.ParentsCanvasDrawer;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import javafx.beans.property.BooleanProperty;
 import javafx.collections.FXCollections;
@@ -32,6 +34,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.gantt.fx.highlight.FXGanttHighlight;
+import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Item;
@@ -95,10 +98,13 @@ public class AccommodationGanttCanvas {
                     .setChildParentReader(bar -> bar.getInstance().getResourceConfiguration())
                     .setChildGrandparentReader(bar -> bar.getInstance().getResourceConfiguration().getItem())
                     .setParentGrandparentReader(ResourceConfiguration::getItem)
-                    .setParentHeaderPosition(HeaderPosition.TOP)
+                    .setGrandparentHeaderPosition(HeaderPosition.LEFT)
+                    .setParentHeaderPosition(HeaderPosition.LEFT)
                     .setParentHeaderHeight(BAR_HEIGHT)
                     .setTetrisPacking(true)
                     .setChildTetrisMinWidthReader(bar -> WebFxKitLauncher.measureText(bar.getInstance().getPersonName(), barsFont).getWidth())
+                    .setGrandparentHeaderWidth(20)
+                    .setParentHeaderWidth(90)
                     .setVSpacing(2);
 
     // Once the position of the bars are computed by barsLayout, they will be automatically drawn in a canvas by this
@@ -128,7 +134,7 @@ public class AccommodationGanttCanvas {
     private final BarDrawer grandparentRoomTypeDrawer = new BarDrawer() // unique instance to draw all the room types
             .setStroke(Color.grayRgb(130))
             .setBackgroundFill(Color.WHITE)
-            .setTextAlignment(TextAlignment.LEFT)
+            .setTextAlignment(TextAlignment.CENTER)
             .setTextFill(Color.rgb(0, 150, 214));
 
     public AccommodationGanttCanvas(AccommodationController controller) {
@@ -157,15 +163,25 @@ public class AccommodationGanttCanvas {
             barsLayout.getParents().setAll(parents);
         });
 
+        ParentsCanvasDrawer.create(barsLayout, barsDrawer, this::drawParentRoom, this::drawGrandparentRoomType)
+                .setChildRowHeaderDrawer(this::drawBed)
+                .setHorizontalStroke(Color.grayRgb(200))
+                .setVerticalStroke(Color.grayRgb(233), false)
+                .setTetrisAreaFill(Color.grayRgb(243))
+                .setGrandparentHeaderRotation(HeaderRotation.DEG_90_ANTICLOCKWISE)
+        ;
+
         FXGanttHighlight.addDayHighlight(barsLayout, barsDrawer);
 
         // Updating the text font on any theme mode change that may impact it (light/dark mode, etc...)
         ThemeRegistry.runNowAndOnModeChange(() -> {
-            parentRoomDrawer.setTextFont(barsFont = TextTheme.getFont(FontDef.font(FontWeight.BOLD,13)));
+            parentRoomDrawer.setTextFont(barsFont = TextTheme.getFont(FontDef.font(FontWeight.BOLD,10)));
             grandparentRoomTypeDrawer.setTextFont(barsFont);
-            barDrawer.setTextFont(barsFont = TextTheme.getFont(FontDef.font(13)));
+            barDrawer.setTextFont(barsFont = TextTheme.getFont(FontDef.font(10)));
             bedDrawer.setTextFont(barsFont);
         });
+
+        FXProperties.runOnPropertiesChange(barsDrawer::markDrawAreaAsDirty, FXGanttSelection.ganttSelectedObjectProperty());
     }
 
     BooleanProperty parentsProvidedProperty() {
@@ -180,12 +196,7 @@ public class AccommodationGanttCanvas {
         // That scrollPane will contain a splitPane showing the list of rooms on its left side, and the blocks/bars on
         // the right side. To show the list of rooms, we just use a ParentCanvasPane which displays the parents of the
         // barsLayout (the parents are ResourceConfiguration instances as set in barsLayout.setChildParentReader() above)
-        ParentsCanvasDrawer.create(barsLayout, barsDrawer, this::drawParentRoom, this::drawGrandparentRoomType)
-                .setChildRowHeaderDrawer(this::drawBed)
-                .setHorizontalStroke(Color.grayRgb(200))
-                .setVerticalStroke(Color.grayRgb(233), false)
-                .setTetrisAreaFill(Color.grayRgb(243))
-                .setParentWidth(150);
+
         // We embed the canvas in a VirtualCanvasPane which has 2 functions:
         // 1) As a CanvasPane it is responsible for automatically resizing the canvas when the user resizes the UI, and
         // for calling the canvas refresher (the piece of code that redraws the canvas). TimeCanvasUtil will actually
@@ -207,7 +218,7 @@ public class AccommodationGanttCanvas {
         AttendanceBlock block = bar.getInstance();
 
         barDrawer
-                .setBackgroundFill(block.getAttendeeCategory().getColor())
+                .setBackgroundFill(block.getBlockColor())
                 .setMiddleText(block.getPersonName())
                 // First draw the un-clipped text in a dark colour which contrasts with the background of the chart
                 .setClipText(false)
@@ -221,7 +232,7 @@ public class AccommodationGanttCanvas {
 
     private void drawGrandparentRoomType(Item item, Bounds b, GraphicsContext gc) {
         grandparentRoomTypeDrawer
-                .setBottomText(item.getName())
+                .setMiddleText(item.getName())
                 .drawBar(b, gc);
     }
 
