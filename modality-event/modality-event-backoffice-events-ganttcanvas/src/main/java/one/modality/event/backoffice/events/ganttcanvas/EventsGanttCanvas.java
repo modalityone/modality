@@ -12,6 +12,7 @@ import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMap
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.FontWeight;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.client.ganttcanvas.DatedGanttCanvas;
@@ -64,7 +65,7 @@ public final class EventsGanttCanvas {
 
         // The following properties depend on the theme mode (light/dark mode, etc...):
         ThemeRegistry.runNowAndOnModeChange(() -> eventBarDrawer
-                .setTextFont(TextTheme.getFont(FontDef.font(13)))
+                .setTextFont(TextTheme.getFont(FontDef.font(FontWeight.BOLD, 10)))
                 .setTextFill(EventTheme.getEventTextColor()));
     }
 
