@@ -30,11 +30,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import one.modality.base.client.gantt.fx.highlight.FXGanttHighlight;
-import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.base.shared.entities.ScheduledResource;
-import one.modality.crm.backoffice.organization.fx.FXOrganization;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
@@ -117,14 +115,13 @@ public final class RoomViewGanttCanvas {
 
     public RoomViewGanttCanvas() {
         this(new AccommodationPresentationModel());
+        pm.bindFXs();
     }
 
     public RoomViewGanttCanvas(AccommodationPresentationModel pm) {
         this.pm = pm;
         // Binding the presentation model and the barsLayout time window
-        pm.organizationIdProperty().bind(FXOrganization.organizationProperty());
-        pm.bindTimeWindow(barsLayout); // barsLayout will itself be bound to FXGanttTimeWindow (see below)
-        barsLayout.bindTimeWindowBidirectional(FXGanttTimeWindow.ganttTimeWindow());
+        barsLayout.bindTimeWindowBidirectional(pm);
 
         // Asking TimeBarUtil to automatically transform entities into bars that will feed the input of barsLayout
         TimeBarUtil.setupBarsLayout(

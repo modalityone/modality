@@ -1,11 +1,9 @@
-package one.modality.hotel.backoffice.activities.accommodation;
+package one.modality.hotel.backoffice.activities.household;
 
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
@@ -15,53 +13,27 @@ import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.ScheduledResource;
 
 import java.util.List;
-import java.util.function.Supplier;
 
-final class AccommodationActivity extends OrganizationDependentViewDomainActivity implements
+final class HouseholdActivity extends OrganizationDependentViewDomainActivity implements
         AccommodationController,
         OperationActionFactoryMixin {
 
     private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
-    private final RoomViewGanttCanvas roomViewGanttCanvas = new RoomViewGanttCanvas(pm);
-    private final AccommodationGanttCanvas accommodationGanttCanvas = new AccommodationGanttCanvas(pm, this);
+    private final HouseholdGanttCanvas householdGanttCanvas = new HouseholdGanttCanvas(pm, this);
     private final AccommodationKeyPane accommodationKeyPane = new AccommodationKeyPane();
     private final AccommodationSummaryPane accommodationSummaryPane = new AccommodationSummaryPane();
 
-    public AccommodationActivity() {
+    public HouseholdActivity() {
         pm.bindFXs();
     }
 
     @Override
     public Node buildUi() {
-        TabPane tabPane = new TabPane();
-        tabPane.getTabs().setAll(
-                createTab("Rooms", this::buildRoomView),
-                createTab("Guests", this::buildGuestView)
-        );
-        return tabPane;
-    }
-
-    private Tab createTab(String text, Supplier<Node> nodeSupplier) {
-        Tab tab = new Tab(text);
-        tab.setContent(nodeSupplier.get());
-        tab.setClosable(false);
-        return tab;
-    }
-
-    private Node buildRoomView() {
-        BorderPane borderPane = new BorderPane(roomViewGanttCanvas.buildCanvasContainer());
-        CheckBox groupBlocksCheckBox = new CheckBox("Group blocks");
-        roomViewGanttCanvas.blocksGroupingProperty.bind(groupBlocksCheckBox.selectedProperty());
-        borderPane.setBottom(groupBlocksCheckBox);
-        return borderPane;
-    }
-
-    private Node buildGuestView() {
-        BorderPane borderPane = new BorderPane(accommodationGanttCanvas.buildCanvasContainer());
+        BorderPane borderPane = new BorderPane(householdGanttCanvas.buildCanvasContainer());
 
         CheckBox showAllCheckBox = new CheckBox("Show all");
         showAllCheckBox.setSelected(false);
-        accommodationGanttCanvas.parentsProvidedProperty().bind(showAllCheckBox.selectedProperty());
+        householdGanttCanvas.parentsProvidedProperty().bind(showAllCheckBox.selectedProperty());
 
         CheckBox showKeyCheckBox = new CheckBox("Show Legend");
         showKeyCheckBox.setOnAction(e -> {
@@ -74,6 +46,10 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
         borderPane.setBottom(bottomPane);
 
         return borderPane;
+    }
+
+    private Node buildHouseholdView() {
+        return householdGanttCanvas.buildCanvasContainer();
     }
 
     @Override
@@ -104,12 +80,12 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
 
     @Override
     protected void startLogic() {
-        roomViewGanttCanvas.startLogic(this);
-        accommodationGanttCanvas.startLogic(this);
+        householdGanttCanvas.startLogic(this);
     }
 
     @Override
     public AccommodationPresentationModel getPresentationModel() {
+        super.getPresentationModel();
         return pm; // eventId and organizationId will then be updated from route
     }
 

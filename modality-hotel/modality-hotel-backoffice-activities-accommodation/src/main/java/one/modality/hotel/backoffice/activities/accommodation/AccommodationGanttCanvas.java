@@ -35,12 +35,10 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.gantt.fx.highlight.FXGanttHighlight;
 import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
-import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.base.shared.entities.ScheduledResource;
-import one.modality.crm.backoffice.organization.fx.FXOrganization;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,7 +62,7 @@ public class AccommodationGanttCanvas {
 
 
     // The presentation model used by the logic code to query the server (see startLogic() method)
-    private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
+    private final AccommodationPresentationModel pm;
 
     // The results returned by the server will be stored in observable lists of Attendance and ScheduledResource entities:
     private final ObservableList<Attendance> entities = FXCollections.observableArrayList();
@@ -139,10 +137,14 @@ public class AccommodationGanttCanvas {
             .setTextFill(Color.rgb(0, 150, 214));
 
     public AccommodationGanttCanvas(AccommodationController controller) {
+        this(new AccommodationPresentationModel(), controller);
+        pm.bindFXs();
+    }
+
+    public AccommodationGanttCanvas(AccommodationPresentationModel pm, AccommodationController controller) {
+        this.pm = pm;
         // Binding the presentation model and the barsLayout time window
-        pm.organizationIdProperty().bind(FXOrganization.organizationProperty());
-        pm.bindTimeWindow(barsLayout); // barsLayout will itself be bound to FXGanttTimeWindow (see below)
-        barsLayout.bindTimeWindowBidirectional(FXGanttTimeWindow.ganttTimeWindow());
+        barsLayout.bindTimeWindowBidirectional(pm);
 
         // Asking TimeBarUtil to automatically transform entities into bars that will feed the input of barsLayout
         TimeBarUtil.setupBarsLayout(
