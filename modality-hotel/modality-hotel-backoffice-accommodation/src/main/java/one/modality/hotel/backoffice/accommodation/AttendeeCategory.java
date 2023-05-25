@@ -1,4 +1,4 @@
-package one.modality.hotel.backoffice.activities.accommodation;
+package one.modality.hotel.backoffice.accommodation;
 
 import javafx.scene.paint.Color;
 

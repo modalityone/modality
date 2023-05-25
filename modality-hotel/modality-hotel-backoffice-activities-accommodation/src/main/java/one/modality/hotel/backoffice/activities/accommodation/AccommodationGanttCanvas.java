@@ -39,6 +39,9 @@ import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.base.shared.entities.ScheduledResource;
+import one.modality.hotel.backoffice.accommodation.AccommodationStatusBarUpdater;
+import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
+import one.modality.hotel.backoffice.accommodation.AttendanceBlock;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -136,12 +139,12 @@ public class AccommodationGanttCanvas {
             .setTextAlignment(TextAlignment.CENTER)
             .setTextFill(Color.rgb(0, 150, 214));
 
-    public AccommodationGanttCanvas(AccommodationController controller) {
+    public AccommodationGanttCanvas(AccommodationStatusBarUpdater controller) {
         this(new AccommodationPresentationModel(), controller);
-        pm.bindFXs();
+        pm.doFXBindings();
     }
 
-    public AccommodationGanttCanvas(AccommodationPresentationModel pm, AccommodationController controller) {
+    public AccommodationGanttCanvas(AccommodationPresentationModel pm, AccommodationStatusBarUpdater controller) {
         this.pm = pm;
         // Binding the presentation model and the barsLayout time window
         barsLayout.bindTimeWindowBidirectional(pm);

@@ -1,4 +1,4 @@
-package one.modality.hotel.backoffice.activities.household;
+package one.modality.hotel.backoffice.accommodation;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AccommodationSummaryPane extends GridPane {
+public class AccommodationStatusBar extends GridPane {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yy");
 
@@ -27,7 +27,7 @@ public class AccommodationSummaryPane extends GridPane {
     private List<Attendance> attendances = Collections.emptyList();
     private List<ScheduledResource> allScheduledResource = Collections.emptyList();
 
-    public AccommodationSummaryPane() {
+    public AccommodationStatusBar() {
         // Bind the date to the one selected in the Gantt chart, provided it is a date as opposed to a month
         FXGanttSelection.ganttSelectedObjectProperty().addListener((observable, oldValue, newValue) -> {
             if (FXGanttSelection.ganttSelectedObjectProperty().get() instanceof LocalDate) {
@@ -70,7 +70,7 @@ public class AccommodationSummaryPane extends GridPane {
 
     private Label buildLabel(String text) {
         Label label = new Label(text);
-        setHalignment(label, HPos.CENTER);
+        GridPane.setHalignment(label, HPos.CENTER);
         return label;
     }
 

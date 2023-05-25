@@ -431,6 +431,8 @@
     <source path="one/modality/event/frontoffice/activities/options"/>
     <source path="one/modality/event/frontoffice/activities/options/routing"/>
     <source path="one/modality/event/frontoffice/operations/options"/>
+    <!--====================< modality-hotel-backoffice-accommodation >=====================-->
+    <source path="one/modality/hotel/backoffice/accommodation"/>
     <!--===============< modality-hotel-backoffice-activities-accommodation >===============-->
     <source path="one/modality/hotel/backoffice/activities/accommodation"/>
     <source path="one/modality/hotel/backoffice/activities/accommodation/routing"/>

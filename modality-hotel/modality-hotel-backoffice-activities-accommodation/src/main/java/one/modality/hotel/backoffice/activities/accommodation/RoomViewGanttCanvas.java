@@ -33,6 +33,8 @@ import one.modality.base.client.gantt.fx.highlight.FXGanttHighlight;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.base.shared.entities.ScheduledResource;
+import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
+import one.modality.hotel.backoffice.accommodation.ScheduledResourceBlock;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
@@ -115,7 +117,7 @@ public final class RoomViewGanttCanvas {
 
     public RoomViewGanttCanvas() {
         this(new AccommodationPresentationModel());
-        pm.bindFXs();
+        pm.doFXBindings();
     }
 
     public RoomViewGanttCanvas(AccommodationPresentationModel pm) {

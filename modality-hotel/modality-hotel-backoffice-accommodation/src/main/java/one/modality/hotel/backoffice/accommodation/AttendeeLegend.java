@@ -1,4 +1,4 @@
-package one.modality.hotel.backoffice.activities.accommodation;
+package one.modality.hotel.backoffice.accommodation;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -11,11 +11,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class AccommodationKeyPane extends VBox {
+public class AttendeeLegend extends VBox {
 
     private static final double COLOR_BLOCK_HEIGHT = 20;
 
-    public AccommodationKeyPane() {
+    public AttendeeLegend() {
         List<AttendeeCategory> categories = Stream.of(AttendeeCategory.values())
                 .sorted(Comparator.comparing(AttendeeCategory::getText))
                 .collect(Collectors.toList());

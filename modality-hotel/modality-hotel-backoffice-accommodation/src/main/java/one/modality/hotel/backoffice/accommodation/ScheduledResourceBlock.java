@@ -1,4 +1,4 @@
-package one.modality.hotel.backoffice.activities.accommodation;
+package one.modality.hotel.backoffice.accommodation;
 
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.base.shared.entities.ScheduledResource;

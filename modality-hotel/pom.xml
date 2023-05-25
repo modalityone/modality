@@ -16,6 +16,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>modality-hotel-backoffice-accommodation</module>
         <module>modality-hotel-backoffice-activities-accommodation</module>
         <module>modality-hotel-backoffice-activities-all</module>
         <module>modality-hotel-backoffice-activities-household</module>

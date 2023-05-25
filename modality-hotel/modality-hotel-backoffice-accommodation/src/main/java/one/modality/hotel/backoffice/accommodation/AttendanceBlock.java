@@ -1,4 +1,4 @@
-package one.modality.hotel.backoffice.activities.household;
+package one.modality.hotel.backoffice.accommodation;
 
 import dev.webfx.platform.util.Numbers;
 import javafx.scene.paint.Color;

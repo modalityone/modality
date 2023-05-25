@@ -1,4 +1,4 @@
-package one.modality.hotel.backoffice.activities.accommodation;
+package one.modality.hotel.backoffice.accommodation;
 
 import dev.webfx.extras.time.window.TimeWindow;
 import javafx.beans.property.ObjectProperty;
@@ -20,8 +20,8 @@ public class AccommodationPresentationModel extends OrganizationDependentGeneric
     private final ObjectProperty<LocalDate> timeWindowEndProperty = new SimpleObjectProperty<>(LocalDate.now().plusWeeks(3));
     public ObjectProperty<LocalDate> timeWindowEndProperty() { return timeWindowEndProperty; }
 
-    public void bindFXs() {
+    public void doFXBindings() {
         organizationIdProperty().bind(FXOrganization.organizationProperty());
-        bindTimeWindowBidirectional(FXGanttTimeWindow.ganttTimeWindow()); // barsLayout will itself be bound to FXGanttTimeWindow (see below)
+        bindTimeWindowBidirectional(FXGanttTimeWindow.ganttTimeWindow());
     }
 }

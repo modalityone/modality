@@ -11,38 +11,42 @@ import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.ScheduledResource;
+import one.modality.hotel.backoffice.accommodation.AccommodationStatusBarUpdater;
+import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
+import one.modality.hotel.backoffice.accommodation.AccommodationStatusBar;
+import one.modality.hotel.backoffice.accommodation.AttendeeLegend;
 
 import java.util.List;
 
 final class HouseholdActivity extends OrganizationDependentViewDomainActivity implements
-        AccommodationController,
+        AccommodationStatusBarUpdater,
         OperationActionFactoryMixin {
 
     private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
     private final HouseholdGanttCanvas householdGanttCanvas = new HouseholdGanttCanvas(pm, this);
-    private final AccommodationKeyPane accommodationKeyPane = new AccommodationKeyPane();
-    private final AccommodationSummaryPane accommodationSummaryPane = new AccommodationSummaryPane();
+    private final AccommodationStatusBar accommodationStatusBar = new AccommodationStatusBar();
+    private final AttendeeLegend attendeeLegend = new AttendeeLegend();
 
     public HouseholdActivity() {
-        pm.bindFXs();
+        pm.doFXBindings();
     }
 
     @Override
     public Node buildUi() {
         BorderPane borderPane = new BorderPane(householdGanttCanvas.buildCanvasContainer());
 
-        CheckBox showAllCheckBox = new CheckBox("Show all");
-        showAllCheckBox.setSelected(false);
-        householdGanttCanvas.parentsProvidedProperty().bind(showAllCheckBox.selectedProperty());
+        CheckBox allRoomsCheckBox = new CheckBox("All rooms");
+        allRoomsCheckBox.setSelected(false);
+        householdGanttCanvas.parentsProvidedProperty().bind(allRoomsCheckBox.selectedProperty());
 
         CheckBox showKeyCheckBox = new CheckBox("Show Legend");
         showKeyCheckBox.setOnAction(e -> {
-            borderPane.setLeft(showKeyCheckBox.isSelected() ? accommodationKeyPane : null);
+            borderPane.setLeft(showKeyCheckBox.isSelected() ? attendeeLegend : null);
         });
-        HBox bottomPane = new HBox(10, showAllCheckBox, showKeyCheckBox, accommodationSummaryPane);
+        HBox bottomPane = new HBox(10, allRoomsCheckBox, showKeyCheckBox, accommodationStatusBar);
         bottomPane.setBackground(new Background(new BackgroundFill(Color.web("#e0dcdc"), null, null)));
         bottomPane.setAlignment(Pos.CENTER_LEFT);
-        HBox.setHgrow(accommodationSummaryPane, Priority.ALWAYS);
+        HBox.setHgrow(accommodationStatusBar, Priority.ALWAYS);
         borderPane.setBottom(bottomPane);
 
         return borderPane;
@@ -54,12 +58,12 @@ final class HouseholdActivity extends OrganizationDependentViewDomainActivity im
 
     @Override
     public void setEntities(List<Attendance> attendances) {
-        accommodationSummaryPane.setEntities(attendances);
+        accommodationStatusBar.setEntities(attendances);
     }
 
     @Override
     public void setAllScheduledResource(List<ScheduledResource> allScheduledResource) {
-        accommodationSummaryPane.setAllScheduledResource(allScheduledResource);
+        accommodationStatusBar.setAllScheduledResource(allScheduledResource);
     }
 
     @Override
