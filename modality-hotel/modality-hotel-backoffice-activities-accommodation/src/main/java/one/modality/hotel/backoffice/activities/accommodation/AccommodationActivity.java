@@ -4,6 +4,8 @@ import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
@@ -13,17 +15,44 @@ import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.ScheduledResource;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 final class AccommodationActivity extends OrganizationDependentViewDomainActivity implements
         AccommodationController,
         OperationActionFactoryMixin {
 
-    private final HouseholdGanttCanvas accommodationGanttCanvas = new HouseholdGanttCanvas(this);
+    private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
+    private final RoomViewGanttCanvas roomViewGanttCanvas = new RoomViewGanttCanvas(pm);
+    private final AccommodationGanttCanvas accommodationGanttCanvas = new AccommodationGanttCanvas(this);
     private final AccommodationKeyPane accommodationKeyPane = new AccommodationKeyPane();
     private final AccommodationSummaryPane accommodationSummaryPane = new AccommodationSummaryPane();
 
     @Override
     public Node buildUi() {
+        TabPane tabPane = new TabPane();
+        tabPane.getTabs().setAll(
+                createTab("Rooms", this::buildRoomView),
+                createTab("Guests", this::buildGuestView)
+        );
+        return tabPane;
+    }
+
+    private Tab createTab(String text, Supplier<Node> nodeSupplier) {
+        Tab tab = new Tab(text);
+        tab.setContent(nodeSupplier.get());
+        tab.setClosable(false);
+        return tab;
+    }
+
+    private Node buildRoomView() {
+        BorderPane borderPane = new BorderPane(roomViewGanttCanvas.buildCanvasContainer());
+        CheckBox groupBlocksCheckBox = new CheckBox("Group blocks");
+        roomViewGanttCanvas.blocksGroupingProperty.bind(groupBlocksCheckBox.selectedProperty());
+        borderPane.setBottom(groupBlocksCheckBox);
+        return borderPane;
+    }
+
+    private Node buildGuestView() {
         BorderPane borderPane = new BorderPane(accommodationGanttCanvas.buildCanvasContainer());
 
         CheckBox showAllCheckBox = new CheckBox("Show all");
@@ -71,10 +100,9 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
 
     @Override
     protected void startLogic() {
+        roomViewGanttCanvas.startLogic(this);
         accommodationGanttCanvas.startLogic(this);
     }
-
-    private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
 
     @Override
     public AccommodationPresentationModel getPresentationModel() {

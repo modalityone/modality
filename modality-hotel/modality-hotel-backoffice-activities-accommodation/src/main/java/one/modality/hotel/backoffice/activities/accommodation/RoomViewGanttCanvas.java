@@ -1,4 +1,4 @@
-package one.modality.hotel.backoffice.activities.roomcalendar;
+package one.modality.hotel.backoffice.activities.accommodation;
 
 import dev.webfx.extras.canvas.bar.BarDrawer;
 import dev.webfx.extras.canvas.pane.VirtualCanvasPane;
@@ -10,6 +10,8 @@ import dev.webfx.extras.time.layout.bar.LocalDateBar;
 import dev.webfx.extras.time.layout.bar.TimeBarUtil;
 import dev.webfx.extras.time.layout.canvas.LocalDateCanvasDrawer;
 import dev.webfx.extras.time.layout.canvas.TimeCanvasUtil;
+import dev.webfx.extras.time.layout.gantt.HeaderPosition;
+import dev.webfx.extras.time.layout.gantt.HeaderRotation;
 import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
 import dev.webfx.extras.time.layout.gantt.canvas.ParentsCanvasDrawer;
 import dev.webfx.extras.util.layout.LayoutUtil;
@@ -18,6 +20,9 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.HPos;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ScrollPane;
@@ -33,11 +38,12 @@ import one.modality.crm.backoffice.organization.fx.FXOrganization;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
+import static one.modality.hotel.backoffice.activities.accommodation.AccommodationGanttCanvas.*;
 
 /**
  * @author Bruno Salmon
  */
-public final class RoomCalendarGanttCanvas {
+public final class RoomViewGanttCanvas {
 
     // Style constants used for drawing bars in the canvas:
     private static final double BAR_HEIGHT = 40;
@@ -47,7 +53,7 @@ public final class RoomCalendarGanttCanvas {
     private final static Color BAR_UNAVAILABLE_COLOR = Color.rgb(130, 135, 136);
 
     // The presentation model used by the logic code to query the server (see startLogic() method)
-    private final RoomCalendarPresentationModel pm = new RoomCalendarPresentationModel();
+    private final AccommodationPresentationModel pm;
 
     // The result returned by the server will be stored in that observable list of ScheduledResource entities:
     private final ObservableList<ScheduledResource> entities = FXCollections.observableArrayList();
@@ -76,6 +82,9 @@ public final class RoomCalendarGanttCanvas {
                 .setChildFixedHeight(BAR_HEIGHT)
                 .setChildParentReader(bar -> bar.getInstance().getResourceConfiguration())
                 .setParentGrandparentReader(ResourceConfiguration::getItem)
+                .setGrandparentHeaderPosition(HeaderPosition.LEFT)
+                .setGrandparentHeaderWidth(20)
+                .setParentHeaderWidth(90)
                 .setParentsProvided(true);
 
     // Once the position of the bars are computed by barsLayout, they will be automatically drawn in a canvas by this
@@ -94,16 +103,24 @@ public final class RoomCalendarGanttCanvas {
             .setClipText(false); // doesn't need clipping (better perf)
     private final BarDrawer parentRoomDrawer = new BarDrawer() // unique instance to draw all the room names
             // Setting the unchanging properties (remaining changing properties will be set in drawParentRoom())
-            .setTextFill(Color.grayRgb(130))
+            .setTextFill(Color.BLACK)
             .setStroke(Color.grayRgb(130))
-            .setBackgroundFill(Color.ALICEBLUE);
+            .setBackgroundFill(Color.WHITE)
+            .setIcon(ROOM_ICON_SVG_PATH, ROOM_ICON_SVG_FILL, ROOM_ICON_SVG_WIDTH, ROOM_ICON_SVG_HEIGHT, Pos.CENTER_LEFT, HPos.LEFT, VPos.CENTER, 10, 0)
+            ;
     private final BarDrawer grandparentRoomTypeDrawer = new BarDrawer() // unique instance to draw all the room types
             // Setting the unchanging properties (remaining changing properties will be set in drawGrandParentRoomType())
-            .setBackgroundFill(Color.ALICEBLUE)
+            .setBackgroundFill(Color.WHITE)
+            .setStroke(Color.grayRgb(130))
             .setTextFill(Color.rgb(0, 150, 214))
             .setClipText(false); // So the text is always visible even when slider is on left
 
-    public RoomCalendarGanttCanvas() {
+    public RoomViewGanttCanvas() {
+        this(new AccommodationPresentationModel());
+    }
+
+    public RoomViewGanttCanvas(AccommodationPresentationModel pm) {
+        this.pm = pm;
         // Binding the presentation model and the barsLayout time window
         pm.organizationIdProperty().bind(FXOrganization.organizationProperty());
         pm.bindTimeWindow(barsLayout); // barsLayout will itself be bound to FXGanttTimeWindow (see below)
@@ -117,14 +134,13 @@ public final class RoomCalendarGanttCanvas {
                 barsLayout, // the layout that will receive the final list of bars as a result of the blocks grouping
                 blocksGroupingProperty); // optional property to eventually disable the blocks grouping (=> 1 bar per block if disabled)
 
-
         // That scrollPane will contain a splitPane showing the list of rooms on its left side, and the blocks/bars on
         // the right side. To show the list of rooms, we just use a ParentCanvasPane which displays the parents of the
         // barsLayout (the parents are ResourceConfiguration instances as set in barsLayout.setChildParentReader() above)
         new ParentsCanvasDrawer(barsLayout, barsDrawer)
                 .setParentDrawer(this::drawParentRoom)
                 .setGrandparentDrawer(this::drawGrandParentRoomType)
-                .setParentWidth(150)
+                .setGrandparentHeaderRotation(HeaderRotation.DEG_90_ANTICLOCKWISE)
                 .setHorizontalStroke(Color.BLACK)
                 .setVerticalStroke(Color.BLACK);
 
@@ -135,10 +151,10 @@ public final class RoomCalendarGanttCanvas {
 
         // Updating the text font on any theme mode change that may impact it (light/dark mode, etc...)
         ThemeRegistry.runNowAndOnModeChange(() -> {
-            Font font = TextTheme.getFont(FontDef.font(13));
-            barDrawer.setTextFont(font);
+            Font font = TextTheme.getFont(FontDef.font(FontWeight.BOLD,13));
+            grandparentRoomTypeDrawer.setTextFont(font);
             parentRoomDrawer.setTextFont(font);
-            grandparentRoomTypeDrawer.setTextFont(TextTheme.getFont(FontDef.font(FontWeight.BOLD,13)));
+            barDrawer.setTextFont(TextTheme.getFont(FontDef.font(13)));
         });
     }
 
@@ -194,14 +210,15 @@ public final class RoomCalendarGanttCanvas {
 
     private void drawGrandParentRoomType(Item item, Bounds b, GraphicsContext gc) {
         grandparentRoomTypeDrawer
-                .setBottomText(item.getName())
+                .setMiddleText(item.getName())
                 .drawBar(b, gc);
     }
 
     public void startLogic(Object mixin) {
+        // Loading room types (for when parents are provided ie "Show all" ticked)
         ReactiveEntitiesMapper.<ResourceConfiguration>createPushReactiveChain(mixin)
                 .always("{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,item.name'}")
-                .always(orderBy("item.ord desc,name desc"))
+                .always(orderBy("item.ord,name"))
                 // Returning events for the selected organization only (or returning an empty set if no organization is selected)
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("resource.site.(organization=? and event=null)", o))
                 // Restricting events to those appearing in the time window
@@ -209,6 +226,7 @@ public final class RoomCalendarGanttCanvas {
                 // We are now ready to start
                 .start();
 
+        // Loading all scheduled resources (the children)
         ReactiveEntitiesMapper.<ScheduledResource>createPushReactiveChain(mixin)
                 .always("{class: 'ScheduledResource', alias: 'sr', fields: 'date,available,online,max,configuration.(name,item.name),(select count(1) from Attendance where scheduledResource=sr) as booked'}")
                 .always(orderBy("configuration.item.ord,configuration.name,configuration,date")) // Order is important for TimeBarUtil (see comment on barsLayout)
@@ -217,7 +235,7 @@ public final class RoomCalendarGanttCanvas {
                 // Restricting events to those appearing in the time window
                 .always(pm.timeWindowStartProperty(), startDate -> where("sr.date >= ?", startDate))
                 .always(pm.timeWindowEndProperty(),   endDate   -> where("sr.date <= ?", endDate))
-                // Storing the result directly in the events layer
+                // Storing the result directly in entities observable list
                 .storeEntitiesInto(entities)
                 // We are now ready to start
                 .start();

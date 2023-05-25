@@ -10,7 +10,7 @@ import java.util.List;
  */
 public enum AttendeeCategory {
 
-    GUEST("Guest", Color.rgb(154, 77, 152)),
+    GUEST("Guest", Color.rgb(131,135,136)),
     RESIDENT("Resident", Color.rgb(218,201,46)),
     RESIDENTS_FAMILY("Resident's family", Color.rgb(65,186,77)),
     SPECIAL_GUEST("Special guest", Color.web("#F400A1")), // Hollywood cerise // Color.web("#C51E3A")), // Cardinal

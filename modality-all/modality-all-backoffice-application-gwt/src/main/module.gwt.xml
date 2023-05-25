@@ -435,10 +435,6 @@
     <source path="one/modality/hotel/backoffice/activities/accommodation"/>
     <source path="one/modality/hotel/backoffice/activities/accommodation/routing"/>
     <source path="one/modality/hotel/backoffice/operations/routes/accommodation"/>
-    <!--===============< modality-hotel-backoffice-activities-roomcalendar >================-->
-    <source path="one/modality/hotel/backoffice/activities/roomcalendar"/>
-    <source path="one/modality/hotel/backoffice/activities/roomcalendar/routing"/>
-    <source path="one/modality/hotel/backoffice/operations/routes/roomcalendar"/>
     <!--===============< modality-hotel-backoffice-activities-roomsgraphic >================-->
     <source path="one/modality/hotel/backoffice/activities/roomsgraphic"/>
     <source path="one/modality/hotel/backoffice/activities/roomsgraphic/routing"/>

@@ -1,9 +1,14 @@
 package one.modality.hotel.backoffice.activities.accommodation;
 
 import dev.webfx.platform.util.Numbers;
+import javafx.scene.paint.Color;
+import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.ResourceConfiguration;
+import one.modality.event.client.theme.EventTheme;
+
+import java.util.Objects;
 
 /**
  * @author Dan Newman
@@ -25,12 +30,26 @@ public final class AttendanceBlock {
             attendeeCategory = AttendeeCategory.GUEST;
     }
 
+    public Color getBlockColor() {
+        if (attendeeCategory == AttendeeCategory.GUEST) {
+            if (Objects.equals(FXGanttSelection.getGanttSelectedObject(), getDocument().getEvent()))
+                return EventTheme.getEventBackgroundColor(getDocument().getEvent(), true);
+        }
+        return attendeeCategory.getColor();
+    }
+
     private Document getDocument() {
         return attendance.getDocumentLine().getDocument();
     }
 
     public String getPersonName() {
-        return getDocument().getFullName();
+        String name = getDocument().getFullName();
+        if (attendeeCategory == AttendeeCategory.GUEST) {
+            Object pk = getDocument().getEventId().getPrimaryKey();
+            if (Numbers.toInteger(pk) != 356)
+                name += " (" + pk + ")";
+        }
+        return name;
     }
 
     public ResourceConfiguration getResourceConfiguration() {

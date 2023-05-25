@@ -1,17 +1,14 @@
-package one.modality.hotel.backoffice.activities.roomcalendar;
+package one.modality.ecommerce.backoffice.activities.statistics;
 
+import dev.webfx.extras.time.window.TimeWindow;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentGenericTablePresentationModel;
-import dev.webfx.extras.time.window.TimeWindow;
 
 import java.time.LocalDate;
 
-/**
- * @author Bruno Salmon
- */
-public final class RoomCalendarPresentationModel extends OrganizationDependentGenericTablePresentationModel
-    implements TimeWindow<LocalDate> {
+public class AccommodationPresentationModel extends OrganizationDependentGenericTablePresentationModel
+        implements TimeWindow<LocalDate> {
 
     // Display input
 
@@ -20,5 +17,4 @@ public final class RoomCalendarPresentationModel extends OrganizationDependentGe
 
     private final ObjectProperty<LocalDate> timeWindowEndProperty = new SimpleObjectProperty<>(LocalDate.now().plusWeeks(3));
     public ObjectProperty<LocalDate> timeWindowEndProperty() { return timeWindowEndProperty; }
-
 }

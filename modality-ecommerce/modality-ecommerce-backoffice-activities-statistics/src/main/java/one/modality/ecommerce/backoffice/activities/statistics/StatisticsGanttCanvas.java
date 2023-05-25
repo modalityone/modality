@@ -24,7 +24,6 @@ import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ItemFamily;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
-import one.modality.hotel.backoffice.activities.roomcalendar.RoomCalendarPresentationModel;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
@@ -38,7 +37,7 @@ public final class StatisticsGanttCanvas {
     private static final double BAR_HEIGHT = 40;
 
     // The presentation model used by the logic code to query the server (see startLogic() method)
-    private final RoomCalendarPresentationModel pm = new RoomCalendarPresentationModel();
+    private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
 
     // As a result, TimeBarUtil generates a list of bars that will be the input of this barsLayout:
     private final LocalDateGanttLayout<Attendance> barsLayout = new LocalDateGanttLayout<Attendance>()
