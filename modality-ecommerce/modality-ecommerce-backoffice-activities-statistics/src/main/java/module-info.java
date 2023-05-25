@@ -18,13 +18,13 @@ module modality.ecommerce.backoffice.activities.statistics {
     requires modality.crm.backoffice.organization.fx;
     requires modality.ecommerce.backoffice.operations.document;
     requires modality.ecommerce.backoffice.operations.documentline;
-    requires modality.hotel.backoffice.activities.roomcalendar;
     requires webfx.extras.canvas.bar;
     requires webfx.extras.canvas.pane;
     requires webfx.extras.geometry;
     requires webfx.extras.theme;
     requires webfx.extras.time.layout;
     requires webfx.extras.time.layout.gantt;
+    requires webfx.extras.time.window;
     requires webfx.extras.type;
     requires webfx.extras.util.layout;
     requires webfx.extras.visual;
