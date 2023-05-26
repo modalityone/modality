@@ -11,6 +11,7 @@ module modality.hotel.backoffice.activities.accommodation {
     requires modality.base.client.gantt.fx;
     requires modality.base.shared.entities;
     requires modality.hotel.backoffice.accommodation;
+    requires modality.hotel.backoffice.icons;
     requires webfx.extras.canvas.bar;
     requires webfx.extras.canvas.pane;
     requires webfx.extras.geometry;

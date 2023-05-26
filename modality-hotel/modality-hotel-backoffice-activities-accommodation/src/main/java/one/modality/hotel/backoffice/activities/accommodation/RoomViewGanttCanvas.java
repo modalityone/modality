@@ -35,10 +35,10 @@ import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.base.shared.entities.ScheduledResource;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
 import one.modality.hotel.backoffice.accommodation.ScheduledResourceBlock;
+import one.modality.hotel.backoffice.icons.RoomSvgIcon;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
-import static one.modality.hotel.backoffice.activities.accommodation.AccommodationGanttCanvas.*;
 
 /**
  * @author Bruno Salmon
@@ -106,7 +106,7 @@ public final class RoomViewGanttCanvas {
             .setTextFill(Color.BLACK)
             .setStroke(Color.grayRgb(130))
             .setBackgroundFill(Color.WHITE)
-            .setIcon(ROOM_ICON_SVG_PATH, ROOM_ICON_SVG_FILL, ROOM_ICON_SVG_WIDTH, ROOM_ICON_SVG_HEIGHT, Pos.CENTER_LEFT, HPos.LEFT, VPos.CENTER, 10, 0)
+            .setIcon(RoomSvgIcon.ROOM_ICON_SVG_PATH, RoomSvgIcon.ROOM_ICON_SVG_FILL, RoomSvgIcon.ROOM_ICON_SVG_WIDTH, RoomSvgIcon.ROOM_ICON_SVG_HEIGHT, Pos.CENTER_LEFT, HPos.LEFT, VPos.CENTER, 10, 0)
             ;
     private final BarDrawer grandparentRoomTypeDrawer = new BarDrawer() // unique instance to draw all the room types
             // Setting the unchanging properties (remaining changing properties will be set in drawGrandParentRoomType())

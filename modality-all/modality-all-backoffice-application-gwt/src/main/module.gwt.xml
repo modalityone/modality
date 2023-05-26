@@ -445,6 +445,8 @@
     <source path="one/modality/hotel/backoffice/activities/roomsgraphic"/>
     <source path="one/modality/hotel/backoffice/activities/roomsgraphic/routing"/>
     <source path="one/modality/hotel/backoffice/operations/routes/roomsgraphic"/>
+    <!--========================< modality-hotel-backoffice-icons >=========================-->
+    <source path="one/modality/hotel/backoffice/icons"/>
     <!--===========< modality-hotel-backoffice-operations-resourceconfiguration >===========-->
     <source path="one/modality/hotel/backoffice/operations/entities/resourceconfiguration"/>
     <!--===========================< modality-hotel-shared-time >===========================-->

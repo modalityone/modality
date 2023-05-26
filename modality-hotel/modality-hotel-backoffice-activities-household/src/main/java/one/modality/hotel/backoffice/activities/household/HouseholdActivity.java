@@ -52,10 +52,6 @@ final class HouseholdActivity extends OrganizationDependentViewDomainActivity im
         return borderPane;
     }
 
-    private Node buildHouseholdView() {
-        return householdGanttCanvas.buildCanvasContainer();
-    }
-
     @Override
     public void setEntities(List<Attendance> attendances) {
         accommodationStatusBar.setEntities(attendances);
@@ -89,8 +85,7 @@ final class HouseholdActivity extends OrganizationDependentViewDomainActivity im
 
     @Override
     public AccommodationPresentationModel getPresentationModel() {
-        super.getPresentationModel();
-        return pm; // eventId and organizationId will then be updated from route
+        return pm;
     }
 
 }
