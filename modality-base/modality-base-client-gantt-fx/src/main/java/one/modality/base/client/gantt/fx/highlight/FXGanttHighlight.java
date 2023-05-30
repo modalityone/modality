@@ -2,7 +2,7 @@ package one.modality.base.client.gantt.fx.highlight;
 
 import dev.webfx.extras.canvas.layer.interact.CanvasInteractionHandler;
 import dev.webfx.extras.canvas.layer.interact.HasCanvasInteractionManager;
-import dev.webfx.extras.time.layout.HasTimeProjector;
+import dev.webfx.extras.time.projector.HasTimeProjector;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.canvas.Canvas;

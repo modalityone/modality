@@ -13,6 +13,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.FontWeight;
+import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.client.ganttcanvas.DatedGanttCanvas;
@@ -56,6 +57,13 @@ public final class EventsGanttCanvas {
             .setTextAlignment(null); // auto
 
     public EventsGanttCanvas() {
+        // datedGanttCanvas is registered as the referent in FXGanttTimeWindow for pairing other gantt canvas, so their
+        // horizontal time axis stay aligned with this datedGanttCanvas time axis even if their horizontal origin differs
+        // (like in the accommodation canvas when we show the legend on the left). To allow this pairing, we need to
+        // register its time projector and its canvas as the referent ones.
+        FXGanttTimeWindow.setTimeProjector(datedGanttCanvas.getTimeProjector());
+        FXGanttTimeWindow.setGanttNode(datedGanttCanvas.getCanvas());
+
         // Binding the presentation model time window with the UI, here the dated Gantt canvas - probably bound itself to global FXGanttTimeWindow by application code through setupFXBindings()
         pm.organizationIdProperty().bind(FXOrganization.organizationProperty());
         pm.bindTimeWindow(datedGanttCanvas);
