@@ -1,22 +1,19 @@
 package one.modality.hotel.backoffice.activities.accommodation;
 
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.BorderPane;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.ScheduledResource;
-import one.modality.hotel.backoffice.accommodation.AccommodationStatusBarUpdater;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
 import one.modality.hotel.backoffice.accommodation.AccommodationStatusBar;
-import one.modality.hotel.backoffice.accommodation.AttendeeLegend;
+import one.modality.hotel.backoffice.accommodation.AccommodationStatusBarUpdater;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -26,9 +23,8 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
         OperationActionFactoryMixin {
 
     private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
-    private final RoomViewGanttCanvas roomViewGanttCanvas = new RoomViewGanttCanvas(pm);
-    private final AccommodationGanttCanvas accommodationGanttCanvas = new AccommodationGanttCanvas(pm, this);
-    private final AttendeeLegend attendeeLegend = new AttendeeLegend();
+    private final RoomView roomView = new RoomView(pm);
+    private final GuestView guestView = new GuestView(pm, this);
     private final AccommodationStatusBar accommodationStatusBar = new AccommodationStatusBar();
 
     public AccommodationActivity() {
@@ -53,31 +49,15 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
     }
 
     private Node buildRoomView() {
-        BorderPane borderPane = new BorderPane(roomViewGanttCanvas.buildCanvasContainer());
+        BorderPane borderPane = new BorderPane(roomView.buildCanvasContainer());
         CheckBox groupBlocksCheckBox = new CheckBox("Group blocks");
-        roomViewGanttCanvas.blocksGroupingProperty.bind(groupBlocksCheckBox.selectedProperty());
+        roomView.blocksGroupingProperty.bind(groupBlocksCheckBox.selectedProperty());
         borderPane.setBottom(groupBlocksCheckBox);
         return borderPane;
     }
 
     private Node buildGuestView() {
-        BorderPane borderPane = new BorderPane(accommodationGanttCanvas.buildCanvasContainer());
-
-        CheckBox allRoomsCheckBox = new CheckBox("All rooms");
-        allRoomsCheckBox.setSelected(false);
-        accommodationGanttCanvas.parentsProvidedProperty().bind(allRoomsCheckBox.selectedProperty());
-
-        CheckBox showKeyCheckBox = new CheckBox("Show Legend");
-        showKeyCheckBox.setOnAction(e -> {
-            borderPane.setLeft(showKeyCheckBox.isSelected() ? attendeeLegend : null);
-        });
-        HBox bottomPane = new HBox(10, allRoomsCheckBox, showKeyCheckBox, accommodationStatusBar);
-        bottomPane.setBackground(new Background(new BackgroundFill(Color.web("#e0dcdc"), null, null)));
-        bottomPane.setAlignment(Pos.CENTER_LEFT);
-        HBox.setHgrow(accommodationStatusBar, Priority.ALWAYS);
-        borderPane.setBottom(bottomPane);
-
-        return borderPane;
+        return accommodationStatusBar.createAccommodationViewWithStatusBar(guestView);
     }
 
     @Override
@@ -108,8 +88,8 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
 
     @Override
     protected void startLogic() {
-        roomViewGanttCanvas.startLogic(this);
-        accommodationGanttCanvas.startLogic(this);
+        roomView.startLogic(this);
+        guestView.startLogic(this);
     }
 
     @Override

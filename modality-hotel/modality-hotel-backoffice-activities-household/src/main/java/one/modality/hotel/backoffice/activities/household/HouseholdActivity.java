@@ -1,20 +1,15 @@
 package one.modality.hotel.backoffice.activities.household;
 
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.CheckBox;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.ScheduledResource;
-import one.modality.hotel.backoffice.accommodation.AccommodationStatusBarUpdater;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
 import one.modality.hotel.backoffice.accommodation.AccommodationStatusBar;
-import one.modality.hotel.backoffice.accommodation.AttendeeLegend;
+import one.modality.hotel.backoffice.accommodation.AccommodationStatusBarUpdater;
 
 import java.util.List;
 
@@ -23,9 +18,8 @@ final class HouseholdActivity extends OrganizationDependentViewDomainActivity im
         OperationActionFactoryMixin {
 
     private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
-    private final HouseholdGanttCanvas householdGanttCanvas = new HouseholdGanttCanvas(pm, this);
+    private final HouseholdView householdView = new HouseholdView(pm, this);
     private final AccommodationStatusBar accommodationStatusBar = new AccommodationStatusBar();
-    private final AttendeeLegend attendeeLegend = new AttendeeLegend();
 
     public HouseholdActivity() {
         pm.doFXBindings();
@@ -33,23 +27,7 @@ final class HouseholdActivity extends OrganizationDependentViewDomainActivity im
 
     @Override
     public Node buildUi() {
-        BorderPane borderPane = new BorderPane(householdGanttCanvas.buildCanvasContainer());
-
-        CheckBox allRoomsCheckBox = new CheckBox("All rooms");
-        allRoomsCheckBox.setSelected(false);
-        householdGanttCanvas.parentsProvidedProperty().bind(allRoomsCheckBox.selectedProperty());
-
-        CheckBox showKeyCheckBox = new CheckBox("Show Legend");
-        showKeyCheckBox.setOnAction(e -> {
-            borderPane.setLeft(showKeyCheckBox.isSelected() ? attendeeLegend : null);
-        });
-        HBox bottomPane = new HBox(10, allRoomsCheckBox, showKeyCheckBox, accommodationStatusBar);
-        bottomPane.setBackground(new Background(new BackgroundFill(Color.web("#e0dcdc"), null, null)));
-        bottomPane.setAlignment(Pos.CENTER_LEFT);
-        HBox.setHgrow(accommodationStatusBar, Priority.ALWAYS);
-        borderPane.setBottom(bottomPane);
-
-        return borderPane;
+        return accommodationStatusBar.createAccommodationViewWithStatusBar(householdView);
     }
 
     @Override
@@ -80,7 +58,7 @@ final class HouseholdActivity extends OrganizationDependentViewDomainActivity im
 
     @Override
     protected void startLogic() {
-        householdGanttCanvas.startLogic(this);
+        householdView.startLogic(this);
     }
 
     @Override

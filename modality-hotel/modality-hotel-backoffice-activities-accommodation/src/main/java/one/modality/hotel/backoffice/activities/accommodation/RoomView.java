@@ -11,7 +11,6 @@ import dev.webfx.extras.time.layout.bar.TimeBarUtil;
 import dev.webfx.extras.time.layout.canvas.LocalDateCanvasDrawer;
 import dev.webfx.extras.time.layout.canvas.TimeCanvasUtil;
 import dev.webfx.extras.time.layout.gantt.HeaderPosition;
-import dev.webfx.extras.time.layout.gantt.HeaderRotation;
 import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
 import dev.webfx.extras.time.layout.gantt.canvas.ParentsCanvasDrawer;
 import dev.webfx.extras.util.layout.LayoutUtil;
@@ -29,21 +28,22 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextAlignment;
 import one.modality.base.client.gantt.fx.highlight.FXGanttHighlight;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.base.shared.entities.ScheduledResource;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
 import one.modality.hotel.backoffice.accommodation.ScheduledResourceBlock;
-import one.modality.hotel.backoffice.icons.RoomSvgIcon;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
+import static one.modality.hotel.backoffice.icons.RoomSvgIcon.*;
 
 /**
  * @author Bruno Salmon
  */
-public final class RoomViewGanttCanvas {
+public final class RoomView {
 
     // Style constants used for drawing bars in the canvas:
     private static final double BAR_HEIGHT = 40;
@@ -82,7 +82,7 @@ public final class RoomViewGanttCanvas {
                 .setChildFixedHeight(BAR_HEIGHT)
                 .setChildParentReader(bar -> bar.getInstance().getResourceConfiguration())
                 .setParentGrandparentReader(ResourceConfiguration::getItem)
-                .setGrandparentHeaderPosition(HeaderPosition.LEFT)
+                .setGrandparentHeaderPosition(HeaderPosition.TOP)
                 .setGrandparentHeaderWidth(20)
                 .setParentHeaderWidth(90)
                 .setParentsProvided(true);
@@ -106,21 +106,22 @@ public final class RoomViewGanttCanvas {
             .setTextFill(Color.BLACK)
             .setStroke(Color.grayRgb(130))
             .setBackgroundFill(Color.WHITE)
-            .setIcon(RoomSvgIcon.ROOM_ICON_SVG_PATH, RoomSvgIcon.ROOM_ICON_SVG_FILL, RoomSvgIcon.ROOM_ICON_SVG_WIDTH, RoomSvgIcon.ROOM_ICON_SVG_HEIGHT, Pos.CENTER_LEFT, HPos.LEFT, VPos.CENTER, 10, 0)
+            .setIcon(ROOM_ICON_SVG_PATH, ROOM_ICON_SVG_FILL, ROOM_ICON_SVG_WIDTH, ROOM_ICON_SVG_HEIGHT, Pos.CENTER_LEFT, HPos.LEFT, VPos.CENTER, 10, 0)
             ;
     private final BarDrawer grandparentRoomTypeDrawer = new BarDrawer() // unique instance to draw all the room types
             // Setting the unchanging properties (remaining changing properties will be set in drawGrandParentRoomType())
             .setBackgroundFill(Color.WHITE)
-            .setStroke(Color.grayRgb(130))
+            //.setStroke(Color.grayRgb(130))
             .setTextFill(Color.rgb(0, 150, 214))
+            .setTextAlignment(TextAlignment.LEFT)
             .setClipText(false); // So the text is always visible even when slider is on left
 
-    public RoomViewGanttCanvas() {
+    public RoomView() {
         this(new AccommodationPresentationModel());
         pm.doFXBindings();
     }
 
-    public RoomViewGanttCanvas(AccommodationPresentationModel pm) {
+    public RoomView(AccommodationPresentationModel pm) {
         this.pm = pm;
         // Binding the presentation model and the barsLayout time window
         barsLayout.bindTimeWindowBidirectional(pm);
@@ -139,7 +140,7 @@ public final class RoomViewGanttCanvas {
         new ParentsCanvasDrawer(barsLayout, barsDrawer)
                 .setParentDrawer(this::drawParentRoom)
                 .setGrandparentDrawer(this::drawGrandParentRoomType)
-                .setGrandparentHeaderRotation(HeaderRotation.DEG_90_ANTICLOCKWISE)
+                //.setGrandparentHeaderRotation(HeaderRotation.DEG_90_ANTICLOCKWISE)
                 .setHorizontalStroke(Color.BLACK)
                 .setVerticalStroke(Color.BLACK);
 
@@ -209,7 +210,7 @@ public final class RoomViewGanttCanvas {
 
     private void drawGrandParentRoomType(Item item, Bounds b, GraphicsContext gc) {
         grandparentRoomTypeDrawer
-                .setMiddleText(item.getName())
+                .setBottomText(item.getName())
                 .drawBar(b, gc);
     }
 

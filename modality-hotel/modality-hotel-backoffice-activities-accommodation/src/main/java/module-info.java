@@ -19,8 +19,6 @@ module modality.hotel.backoffice.activities.accommodation {
     requires webfx.extras.time.layout;
     requires webfx.extras.time.layout.gantt;
     requires webfx.extras.util.layout;
-    requires webfx.kit.launcher;
-    requires webfx.kit.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;

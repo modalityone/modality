@@ -1,36 +1,36 @@
 package one.modality.hotel.backoffice.accommodation;
 
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class AttendeeLegend extends VBox {
+public class AttendeeLegend {
 
-    private static final double COLOR_BLOCK_HEIGHT = 20;
+    private static final double COLOR_BLOCK_SIZE = 20;
 
-    public AttendeeLegend() {
+    public static GridPane createLegend() {
         List<AttendeeCategory> categories = Stream.of(AttendeeCategory.values())
                 .sorted(Comparator.comparing(AttendeeCategory::getText))
                 .collect(Collectors.toList());
 
-        List<HBox> rows = new ArrayList<>(categories.size());
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(5);
+        gridPane.setVgap(5);
+        gridPane.setAlignment(Pos.CENTER_LEFT);
         for (AttendeeCategory category : categories) {
-            Rectangle rectangle = new Rectangle(COLOR_BLOCK_HEIGHT, COLOR_BLOCK_HEIGHT);
+            Rectangle rectangle = new Rectangle(COLOR_BLOCK_SIZE, COLOR_BLOCK_SIZE);
             rectangle.setFill(category.getColor());
-            Label label = new Label(category.getText());
-            HBox row = new HBox(rectangle, label);
-            row.setPadding(new Insets(8, 0, 0, 0));
-            row.setAlignment(Pos.CENTER_LEFT);
-            rows.add(row);
+            Text label = new Text(category.getText());
+            gridPane.add(rectangle, 0, category.ordinal());
+            gridPane.add(label, 1, category.ordinal());
         }
-        getChildren().setAll(rows);
+        return gridPane;
     }
 
 }

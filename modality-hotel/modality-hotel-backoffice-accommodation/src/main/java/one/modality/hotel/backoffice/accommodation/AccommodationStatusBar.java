@@ -1,12 +1,15 @@
 package one.modality.hotel.backoffice.accommodation;
 
+import dev.webfx.extras.util.animation.Animations;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.ScheduledResource;
@@ -143,5 +146,37 @@ public class AccommodationStatusBar extends GridPane {
 
     private long countGuests(List<Attendance> attendancesForDate) {
         return attendancesForDate.size();
+    }
+
+    double prefWidth;
+
+    public BorderPane createAccommodationViewWithStatusBar(AccommodationGanttCanvas householdView) {
+        BorderPane borderPane = new BorderPane();
+        GridPane attendeeLegend = AttendeeLegend.createLegend();
+        borderPane.setLeft(attendeeLegend); // Left first, so it's behind center when animating it
+        borderPane.setCenter(householdView.buildCanvasContainer());
+        attendeeLegend.setVisible(false);
+        UiScheduler.scheduleInAnimationFrame(() -> {
+            prefWidth = attendeeLegend.prefWidth(-1);
+            attendeeLegend.setMinWidth(0);
+            attendeeLegend.setPrefWidth(0);
+        }, 4);
+
+        CheckBox allRoomsCheckBox = new CheckBox("All rooms");
+        allRoomsCheckBox.setSelected(false);
+        householdView.parentsProvidedProperty().bind(allRoomsCheckBox.selectedProperty());
+
+        CheckBox legendCheckBox = new CheckBox("Show Legend");
+        legendCheckBox.setOnAction(e -> {
+            attendeeLegend.setVisible(true);
+            Animations.animateProperty(attendeeLegend.prefWidthProperty(), legendCheckBox.isSelected() ? prefWidth + 5 : 0);
+        });
+        HBox bottomPane = new HBox(10, allRoomsCheckBox, legendCheckBox, this);
+        bottomPane.setBackground(new Background(new BackgroundFill(Color.web("#e0dcdc"), null, null)));
+        bottomPane.setAlignment(Pos.CENTER_LEFT);
+        HBox.setHgrow(this, Priority.ALWAYS);
+        borderPane.setBottom(bottomPane);
+
+        return borderPane;
     }
 }
