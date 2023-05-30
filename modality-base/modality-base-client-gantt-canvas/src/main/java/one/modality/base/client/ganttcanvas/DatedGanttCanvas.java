@@ -16,6 +16,7 @@ import dev.webfx.extras.time.layout.canvas.MultiLayerLocalDateCanvasDrawer;
 import dev.webfx.extras.time.layout.canvas.TimeCanvasUtil;
 import dev.webfx.extras.time.layout.gantt.GanttLayout;
 import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
+import dev.webfx.extras.time.projector.TimeProjector;
 import dev.webfx.extras.time.window.TimeWindow;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -28,6 +29,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
@@ -105,8 +107,16 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
         FXGanttHighlight.addDayHighlight(daysLayer, globalCanvasDrawer);
     }
 
+    public Canvas getCanvas() {
+        return globalCanvasDrawer.getCanvas();
+    }
+
     public Pane getCanvasContainer() {
         return canvasPane;
+    }
+
+    public TimeProjector<LocalDate> getTimeProjector() {
+        return daysLayer.getTimeProjector();
     }
 
     @Override

@@ -1,7 +1,13 @@
 package one.modality.base.client.gantt.fx.timewindow;
 
+import dev.webfx.extras.time.projector.HasTimeProjector;
+import dev.webfx.extras.time.projector.PairedTimeProjector;
+import dev.webfx.extras.time.projector.TimeProjector;
 import dev.webfx.extras.time.window.impl.TimeWindowImpl;
+import dev.webfx.kit.util.properties.FXProperties;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.Node;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -12,6 +18,9 @@ import java.time.temporal.TemporalAdjusters;
  * @author Bruno Salmon
  */
 public final class FXGanttTimeWindow extends TimeWindowImpl<LocalDate> {
+
+    private final static ObjectProperty<TimeProjector<LocalDate>> timeProjectorProperty = new SimpleObjectProperty<>();
+    private final static ObjectProperty<Node> ganttNodeProperty = new SimpleObjectProperty<>();
 
     @Override
     protected void onTimeWindowChanged() {
@@ -28,28 +37,32 @@ public final class FXGanttTimeWindow extends TimeWindowImpl<LocalDate> {
         return ganttTimeWindow;
     }
 
-    public static ObjectProperty<LocalDate> ganttTimeWindowStartProperty() {
-        return ganttTimeWindow().timeWindowStartProperty();
+    public static Node getGanttNode() {
+        return ganttNodeProperty.get();
     }
 
-    public static LocalDate getGanttTimeWindowStart() {
-        return ganttTimeWindow().getTimeWindowStart();
+    public static void setGanttNode(Node ganttNode) {
+        ganttNodeProperty.set(ganttNode);
     }
 
-    public static void setGanttTimeWindowStart(LocalDate timeWindowStart) {
-        ganttTimeWindow().setTimeWindowStart(timeWindowStart);
+    public static TimeProjector<LocalDate> getTimeProjector() {
+        return timeProjectorProperty.get();
     }
 
-    public static ObjectProperty<LocalDate> ganttTimeWindowEndProperty() {
-        return ganttTimeWindow().timeWindowEndProperty();
+    public static void setTimeProjector(TimeProjector<LocalDate> timeProjector) {
+        timeProjectorProperty.set(timeProjector);
     }
 
-    public static LocalDate getGanttTimeWindowEnd() {
-        return ganttTimeWindow().getTimeWindowEnd();
+    public static PairedTimeProjector<LocalDate> createPairedTimeProjector(Node node) {
+        return new PairedTimeProjector<>(getTimeProjector(), getGanttNode(), node);
     }
 
-    public static void setGanttTimeWindowEnd(LocalDate timeWindowEnd) {
-        ganttTimeWindow().setTimeWindowEnd(timeWindowEnd);
+    public static void setupPairedTimeProjectorWhenReady(HasTimeProjector<LocalDate> hasTimeProjector, Node node) {
+        if (getTimeProjector() == null)
+            FXProperties.onPropertySet(timeProjectorProperty, p -> setupPairedTimeProjectorWhenReady(hasTimeProjector, node), false);
+        else if (getGanttNode() == null)
+            FXProperties.onPropertySet(ganttNodeProperty, p -> setupPairedTimeProjectorWhenReady(hasTimeProjector, node), false);
+        else
+            hasTimeProjector.setTimeProjector(createPairedTimeProjector(node));
     }
-    
 }

@@ -24,7 +24,7 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-hotel-backoffice-activities-roomcalendar</artifactId>
+            <artifactId>modality-hotel-backoffice-activities-household</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>

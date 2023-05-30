@@ -7,8 +7,8 @@ module modality.base.client.gantt.fx {
     requires javafx.base;
     requires javafx.graphics;
     requires webfx.extras.canvas.layer;
-    requires webfx.extras.time.layout;
     requires webfx.extras.time.window;
+    requires webfx.kit.util;
     requires webfx.platform.console;
 
     // Exported packages

@@ -431,18 +431,22 @@
     <source path="one/modality/event/frontoffice/activities/options"/>
     <source path="one/modality/event/frontoffice/activities/options/routing"/>
     <source path="one/modality/event/frontoffice/operations/options"/>
+    <!--====================< modality-hotel-backoffice-accommodation >=====================-->
+    <source path="one/modality/hotel/backoffice/accommodation"/>
     <!--===============< modality-hotel-backoffice-activities-accommodation >===============-->
     <source path="one/modality/hotel/backoffice/activities/accommodation"/>
     <source path="one/modality/hotel/backoffice/activities/accommodation/routing"/>
     <source path="one/modality/hotel/backoffice/operations/routes/accommodation"/>
-    <!--===============< modality-hotel-backoffice-activities-roomcalendar >================-->
-    <source path="one/modality/hotel/backoffice/activities/roomcalendar"/>
-    <source path="one/modality/hotel/backoffice/activities/roomcalendar/routing"/>
-    <source path="one/modality/hotel/backoffice/operations/routes/roomcalendar"/>
+    <!--=================< modality-hotel-backoffice-activities-household >=================-->
+    <source path="one/modality/hotel/backoffice/activities/household"/>
+    <source path="one/modality/hotel/backoffice/activities/household/routing"/>
+    <source path="one/modality/hotel/backoffice/operations/routes/household"/>
     <!--===============< modality-hotel-backoffice-activities-roomsgraphic >================-->
     <source path="one/modality/hotel/backoffice/activities/roomsgraphic"/>
     <source path="one/modality/hotel/backoffice/activities/roomsgraphic/routing"/>
     <source path="one/modality/hotel/backoffice/operations/routes/roomsgraphic"/>
+    <!--========================< modality-hotel-backoffice-icons >=========================-->
+    <source path="one/modality/hotel/backoffice/icons"/>
     <!--===========< modality-hotel-backoffice-operations-resourceconfiguration >===========-->
     <source path="one/modality/hotel/backoffice/operations/entities/resourceconfiguration"/>
     <!--===========================< modality-hotel-shared-time >===========================-->
@@ -502,6 +506,7 @@
     <source path="dev/webfx/extras/time/layout/gantt/canvas"/>
     <source path="dev/webfx/extras/time/layout/gantt/impl"/>
     <!--============================< webfx-extras-time-window >============================-->
+    <source path="dev/webfx/extras/time/projector"/>
     <source path="dev/webfx/extras/time/window"/>
     <source path="dev/webfx/extras/time/window/impl"/>
     <!--===============================< webfx-extras-type >================================-->

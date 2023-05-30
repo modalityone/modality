@@ -96,7 +96,7 @@ public class HomeActivity extends ViewDomainActivityBase
         redirects.put("RouteToHumanResources", "RouteToStatistics");
         redirects.put("RouteToReception", "RouteToFilters");
         redirects.put("RouteToExtras", "RouteToOperations");
-        redirects.put("RouteToHousehold", "RouteToRoomCalendar");
+        //redirects.put("RouteToHousehold", "RouteToRoomCalendar");
     }
 
     @Override

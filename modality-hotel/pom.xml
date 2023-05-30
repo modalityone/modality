@@ -16,10 +16,12 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>modality-hotel-backoffice-accommodation</module>
         <module>modality-hotel-backoffice-activities-accommodation</module>
         <module>modality-hotel-backoffice-activities-all</module>
-        <module>modality-hotel-backoffice-activities-roomcalendar</module>
+        <module>modality-hotel-backoffice-activities-household</module>
         <module>modality-hotel-backoffice-activities-roomsgraphic</module>
+        <module>modality-hotel-backoffice-icons</module>
         <module>modality-hotel-backoffice-operations-resourceconfiguration</module>
         <module>modality-hotel-shared-time</module>
     </modules>
