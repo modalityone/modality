@@ -81,7 +81,12 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY
           docker tag  $ECR_REGISTRY/$ECR_REPOSITORY $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          aws ecs update-service --cluster ${ECS_CLUSTER} --service ${ECS_SERVICE} --force-new-deployment
+          aws ecs describe-clusters --clusters ${ECS_CLUSTER} | grep -q ACTIVE
+          if [ "$?" == "0" ]; then
+            aws ecs update-service --cluster ${ECS_CLUSTER} --service ${ECS_SERVICE} --force-new-deployment
+          else
+            echo "The DEMO environment seems not to be running. So not refreshing the application services." >>$GITHUB_OUTPUT
+          fi
       - name: Upload database seed to S3
         env:
           AWS_REGION: ${{ vars.AWS_REGION }}
