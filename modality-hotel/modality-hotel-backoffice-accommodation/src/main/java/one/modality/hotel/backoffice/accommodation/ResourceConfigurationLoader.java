@@ -8,7 +8,7 @@ import one.modality.base.shared.entities.ResourceConfiguration;
 import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
-public class ResourceConfigurationLoader {
+public final class ResourceConfigurationLoader {
 
     // The presentation model used by the logic code to query the server (see startLogic() method)
     private final AccommodationPresentationModel pm;

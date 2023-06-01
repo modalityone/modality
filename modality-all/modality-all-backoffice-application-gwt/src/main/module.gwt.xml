@@ -205,6 +205,7 @@
     <source path="one/modality/base/client/gantt/fx/interstice"/>
     <source path="one/modality/base/client/gantt/fx/selection"/>
     <source path="one/modality/base/client/gantt/fx/timewindow"/>
+    <source path="one/modality/base/client/gantt/fx/today"/>
     <source path="one/modality/base/client/gantt/fx/visibility"/>
     <!--===========================< modality-base-client-i18n >============================-->
     <source path="one/modality/base/client/operations/i18n"/>

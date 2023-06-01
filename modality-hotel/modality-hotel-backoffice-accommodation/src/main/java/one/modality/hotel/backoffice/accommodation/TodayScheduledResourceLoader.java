@@ -3,26 +3,27 @@ package one.modality.hotel.backoffice.accommodation;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import one.modality.base.client.gantt.fx.today.FXToday;
 import one.modality.base.shared.entities.ScheduledResource;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
-public final class ScheduledResourceLoader {
+public final class TodayScheduledResourceLoader {
 
     // The presentation model used by the logic code to query the server (see startLogic() method)
     private final AccommodationPresentationModel pm;
 
     // The results returned by the server will be stored in observable lists of Attendance and ScheduledResource entities:
-    private final ObservableList<ScheduledResource> scheduledResources = FXCollections.observableArrayList();
+    private final ObservableList<ScheduledResource> todayScheduledResources = FXCollections.observableArrayList();
     private boolean started;
 
-    public ScheduledResourceLoader(AccommodationPresentationModel pm) {
+    public TodayScheduledResourceLoader(AccommodationPresentationModel pm) {
         this.pm = pm;
     }
 
-    public ObservableList<ScheduledResource> getScheduledResources() {
-        return scheduledResources;
+    public ObservableList<ScheduledResource> getTodayScheduledResources() {
+        return todayScheduledResources;
     }
 
     public void startLogic(Object mixin) {
@@ -35,20 +36,19 @@ public final class ScheduledResourceLoader {
                 // Returning events for the selected organization only (or returning an empty set if no organization is selected)
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("configuration.resource.site.organization=?", o))
                 // Restricting events to those appearing in the time window
-                .always(pm.timeWindowStartProperty(), startDate -> where("sr.date >= ?", startDate))
-                .always(pm.timeWindowEndProperty(), endDate -> where("sr.date <= ?", endDate))
+                .always(FXToday.todayProperty(), today -> where("sr.date = ?", today))
                 // Storing the result directly in the events layer
-                .storeEntitiesInto(scheduledResources)
+                .storeEntitiesInto(todayScheduledResources)
                 // We are now ready to start
                 .start();
         started = true;
     }
 
-    private static ScheduledResourceLoader INSTANCE;
+    private static TodayScheduledResourceLoader INSTANCE;
 
-    public static ScheduledResourceLoader getOrCreate(AccommodationPresentationModel pm) {
+    public static TodayScheduledResourceLoader getOrCreate(AccommodationPresentationModel pm) {
         if (INSTANCE == null)
-            INSTANCE = new ScheduledResourceLoader(pm);
+            INSTANCE = new TodayScheduledResourceLoader(pm);
         return INSTANCE;
     }
 }

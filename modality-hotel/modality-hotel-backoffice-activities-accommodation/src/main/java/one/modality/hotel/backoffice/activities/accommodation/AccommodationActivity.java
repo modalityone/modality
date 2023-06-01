@@ -9,23 +9,19 @@ import javafx.scene.layout.BorderPane;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
-import one.modality.base.shared.entities.Attendance;
-import one.modality.base.shared.entities.ScheduledResource;
+import one.modality.hotel.backoffice.accommodation.AccommodationBorderPane;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
-import one.modality.hotel.backoffice.accommodation.AccommodationStatusBar;
-import one.modality.hotel.backoffice.accommodation.AccommodationStatusBarUpdater;
+import one.modality.hotel.backoffice.accommodation.TodayAccommodationStatus;
 
-import java.util.List;
 import java.util.function.Supplier;
 
 final class AccommodationActivity extends OrganizationDependentViewDomainActivity implements
-        AccommodationStatusBarUpdater,
         OperationActionFactoryMixin {
 
     private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
     private final RoomView roomView = new RoomView(pm);
-    private final GuestView guestView = new GuestView(pm, this);
-    private final AccommodationStatusBar accommodationStatusBar = new AccommodationStatusBar();
+    private final GuestView guestView = new GuestView(pm);
+    private final TodayAccommodationStatus todayAccommodationStatus = TodayAccommodationStatus.getOrCreate(pm);
 
     public AccommodationActivity() {
         pm.doFXBindings();
@@ -57,17 +53,7 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
     }
 
     private Node buildGuestView() {
-        return accommodationStatusBar.embedAccommodationGanttWithStatusBar(guestView.getAccommodationGantt());
-    }
-
-    @Override
-    public void setEntities(List<Attendance> attendances) {
-        accommodationStatusBar.setEntities(attendances);
-    }
-
-    @Override
-    public void setAllScheduledResource(List<ScheduledResource> allScheduledResource) {
-        accommodationStatusBar.setAllScheduledResource(allScheduledResource);
+        return AccommodationBorderPane.createAccommodationBorderPane(guestView.getAccommodationGantt(), todayAccommodationStatus);
     }
 
     @Override
@@ -90,6 +76,7 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
     protected void startLogic() {
         roomView.startLogic(this);
         guestView.startLogic(this);
+        todayAccommodationStatus.startLogic(this);
     }
 
     @Override
