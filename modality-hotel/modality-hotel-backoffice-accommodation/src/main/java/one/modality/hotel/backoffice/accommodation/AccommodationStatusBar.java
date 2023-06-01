@@ -150,11 +150,11 @@ public class AccommodationStatusBar extends GridPane {
 
     double prefWidth;
 
-    public BorderPane createAccommodationViewWithStatusBar(AccommodationGanttCanvas householdView) {
+    public BorderPane embedAccommodationGanttWithStatusBar(AccommodationGantt<?> accommodationGantt) {
         BorderPane borderPane = new BorderPane();
         GridPane attendeeLegend = AttendeeLegend.createLegend();
         borderPane.setLeft(attendeeLegend); // Left first, so it's behind center when animating it
-        borderPane.setCenter(householdView.buildCanvasContainer());
+        borderPane.setCenter(accommodationGantt.buildCanvasContainer());
         attendeeLegend.setVisible(false);
         UiScheduler.scheduleInAnimationFrame(() -> {
             prefWidth = attendeeLegend.prefWidth(-1);
@@ -164,7 +164,7 @@ public class AccommodationStatusBar extends GridPane {
 
         CheckBox allRoomsCheckBox = new CheckBox("All rooms");
         allRoomsCheckBox.setSelected(false);
-        householdView.parentsProvidedProperty().bind(allRoomsCheckBox.selectedProperty());
+        accommodationGantt.parentsProvidedProperty().bind(allRoomsCheckBox.selectedProperty());
 
         CheckBox legendCheckBox = new CheckBox("Show Legend");
         legendCheckBox.setOnAction(e -> {

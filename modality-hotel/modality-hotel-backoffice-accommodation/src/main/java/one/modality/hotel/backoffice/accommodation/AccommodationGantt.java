@@ -15,13 +15,8 @@ import dev.webfx.extras.time.layout.gantt.HeaderRotation;
 import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
 import dev.webfx.extras.time.layout.gantt.canvas.ParentsCanvasDrawer;
 import dev.webfx.extras.util.layout.LayoutUtil;
-import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import javafx.beans.property.BooleanProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -35,32 +30,16 @@ import javafx.scene.text.TextAlignment;
 import one.modality.base.client.gantt.fx.highlight.FXGanttHighlight;
 import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
-import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ResourceConfiguration;
-import one.modality.base.shared.entities.ScheduledResource;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
-import static dev.webfx.stack.orm.dql.DqlStatement.where;
 import static one.modality.hotel.backoffice.icons.BedSvgIcon.*;
 import static one.modality.hotel.backoffice.icons.RoomSvgIcon.*;
 
-public class AccommodationGanttCanvas {
+public abstract class AccommodationGantt<B extends AccommodationBlock> {
 
     private static final double BAR_HEIGHT = 20;
     private static final double BAR_RADIUS = 10;
-
-
-    // The presentation model used by the logic code to query the server (see startLogic() method)
-    private final AccommodationPresentationModel pm;
-
-    // The results returned by the server will be stored in observable lists of Attendance and ScheduledResource entities:
-    private final ObservableList<Attendance> entities = FXCollections.observableArrayList();
-
-    private final ObservableList<ScheduledResource> allScheduledResources = FXCollections.observableArrayList();
 
     /**
      * We will ask TimeBarUtil to automatically convert those Attendance entities first into AttendanceBlock
@@ -83,33 +62,31 @@ public class AccommodationGanttCanvas {
     private Font barsFont;
 
     // As a result, TimeBarUtil generates a list of bars that will be the input of this barsLayout:
-    protected final LocalDateGanttLayout<LocalDateBar<AttendanceBlock>> barsLayout =
-            new LocalDateGanttLayout<LocalDateBar<AttendanceBlock>>()
+    protected final LocalDateGanttLayout<LocalDateBar<B>> barsLayout =
+            new LocalDateGanttLayout<LocalDateBar<B>>()
                     .setChildFixedHeight(BAR_HEIGHT)
-                    .setChildParentReader(bar -> bar.getInstance().getResourceConfiguration())
-                    .setChildGrandparentReader(bar -> bar.getInstance().getResourceConfiguration().getItem())
+                    .setChildParentReader(     bar -> bar.getInstance().getRoomConfiguration())
+                    //.setChildGrandparentReader(bar -> bar.getInstance().getRoomConfiguration().getItem())
                     .setParentGrandparentReader(ResourceConfiguration::getItem)
-                    .setGrandparentHeaderPosition(HeaderPosition.LEFT)
-                    .setParentHeaderPosition(HeaderPosition.LEFT)
                     .setParentHeaderHeight(BAR_HEIGHT)
-                    .setTetrisPacking(true)
-                    .setChildTetrisMinWidthReader(bar -> WebFxKitLauncher.measureText(bar.getInstance().getPersonName(), barsFont).getWidth())
                     .setGrandparentHeaderWidth(20)
                     .setParentHeaderWidth(90)
-                    .setHSpacing(2)
-                    .setVSpacing(2);
+            ;
 
     // Once the position of the bars are computed by barsLayout, they will be automatically drawn in a canvas by this
     // barsDrawer (each bar will be rendered using the drawBar() method provided in this class)
-    private final LocalDateCanvasDrawer<LocalDateBar<AttendanceBlock>> barsDrawer =
+    private final LocalDateCanvasDrawer<LocalDateBar<B>> barsDrawer =
             new LocalDateCanvasDrawer<>(barsLayout, this::drawBar)
                     // Enabling canvas interaction (user can move & zoom in/out the time window)
                     .enableCanvasInteraction();
 
+    protected final ParentsCanvasDrawer parentsCanvasDrawer = ParentsCanvasDrawer.create(barsLayout, barsDrawer)
+            .setParentDrawer(this::drawParentRoom)
+            .setGrandparentDrawer(this::drawGrandparentRoomType);
+
     // We will use the BarDrawer utility class to draw the bars & rooms names & types
-    private final BarDrawer barDrawer = new BarDrawer()  // unique instance to draw all the bars
-            .setTextFill(Color.WHITE)
-            .setRadius(BAR_RADIUS);
+    protected final BarDrawer barDrawer = new BarDrawer()  // unique instance to draw all the bars
+            .setTextFill(Color.WHITE);
 
     private final BarDrawer parentRoomDrawer = new BarDrawer() // unique instance to draw all the room names
             .setBackgroundFill(Color.WHITE)
@@ -129,13 +106,7 @@ public class AccommodationGanttCanvas {
             .setTextAlignment(TextAlignment.CENTER)
             .setTextFill(Color.rgb(0, 150, 214));
 
-    public AccommodationGanttCanvas(AccommodationStatusBarUpdater controller) {
-        this(new AccommodationPresentationModel(), controller);
-        pm.doFXBindings();
-    }
-
-    public AccommodationGanttCanvas(AccommodationPresentationModel pm, AccommodationStatusBarUpdater controller) {
-        this.pm = pm;
+    public AccommodationGantt(AccommodationPresentationModel pm, double barsFontSize) {
         // Binding the presentation model and the barsLayout time window
         barsLayout.bindTimeWindowBidirectional(pm);
 
@@ -144,41 +115,16 @@ public class AccommodationGanttCanvas {
         // showing the legend on the left, which shifts this canvas to the right).
         FXGanttTimeWindow.setupPairedTimeProjectorWhenReady(barsLayout, barsDrawer.getCanvas());
 
-        // Asking TimeBarUtil to automatically transform entities into bars that will feed the input of barsLayout
-        TimeBarUtil.setupBarsLayout(
-                entities, // the observable list of Attendance entities to take as input
-                Attendance::getDate, // the entity date reader that will be used to date each block
-                AttendanceBlock::new, // the factory that creates blocks, initially 1 instance per entity, but then grouped into bars
-                barsLayout); // the layout that will receive the final list of bars as a result of the blocks grouping
-
-        // Update key with new colours when the entities change
-        entities.addListener((ListChangeListener<Attendance>) change -> controller.setEntities(entities));
-
-        // Update summary pane when scheduled resources change
-        allScheduledResources.addListener((ListChangeListener<ScheduledResource>) change -> {
-            controller.setAllScheduledResource(allScheduledResources);
-            List<ResourceConfiguration> parents = allScheduledResources.stream()
-                    .map(ScheduledResource::getResourceConfiguration)
-                    .distinct()
-                    .collect(Collectors.toList());
-            barsLayout.getParents().setAll(parents);
-        });
-
-        ParentsCanvasDrawer.create(barsLayout, barsDrawer, this::drawParentRoom, this::drawGrandparentRoomType)
-                .setChildRowHeaderDrawer(this::drawBed)
-                .setHorizontalStroke(Color.grayRgb(200))
-                .setVerticalStroke(Color.grayRgb(233), false)
-                .setTetrisAreaFill(Color.grayRgb(243))
-                .setGrandparentHeaderRotation(HeaderRotation.DEG_90_ANTICLOCKWISE)
-        ;
+        // Telling the bars layout how to read start & end times of bars
+        TimeBarUtil.setBarsLayoutTimeReaders(barsLayout);
 
         FXGanttHighlight.addDayHighlight(barsLayout, barsDrawer);
 
         // Updating the text font on any theme mode change that may impact it (light/dark mode, etc...)
         ThemeRegistry.runNowAndOnModeChange(() -> {
-            parentRoomDrawer.setTextFont(barsFont = TextTheme.getFont(FontDef.font(FontWeight.BOLD,10)));
+            parentRoomDrawer.setTextFont(barsFont = TextTheme.getFont(FontDef.font(FontWeight.BOLD, barsFontSize)));
             grandparentRoomTypeDrawer.setTextFont(barsFont);
-            barDrawer.setTextFont(barsFont = TextTheme.getFont(FontDef.font(10)));
+            barDrawer.setTextFont(barsFont = TextTheme.getFont(FontDef.font(barsFontSize)));
             bedDrawer.setTextFont(barsFont);
         });
 
@@ -214,28 +160,6 @@ public class AccommodationGanttCanvas {
         return scrollPane;
     }
 
-    private void drawBar(LocalDateBar<AttendanceBlock> bar, Bounds b, GraphicsContext gc) {
-        // The bar wraps a block over 1 or several days (or always 1 day if the user hasn't ticked the grouping block
-        // checkbox). So the bar instance is that block that was repeated over that period.
-        AttendanceBlock block = bar.getInstance();
-
-        barDrawer
-                .setBackgroundFill(getBarColor(block))
-                .setMiddleText(block.getPersonName())
-                // First draw the un-clipped text in a dark colour which contrasts with the background of the chart
-                .setClipText(false)
-                .setTextFill(Color.GRAY)
-                .drawBar(b, gc)
-                // Second draw the clipped text in a light colour which contrasts with the background of the bar
-                .setClipText(true)
-                .setTextFill(Color.WHITE)
-                .drawTexts(b, gc);
-    }
-
-    protected Color getBarColor(AttendanceBlock block) {
-        return block.getBlockColor();
-    }
-
     private void drawGrandparentRoomType(Item item, Bounds b, GraphicsContext gc) {
         grandparentRoomTypeDrawer
                 .setMiddleText(item.getName())
@@ -251,40 +175,36 @@ public class AccommodationGanttCanvas {
         gc.fillRect(b.getMinX(), b.getMinY(), 2, b.getHeight()); // erasing the left side of the stroke rectangle
     }
 
+    protected void drawBar(LocalDateBar<B> bar, Bounds b, GraphicsContext gc) {
+        // The bar wraps a block over 1 or several days (or always 1 day if the user hasn't ticked the grouping block
+        // checkbox). So the bar instance is that block that was repeated over that period.
+        drawBlock(bar.getInstance(), b, gc);
+    }
+
+    protected abstract void drawBlock(B block, Bounds b, GraphicsContext gc);
+
+    protected void showBeds() {
+        barsLayout
+                .setGrandparentHeaderPosition(HeaderPosition.LEFT)
+                .setParentHeaderPosition(HeaderPosition.LEFT)
+                .setTetrisPacking(true)
+                //.setChildTetrisMinWidthReader(bar -> WebFxKitLauncher.measureText(bar.getInstance().getPersonName(), barsFont).getWidth())
+                .setHSpacing(2)
+                .setVSpacing(2);
+        parentsCanvasDrawer
+                .setChildRowHeaderDrawer(this::drawBed)
+                .setHorizontalStroke(Color.grayRgb(200))
+                .setVerticalStroke(Color.grayRgb(233), false)
+                .setTetrisAreaFill(Color.grayRgb(243))
+                .setGrandparentHeaderRotation(HeaderRotation.DEG_90_ANTICLOCKWISE);
+        barDrawer
+            .setRadius(BAR_RADIUS);
+    }
+
     private void drawBed(Integer rowIndex, Bounds b, GraphicsContext gc) {
         bedDrawer
                 .setMiddleText("Bed " + (rowIndex + 1))
                 .drawBar(b, gc);
     }
 
-    public void startLogic(Object mixin) {
-        // This ReactiveEntitiesMapper will populate the children of the GanttLayout (indirectly from entities observable list)
-        ReactiveEntitiesMapper.<Attendance>createPushReactiveChain(mixin)
-                .always("{class: 'Attendance', alias: 'a', fields: 'date,documentLine.document.(arrived,person_firstName,person_lastName,event.id),scheduledResource.configuration.(name,item.name),documentLine.document.event.name'}")
-                .always(where("scheduledResource is not null"))
-                .always(orderBy("scheduledResource.configuration.item.ord,scheduledResource.configuration.name,documentLine.document.person_lastName,documentLine.document.person_firstName,date")) // Order is important for TimeBarUtil (see comment on barsLayout)
-                // Returning events for the selected organization only (or returning an empty set if no organization is selected)
-                .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("documentLine.document.event.organization=?", o))
-                // Restricting events to those appearing in the time window
-                .always(pm.timeWindowStartProperty(), startDate -> where("a.date +1 >= ?", startDate)) // +1 is to avoid the round corners on left for bookings exceeding the time window
-                .always(pm.timeWindowEndProperty(),   endDate   -> where("a.date -1 <= ?", endDate)) // -1 is to avoid the round corners on right for bookings exceeding the time window
-                // Storing the result directly in the events layer
-                .storeEntitiesInto(entities)
-                // We are now ready to start
-                .start();
-
-        // This ReactiveEntitiesMapper will populate the provided parents of the GanttLayout (indirectly from allScheduledResources observable list)
-        ReactiveEntitiesMapper.<ScheduledResource>createPushReactiveChain(mixin)
-                .always("{class: 'ScheduledResource', alias: 'sr', fields: 'date,available,online,max,configuration.(name,item.name),(select count(1) from Attendance where scheduledResource=sr) as booked'}")
-                .always(orderBy("configuration.item.ord,configuration.name")) // How rooms will be ordered when provided ("Show all" checkbox)
-                // Returning events for the selected organization only (or returning an empty set if no organization is selected)
-                .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("configuration.resource.site.organization=?", o))
-                // Restricting events to those appearing in the time window
-                .always(pm.timeWindowStartProperty(), startDate -> where("sr.date >= ?", startDate))
-                .always(pm.timeWindowEndProperty(),   endDate   -> where("sr.date <= ?", endDate))
-                // Storing the result directly in the events layer
-                .storeEntitiesInto(allScheduledResources)
-                // We are now ready to start
-                .start();
-    }
 }

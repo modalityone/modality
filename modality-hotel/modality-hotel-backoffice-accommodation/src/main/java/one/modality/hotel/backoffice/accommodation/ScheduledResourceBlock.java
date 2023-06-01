@@ -6,7 +6,7 @@ import one.modality.base.shared.entities.ScheduledResource;
 /**
  * @author Bruno Salmon
  */
-public final class ScheduledResourceBlock {
+public final class ScheduledResourceBlock implements AccommodationBlock {
     private final ResourceConfiguration resourceConfiguration;
     private final boolean available;
     private final boolean online;
@@ -22,7 +22,8 @@ public final class ScheduledResourceBlock {
         remaining = max - booked;
     }
 
-    public ResourceConfiguration getResourceConfiguration() {
+    @Override
+    public ResourceConfiguration getRoomConfiguration() {
         return resourceConfiguration;
     }
 

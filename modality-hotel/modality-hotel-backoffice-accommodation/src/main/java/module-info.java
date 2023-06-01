@@ -13,16 +13,15 @@ module modality.hotel.backoffice.accommodation {
     requires modality.crm.backoffice.organization.fx;
     requires modality.event.client.theme;
     requires modality.hotel.backoffice.icons;
-    requires webfx.extras.canvas.bar;
+    requires transitive webfx.extras.canvas.bar;
     requires webfx.extras.canvas.pane;
     requires webfx.extras.geometry;
     requires webfx.extras.theme;
     requires webfx.extras.time.layout;
-    requires webfx.extras.time.layout.gantt;
+    requires transitive webfx.extras.time.layout.gantt;
     requires webfx.extras.time.window;
     requires webfx.extras.util.animation;
     requires webfx.extras.util.layout;
-    requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;

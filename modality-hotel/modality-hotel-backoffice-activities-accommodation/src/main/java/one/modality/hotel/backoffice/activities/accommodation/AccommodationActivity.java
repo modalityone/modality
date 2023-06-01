@@ -57,7 +57,7 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
     }
 
     private Node buildGuestView() {
-        return accommodationStatusBar.createAccommodationViewWithStatusBar(guestView);
+        return accommodationStatusBar.embedAccommodationGanttWithStatusBar(guestView.getAccommodationGantt());
     }
 
     @Override

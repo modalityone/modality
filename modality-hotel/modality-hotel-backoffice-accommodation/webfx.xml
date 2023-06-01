@@ -6,7 +6,10 @@
     </exported-packages>
 
     <dependencies>
-        <used-by-source-modules/>
+        <used-by-source-modules>
+            <module transitive="true">webfx-extras-canvas-bar</module>
+            <module transitive="true">webfx-extras-time-layout-gantt</module>
+        </used-by-source-modules>
     </dependencies>
 
 </project>

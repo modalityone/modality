@@ -27,7 +27,7 @@ final class HouseholdActivity extends OrganizationDependentViewDomainActivity im
 
     @Override
     public Node buildUi() {
-        return accommodationStatusBar.createAccommodationViewWithStatusBar(householdView);
+        return accommodationStatusBar.embedAccommodationGanttWithStatusBar(householdView.getAccommodationGantt());
     }
 
     @Override

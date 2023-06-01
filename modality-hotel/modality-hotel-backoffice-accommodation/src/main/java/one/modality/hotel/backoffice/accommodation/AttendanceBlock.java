@@ -13,7 +13,7 @@ import java.util.Objects;
 /**
  * @author Dan Newman
  */
-public final class AttendanceBlock {
+public final class AttendanceBlock implements AccommodationBlock {
 
     private final Attendance attendance;
     private final ResourceConfiguration resourceConfiguration;
@@ -52,7 +52,8 @@ public final class AttendanceBlock {
         return name;
     }
 
-    public ResourceConfiguration getResourceConfiguration() {
+    @Override
+    public ResourceConfiguration getRoomConfiguration() {
         return resourceConfiguration;
     }
 
