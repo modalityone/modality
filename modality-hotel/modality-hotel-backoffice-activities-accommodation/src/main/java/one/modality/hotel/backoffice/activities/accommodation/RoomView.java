@@ -1,14 +1,10 @@
 package one.modality.hotel.backoffice.activities.accommodation;
 
 import dev.webfx.extras.geometry.Bounds;
-import dev.webfx.extras.time.layout.bar.TimeBarUtil;
-import dev.webfx.kit.util.properties.ObservableLists;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Node;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import one.modality.base.shared.entities.ScheduledResource;
 import one.modality.hotel.backoffice.accommodation.*;
 
 /**
@@ -24,33 +20,12 @@ public final class RoomView {
 
     private final ResourceConfigurationLoader resourceConfigurationLoader;
     private final ScheduledResourceLoader scheduledResourceLoader;
-    private final AccommodationGantt<ScheduledResourceBlock> accommodationGantt;
-
-    // The user has the option to enable/disable the blocks grouping (when disabled, TimeBarUtil will not group the
-    // blocks, but simply map each block to a 1-day-long bar, so the user will see all these blocks)
-    final BooleanProperty blocksGroupingProperty = new SimpleBooleanProperty();
-
+    private final ScheduledResourceGantt scheduledResourceGantt;
 
     public RoomView(AccommodationPresentationModel pm) {
         resourceConfigurationLoader = new ResourceConfigurationLoader(pm);
         scheduledResourceLoader = ScheduledResourceLoader.getOrCreate(pm);
-        accommodationGantt = new AccommodationGantt<>(pm, 13) {
-            { // Finishing the setup
-                TimeBarUtil.convertToBlocksThenGroupToBars(
-                        scheduledResourceLoader.getScheduledResources(), // the observable list of ScheduledResource entities to take as input
-                        ScheduledResource::getDate, // the entity date reader that will be used to date each block
-                        ScheduledResourceBlock::new, // the factory that creates blocks, initially 1 instance per entity, but then grouped into bars
-                        barsLayout.getChildren(), // the final list of bars that will receive the result of grouping blocks
-                        blocksGroupingProperty); // optional property to eventually disable the blocks grouping (=> 1 bar per block if disabled)
-                barsLayout
-                        .setChildFixedHeight(40)
-                        .setParentsProvided(true);
-                ObservableLists.bind(barsLayout.getParents(), resourceConfigurationLoader.getResourceConfigurations());
-                parentsCanvasDrawer
-                        .setHorizontalStroke(Color.BLACK)
-                        .setVerticalStroke(Color.BLACK);
-            }
-
+        scheduledResourceGantt = new ScheduledResourceGantt(pm, scheduledResourceLoader.getScheduledResources(), resourceConfigurationLoader.getResourceConfigurations()) {
             @Override
             protected void drawBlock(ScheduledResourceBlock block, Bounds b, GraphicsContext gc) {
                 // The main info we display in the bar is a number which represents how many free beds are remaining for booking
@@ -73,8 +48,13 @@ public final class RoomView {
     }
 
     public Node buildCanvasContainer() {
-        return accommodationGantt.buildCanvasContainer();
+        return scheduledResourceGantt.buildCanvasContainer();
     }
+
+    public BooleanProperty blocksGroupingProperty() {
+        return scheduledResourceGantt.blocksGroupingProperty();
+    }
+
 
     public void startLogic(Object mixin) {
         resourceConfigurationLoader.startLogic(mixin);

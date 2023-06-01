@@ -22,7 +22,7 @@ final class HouseholdActivity extends OrganizationDependentViewDomainActivity im
 
     @Override
     public Node buildUi() {
-        return AccommodationBorderPane.createAccommodationBorderPane(householdView.getAccommodationGantt(), todayAccommodationStatus);
+        return AccommodationBorderPane.createAccommodationBorderPane(householdView.getAttendanceGantt(), todayAccommodationStatus);
     }
 
     @Override

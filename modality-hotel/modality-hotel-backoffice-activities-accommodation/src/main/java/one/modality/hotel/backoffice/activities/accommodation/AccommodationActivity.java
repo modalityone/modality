@@ -47,13 +47,13 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
     private Node buildRoomView() {
         BorderPane borderPane = new BorderPane(roomView.buildCanvasContainer());
         CheckBox groupBlocksCheckBox = new CheckBox("Group blocks");
-        roomView.blocksGroupingProperty.bind(groupBlocksCheckBox.selectedProperty());
+        roomView.blocksGroupingProperty().bind(groupBlocksCheckBox.selectedProperty());
         borderPane.setBottom(groupBlocksCheckBox);
         return borderPane;
     }
 
     private Node buildGuestView() {
-        return AccommodationBorderPane.createAccommodationBorderPane(guestView.getAccommodationGantt(), todayAccommodationStatus);
+        return AccommodationBorderPane.createAccommodationBorderPane(guestView.getAttendanceGantt(), todayAccommodationStatus);
     }
 
     @Override
@@ -81,7 +81,7 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
 
     @Override
     public AccommodationPresentationModel getPresentationModel() {
-        return pm; // eventId and organizationId will then be updated from route
+        return pm;
     }
 
 }
