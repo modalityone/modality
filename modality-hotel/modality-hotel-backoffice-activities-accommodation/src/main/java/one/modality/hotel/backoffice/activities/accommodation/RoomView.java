@@ -23,7 +23,7 @@ public final class RoomView {
     private final ScheduledResourceGantt scheduledResourceGantt;
 
     public RoomView(AccommodationPresentationModel pm) {
-        resourceConfigurationLoader = new ResourceConfigurationLoader(pm);
+        resourceConfigurationLoader = ResourceConfigurationLoader.getOrCreate(pm);
         scheduledResourceLoader = ScheduledResourceLoader.getOrCreate(pm);
         scheduledResourceGantt = new ScheduledResourceGantt(pm, scheduledResourceLoader.getScheduledResources(), resourceConfigurationLoader.getResourceConfigurations()) {
             @Override

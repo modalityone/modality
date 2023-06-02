@@ -1,18 +1,22 @@
 package one.modality.hotel.backoffice.activities.household;
 
+import dev.webfx.extras.time.layout.bar.LocalDateBar;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
 import one.modality.hotel.backoffice.accommodation.*;
 
 public class HouseholdView {
 
-    private final ScheduledResourceLoader scheduledResourceLoader;
     private final AttendanceLoader attendanceLoader;
+    private final ResourceConfigurationLoader resourceConfigurationLoader;
     private final AttendanceGantt attendanceGantt;
+    private final ObservableList<LocalDateBar<AttendanceBlock>> bars = FXCollections.observableArrayList();
 
     public HouseholdView(AccommodationPresentationModel pm) {
-        scheduledResourceLoader = ScheduledResourceLoader.getOrCreate(pm);
-        attendanceLoader = new AttendanceLoader(pm);
-        attendanceGantt = new AttendanceGantt(pm, attendanceLoader.getAttendances()) {
+        attendanceLoader = AttendanceLoader.getOrCreate(pm);
+        resourceConfigurationLoader = ResourceConfigurationLoader.getOrCreate(pm);
+        attendanceGantt = new AttendanceGantt(pm, attendanceLoader.getAttendances(), bars, resourceConfigurationLoader.getResourceConfigurations()) {
             protected Color getBarColor(AttendanceBlock block) {
                 if (block.isCheckedIn())
                     return Color.GRAY;
@@ -26,7 +30,7 @@ public class HouseholdView {
     }
 
     public void startLogic(Object mixin) {
-        scheduledResourceLoader.startLogic(mixin);
         attendanceLoader.startLogic(mixin);
+        resourceConfigurationLoader.startLogic(mixin);
     }
 }

@@ -16,7 +16,9 @@ import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
 import dev.webfx.extras.time.layout.gantt.canvas.ParentsCanvasDrawer;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.kit.util.properties.ObservableLists;
 import javafx.beans.property.BooleanProperty;
+import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -106,7 +108,7 @@ public abstract class AccommodationGantt<B extends AccommodationBlock> {
             .setTextAlignment(TextAlignment.CENTER)
             .setTextFill(Color.rgb(0, 150, 214));
 
-    public AccommodationGantt(AccommodationPresentationModel pm, double barsFontSize) {
+    public AccommodationGantt(AccommodationPresentationModel pm, ObservableList<LocalDateBar<B>> children, ObservableList<ResourceConfiguration> providedParentRooms, double barsFontSize) {
         // Binding the presentation model and the barsLayout time window
         barsLayout.bindTimeWindowBidirectional(pm);
 
@@ -117,6 +119,12 @@ public abstract class AccommodationGantt<B extends AccommodationBlock> {
 
         // Telling the bars layout how to read start & end times of bars
         TimeBarUtil.setBarsLayoutTimeReaders(barsLayout);
+        if (children != null)
+            ObservableLists.bind(barsLayout.getChildren(), children);
+        if (providedParentRooms != null) {
+            ObservableLists.bind(barsLayout.getParents(), providedParentRooms);
+            barsLayout.setParentsProvided(true);
+        }
 
         FXGanttHighlight.addDayHighlight(barsLayout, barsDrawer);
 

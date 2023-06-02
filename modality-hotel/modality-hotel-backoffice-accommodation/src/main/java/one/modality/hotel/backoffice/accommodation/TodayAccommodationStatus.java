@@ -9,7 +9,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import one.modality.base.client.gantt.fx.today.FXToday;
-import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.ScheduledResource;
 
 import java.time.format.DateTimeFormatter;
@@ -24,20 +23,13 @@ public final class TodayAccommodationStatus {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yy");
 
     private final TodayScheduledResourceLoader todayScheduledResourceLoader;
-    private final TodayAttendanceLoader todayAttendanceLoader;
 
     public TodayAccommodationStatus(AccommodationPresentationModel pm) {
         todayScheduledResourceLoader = TodayScheduledResourceLoader.getOrCreate(pm);
-        todayAttendanceLoader = new TodayAttendanceLoader(pm);
     }
 
     public void startLogic(Object mixin) {
         todayScheduledResourceLoader.startLogic(mixin);
-        todayAttendanceLoader.startLogic(mixin);
-    }
-
-    private ObservableList<Attendance> todayAttendances() {
-        return todayAttendanceLoader.getTodayAttendances();
     }
 
     private ObservableList<ScheduledResource> todayScheduledResources() {
@@ -45,9 +37,9 @@ public final class TodayAccommodationStatus {
     }
 
     private long countRoomsOccupied() {
-        return todayAttendances().stream()
-                .map(Attendance::getResourceConfiguration)
-                .distinct()
+        // The "booked" field is an extra computed fields added by the ReactiveEntitiesMapper in TodayScheduledResourceLoader
+        return todayScheduledResources().stream()
+                .filter(scheduledResource -> scheduledResource.getIntegerFieldValue("booked") > 0)
                 .count();
     }
 
@@ -62,26 +54,25 @@ public final class TodayAccommodationStatus {
     }
 
     private long countBedsAvailable() {
-        // The "booked" field is an extra computed fields added by the ReactiveEntitiesMapper in AccommodationGanttCanvas
-        return todayScheduledResources().stream()
-                .mapToInt(scheduledResource -> scheduledResource.getMax() - scheduledResource.getIntegerFieldValue("booked"))
-                .sum();
+        return countAllBeds() - countGuests();
     }
 
     private long countGuests() {
-        return todayAttendances().size();
+        // The "booked" field is an extra computed fields added by the ReactiveEntitiesMapper in TodayScheduledResourceLoader
+        return todayScheduledResources().stream()
+                .mapToInt(scheduledResource -> scheduledResource.getIntegerFieldValue("booked"))
+                .sum();
     }
 
     public GridPane createStatusBar() {
         GridPane statusBar = new GridPane();
+        statusBar.setAlignment(Pos.CENTER); // Makes a difference for the Web version (otherwise children appears on top)
         FXProperties.runNowAndOnPropertiesChange(() -> updateStatusBar(statusBar), FXToday.todayProperty());
-        ObservableLists.runOnListChange(c -> updateStatusBar(statusBar), todayAttendances());
         ObservableLists.runOnListChange(c -> updateStatusBar(statusBar), todayScheduledResources());
         return statusBar;
     }
 
     private void updateStatusBar(GridPane statusBar) {
-        statusBar.setAlignment(Pos.CENTER); // Makes a difference for the Web version (otherwise children appears on top)
         long numRoomsOccupied = countRoomsOccupied();
         long numRoomsAvailable = countAllRooms() - numRoomsOccupied;
         int numBeds = countAllBeds();
@@ -125,14 +116,6 @@ public final class TodayAccommodationStatus {
         column.setPercentWidth(percentageRemaining);
         columnConstraints.add(column);
         statusBar.getColumnConstraints().setAll(columnConstraints);
-    }
-
-    private static TodayAccommodationStatus INSTANCE;
-
-    public static TodayAccommodationStatus getOrCreate(AccommodationPresentationModel pm) {
-        if (INSTANCE == null)
-            INSTANCE = new TodayAccommodationStatus(pm);
-        return INSTANCE;
     }
 
 }

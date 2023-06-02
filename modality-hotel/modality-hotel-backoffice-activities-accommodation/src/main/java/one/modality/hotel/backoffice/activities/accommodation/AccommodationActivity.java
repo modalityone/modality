@@ -21,7 +21,7 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
     private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
     private final RoomView roomView = new RoomView(pm);
     private final GuestView guestView = new GuestView(pm);
-    private final TodayAccommodationStatus todayAccommodationStatus = TodayAccommodationStatus.getOrCreate(pm);
+    private final TodayAccommodationStatus todayAccommodationStatus = new TodayAccommodationStatus(pm);
 
     public AccommodationActivity() {
         pm.doFXBindings();

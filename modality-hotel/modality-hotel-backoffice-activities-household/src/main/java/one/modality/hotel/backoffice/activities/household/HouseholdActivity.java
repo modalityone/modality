@@ -14,7 +14,7 @@ final class HouseholdActivity extends OrganizationDependentViewDomainActivity im
 
     private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
     private final HouseholdView householdView = new HouseholdView(pm);
-    private final TodayAccommodationStatus todayAccommodationStatus = TodayAccommodationStatus.getOrCreate(pm);
+    private final TodayAccommodationStatus todayAccommodationStatus = new TodayAccommodationStatus(pm);
 
     public HouseholdActivity() {
         pm.doFXBindings();

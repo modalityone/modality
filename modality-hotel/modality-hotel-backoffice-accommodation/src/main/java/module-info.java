@@ -27,6 +27,7 @@ module modality.hotel.backoffice.accommodation {
     requires webfx.platform.util;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.reactive.entities;
+    requires webfx.stack.routing.activity;
 
     // Exported packages
     exports one.modality.hotel.backoffice.accommodation;

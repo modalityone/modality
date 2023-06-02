@@ -1,7 +1,6 @@
 package one.modality.hotel.backoffice.accommodation;
 
 import dev.webfx.extras.time.layout.bar.TimeBarUtil;
-import dev.webfx.kit.util.properties.ObservableLists;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
@@ -19,17 +18,14 @@ public abstract class ScheduledResourceGantt extends AccommodationGantt<Schedule
     private final BooleanProperty blocksGroupingProperty = new SimpleBooleanProperty();
 
     public ScheduledResourceGantt(AccommodationPresentationModel pm, ObservableList<ScheduledResource> scheduledResources, ObservableList<ResourceConfiguration> providedParentRooms) {
-        super(pm, 13);
+        super(pm, null, providedParentRooms, 13);
         TimeBarUtil.convertToBlocksThenGroupToBars(
                 scheduledResources, // the observable list of ScheduledResource entities to take as input
                 ScheduledResource::getDate, // the entity date reader that will be used to date each block
                 ScheduledResourceBlock::new, // the factory that creates blocks, initially 1 instance per entity, but then grouped into bars
                 barsLayout.getChildren(), // the final list of bars that will receive the result of grouping blocks
                 blocksGroupingProperty); // optional property to eventually disable the blocks grouping (=> 1 bar per block if disabled)
-        barsLayout
-                .setChildFixedHeight(40)
-                .setParentsProvided(true);
-        ObservableLists.bind(barsLayout.getParents(), providedParentRooms);
+        barsLayout.setChildFixedHeight(40);
         parentsCanvasDrawer
                 .setHorizontalStroke(Color.BLACK)
                 .setVerticalStroke(Color.BLACK);
