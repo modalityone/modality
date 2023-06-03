@@ -77,7 +77,7 @@ public abstract class AccommodationGantt<B extends AccommodationBlock> {
 
     // Once the position of the bars are computed by barsLayout, they will be automatically drawn in a canvas by this
     // barsDrawer (each bar will be rendered using the drawBar() method provided in this class)
-    private final LocalDateCanvasDrawer<LocalDateBar<B>> barsDrawer =
+    protected final LocalDateCanvasDrawer<LocalDateBar<B>> barsDrawer =
             new LocalDateCanvasDrawer<>(barsLayout, this::drawBar)
                     // Enabling canvas interaction (user can move & zoom in/out the time window)
                     .enableCanvasInteraction();
@@ -183,13 +183,7 @@ public abstract class AccommodationGantt<B extends AccommodationBlock> {
         gc.fillRect(b.getMinX(), b.getMinY(), 2, b.getHeight()); // erasing the left side of the stroke rectangle
     }
 
-    protected void drawBar(LocalDateBar<B> bar, Bounds b, GraphicsContext gc) {
-        // The bar wraps a block over 1 or several days (or always 1 day if the user hasn't ticked the grouping block
-        // checkbox). So the bar instance is that block that was repeated over that period.
-        drawBlock(bar.getInstance(), b, gc);
-    }
-
-    protected abstract void drawBlock(B block, Bounds b, GraphicsContext gc);
+    protected abstract void drawBar(LocalDateBar<B> bar, Bounds b, GraphicsContext gc);
 
     protected void showBeds() {
         barsLayout

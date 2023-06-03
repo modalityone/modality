@@ -1,6 +1,7 @@
 package one.modality.hotel.backoffice.activities.accommodation;
 
 import dev.webfx.extras.geometry.Bounds;
+import dev.webfx.extras.time.layout.bar.LocalDateBar;
 import javafx.beans.property.BooleanProperty;
 import javafx.scene.Node;
 import javafx.scene.canvas.GraphicsContext;
@@ -27,7 +28,10 @@ public final class RoomView {
         scheduledResourceLoader = ScheduledResourceLoader.getOrCreate(pm);
         scheduledResourceGantt = new ScheduledResourceGantt(pm, scheduledResourceLoader.getScheduledResources(), resourceConfigurationLoader.getResourceConfigurations()) {
             @Override
-            protected void drawBlock(ScheduledResourceBlock block, Bounds b, GraphicsContext gc) {
+            protected void drawBar(LocalDateBar<ScheduledResourceBlock> bar, Bounds b, GraphicsContext gc) {
+                // The bar wraps a block over 1 or several days (or always 1 day if the user hasn't ticked the grouping block
+                // checkbox). So the bar instance is that block that was repeated over that period.
+                ScheduledResourceBlock block = bar.getInstance();
                 // The main info we display in the bar is a number which represents how many free beds are remaining for booking
                 String remaining = String.valueOf(block.getRemaining());
                 // If the bar is wide enough we show "Beds" on top and the number on bottom, but if it is too narrow, we just

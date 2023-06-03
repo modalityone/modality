@@ -9,7 +9,8 @@ import dev.webfx.stack.orm.entity.Entity;
  */
 public interface Attendance extends Entity, EntityHasDocumentLine, EntityHasDate {
 
-    default ResourceConfiguration getResourceConfiguration() {
-        return getForeignEntity("scheduledResource").getForeignEntity("configuration");
+    default ScheduledResource getScheduledResource() {
+        return getForeignEntity("scheduledResource");
     }
+
 }

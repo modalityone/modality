@@ -14,27 +14,29 @@ import one.modality.base.shared.entities.ResourceConfiguration;
  */
 public class AttendanceGantt extends AccommodationGantt<AttendanceBlock> {
 
-    public AttendanceGantt(AccommodationPresentationModel pm, ObservableList<Attendance> attendances, ObservableList<ResourceConfiguration> providedParentRooms) {
-        this(pm, attendances, null, providedParentRooms);
+    public AttendanceGantt(AccommodationPresentationModel pm, ObservableList<Attendance> attendancesToConvertToBars, ObservableList<ResourceConfiguration> providedParentRooms) {
+        this(pm, attendancesToConvertToBars, null, null, providedParentRooms);
     }
 
-    public AttendanceGantt(AccommodationPresentationModel pm, ObservableList<Attendance> attendances, ObservableList<LocalDateBar<AttendanceBlock>> bars, ObservableList<ResourceConfiguration> providedParentRooms) {
-        super(pm, bars, providedParentRooms, 10);
-        if (bars == null)
-            bars = barsLayout.getChildren();
+    public AttendanceGantt(AccommodationPresentationModel pm, ObservableList<Attendance> attendancesToConvertToBars, ObservableList<LocalDateBar<AttendanceBlock>> convertedBars, ObservableList<LocalDateBar<AttendanceBlock>> barsLayoutChildren, ObservableList<ResourceConfiguration> providedParentRooms) {
+        super(pm, barsLayoutChildren, providedParentRooms, 10);
+        if (convertedBars == null)
+            convertedBars = barsLayout.getChildren();
         TimeBarUtil.convertToBlocksThenGroupToBars(
-                attendances, // the observable list of Attendance entities to take as input
+                attendancesToConvertToBars, // the observable list of Attendance entities to take as input
                 Attendance::getDate, // the entity date reader that will be used to date each block
                 AttendanceBlock::new, // the factory that creates blocks, initially 1 instance per entity, but then grouped into bars
-                bars); // the final list of bars that will receive the result of grouping blocks
+                convertedBars); // the final list of bars that will receive the result of grouping blocks
         showBeds();
     }
 
     @Override
-    protected void drawBlock(AttendanceBlock block, Bounds b, GraphicsContext gc) {
+    protected void drawBar(LocalDateBar<AttendanceBlock> bar, Bounds b, GraphicsContext gc) {
+        // The bar wraps a block over 1 or several days (or always 1 day if the user hasn't ticked the grouping block
+        // checkbox). So the bar instance is that block that was repeated over that period.
         barDrawer
-                .setBackgroundFill(getBarColor(block))
-                .setMiddleText(block.getPersonName())
+                .setBackgroundFill(getBarColor(bar))
+                .setMiddleText(bar.getInstance().getPersonName())
                 // First draw the un-clipped text in a dark colour which contrasts with the background of the chart
                 .setClipText(false)
                 .setTextFill(Color.GRAY)
@@ -45,8 +47,8 @@ public class AttendanceGantt extends AccommodationGantt<AttendanceBlock> {
                 .drawTexts(b, gc);
     }
 
-    protected Color getBarColor(AttendanceBlock block) {
-        return block.getBlockColor();
+    protected Color getBarColor(LocalDateBar<AttendanceBlock> bar) {
+        return bar.getInstance().getBlockColor();
     }
 
 }
