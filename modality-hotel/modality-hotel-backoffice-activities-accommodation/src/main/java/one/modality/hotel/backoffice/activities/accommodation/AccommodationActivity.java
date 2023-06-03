@@ -21,6 +21,8 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
     private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
     private final RoomView roomView = new RoomView(pm);
     private final GuestView guestView = new GuestView(pm);
+
+    private final RoomsAlterationView roomsAlterationView = new RoomsAlterationView(pm);
     private final TodayAccommodationStatus todayAccommodationStatus = new TodayAccommodationStatus(pm);
 
     public AccommodationActivity() {
@@ -32,7 +34,8 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
         TabPane tabPane = new TabPane();
         tabPane.getTabs().setAll(
                 createTab("Rooms", this::buildRoomView),
-                createTab("Guests", this::buildGuestView)
+                createTab("Guests", this::buildGuestView),
+                createTab("Rooms alteration", this::buildRoomsAlterationView)
         );
         return tabPane;
     }
@@ -56,6 +59,10 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
         return AccommodationBorderPane.createAccommodationBorderPane(guestView.getAttendanceGantt(), todayAccommodationStatus);
     }
 
+    private Node buildRoomsAlterationView() {
+        return roomsAlterationView.buildView();
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -77,6 +84,7 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
         roomView.startLogic(this);
         guestView.startLogic(this);
         todayAccommodationStatus.startLogic(this);
+        roomsAlterationView.startLogic(this);
     }
 
     @Override
