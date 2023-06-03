@@ -27,4 +27,12 @@ public interface ResourceConfiguration extends Entity,
     default LocalDate getEndDate() {
         return getLocalDateFieldValue("endDate");
     }
+
+    default void setLastCleaningDate(LocalDate endDate) {
+        setFieldValue("lastCleaningDate", endDate);
+    }
+
+    default LocalDate getLastCleaningDate() {
+        return getLocalDateFieldValue("lastCleaningDate");
+    }
 }
