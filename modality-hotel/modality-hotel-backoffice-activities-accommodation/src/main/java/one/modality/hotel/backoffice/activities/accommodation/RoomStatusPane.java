@@ -5,9 +5,12 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import one.modality.hotel.backoffice.accommodation.AttendeeCategory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RoomStatusPane extends VBox {
 
@@ -16,6 +19,7 @@ public class RoomStatusPane extends VBox {
     private CheckBox specialRateCheckBox;
     private TextField rateTextField;
     private TextField specificPriceTextField;
+    private Map<AttendeeCategory, CheckBox> attendeeCategoryCheckBoxMap = new HashMap<>();
 
     private Button deleteButton;
     private Button closeButton;
@@ -48,6 +52,7 @@ public class RoomStatusPane extends VBox {
         specialRateCheckBox = new CheckBox();
         rateTextField = new TextField();
         rateTextField.setPromptText("Enter the name of your rule here");
+        GridPane eligibilityForBookingGrid = createEligibilityForBookingGrid();
         specificPriceTextField = new TextField();
 
         GridPane detailsGridPane = new GridPane();
@@ -58,7 +63,7 @@ public class RoomStatusPane extends VBox {
         detailsGridPane.add(createLabel("Beds in the room"), 0, 2);
         detailsGridPane.add(bedsInRoomComboBox, 1, 2);
         detailsGridPane.add(createLabel("Eligibility for booking"), 0, 3);
-        detailsGridPane.add(createLabel("<TODO>"), 1, 3);
+        detailsGridPane.add(eligibilityForBookingGrid, 1, 3);
         detailsGridPane.add(createLabel("Special rate"), 0, 4);
         detailsGridPane.add(specialRateCheckBox, 1, 4);
         detailsGridPane.add(createLabel("Rate"), 0, 5);
@@ -80,6 +85,24 @@ public class RoomStatusPane extends VBox {
             items.add(i);
         }
         return new ComboBox<>(FXCollections.observableList(items));
+    }
+
+    private GridPane createEligibilityForBookingGrid() {
+        GridPane gridPane = new GridPane();
+        final int numColumns = 3;
+        int columnIndex = 0;
+        int rowIndex = 0;
+        for (AttendeeCategory attendeeCategory : AttendeeCategory.values()) {
+            CheckBox checkBox = new CheckBox(attendeeCategory.getText());
+            attendeeCategoryCheckBoxMap.put(attendeeCategory, checkBox);
+            gridPane.add(checkBox, columnIndex, rowIndex);
+            columnIndex++;
+            if (columnIndex >= numColumns) {
+                columnIndex = 0;
+                rowIndex++;
+            }
+        }
+        return gridPane;
     }
 
     private Label createLabel(String text) {
