@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 
 public class RoomsAlterationBorderPane {
 
+    private static final String MSG_CLICK_ON_ROOM_TO_SELECT_IT = "Click on a room to select it.";
     private static final FontDef SELECT_ROOM_TYPE_FONT = FontDef.font(FontWeight.BOLD, 15);
 
     public static BorderPane createAccommodationBorderPane(RoomsAlterationView roomsAlterationView, AccommodationPresentationModel pm) {
@@ -35,7 +37,20 @@ public class RoomsAlterationBorderPane {
                 .requestedFont(SELECT_ROOM_TYPE_FONT)
                 .style();
 
-        HBox bottomBar = new HBox(10, selectRoomTypeLabel, roomTypeComboBox);
+        Label selectedRoomLabel = new Label(MSG_CLICK_ON_ROOM_TO_SELECT_IT);
+        Button roomStatusButton = new Button("Room status");
+        roomStatusButton.setDisable(true);
+        roomStatusButton.setOnAction(e -> roomsAlterationView.showRoomStatus());
+        roomsAlterationView.selectedRoomProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                selectedRoomLabel.setText(MSG_CLICK_ON_ROOM_TO_SELECT_IT);
+            } else {
+                selectedRoomLabel.setText(newValue.getName() + " selected.");
+            }
+            roomStatusButton.setDisable(newValue == null);
+        });
+
+        HBox bottomBar = new HBox(10, selectRoomTypeLabel, roomTypeComboBox, selectedRoomLabel, roomStatusButton);
         bottomBar.setBackground(new Background(new BackgroundFill(Color.web("#e0dcdc"), null, null)));
         bottomBar.setAlignment(Pos.CENTER_LEFT);
         borderPane.setBottom(bottomBar);

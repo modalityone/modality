@@ -4,6 +4,8 @@ import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import javafx.application.Platform;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ListChangeListener;
@@ -33,22 +35,41 @@ public class RoomsAlterationView {
     private final StringProperty roomTypeProperty = new SimpleStringProperty();
     public StringProperty roomTypeProperty() { return roomTypeProperty; }
 
+    private final Property<ResourceConfiguration> selectedRoomProperty = new SimpleObjectProperty<>();
+    public Property<ResourceConfiguration> selectedRoomProperty() { return selectedRoomProperty; }
+
+    private GridPane roomListPane;
+    private RoomStatusPane roomStatusPane;
+    private VBox body;
+
     public RoomsAlterationView(AccommodationPresentationModel pm) {
         resourceConfigurationLoader = ResourceConfigurationLoader.getOrCreate(pm);
     }
 
     public Node buildView() {
-        GridPane gridPane = new GridPane();
-        gridPane.setVgap(4);
-        gridPane.setHgap(4);
+        roomListPane = new GridPane();
+        roomListPane.setVgap(4);
+        roomListPane.setHgap(4);
         for (int i = 0; i < NUM_COLS; i++) {
             ColumnConstraints columnConstraints = new ColumnConstraints();
             columnConstraints.setPercentWidth(100.0 / NUM_COLS);
-            gridPane.getColumnConstraints().add(columnConstraints);
+            roomListPane.getColumnConstraints().add(columnConstraints);
         }
-        resourceConfigurationLoader.getResourceConfigurations().addListener((ListChangeListener<? super ResourceConfiguration>) change -> addRoomNodes(gridPane));
-        roomTypeProperty.addListener(((observableValue, oldValue, newValue) -> addRoomNodes(gridPane)));
-        return LayoutUtil.createVerticalScrollPane(gridPane);
+        resourceConfigurationLoader.getResourceConfigurations().addListener((ListChangeListener<? super ResourceConfiguration>) change -> addRoomNodes(roomListPane));
+        roomTypeProperty.addListener(((observableValue, oldValue, newValue) -> addRoomNodes(roomListPane)));
+
+        roomStatusPane = new RoomStatusPane(this);
+
+        body = new VBox(roomListPane);
+        return LayoutUtil.createVerticalScrollPane(body);
+    }
+
+    public void showRoomList() {
+        body.getChildren().setAll(roomListPane);
+    }
+
+    public void showRoomStatus() {
+        body.getChildren().setAll(roomStatusPane);
     }
 
     private void addRoomNodes(GridPane gridPane) {
@@ -90,6 +111,7 @@ public class RoomsAlterationView {
         VBox vBox = new VBox(topRow, roomNameLabel);
         vBox.setStyle("-fx-background-color: white");
         vBox.setAlignment(Pos.CENTER);
+        vBox.setOnMouseClicked(e -> selectedRoomProperty.setValue(rc));
         return vBox;
     }
 
