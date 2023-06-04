@@ -4,6 +4,8 @@ import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -28,12 +30,14 @@ public class RoomsAlterationView {
 
     private final ResourceConfigurationLoader resourceConfigurationLoader;
 
+    private final StringProperty roomTypeProperty = new SimpleStringProperty();
+    public StringProperty roomTypeProperty() { return roomTypeProperty; }
+
     public RoomsAlterationView(AccommodationPresentationModel pm) {
         resourceConfigurationLoader = ResourceConfigurationLoader.getOrCreate(pm);
     }
 
     public Node buildView() {
-        //VBox vBox = new VBox(10);
         GridPane gridPane = new GridPane();
         gridPane.setVgap(4);
         gridPane.setHgap(4);
@@ -42,23 +46,34 @@ public class RoomsAlterationView {
             columnConstraints.setPercentWidth(100.0 / NUM_COLS);
             gridPane.getColumnConstraints().add(columnConstraints);
         }
-        //ObservableLists.bindConverted(vBox.getChildren(), resourceConfigurationLoader.getResourceConfigurations(), this::createRoomNode);
-        resourceConfigurationLoader.getResourceConfigurations().addListener((ListChangeListener<? super ResourceConfiguration>) change -> {
-            Platform.runLater(() -> gridPane.getChildren().clear());
-            int columnIndex = 0, rowIndex = 0;
-            for (ResourceConfiguration rc : resourceConfigurationLoader.getResourceConfigurations()) {
-                Node roomNode = createRoomNode(rc);
-                final int finalColumnIndex = columnIndex;
-                final int finalRowIndex = rowIndex;
-                Platform.runLater(() -> gridPane.add(roomNode, finalColumnIndex, finalRowIndex));
-                columnIndex++;
-                if (columnIndex >= NUM_COLS) {
-                    rowIndex++;
-                    columnIndex = 0;
-                }
-            }
-        });
+        resourceConfigurationLoader.getResourceConfigurations().addListener((ListChangeListener<? super ResourceConfiguration>) change -> addRoomNodes(gridPane));
+        roomTypeProperty.addListener(((observableValue, oldValue, newValue) -> addRoomNodes(gridPane)));
         return LayoutUtil.createVerticalScrollPane(gridPane);
+    }
+
+    private void addRoomNodes(GridPane gridPane) {
+        Platform.runLater(() -> gridPane.getChildren().clear());
+        int columnIndex = 0, rowIndex = 0;
+        for (ResourceConfiguration rc : resourceConfigurationLoader.getResourceConfigurations()) {
+            if (!matchesRoomType(rc)) {
+                continue;
+            }
+            Node roomNode = createRoomNode(rc);
+            final int finalColumnIndex = columnIndex;
+            final int finalRowIndex = rowIndex;
+            Platform.runLater(() -> gridPane.add(roomNode, finalColumnIndex, finalRowIndex));
+            columnIndex++;
+            if (columnIndex >= NUM_COLS) {
+                rowIndex++;
+                columnIndex = 0;
+            }
+        }
+    }
+
+    private boolean matchesRoomType(ResourceConfiguration rc) {
+        String roomType = rc.getItem().getName();
+        String requiredRoomType = roomTypeProperty().get();
+        return requiredRoomType == null || requiredRoomType.equals(roomType);
     }
 
     private Node createRoomNode(ResourceConfiguration rc) {
