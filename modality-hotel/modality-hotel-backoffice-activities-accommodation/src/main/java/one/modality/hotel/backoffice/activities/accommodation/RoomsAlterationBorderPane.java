@@ -57,7 +57,7 @@ public class RoomsAlterationBorderPane {
             roomTypeComboBox.setItems(FXCollections.observableList(roomTypeStrings));
         });
 
-        roomTypeComboBox.setConverter(new StringConverter<String>() {
+        roomTypeComboBox.setConverter(new StringConverter<>() {
             @Override
             public String toString(String s) {
                 return s != null ? s : "All rooms";
