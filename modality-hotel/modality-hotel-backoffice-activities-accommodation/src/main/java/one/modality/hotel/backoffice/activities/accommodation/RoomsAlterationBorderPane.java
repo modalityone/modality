@@ -2,35 +2,42 @@ package one.modality.hotel.backoffice.activities.accommodation;
 
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.text.TextTheme;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
+import dev.webfx.stack.orm.dql.DqlStatement;
+import dev.webfx.stack.orm.entity.Entities;
+import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.FontWeight;
-import javafx.util.StringConverter;
-import one.modality.base.shared.entities.ResourceConfiguration;
+import one.modality.base.shared.entities.Item;
+import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
-import one.modality.hotel.backoffice.accommodation.ResourceConfigurationLoader;
 
-import java.util.ArrayList;
-import java.util.stream.Collectors;
-
-public class RoomsAlterationBorderPane {
+class RoomsAlterationBorderPane {
 
     private static final String MSG_CLICK_ON_ROOM_TO_SELECT_IT = "Click on a room to select it.";
     private static final FontDef SELECT_ROOM_TYPE_FONT = FontDef.font(FontWeight.BOLD, 15);
 
-    public static BorderPane createAccommodationBorderPane(RoomsAlterationView roomsAlterationView, AccommodationPresentationModel pm) {
+    public static BorderPane createAccommodationBorderPane(RoomsAlterationView roomsAlterationView, AccommodationPresentationModel pm, AccommodationActivity activity) {
         Node body = roomsAlterationView.buildView();
         BorderPane borderPane = new BorderPane(body);
 
-        ComboBox<String> roomTypeComboBox = createRoomTypeComboBox(pm);
-        roomsAlterationView.roomTypeProperty().bind(roomTypeComboBox.valueProperty());
+        EntityButtonSelector<Item> roomTypeSelector = new EntityButtonSelector<>(
+                "{class: 'Item', alias: 'i', where: 'family.code=`acco`'}",
+                activity, activity.container, activity.getDataSourceModel()
+        );
+        ReactiveVisualMapper<Item> entityDialogMapper = roomTypeSelector.getEntityDialogMapper();
+        entityDialogMapper
+                .always(FXOrganizationId.organizationIdProperty(), orgId -> DqlStatement.where("exists(select ScheduledResource where configuration.(item=i and resource.site.organization=?))", Entities.getPrimaryKey(orgId)))
+        ;
+        roomsAlterationView.roomTypeProperty().bind(roomTypeSelector.selectedItemProperty());
 
         Label selectRoomTypeLabel = new Label("Select the room type!");
         TextTheme.createPrimaryTextFacet(selectRoomTypeLabel)
@@ -50,7 +57,7 @@ public class RoomsAlterationBorderPane {
             roomStatusButton.setDisable(newValue == null);
         });
 
-        HBox bottomBar = new HBox(10, selectRoomTypeLabel, roomTypeComboBox, selectedRoomLabel, roomStatusButton);
+        HBox bottomBar = new HBox(10, selectRoomTypeLabel, roomTypeSelector.getButton(), selectedRoomLabel, roomStatusButton);
         bottomBar.setBackground(new Background(new BackgroundFill(Color.web("#e0dcdc"), null, null)));
         bottomBar.setAlignment(Pos.CENTER_LEFT);
         borderPane.setBottom(bottomBar);
@@ -58,31 +65,4 @@ public class RoomsAlterationBorderPane {
         return borderPane;
     }
 
-    private static ComboBox<String> createRoomTypeComboBox(AccommodationPresentationModel pm) {
-        ComboBox<String> roomTypeComboBox = new ComboBox<>();
-
-        ResourceConfigurationLoader resourceConfigurationLoader = ResourceConfigurationLoader.getOrCreate(pm);
-        resourceConfigurationLoader.getResourceConfigurations().addListener((ListChangeListener<? super ResourceConfiguration>) change -> {
-            ArrayList<String> roomTypeStrings = resourceConfigurationLoader.getResourceConfigurations().stream()
-                    .map(rc -> rc.getItem().getName())
-                    .distinct()
-                    .sorted()
-                    .collect(Collectors.toCollection(ArrayList::new));
-            roomTypeStrings.add(0, null);
-            roomTypeComboBox.setItems(FXCollections.observableList(roomTypeStrings));
-        });
-
-        roomTypeComboBox.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(String s) {
-                return s != null ? s : "All rooms";
-            }
-
-            @Override
-            public String fromString(String s) {
-                return null;
-            }
-        });
-        return roomTypeComboBox;
-    }
 }

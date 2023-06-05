@@ -1,21 +1,18 @@
 package one.modality.hotel.backoffice.activities.accommodation;
 
-import javafx.collections.FXCollections;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import one.modality.hotel.backoffice.accommodation.AttendeeCategory;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class RoomStatusPane extends VBox {
 
     private TextField roomNameTextField;
-    private ComboBox<Integer> bedsInRoomComboBox;
+    //private ComboBox<Integer> bedsInRoomComboBox;
     private CheckBox specialRateCheckBox;
     private TextField rateTextField;
     private TextField specificPriceTextField;
@@ -48,7 +45,7 @@ public class RoomStatusPane extends VBox {
 
     private GridPane createDetailsGrid() {
         roomNameTextField = new TextField();
-        bedsInRoomComboBox = createBedsInRoomComboBox();
+        //bedsInRoomComboBox = createBedsInRoomComboBox();
         specialRateCheckBox = new CheckBox();
         rateTextField = new TextField();
         rateTextField.setPromptText("Enter the name of your rule here");
@@ -57,11 +54,11 @@ public class RoomStatusPane extends VBox {
 
         GridPane detailsGridPane = new GridPane();
         detailsGridPane.add(createLabel("Product"), 0, 0);
-        detailsGridPane.add(createRoomTypeComboBox(), 1, 0);
+        //detailsGridPane.add(createRoomTypeComboBox(), 1, 0);
         detailsGridPane.add(createLabel("Name"), 0, 1);
         detailsGridPane.add(roomNameTextField, 1, 1);
         detailsGridPane.add(createLabel("Beds in the room"), 0, 2);
-        detailsGridPane.add(bedsInRoomComboBox, 1, 2);
+        //detailsGridPane.add(bedsInRoomComboBox, 1, 2);
         detailsGridPane.add(createLabel("Eligibility for booking"), 0, 3);
         detailsGridPane.add(eligibilityForBookingGrid, 1, 3);
         detailsGridPane.add(createLabel("Special rate"), 0, 4);
@@ -74,7 +71,7 @@ public class RoomStatusPane extends VBox {
         return detailsGridPane;
     }
 
-    private ComboBox<String> createRoomTypeComboBox() {
+    /*private ComboBox<String> createRoomTypeComboBox() {
         return new ComboBox<>();
     }
 
@@ -85,7 +82,7 @@ public class RoomStatusPane extends VBox {
             items.add(i);
         }
         return new ComboBox<>(FXCollections.observableList(items));
-    }
+    }*/
 
     private GridPane createEligibilityForBookingGrid() {
         GridPane gridPane = new GridPane();

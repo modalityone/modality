@@ -25,6 +25,7 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
     private final RoomsAlterationView roomsAlterationView = new RoomsAlterationView(pm);
     private final TodayAccommodationStatus todayAccommodationStatus = new TodayAccommodationStatus(pm);
 
+    final BorderPane container = new BorderPane();
     public AccommodationActivity() {
         pm.doFXBindings();
     }
@@ -37,7 +38,8 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
                 createTab("Guests", this::buildGuestView),
                 createTab("Rooms alteration", this::buildRoomsAlterationView)
         );
-        return tabPane;
+        container.setCenter(tabPane);
+        return container;
     }
 
     private Tab createTab(String text, Supplier<Node> nodeSupplier) {
@@ -60,7 +62,7 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
     }
 
     private Node buildRoomsAlterationView() {
-        return RoomsAlterationBorderPane.createAccommodationBorderPane(roomsAlterationView, pm);
+        return RoomsAlterationBorderPane.createAccommodationBorderPane(roomsAlterationView, pm, this);
     }
 
     @Override

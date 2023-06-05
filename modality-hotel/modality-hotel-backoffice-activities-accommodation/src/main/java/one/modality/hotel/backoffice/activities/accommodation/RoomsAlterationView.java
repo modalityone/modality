@@ -4,14 +4,12 @@ import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import javafx.application.Platform;
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -21,6 +19,7 @@ import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
 import one.modality.hotel.backoffice.accommodation.ResourceConfigurationLoader;
+import one.modality.hotel.backoffice.icons.RoomSvgIcon;
 
 /**
  * @author Bruno Salmon
@@ -32,15 +31,15 @@ public class RoomsAlterationView {
 
     private final ResourceConfigurationLoader resourceConfigurationLoader;
 
-    private final StringProperty roomTypeProperty = new SimpleStringProperty();
-    public StringProperty roomTypeProperty() { return roomTypeProperty; }
+    private final ObjectProperty<Item> roomTypeProperty = new SimpleObjectProperty<>();
+    public ObjectProperty<Item> roomTypeProperty() { return roomTypeProperty; }
 
     private final Property<ResourceConfiguration> selectedRoomProperty = new SimpleObjectProperty<>();
     public Property<ResourceConfiguration> selectedRoomProperty() { return selectedRoomProperty; }
 
     private GridPane roomListPane;
     private RoomStatusPane roomStatusPane;
-    private VBox body;
+    private ScrollPane scrollPane;
 
     public RoomsAlterationView(AccommodationPresentationModel pm) {
         resourceConfigurationLoader = ResourceConfigurationLoader.getOrCreate(pm);
@@ -60,16 +59,15 @@ public class RoomsAlterationView {
 
         roomStatusPane = new RoomStatusPane(this);
 
-        body = new VBox(roomListPane);
-        return LayoutUtil.createVerticalScrollPane(body);
+        return scrollPane = LayoutUtil.createVerticalScrollPane(roomListPane);
     }
 
     public void showRoomList() {
-        body.getChildren().setAll(roomListPane);
+        scrollPane.setContent(roomListPane);
     }
 
     public void showRoomStatus() {
-        body.getChildren().setAll(roomStatusPane);
+        scrollPane.setContent(roomStatusPane);
     }
 
     private void addRoomNodes(GridPane gridPane) {
@@ -92,16 +90,15 @@ public class RoomsAlterationView {
     }
 
     private boolean matchesRoomType(ResourceConfiguration rc) {
-        String roomType = rc.getItem().getName();
-        String requiredRoomType = roomTypeProperty().get();
-        return requiredRoomType == null || requiredRoomType.equals(roomType);
+        Item requiredRoomType = roomTypeProperty().get();
+        return requiredRoomType == null || requiredRoomType.equals(rc.getItem());
     }
 
     private Node createRoomNode(ResourceConfiguration rc) {
         Node icon = createIcon();
         Item item = rc.getItem();
         Label roomTypeLabel = new Label(item.getName());
-        HBox topRow = new HBox(icon, roomTypeLabel);
+        HBox topRow = new HBox(10, icon, roomTypeLabel);
         topRow.setAlignment(Pos.CENTER);
         Label roomNameLabel = new Label(rc.getName());
         roomNameLabel.setAlignment(Pos.CENTER);
@@ -116,7 +113,7 @@ public class RoomsAlterationView {
     }
 
     private Node createIcon() {
-        return new Label("<icon>");
+        return RoomSvgIcon.createSVGPath();
     }
 
     public void startLogic(Object mixin) {
