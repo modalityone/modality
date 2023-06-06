@@ -1,5 +1,5 @@
 # Modality
-Modality is a free, open-source, hospitality-oriented booking system, currently in development. It will support significant event complexity, unmatched by any existing open-source solution.
+Modality is a free, open-source, hospitality-oriented booking system, currently in development. It will support significant event complexity, unmatched by any existing solution that we are aware of.
 
 Modality will support:
 
@@ -60,7 +60,8 @@ Modality is in early-stage development. We intend to release a functioning MVP b
 ## Key technology features
 * developed entirely in Java, on both the server-side and client-side
 * uses the same UI toolkit (JavaFX) across all clients apps
-* native Web and mobile clients generated from the same codebase
+* native Web, Mobile and Desktop clients generated from the same codebase
+* server powered by [Vert.x](https://vertx.io/)
 
 
 ## Powered by WebFX
@@ -68,7 +69,7 @@ Modality is in early-stage development. We intend to release a functioning MVP b
 
 
 ## Documentation
-* [Website](https://docs.modality.one) - read a more detailed overview of the project
+* [Website](https://modality.one) - read a more detailed overview of the project
 * [Getting started](https://docs.modality.one) - stand up Modality on your local machine
 * [Contribute](CONTRIBUTING.md) - participate in the Modality development community
 * [Roadmap](ROADMAP.md) - mapping out the implementation of Modality
