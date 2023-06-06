@@ -1,5 +1,5 @@
 # Modality
-Modality is a free, open-source, hospitality-oriented booking system, currently in development. It will support significant event complexity, unmatched by any existing open-source solution.
+Modality is a free, open-source, hospitality-oriented booking system, currently in development. It will support significant event complexity, unmatched by any existing solution that we are aware of.
 
 Modality will support:
 
