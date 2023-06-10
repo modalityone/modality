@@ -47,7 +47,6 @@ class RoomsAlterationBorderPane {
         Label selectedRoomLabel = new Label(MSG_CLICK_ON_ROOM_TO_SELECT_IT);
 
         Button roomStatusButton = new Button("Room status");
-        roomStatusButton.setDisable(true);
         roomStatusButton.setOnAction(e -> roomsAlterationView.showRoomStatusDateSelection());
 
         Button roomAlterationButton = new Button("Alter Room");
@@ -60,7 +59,6 @@ class RoomsAlterationBorderPane {
             } else {
                 selectedRoomLabel.setText(newValue.getName() + " selected.");
             }
-            roomStatusButton.setDisable(newValue == null);
             roomAlterationButton.setDisable(newValue == null);
         });
 
