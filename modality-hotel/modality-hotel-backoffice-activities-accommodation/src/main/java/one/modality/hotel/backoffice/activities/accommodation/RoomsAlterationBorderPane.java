@@ -45,9 +45,15 @@ class RoomsAlterationBorderPane {
                 .style();
 
         Label selectedRoomLabel = new Label(MSG_CLICK_ON_ROOM_TO_SELECT_IT);
+
         Button roomStatusButton = new Button("Room status");
         roomStatusButton.setDisable(true);
-        roomStatusButton.setOnAction(e -> roomsAlterationView.showRoomStatus());
+        roomStatusButton.setOnAction(e -> roomsAlterationView.showRoomStatusDateSelection());
+
+        Button roomAlterationButton = new Button("Alter Room");
+        roomAlterationButton.setDisable(true);
+        roomAlterationButton.setOnAction(e -> roomsAlterationView.showAlterRoom());
+
         roomsAlterationView.selectedRoomProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
                 selectedRoomLabel.setText(MSG_CLICK_ON_ROOM_TO_SELECT_IT);
@@ -55,9 +61,10 @@ class RoomsAlterationBorderPane {
                 selectedRoomLabel.setText(newValue.getName() + " selected.");
             }
             roomStatusButton.setDisable(newValue == null);
+            roomAlterationButton.setDisable(newValue == null);
         });
 
-        HBox bottomBar = new HBox(10, selectRoomTypeLabel, roomTypeSelector.getButton(), selectedRoomLabel, roomStatusButton);
+        HBox bottomBar = new HBox(10, selectRoomTypeLabel, roomTypeSelector.getButton(), selectedRoomLabel, roomStatusButton, roomAlterationButton);
         bottomBar.setBackground(new Background(new BackgroundFill(Color.web("#e0dcdc"), null, null)));
         bottomBar.setAlignment(Pos.CENTER_LEFT);
         borderPane.setBottom(bottomBar);

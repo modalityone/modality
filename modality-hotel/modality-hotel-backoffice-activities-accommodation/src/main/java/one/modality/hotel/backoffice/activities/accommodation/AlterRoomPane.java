@@ -9,7 +9,7 @@ import one.modality.hotel.backoffice.accommodation.AttendeeCategory;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RoomStatusPane extends VBox {
+public class AlterRoomPane extends VBox {
 
     private TextField roomNameTextField;
     //private ComboBox<Integer> bedsInRoomComboBox;
@@ -22,7 +22,7 @@ public class RoomStatusPane extends VBox {
     private Button closeButton;
     private Button saveButton;
 
-    public RoomStatusPane(RoomsAlterationView roomsAlterationView) {
+    public AlterRoomPane(RoomsAlterationView roomsAlterationView) {
         HBox topRow = new HBox(createHeadingLabel("Details"), createDetailsGrid());
 
 

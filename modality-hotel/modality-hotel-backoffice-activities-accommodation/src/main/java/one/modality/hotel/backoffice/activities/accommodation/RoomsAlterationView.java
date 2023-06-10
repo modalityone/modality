@@ -30,7 +30,8 @@ public class RoomsAlterationView {
     public Property<ResourceConfiguration> selectedRoomProperty() { return selectedRoomProperty; }
 
     private GridPane roomListPane;
-    private RoomStatusPane roomStatusPane;
+    private RoomStatusDateSelectionPane roomStatusDateSelectionPane;
+    private AlterRoomPane alterRoomPane;
     private ScrollPane scrollPane;
 
     public RoomsAlterationView(AccommodationPresentationModel pm) {
@@ -49,7 +50,8 @@ public class RoomsAlterationView {
         resourceConfigurationLoader.getResourceConfigurations().addListener((ListChangeListener<? super ResourceConfiguration>) change -> addRoomNodes(roomListPane));
         roomTypeProperty.addListener(((observableValue, oldValue, newValue) -> addRoomNodes(roomListPane)));
 
-        roomStatusPane = new RoomStatusPane(this);
+        roomStatusDateSelectionPane = new RoomStatusDateSelectionPane(this);
+        alterRoomPane = new AlterRoomPane(this);
 
         return scrollPane = LayoutUtil.createVerticalScrollPane(roomListPane);
     }
@@ -58,8 +60,12 @@ public class RoomsAlterationView {
         scrollPane.setContent(roomListPane);
     }
 
-    public void showRoomStatus() {
-        scrollPane.setContent(roomStatusPane);
+    public void showRoomStatusDateSelection() {
+        scrollPane.setContent(roomStatusDateSelectionPane);
+    }
+
+    public void showAlterRoom() {
+        scrollPane.setContent(alterRoomPane);
     }
 
     private void addRoomNodes(GridPane gridPane) {
