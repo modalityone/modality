@@ -1,24 +1,18 @@
 package one.modality.hotel.backoffice.activities.accommodation;
 
 import dev.webfx.extras.theme.Facet;
-import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.luminance.LuminanceFacetCategory;
-import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.ListChangeListener;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
-import javafx.scene.text.FontWeight;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
 import one.modality.hotel.backoffice.accommodation.ResourceConfigurationLoader;
-import one.modality.hotel.backoffice.icons.RoomSvgIcon;
 
 /**
  * @author Bruno Salmon
@@ -26,7 +20,6 @@ import one.modality.hotel.backoffice.icons.RoomSvgIcon;
 public class RoomsAlterationView {
 
     private static final int NUM_COLS = 7;
-    private static final FontDef ROOM_NAME_FONT = FontDef.font(FontWeight.BOLD, 15);
 
     private final ResourceConfigurationLoader resourceConfigurationLoader;
 
@@ -94,24 +87,8 @@ public class RoomsAlterationView {
     }
 
     private Node createRoomNode(ResourceConfiguration rc) {
-        Node icon = createIcon();
-        Item item = rc.getItem();
-        Label roomTypeLabel = new Label(item.getName());
-        HBox topRow = new HBox(10, icon, roomTypeLabel);
-        topRow.setAlignment(Pos.CENTER);
-        Label roomNameLabel = new Label(rc.getName());
-        roomNameLabel.setAlignment(Pos.CENTER);
-        TextTheme.createPrimaryTextFacet(roomNameLabel)
-                .requestedFont(ROOM_NAME_FONT)
-                .style();
-        VBox vBox = new VBox(topRow, roomNameLabel);
-        vBox.setAlignment(Pos.CENTER);
-        vBox.setOnMouseClicked(e -> selectedRoomProperty.setValue(rc));
-        return createPrimaryPanelFacet(vBox).getContainerNode(); // TODO replace this with a call to a Theme class
-    }
-
-    private Node createIcon() {
-        return RoomSvgIcon.createSVGPath();
+        RoomsAlterationRoomPane roomsAlterationRoomPane = new RoomsAlterationRoomPane(rc, selectedRoomProperty);
+        return createPrimaryPanelFacet(roomsAlterationRoomPane).getContainerNode(); // TODO replace this with a call to a Theme class
     }
 
     private static Facet createPrimaryPanelFacet(Region panel) {
