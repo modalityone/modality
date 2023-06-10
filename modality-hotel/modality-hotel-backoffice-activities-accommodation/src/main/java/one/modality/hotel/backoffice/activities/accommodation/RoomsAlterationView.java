@@ -1,6 +1,8 @@
 package one.modality.hotel.backoffice.activities.accommodation;
 
+import dev.webfx.extras.theme.Facet;
 import dev.webfx.extras.theme.FontDef;
+import dev.webfx.extras.theme.luminance.LuminanceFacetCategory;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import javafx.application.Platform;
@@ -10,10 +12,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.FontWeight;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ResourceConfiguration;
@@ -106,14 +105,19 @@ public class RoomsAlterationView {
                 .requestedFont(ROOM_NAME_FONT)
                 .style();
         VBox vBox = new VBox(topRow, roomNameLabel);
-        vBox.setStyle("-fx-background-color: white");
         vBox.setAlignment(Pos.CENTER);
         vBox.setOnMouseClicked(e -> selectedRoomProperty.setValue(rc));
-        return vBox;
+        return createPrimaryPanelFacet(vBox).getContainerNode(); // TODO replace this with a call to a Theme class
     }
 
     private Node createIcon() {
         return RoomSvgIcon.createSVGPath();
+    }
+
+    private static Facet createPrimaryPanelFacet(Region panel) {
+        return new Facet(LuminanceFacetCategory.PRIMARY_PANEL_FACET, panel)
+                .setRounded(true)
+                .setBordered(true);
     }
 
     public void startLogic(Object mixin) {
