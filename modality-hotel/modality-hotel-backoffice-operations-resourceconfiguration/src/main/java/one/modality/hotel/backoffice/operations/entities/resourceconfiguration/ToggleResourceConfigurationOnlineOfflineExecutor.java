@@ -1,10 +1,10 @@
 package one.modality.hotel.backoffice.operations.entities.resourceconfiguration;
 
-import dev.webfx.stack.orm.entity.Entity;
-import dev.webfx.stack.orm.entity.UpdateStore;
-import dev.webfx.stack.db.submit.SubmitResult;
 import dev.webfx.platform.async.Batch;
 import dev.webfx.platform.async.Future;
+import dev.webfx.stack.db.submit.SubmitResult;
+import dev.webfx.stack.orm.entity.UpdateStore;
+import one.modality.base.shared.entities.ResourceConfiguration;
 
 final class ToggleResourceConfigurationOnlineOfflineExecutor {
 
@@ -12,10 +12,10 @@ final class ToggleResourceConfigurationOnlineOfflineExecutor {
         return execute(rq.getResourceConfiguration());
     }
 
-    private static Future<Batch<SubmitResult>> execute(Entity resourceConfiguration) {
+    private static Future<Batch<SubmitResult>> execute(ResourceConfiguration resourceConfiguration) {
         UpdateStore updateStore = UpdateStore.create(resourceConfiguration.getStore().getDataSourceModel());
-        Entity entity = updateStore.updateEntity(resourceConfiguration);
-        entity.setFieldValue("online", !resourceConfiguration.getBooleanFieldValue("online"));
+        ResourceConfiguration rc = updateStore.updateEntity(resourceConfiguration);
+        rc.setOnline(!rc.isOnline());
         return updateStore.submitChanges();
     }
 }

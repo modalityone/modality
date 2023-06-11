@@ -90,19 +90,19 @@ public abstract class AccommodationGantt<B extends AccommodationBlock> {
     protected final BarDrawer barDrawer = new BarDrawer()  // unique instance to draw all the bars
             .setTextFill(Color.WHITE);
 
-    private final BarDrawer parentRoomDrawer = new BarDrawer() // unique instance to draw all the room names
+    protected final BarDrawer parentRoomDrawer = new BarDrawer() // unique instance to draw all the room names
             .setBackgroundFill(Color.WHITE)
             .setStroke(Color.grayRgb(130))
             .setIcon(ROOM_ICON_SVG_PATH, ROOM_ICON_SVG_FILL, ROOM_ICON_SVG_WIDTH, ROOM_ICON_SVG_HEIGHT, Pos.CENTER_LEFT, HPos.LEFT, VPos.CENTER, 10, 0)
             .setTextFill(Color.BLACK)
             .setTextAlignment(TextAlignment.LEFT);
 
-    private final BarDrawer bedDrawer = new BarDrawer()
+    protected final BarDrawer bedDrawer = new BarDrawer()
             .setBackgroundFill(Color.grayRgb(243))
             .setIcon(BED_ICON_SVG_PATH, BED_ICON_SVG_FILL, BED_ICON_SVG_WIDTH, BED_ICON_SVG_HEIGHT, Pos.CENTER_LEFT, HPos.LEFT, VPos.CENTER, 10, 0)
             .setTextFill(Color.grayRgb(130));
 
-    private final BarDrawer grandparentRoomTypeDrawer = new BarDrawer() // unique instance to draw all the room types
+    protected final BarDrawer grandparentRoomTypeDrawer = new BarDrawer() // unique instance to draw all the room types
             .setStroke(Color.grayRgb(130))
             .setBackgroundFill(Color.WHITE)
             .setTextAlignment(TextAlignment.CENTER)
@@ -168,13 +168,13 @@ public abstract class AccommodationGantt<B extends AccommodationBlock> {
         return scrollPane;
     }
 
-    private void drawGrandparentRoomType(Item item, Bounds b, GraphicsContext gc) {
+    protected void drawGrandparentRoomType(Item item, Bounds b, GraphicsContext gc) {
         grandparentRoomTypeDrawer
                 .setMiddleText(item.getName())
                 .drawBar(b, gc);
     }
 
-    private void drawParentRoom(ResourceConfiguration rc, Bounds b, GraphicsContext gc) {
+    protected void drawParentRoom(ResourceConfiguration rc, Bounds b, GraphicsContext gc) {
         // The only remaining property that needs to be set here is the room name that we display in the bar middle
         parentRoomDrawer
                 .setMiddleText(rc.getName())
@@ -203,7 +203,7 @@ public abstract class AccommodationGantt<B extends AccommodationBlock> {
             .setRadius(BAR_RADIUS);
     }
 
-    private void drawBed(Integer rowIndex, Bounds b, GraphicsContext gc) {
+    protected void drawBed(Integer rowIndex, Bounds b, GraphicsContext gc) {
         bedDrawer
                 .setMiddleText("Bed " + (rowIndex + 1))
                 .drawBar(b, gc);
