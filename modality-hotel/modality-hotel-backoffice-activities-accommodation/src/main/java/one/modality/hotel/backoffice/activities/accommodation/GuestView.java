@@ -1,12 +1,25 @@
 package one.modality.hotel.backoffice.activities.accommodation;
 
-import one.modality.hotel.backoffice.accommodation.AccommodationGanttCanvas;
-import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
-import one.modality.hotel.backoffice.accommodation.AccommodationStatusBarUpdater;
+import one.modality.hotel.backoffice.accommodation.*;
 
-public class GuestView extends AccommodationGanttCanvas {
+public class GuestView {
 
-    public GuestView(AccommodationPresentationModel pm, AccommodationStatusBarUpdater controller) {
-        super(pm, controller);
+    private final ResourceConfigurationLoader resourceConfigurationLoader;
+    private final AttendanceLoader attendanceLoader;
+    private final AttendanceGantt attendanceGantt;
+
+    public GuestView(AccommodationPresentationModel pm) {
+        resourceConfigurationLoader = ResourceConfigurationLoader.getOrCreate(pm);
+        attendanceLoader = AttendanceLoader.getOrCreate(pm);
+        attendanceGantt = new AttendanceGantt(pm, attendanceLoader.getAttendances(), resourceConfigurationLoader.getResourceConfigurations());
+    }
+
+    public AttendanceGantt getAttendanceGantt() {
+        return attendanceGantt;
+    }
+
+    public void startLogic(Object mixin) {
+        resourceConfigurationLoader.startLogic(mixin);
+        attendanceLoader.startLogic(mixin);
     }
 }

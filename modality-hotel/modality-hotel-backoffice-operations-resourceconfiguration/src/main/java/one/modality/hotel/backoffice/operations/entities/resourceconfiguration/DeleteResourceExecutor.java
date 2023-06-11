@@ -8,6 +8,7 @@ import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import one.modality.base.shared.entities.ResourceConfiguration;
 
 final class DeleteResourceExecutor {
 
@@ -15,7 +16,7 @@ final class DeleteResourceExecutor {
         return execute(rq.getResourceConfiguration(), rq.getParentContainer());
     }
 
-    private static Future<Void> execute(Entity resourceConfiguration, Pane parentContainer) {
+    private static Future<Void> execute(ResourceConfiguration resourceConfiguration, Pane parentContainer) {
         Promise<Void> promise = Promise.promise();
         DialogContent dialogContent = new DialogContent().setContent(new Text("Are you sure you want to delete room " + resourceConfiguration.evaluate("name") + '?'));
         DialogUtil.showModalNodeInGoldLayout(dialogContent, parentContainer).addCloseHook(promise::complete);

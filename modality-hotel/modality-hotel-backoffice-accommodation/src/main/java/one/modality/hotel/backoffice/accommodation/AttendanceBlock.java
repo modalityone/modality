@@ -13,7 +13,7 @@ import java.util.Objects;
 /**
  * @author Dan Newman
  */
-public final class AttendanceBlock {
+public final class AttendanceBlock implements AccommodationBlock {
 
     private final Attendance attendance;
     private final ResourceConfiguration resourceConfiguration;
@@ -21,13 +21,17 @@ public final class AttendanceBlock {
 
     public AttendanceBlock(Attendance attendance) {
         this.attendance = attendance;
-        this.resourceConfiguration = attendance.getResourceConfiguration();
+        this.resourceConfiguration = attendance.getScheduledResource().getResourceConfiguration();
         if (getPersonName().contains("Gen-la") || getPersonName().contains("Birch"))
             attendeeCategory = AttendeeCategory.SPECIAL_GUEST;
         else if (Numbers.toInteger(getDocument().getEventId().getPrimaryKey()) == 480) // 480 = Working visit
             attendeeCategory = AttendeeCategory.VOLUNTEER;
         else
             attendeeCategory = AttendeeCategory.GUEST;
+    }
+
+    public Attendance getAttendance() {
+        return attendance;
     }
 
     public Color getBlockColor() {
@@ -52,16 +56,13 @@ public final class AttendanceBlock {
         return name;
     }
 
-    public ResourceConfiguration getResourceConfiguration() {
+    @Override
+    public ResourceConfiguration getRoomConfiguration() {
         return resourceConfiguration;
     }
 
-    public AttendeeCategory getAttendeeCategory() {
-        return attendeeCategory;
-    }
-
     public boolean isCheckedIn() {
-        return getDocument().getBooleanFieldValue("arrived");
+        return getDocument().isArrived();
     }
 
     @Override

@@ -32,6 +32,7 @@ import javafx.scene.paint.Color;
 import one.modality.base.backoffice.controls.masterslave.MasterSlaveView;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.DocumentLine;
+import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.base.shared.entities.Site;
 import one.modality.hotel.backoffice.operations.entities.resourceconfiguration.*;
 import one.modality.base.client.activity.eventdependent.EventDependentPresentationModel;
@@ -123,7 +124,7 @@ final class RoomsGraphicActivity extends EventDependentViewDomainActivity implem
             final ObjectProperty<Entity> siteItemProperty = new SimpleObjectProperty<>();
             final Pane boxesContainer = new FlexBox(10, 10);
             final Tab siteItemTab = new Tab(null, LayoutUtil.createVerticalScrollPane(boxesContainer));
-            final ReactiveObjectsMapper<Entity, Node> siteItemResourceConfigurationsToBoxesMapper;
+            final ReactiveObjectsMapper<ResourceConfiguration, Node> siteItemResourceConfigurationsToBoxesMapper;
 
             IndividualSiteItemToTabMapper(Entity siteItem) { // actually a ResourceConfiguration group
                 boxesContainer.setPadding(new Insets(10));
@@ -131,7 +132,7 @@ final class RoomsGraphicActivity extends EventDependentViewDomainActivity implem
                 onEntityChangedOrReplaced(siteItem);
                 // Mapping the site item resource (configurations) to boxes. Each ResourceConfiguration is an individual
                 // member of the site item ResourceConfiguration group (so all having the same site and item).
-                siteItemResourceConfigurationsToBoxesMapper = ReactiveObjectsMapper.<Entity, Node>create(ReactiveEntitiesMapper.createPushReactiveChain(RoomsGraphicActivity.this))
+                siteItemResourceConfigurationsToBoxesMapper = ReactiveObjectsMapper.<ResourceConfiguration, Node>create(ReactiveEntitiesMapper.createPushReactiveChain(RoomsGraphicActivity.this))
                         .setActiveParent(siteItemsToTabsMapper)
                         .always("{class: 'ResourceConfiguration', fields: 'name,online,max,comment', orderBy: 'name'}")
                         .ifNotNullOtherwiseEmpty(siteItemProperty, rc -> where("resource.site=? and item=?", rc.evaluate("resource.site"), rc.evaluate("item")))
@@ -159,16 +160,16 @@ final class RoomsGraphicActivity extends EventDependentViewDomainActivity implem
             }
 
 
-            class IndividualSiteItemResourceConfigurationToBoxMapper implements IndividualEntityToObjectMapper<Entity, Node> {
+            class IndividualSiteItemResourceConfigurationToBoxMapper implements IndividualEntityToObjectMapper<ResourceConfiguration, Node> {
 
-                private final ObjectProperty<Entity> siteItemResourceConfigurationProperty = new SimpleObjectProperty<>();
+                private final ObjectProperty<ResourceConfiguration> siteItemResourceConfigurationProperty = new SimpleObjectProperty<>();
                 private final Label label = new Label();
                 private final VisualGrid peopleGrid = new SkinnedVisualGrid();
                 private final VBox box = new VBox(LayoutUtil.setMaxWidthToInfinite(label), peopleGrid);
                 private final ReactiveVisualMapper<DocumentLine> peopleVisualMapper;
                 private boolean dragBackgroundVisible;
 
-                IndividualSiteItemResourceConfigurationToBoxMapper(Entity siteItemResourceConfiguration) {
+                IndividualSiteItemResourceConfigurationToBoxMapper(ResourceConfiguration siteItemResourceConfiguration) {
                     label.setTextFill(Color.WHITE);
                     label.setAlignment(Pos.CENTER);
                     peopleGrid.setHeaderVisible(false);
@@ -213,7 +214,7 @@ final class RoomsGraphicActivity extends EventDependentViewDomainActivity implem
                 }
 
                 @Override
-                public void onEntityChangedOrReplaced(Entity siteItemResourceConfiguration) {
+                public void onEntityChangedOrReplaced(ResourceConfiguration siteItemResourceConfiguration) {
                     siteItemResourceConfigurationProperty.set(siteItemResourceConfiguration);
                     label.setText((String) siteItemResourceConfiguration.evaluate("name"));
                     Boolean online = siteItemResourceConfiguration.getBooleanFieldValue("online");
@@ -223,11 +224,11 @@ final class RoomsGraphicActivity extends EventDependentViewDomainActivity implem
                 }
 
                 @Override
-                public void onEntityRemoved(Entity entity) {
+                public void onEntityRemoved(ResourceConfiguration entity) {
                     peopleVisualMapper.stop();
                 }
 
-                Entity getSiteItemResourceConfiguration() {
+                ResourceConfiguration getSiteItemResourceConfiguration() {
                     return siteItemResourceConfigurationProperty.get();
                 }
 

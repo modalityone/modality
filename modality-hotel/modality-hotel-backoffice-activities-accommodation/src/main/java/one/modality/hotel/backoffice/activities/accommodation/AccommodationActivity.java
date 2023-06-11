@@ -9,23 +9,21 @@ import javafx.scene.layout.BorderPane;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
-import one.modality.base.shared.entities.Attendance;
-import one.modality.base.shared.entities.ScheduledResource;
+import one.modality.hotel.backoffice.accommodation.AccommodationBorderPane;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
-import one.modality.hotel.backoffice.accommodation.AccommodationStatusBar;
-import one.modality.hotel.backoffice.accommodation.AccommodationStatusBarUpdater;
+import one.modality.hotel.backoffice.accommodation.TodayAccommodationStatus;
 
-import java.util.List;
 import java.util.function.Supplier;
 
 final class AccommodationActivity extends OrganizationDependentViewDomainActivity implements
-        AccommodationStatusBarUpdater,
         OperationActionFactoryMixin {
 
     private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
     private final RoomView roomView = new RoomView(pm);
-    private final GuestView guestView = new GuestView(pm, this);
-    private final AccommodationStatusBar accommodationStatusBar = new AccommodationStatusBar();
+    private final GuestView guestView = new GuestView(pm);
+
+    private final RoomsAlterationView roomsAlterationView = new RoomsAlterationView(pm);
+    private final TodayAccommodationStatus todayAccommodationStatus = new TodayAccommodationStatus(pm);
 
     public AccommodationActivity() {
         pm.doFXBindings();
@@ -36,7 +34,8 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
         TabPane tabPane = new TabPane();
         tabPane.getTabs().setAll(
                 createTab("Rooms", this::buildRoomView),
-                createTab("Guests", this::buildGuestView)
+                createTab("Guests", this::buildGuestView),
+                createTab("Rooms alteration", this::buildRoomsAlterationView)
         );
         return tabPane;
     }
@@ -51,23 +50,17 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
     private Node buildRoomView() {
         BorderPane borderPane = new BorderPane(roomView.buildCanvasContainer());
         CheckBox groupBlocksCheckBox = new CheckBox("Group blocks");
-        roomView.blocksGroupingProperty.bind(groupBlocksCheckBox.selectedProperty());
+        roomView.blocksGroupingProperty().bind(groupBlocksCheckBox.selectedProperty());
         borderPane.setBottom(groupBlocksCheckBox);
         return borderPane;
     }
 
     private Node buildGuestView() {
-        return accommodationStatusBar.createAccommodationViewWithStatusBar(guestView);
+        return AccommodationBorderPane.createAccommodationBorderPane(guestView.getAttendanceGantt(), todayAccommodationStatus);
     }
 
-    @Override
-    public void setEntities(List<Attendance> attendances) {
-        accommodationStatusBar.setEntities(attendances);
-    }
-
-    @Override
-    public void setAllScheduledResource(List<ScheduledResource> allScheduledResource) {
-        accommodationStatusBar.setAllScheduledResource(allScheduledResource);
+    private Node buildRoomsAlterationView() {
+        return roomsAlterationView.buildView();
     }
 
     @Override
@@ -90,11 +83,13 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
     protected void startLogic() {
         roomView.startLogic(this);
         guestView.startLogic(this);
+        todayAccommodationStatus.startLogic(this);
+        roomsAlterationView.startLogic(this);
     }
 
     @Override
     public AccommodationPresentationModel getPresentationModel() {
-        return pm; // eventId and organizationId will then be updated from route
+        return pm;
     }
 
 }

@@ -35,11 +35,12 @@ final class StatementsActivity extends EventDependentViewDomainActivity implemen
     public Node buildUi() {
         ui = createAndBindGroupMasterSlaveViewWithFilterSearchBar(pm, "statements", "MoneyTransfer");
 
-        EntityButtonSelector<Entity> moneyAccountSelector = new EntityButtonSelector<>("{class: 'MoneyAccount', alias: 'ma', columns: [{expression: `[icon,name,currency.icon]`}], where: 'type.internal=true', orderBy: 'closed,type desc,exists(select MoneyFlow where toMoneyAccount=ma and positiveAmounts) ? 0 : 1,id desc'}", this, ui::buildUi, getDataSourceModel());
-        moneyAccountSelector.autoSelectFirstEntity();
-        moneyAccountSelector.setAutoOpenOnMouseEntered(true);
-        moneyAccountSelector.setShowMode(ButtonSelector.ShowMode.DROP_DOWN);
-        moneyAccountSelector.getEntityDialogMapper()
+        EntityButtonSelector<Entity> moneyAccountSelector = new EntityButtonSelector<>(
+                "{class: 'MoneyAccount', alias: 'ma', columns: [{expression: `[icon,name,currency.icon]`}], where: 'type.internal=true', orderBy: 'closed,type desc,exists(select MoneyFlow where toMoneyAccount=ma and positiveAmounts) ? 0 : 1,id desc'}",
+                this, ui::buildUi, getDataSourceModel())
+                .autoSelectFirstEntity()
+                .setAutoOpenOnMouseEntered(true)
+                .setShowMode(ButtonSelector.ShowMode.DROP_DOWN)
                 //.combineIfNotNullOtherwiseForceEmptyResult(pm.organizationIdProperty(), organizationId -> where("organization=?", organizationId))
                 .ifNotNullOtherwiseEmpty(pm.eventIdProperty(), eventId -> where("(event=? or event=null) and organization=(select organization from Event where id=?)", eventId, eventId));
         pm.selectedMoneyAccountProperty().bind(moneyAccountSelector.selectedItemProperty());

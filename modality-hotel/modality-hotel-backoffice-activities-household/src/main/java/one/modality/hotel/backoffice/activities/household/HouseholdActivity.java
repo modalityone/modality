@@ -5,21 +5,16 @@ import javafx.scene.Node;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
-import one.modality.base.shared.entities.Attendance;
-import one.modality.base.shared.entities.ScheduledResource;
+import one.modality.hotel.backoffice.accommodation.AccommodationBorderPane;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
-import one.modality.hotel.backoffice.accommodation.AccommodationStatusBar;
-import one.modality.hotel.backoffice.accommodation.AccommodationStatusBarUpdater;
-
-import java.util.List;
+import one.modality.hotel.backoffice.accommodation.TodayAccommodationStatus;
 
 final class HouseholdActivity extends OrganizationDependentViewDomainActivity implements
-        AccommodationStatusBarUpdater,
         OperationActionFactoryMixin {
 
     private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
     private final HouseholdView householdView = new HouseholdView(pm, this);
-    private final AccommodationStatusBar accommodationStatusBar = new AccommodationStatusBar();
+    private final TodayAccommodationStatus todayAccommodationStatus = new TodayAccommodationStatus(pm);
 
     public HouseholdActivity() {
         pm.doFXBindings();
@@ -27,17 +22,7 @@ final class HouseholdActivity extends OrganizationDependentViewDomainActivity im
 
     @Override
     public Node buildUi() {
-        return accommodationStatusBar.createAccommodationViewWithStatusBar(householdView);
-    }
-
-    @Override
-    public void setEntities(List<Attendance> attendances) {
-        accommodationStatusBar.setEntities(attendances);
-    }
-
-    @Override
-    public void setAllScheduledResource(List<ScheduledResource> allScheduledResource) {
-        accommodationStatusBar.setAllScheduledResource(allScheduledResource);
+        return AccommodationBorderPane.createAccommodationBorderPane(householdView.getAttendanceGantt(), todayAccommodationStatus);
     }
 
     @Override
@@ -59,6 +44,7 @@ final class HouseholdActivity extends OrganizationDependentViewDomainActivity im
     @Override
     protected void startLogic() {
         householdView.startLogic(this);
+        todayAccommodationStatus.startLogic(this);
     }
 
     @Override

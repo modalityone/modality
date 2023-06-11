@@ -1,30 +1,30 @@
 package one.modality.hotel.backoffice.operations.entities.resourceconfiguration;
 
-import javafx.scene.layout.Pane;
+import dev.webfx.platform.async.AsyncFunction;
+import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
-import dev.webfx.stack.orm.entity.Entity;
-import dev.webfx.stack.orm.entity.EntityId;
-import dev.webfx.platform.async.AsyncFunction;
+import javafx.scene.layout.Pane;
+import one.modality.base.shared.entities.ResourceConfiguration;
 
 public final class ChangeResourceConfigurationItemRequest implements HasOperationCode,
         HasOperationExecutor<ChangeResourceConfigurationItemRequest, Void> {
 
     private final static String OPERATION_CODE = "ChangeResourceConfigurationItem";
 
-    private final Entity resourceConfiguration;
+    private final ResourceConfiguration resourceConfiguration;
     private final Pane parentContainer;
     private final String itemFamilyCode;
     private final EntityId siteId;
 
-    public ChangeResourceConfigurationItemRequest(Entity resourceConfiguration, Pane parentContainer, String itemFamilyCode, EntityId siteId) {
+    public ChangeResourceConfigurationItemRequest(ResourceConfiguration resourceConfiguration, Pane parentContainer, String itemFamilyCode, EntityId siteId) {
         this.resourceConfiguration = resourceConfiguration;
         this.parentContainer = parentContainer;
         this.itemFamilyCode = itemFamilyCode;
         this.siteId = siteId;
     }
 
-    Entity getResourceConfiguration() {
+    ResourceConfiguration getResourceConfiguration() {
         return resourceConfiguration;
     }
 

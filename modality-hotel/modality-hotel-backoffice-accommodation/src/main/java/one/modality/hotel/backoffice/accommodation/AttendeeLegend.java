@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class AttendeeLegend {
+public final class AttendeeLegend {
 
     private static final double COLOR_BLOCK_SIZE = 20;
 

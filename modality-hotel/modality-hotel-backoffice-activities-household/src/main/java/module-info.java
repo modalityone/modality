@@ -4,13 +4,20 @@ module modality.hotel.backoffice.activities.household {
 
     // Direct dependencies modules
     requires java.base;
+    requires javafx.base;
     requires javafx.graphics;
     requires modality.base.client.activity;
     requires modality.base.client.gantt.fx;
     requires modality.base.shared.entities;
     requires modality.hotel.backoffice.accommodation;
+    requires modality.hotel.backoffice.operations.resourceconfiguration;
+    requires webfx.extras.geometry;
+    requires webfx.extras.time.layout;
+    requires webfx.extras.time.window;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
+    requires webfx.stack.orm.dql;
+    requires webfx.stack.orm.reactive.entities;
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
