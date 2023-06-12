@@ -3,6 +3,7 @@
 module modality.hotel.backoffice.operations.resourceconfiguration {
 
     // Direct dependencies modules
+    requires java.base;
     requires javafx.graphics;
     requires modality.base.shared.entities;
     requires webfx.platform.async;
