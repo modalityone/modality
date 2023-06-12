@@ -67,4 +67,12 @@ public interface Document extends
         return getBooleanFieldValue("confirmed");
     }
 
+    default void setArrived(Boolean confirmed) {
+        setFieldValue("arrived", confirmed);
+    }
+
+    default Boolean isArrived() {
+        return getBooleanFieldValue("arrived");
+    }
+
 }
