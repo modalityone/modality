@@ -3,6 +3,7 @@ package one.modality.base.client.gantt.fx.timewindow;
 import dev.webfx.extras.time.projector.HasTimeProjector;
 import dev.webfx.extras.time.projector.PairedTimeProjector;
 import dev.webfx.extras.time.projector.TimeProjector;
+import dev.webfx.extras.time.window.TimeWindowUtil;
 import dev.webfx.extras.time.window.impl.TimeWindowImpl;
 import dev.webfx.kit.util.properties.FXProperties;
 import javafx.beans.property.ObjectProperty;
@@ -28,7 +29,7 @@ public final class FXGanttTimeWindow extends TimeWindowImpl<LocalDate> {
     }
 
     private FXGanttTimeWindow() {
-        setTimeWindow(LocalDate.now().with(TemporalAdjusters.previous(DayOfWeek.MONDAY)), LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.SUNDAY)).plus(1, ChronoUnit.WEEKS));
+        TimeWindowUtil.setTimeWindowStartAndDuration(this, LocalDate.now().with(TemporalAdjusters.previous(DayOfWeek.MONDAY)), 2, ChronoUnit.WEEKS);
     }
 
     private final static FXGanttTimeWindow ganttTimeWindow = new FXGanttTimeWindow();
