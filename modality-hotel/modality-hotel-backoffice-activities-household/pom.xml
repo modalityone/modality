@@ -52,6 +52,18 @@
         </dependency>
 
         <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-hotel-backoffice-operations-resourceconfiguration</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-geometry</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-time-layout</artifactId>
             <version>0.1.0-SNAPSHOT</version>
@@ -59,7 +71,7 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-kit-util</artifactId>
+            <artifactId>webfx-extras-time-window</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -77,7 +89,13 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-orm-entity</artifactId>
+            <artifactId>webfx-stack-orm-dql</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-orm-reactive-entities</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
