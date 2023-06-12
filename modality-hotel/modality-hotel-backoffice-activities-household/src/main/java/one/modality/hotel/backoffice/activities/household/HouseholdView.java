@@ -12,8 +12,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import one.modality.base.client.gantt.fx.today.FXToday;
 import one.modality.base.shared.entities.Attendance;
+import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.base.shared.entities.markers.EntityHasDate;
+import one.modality.base.shared.entities.markers.EntityHasDocumentLine;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
 import one.modality.hotel.backoffice.accommodation.AttendanceBlock;
 import one.modality.hotel.backoffice.accommodation.AttendanceGantt;
@@ -58,7 +60,7 @@ final class HouseholdView {
                             LocalDate lastCleaningDate = roomConfiguration.getLastCleaningDate();
                             boolean needsCleaning = (lastCleaningDate == null || lastCleaningDate.isBefore(bar.getEndTime()));
                             if (needsCleaning)
-                                activity.executeOperation(new MarkBedAsCleanedRequest(roomConfiguration, bedIndex, (Pane) activity.getNode()));
+                                activity.executeOperation(new MarkBedAsCleanedRequest(roomConfiguration, bedIndex, bar.getEndTime(), (Pane) activity.getNode()));
                         }
                         // Resetting the selection to null, so that the user can select the same bar again
                         barsLayout.setSelectedChild(null);
@@ -66,11 +68,12 @@ final class HouseholdView {
                 });
                 parentsCanvasDrawer.<ResourceConfiguration>setChildRowHeaderClickHandler((rc, bedIndex) -> {
                     System.out.println(rc.getName() + " - bed " + (bedIndex + 1) + " - lastCleaning: " + rc.getLastCleaningDate());
-                    LocalDate[] occupiedStartTime = { null }, occupiedEndTime = { null };
-                    findBedLastOccupiedDates(rc, bedIndex, occupiedStartTime, occupiedEndTime);
-                    System.out.println("[" + occupiedStartTime[0] + ", " + occupiedEndTime[0] + "]");
-                    if (occupiedEndTime[0] != null) {
-                        TimeWindowUtil.setTimeWindowCenter(pm, occupiedEndTime[0], barsLayout.getTimeProjector().getTemporalUnit());
+                    DocumentLine documentLine = findLatestOccupiedDocumentLineBeforeToday(rc, bedIndex);
+                    LocalDate checkInDate = getCheckInDate(rc, documentLine);
+                    LocalDate checkOutDate = getCheckOutDate(rc, documentLine);
+                    System.out.println("[" + checkInDate + ", " + checkOutDate + "]");
+                    if (checkOutDate != null) {
+                        TimeWindowUtil.setTimeWindowCenter(pm, checkOutDate, barsLayout.getTimeProjector().getTemporalUnit());
                     }
                 });
             }
@@ -79,8 +82,10 @@ final class HouseholdView {
                 AttendanceBlock block = bar.getInstance();
                 if (block.isCheckedIn()) {
                     int bedIndex = barsLayout.getRowIndexInParentRow(b);
-                    bar.getInstance().getAttendance().getDocumentLine().setBedNumber(bedIndex);
-                    return getBedCleaningColor(block.getRoomConfiguration(), bedIndex, bar.getStartTime(), bar.getEndTime());
+                    DocumentLine documentLine = bar.getInstance().getAttendance().getDocumentLine();
+                    documentLine.setBedNumber(bedIndex);
+                    if (documentLine == findLatestOccupiedDocumentLineBeforeToday(block.getRoomConfiguration(), bedIndex))
+                        return getCleaningColor(block.getRoomConfiguration(), bedIndex, bar.getStartTime(), bar.getEndTime());
                 }
                 return super.getBarColor(bar, b);
             }
@@ -88,44 +93,79 @@ final class HouseholdView {
             @Override
             protected void drawBed(Integer rowIndex, Bounds b, GraphicsContext gc) {
                 super.drawBed(rowIndex, b, gc);
-                // Trick: the passed Bounds is actually an ObjectBounds whose object is the parent (here = room = ResourceConfiguration)
-                // That's how we get the room.
+                // Trick: the passed Bounds is actually an ObjectBounds whose object is the parent, so here it's the room
+                // i.e. ResourceConfiguration.
                 ResourceConfiguration rc = ((ObjectBounds<ResourceConfiguration>) b).getObject();
-                LocalDate[] occupiedStartTime = { null }, occupiedEndTime = { null };
-                findBedLastOccupiedDates(rc, rowIndex, occupiedStartTime, occupiedEndTime);
-                gc.setFill(getBedCleaningColor(rc, rowIndex, occupiedStartTime[0], occupiedEndTime[0]));
+                DocumentLine documentLine = findLatestOccupiedDocumentLineBeforeToday(rc, rowIndex);
+                gc.setFill(getCleaningColor(rc, documentLine, rowIndex));
                 gc.fillOval(b.getMaxX() - 10, b.getCenterY() - 3, 6, 6);
             }
         };
     }
 
-    private Color getBedCleaningColor(ResourceConfiguration rc, int bedIndex, LocalDate occupiedStartTime, LocalDate occupiedEndTime) {
+    private Color getCleaningColor(ResourceConfiguration rc, DocumentLine documentLine, int bedIndex) {
+        LocalDate checkInDate = getCheckInDate(rc, documentLine);
+        LocalDate checkOutDate = getCheckOutDate(rc, documentLine);
+        return getCleaningColor(rc, bedIndex, checkInDate, checkOutDate);
+    }
+
+    private Color getCleaningColor(ResourceConfiguration rc, int bedIndex, LocalDate lastCheckInDate, LocalDate lastCheckOutDate) {
         LocalDate today = FXToday.getToday();
-        if (occupiedStartTime != null && occupiedStartTime.isBefore(today) && occupiedEndTime != null && occupiedEndTime.isAfter(today))
+        if (lastCheckInDate != null && lastCheckInDate.isBefore(today) && lastCheckOutDate != null && lastCheckOutDate.isAfter(today))
             return OCCUPIED_COLOR;
         LocalDate lastCleaningDate = getLastBedCleaningDate(rc, bedIndex);
-        if (occupiedEndTime != null && (lastCleaningDate == null || lastCleaningDate.isBefore(occupiedEndTime)))
+        if (lastCheckOutDate != null && (lastCleaningDate == null || lastCleaningDate.isBefore(lastCheckOutDate)))
             return CLEANING_NEEDED_COLOR;
         if (lastCleaningDate == null)
             return NEVER_OCCUPIED_COLOR;
         return CLEANED_DONE_COLOR;
     }
 
-    private void findBedLastOccupiedDates(ResourceConfiguration rc, int bedIndex, LocalDate[] occupiedStartTime, LocalDate[] occupiedEndTime) {
-        occupiedStartTime[0] = attendances.stream()
-                .filter(a -> a.getScheduledResource().getResourceConfiguration() == rc && a.getDocumentLine().getDocument().isArrived() && getBedNumber(a) == bedIndex)
-                .map(EntityHasDate::getDate)
-                .min(LocalDate::compareTo)
-                .orElse(null);
-        occupiedEndTime[0] = attendances.stream()
-                .filter(a -> a.getScheduledResource().getResourceConfiguration() == rc && a.getDocumentLine().getDocument().isArrived() && getBedNumber(a) == bedIndex)
-                .map(EntityHasDate::getDate)
-                .max(LocalDate::compareTo)
+    private DocumentLine findLatestOccupiedDocumentLineBeforeToday(ResourceConfiguration rc, int bedIndex) {
+        return attendances.stream()
+                .filter(a -> a.getScheduledResource().getResourceConfiguration() == rc && !a.getDate().isAfter(FXToday.getToday()))
+                .map(EntityHasDocumentLine::getDocumentLine)
+                .distinct()
+                .filter(dl -> dl.getDocument().isArrived() && getBedNumber(dl) == bedIndex)
+                .max((dl1, dl2) -> getCheckOutDate(rc, dl1).compareTo(getCheckOutDate(rc, dl2)))
                 .orElse(null);
     }
 
-    private int getBedNumber(Attendance a) {
-        Integer bedNumber = a.getDocumentLine().getBedNumber();
+    // Note: in KBS2, a.scheduledResource.resourceConfiguration refers to the global site, while dl.resourceConfiguration
+    // refers to the event site.
+
+    private LocalDate getCheckInDate(ResourceConfiguration rc, DocumentLine dl) { // rc = global site
+        if (dl == null)
+            return null;
+        LocalDate checkInDate = dl.getLocalDateFieldValue("checkInDate");
+        if (checkInDate == null) {
+            checkInDate = attendances.stream()
+                    .filter(a -> a.getScheduledResource().getResourceConfiguration() == rc && a.getDocumentLine() == dl)
+                    .map(EntityHasDate::getDate)
+                    .min(LocalDate::compareTo)
+                    .orElse(null);
+            dl.setFieldValue("checkInDate", checkInDate);
+        }
+        return checkInDate;
+    }
+
+    private LocalDate getCheckOutDate(ResourceConfiguration rc, DocumentLine dl) { // rc = global site
+        if (dl == null)
+            return null;
+        LocalDate checkOutDate = dl.getLocalDateFieldValue("checkOutDate");
+        if (checkOutDate == null) {
+            checkOutDate = attendances.stream()
+                    .filter(a -> a.getScheduledResource().getResourceConfiguration() == rc && a.getDocumentLine() == dl)
+                    .map(EntityHasDate::getDate)
+                    .max(LocalDate::compareTo)
+                    .orElse(null);
+            dl.setFieldValue("checkOutDate", checkOutDate);
+        }
+        return checkOutDate;
+    }
+
+    private int getBedNumber(DocumentLine dl) {
+        Integer bedNumber = dl.getBedNumber();
         return bedNumber == null ? 0 : bedNumber;
     }
 
@@ -147,7 +187,7 @@ final class HouseholdView {
                 // Returning events for the selected organization only (or returning an empty set if no organization is selected)
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("documentLine.document.event.organization=?", o))
                 // Restricting events to those appearing in the time window
-                .always(pm.timeWindowEndProperty(),   endDate   -> where("a.date +1 >= ? and a.date -1 <= ? or a.documentLine.document.arrived and a.scheduledResource.configuration.(lastCleaningDate == null or lastCleaningDate < a.date)", pm.getTimeWindowStart(), endDate))   // -1 is to avoid the round corners on right for bookings exceeding the time window
+                .always(pm.timeWindowEndProperty(), endDate -> where("a.date +1 >= ? and a.date -1 <= ? or a.documentLine.document.arrived and a.scheduledResource.configuration.(lastCleaningDate == null or lastCleaningDate < a.date)", pm.getTimeWindowStart(), endDate))   // -1 is to avoid the round corners on right for bookings exceeding the time window
                 // Storing the result directly in the events layer
                 .storeEntitiesInto(attendances)
                 // We are now ready to start

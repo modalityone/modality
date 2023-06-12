@@ -6,6 +6,8 @@ import dev.webfx.stack.ui.operation.HasOperationExecutor;
 import javafx.scene.layout.Pane;
 import one.modality.base.shared.entities.ResourceConfiguration;
 
+import java.time.LocalDate;
+
 public final class MarkBedAsCleanedRequest implements HasOperationCode,
         HasOperationExecutor<MarkBedAsCleanedRequest, Void> {
 
@@ -13,11 +15,13 @@ public final class MarkBedAsCleanedRequest implements HasOperationCode,
 
     private final ResourceConfiguration roomConfiguration;
     private final int bedIndex;
+    private final LocalDate cleaningDate;
     private final Pane parentContainer;
 
-    public MarkBedAsCleanedRequest(ResourceConfiguration roomConfiguration, int bedIndex, Pane parentContainer) {
+    public MarkBedAsCleanedRequest(ResourceConfiguration roomConfiguration, int bedIndex, LocalDate cleaningDate, Pane parentContainer) {
         this.roomConfiguration = roomConfiguration;
         this.bedIndex = bedIndex;
+        this.cleaningDate = cleaningDate;
         this.parentContainer = parentContainer;
     }
 
@@ -27,6 +31,10 @@ public final class MarkBedAsCleanedRequest implements HasOperationCode,
 
     public int getBedIndex() {
         return bedIndex;
+    }
+
+    public LocalDate getCleaningDate() {
+        return cleaningDate;
     }
 
     Pane getParentContainer() {

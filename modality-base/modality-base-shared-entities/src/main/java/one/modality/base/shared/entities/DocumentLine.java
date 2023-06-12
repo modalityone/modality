@@ -14,6 +14,7 @@ public interface DocumentLine extends
         EntityHasArrivalSiteAndItem,
         EntityHasResourceConfiguration {
 
+    // Non-persistent bedNumber field using by Household screen (allocated arbitrary at runtime)
     default Integer getBedNumber() {
         return getIntegerFieldValue("bedNumber");
     }
