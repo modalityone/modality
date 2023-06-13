@@ -766,6 +766,8 @@
     <source path="dev/webfx/stack/conf/spi/impl/localstorage"/>
     <!--===========================< webfx-stack-conf-resource >============================-->
     <source path="dev/webfx/stack/conf/spi/impl/resource"/>
+    <!--========================< webfx-stack-conf-windowlocation >=========================-->
+    <source path="dev/webfx/stack/conf/spi/impl/windowlocation"/>
     <!--============================< webfx-stack-db-datascope >============================-->
     <source path="dev/webfx/stack/db/datascope"/>
     <source path="dev/webfx/stack/db/datascope/aggregate"/>
