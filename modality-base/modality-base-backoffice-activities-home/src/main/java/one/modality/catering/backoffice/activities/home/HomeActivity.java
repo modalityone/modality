@@ -5,20 +5,17 @@ import dev.webfx.extras.theme.Facet;
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
-import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContextMixin;
-import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionBinder;
 import dev.webfx.stack.ui.action.ActionBuilder;
-import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
-import dev.webfx.extras.util.layout.LayoutUtil;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
@@ -29,9 +26,9 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
+import one.modality.base.client.application.RoutingActions;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Bruno Salmon
@@ -107,14 +104,11 @@ public class HomeActivity extends ViewDomainActivityBase
     }
 
     protected Collection<Action> homeRoutingActions() {
-        return Arrays.stream(sortedPossibleHomeRoutingOperations)
-                .map(this::operationCodeToAction)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        return RoutingActions.filterRoutingActions(this::operationCodeToAction, sortedPossibleHomeRoutingOperations);
     }
 
     private Action operationCodeToAction(String operationCode) {
-        RouteRequestEmitter routeRequestEmitter = findRouteRequestEmitter(operationCode);
+        RouteRequestEmitter routeRequestEmitter = RoutingActions.findRouteRequestEmitter(operationCode, this);
         // Temporary code for main areas that don't have a route yet
         List<String> sortedPossibleHomeRoutingOperationsList = Arrays.asList(sortedPossibleHomeRoutingOperations);
         int operationIndex = sortedPossibleHomeRoutingOperationsList.indexOf(operationCode);
@@ -122,34 +116,21 @@ public class HomeActivity extends ViewDomainActivityBase
         if (operationIndex < areaLastIndex) {
             if (routeRequestEmitter == null) {
                 String redirect = redirects.get(operationCode);
-                Action redirectAction = redirect == null ? null : getRouteEmitterAction(findRouteRequestEmitter(redirect));
+                Action redirectAction;
+                if (redirect == null) {
+                    redirectAction = null;
+                } else {
+                    RouteRequestEmitter routeRequestEmitter1 = RoutingActions.findRouteRequestEmitter(redirect, this);
+                    redirectAction = RoutingActions.getRouteEmitterAction(routeRequestEmitter1, this, this);
+                }
                 return new ActionBuilder()
                         .setI18nKey(operationCode.substring(7))
                         .setActionHandler(redirectAction)
                         .build();
             } else
-                return getRouteEmitterAction(routeRequestEmitter);
+                return RoutingActions.getRouteEmitterAction(routeRequestEmitter, this, this);
         } else
             return null;
-    }
-
-    private Action getRouteEmitterAction(RouteRequestEmitter routeRequestEmitter) {
-        return newOperationAction(() -> {
-            RouteRequest routeRequest = routeRequestEmitter.instantiateRouteRequest(this);
-            if (routeRequest instanceof RoutePushRequest)
-                ((RoutePushRequest) routeRequest).setReplace(true);
-            return routeRequest;
-        });
-    }
-
-    private RouteRequestEmitter findRouteRequestEmitter(String operationCode) {
-        return RouteRequestEmitter.getProvidedEmitters().stream()
-                .filter(instantiator -> hasRequestOperationCode(instantiator.instantiateRouteRequest(this), operationCode))
-                .findFirst().orElse(null);
-    }
-
-    private static boolean hasRequestOperationCode(Object request, Object operationCode) {
-        return request instanceof HasOperationCode && operationCode.equals(((HasOperationCode) request).getOperationCode());
     }
 
     static class HomePane extends Pane {
