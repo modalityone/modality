@@ -305,7 +305,7 @@ final class PaymentActivity extends CartBasedActivity {
         value = Strings.replaceAllSafe(value, "[amount_int]", lastPayment.getAmount().toString());
         value = Strings.replaceAllSafe(value, "[event]", Labels.instantTranslate(event));
         value = Strings.replaceAllSafe(value, "[eventid]", event.getPrimaryKey().toString());
-        value = Strings.replaceAllSafe(value, "[eventid5]", digits(event.getPrimaryKey().toString(), 5, true));
+        value = Strings.replaceAllSafe(value, "[eventid5]", formatDigits(event.getPrimaryKey().toString(), 5, true));
         value = Strings.replaceAllSafe(value, "[firstName]", doc.getFirstName());
         value = Strings.replaceAllSafe(value, "[lastName]", doc.getLastName());
         value = Strings.replaceAllSafe(value, "[name]", doc.isOrdained() ? doc.getLayName() : doc.getFullName());
@@ -327,7 +327,7 @@ final class PaymentActivity extends CartBasedActivity {
         value = Strings.replaceAllSafe(value, "[session]", FXServerSessionId.getServerSessionId());
         value = Strings.replaceAllSafe(value, "[lang]", I18n.getLanguage().toString());
         value = Strings.replaceAllSafe(value, "[paymentId]", lastPayment.getPrimaryKey().toString());
-        value = Strings.replaceAllSafe(value, "[paymentId6]", digits(lastPayment.getPrimaryKey().toString(), 6, false));
+        value = Strings.replaceAllSafe(value, "[paymentId6]", formatDigits(lastPayment.getPrimaryKey().toString(), 6, false));
         value = Strings.replaceAllSafe(value, "[date]", Dates.format(lastPayment.getDate(), "yyyyMMddHHmmss"));
         return value;
     }
@@ -350,7 +350,7 @@ final class PaymentActivity extends CartBasedActivity {
         return sb.toString();
     }
 
-    private static String digits(String s, int n, boolean right) {
+    private static String formatDigits(String s, int n, boolean right) {
         s = "" + s;
         while (s.length() < n)
             s = right ? s + '0' : '0' + s;
