@@ -11,7 +11,6 @@ import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivi
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionBinder;
 import dev.webfx.stack.ui.action.ActionGroup;
-import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -91,9 +90,5 @@ public class ModalityClientFrameContainerActivity extends ViewDomainActivityBase
                         .map(instantiator -> newOperationAction(instantiator::emitLanguageRequest))
                         .toArray(Action[]::new)
         );
-    }
-
-    private static boolean hasRequestOperationCode(Object request, Object operationCode) {
-        return request instanceof HasOperationCode && operationCode.equals(((HasOperationCode) request).getOperationCode());
     }
 }
