@@ -3,11 +3,11 @@
     {
       "routePattern": "/*",
       "hostnamePatterns": ["backoffice.*"],
-      "pathToStaticFolder": "modality-all/modality-all-backoffice-application-gwt/target/modality-all-backoffice-application-gwt-1.0.0-SNAPSHOT.war!/modality_all_backoffice_application_gwt"
+      "pathToStaticFolder": "/opt/modality/modality-all/modality-all-backoffice-application-gwt/target/modality-all-backoffice-application-gwt-1.0.0-SNAPSHOT.war!/modality_all_backoffice_application_gwt"
     },
     {
       "routePattern": "/*",
-      "pathToStaticFolder": "modality-all/modality-all-frontoffice-application-gwt/target/modality-all-frontoffice-application-gwt-1.0.0-SNAPSHOT.war!/modality_all_frontoffice_application_gwt"
+      "pathToStaticFolder": "/opt/modality/modality-all/modality-all-frontoffice-application-gwt/target/modality-all-frontoffice-application-gwt-1.0.0-SNAPSHOT.war!/modality_all_frontoffice_application_gwt"
     }
   ]
 }
