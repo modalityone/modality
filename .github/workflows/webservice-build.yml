@@ -1,0 +1,16 @@
+name: modality-webservice-build
+run-name: ${{ github.actor }} building Modality web service 🚀
+on: [push]
+jobs:
+  modality-webservice-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Set up Zulu JDK 19
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 19
+      - name: Build with maven
+        run: mvn package -P vertx-fatjar

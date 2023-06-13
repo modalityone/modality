@@ -1,0 +1,19 @@
+--- V0009__country.sql	2023-01-22 13:32:03
++++ tmp/V0009__country.sql	2022-11-17 22:35:40
+@@ -8,8 +8,8 @@
+ SET xmloption = content;
+ SET client_min_messages = warning;
+ SET row_security = off;
++SET session_replication_role = replica;
+ 
+-ALTER TABLE public.country DISABLE TRIGGER ALL;
+ INSERT INTO public.country VALUES (29, 'bo', 'BOL', 68, 'BL', 'Bolivia', 1098580, 9947418, 'SA', 6, 'BOB', 64, '.bo', '591', NULL, NULL, 'es-BO,qu,ay', 'es', 40, 3923057, -17, -65, NULL, NULL, NULL, NULL, false, false);
+ INSERT INTO public.country VALUES (221, 'tk', 'TKL', 772, 'TL', 'Tokelau', 10, 1466, 'OC', 5, 'NZD', 98, '.tk', '690', NULL, NULL, 'tkl,en-TK', 'tkl', 190, 4031074, -9.167, -171.83, NULL, NULL, NULL, NULL, false, false);
+ INSERT INTO public.country VALUES (150, 'mp', 'MNP', 580, 'CQ', 'Northern Mariana Islands', 477, 53883, 'OC', 5, 'USD', 169, '.mp', '+1-670', NULL, NULL, 'fil,tl,zh,ch-MP,en-MP', 'fil', 186, 4041468, 15.214, 145.756, NULL, NULL, NULL, NULL, false, false);
+@@ -260,4 +260,5 @@
+ INSERT INTO public.country VALUES (234, 'us', 'USA', 840, 'US', 'United States', 9629091, 310232863, 'NA', 4, 'USD', 169, '.us', '1', '#####-####', '^(d{9})$', 'en-US,es-US,haw,fr', 'en', 38, 6252001, 39.76, -98.5, NULL, 'USA', 'US', NULL, true, true);
+ INSERT INTO public.country VALUES (77, 'gb', 'GBR', 826, 'UK', 'United Kingdom', 244820, 62348447, 'EU', 3, 'GBP', 96, '.uk', '44', '@# #@@|@## #@@|@@# #@@|@@## #@@|@#@ #@@|@@#@ #@@|GIR0AA', '^(([A-Z]d{2}[A-Z]{2})|([A-Z]d{3}[A-Z]{2})|([A-Z]{2}d{2}[A-Z]{2})|([A-Z]{2}d{3}[A-Z]{2})|([A-Z]d[A-Z]d[A-Z]{2})|([A-Z]{2}d[A-Z]d[A-Z]{2})|(GIR0AA))$', 'en-GB,cy-GB,gd', 'en', 38, 2635167, 54.75844, -2.69531, NULL, 'UK', 'England', NULL, true, true);
+ INSERT INTO public.country VALUES (75, 'fr', 'FRA', 250, 'FR', 'France', 547030, 64768389, 'EU', 3, 'EUR', 93, '.fr', '33', '#####', '^(d{5})$', 'fr-FR,frp,br,co,ca,eu,oc', 'fr', 48, 3017382, 46, 2, NULL, NULL, NULL, NULL, false, true);
+-ALTER TABLE public.country ENABLE TRIGGER ALL;
++
++SET session_replication_role = default;

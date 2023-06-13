@@ -1,0 +1,7 @@
+{
+    "host": "__MODALITY_DATABASE_HOST__",
+    "port": "__MODALITY_DATABASE_PORT__",
+    "databaseName": "__MODALITY_DATABASE_NAME__",
+    "username": "__MODALITY_DATABASE_USERNAME__",
+    "password": "__MODALITY_DATABASE_PASSWORD__"
+}
