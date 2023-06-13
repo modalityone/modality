@@ -4,9 +4,8 @@ import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.Entities;
+import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.stack.ui.controls.dialog.DialogCallback;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.controls.dialog.DialogUtil;
 import javafx.geometry.Pos;
@@ -17,6 +16,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.FontWeight;
 import one.modality.base.shared.entities.Item;
+import one.modality.base.shared.entities.ItemFamily;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
 
@@ -31,14 +31,22 @@ class RoomsAlterationBorderPane {
         Node body = roomsAlterationView.buildView();
         BorderPane borderPane = new BorderPane(body);
 
-        EntityButtonSelector<Item> roomTypeSelector = new EntityButtonSelector<>(
+        EntityButtonSelector<Item> roomTypeSelector = new EntityButtonSelector<Item>(
                 "{class: 'Item', alias: 'i', where: 'family.code=`acco`'}",
                 activity, activity.container, activity.getDataSourceModel()
-        );
-        ReactiveVisualMapper<Item> entityDialogMapper = roomTypeSelector.getEntityDialogMapper();
-        entityDialogMapper
+        )
                 .always(FXOrganizationId.organizationIdProperty(), orgId -> DqlStatement.where("exists(select ScheduledResource where configuration.(item=i and resource.site.organization=?))", Entities.getPrimaryKey(orgId)))
-        ;
+                .setAutoOpenOnMouseEntered(true)
+                .appendNullEntity(true);
+        // Creating the null Entity (the entity the selector will use to display null) to say "<All>"
+        EntityStore store = roomTypeSelector.getStore();
+        Item allItem = store.createEntity(Item.class);
+        allItem.setName("<All>");
+        ItemFamily accoFamily = store.createEntity(ItemFamily.class);
+        accoFamily.setCode("acco");
+        allItem.setFamily(accoFamily);
+        roomTypeSelector.setVisualNullEntity(allItem);
+
         roomsAlterationView.roomTypeProperty().bind(roomTypeSelector.selectedItemProperty());
 
         Label selectRoomTypeLabel = new Label("Select the room type!");
