@@ -4,22 +4,23 @@ import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.Entities;
-import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.ui.controls.dialog.DialogCallback;
+import dev.webfx.stack.ui.controls.dialog.DialogContent;
+import dev.webfx.stack.ui.controls.dialog.DialogUtil;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.FontWeight;
 import one.modality.base.shared.entities.Item;
-import one.modality.base.shared.entities.ItemFamily;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
+
+import java.time.LocalDate;
 
 class RoomsAlterationBorderPane {
 
@@ -30,22 +31,14 @@ class RoomsAlterationBorderPane {
         Node body = roomsAlterationView.buildView();
         BorderPane borderPane = new BorderPane(body);
 
-        EntityButtonSelector<Item> roomTypeSelector = new EntityButtonSelector<Item>(
+        EntityButtonSelector<Item> roomTypeSelector = new EntityButtonSelector<>(
                 "{class: 'Item', alias: 'i', where: 'family.code=`acco`'}",
                 activity, activity.container, activity.getDataSourceModel()
-        )
+        );
+        ReactiveVisualMapper<Item> entityDialogMapper = roomTypeSelector.getEntityDialogMapper();
+        entityDialogMapper
                 .always(FXOrganizationId.organizationIdProperty(), orgId -> DqlStatement.where("exists(select ScheduledResource where configuration.(item=i and resource.site.organization=?))", Entities.getPrimaryKey(orgId)))
-                .setAutoOpenOnMouseEntered(true)
-                .appendNullEntity(true);
-        // Creating the null Entity (the entity the selector will use to display null) to say "<All>"
-        EntityStore store = roomTypeSelector.getStore();
-        Item allItem = store.createEntity(Item.class);
-        allItem.setName("<All>");
-        ItemFamily accoFamily = store.createEntity(ItemFamily.class);
-        accoFamily.setCode("acco");
-        allItem.setFamily(accoFamily);
-        roomTypeSelector.setVisualNullEntity(allItem);
-
+        ;
         roomsAlterationView.roomTypeProperty().bind(roomTypeSelector.selectedItemProperty());
 
         Label selectRoomTypeLabel = new Label("Select the room type!");
@@ -56,7 +49,15 @@ class RoomsAlterationBorderPane {
         Label selectedRoomLabel = new Label(MSG_CLICK_ON_ROOM_TO_SELECT_IT);
 
         Button roomStatusButton = new Button("Room status");
-        roomStatusButton.setOnAction(e -> roomsAlterationView.showRoomStatusDateSelection());
+        roomStatusButton.setOnAction(e -> {
+            RoomStatusDateSelectionPane roomStatusDateSelectionPane = new RoomStatusDateSelectionPane();
+            DialogContent dialogContent = new DialogContent().setContent(roomStatusDateSelectionPane);
+            DialogUtil.showModalNodeInGoldLayout(dialogContent, borderPane);
+            DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
+                dialogCallback.closeDialog();
+                showRoomStatusDialog(roomStatusDateSelectionPane, roomsAlterationView);
+            });
+        });
 
         Button roomAlterationButton = new Button("Alter Room");
         roomAlterationButton.setDisable(true);
@@ -79,4 +80,9 @@ class RoomsAlterationBorderPane {
         return borderPane;
     }
 
+    private static void showRoomStatusDialog(RoomStatusDateSelectionPane roomStatusDateSelectionPane, RoomsAlterationView roomsAlterationView) {
+        LocalDate from = roomStatusDateSelectionPane.getFrom();
+        LocalDate to = roomStatusDateSelectionPane.getTo();
+        roomsAlterationView.showRoomStatusDialog(from, to);
+    }
 }

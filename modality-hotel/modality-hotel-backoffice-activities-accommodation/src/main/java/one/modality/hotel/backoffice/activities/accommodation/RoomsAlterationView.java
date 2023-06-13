@@ -3,6 +3,8 @@ package one.modality.hotel.backoffice.activities.accommodation;
 import dev.webfx.extras.theme.Facet;
 import dev.webfx.extras.theme.luminance.LuminanceFacetCategory;
 import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.stack.ui.controls.dialog.DialogContent;
+import dev.webfx.stack.ui.controls.dialog.DialogUtil;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.ListChangeListener;
@@ -13,6 +15,8 @@ import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
 import one.modality.hotel.backoffice.accommodation.ResourceConfigurationLoader;
+
+import java.time.LocalDate;
 
 /**
  * @author Bruno Salmon
@@ -29,13 +33,15 @@ public class RoomsAlterationView {
     private final Property<ResourceConfiguration> selectedRoomProperty = new SimpleObjectProperty<>();
     public Property<ResourceConfiguration> selectedRoomProperty() { return selectedRoomProperty; }
 
+    private final RoomStatusView roomStatusView;
+
     private GridPane roomListPane;
-    private RoomStatusDateSelectionPane roomStatusDateSelectionPane;
     private AlterRoomPane alterRoomPane;
     private ScrollPane scrollPane;
 
     public RoomsAlterationView(AccommodationPresentationModel pm) {
         resourceConfigurationLoader = ResourceConfigurationLoader.getOrCreate(pm);
+        roomStatusView = new RoomStatusView(pm);
     }
 
     public Node buildView() {
@@ -50,18 +56,13 @@ public class RoomsAlterationView {
         resourceConfigurationLoader.getResourceConfigurations().addListener((ListChangeListener<? super ResourceConfiguration>) change -> addRoomNodes(roomListPane));
         roomTypeProperty.addListener(((observableValue, oldValue, newValue) -> addRoomNodes(roomListPane)));
 
-        roomStatusDateSelectionPane = new RoomStatusDateSelectionPane(this);
         alterRoomPane = new AlterRoomPane(this);
-
-        return scrollPane = LayoutUtil.createVerticalScrollPane(roomListPane);
+        scrollPane = LayoutUtil.createVerticalScrollPane(roomListPane);
+        return scrollPane;
     }
 
     public void showRoomList() {
         scrollPane.setContent(roomListPane);
-    }
-
-    public void showRoomStatusDateSelection() {
-        scrollPane.setContent(roomStatusDateSelectionPane);
     }
 
     public void showAlterRoom() {
@@ -105,5 +106,15 @@ public class RoomsAlterationView {
 
     public void startLogic(Object mixin) {
         resourceConfigurationLoader.startLogic(mixin);
+        roomStatusView.startLogic(mixin);
+    }
+
+    public void showRoomStatusDialog(LocalDate from, LocalDate to) {
+        roomStatusView.fromProperty().set(from);
+        roomStatusView.toProperty().set(to);
+        Node roomStatusNode = roomStatusView.buildView();
+        DialogContent dialogContent = new DialogContent().setContent(roomStatusNode);
+        DialogUtil.showModalNodeInGoldLayout(dialogContent, (Pane) scrollPane.getParent());
+        DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> dialogCallback.closeDialog());
     }
 }

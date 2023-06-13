@@ -24,6 +24,10 @@ public interface ResourceConfiguration extends Entity,
         setFieldValue("endDate", endDate);
     }
 
+    default LocalDate getStartDate() {
+        return getLocalDateFieldValue("startDate");
+    }
+
     default LocalDate getEndDate() {
         return getLocalDateFieldValue("endDate");
     }
