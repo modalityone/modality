@@ -4,6 +4,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.hotel.backoffice.accommodation.AttendeeCategory;
 
 import java.util.HashMap;
@@ -19,32 +20,20 @@ public class AlterRoomPane extends VBox {
     private Map<AttendeeCategory, CheckBox> attendeeCategoryCheckBoxMap = new HashMap<>();
 
     private Button deleteButton;
-    private Button closeButton;
     private Button saveButton;
 
-    public AlterRoomPane(RoomsAlterationView roomsAlterationView) {
-        HBox topRow = new HBox(createHeadingLabel("Details"), createDetailsGrid());
-
+    public AlterRoomPane(ResourceConfiguration rc) {
+        HBox topRow = new HBox(createHeadingLabel("Details"), createDetailsGrid(rc));
 
         deleteButton = new Button("Delete room");
-        closeButton = new Button("Close");
-        closeButton.setOnAction(e -> roomsAlterationView.showRoomList());
         saveButton = new Button("Save");
-        HBox buttonPane = new HBox(deleteButton, closeButton, saveButton);
+        HBox buttonPane = new HBox(deleteButton, saveButton);
 
         getChildren().addAll(topRow, buttonPane);
-
-        roomsAlterationView.selectedRoomProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                roomNameTextField.setText(newValue.getName());
-            } else {
-                roomNameTextField.setText(null);
-            }
-        });
     }
 
-    private GridPane createDetailsGrid() {
-        roomNameTextField = new TextField();
+    private GridPane createDetailsGrid(ResourceConfiguration rc) {
+        roomNameTextField = new TextField(rc.getName());
         //bedsInRoomComboBox = createBedsInRoomComboBox();
         specialRateCheckBox = new CheckBox();
         rateTextField = new TextField();

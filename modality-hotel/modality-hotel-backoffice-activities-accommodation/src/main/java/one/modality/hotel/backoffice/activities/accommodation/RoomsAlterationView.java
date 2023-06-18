@@ -3,6 +3,7 @@ package one.modality.hotel.backoffice.activities.accommodation;
 import dev.webfx.extras.theme.Facet;
 import dev.webfx.extras.theme.luminance.LuminanceFacetCategory;
 import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.stack.ui.controls.dialog.DialogCallback;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.controls.dialog.DialogUtil;
 import javafx.application.Platform;
@@ -30,13 +31,9 @@ public class RoomsAlterationView {
     private final ObjectProperty<Item> roomTypeProperty = new SimpleObjectProperty<>();
     public ObjectProperty<Item> roomTypeProperty() { return roomTypeProperty; }
 
-    private final Property<ResourceConfiguration> selectedRoomProperty = new SimpleObjectProperty<>();
-    public Property<ResourceConfiguration> selectedRoomProperty() { return selectedRoomProperty; }
-
     private final RoomStatusView roomStatusView;
 
     private GridPane roomListPane;
-    private AlterRoomPane alterRoomPane;
     private ScrollPane scrollPane;
 
     public RoomsAlterationView(AccommodationPresentationModel pm) {
@@ -56,17 +53,12 @@ public class RoomsAlterationView {
         resourceConfigurationLoader.getResourceConfigurations().addListener((ListChangeListener<? super ResourceConfiguration>) change -> addRoomNodes(roomListPane));
         roomTypeProperty.addListener(((observableValue, oldValue, newValue) -> addRoomNodes(roomListPane)));
 
-        alterRoomPane = new AlterRoomPane(this);
         scrollPane = LayoutUtil.createVerticalScrollPane(roomListPane);
         return scrollPane;
     }
 
     public void showRoomList() {
         scrollPane.setContent(roomListPane);
-    }
-
-    public void showAlterRoom() {
-        scrollPane.setContent(alterRoomPane);
     }
 
     private void addRoomNodes(GridPane gridPane) {
@@ -94,7 +86,13 @@ public class RoomsAlterationView {
     }
 
     private Node createRoomNode(ResourceConfiguration rc) {
-        RoomsAlterationRoomPane roomsAlterationRoomPane = new RoomsAlterationRoomPane(rc, selectedRoomProperty);
+        RoomsAlterationRoomPane roomsAlterationRoomPane = new RoomsAlterationRoomPane(rc);
+        roomsAlterationRoomPane.setOnMouseClicked(e -> {
+            AlterRoomPane alterRoomPane = new AlterRoomPane(rc);
+            DialogContent dialogContent = new DialogContent().setContent(alterRoomPane);
+            DialogUtil.showModalNodeInGoldLayout(dialogContent, (Pane) roomsAlterationRoomPane.getParent());
+            DialogUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
+        });
         return createPrimaryPanelFacet(roomsAlterationRoomPane).getContainerNode(); // TODO replace this with a call to a Theme class
     }
 

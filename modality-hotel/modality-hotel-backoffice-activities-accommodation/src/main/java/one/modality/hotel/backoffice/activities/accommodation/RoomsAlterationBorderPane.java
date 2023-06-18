@@ -24,7 +24,7 @@ import java.time.LocalDate;
 
 class RoomsAlterationBorderPane {
 
-    private static final String MSG_CLICK_ON_ROOM_TO_SELECT_IT = "Click on a room to select it.";
+    private static final String MSG_CLICK_ON_ROOM_TO_EDIT_IT = "Click on a room to edit it.";
     private static final FontDef SELECT_ROOM_TYPE_FONT = FontDef.font(FontWeight.BOLD, 15);
 
     public static BorderPane createAccommodationBorderPane(RoomsAlterationView roomsAlterationView, AccommodationPresentationModel pm, AccommodationActivity activity) {
@@ -54,7 +54,7 @@ class RoomsAlterationBorderPane {
                 .requestedFont(SELECT_ROOM_TYPE_FONT)
                 .style();
 
-        Label selectedRoomLabel = new Label(MSG_CLICK_ON_ROOM_TO_SELECT_IT);
+        Label selectedRoomLabel = new Label(MSG_CLICK_ON_ROOM_TO_EDIT_IT);
 
         Button roomStatusButton = new Button("Room status");
         roomStatusButton.setOnAction(e -> {
@@ -67,20 +67,7 @@ class RoomsAlterationBorderPane {
             });
         });
 
-        Button roomAlterationButton = new Button("Alter Room");
-        roomAlterationButton.setDisable(true);
-        roomAlterationButton.setOnAction(e -> roomsAlterationView.showAlterRoom());
-
-        roomsAlterationView.selectedRoomProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == null) {
-                selectedRoomLabel.setText(MSG_CLICK_ON_ROOM_TO_SELECT_IT);
-            } else {
-                selectedRoomLabel.setText(newValue.getName() + " selected.");
-            }
-            roomAlterationButton.setDisable(newValue == null);
-        });
-
-        HBox bottomBar = new HBox(10, selectRoomTypeLabel, roomTypeSelector.getButton(), selectedRoomLabel, roomStatusButton, roomAlterationButton);
+        HBox bottomBar = new HBox(10, selectRoomTypeLabel, roomTypeSelector.getButton(), selectedRoomLabel, roomStatusButton);
         bottomBar.setBackground(new Background(new BackgroundFill(Color.web("#e0dcdc"), null, null)));
         bottomBar.setAlignment(Pos.CENTER_LEFT);
         borderPane.setBottom(bottomBar);
