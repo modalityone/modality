@@ -14,11 +14,12 @@ import javafx.scene.text.FontWeight;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 
 public class RoomStatusDateSelectionPane extends VBox {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-YY");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-uu");
 
     private static final FontDef SELECT_PERIOD_FONT = FontDef.font(FontWeight.BOLD, 15);
 
@@ -68,7 +69,6 @@ public class RoomStatusDateSelectionPane extends VBox {
         try {
             return LocalDate.parse(text, DATE_FORMATTER);
         } catch (DateTimeParseException e) {
-            //return LocalDate.parse("2050-01-01");
             return LocalDate.now().atStartOfDay().toLocalDate();
         }
     }
