@@ -1,10 +1,15 @@
 package one.modality.hotel.backoffice.activities.accommodation;
 
+import dev.webfx.stack.orm.dql.DqlStatement;
+import dev.webfx.stack.orm.entity.Entities;
+import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ResourceConfiguration;
+import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.hotel.backoffice.accommodation.AttendeeCategory;
 
 import java.util.HashMap;
@@ -22,8 +27,8 @@ public class AlterRoomPane extends VBox {
     private Button deleteButton;
     private Button saveButton;
 
-    public AlterRoomPane(ResourceConfiguration rc) {
-        HBox topRow = new HBox(createHeadingLabel("Details"), createDetailsGrid(rc));
+    public AlterRoomPane(ResourceConfiguration rc, AccommodationActivity activity) {
+        HBox topRow = new HBox(createHeadingLabel("Details"), createDetailsGrid(rc, activity));
 
         deleteButton = new Button("Delete room");
         saveButton = new Button("Save");
@@ -32,7 +37,8 @@ public class AlterRoomPane extends VBox {
         getChildren().addAll(topRow, buttonPane);
     }
 
-    private GridPane createDetailsGrid(ResourceConfiguration rc) {
+    private GridPane createDetailsGrid(ResourceConfiguration rc, AccommodationActivity activity) {
+        Button productComboBoxButton = createProductComboBox(rc, activity);
         roomNameTextField = new TextField(rc.getName());
         //bedsInRoomComboBox = createBedsInRoomComboBox();
         specialRateCheckBox = new CheckBox();
@@ -43,7 +49,7 @@ public class AlterRoomPane extends VBox {
 
         GridPane detailsGridPane = new GridPane();
         detailsGridPane.add(createLabel("Product"), 0, 0);
-        //detailsGridPane.add(createRoomTypeComboBox(), 1, 0);
+        detailsGridPane.add(productComboBoxButton, 1, 0);
         detailsGridPane.add(createLabel("Name"), 0, 1);
         detailsGridPane.add(roomNameTextField, 1, 1);
         detailsGridPane.add(createLabel("Beds in the room"), 0, 2);
@@ -60,11 +66,19 @@ public class AlterRoomPane extends VBox {
         return detailsGridPane;
     }
 
-    /*private ComboBox<String> createRoomTypeComboBox() {
-        return new ComboBox<>();
+    private Button createProductComboBox(ResourceConfiguration rc, AccommodationActivity activity) {
+        EntityButtonSelector<Item> roomTypeSelector = new EntityButtonSelector<Item>(
+                "{class: 'Item', alias: 'i', where: 'family.code=`acco`'}",
+                activity, this, activity.getDataSourceModel()
+        )
+                .always(FXOrganizationId.organizationIdProperty(), orgId -> DqlStatement.where("exists(select ScheduledResource where configuration.(item=i and resource.site.organization=?))", Entities.getPrimaryKey(orgId)))
+                .setAutoOpenOnMouseEntered(true)
+                .appendNullEntity(true);
+        roomTypeSelector.setSelectedItem(rc.getItem());
+        return roomTypeSelector.getButton();
     }
 
-    private ComboBox<Integer> createBedsInRoomComboBox() {
+    /*private ComboBox<Integer> createBedsInRoomComboBox() {
         final int maxBedsInRoom = 50;
         List<Integer> items = new ArrayList<>();
         for (int i = 1; i <= maxBedsInRoom; i++) {

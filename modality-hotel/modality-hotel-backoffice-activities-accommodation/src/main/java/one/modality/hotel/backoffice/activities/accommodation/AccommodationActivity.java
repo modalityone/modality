@@ -62,7 +62,7 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
     }
 
     private Node buildRoomsAlterationView() {
-        return RoomsAlterationBorderPane.createAccommodationBorderPane(roomsAlterationView, pm, this);
+        return RoomsAlterationBorderPane.createAccommodationBorderPane(roomsAlterationView, this);
     }
 
     @Override

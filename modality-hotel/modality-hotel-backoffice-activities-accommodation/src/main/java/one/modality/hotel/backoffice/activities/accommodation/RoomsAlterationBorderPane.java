@@ -27,8 +27,8 @@ class RoomsAlterationBorderPane {
     private static final String MSG_CLICK_ON_ROOM_TO_EDIT_IT = "Click on a room to edit it.";
     private static final FontDef SELECT_ROOM_TYPE_FONT = FontDef.font(FontWeight.BOLD, 15);
 
-    public static BorderPane createAccommodationBorderPane(RoomsAlterationView roomsAlterationView, AccommodationPresentationModel pm, AccommodationActivity activity) {
-        Node body = roomsAlterationView.buildView();
+    public static BorderPane createAccommodationBorderPane(RoomsAlterationView roomsAlterationView, AccommodationActivity activity) {
+        Node body = roomsAlterationView.buildView(activity);
         BorderPane borderPane = new BorderPane(body);
 
         EntityButtonSelector<Item> roomTypeSelector = new EntityButtonSelector<Item>(

@@ -41,7 +41,7 @@ public class RoomsAlterationView {
         roomStatusView = new RoomStatusView(pm);
     }
 
-    public Node buildView() {
+    public Node buildView(AccommodationActivity activity) {
         roomListPane = new GridPane();
         roomListPane.setVgap(4);
         roomListPane.setHgap(4);
@@ -50,8 +50,8 @@ public class RoomsAlterationView {
             columnConstraints.setPercentWidth(100.0 / NUM_COLS);
             roomListPane.getColumnConstraints().add(columnConstraints);
         }
-        resourceConfigurationLoader.getResourceConfigurations().addListener((ListChangeListener<? super ResourceConfiguration>) change -> addRoomNodes(roomListPane));
-        roomTypeProperty.addListener(((observableValue, oldValue, newValue) -> addRoomNodes(roomListPane)));
+        resourceConfigurationLoader.getResourceConfigurations().addListener((ListChangeListener<? super ResourceConfiguration>) change -> addRoomNodes(roomListPane, activity));
+        roomTypeProperty.addListener(((observableValue, oldValue, newValue) -> addRoomNodes(roomListPane, activity)));
 
         scrollPane = LayoutUtil.createVerticalScrollPane(roomListPane);
         return scrollPane;
@@ -61,14 +61,14 @@ public class RoomsAlterationView {
         scrollPane.setContent(roomListPane);
     }
 
-    private void addRoomNodes(GridPane gridPane) {
+    private void addRoomNodes(GridPane gridPane, AccommodationActivity activity) {
         Platform.runLater(() -> gridPane.getChildren().clear());
         int columnIndex = 0, rowIndex = 0;
         for (ResourceConfiguration rc : resourceConfigurationLoader.getResourceConfigurations()) {
             if (!matchesRoomType(rc)) {
                 continue;
             }
-            Node roomNode = createRoomNode(rc);
+            Node roomNode = createRoomNode(rc, activity);
             final int finalColumnIndex = columnIndex;
             final int finalRowIndex = rowIndex;
             Platform.runLater(() -> gridPane.add(roomNode, finalColumnIndex, finalRowIndex));
@@ -85,10 +85,10 @@ public class RoomsAlterationView {
         return requiredRoomType == null || requiredRoomType.equals(rc.getItem());
     }
 
-    private Node createRoomNode(ResourceConfiguration rc) {
+    private Node createRoomNode(ResourceConfiguration rc, AccommodationActivity activity) {
         RoomsAlterationRoomPane roomsAlterationRoomPane = new RoomsAlterationRoomPane(rc);
         roomsAlterationRoomPane.setOnMouseClicked(e -> {
-            AlterRoomPane alterRoomPane = new AlterRoomPane(rc);
+            AlterRoomPane alterRoomPane = new AlterRoomPane(rc, activity);
             DialogContent dialogContent = new DialogContent().setContent(alterRoomPane);
             DialogUtil.showModalNodeInGoldLayout(dialogContent, (Pane) roomsAlterationRoomPane.getParent());
             DialogUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
