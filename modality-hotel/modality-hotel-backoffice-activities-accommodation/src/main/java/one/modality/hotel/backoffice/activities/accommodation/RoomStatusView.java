@@ -25,14 +25,15 @@ import one.modality.base.shared.entities.ScheduledResource;
 import one.modality.hotel.backoffice.accommodation.*;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
 public class RoomStatusView {
 
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yy");
     private static final FontDef TOP_ROW_FONT = FontDef.font(FontWeight.BOLD, 15);
 
     private final AccommodationPresentationModel pm;
@@ -76,7 +77,10 @@ public class RoomStatusView {
 
     private HBox createTopRow() {
         Label topLeftLabel = new Label("Room status - period view");
-        Label topRightLabel = new Label("From " + fromProperty.get() + " to " + toProperty.get());
+
+        String fromDateString = DATE_FORMATTER.format(fromProperty.get());
+        String toDateString = DATE_FORMATTER.format(toProperty.get());
+        Label topRightLabel = new Label("From " + fromDateString + " to " + toDateString);
         TextTheme.createSecondaryTextFacet(topLeftLabel)
                 .requestedFont(TOP_ROW_FONT)
                 .style();
