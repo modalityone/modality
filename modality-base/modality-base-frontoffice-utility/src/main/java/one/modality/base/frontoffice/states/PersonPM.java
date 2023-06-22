@@ -28,6 +28,7 @@ public class PersonPM {
     public StringProperty ADDRESS_NUMBER = new SimpleStringProperty("000");
     public StringProperty ADDRESS_APT = new SimpleStringProperty("000");
     public StringProperty ADDRESS_OBSERVATION = new SimpleStringProperty("00000");
+    public BooleanProperty ADDRESS_BILLING_SAME = new SimpleBooleanProperty(false);
 
     public StringProperty DIET = new SimpleStringProperty("Vegetarian");
     public BooleanProperty NEEDS_WHEELCHAIR = new SimpleBooleanProperty(false);

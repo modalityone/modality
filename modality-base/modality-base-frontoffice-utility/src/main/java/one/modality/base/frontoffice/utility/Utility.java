@@ -2,6 +2,9 @@ package one.modality.base.frontoffice.utility;
 
 import dev.webfx.stack.i18n.controls.I18nControls;
 import javafx.animation.TranslateTransition;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -9,6 +12,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
@@ -22,6 +27,29 @@ public class Utility {
         icon.setContent(svgPath);
 
         return icon;
+    }
+
+    public static Node createSpace(int height) {
+        VBox b = new VBox();
+        b.setMinHeight(height);
+        return b;
+    }
+
+    public static Node createCheckBox(BooleanProperty property, boolean isRadio, boolean isReverse, String label, boolean isDisabled) {
+        Rectangle b = new Rectangle();
+        b.setWidth(20);
+        b.setHeight(20);
+        b.setArcHeight(4);
+        b.setArcWidth(4);
+        b.setFill((isReverse != property.get()) ? Color.web(Style.MAIN_BLUE) : Color.WHITE);
+        b.setStroke(Color.BLACK);
+        property.addListener((observableValue, aBoolean, t1) -> {
+            b.setFill((isReverse != property.get()) ? Color.web(Style.MAIN_BLUE) : Color.WHITE);
+        });
+
+        if (!isDisabled) b.setOnMouseClicked(e -> property.set(isRadio ? !isReverse : !property.get()));
+
+        return createHList(5,0, b, new Label(label));
     }
 
     public static Node createSplitRow(Node node1, Node node2, int ratio, int padding) {
@@ -40,7 +68,7 @@ public class Utility {
                 col1, col2
         );
 
-        container.setPadding(new Insets(padding));
+        container.setHgap(padding);
 
         return container;
     }

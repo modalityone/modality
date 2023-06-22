@@ -10,6 +10,7 @@ module modality.event.frontoffice.activities.account {
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires modality.crm.shared.authn;
+    requires webfx.extras.util.layout;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;

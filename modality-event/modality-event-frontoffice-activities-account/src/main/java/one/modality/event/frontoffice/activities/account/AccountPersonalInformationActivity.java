@@ -1,5 +1,6 @@
 package one.modality.event.frontoffice.activities.account;
 
+import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.scene.Node;
@@ -16,6 +17,6 @@ public class AccountPersonalInformationActivity extends ViewDomainActivityBase i
                 AccountUtility.displayInformation(this, this, FXAccount.ownerPM)
         );
 
-        return container;
+        return LayoutUtil.createVerticalScrollPane(container);
     }
 }

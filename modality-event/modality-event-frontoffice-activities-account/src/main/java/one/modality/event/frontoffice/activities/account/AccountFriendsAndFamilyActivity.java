@@ -15,11 +15,12 @@ public class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase impl
         VBox membersContainer = new VBox();
         VBox memberInformation = new VBox();
         Button friendsFamilyHome = new Button("Friends and Family");
+        double NO_LIMITED_WIDTH = -1;
 
         memberInformation.getChildren().addAll(
                 Utility.createSplitRow(
-                        Utility.createField("First name", AccountUtility.createBindedTextField(FXAccount.viewedPersonPM.NAME_FIRST)),
-                        Utility.createField("Last name", AccountUtility.createBindedTextField(FXAccount.viewedPersonPM.NAME_LAST)),
+                        Utility.createField("First name", AccountUtility.createBindedTextField(FXAccount.viewedPersonPM.NAME_FIRST, NO_LIMITED_WIDTH)),
+                        Utility.createField("Last name", AccountUtility.createBindedTextField(FXAccount.viewedPersonPM.NAME_LAST, NO_LIMITED_WIDTH)),
                         50, 10
                 ),
                 AccountUtility.displayInformation(this, this, FXAccount.viewedPersonPM)
