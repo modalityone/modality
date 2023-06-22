@@ -4,13 +4,18 @@ import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.scene.Node;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 public class AccountPersonalInformationActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
 
     @Override
     public Node buildUi() {
         VBox container = new VBox();
+
+        container.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
 
         container.getChildren().addAll(
                 AccountUtility.createAvatar(),

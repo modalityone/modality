@@ -8,7 +8,9 @@ module modality.base.frontoffice.utility {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.shared.entities;
+    requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;
+    requires webfx.stack.orm.entity.controls;
 
     // Exported packages
     exports one.modality.base.frontoffice.states;

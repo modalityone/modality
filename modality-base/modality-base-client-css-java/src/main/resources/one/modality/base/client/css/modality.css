@@ -52,6 +52,11 @@ VisualGrid, VisualLineChart, VisualPieChart, VisualBarChart, VisualAreaChart, Gr
     src: url('../fonts/Montserrat-BoldItalic.ttf');
 }
 
+Text, Label, Button, TextField {
+    -fx-font-family: 'Montserrat';
+    -fx-font-weight: 500;
+}
+
 .scroll-pane > .viewport {
    -fx-background-color: transparent;
 }

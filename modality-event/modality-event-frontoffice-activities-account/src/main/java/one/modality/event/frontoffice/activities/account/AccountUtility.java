@@ -5,7 +5,6 @@ import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.stack.orm.expression.terms.In;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
@@ -14,14 +13,16 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import one.modality.base.frontoffice.states.GeneralPM;
 import one.modality.base.frontoffice.states.PersonPM;
-import one.modality.base.frontoffice.utility.Utility;
+import one.modality.base.frontoffice.utility.StyleUtility;
+import one.modality.base.frontoffice.utility.GeneralUtility;
+import one.modality.base.frontoffice.utility.TextUtility;
 import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Person;
 
@@ -35,9 +36,8 @@ public class AccountUtility {
 
         HBox row = new HBox();
 
-        Text title = new Text();
+        Text title = TextUtility.getNameText("");
         title.textProperty().bind(FXAccount.ownerPM.NAME_FULL);
-        title.setFont(Font.font("Verdana", 20));
 
         row.getChildren().addAll(
                 imageView, title
@@ -51,13 +51,19 @@ public class AccountUtility {
     }
 
     public static Node createHorizontalRadioButtons(String option1, String option2, BooleanProperty isFirstSelected) {
-        return Utility.createSplitRow(
-                Utility.createCheckBox(isFirstSelected, true, false, option1, true),
-                Utility.createCheckBox(isFirstSelected, true, true, option2, true), 40, 0);
+        return GeneralUtility.createSplitRow(
+                GeneralUtility.createCheckBox(isFirstSelected, true, false, option1, true),
+                GeneralUtility.createCheckBox(isFirstSelected, true, true, option2, true), 40, 0);
     }
 
     public static TextField createBindedTextField(StringProperty stringProperty, double limitedWidth) {
         TextField tf = new TextField();
+
+        tf.setBorder(new Border(new BorderStroke(Color.web(StyleUtility.INPUT_BORDER), BorderStrokeStyle.SOLID, new CornerRadii(5), new BorderWidths(0.3))));
+        tf.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+        tf.setPadding(new Insets(5, 15, 5, 15));
+        tf.setFont(Font.font(StyleUtility.MAIN_TEXT_SIZE));
+
         tf.textProperty().bindBidirectional(stringProperty);
         if (limitedWidth > 0) {
             tf.setMaxWidth(limitedWidth);
@@ -72,12 +78,12 @@ public class AccountUtility {
         TextField birthdayTF = createBindedTextField(personPM.BIRTHDAY, 120);
         birthdayTF.setEditable(false);
 
-        Node birthday = Utility.createField("Birthday", birthdayTF);
-        Node language = Utility.createField("Language", createBindedTextField(personPM.LANGUAGE, 120));
-        Node idType = Utility.createField("ID type", createBindedTextField(personPM.ID_TYPE, 120));
-        Node idNumber = Utility.createField("ID Number", createBindedTextField(personPM.ID_NUMBER, 120));
-        Node gender = Utility.createField("Biological gender", createHorizontalRadioButtons("Male", "Female", personPM.IS_MALE));
-        Node practitioner = Utility.createField("Practitioner", createHorizontalRadioButtons("Lay", "Ordained", personPM.IS_LAY));
+        Node birthday = GeneralUtility.createField("Birthday", birthdayTF);
+        Node language = GeneralUtility.createField("Language", createBindedTextField(personPM.LANGUAGE, 120));
+        Node idType = GeneralUtility.createField("ID type", createBindedTextField(personPM.ID_TYPE, 120));
+        Node idNumber = GeneralUtility.createField("ID Number", createBindedTextField(personPM.ID_NUMBER, 120));
+        Node gender = GeneralUtility.createField("Biological gender", createHorizontalRadioButtons("Male", "Female", personPM.IS_MALE));
+        Node practitioner = GeneralUtility.createField("Practitioner", createHorizontalRadioButtons("Lay", "Ordained", personPM.IS_LAY));
 
         EntityButtonSelector<Country> countriesButtonSelector = new EntityButtonSelector<>(
                 "{class:'country', orderBy:'name'}",
@@ -85,61 +91,63 @@ public class AccountUtility {
         );
 
         countriesButtonSelector.selectedItemProperty().bindBidirectional(personPM.ADDRESS_COUNTRY);
+        GeneralUtility.styleSelectButton(countriesButtonSelector);
 
-        Node addressCountry = Utility.createField("Country", countriesButtonSelector.getButton());
-        Node addressZip = Utility.createField("Post/Zip code", createBindedTextField(personPM.ADDRESS_ZIP, 100));
-        Node addressState = Utility.createField("State", createBindedTextField(personPM.ADDRESS_STATE, NO_LIMITED_WIDTH));
-        Node addressCity = Utility.createField("City", createBindedTextField(personPM.ADDRESS_CITY, NO_LIMITED_WIDTH));
-        Node addressStreet = Utility.createField("Street name", createBindedTextField(personPM.ADDRESS_STREET, NO_LIMITED_WIDTH));
-        Node addressNumber = Utility.createField("Number", createBindedTextField(personPM.ADDRESS_NUMBER, NO_LIMITED_WIDTH));
-        Node addressApt = Utility.createField("Apt/Room", createBindedTextField(personPM.ADDRESS_APT, 50));
-        Node addressObservation = Utility.createField("Observation", createBindedTextField(personPM.ADDRESS_OBSERVATION, NO_LIMITED_WIDTH));
+        Node addressCountry = GeneralUtility.createField("Country", countriesButtonSelector.getButton());
+        Node addressZip = GeneralUtility.createField("Post/Zip code", createBindedTextField(personPM.ADDRESS_ZIP, 100));
+        Node addressState = GeneralUtility.createField("State", createBindedTextField(personPM.ADDRESS_STATE, NO_LIMITED_WIDTH));
+        Node addressCity = GeneralUtility.createField("City", createBindedTextField(personPM.ADDRESS_CITY, NO_LIMITED_WIDTH));
+        Node addressStreet = GeneralUtility.createField("Street name", createBindedTextField(personPM.ADDRESS_STREET, NO_LIMITED_WIDTH));
+        Node addressNumber = GeneralUtility.createField("Number", createBindedTextField(personPM.ADDRESS_NUMBER, NO_LIMITED_WIDTH));
+        Node addressApt = GeneralUtility.createField("Apt/Room", createBindedTextField(personPM.ADDRESS_APT, 50));
+        Node addressObservation = GeneralUtility.createField("Observation", createBindedTextField(personPM.ADDRESS_OBSERVATION, NO_LIMITED_WIDTH));
 
         Node diet = createBindedTextField(personPM.DIET, 200);
 
-        Node needsWheelchair = Utility.createCheckBox(personPM.NEEDS_WHEELCHAIR, false,false, "Wheelchair", false);
-        Node needsSight = Utility.createCheckBox(personPM.NEEDS_SIGHT, false,false, "Sight impaired", false);
-        Node needsHearing = Utility.createCheckBox(personPM.NEEDS_HEARING, false,false, "Hard of hearing", false);
-        Node needsMobility = Utility.createCheckBox(personPM.NEEDS_MOBILITY, false,false, "Mobility", false);
+        Node needsWheelchair = GeneralUtility.createCheckBox(personPM.NEEDS_WHEELCHAIR, false,false, "Wheelchair", false);
+        Node needsSight = GeneralUtility.createCheckBox(personPM.NEEDS_SIGHT, false,false, "Sight impaired", false);
+        Node needsHearing = GeneralUtility.createCheckBox(personPM.NEEDS_HEARING, false,false, "Hard of hearing", false);
+        Node needsMobility = GeneralUtility.createCheckBox(personPM.NEEDS_MOBILITY, false,false, "Mobility", false);
 
         container.getChildren().addAll(
-                Utility.createSplitRow(birthday, gender, 50, 10),
-                Utility.createSplitRow(language, practitioner, 50, 10),
-                Utility.createSplitRow(idType, idNumber, 50, 10),
-                Utility.createSpace(20),
-                Utility.bindI18N(new Label(), "Address"),
-                Utility.createSplitRow(addressCountry, addressZip, 50, 10),
-                Utility.createSplitRow(addressState, addressCity, 50, 10),
-                Utility.createSplitRow(addressStreet, addressNumber, 75, 10),
-                Utility.createSplitRow(addressApt, addressObservation, 50, 10),
-                Utility.createSpace(10),
-                Utility.createSplitRow(
-                        Utility.bindI18N(new Label(), "Billing Address"),
-                        Utility.createCheckBox(personPM.ADDRESS_BILLING_SAME, false, false, "Same as the billing address", false),
+                GeneralUtility.createSplitRow(birthday, gender, 50, 10),
+                GeneralUtility.createSplitRow(language, practitioner, 50, 10),
+                GeneralUtility.createSplitRow(idType, idNumber, 50, 10),
+                GeneralUtility.createSpace(20),
+                GeneralUtility.bindI18N(TextUtility.getMainText(""), "Address"),
+                GeneralUtility.createSplitRow(addressCountry, addressZip, 50, 10),
+                GeneralUtility.createSplitRow(addressState, addressCity, 50, 10),
+                GeneralUtility.createSplitRow(addressStreet, addressNumber, 75, 10),
+                GeneralUtility.createSplitRow(addressApt, addressObservation, 50, 10),
+                GeneralUtility.createSpace(10),
+                GeneralUtility.createSplitRow(
+
+                        GeneralUtility.bindI18N(TextUtility.getMainText(""), "Billing Address"),
+                        GeneralUtility.createCheckBox(personPM.ADDRESS_BILLING_SAME, false, false, "Same as the billing address", false),
                         30, 10
                 ),
-                Utility.createSpace(20),
-                Utility.bindI18N(new Label(), "Diet"),
+                GeneralUtility.createSpace(20),
+                GeneralUtility.bindI18N(TextUtility.getMainText(""), "Diet"),
                 diet,
-                Utility.createSpace(20),
-                Utility.bindI18N(new Label(), "Special needs"),
-                Utility.createSplitRow(needsWheelchair, needsHearing, 50, 0),
-                Utility.createSplitRow(needsSight, needsMobility, 50, 0)
+                GeneralUtility.createSpace(20),
+                GeneralUtility.bindI18N(TextUtility.getMainText(""), "Special needs"),
+                GeneralUtility.createSplitRow(needsWheelchair, needsHearing, 50, 0),
+                GeneralUtility.createSplitRow(needsSight, needsMobility, 50, 0)
         );
 
         if (personPM.IS_OWNER) {
-            Label emergencyHeader = new Label("Emergency contact");
-            Node emergencyName = Utility.createField("Name", AccountUtility.createBindedTextField(FXAccount.ownerPM.EMERGENCY_NAME, NO_LIMITED_WIDTH));
-            Node emergencyKinship = Utility.createField("Kinship", AccountUtility.createBindedTextField(FXAccount.ownerPM.EMERGENCY_KINSHIP, NO_LIMITED_WIDTH));
-            Node emergencyEmail = Utility.createField("E-mail", AccountUtility.createBindedTextField(FXAccount.ownerPM.EMERGENCY_EMAIL, NO_LIMITED_WIDTH));
-            Node emergencyPhoneNumber = Utility.createField("Phone number", AccountUtility.createBindedTextField(FXAccount.ownerPM.EMERGENCY_PHONE, NO_LIMITED_WIDTH));
+            Text emergencyHeader = TextUtility.getSettingSectionText("Emergency contact");
+            Node emergencyName = GeneralUtility.createField("Name", AccountUtility.createBindedTextField(FXAccount.ownerPM.EMERGENCY_NAME, NO_LIMITED_WIDTH));
+            Node emergencyKinship = GeneralUtility.createField("Kinship", AccountUtility.createBindedTextField(FXAccount.ownerPM.EMERGENCY_KINSHIP, NO_LIMITED_WIDTH));
+            Node emergencyEmail = GeneralUtility.createField("E-mail", AccountUtility.createBindedTextField(FXAccount.ownerPM.EMERGENCY_EMAIL, NO_LIMITED_WIDTH));
+            Node emergencyPhoneNumber = GeneralUtility.createField("Phone number", AccountUtility.createBindedTextField(FXAccount.ownerPM.EMERGENCY_PHONE, NO_LIMITED_WIDTH));
 
             container.getChildren().addAll(
-                    Utility.createSpace(20),
+                    GeneralUtility.createSpace(20),
                     emergencyHeader,
-                    Utility.createSplitRow(emergencyName, emergencyKinship, 80, 10),
-                    Utility.createSplitRow(emergencyEmail, new VBox(), 80, 10),
-                    Utility.createSplitRow(emergencyPhoneNumber, new VBox(), 80, 10)
+                    GeneralUtility.createSplitRow(emergencyName, emergencyKinship, 80, 10),
+                    GeneralUtility.createSplitRow(emergencyEmail, new VBox(), 80, 10),
+                    GeneralUtility.createSplitRow(emergencyPhoneNumber, new VBox(), 80, 10)
             );
         }
 
@@ -147,6 +155,11 @@ public class AccountUtility {
         container.setSpacing(10);
 
         Button b = new Button("Update");
+        HBox cb = new HBox();
+        cb.setAlignment(Pos.CENTER);
+        cb.getChildren().add(b);
+        b.setTextFill(Color.WHITE);
+        b.setBackground(new Background(new BackgroundFill(Color.web(StyleUtility.POSITIVE_GREEN), new CornerRadii(4), null)));
 //        b.setId();
 //        b.getStyleClass().addAll("hhh", "kkk");
         b.setOnAction(e -> {
@@ -203,8 +216,8 @@ public class AccountUtility {
         });
 
         container.getChildren().addAll(
-                Utility.createSpace(20),
-                b
+                GeneralUtility.createSpace(20),
+                cb
         );
 
         return container;

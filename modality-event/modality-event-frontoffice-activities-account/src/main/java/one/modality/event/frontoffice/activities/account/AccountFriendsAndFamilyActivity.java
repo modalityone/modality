@@ -6,7 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import one.modality.base.frontoffice.states.PersonPM;
-import one.modality.base.frontoffice.utility.Utility;
+import one.modality.base.frontoffice.utility.GeneralUtility;
 
 public class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
     @Override
@@ -18,9 +18,9 @@ public class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase impl
         double NO_LIMITED_WIDTH = -1;
 
         memberInformation.getChildren().addAll(
-                Utility.createSplitRow(
-                        Utility.createField("First name", AccountUtility.createBindedTextField(FXAccount.viewedPersonPM.NAME_FIRST, NO_LIMITED_WIDTH)),
-                        Utility.createField("Last name", AccountUtility.createBindedTextField(FXAccount.viewedPersonPM.NAME_LAST, NO_LIMITED_WIDTH)),
+                GeneralUtility.createSplitRow(
+                        GeneralUtility.createField("First name", AccountUtility.createBindedTextField(FXAccount.viewedPersonPM.NAME_FIRST, NO_LIMITED_WIDTH)),
+                        GeneralUtility.createField("Last name", AccountUtility.createBindedTextField(FXAccount.viewedPersonPM.NAME_LAST, NO_LIMITED_WIDTH)),
                         50, 10
                 ),
                 AccountUtility.displayInformation(this, this, FXAccount.viewedPersonPM)
@@ -42,7 +42,7 @@ public class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase impl
         Button deleteMember = new Button("Delete selected member");
 
         membersContainer.getChildren().addAll(
-                Utility.createHList(10, 0, addMember, deleteMember)
+                GeneralUtility.createHList(10, 0, addMember, deleteMember)
         );
 
         addMember.setOnAction(e -> {

@@ -13,14 +13,14 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import one.modality.base.frontoffice.states.GeneralPM;
-import one.modality.base.frontoffice.utility.Utility;
+import one.modality.base.frontoffice.utility.GeneralUtility;
 
 import java.util.ArrayList;
 
 public class BottomButtons extends Application {
 
     private Button createBottomButton(String key) {
-        Button button = Utility.bindI18N(new Button(), key);
+        Button button = GeneralUtility.bindI18N(new Button(), key);
 
         button.setContentDisplay(ContentDisplay.TOP);
 

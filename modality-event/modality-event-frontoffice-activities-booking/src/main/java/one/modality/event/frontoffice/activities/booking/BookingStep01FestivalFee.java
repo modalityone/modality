@@ -3,7 +3,7 @@ package one.modality.event.frontoffice.activities.booking;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import one.modality.base.frontoffice.utility.Utility;
+import one.modality.base.frontoffice.utility.GeneralUtility;
 
 public class BookingStep01FestivalFee {
     public static BookingStep createPage(VBox container, Button tab) {
@@ -16,7 +16,7 @@ public class BookingStep01FestivalFee {
 
         page.getChildren().addAll(
                 new Text(step.getName()),
-                Utility.createSplitRow(new Button(), next, 50, 0)
+                GeneralUtility.createSplitRow(new Button(), next, 50, 0)
         );
 
         return step;

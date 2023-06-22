@@ -1,10 +1,9 @@
 package one.modality.base.frontoffice.utility;
 
+import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -12,14 +11,20 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
-import javafx.util.Duration;
 
-public class Utility {
+import javafx.scene.text.Text;
+import javafx.util.Duration;
+import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
+
+public class GeneralUtility {
     public static <T extends Labeled> T bindI18N(T node, String key) {
         return I18nControls.bindI18nProperties(node, key);
+    }
+
+    public static <T extends Text> T bindI18N(T text, String key) {
+        return I18n.bindI18nProperties(text, key);
     }
 
     public static Node createSVGIcon(String svgPath) {
@@ -35,21 +40,29 @@ public class Utility {
         return b;
     }
 
+    public static void styleSelectButton(EntityButtonSelector buttonSelector) {
+        Button b = buttonSelector.getButton();
+        b.setBorder(new Border(new BorderStroke(Color.web(StyleUtility.INPUT_BORDER), BorderStrokeStyle.SOLID, new CornerRadii(5), new BorderWidths(0.3))));
+        b.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+        b.setPadding(new Insets(5, 15, 5, 15));
+    }
+
     public static Node createCheckBox(BooleanProperty property, boolean isRadio, boolean isReverse, String label, boolean isDisabled) {
         Rectangle b = new Rectangle();
         b.setWidth(20);
         b.setHeight(20);
         b.setArcHeight(4);
         b.setArcWidth(4);
-        b.setFill((isReverse != property.get()) ? Color.web(Style.MAIN_BLUE) : Color.WHITE);
+        b.setFill((isReverse != property.get()) ? Color.web(StyleUtility.MAIN_BLUE) : Color.WHITE);
         b.setStroke(Color.BLACK);
+        b.setStrokeWidth(0.5);
         property.addListener((observableValue, aBoolean, t1) -> {
-            b.setFill((isReverse != property.get()) ? Color.web(Style.MAIN_BLUE) : Color.WHITE);
+            b.setFill((isReverse != property.get()) ? Color.web(StyleUtility.MAIN_BLUE) : Color.WHITE);
         });
 
         if (!isDisabled) b.setOnMouseClicked(e -> property.set(isRadio ? !isReverse : !property.get()));
 
-        return createHList(5,0, b, new Label(label));
+        return createHList(5,0, b, TextUtility.getMainText(label));
     }
 
     public static Node createSplitRow(Node node1, Node node2, int ratio, int padding) {
@@ -97,10 +110,10 @@ public class Utility {
 
     public static Node createField(String labelKey, Node node) {
         VBox field = new VBox();
-        Label label = bindI18N(new Label(), labelKey);
 
+        field.setSpacing(5);
         field.getChildren().addAll(
-                label, node
+                TextUtility.getSubText(labelKey), node
         );
 
         return field;

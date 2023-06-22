@@ -7,10 +7,13 @@ import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.session.state.client.fx.FXUserId;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.scene.Node;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import one.modality.base.frontoffice.states.AccountHomePM;
-import one.modality.base.frontoffice.utility.Utility;
+import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 import one.modality.event.frontoffice.operations.routes.account.RouteToAccountFriendsAndFamilyRequest;
@@ -23,14 +26,14 @@ import one.modality.event.frontoffice.operations.routes.account.RouteToAccountSe
 final class AccountHomeActivity extends ViewDomainActivityBase implements OperationActionFactoryMixin {
 
     public Node createRow(String title, String subtitle, String svgPath, RoutePushRequest request) {
-        Node icon = Utility.createSVGIcon(svgPath);
+        Node icon = GeneralUtility.createSVGIcon(svgPath);
         Text titleText = new Text(title);
         Text subtitleText = new Text(subtitle);
 
         subtitleText.setOpacity(0.3d);
 
-        Node row = Utility.createHList(10, 10,
-                icon, Utility.createVList(2, 0, titleText, subtitleText)
+        Node row = GeneralUtility.createHList(10, 10,
+                icon, GeneralUtility.createVList(2, 0, titleText, subtitleText)
         );
 
         row.setOnMouseClicked(e -> {
@@ -43,6 +46,8 @@ final class AccountHomeActivity extends ViewDomainActivityBase implements Operat
     @Override
     public Node buildUi() {
         VBox page = new VBox();
+
+        page.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
 
         page.getChildren().addAll(
                 AccountUtility.createAvatar(),
