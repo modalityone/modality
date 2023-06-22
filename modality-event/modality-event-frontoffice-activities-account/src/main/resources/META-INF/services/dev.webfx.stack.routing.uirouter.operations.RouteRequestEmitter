@@ -1,0 +1,4 @@
+one.modality.event.frontoffice.activities.account.RouteToAccountRequestEmitter
+one.modality.event.frontoffice.activities.account.RouteToAccountSettingsRequestEmitter
+one.modality.event.frontoffice.activities.account.RouteToAccountPersonalInformationEmitter
+one.modality.event.frontoffice.activities.account.RouteToAccountFriendsAndFamilyEmitter

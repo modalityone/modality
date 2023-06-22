@@ -160,6 +160,11 @@
     <source path="one/modality/base/client/util/routing"/>
     <!--========================< modality-base-client-validation >=========================-->
     <source path="one/modality/base/client/validation"/>
+    <!--=======================< modality-base-frontoffice-utility >========================-->
+    <source path="one/modality/base/frontoffice/states"/>
+    <source path="one/modality/base/frontoffice/utility"/>
+    <resource path="one/modality/base/frontoffice"/>
+    <public includes="one/modality/base/frontoffice/" path=""/>
     <!--========================< modality-base-shared-domainmodel >========================-->
     <source path="one/modality/base/shared/domainmodel/formatters"/>
     <source path="one/modality/base/shared/domainmodel/functions"/>
@@ -182,15 +187,9 @@
     <source path="one/modality/crm/client/activities/unauthorized"/>
     <!--===========================< modality-crm-client-authz >============================-->
     <source path="one/modality/crm/client/services/authz"/>
-    <!--======================< modality-crm-client-personaldetails >=======================-->
-    <source path="one/modality/crm/client/controls/personaldetails"/>
     <!--===========================< modality-crm-shared-authn >============================-->
     <source path="one/modality/crm/shared/services/authn"/>
     <source path="one/modality/crm/shared/services/authn/serial"/>
-    <!--=================< modality-ecommerce-client-bookingoptionspanel >==================-->
-    <source path="one/modality/ecommerce/client/controls/bookingoptionspanel"/>
-    <!--====================< modality-ecommerce-client-bookingprocess >====================-->
-    <source path="one/modality/ecommerce/client/activity/bookingprocess"/>
     <!--====================< modality-ecommerce-client-businesslogic >=====================-->
     <source path="one/modality/ecommerce/client/businessdata/feesgroup"/>
     <source path="one/modality/ecommerce/client/businessdata/preselection"/>
@@ -200,28 +199,6 @@
     <source path="one/modality/ecommerce/client/businesslogic/pricing"/>
     <source path="one/modality/ecommerce/client/businesslogic/rules"/>
     <source path="one/modality/ecommerce/client/businesslogic/workingdocument"/>
-    <!--=================< modality-ecommerce-frontoffice-activities-cart >=================-->
-    <source path="one/modality/ecommerce/frontoffice/activities/cart"/>
-    <!--=============< modality-ecommerce-frontoffice-activities-cart-routing >=============-->
-    <source path="one/modality/ecommerce/frontoffice/activities/cart/base"/>
-    <source path="one/modality/ecommerce/frontoffice/activities/cart/routing"/>
-    <source path="one/modality/ecommerce/frontoffice/operations/cart"/>
-    <!--==============< modality-ecommerce-frontoffice-activities-contactus >===============-->
-    <source path="one/modality/ecommerce/frontoffice/activities/contactus"/>
-    <source path="one/modality/ecommerce/frontoffice/activities/contactus/routing"/>
-    <source path="one/modality/ecommerce/frontoffice/operations/contactus"/>
-    <!--===============< modality-ecommerce-frontoffice-activities-payment >================-->
-    <source path="one/modality/ecommerce/frontoffice/activities/payment"/>
-    <source path="one/modality/ecommerce/frontoffice/activities/payment/routing"/>
-    <source path="one/modality/ecommerce/frontoffice/operations/payment"/>
-    <!--================< modality-ecommerce-frontoffice-activities-person >================-->
-    <source path="one/modality/ecommerce/frontoffice/activities/person"/>
-    <source path="one/modality/ecommerce/frontoffice/activities/person/routing"/>
-    <source path="one/modality/ecommerce/frontoffice/operations/person"/>
-    <!--===============< modality-ecommerce-frontoffice-activities-summary >================-->
-    <source path="one/modality/ecommerce/frontoffice/activities/summary"/>
-    <source path="one/modality/ecommerce/frontoffice/activities/summary/routing"/>
-    <source path="one/modality/ecommerce/frontoffice/operations/summary"/>
     <!--=======================< modality-event-backoffice-event-fx >=======================-->
     <source path="one/modality/event/backoffice/event/fx"/>
     <!--=====================< modality-event-client-bookingcalendar >======================-->
@@ -233,34 +210,28 @@
     <source path="one/modality/event/client/controls/calendargraphic/impl"/>
     <!--=======================< modality-event-client-sectionpanel >=======================-->
     <source path="one/modality/event/client/controls/sectionpanel"/>
-    <!--===================< modality-event-frontoffice-activities-fees >===================-->
-    <source path="one/modality/event/frontoffice/activities/fees"/>
-    <source path="one/modality/event/frontoffice/activities/fees/routing"/>
-    <source path="one/modality/event/frontoffice/operations/fees"/>
-    <!--=================< modality-event-frontoffice-activities-options >==================-->
-    <source path="one/modality/event/frontoffice/activities/options"/>
-    <source path="one/modality/event/frontoffice/activities/options/routing"/>
-    <source path="one/modality/event/frontoffice/operations/options"/>
-    <!--=================< modality-event-frontoffice-activities-program >==================-->
-    <source path="one/modality/event/frontoffice/activities/program"/>
-    <source path="one/modality/event/frontoffice/activities/program/routing"/>
-    <source path="one/modality/event/frontoffice/operations/program"/>
-    <!--===============< modality-event-frontoffice-activities-startbooking >===============-->
-    <source path="one/modality/event/frontoffice/activities/startbooking"/>
-    <source path="one/modality/event/frontoffice/activities/startbooking/routing"/>
-    <source path="one/modality/event/frontoffice/operations/startbooking"/>
-    <!--==================< modality-event-frontoffice-activities-terms >===================-->
-    <source path="one/modality/event/frontoffice/activities/terms"/>
-    <source path="one/modality/event/frontoffice/activities/terms/routing"/>
-    <source path="one/modality/event/frontoffice/operations/terms"/>
+    <!--=================< modality-event-frontoffice-activities-account >==================-->
+    <source path="one/modality/event/frontoffice/activities/account"/>
+    <source path="one/modality/event/frontoffice/activities/account/routing"/>
+    <source path="one/modality/event/frontoffice/operations/routes/account"/>
+    <!--==================< modality-event-frontoffice-activities-alerts >==================-->
+    <source path="one/modality/event/frontoffice/activities/alerts"/>
+    <source path="one/modality/event/frontoffice/activities/alerts/routing"/>
+    <source path="one/modality/event/frontoffice/operations/routes/alerts"/>
+    <!--=================< modality-event-frontoffice-activities-booking >==================-->
+    <source path="one/modality/event/frontoffice/activities/booking"/>
+    <source path="one/modality/event/frontoffice/activities/booking/routing"/>
+    <source path="one/modality/event/frontoffice/operations/routes/booking"/>
+    <!--===================< modality-event-frontoffice-activities-home >===================-->
+    <source path="one/modality/event/frontoffice/activities/home"/>
+    <source path="one/modality/event/frontoffice/activities/home/routing"/>
+    <source path="one/modality/event/frontoffice/operations/routes/home"/>
     <!--===========================< modality-hotel-shared-time >===========================-->
     <source path="one/modality/hotel/shared/businessdata/time"/>
     <!--===============================< webfx-extras-cell >================================-->
     <source path="dev/webfx/extras/cell/collator"/>
     <source path="dev/webfx/extras/cell/renderer"/>
     <source path="dev/webfx/extras/cell/rowstyle"/>
-    <!--==============================< webfx-extras-flexbox >==============================-->
-    <source path="dev/webfx/extras/flexbox"/>
     <!--============================< webfx-extras-imagestore >=============================-->
     <source path="dev/webfx/extras/imagestore"/>
     <!--===============================< webfx-extras-label >===============================-->
@@ -525,8 +496,6 @@
     <source path="dev/webfx/stack/conf/spi/impl/localstorage"/>
     <!--===========================< webfx-stack-conf-resource >============================-->
     <source path="dev/webfx/stack/conf/spi/impl/resource"/>
-    <!--========================< webfx-stack-conf-windowlocation >=========================-->
-    <source path="dev/webfx/stack/conf/spi/impl/windowlocation"/>
     <!--============================< webfx-stack-db-datascope >============================-->
     <source path="dev/webfx/stack/db/datascope"/>
     <source path="dev/webfx/stack/db/datascope/aggregate"/>

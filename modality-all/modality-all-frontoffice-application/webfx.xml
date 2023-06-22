@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project>
+<project applicationId="one.modality.frontoffice" applicationLabel="Modality FrontOffice">
 
     <exported-packages>
         <source-packages/>
@@ -12,11 +12,12 @@
     <dependencies>
         <used-by-source-modules/>
 
-        <!-- Ecommerce activities -->
-        <plugin-module>modality-ecommerce-frontoffice-activities-all</plugin-module>
-
         <!-- Event activities -->
-        <plugin-module>modality-event-frontoffice-activities-all</plugin-module>
+        <plugin-module>modality-event-frontoffice-activities-account</plugin-module>
+        <plugin-module>modality-event-frontoffice-activities-booking</plugin-module>
+        <plugin-module>modality-event-frontoffice-activities-alerts</plugin-module>
+        <plugin-module>modality-event-frontoffice-activities-home</plugin-module>
+
 
     </dependencies>
 

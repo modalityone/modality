@@ -28,8 +28,13 @@
         <module>modality-event-client-calendar</module>
         <module>modality-event-client-sectionpanel</module>
         <module>modality-event-client-theme</module>
+        <module>modality-event-frontoffice-activities-account</module>
+        <module>modality-event-frontoffice-activities-alerts</module>
         <module>modality-event-frontoffice-activities-all</module>
+        <module>modality-event-frontoffice-activities-app</module>
+        <module>modality-event-frontoffice-activities-booking</module>
         <module>modality-event-frontoffice-activities-fees</module>
+        <module>modality-event-frontoffice-activities-home</module>
         <module>modality-event-frontoffice-activities-options</module>
         <module>modality-event-frontoffice-activities-program</module>
         <module>modality-event-frontoffice-activities-startbooking</module>

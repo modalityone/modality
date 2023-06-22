@@ -3,8 +3,6 @@
 
     <dependencies>
         <used-by-source-modules/>
-        <!-- We allow WINDOW_LOCATION_XXX variables resolution so that the webapp can assume the eventbus is provided by its webserver by default (see ClientBusOptions.default.json) -->
-        <plugin-module>webfx-stack-conf-windowlocation</plugin-module>
     </dependencies>
 
     <html>
