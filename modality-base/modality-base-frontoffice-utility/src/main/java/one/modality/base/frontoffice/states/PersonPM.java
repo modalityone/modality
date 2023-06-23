@@ -10,6 +10,7 @@ public class PersonPM {
     public Person PERSON = null;
     public PersonPM ASSOCIATE_PM = null;
     public boolean IS_OWNER = false;
+    public boolean IS_NEW = false;
     public StringProperty NAME_FIRST = new SimpleStringProperty();
     public StringProperty NAME_LAST = new SimpleStringProperty();
     public StringProperty NAME_FULL = new SimpleStringProperty();
@@ -43,6 +44,8 @@ public class PersonPM {
     public void set(Person person) {
         this.PERSON = person;
 
+        IS_NEW = false;
+
         NAME_FULL.set(person.getFirstName() + " " + person.getLastName());
         NAME_FIRST.set(person.getFirstName());
         NAME_LAST.set(person.getLastName());
@@ -56,6 +59,23 @@ public class PersonPM {
 
         if (person.isMale() != null) { IS_MALE.set(person.isMale()); }
         if (person.isOrdained() != null) { IS_LAY.set(!person.isOrdained()); }
+    }
+
+    public void setNew() {
+        NAME_FULL.set("");
+        NAME_FIRST.set("");
+        NAME_LAST.set("");
+
+        ADDRESS_STREET.set("");
+        ADDRESS_CITY.set("");
+        ADDRESS_COUNTRY.setValue(null);
+        ADDRESS_ZIP.set("");
+
+        BIRTHDAY.set("");
+        IS_MALE.set(true);
+        IS_LAY.set(true);
+
+        IS_NEW = true;
     }
 
     public PersonPM() {}

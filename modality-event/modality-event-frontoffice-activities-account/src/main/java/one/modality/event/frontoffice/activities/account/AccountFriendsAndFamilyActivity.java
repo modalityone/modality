@@ -1,21 +1,40 @@
 package one.modality.event.frontoffice.activities.account;
 
+import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import one.modality.base.frontoffice.states.PersonPM;
 import one.modality.base.frontoffice.utility.GeneralUtility;
 
+import java.util.List;
+
 public class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
-    @Override
-    public Node buildUi() {
-        VBox container = new VBox();
-        VBox membersContainer = new VBox();
-        VBox memberInformation = new VBox();
-        Button friendsFamilyHome = new Button("Friends and Family");
+    private void rebuildMembersList(ObservableList<PersonPM> persons, VBox membersContainer, VBox membersList, VBox memberInformation, VBox container) {
+        membersList.getChildren().removeAll(membersList.getChildren());
+
+        persons.forEach(personPM -> {
+            Button b = new Button();
+            b.textProperty().bind(personPM.NAME_FULL);
+            membersList.getChildren().add(b);
+            b.setOnAction(e -> {
+                rebuildMemberInformation(memberInformation);
+                container.getChildren().remove(membersContainer);
+                container.getChildren().add(memberInformation);
+                FXAccount.viewedPersonPM.set(personPM.PERSON);
+                FXAccount.viewedPersonPM.setASSOCIATE_PM(personPM);
+            });
+        });
+    }
+
+    private void rebuildMemberInformation(VBox memberInformation) {
         double NO_LIMITED_WIDTH = -1;
+
+        memberInformation.getChildren().removeAll(memberInformation.getChildren());
 
         memberInformation.getChildren().addAll(
                 GeneralUtility.createSplitRow(
@@ -25,28 +44,34 @@ public class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase impl
                 ),
                 AccountUtility.displayInformation(this, this, FXAccount.viewedPersonPM)
         );
+    }
 
-        FXAccount.getMembersPM().forEach(personPM -> {
-            Button b = new Button();
-            b.textProperty().bind(personPM.NAME_FULL);
-            membersContainer.getChildren().add(b);
-            b.setOnAction(e -> {
-                container.getChildren().remove(membersContainer);
-                container.getChildren().add(memberInformation);
-                FXAccount.viewedPersonPM.set(personPM.PERSON);
-                FXAccount.viewedPersonPM.setASSOCIATE_PM(personPM);
-            });
+    @Override
+    public Node buildUi() {
+        VBox container = new VBox();
+        VBox membersContainer = new VBox();
+        VBox membersList = new VBox();
+        VBox memberInformation = new VBox();
+        Button friendsFamilyHome = new Button("Friends and Family");
+
+        rebuildMemberInformation(memberInformation);
+        rebuildMembersList(FXAccount.getMembersPM(), membersContainer, membersList, memberInformation, container);
+
+        FXAccount.getMembersPM().addListener((ListChangeListener<PersonPM>) change -> {
+            rebuildMembersList(FXAccount.getMembersPM(), membersContainer, membersList, memberInformation, container);
         });
 
         Button addMember = new Button("Add member");
         Button deleteMember = new Button("Delete selected member");
 
         membersContainer.getChildren().addAll(
+                membersList,
                 GeneralUtility.createHList(10, 0, addMember, deleteMember)
         );
 
         addMember.setOnAction(e -> {
-            FXAccount.viewedPersonPM = new PersonPM();
+            FXAccount.viewedPersonPM.setNew();
+            rebuildMemberInformation(memberInformation);
             container.getChildren().remove(membersContainer);
             container.getChildren().add(memberInformation);
         });
@@ -61,7 +86,7 @@ public class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase impl
                 membersContainer
         );
 
-        return container;
+        return LayoutUtil.createVerticalScrollPane(container);
     }
 
 }

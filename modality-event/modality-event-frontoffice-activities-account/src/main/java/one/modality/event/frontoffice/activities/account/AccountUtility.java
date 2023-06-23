@@ -50,10 +50,10 @@ public class AccountUtility {
         return row;
     }
 
-    public static Node createHorizontalRadioButtons(String option1, String option2, BooleanProperty isFirstSelected) {
+    public static Node createHorizontalRadioButtons(String option1, String option2, BooleanProperty isFirstSelected, boolean isDisabled) {
         return GeneralUtility.createSplitRow(
-                GeneralUtility.createCheckBox(isFirstSelected, true, false, option1, true),
-                GeneralUtility.createCheckBox(isFirstSelected, true, true, option2, true), 40, 0);
+                GeneralUtility.createCheckBox(isFirstSelected, true, false, option1, isDisabled),
+                GeneralUtility.createCheckBox(isFirstSelected, true, true, option2, isDisabled), 40, 0);
     }
 
     public static TextField createBindedTextField(StringProperty stringProperty, double limitedWidth) {
@@ -76,14 +76,14 @@ public class AccountUtility {
         double NO_LIMITED_WIDTH = -1;
 
         TextField birthdayTF = createBindedTextField(personPM.BIRTHDAY, 120);
-        birthdayTF.setEditable(false);
+        birthdayTF.setEditable(personPM.IS_NEW);
 
         Node birthday = GeneralUtility.createField("Birthday", birthdayTF);
         Node language = GeneralUtility.createField("Language", createBindedTextField(personPM.LANGUAGE, 120));
         Node idType = GeneralUtility.createField("ID type", createBindedTextField(personPM.ID_TYPE, 120));
         Node idNumber = GeneralUtility.createField("ID Number", createBindedTextField(personPM.ID_NUMBER, 120));
-        Node gender = GeneralUtility.createField("Biological gender", createHorizontalRadioButtons("Male", "Female", personPM.IS_MALE));
-        Node practitioner = GeneralUtility.createField("Practitioner", createHorizontalRadioButtons("Lay", "Ordained", personPM.IS_LAY));
+        Node gender = GeneralUtility.createField("Biological gender", createHorizontalRadioButtons("Male", "Female", personPM.IS_MALE, !personPM.IS_NEW));
+        Node practitioner = GeneralUtility.createField("Practitioner", createHorizontalRadioButtons("Lay", "Ordained", personPM.IS_LAY, !personPM.IS_NEW));
 
         EntityButtonSelector<Country> countriesButtonSelector = new EntityButtonSelector<>(
                 "{class:'country', orderBy:'name'}",

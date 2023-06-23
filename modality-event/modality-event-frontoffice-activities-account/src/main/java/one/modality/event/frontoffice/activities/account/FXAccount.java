@@ -30,7 +30,7 @@ public class FXAccount {
     };
 
     public static PersonPM ownerPM = new PersonPM();
-    public static List<PersonPM> membersPM = new ArrayList<>();
+    public static ObservableList<PersonPM> membersPM = FXCollections.observableArrayList();
     public static PersonPM viewedPersonPM = new PersonPM();
 
     private final static ObservableList<Person> accountFriendsAndFamily = FXCollections.observableArrayList();
@@ -46,7 +46,7 @@ public class FXAccount {
                 ownerPM.set(persons.get(0));
                 ownerPM.setASSOCIATE_PM(ownerPM);
                 ownerPM.IS_OWNER = true;
-                membersPM = accountFriendsAndFamily.stream().map(PersonPM::new).collect(Collectors.toList());
+                membersPM.setAll(accountFriendsAndFamily.stream().map(PersonPM::new).collect(Collectors.toList()));
             }
         });
     }
@@ -73,7 +73,7 @@ public class FXAccount {
         return accountFriendsAndFamily;
     }
 
-    public static List<PersonPM> getMembersPM() {
+    public static ObservableList<PersonPM> getMembersPM() {
         return membersPM;
     }
 }
