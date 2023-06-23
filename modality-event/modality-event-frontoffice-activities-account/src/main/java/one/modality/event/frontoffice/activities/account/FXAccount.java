@@ -4,6 +4,8 @@ import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -32,6 +34,7 @@ public class FXAccount {
     public static PersonPM ownerPM = new PersonPM();
     public static ObservableList<PersonPM> membersPM = FXCollections.observableArrayList();
     public static PersonPM viewedPersonPM = new PersonPM();
+    public static StringProperty toBeDeletedPerson = new SimpleStringProperty("");
 
     private final static ObservableList<Person> accountFriendsAndFamily = FXCollections.observableArrayList();
 

@@ -1,9 +1,12 @@
 package one.modality.base.frontoffice.utility;
 
+import javafx.beans.property.StringProperty;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+
+import java.util.function.Function;
 
 public class TextUtility {
     public static Text getText(String content, double size, Color color) {
@@ -11,6 +14,12 @@ public class TextUtility {
         t.setFont(Font.font(t.getFont().getFamily(), FontWeight.findByWeight(500), size));
         t.setFill(color);
 
+        return t;
+    }
+
+    public static Text getBindedText(StringProperty property, Function<String, Text> textFunction) {
+        Text t = textFunction.apply("");
+        t.textProperty().bind(property);
         return t;
     }
 

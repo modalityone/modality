@@ -4,10 +4,10 @@ import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -47,15 +47,24 @@ public class GeneralUtility {
         b.setPadding(new Insets(5, 15, 5, 15));
     }
 
-    public static Node createCheckBox(BooleanProperty property, boolean isRadio, boolean isReverse, String label, boolean isDisabled) {
+    public static Rectangle createCheckBoxRaw() {
         Rectangle b = new Rectangle();
         b.setWidth(20);
         b.setHeight(20);
         b.setArcHeight(4);
         b.setArcWidth(4);
-        b.setFill((isReverse != property.get()) ? Color.web(StyleUtility.MAIN_BLUE) : Color.WHITE);
         b.setStroke(Color.BLACK);
         b.setStrokeWidth(0.5);
+
+        return b;
+    }
+
+
+    public static Node createCheckBoxDirect(BooleanProperty property, boolean isRadio, boolean isReverse, String label, boolean isDisabled) {
+        Rectangle b = createCheckBoxRaw();
+
+        b.setFill((isReverse != property.get()) ? Color.web(StyleUtility.MAIN_BLUE) : Color.WHITE);
+
         property.addListener((observableValue, aBoolean, t1) -> {
             b.setFill((isReverse != property.get()) ? Color.web(StyleUtility.MAIN_BLUE) : Color.WHITE);
         });
@@ -63,6 +72,20 @@ public class GeneralUtility {
         if (!isDisabled) b.setOnMouseClicked(e -> property.set(isRadio ? !isReverse : !property.get()));
 
         return createHList(5,0, b, TextUtility.getMainText(label));
+    }
+
+    public static Node createRadioCheckBoxBySelection(StringProperty selectedProperty, String label) {
+        Rectangle b = createCheckBoxRaw();
+
+        b.setFill(selectedProperty.get().equals(label) ? Color.web(StyleUtility.MAIN_BLUE) : Color.WHITE);
+
+        selectedProperty.addListener((observableValue, aBoolean, t1) -> {
+            b.setFill(selectedProperty.get().equals(label) ? Color.web(StyleUtility.MAIN_BLUE) : Color.WHITE);
+        });
+
+        b.setOnMouseClicked(e -> { selectedProperty.set(selectedProperty.get().equals(label) ? "" : label); });
+
+        return b;
     }
 
     public static Node createSplitRow(Node node1, Node node2, int ratio, int padding) {

@@ -52,8 +52,8 @@ public class AccountUtility {
 
     public static Node createHorizontalRadioButtons(String option1, String option2, BooleanProperty isFirstSelected, boolean isDisabled) {
         return GeneralUtility.createSplitRow(
-                GeneralUtility.createCheckBox(isFirstSelected, true, false, option1, isDisabled),
-                GeneralUtility.createCheckBox(isFirstSelected, true, true, option2, isDisabled), 40, 0);
+                GeneralUtility.createCheckBoxDirect(isFirstSelected, true, false, option1, isDisabled),
+                GeneralUtility.createCheckBoxDirect(isFirstSelected, true, true, option2, isDisabled), 40, 0);
     }
 
     public static TextField createBindedTextField(StringProperty stringProperty, double limitedWidth) {
@@ -104,10 +104,10 @@ public class AccountUtility {
 
         Node diet = createBindedTextField(personPM.DIET, 200);
 
-        Node needsWheelchair = GeneralUtility.createCheckBox(personPM.NEEDS_WHEELCHAIR, false,false, "Wheelchair", false);
-        Node needsSight = GeneralUtility.createCheckBox(personPM.NEEDS_SIGHT, false,false, "Sight impaired", false);
-        Node needsHearing = GeneralUtility.createCheckBox(personPM.NEEDS_HEARING, false,false, "Hard of hearing", false);
-        Node needsMobility = GeneralUtility.createCheckBox(personPM.NEEDS_MOBILITY, false,false, "Mobility", false);
+        Node needsWheelchair = GeneralUtility.createCheckBoxDirect(personPM.NEEDS_WHEELCHAIR, false,false, "Wheelchair", false);
+        Node needsSight = GeneralUtility.createCheckBoxDirect(personPM.NEEDS_SIGHT, false,false, "Sight impaired", false);
+        Node needsHearing = GeneralUtility.createCheckBoxDirect(personPM.NEEDS_HEARING, false,false, "Hard of hearing", false);
+        Node needsMobility = GeneralUtility.createCheckBoxDirect(personPM.NEEDS_MOBILITY, false,false, "Mobility", false);
 
         container.getChildren().addAll(
                 GeneralUtility.createSplitRow(birthday, gender, 50, 10),
@@ -123,7 +123,7 @@ public class AccountUtility {
                 GeneralUtility.createSplitRow(
 
                         GeneralUtility.bindI18N(TextUtility.getMainText(""), "Billing Address"),
-                        GeneralUtility.createCheckBox(personPM.ADDRESS_BILLING_SAME, false, false, "Same as the billing address", false),
+                        GeneralUtility.createCheckBoxDirect(personPM.ADDRESS_BILLING_SAME, false, false, "Same as the billing address", false),
                         30, 10
                 ),
                 GeneralUtility.createSpace(20),

@@ -2,14 +2,18 @@ package one.modality.event.frontoffice.activities.account;
 
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.stack.orm.expression.terms.In;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import one.modality.base.frontoffice.states.PersonPM;
 import one.modality.base.frontoffice.utility.GeneralUtility;
+import one.modality.base.frontoffice.utility.TextUtility;
 
 import java.util.List;
 
@@ -19,15 +23,27 @@ public class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase impl
 
         persons.forEach(personPM -> {
             Button b = new Button();
-            b.textProperty().bind(personPM.NAME_FULL);
-            membersList.getChildren().add(b);
-            b.setOnAction(e -> {
+
+            BorderPane bpL = new BorderPane();
+            BorderPane bpR = new BorderPane();
+
+            bpL.setLeft(GeneralUtility.createRadioCheckBoxBySelection(FXAccount.toBeDeletedPerson, personPM.NAME_FULL.get()));
+            bpL.setCenter(bpR);
+
+            bpR.setRight(new Button(">"));
+            bpR.setCenter(
+                    GeneralUtility.createSplitRow(TextUtility.getBindedText(personPM.NAME_FULL, TextUtility::getMainText), TextUtility.getSubText("Kinship"), 75, 0)
+            );
+
+            bpR.setOnMouseClicked(e -> {
                 rebuildMemberInformation(memberInformation);
                 container.getChildren().remove(membersContainer);
                 container.getChildren().add(memberInformation);
                 FXAccount.viewedPersonPM.set(personPM.PERSON);
                 FXAccount.viewedPersonPM.setASSOCIATE_PM(personPM);
             });
+
+            membersList.getChildren().add(bpL);
         });
     }
 
@@ -36,12 +52,17 @@ public class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase impl
 
         memberInformation.getChildren().removeAll(memberInformation.getChildren());
 
+        VBox nameContainer = new VBox();
+        nameContainer.setPadding(new Insets(20));
+
+        nameContainer.getChildren().add(GeneralUtility.createSplitRow(
+                GeneralUtility.createField("First name", AccountUtility.createBindedTextField(FXAccount.viewedPersonPM.NAME_FIRST, NO_LIMITED_WIDTH)),
+                GeneralUtility.createField("Last name", AccountUtility.createBindedTextField(FXAccount.viewedPersonPM.NAME_LAST, NO_LIMITED_WIDTH)),
+                50, 10
+        ));
+
         memberInformation.getChildren().addAll(
-                GeneralUtility.createSplitRow(
-                        GeneralUtility.createField("First name", AccountUtility.createBindedTextField(FXAccount.viewedPersonPM.NAME_FIRST, NO_LIMITED_WIDTH)),
-                        GeneralUtility.createField("Last name", AccountUtility.createBindedTextField(FXAccount.viewedPersonPM.NAME_LAST, NO_LIMITED_WIDTH)),
-                        50, 10
-                ),
+                nameContainer,
                 AccountUtility.displayInformation(this, this, FXAccount.viewedPersonPM)
         );
     }
