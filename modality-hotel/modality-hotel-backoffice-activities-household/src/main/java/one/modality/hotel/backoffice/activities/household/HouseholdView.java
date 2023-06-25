@@ -46,26 +46,42 @@ final class HouseholdView {
                 pm, // Presentation model
                 attendances, // attendances observable list that we provide as input to AttendanceGantt for bar conversion
                 resourceConfigurationLoader.getResourceConfigurations()) // the provided parent rooms
-        {  // We also override getBarColor() to show checked-in attendees as gray
-            {
+        {
+            { // Additional constructor code for settings specifics to the Household
+
+                // The user can click on bars. A bar represents the nights spent and is (arbitrarily) associated to a bed.
+                // When the user clicks on a bar after the guest left, it's to tell the system that the bed has been
+                // cleaned.
                 barsLayout.setSelectionEnabled(true);
                 barsLayout.selectedChildProperty().addListener((observable, oldValue, bar) -> {
-                    if (bar != null) {
+                    if (bar != null) { // ignoring null (which happens when resetting selection in last line of this code)
                         AttendanceBlock block = bar.getInstance();
+                        // The user can click on bars only when the guest has arrived
                         if (block.isCheckedIn()) {
+                            // Also, the person must have left already in order to mark the bed as cleaned, so we ignore
+                            // any click on a stay that has not yet ended.
                             if (bar.getEndTime().isAfter(FXToday.getToday()))
                                 return;
+                            // Now that we know the user clicked on a stay where the guest has arrived and then left, we
+                            // need to check if the bed has not already been cleaned before.
                             ResourceConfiguration roomConfiguration = block.getRoomConfiguration();
                             int bedIndex = barsLayout.getRowIndexInParentRow(bar);
                             LocalDate lastCleaningDate = roomConfiguration.getLastCleaningDate();
+                            // The bed needs cleaning if there is no previous cleaning date, or if the cleaning was prior to the stay
                             boolean needsCleaning = (lastCleaningDate == null || lastCleaningDate.isBefore(bar.getEndTime()));
+                            // If the bed needs cleaning, we request the execution of a MarkBedAsCleaned operation:
                             if (needsCleaning)
+                                // Note: the operation will first show a confirmation dialog, before actually updating the cleaning date for the bed
                                 activity.executeOperation(new MarkBedAsCleanedRequest(roomConfiguration, bedIndex, bar.getEndTime(), (Pane) activity.getNode()));
                         }
                         // Resetting the selection to null, so that the user can select the same bar again
                         barsLayout.setSelectedChild(null);
                     }
                 });
+                // We made the child row header clickable (the area where the bed is displayed via drawBed()). When the
+                // user clicks on that area, we move the time window to reveal the latest stay that occupied that bed
+                // (the stay bar will appear so that the last day will be in the center of the time window). This will
+                // give the possibility to click on that bar to eventually mark the bed as cleaned.
                 parentsCanvasDrawer.<ResourceConfiguration>setChildRowHeaderClickHandler((rc, bedIndex) -> {
                     System.out.println(rc.getName() + " - bed " + (bedIndex + 1) + " - lastCleaning: " + rc.getLastCleaningDate());
                     DocumentLine documentLine = findLatestOccupiedDocumentLineBeforeToday(rc, bedIndex);
@@ -77,6 +93,8 @@ final class HouseholdView {
                     }
                 });
             }
+
+            // We also override getBarColor() to show checked-in attendees as gray
             @Override
             protected Color getBarColor(LocalDateBar<AttendanceBlock> bar, Bounds b) {
                 AttendanceBlock block = bar.getInstance();
@@ -132,7 +150,7 @@ final class HouseholdView {
     }
 
     // Note: in KBS2, a.scheduledResource.resourceConfiguration refers to the global site, while dl.resourceConfiguration
-    // refers to the event site.
+    // refers to the event site (in KBS3 they will be identical and refer to the global site).
 
     private LocalDate getCheckInDate(ResourceConfiguration rc, DocumentLine dl) { // rc = global site
         if (dl == null)
