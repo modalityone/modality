@@ -192,6 +192,9 @@ public class AccountUtility {
             updatedPerson.setFirstName(personPM.NAME_FIRST.get());
             updatedPerson.setLastName(personPM.NAME_LAST.get());
 
+            updatedPerson.setMale(personPM.IS_MALE.get());
+            updatedPerson.setOrdained(!personPM.IS_LAY.get());
+
             Person finalUpdatedPerson = updatedPerson;
             updateStore.submitChanges()
                     .onSuccess(batch -> {

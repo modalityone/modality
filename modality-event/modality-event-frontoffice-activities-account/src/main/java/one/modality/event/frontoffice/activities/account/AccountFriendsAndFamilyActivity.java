@@ -105,6 +105,8 @@ public class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase impl
             container.setCenter(membersContainer);
         });
 
+        GeneralUtility.bindButtonWithPopup(deleteMember, container, new VBox(), 200);
+
         container.setTop(friendsFamilyHome);
         container.setCenter(membersContainer);
 
