@@ -6,6 +6,7 @@ public class StyleUtility {
     public static String ELEMENT_GRAY = "#838788";
     public static String SEPARATOR_GRAY = "#D9D9D9";
     public static String IMPORTANT_RED = "F50100";
+    public static String BACKGROUND_GRAY = "#F6F6F6";
     public static int MAIN_TEXT_SIZE = 12;
     public static int SUB_TEXT_SIZE = 9;
 }
