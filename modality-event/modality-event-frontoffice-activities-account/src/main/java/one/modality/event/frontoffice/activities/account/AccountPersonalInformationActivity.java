@@ -8,6 +8,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import one.modality.base.frontoffice.fx.FXAccount;
 
 public class AccountPersonalInformationActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
 

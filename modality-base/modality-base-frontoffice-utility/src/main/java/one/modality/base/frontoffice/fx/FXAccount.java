@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.activities.account;
+package one.modality.base.frontoffice.fx;
 
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
@@ -9,6 +9,7 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import one.modality.base.frontoffice.fx.FXBooking;
 import one.modality.base.frontoffice.states.PersonPM;
 import one.modality.base.shared.entities.Person;
 
@@ -50,6 +51,8 @@ public class FXAccount {
                 ownerPM.setASSOCIATE_PM(ownerPM);
                 ownerPM.IS_OWNER = true;
                 membersPM.setAll(accountFriendsAndFamily.stream().map(PersonPM::new).collect(Collectors.toList()));
+
+                FXBooking.ownerLocalCenterProperty.bind(ownerPM.LOCAL_CENTER);
             }
         });
     }

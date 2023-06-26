@@ -161,6 +161,7 @@
     <!--========================< modality-base-client-validation >=========================-->
     <source path="one/modality/base/client/validation"/>
     <!--=======================< modality-base-frontoffice-utility >========================-->
+    <source path="one/modality/base/frontoffice/fx"/>
     <source path="one/modality/base/frontoffice/states"/>
     <source path="one/modality/base/frontoffice/utility"/>
     <resource path="one/modality/base/frontoffice"/>

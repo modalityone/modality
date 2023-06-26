@@ -7,9 +7,9 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import one.modality.base.frontoffice.fx.FXAccount;
 import one.modality.base.frontoffice.utility.GeneralUtility;
 
 public class AccountFriendsAndFamilyEditActivity extends ViewDomainActivityBase implements ButtonFactoryMixin  {

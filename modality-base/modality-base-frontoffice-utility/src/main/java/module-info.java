@@ -10,9 +10,11 @@ module modality.base.frontoffice.utility {
     requires modality.base.shared.entities;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;
+    requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
 
     // Exported packages
+    exports one.modality.base.frontoffice.fx;
     exports one.modality.base.frontoffice.states;
     exports one.modality.base.frontoffice.utility;
 

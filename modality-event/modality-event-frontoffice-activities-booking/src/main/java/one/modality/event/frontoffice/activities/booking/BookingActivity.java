@@ -1,10 +1,32 @@
 package one.modality.event.frontoffice.activities.booking;
 
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.stack.orm.dql.DqlStatement;
+import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
+import dev.webfx.stack.session.state.client.fx.FXUserId;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import one.modality.base.shared.entities.Event;
+import one.modality.base.frontoffice.fx.FXBooking;
+
+import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.stack.orm.dql.DqlStatement;
+import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
+import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
+import dev.webfx.stack.session.state.client.fx.FXUserId;
+import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
+import javafx.scene.Node;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import one.modality.base.frontoffice.states.AccountHomePM;
+import one.modality.base.frontoffice.utility.GeneralUtility;
+import one.modality.base.shared.entities.Person;
+import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 
 public class BookingActivity extends ViewDomainActivityBase {
     private Node activePage = null;
@@ -46,5 +68,18 @@ public class BookingActivity extends ViewDomainActivityBase {
     public void goToBookingConfirmed() {
         container.getChildren().remove(bookingSteps);
         container.getChildren().add(bookingConfirmed);
+    }
+
+    protected void startLogic() {
+        ReactiveEntitiesMapper.<Event>createPushReactiveChain(this)
+                .always("{class: 'Event', fields:'name', where: 'organization.type.code = `CORP` and endDate > now()', orderBy: 'startDate'}")
+                .storeEntitiesInto(FXBooking.nktEvents)
+                .start();
+
+        ReactiveEntitiesMapper.<Event>createPushReactiveChain(this)
+                .always("{class: 'Event', fields:'name', where: 'endDate > now()', orderBy: 'startDate'}")
+                .ifNotNullOtherwiseEmpty(FXBooking.ownerLocalCenterProperty, localCenter -> DqlStatement.where("organization=?", localCenter))
+                .storeEntitiesInto(FXBooking.localCenterEvents)
+                .start();
     }
 }

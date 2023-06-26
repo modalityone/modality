@@ -3,7 +3,6 @@
 module modality.event.frontoffice.activities.account {
 
     // Direct dependencies modules
-    requires java.base;
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
@@ -16,9 +15,7 @@ module modality.event.frontoffice.activities.account {
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
-    requires webfx.stack.orm.expression;
     requires webfx.stack.orm.reactive.entities;
-    requires webfx.stack.routing.activity;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.session.state.client.fx;

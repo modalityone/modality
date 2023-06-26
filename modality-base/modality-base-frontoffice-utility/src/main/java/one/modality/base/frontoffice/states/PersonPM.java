@@ -2,6 +2,7 @@ package one.modality.base.frontoffice.states;
 
 import javafx.beans.property.*;
 import one.modality.base.shared.entities.Country;
+import one.modality.base.shared.entities.Organization;
 import one.modality.base.shared.entities.Person;
 
 import java.time.format.DateTimeFormatter;
@@ -14,6 +15,7 @@ public class PersonPM {
     public StringProperty NAME_FIRST = new SimpleStringProperty();
     public StringProperty NAME_LAST = new SimpleStringProperty();
     public StringProperty NAME_FULL = new SimpleStringProperty();
+    public Property<Organization> LOCAL_CENTER = new SimpleObjectProperty<>();
 
     public StringProperty BIRTHDAY = new SimpleStringProperty("27-07-2008");
     public StringProperty LANGUAGE = new SimpleStringProperty("French");
@@ -55,6 +57,8 @@ public class PersonPM {
         ADDRESS_COUNTRY.setValue(person.getCountry());
         ADDRESS_ZIP.set(person.getPostCode());
 
+        LOCAL_CENTER.setValue(person.getOrganization());
+
         if (person.getBirthDate() != null) { BIRTHDAY.set(person.getBirthDate().format(DateTimeFormatter.BASIC_ISO_DATE)); }
 
         if (person.isMale() != null) { IS_MALE.set(person.isMale()); }
@@ -76,6 +80,8 @@ public class PersonPM {
         IS_LAY.set(true);
 
         IS_NEW = true;
+
+        LOCAL_CENTER.setValue(null);
     }
 
     public PersonPM() {}

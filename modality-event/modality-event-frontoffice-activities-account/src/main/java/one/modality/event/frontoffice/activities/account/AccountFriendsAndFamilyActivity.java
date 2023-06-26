@@ -2,26 +2,22 @@ package one.modality.event.frontoffice.activities.account;
 
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
-import dev.webfx.stack.orm.expression.terms.In;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
+import one.modality.base.frontoffice.fx.FXAccount;
 import one.modality.base.frontoffice.states.PersonPM;
 import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.base.frontoffice.utility.StyleUtility;
 import one.modality.base.frontoffice.utility.TextUtility;
 import one.modality.event.frontoffice.operations.routes.account.RouteToAccountFriendsAndFamilyEditRequest;
-
-import java.util.List;
 
 public class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase implements ButtonFactoryMixin, OperationActionFactoryMixin {
     private void rebuildMembersList(ObservableList<PersonPM> persons, VBox membersList) {
