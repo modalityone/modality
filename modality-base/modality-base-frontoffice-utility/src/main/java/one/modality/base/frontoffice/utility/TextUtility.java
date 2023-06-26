@@ -31,6 +31,10 @@ public class TextUtility {
         return weight(getText(content, 20, Color.BLACK), FontWeight.findByWeight(600));
     }
 
+    public static Text getMainHeaderText(String content) {
+        return weight(getText(content, 21, Color.web(StyleUtility.MAIN_BLUE)), FontWeight.findByWeight(600));
+    }
+
     public static Text getSubText(String content) {
         return getText(content, 9, Color.web(StyleUtility.ELEMENT_GRAY));
     }
