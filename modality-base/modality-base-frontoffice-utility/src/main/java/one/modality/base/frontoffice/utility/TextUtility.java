@@ -27,18 +27,24 @@ public class TextUtility {
         return getText(content, StyleUtility.MAIN_TEXT_SIZE, Color.BLACK);
     }
 
+    public static Text getAccountHeaderText(String content) {
+        return weight(getText(content, 20, Color.BLACK), FontWeight.findByWeight(600));
+    }
+
     public static Text getSubText(String content) {
-        return getText(content, 9, Color.web(StyleUtility.INPUT_BORDER));
+        return getText(content, 9, Color.web(StyleUtility.ELEMENT_GRAY));
     }
 
     public static Text getNameText(String content) {
         return getText(content, 30, Color.BLACK);
     }
 
-    public static Text getSettingSectionText(String content) {
-        Text t = getText(content, StyleUtility.MAIN_TEXT_SIZE, Color.BLACK);
-        t.setFont(Font.font(t.getFont().getFamily(), FontWeight.BOLD, t.getFont().getSize()));
-
+    private static Text weight(Text t, FontWeight weight) {
+        t.setFont(Font.font(t.getFont().getFamily(), weight, t.getFont().getSize()));
         return t;
+    }
+
+    public static Text getSettingSectionText(String content) {
+        return weight(getText(content, StyleUtility.MAIN_TEXT_SIZE, Color.BLACK), FontWeight.BOLD);
     }
 }

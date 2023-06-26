@@ -17,4 +17,6 @@ public class GeneralPM {
     public static String ACCOUNT_PERSONAL_INFORMATION_PATH = "/app-account/personal-information";
     public static String ACCOUNT_SETTINGS_PATH = "/app-account/settings";
     public static String ACCOUNT_FRIENDS_AND_FAMILY_PATH = "/app-account/friends-family";
+    public static String ACCOUNT_FRIENDS_AND_FAMILY_EDIT_PATH = "/app-account/friends-family/edit";
+
 }

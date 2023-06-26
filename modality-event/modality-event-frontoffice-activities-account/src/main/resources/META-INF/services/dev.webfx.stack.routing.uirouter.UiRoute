@@ -2,3 +2,4 @@ one.modality.event.frontoffice.activities.account.AccountUiRoute
 one.modality.event.frontoffice.activities.account.AccountPersonalInformationUiRoute
 one.modality.event.frontoffice.activities.account.AccountSettingsUiRoute
 one.modality.event.frontoffice.activities.account.AccountFriendsAndFamilyUiRoute
+one.modality.event.frontoffice.activities.account.AccountFriendsAndFamilyEditUiRoute

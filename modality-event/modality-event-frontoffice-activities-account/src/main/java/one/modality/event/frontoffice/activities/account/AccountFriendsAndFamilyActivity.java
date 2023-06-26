@@ -4,23 +4,27 @@ import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.expression.terms.In;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import one.modality.base.frontoffice.states.PersonPM;
 import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.base.frontoffice.utility.StyleUtility;
 import one.modality.base.frontoffice.utility.TextUtility;
+import one.modality.event.frontoffice.operations.routes.account.RouteToAccountFriendsAndFamilyEditRequest;
 
 import java.util.List;
 
-public class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
-    private void rebuildMembersList(ObservableList<PersonPM> persons, BorderPane membersContainer, VBox membersList, VBox memberInformation, BorderPane container) {
+public class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase implements ButtonFactoryMixin, OperationActionFactoryMixin {
+    private void rebuildMembersList(ObservableList<PersonPM> persons, VBox membersList) {
         membersList.getChildren().removeAll(membersList.getChildren());
 
         persons.forEach(personPM -> {
@@ -40,79 +44,55 @@ public class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase impl
             bpR.setBottom(s);
 
             bpR.setOnMouseClicked(e -> {
-                rebuildMemberInformation(memberInformation);
-                container.getChildren().remove(membersContainer);
-                container.setCenter(memberInformation);
                 FXAccount.viewedPersonPM.set(personPM.PERSON);
                 FXAccount.viewedPersonPM.setASSOCIATE_PM(personPM);
+                executeOperation(new RouteToAccountFriendsAndFamilyEditRequest(getHistory()));
             });
 
             membersList.getChildren().add(bpL);
         });
     }
 
-    private void rebuildMemberInformation(VBox memberInformation) {
-        double NO_LIMITED_WIDTH = -1;
-
-        memberInformation.getChildren().removeAll(memberInformation.getChildren());
-
-        VBox nameContainer = new VBox();
-        nameContainer.setPadding(new Insets(20));
-
-        nameContainer.getChildren().add(GeneralUtility.createSplitRow(
-                GeneralUtility.createField("First name", AccountUtility.createBindedTextField(FXAccount.viewedPersonPM.NAME_FIRST, NO_LIMITED_WIDTH)),
-                GeneralUtility.createField("Last name", AccountUtility.createBindedTextField(FXAccount.viewedPersonPM.NAME_LAST, NO_LIMITED_WIDTH)),
-                50, 10
-        ));
-
-        memberInformation.getChildren().add(LayoutUtil.createVerticalScrollPane(
-                (Region) GeneralUtility.createVList(0, 0, nameContainer, AccountUtility.displayInformation(this, this, FXAccount.viewedPersonPM))
-        ));
-
-
-    }
-
     @Override
     public Node buildUi() {
-        BorderPane container = new BorderPane();
-        BorderPane membersContainer = new BorderPane();
+        VBox container = new VBox();
+        VBox membersContainer = new VBox();
         VBox membersList = new VBox();
-        VBox memberInformation = new VBox();
-        Button friendsFamilyHome = new Button("Friends and Family");
 
-        rebuildMemberInformation(memberInformation);
-        rebuildMembersList(FXAccount.getMembersPM(), membersContainer, membersList, memberInformation, container);
+        rebuildMembersList(FXAccount.getMembersPM(), membersList);
 
         FXAccount.getMembersPM().addListener((ListChangeListener<PersonPM>) change -> {
-            rebuildMembersList(FXAccount.getMembersPM(), membersContainer, membersList, memberInformation, container);
+            rebuildMembersList(FXAccount.getMembersPM(), membersList);
         });
 
-        Button addMember = new Button("Add member");
-        Button deleteMember = new Button("Delete selected member");
+        Button addMember = GeneralUtility.createButton(Color.web(StyleUtility.ELEMENT_GRAY), 4, "Add Member");
+        Button deleteMember = GeneralUtility.createButton(Color.web(StyleUtility.IMPORTANT_RED), 4, "Delete");
 
-        membersContainer.setCenter(LayoutUtil.createVerticalScrollPane(membersList));
-        membersContainer.setBottom(GeneralUtility.createHList(10, 0, addMember, deleteMember));
+        HBox buttonRow = new HBox();
+        buttonRow.setAlignment(Pos.CENTER);
+        buttonRow.getChildren().add(GeneralUtility.createHList(10, 0, deleteMember, addMember));
+
+        membersContainer.getChildren().addAll(
+                membersList, GeneralUtility.createSpace(100), buttonRow
+        );
 
         addMember.setOnAction(e -> {
             FXAccount.viewedPersonPM.setNew();
-            rebuildMemberInformation(memberInformation);
-            container.getChildren().remove(membersContainer);
-            container.setCenter(memberInformation);
+            executeOperation(new RouteToAccountFriendsAndFamilyEditRequest(getHistory()));
         });
 
-        friendsFamilyHome.setOnAction(e -> {
-            container.getChildren().remove(memberInformation);
-            container.setCenter(membersContainer);
-        });
+
 
         GeneralUtility.bindButtonWithPopup(deleteMember, container, new VBox(), 200);
 
-        container.setTop(friendsFamilyHome);
-        container.setCenter(membersContainer);
+        container.getChildren().addAll(
+                AccountUtility.createAccountHeader("Family or Friends", "Add your family or friends information here", this),
+                membersContainer
+        );
 
         container.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
 
-        return container;
+        return LayoutUtil.createVerticalScrollPane(container);
     }
 
 }

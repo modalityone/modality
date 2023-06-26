@@ -5,6 +5,7 @@ import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
+import dev.webfx.stack.routing.activity.Activity;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
@@ -59,7 +60,7 @@ public class AccountUtility {
     public static TextField createBindedTextField(StringProperty stringProperty, double limitedWidth) {
         TextField tf = new TextField();
 
-        tf.setBorder(new Border(new BorderStroke(Color.web(StyleUtility.INPUT_BORDER), BorderStrokeStyle.SOLID, new CornerRadii(5), new BorderWidths(0.3))));
+        tf.setBorder(new Border(new BorderStroke(Color.web(StyleUtility.ELEMENT_GRAY), BorderStrokeStyle.SOLID, new CornerRadii(5), new BorderWidths(0.3))));
         tf.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
         tf.setPadding(new Insets(5, 15, 5, 15));
         tf.setFont(Font.font(StyleUtility.MAIN_TEXT_SIZE));
@@ -69,6 +70,24 @@ public class AccountUtility {
             tf.setMaxWidth(limitedWidth);
         }
         return tf;
+    }
+
+    public static Node createAccountHeader(String title, String subTitle, ViewDomainActivityBase activity) {
+        Button friendsFamilyBackButton = new Button("<-");
+
+        friendsFamilyBackButton.setOnAction(e -> {
+            activity.getHistory().goBack();
+        });
+
+        VBox container = new VBox();
+
+        container.getChildren().addAll(
+                GeneralUtility.createSplitRow(friendsFamilyBackButton, TextUtility.getAccountHeaderText(title), 10, 0),
+                GeneralUtility.createSplitRow(new Text(" "), TextUtility.getSubText(subTitle), 10, 0),
+                GeneralUtility.createSpace(20)
+        );
+
+        return container;
     }
 
     public static Node displayInformation(ViewDomainActivityBase activity, ButtonFactoryMixin activityMixin, PersonPM personPM) {
@@ -154,12 +173,10 @@ public class AccountUtility {
         container.setPadding(new Insets(20));
         container.setSpacing(10);
 
-        Button b = new Button("Update");
+        Button b = GeneralUtility.createButton(Color.web(StyleUtility.POSITIVE_GREEN), 4, "Update");
         HBox cb = new HBox();
         cb.setAlignment(Pos.CENTER);
         cb.getChildren().add(b);
-        b.setTextFill(Color.WHITE);
-        b.setBackground(new Background(new BackgroundFill(Color.web(StyleUtility.POSITIVE_GREEN), new CornerRadii(4), null)));
 //        b.setId();
 //        b.getStyleClass().addAll("hhh", "kkk");
         b.setOnAction(e -> {

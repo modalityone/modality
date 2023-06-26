@@ -16,7 +16,9 @@ module modality.event.frontoffice.activities.account {
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
+    requires webfx.stack.orm.expression;
     requires webfx.stack.orm.reactive.entities;
+    requires webfx.stack.routing.activity;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.session.state.client.fx;
@@ -30,7 +32,7 @@ module modality.event.frontoffice.activities.account {
     exports one.modality.event.frontoffice.operations.routes.account;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.account.AccountUiRoute, one.modality.event.frontoffice.activities.account.AccountPersonalInformationUiRoute, one.modality.event.frontoffice.activities.account.AccountSettingsUiRoute, one.modality.event.frontoffice.activities.account.AccountFriendsAndFamilyUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.event.frontoffice.activities.account.RouteToAccountRequestEmitter, one.modality.event.frontoffice.activities.account.RouteToAccountSettingsRequestEmitter, one.modality.event.frontoffice.activities.account.RouteToAccountPersonalInformationEmitter, one.modality.event.frontoffice.activities.account.RouteToAccountFriendsAndFamilyEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.account.AccountUiRoute, one.modality.event.frontoffice.activities.account.AccountPersonalInformationUiRoute, one.modality.event.frontoffice.activities.account.AccountSettingsUiRoute, one.modality.event.frontoffice.activities.account.AccountFriendsAndFamilyUiRoute, one.modality.event.frontoffice.activities.account.AccountFriendsAndFamilyEditUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.event.frontoffice.activities.account.RouteToAccountRequestEmitter, one.modality.event.frontoffice.activities.account.RouteToAccountSettingsRequestEmitter, one.modality.event.frontoffice.activities.account.RouteToAccountPersonalInformationEmitter, one.modality.event.frontoffice.activities.account.RouteToAccountFriendsAndFamilyEmitter, one.modality.event.frontoffice.activities.account.RouteToAccountFriendsAndFamilyEditEmitter;
 
 }

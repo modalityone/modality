@@ -42,7 +42,7 @@ public class GeneralUtility {
 
     public static void styleSelectButton(EntityButtonSelector buttonSelector) {
         Button b = buttonSelector.getButton();
-        b.setBorder(new Border(new BorderStroke(Color.web(StyleUtility.INPUT_BORDER), BorderStrokeStyle.SOLID, new CornerRadii(5), new BorderWidths(0.3))));
+        b.setBorder(new Border(new BorderStroke(Color.web(StyleUtility.ELEMENT_GRAY), BorderStrokeStyle.SOLID, new CornerRadii(5), new BorderWidths(0.3))));
         b.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
         b.setPadding(new Insets(5, 15, 5, 15));
     }
@@ -140,6 +140,14 @@ public class GeneralUtility {
         );
 
         return field;
+    }
+
+    public static Button createButton(Color color, int radius, String label) {
+        Button b = new Button(label);
+        b.setTextFill(Color.WHITE);
+        b.setBackground(new Background(new BackgroundFill(color, new CornerRadii(radius), null)));
+
+        return b;
     }
 
     public static Node bindButtonWithPopup(Button button, Node container, Node content, int height) {
