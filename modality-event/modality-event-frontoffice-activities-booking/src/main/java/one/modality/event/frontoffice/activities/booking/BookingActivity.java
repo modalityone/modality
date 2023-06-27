@@ -13,8 +13,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
+import javafx.scene.text.*;
 import one.modality.base.frontoffice.fx.FXAccount;
 import one.modality.base.frontoffice.utility.StyleUtility;
 import one.modality.base.frontoffice.utility.TextUtility;
@@ -59,11 +58,16 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
     }
 
     private Node createEventBanner(Event event) {
-        Text title = new Text(event.getName());
-        Text subTitle = new Text("Lower description");
-        Text date = new Text(event.getStartDate().format(DateTimeFormatter.BASIC_ISO_DATE));
-        Text location = new Text("Manjushri - Ulverston");
+        Text title = TextUtility.getMediumText(event.getName(), StyleUtility.MAIN_BLUE);
+        Text subTitle = TextUtility.getText("LOWER DESCRIPTION", 10, StyleUtility.PURE_BLACK);
+        Text date = TextUtility.getText(event.getStartDate().toString(), 10, StyleUtility.PURE_BLACK);
+        Node location = GeneralUtility.createVList(0, 0,
+                TextUtility.weight(TextUtility.getText("At Manjushri Kadampa Meditation Center", 8, StyleUtility.ELEMENT_GRAY), FontWeight.THIN),
+                TextUtility.weight(TextUtility.getText("Ulverston, United Kingdom", 8, StyleUtility.ELEMENT_GRAY), FontWeight.MEDIUM)
+                );
         Button book = GeneralUtility.createButton(Color.web(StyleUtility.MAIN_BLUE), 4, "Book now");
+
+        book.setFont(Font.font(StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(600), 9));
 
         title.setWrappingWidth(200);
 

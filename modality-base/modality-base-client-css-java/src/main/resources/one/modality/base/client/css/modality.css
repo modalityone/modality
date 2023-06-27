@@ -54,7 +54,6 @@ VisualGrid, VisualLineChart, VisualPieChart, VisualBarChart, VisualAreaChart, Gr
 
 Text, Label, Button, TextField {
     -fx-font-family: 'Montserrat';
-    -fx-font-weight: 500;
 }
 
 .scroll-pane > .viewport {
