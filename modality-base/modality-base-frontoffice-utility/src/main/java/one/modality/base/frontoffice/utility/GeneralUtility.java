@@ -71,7 +71,7 @@ public class GeneralUtility {
 
         if (!isDisabled) b.setOnMouseClicked(e -> property.set(isRadio ? !isReverse : !property.get()));
 
-        return createHList(5,0, b, TextUtility.getMainText(label));
+        return createHList(5,0, b, TextUtility.getMainText(label, StyleUtility.VICTOR_BATTLE_BLACK));
     }
 
     public static Node createRadioCheckBoxBySelection(StringProperty selectedProperty, String label) {

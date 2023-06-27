@@ -133,7 +133,7 @@ public class AccountUtility {
                 GeneralUtility.createSplitRow(language, practitioner, 50, 10),
                 GeneralUtility.createSplitRow(idType, idNumber, 50, 10),
                 GeneralUtility.createSpace(20),
-                GeneralUtility.bindI18N(TextUtility.getMainText(""), "Address"),
+                GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.VICTOR_BATTLE_BLACK), "Address"),
                 GeneralUtility.createSplitRow(addressCountry, addressZip, 50, 10),
                 GeneralUtility.createSplitRow(addressState, addressCity, 50, 10),
                 GeneralUtility.createSplitRow(addressStreet, addressNumber, 75, 10),
@@ -141,15 +141,15 @@ public class AccountUtility {
                 GeneralUtility.createSpace(10),
                 GeneralUtility.createSplitRow(
 
-                        GeneralUtility.bindI18N(TextUtility.getMainText(""), "Billing Address"),
+                        GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.VICTOR_BATTLE_BLACK), "Billing Address"),
                         GeneralUtility.createCheckBoxDirect(personPM.ADDRESS_BILLING_SAME, false, false, "Same as the billing address", false),
                         30, 10
                 ),
                 GeneralUtility.createSpace(20),
-                GeneralUtility.bindI18N(TextUtility.getMainText(""), "Diet"),
+                GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.VICTOR_BATTLE_BLACK), "Diet"),
                 diet,
                 GeneralUtility.createSpace(20),
-                GeneralUtility.bindI18N(TextUtility.getMainText(""), "Special needs"),
+                GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.VICTOR_BATTLE_BLACK), "Special needs"),
                 GeneralUtility.createSplitRow(needsWheelchair, needsHearing, 50, 0),
                 GeneralUtility.createSplitRow(needsSight, needsMobility, 50, 0)
         );
@@ -180,59 +180,7 @@ public class AccountUtility {
 //        b.setId();
 //        b.getStyleClass().addAll("hhh", "kkk");
         b.setOnAction(e -> {
-            UpdateStore updateStore = null;
-            Person updatedPerson = null;
-
-            if (personPM.PERSON == null) {
-                EntityStore store = FXAccount.ownerPM.PERSON.getStore();
-                updateStore = UpdateStore.createAbove(store);
-                updatedPerson = updateStore.insertEntity(Person.class);
-                Entity frontendAccount = FXAccount.ownerPM.PERSON.getForeignEntity("frontendAccount");
-                updatedPerson.setForeignField("frontendAccount", frontendAccount);
-            } else {
-                EntityStore store = personPM.PERSON.getStore();
-                updateStore = UpdateStore.createAbove(store);
-                updatedPerson = updateStore.updateEntity(personPM.PERSON);
-            }
-
-//            updateStore.deleteEntity(owner);
-//            Person newPerson = updateStore.insertEntity(Person.class);
-//            Entity frontendAccount = updatedOwner.getForeignEntity("frontendAccount");
-//            updatedOwner.setFieldValue("removed", true);
-//            boolean removed = updatedOwner.getBooleanFieldValue("removed");
-//            updatedOwner.setLastName("Salmon");
-
-            updatedPerson.setStreet(personPM.ADDRESS_STREET.get());
-            updatedPerson.setCityName(personPM.ADDRESS_CITY.get());
-            updatedPerson.setCountry(personPM.ADDRESS_COUNTRY.getValue());
-
-            updatedPerson.setFirstName(personPM.NAME_FIRST.get());
-            updatedPerson.setLastName(personPM.NAME_LAST.get());
-
-            updatedPerson.setMale(personPM.IS_MALE.get());
-            updatedPerson.setOrdained(!personPM.IS_LAY.get());
-
-            Person finalUpdatedPerson = updatedPerson;
-            updateStore.submitChanges()
-                    .onSuccess(batch -> {
-                        if (personPM.PERSON == null) {
-                            PersonPM newMember = new PersonPM();
-                            FXAccount.membersPM.add(newMember);
-                            personPM.setASSOCIATE_PM(newMember);
-                        }
-                        personPM.set(finalUpdatedPerson);
-                        personPM.ASSOCIATE_PM.set(finalUpdatedPerson);
-
-                        System.out.println("Success");
-                    })
-                    .onFailure(ex -> System.out.println("Failed: " + ex))
-                    .onComplete(ar -> {
-                        if (ar.succeeded()) {
-
-                        } else {
-
-                        }
-                    });
+            FXAccount.updatePerson(personPM);
         });
 
         container.getChildren().addAll(

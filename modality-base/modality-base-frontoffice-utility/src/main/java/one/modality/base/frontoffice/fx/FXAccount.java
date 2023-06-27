@@ -1,7 +1,6 @@
 package one.modality.base.frontoffice.fx;
 
-import dev.webfx.stack.orm.entity.Entities;
-import dev.webfx.stack.orm.entity.EntityId;
+import dev.webfx.stack.orm.entity.*;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -9,12 +8,9 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import one.modality.base.frontoffice.fx.FXBooking;
 import one.modality.base.frontoffice.states.PersonPM;
 import one.modality.base.shared.entities.Person;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -52,7 +48,16 @@ public class FXAccount {
                 ownerPM.IS_OWNER = true;
                 membersPM.setAll(accountFriendsAndFamily.stream().map(PersonPM::new).collect(Collectors.toList()));
 
-                FXBooking.ownerLocalCenterProperty.bind(ownerPM.LOCAL_CENTER);
+                FXBooking.countryProperty.set(ownerPM.ADDRESS_COUNTRY.getValue().getName());
+                FXBooking.cityProperty.set(ownerPM.ADDRESS_CITY.get());
+                FXBooking.displayCenterProperty.setValue(ownerPM.LOCAL_CENTER.getValue());
+
+                ownerPM.LOCAL_CENTER.addListener(c -> {
+                    FXBooking.countryProperty.set(ownerPM.ADDRESS_COUNTRY.getValue().getName());
+                    FXBooking.cityProperty.set(ownerPM.ADDRESS_CITY.get());
+                    FXBooking.displayCenterProperty.setValue(ownerPM.LOCAL_CENTER.getValue());
+
+                });
             }
         });
     }
@@ -81,5 +86,66 @@ public class FXAccount {
 
     public static ObservableList<PersonPM> getMembersPM() {
         return membersPM;
+    }
+
+    public static void updatePerson(PersonPM personPM) {
+        UpdateStore updateStore = null;
+        Person updatedPerson = null;
+
+        if (personPM.PERSON == null) {
+            EntityStore store = FXAccount.ownerPM.PERSON.getStore();
+            updateStore = UpdateStore.createAbove(store);
+            updatedPerson = updateStore.insertEntity(Person.class);
+            Entity frontendAccount = FXAccount.ownerPM.PERSON.getForeignEntity("frontendAccount");
+            updatedPerson.setForeignField("frontendAccount", frontendAccount);
+        } else {
+            EntityStore store = personPM.PERSON.getStore();
+            updateStore = UpdateStore.createAbove(store);
+            updatedPerson = updateStore.updateEntity(personPM.PERSON);
+        }
+
+//            updateStore.deleteEntity(owner);
+//            Person newPerson = updateStore.insertEntity(Person.class);
+//            Entity frontendAccount = updatedOwner.getForeignEntity("frontendAccount");
+//            updatedOwner.setFieldValue("removed", true);
+//            boolean removed = updatedOwner.getBooleanFieldValue("removed");
+//            updatedOwner.setLastName("Salmon");
+
+        updatedPerson.setFirstName(personPM.NAME_FIRST.get());
+        updatedPerson.setLastName(personPM.NAME_LAST.get());
+
+        updatedPerson.setStreet(personPM.ADDRESS_STREET.get());
+        updatedPerson.setCityName(personPM.ADDRESS_CITY.get());
+        updatedPerson.setCountry(personPM.ADDRESS_COUNTRY.getValue());
+
+        updatedPerson.setFirstName(personPM.NAME_FIRST.get());
+        updatedPerson.setLastName(personPM.NAME_LAST.get());
+
+        updatedPerson.setMale(personPM.IS_MALE.get());
+        updatedPerson.setOrdained(!personPM.IS_LAY.get());
+
+        updatedPerson.setOrganization(personPM.LOCAL_CENTER.getValue());
+
+        Person finalUpdatedPerson = updatedPerson;
+        updateStore.submitChanges()
+                .onSuccess(batch -> {
+                    if (personPM.PERSON == null) {
+                        PersonPM newMember = new PersonPM();
+                        FXAccount.membersPM.add(newMember);
+                        personPM.setASSOCIATE_PM(newMember);
+                    }
+                    personPM.set(finalUpdatedPerson);
+                    personPM.ASSOCIATE_PM.set(finalUpdatedPerson);
+
+                    System.out.println("Success");
+                })
+                .onFailure(ex -> System.out.println("Failed: " + ex))
+                .onComplete(ar -> {
+                    if (ar.succeeded()) {
+
+                    } else {
+
+                    }
+                });
     }
 }

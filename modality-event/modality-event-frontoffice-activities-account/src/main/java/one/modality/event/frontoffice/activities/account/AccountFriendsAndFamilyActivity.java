@@ -35,7 +35,7 @@ public class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase impl
 
             bpR.setRight(new Button(">"));
             bpR.setCenter(
-                    GeneralUtility.createSplitRow(TextUtility.getBindedText(personPM.NAME_FULL, TextUtility::getMainText), TextUtility.getSubText("Kinship"), 75, 0)
+                    GeneralUtility.createSplitRow(TextUtility.getBindedText(personPM.NAME_FULL, name -> TextUtility.getMainText(name, StyleUtility.VICTOR_BATTLE_BLACK)), TextUtility.getSubText("Kinship"), 75, 0)
             );
             bpR.setBottom(s);
 

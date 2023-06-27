@@ -23,16 +23,20 @@ public class TextUtility {
         return t;
     }
 
-    public static Text getMainText(String content) {
-        return getText(content, StyleUtility.MAIN_TEXT_SIZE, StyleUtility.PURE_BLACK);
+    public static Text getMainText(String content, String color) {
+        return getText(content, StyleUtility.MAIN_TEXT_SIZE, color);
     }
 
     public static Text getMediumText(String content, String color) {
         return getText(content, StyleUtility.MEDIUM_TEXT_SIZE, color);
     }
 
+    public static Text getSubText(String content, String color) {
+        return getText(content, StyleUtility.SUB_TEXT_SIZE, color);
+    }
+
     public static Text getAccountHeaderText(String content) {
-        return weight(getText(content, 20, StyleUtility.PURE_BLACK), FontWeight.findByWeight(600));
+        return weight(getText(content, 20, StyleUtility.VICTOR_BATTLE_BLACK), FontWeight.findByWeight(600));
     }
 
     public static Text getMainHeaderText(String content) {
@@ -44,7 +48,7 @@ public class TextUtility {
     }
 
     public static Text getNameText(String content) {
-        return getText(content, 30, StyleUtility.PURE_BLACK);
+        return getText(content, 30, StyleUtility.VICTOR_BATTLE_BLACK);
     }
 
     public static Text weight(Text t, FontWeight weight) {
@@ -53,6 +57,6 @@ public class TextUtility {
     }
 
     public static Text getSettingSectionText(String content) {
-        return weight(getText(content, StyleUtility.MAIN_TEXT_SIZE, StyleUtility.PURE_BLACK), FontWeight.BOLD);
+        return weight(getText(content, StyleUtility.MAIN_TEXT_SIZE, StyleUtility.VICTOR_BATTLE_BLACK), FontWeight.BOLD);
     }
 }

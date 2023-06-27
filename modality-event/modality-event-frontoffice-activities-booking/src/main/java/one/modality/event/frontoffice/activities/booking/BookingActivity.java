@@ -1,10 +1,9 @@
 package one.modality.event.frontoffice.activities.booking;
 
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
-import dev.webfx.stack.orm.dql.DqlStatement;
+import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
-import dev.webfx.stack.session.state.client.fx.FXUserId;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -15,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
 import one.modality.base.frontoffice.fx.FXAccount;
+import one.modality.base.frontoffice.states.BookingPM;
 import one.modality.base.frontoffice.utility.StyleUtility;
 import one.modality.base.frontoffice.utility.TextUtility;
 import one.modality.base.shared.entities.Country;
@@ -22,24 +22,13 @@ import one.modality.base.shared.entities.Event;
 import one.modality.base.frontoffice.fx.FXBooking;
 import dev.webfx.extras.util.layout.LayoutUtil;
 
-import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
-import dev.webfx.stack.orm.dql.DqlStatement;
-import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
-import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
-import dev.webfx.stack.session.state.client.fx.FXUserId;
-import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
-import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import one.modality.base.frontoffice.states.AccountHomePM;
 import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.base.shared.entities.Organization;
-import one.modality.base.shared.entities.Person;
-import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
-import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
+import one.modality.base.shared.entities.impl.OrganizationImpl;
 
-import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
@@ -59,8 +48,8 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
 
     private Node createEventBanner(Event event) {
         Text title = TextUtility.getMediumText(event.getName(), StyleUtility.MAIN_BLUE);
-        Text subTitle = TextUtility.getText("LOWER DESCRIPTION", 10, StyleUtility.PURE_BLACK);
-        Text date = TextUtility.getText(event.getStartDate().toString(), 10, StyleUtility.PURE_BLACK);
+        Text subTitle = TextUtility.getText("LOWER DESCRIPTION", 10, StyleUtility.VICTOR_BATTLE_BLACK);
+        Text date = TextUtility.getText(event.getStartDate().toString(), 10, StyleUtility.VICTOR_BATTLE_BLACK);
         Node location = GeneralUtility.createVList(0, 0,
                 TextUtility.weight(TextUtility.getText("At Manjushri Kadampa Meditation Center", 8, StyleUtility.ELEMENT_GRAY), FontWeight.THIN),
                 TextUtility.weight(TextUtility.getText("Ulverston, United Kingdom", 8, StyleUtility.ELEMENT_GRAY), FontWeight.MEDIUM)
@@ -86,7 +75,15 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
         return container;
     }
 
-    private Node createCenterDisplay() {
+    private Node rebuildCenterDisplay(VBox container) {
+        if (FXAccount.ownerPM.PERSON == null) return new VBox();
+
+        try {
+            container.getChildren().removeAll(container.getChildren());
+        } catch (IllegalStateException e) {
+            container = new VBox();
+        }
+
         EntityButtonSelector<Country> countriesButtonSelector = new EntityButtonSelector<>(
                 "{class:'country', orderBy:'name'}",
                 this, container, getDataSourceModel()
@@ -103,18 +100,96 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
 
         centersButtonSelector.selectedItemProperty().bindBidirectional(FXAccount.ownerPM.LOCAL_CENTER);
 
-        VBox container = new VBox();
+        Button map = new Button("MAP");
+        map.setMinWidth(100);
+        map.setMinHeight(120);
+
+        Text address = TextUtility.getSubText("Manjushri Kadampa Meditation Centre Conishead Priory, Ulverston LA12 9QQ", StyleUtility.RUPAVAJRA_WHITE);
+        address.setWrappingWidth(100);
+
+        Node location = GeneralUtility.createSplitRow(
+                map,
+                GeneralUtility.createVList(5, 0,
+                        TextUtility.getSubText("manjushri.org", StyleUtility.RUPAVAJRA_WHITE),
+                        address,
+                        TextUtility.getSubText("+44 (0)1229 584029", StyleUtility.RUPAVAJRA_WHITE),
+                        TextUtility.getSubText("info@manjushri.org", StyleUtility.RUPAVAJRA_WHITE)
+                        ),50, 10
+        );
+
+        Text changeLocation = TextUtility.getText(BookingPM.CHANGE_CENTER.get() ? "Confirm change" : "Change your location", 10, StyleUtility.RUPAVAJRA_WHITE);
+        changeLocation.setOnMouseClicked(event -> {
+            if (BookingPM.CHANGE_CENTER.get()) FXAccount.updatePerson(FXAccount.ownerPM);
+            BookingPM.CHANGE_CENTER.set(!BookingPM.CHANGE_CENTER.get());
+        });
+        changeLocation.setTextAlignment(TextAlignment.CENTER);
 
         container.getChildren().addAll(
-                new Text("Your Country"),
-                countriesButtonSelector.getButton(),
-                new Text("Your Local Dharma Center"),
-                centersButtonSelector.getButton()
+                TextUtility.getSubText("Your Country", StyleUtility.RUPAVAJRA_WHITE),
+                BookingPM.CHANGE_CENTER.get() ? countriesButtonSelector.getButton() : TextUtility.getMainText(FXAccount.ownerPM.ADDRESS_COUNTRY.getValue().getName(), StyleUtility.VICTOR_BATTLE_BLACK),
+                GeneralUtility.createSpace(20),
+                TextUtility.getSubText("Your Local Dharma Center", StyleUtility.RUPAVAJRA_WHITE),
+                BookingPM.CHANGE_CENTER.get() ? centersButtonSelector.getButton() : TextUtility.getMainText(FXAccount.ownerPM.LOCAL_CENTER.getValue().getName(), StyleUtility.VICTOR_BATTLE_BLACK),
+                GeneralUtility.createSpace(20),
+                location,
+                GeneralUtility.createSpace(20),
+                changeLocation
         );
 
         container.setBackground(Background.fill(Color.web(StyleUtility.MAIN_BLUE)));
         container.setPadding(new Insets(35));
         container.setAlignment(Pos.CENTER);
+
+        return container;
+    }
+
+    public Node rebuildSearchBar(VBox container) {
+        try {
+            container.getChildren().removeAll(container.getChildren());
+        } catch (IllegalStateException exception) {
+            container = new VBox();
+        }
+
+        StackPane sp = new StackPane();
+
+        BorderPane searchContainer = new BorderPane();
+        Button search = new Button("Search");
+        searchContainer.setRight(search);
+
+        search.setOnMouseClicked(e -> {
+            FXBooking.countryProperty.set("United States");
+            FXBooking.cityProperty.set("San Francisco");
+            EntityStore store = FXAccount.ownerPM.PERSON.getStore();
+            Organization organization = store.createEntity(Organization.class);
+            organization.setName("My center");
+            FXBooking.displayCenterProperty.setValue(organization);
+        });
+
+        String locationString = FXBooking.countryProperty.get() + ", " + FXBooking.cityProperty.get();
+
+        if (locationString.trim().equals(",")) locationString = "Please select a location";
+
+        Text title = TextUtility.getText("Local Events", 16, StyleUtility.VICTOR_BATTLE_BLACK);
+        Text location = TextUtility.getText(locationString, 8, StyleUtility.ELEMENT_GRAY);
+        Text clear = TextUtility.getText("Clear filters", 8, StyleUtility.ELEMENT_GRAY);
+
+        VBox titleContainer = (VBox) GeneralUtility.createVList(0, 0, title, location);
+
+        clear.setOnMouseClicked(e -> {
+            FXBooking.cityProperty.set(FXAccount.ownerPM.ADDRESS_CITY.get());
+            FXBooking.countryProperty.set(FXAccount.ownerPM.ADDRESS_COUNTRY.getValue().getName());
+            FXBooking.displayCenterProperty.setValue(FXAccount.ownerPM.LOCAL_CENTER.getValue());
+        });
+
+        titleContainer.setAlignment(Pos.CENTER);
+        container.setAlignment(Pos.CENTER);
+
+        sp.getChildren().addAll(
+                titleContainer,
+                searchContainer
+        );
+
+        container.getChildren().addAll(sp, clear);
 
         return container;
     }
@@ -130,14 +205,23 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
 
         VBox nktEventsContainer = new VBox();
         VBox localEventsContainer = new VBox();
+        VBox centerContainer = new VBox();
+        VBox searchContainer = new VBox();
 
         rebuildEvents(nktEventsContainer, FXBooking.nktEvents);
         rebuildEvents(localEventsContainer, FXBooking.localCenterEvents);
+        rebuildCenterDisplay(centerContainer);
+        rebuildSearchBar(searchContainer);
 
         FXBooking.nktEvents.addListener((ListChangeListener<Event>) change -> rebuildEvents(nktEventsContainer, FXBooking.nktEvents));
         FXBooking.localCenterEvents.addListener((ListChangeListener<Event>) change -> rebuildEvents(localEventsContainer, FXBooking.localCenterEvents));
 
+        BookingPM.CHANGE_CENTER.addListener(change -> rebuildCenterDisplay(centerContainer));
 
+        FXBooking.displayCenterProperty.addListener(c -> {
+            rebuildSearchBar(searchContainer);
+            rebuildCenterDisplay(centerContainer);
+        });
 
         Button startBooking = new Button("Start Booking");
         bookingWelcome.getChildren().addAll(
@@ -166,8 +250,10 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
                 header,
                 nktEventsContainer,
                 GeneralUtility.createSpace(50),
-                createCenterDisplay(),
+                centerContainer,
                 GeneralUtility.createSpace(50),
+                searchContainer,
+                GeneralUtility.createSpace(20),
                 localEventsContainer,
                 bookingWelcome);
 
@@ -189,7 +275,7 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
 
         ReactiveEntitiesMapper.<Event>createPushReactiveChain(this)
                 .always("{class: 'Event', fields:'name, startDate, endDate', where: 'endDate > now()', orderBy: 'startDate'}")
-                .ifNotNullOtherwiseEmpty(FXBooking.ownerLocalCenterProperty, localCenter -> where("organization=?", localCenter))
+                .ifNotNullOtherwiseEmpty(FXBooking.displayCenterProperty, localCenter -> where("organization=?", localCenter))
                 .storeEntitiesInto(FXBooking.localCenterEvents)
                 .start();
     }
