@@ -1,7 +1,9 @@
 package one.modality.base.frontoffice.utility;
 
+import com.robrua.nlp.bert.Bert;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
+import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
@@ -13,12 +15,72 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
-
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
+
+import java.nio.file.Paths;
 
 public class GeneralUtility {
+
+    static {
+        try(Bert bert = Bert.load(Paths.get("/Users/tylertuan/Documents/modality/modality-base/modality-base-frontoffice-utility/src/main/resources/bert/bert_cased"))) {
+            System.out.println(
+                    cosineSimilarity(
+                            bert.embedSequence("Kadampa Meditation Center San Francisco"),
+                            bert.embedSequence("Kadampa Meditation Center San Francisco")
+                    )
+            );
+            System.out.println(
+                    cosineSimilarity(
+                            bert.embedSequence("KMC San Francisco"),
+                            bert.embedSequence("KMC San Francisco")
+                    )
+            );
+            System.out.println(
+                    cosineSimilarity(
+                            bert.embedSequence("Kadampa Meditation Center San Francisco"),
+                            bert.embedSequence("KMC San Francisco")
+                    )
+            );
+            System.out.println(
+                    cosineSimilarity(
+                            bert.embedSequence("Kadampa Meditation Center San Francisco"),
+                            bert.embedSequence("KMC France")
+                    )
+            );
+            System.out.println(
+                    cosineSimilarity(
+                            bert.embedSequence("Kadampa Meditation Center San Francisco"),
+                            bert.embedSequence("France")
+                    )
+            );
+            System.out.println(
+                    cosineSimilarity(
+                            bert.embedSequence("Kadampa Meditation Center San Francisco"),
+                            bert.embedSequence("I want to eat ice cream")
+                    )
+            );
+            System.out.println(
+                    cosineSimilarity(
+                            bert.embedSequence("disco"),
+                            bert.embedSequence("ice cream")
+                    )
+            );
+        }
+    }
+
+    public static double cosineSimilarity(float[] vectorA, float[] vectorB) {
+        double dotProduct = 0.0;
+        double normA = 0.0;
+        double normB = 0.0;
+        for (int i = 0; i < vectorA.length; i++) {
+            dotProduct += vectorA[i] * vectorB[i];
+            normA += Math.pow(vectorA[i], 2);
+            normB += Math.pow(vectorB[i], 2);
+        }
+        return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+    }
+
     public static <T extends Labeled> T bindI18N(T node, String key) {
         return I18nControls.bindI18nProperties(node, key);
     }
@@ -32,6 +94,38 @@ public class GeneralUtility {
         icon.setContent(svgPath);
 
         return icon;
+    }
+
+    public static Double distance(Double lat1, Double lon1, Double lat2, Double lon2, char unit) {
+        if (lat1 == null || lat2 == null || lon1 == null || lon2 == null)
+            return null;
+
+        Double theta = lon1 - lon2;
+        Double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+        dist = dist * 60 * 1.1515;
+        if (unit == 'K') {
+            dist = dist * 1.609344;
+        } else if (unit == 'N') {
+            dist = dist * 0.8684;
+        }
+
+        return (dist);
+    }
+
+    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+    /*::  This function converts decimal degrees to radians             :*/
+    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+    private static double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+    /*::  This function converts radians to decimal degrees             :*/
+    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+    private static double rad2deg(double rad) {
+        return (rad * 180.0 / Math.PI);
     }
 
     public static Node createSpace(int height) {

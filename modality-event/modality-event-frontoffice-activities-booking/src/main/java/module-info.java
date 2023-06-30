@@ -7,9 +7,14 @@ module modality.event.frontoffice.activities.booking {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires javafx.web;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires webfx.extras.util.layout;
+    requires webfx.platform.console;
+    requires webfx.platform.fetch;
+    requires webfx.platform.json;
+    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;

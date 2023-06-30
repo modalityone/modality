@@ -16,6 +16,12 @@
     <dependencies>
 
         <dependency>
+            <groupId>com.robrua.nlp</groupId>
+            <artifactId>easy-bert</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
             <scope>provided</scope>
