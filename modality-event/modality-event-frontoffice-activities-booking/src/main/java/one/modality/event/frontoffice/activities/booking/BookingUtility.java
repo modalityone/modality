@@ -32,7 +32,6 @@ public class BookingUtility {
 
                                 List<Pair<Center, Double>> centersDistance = FXApp.centers.stream().map(c -> {
                                     Double d = GeneralUtility.distance(lat, lng, c.lat, c.lng, 'K');
-                                    System.out.println(d);
                                     return new Pair<>(c, d);
                                 }).filter(new Predicate<Pair<Center, Double>>() {
                                     @Override
@@ -47,12 +46,13 @@ public class BookingUtility {
                                     }
                                 }).collect(Collectors.toList());
 
-                                System.out.println("Total centers:");
-                                System.out.println(centersDistance.size());
-                                System.out.println(" ");
-
-                                centersDistance.forEach(p -> {
-                                    System.out.println(p.get1().name + " - " + p.get1().type);
+                                centersDistance.stream().filter(new Predicate<Pair<Center, Double>>() {
+                                    @Override
+                                    public boolean test(Pair<Center, Double> centerDoublePair) {
+                                        return centerDoublePair.get2() < 50;
+                                    }
+                                }).forEach(p -> {
+                                    System.out.println(p.get1().organization.getName() + " - " + p.get1().type);
                                     System.out.println(p.get2());
                                     System.out.println(" ");
                                 });
