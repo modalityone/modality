@@ -46,6 +46,18 @@
         </dependency>
 
         <dependency>
+            <groupId>com.robrua.nlp</groupId>
+            <artifactId>easy-bert</artifactId>
+            <version>1.0.3</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.elemental2</groupId>
+            <artifactId>elemental2-promise</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.google.elemental2</groupId>
             <artifactId>elemental2-svg</artifactId>
         </dependency>
@@ -573,6 +585,34 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-console-gwt</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-fetch</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-fetch-gwt</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-file</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-file-gwt</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>

@@ -1,5 +1,6 @@
 package one.modality.event.frontoffice.activities.booking;
 
+import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
@@ -11,23 +12,24 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.text.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.web.WebView;
 import one.modality.base.frontoffice.fx.FXAccount;
+import one.modality.base.frontoffice.fx.FXBooking;
 import one.modality.base.frontoffice.states.BookingPM;
+import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.base.frontoffice.utility.StyleUtility;
 import one.modality.base.frontoffice.utility.TextUtility;
 import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Event;
-import one.modality.base.frontoffice.fx.FXBooking;
-import dev.webfx.extras.util.layout.LayoutUtil;
-
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.base.shared.entities.Organization;
-import one.modality.base.shared.entities.impl.OrganizationImpl;
 
 import java.util.stream.Collectors;
 
@@ -40,19 +42,20 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
     private Node bookingSteps = BookingStepAll.createPage(this);
     private VBox bookingConfirmed = new VBox();
 
-    private void rebuildEvents(VBox container, ObservableList<Event> events) {
+    private void rebuildEvents(VBox container, ObservableList<Event> events, boolean isSearched) {
         container.getChildren().removeAll(container.getChildren());
-        container.getChildren().addAll(events.stream().map(this::createEventBanner).collect(Collectors.toList()));
+        container.getChildren().addAll(events.stream().map(e -> createEventBanner(e, isSearched ? 10.0 : -1.0)).collect(Collectors.toList()));
         container.setSpacing(5);
     }
 
-    private Node createEventBanner(Event event) {
+    private Node createEventBanner(Event event, Double distance) {
         Text title = TextUtility.getMediumText(event.getName(), StyleUtility.MAIN_BLUE);
         Text subTitle = TextUtility.getText("LOWER DESCRIPTION", 10, StyleUtility.VICTOR_BATTLE_BLACK);
         Text date = TextUtility.getText(event.getStartDate().toString(), 10, StyleUtility.VICTOR_BATTLE_BLACK);
         Node location = GeneralUtility.createVList(0, 0,
                 TextUtility.weight(TextUtility.getText("At Manjushri Kadampa Meditation Center", 8, StyleUtility.ELEMENT_GRAY), FontWeight.THIN),
-                TextUtility.weight(TextUtility.getText("Ulverston, United Kingdom", 8, StyleUtility.ELEMENT_GRAY), FontWeight.MEDIUM)
+                TextUtility.weight(TextUtility.getText("Ulverston, United Kingdom", 8, StyleUtility.ELEMENT_GRAY), FontWeight.MEDIUM),
+                distance < 0 ? new VBox() : TextUtility.getText(distance.toString(), 8, StyleUtility.ELEMENT_GRAY)
                 );
         Button book = GeneralUtility.createButton(Color.web(StyleUtility.MAIN_BLUE), 4, "Book now");
 
@@ -100,15 +103,22 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
 
         centersButtonSelector.selectedItemProperty().bindBidirectional(FXAccount.ownerPM.LOCAL_CENTER);
 
-        Button map = new Button("MAP");
-        map.setMinWidth(100);
-        map.setMinHeight(120);
+        WebView mapView = new WebView();
+        mapView.getEngine().load("https://maps.googleapis.com/maps/api/js?key=AIzaSyD7f9GOiTp2n4eIGqmUkN3U0RtKVhfsU8k&v=3.exp");
+
+        Image mapImage = new Image("https://maps.googleapis.com/maps/api/staticmap?center=40.714728,-73.998672&zoom=12&size=400x400&maptype=terrain&key=AIzaSyD7f9GOiTp2n4eIGqmUkN3U0RtKVhfsU8k");
+        ImageView map = new ImageView(mapImage);
+        mapView.setMinWidth(100);
+        mapView.setMinHeight(120);
+
+        map.setFitWidth(100);
+        map.setFitHeight(120);
 
         Text address = TextUtility.getSubText("Manjushri Kadampa Meditation Centre Conishead Priory, Ulverston LA12 9QQ", StyleUtility.RUPAVAJRA_WHITE);
         address.setWrappingWidth(100);
 
         Node location = GeneralUtility.createSplitRow(
-                map,
+                mapView,
                 GeneralUtility.createVList(5, 0,
                         TextUtility.getSubText("manjushri.org", StyleUtility.RUPAVAJRA_WHITE),
                         address,
@@ -124,12 +134,16 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
         });
         changeLocation.setTextAlignment(TextAlignment.CENTER);
 
+        Text localCenterText = TextUtility.getMainText(FXAccount.ownerPM.LOCAL_CENTER.getValue().getName(), StyleUtility.VICTOR_BATTLE_BLACK);
+        localCenterText.setWrappingWidth(200);
+        localCenterText.setTextAlignment(TextAlignment.CENTER);
+
         container.getChildren().addAll(
                 TextUtility.getSubText("Your Country", StyleUtility.RUPAVAJRA_WHITE),
                 BookingPM.CHANGE_CENTER.get() ? countriesButtonSelector.getButton() : TextUtility.getMainText(FXAccount.ownerPM.ADDRESS_COUNTRY.getValue().getName(), StyleUtility.VICTOR_BATTLE_BLACK),
                 GeneralUtility.createSpace(20),
                 TextUtility.getSubText("Your Local Dharma Center", StyleUtility.RUPAVAJRA_WHITE),
-                BookingPM.CHANGE_CENTER.get() ? centersButtonSelector.getButton() : TextUtility.getMainText(FXAccount.ownerPM.LOCAL_CENTER.getValue().getName(), StyleUtility.VICTOR_BATTLE_BLACK),
+                BookingPM.CHANGE_CENTER.get() ? centersButtonSelector.getButton() : localCenterText,
                 GeneralUtility.createSpace(20),
                 location,
                 GeneralUtility.createSpace(20),
@@ -208,13 +222,13 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
         VBox centerContainer = new VBox();
         VBox searchContainer = new VBox();
 
-        rebuildEvents(nktEventsContainer, FXBooking.nktEvents);
-        rebuildEvents(localEventsContainer, FXBooking.localCenterEvents);
+        rebuildEvents(nktEventsContainer, FXBooking.nktEvents, false);
+        rebuildEvents(localEventsContainer, FXBooking.localCenterEvents, false);
         rebuildCenterDisplay(centerContainer);
         rebuildSearchBar(searchContainer);
 
-        FXBooking.nktEvents.addListener((ListChangeListener<Event>) change -> rebuildEvents(nktEventsContainer, FXBooking.nktEvents));
-        FXBooking.localCenterEvents.addListener((ListChangeListener<Event>) change -> rebuildEvents(localEventsContainer, FXBooking.localCenterEvents));
+        FXBooking.nktEvents.addListener((ListChangeListener<Event>) change -> rebuildEvents(nktEventsContainer, FXBooking.nktEvents, false));
+        FXBooking.localCenterEvents.addListener((ListChangeListener<Event>) change -> rebuildEvents(localEventsContainer, FXBooking.localCenterEvents, false));
 
         BookingPM.CHANGE_CENTER.addListener(change -> rebuildCenterDisplay(centerContainer));
 
@@ -278,5 +292,7 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
                 .ifNotNullOtherwiseEmpty(FXBooking.displayCenterProperty, localCenter -> where("organization=?", localCenter))
                 .storeEntitiesInto(FXBooking.localCenterEvents)
                 .start();
+
+        BookingUtility.cityAutoComplete("Manc");
     }
 }

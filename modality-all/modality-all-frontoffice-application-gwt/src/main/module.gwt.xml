@@ -67,12 +67,18 @@
     <source path="javafx/scene/text"/>
     <source path="javafx/scene/transform"/>
     <source path="javafx/stage"/>
+    <!--===================================< javafx-web >===================================-->
+    <source path="javafx/scene/web"/>
     <!--============================< webfx-kit-javafxweb-emul >============================-->
     <source path="javafx/scene/web"/>
+    <!--===================================< easy-bert >====================================-->
+    <source path="com/robrua/nlp/bert"/>
     <!--================================< elemental2-core >=================================-->
     <inherits name="elemental2.core.Core"/>
     <!--=================================< elemental2-dom >=================================-->
     <inherits name="elemental2.dom.Dom"/>
+    <!--===============================< elemental2-promise >===============================-->
+    <source path="elemental2/promise"/>
     <!--=================================< elemental2-svg >=================================-->
     <inherits name="elemental2.svg.Svg"/>
     <!--====================================< gwt-user >====================================-->
@@ -161,9 +167,16 @@
     <!--========================< modality-base-client-validation >=========================-->
     <source path="one/modality/base/client/validation"/>
     <!--=======================< modality-base-frontoffice-utility >========================-->
+    <source path="one/modality/base/frontoffice/entities"/>
     <source path="one/modality/base/frontoffice/fx"/>
     <source path="one/modality/base/frontoffice/states"/>
     <source path="one/modality/base/frontoffice/utility"/>
+    <resource path="bert/bert_cased"/>
+    <public includes="bert/bert_cased/" path=""/>
+    <resource path="bert/bert_cased/assets"/>
+    <public includes="bert/bert_cased/assets/" path=""/>
+    <resource path="bert/bert_cased/variables"/>
+    <public includes="bert/bert_cased/variables/" path=""/>
     <resource path="one/modality/base/frontoffice"/>
     <public includes="one/modality/base/frontoffice/" path=""/>
     <!--========================< modality-base-shared-domainmodel >========================-->
@@ -342,6 +355,18 @@
     <source path="dev/webfx/platform/console/spi"/>
     <!--===========================< webfx-platform-console-gwt >===========================-->
     <source path="dev/webfx/platform/console/spi/impl/gwt"/>
+    <!--==============================< webfx-platform-fetch >==============================-->
+    <source path="dev/webfx/platform/fetch"/>
+    <source path="dev/webfx/platform/fetch/spi"/>
+    <source path="dev/webfx/platform/streams"/>
+    <!--============================< webfx-platform-fetch-gwt >============================-->
+    <source path="dev/webfx/platform/fetch/spi/impl/gwt"/>
+    <source path="dev/webfx/platform/streams/spi/impl/gwt"/>
+    <!--==============================< webfx-platform-file >===============================-->
+    <source path="dev/webfx/platform/file"/>
+    <source path="dev/webfx/platform/file/spi"/>
+    <!--============================< webfx-platform-file-gwt >=============================-->
+    <source path="dev/webfx/platform/file/spi/impl/gwt"/>
     <!--========================< webfx-platform-javabase-emul-gwt >========================-->
     <source path="emul/java/lang/ref"/>
     <source path="emul/java/util"/>
