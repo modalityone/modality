@@ -177,6 +177,8 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
             Organization organization = store.createEntity(Organization.class);
             organization.setName("My center");
             FXBooking.displayCenterProperty.setValue(organization);
+
+            BookingUtility.cityAutoComplete("Manc");
         });
 
         String locationString = FXBooking.countryProperty.get() + ", " + FXBooking.cityProperty.get();
@@ -292,7 +294,5 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
                 .ifNotNullOtherwiseEmpty(FXBooking.displayCenterProperty, localCenter -> where("organization=?", localCenter))
                 .storeEntitiesInto(FXBooking.localCenterEvents)
                 .start();
-
-        BookingUtility.cityAutoComplete("Manc");
     }
 }

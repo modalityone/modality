@@ -1,6 +1,5 @@
 package one.modality.base.frontoffice.utility;
 
-import com.robrua.nlp.bert.Bert;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
@@ -18,69 +17,7 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-import java.nio.file.Paths;
-
 public class GeneralUtility {
-
-    static {
-        try(Bert bert = Bert.load(Paths.get("/Users/tylertuan/Documents/modality/modality-base/modality-base-frontoffice-utility/src/main/resources/bert/bert_cased"))) {
-            System.out.println(
-                    cosineSimilarity(
-                            bert.embedSequence("Kadampa Meditation Center San Francisco"),
-                            bert.embedSequence("Kadampa Meditation Center San Francisco")
-                    )
-            );
-            System.out.println(
-                    cosineSimilarity(
-                            bert.embedSequence("KMC San Francisco"),
-                            bert.embedSequence("KMC San Francisco")
-                    )
-            );
-            System.out.println(
-                    cosineSimilarity(
-                            bert.embedSequence("Kadampa Meditation Center San Francisco"),
-                            bert.embedSequence("KMC San Francisco")
-                    )
-            );
-            System.out.println(
-                    cosineSimilarity(
-                            bert.embedSequence("Kadampa Meditation Center San Francisco"),
-                            bert.embedSequence("KMC France")
-                    )
-            );
-            System.out.println(
-                    cosineSimilarity(
-                            bert.embedSequence("Kadampa Meditation Center San Francisco"),
-                            bert.embedSequence("France")
-                    )
-            );
-            System.out.println(
-                    cosineSimilarity(
-                            bert.embedSequence("Kadampa Meditation Center San Francisco"),
-                            bert.embedSequence("I want to eat ice cream")
-                    )
-            );
-            System.out.println(
-                    cosineSimilarity(
-                            bert.embedSequence("disco"),
-                            bert.embedSequence("ice cream")
-                    )
-            );
-        }
-    }
-
-    public static double cosineSimilarity(float[] vectorA, float[] vectorB) {
-        double dotProduct = 0.0;
-        double normA = 0.0;
-        double normB = 0.0;
-        for (int i = 0; i < vectorA.length; i++) {
-            dotProduct += vectorA[i] * vectorB[i];
-            normA += Math.pow(vectorA[i], 2);
-            normB += Math.pow(vectorB[i], 2);
-        }
-        return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
-    }
-
     public static <T extends Labeled> T bindI18N(T node, String key) {
         return I18nControls.bindI18nProperties(node, key);
     }
