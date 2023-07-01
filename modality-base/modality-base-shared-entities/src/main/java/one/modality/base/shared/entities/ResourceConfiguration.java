@@ -39,4 +39,60 @@ public interface ResourceConfiguration extends Entity,
     default LocalDate getLastCleaningDate() {
         return getLocalDateFieldValue("lastCleaningDate");
     }
+
+    default boolean allowsMale() {
+        return getBooleanFieldValue("allowsMale");
+    }
+
+    default void setAllowsMale(boolean allowsMale) {
+        setFieldValue("allowsMale", allowsMale);
+    }
+
+    default boolean allowsFemale() {
+        return getBooleanFieldValue("allowsFemale");
+    }
+
+    default void setAllowsFemale(boolean allowsFemale) {
+        setFieldValue("allowsFemale", allowsFemale);
+    }
+
+    default boolean allowsGuest() {
+        return getBooleanFieldValue("allowsGuest");
+    }
+
+    default void setAllowsGuest(boolean allowsGuest) {
+        setFieldValue("allowsGuest", allowsGuest);
+    }
+
+    default boolean allowsSpecialGuest() {
+        return getBooleanFieldValue("allowsSpecialGuest");
+    }
+
+    default void setAllowsSpecialGuest(boolean allowsSpecialGuest) {
+        setFieldValue("allowsSpecialGuest", allowsSpecialGuest);
+    }
+
+    default boolean allowsVolunteer() {
+        return getBooleanFieldValue("allowsVolunteer");
+    }
+
+    default void setAllowsVolunteer(boolean allowsVolunteer) {
+        setFieldValue("allowsVolunteer", allowsVolunteer);
+    }
+
+    default boolean allowsResident() {
+        return getBooleanFieldValue("allowsResident");
+    }
+
+    default void setAllowsResident(boolean allowsResident) {
+        setFieldValue("allowsResident", allowsResident);
+    }
+
+    default boolean allowsResidentFamily() {
+        return getBooleanFieldValue("allowsResidentFamily");
+    }
+
+    default void setAllowsResidentFamily(boolean allowsResidentFamily) {
+        setFieldValue("allowsResidentFamily", allowsResidentFamily);
+    }
 }
