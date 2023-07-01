@@ -40,59 +40,59 @@ public interface ResourceConfiguration extends Entity,
         return getLocalDateFieldValue("lastCleaningDate");
     }
 
-    default boolean allowsMale() {
+    default Boolean allowsMale() {
         return getBooleanFieldValue("allowsMale");
     }
 
-    default void setAllowsMale(boolean allowsMale) {
+    default void setAllowsMale(Boolean allowsMale) {
         setFieldValue("allowsMale", allowsMale);
     }
 
-    default boolean allowsFemale() {
+    default Boolean allowsFemale() {
         return getBooleanFieldValue("allowsFemale");
     }
 
-    default void setAllowsFemale(boolean allowsFemale) {
+    default void setAllowsFemale(Boolean allowsFemale) {
         setFieldValue("allowsFemale", allowsFemale);
     }
 
-    default boolean allowsGuest() {
+    default Boolean allowsGuest() {
         return getBooleanFieldValue("allowsGuest");
     }
 
-    default void setAllowsGuest(boolean allowsGuest) {
+    default void setAllowsGuest(Boolean allowsGuest) {
         setFieldValue("allowsGuest", allowsGuest);
     }
 
-    default boolean allowsSpecialGuest() {
+    default Boolean allowsSpecialGuest() {
         return getBooleanFieldValue("allowsSpecialGuest");
     }
 
-    default void setAllowsSpecialGuest(boolean allowsSpecialGuest) {
+    default void setAllowsSpecialGuest(Boolean allowsSpecialGuest) {
         setFieldValue("allowsSpecialGuest", allowsSpecialGuest);
     }
 
-    default boolean allowsVolunteer() {
+    default Boolean allowsVolunteer() {
         return getBooleanFieldValue("allowsVolunteer");
     }
 
-    default void setAllowsVolunteer(boolean allowsVolunteer) {
+    default void setAllowsVolunteer(Boolean allowsVolunteer) {
         setFieldValue("allowsVolunteer", allowsVolunteer);
     }
 
-    default boolean allowsResident() {
+    default Boolean allowsResident() {
         return getBooleanFieldValue("allowsResident");
     }
 
-    default void setAllowsResident(boolean allowsResident) {
+    default void setAllowsResident(Boolean allowsResident) {
         setFieldValue("allowsResident", allowsResident);
     }
 
-    default boolean allowsResidentFamily() {
+    default Boolean allowsResidentFamily() {
         return getBooleanFieldValue("allowsResidentFamily");
     }
 
-    default void setAllowsResidentFamily(boolean allowsResidentFamily) {
+    default void setAllowsResidentFamily(Boolean allowsResidentFamily) {
         setFieldValue("allowsResidentFamily", allowsResidentFamily);
     }
 }
