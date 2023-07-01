@@ -47,7 +47,7 @@ public class AlterRoomPane extends VBox {
         specialRateCheckBox = new CheckBox();
         rateTextField = new TextField();
         rateTextField.setPromptText("Enter the name of your rule here");
-        GridPane eligibilityForBookingGrid = createEligibilityForBookingGrid();
+        GridPane eligibilityForBookingGrid = createEligibilityForBookingGrid(rc);
         specificPriceTextField = new TextField();
 
         GridPane detailsGridPane = new GridPane();
@@ -93,13 +93,15 @@ public class AlterRoomPane extends VBox {
         return comboBox;
     }
 
-    private GridPane createEligibilityForBookingGrid() {
+    private GridPane createEligibilityForBookingGrid(ResourceConfiguration rc) {
         GridPane gridPane = new GridPane();
         final int numColumns = 3;
         int columnIndex = 0;
         int rowIndex = 0;
         for (AttendeeCategory attendeeCategory : AttendeeCategory.values()) {
             CheckBox checkBox = new CheckBox(attendeeCategory.getText());
+            boolean selected = allowsAttendanceCategory(rc, attendeeCategory);
+            checkBox.setSelected(selected);
             attendeeCategoryCheckBoxMap.put(attendeeCategory, checkBox);
             gridPane.add(checkBox, columnIndex, rowIndex);
             columnIndex++;
@@ -109,6 +111,17 @@ public class AlterRoomPane extends VBox {
             }
         }
         return gridPane;
+    }
+
+    private boolean allowsAttendanceCategory(ResourceConfiguration rc, AttendeeCategory attendeeCategory) {
+        switch (attendeeCategory) {
+            case GUEST: return rc.allowsGuest();
+            case RESIDENT: return rc.allowsResident();
+            case RESIDENTS_FAMILY: return rc.allowsResidentFamily();
+            case SPECIAL_GUEST: return rc.allowsSpecialGuest();
+            case VOLUNTEER: return rc.allowsVolunteer();
+            default: return false;
+        }
     }
 
     private Label createLabel(String text) {
