@@ -4,9 +4,9 @@ import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
@@ -100,16 +100,44 @@ public class RoomStatusView {
     }
 
     private VBox createRoomPane(ResourceConfiguration rc) {
-        Label roomNameLabel = new Label(rc.getName());
-        GridPane historyGridPane = createRateHistoryGridPane(rc);
-        VBox roomPane = new VBox(roomNameLabel, historyGridPane);
-        return roomPane;
+        return new CollapsiblePane(rc.getName(), createRateHistoryGridPane(rc));
+    }
+
+    private static class CollapsiblePane extends VBox {
+
+        private static final String PREFIX_EXPAND = "(+)";
+        private static final String PREFIX_COLLAPSE = "(-)";
+
+        private final String headingText;
+        private final Label headingLabel = new Label();
+        private final Node body;
+
+        public CollapsiblePane(String headingText, Node body) {
+            this.headingText = headingText;
+            this.body = body;
+            headingLabel.setOnMouseClicked(e -> expandOrCollapse());
+            expandOrCollapse();
+        }
+
+        public void expandOrCollapse() {
+            boolean wasExpanded = !headingLabel.getText().startsWith(PREFIX_COLLAPSE);
+            String newHeadingText = (wasExpanded ? PREFIX_COLLAPSE : PREFIX_EXPAND) + headingText;
+            Platform.runLater(() -> {
+                headingLabel.setText(newHeadingText);
+                if (wasExpanded) {
+                    getChildren().setAll(headingLabel);
+                } else {
+                    getChildren().setAll(headingLabel, body);
+                }
+            });
+        }
     }
 
     private GridPane createRateHistoryGridPane(ResourceConfiguration rc) {
         // TODO find all rates between the start and end date for the resource item
         List<Rate> ratesForRoom = rates.stream()
                 .filter(rate -> rate.getItem().equals(rc.getItem()))
+                .sorted(Comparator.comparing(Rate::getStartDate))
                 .collect(Collectors.toList());
         GridPane gridPane = new GridPane();
         gridPane.setHgap(16);
