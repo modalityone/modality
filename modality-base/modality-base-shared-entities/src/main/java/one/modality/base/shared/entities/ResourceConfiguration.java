@@ -1,6 +1,7 @@
 package one.modality.base.shared.entities;
 
 import dev.webfx.stack.orm.entity.Entity;
+import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.markers.EntityHasSiteAndItem;
 import one.modality.base.shared.entities.markers.HasName;
 
@@ -9,6 +10,18 @@ import java.time.LocalDate;
 public interface ResourceConfiguration extends Entity,
         EntityHasSiteAndItem,
         HasName {
+
+    default void setResource(Object site) {
+        setForeignField("resource", site);
+    }
+
+    default EntityId getResourceId() {
+        return getForeignEntityId("resource");
+    }
+
+    default Resource getResource() {
+        return getForeignEntity("resource");
+    }
 
     @Override
     default String getName() {

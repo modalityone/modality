@@ -23,6 +23,7 @@ one.modality.base.shared.entities.impl.OptionImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.OrganizationImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.OrganizationTypeImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.PersonImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.ResourceImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.ResourceConfigurationImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.RateImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.ScheduledItemImpl$ProvidedFactory
