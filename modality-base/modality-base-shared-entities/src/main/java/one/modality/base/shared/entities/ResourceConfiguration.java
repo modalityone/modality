@@ -108,4 +108,8 @@ public interface ResourceConfiguration extends Entity,
     default void setAllowsResidentFamily(Boolean allowsResidentFamily) {
         setFieldValue("allowsResidentFamily", allowsResidentFamily);
     }
+
+    default Integer getMax() {
+        return getIntegerFieldValue("max");
+    }
 }

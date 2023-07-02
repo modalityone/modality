@@ -88,7 +88,7 @@ public class RoomsAlterationView {
     private Node createRoomNode(ResourceConfiguration rc, AccommodationActivity activity) {
         RoomsAlterationRoomPane roomsAlterationRoomPane = new RoomsAlterationRoomPane(rc);
         roomsAlterationRoomPane.setOnMouseClicked(e -> {
-            AlterRoomPane alterRoomPane = new AlterRoomPane(rc, activity);
+            AlterRoomPane alterRoomPane = new AlterRoomPane(rc, activity, resourceConfigurationLoader);
             DialogContent dialogContent = new DialogContent().setContent(alterRoomPane);
             DialogUtil.showModalNodeInGoldLayout(dialogContent, (Pane) roomsAlterationRoomPane.getParent());
             DialogUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);

@@ -1,5 +1,7 @@
 package one.modality.hotel.backoffice.activities.accommodation;
 
+import dev.webfx.extras.theme.FontDef;
+import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
@@ -8,17 +10,23 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.FontWeight;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.hotel.backoffice.accommodation.AttendeeCategory;
+import one.modality.hotel.backoffice.accommodation.ResourceConfigurationLoader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class AlterRoomPane extends VBox {
+
+    private static final FontDef DETAIL_FONT = FontDef.font(FontWeight.NORMAL, 12);
 
     private TextField roomNameTextField;
     private ComboBox<Integer> bedsInRoomComboBox;
@@ -29,14 +37,16 @@ public class AlterRoomPane extends VBox {
     private Button deleteButton;
     private Button saveButton;
 
-    public AlterRoomPane(ResourceConfiguration rc, AccommodationActivity activity) {
-        HBox topRow = new HBox(createHeadingLabel("Details"), createDetailsGrid(rc, activity));
+    public AlterRoomPane(ResourceConfiguration rc, AccommodationActivity activity, ResourceConfigurationLoader resourceConfigurationLoader) {
+        HBox detailsRow = new HBox(createHeadingLabel("Details"), createDetailsGrid(rc, activity));
+        Label availabilityLabel = createHeadingLabel("Availability");
+        GridPane availabilityGrid = createAvailabilityGrid(rc, resourceConfigurationLoader);
 
         deleteButton = new Button("Delete room");
         saveButton = new Button("Save");
         HBox buttonPane = new HBox(deleteButton, saveButton);
 
-        getChildren().addAll(topRow, buttonPane);
+        getChildren().addAll(detailsRow, availabilityLabel, availabilityGrid, buttonPane);
     }
 
     private GridPane createDetailsGrid(ResourceConfiguration rc, AccommodationActivity activity) {
@@ -82,7 +92,7 @@ public class AlterRoomPane extends VBox {
             items.add(i);
         }
         ComboBox<Integer> comboBox = new ComboBox<>(FXCollections.observableList(items));
-        Integer max = rc.getIntegerFieldValue("max");
+        Integer max = rc.getMax();
         comboBox.setValue(max);
         return comboBox;
     }
@@ -116,6 +126,43 @@ public class AlterRoomPane extends VBox {
             case VOLUNTEER: return rc.allowsVolunteer();
             default: return false;
         }
+    }
+
+    private GridPane createAvailabilityGrid(ResourceConfiguration rc, ResourceConfigurationLoader resourceConfigurationLoader) {
+        List<ResourceConfiguration> historicalResourceConfigurations = resourceConfigurationLoader.getResourceConfigurations().stream()
+                .filter(rc2 -> rc2.getResource().equals(rc.getResource()))
+                .collect(Collectors.toList());
+
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(16);
+        int rowIndex = 0;
+        for (ResourceConfiguration historicalResourceConfiguration : historicalResourceConfigurations) {
+            int numBeds = historicalResourceConfiguration.getMax();
+            String numBedsText = numBeds + (numBeds == 1 ? " bed" : " beds");
+            String eligible = Stream.of(AttendeeCategory.values())
+                    .filter(attendeeCategory -> allowsAttendanceCategory(historicalResourceConfiguration, attendeeCategory))
+                    .map(AttendeeCategory::getText)
+                    .collect(Collectors.joining(", "));
+            if (eligible.isEmpty()) {
+                eligible = "<none>";
+            }
+
+            gridPane.add(createDetailLabel(historicalResourceConfiguration.getItem().getName()), 0, rowIndex);
+            gridPane.add(createDetailLabel(numBedsText), 1, rowIndex);
+            gridPane.add(createDetailLabel("Eligible: " + eligible), 2, rowIndex);
+            gridPane.add(createDetailLabel("From " + historicalResourceConfiguration.getStartDate()), 3, rowIndex);
+            gridPane.add(createDetailLabel("To " + historicalResourceConfiguration.getEndDate()), 4, rowIndex);
+            rowIndex++;
+        }
+        return gridPane;
+    }
+
+    private Label createDetailLabel(String text) {
+        Label label = new Label(text);
+        TextTheme.createDefaultTextFacet(label)
+                .requestedFont(DETAIL_FONT)
+                .style();
+        return label;
     }
 
     private Label createLabel(String text) {
