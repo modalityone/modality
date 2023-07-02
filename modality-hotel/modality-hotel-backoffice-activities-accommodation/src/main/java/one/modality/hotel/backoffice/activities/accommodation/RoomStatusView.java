@@ -13,6 +13,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -83,12 +84,12 @@ public class RoomStatusView {
 
         VBox roomTypePanes = new VBox();
         for (Item roomType : roomTypes) {
-            Label roomTypeLabel = new Label(roomType.getName());
-            VBox roomPane = new VBox(roomTypeLabel);
+            VBox roomsPane = new VBox();
             for (ResourceConfiguration rc : listRoomsOfType(roomType)) {
-                roomPane.getChildren().add(createRoomPane(rc));
+                roomsPane.getChildren().add(createRoomPane(rc));
             }
-            roomTypePanes.getChildren().add(roomPane);
+            CollapsiblePane rooms = new CollapsiblePane(roomType.getName(), 0, roomsPane);
+            roomTypePanes.getChildren().add(rooms);
         }
         return roomTypePanes;
     }
@@ -100,7 +101,7 @@ public class RoomStatusView {
     }
 
     private VBox createRoomPane(ResourceConfiguration rc) {
-        return new CollapsiblePane(rc.getName(), createRateHistoryGridPane(rc));
+        return new CollapsiblePane(rc.getName(), 1, createRateHistoryGridPane(rc));
     }
 
     private static class CollapsiblePane extends VBox {
@@ -113,10 +114,11 @@ public class RoomStatusView {
         private final Label headingLabel = new Label();
         private final Node body;
 
-        public CollapsiblePane(String headingText, Node body) {
+        public CollapsiblePane(String headingText, int indentationLevel, Node body) {
             this.headingText = headingText;
             this.body = body;
             headingLabel.setOnMouseClicked(e -> expandOrCollapse());
+            headingLabel.setPadding(new Insets(0, 0, 0, 32 * indentationLevel));
             expandOrCollapse();
         }
 
