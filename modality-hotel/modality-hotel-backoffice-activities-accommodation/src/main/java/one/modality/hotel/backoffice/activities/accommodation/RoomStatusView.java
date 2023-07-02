@@ -65,7 +65,6 @@ public class RoomStatusView {
         });
     }
     public Node buildView() {
-        VBox body = new VBox();
         ScrollPane roomTypesScrollPane = new ScrollPane();
         rates.addListener((ListChangeListener<? super Rate>) change -> {
             roomTypesScrollPane.setContent(createRoomTypePanes());
