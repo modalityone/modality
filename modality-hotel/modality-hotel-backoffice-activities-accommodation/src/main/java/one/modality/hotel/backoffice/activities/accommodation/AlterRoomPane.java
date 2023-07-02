@@ -23,6 +23,8 @@ public class AlterRoomPane extends VBox {
     private TextField roomNameTextField;
     private ComboBox<Integer> bedsInRoomComboBox;
     private Map<AttendeeCategory, CheckBox> attendeeCategoryCheckBoxMap = new HashMap<>();
+    private TextField fromDateField;
+    private TextField toDateField;
 
     private Button deleteButton;
     private Button saveButton;
@@ -42,6 +44,10 @@ public class AlterRoomPane extends VBox {
         roomNameTextField = new TextField(rc.getName());
         bedsInRoomComboBox = createBedsInRoomComboBox(rc);
         GridPane eligibilityForBookingGrid = createEligibilityForBookingGrid(rc);
+        fromDateField = new TextField();
+        fromDateField.setPromptText("e.g. 15-01-22");
+        toDateField = new TextField();
+        toDateField.setPromptText("e.g. 16-01-22");
 
         GridPane detailsGridPane = new GridPane();
         detailsGridPane.add(createLabel("Product"), 0, 0);
@@ -52,7 +58,8 @@ public class AlterRoomPane extends VBox {
         detailsGridPane.add(bedsInRoomComboBox, 1, 2);
         detailsGridPane.add(createLabel("Eligibility for booking"), 0, 3);
         detailsGridPane.add(eligibilityForBookingGrid, 1, 3);
-        detailsGridPane.add(createLabel("From / To"), 0, 6);
+        detailsGridPane.add(createLabel("From / To"), 0, 4);
+        detailsGridPane.add(new HBox(fromDateField, toDateField), 1, 4);
         return detailsGridPane;
     }
 
