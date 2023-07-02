@@ -22,9 +22,6 @@ public class AlterRoomPane extends VBox {
 
     private TextField roomNameTextField;
     private ComboBox<Integer> bedsInRoomComboBox;
-    private CheckBox specialRateCheckBox;
-    private TextField rateTextField;
-    private TextField specificPriceTextField;
     private Map<AttendeeCategory, CheckBox> attendeeCategoryCheckBoxMap = new HashMap<>();
 
     private Button deleteButton;
@@ -44,11 +41,7 @@ public class AlterRoomPane extends VBox {
         Button productComboBoxButton = createProductComboBox(rc, activity);
         roomNameTextField = new TextField(rc.getName());
         bedsInRoomComboBox = createBedsInRoomComboBox(rc);
-        specialRateCheckBox = new CheckBox();
-        rateTextField = new TextField();
-        rateTextField.setPromptText("Enter the name of your rule here");
         GridPane eligibilityForBookingGrid = createEligibilityForBookingGrid(rc);
-        specificPriceTextField = new TextField();
 
         GridPane detailsGridPane = new GridPane();
         detailsGridPane.add(createLabel("Product"), 0, 0);
@@ -59,13 +52,7 @@ public class AlterRoomPane extends VBox {
         detailsGridPane.add(bedsInRoomComboBox, 1, 2);
         detailsGridPane.add(createLabel("Eligibility for booking"), 0, 3);
         detailsGridPane.add(eligibilityForBookingGrid, 1, 3);
-        detailsGridPane.add(createLabel("Special rate"), 0, 4);
-        detailsGridPane.add(specialRateCheckBox, 1, 4);
-        detailsGridPane.add(createLabel("Rate"), 0, 5);
-        detailsGridPane.add(rateTextField, 1, 5);
         detailsGridPane.add(createLabel("From / To"), 0, 6);
-        detailsGridPane.add(createLabel("Specific Price\n(per night)"), 0, 7);
-        detailsGridPane.add(specificPriceTextField, 1, 7);
         return detailsGridPane;
     }
 
