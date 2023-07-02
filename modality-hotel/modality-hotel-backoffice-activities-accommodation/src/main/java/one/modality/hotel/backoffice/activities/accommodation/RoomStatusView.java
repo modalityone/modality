@@ -107,6 +107,7 @@ public class RoomStatusView {
 
         private static final String PREFIX_EXPAND = "(+)";
         private static final String PREFIX_COLLAPSE = "(-)";
+        private static final FontDef ROOM_NAME_FONT = FontDef.font(FontWeight.BOLD, 15);
 
         private final String headingText;
         private final Label headingLabel = new Label();
@@ -130,6 +131,19 @@ public class RoomStatusView {
                     getChildren().setAll(headingLabel, body);
                 }
             });
+            updateLabelStyle(headingLabel, !wasExpanded);
+        }
+
+        private void updateLabelStyle(Label label, boolean selected) {
+            if (selected) {
+                TextTheme.createPrimaryTextFacet(label)
+                        .requestedFont(ROOM_NAME_FONT)
+                        .style();
+            } else {
+                TextTheme.createSecondaryTextFacet(label)
+                        .requestedFont(ROOM_NAME_FONT)
+                        .style();
+            }
         }
     }
 
