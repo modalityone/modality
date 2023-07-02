@@ -148,10 +148,11 @@ public class AlterRoomPane extends VBox {
             }
 
             gridPane.add(createDetailLabel(historicalResourceConfiguration.getItem().getName()), 0, rowIndex);
-            gridPane.add(createDetailLabel(numBedsText), 1, rowIndex);
-            gridPane.add(createDetailLabel("Eligible: " + eligible), 2, rowIndex);
-            gridPane.add(createDetailLabel("From " + historicalResourceConfiguration.getStartDate()), 3, rowIndex);
-            gridPane.add(createDetailLabel("To " + historicalResourceConfiguration.getEndDate()), 4, rowIndex);
+            gridPane.add(createDetailLabel(historicalResourceConfiguration.getName()), 1, rowIndex);
+            gridPane.add(createDetailLabel(numBedsText), 2, rowIndex);
+            gridPane.add(createDetailLabel("Eligible: " + eligible), 3, rowIndex);
+            gridPane.add(createDetailLabel("From " + historicalResourceConfiguration.getStartDate()), 4, rowIndex);
+            gridPane.add(createDetailLabel("To " + historicalResourceConfiguration.getEndDate()), 5, rowIndex);
             rowIndex++;
         }
         return gridPane;
