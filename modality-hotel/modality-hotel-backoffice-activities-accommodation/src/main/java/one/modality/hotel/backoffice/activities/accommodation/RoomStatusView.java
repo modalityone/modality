@@ -23,7 +23,6 @@ import javafx.scene.text.FontWeight;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.Rate;
 import one.modality.base.shared.entities.ResourceConfiguration;
-import one.modality.base.shared.entities.ScheduledResource;
 import one.modality.base.shared.entities.markers.EntityHasItem;
 import one.modality.hotel.backoffice.accommodation.*;
 
@@ -39,6 +38,7 @@ public class RoomStatusView {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yy");
     private static final FontDef TOP_ROW_FONT = FontDef.font(FontWeight.BOLD, 15);
+    private static final FontDef RATE_FONT = FontDef.font(FontWeight.NORMAL, 12);
 
     private final AccommodationPresentationModel pm;
     private final ResourceConfigurationLoader resourceConfigurationLoader;
@@ -157,15 +157,23 @@ public class RoomStatusView {
         gridPane.setHgap(16);
         int rowIndex = 0;
         for (Rate rate : ratesForRoom) {
-            gridPane.add(new Label("From"), 0, rowIndex);
-            gridPane.add(new Label(formatDate(rate.getStartDate())), 1, rowIndex);
-            gridPane.add(new Label("To"), 2, rowIndex);
-            gridPane.add(new Label(formatDate(rate.getEndDate())), 3, rowIndex);
-            gridPane.add(new Label("Price"), 4, rowIndex);
-            gridPane.add(new Label(priceToString(rate.getPrice()) + " / night"), 5, rowIndex);
+            gridPane.add(createRateLabel("From"), 0, rowIndex);
+            gridPane.add(createRateLabel(formatDate(rate.getStartDate())), 1, rowIndex);
+            gridPane.add(createRateLabel("To"), 2, rowIndex);
+            gridPane.add(createRateLabel(formatDate(rate.getEndDate())), 3, rowIndex);
+            gridPane.add(createRateLabel("Price"), 4, rowIndex);
+            gridPane.add(createRateLabel(priceToString(rate.getPrice()) + " / night"), 5, rowIndex);
             rowIndex++;
         }
         return gridPane;
+    }
+
+    private Label createRateLabel(String text) {
+        Label label = new Label(text);
+        TextTheme.createDefaultTextFacet(label)
+                .requestedFont(RATE_FONT)
+                .style();
+        return label;
     }
 
     private static String formatDate(LocalDate date) {
