@@ -50,7 +50,6 @@ public class RoomStatusView {
     public ObjectProperty<LocalDate> toProperty() { return toProperty; }
 
     private ObservableValue<Boolean> activeProperty;
-    private ReactiveEntitiesMapper<ScheduledResource> rem;
     private ReactiveEntitiesMapper<Rate> ratesRem;
     private final ObjectProperty<String> commaSeparatedRoomIds = new SimpleObjectProperty<>();
     public RoomStatusView(AccommodationPresentationModel pm) {
@@ -196,6 +195,7 @@ public class RoomStatusView {
         Region topRowPadding = new Region();
         HBox.setHgrow(topRowPadding, Priority.ALWAYS);
         HBox topRow = new HBox(topLeftLabel, topRowPadding, topRightLabel);
+        topRow.setSpacing(32);
         topRightLabel.setAlignment(Pos.TOP_RIGHT);
         LuminanceTheme.createTopPanelFacet(topRow)
                 .style();
@@ -211,7 +211,7 @@ public class RoomStatusView {
             else
                 activeProperty = FXProperties.combine(activeProperty, ap, (a1, a2) -> a1 || a2);
         }
-        if (rem == null) { // first call
+        if (ratesRem == null) { // first call
             ratesRem = ReactiveEntitiesMapper.<Rate>createPushReactiveChain(mixin)
                     .always("{class: 'Rate', alias: 'r', fields: 'startDate,endDate,item.id,price'}")
                     // Returning events for the selected organization only (or returning an empty set if no organization is selected)
@@ -225,8 +225,7 @@ public class RoomStatusView {
                     // We are now ready to start
                     .start();
         } else if (activeProperty != null) { // subsequent calls
-            rem.bindActivePropertyTo(activeProperty); // updating the reactive entities mapper active property
-            ratesRem.bindActivePropertyTo(activeProperty);
+            ratesRem.bindActivePropertyTo(activeProperty); // updating the reactive entities mapper active property
         }
     }
 
