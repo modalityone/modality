@@ -1,31 +1,27 @@
 package one.modality.event.frontoffice.activities.account;
 
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
-import dev.webfx.stack.orm.entity.Entity;
-import dev.webfx.stack.orm.entity.EntityStore;
-import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import one.modality.base.frontoffice.fx.FXAccount;
 import one.modality.base.frontoffice.states.GeneralPM;
 import one.modality.base.frontoffice.states.PersonPM;
-import one.modality.base.frontoffice.utility.StyleUtility;
 import one.modality.base.frontoffice.utility.GeneralUtility;
+import one.modality.base.frontoffice.utility.StyleUtility;
 import one.modality.base.frontoffice.utility.TextUtility;
 import one.modality.base.shared.entities.Country;
-import one.modality.base.shared.entities.Person;
 
 public class AccountUtility {
     public static Node createAvatar() {
@@ -57,21 +53,6 @@ public class AccountUtility {
                 GeneralUtility.createCheckBoxDirect(isFirstSelected, true, true, option2, isDisabled), 40, 0);
     }
 
-    public static TextField createBindedTextField(StringProperty stringProperty, double limitedWidth) {
-        TextField tf = new TextField();
-
-        tf.setBorder(new Border(new BorderStroke(Color.web(StyleUtility.ELEMENT_GRAY), BorderStrokeStyle.SOLID, new CornerRadii(5), new BorderWidths(0.3))));
-        tf.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
-        tf.setPadding(new Insets(5, 15, 5, 15));
-        tf.setFont(Font.font(StyleUtility.MAIN_TEXT_SIZE));
-
-        tf.textProperty().bindBidirectional(stringProperty);
-        if (limitedWidth > 0) {
-            tf.setMaxWidth(limitedWidth);
-        }
-        return tf;
-    }
-
     public static Node createAccountHeader(String title, String subTitle, ViewDomainActivityBase activity) {
         Button friendsFamilyBackButton = new Button("<-");
 
@@ -94,13 +75,13 @@ public class AccountUtility {
         VBox container = new VBox();
         double NO_LIMITED_WIDTH = -1;
 
-        TextField birthdayTF = createBindedTextField(personPM.BIRTHDAY, 120);
+        TextField birthdayTF = GeneralUtility.createBindedTextField(personPM.BIRTHDAY, 120);
         birthdayTF.setEditable(personPM.IS_NEW);
 
         Node birthday = GeneralUtility.createField("Birthday", birthdayTF);
-        Node language = GeneralUtility.createField("Language", createBindedTextField(personPM.LANGUAGE, 120));
-        Node idType = GeneralUtility.createField("ID type", createBindedTextField(personPM.ID_TYPE, 120));
-        Node idNumber = GeneralUtility.createField("ID Number", createBindedTextField(personPM.ID_NUMBER, 120));
+        Node language = GeneralUtility.createField("Language", GeneralUtility.createBindedTextField(personPM.LANGUAGE, 120));
+        Node idType = GeneralUtility.createField("ID type", GeneralUtility.createBindedTextField(personPM.ID_TYPE, 120));
+        Node idNumber = GeneralUtility.createField("ID Number", GeneralUtility.createBindedTextField(personPM.ID_NUMBER, 120));
         Node gender = GeneralUtility.createField("Biological gender", createHorizontalRadioButtons("Male", "Female", personPM.IS_MALE, !personPM.IS_NEW));
         Node practitioner = GeneralUtility.createField("Practitioner", createHorizontalRadioButtons("Lay", "Ordained", personPM.IS_LAY, !personPM.IS_NEW));
 
@@ -113,15 +94,15 @@ public class AccountUtility {
         GeneralUtility.styleSelectButton(countriesButtonSelector);
 
         Node addressCountry = GeneralUtility.createField("Country", countriesButtonSelector.getButton());
-        Node addressZip = GeneralUtility.createField("Post/Zip code", createBindedTextField(personPM.ADDRESS_ZIP, 100));
-        Node addressState = GeneralUtility.createField("State", createBindedTextField(personPM.ADDRESS_STATE, NO_LIMITED_WIDTH));
-        Node addressCity = GeneralUtility.createField("City", createBindedTextField(personPM.ADDRESS_CITY, NO_LIMITED_WIDTH));
-        Node addressStreet = GeneralUtility.createField("Street name", createBindedTextField(personPM.ADDRESS_STREET, NO_LIMITED_WIDTH));
-        Node addressNumber = GeneralUtility.createField("Number", createBindedTextField(personPM.ADDRESS_NUMBER, NO_LIMITED_WIDTH));
-        Node addressApt = GeneralUtility.createField("Apt/Room", createBindedTextField(personPM.ADDRESS_APT, 50));
-        Node addressObservation = GeneralUtility.createField("Observation", createBindedTextField(personPM.ADDRESS_OBSERVATION, NO_LIMITED_WIDTH));
+        Node addressZip = GeneralUtility.createField("Post/Zip code", GeneralUtility.createBindedTextField(personPM.ADDRESS_ZIP, 100));
+        Node addressState = GeneralUtility.createField("State", GeneralUtility.createBindedTextField(personPM.ADDRESS_STATE, NO_LIMITED_WIDTH));
+        Node addressCity = GeneralUtility.createField("City", GeneralUtility.createBindedTextField(personPM.ADDRESS_CITY, NO_LIMITED_WIDTH));
+        Node addressStreet = GeneralUtility.createField("Street name", GeneralUtility.createBindedTextField(personPM.ADDRESS_STREET, NO_LIMITED_WIDTH));
+        Node addressNumber = GeneralUtility.createField("Number", GeneralUtility.createBindedTextField(personPM.ADDRESS_NUMBER, NO_LIMITED_WIDTH));
+        Node addressApt = GeneralUtility.createField("Apt/Room", GeneralUtility.createBindedTextField(personPM.ADDRESS_APT, 50));
+        Node addressObservation = GeneralUtility.createField("Observation", GeneralUtility.createBindedTextField(personPM.ADDRESS_OBSERVATION, NO_LIMITED_WIDTH));
 
-        Node diet = createBindedTextField(personPM.DIET, 200);
+        Node diet = GeneralUtility.createBindedTextField(personPM.DIET, 200);
 
         Node needsWheelchair = GeneralUtility.createCheckBoxDirect(personPM.NEEDS_WHEELCHAIR, false,false, "Wheelchair", false);
         Node needsSight = GeneralUtility.createCheckBoxDirect(personPM.NEEDS_SIGHT, false,false, "Sight impaired", false);
@@ -156,10 +137,10 @@ public class AccountUtility {
 
         if (personPM.IS_OWNER) {
             Text emergencyHeader = TextUtility.getSettingSectionText("Emergency contact");
-            Node emergencyName = GeneralUtility.createField("Name", AccountUtility.createBindedTextField(FXAccount.ownerPM.EMERGENCY_NAME, NO_LIMITED_WIDTH));
-            Node emergencyKinship = GeneralUtility.createField("Kinship", AccountUtility.createBindedTextField(FXAccount.ownerPM.EMERGENCY_KINSHIP, NO_LIMITED_WIDTH));
-            Node emergencyEmail = GeneralUtility.createField("E-mail", AccountUtility.createBindedTextField(FXAccount.ownerPM.EMERGENCY_EMAIL, NO_LIMITED_WIDTH));
-            Node emergencyPhoneNumber = GeneralUtility.createField("Phone number", AccountUtility.createBindedTextField(FXAccount.ownerPM.EMERGENCY_PHONE, NO_LIMITED_WIDTH));
+            Node emergencyName = GeneralUtility.createField("Name", GeneralUtility.createBindedTextField(FXAccount.ownerPM.EMERGENCY_NAME, NO_LIMITED_WIDTH));
+            Node emergencyKinship = GeneralUtility.createField("Kinship", GeneralUtility.createBindedTextField(FXAccount.ownerPM.EMERGENCY_KINSHIP, NO_LIMITED_WIDTH));
+            Node emergencyEmail = GeneralUtility.createField("E-mail", GeneralUtility.createBindedTextField(FXAccount.ownerPM.EMERGENCY_EMAIL, NO_LIMITED_WIDTH));
+            Node emergencyPhoneNumber = GeneralUtility.createField("Phone number", GeneralUtility.createBindedTextField(FXAccount.ownerPM.EMERGENCY_PHONE, NO_LIMITED_WIDTH));
 
             container.getChildren().addAll(
                     GeneralUtility.createSpace(20),

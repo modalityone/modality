@@ -3,11 +3,14 @@
 module modality.event.frontoffice.activities.home {
 
     // Direct dependencies modules
+    requires java.base;
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires javafx.media;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
+    requires webfx.extras.util.layout;
     requires webfx.platform.console;
     requires webfx.platform.fetch;
     requires webfx.platform.json;

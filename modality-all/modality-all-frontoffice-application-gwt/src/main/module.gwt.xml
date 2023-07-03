@@ -67,16 +67,20 @@
     <source path="javafx/scene/text"/>
     <source path="javafx/scene/transform"/>
     <source path="javafx/stage"/>
+    <!--===========================< webfx-kit-javafxmedia-emul >===========================-->
+    <source path="dev/webfx/kit/mapper/peers/javafxmedia"/>
+    <source path="dev/webfx/kit/mapper/peers/javafxmedia/spi"/>
+    <source path="javafx/scene/media"/>
     <!--===================================< javafx-web >===================================-->
     <source path="javafx/scene/web"/>
     <!--============================< webfx-kit-javafxweb-emul >============================-->
     <source path="javafx/scene/web"/>
-    <!--===================================< easy-bert >====================================-->
-    <source path="com/robrua/nlp/bert"/>
     <!--================================< elemental2-core >=================================-->
     <inherits name="elemental2.core.Core"/>
     <!--=================================< elemental2-dom >=================================-->
     <inherits name="elemental2.dom.Dom"/>
+    <!--================================< elemental2-media >================================-->
+    <source path="elemental2/media"/>
     <!--===============================< elemental2-promise >===============================-->
     <source path="elemental2/promise"/>
     <!--=================================< elemental2-svg >=================================-->
@@ -324,6 +328,10 @@
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics/gwt/util"/>
     <!--=====================< webfx-kit-javafxgraphics-registry-gwt >======================-->
     <source path="dev/webfx/kit/registry/javafxgraphics"/>
+    <!--========================< webfx-kit-javafxmedia-peers-gwt >=========================-->
+    <source path="dev/webfx/kit/mapper/peers/javafxmedia/spi/gwt"/>
+    <!--=======================< webfx-kit-javafxmedia-registry-gwt >=======================-->
+    <source path="dev/webfx/kit/registry/javafxmedia"/>
     <!--=========================< webfx-kit-javafxweb-peers-base >=========================-->
     <source path="dev/webfx/kit/mapper/peers/javafxweb/base"/>
     <!--=========================< webfx-kit-javafxweb-peers-gwt >==========================-->

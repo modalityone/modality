@@ -16,6 +16,11 @@
     <dependencies>
 
         <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-media</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>one.modality</groupId>
             <artifactId>modality-all-frontoffice-application</artifactId>
             <version>1.0.0-SNAPSHOT</version>

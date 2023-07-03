@@ -10,12 +10,18 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Labeled;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import one.modality.base.frontoffice.entities.Center;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class GeneralUtility {
     public static <T extends Labeled> T bindI18N(T node, String key) {
@@ -71,6 +77,29 @@ public class GeneralUtility {
         return b;
     }
 
+    public static TextField createBindedTextField(StringProperty stringProperty, double limitedWidth) {
+        TextField tf = new TextField();
+
+        tf.setBorder(new Border(new BorderStroke(Color.web(StyleUtility.ELEMENT_GRAY), BorderStrokeStyle.SOLID, new CornerRadii(5), new BorderWidths(0.3))));
+        tf.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+        tf.setPadding(new Insets(5, 15, 5, 15));
+        tf.setFont(Font.font(StyleUtility.MAIN_TEXT_SIZE));
+
+        tf.textProperty().bindBidirectional(stringProperty);
+        if (limitedWidth > 0) {
+            tf.setMaxWidth(limitedWidth);
+        }
+        return tf;
+    }
+
+    public static String generateStaticMapLinks(Double lat, Double lng, List<Center> centers) {
+        return   "https://maps.googleapis.com/maps/api/staticmap?center=" + lat + "," + lng +
+                "&markers=color:blue%7Clabel:S%7C" + centers.stream().map(c -> {
+                    return c.lat + "," + c.lng;
+                }).collect(Collectors.joining("|"))
+                + "&zoom=9&size=400x400&key=AIzaSyAihoCYFho8rqJwnBjxzBlk56SR0uL7_Ks";
+    }
+
     public static void styleSelectButton(EntityButtonSelector buttonSelector) {
         Button b = buttonSelector.getButton();
         b.setBorder(new Border(new BorderStroke(Color.web(StyleUtility.ELEMENT_GRAY), BorderStrokeStyle.SOLID, new CornerRadii(5), new BorderWidths(0.3))));
@@ -117,6 +146,15 @@ public class GeneralUtility {
         b.setOnMouseClicked(e -> { selectedProperty.set(selectedProperty.get().equals(label) ? "" : label); });
 
         return b;
+    }
+
+    public static Node createPaddedContainer(Node node, int hPadding, int vPadding) {
+        VBox vBox = new VBox();
+        vBox.getChildren().add(node);
+
+        vBox.setPadding(new Insets(vPadding, hPadding, vPadding, hPadding));
+
+        return vBox;
     }
 
     public static Node createSplitRow(Node node1, Node node2, int ratio, int padding) {

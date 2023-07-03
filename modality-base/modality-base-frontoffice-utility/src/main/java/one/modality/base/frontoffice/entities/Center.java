@@ -14,7 +14,14 @@ public class Center {
     public String city = "";
     public Organization organization;
 
-    public static List<String> rejected = new ArrayList<>();
+    public static Set<String> rejected = new HashSet<>(Arrays.asList(
+            "Kadampa", "Meditation", "Center",
+            "Centre", "de", "Méditation",
+            "Centro", "Meditación",
+            "Bouddhiste",
+            "Budista",
+            "Zentrum", "für", "Buddhismus"
+    ));
 
     public Center(String name, Double lat, Double lng, String type, String city) {
         this.lat = lat;
