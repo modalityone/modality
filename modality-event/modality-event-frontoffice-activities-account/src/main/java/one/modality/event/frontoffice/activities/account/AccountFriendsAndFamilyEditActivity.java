@@ -24,8 +24,8 @@ public class AccountFriendsAndFamilyEditActivity extends ViewDomainActivityBase 
         nameContainer.setPadding(new Insets(20));
 
         nameContainer.getChildren().add(GeneralUtility.createSplitRow(
-                GeneralUtility.createField("First name", AccountUtility.createBindedTextField(FXAccount.viewedPersonPM.NAME_FIRST, NO_LIMITED_WIDTH)),
-                GeneralUtility.createField("Last name", AccountUtility.createBindedTextField(FXAccount.viewedPersonPM.NAME_LAST, NO_LIMITED_WIDTH)),
+                GeneralUtility.createField("First name", GeneralUtility.createBindedTextField(FXAccount.viewedPersonPM.NAME_FIRST, NO_LIMITED_WIDTH)),
+                GeneralUtility.createField("Last name", GeneralUtility.createBindedTextField(FXAccount.viewedPersonPM.NAME_LAST, NO_LIMITED_WIDTH)),
                 50, 10
         ));
 

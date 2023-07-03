@@ -3,12 +3,13 @@
 module modality.base.frontoffice.utility {
 
     // Direct dependencies modules
-    requires easy.bert;
     requires java.base;
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires javafx.media;
     requires modality.base.shared.entities;
+    requires webfx.platform.json;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.entity;

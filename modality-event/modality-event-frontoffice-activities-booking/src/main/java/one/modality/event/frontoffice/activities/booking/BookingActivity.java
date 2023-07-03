@@ -106,19 +106,24 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
         WebView mapView = new WebView();
         mapView.getEngine().load("https://maps.googleapis.com/maps/api/js?key=AIzaSyD7f9GOiTp2n4eIGqmUkN3U0RtKVhfsU8k&v=3.exp");
 
-        Image mapImage = new Image("https://maps.googleapis.com/maps/api/staticmap?center=40.714728,-73.998672&zoom=12&size=400x400&maptype=terrain&key=AIzaSyD7f9GOiTp2n4eIGqmUkN3U0RtKVhfsU8k");
+        Image mapImage = new Image("https://maps.googleapis.com/maps/api/staticmap?center=40.714728,-73.998672&zoom=12&size=400x400&key=AIzaSyAihoCYFho8rqJwnBjxzBlk56SR0uL7_Ks", true);
         ImageView map = new ImageView(mapImage);
+
+        FXBooking.centerImageProperty.addListener(change -> {
+            map.setImage(new Image(FXBooking.centerImageProperty.get(), true));
+        });
+
         mapView.setMinWidth(100);
         mapView.setMinHeight(120);
 
-        map.setFitWidth(100);
-        map.setFitHeight(120);
+        map.setFitWidth(150);
+        map.setFitHeight(150);
 
         Text address = TextUtility.getSubText("Manjushri Kadampa Meditation Centre Conishead Priory, Ulverston LA12 9QQ", StyleUtility.RUPAVAJRA_WHITE);
         address.setWrappingWidth(100);
 
         Node location = GeneralUtility.createSplitRow(
-                mapView,
+                map,
                 GeneralUtility.createVList(5, 0,
                         TextUtility.getSubText("manjushri.org", StyleUtility.RUPAVAJRA_WHITE),
                         address,
@@ -169,6 +174,7 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
         BorderPane searchContainer = new BorderPane();
         Button search = new Button("Search");
         searchContainer.setRight(search);
+        searchContainer.setTop(GeneralUtility.createField("City", GeneralUtility.createBindedTextField(FXBooking.keywordsSearchProperty, -1)));
 
         search.setOnMouseClicked(e -> {
             FXBooking.countryProperty.set("United States");
@@ -178,7 +184,7 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
             organization.setName("My center");
             FXBooking.displayCenterProperty.setValue(organization);
 
-            BookingUtility.cityAutoComplete("Manc");
+            BookingUtility.cityAutoComplete(FXBooking.keywordsSearchProperty.get());
         });
 
         String locationString = FXBooking.countryProperty.get() + ", " + FXBooking.cityProperty.get();

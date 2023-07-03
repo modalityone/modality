@@ -46,6 +46,7 @@ public class FXAccount {
                 ownerPM.set(persons.get(0));
                 ownerPM.setASSOCIATE_PM(ownerPM);
                 ownerPM.IS_OWNER = true;
+
                 membersPM.setAll(accountFriendsAndFamily.stream().map(PersonPM::new).collect(Collectors.toList()));
 
                 FXBooking.countryProperty.set(ownerPM.ADDRESS_COUNTRY.getValue().getName());

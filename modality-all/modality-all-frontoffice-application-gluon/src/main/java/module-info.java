@@ -3,6 +3,7 @@
 module modality.all.frontoffice.application.gluon {
 
     // Direct dependencies modules
+    requires javafx.media;
     requires modality.all.frontoffice.application;
     requires webfx.kit.openjfx;
     requires webfx.platform.boot.java;
