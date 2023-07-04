@@ -8,16 +8,12 @@ module modality.event.frontoffice.activities.account {
     requires javafx.graphics;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
-    requires modality.crm.shared.authn;
     requires webfx.extras.util.layout;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
-    requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity.controls;
-    requires webfx.stack.orm.reactive.entities;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
-    requires webfx.stack.session.state.client.fx;
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.operation;
     requires webfx.stack.ui.operation.action;

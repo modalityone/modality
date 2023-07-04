@@ -2,7 +2,9 @@ package one.modality.event.frontoffice.activities.home;
 
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
+import dev.webfx.stack.session.state.client.fx.FXUserId;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
@@ -18,12 +20,15 @@ import javafx.scene.text.Text;
 import one.modality.base.frontoffice.entities.Center;
 import one.modality.base.frontoffice.entities.News;
 import one.modality.base.frontoffice.entities.Podcast;
+import one.modality.base.frontoffice.fx.FXAccount;
 import one.modality.base.frontoffice.fx.FXApp;
 import one.modality.base.frontoffice.fx.FXHome;
 import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.base.frontoffice.utility.StyleUtility;
 import one.modality.base.frontoffice.utility.TextUtility;
 import one.modality.base.shared.entities.Organization;
+import one.modality.base.shared.entities.Person;
+import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -145,6 +150,14 @@ public class HomeActivity extends ViewDomainActivityBase {
         ReactiveEntitiesMapper.<Organization>createPushReactiveChain(this)
                 .always("{class: 'Organization', fields:'name, country, type, closed'}")
                 .storeEntitiesInto(FXApp.organizations)
+                .start();
+
+        ReactiveEntitiesMapper.<Person>createPushReactiveChain(this)
+                .always("{class: 'Person', fields:'firstName,lastName,birthdate,male,ordained,email,street,cityName,postCode,country,organization,passport,removed', orderBy: 'id'}")
+                //.ifInstanceOf(FXUserId.userIdProperty(), ModalityUserPrincipal.class, mup -> DqlStatement.where("frontendAccount=?", mup.getUserAccountId()))
+                .ifNotNullOtherwiseEmpty(FXUserId.userIdProperty(), mup -> DqlStatement.where("frontendAccount=?", ((ModalityUserPrincipal) mup).getUserAccountId())
+                )
+                .storeEntitiesInto(FXAccount.getPersons())
                 .start();
     }
 }
