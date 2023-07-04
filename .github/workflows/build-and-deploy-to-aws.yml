@@ -10,9 +10,9 @@ name: Build and Deploy to AWS
 
 on:
   push:
-    branches: [ "main", "feature/aws-pipeline" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main", "feature/aws-pipeline" ]
+    branches: [ "main" ]
 
 jobs:
   build:
