@@ -1,6 +1,7 @@
-[![Build for Multiple OS](https://github.com/modalityone/modality/actions/workflows/builds.yml/badge.svg)](https://github.com/modalityone/modality/actions/workflows/builds.yml)
-[![Build and Deploy to AWS](https://github.com/modalityone/modality/actions/workflows/aws-service-build.yml/badge.svg)](https://github.com/modalityone/modality/actions/workflows/aws-service-build.yml)
-[![Deploy to Sonatype](https://github.com/modalityone/modality/actions/workflows/deploy.yml/badge.svg)](https://github.com/modalityone/modality/actions/workflows/deploy.yml)
+[![Build for Multiple OS](https://github.com/modalityone/modality/actions/workflows/build-for-multiple-os.yml/badge.svg)](https://github.com/modalityone/modality/actions/workflows/build-for-multiple-os.yml)
+[![Build and Deploy to AWS](https://github.com/modalityone/modality/actions/workflows/build-and-deploy-to-aws.yml/badge.svg)](https://github.com/modalityone/modality/actions/workflows/build-and-deploy-to-aws.yml)
+[![Deploy to Sonatype](https://github.com/modalityone/modality/actions/workflows/deploy-to-sonatype.yml/badge.svg)](https://github.com/modalityone/modality/actions/workflows/deploy-to-sonatype.yml)
+
 
 # Modality
 Modality is a free, open-source, hospitality-oriented booking system, currently in development. It will support significant event complexity, unmatched by any existing solution that we are aware of.
