@@ -21,7 +21,7 @@
 # 15) App-iOS-arm64-native-package.ipa : iOS native app (Gluon)                                                  #
 ##################################################################################################################
 
-name: Multi-OS builds
+name: Build for Multiple OS
 
 on:
   push:
