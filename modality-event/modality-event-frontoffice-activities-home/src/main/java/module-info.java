@@ -25,6 +25,7 @@ module modality.event.frontoffice.activities.home {
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.session.state.client.fx;
     requires webfx.stack.ui.operation;
+    requires webfx.stack.ui.operation.action;
 
     // Exported packages
     exports one.modality.event.frontoffice.activities.home;
@@ -32,7 +33,7 @@ module modality.event.frontoffice.activities.home {
     exports one.modality.event.frontoffice.operations.routes.home;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.home.HomeUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.event.frontoffice.activities.home.RouteToHomeRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.home.HomeUiRoute, one.modality.event.frontoffice.activities.home.HomeNewsArticleUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.event.frontoffice.activities.home.RouteToHomeRequestEmitter, one.modality.event.frontoffice.activities.home.RouteToHomeNewsArticleRequestEmitter;
 
 }

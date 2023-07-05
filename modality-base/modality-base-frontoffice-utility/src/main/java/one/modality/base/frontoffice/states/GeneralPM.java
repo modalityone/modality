@@ -11,6 +11,7 @@ public class GeneralPM {
     public static ObjectProperty<Node> LANGUAGE_BUTTON_OPTIONS = new SimpleObjectProperty<>(new VBox());
 
     public static String HOME_PATH = "/app-home";
+    public static String HOME_NEWS_ARTICLE_PATH = "/app-home-news-article";
     public static String ALERTS_PATH = "/app-alerts";
     public static String BOOKING_PATH = "/app-booking";
     public static String ACCOUNT_PATH = "/app-account";

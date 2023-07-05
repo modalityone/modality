@@ -11,7 +11,10 @@
 
     <providers>
         <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.event.frontoffice.activities.home.HomeUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.event.frontoffice.activities.home.HomeNewsArticleUiRoute</provider>
+
         <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.event.frontoffice.activities.home.RouteToHomeRequestEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.event.frontoffice.activities.home.RouteToHomeNewsArticleRequestEmitter</provider>
 
     </providers>
 

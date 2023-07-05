@@ -2,11 +2,14 @@ package one.modality.event.frontoffice.activities.home;
 
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.console.Console;
+import dev.webfx.platform.fetch.Fetch;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import dev.webfx.stack.session.state.client.fx.FXUserId;
+import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
@@ -31,12 +34,13 @@ import one.modality.base.frontoffice.utility.TextUtility;
 import one.modality.base.shared.entities.Organization;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
+import one.modality.event.frontoffice.operations.routes.home.RouteToHomeNewsArticleRequest;
 
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class HomeActivity extends ViewDomainActivityBase {
+public class HomeActivity extends ViewDomainActivityBase implements OperationActionFactoryMixin {
     public void rebuild(VBox page) {
         System.out.println(">>>> REBUILD <<<<<");
         page.getChildren().removeAll(page.getChildren());
@@ -81,11 +85,23 @@ public class HomeActivity extends ViewDomainActivityBase {
             Text t = TextUtility.getMainText(n.title.toUpperCase(), StyleUtility.MAIN_BLUE);
             t.setWrappingWidth(200);
 
-            Text c = TextUtility.getMainText("A wonderful weekend in which more than 180 people gathered to delight in the yogas of Je Tsongkhapa, understanding a little more his teachings and aspect of Guru Sumati Buddha Heruka. During the event, meditations were guided by kadam Gabby, the Resident Teacher of KMC Girona, and the retreat were guided by gen Kelsang Lochani, the Resident Teacher of KMC Barcelona.", StyleUtility.VICTOR_BATTLE_BLACK);
+            t.setOnMouseClicked(c -> executeOperation(new RouteToHomeNewsArticleRequest(getHistory())));
+
+            Text c = TextUtility.getMainText(n.excerpt, StyleUtility.VICTOR_BATTLE_BLACK);
             c.setWrappingWidth(200);
 
-            Image img = new Image("https://kadampa.org/cdn-cgi/image/width=2048,height=1365,fit=crop,quality=80,format=auto,onerror=redirect,metadata=none/wp-content/uploads/2023/06/Metal-Statues-Project-25.jpg", true);
-            ImageView imgV = new ImageView(img);
+            ImageView imgV = new ImageView();
+
+            Fetch.fetch("https://kadampa.org/wp-json/wp/v2/media/" + n.mediaId) // Expecting a JSON object only
+                    .onFailure(error -> Console.log("Fetch failure: " + error))
+                    .onSuccess(response -> {
+                        Console.log("Fetch success: ok = " + response.ok());
+                        response.jsonObject()
+                                .onFailure(error -> Console.log("JsonObject failure: " + error))
+                                .onSuccess(jsonObject -> {
+                                    imgV.setImage(new Image(jsonObject.getObject("guid").getString("rendered").replace("\\", ""), true));
+                                });
+                    });
 
             imgV.setFitWidth(100);
             imgV.setFitHeight(75);
@@ -138,6 +154,7 @@ public class HomeActivity extends ViewDomainActivityBase {
 
         page.getChildren().addAll(newsContainer, podcastContainer);
     }
+
     @Override
     public Node buildUi() {
         VBox page = new VBox();
