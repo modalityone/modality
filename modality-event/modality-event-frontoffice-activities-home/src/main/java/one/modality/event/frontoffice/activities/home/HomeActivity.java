@@ -1,6 +1,8 @@
 package one.modality.event.frontoffice.activities.home;
 
 import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
@@ -35,9 +37,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class HomeActivity extends ViewDomainActivityBase {
-    @Override
-    public Node buildUi() {
-        VBox page = new VBox();
+    public void rebuild(VBox page) {
+        System.out.println(">>>> REBUILD <<<<<");
+        page.getChildren().removeAll(page.getChildren());
+
         Button compute = new Button("Compute");
 
         page.getChildren().add(compute);
@@ -74,69 +77,80 @@ public class HomeActivity extends ViewDomainActivityBase {
         VBox newsContainer = new VBox();
         VBox podcastContainer = new VBox();
 
-        FXHome.news.addListener((ListChangeListener<? super News>) change -> {
-            FXHome.news.forEach(n -> {
-                Text t = TextUtility.getMainText(n.title.toUpperCase(), StyleUtility.MAIN_BLUE);
-                t.setWrappingWidth(200);
+        FXHome.news.forEach(n -> {
+            Text t = TextUtility.getMainText(n.title.toUpperCase(), StyleUtility.MAIN_BLUE);
+            t.setWrappingWidth(200);
 
-                Text c = TextUtility.getMainText("A wonderful weekend in which more than 180 people gathered to delight in the yogas of Je Tsongkhapa, understanding a little more his teachings and aspect of Guru Sumati Buddha Heruka. During the event, meditations were guided by kadam Gabby, the Resident Teacher of KMC Girona, and the retreat were guided by gen Kelsang Lochani, the Resident Teacher of KMC Barcelona.", StyleUtility.VICTOR_BATTLE_BLACK);
-                c.setWrappingWidth(200);
+            Text c = TextUtility.getMainText("A wonderful weekend in which more than 180 people gathered to delight in the yogas of Je Tsongkhapa, understanding a little more his teachings and aspect of Guru Sumati Buddha Heruka. During the event, meditations were guided by kadam Gabby, the Resident Teacher of KMC Girona, and the retreat were guided by gen Kelsang Lochani, the Resident Teacher of KMC Barcelona.", StyleUtility.VICTOR_BATTLE_BLACK);
+            c.setWrappingWidth(200);
 
-                Image img = new Image("https://kadampa.org/cdn-cgi/image/width=2048,height=1365,fit=crop,quality=80,format=auto,onerror=redirect,metadata=none/wp-content/uploads/2023/06/Metal-Statues-Project-25.jpg", true);
-                ImageView imgV = new ImageView(img);
+            Image img = new Image("https://kadampa.org/cdn-cgi/image/width=2048,height=1365,fit=crop,quality=80,format=auto,onerror=redirect,metadata=none/wp-content/uploads/2023/06/Metal-Statues-Project-25.jpg", true);
+            ImageView imgV = new ImageView(img);
 
-                imgV.setFitWidth(100);
-                imgV.setFitHeight(75);
+            imgV.setFitWidth(100);
+            imgV.setFitHeight(75);
 
-                Node newsBanner = GeneralUtility.createHList(10, 0, imgV,
+            Node newsBanner = GeneralUtility.createHList(10, 0, imgV,
                     GeneralUtility.createVList(5, 0,
-                        t,
-                        TextUtility.getSubText(n.date),
-                        c, GeneralUtility.createSpace(20)));
+                            t,
+                            TextUtility.getSubText(n.date),
+                            c, GeneralUtility.createSpace(20)));
 
-                newsContainer.getChildren().add(newsBanner);
-            });
+            newsContainer.getChildren().add(newsBanner);
         });
 
-        FXHome.podcasts.addListener((ListChangeListener<? super Podcast>) change -> {
-            FXHome.podcasts.forEach(p -> {
-                Text t = TextUtility.getMainText(p.title.toUpperCase(), StyleUtility.MAIN_BLUE);
-                t.setWrappingWidth(200);
+        FXHome.podcasts.forEach(p -> {
+            System.out.println(p.title);
+            Text t = TextUtility.getMainText(p.title.toUpperCase(), StyleUtility.MAIN_BLUE);
+            t.setWrappingWidth(200);
 
-                Text c = TextUtility.getMainText(p.excerpt, StyleUtility.VICTOR_BATTLE_BLACK);
-                c.setWrappingWidth(350);
+            Text c = TextUtility.getMainText(p.excerpt, StyleUtility.VICTOR_BATTLE_BLACK);
+            c.setWrappingWidth(350);
 
-                Image img = new Image(p.image.replace("\\", ""), true);
-                ImageView imgV = new ImageView(img);
+            Image img = new Image(p.image.replace("\\", ""), true);
+            ImageView imgV = new ImageView(img);
 
-                imgV.setFitWidth(75);
-                imgV.setFitHeight(75);
+            imgV.setFitWidth(75);
+            imgV.setFitHeight(75);
 
-                MediaPlayer player = new MediaPlayer(new Media(p.link.replace("\\", "")));
+            MediaPlayer player = new MediaPlayer(new Media(p.link.replace("\\", "")));
 
-                Button play = GeneralUtility.createButton(Color.web(StyleUtility.MAIN_BLUE), 4, "Play");
-                Button pause = GeneralUtility.createButton(Color.web(StyleUtility.MAIN_BLUE), 4, "Pause");
+            Button play = GeneralUtility.createButton(Color.web(StyleUtility.MAIN_BLUE), 4, "Play");
+            Button pause = GeneralUtility.createButton(Color.web(StyleUtility.MAIN_BLUE), 4, "Pause");
 
-                play.setOnAction(e -> {
-                    if (FXHome.player != null) FXHome.player.pause();
-                    FXHome.player = player;
-                    player.play();
-                });
-
-                pause.setOnAction(e -> player.pause());
-
-                Node podcastBanner = GeneralUtility.createVList(10, 0,
-                        GeneralUtility.createHList(10, 0, imgV,
-                        GeneralUtility.createVList(5, 0,
-                                t,
-                                GeneralUtility.createHList(10, 0, play, pause))),
-                        c, GeneralUtility.createSpace(20));
-
-                podcastContainer.getChildren().add(podcastBanner);
+            play.setOnAction(e -> {
+                if (FXHome.player != null) FXHome.player.pause();
+                FXHome.player = player;
+                player.play();
             });
+
+            pause.setOnAction(e -> player.pause());
+
+            Node podcastBanner = GeneralUtility.createVList(10, 0,
+                    GeneralUtility.createHList(10, 0, imgV,
+                            GeneralUtility.createVList(5, 0,
+                                    t,
+                                    GeneralUtility.createHList(10, 0, play, pause))),
+                    c, GeneralUtility.createSpace(20));
+
+            podcastContainer.getChildren().add(podcastBanner);
         });
 
         page.getChildren().addAll(newsContainer, podcastContainer);
+    }
+    @Override
+    public Node buildUi() {
+        VBox page = new VBox();
+
+        rebuild(page);
+
+        FXProperties.runNowAndOnPropertiesChange(e -> {
+            HomeUtility.loadPodcasts();
+            HomeUtility.loadNews();
+        }, I18n.dictionaryProperty());
+
+        FXHome.news.addListener((ListChangeListener<News>) change -> rebuild(page));
+        FXHome.podcasts.addListener((ListChangeListener<Podcast>) change -> rebuild(page));
 
         return LayoutUtil.createVerticalScrollPane((Region) GeneralUtility.createPaddedContainer(page, 10, 10));
     }
@@ -155,8 +169,7 @@ public class HomeActivity extends ViewDomainActivityBase {
         ReactiveEntitiesMapper.<Person>createPushReactiveChain(this)
                 .always("{class: 'Person', fields:'firstName,lastName,birthdate,male,ordained,email,street,cityName,postCode,country,organization,passport,removed', orderBy: 'id'}")
                 //.ifInstanceOf(FXUserId.userIdProperty(), ModalityUserPrincipal.class, mup -> DqlStatement.where("frontendAccount=?", mup.getUserAccountId()))
-                .ifNotNullOtherwiseEmpty(FXUserId.userIdProperty(), mup -> DqlStatement.where("frontendAccount=?", ((ModalityUserPrincipal) mup).getUserAccountId())
-                )
+                .ifNotNullOtherwiseEmpty(FXUserId.userIdProperty(), mup -> DqlStatement.where("frontendAccount=?", ((ModalityUserPrincipal) mup).getUserAccountId()))
                 .storeEntitiesInto(FXAccount.getPersons())
                 .start();
     }

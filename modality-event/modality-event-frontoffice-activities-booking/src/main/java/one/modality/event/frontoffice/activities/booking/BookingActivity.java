@@ -1,6 +1,7 @@
 package one.modality.event.frontoffice.activities.booking;
 
 import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
@@ -49,7 +50,10 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
     }
 
     private Node createEventBanner(Event event, Double distance) {
-        Text title = TextUtility.getMediumText(event.getName(), StyleUtility.MAIN_BLUE);
+        Object language = I18n.getLanguage();
+        String titleStr = (event.getLabel() != null) ? event.getLabel().getStringFieldValue(language) : event.getName();
+        titleStr = (titleStr == null) ? event.getName() : titleStr;
+        Text title = TextUtility.getMediumText(titleStr, StyleUtility.MAIN_BLUE);
         Text subTitle = TextUtility.getText("LOWER DESCRIPTION", 10, StyleUtility.VICTOR_BATTLE_BLACK);
         Text date = TextUtility.getText(event.getStartDate().toString(), 10, StyleUtility.VICTOR_BATTLE_BLACK);
         Node location = GeneralUtility.createVList(0, 0,
@@ -216,8 +220,8 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
         return container;
     }
 
-    @Override
-    public Node buildUi() {
+    public void rebuild() {
+        container.getChildren().removeAll(container.getChildren());
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER);
         Text t = TextUtility.getMainHeaderText("YOUR NEXT MEANINGFUL EVENT IS HERE");
@@ -234,16 +238,6 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
         rebuildEvents(localEventsContainer, FXBooking.localCenterEvents, false);
         rebuildCenterDisplay(centerContainer);
         rebuildSearchBar(searchContainer);
-
-        FXBooking.nktEvents.addListener((ListChangeListener<Event>) change -> rebuildEvents(nktEventsContainer, FXBooking.nktEvents, false));
-        FXBooking.localCenterEvents.addListener((ListChangeListener<Event>) change -> rebuildEvents(localEventsContainer, FXBooking.localCenterEvents, false));
-
-        BookingPM.CHANGE_CENTER.addListener(change -> rebuildCenterDisplay(centerContainer));
-
-        FXBooking.displayCenterProperty.addListener(c -> {
-            rebuildSearchBar(searchContainer);
-            rebuildCenterDisplay(centerContainer);
-        });
 
         Button startBooking = new Button("Start Booking");
         bookingWelcome.getChildren().addAll(
@@ -278,6 +272,15 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
                 GeneralUtility.createSpace(20),
                 localEventsContainer,
                 bookingWelcome);
+    }
+
+    @Override
+    public Node buildUi() {
+        FXBooking.nktEvents.addListener((ListChangeListener<Event>) change -> rebuild());
+        FXBooking.localCenterEvents.addListener((ListChangeListener<Event>) change -> rebuild());
+        BookingPM.CHANGE_CENTER.addListener(change -> rebuild());
+        FXBooking.displayCenterProperty.addListener(c -> rebuild());
+        I18n.dictionaryProperty().addListener(change -> rebuild());
 
         container.setBackground(Background.fill(Color.WHITE));
 
@@ -291,12 +294,12 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
 
     protected void startLogic() {
         ReactiveEntitiesMapper.<Event>createPushReactiveChain(this)
-                .always("{class: 'Event', fields:'name, startDate, endDate', where: 'organization.type.code = `CORP` and endDate > now()', orderBy: 'startDate'}")
+                .always("{class: 'Event', fields:'name, label.<loadAll>, startDate, endDate', where: 'organization.type.code = `CORP` and endDate > now()', orderBy: 'startDate'}")
                 .storeEntitiesInto(FXBooking.nktEvents)
                 .start();
 
         ReactiveEntitiesMapper.<Event>createPushReactiveChain(this)
-                .always("{class: 'Event', fields:'name, startDate, endDate', where: 'endDate > now()', orderBy: 'startDate'}")
+                .always("{class: 'Event', fields:'name, label.<loadAll>, startDate, endDate', where: 'endDate > now()', orderBy: 'startDate'}")
                 .ifNotNullOtherwiseEmpty(FXBooking.displayCenterProperty, localCenter -> where("organization=?", localCenter))
                 .storeEntitiesInto(FXBooking.localCenterEvents)
                 .start();

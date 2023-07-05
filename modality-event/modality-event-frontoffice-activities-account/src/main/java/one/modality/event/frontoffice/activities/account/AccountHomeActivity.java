@@ -14,6 +14,7 @@ import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.event.frontoffice.operations.routes.account.RouteToAccountFriendsAndFamilyRequest;
 import one.modality.event.frontoffice.operations.routes.account.RouteToAccountPersonalInformationRequest;
 import one.modality.event.frontoffice.operations.routes.account.RouteToAccountSettingsRequest;
+import dev.webfx.stack.i18n.I18n;
 
 /**
  * @author Bruno Salmon
@@ -38,9 +39,8 @@ final class AccountHomeActivity extends ViewDomainActivityBase implements Operat
         return row;
     }
 
-    @Override
-    public Node buildUi() {
-        VBox page = new VBox();
+    public void rebuild(VBox page) {
+        page.getChildren().removeAll(page.getChildren());
 
         page.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
 
@@ -55,7 +55,7 @@ final class AccountHomeActivity extends ViewDomainActivityBase implements Operat
                         AccountHomePM.FAMILY_FRIENDS_SUBTITLE,
                         AccountHomePM.FAMILY_FRIENDS_SVG_PATH,
                         new RouteToAccountFriendsAndFamilyRequest(getHistory())
-                        ),
+                ),
                 createRow(AccountHomePM.MESSAGES_TITLE,
                         AccountHomePM.MESSAGES_SUBTITLE,
                         AccountHomePM.MESSAGES_SVG_PATH,
@@ -82,6 +82,15 @@ final class AccountHomeActivity extends ViewDomainActivityBase implements Operat
                         new RouteToAccountPersonalInformationRequest(getHistory())
                 )
         );
+    }
+
+    @Override
+    public Node buildUi() {
+        VBox page = new VBox();
+
+        rebuild(page);
+
+        I18n.dictionaryProperty().addListener(c -> rebuild(page));
 
         return page;
     }
