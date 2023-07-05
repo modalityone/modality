@@ -1,6 +1,7 @@
 package one.modality.event.frontoffice.activities.account;
 
 import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
@@ -20,8 +21,11 @@ import one.modality.base.frontoffice.utility.TextUtility;
 import one.modality.event.frontoffice.operations.routes.account.RouteToAccountFriendsAndFamilyEditRequest;
 
 public class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase implements ButtonFactoryMixin, OperationActionFactoryMixin {
+    VBox container = new VBox();
+    Button deleteMember;
+
     private void rebuildMembersList(ObservableList<PersonPM> persons, VBox membersList) {
-        membersList.getChildren().removeAll(membersList.getChildren());
+        membersList.getChildren().clear();
 
         persons.forEach(personPM -> {
             BorderPane bpL = new BorderPane();
@@ -49,20 +53,17 @@ public class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase impl
         });
     }
 
-    @Override
-    public Node buildUi() {
-        VBox container = new VBox();
+    public void rebuild() {
+        System.out.println(">>>> REBUILD Friends and Family <<<<<");
+        container.getChildren().clear();
+
         VBox membersContainer = new VBox();
         VBox membersList = new VBox();
 
         rebuildMembersList(FXAccount.getMembersPM(), membersList);
 
-        FXAccount.getMembersPM().addListener((ListChangeListener<PersonPM>) change -> {
-            rebuildMembersList(FXAccount.getMembersPM(), membersList);
-        });
-
         Button addMember = GeneralUtility.createButton(Color.web(StyleUtility.ELEMENT_GRAY), 4, "Add Member");
-        Button deleteMember = GeneralUtility.createButton(Color.web(StyleUtility.IMPORTANT_RED), 4, "Delete");
+        deleteMember = GeneralUtility.createButton(Color.web(StyleUtility.IMPORTANT_RED), 4, "Delete");
 
         HBox buttonRow = new HBox();
         buttonRow.setAlignment(Pos.CENTER);
@@ -77,18 +78,26 @@ public class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase impl
             executeOperation(new RouteToAccountFriendsAndFamilyEditRequest(getHistory()));
         });
 
-
-
-        GeneralUtility.bindButtonWithPopup(deleteMember, container, new VBox(), 200);
-
         container.getChildren().addAll(
                 AccountUtility.createAccountHeader("Family or Friends", "Add your family or friends information here", this),
                 membersContainer
         );
+    }
+
+    @Override
+    public Node buildUi() {
+        rebuild();
+
+        I18n.dictionaryProperty().addListener(c -> rebuild());
+        FXAccount.getMembersPM().addListener((ListChangeListener<PersonPM>) c -> rebuild());
 
         container.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
 
-        return LayoutUtil.createVerticalScrollPane(container);
+        return GeneralUtility.bindButtonWithPopup(deleteMember, LayoutUtil.createVerticalScrollPane(container), new VBox(), 200);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
 }

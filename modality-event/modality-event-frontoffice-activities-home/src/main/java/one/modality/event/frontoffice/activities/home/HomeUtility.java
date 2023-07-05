@@ -9,6 +9,7 @@ import one.modality.base.frontoffice.entities.Center;
 import one.modality.base.frontoffice.entities.News;
 import one.modality.base.frontoffice.entities.Podcast;
 import one.modality.base.frontoffice.fx.FXHome;
+import dev.webfx.stack.i18n.I18n;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,7 @@ public class HomeUtility {
     }
 
     public static void loadNews() {
-        Fetch.fetch("https://kadampa.org/wp-json/wp/v2/posts?per_page=5") // Expecting a JSON object only
+        Fetch.fetch("https://kadampa.org/wp-json/wp/v2/posts?per_page=5&lang=" + I18n.getLanguage().toString()) // Expecting a JSON object only
                 .onFailure(error -> Console.log("Fetch failure: " + error))
                 .onSuccess(response -> {
                     Console.log("Fetch success: ok = " + response.ok());
@@ -53,7 +54,7 @@ public class HomeUtility {
                                     news.add(n);
                                 }
 
-                                Platform.runLater(() -> FXHome.news.addAll(news));
+                                Platform.runLater(() -> FXHome.news.setAll(news));
                             });
                 });
     }
@@ -76,7 +77,7 @@ public class HomeUtility {
                                     podcasts.add(p);
                                 }
 
-                                Platform.runLater(() -> FXHome.podcasts.addAll(podcasts));
+                                Platform.runLater(() -> FXHome.podcasts.setAll(podcasts));
                             });
                 });
     }

@@ -11,12 +11,13 @@ module modality.event.frontoffice.activities.home {
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires modality.crm.shared.authn;
-    requires modality.event.frontoffice.activities.account;
     requires webfx.extras.util.layout;
+    requires webfx.kit.util;
     requires webfx.platform.console;
     requires webfx.platform.fetch;
     requires webfx.platform.json;
     requires webfx.platform.windowhistory;
+    requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.reactive.entities;
@@ -24,7 +25,6 @@ module modality.event.frontoffice.activities.home {
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.session.state.client.fx;
     requires webfx.stack.ui.operation;
-    requires webfx.stack.ui.operation.action;
 
     // Exported packages
     exports one.modality.event.frontoffice.activities.home;
