@@ -10,4 +10,5 @@ public class FXHome {
     public static final ObservableList<News> news = FXCollections.observableArrayList();
     public static final ObservableList<Podcast> podcasts = FXCollections.observableArrayList();
     public static MediaPlayer player;
+    public static News article;
 }

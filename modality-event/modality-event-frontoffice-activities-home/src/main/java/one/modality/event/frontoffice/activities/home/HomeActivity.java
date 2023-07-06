@@ -10,18 +10,22 @@ import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import dev.webfx.stack.session.state.client.fx.FXUserId;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import one.modality.base.frontoffice.entities.Center;
 import one.modality.base.frontoffice.entities.News;
 import one.modality.base.frontoffice.entities.Podcast;
@@ -41,6 +45,43 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class HomeActivity extends ViewDomainActivityBase implements OperationActionFactoryMixin {
+    private VBox page = new VBox();
+
+    private boolean isValidDuration(Duration d) {
+        return d != null && !d.isIndefinite() && !d.isUnknown();
+    }
+    private void bindProgress(MediaPlayer player, ProgressBar bar) {
+        var binding =
+                Bindings.createDoubleBinding(
+                        () -> {
+                            var currentTime = player.getCurrentTime();
+                            var duration = player.getMedia().getDuration();
+                            if (isValidDuration(currentTime) && isValidDuration(duration)) {
+                                return currentTime.toMillis() / duration.toMillis();
+                            }
+                            return ProgressBar.INDETERMINATE_PROGRESS;
+                        },
+                        player.currentTimeProperty(),
+                        player.getMedia().durationProperty());
+
+        bar.progressProperty().bind(binding);
+    }
+
+    private void addSeekBehavior(MediaPlayer player, ProgressBar bar) {
+        EventHandler<MouseEvent> onClickAndOnDragHandler =
+                e -> {
+                    var duration = player.getMedia().getDuration();
+                    if (isValidDuration(duration)) {
+                        var seekTime = duration.multiply(e.getX() / bar.getWidth());
+                        player.seek(seekTime);
+                        e.consume();
+                    }
+                };
+        bar.addEventHandler(MouseEvent.MOUSE_CLICKED, onClickAndOnDragHandler);
+        bar.addEventHandler(MouseEvent.MOUSE_DRAGGED, onClickAndOnDragHandler);
+    }
+
+
     public void rebuild(VBox page) {
         System.out.println(">>>> REBUILD <<<<<");
         page.getChildren().removeAll(page.getChildren());
@@ -83,12 +124,13 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
 
         FXHome.news.forEach(n -> {
             Text t = TextUtility.getMainText(n.title.toUpperCase(), StyleUtility.MAIN_BLUE);
-            t.setWrappingWidth(200);
 
-            t.setOnMouseClicked(c -> executeOperation(new RouteToHomeNewsArticleRequest(getHistory())));
+            t.setOnMouseClicked(c -> {
+                FXHome.article = n;
+                executeOperation(new RouteToHomeNewsArticleRequest(getHistory()));
+            });
 
             Text c = TextUtility.getMainText(n.excerpt, StyleUtility.VICTOR_BATTLE_BLACK);
-            c.setWrappingWidth(200);
 
             ImageView imgV = new ImageView();
 
@@ -103,14 +145,22 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
                                 });
                     });
 
-            imgV.setFitWidth(100);
-            imgV.setFitHeight(75);
+            imgV.setFitWidth(100*FXApp.fontRatio.get());
+            imgV.setFitHeight(75*FXApp.fontRatio.get());
 
-            Node newsBanner = GeneralUtility.createHList(10, 0, imgV,
-                    GeneralUtility.createVList(5, 0,
-                            t,
-                            TextUtility.getSubText(n.date),
-                            c, GeneralUtility.createSpace(20)));
+            VBox vList = GeneralUtility.createVList(5, 0,
+                    t,
+                    TextUtility.getSubText(n.date),
+                    c, GeneralUtility.createSpace(20));
+            vList.setMinWidth(0);
+            HBox.setHgrow(vList, Priority.ALWAYS);
+            vList.widthProperty().addListener((observableValue, number, width) -> {
+                double wrappingWidth = width.doubleValue() - 10;
+                t.setWrappingWidth(wrappingWidth);
+                c.setWrappingWidth(wrappingWidth);
+            });
+
+            Node newsBanner = GeneralUtility.createHList(10, 0, imgV, vList);
 
             newsContainer.getChildren().add(newsBanner);
         });
@@ -118,21 +168,33 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
         FXHome.podcasts.forEach(p -> {
             System.out.println(p.title);
             Text t = TextUtility.getMainText(p.title.toUpperCase(), StyleUtility.MAIN_BLUE);
-            t.setWrappingWidth(200);
 
             Text c = TextUtility.getMainText(p.excerpt, StyleUtility.VICTOR_BATTLE_BLACK);
-            c.setWrappingWidth(350);
 
             Image img = new Image(p.image.replace("\\", ""), true);
             ImageView imgV = new ImageView(img);
 
-            imgV.setFitWidth(75);
-            imgV.setFitHeight(75);
+            imgV.setFitWidth(75*FXApp.fontRatio.get());
+            imgV.setFitHeight(75*FXApp.fontRatio.get());
 
             MediaPlayer player = new MediaPlayer(new Media(p.link.replace("\\", "")));
 
-            Button play = GeneralUtility.createButton(Color.web(StyleUtility.MAIN_BLUE), 4, "Play");
-            Button pause = GeneralUtility.createButton(Color.web(StyleUtility.MAIN_BLUE), 4, "Pause");
+            Button play = GeneralUtility.createButton(Color.web(StyleUtility.MAIN_BLUE), 4, "Play", 9);
+            Button pause = GeneralUtility.createButton(Color.web(StyleUtility.MAIN_BLUE), 4, "Pause", 9);
+            Button forward = GeneralUtility.createButton(Color.web(StyleUtility.MAIN_BLUE), 4, "--> 30s", 9);
+            Button backward = GeneralUtility.createButton(Color.web(StyleUtility.MAIN_BLUE), 4, "<-- 10s>", 9);
+
+            ProgressBar bar = new ProgressBar();
+            Text duration = TextUtility.getSubText("", StyleUtility.ELEMENT_GRAY);
+            Text current = TextUtility.getSubText("", StyleUtility.ELEMENT_GRAY);
+
+            player.getMedia().durationProperty().addListener(e -> duration.setText("/" + Math.round(player.getMedia().durationProperty().get().toSeconds())));
+            player.currentTimeProperty().addListener(e -> current.setText(String.valueOf(Math.round(player.currentTimeProperty().get().toSeconds()))));
+
+            Node barContainer = GeneralUtility.createHList(5,0, bar, current, duration);
+
+            bindProgress(player, bar);
+            addSeekBehavior(player, bar);
 
             play.setOnAction(e -> {
                 if (FXHome.player != null) FXHome.player.pause();
@@ -140,13 +202,31 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
                 player.play();
             });
 
+            forward.setOnAction(e -> {
+                player.seek(player.getCurrentTime().add(Duration.seconds(30)));
+            });
+
+            backward.setOnAction(e -> {
+                player.seek(player.getCurrentTime().subtract(Duration.seconds(10)));
+            });
+
             pause.setOnAction(e -> player.pause());
 
+            VBox vList = GeneralUtility.createVList(5, 0,
+                    t,
+                    barContainer,
+                    GeneralUtility.createHList(10, 0, play, pause, backward, forward));
+
+            vList.setMinWidth(0);
+            HBox.setHgrow(vList, Priority.ALWAYS);
+            vList.widthProperty().addListener((observableValue, number, width) -> {
+                double wrappingWidth = width.doubleValue() - 10;
+                t.setWrappingWidth(wrappingWidth);
+                c.setWrappingWidth(wrappingWidth);
+            });
+
             Node podcastBanner = GeneralUtility.createVList(10, 0,
-                    GeneralUtility.createHList(10, 0, imgV,
-                            GeneralUtility.createVList(5, 0,
-                                    t,
-                                    GeneralUtility.createHList(10, 0, play, pause))),
+                    GeneralUtility.createHList(10, 0, imgV, vList),
                     c, GeneralUtility.createSpace(20));
 
             podcastContainer.getChildren().add(podcastBanner);
@@ -166,8 +246,16 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
             HomeUtility.loadNews();
         }, I18n.dictionaryProperty());
 
+
         FXHome.news.addListener((ListChangeListener<News>) change -> rebuild(page));
         FXHome.podcasts.addListener((ListChangeListener<Podcast>) change -> rebuild(page));
+
+        page.widthProperty().addListener((observableValue, number, width) -> {
+            if (GeneralUtility.screenChangeListened(width.doubleValue()))
+                rebuild(page);
+        });
+
+        FXApp.fontRatio.addListener(c -> rebuild(page));
 
         return LayoutUtil.createVerticalScrollPane((Region) GeneralUtility.createPaddedContainer(page, 10, 10));
     }
@@ -189,5 +277,10 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
                 .ifNotNullOtherwiseEmpty(FXUserId.userIdProperty(), mup -> DqlStatement.where("frontendAccount=?", ((ModalityUserPrincipal) mup).getUserAccountId()))
                 .storeEntitiesInto(FXAccount.getPersons())
                 .start();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 }

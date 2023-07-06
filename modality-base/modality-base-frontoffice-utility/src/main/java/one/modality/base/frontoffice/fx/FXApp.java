@@ -1,5 +1,9 @@
 package one.modality.base.frontoffice.fx;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -13,6 +17,8 @@ public class FXApp {
     public static ObservableList<Center> centers = FXCollections.observableArrayList();
     public static final ObservableList<Organization> organizations = FXCollections.observableArrayList();
     public static final ObservableList<Center> centersRef = FXCollections.observableArrayList();
+    public static DoubleProperty fontRatio = new SimpleDoubleProperty(1.0);
+    public static IntegerProperty widthStage = new SimpleIntegerProperty(300);
 
     static {
         organizations.addListener((ListChangeListener<? super Organization>) change -> {

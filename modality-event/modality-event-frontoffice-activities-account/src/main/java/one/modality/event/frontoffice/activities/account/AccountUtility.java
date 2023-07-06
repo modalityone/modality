@@ -154,7 +154,7 @@ public class AccountUtility {
         container.setPadding(new Insets(20));
         container.setSpacing(10);
 
-        Button b = GeneralUtility.createButton(Color.web(StyleUtility.POSITIVE_GREEN), 4, "Update");
+        Button b = GeneralUtility.createButton(Color.web(StyleUtility.POSITIVE_GREEN), 4, "Update", 9);
         HBox cb = new HBox();
         cb.setAlignment(Pos.CENTER);
         cb.getChildren().add(b);

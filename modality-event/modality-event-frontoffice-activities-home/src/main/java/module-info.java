@@ -8,6 +8,7 @@ module modality.event.frontoffice.activities.home {
     requires javafx.controls;
     requires javafx.graphics;
     requires javafx.media;
+    requires javafx.web;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires modality.crm.shared.authn;

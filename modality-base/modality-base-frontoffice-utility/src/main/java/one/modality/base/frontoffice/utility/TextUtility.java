@@ -5,14 +5,17 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import one.modality.base.frontoffice.fx.FXApp;
 
 import java.util.function.Function;
 
 public class TextUtility {
     public static Text getText(String content, double size, String color) {
         Text t = new Text(content);
-        t.setFont(Font.font(StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), size));
+        t.setFont(Font.font(StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), size* FXApp.fontRatio.get()));
         t.setFill(Color.web(color));
+
+        t.setStyle("-fx-font-size: " + size* FXApp.fontRatio.get());
 
         return t;
     }
