@@ -17,12 +17,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.web.WebView;
 import one.modality.base.frontoffice.fx.FXAccount;
+import one.modality.base.frontoffice.fx.FXApp;
 import one.modality.base.frontoffice.fx.FXBooking;
 import one.modality.base.frontoffice.states.BookingPM;
 import one.modality.base.frontoffice.utility.GeneralUtility;
@@ -61,11 +61,9 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
                 TextUtility.weight(TextUtility.getText("Ulverston, United Kingdom", 8, StyleUtility.ELEMENT_GRAY), FontWeight.MEDIUM),
                 distance < 0 ? new VBox() : TextUtility.getText(distance.toString(), 8, StyleUtility.ELEMENT_GRAY)
                 );
-        Button book = GeneralUtility.createButton(Color.web(StyleUtility.MAIN_BLUE), 4, "Book now");
+        Button book = GeneralUtility.createButton(Color.web(StyleUtility.MAIN_BLUE), 4, "Book now", 9);
 
-        book.setFont(Font.font(StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(600), 9));
-
-        title.setWrappingWidth(200);
+        title.setWrappingWidth(FXApp.widthStage.get() * 0.75);
 
         VBox container = new VBox();
 
@@ -251,6 +249,11 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
 
         Button restartBooking = new Button("Restart");
 
+        container.widthProperty().addListener((observableValue, number, width) -> {
+            if (GeneralUtility.screenChangeListened(width.doubleValue()))
+                rebuild();
+        });
+
         restartBooking.setOnAction(e -> {
             container.getChildren().remove(bookingConfirmed);
             container.getChildren().add(bookingWelcome);
@@ -283,6 +286,8 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
         I18n.dictionaryProperty().addListener(change -> rebuild());
 
         container.setBackground(Background.fill(Color.WHITE));
+
+        FXApp.fontRatio.addListener(c -> rebuild());
 
         return LayoutUtil.createVerticalScrollPane(container);
     }

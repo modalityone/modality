@@ -16,9 +16,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import one.modality.base.frontoffice.entities.Center;
+import one.modality.base.frontoffice.fx.FXApp;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -119,6 +121,20 @@ public class GeneralUtility {
         return b;
     }
 
+    public static boolean screenChangeListened(double w) {
+        double xRatio = FXApp.fontRatio.get();
+
+        if (w < 300) { FXApp.fontRatio.set(1.0); FXApp.widthStage.set(300); }
+        else if (w > 2000) { FXApp.fontRatio.set(2.0); FXApp.widthStage.set(2000); }
+        else if (300 < w && w < 600) { FXApp.fontRatio.set(1.2); FXApp.widthStage.set(300); }
+        else if (600 < w && w < 900) { FXApp.fontRatio.set(1.4); FXApp.widthStage.set(600); }
+        else if (900 < w && w < 1200) { FXApp.fontRatio.set(1.6); FXApp.widthStage.set(900); }
+        else if (1200 < w && w < 1500) { FXApp.fontRatio.set(1.8); FXApp.widthStage.set(1200); }
+        else if (1500 < w && w < 1800) { FXApp.fontRatio.set(1.9); FXApp.widthStage.set(1500); }
+        else if (1800 < w && w < 2000) { FXApp.fontRatio.set(2.0); FXApp.widthStage.set(2000); }
+
+        return xRatio != FXApp.fontRatio.get();
+    }
 
     public static Node createCheckBoxDirect(BooleanProperty property, boolean isRadio, boolean isReverse, String label, boolean isDisabled) {
         Rectangle b = createCheckBoxRaw();
@@ -189,7 +205,7 @@ public class GeneralUtility {
         return container;
     }
 
-    public static Node createVList(int space, int padding, Node... nodes) {
+    public static VBox createVList(int space, int padding, Node... nodes) {
         VBox container = new VBox();
 
         container.getChildren().addAll(nodes);
@@ -211,10 +227,12 @@ public class GeneralUtility {
         return field;
     }
 
-    public static Button createButton(Color color, int radius, String label) {
+    public static Button createButton(Color color, int radius, String label, double fontSize) {
         Button b = new Button(label);
         b.setTextFill(Color.WHITE);
-        b.setBackground(new Background(new BackgroundFill(color, new CornerRadii(radius), null)));
+        b.setBackground(new Background(new BackgroundFill(color, new CornerRadii(radius*FXApp.fontRatio.get()), null)));
+
+        b.setFont(Font.font(StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(600), fontSize*FXApp.fontRatio.get()));
 
         return b;
     }
