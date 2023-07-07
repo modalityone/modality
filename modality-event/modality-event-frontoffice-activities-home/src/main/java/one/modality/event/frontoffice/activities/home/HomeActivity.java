@@ -82,8 +82,7 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
         bar.addEventHandler(MouseEvent.MOUSE_CLICKED, onClickAndOnDragHandler);
         bar.addEventHandler(MouseEvent.MOUSE_DRAGGED, onClickAndOnDragHandler);
     }
-
-
+        
     public void rebuild(VBox page) {
         System.out.println(">>>> REBUILD <<<<<");
         page.getChildren().removeAll(page.getChildren());
@@ -128,7 +127,7 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
             Text t = TextUtility.getMainText(n.title.toUpperCase(), StyleUtility.MAIN_BLUE);
 
             t.setOnMouseClicked(c -> {
-                FXHome.article = n;
+                FXHome.article.set(n);
                 executeOperation(new RouteToHomeNewsArticleRequest(getHistory()));
             });
 
