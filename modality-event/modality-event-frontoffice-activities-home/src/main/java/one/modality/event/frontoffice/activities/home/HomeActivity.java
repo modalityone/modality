@@ -32,7 +32,12 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class HomeActivity extends ViewDomainActivityBase implements OperationActionFactoryMixin {
-    public void rebuild(VBox page) {
+
+    VBox page = new VBox();
+    VBox newsContainer = new VBox();
+    VBox podcastContainer = new VBox();
+
+    public void rebuild() {
         System.out.println(">>>> REBUILD <<<<<");
         page.getChildren().removeAll(page.getChildren());
 
@@ -69,15 +74,20 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
             System.out.println("Size of the matches: " + FXApp.centers.size());
         });
 
-        VBox newsContainer = new VBox(10);
-        VBox podcastContainer = new VBox();
+        FXHome.news.addListener((ListChangeListener<News>) change -> {
+            newsContainer.getChildren().clear();
 
-        FXHome.news.forEach(n -> {
-            newsContainer.getChildren().add(new NewsView(n).getView(page, this, this));
+            FXHome.news.forEach(n -> {
+                newsContainer.getChildren().add(new NewsView(n).getView(page, this, this));
+            });
         });
 
-        FXHome.podcasts.forEach(p -> {
-            podcastContainer.getChildren().add(new PodcastView(p).getView(page));
+        FXHome.podcasts.addListener((ListChangeListener<Podcast>) change -> {
+            podcastContainer.getChildren().clear();
+
+            FXHome.podcasts.forEach(p -> {
+                podcastContainer.getChildren().add(new PodcastView(p).getView(page));
+            });
         });
 
         page.getChildren().addAll(newsContainer, podcastContainer);
@@ -85,17 +95,12 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
 
     @Override
     public Node buildUi() {
-        VBox page = new VBox();
-
-        rebuild(page);
+        rebuild();
 
         FXProperties.runNowAndOnPropertiesChange(e -> {
             HomeUtility.loadPodcasts();
             HomeUtility.loadNews();
         }, I18n.dictionaryProperty());
-
-        FXHome.news.addListener((ListChangeListener<News>) change -> rebuild(page));
-        FXHome.podcasts.addListener((ListChangeListener<Podcast>) change -> rebuild(page));
 
         FXProperties.runOnPropertiesChange(() -> GeneralUtility.screenChangeListened(page.getWidth()), page.widthProperty());
 
