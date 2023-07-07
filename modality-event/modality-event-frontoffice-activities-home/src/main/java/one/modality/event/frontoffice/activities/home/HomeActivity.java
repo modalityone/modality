@@ -20,7 +20,10 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
@@ -45,7 +48,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class HomeActivity extends ViewDomainActivityBase implements OperationActionFactoryMixin {
-    private VBox page = new VBox();
 
     private boolean isValidDuration(Duration d) {
         return d != null && !d.isIndefinite() && !d.isUnknown();
@@ -119,7 +121,7 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
             System.out.println("Size of the matches: " + FXApp.centers.size());
         });
 
-        VBox newsContainer = new VBox();
+        VBox newsContainer = new VBox(10);
         VBox podcastContainer = new VBox();
 
         FXHome.news.forEach(n -> {
@@ -145,8 +147,8 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
                                 });
                     });
 
-            imgV.setFitWidth(100*FXApp.fontRatio.get());
-            imgV.setFitHeight(75*FXApp.fontRatio.get());
+            imgV.setPreserveRatio(true);
+            FXProperties.runNowAndOnPropertiesChange(() -> imgV.setFitWidth(100*FXApp.fontRatio.get()), FXApp.fontRatio);
 
             VBox vList = GeneralUtility.createVList(5, 0,
                     t,
@@ -160,7 +162,8 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
                 c.setWrappingWidth(wrappingWidth);
             });
 
-            Node newsBanner = GeneralUtility.createHList(10, 0, imgV, vList);
+            HBox newsBanner = GeneralUtility.createHList(10, 0, imgV, vList);
+            newsBanner.maxWidthProperty().bind(page.widthProperty());
 
             newsContainer.getChildren().add(newsBanner);
         });
@@ -174,8 +177,8 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
             Image img = new Image(p.image.replace("\\", ""), true);
             ImageView imgV = new ImageView(img);
 
-            imgV.setFitWidth(75*FXApp.fontRatio.get());
-            imgV.setFitHeight(75*FXApp.fontRatio.get());
+            imgV.setPreserveRatio(true);
+            FXProperties.runNowAndOnPropertiesChange(() -> imgV.setFitWidth(100*FXApp.fontRatio.get()), FXApp.fontRatio);
 
             MediaPlayer player = new MediaPlayer(new Media(p.link.replace("\\", "")));
 
@@ -225,9 +228,11 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
                 c.setWrappingWidth(wrappingWidth);
             });
 
-            Node podcastBanner = GeneralUtility.createVList(10, 0,
-                    GeneralUtility.createHList(10, 0, imgV, vList),
+            HBox hList = GeneralUtility.createHList(10, 0, imgV, vList);
+            VBox podcastBanner = GeneralUtility.createVList(10, 0,
+                    hList,
                     c, GeneralUtility.createSpace(20));
+            hList.maxWidthProperty().bind(page.widthProperty());
 
             podcastContainer.getChildren().add(podcastBanner);
         });
@@ -246,16 +251,10 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
             HomeUtility.loadNews();
         }, I18n.dictionaryProperty());
 
-
         FXHome.news.addListener((ListChangeListener<News>) change -> rebuild(page));
         FXHome.podcasts.addListener((ListChangeListener<Podcast>) change -> rebuild(page));
 
-        page.widthProperty().addListener((observableValue, number, width) -> {
-            if (GeneralUtility.screenChangeListened(width.doubleValue()))
-                rebuild(page);
-        });
-
-        FXApp.fontRatio.addListener(c -> rebuild(page));
+        FXProperties.runOnPropertiesChange(() -> GeneralUtility.screenChangeListened(page.getWidth()), page.widthProperty());
 
         return LayoutUtil.createVerticalScrollPane((Region) GeneralUtility.createPaddedContainer(page, 10, 10));
     }

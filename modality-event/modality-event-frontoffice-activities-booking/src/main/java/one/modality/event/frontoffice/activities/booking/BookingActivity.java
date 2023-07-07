@@ -1,6 +1,7 @@
 package one.modality.event.frontoffice.activities.booking;
 
 import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -22,7 +23,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.web.WebView;
 import one.modality.base.frontoffice.fx.FXAccount;
-import one.modality.base.frontoffice.fx.FXApp;
 import one.modality.base.frontoffice.fx.FXBooking;
 import one.modality.base.frontoffice.states.BookingPM;
 import one.modality.base.frontoffice.utility.GeneralUtility;
@@ -37,7 +37,6 @@ import java.util.stream.Collectors;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
 public class BookingActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
-    private Node activePage = null;
     private VBox container = new VBox();
     private VBox bookingWelcome = new VBox();
     private Node bookingSteps = BookingStepAll.createPage(this);
@@ -63,19 +62,17 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
                 );
         Button book = GeneralUtility.createButton(Color.web(StyleUtility.MAIN_BLUE), 4, "Book now", 9);
 
-        title.setWrappingWidth(FXApp.widthStage.get() * 0.75);
+        VBox container = new VBox(10);
 
-        VBox container = new VBox();
-
-        container.getChildren().add(
-                GeneralUtility.createVList(10, 0,
+        container.getChildren().addAll(
                 GeneralUtility.createSplitRow(title, date, 80, 0),
                 GeneralUtility.createSplitRow(subTitle, new Text(""), 80, 0),
-                GeneralUtility.createSplitRow(location, book, 80, 0))
+                GeneralUtility.createSplitRow(location, book, 80, 0)
         );
 
         container.setPadding(new Insets(20));
         container.setBackground(Background.fill(Color.web(StyleUtility.BACKGROUND_GRAY)));
+        FXProperties.runNowAndOnPropertiesChange(() -> title.setWrappingWidth(container.getWidth() * 0.75), container.widthProperty());
 
         return container;
     }
@@ -83,11 +80,7 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
     private Node rebuildCenterDisplay(VBox container) {
         if (FXAccount.ownerPM.PERSON == null) return new VBox();
 
-        try {
-            container.getChildren().removeAll(container.getChildren());
-        } catch (IllegalStateException e) {
-            container = new VBox();
-        }
+        container.getChildren().clear();
 
         EntityButtonSelector<Country> countriesButtonSelector = new EntityButtonSelector<>(
                 "{class:'country', orderBy:'name'}",
@@ -115,11 +108,9 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
             map.setImage(new Image(FXBooking.centerImageProperty.get(), true));
         });
 
-        mapView.setMinWidth(100);
-        mapView.setMinHeight(120);
 
-        map.setFitWidth(150);
-        map.setFitHeight(150);
+        map.setPreserveRatio(true);
+        FXProperties.runNowAndOnPropertiesChange(() -> map.setFitWidth(container.getWidth() * 0.25), container.widthProperty());
 
         Text address = TextUtility.getSubText("Manjushri Kadampa Meditation Centre Conishead Priory, Ulverston LA12 9QQ", StyleUtility.RUPAVAJRA_WHITE);
         address.setWrappingWidth(100);
@@ -197,7 +188,7 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
         Text location = TextUtility.getText(locationString, 8, StyleUtility.ELEMENT_GRAY);
         Text clear = TextUtility.getText("Clear filters", 8, StyleUtility.ELEMENT_GRAY);
 
-        VBox titleContainer = (VBox) GeneralUtility.createVList(0, 0, title, location);
+        VBox titleContainer = GeneralUtility.createVList(0, 0, title, location);
 
         clear.setOnMouseClicked(e -> {
             FXBooking.cityProperty.set(FXAccount.ownerPM.ADDRESS_CITY.get());
@@ -249,11 +240,6 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
 
         Button restartBooking = new Button("Restart");
 
-        container.widthProperty().addListener((observableValue, number, width) -> {
-            if (GeneralUtility.screenChangeListened(width.doubleValue()))
-                rebuild();
-        });
-
         restartBooking.setOnAction(e -> {
             container.getChildren().remove(bookingConfirmed);
             container.getChildren().add(bookingWelcome);
@@ -287,7 +273,7 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
 
         container.setBackground(Background.fill(Color.WHITE));
 
-        FXApp.fontRatio.addListener(c -> rebuild());
+        FXProperties.runOnPropertiesChange(() -> GeneralUtility.screenChangeListened(container.getWidth()), container.widthProperty());
 
         return LayoutUtil.createVerticalScrollPane(container);
     }

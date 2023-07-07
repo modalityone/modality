@@ -1,5 +1,6 @@
 package one.modality.base.frontoffice.utility;
 
+import dev.webfx.kit.util.properties.FXProperties;
 import javafx.beans.property.StringProperty;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -10,12 +11,16 @@ import one.modality.base.frontoffice.fx.FXApp;
 import java.util.function.Function;
 
 public class TextUtility {
+
     public static Text getText(String content, double size, String color) {
         Text t = new Text(content);
-        t.setFont(Font.font(StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), size* FXApp.fontRatio.get()));
         t.setFill(Color.web(color));
 
-        t.setStyle("-fx-font-size: " + size* FXApp.fontRatio.get());
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            double fontSize = size * FXApp.fontRatio.get();
+            t.setFont(Font.font(StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), fontSize));
+            t.setStyle("-fx-font-size: " + fontSize);
+        }, FXApp.fontRatio);
 
         return t;
     }

@@ -126,12 +126,12 @@ public class GeneralUtility {
 
         if (w < 300) { FXApp.fontRatio.set(1.0); FXApp.widthStage.set(300); }
         else if (w > 2000) { FXApp.fontRatio.set(2.0); FXApp.widthStage.set(2000); }
-        else if (300 < w && w < 600) { FXApp.fontRatio.set(1.2); FXApp.widthStage.set(300); }
-        else if (600 < w && w < 900) { FXApp.fontRatio.set(1.4); FXApp.widthStage.set(600); }
-        else if (900 < w && w < 1200) { FXApp.fontRatio.set(1.6); FXApp.widthStage.set(900); }
-        else if (1200 < w && w < 1500) { FXApp.fontRatio.set(1.8); FXApp.widthStage.set(1200); }
-        else if (1500 < w && w < 1800) { FXApp.fontRatio.set(1.9); FXApp.widthStage.set(1500); }
-        else if (1800 < w && w < 2000) { FXApp.fontRatio.set(2.0); FXApp.widthStage.set(2000); }
+        else if (300 <= w && w < 600) { FXApp.fontRatio.set(1.2); FXApp.widthStage.set(300); }
+        else if (600 <= w && w < 900) { FXApp.fontRatio.set(1.4); FXApp.widthStage.set(600); }
+        else if (900 <= w && w < 1200) { FXApp.fontRatio.set(1.6); FXApp.widthStage.set(900); }
+        else if (1200 <= w && w < 1500) { FXApp.fontRatio.set(1.8); FXApp.widthStage.set(1200); }
+        else if (1500 <= w && w < 1800) { FXApp.fontRatio.set(1.9); FXApp.widthStage.set(1500); }
+        else if (1800 <= w && w < 2000) { FXApp.fontRatio.set(2.0); FXApp.widthStage.set(2000); }
 
         return xRatio != FXApp.fontRatio.get();
     }
@@ -190,11 +190,12 @@ public class GeneralUtility {
         );
 
         container.setHgap(padding);
+        container.setMinWidth(0);
 
         return container;
     }
 
-    public static Node createHList(int space, int padding, Node... nodes) {
+    public static HBox createHList(int space, int padding, Node... nodes) {
         HBox container = new HBox();
 
         container.getChildren().addAll(nodes);
