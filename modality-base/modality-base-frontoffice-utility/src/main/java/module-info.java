@@ -9,6 +9,7 @@ module modality.base.frontoffice.utility {
     requires javafx.graphics;
     requires javafx.media;
     requires modality.base.shared.entities;
+    requires webfx.kit.util;
     requires webfx.platform.json;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;
@@ -22,9 +23,6 @@ module modality.base.frontoffice.utility {
     exports one.modality.base.frontoffice.utility;
 
     // Resources packages
-    opens bert.bert_cased;
-    opens bert.bert_cased.assets;
-    opens bert.bert_cased.variables;
     opens one.modality.base.frontoffice;
 
 }
