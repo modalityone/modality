@@ -88,8 +88,16 @@ public class PodcastView {
         Text duration = TextUtility.getSubText("", StyleUtility.ELEMENT_GRAY);
         Text current = TextUtility.getSubText("", StyleUtility.ELEMENT_GRAY);
 
-        player.getMedia().durationProperty().addListener(e -> duration.setText("/" + Math.round(player.getMedia().durationProperty().get().toSeconds())));
-        player.currentTimeProperty().addListener(e -> current.setText(String.valueOf(Math.round(player.currentTimeProperty().get().toSeconds()))));
+        player.getMedia().durationProperty().addListener(e -> {
+            int secondsTotal = (int) Math.floor(player.getMedia().durationProperty().get().toSeconds());
+            int minutesTotal = (int) Math.floor(player.getMedia().durationProperty().get().toMinutes());
+            duration.setText(String.format("/%02d:%02d", minutesTotal, (secondsTotal - minutesTotal*60)));
+        });
+        player.currentTimeProperty().addListener(e -> {
+            int secondsTotal = (int) Math.floor(player.currentTimeProperty().get().toSeconds());
+            int minutesTotal = (int) Math.floor(player.currentTimeProperty().get().toMinutes());
+            current.setText(String.format("%02d:%02d", minutesTotal, (secondsTotal - minutesTotal*60)));
+        });
 
         javafx.scene.Node barContainer = GeneralUtility.createVList(5,0, bar,
                 GeneralUtility.createHList(5, 0, current, duration)
