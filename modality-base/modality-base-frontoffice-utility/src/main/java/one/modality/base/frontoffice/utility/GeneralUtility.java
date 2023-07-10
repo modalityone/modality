@@ -1,5 +1,8 @@
 package one.modality.base.frontoffice.utility;
 
+import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.kit.util.properties.Unregisterable;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
@@ -11,6 +14,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -282,4 +287,55 @@ public class GeneralUtility {
 
         return layers;
     }
+
+    public static void roundClipImageView(ImageView imageView) {
+        // We will apply a round clip to the imageView
+        Rectangle roundClip = new Rectangle();
+        imageView.setClip(roundClip);
+        // We now need to set the properties of that round clip to always match the width & height of the image view
+        // (and set the rectangle arc for the round effect). It's not an obvious task because it's not easy to track
+        // the width and height of an ImageView (there is no observable width/height properties). Also (but minor issue)
+        // the image may not be set at this stage, or may change later. So first thing is to listen to the image property.
+        Unregisterable[] imageUnregisterable = { null }; // Will hold the second listener for a possible un-registration on image change
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            // Now we can get the Image value
+            Image image = imageView.getImage();
+            // We un-register the previous listener if there was one, before creating a new one
+            if (imageUnregisterable[0] != null)
+                imageUnregisterable[0].unregister();
+            boolean[] postponedInAnimationFrame = { false }; // See explanation in code below
+            // If an image is set, we listen to the different properties that impact the ImageView size: Image width &
+            // height (which may change if the image has not yet finished loading), and ImageView fitWidth & fitHeight
+            imageUnregisterable[0] = image == null ? null : FXProperties.runNowAndOnPropertiesChange(new Runnable() {
+                @Override
+                public void run() {
+                    // If a fitWidth or fitHeight has been set, then they are the ImageView width & height
+                    double width = imageView.getFitWidth();
+                    double height = imageView.getFitHeight();
+                    // But if at least one is not set, we will need to rely on the layoutBounds instead. However, the
+                    // layoutBounds is not set at this stage in the web version. For this reason, we need to postpone
+                    // this runnable in the animation frame before accessing the layoutBounds. This is what we do now:
+                    if ((width == 0 || height == 0) && !postponedInAnimationFrame[0]) {
+                        UiScheduler.scheduleInAnimationFrame(this);
+                        postponedInAnimationFrame[0] = true;
+                        return;
+                    }
+                    // Now we can get the width & height from the layoutBounds if it was not set by fitWidth & fitHeight
+                    if (width == 0)
+                        width = imageView.getLayoutBounds().getWidth();
+                    if (height == 0)
+                        height = imageView.getLayoutBounds().getHeight();
+                    // Because we now have the width & height of the ImageView, we can finally set the round clip properties
+                    roundClip.setWidth(width);
+                    roundClip.setHeight(height);
+                    double arcWidthHeight = width / 4;
+                    roundClip.setArcWidth(arcWidthHeight);
+                    roundClip.setArcHeight(arcWidthHeight);
+                    // Resetting the postponedInAnimationFrame flag for the next call
+                    postponedInAnimationFrame[0] = false;
+                }
+            }, image.widthProperty(), image.heightProperty(), imageView.fitWidthProperty(), imageView.fitHeightProperty());
+        }, imageView.imageProperty());
+    }
+
 }
