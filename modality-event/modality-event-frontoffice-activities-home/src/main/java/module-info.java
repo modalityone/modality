@@ -12,6 +12,7 @@ module modality.event.frontoffice.activities.home {
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires modality.crm.shared.authn;
+    requires webfx.extras.scalepane;
     requires webfx.extras.util.layout;
     requires webfx.kit.util;
     requires webfx.platform.console;
@@ -31,6 +32,7 @@ module modality.event.frontoffice.activities.home {
     // Exported packages
     exports one.modality.event.frontoffice.activities.home;
     exports one.modality.event.frontoffice.activities.home.routing;
+    exports one.modality.event.frontoffice.activities.home.views;
     exports one.modality.event.frontoffice.operations.routes.home;
 
     // Provided services

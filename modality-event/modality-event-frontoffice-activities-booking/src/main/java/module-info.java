@@ -31,6 +31,7 @@ module modality.event.frontoffice.activities.booking {
     // Exported packages
     exports one.modality.event.frontoffice.activities.booking;
     exports one.modality.event.frontoffice.activities.booking.routing;
+    exports one.modality.event.frontoffice.activities.booking.views;
     exports one.modality.event.frontoffice.operations.routes.booking;
 
     // Provided services

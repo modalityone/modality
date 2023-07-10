@@ -175,12 +175,6 @@
     <source path="one/modality/base/frontoffice/fx"/>
     <source path="one/modality/base/frontoffice/states"/>
     <source path="one/modality/base/frontoffice/utility"/>
-    <resource path="bert/bert_cased"/>
-    <public includes="bert/bert_cased/" path=""/>
-    <resource path="bert/bert_cased/assets"/>
-    <public includes="bert/bert_cased/assets/" path=""/>
-    <resource path="bert/bert_cased/variables"/>
-    <public includes="bert/bert_cased/variables/" path=""/>
     <resource path="one/modality/base/frontoffice"/>
     <public includes="one/modality/base/frontoffice/" path=""/>
     <!--========================< modality-base-shared-domainmodel >========================-->
@@ -239,10 +233,12 @@
     <!--=================< modality-event-frontoffice-activities-booking >==================-->
     <source path="one/modality/event/frontoffice/activities/booking"/>
     <source path="one/modality/event/frontoffice/activities/booking/routing"/>
+    <source path="one/modality/event/frontoffice/activities/booking/views"/>
     <source path="one/modality/event/frontoffice/operations/routes/booking"/>
     <!--===================< modality-event-frontoffice-activities-home >===================-->
     <source path="one/modality/event/frontoffice/activities/home"/>
     <source path="one/modality/event/frontoffice/activities/home/routing"/>
+    <source path="one/modality/event/frontoffice/activities/home/views"/>
     <source path="one/modality/event/frontoffice/operations/routes/home"/>
     <!--===========================< modality-hotel-shared-time >===========================-->
     <source path="one/modality/hotel/shared/businessdata/time"/>
@@ -260,6 +256,8 @@
     <source path="dev/webfx/extras/materialdesign/util/background"/>
     <source path="dev/webfx/extras/materialdesign/util/layout"/>
     <source path="dev/webfx/extras/materialdesign/util/scene"/>
+    <!--=============================< webfx-extras-scalepane >=============================-->
+    <source path="dev/webfx/extras/scalepane"/>
     <!--===============================< webfx-extras-theme >===============================-->
     <source path="dev/webfx/extras/theme"/>
     <source path="dev/webfx/extras/theme/layout"/>
