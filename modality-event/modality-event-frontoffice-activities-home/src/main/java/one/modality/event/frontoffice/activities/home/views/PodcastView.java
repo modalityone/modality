@@ -80,7 +80,6 @@ public class PodcastView {
         MediaPlayer player = new MediaPlayer(new Media(podcast.link.replace("\\", "")));
 
         Button play = GeneralUtility.createButton(Color.web(StyleUtility.MAIN_BLUE), 4, "Play", 9);
-        Button pause = GeneralUtility.createButton(Color.web(StyleUtility.MAIN_BLUE), 4, "Pause", 9);
         Button forward = GeneralUtility.createButton(Color.web(StyleUtility.MAIN_BLUE), 4, "--> 30s", 9);
         Button backward = GeneralUtility.createButton(Color.web(StyleUtility.MAIN_BLUE), 4, "<-- 10s>", 9);
 
@@ -97,9 +96,13 @@ public class PodcastView {
         addSeekBehavior(player, bar);
 
         play.setOnAction(e -> {
-            if (FXHome.player != null) FXHome.player.pause();
-            FXHome.player = player;
-            player.play();
+            if (!player.getStatus().equals(MediaPlayer.Status.PLAYING)) {
+                if (FXHome.player != null) FXHome.player.pause();
+                FXHome.player = player;
+                player.play();
+            } else {
+                player.pause();
+            }
         });
 
         forward.setOnAction(e -> {
@@ -110,12 +113,15 @@ public class PodcastView {
             player.seek(player.getCurrentTime().subtract(Duration.seconds(10)));
         });
 
-        pause.setOnAction(e -> player.pause());
+        player.statusProperty().addListener(change -> {
+            if (player.getStatus().equals(MediaPlayer.Status.PLAYING)) play.setText("Paused");
+            else play.setText("Play");
+        });
 
         VBox vList = GeneralUtility.createVList(5, 0,
                 t,
                 barContainer,
-                GeneralUtility.createHList(10, 0, play, pause, backward, forward));
+                GeneralUtility.createHList(10, 0, play, backward, forward));
 
         vList.setMinWidth(0);
         HBox.setHgrow(vList, Priority.ALWAYS);

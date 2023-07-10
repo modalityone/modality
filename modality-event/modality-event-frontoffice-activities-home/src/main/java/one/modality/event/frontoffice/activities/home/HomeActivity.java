@@ -38,7 +38,6 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
     VBox podcastContainer = new VBox();
 
     public void rebuild() {
-        System.out.println(">>>> REBUILD <<<<<");
         page.getChildren().removeAll(page.getChildren());
 
         Button compute = new Button("Compute");
