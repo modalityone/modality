@@ -13,4 +13,5 @@ public class StyleUtility {
     public static int SUB_TEXT_SIZE = 9;
     public static int MEDIUM_TEXT_SIZE = 16;
     public static String TEXT_FAMILY = "Montserrat";
+    public static String CLOCK_FAMILY = "Courier";
 }

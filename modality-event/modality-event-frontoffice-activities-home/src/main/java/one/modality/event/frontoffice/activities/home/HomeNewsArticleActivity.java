@@ -20,26 +20,16 @@ public class HomeNewsArticleActivity extends ViewDomainActivityBase implements O
     private void rebuild() {
         System.out.println(wv.getEngine().getLocation());
         layers.getChildren().clear();
+        wv = new WebView();
 
         Button button = GeneralUtility.createButton(Color.web(StyleUtility.ELEMENT_GRAY), 4, "<--", 10);
 
         button.setOnAction(c -> {
-            int i = wv.getEngine().getHistory().getCurrentIndex();
-
-            if (wv.getEngine().getLocation().isEmpty()) getHistory().goBack();
-            else if (i == 0) rebuild();
+            if (wv.getEngine().getHistory().getCurrentIndex() == 0) getHistory().goBack();
             else wv.getEngine().getHistory().go(-1);
         });
 
-        String html = "<div style='text-align:center'><div style='display:inline-block'><div style='max-width:500px; text-align:left'><div style='max-width: 90%'>" +
-                FXHome.article.get().content.replace("\\", "").replaceAll(
-                        "width=\".*\"", "width=\"90%\""
-                ).replaceAll(
-                        "height=\".*\"", ""
-                ) +
-                "</div></div></div></div>";
-
-        wv.getEngine().loadContent(html, "text/html");
+        wv.getEngine().load(FXHome.article.get().url);
 
         StackPane.setAlignment(button, Pos.TOP_LEFT);
         StackPane.setMargin(button, new Insets(10));
@@ -48,8 +38,6 @@ public class HomeNewsArticleActivity extends ViewDomainActivityBase implements O
 
     @Override
     public Node buildUi() {
-        wv.getEngine().getHistory().setMaxSize(20);
-
         rebuild();
 
         FXHome.article.addListener(c -> {

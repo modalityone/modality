@@ -71,6 +71,7 @@ public class PodcastView {
         ImageView imgV = new ImageView(img);
 
         imgV.setPreserveRatio(true);
+
         FXProperties.runNowAndOnPropertiesChange(() -> imgV.setFitWidth(100* FXApp.fontRatio.get()), FXApp.fontRatio);
 
         MediaPlayer player = new MediaPlayer(new Media(podcast.link.replace("\\", "")));
@@ -86,13 +87,17 @@ public class PodcastView {
 
         ProgressBar bar = new ProgressBar();
         Text duration = TextUtility.getSubText("", StyleUtility.ELEMENT_GRAY);
-        Text current = TextUtility.getSubText("", StyleUtility.ELEMENT_GRAY);
+        Text current = TextUtility.getSubText("00:00", StyleUtility.ELEMENT_GRAY);
+
+        TextUtility.setFontFamily(duration, StyleUtility.CLOCK_FAMILY, 9);
+        TextUtility.setFontFamily(current, StyleUtility.CLOCK_FAMILY, 9);
 
         player.getMedia().durationProperty().addListener(e -> {
             int secondsTotal = (int) Math.floor(player.getMedia().durationProperty().get().toSeconds());
             int minutesTotal = (int) Math.floor(player.getMedia().durationProperty().get().toMinutes());
-            duration.setText(String.format("/%02d:%02d", minutesTotal, (secondsTotal - minutesTotal*60)));
+            duration.setText(String.format("/ %02d:%02d", minutesTotal, (secondsTotal - minutesTotal*60)));
         });
+
         player.currentTimeProperty().addListener(e -> {
             int secondsTotal = (int) Math.floor(player.currentTimeProperty().get().toSeconds());
             int minutesTotal = (int) Math.floor(player.currentTimeProperty().get().toMinutes());
@@ -130,23 +135,31 @@ public class PodcastView {
             play.setVisible(!isPlay);
         });
 
-        VBox vList = GeneralUtility.createVList(5, 0,
-                TextUtility.getSubText("Date date date"),
-                t,
-                GeneralUtility.createHList(10, 0, backward, playHolder, forward, barContainer));
+        BorderPane borderPane = new BorderPane();
 
-        vList.setMinWidth(0);
-        HBox.setHgrow(vList, Priority.ALWAYS);
-        vList.widthProperty().addListener((observableValue, number, width) -> {
+        borderPane.setTop(GeneralUtility.createVList(5, 0, TextUtility.getSubText(podcast.date), t));
+        borderPane.setBottom(GeneralUtility.createHList(10, 0, backward, playHolder, forward, barContainer));
+
+//
+//                GeneralUtility.createVList(5, 0,
+//                TextUtility.getSubText(podcast.date),
+//                t,
+//                );
+
+        borderPane.setMinWidth(0);
+        HBox.setHgrow(borderPane, Priority.ALWAYS);
+        borderPane.widthProperty().addListener((observableValue, number, width) -> {
             double wrappingWidth = width.doubleValue() - 10;
             t.setWrappingWidth(wrappingWidth);
             c.setWrappingWidth(wrappingWidth);
+
+            bar.setMinWidth(width.doubleValue()*0.5);
         });
 
-        HBox hList = GeneralUtility.createHList(10, 0, imgV, vList);
+        HBox hList = GeneralUtility.createHList(10, 0, imgV, borderPane);
         VBox podcastBanner = GeneralUtility.createVList(10, 0,
                 hList,
-                c, GeneralUtility.createSpace(20));
+                GeneralUtility.createSpace(20));
         hList.maxWidthProperty().bind(page.widthProperty());
 
         return podcastBanner;
