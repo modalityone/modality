@@ -19,10 +19,18 @@ public class TextUtility {
         FXProperties.runNowAndOnPropertiesChange(() -> {
             double fontSize = size * FXApp.fontRatio.get();
             t.setFont(Font.font(StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), fontSize));
-            t.setStyle("-fx-font-size: " + fontSize);
+            t.setStyle("-fx-font-family: " + StyleUtility.TEXT_FAMILY + "; -fx-font-size: " + fontSize);
         }, FXApp.fontRatio);
 
         return t;
+    }
+
+    public static void setFontFamily(Text t, String family, int size) {
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            double fontSize = size * FXApp.fontRatio.get();
+            t.setFont(Font.font(family));
+            t.setStyle("-fx-font-family: " + family);
+        }, FXApp.fontRatio);
     }
 
     public static Text getBindedText(StringProperty property, Function<String, Text> textFunction) {
