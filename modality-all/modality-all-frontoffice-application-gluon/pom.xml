@@ -325,9 +325,6 @@
                         <list>util</list>
                     </attachList>
                     <resourcesList>
-                        <list>bert/bert_cased/[^/]+$</list>
-                        <list>bert/bert_cased/assets/[^/]+$</list>
-                        <list>bert/bert_cased/variables/[^/]+$</list>
                         <list>dev/webfx/platform/meta/exe/[^/]+$</list>
                         <list>dev/webfx/stack/authn/login/ui/spi/impl/gateway/facebook/[^/]+$</list>
                         <list>dev/webfx/stack/authn/login/ui/spi/impl/gateway/google/[^/]+$</list>
