@@ -69,6 +69,7 @@ public class PodcastView {
 
         Image img = new Image(podcast.image.replace("\\", ""), true);
         ImageView imgV = new ImageView(img);
+        GeneralUtility.roundClipImageView(imgV);
 
         imgV.setPreserveRatio(true);
 
