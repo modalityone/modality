@@ -12,4 +12,4 @@ jobs:
         id: scc
         uses: hdmsantander/scc-docker-action@3.0
         with:
-          args: ${{ env.workspace }} src --ci -i java
+          args: ${{ env.workspace }} modality-* --ci -i java
