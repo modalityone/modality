@@ -1,6 +1,8 @@
 [![Build for Multiple OS](https://github.com/modalityone/modality/actions/workflows/build-for-multiple-os.yml/badge.svg)](https://github.com/modalityone/modality/actions/workflows/build-for-multiple-os.yml)
 [![Build and Deploy to AWS](https://github.com/modalityone/modality/actions/workflows/build-and-deploy-to-aws.yml/badge.svg)](https://github.com/modalityone/modality/actions/workflows/build-and-deploy-to-aws.yml)
 [![Deploy to Sonatype](https://github.com/modalityone/modality/actions/workflows/deploy-to-sonatype.yml/badge.svg)](https://github.com/modalityone/modality/actions/workflows/deploy-to-sonatype.yml)
+[![Scc Count Badge](https://sloc.xyz/github/modalityone/modality/)](https://github.com/modalityone/modality/)
+
 
 
 # Modality
