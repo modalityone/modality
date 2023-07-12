@@ -21,6 +21,8 @@ import one.modality.base.frontoffice.fx.FXApp;
 import one.modality.base.frontoffice.fx.FXHome;
 import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.base.frontoffice.utility.StyleUtility;
+import one.modality.base.frontoffice.utility.SvgUtility;
+import one.modality.base.frontoffice.utility.TextUtility;
 import one.modality.base.shared.entities.Organization;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
@@ -85,7 +87,12 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
                 newsContainer.getChildren().add(new NewsView(n).getView(page, this, this));
             });
 
-            newsContainer.getChildren().add(newsLoadMore);
+            newsContainer.getChildren().addAll(
+                    GeneralUtility.createSpace(20),
+                    GeneralUtility.centerNode(newsLoadMore),
+                    GeneralUtility.createSpace(20)
+
+            );
         });
 
         FXHome.podcasts.addListener((InvalidationListener) change -> {
@@ -102,10 +109,23 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
                 podcastContainer.getChildren().add(new PodcastView(p).getView(page));
             });
 
-            podcastContainer.getChildren().add(podcastLoadMore);
+            podcastContainer.getChildren().addAll(
+                    GeneralUtility.createSpace(20),
+                    GeneralUtility.centerNode(podcastLoadMore),
+                    GeneralUtility.createSpace(20)
+            );
         });
 
-        page.getChildren().addAll(newsContainer, podcastContainer);
+        page.getChildren().addAll(
+                newsContainer,
+                GeneralUtility.createSpace(100),
+                GeneralUtility.centerNode(
+                    GeneralUtility.createHList(10, 0,
+                                GeneralUtility.createSvgPath(SvgUtility.KADAMPA_PODCAST, StyleUtility.MAIN_BLUE),
+                                TextUtility.getText("Kadampa Podcast", 21, StyleUtility.MAIN_BLUE))
+                ),
+                GeneralUtility.createSpace(50),
+                podcastContainer);
     }
 
     @Override
