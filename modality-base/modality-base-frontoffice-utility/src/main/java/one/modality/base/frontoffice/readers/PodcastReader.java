@@ -9,6 +9,7 @@ import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
+import one.modality.base.frontoffice.entities.PodcastOld;
 import one.modality.base.shared.entities.Podcast;
 
 import java.time.LocalDate;
@@ -37,7 +38,7 @@ public class PodcastReader {
                                     loop: for (int i=0; i<jsonArray.size(); i++) {
                                         ReadOnlyJsonObject o = jsonArray.getObject(i);
                                         String id = o.getString("id");
-                                        one.modality.base.frontoffice.entities.Podcast podcast = new one.modality.base.frontoffice.entities.Podcast(o);
+                                        PodcastOld podcast = new PodcastOld(o);
 
                                         for (Podcast p : podcasts) {
                                             if (Objects.equals(id, p.getChannelPodcastId())) {
