@@ -4,6 +4,7 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.platform.fetch.Fetch;
 import dev.webfx.platform.json.ReadOnlyJsonObject;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import javafx.collections.ObservableList;
 import one.modality.base.frontoffice.entities.Center;
@@ -36,6 +37,7 @@ public class HomeUtility {
     public static void loadNews(ViewDomainActivityBase activity) {
         ReactiveEntitiesMapper.<News>createPushReactiveChain(activity)
                 .always("{class: 'News', fields:'channel, channelNewsId, date, title, excerpt, imageUrl, linkUrl', orderBy: 'date desc'}")
+                .always(FXHome.newsLimit, limit -> DqlStatement.limit("?", limit))
                 .storeEntitiesInto(FXHome.news)
                 .start();
     }
@@ -43,6 +45,7 @@ public class HomeUtility {
     public static void loadPodcasts(ViewDomainActivityBase activity) {
         ReactiveEntitiesMapper.<Podcast>createPushReactiveChain(activity)
                 .always("{class: 'Podcast', fields:'channel, channelPodcastId, date, title, excerpt, imageUrl, audioUrl', orderBy: 'date desc'}")
+                .always(FXHome.podcastLimit, limit -> DqlStatement.limit("?", limit))
                 .storeEntitiesInto(FXHome.podcasts)
                 .start();
     }
