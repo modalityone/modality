@@ -14,11 +14,13 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import one.modality.base.frontoffice.entities.Center;
 import one.modality.base.frontoffice.fx.FXAccount;
 import one.modality.base.frontoffice.fx.FXApp;
 import one.modality.base.frontoffice.fx.FXHome;
 import one.modality.base.frontoffice.utility.GeneralUtility;
+import one.modality.base.frontoffice.utility.StyleUtility;
 import one.modality.base.shared.entities.Organization;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
@@ -74,17 +76,33 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
         FXHome.news.addListener((InvalidationListener) change -> {
             newsContainer.getChildren().clear();
 
+            Button newsLoadMore = GeneralUtility.createButton(Color.web(StyleUtility.ELEMENT_GRAY), 4, "Load more", StyleUtility.MAIN_TEXT_SIZE);
+            newsLoadMore.setOnAction(e -> {
+                FXHome.newsLimit.set(FXHome.newsLimit.get() + 3);
+                HomeUtility.loadNews(this);
+            });
             FXHome.news.forEach(n -> {
                 newsContainer.getChildren().add(new NewsView(n).getView(page, this, this));
             });
+
+            newsContainer.getChildren().add(newsLoadMore);
         });
 
         FXHome.podcasts.addListener((InvalidationListener) change -> {
             podcastContainer.getChildren().clear();
 
+            Button podcastLoadMore = GeneralUtility.createButton(Color.web(StyleUtility.ELEMENT_GRAY), 4, "Load more", StyleUtility.MAIN_TEXT_SIZE);
+
+            podcastLoadMore.setOnAction(e -> {
+                FXHome.podcastLimit.set(FXHome.podcastLimit.get() + 3);
+                HomeUtility.loadPodcasts(this);
+            });
+
             FXHome.podcasts.forEach(p -> {
                 podcastContainer.getChildren().add(new PodcastView(p).getView(page));
             });
+
+            podcastContainer.getChildren().add(podcastLoadMore);
         });
 
         page.getChildren().addAll(newsContainer, podcastContainer);
