@@ -18,8 +18,6 @@ import one.modality.base.frontoffice.entities.Center;
 import one.modality.base.frontoffice.fx.FXAccount;
 import one.modality.base.frontoffice.fx.FXApp;
 import one.modality.base.frontoffice.fx.FXHome;
-import one.modality.base.frontoffice.readers.NewsReader;
-import one.modality.base.frontoffice.readers.PodcastReader;
 import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.base.shared.entities.Organization;
 import one.modality.base.shared.entities.Person;
@@ -111,8 +109,6 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
         HomeUtility.loadCenters(FXApp.centersRef);
         HomeUtility.loadNews(this);
         HomeUtility.loadPodcasts(this);
-        NewsReader.fetch(getDataSourceModel());
-        PodcastReader.fetch(getDataSourceModel());
 
         ReactiveEntitiesMapper.<Organization>createPushReactiveChain(this)
                 .always("{class: 'Organization', fields:'name, country, type, closed'}")
