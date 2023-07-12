@@ -11,71 +11,74 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>modality-base-server-application-all</artifactId>
+    <artifactId>modality-base-server-newsimport</artifactId>
 
     <dependencies>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-server-application-min</artifactId>
+            <artifactId>modality-base-shared-entities</artifactId>
             <version>1.0.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-base-server-newsimport</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-base-server-podcastsimport</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-authn-login-server-gateway-facebook</artifactId>
+            <artifactId>webfx-platform-async</artifactId>
             <version>0.1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-authn-login-server-gateway-google</artifactId>
+            <artifactId>webfx-platform-boot</artifactId>
             <version>0.1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-authn-login-server-gateway-mojoauth</artifactId>
+            <artifactId>webfx-platform-console</artifactId>
             <version>0.1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-authn-server-gateway-facebook</artifactId>
+            <artifactId>webfx-platform-fetch</artifactId>
             <version>0.1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-authn-server-gateway-google</artifactId>
+            <artifactId>webfx-platform-json</artifactId>
             <version>0.1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-authn-server-gateway-mojoauth</artifactId>
+            <artifactId>webfx-platform-scheduler</artifactId>
             <version>0.1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-util</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-orm-datasourcemodel-service</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-orm-domainmodel</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-orm-entity</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
     </dependencies>

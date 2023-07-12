@@ -49,6 +49,8 @@
         <module>modality-base-server-application-all</module>
         <module>modality-base-server-application-min</module>
         <module>modality-base-server-datasource</module>
+        <module>modality-base-server-newsimport</module>
+        <module>modality-base-server-podcastsimport</module>
         <module>modality-base-server-sessioncloser</module>
         <module>modality-base-server-systemmetrics</module>
         <module>modality-base-server-systemmetrics-java</module>
