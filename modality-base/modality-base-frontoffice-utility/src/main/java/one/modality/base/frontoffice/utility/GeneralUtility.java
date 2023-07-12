@@ -10,6 +10,7 @@ import javafx.animation.TranslateTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Labeled;
@@ -238,7 +239,27 @@ public class GeneralUtility {
         b.setTextFill(Color.WHITE);
         b.setBackground(new Background(new BackgroundFill(color, new CornerRadii(radius*FXApp.fontRatio.get()), null)));
 
-        b.setFont(Font.font(StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(600), fontSize*FXApp.fontRatio.get()));
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            double size = fontSize * FXApp.fontRatio.get();
+            b.setFont(Font.font(StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), size));
+            b.setStyle("-fx-font-family: " + StyleUtility.TEXT_FAMILY + "; -fx-font-size: " + size);
+        }, FXApp.fontRatio);
+
+        return b;
+    }
+
+    public static SVGPath createSvgPath(String content, String color) {
+        SVGPath p = new SVGPath();
+        p.setContent(content);
+        p.setFill(Color.web(color));
+
+        return p;
+    }
+
+    public static Node centerNode(Node node) {
+        VBox b = new VBox();
+        b.getChildren().add(node);
+        b.setAlignment(Pos.CENTER);
 
         return b;
     }
