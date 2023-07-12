@@ -1,6 +1,8 @@
 package one.modality.base.frontoffice.fx;
 
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,4 +15,7 @@ public class FXHome {
     public static final ObservableList<Podcast> podcasts = FXCollections.observableArrayList();
     public static MediaPlayer player;
     public static ObjectProperty<News> article = new SimpleObjectProperty<>();
+
+    public static IntegerProperty newsLimit = new SimpleIntegerProperty(3);
+    public static IntegerProperty podcastLimit = new SimpleIntegerProperty(3);
 }
