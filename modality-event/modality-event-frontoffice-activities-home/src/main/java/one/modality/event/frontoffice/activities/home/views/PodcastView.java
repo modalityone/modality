@@ -13,12 +13,15 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import one.modality.base.frontoffice.entities.Podcast;
 import one.modality.base.frontoffice.fx.FXApp;
 import one.modality.base.frontoffice.fx.FXHome;
 import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.base.frontoffice.utility.StyleUtility;
 import one.modality.base.frontoffice.utility.TextUtility;
+import one.modality.base.shared.entities.Podcast;
+
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 
 public class PodcastView {
     private Podcast podcast;
@@ -62,12 +65,13 @@ public class PodcastView {
     }
 
     public Node getView(VBox page) {
-        System.out.println(podcast.title);
-        Text t = TextUtility.getMainText(podcast.title.toUpperCase(), StyleUtility.MAIN_BLUE);
+        System.out.println(podcast.getTitle());
+        Text t = TextUtility.getMainText(podcast.getTitle().toUpperCase(), StyleUtility.MAIN_BLUE);
+        String date = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).format(podcast.getDate());
+        Text d = TextUtility.getSubText(date);
+        Text c = TextUtility.getMainText(podcast.getExcerpt(), StyleUtility.VICTOR_BATTLE_BLACK);
 
-        Text c = TextUtility.getMainText(podcast.excerpt, StyleUtility.VICTOR_BATTLE_BLACK);
-
-        Image img = new Image(podcast.image.replace("\\", ""), true);
+        Image img = new Image(podcast.getImageUrl().replace("\\", ""), true);
         ImageView imgV = new ImageView(img);
         GeneralUtility.roundClipImageView(imgV);
 
@@ -75,7 +79,7 @@ public class PodcastView {
 
         FXProperties.runNowAndOnPropertiesChange(() -> imgV.setFitWidth(100* FXApp.fontRatio.get()), FXApp.fontRatio);
 
-        MediaPlayer player = new MediaPlayer(new Media(podcast.link.replace("\\", "")));
+        MediaPlayer player = new MediaPlayer(new Media(podcast.getAudioUrl().replace("\\", "")));
 
         StackPane playHolder = new StackPane();
         Pane play = PodcastButtons.createPlayButton();
@@ -138,14 +142,8 @@ public class PodcastView {
 
         BorderPane borderPane = new BorderPane();
 
-        borderPane.setTop(GeneralUtility.createVList(5, 0, TextUtility.getSubText(podcast.date), t));
+        borderPane.setTop(GeneralUtility.createVList(5, 0, d, t));
         borderPane.setBottom(GeneralUtility.createHList(10, 0, backward, playHolder, forward, barContainer));
-
-//
-//                GeneralUtility.createVList(5, 0,
-//                TextUtility.getSubText(podcast.date),
-//                t,
-//                );
 
         borderPane.setMinWidth(0);
         HBox.setHgrow(borderPane, Priority.ALWAYS);

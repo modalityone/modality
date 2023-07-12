@@ -3,16 +3,13 @@ package one.modality.event.frontoffice.activities.home;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.fetch.Fetch;
 import dev.webfx.platform.json.ReadOnlyJsonObject;
-import javafx.application.Platform;
+import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import javafx.collections.ObservableList;
 import one.modality.base.frontoffice.entities.Center;
-import one.modality.base.frontoffice.entities.News;
-import one.modality.base.frontoffice.entities.Podcast;
 import one.modality.base.frontoffice.fx.FXHome;
-import dev.webfx.stack.i18n.I18n;
-
-import java.util.ArrayList;
-import java.util.List;
+import one.modality.base.shared.entities.News;
+import one.modality.base.shared.entities.Podcast;
 
 public class HomeUtility {
     public static void loadCenters(ObservableList<Center> centers) {
@@ -36,49 +33,17 @@ public class HomeUtility {
                 });
     }
 
-    public static void loadNews() {
-        Fetch.fetch("https://kadampa.org/wp-json/wp/v2/posts?per_page=5&lang=" + I18n.getLanguage().toString()) // Expecting a JSON object only
-                .onFailure(error -> Console.log("Fetch failure: " + error))
-                .onSuccess(response -> {
-                    Console.log("Fetch success: ok = " + response.ok());
-                    response.jsonArray()
-                            .onFailure(error -> Console.log("JsonObject failure: " + error))
-                            .onSuccess(jsonArray -> {
-                                System.out.println("News size = " + jsonArray.size());
-                                List<News> news = new ArrayList<>();
-
-                                for (int i=0; i<jsonArray.size(); i++) {
-                                    System.out.println(i);
-                                    ReadOnlyJsonObject o = jsonArray.getObject(i);
-                                    News n = new News(o);
-                                    news.add(n);
-                                }
-
-                                Platform.runLater(() -> FXHome.news.setAll(news));
-                            });
-                });
+    public static void loadNews(ViewDomainActivityBase activity) {
+        ReactiveEntitiesMapper.<News>createPushReactiveChain(activity)
+                .always("{class: 'News', fields:'channel, channelNewsId, date, title, excerpt, imageUrl, linkUrl', orderBy: 'date desc'}")
+                .storeEntitiesInto(FXHome.news)
+                .start();
     }
 
-    public static void loadPodcasts() {
-        Fetch.fetch("https://kadampa.org/wp-json/wp/v2/podcast?per_page=5") // Expecting a JSON object only
-                .onFailure(error -> Console.log("Fetch failure: " + error))
-                .onSuccess(response -> {
-                    Console.log("Fetch success: ok = " + response.ok());
-                    response.jsonArray()
-                            .onFailure(error -> Console.log("JsonObject failure: " + error))
-                            .onSuccess(jsonArray -> {
-                                System.out.println("Podcasts size = " + jsonArray.size());
-                                List<Podcast> podcasts = new ArrayList<>();
-
-                                for (int i=0; i<jsonArray.size(); i++) {
-                                    System.out.println(i);
-                                    ReadOnlyJsonObject o = jsonArray.getObject(i);
-                                    Podcast p = new Podcast(o);
-                                    podcasts.add(p);
-                                }
-
-                                Platform.runLater(() -> FXHome.podcasts.setAll(podcasts));
-                            });
-                });
+    public static void loadPodcasts(ViewDomainActivityBase activity) {
+        ReactiveEntitiesMapper.<Podcast>createPushReactiveChain(activity)
+                .always("{class: 'Podcast', fields:'channel, channelPodcastId, date, title, excerpt, imageUrl, audioUrl', orderBy: 'date desc'}")
+                .storeEntitiesInto(FXHome.podcasts)
+                .start();
     }
 }

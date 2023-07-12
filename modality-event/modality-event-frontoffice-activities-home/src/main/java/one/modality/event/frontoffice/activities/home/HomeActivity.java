@@ -8,15 +8,13 @@ import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import dev.webfx.stack.session.state.client.fx.FXUserId;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
+import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.frontoffice.entities.Center;
-import one.modality.base.frontoffice.entities.News;
-import one.modality.base.frontoffice.entities.Podcast;
 import one.modality.base.frontoffice.fx.FXAccount;
 import one.modality.base.frontoffice.fx.FXApp;
 import one.modality.base.frontoffice.fx.FXHome;
@@ -75,7 +73,7 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
             System.out.println("Size of the matches: " + FXApp.centers.size());
         });
 
-        FXHome.news.addListener((ListChangeListener<News>) change -> {
+        FXHome.news.addListener((InvalidationListener) change -> {
             newsContainer.getChildren().clear();
 
             FXHome.news.forEach(n -> {
@@ -83,7 +81,7 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
             });
         });
 
-        FXHome.podcasts.addListener((ListChangeListener<Podcast>) change -> {
+        FXHome.podcasts.addListener((InvalidationListener) change -> {
             podcastContainer.getChildren().clear();
 
             FXHome.podcasts.forEach(p -> {
@@ -99,8 +97,8 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
         rebuild();
 
         FXProperties.runNowAndOnPropertiesChange(e -> {
-            HomeUtility.loadPodcasts();
-            HomeUtility.loadNews();
+            HomeUtility.loadPodcasts(this);
+            HomeUtility.loadNews(this);
         }, I18n.dictionaryProperty());
 
         FXProperties.runOnPropertiesChange(() -> GeneralUtility.screenChangeListened(page.getWidth()), page.widthProperty());
@@ -111,8 +109,8 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
     @Override
     protected void startLogic() {
         HomeUtility.loadCenters(FXApp.centersRef);
-        HomeUtility.loadNews();
-        HomeUtility.loadPodcasts();
+        HomeUtility.loadNews(this);
+        HomeUtility.loadPodcasts(this);
         NewsReader.fetch(getDataSourceModel());
         PodcastReader.fetch(getDataSourceModel());
 

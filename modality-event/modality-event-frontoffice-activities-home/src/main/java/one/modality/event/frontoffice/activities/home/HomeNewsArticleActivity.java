@@ -29,7 +29,7 @@ public class HomeNewsArticleActivity extends ViewDomainActivityBase implements O
             else wv.getEngine().getHistory().go(-1);
         });
 
-        wv.getEngine().load(FXHome.article.get().url);
+        wv.getEngine().load(FXHome.article.get().getLinkUrl());
 
         StackPane.setAlignment(button, Pos.TOP_LEFT);
         StackPane.setMargin(button, new Insets(10));

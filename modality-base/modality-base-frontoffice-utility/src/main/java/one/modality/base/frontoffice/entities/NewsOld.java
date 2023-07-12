@@ -7,21 +7,24 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
-public class Podcast {
+public class NewsOld {
     public String title;
-    public String excerpt;
-    public String image;
-    public String link;
+    public String content;
     public String date;
+    public String excerpt;
+    public String mediaId;
+    public String url;
 
-    public Podcast(ReadOnlyJsonObject o) {
+    public NewsOld(ReadOnlyJsonObject o) {
         title = o.getObject("title").getString("rendered");
-        excerpt = o.getObject("excerpt").getString("rendered");
-        image = o.getString("episode_featured_image");
-        link = o.getString("player_link");
+        content = o.getObject("content").getString("rendered");
         date = o.getString("date");
+        excerpt = o.getObject("excerpt").getString("rendered");
+        mediaId = o.getString("featured_media");
+
         LocalDateTime localDateTime = Dates.parseIsoLocalDateTime(date);
         date = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).format(localDateTime);
-    }
 
+        url = o.getObject("guid").getString("rendered");
+    }
 }

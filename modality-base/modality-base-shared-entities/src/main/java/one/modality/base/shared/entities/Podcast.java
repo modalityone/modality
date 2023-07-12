@@ -61,7 +61,7 @@ public interface Podcast extends EntityHasDate {
         setFieldValue("audioUrl", audioUrl);
     }
 
-    default String getAudioUrl(String playerLink) {
+    default String getAudioUrl() {
         return getStringFieldValue("audioUrl");
     }
 
