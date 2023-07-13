@@ -122,6 +122,13 @@ public class PodcastView {
                     int secondsTotal = (int) Math.floor(playerProperty.get().currentTimeProperty().get().toSeconds());
                     int minutesTotal = (int) Math.floor(playerProperty.get().currentTimeProperty().get().toMinutes());
                     current.setText(String.format("%02d:%02d", minutesTotal, (secondsTotal - minutesTotal*60)));
+
+                    if (playerProperty.get().getCurrentTime().greaterThanOrEqualTo(playerProperty.get().getMedia().getDuration())) {
+                        pause.setVisible(false);
+                        play.setVisible(true);
+                        playerProperty.get().pause();
+                        playerProperty.get().seek(new Duration(0));
+                    }
                 });
 
                 playerProperty.get().statusProperty().addListener(change -> {
