@@ -25,6 +25,7 @@ import java.time.format.FormatStyle;
 
 public class PodcastView {
     private Podcast podcast;
+    private Node view;
 
     public PodcastView(Podcast podcast) {
         this.podcast = podcast;
@@ -64,7 +65,11 @@ public class PodcastView {
         bar.addEventHandler(MouseEvent.MOUSE_DRAGGED, onClickAndOnDragHandler);
     }
 
-    public Node getView(VBox page) {
+    public Node getView() {
+        return view;
+    }
+
+    public void buildView(VBox page) {
         System.out.println(podcast.getTitle());
         Text t = TextUtility.getMainText(podcast.getTitle().toUpperCase(), StyleUtility.MAIN_BLUE);
         String date = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).format(podcast.getDate());
@@ -161,6 +166,6 @@ public class PodcastView {
                 GeneralUtility.createSpace(20));
         hList.maxWidthProperty().bind(page.widthProperty());
 
-        return podcastBanner;
+        view = podcastBanner;
     }
 }
