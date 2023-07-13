@@ -2,6 +2,8 @@ package one.modality.event.frontoffice.activities.home.views;
 
 import dev.webfx.kit.util.properties.FXProperties;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ProgressBar;
@@ -22,6 +24,7 @@ import one.modality.base.shared.entities.Podcast;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PodcastView {
     private Podcast podcast;
@@ -70,11 +73,11 @@ public class PodcastView {
     }
 
     public void buildView(VBox page) {
-        System.out.println(podcast.getTitle());
         Text t = TextUtility.getMainText(podcast.getTitle().toUpperCase(), StyleUtility.MAIN_BLUE);
         String date = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).format(podcast.getDate());
         Text d = TextUtility.getSubText(date);
         Text c = TextUtility.getMainText(podcast.getExcerpt(), StyleUtility.VICTOR_BATTLE_BLACK);
+        AtomicBoolean isPlayed = new AtomicBoolean(false);
 
         Image img = new Image(podcast.getImageUrl().replace("\\", ""), true);
         ImageView imgV = new ImageView(img);
@@ -83,66 +86,71 @@ public class PodcastView {
         imgV.setPreserveRatio(true);
 
         FXProperties.runNowAndOnPropertiesChange(() -> imgV.setFitWidth(100* FXApp.fontRatio.get()), FXApp.fontRatio);
-
-        MediaPlayer player = new MediaPlayer(new Media(podcast.getAudioUrl().replace("\\", "")));
-
+        
         StackPane playHolder = new StackPane();
         Pane play = PodcastButtons.createPlayButton();
         Pane pause = PodcastButtons.createPauseButton();
 
-        playHolder.getChildren().addAll(play, pause);
+        playHolder.getChildren().addAll(pause, play);
 
         Pane forward = PodcastButtons.createForwardButton();
         Pane backward = PodcastButtons.createBackwardButton();
 
-        ProgressBar bar = new ProgressBar();
-        Text duration = TextUtility.getSubText("", StyleUtility.ELEMENT_GRAY);
+        ProgressBar bar = new ProgressBar(0);
+        Text duration = TextUtility.getSubText(String.valueOf(podcast.getDurationMillis()), StyleUtility.ELEMENT_GRAY);
+
+        int secondsTotalDuration = (int) Math.floor((double) podcast.getDurationMillis() /1000);
+        int minutesTotalDuration = (int) Math.floor((double) podcast.getDurationMillis() /60000);
+        duration.setText(String.format("/ %02d:%02d", minutesTotalDuration, (secondsTotalDuration - minutesTotalDuration*60)));
+
         Text current = TextUtility.getSubText("00:00", StyleUtility.ELEMENT_GRAY);
 
         TextUtility.setFontFamily(duration, StyleUtility.CLOCK_FAMILY, 9);
         TextUtility.setFontFamily(current, StyleUtility.CLOCK_FAMILY, 9);
 
-        player.getMedia().durationProperty().addListener(e -> {
-            int secondsTotal = (int) Math.floor(player.getMedia().durationProperty().get().toSeconds());
-            int minutesTotal = (int) Math.floor(player.getMedia().durationProperty().get().toMinutes());
-            duration.setText(String.format("/ %02d:%02d", minutesTotal, (secondsTotal - minutesTotal*60)));
-        });
-
-        player.currentTimeProperty().addListener(e -> {
-            int secondsTotal = (int) Math.floor(player.currentTimeProperty().get().toSeconds());
-            int minutesTotal = (int) Math.floor(player.currentTimeProperty().get().toMinutes());
-            current.setText(String.format("%02d:%02d", minutesTotal, (secondsTotal - minutesTotal*60)));
-        });
-
         javafx.scene.Node barContainer = GeneralUtility.createVList(5,0, bar,
                 GeneralUtility.createHList(5, 0, current, duration)
         );
 
-        bindProgress(player, bar);
-        addSeekBehavior(player, bar);
+        ObjectProperty<MediaPlayer> playerProperty = new SimpleObjectProperty<>();
+        
+        playHolder.setOnMouseClicked(me -> {
+            if (!isPlayed.get()) {
+                playerProperty.set(new MediaPlayer(new Media(podcast.getAudioUrl().replace("\\", ""))));
 
-        playHolder.setOnMouseClicked(e -> {
-            if (!player.getStatus().equals(MediaPlayer.Status.PLAYING)) {
-                if (FXHome.player != null) FXHome.player.pause();
-                FXHome.player = player;
-                player.play();
-            } else {
-                player.pause();
+                playerProperty.get().currentTimeProperty().addListener(e -> {
+                    int secondsTotal = (int) Math.floor(playerProperty.get().currentTimeProperty().get().toSeconds());
+                    int minutesTotal = (int) Math.floor(playerProperty.get().currentTimeProperty().get().toMinutes());
+                    current.setText(String.format("%02d:%02d", minutesTotal, (secondsTotal - minutesTotal*60)));
+                });
+
+                playerProperty.get().statusProperty().addListener(change -> {
+                    boolean isPlay = playerProperty.get().getStatus().equals(MediaPlayer.Status.PLAYING);
+                    pause.setVisible(isPlay);
+                    play.setVisible(!isPlay);
+                });
+
+                forward.setOnMouseClicked(e -> {
+                    playerProperty.get().seek(playerProperty.get().getCurrentTime().add(Duration.seconds(30)));
+                });
+
+                backward.setOnMouseClicked(e -> {
+                    playerProperty.get().seek(playerProperty.get().getCurrentTime().subtract(Duration.seconds(10)));
+                });
+
+                bindProgress(playerProperty.get(), bar);
+                addSeekBehavior(playerProperty.get(), bar);
             }
-        });
+            
+            if (!isPlayed.get() || !playerProperty.get().getStatus().equals(MediaPlayer.Status.PLAYING)) {
+                if (FXHome.player != null) FXHome.player.pause();
+                FXHome.player = playerProperty.get();
+                playerProperty.get().play();
+            } else {
+                playerProperty.get().pause();
+            }
 
-        forward.setOnMouseClicked(e -> {
-            player.seek(player.getCurrentTime().add(Duration.seconds(30)));
-        });
-
-        backward.setOnMouseClicked(e -> {
-            player.seek(player.getCurrentTime().subtract(Duration.seconds(10)));
-        });
-
-        player.statusProperty().addListener(change -> {
-            boolean isPlay = player.getStatus().equals(MediaPlayer.Status.PLAYING);
-            pause.setVisible(isPlay);
-            play.setVisible(!isPlay);
+            isPlayed.set(true);
         });
 
         BorderPane borderPane = new BorderPane();

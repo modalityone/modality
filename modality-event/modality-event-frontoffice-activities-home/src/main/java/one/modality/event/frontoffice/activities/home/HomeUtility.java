@@ -51,7 +51,7 @@ public class HomeUtility {
 
     public static void loadPodcasts(ViewDomainActivityBase activity, ObservableList<Node> podcastViews, VBox page) {
         ReactiveObjectsMapper.<Podcast, Node>createPushReactiveChain(activity)
-                .always("{class: 'Podcast', fields:'channel, channelPodcastId, date, title, excerpt, imageUrl, audioUrl', orderBy: 'date desc'}")
+                .always("{class: 'Podcast', fields:'channel, channelPodcastId, date, title, excerpt, imageUrl, audioUrl, durationMillis', orderBy: 'date desc'}")
                 .always(FXHome.podcastLimit, limit -> DqlStatement.limit("?", limit))
                 .setIndividualEntityToObjectMapperFactory(podcast -> new PodcastToPodcastViewMapper(page, podcast))
                 .storeMappedObjectsInto(podcastViews)
