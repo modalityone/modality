@@ -12,6 +12,7 @@ import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -22,7 +23,6 @@ import one.modality.base.frontoffice.fx.FXHome;
 import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.base.frontoffice.utility.StyleUtility;
 import one.modality.base.frontoffice.utility.SvgUtility;
-import one.modality.base.frontoffice.utility.TextUtility;
 import one.modality.base.shared.entities.Organization;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
@@ -78,54 +78,54 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
         FXHome.news.addListener((InvalidationListener) change -> {
             newsContainer.getChildren().clear();
 
-            Button newsLoadMore = GeneralUtility.createButton(Color.web(StyleUtility.ELEMENT_GRAY), 4, "Load more", StyleUtility.MAIN_TEXT_SIZE);
-            newsLoadMore.setOnAction(e -> {
-                FXHome.newsLimit.set(FXHome.newsLimit.get() + 3);
-                HomeUtility.loadNews(this);
-            });
             FXHome.news.forEach(n -> {
-                newsContainer.getChildren().add(new NewsView(n).getView(page, this, this));
+                NewsView nv = new NewsView(n);
+                nv.buildView(page, this, this);
+                newsContainer.getChildren().add(nv.getView());
             });
-
-            newsContainer.getChildren().addAll(
-                    GeneralUtility.createSpace(20),
-                    GeneralUtility.centerNode(newsLoadMore),
-                    GeneralUtility.createSpace(20)
-
-            );
         });
 
         FXHome.podcasts.addListener((InvalidationListener) change -> {
             podcastContainer.getChildren().clear();
 
-            Button podcastLoadMore = GeneralUtility.createButton(Color.web(StyleUtility.ELEMENT_GRAY), 4, "Load more", StyleUtility.MAIN_TEXT_SIZE);
-
-            podcastLoadMore.setOnAction(e -> {
-                FXHome.podcastLimit.set(FXHome.podcastLimit.get() + 3);
-                HomeUtility.loadPodcasts(this);
-            });
 
             FXHome.podcasts.forEach(p -> {
-                podcastContainer.getChildren().add(new PodcastView(p).getView(page));
+                PodcastView pv = new PodcastView(p);
+                pv.buildView(page);
+                podcastContainer.getChildren().add(new PodcastView(p).getView());
             });
-
-            podcastContainer.getChildren().addAll(
-                    GeneralUtility.createSpace(20),
-                    GeneralUtility.centerNode(podcastLoadMore),
-                    GeneralUtility.createSpace(20)
-            );
         });
+
+        Button newsLoadMore = GeneralUtility.createButton(Color.web(StyleUtility.ELEMENT_GRAY), 4, "Load more", StyleUtility.MAIN_TEXT_SIZE);
+        newsLoadMore.setOnAction(e -> {
+            FXHome.newsLimit.set(FXHome.newsLimit.get() + 3);
+        });
+
+        Button podcastLoadMore = GeneralUtility.createButton(Color.web(StyleUtility.ELEMENT_GRAY), 4, "Load more", StyleUtility.MAIN_TEXT_SIZE);
+
+        podcastLoadMore.setOnAction(e -> {
+            FXHome.podcastLimit.set(FXHome.podcastLimit.get() + 3);
+        });
+
+        Label podcastLabel = GeneralUtility.createLabel(Color.web(StyleUtility.MAIN_BLUE), "Kadampa Podcast", 21);
+        podcastLabel.graphicProperty().set(GeneralUtility.createSvgPath(SvgUtility.KADAMPA_PODCAST, StyleUtility.MAIN_BLUE));
+
 
         page.getChildren().addAll(
                 newsContainer,
+                GeneralUtility.createSpace(20),
+                GeneralUtility.centerNode(newsLoadMore),
+                GeneralUtility.createSpace(20),
                 GeneralUtility.createSpace(100),
                 GeneralUtility.centerNode(
-                    GeneralUtility.createHList(10, 0,
-                                GeneralUtility.createSvgPath(SvgUtility.KADAMPA_PODCAST, StyleUtility.MAIN_BLUE),
-                                TextUtility.getText("Kadampa Podcast", 21, StyleUtility.MAIN_BLUE))
+                    GeneralUtility.centerNode(podcastLabel)
                 ),
                 GeneralUtility.createSpace(50),
-                podcastContainer);
+                podcastContainer,
+                GeneralUtility.createSpace(20),
+                GeneralUtility.centerNode(podcastLoadMore),
+                GeneralUtility.createSpace(20)
+        );
     }
 
     @Override
@@ -133,8 +133,8 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
         rebuild();
 
         FXProperties.runNowAndOnPropertiesChange(e -> {
-            HomeUtility.loadPodcasts(this);
-            HomeUtility.loadNews(this);
+            HomeUtility.loadPodcasts(this, podcastContainer.getChildren(), page);
+            HomeUtility.loadNews(this, newsContainer.getChildren(), page);
         }, I18n.dictionaryProperty());
 
         FXProperties.runOnPropertiesChange(() -> GeneralUtility.screenChangeListened(page.getWidth()), page.widthProperty());
@@ -145,8 +145,6 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
     @Override
     protected void startLogic() {
         HomeUtility.loadCenters(FXApp.centersRef);
-        HomeUtility.loadNews(this);
-        HomeUtility.loadPodcasts(this);
 
         ReactiveEntitiesMapper.<Organization>createPushReactiveChain(this)
                 .always("{class: 'Organization', fields:'name, country, type, closed'}")
