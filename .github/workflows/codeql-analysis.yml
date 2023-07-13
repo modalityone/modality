@@ -1,0 +1,25 @@
+name: CodeQL code security analysis
+
+on: [push]
+
+jobs:
+  CodeQL-Build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: javascript,java
+
+      - name: Build with Maven
+        run: mvn package -B -P 'vertx-fatjar,gwt-compile'
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
