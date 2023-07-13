@@ -26,8 +26,10 @@
         <plugin-module>webfx-stack-authn-server-gateway-mojoauth</plugin-module>
 
         <!-- Temporary specific modules (will be moved to KBS3) -->
+<!-- Commented during the development phase on local machines
         <plugin-module>modality-base-server-podcastsimport</plugin-module>
         <plugin-module>modality-base-server-newsimport</plugin-module>
+-->
 
     </dependencies>
 
