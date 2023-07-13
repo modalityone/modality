@@ -13,6 +13,9 @@ import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import one.modality.base.shared.entities.Podcast;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Objects;
 
 /**
@@ -68,9 +71,16 @@ public class PodcastsImportJob implements ApplicationJob {
                                                 p.setChannelPodcastId(id);
                                                 p.setTitle(getRendered(podcastJson.getObject("title")));
                                                 p.setExcerpt(getRendered(podcastJson.getObject("excerpt")));
-                                                p.setDate(Dates.parseIsoLocalDate(podcastJson.getString("date")));
-                                                p.setAudioUrl(cleanUrl(podcastJson.getString("player_link")));
+                                                p.setDate(LocalDate.from(Dates.parseIsoLocalDateTime(podcastJson.getString("date"))));
                                                 p.setImageUrl(cleanUrl(podcastJson.getString("episode_featured_image")));
+                                                p.setAudioUrl(cleanUrl(podcastJson.getString("player_link")));
+                                                try {
+                                                    String durationText = podcastJson.getObject("meta").getString("duration");
+                                                    Duration duration = Duration.between(LocalTime.MIN, LocalTime.parse(durationText));
+                                                    p.setDurationMillis(duration.toMillis());
+                                                } catch (Exception e) {
+                                                    Console.log("WARNING: No or wrong duration for podcast " + id);
+                                                }
                                             }
 
                                             updateStore.submitChanges()

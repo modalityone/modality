@@ -65,4 +65,13 @@ public interface Podcast extends EntityHasDate {
         return getStringFieldValue("audioUrl");
     }
 
+
+    default void setDurationMillis(Long durationMillis) {
+        setFieldValue("durationMillis", durationMillis);
+    }
+
+    default long getDurationMillis() {
+        return getLongFieldValue("durationMillis");
+    }
+
 }

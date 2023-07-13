@@ -95,7 +95,7 @@ public class NewsImportJob implements ApplicationJob {
                                                         }
 
                                                         updateStore.submitChanges()
-                                                                .onFailure(e -> Console.log("Error while inserting podcasts in database", e))
+                                                                .onFailure(e -> Console.log("Error while inserting news in database", e))
                                                                 .onSuccess(insertBatch -> {
                                                                     int newNewsCount = insertBatch.getArray().length;
                                                                     Console.log(newNewsCount + " new news imported in database");
