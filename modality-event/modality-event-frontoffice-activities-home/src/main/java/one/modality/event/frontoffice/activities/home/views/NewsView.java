@@ -23,12 +23,17 @@ import java.time.format.FormatStyle;
 
 public class NewsView {
     News news;
+    Node view;
 
     public NewsView(News news) {
         this.news = news;
     }
 
-    public Node getView(VBox page, OperationActionFactoryMixin activityOperation, ViewDomainActivityBase activityBase) {
+    public Node getView() {
+        return view;
+    }
+
+    public void buildView(VBox page, OperationActionFactoryMixin activityOperation, ViewDomainActivityBase activityBase) {
         Text t = TextUtility.getMainText(news.getTitle().toUpperCase(), StyleUtility.MAIN_BLUE);
         String date = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).format(news.getDate());
 
@@ -62,6 +67,6 @@ public class NewsView {
         HBox newsBanner = GeneralUtility.createHList(10, 0, imgV, vList);
         newsBanner.maxWidthProperty().bind(page.widthProperty());
 
-        return newsBanner;
+        view = newsBanner;
     }
 }

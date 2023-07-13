@@ -13,6 +13,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -246,6 +247,18 @@ public class GeneralUtility {
         }, FXApp.fontRatio);
 
         return b;
+    }
+
+    public static Label createLabel(Color color, String label, double fontSize) {
+        Label l = new Label(label);
+        l.setTextFill(color);
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            double size = fontSize * FXApp.fontRatio.get();
+            l.setFont(Font.font(StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), size));
+            l.setStyle("-fx-font-family: " + StyleUtility.TEXT_FAMILY + "; -fx-font-size: " + size);
+        }, FXApp.fontRatio);
+
+        return l;
     }
 
     public static SVGPath createSvgPath(String content, String color) {
