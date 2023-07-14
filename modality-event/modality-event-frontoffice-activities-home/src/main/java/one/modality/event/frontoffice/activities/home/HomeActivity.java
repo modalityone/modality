@@ -88,7 +88,6 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
         FXHome.podcasts.addListener((InvalidationListener) change -> {
             podcastContainer.getChildren().clear();
 
-
             FXHome.podcasts.forEach(p -> {
                 PodcastView pv = new PodcastView(p);
                 pv.buildView(page);
@@ -102,14 +101,12 @@ public class HomeActivity extends ViewDomainActivityBase implements OperationAct
         });
 
         Button podcastLoadMore = GeneralUtility.createButton(Color.web(StyleUtility.ELEMENT_GRAY), 4, "Load more", StyleUtility.MAIN_TEXT_SIZE);
-
         podcastLoadMore.setOnAction(e -> {
             FXHome.podcastLimit.set(FXHome.podcastLimit.get() + 3);
         });
 
         Label podcastLabel = GeneralUtility.createLabel(Color.web(StyleUtility.MAIN_BLUE), "Kadampa Podcast", 21);
         podcastLabel.graphicProperty().set(GeneralUtility.createSvgPath(SvgUtility.KADAMPA_PODCAST, StyleUtility.MAIN_BLUE));
-
 
         page.getChildren().addAll(
                 newsContainer,
