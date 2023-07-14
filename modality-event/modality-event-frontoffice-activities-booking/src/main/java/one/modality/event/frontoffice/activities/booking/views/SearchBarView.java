@@ -4,15 +4,15 @@ import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import one.modality.base.frontoffice.fx.FXAccount;
 import one.modality.base.frontoffice.fx.FXBooking;
 import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.base.frontoffice.utility.StyleUtility;
+import one.modality.base.frontoffice.utility.SvgUtility;
 import one.modality.base.frontoffice.utility.TextUtility;
 import one.modality.base.shared.entities.Organization;
 import one.modality.event.frontoffice.activities.booking.BookingUtility;
@@ -24,11 +24,21 @@ public class SearchBarView {
         StackPane sp = new StackPane();
 
         BorderPane searchContainer = new BorderPane();
-        Button search = new Button("Search");
-        searchContainer.setRight(search);
+        Label searchOpener = new Label();
+        searchOpener.graphicProperty().set(GeneralUtility.createSvgPath(SvgUtility.SEARCH_ICON, StyleUtility.VICTOR_BATTLE_BLACK));
+        searchContainer.setRight(searchOpener);
+
+        searchOpener.setOnMouseClicked(e -> FXBooking.searchDisplayProperty.set(!FXBooking.searchDisplayProperty.get()));
 
         TextField searchBar = GeneralUtility.createBindedTextField(FXBooking.keywordsSearchProperty, -1);
         searchBar.setPromptText("Enter city");
+        Button search = new Button("Search");
+
+        Node searchBarContainer = GeneralUtility.createHList(5, 0,
+                searchBar, search
+                );
+
+        HBox.setHgrow(searchBar, Priority.ALWAYS);
 
         search.setOnMouseClicked(e -> {
             FXBooking.countryProperty.set("United States");
@@ -66,9 +76,16 @@ public class SearchBarView {
         );
 
         container.getChildren().addAll(sp, clear,
-                GeneralUtility.createSpace(20),
-                searchBar
+                GeneralUtility.createSpace(20)
         );
+
+        FXBooking.searchDisplayProperty.addListener(c -> {
+            if (FXBooking.searchDisplayProperty.get()) {
+                container.getChildren().add(searchBarContainer);
+            } else {
+                container.getChildren().remove(searchBarContainer);
+            }
+        });
 
         return container;
     }

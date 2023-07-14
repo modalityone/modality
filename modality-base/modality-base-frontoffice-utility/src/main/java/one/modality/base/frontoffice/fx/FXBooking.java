@@ -1,10 +1,7 @@
 package one.modality.base.frontoffice.fx;
 
 
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -22,6 +19,8 @@ public class FXBooking {
     public final static StringProperty cityProperty = new SimpleStringProperty("");
     public final static StringProperty keywordsSearchProperty = new SimpleStringProperty("");
     public final static StringProperty centerImageProperty = new SimpleStringProperty("");
+
+    public final static BooleanProperty searchDisplayProperty = new SimpleBooleanProperty(false);
 
     static {
         localCenterEvents.addListener((ListChangeListener<Event>) change -> {
