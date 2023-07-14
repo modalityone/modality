@@ -4,6 +4,7 @@ import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -25,7 +26,9 @@ public class SearchBarView {
         BorderPane searchContainer = new BorderPane();
         Button search = new Button("Search");
         searchContainer.setRight(search);
-        searchContainer.setTop(GeneralUtility.createField("City", GeneralUtility.createBindedTextField(FXBooking.keywordsSearchProperty, -1)));
+
+        TextField searchBar = GeneralUtility.createBindedTextField(FXBooking.keywordsSearchProperty, -1);
+        searchBar.setPromptText("Enter city");
 
         search.setOnMouseClicked(e -> {
             FXBooking.countryProperty.set("United States");
@@ -62,7 +65,10 @@ public class SearchBarView {
                 searchContainer
         );
 
-        container.getChildren().addAll(sp, clear);
+        container.getChildren().addAll(sp, clear,
+                GeneralUtility.createSpace(20),
+                searchBar
+        );
 
         return container;
     }
