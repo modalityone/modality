@@ -7,6 +7,7 @@ import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
@@ -20,6 +21,7 @@ import one.modality.base.frontoffice.fx.FXBooking;
 import one.modality.base.frontoffice.states.BookingPM;
 import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.base.frontoffice.utility.StyleUtility;
+import one.modality.base.frontoffice.utility.SvgUtility;
 import one.modality.base.frontoffice.utility.TextUtility;
 import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Organization;
@@ -27,7 +29,7 @@ import one.modality.base.shared.entities.Organization;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
 public class CenterDisplayView {
-    public Node getView(ButtonFactoryMixin factoryMixin, ViewDomainActivityBase activityBase) {
+    public Node getView(VBox page, ButtonFactoryMixin factoryMixin, ViewDomainActivityBase activityBase) {
         if (FXAccount.ownerPM.PERSON == null) return new VBox();
 
         VBox container = new VBox();
@@ -64,16 +66,25 @@ public class CenterDisplayView {
         map.setPreserveRatio(true);
         FXProperties.runNowAndOnPropertiesChange(() -> map.setFitWidth(container.getWidth() * 0.25), container.widthProperty());
 
-        Text address = TextUtility.getSubText("Manjushri Kadampa Meditation Centre Conishead Priory, Ulverston LA12 9QQ", StyleUtility.RUPAVAJRA_WHITE);
-        address.setWrappingWidth(100);
+        Label addressWeb = GeneralUtility.createLabel(Color.web(StyleUtility.RUPAVAJRA_WHITE), "manjushri.org", StyleUtility.SUB_TEXT_SIZE);
+        addressWeb.graphicProperty().set(GeneralUtility.createSvgPath(SvgUtility.ADDRESS_WEB, StyleUtility.RUPAVAJRA_WHITE));
+
+        Label addressLocation = GeneralUtility.createLabel(Color.web(StyleUtility.RUPAVAJRA_WHITE), "Manjushri Kadampa Meditation Centre Conishead Priory, Ulverston LA12 9QQ", StyleUtility.SUB_TEXT_SIZE);
+        addressLocation.graphicProperty().set(GeneralUtility.createSvgPath(SvgUtility.ADDRESS_LOCATION, StyleUtility.RUPAVAJRA_WHITE));
+
+        Label addressPhone = GeneralUtility.createLabel(Color.web(StyleUtility.RUPAVAJRA_WHITE), "+44 (0)1229 584029", StyleUtility.SUB_TEXT_SIZE);
+        addressPhone.graphicProperty().set(GeneralUtility.createSvgPath(SvgUtility.ADDRESS_PHONE, StyleUtility.RUPAVAJRA_WHITE));
+
+        Label addressEmail = GeneralUtility.createLabel(Color.web(StyleUtility.RUPAVAJRA_WHITE), "info@manjushri.org", StyleUtility.SUB_TEXT_SIZE);
+        addressEmail.graphicProperty().set(GeneralUtility.createSvgPath(SvgUtility.ADDRESS_EMAIL, StyleUtility.RUPAVAJRA_WHITE));
 
         Node location = GeneralUtility.createSplitRow(
                 map,
                 GeneralUtility.createVList(5, 0,
-                        TextUtility.getSubText("manjushri.org", StyleUtility.RUPAVAJRA_WHITE),
-                        address,
-                        TextUtility.getSubText("+44 (0)1229 584029", StyleUtility.RUPAVAJRA_WHITE),
-                        TextUtility.getSubText("info@manjushri.org", StyleUtility.RUPAVAJRA_WHITE)
+                        addressWeb,
+                        addressLocation,
+                        addressPhone,
+                        addressEmail
                 ),50, 10
         );
 
@@ -84,13 +95,12 @@ public class CenterDisplayView {
         });
         changeLocation.setTextAlignment(TextAlignment.CENTER);
 
-        Text localCenterText = TextUtility.getMainText(FXAccount.ownerPM.LOCAL_CENTER.getValue().getName(), StyleUtility.VICTOR_BATTLE_BLACK);
-        localCenterText.setWrappingWidth(200);
+        Label localCenterText = GeneralUtility.createLabel(Color.web(StyleUtility.VICTOR_BATTLE_BLACK), FXAccount.ownerPM.LOCAL_CENTER.getValue().getName(), StyleUtility.MAIN_TEXT_SIZE);
         localCenterText.setTextAlignment(TextAlignment.CENTER);
 
         container.getChildren().addAll(
                 TextUtility.getSubText("Your Country", StyleUtility.RUPAVAJRA_WHITE),
-                BookingPM.CHANGE_CENTER.get() ? countriesButtonSelector.getButton() : TextUtility.getMainText(FXAccount.ownerPM.ADDRESS_COUNTRY.getValue().getName(), StyleUtility.VICTOR_BATTLE_BLACK),
+                BookingPM.CHANGE_CENTER.get() ? countriesButtonSelector.getButton() : GeneralUtility.createLabel(Color.web(StyleUtility.VICTOR_BATTLE_BLACK), FXAccount.ownerPM.ADDRESS_COUNTRY.getValue().getName(), StyleUtility.MAIN_TEXT_SIZE),
                 GeneralUtility.createSpace(20),
                 TextUtility.getSubText("Your Local Dharma Center", StyleUtility.RUPAVAJRA_WHITE),
                 BookingPM.CHANGE_CENTER.get() ? centersButtonSelector.getButton() : localCenterText,
@@ -103,6 +113,8 @@ public class CenterDisplayView {
         container.setBackground(Background.fill(Color.web(StyleUtility.MAIN_BLUE)));
         container.setPadding(new Insets(35));
         container.setAlignment(Pos.CENTER);
+
+        container.maxWidthProperty().bind(page.widthProperty());
 
         return container;
     }

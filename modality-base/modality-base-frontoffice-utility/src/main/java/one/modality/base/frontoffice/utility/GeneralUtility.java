@@ -258,6 +258,8 @@ public class GeneralUtility {
             l.setStyle("-fx-font-family: " + StyleUtility.TEXT_FAMILY + "; -fx-font-size: " + size);
         }, FXApp.fontRatio);
 
+        l.wrapTextProperty().set(true);
+
         return l;
     }
 

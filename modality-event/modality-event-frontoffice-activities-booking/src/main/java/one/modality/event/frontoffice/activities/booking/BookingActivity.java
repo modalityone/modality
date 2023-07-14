@@ -49,7 +49,7 @@ public class BookingActivity extends ViewDomainActivityBase implements ButtonFac
 
     private void rebuildCenterDisplay() {
         centerContainer.getChildren().clear();
-        centerContainer.getChildren().add(new CenterDisplayView().getView(this,this));
+        centerContainer.getChildren().add(new CenterDisplayView().getView(container, this,this));
     }
 
     public void rebuildSearchBar() {
