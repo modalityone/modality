@@ -2,8 +2,10 @@ package one.modality.hotel.backoffice.activities.accommodation;
 
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.stack.db.submit.SubmitResult;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.Entities;
+import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import javafx.collections.FXCollections;
 import javafx.scene.control.*;
@@ -17,6 +19,8 @@ import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.hotel.backoffice.accommodation.AttendeeCategory;
 import one.modality.hotel.backoffice.accommodation.ResourceConfigurationLoader;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,25 +30,35 @@ import java.util.stream.Stream;
 
 public class AlterRoomPane extends VBox {
 
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-uu");
     private static final FontDef DETAIL_FONT = FontDef.font(FontWeight.NORMAL, 12);
 
+    private EntityButtonSelector<Item> roomTypeSelector;
     private TextField roomNameTextField;
     private ComboBox<Integer> bedsInRoomComboBox;
     private Map<AttendeeCategory, CheckBox> attendeeCategoryCheckBoxMap = new HashMap<>();
     private TextField fromDateField;
     private TextField toDateField;
 
+    private Button createButton;
+    private Button updateButton;
     private Button deleteButton;
-    private Button saveButton;
+    private Button deleteRoomButton;
+
+    private ResourceConfiguration rc;
 
     public AlterRoomPane(ResourceConfiguration rc, AccommodationActivity activity, ResourceConfigurationLoader resourceConfigurationLoader) {
+        this.rc = rc;
         HBox detailsRow = new HBox(createHeadingLabel("Details"), createDetailsGrid(rc, activity));
         Label availabilityLabel = createHeadingLabel("Availability");
         GridPane availabilityGrid = createAvailabilityGrid(rc, resourceConfigurationLoader);
 
-        deleteButton = new Button("Delete room");
-        saveButton = new Button("Save");
-        HBox buttonPane = new HBox(deleteButton, saveButton);
+        createButton = new Button("Create");
+        createButton.setOnAction(e -> create());
+        updateButton = new Button("Update");
+        deleteButton = new Button("Delete");
+        deleteRoomButton = new Button("Delete room");
+        HBox buttonPane = new HBox(createButton, updateButton, deleteButton, deleteRoomButton);
 
         getChildren().addAll(detailsRow, availabilityLabel, availabilityGrid, buttonPane);
     }
@@ -74,7 +88,7 @@ public class AlterRoomPane extends VBox {
     }
 
     private Button createProductComboBox(ResourceConfiguration rc, AccommodationActivity activity) {
-        EntityButtonSelector<Item> roomTypeSelector = new EntityButtonSelector<Item>(
+        roomTypeSelector = new EntityButtonSelector<Item>(
                 "{class: 'Item', alias: 'i', where: 'family.code=`acco`'}",
                 activity, this, activity.getDataSourceModel()
         )
@@ -172,5 +186,27 @@ public class AlterRoomPane extends VBox {
 
     private Label createHeadingLabel(String text) {
         return new Label(text);
+    }
+
+    private void create() {
+        UpdateStore updateStore = UpdateStore.create(rc.getStore().getDataSourceModel());
+        ResourceConfiguration newRc = updateStore.createEntity(ResourceConfiguration.class);
+        newRc.setResource(rc.getResource());
+        newRc.setItem(roomTypeSelector.getSelectedItem());
+        newRc.setName(roomNameTextField.getText());
+        newRc.setMax(bedsInRoomComboBox.getValue());
+        newRc.setAllowsGuest(attendeeCategoryCheckBoxMap.get(AttendeeCategory.GUEST).isSelected());
+        newRc.setAllowsResident(attendeeCategoryCheckBoxMap.get(AttendeeCategory.RESIDENT).isSelected());
+        newRc.setAllowsResidentFamily(attendeeCategoryCheckBoxMap.get(AttendeeCategory.RESIDENTS_FAMILY).isSelected());
+        newRc.setAllowsSpecialGuest(attendeeCategoryCheckBoxMap.get(AttendeeCategory.SPECIAL_GUEST).isSelected());
+        newRc.setAllowsVolunteer(attendeeCategoryCheckBoxMap.get(AttendeeCategory.VOLUNTEER).isSelected());
+        // TODO set allows female and allows male
+        newRc.setStartDate(LocalDate.parse(fromDateField.getText(), DATE_FORMATTER));
+        newRc.setEndDate(LocalDate.parse(toDateField.getText(), DATE_FORMATTER));
+        updateStore.submitChanges()
+                .onFailure(Throwable::printStackTrace)
+                .onSuccess(result -> {
+                    System.out.println("Success: " + result.getArray().length + " entities inserted.");
+                });
     }
 }

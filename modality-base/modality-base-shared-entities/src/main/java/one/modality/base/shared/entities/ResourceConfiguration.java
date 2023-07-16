@@ -41,6 +41,10 @@ public interface ResourceConfiguration extends Entity,
         return getLocalDateFieldValue("startDate");
     }
 
+    default void setStartDate(LocalDate startDate) {
+        setFieldValue("startDate", startDate);
+    }
+
     default LocalDate getEndDate() {
         return getLocalDateFieldValue("endDate");
     }
@@ -111,5 +115,9 @@ public interface ResourceConfiguration extends Entity,
 
     default Integer getMax() {
         return getIntegerFieldValue("max");
+    }
+
+    default void setMax(int max) {
+        setFieldValue("max", max);
     }
 }
