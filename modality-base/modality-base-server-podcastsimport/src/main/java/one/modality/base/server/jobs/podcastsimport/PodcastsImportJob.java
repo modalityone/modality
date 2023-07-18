@@ -15,6 +15,7 @@ import one.modality.base.shared.entities.Podcast;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Objects;
 
@@ -24,10 +25,10 @@ import java.util.Objects;
 public class PodcastsImportJob implements ApplicationJob {
 
     private static final String PODCAST_FETCH_URL = "https://kadampa.org/wp-json/wp/v2/podcast";
-    private static final int limit = 100;
     private static final long IMPORT_PERIODICITY_MILLIS = 3600 * 1000; // 1h
     private Scheduled importTimer;
     private final DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
+    private LocalDateTime fetchAfterParameter;
 
 
     @Override
@@ -43,21 +44,39 @@ public class PodcastsImportJob implements ApplicationJob {
     }
 
     public void importPodcasts() {
-        String fetchUrl = PODCAST_FETCH_URL + "?per_page=" + limit;
+        // When this job starts, there is no fetchAfterParameter, so we initialize it with the latest podcast date
+        // imported so far in the database.
+        if (fetchAfterParameter == null) {
+            EntityStore.create(dataSourceModel).<Podcast>executeQuery("select id,date from Podcast order by date desc limit 1")
+                    .onFailure(error -> Console.log("Error while reading latest podcast", error))
+                    .onSuccess(podcasts -> {
+                        if (podcasts.isEmpty()) // Means that there is no podcast in the database
+                            fetchAfterParameter = LocalDate.of(2000, 1, 1).atStartOfDay(); // The web service raise an error with dates before 2000
+                        else
+                            fetchAfterParameter = podcasts.get(0).getDate().atStartOfDay();
+                        // Now that fetchAfterParameter is set, we can call importPodcasts() again.
+                        importPodcasts();
+                    });
+            return;
+        }
+        // Creating the final fetch url with the additional query string (note: the number of podcasts returned by the
+        // web service is 10 by default; this could be increased using &per_page=100 - 100 is the maximal value
+        // authorized by the web service)
+        String fetchUrl = PODCAST_FETCH_URL + "?order=asc&after=" + Dates.formatIso(fetchAfterParameter);
         Fetch.fetch(fetchUrl)
                 .onFailure(error -> Console.log("Error while fetching " + fetchUrl, error))
                 .onSuccess(response -> {
                     response.jsonArray()
                             .onFailure(error -> Console.log("Error while parsing json array from " + fetchUrl, error))
                             .onSuccess(podcastsJsonArray -> {
-                                EntityStore entityStore = EntityStore.create(dataSourceModel);
-                                entityStore.<Podcast>executeListQuery("podcasts",
-                                                "select channelPodcastId from Podcast order by date desc limit ?", limit
+                                EntityStore.create(dataSourceModel).<Podcast>executeQuery(
+                                                "select channelPodcastId from Podcast where date >= ? order by date limit ?", fetchAfterParameter, podcastsJsonArray.size()
                                         )
                                         .onFailure(e -> Console.log("Error while reading podcasts from database", e))
                                         .onSuccess(podcasts -> {
 
-                                            UpdateStore updateStore = UpdateStore.createAbove(entityStore);
+                                            UpdateStore updateStore = UpdateStore.createAbove(podcasts.getStore());
+                                            LocalDateTime[] maxPodcastDate = { fetchAfterParameter };
 
                                             for (int i = 0; i < podcastsJsonArray.size(); i++) {
                                                 ReadOnlyJsonObject podcastJson = podcastsJsonArray.getObject(i);
@@ -71,7 +90,10 @@ public class PodcastsImportJob implements ApplicationJob {
                                                 p.setChannelPodcastId(id);
                                                 p.setTitle(getRendered(podcastJson.getObject("title")));
                                                 p.setExcerpt(getRendered(podcastJson.getObject("excerpt")));
-                                                p.setDate(LocalDate.from(Dates.parseIsoLocalDateTime(podcastJson.getString("date"))));
+                                                LocalDateTime dateTime = Dates.parseIsoLocalDateTime(podcastJson.getString("date"));
+                                                if (dateTime.isAfter(maxPodcastDate[0]))
+                                                    maxPodcastDate[0] = dateTime;
+                                                p.setDate(LocalDate.from(dateTime));
                                                 p.setImageUrl(cleanUrl(podcastJson.getString("episode_featured_image")));
                                                 p.setAudioUrl(cleanUrl(podcastJson.getString("player_link")));
                                                 try {
@@ -83,12 +105,17 @@ public class PodcastsImportJob implements ApplicationJob {
                                                 }
                                             }
 
-                                            updateStore.submitChanges()
-                                                    .onFailure(e -> Console.log("Error while inserting podcasts in database", e))
-                                                    .onSuccess(insertBatch -> {
-                                                        int newPodcastsCount = insertBatch.getArray().length;
-                                                        Console.log(newPodcastsCount + " new podcasts imported in database");
-                                                    });
+                                            if (!updateStore.hasChanges())
+                                                Console.log("No new podcasts to import");
+                                            else
+                                                updateStore.submitChanges()
+                                                        .onFailure(e -> Console.log("Error while inserting podcasts in database", e))
+                                                        .onSuccess(insertBatch -> {
+                                                            int newPodcastsCount = insertBatch.getArray().length;
+                                                            Console.log(newPodcastsCount + " new podcasts imported in database");
+                                                            fetchAfterParameter = maxPodcastDate[0];
+                                                            importPodcasts();
+                                                        });
                                         });
                             });
                 });
