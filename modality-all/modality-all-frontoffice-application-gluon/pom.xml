@@ -18,11 +18,6 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-media</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>one.modality</groupId>
             <artifactId>modality-all-frontoffice-application</artifactId>
             <version>1.0.0-SNAPSHOT</version>
@@ -79,6 +74,12 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-javafxmedia-gluon</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-kit-launcher</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
@@ -86,6 +87,18 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-kit-openjfx</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-statusbar-gluon</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-audio-gluon</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -320,7 +333,9 @@
                 <artifactId>gluonfx-maven-plugin</artifactId>
                 <configuration>
                     <attachList>
+                        <list>audio</list>
                         <list>lifecycle</list>
+                        <list>statusbar</list>
                         <list>storage</list>
                         <list>util</list>
                     </attachList>
@@ -356,7 +371,7 @@
                         <list>one/modality/base/client/fonts/[^/]+$</list>
                         <list>one/modality/base/client/images/[^/]+$</list>
                         <list>one/modality/base/client/services/i18n/dictionaries/[^/]+$</list>
-                        <list>one/modality/base/frontoffice/[^/]+$</list>
+                        <list>one/modality/base/frontoffice/activities/account/images/[^/]+$</list>
                         <list>one/modality/base/shared/domainmodel/[^/]+$</list>
                     </resourcesList>
                     <appIdentifier>one.modality.frontoffice</appIdentifier>

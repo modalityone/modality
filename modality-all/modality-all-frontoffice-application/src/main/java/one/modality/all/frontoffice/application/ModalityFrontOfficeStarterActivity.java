@@ -13,6 +13,4 @@ final class ModalityFrontOfficeStarterActivity extends ModalityClientStarterActi
         super(DEFAULT_START_PATH, ModalityFrontOfficeFrameContainerActivity::new);
     }
 
-
-
 }

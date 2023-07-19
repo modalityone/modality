@@ -7,9 +7,9 @@ module modality.event.frontoffice.activities.booking {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
-    requires javafx.web;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
+    requires webfx.extras.imagestore;
     requires webfx.extras.util.layout;
     requires webfx.kit.util;
     requires webfx.platform.console;
@@ -31,6 +31,7 @@ module modality.event.frontoffice.activities.booking {
     // Exported packages
     exports one.modality.event.frontoffice.activities.booking;
     exports one.modality.event.frontoffice.activities.booking.routing;
+    exports one.modality.event.frontoffice.activities.booking.steps;
     exports one.modality.event.frontoffice.activities.booking.views;
     exports one.modality.event.frontoffice.operations.routes.booking;
 

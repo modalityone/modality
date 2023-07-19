@@ -13,7 +13,7 @@ import java.util.function.Function;
 public class TextUtility {
 
     public static Text getText(String content, double size, String color) {
-        Text t = new Text(escapeHtmlUnicode(content));
+        Text t = new Text(content);
         t.setFill(Color.web(color));
 
         FXProperties.runNowAndOnPropertiesChange(() -> {
@@ -21,29 +21,6 @@ public class TextUtility {
             t.setFont(Font.font(StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), fontSize));
             t.setStyle("-fx-font-family: " + StyleUtility.TEXT_FAMILY + "; -fx-font-size: " + fontSize);
         }, FXApp.fontRatio);
-
-        return t;
-    }
-
-    public static String escapeHtmlUnicode(String t) {
-        // https://oinam.github.io/entities/
-
-        t = t.replace("&#160;", " ");
-        t = t.replace("&#060;", "<");
-        t = t.replace("&#062;", "<");
-        t = t.replace("&#034;", "\"");
-        t = t.replace("&#039;", "'");
-        t = t.replace("&#162;", "¢");
-        t = t.replace("&#163;", "£");
-        t = t.replace("&#165;", "¥");
-        t = t.replace("&#8364;", "€");
-        t = t.replace("&#169;", "©");
-        t = t.replace("&#174;", "®");
-        t = t.replace("&#8211;", "-");
-        t = t.replace("&#8217;", "'");
-        t = t.replace("&#038;", "&");
-        t = t.replace("&#8221;", "”");
-        t = t.replace("&#8220;", "“");
 
         return t;
     }

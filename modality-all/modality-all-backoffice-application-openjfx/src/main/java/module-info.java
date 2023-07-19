@@ -8,8 +8,9 @@ module modality.all.backoffice.application.openjfx {
     requires modality.base.shared.domainmodel;
     requires modality.ecommerce.payment.custom.buscall;
     requires modality.ecommerce.payment.custom.remote;
-    requires modality.event.backoffice.activities.cloneevent;
-    requires modality.event.backoffice.activities.cloneevent.routing;
+    requires modality.event.backoffice2018.activities.cloneevent;
+    requires modality.event.backoffice2018.activities.cloneevent.routing;
+    requires webfx.extras.webtext.peers.openjfx;
     requires webfx.kit.openjfx;
     requires webfx.kit.platform.visibility.openjfx;
     requires webfx.platform.boot.java;

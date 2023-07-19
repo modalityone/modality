@@ -9,10 +9,8 @@ import one.modality.base.frontoffice.fx.FXApp;
 import one.modality.base.frontoffice.fx.FXBooking;
 import one.modality.base.frontoffice.utility.GeneralUtility;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class BookingUtility {
@@ -32,28 +30,18 @@ public class BookingUtility {
                                 Console.log("JsonObject Success: " + jsonObject.toJsonString());
                                 System.out.println(name);
 
-                                List<Pair<Center, Double>> centersDistance = FXApp.centers.stream().map(c -> {
+                                List<Pair<Center, Double>> centersDistance = FXApp.centers.stream()
+                                        .map(c -> {
                                     Double d = GeneralUtility.distance(lat, lng, c.lat, c.lng, 'K');
                                     return new Pair<>(c, d);
-                                }).filter(new Predicate<Pair<Center, Double>>() {
-                                    @Override
-                                    public boolean test(Pair<Center, Double> centerDoublePair) {
-                                        return centerDoublePair.get2() != null;
-                                    }
-                                }).sorted(new Comparator<Pair<Center, Double>>() {
-                                    @Override
-                                    public int compare(Pair<Center, Double> o1, Pair<Center, Double> o2) {
-                                        if (Objects.equals(o1.get2(), o2.get2())) return 0;
-                                        return o1.get2() > o2.get2() ? 1 : -1;
-                                    }
+                                }).filter(centerDoublePair -> centerDoublePair.get2() != null).sorted((o1, o2) -> {
+                                    if (Objects.equals(o1.get2(), o2.get2())) return 0;
+                                    return o1.get2() > o2.get2() ? 1 : -1;
                                 }).collect(Collectors.toList());
 
-                                List<Pair<Center, Double>> centersResult = centersDistance.stream().filter(new Predicate<Pair<Center, Double>>() {
-                                    @Override
-                                    public boolean test(Pair<Center, Double> centerDoublePair) {
-                                        return centerDoublePair.get2() < 50;
-                                    }
-                                }).collect(Collectors.toList());
+                                List<Pair<Center, Double>> centersResult = centersDistance.stream()
+                                        .filter(centerDoublePair -> centerDoublePair.get2() < 50)
+                                        .collect(Collectors.toList());
 
                                 centersResult.forEach(p -> {
                                     System.out.println(p.get1().organization.getName() + " - " + p.get1().type);
