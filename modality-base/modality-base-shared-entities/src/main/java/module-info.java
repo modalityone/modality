@@ -5,7 +5,7 @@ module modality.base.shared.entities {
     // Direct dependencies modules
     requires java.base;
     requires modality.base.shared.domainmodel;
-    requires modality.hotel.shared.time;
+    requires modality.hotel.shared2018.time;
     requires webfx.platform.util;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;

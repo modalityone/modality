@@ -3,9 +3,8 @@ package one.modality.base.shared.entities;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.markers.*;
-import one.modality.base.shared.entities.markers.*;
-import one.modality.hotel.shared.businessdata.time.DateTimeRange;
-import one.modality.hotel.shared.businessdata.time.DayTimeRange;
+import one.modality.hotel.shared2018.businessdata.time.DateTimeRange;
+import one.modality.hotel.shared2018.businessdata.time.DayTimeRange;
 
 /**
  * @author Bruno Salmon

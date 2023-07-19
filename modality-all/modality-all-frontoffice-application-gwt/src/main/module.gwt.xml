@@ -71,8 +71,6 @@
     <source path="dev/webfx/kit/mapper/peers/javafxmedia"/>
     <source path="dev/webfx/kit/mapper/peers/javafxmedia/spi"/>
     <source path="javafx/scene/media"/>
-    <!--===================================< javafx-web >===================================-->
-    <source path="javafx/scene/web"/>
     <!--============================< webfx-kit-javafxweb-emul >============================-->
     <source path="javafx/scene/web"/>
     <!--================================< elemental2-core >=================================-->
@@ -97,10 +95,6 @@
     <source path="one/modality/base/client/activity/organizationdependent"/>
     <source path="one/modality/base/client/activity/table"/>
     <source path="one/modality/base/client/activity/themes"/>
-    <!--========================< modality-base-client-aggregates >=========================-->
-    <source path="one/modality/base/client/aggregates/cart"/>
-    <source path="one/modality/base/client/aggregates/event"/>
-    <source path="one/modality/base/client/aggregates/person"/>
     <!--========================< modality-base-client-application >========================-->
     <source path="one/modality/base/client/application"/>
     <resource path="images/buddhas"/>
@@ -170,14 +164,30 @@
     <source path="one/modality/base/client/util/routing"/>
     <!--========================< modality-base-client-validation >=========================-->
     <source path="one/modality/base/client/validation"/>
+    <!--======================< modality-base-client2018-aggregates >=======================-->
+    <source path="one/modality/base/client2018/aggregates/cart"/>
+    <source path="one/modality/base/client2018/aggregates/event"/>
+    <source path="one/modality/base/client2018/aggregates/person"/>
+    <!--==================< modality-base-frontoffice-activities-account >==================-->
+    <source path="one/modality/base/frontoffice/activities/account"/>
+    <source path="one/modality/base/frontoffice/activities/account/routing"/>
+    <source path="one/modality/base/frontoffice/operations/routes/account"/>
+    <resource path="one/modality/base/frontoffice/activities/account/images"/>
+    <public includes="one/modality/base/frontoffice/activities/account/images/" path=""/>
+    <!--==================< modality-base-frontoffice-activities-alerts >===================-->
+    <source path="one/modality/base/frontoffice/activities/alerts"/>
+    <source path="one/modality/base/frontoffice/activities/alerts/routing"/>
+    <source path="one/modality/base/frontoffice/operations/routes/alerts"/>
+    <!--===================< modality-base-frontoffice-activities-home >====================-->
+    <source path="one/modality/base/frontoffice/activities/home"/>
+    <source path="one/modality/base/frontoffice/activities/home/routing"/>
+    <source path="one/modality/base/frontoffice/activities/home/views"/>
+    <source path="one/modality/base/frontoffice/operations/routes/home"/>
     <!--=======================< modality-base-frontoffice-utility >========================-->
     <source path="one/modality/base/frontoffice/entities"/>
     <source path="one/modality/base/frontoffice/fx"/>
-    <source path="one/modality/base/frontoffice/readers"/>
     <source path="one/modality/base/frontoffice/states"/>
     <source path="one/modality/base/frontoffice/utility"/>
-    <resource path="one/modality/base/frontoffice"/>
-    <public includes="one/modality/base/frontoffice/" path=""/>
     <!--========================< modality-base-shared-domainmodel >========================-->
     <source path="one/modality/base/shared/domainmodel/formatters"/>
     <source path="one/modality/base/shared/domainmodel/functions"/>
@@ -200,53 +210,40 @@
     <source path="one/modality/crm/client/activities/unauthorized"/>
     <!--===========================< modality-crm-client-authz >============================-->
     <source path="one/modality/crm/client/services/authz"/>
-    <!--===========================< modality-crm-shared-authn >============================-->
-    <source path="one/modality/crm/shared/services/authn"/>
-    <source path="one/modality/crm/shared/services/authn/serial"/>
-    <!--====================< modality-ecommerce-client-businesslogic >=====================-->
-    <source path="one/modality/ecommerce/client/businessdata/feesgroup"/>
-    <source path="one/modality/ecommerce/client/businessdata/preselection"/>
-    <source path="one/modality/ecommerce/client/businessdata/workingdocument"/>
-    <source path="one/modality/ecommerce/client/businesslogic/feesgroup"/>
-    <source path="one/modality/ecommerce/client/businesslogic/option"/>
-    <source path="one/modality/ecommerce/client/businesslogic/pricing"/>
-    <source path="one/modality/ecommerce/client/businesslogic/rules"/>
-    <source path="one/modality/ecommerce/client/businesslogic/workingdocument"/>
+    <!--==================< modality-ecommerce-client2018-businesslogic >===================-->
+    <source path="one/modality/ecommerce/client2018/businessdata/feesgroup"/>
+    <source path="one/modality/ecommerce/client2018/businessdata/preselection"/>
+    <source path="one/modality/ecommerce/client2018/businessdata/workingdocument"/>
+    <source path="one/modality/ecommerce/client2018/businesslogic/feesgroup"/>
+    <source path="one/modality/ecommerce/client2018/businesslogic/option"/>
+    <source path="one/modality/ecommerce/client2018/businesslogic/pricing"/>
+    <source path="one/modality/ecommerce/client2018/businesslogic/rules"/>
+    <source path="one/modality/ecommerce/client2018/businesslogic/workingdocument"/>
     <!--=======================< modality-event-backoffice-event-fx >=======================-->
     <source path="one/modality/event/backoffice/event/fx"/>
-    <!--=====================< modality-event-client-bookingcalendar >======================-->
-    <source path="one/modality/event/client/controls/bookingcalendar"/>
-    <!--=========================< modality-event-client-calendar >=========================-->
-    <source path="one/modality/event/client/businessdata/calendar"/>
-    <source path="one/modality/event/client/businessdata/calendar/impl"/>
-    <source path="one/modality/event/client/controls/calendargraphic"/>
-    <source path="one/modality/event/client/controls/calendargraphic/impl"/>
-    <!--=======================< modality-event-client-sectionpanel >=======================-->
-    <source path="one/modality/event/client/controls/sectionpanel"/>
-    <!--=================< modality-event-frontoffice-activities-account >==================-->
-    <source path="one/modality/event/frontoffice/activities/account"/>
-    <source path="one/modality/event/frontoffice/activities/account/routing"/>
-    <source path="one/modality/event/frontoffice/operations/routes/account"/>
-    <!--==================< modality-event-frontoffice-activities-alerts >==================-->
-    <source path="one/modality/event/frontoffice/activities/alerts"/>
-    <source path="one/modality/event/frontoffice/activities/alerts/routing"/>
-    <source path="one/modality/event/frontoffice/operations/routes/alerts"/>
+    <!--===================< modality-event-client2018-bookingcalendar >====================-->
+    <source path="one/modality/event/client2018/controls/bookingcalendar"/>
+    <!--=======================< modality-event-client2018-calendar >=======================-->
+    <source path="one/modality/event/client2018/businessdata/calendar"/>
+    <source path="one/modality/event/client2018/businessdata/calendar/impl"/>
+    <source path="one/modality/event/client2018/controls/calendargraphic"/>
+    <source path="one/modality/event/client2018/controls/calendargraphic/impl"/>
+    <!--=====================< modality-event-client2018-sectionpanel >=====================-->
+    <source path="one/modality/event/client2018/controls/sectionpanel"/>
     <!--=================< modality-event-frontoffice-activities-booking >==================-->
     <source path="one/modality/event/frontoffice/activities/booking"/>
     <source path="one/modality/event/frontoffice/activities/booking/routing"/>
+    <source path="one/modality/event/frontoffice/activities/booking/steps"/>
     <source path="one/modality/event/frontoffice/activities/booking/views"/>
     <source path="one/modality/event/frontoffice/operations/routes/booking"/>
-    <!--===================< modality-event-frontoffice-activities-home >===================-->
-    <source path="one/modality/event/frontoffice/activities/home"/>
-    <source path="one/modality/event/frontoffice/activities/home/routing"/>
-    <source path="one/modality/event/frontoffice/activities/home/views"/>
-    <source path="one/modality/event/frontoffice/operations/routes/home"/>
-    <!--===========================< modality-hotel-shared-time >===========================-->
-    <source path="one/modality/hotel/shared/businessdata/time"/>
+    <!--=========================< modality-hotel-shared2018-time >=========================-->
+    <source path="one/modality/hotel/shared2018/businessdata/time"/>
     <!--===============================< webfx-extras-cell >================================-->
     <source path="dev/webfx/extras/cell/collator"/>
     <source path="dev/webfx/extras/cell/renderer"/>
     <source path="dev/webfx/extras/cell/rowstyle"/>
+    <!--==============================< webfx-extras-flexbox >==============================-->
+    <source path="dev/webfx/extras/flexbox"/>
     <!--============================< webfx-extras-imagestore >=============================-->
     <source path="dev/webfx/extras/imagestore"/>
     <!--===============================< webfx-extras-label >===============================-->
@@ -305,6 +302,8 @@
     <!--=========================< webfx-extras-webtext-peers-gwt >=========================-->
     <source path="dev/webfx/extras/webtext/peers/gwt/html"/>
     <source path="dev/webfx/extras/webtext/registry"/>
+    <!--===========================< webfx-extras-webtext-util >============================-->
+    <source path="dev/webfx/extras/webtext/util"/>
     <!--=================================< webfx-kit-gwt >==================================-->
     <source path="dev/webfx/kit/launcher/spi/impl/gwt"/>
     <source path="dev/webfx/kit/mapper/spi/impl/gwt"/>
@@ -341,6 +340,11 @@
     <source path="dev/webfx/kit/launcher"/>
     <source path="dev/webfx/kit/launcher/spi"/>
     <source path="dev/webfx/kit/launcher/spi/impl/base"/>
+    <!--==============================< webfx-kit-statusbar >===============================-->
+    <source path="dev/webfx/kit/statusbar"/>
+    <source path="dev/webfx/kit/statusbar/spi"/>
+    <!--============================< webfx-kit-statusbar-none >============================-->
+    <source path="dev/webfx/kit/statusbar/spi/impl/none"/>
     <!--=================================< webfx-kit-util >=================================-->
     <source path="dev/webfx/kit/util/properties"/>
     <source path="dev/webfx/kit/util/properties/conversion"/>
@@ -375,10 +379,11 @@
     <!--============================< webfx-platform-file-gwt >=============================-->
     <source path="dev/webfx/platform/file/spi/impl/gwt"/>
     <!--========================< webfx-platform-javabase-emul-gwt >========================-->
-    <source path="emul/java/lang/ref"/>
-    <source path="emul/java/util"/>
-    <source path="emul/java/util/function"/>
-    <source path="emul/java/util/regex"/>
+    <super-source includes="java/lang/ref/" path=""/>
+    <super-source includes="java/net/" path=""/>
+    <super-source includes="java/util/" path=""/>
+    <super-source includes="java/util/function/" path=""/>
+    <super-source includes="java/util/regex/" path=""/>
     <!--==============================< webfx-platform-json >===============================-->
     <source path="dev/webfx/platform/json"/>
     <source path="dev/webfx/platform/json/parser"/>
@@ -737,20 +742,17 @@
     <source path="dev/webfx/stack/ui/validation/mvvmfx/visualization"/>
     <resource path="dev/webfx/stack/ui/validation/controlsfx/images"/>
     <public includes="dev/webfx/stack/ui/validation/controlsfx/images/" path=""/>
-    <set-property name="user.agent" value="safari"/> <!-- to speed up GWT compilation - this single permutation is now working ok in all modern browsers -->
-    <set-configuration-property name="user.agent.runtimeWarning" value="false"/> <!-- removing irrelevant warning in other browsers -->
+    <set-property name="user.agent" value="safari"/> <!-- Only one permutation to speed up GWT compilation - now workings in all modern browsers -->
+    <set-configuration-property name="user.agent.runtimeWarning" value="false"/> <!-- removing irrelevant warning in non-safari browsers -->
     <set-property name="jre.checks.checkLevel" value="MINIMAL"/> <!-- to speed up execution time -->
 
-    <!-- Specify the app entry point class. -->
+    <!-- Specifying the app entry point class. -->
     <entry-point class="dev.webfx.platform.boot.spi.impl.gwt.GwtApplicationBooterProvider"/>
 
+    <!-- Including super sources possibly generated by the WebFX CLI -->
     <super-source path="super"/>
-    <super-source includes="java/io/" path=""/>
-    <super-source includes="java/lang/" path=""/>
-    <super-source includes="java/security/" path=""/>
-    <super-source includes="java/text/" path=""/>
-    <super-source includes="java/util/" path=""/>
 
+    <!-- Including the public folder that contains source web files such as index.html -->
     <public path="public"/>
 
 </module>

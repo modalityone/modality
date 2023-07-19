@@ -22,11 +22,7 @@ public class FXAccount {
         return persons;
     }
 
-    private final static ObjectProperty<Person> accountOwnerProperty = new SimpleObjectProperty<>() {
-        @Override
-        protected void invalidated() {
-        }
-    };
+    private final static ObjectProperty<Person> accountOwnerProperty = new SimpleObjectProperty<>();
 
     public static PersonPM ownerPM = new PersonPM();
     public static ObservableList<PersonPM> membersPM = FXCollections.observableArrayList();
@@ -90,8 +86,8 @@ public class FXAccount {
     }
 
     public static void updatePerson(PersonPM personPM) {
-        UpdateStore updateStore = null;
-        Person updatedPerson = null;
+        UpdateStore updateStore;
+        Person updatedPerson;
 
         if (personPM.PERSON == null) {
             EntityStore store = FXAccount.ownerPM.PERSON.getStore();
@@ -140,13 +136,6 @@ public class FXAccount {
 
                     System.out.println("Success");
                 })
-                .onFailure(ex -> System.out.println("Failed: " + ex))
-                .onComplete(ar -> {
-                    if (ar.succeeded()) {
-
-                    } else {
-
-                    }
-                });
+                .onFailure(ex -> System.out.println("Failed: " + ex));
     }
 }

@@ -4,17 +4,15 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.Unregisterable;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.i18n.I18n;
-import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Labeled;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -33,9 +31,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GeneralUtility {
-    public static <T extends Labeled> T bindI18N(T node, String key) {
-        return I18nControls.bindI18nProperties(node, key);
-    }
 
     public static <T extends Text> T bindI18N(T text, String key) {
         return I18n.bindI18nProperties(text, key);
@@ -171,15 +166,6 @@ public class GeneralUtility {
         return b;
     }
 
-    public static Node createPaddedContainer(Node node, int hPadding, int vPadding) {
-        VBox vBox = new VBox();
-        vBox.getChildren().add(node);
-
-        vBox.setPadding(new Insets(vPadding, hPadding, vPadding, hPadding));
-
-        return vBox;
-    }
-
     public static Node createSplitRow(Node node1, Node node2, int ratio, int padding) {
         GridPane container = new GridPane();
 
@@ -191,6 +177,7 @@ public class GeneralUtility {
 
         col1.setPercentWidth(ratio);
         col2.setPercentWidth(100 - ratio);
+        col2.setHalignment(HPos.RIGHT);
 
         container.getColumnConstraints().addAll(
                 col1, col2
@@ -249,19 +236,42 @@ public class GeneralUtility {
         return b;
     }
 
-    public static Label createLabel(Color color, String label, double fontSize) {
-        Label l = new Label(label);
-        l.setTextFill(color);
+    public static Label getMainLabel(String content, String color) {
+        return createLabel(content, Color.web(color), StyleUtility.MAIN_TEXT_SIZE);
+    }
+
+    public static Label getMainHeaderLabel(String content) {
+        return weight(createLabel(content, Color.web(StyleUtility.MAIN_BLUE), 21), FontWeight.findByWeight(600));
+    }
+
+    public static Label getMediumLabel(String content, String color) {
+        return createLabel(content, Color.web(color), StyleUtility.MEDIUM_TEXT_SIZE);
+    }
+
+    public static Label getSubLabel(String content, String color) {
+        return createLabel(content, Color.web(color), StyleUtility.SUB_TEXT_SIZE);
+    }
+
+
+    public static Label createLabel(String text, Color color, double fontSize) {
+        Label label = new Label(text);
+        label.setTextFill(color);
         FXProperties.runNowAndOnPropertiesChange(() -> {
             double size = fontSize * FXApp.fontRatio.get();
-            l.setFont(Font.font(StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), size));
-            l.setStyle("-fx-font-family: " + StyleUtility.TEXT_FAMILY + "; -fx-font-size: " + size);
+            label.setFont(Font.font(StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), size));
+            label.setStyle("-fx-font-family: " + StyleUtility.TEXT_FAMILY + "; -fx-font-size: " + size);
         }, FXApp.fontRatio);
 
-        l.wrapTextProperty().set(true);
+        label.setWrapText(true);
 
-        return l;
+        return label;
     }
+
+    public static Label weight(Label t, FontWeight weight) {
+        t.setFont(Font.font(StyleUtility.TEXT_FAMILY, weight, t.getFont().getSize()));
+        return t;
+    }
+
 
     public static SVGPath createSvgPath(String content, String color) {
         SVGPath p = new SVGPath();
@@ -269,14 +279,6 @@ public class GeneralUtility {
         p.setFill(Color.web(color));
 
         return p;
-    }
-
-    public static Node centerNode(Node node) {
-        VBox b = new VBox();
-        b.getChildren().add(node);
-        b.setAlignment(Pos.CENTER);
-
-        return b;
     }
 
     public static Node bindButtonWithPopup(Button button, Node container, Node content, int height) {

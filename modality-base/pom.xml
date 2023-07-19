@@ -19,15 +19,14 @@
         <module>modality-base-backoffice-activities-all</module>
         <module>modality-base-backoffice-activities-filters</module>
         <module>modality-base-backoffice-activities-home</module>
-        <module>modality-base-backoffice-activities-monitor</module>
         <module>modality-base-backoffice-activities-operations</module>
         <module>modality-base-backoffice-masterslave</module>
-        <module>modality-base-backoffice-multilangeditor</module>
         <module>modality-base-backoffice-operations-filters</module>
         <module>modality-base-backoffice-operations-generic</module>
         <module>modality-base-backoffice-operations-snapshot</module>
+        <module>modality-base-backoffice2018-activities-monitor</module>
+        <module>modality-base-backoffice2018-multilangeditor</module>
         <module>modality-base-client-activity</module>
-        <module>modality-base-client-aggregates</module>
         <module>modality-base-client-application</module>
         <module>modality-base-client-busconfig</module>
         <module>modality-base-client-css</module>
@@ -41,19 +40,23 @@
         <module>modality-base-client-navigationarrows-java</module>
         <module>modality-base-client-operationactionsloading</module>
         <module>modality-base-client-presentationmodel</module>
-        <module>modality-base-client-sessionrecorder</module>
         <module>modality-base-client-time-theme</module>
         <module>modality-base-client-util</module>
         <module>modality-base-client-validation</module>
+        <module>modality-base-client2018-aggregates</module>
+        <module>modality-base-client2018-sessionrecorder</module>
+        <module>modality-base-frontoffice-activities-account</module>
+        <module>modality-base-frontoffice-activities-alerts</module>
+        <module>modality-base-frontoffice-activities-home</module>
         <module>modality-base-frontoffice-utility</module>
         <module>modality-base-server-application-all</module>
         <module>modality-base-server-application-min</module>
         <module>modality-base-server-datasource</module>
         <module>modality-base-server-newsimport</module>
         <module>modality-base-server-podcastsimport</module>
-        <module>modality-base-server-sessioncloser</module>
-        <module>modality-base-server-systemmetrics</module>
-        <module>modality-base-server-systemmetrics-java</module>
+        <module>modality-base-server2018-sessioncloser</module>
+        <module>modality-base-server2018-systemmetrics</module>
+        <module>modality-base-server2018-systemmetrics-java</module>
         <module>modality-base-shared-domainmodel</module>
         <module>modality-base-shared-entities</module>
     </modules>

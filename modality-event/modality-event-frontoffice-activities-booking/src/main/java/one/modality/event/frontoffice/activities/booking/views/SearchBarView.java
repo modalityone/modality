@@ -18,6 +18,7 @@ import one.modality.base.shared.entities.Organization;
 import one.modality.event.frontoffice.activities.booking.BookingUtility;
 
 public class SearchBarView {
+
     public Node getView() {
         VBox container = new VBox();
 
@@ -55,11 +56,9 @@ public class SearchBarView {
 
         if (locationString.trim().equals(",")) locationString = "Please select a location";
 
-        Text title = TextUtility.getText("Local Events", 16, StyleUtility.VICTOR_BATTLE_BLACK);
         Text location = TextUtility.getText(locationString, 8, StyleUtility.ELEMENT_GRAY);
         Text clear = TextUtility.getText("Clear filters", 8, StyleUtility.ELEMENT_GRAY);
 
-        VBox titleContainer = GeneralUtility.createVList(0, 0, title, location);
 
         clear.setOnMouseClicked(e -> {
             FXBooking.cityProperty.set(FXAccount.ownerPM.ADDRESS_CITY.get());
@@ -67,11 +66,10 @@ public class SearchBarView {
             FXBooking.displayCenterProperty.setValue(FXAccount.ownerPM.LOCAL_CENTER.getValue());
         });
 
-        titleContainer.setAlignment(Pos.CENTER);
         container.setAlignment(Pos.CENTER);
 
         sp.getChildren().addAll(
-                titleContainer,
+                location,
                 searchContainer
         );
 

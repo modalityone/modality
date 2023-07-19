@@ -1,143 +1,93 @@
 package one.modality.event.frontoffice.activities.booking;
 
+import dev.webfx.extras.imagestore.ImageStore;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
-import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
+import dev.webfx.stack.orm.reactive.entities.entities_to_objects.IndividualEntityToObjectMapper;
+import dev.webfx.stack.orm.reactive.entities.entities_to_objects.ReactiveObjectsMapper;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.frontoffice.fx.FXBooking;
-import one.modality.base.frontoffice.states.BookingPM;
 import one.modality.base.frontoffice.utility.GeneralUtility;
-import one.modality.base.frontoffice.utility.TextUtility;
+import one.modality.base.frontoffice.utility.StyleUtility;
 import one.modality.base.shared.entities.Event;
 import one.modality.event.frontoffice.activities.booking.views.CenterDisplayView;
 import one.modality.event.frontoffice.activities.booking.views.EventView;
 import one.modality.event.frontoffice.activities.booking.views.SearchBarView;
 
-import java.util.stream.Collectors;
-
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
-public class BookingActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
-    private VBox container = new VBox();
-    private VBox nktEventsContainer = new VBox();
-    private VBox localEventsContainer = new VBox();
-    private VBox centerContainer = new VBox();
-    private VBox searchContainer = new VBox();
-
-    private VBox bookingWelcome = new VBox();
-    private Node bookingSteps = BookingStepAll.createPage(this);
-    private VBox bookingConfirmed = new VBox();
-
-    private void rebuildEvents(VBox container, ObservableList<Event> events, boolean isSearched) {
-        container.getChildren().removeAll(container.getChildren());
-        container.getChildren().addAll(events.stream().map(e -> new EventView(e).getView(isSearched ? 10.0 : -1.0)).collect(Collectors.toList()));
-        container.setSpacing(5);
-    }
-
-    private void rebuildCenterDisplay() {
-        centerContainer.getChildren().clear();
-        centerContainer.getChildren().add(new CenterDisplayView().getView(container, this,this));
-    }
-
-    public void rebuildSearchBar() {
-        searchContainer.getChildren().clear();
-        searchContainer.getChildren().add(new SearchBarView().getView());
-    }
-
-    public void rebuild() {
-        container.getChildren().removeAll(container.getChildren());
-        HBox header = new HBox();
-        header.setAlignment(Pos.CENTER);
-        Text t = TextUtility.getMainHeaderText("YOUR NEXT MEANINGFUL EVENT IS HERE");
-        t.setWrappingWidth(350);
-        t.setTextAlignment(TextAlignment.CENTER);
-        header.getChildren().add(t);
-
-        rebuildEvents(nktEventsContainer, FXBooking.nktEvents, false);
-        rebuildEvents(localEventsContainer, FXBooking.localCenterEvents, false);
-        rebuildCenterDisplay();
-        rebuildSearchBar();
-
-        Button startBooking = new Button("Start Booking");
-        bookingWelcome.getChildren().addAll(
-                startBooking
-        );
-
-        startBooking.setOnAction(e -> {
-            container.getChildren().remove(bookingWelcome);
-            container.getChildren().add(bookingSteps);
-        });
-
-        Button restartBooking = new Button("Restart");
-
-        restartBooking.setOnAction(e -> {
-            container.getChildren().remove(bookingConfirmed);
-            container.getChildren().add(bookingWelcome);
-            BookingStepAll.step10.go(BookingStepAll.step1);
-        });
-
-        bookingConfirmed.getChildren().addAll(
-                new Text("How wonderful! Let's Festival!"),
-                restartBooking
-        );
-
-        container.getChildren().addAll(
-                header,
-                nktEventsContainer,
-                GeneralUtility.createSpace(50),
-                centerContainer,
-                GeneralUtility.createSpace(50),
-                searchContainer,
-                GeneralUtility.createSpace(20),
-                localEventsContainer,
-                bookingWelcome);
-    }
+public final class BookingActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
+    private final VBox internationalEventsContainer = new VBox(20);
+    private final VBox localEventsContainer = new VBox(20);
 
     @Override
     public Node buildUi() {
-        rebuild();
+        Label headerLabel = GeneralUtility.getMainHeaderLabel("YOUR NEXT MEANINGFUL EVENT IS HERE");
+        headerLabel.setTextAlignment(TextAlignment.CENTER);
 
-        FXBooking.nktEvents.addListener((ListChangeListener<Event>) change -> rebuildEvents(nktEventsContainer, FXBooking.nktEvents, false));
-        FXBooking.localCenterEvents.addListener((ListChangeListener<Event>) change -> rebuildEvents(localEventsContainer, FXBooking.localCenterEvents, false));
-        BookingPM.CHANGE_CENTER.addListener(change -> rebuild());
-        FXBooking.displayCenterProperty.addListener(c -> rebuild());
-        I18n.dictionaryProperty().addListener(change -> rebuild());
+        ImageView headerImageView = ImageStore.createImageView("https://kadampafestivals.org/wp-content/uploads/2022/08/Puja_0028.jpg");
+        headerImageView.setPreserveRatio(true);
 
+        Label internationalEventsLabel = GeneralUtility.createLabel("International Festivals", Color.web(StyleUtility.VICTOR_BATTLE_BLACK), 16);
+
+        Node centerDisplay = new CenterDisplayView().getView( this, this);
+
+        Label localEventsLabel = GeneralUtility.createLabel("Local Events", Color.web(StyleUtility.VICTOR_BATTLE_BLACK), 16);
+
+        Node searchBar = new SearchBarView().getView();
+
+        VBox.setMargin(headerLabel, new Insets(5, 0, 5, 0));
+        VBox.setMargin(internationalEventsLabel, new Insets(20));
+        VBox.setMargin(centerDisplay, new Insets(10, 0, 25, 0));
+        VBox.setMargin(searchBar, new Insets(25));
+
+        VBox container = new VBox(
+                headerLabel,
+                headerImageView,
+                internationalEventsLabel,
+                internationalEventsContainer,
+                centerDisplay,
+                localEventsLabel,
+                searchBar,
+                localEventsContainer);
+        container.setAlignment(Pos.CENTER);
         container.setBackground(Background.fill(Color.WHITE));
 
-        FXProperties.runOnPropertiesChange(() -> GeneralUtility.screenChangeListened(container.getWidth()), container.widthProperty());
+        FXProperties.runOnPropertiesChange(() -> {
+            double width = container.getWidth();
+            boolean fillWidth = width <= 600;
+            headerImageView.setFitWidth(fillWidth ? width : 0);
+            headerImageView.setFitHeight(fillWidth ? 0 : 600);
+
+            GeneralUtility.screenChangeListened(container.getWidth());
+        }, container.widthProperty());
 
         return LayoutUtil.createVerticalScrollPane(container);
     }
 
-    public void goToBookingConfirmed() {
-        container.getChildren().remove(bookingSteps);
-        container.getChildren().add(bookingConfirmed);
-    }
-
     protected void startLogic() {
-        ReactiveEntitiesMapper.<Event>createPushReactiveChain(this)
-                .always("{class: 'Event', fields:'name, label.<loadAll>, startDate, endDate', where: 'organization.type.code = `CORP` and endDate > now()', orderBy: 'startDate'}")
-                .storeEntitiesInto(FXBooking.nktEvents)
+        // Loading NKT Festivals
+        ReactiveObjectsMapper.<Event, Node>createPushReactiveChain(this)
+                .always("{class: 'Event', fields:'name, label.<loadAll>, startDate, endDate', where: 'organization.type.code = `CORP` and endDate > now()', orderBy: 'startDate desc, id'}")
+                .setIndividualEntityToObjectMapperFactory(IndividualEntityToObjectMapper.createFactory(EventView::new, EventView::setEvent, EventView::getView))
+                .storeMappedObjectsInto(internationalEventsContainer.getChildren())
                 .start();
 
-        ReactiveEntitiesMapper.<Event>createPushReactiveChain(this)
+        // Loading local events
+        ReactiveObjectsMapper.<Event, Node>createPushReactiveChain(this)
                 .always("{class: 'Event', fields:'name, label.<loadAll>, startDate, endDate', where: 'endDate > now()', orderBy: 'startDate'}")
                 .ifNotNullOtherwiseEmpty(FXBooking.displayCenterProperty, localCenter -> where("organization=?", localCenter))
-                .storeEntitiesInto(FXBooking.localCenterEvents)
+                .storeMappedObjectsInto(localEventsContainer.getChildren())
                 .start();
     }
 }

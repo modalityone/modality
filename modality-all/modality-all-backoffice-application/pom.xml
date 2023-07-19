@@ -74,26 +74,19 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-crm-backoffice-bookingdetailspanel</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
             <artifactId>modality-crm-backoffice-organization-fx</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-backoffice-activities-all</artifactId>
+            <artifactId>modality-crm-backoffice2018-bookingdetailspanel</artifactId>
             <version>1.0.0-SNAPSHOT</version>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-event-backoffice-activities-all</artifactId>
+            <artifactId>modality-ecommerce-backoffice-activities-all</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
@@ -108,6 +101,13 @@
             <groupId>one.modality</groupId>
             <artifactId>modality-event-backoffice-events-ganttcanvas</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-event-backoffice2018-activities-all</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>

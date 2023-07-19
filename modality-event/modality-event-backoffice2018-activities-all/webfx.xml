@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+        <plugin-module>modality-event-backoffice2018-activities-cloneevent</plugin-module>
+        <plugin-module>modality-event-backoffice2018-activities-events</plugin-module>
+        <plugin-module>modality-event-backoffice2018-activities-options</plugin-module>
+    </dependencies>
+
+</project>

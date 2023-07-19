@@ -16,29 +16,25 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>modality-event-backoffice-activities-all</module>
-        <module>modality-event-backoffice-activities-cloneevent</module>
-        <module>modality-event-backoffice-activities-cloneevent-routing</module>
-        <module>modality-event-backoffice-activities-events</module>
-        <module>modality-event-backoffice-activities-options</module>
         <module>modality-event-backoffice-event-fx</module>
         <module>modality-event-backoffice-events-ganttcanvas</module>
         <module>modality-event-backoffice-events-pm</module>
-        <module>modality-event-client-bookingcalendar</module>
-        <module>modality-event-client-calendar</module>
-        <module>modality-event-client-sectionpanel</module>
+        <module>modality-event-backoffice2018-activities-all</module>
+        <module>modality-event-backoffice2018-activities-cloneevent</module>
+        <module>modality-event-backoffice2018-activities-cloneevent-routing</module>
+        <module>modality-event-backoffice2018-activities-events</module>
+        <module>modality-event-backoffice2018-activities-options</module>
         <module>modality-event-client-theme</module>
-        <module>modality-event-frontoffice-activities-account</module>
-        <module>modality-event-frontoffice-activities-alerts</module>
-        <module>modality-event-frontoffice-activities-all</module>
-        <module>modality-event-frontoffice-activities-app</module>
+        <module>modality-event-client2018-bookingcalendar</module>
+        <module>modality-event-client2018-calendar</module>
+        <module>modality-event-client2018-sectionpanel</module>
         <module>modality-event-frontoffice-activities-booking</module>
-        <module>modality-event-frontoffice-activities-fees</module>
-        <module>modality-event-frontoffice-activities-home</module>
-        <module>modality-event-frontoffice-activities-options</module>
-        <module>modality-event-frontoffice-activities-program</module>
-        <module>modality-event-frontoffice-activities-startbooking</module>
-        <module>modality-event-frontoffice-activities-terms</module>
+        <module>modality-event-frontoffice2018-activities-all</module>
+        <module>modality-event-frontoffice2018-activities-fees</module>
+        <module>modality-event-frontoffice2018-activities-options</module>
+        <module>modality-event-frontoffice2018-activities-program</module>
+        <module>modality-event-frontoffice2018-activities-startbooking</module>
+        <module>modality-event-frontoffice2018-activities-terms</module>
     </modules>
 
 </project>

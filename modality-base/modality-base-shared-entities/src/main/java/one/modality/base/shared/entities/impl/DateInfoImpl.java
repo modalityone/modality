@@ -2,7 +2,7 @@ package one.modality.base.shared.entities.impl;
 
 import one.modality.base.shared.entities.DateInfo;
 import one.modality.base.shared.entities.Label;
-import one.modality.hotel.shared.businessdata.time.DateTimeRange;
+import one.modality.hotel.shared2018.businessdata.time.DateTimeRange;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.impl.DynamicEntity;
