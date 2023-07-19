@@ -3,10 +3,12 @@ package one.modality.base.server.jobs.podcastsimport;
 import dev.webfx.platform.boot.spi.ApplicationJob;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.fetch.Fetch;
+import dev.webfx.platform.json.Json;
 import dev.webfx.platform.json.ReadOnlyJsonObject;
 import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.platform.util.Dates;
+import dev.webfx.extras.webtext.util.WebTextUtil;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -65,64 +67,62 @@ public class PodcastsImportJob implements ApplicationJob {
         String fetchUrl = PODCAST_FETCH_URL + "?order=asc&after=" + Dates.formatIso(fetchAfterParameter);
         Fetch.fetch(fetchUrl)
                 .onFailure(error -> Console.log("Error while fetching " + fetchUrl, error))
-                .onSuccess(response -> {
-                    response.jsonArray()
-                            .onFailure(error -> Console.log("Error while parsing json array from " + fetchUrl, error))
-                            .onSuccess(podcastsJsonArray -> {
-                                EntityStore.create(dataSourceModel).<Podcast>executeQuery(
-                                                "select channelPodcastId from Podcast where date >= ? order by date limit ?", fetchAfterParameter, podcastsJsonArray.size()
-                                        )
-                                        .onFailure(e -> Console.log("Error while reading podcasts from database", e))
-                                        .onSuccess(podcasts -> {
+                .onSuccess(response -> response.jsonArray()
+                        .onFailure(error -> Console.log("Error while parsing json array from " + fetchUrl, error))
+                        // Fetching the latest podcasts from the database in order to determine those that are not yet imported
+                        .onSuccess(webPodcastsJsonArray -> EntityStore.create(dataSourceModel).<Podcast>executeQuery(
+                                        "select channelPodcastId from Podcast where date >= ? order by date limit ?", fetchAfterParameter, webPodcastsJsonArray.size()
+                                )
+                                .onFailure(e -> Console.log("Error while reading podcasts from database", e))
+                                .onSuccess(dbPodcasts -> {
 
-                                            UpdateStore updateStore = UpdateStore.createAbove(podcasts.getStore());
-                                            LocalDateTime[] maxPodcastDate = { fetchAfterParameter };
+                                    UpdateStore updateStore = UpdateStore.createAbove(dbPodcasts.getStore());
+                                    LocalDateTime maxPodcastDate = fetchAfterParameter;
 
-                                            for (int i = 0; i < podcastsJsonArray.size(); i++) {
-                                                ReadOnlyJsonObject podcastJson = podcastsJsonArray.getObject(i);
-                                                String id = podcastJson.getString("id");
+                                    for (int i = 0; i < webPodcastsJsonArray.size(); i++) {
+                                        ReadOnlyJsonObject podcastJson = webPodcastsJsonArray.getObject(i);
+                                        String id = podcastJson.getString("id");
 
-                                                if (podcasts.stream().anyMatch(p -> Objects.equals(id, p.getChannelPodcastId())))
-                                                    continue;
+                                        // Skipping the podcasts already present in the database
+                                        if (dbPodcasts.stream().anyMatch(p -> Objects.equals(id, p.getChannelPodcastId())))
+                                            continue;
 
-                                                Podcast p = updateStore.insertEntity(Podcast.class);
-                                                p.setChannel(2);
-                                                p.setChannelPodcastId(id);
-                                                p.setTitle(getRendered(podcastJson.getObject("title")));
-                                                p.setExcerpt(getRendered(podcastJson.getObject("excerpt")));
-                                                LocalDateTime dateTime = Dates.parseIsoLocalDateTime(podcastJson.getString("date"));
-                                                if (dateTime.isAfter(maxPodcastDate[0]))
-                                                    maxPodcastDate[0] = dateTime;
-                                                p.setDate(LocalDate.from(dateTime));
-                                                p.setImageUrl(cleanUrl(podcastJson.getString("episode_featured_image")));
-                                                p.setAudioUrl(cleanUrl(podcastJson.getString("player_link")));
-                                                try {
-                                                    String durationText = podcastJson.getObject("meta").getString("duration");
-                                                    Duration duration = Duration.between(LocalTime.MIN, LocalTime.parse(durationText));
-                                                    p.setDurationMillis(duration.toMillis());
-                                                } catch (Exception e) {
-                                                    Console.log("WARNING: No or wrong duration for podcast " + id);
-                                                }
-                                            }
+                                        Podcast p = updateStore.insertEntity(Podcast.class);
+                                        p.setChannel(2);
+                                        p.setChannelPodcastId(id);
+                                        String text1 = Json.lookupString(podcastJson, "title.rendered");
+                                        p.setTitle(WebTextUtil.unescapeHtml(text1));
+                                        String text = Json.lookupString(podcastJson, "excerpt.rendered");
+                                        p.setExcerpt(WebTextUtil.unescapeHtml(text));
+                                        LocalDateTime dateTime = Dates.parseIsoLocalDateTime(podcastJson.getString("date"));
+                                        if (dateTime.isAfter(maxPodcastDate))
+                                            maxPodcastDate = dateTime;
+                                        p.setDate(LocalDate.from(dateTime));
+                                        p.setImageUrl(cleanUrl(podcastJson.getString("episode_featured_image")));
+                                        p.setAudioUrl(cleanUrl(podcastJson.getString("player_link")));
+                                        try {
+                                            String durationString = Json.lookupString(podcastJson, "meta.duration");
+                                            Duration duration = Duration.between(LocalTime.MIN, LocalTime.parse(durationString));
+                                            p.setDurationMillis(duration.toMillis());
+                                        } catch (Exception e) {
+                                            Console.log("WARNING: No or wrong duration for podcast " + id);
+                                        }
+                                    }
 
-                                            if (!updateStore.hasChanges())
-                                                Console.log("No new podcasts to import");
-                                            else
-                                                updateStore.submitChanges()
-                                                        .onFailure(e -> Console.log("Error while inserting podcasts in database", e))
-                                                        .onSuccess(insertBatch -> {
-                                                            int newPodcastsCount = insertBatch.getArray().length;
-                                                            Console.log(newPodcastsCount + " new podcasts imported in database");
-                                                            fetchAfterParameter = maxPodcastDate[0];
-                                                            importPodcasts();
-                                                        });
-                                        });
-                            });
-                });
-    }
+                                    LocalDateTime finalMaxPodcastDate = maxPodcastDate;
 
-    private static String getRendered(ReadOnlyJsonObject json) {
-        return json == null ? null : json.getString("rendered");
+                                    if (!updateStore.hasChanges())
+                                        Console.log("No new podcasts to import");
+                                    else
+                                        updateStore.submitChanges()
+                                                .onFailure(e -> Console.log("Error while inserting podcasts in database", e))
+                                                .onSuccess(insertBatch -> {
+                                                    int newPodcastsCount = insertBatch.getArray().length;
+                                                    Console.log(newPodcastsCount + " new podcasts imported in database");
+                                                    fetchAfterParameter = finalMaxPodcastDate;
+                                                    importPodcasts();
+                                                });
+                                })));
     }
 
     private static String cleanUrl(String url) {

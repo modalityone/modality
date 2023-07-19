@@ -5,6 +5,7 @@ module modality.base.server.newsimport {
     // Direct dependencies modules
     requires java.base;
     requires modality.base.shared.entities;
+    requires webfx.extras.webtext.util;
     requires webfx.platform.async;
     requires webfx.platform.boot;
     requires webfx.platform.console;
