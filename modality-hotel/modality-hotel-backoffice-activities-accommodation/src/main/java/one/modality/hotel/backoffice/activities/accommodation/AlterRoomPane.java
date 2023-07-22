@@ -2,11 +2,18 @@ package one.modality.hotel.backoffice.activities.accommodation;
 
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.stack.db.submit.SubmitResult;
+import dev.webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
+import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -16,8 +23,8 @@ import javafx.scene.text.FontWeight;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
+import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
 import one.modality.hotel.backoffice.accommodation.AttendeeCategory;
-import one.modality.hotel.backoffice.accommodation.ResourceConfigurationLoader;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -25,34 +32,49 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
+import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
 public class AlterRoomPane extends VBox {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-uu");
     private static final FontDef DETAIL_FONT = FontDef.font(FontWeight.NORMAL, 12);
 
+    private final AccommodationPresentationModel pm;
+    private final ObjectProperty<ResourceConfiguration> resourceConfigurationProperty = new SimpleObjectProperty<>();
+    public ObjectProperty<ResourceConfiguration> resourceConfigurationProperty() { return resourceConfigurationProperty; }
+    private final ObjectProperty<ResourceConfiguration>  selectedResourceConfigurationProperty = new SimpleObjectProperty<>();
+
+    private ButtonFactoryMixin mixin;
+    private ObservableValue<Boolean> activeProperty;
+    private ReactiveVisualMapper<ResourceConfiguration> rvm;
+
+    private GridPane detailsGridPane;
     private EntityButtonSelector<Item> roomTypeSelector;
     private TextField roomNameTextField;
     private ComboBox<Integer> bedsInRoomComboBox;
     private Map<AttendeeCategory, CheckBox> attendeeCategoryCheckBoxMap = new HashMap<>();
+    private CheckBox allowsFemaleCheckBox;
+    private CheckBox allowsMaleCheckBox;
     private TextField fromDateField;
     private TextField toDateField;
+    private VisualGrid table;
 
     private Button createButton;
     private Button updateButton;
     private Button deleteButton;
     private Button deleteRoomButton;
 
-    private ResourceConfiguration rc;
 
-    public AlterRoomPane(ResourceConfiguration rc, AccommodationActivity activity, ResourceConfigurationLoader resourceConfigurationLoader) {
-        this.rc = rc;
-        HBox detailsRow = new HBox(createHeadingLabel("Details"), createDetailsGrid(rc, activity));
+    public AlterRoomPane(AccommodationPresentationModel pm) {
+        this.pm = pm;
+        selectedResourceConfigurationProperty.addListener((observable, oldValue, newValue) -> displayDetails(newValue));
+        HBox detailsRow = new HBox(createHeadingLabel("Details"), createDetailsGrid());
         Label availabilityLabel = createHeadingLabel("Availability");
-        GridPane availabilityGrid = createAvailabilityGrid(rc, resourceConfigurationLoader);
+        //VisualGrid availabilityGrid = createAvailabilityGrid(rc, activity);
 
+        table = new VisualGrid();
         createButton = new Button("Create");
         createButton.setOnAction(e -> create());
         updateButton = new Button("Update");
@@ -60,22 +82,20 @@ public class AlterRoomPane extends VBox {
         deleteRoomButton = new Button("Delete room");
         HBox buttonPane = new HBox(createButton, updateButton, deleteButton, deleteRoomButton);
 
-        getChildren().addAll(detailsRow, availabilityLabel, availabilityGrid, buttonPane);
+        getChildren().addAll(detailsRow, availabilityLabel, table, buttonPane);
     }
 
-    private GridPane createDetailsGrid(ResourceConfiguration rc, AccommodationActivity activity) {
-        Button productComboBoxButton = createProductComboBox(rc, activity);
-        roomNameTextField = new TextField(rc.getName());
-        bedsInRoomComboBox = createBedsInRoomComboBox(rc);
-        GridPane eligibilityForBookingGrid = createEligibilityForBookingGrid(rc);
+    private GridPane createDetailsGrid() {
+        roomNameTextField = new TextField();
+        bedsInRoomComboBox = createBedsInRoomComboBox();
+        GridPane eligibilityForBookingGrid = createEligibilityForBookingGrid();
         fromDateField = new TextField();
         fromDateField.setPromptText("e.g. 15-01-22");
         toDateField = new TextField();
         toDateField.setPromptText("e.g. 16-01-22");
 
-        GridPane detailsGridPane = new GridPane();
+        detailsGridPane = new GridPane();
         detailsGridPane.add(createLabel("Product"), 0, 0);
-        detailsGridPane.add(productComboBoxButton, 1, 0);
         detailsGridPane.add(createLabel("Name"), 0, 1);
         detailsGridPane.add(roomNameTextField, 1, 1);
         detailsGridPane.add(createLabel("Beds in the room"), 0, 2);
@@ -87,48 +107,42 @@ public class AlterRoomPane extends VBox {
         return detailsGridPane;
     }
 
-    private Button createProductComboBox(ResourceConfiguration rc, AccommodationActivity activity) {
-        roomTypeSelector = new EntityButtonSelector<Item>(
-                "{class: 'Item', alias: 'i', where: 'family.code=`acco`'}",
-                activity, this, activity.getDataSourceModel()
-        )
-                .always(FXOrganizationId.organizationIdProperty(), orgId -> DqlStatement.where("exists(select ScheduledResource where configuration.(item=i and resource.site.organization=?))", Entities.getPrimaryKey(orgId)))
-                .setAutoOpenOnMouseEntered(true)
-                .appendNullEntity(true);
-        roomTypeSelector.setSelectedItem(rc.getItem());
-        return roomTypeSelector.getButton();
-    }
-
-    private ComboBox<Integer> createBedsInRoomComboBox(ResourceConfiguration rc) {
+    private ComboBox<Integer> createBedsInRoomComboBox() {
         final int maxBedsInRoom = 50;
         List<Integer> items = new ArrayList<>();
         for (int i = 1; i <= maxBedsInRoom; i++) {
             items.add(i);
         }
-        ComboBox<Integer> comboBox = new ComboBox<>(FXCollections.observableList(items));
-        Integer max = rc.getMax();
-        comboBox.setValue(max);
-        return comboBox;
+        return new ComboBox<>(FXCollections.observableList(items));
     }
 
-    private GridPane createEligibilityForBookingGrid(ResourceConfiguration rc) {
+    private GridPane createEligibilityForBookingGrid() {
         GridPane gridPane = new GridPane();
         final int numColumns = 3;
         int columnIndex = 0;
         int rowIndex = 0;
         for (AttendeeCategory attendeeCategory : AttendeeCategory.values()) {
-            CheckBox checkBox = new CheckBox(attendeeCategory.getText());
-            boolean selected = allowsAttendanceCategory(rc, attendeeCategory);
-            checkBox.setSelected(selected);
-            attendeeCategoryCheckBoxMap.put(attendeeCategory, checkBox);
-            gridPane.add(checkBox, columnIndex, rowIndex);
-            columnIndex++;
             if (columnIndex >= numColumns) {
                 columnIndex = 0;
                 rowIndex++;
             }
+            CheckBox checkBox = new CheckBox(attendeeCategory.getText());
+            checkBox.selectedProperty().addListener(e -> setAllowsAttendanceCategory(attendeeCategory, checkBox.isSelected()));
+            attendeeCategoryCheckBoxMap.put(attendeeCategory, checkBox);
+            gridPane.add(checkBox, columnIndex, rowIndex);
+            columnIndex++;
         }
+        allowsFemaleCheckBox = new CheckBox("Female");
+        allowsMaleCheckBox = new CheckBox("Male");
+        allowsFemaleCheckBox.selectedProperty().addListener(e -> selectedResourceConfigurationProperty.get().setAllowsFemale(allowsFemaleCheckBox.isSelected()));
+        allowsMaleCheckBox.selectedProperty().addListener(e -> selectedResourceConfigurationProperty.get().setAllowsMale(allowsMaleCheckBox.isSelected()));
+        gridPane.add(allowsFemaleCheckBox, 0, rowIndex + 1);
+        gridPane.add(allowsMaleCheckBox, 1, rowIndex + 1);
         return gridPane;
+    }
+
+    private boolean allowsAttendanceCategory(AttendeeCategory attendeeCategory) {
+        return allowsAttendanceCategory(selectedResourceConfigurationProperty.get(), attendeeCategory);
     }
 
     private boolean allowsAttendanceCategory(ResourceConfiguration rc, AttendeeCategory attendeeCategory) {
@@ -142,12 +156,57 @@ public class AlterRoomPane extends VBox {
         }
     }
 
-    private GridPane createAvailabilityGrid(ResourceConfiguration rc, ResourceConfigurationLoader resourceConfigurationLoader) {
-        List<ResourceConfiguration> historicalResourceConfigurations = resourceConfigurationLoader.getResourceConfigurations().stream()
-                .filter(rc2 -> rc2.getResource().equals(rc.getResource()))
-                .collect(Collectors.toList());
+    private void setAllowsAttendanceCategory(AttendeeCategory attendeeCategory, boolean allowed) {
+        ResourceConfiguration rc = selectedResourceConfigurationProperty.get();
+        switch (attendeeCategory) {
+            case GUEST: rc.setAllowsGuest(allowed);
+            case RESIDENT: rc.setAllowsResident(allowed);
+            case RESIDENTS_FAMILY: rc.setAllowsResidentFamily(allowed);
+            case SPECIAL_GUEST: rc.setAllowsSpecialGuest(allowed);
+            case VOLUNTEER: rc.setAllowsVolunteer(allowed);
+        }
+    }
 
-        GridPane gridPane = new GridPane();
+    private void displayDetails(ResourceConfiguration rc) {
+        if (roomTypeSelector == null) {
+            // This can be created once we have an entity to get the data source model from
+            createProductComboBox();
+        }
+        roomTypeSelector.setSelectedItem(rc.getItem());
+        roomNameTextField.setText(rc.getName());
+        bedsInRoomComboBox.setValue(rc.getMax());
+
+        for (AttendeeCategory attendeeCategory : AttendeeCategory.values()) {
+            CheckBox checkBox = attendeeCategoryCheckBoxMap.get(attendeeCategory);
+            boolean selected = allowsAttendanceCategory(attendeeCategory);
+            checkBox.setSelected(selected);
+        }
+        allowsFemaleCheckBox.setSelected(rc.allowsFemale());
+        allowsMaleCheckBox.setSelected(rc.allowsMale());
+    }
+
+    // TODO change this to return a table
+    /*private VisualGrid createAvailabilityGrid(ResourceConfiguration rc, AccommodationActivity activity) {
+        AccommodationPresentationModel pm = activity.getPresentationModel();
+
+        /*List<ResourceConfiguration> historicalResourceConfigurations = resourceConfigurationLoader.getResourceConfigurations().stream()
+                .filter(rc2 -> rc2.getResource().equals(rc.getResource()))
+                .collect(Collectors.toList());*
+
+        rem = ReactiveVisualMapper.<ResourceConfiguration>createPushReactiveChain(activity)
+                .always("{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,item.name,max,allowsGuest,allowsResident,allowsResidentFamily,allowsSpecialGuest,allowsVolunteer'}")
+                .always(orderBy("item.ord,name"))
+                .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("resource.site.(organization=? and event=null)", o))
+                // Restricting events to those appearing in the time window
+                //.storeEntitiesInto(resourceConfigurations)
+                .visualizeResultInto(table)
+                // We are now ready to start
+                .start();
+        //VisualResult visualResult;
+        return table;
+
+
+        /*GridPane gridPane = new GridPane();
         gridPane.setHgap(16);
         int rowIndex = 0;
         for (ResourceConfiguration historicalResourceConfiguration : historicalResourceConfigurations) {
@@ -170,6 +229,17 @@ public class AlterRoomPane extends VBox {
             rowIndex++;
         }
         return gridPane;
+    }*/
+
+    private void createProductComboBox() {
+        roomTypeSelector = new EntityButtonSelector<Item>(
+                "{class: 'Item', alias: 'i', where: 'family.code=`acco`'}",
+                mixin, this, selectedResourceConfigurationProperty.get().getStore().getDataSourceModel()
+        )
+                .always(FXOrganizationId.organizationIdProperty(), orgId -> DqlStatement.where("exists(select ScheduledResource where configuration.(item=i and resource.site.organization=?))", Entities.getPrimaryKey(orgId)))
+                .setAutoOpenOnMouseEntered(true)
+                .appendNullEntity(true);
+        detailsGridPane.add(roomTypeSelector.getButton(), 1, 0);
     }
 
     private Label createDetailLabel(String text) {
@@ -189,24 +259,52 @@ public class AlterRoomPane extends VBox {
     }
 
     private void create() {
-        UpdateStore updateStore = UpdateStore.create(rc.getStore().getDataSourceModel());
+        UpdateStore updateStore = UpdateStore.create(selectedResourceConfigurationProperty.get().getStore().getDataSourceModel());
         ResourceConfiguration newRc = updateStore.createEntity(ResourceConfiguration.class);
-        newRc.setResource(rc.getResource());
-        newRc.setItem(roomTypeSelector.getSelectedItem());
-        newRc.setName(roomNameTextField.getText());
-        newRc.setMax(bedsInRoomComboBox.getValue());
-        newRc.setAllowsGuest(attendeeCategoryCheckBoxMap.get(AttendeeCategory.GUEST).isSelected());
-        newRc.setAllowsResident(attendeeCategoryCheckBoxMap.get(AttendeeCategory.RESIDENT).isSelected());
-        newRc.setAllowsResidentFamily(attendeeCategoryCheckBoxMap.get(AttendeeCategory.RESIDENTS_FAMILY).isSelected());
-        newRc.setAllowsSpecialGuest(attendeeCategoryCheckBoxMap.get(AttendeeCategory.SPECIAL_GUEST).isSelected());
-        newRc.setAllowsVolunteer(attendeeCategoryCheckBoxMap.get(AttendeeCategory.VOLUNTEER).isSelected());
-        // TODO set allows female and allows male
-        newRc.setStartDate(LocalDate.parse(fromDateField.getText(), DATE_FORMATTER));
-        newRc.setEndDate(LocalDate.parse(toDateField.getText(), DATE_FORMATTER));
-        updateStore.submitChanges()
-                .onFailure(Throwable::printStackTrace)
-                .onSuccess(result -> {
-                    System.out.println("Success: " + result.getArray().length + " entities inserted.");
-                });
+        newRc.setAllowsGuest(false);
+        newRc.setAllowsResident(false);
+        newRc.setAllowsResidentFamily(false);
+        newRc.setAllowsSpecialGuest(false);
+        newRc.setAllowsVolunteer(false);
+        newRc.setAllowsFemale(false);
+        newRc.setAllowsMale(false);
+        selectedResourceConfigurationProperty.set(newRc);
+    }
+
+    public void startLogic(Object mixin) { // may be called several times with different mixins (due to workaround)
+        if (mixin instanceof ButtonFactoryMixin) {
+            this.mixin = (ButtonFactoryMixin) mixin;
+        }
+        // Updating the active property with a OR => mixin1.active || mixin2.active || mixin3.active ...
+        if (mixin instanceof HasActiveProperty) {
+            ObservableValue<Boolean> ap = ((HasActiveProperty) mixin).activeProperty();
+            if (activeProperty == null)
+                activeProperty = ap;
+            else
+                activeProperty = FXProperties.combine(activeProperty, ap, (a1, a2) -> a1 || a2);
+        }
+        if (rvm == null) { // first call
+            rvm = ReactiveVisualMapper.<ResourceConfiguration>createPushReactiveChain(mixin)
+                    .always("{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,item.name,max,allowsGuest,allowsResident,allowsResidentFamily,allowsSpecialGuest,allowsVolunteer,allowsFemale,allowsMale,startDate,endDate'}")
+                    .always(orderBy("item.ord,name"))
+                    .setEntityColumns("[" +
+                            "{label: 'Name', expression: 'name'}," +
+                            "{label: 'Product', expression: 'item.name'}," +
+                            "{label: 'Beds', expression: 'max'}," +
+                            //"{label: 'Eligible', expression: 'name'}," +
+                            "{label: 'From', expression: 'startDate'}," +
+                            "{label: 'To', expression: 'endDate'}" +
+                            "]")
+                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("resource.site.(organization=? and event=null)", o))
+                    .ifNotNullOtherwiseEmpty(resourceConfigurationProperty, rc -> where("resource = ?", rc.getResource()))
+                    .applyDomainModelRowStyle()
+                    .autoSelectSingleRow()
+                    .visualizeResultInto(table)
+                    .setSelectedEntityHandler(selectedResourceConfigurationProperty::setValue)
+                    .start();
+
+        } else if (activeProperty != null) { // subsequent calls
+            rvm.bindActivePropertyTo(activeProperty); // updating the reactive entities mapper active property
+        }
     }
 }

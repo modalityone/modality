@@ -29,6 +29,8 @@ module modality.hotel.backoffice.activities.accommodation {
     requires webfx.stack.ui.operation.action;
     requires webfx.kit.util;
     requires webfx.stack.orm.reactive.entities;
+    requires webfx.extras.visual.grid;
+    requires webfx.extras.visual;
 
     // Exported packages
     exports one.modality.hotel.backoffice.activities.accommodation;
