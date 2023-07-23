@@ -196,7 +196,7 @@ public class AlterRoomPane extends VBox {
                 .always(FXOrganizationId.organizationIdProperty(), orgId -> DqlStatement.where("exists(select ScheduledResource where configuration.(item=i and resource.site.organization=?))", Entities.getPrimaryKey(orgId)))
                 .setAutoOpenOnMouseEntered(true)
                 .appendNullEntity(true);
-        roomTypeSelector.getButton().setDisable(true);
+        roomTypeSelector.setReadOnly(true);
         detailsGridPane.add(roomTypeSelector.getButton(), 1, 0);
     }
 
@@ -236,7 +236,7 @@ public class AlterRoomPane extends VBox {
 
     private void setDetailsPaneDisabled(boolean disabled) {
         if (roomTypeSelector != null) {
-            roomTypeSelector.getButton().setDisable(disabled);
+            roomTypeSelector.setReadOnly(disabled);
         }
         roomNameTextField.setDisable(disabled);
         bedsInRoomComboBox.setDisable(disabled);
