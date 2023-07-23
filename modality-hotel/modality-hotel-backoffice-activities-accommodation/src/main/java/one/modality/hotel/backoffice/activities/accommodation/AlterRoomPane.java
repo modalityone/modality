@@ -71,6 +71,7 @@ public class AlterRoomPane extends VBox {
     private Button deleteButton;
     private Button deleteRoomButton;
     private Button saveButton;
+    private Button cancelButton;
     private Label statusLabel;
 
     public AlterRoomPane(AccommodationPresentationModel pm) {
@@ -99,8 +100,11 @@ public class AlterRoomPane extends VBox {
         saveButton = new Button("Save");
         saveButton.setOnAction(e -> save());
         saveButton.setVisible(false);
+        cancelButton = new Button("Cancel");
+        cancelButton.setOnAction(e -> cancel());
+        cancelButton.setVisible(false);
 
-        HBox buttonPane = new HBox(createButton, updateButton, deleteButton, deleteRoomButton, saveButton);
+        HBox buttonPane = new HBox(createButton, updateButton, deleteButton, deleteRoomButton, saveButton, cancelButton);
 
         statusLabel = new Label();
 
@@ -281,12 +285,16 @@ public class AlterRoomPane extends VBox {
         newRc.setStartDate(previousRc.getEndDate() != null ? previousRc.getEndDate().plus(1, ChronoUnit.DAYS) : LocalDate.now());
         selectedResourceConfigurationProperty.set(newRc);
         setDetailsPaneDisabled(false);
+        table.setDisable(true);
         saveButton.setVisible(true);
+        cancelButton.setVisible(true);
     }
 
     private void update() {
         setDetailsPaneDisabled(false);
+        table.setDisable(true);
         saveButton.setVisible(true);
+        cancelButton.setVisible(true);
     }
 
     private void confirmDelete() {
@@ -425,6 +433,16 @@ public class AlterRoomPane extends VBox {
 
     private void saveUpdate() {
         // TODO
+    }
+
+    private void cancel() {
+        saveButton.setVisible(false);
+        cancelButton.setVisible(false);
+        setDetailsPaneDisabled(true);
+        table.setDisable(false);
+        int selectedRow = table.getVisualSelection().getSelectedRow();
+        ResourceConfiguration selectedResourceConfiguration = resourceConfigurations.get(selectedRow);
+        selectedResourceConfigurationProperty.set(selectedResourceConfiguration);
     }
 
     private void setDetailsPaneDisabled(boolean disabled) {
