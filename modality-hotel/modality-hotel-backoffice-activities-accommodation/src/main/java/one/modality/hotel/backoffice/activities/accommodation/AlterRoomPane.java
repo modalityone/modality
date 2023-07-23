@@ -36,10 +36,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
@@ -299,6 +296,43 @@ public class AlterRoomPane extends VBox {
             DialogUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
             return;
         }
+
+        // Ensure there are no time gaps
+        ResourceConfiguration toDelete = selectedResourceConfigurationProperty.get();
+        UpdateStore deleteUpdateStore = UpdateStore.createAbove(toDelete.getStore());
+        if (resourceConfigurations.size() == 2) {
+            // If there would only be one resource configuration left once this is delete then set its start and end dates to null
+            int otherIndex = 1 - resourceConfigurations.indexOf(toDelete);
+            ResourceConfiguration otherResourceConfiguration = resourceConfigurations.get(otherIndex);
+            ResourceConfiguration toUpdate = deleteUpdateStore.updateEntity(otherResourceConfiguration);
+            toUpdate.setStartDate(null);
+            toUpdate.setEndDate(null);
+        } else {
+            if (toDelete.getEndDate() == null) {
+                // If the configuration to delete has no end date then set the end date of the latest resource before it to null
+                ResourceConfiguration latestResourceConfiguration = resourceConfigurations.stream()
+                        .filter(rc -> !rc.equals(toDelete))
+                        .max(Comparator.comparing(ResourceConfiguration::getStartDate))
+                        .get();
+                ResourceConfiguration toUpdate = deleteUpdateStore.updateEntity(latestResourceConfiguration);
+                toUpdate.setEndDate(null);
+            }
+            if (toDelete.getStartDate() == null) {
+                // If the configuration to delete has no start date then set the start date of the earliest resource after it to null
+                ResourceConfiguration earliestResourceConfiguration = resourceConfigurations.stream()
+                        .filter(rc -> !rc.equals(toDelete))
+                        .min(Comparator.comparing(ResourceConfiguration::getStartDate))
+                        .get();
+                ResourceConfiguration toUpdate = deleteUpdateStore.updateEntity(earliestResourceConfiguration);
+                toUpdate.setStartDate(null);
+            }
+        }
+
+        // Delete the resource configuration
+        deleteUpdateStore.deleteEntity(toDelete);
+        deleteUpdateStore.submitChanges()
+                .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
+                .onSuccess(b -> displayStatus("Saved."));
     }
 
     private void save() {
