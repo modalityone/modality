@@ -10,6 +10,9 @@ import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.stack.ui.controls.dialog.DialogCallback;
+import dev.webfx.stack.ui.controls.dialog.DialogContent;
+import dev.webfx.stack.ui.controls.dialog.DialogUtil;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -21,6 +24,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.Resource;
 import one.modality.base.shared.entities.ResourceConfiguration;
@@ -73,7 +77,6 @@ public class AlterRoomPane extends VBox {
     private Button saveButton;
     private Label statusLabel;
 
-
     public AlterRoomPane(AccommodationPresentationModel pm) {
         this.pm = pm;
 
@@ -95,6 +98,7 @@ public class AlterRoomPane extends VBox {
         updateButton = new Button("Update");
         updateButton.setOnAction(e -> update());
         deleteButton = new Button("Delete");
+        deleteButton.setOnAction(e -> delete());
         deleteRoomButton = new Button("Delete room");
         saveButton = new Button("Save");
         saveButton.setOnAction(e -> save());
@@ -284,6 +288,17 @@ public class AlterRoomPane extends VBox {
     private void update() {
         setDetailsPaneDisabled(false);
         saveButton.setVisible(true);
+    }
+
+    private void delete() {
+        if (resourceConfigurations.size() < 2) {
+            String msg = "This is the only configuration for this resource. It cannot be deleted.";
+            DialogContent dialogContent = new DialogContent().setContentText(msg);
+            dialogContent.getCancelButton().setVisible(false);
+            DialogUtil.showModalNodeInGoldLayout(dialogContent, this);
+            DialogUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
+            return;
+        }
     }
 
     private void save() {
