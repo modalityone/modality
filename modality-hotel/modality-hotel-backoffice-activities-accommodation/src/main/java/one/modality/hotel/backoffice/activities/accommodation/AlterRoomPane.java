@@ -24,7 +24,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.Resource;
 import one.modality.base.shared.entities.ResourceConfiguration;
@@ -95,7 +94,7 @@ public class AlterRoomPane extends VBox {
         updateButton = new Button("Update");
         updateButton.setOnAction(e -> update());
         deleteButton = new Button("Delete");
-        deleteButton.setOnAction(e -> delete());
+        deleteButton.setOnAction(e -> confirmDelete());
         deleteRoomButton = new Button("Delete room");
         saveButton = new Button("Save");
         saveButton.setOnAction(e -> save());
@@ -287,16 +286,25 @@ public class AlterRoomPane extends VBox {
         saveButton.setVisible(true);
     }
 
-    private void delete() {
+    private void confirmDelete() {
         if (resourceConfigurations.size() < 2) {
             String msg = "This is the only configuration for this resource. It cannot be deleted.";
             DialogContent dialogContent = new DialogContent().setContentText(msg);
             dialogContent.getCancelButton().setVisible(false);
             DialogUtil.showModalNodeInGoldLayout(dialogContent, this);
             DialogUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
-            return;
+        } else {
+            String msg = "Are you sure you wish to delete the selected resource configuration?";
+            DialogContent dialogContent = new DialogContent().setContentText(msg).setYesNo();
+            DialogUtil.showModalNodeInGoldLayout(dialogContent, this);
+            DialogUtil.armDialogContentButtons(dialogContent,dialogCallback -> {
+                delete();
+                dialogCallback.closeDialog();
+            });
         }
+    }
 
+    private void delete() {
         // Ensure there are no time gaps
         ResourceConfiguration toDelete = selectedResourceConfigurationProperty.get();
         UpdateStore deleteUpdateStore = UpdateStore.createAbove(toDelete.getStore());
