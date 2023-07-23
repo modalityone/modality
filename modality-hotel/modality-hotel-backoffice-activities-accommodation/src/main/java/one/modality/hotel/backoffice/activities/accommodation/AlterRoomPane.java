@@ -155,7 +155,7 @@ public class AlterRoomPane extends VBox {
     private static LocalDate dateFromText(String text) {
         try {
             return LocalDate.parse(text, DATE_FORMATTER);
-        } catch (DateTimeParseException e) {
+        } catch (DateTimeParseException | NullPointerException e) {
             return null;
         }
     }
@@ -237,6 +237,8 @@ public class AlterRoomPane extends VBox {
         }
         allowsFemaleCheckBox.setSelected(rc.allowsFemale());
         allowsMaleCheckBox.setSelected(rc.allowsMale());
+
+        fromDateField.setText(rc.getStartDate() != null ? DATE_FORMATTER.format(rc.getStartDate()) : null);
     }
 
     private void createProductComboBox() {
@@ -276,6 +278,7 @@ public class AlterRoomPane extends VBox {
         newRc.setAllowsVolunteer(previousRc.allowsVolunteer());
         newRc.setAllowsFemale(previousRc.allowsFemale());
         newRc.setAllowsMale(previousRc.allowsMale());
+        newRc.setStartDate(previousRc.getEndDate() != null ? previousRc.getEndDate().plus(1, ChronoUnit.DAYS) : LocalDate.now());
         selectedResourceConfigurationProperty.set(newRc);
         setDetailsPaneDisabled(false);
         saveButton.setVisible(true);
