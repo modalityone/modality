@@ -1,7 +1,5 @@
 package one.modality.hotel.backoffice.activities.accommodation;
 
-import dev.webfx.extras.theme.FontDef;
-import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.dql.DqlStatement;
@@ -11,16 +9,18 @@ import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.FontWeight;
 import one.modality.base.shared.entities.Item;
+import one.modality.base.shared.entities.Resource;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
@@ -28,6 +28,8 @@ import one.modality.hotel.backoffice.accommodation.AttendeeCategory;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,16 +41,17 @@ import static dev.webfx.stack.orm.dql.DqlStatement.where;
 public class AlterRoomPane extends VBox {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-uu");
-    private static final FontDef DETAIL_FONT = FontDef.font(FontWeight.NORMAL, 12);
 
     private final AccommodationPresentationModel pm;
     private final ObjectProperty<ResourceConfiguration> resourceConfigurationProperty = new SimpleObjectProperty<>();
     public ObjectProperty<ResourceConfiguration> resourceConfigurationProperty() { return resourceConfigurationProperty; }
     private final ObjectProperty<ResourceConfiguration>  selectedResourceConfigurationProperty = new SimpleObjectProperty<>();
+    private final ObservableList<ResourceConfiguration> resourceConfigurations = FXCollections.observableArrayList();
 
     private ButtonFactoryMixin mixin;
     private ObservableValue<Boolean> activeProperty;
     private ReactiveVisualMapper<ResourceConfiguration> rvm;
+    private UpdateStore updateStore;
 
     private GridPane detailsGridPane;
     private EntityButtonSelector<Item> roomTypeSelector;
@@ -65,6 +68,8 @@ public class AlterRoomPane extends VBox {
     private Button updateButton;
     private Button deleteButton;
     private Button deleteRoomButton;
+    private Button saveButton;
+    private Label statusLabel;
 
 
     public AlterRoomPane(AccommodationPresentationModel pm) {
@@ -72,7 +77,6 @@ public class AlterRoomPane extends VBox {
         selectedResourceConfigurationProperty.addListener((observable, oldValue, newValue) -> displayDetails(newValue));
         HBox detailsRow = new HBox(createHeadingLabel("Details"), createDetailsGrid());
         Label availabilityLabel = createHeadingLabel("Availability");
-        //VisualGrid availabilityGrid = createAvailabilityGrid(rc, activity);
 
         table = new VisualGrid();
         createButton = new Button("Create");
@@ -81,19 +85,47 @@ public class AlterRoomPane extends VBox {
         updateButton.setOnAction(e -> update());
         deleteButton = new Button("Delete");
         deleteRoomButton = new Button("Delete room");
-        HBox buttonPane = new HBox(createButton, updateButton, deleteButton, deleteRoomButton);
+        saveButton = new Button("Save");
+        saveButton.setOnAction(e -> save());
+        saveButton.setVisible(false);
 
-        getChildren().addAll(detailsRow, availabilityLabel, table, buttonPane);
+        HBox buttonPane = new HBox(createButton, updateButton, deleteButton, deleteRoomButton, saveButton);
+
+        statusLabel = new Label();
+
+        getChildren().addAll(detailsRow, availabilityLabel, table, buttonPane, statusLabel);
     }
 
     private GridPane createDetailsGrid() {
         roomNameTextField = new TextField();
+        roomNameTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (selectedResourceConfigurationProperty.get() != null) {
+                selectedResourceConfigurationProperty.get().setName(newValue);
+            }
+        });
         bedsInRoomComboBox = createBedsInRoomComboBox();
+        bedsInRoomComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (selectedResourceConfigurationProperty.get() != null && newValue != null) {
+                selectedResourceConfigurationProperty.get().setMax(newValue);
+            }
+        });
         GridPane eligibilityForBookingGrid = createEligibilityForBookingGrid();
         fromDateField = new TextField();
         fromDateField.setPromptText("e.g. 15-01-22");
+        fromDateField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (selectedResourceConfigurationProperty.get() != null) {
+                LocalDate startDate = dateFromText(newValue);
+                selectedResourceConfigurationProperty.get().setStartDate(startDate);
+            }
+        });
         toDateField = new TextField();
         toDateField.setPromptText("e.g. 16-01-22");
+        toDateField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (selectedResourceConfigurationProperty.get() != null) {
+                LocalDate endDate = dateFromText(newValue);
+                selectedResourceConfigurationProperty.get().setEndDate(endDate);
+            }
+        });
 
         detailsGridPane = new GridPane();
         detailsGridPane.add(createLabel("Product"), 0, 0);
@@ -107,6 +139,14 @@ public class AlterRoomPane extends VBox {
         detailsGridPane.add(new HBox(fromDateField, toDateField), 1, 4);
         setDetailsPaneDisabled(true);
         return detailsGridPane;
+    }
+
+    private static LocalDate dateFromText(String text) {
+        try {
+            return LocalDate.parse(text, DATE_FORMATTER);
+        } catch (DateTimeParseException e) {
+            return null;
+        }
     }
 
     private ComboBox<Integer> createBedsInRoomComboBox() {
@@ -161,11 +201,11 @@ public class AlterRoomPane extends VBox {
     private void setAllowsAttendanceCategory(AttendeeCategory attendeeCategory, boolean allowed) {
         ResourceConfiguration rc = selectedResourceConfigurationProperty.get();
         switch (attendeeCategory) {
-            case GUEST: rc.setAllowsGuest(allowed);
-            case RESIDENT: rc.setAllowsResident(allowed);
-            case RESIDENTS_FAMILY: rc.setAllowsResidentFamily(allowed);
-            case SPECIAL_GUEST: rc.setAllowsSpecialGuest(allowed);
-            case VOLUNTEER: rc.setAllowsVolunteer(allowed);
+            case GUEST: rc.setAllowsGuest(allowed); break;
+            case RESIDENT: rc.setAllowsResident(allowed); break;
+            case RESIDENTS_FAMILY: rc.setAllowsResidentFamily(allowed); break;
+            case SPECIAL_GUEST: rc.setAllowsSpecialGuest(allowed); break;
+            case VOLUNTEER: rc.setAllowsVolunteer(allowed); break;
         }
     }
 
@@ -200,14 +240,6 @@ public class AlterRoomPane extends VBox {
         detailsGridPane.add(roomTypeSelector.getButton(), 1, 0);
     }
 
-    private Label createDetailLabel(String text) {
-        Label label = new Label(text);
-        TextTheme.createDefaultTextFacet(label)
-                .requestedFont(DETAIL_FONT)
-                .style();
-        return label;
-    }
-
     private Label createLabel(String text) {
         return new Label(text);
     }
@@ -217,21 +249,97 @@ public class AlterRoomPane extends VBox {
     }
 
     private void create() {
-        UpdateStore updateStore = UpdateStore.create(selectedResourceConfigurationProperty.get().getStore().getDataSourceModel());
-        ResourceConfiguration newRc = updateStore.createEntity(ResourceConfiguration.class);
-        newRc.setAllowsGuest(false);
-        newRc.setAllowsResident(false);
-        newRc.setAllowsResidentFamily(false);
-        newRc.setAllowsSpecialGuest(false);
-        newRc.setAllowsVolunteer(false);
-        newRc.setAllowsFemale(false);
-        newRc.setAllowsMale(false);
+        ResourceConfiguration previousRc = selectedResourceConfigurationProperty.get();
+        Resource resource = previousRc.getResource();
+
+        updateStore = UpdateStore.create(previousRc.getStore().getDataSourceModel());
+        ResourceConfiguration newRc = updateStore.insertEntity(ResourceConfiguration.class);
+        newRc.setResource(resource);
+        newRc.setItem(previousRc.getItem());
+        newRc.setName(previousRc.getName());
+        newRc.setMax(previousRc.getMax());
+        newRc.setAllowsGuest(previousRc.allowsGuest());
+        newRc.setAllowsResident(previousRc.allowsResident());
+        newRc.setAllowsResidentFamily(previousRc.allowsResidentFamily());
+        newRc.setAllowsSpecialGuest(previousRc.allowsSpecialGuest());
+        newRc.setAllowsVolunteer(previousRc.allowsVolunteer());
+        newRc.setAllowsFemale(previousRc.allowsFemale());
+        newRc.setAllowsMale(previousRc.allowsMale());
         selectedResourceConfigurationProperty.set(newRc);
         setDetailsPaneDisabled(false);
+        saveButton.setVisible(true);
     }
 
     private void update() {
         setDetailsPaneDisabled(false);
+        saveButton.setVisible(true);
+    }
+
+    private void save() {
+        boolean isNewRecord = ((Integer) selectedResourceConfigurationProperty.get().getPrimaryKey()) < 0;
+        if (isNewRecord) {
+            saveCreate();
+        } else {
+            saveUpdate();
+        }
+    }
+
+    private void saveCreate() {
+        ResourceConfiguration newRc = selectedResourceConfigurationProperty.get();
+        if (newRc == null) {
+            return;
+        }
+        LocalDate fromDate = newRc.getStartDate();
+        if (fromDate == null) {
+            displayStatus("Not saved. Please enter from date in the format dd-mm-yy.");
+            return;
+        }
+
+        ResourceConfiguration latestResourceConfigurationBeforeNewOne = findLatestResourceConfigurationBeforeDate(fromDate);
+        LocalDate latestEndDate = latestResourceConfigurationBeforeNewOne.getEndDate();
+        if (latestEndDate == null || latestEndDate.until(fromDate, ChronoUnit.DAYS) > 1) {
+            // Perform an update if necessary to ensure there are no gaps in dates across all records for this resource
+            UpdateStore otherUpdateStore = UpdateStore.createAbove(updateStore);
+            ResourceConfiguration updatedLatestResourceConfiguration = otherUpdateStore.updateEntity(latestResourceConfigurationBeforeNewOne);
+            updatedLatestResourceConfiguration.setEndDate(fromDate.minus(1, ChronoUnit.DAYS));
+            otherUpdateStore.submitChanges()
+                    .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
+                    .onSuccess(b -> {
+                        updateStore.submitChanges()
+                                .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
+                                .onSuccess(b2 -> displayStatus("Saved."));
+                    });
+        } else {
+            // If no update needed then save the new entity
+            updateStore.submitChanges()
+                    .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
+                    .onSuccess(b2 -> displayStatus("Saved."));
+        }
+    }
+
+    private void displayStatus(String status) {
+        Platform.runLater(() -> statusLabel.setText(status));
+    }
+
+    private ResourceConfiguration findLatestResourceConfigurationBeforeDate(LocalDate date) {
+        ResourceConfiguration latestResourceConfigurationBeforeDate = null;
+        for (ResourceConfiguration rc : resourceConfigurations) {
+            LocalDate endDate = rc.getEndDate();
+            if (endDate == null) {
+                if (latestResourceConfigurationBeforeDate == null) {
+                    latestResourceConfigurationBeforeDate = rc;
+                }
+            } else if (endDate.isBefore(date)) {
+                if (latestResourceConfigurationBeforeDate == null || latestResourceConfigurationBeforeDate.getEndDate().isBefore(endDate)) {
+                    latestResourceConfigurationBeforeDate = rc;
+                }
+            }
+        }
+        return latestResourceConfigurationBeforeDate;
+    }
+
+    private void saveUpdate() {
+        // TODO
     }
 
     private void setDetailsPaneDisabled(boolean disabled) {
@@ -276,6 +384,7 @@ public class AlterRoomPane extends VBox {
                     .applyDomainModelRowStyle()
                     .autoSelectSingleRow()
                     .visualizeResultInto(table)
+                    .storeEntitiesInto(resourceConfigurations)
                     .setSelectedEntityHandler(selectedResourceConfigurationProperty::setValue)
                     .start();
 
