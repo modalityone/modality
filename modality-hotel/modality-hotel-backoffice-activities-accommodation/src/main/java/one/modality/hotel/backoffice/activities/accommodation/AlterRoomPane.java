@@ -362,27 +362,41 @@ public class AlterRoomPane extends VBox {
             displayStatus("Not saved. Please enter from date in the format dd-mm-yy.");
             return;
         }
+        boolean duplicateStartDate = resourceConfigurations.stream()
+                .anyMatch(rc -> rc.getStartDate() != null && rc.getStartDate().equals(fromDate));
+        if (duplicateStartDate) {
+            displayStatus("Not saved. A resource configuration with this from date already exists.");
+            return;
+        }
 
+        // Perform updates if necessary to ensure there are no gaps in dates across all configurations for this resource
+        UpdateStore otherUpdateStore = UpdateStore.createAbove(updateStore);
         ResourceConfiguration latestResourceConfigurationBeforeNewOne = findLatestResourceConfigurationBeforeDate(fromDate);
         LocalDate latestEndDate = latestResourceConfigurationBeforeNewOne.getEndDate();
-        if (latestEndDate == null || latestEndDate.until(fromDate, ChronoUnit.DAYS) > 1) {
-            // Perform an update if necessary to ensure there are no gaps in dates across all records for this resource
-            UpdateStore otherUpdateStore = UpdateStore.createAbove(updateStore);
+        if (latestEndDate == null || latestEndDate.isAfter(fromDate)) {
+            // Ensure the resource configuration immediately before the new one ends the day before the new one begins
             ResourceConfiguration updatedLatestResourceConfiguration = otherUpdateStore.updateEntity(latestResourceConfigurationBeforeNewOne);
             updatedLatestResourceConfiguration.setEndDate(fromDate.minus(1, ChronoUnit.DAYS));
-            otherUpdateStore.submitChanges()
-                    .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
-                    .onSuccess(b -> {
-                        updateStore.submitChanges()
-                                .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
-                                .onSuccess(b2 -> displayStatus("Saved."));
-                    });
-        } else {
-            // If no update needed then save the new entity
-            updateStore.submitChanges()
-                    .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
-                    .onSuccess(b2 -> displayStatus("Saved."));
         }
+
+        Optional<ResourceConfiguration> resourceConfigurationImmediatelyAfterNewOne = resourceConfigurations.stream()
+                .filter(rc -> rc.getStartDate() != null && rc.getStartDate().isAfter(fromDate))
+                .min(Comparator.comparing(ResourceConfiguration::getStartDate));
+        if (resourceConfigurationImmediatelyAfterNewOne.isPresent()) {
+            // If there is a resource configuration with a start date later than the one entered then set the end date of this one
+            // to the day before it starts
+            LocalDate endDate = resourceConfigurationImmediatelyAfterNewOne.get().getStartDate().minus(1, ChronoUnit.DAYS);
+            newRc.setEndDate(endDate);
+        }
+
+        // Submit changes
+        otherUpdateStore.submitChanges()
+                .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
+                .onSuccess(b -> {
+                    updateStore.submitChanges()
+                            .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
+                            .onSuccess(b2 -> displayStatus("Saved."));
+                });
     }
 
     private void displayStatus(String status) {
