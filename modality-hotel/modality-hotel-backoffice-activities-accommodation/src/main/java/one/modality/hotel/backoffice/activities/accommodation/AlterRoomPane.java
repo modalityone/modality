@@ -79,6 +79,7 @@ public class AlterRoomPane extends VBox {
 
         resourceConfigurations.addListener((ListChangeListener<ResourceConfiguration>) change -> {
             // Select the configuration applicable today
+            displayStatus(null);
             LocalDate tomorrow = LocalDate.now().plus(1, ChronoUnit.DAYS);
             ResourceConfiguration todayResourceConfiguration = findLatestResourceConfigurationBeforeDate(tomorrow);
             int rowIndex = resourceConfigurations.indexOf(todayResourceConfiguration);
