@@ -323,6 +323,7 @@ public class AlterRoomPane extends VBox {
                 // If the configuration to delete has no end date then set the end date of the latest resource before it to null
                 ResourceConfiguration latestResourceConfiguration = resourceConfigurations.stream()
                         .filter(rc -> !rc.equals(toDelete))
+                        .filter(rc -> rc.getStartDate() != null)
                         .max(Comparator.comparing(ResourceConfiguration::getStartDate))
                         .get();
                 ResourceConfiguration toUpdate = deleteUpdateStore.updateEntity(latestResourceConfiguration);
