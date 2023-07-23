@@ -1,5 +1,6 @@
 package one.modality.hotel.backoffice.activities.accommodation;
 
+import dev.webfx.extras.visual.VisualSelection;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.dql.DqlStatement;
@@ -14,6 +15,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -74,6 +76,14 @@ public class AlterRoomPane extends VBox {
 
     public AlterRoomPane(AccommodationPresentationModel pm) {
         this.pm = pm;
+
+        resourceConfigurations.addListener((ListChangeListener<ResourceConfiguration>) change -> {
+            // Select the configuration applicable today
+            LocalDate tomorrow = LocalDate.now().plus(1, ChronoUnit.DAYS);
+            ResourceConfiguration todayResourceConfiguration = findLatestResourceConfigurationBeforeDate(tomorrow);
+            int rowIndex = resourceConfigurations.indexOf(todayResourceConfiguration);
+            table.setVisualSelection(VisualSelection.createBuilder().addSelectedRow(rowIndex).build());
+        });
         selectedResourceConfigurationProperty.addListener((observable, oldValue, newValue) -> displayDetails(newValue));
         HBox detailsRow = new HBox(createHeadingLabel("Details"), createDetailsGrid());
         Label availabilityLabel = createHeadingLabel("Availability");
@@ -322,20 +332,19 @@ public class AlterRoomPane extends VBox {
     }
 
     private ResourceConfiguration findLatestResourceConfigurationBeforeDate(LocalDate date) {
-        ResourceConfiguration latestResourceConfigurationBeforeDate = null;
+        ResourceConfiguration resourceConfigurationWithoutDates = null;
         for (ResourceConfiguration rc : resourceConfigurations) {
-            LocalDate endDate = rc.getEndDate();
-            if (endDate == null) {
-                if (latestResourceConfigurationBeforeDate == null) {
-                    latestResourceConfigurationBeforeDate = rc;
-                }
-            } else if (endDate.isBefore(date)) {
-                if (latestResourceConfigurationBeforeDate == null || latestResourceConfigurationBeforeDate.getEndDate().isBefore(endDate)) {
-                    latestResourceConfigurationBeforeDate = rc;
+            if (rc.getStartDate() != null && rc.getStartDate().isBefore(date)) {
+                if (rc.getEndDate() == null || !rc.getEndDate().isBefore(date)) {
+                    return rc;
                 }
             }
+
+            if (rc.getStartDate() == null && rc.getEndDate() == null) {
+                resourceConfigurationWithoutDates = rc;
+            }
         }
-        return latestResourceConfigurationBeforeDate;
+        return resourceConfigurationWithoutDates;
     }
 
     private void saveUpdate() {
