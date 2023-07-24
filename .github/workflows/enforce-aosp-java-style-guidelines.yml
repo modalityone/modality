@@ -1,9 +1,9 @@
-name: Enforce Google Java Style Guidelines
+name: Enforce AOSP Java Style Guidelines
 
 on: [push]
 
 jobs:
-  Enforce-Google-Java-Style:
+  Enforce-AOSP-Java-Style-Guidelines:
 
     runs-on: ubuntu-latest
 
@@ -11,5 +11,5 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Enforce Google Java Style Guidelines
+      - name: Enforce AOSP Java Style Guidelines
         run: mvn com.spotify.fmt:fmt-maven-plugin:check -Dverbose=true -Dstyle=aosp
