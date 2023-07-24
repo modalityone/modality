@@ -12,7 +12,11 @@ public class InitiateDelegatedPaymentGatewayArgument {
     private final String successUrl;
     private final String cancelUrl;
 
-    public InitiateDelegatedPaymentGatewayArgument(InitiateDelegatedPaymentArgument userArgument, String accountId, String successUrl, String cancelUrl) {
+    public InitiateDelegatedPaymentGatewayArgument(
+            InitiateDelegatedPaymentArgument userArgument,
+            String accountId,
+            String successUrl,
+            String cancelUrl) {
         this.userArgument = userArgument;
         this.accountId = accountId;
         this.successUrl = successUrl;

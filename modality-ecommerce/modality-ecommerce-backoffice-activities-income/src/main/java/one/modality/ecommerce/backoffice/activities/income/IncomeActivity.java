@@ -1,24 +1,25 @@
 package one.modality.ecommerce.backoffice.activities.income;
 
+import static dev.webfx.stack.orm.dql.DqlStatement.where;
+
+import dev.webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
+
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+
 import one.modality.base.backoffice.controls.masterslave.group.GroupView;
-import one.modality.base.client.entities.util.filters.FilterButtonSelectorFactoryMixin;
 import one.modality.base.client.activity.eventdependent.EventDependentViewDomainActivity;
+import one.modality.base.client.entities.util.filters.FilterButtonSelectorFactoryMixin;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.Filter;
-import dev.webfx.extras.visual.controls.grid.VisualGrid;
-import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
-import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 
-import static dev.webfx.stack.orm.dql.DqlStatement.where;
-
-final class IncomeActivity extends EventDependentViewDomainActivity implements
-        OperationActionFactoryMixin,
-        FilterButtonSelectorFactoryMixin {
+final class IncomeActivity extends EventDependentViewDomainActivity
+        implements OperationActionFactoryMixin, FilterButtonSelectorFactoryMixin {
 
     /*==================================================================================================================
     ================================================= Graphical layer ==================================================
@@ -40,8 +41,10 @@ final class IncomeActivity extends EventDependentViewDomainActivity implements
         totalTable.setFullHeight(true);
         totalTable.visualResultProperty().bind(pm.genericVisualResultProperty());
 
-        // Also putting the breakdown group selector just below the total table (also on top of the container)
-        EntityButtonSelector<Filter> breakdownGroupSelector = createGroupFilterButtonSelectorAndBind("income", "DocumentLine", container, pm);
+        // Also putting the breakdown group selector just below the total table (also on top of the
+        // container)
+        EntityButtonSelector<Filter> breakdownGroupSelector =
+                createGroupFilterButtonSelectorAndBind("income", "DocumentLine", container, pm);
 
         container.setTop(new VBox(totalTable, breakdownGroupSelector.getButton()));
 
@@ -50,7 +53,6 @@ final class IncomeActivity extends EventDependentViewDomainActivity implements
 
         return container;
     }
-
 
     /*==================================================================================================================
     =================================================== Logical layer ==================================================
@@ -61,19 +63,24 @@ final class IncomeActivity extends EventDependentViewDomainActivity implements
 
     @Override
     protected void startLogic() {
-        totalVisualMapper = ReactiveVisualMapper.<Document>createReactiveChain(this)
-                .always("{class: 'Document', alias: 'd'}")
-                // Applying the event condition
-                .ifNotNullOtherwiseEmpty(pm.eventIdProperty(), eventId -> where("event=?", eventId))
-                .always("{columns: `null as Totals,sum(price_deposit) as Deposit,sum(price_net) as Invoiced,sum(price_minDeposit) as MinDeposit,sum(price_nonRefundable) as NonRefundable,sum(price_balance) as Balance,count(1) as Bookings,sum(price_balance!=0 ? 1 : 0) as Unreconciled`, groupBy: `event`}")
-                .visualizeResultInto(pm.genericVisualResultProperty())
-                .start();
+        totalVisualMapper =
+                ReactiveVisualMapper.<Document>createReactiveChain(this)
+                        .always("{class: 'Document', alias: 'd'}")
+                        // Applying the event condition
+                        .ifNotNullOtherwiseEmpty(
+                                pm.eventIdProperty(), eventId -> where("event=?", eventId))
+                        .always(
+                                "{columns: `null as Totals,sum(price_deposit) as Deposit,sum(price_net) as Invoiced,sum(price_minDeposit) as MinDeposit,sum(price_nonRefundable) as NonRefundable,sum(price_balance) as Balance,count(1) as Bookings,sum(price_balance!=0 ? 1 : 0) as Unreconciled`, groupBy: `event`}")
+                        .visualizeResultInto(pm.genericVisualResultProperty())
+                        .start();
 
-        breakdownVisualMapper = ReactiveVisualMapper.<DocumentLine>createGroupReactiveChain(this, pm)
-                .always("{class: 'DocumentLine', alias: 'dl'}")
-                // Applying the event condition
-                .ifNotNullOtherwiseEmpty(pm.eventIdProperty(), eventId -> where("document.event=?", eventId))
-                .start();
+        breakdownVisualMapper =
+                ReactiveVisualMapper.<DocumentLine>createGroupReactiveChain(this, pm)
+                        .always("{class: 'DocumentLine', alias: 'dl'}")
+                        // Applying the event condition
+                        .ifNotNullOtherwiseEmpty(
+                                pm.eventIdProperty(), eventId -> where("document.event=?", eventId))
+                        .start();
     }
 
     @Override

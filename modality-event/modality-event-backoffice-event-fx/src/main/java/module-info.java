@@ -14,5 +14,4 @@ module modality.event.backoffice.event.fx {
 
     // Exported packages
     exports one.modality.event.backoffice.event.fx;
-
 }

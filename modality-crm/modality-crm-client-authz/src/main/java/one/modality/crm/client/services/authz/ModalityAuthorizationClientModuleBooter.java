@@ -10,7 +10,7 @@ import dev.webfx.stack.com.bus.call.BusCallService;
 public class ModalityAuthorizationClientModuleBooter implements ApplicationModuleBooter {
 
     // To be shared by the server counterpart.
-    private final static String CLIENT_AUTHZ_SERVICE_ADDRESS = "modality/service/authz";
+    private static final String CLIENT_AUTHZ_SERVICE_ADDRESS = "modality/service/authz";
 
     @Override
     public String getModuleName() {
@@ -24,6 +24,8 @@ public class ModalityAuthorizationClientModuleBooter implements ApplicationModul
 
     @Override
     public void bootModule() {
-        BusCallService.registerBusCallEndpoint(CLIENT_AUTHZ_SERVICE_ADDRESS, AuthorizationClientService.getProvider()::onAuthorizationsPush);
+        BusCallService.registerBusCallEndpoint(
+                CLIENT_AUTHZ_SERVICE_ADDRESS,
+                AuthorizationClientService.getProvider()::onAuthorizationsPush);
     }
 }

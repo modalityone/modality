@@ -1,12 +1,13 @@
 package one.modality.ecommerce.backoffice.operations.entities.document.registration;
 
 import javafx.scene.layout.Pane;
+
 import one.modality.base.backoffice.operations.entities.generic.ToggleBooleanEntityFieldRequest;
 import one.modality.base.shared.entities.Document;
 
 public final class ToggleMarkDocumentAsArrivedRequest extends ToggleBooleanEntityFieldRequest {
 
-    private final static String OPERATION_CODE = "ToggleMarkDocumentAsArrived";
+    private static final String OPERATION_CODE = "ToggleMarkDocumentAsArrived";
 
     public ToggleMarkDocumentAsArrivedRequest(Document document, Pane parentContainer) {
         super(document, "arrived", null, parentContainer);
@@ -16,5 +17,4 @@ public final class ToggleMarkDocumentAsArrivedRequest extends ToggleBooleanEntit
     public Object getOperationCode() {
         return OPERATION_CODE;
     }
-
 }

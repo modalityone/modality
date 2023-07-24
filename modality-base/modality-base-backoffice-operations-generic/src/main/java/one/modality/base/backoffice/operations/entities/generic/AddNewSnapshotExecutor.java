@@ -1,10 +1,12 @@
 package one.modality.base.backoffice.operations.entities.generic;
 
-import dev.webfx.stack.orm.entity.controls.entity.sheet.EntityPropertiesSheet;
+import dev.webfx.platform.async.Future;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.UpdateStore;
-import dev.webfx.platform.async.Future;
+import dev.webfx.stack.orm.entity.controls.entity.sheet.EntityPropertiesSheet;
+
 import javafx.scene.layout.Pane;
+
 import one.modality.base.shared.entities.MoneyAccount;
 import one.modality.base.shared.entities.Organization;
 import one.modality.base.shared.entities.Snapshot;
@@ -18,7 +20,8 @@ final class AddNewSnapshotExecutor {
         return execute(rq.getEntities(), rq.getOrganization(), rq.getParentContainer());
     }
 
-    private static <E extends Entity> Future<Void> execute(Collection<E> entities, Organization organization, Pane parentContainer) {
+    private static <E extends Entity> Future<Void> execute(
+            Collection<E> entities, Organization organization, Pane parentContainer) {
         // TODO
         if (entities == null || entities.isEmpty()) {
             // TODO show popup

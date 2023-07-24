@@ -1,15 +1,17 @@
 package one.modality.ecommerce.backoffice.operations.entities.documentline;
 
-import javafx.scene.layout.Pane;
-import one.modality.base.shared.entities.DocumentLine;
+import dev.webfx.platform.async.AsyncFunction;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
-import dev.webfx.platform.async.AsyncFunction;
 
-public final class DeleteDocumentLineRequest implements HasOperationCode,
-        HasOperationExecutor<DeleteDocumentLineRequest, Void> {
+import javafx.scene.layout.Pane;
 
-    private final static String OPERATION_CODE = "DeleteDocumentLine";
+import one.modality.base.shared.entities.DocumentLine;
+
+public final class DeleteDocumentLineRequest
+        implements HasOperationCode, HasOperationExecutor<DeleteDocumentLineRequest, Void> {
+
+    private static final String OPERATION_CODE = "DeleteDocumentLine";
 
     private final DocumentLine documentLine;
     private final Pane parentContainer;

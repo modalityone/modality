@@ -5,6 +5,7 @@ import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+
 import one.modality.base.client.activity.eventdependent.EventDependentPresentationModelImpl;
 
 import java.time.LocalDate;
@@ -42,8 +43,15 @@ public final class CloneEventPresentationModel extends EventDependentPresentatio
         return dateProperty.getValue();
     }
 
-    final ObjectProperty<EventHandler<ActionEvent>> onSubmitProperty() { return onSubmit; }
-    final void setOnSubmit(EventHandler<ActionEvent> value) { onSubmitProperty().set(value); }
-    final EventHandler<ActionEvent> getOnSubmit() { return onSubmitProperty().get(); }
+    final ObjectProperty<EventHandler<ActionEvent>> onSubmitProperty() {
+        return onSubmit;
+    }
 
+    final void setOnSubmit(EventHandler<ActionEvent> value) {
+        onSubmitProperty().set(value);
+    }
+
+    final EventHandler<ActionEvent> getOnSubmit() {
+        return onSubmitProperty().get();
+    }
 }

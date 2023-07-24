@@ -11,6 +11,7 @@ module modality.base.server.systemmetrics.java {
     exports one.modality.base.server.services.systemmetrics.spi.java;
 
     // Provided services
-    provides one.modality.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider with one.modality.base.server.services.systemmetrics.spi.java.JavaSystemMetricsServiceProvider;
-
+    provides one.modality.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider with
+            one.modality.base.server.services.systemmetrics.spi.java
+                    .JavaSystemMetricsServiceProvider;
 }

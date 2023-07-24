@@ -5,9 +5,12 @@ import dev.webfx.stack.orm.domainmodel.activity.domainpresentation.impl.DomainPr
 /**
  * @author Bruno Salmon
  */
-final class OrganizationsActivity extends DomainPresentationActivityImpl<OrganizationsPresentationModel> {
+final class OrganizationsActivity
+        extends DomainPresentationActivityImpl<OrganizationsPresentationModel> {
 
     OrganizationsActivity() {
-        super(OrganizationsPresentationViewActivity::new, OrganizationsPresentationLogicActivity::new);
+        super(
+                OrganizationsPresentationViewActivity::new,
+                OrganizationsPresentationLogicActivity::new);
     }
 }

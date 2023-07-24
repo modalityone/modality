@@ -1,11 +1,11 @@
 package one.modality.ecommerce.client.businessdata.preselection;
 
-import one.modality.base.client.entities.util.Labels;
-import one.modality.hotel.shared.businessdata.time.DateTimeRange;
-import one.modality.hotel.shared.businessdata.time.DayTimeRange;
 import one.modality.base.client.aggregates.event.EventAggregate;
+import one.modality.base.client.entities.util.Labels;
 import one.modality.base.shared.entities.Label;
 import one.modality.base.shared.entities.Option;
+import one.modality.hotel.shared.businessdata.time.DateTimeRange;
+import one.modality.hotel.shared.businessdata.time.DayTimeRange;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,19 +29,16 @@ public final class OptionsPreselectionBuilder {
     }
 
     public OptionsPreselectionBuilder addDefaultOptions(Iterable<Option> options) {
-        for (Option option : options)
-            addOption(option);
+        for (Option option : options) addOption(option);
         return this;
     }
 
     public OptionsPreselectionBuilder addAccommodationOption(Option option) {
         if (option != null) {
             hasAccommodation = true;
-            if (addOption(option))
-                nightIsCovered = true;
+            if (addOption(option)) nightIsCovered = true;
             label = Labels.bestLabelOrName(option);
-        } else
-            i18nKey = "NoAccommodation";
+        } else i18nKey = "NoAccommodation";
         return this;
     }
 
@@ -51,16 +48,15 @@ public final class OptionsPreselectionBuilder {
         if (optionDateTimeRange != null)
             finalDateTimeRange = finalDateTimeRange.intersect(optionDateTimeRange);
         DayTimeRange dayTimeRange = option.getParsedTimeRangeOrParent();
-        if (dayTimeRange != null)
-            finalDateTimeRange = finalDateTimeRange.intersect(dayTimeRange);
-        if (finalDateTimeRange.isEmpty())
-            return false;
+        if (dayTimeRange != null) finalDateTimeRange = finalDateTimeRange.intersect(dayTimeRange);
+        if (finalDateTimeRange.isEmpty()) return false;
         optionPreselections.add(new OptionPreselection(option, finalDateTimeRange, dayTimeRange));
         return true;
     }
 
     public OptionsPreselection build() {
-        return hasAccommodation && !nightIsCovered ? null : new OptionsPreselection(eventAggregate, label, i18nKey, optionPreselections);
+        return hasAccommodation && !nightIsCovered
+                ? null
+                : new OptionsPreselection(eventAggregate, label, i18nKey, optionPreselections);
     }
-
 }

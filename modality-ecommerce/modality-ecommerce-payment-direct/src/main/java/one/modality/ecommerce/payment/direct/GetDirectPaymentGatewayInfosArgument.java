@@ -3,5 +3,4 @@ package one.modality.ecommerce.payment.direct;
 /**
  * @author Bruno Salmon
  */
-public class GetDirectPaymentGatewayInfosArgument {
-}
+public class GetDirectPaymentGatewayInfosArgument {}

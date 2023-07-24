@@ -4,6 +4,7 @@ import dev.webfx.extras.scalepane.ScalePane;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.ui.fxraiser.FXRaiser;
+
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Node;

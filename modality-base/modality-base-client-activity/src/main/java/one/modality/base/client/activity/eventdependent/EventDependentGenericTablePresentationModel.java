@@ -2,6 +2,7 @@ package one.modality.base.client.activity.eventdependent;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentGenericTablePresentationModel;
 
 /**
@@ -16,6 +17,4 @@ public class EventDependentGenericTablePresentationModel
     public ObjectProperty<Object> eventIdProperty() {
         return this.eventIdProperty;
     }
-
 }
-

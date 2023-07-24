@@ -16,5 +16,4 @@ public interface EntityHasCancelled extends Entity, HasCancelled {
     default Boolean isCancelled() {
         return getBooleanFieldValue("cancelled");
     }
-
 }

@@ -28,5 +28,4 @@ module modality.base.backoffice.masterslave {
     // Exported packages
     exports one.modality.base.backoffice.controls.masterslave;
     exports one.modality.base.backoffice.controls.masterslave.group;
-
 }

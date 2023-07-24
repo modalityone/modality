@@ -1,15 +1,17 @@
 package one.modality.ecommerce.backoffice.operations.entities.document.cart;
 
-import javafx.scene.layout.Pane;
-import one.modality.base.shared.entities.Document;
+import dev.webfx.platform.async.AsyncFunction;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
-import dev.webfx.platform.async.AsyncFunction;
 
-public final class OpenBookingCartRequest implements HasOperationCode,
-        HasOperationExecutor<OpenBookingCartRequest, Void> {
+import javafx.scene.layout.Pane;
 
-    private final static String OPERATION_CODE = "OpenBookingCart";
+import one.modality.base.shared.entities.Document;
+
+public final class OpenBookingCartRequest
+        implements HasOperationCode, HasOperationExecutor<OpenBookingCartRequest, Void> {
+
+    private static final String OPERATION_CODE = "OpenBookingCart";
 
     private final Document document;
     private final Pane parentContainer;

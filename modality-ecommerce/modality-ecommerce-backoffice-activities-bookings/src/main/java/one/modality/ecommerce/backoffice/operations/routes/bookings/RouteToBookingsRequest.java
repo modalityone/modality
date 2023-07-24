@@ -1,16 +1,17 @@
 package one.modality.ecommerce.backoffice.operations.routes.bookings;
 
-import one.modality.ecommerce.backoffice.activities.bookings.routing.BookingsRouting;
-import dev.webfx.stack.ui.operation.HasOperationCode;
-import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
+import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
+import dev.webfx.stack.ui.operation.HasOperationCode;
+
+import one.modality.ecommerce.backoffice.activities.bookings.routing.BookingsRouting;
 
 /**
  * @author Bruno Salmon
  */
 public final class RouteToBookingsRequest extends RoutePushRequest implements HasOperationCode {
 
-    private final static String OPERATION_CODE = "RouteToBookings";
+    private static final String OPERATION_CODE = "RouteToBookings";
 
     public RouteToBookingsRequest(Object eventId, BrowsingHistory history) {
         super(BookingsRouting.getEventBookingsPath(eventId), history);
@@ -20,5 +21,4 @@ public final class RouteToBookingsRequest extends RoutePushRequest implements Ha
     public Object getOperationCode() {
         return OPERATION_CODE;
     }
-
 }

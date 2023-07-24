@@ -14,5 +14,4 @@ public interface Cart extends Entity {
     default String getUuid() {
         return getStringFieldValue("uuid");
     }
-    
 }

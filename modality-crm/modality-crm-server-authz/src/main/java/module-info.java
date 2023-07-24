@@ -16,6 +16,6 @@ module modality.crm.server.authz {
     exports one.modality.crm.server.services.authz;
 
     // Provided services
-    provides dev.webfx.stack.authz.server.spi.AuthorizationServerServiceProvider with one.modality.crm.server.services.authz.ModalityAuthorizationServerServiceProvider;
-
+    provides dev.webfx.stack.authz.server.spi.AuthorizationServerServiceProvider with
+            one.modality.crm.server.services.authz.ModalityAuthorizationServerServiceProvider;
 }

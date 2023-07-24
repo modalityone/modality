@@ -39,11 +39,14 @@ public final class ModalityUserPrincipal {
     // Static methods helpers
 
     public static Object getUserPersonId(Object principal) {
-        return principal instanceof ModalityUserPrincipal ? ((ModalityUserPrincipal) principal).getUserPersonId() : null;
+        return principal instanceof ModalityUserPrincipal
+                ? ((ModalityUserPrincipal) principal).getUserPersonId()
+                : null;
     }
 
     public static Object getUserAccountId(Object principal) {
-        return principal instanceof ModalityUserPrincipal ? ((ModalityUserPrincipal) principal).getUserAccountId() : null;
+        return principal instanceof ModalityUserPrincipal
+                ? ((ModalityUserPrincipal) principal).getUserAccountId()
+                : null;
     }
-
 }

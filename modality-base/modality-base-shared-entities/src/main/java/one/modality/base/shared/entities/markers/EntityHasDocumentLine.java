@@ -1,8 +1,9 @@
 package one.modality.base.shared.entities.markers;
 
-import one.modality.base.shared.entities.DocumentLine;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
+
+import one.modality.base.shared.entities.DocumentLine;
 
 /**
  * @author Bruno Salmon
@@ -23,5 +24,4 @@ public interface EntityHasDocumentLine extends Entity, HasDocumentLine {
     default DocumentLine getDocumentLine() {
         return getForeignEntity("documentLine");
     }
-
 }

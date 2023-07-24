@@ -1,9 +1,10 @@
 package one.modality.ecommerce.backoffice.activities.bookings;
 
-import one.modality.ecommerce.backoffice.operations.routes.bookings.RouteToBookingsRequest;
+import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
-import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
+
+import one.modality.ecommerce.backoffice.operations.routes.bookings.RouteToBookingsRequest;
 
 /**
  * @author Bruno Salmon

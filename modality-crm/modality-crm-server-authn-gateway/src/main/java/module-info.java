@@ -18,6 +18,7 @@ module modality.crm.server.authn.gateway {
     exports one.modality.crm.server.authn.gateway;
 
     // Provided services
-    provides dev.webfx.stack.authn.server.gateway.spi.ServerAuthenticationGatewayProvider with one.modality.crm.server.authn.gateway.ModalityUsernamePasswordAuthenticationGatewayProvider;
-
+    provides dev.webfx.stack.authn.server.gateway.spi.ServerAuthenticationGatewayProvider with
+            one.modality.crm.server.authn.gateway
+                    .ModalityUsernamePasswordAuthenticationGatewayProvider;
 }

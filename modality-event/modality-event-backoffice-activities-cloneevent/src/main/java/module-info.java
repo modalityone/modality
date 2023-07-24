@@ -23,6 +23,6 @@ module modality.event.backoffice.activities.cloneevent {
     exports one.modality.event.backoffice.activities.cloneevent;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.backoffice.activities.cloneevent.CloneEventUiRoute;
-
+    provides dev.webfx.stack.routing.uirouter.UiRoute with
+            one.modality.event.backoffice.activities.cloneevent.CloneEventUiRoute;
 }

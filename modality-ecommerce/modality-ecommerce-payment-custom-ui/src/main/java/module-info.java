@@ -11,5 +11,4 @@ module modality.ecommerce.payment.custom.ui {
 
     // Exported packages
     exports one.modality.ecommerce.payment.custom.ui;
-
 }

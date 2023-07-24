@@ -12,5 +12,4 @@ final class ModalityFrontOfficeStarterActivity extends ModalityClientStarterActi
     ModalityFrontOfficeStarterActivity() {
         super(DEFAULT_START_PATH);
     }
-
 }

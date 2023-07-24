@@ -1,10 +1,12 @@
 package one.modality.base.client.activity;
 
-import javafx.scene.control.Button;
-import one.modality.base.client.activity.themes.Theme;
-import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
-import dev.webfx.stack.ui.controls.button.ButtonBuilder;
 import dev.webfx.stack.ui.controls.MaterialFactoryMixin;
+import dev.webfx.stack.ui.controls.button.ButtonBuilder;
+import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+
+import javafx.scene.control.Button;
+
+import one.modality.base.client.activity.themes.Theme;
 
 /**
  * @author Bruno Salmon
@@ -32,5 +34,4 @@ public interface ModalityButtonFactoryMixin extends ButtonFactoryMixin, Material
     default ButtonBuilder newSoldoutButtonBuilder() {
         return newColorButtonBuilder("Soldout", "#e92c04", "#853416");
     }
-
 }

@@ -14,6 +14,7 @@ import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.session.state.client.fx.FXRunId;
 import dev.webfx.stack.session.state.client.fx.FXUserPrincipal;
+
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 
 import java.time.Instant;
@@ -36,7 +37,8 @@ public final class ClientSessionRecorderJob implements ApplicationJob {
         INSTANCE = this;
     }
 
-    private final UpdateStore store = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
+    private final UpdateStore store =
+            UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
     private Entity sessionAgent, sessionApplication, sessionProcess, sessionConnection, sessionUser;
     private boolean tryRestoreSessionFromLocalStorage = true;
 
@@ -48,29 +50,32 @@ public final class ClientSessionRecorderJob implements ApplicationJob {
         Console.log("application.build.tool = " + getApplicationBuildTool());
         Console.log("application.build.timestamp = " + getApplicationBuildTimestampString());
         Console.log("application.build.number = " + getApplicationBuildNumberString());
-        bus.setHook(new BusHook() {
-            @Override
-            public void handleOpened() {
-                onConnectionOpened();
-            }
+        bus.setHook(
+                new BusHook() {
+                    @Override
+                    public void handleOpened() {
+                        onConnectionOpened();
+                    }
 
-            @Override
-            public boolean handlePreClose() {
-                onConnectionClosed();
-                return true;
-            }
+                    @Override
+                    public boolean handlePreClose() {
+                        onConnectionClosed();
+                        return true;
+                    }
 
-            @Override
-            public void handlePostClose() {
-                onConnectionClosed();
-            }
-        });
-        if (bus.isOpen())
-            onConnectionOpened();
-        FXUserPrincipal.userPrincipalProperty().addListener((observable, oldValue, userPrincipal) -> {
-            if (userPrincipal instanceof ModalityUserPrincipal && INSTANCE != null)
-                INSTANCE.recordNewSessionUser(((ModalityUserPrincipal) userPrincipal).getUserPersonId());
-        });
+                    @Override
+                    public void handlePostClose() {
+                        onConnectionClosed();
+                    }
+                });
+        if (bus.isOpen()) onConnectionOpened();
+        FXUserPrincipal.userPrincipalProperty()
+                .addListener(
+                        (observable, oldValue, userPrincipal) -> {
+                            if (userPrincipal instanceof ModalityUserPrincipal && INSTANCE != null)
+                                INSTANCE.recordNewSessionUser(
+                                        ((ModalityUserPrincipal) userPrincipal).getUserPersonId());
+                        });
     }
 
     @Override
@@ -88,16 +93,15 @@ public final class ClientSessionRecorderJob implements ApplicationJob {
     }
 
     private Entity getSessionAgent() {
-        if (sessionAgent == null)
-            loadOrInsertSessionAgent();
+        if (sessionAgent == null) loadOrInsertSessionAgent();
         return sessionAgent;
     }
 
     private void loadOrInsertSessionAgent() {
         String agentString = getUserAgent();
-        if (agentString.length() > 1024)
-            agentString = agentString.substring(0, 1024);
-        if (tryRestoreSessionFromLocalStorage && agentString.equals(LocalStorage.getItem("sessionAgent.agentString")))
+        if (agentString.length() > 1024) agentString = agentString.substring(0, 1024);
+        if (tryRestoreSessionFromLocalStorage
+                && agentString.equals(LocalStorage.getItem("sessionAgent.agentString")))
             sessionAgent = recreateSessionEntityFromLocalStorage("SessionAgent", "sessionAgent.id");
         else {
             sessionAgent = insertSessionEntity("SessionAgent", sessionAgent);
@@ -106,25 +110,29 @@ public final class ClientSessionRecorderJob implements ApplicationJob {
     }
 
     private Entity getSessionApplication() {
-        if (sessionApplication == null)
-            loadOrInsertSessionApplication();
+        if (sessionApplication == null) loadOrInsertSessionApplication();
         return sessionApplication;
     }
 
     private void loadOrInsertSessionApplication() {
         if (tryRestoreSessionFromLocalStorage
                 && getApplicationName().equals(LocalStorage.getItem("sessionApplication.name"))
-                && getApplicationVersion().equals(LocalStorage.getItem("sessionApplication.version"))
-                && getApplicationBuildTool().equals(LocalStorage.getItem("sessionApplication.buildTool"))
-                && getApplicationBuildNumberString().equals(LocalStorage.getItem("sessionApplication.buildNumberString"))
-                && getApplicationBuildTimestampString().equals(LocalStorage.getItem("sessionApplication.buildTimestampString")))
+                && getApplicationVersion()
+                        .equals(LocalStorage.getItem("sessionApplication.version"))
+                && getApplicationBuildTool()
+                        .equals(LocalStorage.getItem("sessionApplication.buildTool"))
+                && getApplicationBuildNumberString()
+                        .equals(LocalStorage.getItem("sessionApplication.buildNumberString"))
+                && getApplicationBuildTimestampString()
+                        .equals(LocalStorage.getItem("sessionApplication.buildTimestampString")))
             loadSessionApplication();
-        else
-            insertNewSessionApplication();
+        else insertNewSessionApplication();
     }
 
     private void loadSessionApplication() {
-        sessionApplication = recreateSessionEntityFromLocalStorage("SessionApplication", "sessionApplication.id");
+        sessionApplication =
+                recreateSessionEntityFromLocalStorage(
+                        "SessionApplication", "sessionApplication.id");
     }
 
     private void insertNewSessionApplication() {
@@ -135,13 +143,13 @@ public final class ClientSessionRecorderJob implements ApplicationJob {
         sessionApplication.setFieldValue("buildTool", getApplicationBuildTool());
         sessionApplication.setFieldValue("buildNumberString", getApplicationBuildNumberString());
         sessionApplication.setFieldValue("buildNumber", getApplicationBuildNumber());
-        sessionApplication.setFieldValue("buildTimestampString", getApplicationBuildTimestampString());
+        sessionApplication.setFieldValue(
+                "buildTimestampString", getApplicationBuildTimestampString());
         sessionApplication.setFieldValue("buildTimestamp", getApplicationBuildTimestamp());
     }
 
     private Entity getSessionProcess() {
-        if (sessionProcess == null)
-            insertSessionProcess();
+        if (sessionProcess == null) insertSessionProcess();
         return sessionProcess;
     }
 
@@ -175,8 +183,7 @@ public final class ClientSessionRecorderJob implements ApplicationJob {
             touchSessionEntityEnd(store.updateEntity(sessionProcess));
             if (sessionConnection != null)
                 touchSessionEntityEnd(store.updateEntity(sessionConnection));
-            if (sessionUser != null)
-                touchSessionEntityEnd(store.updateEntity(sessionUser));
+            if (sessionUser != null) touchSessionEntityEnd(store.updateEntity(sessionUser));
             executeUpdate();
         }
     }
@@ -194,24 +201,34 @@ public final class ClientSessionRecorderJob implements ApplicationJob {
 
     private void executeUpdate() {
         boolean newSessionAgent = Entities.isNew(sessionAgent);
-        boolean newSessionApplication =  Entities.isNew(sessionApplication);
+        boolean newSessionApplication = Entities.isNew(sessionApplication);
         store.submitChanges()
-                .onSuccess(resultBatch -> {
-                    if (newSessionAgent)
-                        storeEntityToLocalStorage(sessionAgent, "sessionAgent", "agentString");
-                    if (newSessionApplication)
-                        storeEntityToLocalStorage(sessionApplication, "sessionApplication", "name", "version", "buildTool", "buildNumberString", "buildTimestampString");
-                    listenServerPushCallsIfReady();
-                })
-                .onFailure(cause -> {
-                    if (tryRestoreSessionFromLocalStorage) {
-                        Console.log("Client session couldn't be restored (inconsistent state between the local storage and the database) - Restarting a brand-new client session");
-                        tryRestoreSessionFromLocalStorage = false;
-                        clearSessionInfo();
-                        onConnectionOpened();
-                    } else
-                        Console.log("Client Session Recorder error", cause);
-                });
+                .onSuccess(
+                        resultBatch -> {
+                            if (newSessionAgent)
+                                storeEntityToLocalStorage(
+                                        sessionAgent, "sessionAgent", "agentString");
+                            if (newSessionApplication)
+                                storeEntityToLocalStorage(
+                                        sessionApplication,
+                                        "sessionApplication",
+                                        "name",
+                                        "version",
+                                        "buildTool",
+                                        "buildNumberString",
+                                        "buildTimestampString");
+                            listenServerPushCallsIfReady();
+                        })
+                .onFailure(
+                        cause -> {
+                            if (tryRestoreSessionFromLocalStorage) {
+                                Console.log(
+                                        "Client session couldn't be restored (inconsistent state between the local storage and the database) - Restarting a brand-new client session");
+                                tryRestoreSessionFromLocalStorage = false;
+                                clearSessionInfo();
+                                onConnectionOpened();
+                            } else Console.log("Client Session Recorder error", cause);
+                        });
     }
 
     private void listenServerPushCallsIfReady() {
@@ -220,18 +237,24 @@ public final class ClientSessionRecorderJob implements ApplicationJob {
     }
 
     private void stopListeningServerPushCalls() {
-        // Resetting the push client id property to null (will be reassigned when connected again). The purpose is to
-        // make the reactive expression filters in push mode react when the connection is open again (this property
+        // Resetting the push client id property to null (will be reassigned when connected again).
+        // The purpose is to
+        // make the reactive expression filters in push mode react when the connection is open again
+        // (this property
         // change should make them send the query push info sent to the server again).
         FXRunId.setRunId(null);
     }
 
     private Entity insertSessionEntity(Object domainClassId, Entity previousEntity) {
-        return chainSessionEntities(previousEntity, touchSessionEntityStart(store.insertEntity(domainClassId)));
+        return chainSessionEntities(
+                previousEntity, touchSessionEntityStart(store.insertEntity(domainClassId)));
     }
 
     private Entity recreateSessionEntityFromLocalStorage(Object domainClassId, String idKey) {
-        return store.createEntity(EntityId.create(store.getDomainClass(domainClassId), Integer.parseInt(LocalStorage.getItem(idKey))));
+        return store.createEntity(
+                EntityId.create(
+                        store.getDomainClass(domainClassId),
+                        Integer.parseInt(LocalStorage.getItem(idKey))));
     }
 
     private void storeEntityToLocalStorage(Entity entity, String entityName, Object... fields) {
@@ -297,8 +320,7 @@ public final class ClientSessionRecorderJob implements ApplicationJob {
 
     private static String getApplicationBuildTimestampString() {
         String timestamp = System.getProperty("application.build.timestamp");
-        if (timestamp == null)
-            timestamp = Instant.now().toString();
+        if (timestamp == null) timestamp = Instant.now().toString();
         return timestamp;
     }
 

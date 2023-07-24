@@ -1,8 +1,9 @@
 package one.modality.event.client.controls.calendargraphic;
 
+import javafx.scene.Node;
+
 import one.modality.event.client.businessdata.calendar.Calendar;
 import one.modality.event.client.controls.calendargraphic.impl.CalendarGraphicImpl;
-import javafx.scene.Node;
 
 /**
  * @author Bruno Salmon

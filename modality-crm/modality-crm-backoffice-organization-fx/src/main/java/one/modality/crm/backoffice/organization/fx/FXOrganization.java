@@ -4,8 +4,10 @@ import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
+
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+
 import one.modality.base.shared.entities.Organization;
 
 import java.util.Objects;
@@ -15,12 +17,13 @@ import java.util.Objects;
  */
 public final class FXOrganization {
 
-    private final static ObjectProperty<Organization> organizationProperty = new SimpleObjectProperty<>() {
-        @Override
-        protected void invalidated() {
-            FXOrganizationId.setOrganizationId(getOrganizationId());
-        }
-    };
+    private static final ObjectProperty<Organization> organizationProperty =
+            new SimpleObjectProperty<>() {
+                @Override
+                protected void invalidated() {
+                    FXOrganizationId.setOrganizationId(getOrganizationId());
+                }
+            };
 
     static {
         FXOrganizationId.init();
@@ -32,7 +35,9 @@ public final class FXOrganization {
 
     static EntityStore getOrganizationStore() {
         Organization organization = getOrganization();
-        return organization != null ? organization.getStore() : EntityStore.create(DataSourceModelService.getDefaultDataSourceModel());
+        return organization != null
+                ? organization.getStore()
+                : EntityStore.create(DataSourceModelService.getDefaultDataSourceModel());
     }
 
     public static ObjectProperty<Organization> organizationProperty() {
@@ -47,5 +52,4 @@ public final class FXOrganization {
         if (!Objects.equals(organization, getOrganization()))
             organizationProperty.set(organization);
     }
-
 }

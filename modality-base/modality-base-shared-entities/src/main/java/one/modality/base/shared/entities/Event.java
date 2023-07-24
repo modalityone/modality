@@ -1,9 +1,9 @@
 package one.modality.base.shared.entities;
 
+import dev.webfx.platform.util.Objects;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
-import dev.webfx.platform.util.Objects;
-import one.modality.base.shared.entities.markers.*;
+
 import one.modality.base.shared.entities.markers.*;
 import one.modality.hotel.shared.businessdata.time.DateTimeRange;
 
@@ -12,14 +12,15 @@ import java.time.LocalDate;
 /**
  * @author Bruno Salmon
  */
-public interface Event extends Entity,
-        EntityHasName,
-        EntityHasLabel,
-        EntityHasIcon,
-        EntityHasOrganization,
-        EntityHasDateTimeRange,
-        EntityHasMinDateTimeRange,
-        EntityHasMaxDateTimeRange {
+public interface Event
+        extends Entity,
+                EntityHasName,
+                EntityHasLabel,
+                EntityHasIcon,
+                EntityHasOrganization,
+                EntityHasDateTimeRange,
+                EntityHasMinDateTimeRange,
+                EntityHasMaxDateTimeRange {
 
     default LocalDate getStartDate() {
         return getLocalDateFieldValue("startDate");
@@ -52,6 +53,4 @@ public interface Event extends Entity,
     default DateTimeRange computeMaxDateTimeRange() {
         return Objects.coalesce(getParsedMaxDateTimeRange(), getParsedDateTimeRange());
     }
-
-
 }

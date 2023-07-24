@@ -1,12 +1,11 @@
 package one.modality.base.shared.entities;
 
 import dev.webfx.stack.orm.entity.EntityId;
+
 import one.modality.base.shared.entities.markers.EntityHasIcon;
 import one.modality.base.shared.entities.markers.EntityHasOrganization;
 
-public interface MoneyFlow extends
-        EntityHasIcon,
-        EntityHasOrganization {
+public interface MoneyFlow extends EntityHasIcon, EntityHasOrganization {
 
     default void setFromMoneyAccount(Object fromMoneyAccount) {
         setForeignField("fromMoneyAccount", fromMoneyAccount);
@@ -59,5 +58,4 @@ public interface MoneyFlow extends
     default Boolean isPositiveAmount() {
         return getBooleanFieldValue("positiveAmount");
     }
-
 }

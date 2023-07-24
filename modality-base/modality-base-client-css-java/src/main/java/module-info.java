@@ -14,6 +14,6 @@ module modality.base.client.css {
     opens one.modality.base.client.fonts;
 
     // Provided services
-    provides dev.webfx.platform.boot.spi.ApplicationJob with one.modality.base.client.fonts.ModalityFontsLoader;
-
+    provides dev.webfx.platform.boot.spi.ApplicationJob with
+            one.modality.base.client.fonts.ModalityFontsLoader;
 }

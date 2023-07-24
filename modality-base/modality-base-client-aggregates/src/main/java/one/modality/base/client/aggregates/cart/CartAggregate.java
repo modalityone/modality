@@ -1,12 +1,13 @@
 package one.modality.base.client.aggregates.cart;
 
+import dev.webfx.platform.async.Future;
+import dev.webfx.stack.orm.domainmodel.DataSourceModel;
+import dev.webfx.stack.orm.entity.EntityList;
+
+import one.modality.base.client.aggregates.event.EventAggregate;
 import one.modality.base.shared.entities.Cart;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.MoneyTransfer;
-import one.modality.base.client.aggregates.event.EventAggregate;
-import dev.webfx.stack.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.orm.entity.EntityList;
-import dev.webfx.platform.async.Future;
 
 import java.util.List;
 
@@ -50,5 +51,4 @@ public interface CartAggregate {
     boolean isLoaded();
 
     EventAggregate getEventAggregate();
-
 }

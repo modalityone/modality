@@ -1,20 +1,22 @@
 package one.modality.base.backoffice.controls.masterslave;
 
+import static dev.webfx.extras.util.layout.LayoutUtil.setHGrowable;
+
+import dev.webfx.stack.orm.entity.Entity;
+import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasSelectedMasterProperty;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualResultProperty;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
+import dev.webfx.stack.ui.controls.ControlFactoryMixin;
+
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+
 import one.modality.base.backoffice.controls.masterslave.group.GroupMasterSlaveView;
 import one.modality.base.client.entities.util.filters.FilterButtonSelectorFactoryMixin;
 import one.modality.base.client.entities.util.filters.FilterSearchBar;
-import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasSelectedMasterProperty;
-import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualResultProperty;
-import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
-import dev.webfx.stack.ui.controls.ControlFactoryMixin;
-import dev.webfx.stack.orm.entity.Entity;
-
-import static dev.webfx.extras.util.layout.LayoutUtil.setHGrowable;
 
 public class ConventionalUiBuilder implements UiBuilder {
 
@@ -27,7 +29,8 @@ public class ConventionalUiBuilder implements UiBuilder {
     private GroupMasterSlaveView groupMasterSlaveView;
     private BorderPane container;
 
-    private ConventionalUiBuilder(String activityName, String domainClassId, Object pm, ControlFactoryMixin mixin) {
+    private ConventionalUiBuilder(
+            String activityName, String domainClassId, Object pm, ControlFactoryMixin mixin) {
         this.activityName = activityName;
         this.domainClassId = domainClassId;
         this.pm = pm;
@@ -49,7 +52,9 @@ public class ConventionalUiBuilder implements UiBuilder {
 
             // Building the filter search bar and put it on top
             if (mixin instanceof FilterButtonSelectorFactoryMixin) {
-                filterSearchBar = ((FilterButtonSelectorFactoryMixin) mixin).createFilterSearchBar(activityName, domainClassId, container, pm);
+                filterSearchBar =
+                        ((FilterButtonSelectorFactoryMixin) mixin)
+                                .createFilterSearchBar(activityName, domainClassId, container, pm);
                 if (leftTopNodes.length == 0 && rightTopNodes.length == 0)
                     container.setTop(filterSearchBar.buildUi());
                 else {
@@ -61,8 +66,17 @@ public class ConventionalUiBuilder implements UiBuilder {
                 }
             }
 
-            if (pm instanceof HasGroupVisualResultProperty && pm instanceof HasMasterVisualResultProperty && pm instanceof HasSelectedMasterProperty) {
-                groupMasterSlaveView = GroupMasterSlaveView.createAndBind((HasGroupVisualResultProperty & HasMasterVisualResultProperty & HasSelectedMasterProperty<Entity/*necessary for GWT 2.9*/>) pm, mixin, () -> container);
+            if (pm instanceof HasGroupVisualResultProperty
+                    && pm instanceof HasMasterVisualResultProperty
+                    && pm instanceof HasSelectedMasterProperty) {
+                groupMasterSlaveView =
+                        GroupMasterSlaveView.createAndBind(
+                                (HasGroupVisualResultProperty & HasMasterVisualResultProperty
+                                                & HasSelectedMasterProperty<
+                                                        Entity /*necessary for GWT 2.9*/>)
+                                        pm,
+                                mixin,
+                                () -> container);
                 container.setCenter(groupMasterSlaveView.buildUi());
             }
         }
@@ -71,8 +85,7 @@ public class ConventionalUiBuilder implements UiBuilder {
     }
 
     public void onResume() {
-        if (filterSearchBar != null)
-            filterSearchBar.onResume();
+        if (filterSearchBar != null) filterSearchBar.onResume();
     }
 
     public GroupMasterSlaveView getGroupMasterSlaveView() {
@@ -83,8 +96,15 @@ public class ConventionalUiBuilder implements UiBuilder {
     ============================================== Static factory methods ==============================================
     ==================================================================================================================*/
 
-    public static <PM extends HasGroupVisualResultProperty & HasMasterVisualResultProperty & HasSelectedMasterProperty>
-    ConventionalUiBuilder createAndBindGroupMasterSlaveViewWithFilterSearchBar(PM pm, FilterButtonSelectorFactoryMixin mixin, String activityName, String domainClassId) {
+    public static <
+                    PM extends
+                            HasGroupVisualResultProperty & HasMasterVisualResultProperty
+                                    & HasSelectedMasterProperty>
+            ConventionalUiBuilder createAndBindGroupMasterSlaveViewWithFilterSearchBar(
+                    PM pm,
+                    FilterButtonSelectorFactoryMixin mixin,
+                    String activityName,
+                    String domainClassId) {
         return new ConventionalUiBuilder(activityName, domainClassId, pm, mixin);
     }
 }

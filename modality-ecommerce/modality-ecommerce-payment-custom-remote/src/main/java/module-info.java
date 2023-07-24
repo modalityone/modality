@@ -12,6 +12,6 @@ module modality.ecommerce.payment.custom.remote {
     exports one.modality.ecommerce.payment.custom.spi.impl.remote;
 
     // Provided services
-    provides one.modality.ecommerce.payment.custom.spi.CustomPaymentProvider with one.modality.ecommerce.payment.custom.spi.impl.remote.RemoteCustomPaymentProvider;
-
+    provides one.modality.ecommerce.payment.custom.spi.CustomPaymentProvider with
+            one.modality.ecommerce.payment.custom.spi.impl.remote.RemoteCustomPaymentProvider;
 }

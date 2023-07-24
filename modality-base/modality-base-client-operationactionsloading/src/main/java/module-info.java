@@ -18,6 +18,6 @@ module modality.base.client.operationactionsloading {
     exports one.modality.base.client.operationactionsloading;
 
     // Provided services
-    provides dev.webfx.platform.boot.spi.ApplicationModuleBooter with one.modality.base.client.operationactionsloading.ModalityClientOperationActionsLoader;
-
+    provides dev.webfx.platform.boot.spi.ApplicationModuleBooter with
+            one.modality.base.client.operationactionsloading.ModalityClientOperationActionsLoader;
 }

@@ -17,5 +17,4 @@ module modality.ecommerce.backoffice.operations.moneytransfer {
 
     // Exported packages
     exports one.modality.ecommerce.backoffice.operations.entities.moneytransfer;
-
 }

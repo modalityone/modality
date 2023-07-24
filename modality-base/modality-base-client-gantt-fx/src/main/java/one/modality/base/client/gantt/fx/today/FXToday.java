@@ -1,6 +1,7 @@
 package one.modality.base.client.gantt.fx.today;
 
 import dev.webfx.platform.scheduler.Scheduler;
+
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
@@ -13,7 +14,7 @@ import java.util.Objects;
  */
 public final class FXToday {
 
-    private final static ObjectProperty<LocalDate> todayProperty = new SimpleObjectProperty<>();
+    private static final ObjectProperty<LocalDate> todayProperty = new SimpleObjectProperty<>();
 
     static {
         updateTodayAndScheduleTomorrow(LocalDate.now());
@@ -29,7 +30,6 @@ public final class FXToday {
                 () -> updateTodayAndScheduleTomorrow(tomorrow));
     }
 
-
     public static ObjectProperty<LocalDate> todayProperty() {
         return todayProperty;
     }
@@ -41,5 +41,4 @@ public final class FXToday {
     public static boolean isToday(LocalDate date) {
         return Objects.equals(date, getToday());
     }
-
 }

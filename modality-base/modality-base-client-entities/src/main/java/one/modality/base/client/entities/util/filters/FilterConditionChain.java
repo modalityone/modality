@@ -1,9 +1,10 @@
 package one.modality.base.client.entities.util.filters;
 
-import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasConditionDqlStatementProperty;
-import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.dql.DqlStatementBuilder;
+import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
+import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasConditionDqlStatementProperty;
+
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -12,12 +13,14 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import one.modality.base.shared.entities.converters.FilterToDqlStatementConverter;
+
 import one.modality.base.shared.entities.Filter;
+import one.modality.base.shared.entities.converters.FilterToDqlStatementConverter;
 
 public class FilterConditionChain extends HBox {
 
-    private final ObservableList<EntityButtonSelector<Filter>> conditionSelectorChain = FXCollections.observableArrayList();
+    private final ObservableList<EntityButtonSelector<Filter>> conditionSelectorChain =
+            FXCollections.observableArrayList();
 
     private final FilterButtonSelectorFactoryMixin mixin;
     private final String activityName;
@@ -26,7 +29,12 @@ public class FilterConditionChain extends HBox {
     private final HasConditionDqlStatementProperty pm;
     private final Button newButton;
 
-    public FilterConditionChain(FilterButtonSelectorFactoryMixin mixin, String activityName, String domainClassId, Pane parent, HasConditionDqlStatementProperty pm) {
+    public FilterConditionChain(
+            FilterButtonSelectorFactoryMixin mixin,
+            String activityName,
+            String domainClassId,
+            Pane parent,
+            HasConditionDqlStatementProperty pm) {
         this.mixin = mixin;
         this.activityName = activityName;
         this.domainClassId = domainClassId;
@@ -41,7 +49,9 @@ public class FilterConditionChain extends HBox {
         Property<DqlStatement> dqlStatementProperty = new SimpleObjectProperty<>();
         dqlStatementProperty.addListener(e -> updateDqlStatementProperty());
 
-        EntityButtonSelector<Filter> conditionSelector = mixin.createConditionFilterButtonSelectorAndBind(activityName, domainClassId, parent, dqlStatementProperty);
+        EntityButtonSelector<Filter> conditionSelector =
+                mixin.createConditionFilterButtonSelectorAndBind(
+                        activityName, domainClassId, parent, dqlStatementProperty);
         conditionSelectorChain.add(conditionSelector);
         conditionSelector.selectedItemProperty().addListener(e -> updateDqlStatementProperty());
         addToLeftOf(conditionSelector.getButton(), newButton);
@@ -60,12 +70,13 @@ public class FilterConditionChain extends HBox {
     private Button buildRemoveButton(EntityButtonSelector<Filter> filterToRemove) {
         Button removeButton = new Button("-");
         removeButton.prefWidthProperty().bind(newButton.widthProperty());
-        removeButton.setOnAction(e -> {
-            conditionSelectorChain.remove(filterToRemove);
-            getChildren().remove(filterToRemove.getButton());
-            getChildren().remove(removeButton);
-            updateDqlStatementProperty();
-        });
+        removeButton.setOnAction(
+                e -> {
+                    conditionSelectorChain.remove(filterToRemove);
+                    getChildren().remove(filterToRemove.getButton());
+                    getChildren().remove(removeButton);
+                    updateDqlStatementProperty();
+                });
         return removeButton;
     }
 

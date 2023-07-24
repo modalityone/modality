@@ -5,6 +5,7 @@ import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.stack.ui.fxraiser.FXRaiser;
+
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -13,6 +14,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.text.FontWeight;
+
 import one.modality.base.shared.entities.Item;
 
 import java.time.LocalDate;
@@ -27,7 +29,11 @@ public class AttendanceDayPanel extends GridPane {
     private static final FontDef MEAL_TOTAL_COUNT_FONT = FontDef.font(FontWeight.BOLD, 14);
     private static final FontDef MEAL_TEXT_FONT = FontDef.font(FontWeight.BOLD, 15);
 
-    public AttendanceDayPanel(AttendanceCounts attendanceCounts, LocalDate date, List<Item> displayedMeals, AbbreviationGenerator abbreviationGenerator) {
+    public AttendanceDayPanel(
+            AttendanceCounts attendanceCounts,
+            LocalDate date,
+            List<Item> displayedMeals,
+            AbbreviationGenerator abbreviationGenerator) {
         List<Item> sortedDisplayedMeals = sortMeals(attendanceCounts, date, displayedMeals);
         setPadding(new Insets(4));
         addDayOfMonthNumber(date);
@@ -37,9 +43,14 @@ public class AttendanceDayPanel extends GridPane {
         setVgap(2); // To avoid SVGs to touch each others
     }
 
-    private List<Item> sortMeals(AttendanceCounts attendanceCounts, LocalDate date, List<Item> meals) {
+    private List<Item> sortMeals(
+            AttendanceCounts attendanceCounts, LocalDate date, List<Item> meals) {
         return meals.stream()
-                .filter(meal -> attendanceCounts.getCount(date, meal.getName(), DIETARY_OPTION_TOTAL) > 0)
+                .filter(
+                        meal ->
+                                attendanceCounts.getCount(
+                                                date, meal.getName(), DIETARY_OPTION_TOTAL)
+                                        > 0)
                 .sorted(Comparator.comparingInt(Item::getOrd))
                 .collect(Collectors.toList());
     }
@@ -47,9 +58,7 @@ public class AttendanceDayPanel extends GridPane {
     private void addDayOfMonthNumber(LocalDate date) {
         int dayNumber = date.getDayOfMonth();
         Label dayNumberLabel = new Label(padWithLeadingZero(dayNumber));
-        TextTheme.createPrimaryTextFacet(dayNumberLabel)
-                .requestedFont(MEAL_TEXT_FONT)
-                .style();
+        TextTheme.createPrimaryTextFacet(dayNumberLabel).requestedFont(MEAL_TEXT_FONT).style();
         GridPane.setHalignment(dayNumberLabel, HPos.CENTER);
         GridPane.setColumnSpan(dayNumberLabel, 2);
         add(dayNumberLabel, 0, 0);
@@ -59,7 +68,10 @@ public class AttendanceDayPanel extends GridPane {
         return dayNumber > 9 ? String.valueOf(dayNumber) : "0" + dayNumber;
     }
 
-    private void addMealTitles(LocalDate date, List<Item> displayedMeals, AbbreviationGenerator abbreviationGenerator) {
+    private void addMealTitles(
+            LocalDate date,
+            List<Item> displayedMeals,
+            AbbreviationGenerator abbreviationGenerator) {
         int columnIndex = 2;
         ColumnConstraints percentConstraints = new ColumnConstraints();
         percentConstraints.setPercentWidth(100d / (displayedMeals.size() + 2));
@@ -71,9 +83,7 @@ public class AttendanceDayPanel extends GridPane {
         for (Item meal : displayedMeals) {
             String mealTitle = abbreviationGenerator.getAbbreviation(meal.getName());
             Label mealLabel = new Label(mealTitle);
-            TextTheme.createSecondaryTextFacet(mealLabel)
-                        .requestedFont(MEAL_TEXT_FONT)
-                        .style();
+            TextTheme.createSecondaryTextFacet(mealLabel).requestedFont(MEAL_TEXT_FONT).style();
             GridPane.setHalignment(mealLabel, HPos.CENTER);
             add(mealLabel, columnIndex, 0);
             getColumnConstraints().add(percentConstraints);
@@ -97,7 +107,7 @@ public class AttendanceDayPanel extends GridPane {
             if (!"Total".equals(dietaryOption)) {
                 Label dietaryOptionLabel = new Label(dietaryOption);
                 TextTheme.createSecondaryTextFacet(dietaryOptionLabel).style();
-                boolean unspecifiedDiet = "?" .equals(dietaryOption);
+                boolean unspecifiedDiet = "?".equals(dietaryOption);
                 if (unspecifiedDiet) {
                     GridPane.setHalignment(dietaryOptionLabel, HPos.CENTER);
                     add(dietaryOptionLabel, 0, rowIndex);
@@ -105,14 +115,14 @@ public class AttendanceDayPanel extends GridPane {
                     dietaryOptionLabel.setPadding(new Insets(0, 0, 0, 5));
                     add(dietaryOptionLabel, 1, rowIndex);
                 }
-
             }
 
             rowIndex++;
         }
     }
 
-    private void addMealCounts(AttendanceCounts attendanceCounts, LocalDate date, List<Item> displayedMeals) {
+    private void addMealCounts(
+            AttendanceCounts attendanceCounts, LocalDate date, List<Item> displayedMeals) {
         List<String> dietaryOptions = attendanceCounts.getSortedDietaryOptions();
         int columnIndex = 2;
         for (Item meal : displayedMeals) {
@@ -131,5 +141,4 @@ public class AttendanceDayPanel extends GridPane {
             columnIndex++;
         }
     }
-
 }

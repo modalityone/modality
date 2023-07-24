@@ -18,5 +18,4 @@ module modality.ecommerce.client.bookingprocess {
 
     // Exported packages
     exports one.modality.ecommerce.client.activity.bookingprocess;
-
 }

@@ -2,13 +2,13 @@ package one.modality.base.shared.entities;
 
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
+
 import one.modality.base.shared.entities.markers.EntityHasDate;
 
 /**
  * @author Bruno Salmon
  */
-public interface ScheduledResource extends Entity,
-        EntityHasDate {
+public interface ScheduledResource extends Entity, EntityHasDate {
 
     default void setResourceConfiguration(Object event) {
         setForeignField("configuration", event);
@@ -45,6 +45,4 @@ public interface ScheduledResource extends Entity,
     default Integer getMax() {
         return getIntegerFieldValue("max");
     }
-
-
 }

@@ -1,7 +1,8 @@
 package one.modality.base.shared.entities;
 
-import one.modality.base.shared.entities.markers.EntityHasName;
 import dev.webfx.stack.orm.entity.Entity;
+
+import one.modality.base.shared.entities.markers.EntityHasName;
 
 public interface Filter extends Entity, EntityHasName {
 
@@ -44,5 +45,4 @@ public interface Filter extends Entity, EntityHasName {
     default void setIsColumns(Boolean isColumns) {
         setFieldValue("isColumns", isColumns);
     }
-
 }

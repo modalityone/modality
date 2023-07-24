@@ -11,5 +11,4 @@ module modality.ecommerce.payment.delegated.ui {
 
     // Exported packages
     exports one.modality.ecommerce.payment.delegated.ui;
-
 }

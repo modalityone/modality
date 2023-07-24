@@ -33,8 +33,7 @@ class TimeSeriesBuilder {
         long excludedEnd = 0;
         long oneDay = TimeConverter.oneDay(daysTimeUnit);
         for (long day : days) {
-            if (includedStart == excludedEnd)
-                includedStart = day;
+            if (includedStart == excludedEnd) includedStart = day;
             else if (day != excludedEnd) { // > 1 day => break of the consecutive dates
                 addInterval(new TimeInterval(includedStart, excludedEnd, daysTimeUnit));
                 includedStart = day;
@@ -57,11 +56,15 @@ class TimeSeriesBuilder {
                 endText = hyphenTokens[1];
             }
             long includedStart = TimeConverter.parseTime(startText, timeUnit, false);
-            long excludedEnd = TimeConverter.parseTime(Objects.coalesce(endText, startText), timeUnit, true);
+            long excludedEnd =
+                    TimeConverter.parseTime(Objects.coalesce(endText, startText), timeUnit, true);
             if (lastInterval != null && includedStart == lastInterval.getExcludedEnd())
-                series.set(series.size() - 1, lastInterval = new TimeInterval(lastInterval.getIncludedStart(), excludedEnd, timeUnit));
-            else
-                series.add(lastInterval = new TimeInterval(includedStart, excludedEnd, timeUnit));
+                series.set(
+                        series.size() - 1,
+                        lastInterval =
+                                new TimeInterval(
+                                        lastInterval.getIncludedStart(), excludedEnd, timeUnit));
+            else series.add(lastInterval = new TimeInterval(includedStart, excludedEnd, timeUnit));
         }
         return this;
     }
@@ -72,13 +75,15 @@ class TimeSeriesBuilder {
         if (lastInterval == null || interval.getIncludedStart() > lastInterval.getExcludedEnd())
             series.add(interval);
         else if (interval.getExcludedEnd() > lastInterval.getExcludedEnd())
-            series.set(series.size() - 1, new TimeInterval(lastInterval.getIncludedStart(), interval.getExcludedEnd(), timeUnit));
+            series.set(
+                    series.size() - 1,
+                    new TimeInterval(
+                            lastInterval.getIncludedStart(), interval.getExcludedEnd(), timeUnit));
         return this;
     }
 
     TimeSeriesBuilder addSeries(TimeSeries series) {
-        for (TimeInterval interval : series.getArray())
-            addInterval(interval);
+        for (TimeInterval interval : series.getArray()) addInterval(interval);
         return this;
     }
 }

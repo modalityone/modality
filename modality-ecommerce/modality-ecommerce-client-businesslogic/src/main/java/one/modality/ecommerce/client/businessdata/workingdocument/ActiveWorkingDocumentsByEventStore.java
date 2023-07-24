@@ -1,10 +1,11 @@
 package one.modality.ecommerce.client.businessdata.workingdocument;
 
+import dev.webfx.stack.orm.entity.EntityId;
+
 import one.modality.base.client.aggregates.event.EventAggregate;
+import one.modality.base.shared.entities.Event;
 import one.modality.ecommerce.client.businessdata.preselection.ActiveOptionsPreselectionsByEventStore;
 import one.modality.ecommerce.client.businessdata.preselection.OptionsPreselection;
-import one.modality.base.shared.entities.Event;
-import dev.webfx.stack.orm.entity.EntityId;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,13 +15,15 @@ import java.util.Map;
  */
 public class ActiveWorkingDocumentsByEventStore {
 
-    private final static Map<EntityId, WorkingDocument> activeWorkingDocumentsByEventMap = new HashMap<>();
+    private static final Map<EntityId, WorkingDocument> activeWorkingDocumentsByEventMap =
+            new HashMap<>();
 
     public static void setEventActiveWorkingDocument(WorkingDocument workingDocument) {
         setEventActiveWorkingDocument(workingDocument, workingDocument.getEventAggregate());
     }
 
-    public static void setEventActiveWorkingDocument(WorkingDocument workingDocument, EventAggregate eventAggregate) {
+    public static void setEventActiveWorkingDocument(
+            WorkingDocument workingDocument, EventAggregate eventAggregate) {
         setEventActiveWorkingDocument(workingDocument, eventAggregate.getEvent());
     }
 
@@ -28,7 +31,8 @@ public class ActiveWorkingDocumentsByEventStore {
         setEventActiveWorkingDocument(workingDocument, event.getId());
     }
 
-    public static void setEventActiveWorkingDocument(WorkingDocument workingDocument, EntityId eventId) {
+    public static void setEventActiveWorkingDocument(
+            WorkingDocument workingDocument, EntityId eventId) {
         activeWorkingDocumentsByEventMap.put(eventId, workingDocument);
     }
 
@@ -43,7 +47,9 @@ public class ActiveWorkingDocumentsByEventStore {
     public static WorkingDocument getEventActiveWorkingDocument(EntityId eventId) {
         WorkingDocument workingDocument = activeWorkingDocumentsByEventMap.get(eventId);
         if (workingDocument == null) {
-            OptionsPreselection selectedOptionsPreselection = ActiveOptionsPreselectionsByEventStore.getActiveOptionsPreselection(EventAggregate.get(eventId));
+            OptionsPreselection selectedOptionsPreselection =
+                    ActiveOptionsPreselectionsByEventStore.getActiveOptionsPreselection(
+                            EventAggregate.get(eventId));
             if (selectedOptionsPreselection != null)
                 workingDocument = selectedOptionsPreselection.getWorkingDocument();
         }

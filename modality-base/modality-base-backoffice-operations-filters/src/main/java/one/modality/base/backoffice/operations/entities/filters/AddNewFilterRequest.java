@@ -1,15 +1,16 @@
 package one.modality.base.backoffice.operations.entities.filters;
 
+import dev.webfx.platform.async.AsyncFunction;
+import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
-import dev.webfx.stack.orm.entity.EntityStore;
-import dev.webfx.platform.async.AsyncFunction;
+
 import javafx.scene.layout.Pane;
 
-public final class AddNewFilterRequest implements HasOperationCode,
-        HasOperationExecutor<AddNewFilterRequest, Void> {
+public final class AddNewFilterRequest
+        implements HasOperationCode, HasOperationExecutor<AddNewFilterRequest, Void> {
 
-    private final static String OPERATION_CODE = "AddNewFilter";
+    private static final String OPERATION_CODE = "AddNewFilter";
 
     private final EntityStore entityStore;
     private final Pane parentContainer;

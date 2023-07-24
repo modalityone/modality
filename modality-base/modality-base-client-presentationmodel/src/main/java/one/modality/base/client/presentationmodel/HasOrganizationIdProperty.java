@@ -16,5 +16,4 @@ public interface HasOrganizationIdProperty {
     default Object getOrganizationId() {
         return this.organizationIdProperty().getValue();
     }
-
 }

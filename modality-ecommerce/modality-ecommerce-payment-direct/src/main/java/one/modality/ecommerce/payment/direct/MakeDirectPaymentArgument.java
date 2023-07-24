@@ -10,7 +10,8 @@ public class MakeDirectPaymentArgument {
     private final String ccNumber;
     private final String ccExpiry;
 
-    public MakeDirectPaymentArgument(int amount, String currency, String ccNumber, String ccExpiry) {
+    public MakeDirectPaymentArgument(
+            int amount, String currency, String ccNumber, String ccExpiry) {
         this.amount = amount;
         this.currency = currency;
         this.ccNumber = ccNumber;
@@ -32,5 +33,4 @@ public class MakeDirectPaymentArgument {
     public String getCcExpiry() {
         return ccExpiry;
     }
-
 }

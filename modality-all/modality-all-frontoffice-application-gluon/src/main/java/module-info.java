@@ -40,5 +40,4 @@ module modality.all.frontoffice.application.gluon {
 
     // Meta Resource package
     opens dev.webfx.platform.meta.exe;
-
 }

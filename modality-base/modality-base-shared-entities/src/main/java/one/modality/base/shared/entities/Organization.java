@@ -7,8 +7,4 @@ import one.modality.base.shared.entities.markers.EntityHasName;
 /**
  * @author Bruno Salmon
  */
-public interface Organization extends
-        EntityHasName,
-        EntityHasLabel,
-        EntityHasIcon {
-}
+public interface Organization extends EntityHasName, EntityHasLabel, EntityHasIcon {}

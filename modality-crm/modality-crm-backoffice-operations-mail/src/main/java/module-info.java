@@ -10,5 +10,4 @@ module modality.crm.backoffice.operations.mail {
 
     // Exported packages
     exports one.modality.crm.backoffice.operations.entities.mail;
-
 }

@@ -36,5 +36,4 @@ public interface HasItemFamilyType {
     default boolean isTax() {
         return getItemFamilyType() == ItemFamilyType.TAX;
     }
-
 }

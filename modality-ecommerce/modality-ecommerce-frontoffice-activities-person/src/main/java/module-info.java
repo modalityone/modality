@@ -25,6 +25,6 @@ module modality.ecommerce.frontoffice.activities.person {
     exports one.modality.ecommerce.frontoffice.operations.person;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.ecommerce.frontoffice.activities.person.PersonUiRoute;
-
+    provides dev.webfx.stack.routing.uirouter.UiRoute with
+            one.modality.ecommerce.frontoffice.activities.person.PersonUiRoute;
 }

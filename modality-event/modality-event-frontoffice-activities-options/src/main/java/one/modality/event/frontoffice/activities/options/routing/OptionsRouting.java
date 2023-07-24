@@ -16,5 +16,4 @@ public final class OptionsRouting {
     public static String getEventOptionsPath(Object eventId) {
         return ModalityRoutingUtil.interpolateEventIdInPath(eventId, getPath());
     }
-
 }

@@ -1,16 +1,17 @@
 package one.modality.event.backoffice.operations.routes.events;
 
-import one.modality.event.backoffice.activities.events.routing.EventsRouting;
+import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.ui.operation.HasOperationCode;
-import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
+
+import one.modality.event.backoffice.activities.events.routing.EventsRouting;
 
 /**
  * @author Bruno Salmon
  */
 public final class RouteToEventsRequest extends RoutePushRequest implements HasOperationCode {
 
-    private final static String OPERATION_CODE = "RouteToEvents";
+    private static final String OPERATION_CODE = "RouteToEvents";
 
     public RouteToEventsRequest(BrowsingHistory history) {
         super(EventsRouting.getAllEventsPath(), history);
@@ -24,5 +25,4 @@ public final class RouteToEventsRequest extends RoutePushRequest implements HasO
     public Object getOperationCode() {
         return OPERATION_CODE;
     }
-
 }

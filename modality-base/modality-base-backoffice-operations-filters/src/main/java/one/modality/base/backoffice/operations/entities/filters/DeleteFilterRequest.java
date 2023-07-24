@@ -1,15 +1,17 @@
 package one.modality.base.backoffice.operations.entities.filters;
 
+import dev.webfx.platform.async.AsyncFunction;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
-import dev.webfx.platform.async.AsyncFunction;
+
 import javafx.scene.layout.Pane;
+
 import one.modality.base.shared.entities.Filter;
 
-public final class DeleteFilterRequest implements HasOperationCode,
-        HasOperationExecutor<DeleteFilterRequest, Void> {
+public final class DeleteFilterRequest
+        implements HasOperationCode, HasOperationExecutor<DeleteFilterRequest, Void> {
 
-    private final static String OPERATION_CODE = "DeleteFilter";
+    private static final String OPERATION_CODE = "DeleteFilter";
 
     private final Filter filter;
     private final Pane parentContainer;

@@ -23,6 +23,6 @@ module modality.base.server.systemmetrics {
     uses one.modality.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider;
 
     // Provided services
-    provides dev.webfx.platform.boot.spi.ApplicationJob with one.modality.base.server.jobs.systemmetrics.SystemMetricsRecorderJob;
-
+    provides dev.webfx.platform.boot.spi.ApplicationJob with
+            one.modality.base.server.jobs.systemmetrics.SystemMetricsRecorderJob;
 }

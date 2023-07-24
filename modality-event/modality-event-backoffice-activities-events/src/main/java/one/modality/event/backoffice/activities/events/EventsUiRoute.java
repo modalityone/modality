@@ -4,6 +4,7 @@ import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivi
 import dev.webfx.stack.routing.router.util.PathBuilder;
 import dev.webfx.stack.routing.uirouter.UiRoute;
 import dev.webfx.stack.routing.uirouter.impl.UiRouteImpl;
+
 import one.modality.event.backoffice.activities.events.routing.EventsRouting;
 
 /**
@@ -17,10 +18,9 @@ public final class EventsUiRoute extends UiRouteImpl {
 
     public static UiRoute<?> uiRoute() {
         return UiRoute.createRegex(
-                PathBuilder.toRegexPath(EventsRouting.getAnyPath())
-                , false
-                , EventsActivity::new
-                , ViewDomainActivityContextFinal::new
-        );
+                PathBuilder.toRegexPath(EventsRouting.getAnyPath()),
+                false,
+                EventsActivity::new,
+                ViewDomainActivityContextFinal::new);
     }
 }

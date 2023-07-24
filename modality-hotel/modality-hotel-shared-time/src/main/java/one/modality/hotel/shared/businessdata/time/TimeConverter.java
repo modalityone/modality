@@ -13,14 +13,12 @@ import java.util.concurrent.TimeUnit;
 class TimeConverter {
 
     static long convertTime(long time, TimeUnit srcTu, TimeUnit dstTu) {
-        if (srcTu == dstTu)
-            return time;
+        if (srcTu == dstTu) return time;
         return dstTu.convert(time, srcTu);
     }
 
     static long convertExcludedEnd(long end, TimeUnit srcTu, TimeUnit dstTu) {
-        if (dstTu == TimeUnit.DAYS && srcTu.compareTo(dstTu) < 0)
-            end = end + oneDay(srcTu) - 1;
+        if (dstTu == TimeUnit.DAYS && srcTu.compareTo(dstTu) < 0) end = end + oneDay(srcTu) - 1;
         return convertTime(end, srcTu, dstTu);
     }
 
@@ -33,8 +31,7 @@ class TimeConverter {
     }
 
     static long floorToDay(long time, TimeUnit timeUnit) {
-        if (timeUnit == TimeUnit.DAYS)
-            return time;
+        if (timeUnit == TimeUnit.DAYS) return time;
         return convertTime(convertTime(time, timeUnit, TimeUnit.DAYS), TimeUnit.DAYS, timeUnit);
     }
 
@@ -46,16 +43,12 @@ class TimeConverter {
         long epochMillis = convertTime(time, timeUnit, TimeUnit.MILLISECONDS);
         LocalDateTime date = Dates.epochMillisUtcToLocalDateTime(epochMillis);
         boolean autoFormat = format == null;
-        if (autoFormat)
-            format = "dd/MM/yyyy HH:mm";
+        if (autoFormat) format = "dd/MM/yyyy HH:mm";
         if (date.getYear() == 1970) {
-            if (autoFormat)
-                format = "HH:mm";
+            if (autoFormat) format = "HH:mm";
         } else if (date.getHour() == 0 && date.getMinute() == 0) {
-            if (autoFormat)
-                format = "dd/MM/yyyy";
-            if (excluded)
-                date = date.minusDays(1);
+            if (autoFormat) format = "dd/MM/yyyy";
+            if (excluded) date = date.minusDays(1);
         }
         return Dates.format(date, format);
     }
@@ -64,9 +57,9 @@ class TimeConverter {
         // Only accepted format is DMY [DD/MM/YYYY] [hh:mm:ss]
         LocalDateTime dateTime = parseDMYLocalDateTime(text, excluded);
         long epochMillis = Dates.localDateTimeToEpochMillisUtc(dateTime);
-        return excluded ?
-                convertExcludedEnd(epochMillis, TimeUnit.MILLISECONDS, timeUnit) :
-                convertTime(epochMillis, TimeUnit.MILLISECONDS, timeUnit);
+        return excluded
+                ? convertExcludedEnd(epochMillis, TimeUnit.MILLISECONDS, timeUnit)
+                : convertTime(epochMillis, TimeUnit.MILLISECONDS, timeUnit);
     }
 
     private static LocalDateTime parseDMYLocalDateTime(String text, boolean excluded) {
@@ -80,15 +73,13 @@ class TimeConverter {
             if (i != -1) {
                 month = Numbers.intValue(text.substring(p, i));
                 i = text.indexOf(' ', p = i + 1);
-                if (i == -1)
-                    i = text.length();
+                if (i == -1) i = text.length();
                 year = Numbers.intValue(text.substring(p, i));
                 p = i + 1;
             }
         }
         i = text.indexOf(':', p);
-        if (i == -1)
-            i = text.indexOf('h', p);
+        if (i == -1) i = text.indexOf('h', p);
         if (i != -1) {
             hour = Numbers.intValue(text.substring(p, i));
             if (hour > 24) {
@@ -96,16 +87,14 @@ class TimeConverter {
                 hour -= 24;
             }
             i = text.indexOf(':', p = i + 1);
-            if (i == -1)
-                i = text.length();
+            if (i == -1) i = text.length();
             minute = Numbers.intValue(text.substring(p, i));
             if (i < text.length()) {
                 p = i + 1;
                 i = text.length();
                 second = Numbers.intValue(text.substring(p, i));
             }
-        } else if (excluded)
-            day++;
+        } else if (excluded) day++;
         return LocalDateTime.of(year, Month.of(month), day, hour, minute, second);
     }
 }

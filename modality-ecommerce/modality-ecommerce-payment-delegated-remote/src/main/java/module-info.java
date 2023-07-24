@@ -12,6 +12,6 @@ module modality.ecommerce.payment.delegated.remote {
     exports one.modality.ecommerce.payment.delegated.spi.impl.remote;
 
     // Provided services
-    provides one.modality.ecommerce.payment.delegated.spi.DelegatedPaymentProvider with one.modality.ecommerce.payment.delegated.spi.impl.remote.RemoteDelegatedPaymentProvider;
-
+    provides one.modality.ecommerce.payment.delegated.spi.DelegatedPaymentProvider with
+            one.modality.ecommerce.payment.delegated.spi.impl.remote.RemoteDelegatedPaymentProvider;
 }

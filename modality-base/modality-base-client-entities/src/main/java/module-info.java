@@ -23,5 +23,4 @@ module modality.base.client.entities {
     // Exported packages
     exports one.modality.base.client.entities.util;
     exports one.modality.base.client.entities.util.filters;
-
 }

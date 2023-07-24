@@ -1,10 +1,11 @@
 package one.modality.ecommerce.client.businessdata.feesgroup;
 
-import one.modality.ecommerce.client.businesslogic.feesgroup.FeesGroupLogic;
+import dev.webfx.platform.async.Future;
+import dev.webfx.stack.orm.entity.EntityId;
+
 import one.modality.base.client.aggregates.event.EventAggregate;
 import one.modality.base.shared.entities.Event;
-import dev.webfx.stack.orm.entity.EntityId;
-import dev.webfx.platform.async.Future;
+import one.modality.ecommerce.client.businesslogic.feesgroup.FeesGroupLogic;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +15,7 @@ import java.util.Map;
  */
 public class FeesGroupsByEventStore {
 
-    private final static Map<EntityId, FeesGroup[]> feesGroupsByEventMap = new HashMap<>();
+    private static final Map<EntityId, FeesGroup[]> feesGroupsByEventMap = new HashMap<>();
 
     public static FeesGroup[] getEventFeesGroups(EventAggregate eventAggregate) {
         return getEventFeesGroups(eventAggregate.getEvent());
@@ -27,7 +28,9 @@ public class FeesGroupsByEventStore {
     public static FeesGroup[] getEventFeesGroups(EntityId eventId) {
         FeesGroup[] feesGroups = feesGroupsByEventMap.get(eventId);
         if (feesGroups == null)
-            feesGroupsByEventMap.put(eventId, feesGroups = FeesGroupLogic.createFeesGroups(EventAggregate.get(eventId)));
+            feesGroupsByEventMap.put(
+                    eventId,
+                    feesGroups = FeesGroupLogic.createFeesGroups(EventAggregate.get(eventId)));
         return feesGroups;
     }
 
@@ -41,9 +44,9 @@ public class FeesGroupsByEventStore {
 
     public static Future<FeesGroup[]> onEventFeesGroups(EntityId eventId) {
         FeesGroup[] feesGroups = feesGroupsByEventMap.get(eventId);
-        if (feesGroups != null)
-            return Future.succeededFuture(feesGroups);
-        return EventAggregate.get(eventId).onEventOptions().map(ignored -> getEventFeesGroups(eventId));
+        if (feesGroups != null) return Future.succeededFuture(feesGroups);
+        return EventAggregate.get(eventId)
+                .onEventOptions()
+                .map(ignored -> getEventFeesGroups(eventId));
     }
-
 }

@@ -1,17 +1,17 @@
 package one.modality.ecommerce.backoffice.operations.routes.bookings;
 
-import dev.webfx.stack.ui.operation.HasOperationCode;
-import dev.webfx.stack.routing.uirouter.operations.RouteRequestBase;
-import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.platform.async.AsyncFunction;
+import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
+import dev.webfx.stack.routing.uirouter.operations.RouteRequestBase;
+import dev.webfx.stack.ui.operation.HasOperationCode;
 
 /**
  * @author Bruno Salmon
  */
-public final class RouteToNewBackOfficeBookingRequest extends RouteRequestBase<RouteToNewBackOfficeBookingRequest>
-        implements HasOperationCode {
+public final class RouteToNewBackOfficeBookingRequest
+        extends RouteRequestBase<RouteToNewBackOfficeBookingRequest> implements HasOperationCode {
 
-    private final static String OPERATION_CODE = "RouteToNewBackOfficeBooking";
+    private static final String OPERATION_CODE = "RouteToNewBackOfficeBooking";
 
     private Object eventId;
 
@@ -38,5 +38,4 @@ public final class RouteToNewBackOfficeBookingRequest extends RouteRequestBase<R
     public AsyncFunction<RouteToNewBackOfficeBookingRequest, Void> getOperationExecutor() {
         return RouteToNewBackOfficeBookingExecutor::executeRequest;
     }
-
 }

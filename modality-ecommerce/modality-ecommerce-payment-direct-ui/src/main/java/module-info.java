@@ -10,5 +10,4 @@ module modality.ecommerce.payment.direct.ui {
 
     // Exported packages
     exports one.modality.ecommerce.payment.direct.ui;
-
 }

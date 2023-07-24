@@ -1,15 +1,17 @@
 package one.modality.crm.backoffice.operations.entities.mail;
 
-import javafx.scene.layout.Pane;
-import one.modality.base.shared.entities.Mail;
+import dev.webfx.platform.async.AsyncFunction;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
-import dev.webfx.platform.async.AsyncFunction;
 
-public final class OpenMailRequest implements HasOperationCode,
-        HasOperationExecutor<OpenMailRequest, Void> {
+import javafx.scene.layout.Pane;
 
-    private final static String OPERATION_CODE = "OpenMail";
+import one.modality.base.shared.entities.Mail;
+
+public final class OpenMailRequest
+        implements HasOperationCode, HasOperationExecutor<OpenMailRequest, Void> {
+
+    private static final String OPERATION_CODE = "OpenMail";
 
     private final Mail mail;
     private final Pane parentContainer;

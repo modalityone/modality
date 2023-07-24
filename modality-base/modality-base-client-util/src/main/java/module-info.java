@@ -15,5 +15,4 @@ module modality.base.client.util {
     exports one.modality.base.client.util.functions;
     exports one.modality.base.client.util.log;
     exports one.modality.base.client.util.routing;
-
 }

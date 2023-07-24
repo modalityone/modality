@@ -5,10 +5,9 @@ package one.modality.hotel.backoffice.activities.household.routing;
  */
 public final class HouseholdRouting {
 
-    private final static String ANY_PATH = "/household";
+    private static final String ANY_PATH = "/household";
 
     public static String getAnyPath() {
         return ANY_PATH;
     }
-
 }

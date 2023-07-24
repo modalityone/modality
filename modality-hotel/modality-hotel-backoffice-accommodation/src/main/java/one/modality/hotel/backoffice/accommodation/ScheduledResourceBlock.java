@@ -17,7 +17,8 @@ public final class ScheduledResourceBlock implements AccommodationBlock {
         available = sr.isAvailable();
         online = sr.isOnline();
         int max = sr.getMax();
-        // The "booked" field is an extra computed fields added by the ReactiveEntitiesMapper in RoomCalendarGanttCanvas
+        // The "booked" field is an extra computed fields added by the ReactiveEntitiesMapper in
+        // RoomCalendarGanttCanvas
         int booked = sr.getIntegerFieldValue("booked");
         remaining = max - booked;
     }

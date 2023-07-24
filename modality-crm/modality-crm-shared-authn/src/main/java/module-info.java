@@ -12,6 +12,6 @@ module modality.crm.shared.authn {
     exports one.modality.crm.shared.services.authn.serial;
 
     // Provided services
-    provides dev.webfx.stack.com.serial.spi.SerialCodec with one.modality.crm.shared.services.authn.serial.ModalityUserPrincipalSerialCodec;
-
+    provides dev.webfx.stack.com.serial.spi.SerialCodec with
+            one.modality.crm.shared.services.authn.serial.ModalityUserPrincipalSerialCodec;
 }

@@ -3,10 +3,12 @@ package one.modality.ecommerce.payment.gateway.direct.spi.impl.authorizedotnet;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
 import dev.webfx.platform.scheduler.Scheduler;
+
 import net.authorize.Environment;
 import net.authorize.api.contract.v1.*;
 import net.authorize.api.controller.CreateTransactionController;
 import net.authorize.api.controller.base.ApiOperationBase;
+
 import one.modality.ecommerce.payment.direct.MakeDirectPaymentArgument;
 import one.modality.ecommerce.payment.direct.MakeDirectPaymentResult;
 import one.modality.ecommerce.payment.gateway.direct.spi.DirectPaymentGatewayProvider;
@@ -18,10 +20,11 @@ import java.math.BigDecimal;
  */
 public class AuthorizeDotNetDirectPaymentGatewayProvider implements DirectPaymentGatewayProvider {
 
-    private final static String API_KEY = "6VEbu4X922";
-    private final static String TRANSACTION_KEY = "7pZts3g48E3L58Da"; // @TODO hide this or pull from configuration
+    private static final String API_KEY = "6VEbu4X922";
+    private static final String TRANSACTION_KEY =
+            "7pZts3g48E3L58Da"; // @TODO hide this or pull from configuration
 
-    private final static net.authorize.Environment ENV = Environment.SANDBOX;
+    private static final net.authorize.Environment ENV = Environment.SANDBOX;
 
     public AuthorizeDotNetDirectPaymentGatewayProvider() {
         ApiOperationBase.setEnvironment(ENV);
@@ -29,13 +32,14 @@ public class AuthorizeDotNetDirectPaymentGatewayProvider implements DirectPaymen
 
     public Future<MakeDirectPaymentResult> makeDirectPayment(MakeDirectPaymentArgument argument) {
         Promise<MakeDirectPaymentResult> promise = Promise.promise();
-        Scheduler.runInBackground(() -> {
-            try {
-                promise.complete(makeDirectPaymentBlocking(argument));
-            } catch (Throwable throwable) {
-                promise.fail(throwable);
-            }
-        });
+        Scheduler.runInBackground(
+                () -> {
+                    try {
+                        promise.complete(makeDirectPaymentBlocking(argument));
+                    } catch (Throwable throwable) {
+                        promise.fail(throwable);
+                    }
+                });
         return promise.future();
     }
 
@@ -46,7 +50,7 @@ public class AuthorizeDotNetDirectPaymentGatewayProvider implements DirectPaymen
         System.out.println("The cc number is: " + ccNumber);
         System.out.println("The expiry date is: " + ccExpiry);
 
-        MerchantAuthenticationType merchantAuthenticationType  = new MerchantAuthenticationType() ;
+        MerchantAuthenticationType merchantAuthenticationType = new MerchantAuthenticationType();
         merchantAuthenticationType.setName(API_KEY);
         merchantAuthenticationType.setTransactionKey(TRANSACTION_KEY);
         ApiOperationBase.setMerchantAuthentication(merchantAuthenticationType);
@@ -76,8 +80,7 @@ public class AuthorizeDotNetDirectPaymentGatewayProvider implements DirectPaymen
 
         CreateTransactionResponse trxResponse = controller.getApiResponse();
         boolean success = false;
-        if (trxResponse == null)
-            System.out.println("Response is null!");
+        if (trxResponse == null) System.out.println("Response is null!");
         else {
 
             TransactionResponse result = trxResponse.getTransactionResponse();
@@ -89,9 +92,9 @@ public class AuthorizeDotNetDirectPaymentGatewayProvider implements DirectPaymen
                 success = true;
             } else {
                 System.out.println("Failed Credit Card Transaction");
-                System.out.println("Failed Transaction: " + trxResponse.getMessages().getResultCode());
+                System.out.println(
+                        "Failed Transaction: " + trxResponse.getMessages().getResultCode());
             }
-
         }
 
         return new MakeDirectPaymentResult(success);

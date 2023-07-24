@@ -16,5 +16,4 @@ public interface EntityHasOnline extends Entity, HasOnline {
     default Boolean isOnline() {
         return getBooleanFieldValue("online");
     }
-
 }

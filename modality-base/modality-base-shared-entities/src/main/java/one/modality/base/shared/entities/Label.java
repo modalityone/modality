@@ -6,9 +6,7 @@ import one.modality.base.shared.entities.markers.EntityHasOrganization;
 /**
  * @author Bruno Salmon
  */
-public interface Label extends
-        EntityHasIcon,
-        EntityHasOrganization {
+public interface Label extends EntityHasIcon, EntityHasOrganization {
 
     default void setDe(String de) {
         setFieldValue("de", de);
@@ -49,5 +47,4 @@ public interface Label extends
     default String getPt() {
         return getStringFieldValue("pt");
     }
-
 }

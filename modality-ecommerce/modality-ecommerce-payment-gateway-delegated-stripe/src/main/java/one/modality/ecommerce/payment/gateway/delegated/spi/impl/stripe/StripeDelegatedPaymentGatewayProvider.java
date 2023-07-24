@@ -3,7 +3,9 @@ package one.modality.ecommerce.payment.gateway.delegated.spi.impl.stripe;
 import com.stripe.Stripe;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
+
 import dev.webfx.platform.async.Future;
+
 import one.modality.ecommerce.payment.delegated.InitiateDelegatedPaymentArgument;
 import one.modality.ecommerce.payment.delegated.InitiateDelegatedPaymentResult;
 import one.modality.ecommerce.payment.gateway.delegated.spi.DelegatedPaymentGatewayProvider;
@@ -15,7 +17,8 @@ import one.modality.ecommerce.payment.gateway.delegated.spi.InitiateDelegatedPay
 public class StripeDelegatedPaymentGatewayProvider implements DelegatedPaymentGatewayProvider {
 
     @Override
-    public Future<InitiateDelegatedPaymentResult> initiateDelegatedPayment(InitiateDelegatedPaymentGatewayArgument argument) {
+    public Future<InitiateDelegatedPaymentResult> initiateDelegatedPayment(
+            InitiateDelegatedPaymentGatewayArgument argument) {
         InitiateDelegatedPaymentArgument userArgument = argument.getUserArgument();
         Stripe.apiKey = argument.getAccountId();
         // Extract the following to a 'StripeClient'

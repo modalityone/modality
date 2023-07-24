@@ -5,6 +5,5 @@ import one.modality.base.client.activity.table.GenericTablePresentationViewActiv
 /**
  * @author Bruno Salmon
  */
-final class OperationsPresentationViewActivity extends GenericTablePresentationViewActivity<OperationsPresentationModel> {
-
-}
+final class OperationsPresentationViewActivity
+        extends GenericTablePresentationViewActivity<OperationsPresentationModel> {}

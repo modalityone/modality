@@ -1,16 +1,17 @@
 package one.modality.ecommerce.backoffice.operations.routes.payments;
 
-import one.modality.ecommerce.backoffice.activities.payments.routing.PaymentsRouting;
+import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.ui.operation.HasOperationCode;
-import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
+
+import one.modality.ecommerce.backoffice.activities.payments.routing.PaymentsRouting;
 
 /**
  * @author Bruno Salmon
  */
 public final class RouteToPaymentsRequest extends RoutePushRequest implements HasOperationCode {
 
-    private final static String OPERATION_CODE = "RouteToPayments";
+    private static final String OPERATION_CODE = "RouteToPayments";
 
     public RouteToPaymentsRequest(Object eventId, BrowsingHistory history) {
         super(PaymentsRouting.getPaymentsPath(eventId), history);
@@ -20,5 +21,4 @@ public final class RouteToPaymentsRequest extends RoutePushRequest implements Ha
     public Object getOperationCode() {
         return OPERATION_CODE;
     }
-
 }

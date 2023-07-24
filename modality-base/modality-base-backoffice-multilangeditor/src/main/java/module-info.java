@@ -20,5 +20,4 @@ module modality.base.backoffice.multilangeditor {
 
     // Exported packages
     exports one.modality.base.backoffice.controls.multilangeditor;
-
 }

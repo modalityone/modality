@@ -16,6 +16,7 @@ module modality.ecommerce.payment.gateway.custom.stripe {
     opens one.modality.ecommerce.payment.gateway.custom.spi.impl.stripe;
 
     // Provided services
-    provides one.modality.ecommerce.payment.gateway.custom.spi.CustomPaymentGatewayProvider with one.modality.ecommerce.payment.gateway.custom.spi.impl.stripe.StripeCustomPaymentGatewayProvider;
-
+    provides one.modality.ecommerce.payment.gateway.custom.spi.CustomPaymentGatewayProvider with
+            one.modality.ecommerce.payment.gateway.custom.spi.impl.stripe
+                    .StripeCustomPaymentGatewayProvider;
 }

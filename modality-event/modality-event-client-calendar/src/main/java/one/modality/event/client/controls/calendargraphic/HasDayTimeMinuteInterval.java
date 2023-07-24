@@ -8,5 +8,4 @@ import one.modality.hotel.shared.businessdata.time.TimeInterval;
 public interface HasDayTimeMinuteInterval {
 
     TimeInterval getDayTimeMinuteInterval();
-
 }

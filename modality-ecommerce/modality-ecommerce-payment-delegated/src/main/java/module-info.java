@@ -13,5 +13,4 @@ module modality.ecommerce.payment.delegated {
 
     // Used services
     uses one.modality.ecommerce.payment.delegated.spi.DelegatedPaymentProvider;
-
 }

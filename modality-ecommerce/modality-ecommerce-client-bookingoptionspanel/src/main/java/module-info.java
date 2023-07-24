@@ -24,5 +24,4 @@ module modality.ecommerce.client.bookingoptionspanel {
 
     // Exported packages
     exports one.modality.ecommerce.client.controls.bookingoptionspanel;
-
 }

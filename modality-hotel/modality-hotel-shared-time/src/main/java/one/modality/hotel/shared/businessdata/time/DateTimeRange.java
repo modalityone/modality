@@ -49,14 +49,12 @@ public final class DateTimeRange {
     }
 
     public TimeInterval getInterval() {
-        if (interval == null)
-            interval = getSeries().toInterval();
+        if (interval == null) interval = getSeries().toInterval();
         return interval;
     }
 
     public DaysArray getDaysArray() {
-        if (daysArray == null)
-            daysArray = getSeries().toDaysArray();
+        if (daysArray == null) daysArray = getSeries().toDaysArray();
         return daysArray;
     }
 
@@ -66,19 +64,15 @@ public final class DateTimeRange {
 
     public TimeSeries getSeries() {
         if (series == null) {
-            if (text != null)
-                series = TimeSeries.parse(text);
-            else if (daysArray != null)
-                series = daysArray.toSeries();
-            else
-                series = interval.toSeries();
+            if (text != null) series = TimeSeries.parse(text);
+            else if (daysArray != null) series = daysArray.toSeries();
+            else series = interval.toSeries();
         }
         return series;
     }
 
     public String getText() {
-        if (text == null)
-            text = getSeries().toText();
+        if (text == null) text = getSeries().toText();
         return text;
     }
 
@@ -87,28 +81,24 @@ public final class DateTimeRange {
     }
 
     public DateTimeRange changeTimeUnit(TimeUnit newTimeUnit) {
-        if (series != null)
-            return from(series.changeTimeUnit(newTimeUnit));
-        if (daysArray != null)
-            return from(daysArray.changeTimeUnit(newTimeUnit));
-        if (interval != null)
-            return from(interval.changeTimeUnit(newTimeUnit));
+        if (series != null) return from(series.changeTimeUnit(newTimeUnit));
+        if (daysArray != null) return from(daysArray.changeTimeUnit(newTimeUnit));
+        if (interval != null) return from(interval.changeTimeUnit(newTimeUnit));
         return from(getSeries().changeTimeUnit(newTimeUnit));
     }
 
     public boolean containsInterval(TimeInterval interval) {
-        return containsInterval(interval.getIncludedStart(), interval.getExcludedEnd(), interval.getTimeUnit());
+        return containsInterval(
+                interval.getIncludedStart(), interval.getExcludedEnd(), interval.getTimeUnit());
     }
 
     boolean containsInterval(long includedStart, long excludedEnd, TimeUnit timeUnit) {
         TimeInterval[] series = getSeries().changeTimeUnit(timeUnit).getArray();
         for (TimeInterval interval : series) {
             long start = interval.getIncludedStart();
-            if (start >= excludedEnd)
-                return false;
+            if (start >= excludedEnd) return false;
             long end = interval.getExcludedEnd();
-            if (end > includedStart)
-                return true;
+            if (end > includedStart) return true;
         }
         return false;
     }
@@ -122,8 +112,7 @@ public final class DateTimeRange {
     }
 
     public DateTimeRange intersect(DayTimeRange dayTimeRange) {
-        if (dayTimeRange == null)
-            return this;
+        if (dayTimeRange == null) return this;
         return from(getSeries().changeTimeUnit(TimeUnit.MINUTES).intersect(dayTimeRange));
     }
 
@@ -132,18 +121,23 @@ public final class DateTimeRange {
         return intersect != null && !intersect.isEmpty();
     }
 
-    public static DateTimeRange cropDateTimeRangeWithDayTime(DateTimeRange dateTimeRange, DayTimeRange dayTimeRange) {
-        return dateTimeRange == null || dayTimeRange == null ? dateTimeRange : dateTimeRange.intersect(dayTimeRange);
+    public static DateTimeRange cropDateTimeRangeWithDayTime(
+            DateTimeRange dateTimeRange, DayTimeRange dayTimeRange) {
+        return dateTimeRange == null || dayTimeRange == null
+                ? dateTimeRange
+                : dateTimeRange.intersect(dayTimeRange);
     }
 
     public static DateTimeRange merge(List<DateTimeRange> dateTimeRanges) {
-        switch (Collections.size( dateTimeRanges)) {
+        switch (Collections.size(dateTimeRanges)) {
             case 0:
                 return null;
             case 1:
                 return Collections.first(dateTimeRanges);
             default:
-                return new DateTimeRange(TimeSeries.merge(Collections.map(dateTimeRanges, DateTimeRange::getSeries)));
+                return new DateTimeRange(
+                        TimeSeries.merge(
+                                Collections.map(dateTimeRanges, DateTimeRange::getSeries)));
         }
     }
 }

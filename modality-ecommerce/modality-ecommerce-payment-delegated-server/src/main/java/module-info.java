@@ -16,6 +16,6 @@ module modality.ecommerce.payment.delegated.server {
     uses one.modality.ecommerce.payment.gateway.delegated.spi.DelegatedPaymentGatewayProvider;
 
     // Provided services
-    provides one.modality.ecommerce.payment.delegated.spi.DelegatedPaymentProvider with one.modality.ecommerce.payment.delegated.spi.impl.server.ServerDelegatedPaymentProvider;
-
+    provides one.modality.ecommerce.payment.delegated.spi.DelegatedPaymentProvider with
+            one.modality.ecommerce.payment.delegated.spi.impl.server.ServerDelegatedPaymentProvider;
 }

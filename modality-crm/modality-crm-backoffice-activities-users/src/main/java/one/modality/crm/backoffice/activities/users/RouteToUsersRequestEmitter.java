@@ -1,9 +1,10 @@
 package one.modality.crm.backoffice.activities.users;
 
-import one.modality.crm.backoffice.operations.routes.users.RouteToUsersRequest;
+import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
-import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
+
+import one.modality.crm.backoffice.operations.routes.users.RouteToUsersRequest;
 
 /**
  * @author Bruno Salmon

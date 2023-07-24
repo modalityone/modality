@@ -25,7 +25,8 @@ module modality.base.backoffice.activities.monitor {
     exports one.modality.base.backoffice.operations.routes.monitor;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.base.backoffice.activities.monitor.MonitorUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.base.backoffice.activities.monitor.RouteToMonitorRequestEmitter;
-
+    provides dev.webfx.stack.routing.uirouter.UiRoute with
+            one.modality.base.backoffice.activities.monitor.MonitorUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with
+            one.modality.base.backoffice.activities.monitor.RouteToMonitorRequestEmitter;
 }

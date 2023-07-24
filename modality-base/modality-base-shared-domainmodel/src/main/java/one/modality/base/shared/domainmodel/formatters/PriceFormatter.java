@@ -1,10 +1,10 @@
 package one.modality.base.shared.domainmodel.formatters;
 
-import dev.webfx.stack.orm.domainmodel.formatter.ValueFormatter;
-import dev.webfx.stack.orm.domainmodel.formatter.ValueParser;
 import dev.webfx.extras.type.PrimType;
 import dev.webfx.extras.type.Type;
 import dev.webfx.platform.util.Numbers;
+import dev.webfx.stack.orm.domainmodel.formatter.ValueFormatter;
+import dev.webfx.stack.orm.domainmodel.formatter.ValueParser;
 
 /**
  * @author Bruno Salmon
@@ -30,24 +30,30 @@ public class PriceFormatter implements ValueFormatter, ValueParser {
 
     @Override
     public Object formatValue(Object value) {
-        return currencySymbol != null ? formatWithCurrency(value, currencySymbol) : format(value, true);
+        return currencySymbol != null
+                ? formatWithCurrency(value, currencySymbol)
+                : format(value, true);
     }
 
     public Object format(Object value, boolean show00cents) {
-        if (!Numbers.isNumber(value))
-            return value;
+        if (!Numbers.isNumber(value)) return value;
         String cents = value.toString();
         switch (cents.length()) {
-            case 1 : return show00cents || !cents.equals("0") ? "0.0" + cents : "0";
-            case 2 : return "0." + cents;
-            default: return cents.substring(0, cents.length() - 2) + (!show00cents && cents.endsWith("00") ? "" : "." + cents.substring(cents.length() - 2));
+            case 1:
+                return show00cents || !cents.equals("0") ? "0.0" + cents : "0";
+            case 2:
+                return "0." + cents;
+            default:
+                return cents.substring(0, cents.length() - 2)
+                        + (!show00cents && cents.endsWith("00")
+                                ? ""
+                                : "." + cents.substring(cents.length() - 2));
         }
     }
 
     @Override
     public Object parseValue(Object value) {
-        if (value == null || "".equals(value))
-            return null;
+        if (value == null || "".equals(value)) return null;
         return (int) (Numbers.toFloat(value) * 100);
     }
 
@@ -57,6 +63,8 @@ public class PriceFormatter implements ValueFormatter, ValueParser {
 
     public static String formatWithCurrency(Object value, String currencySymbol) {
         String price = (String) INSTANCE.format(value, currencySymbol == null);
-        return currencySymbol == null || currencySymbol.isEmpty() ? price : currencySymbol.startsWith(" ") ? price + currencySymbol : currencySymbol + price;
+        return currencySymbol == null || currencySymbol.isEmpty()
+                ? price
+                : currencySymbol.startsWith(" ") ? price + currencySymbol : currencySymbol + price;
     }
 }

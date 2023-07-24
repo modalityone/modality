@@ -13,5 +13,4 @@ public interface HasParent<P extends Entity> {
     EntityId getParentId();
 
     P getParent();
-
 }

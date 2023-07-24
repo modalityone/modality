@@ -19,6 +19,6 @@ module modality.crm.backoffice.activities.letter {
     exports one.modality.crm.backoffice.operations.routes.letter;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.crm.backoffice.activities.letter.LetterUiRoute;
-
+    provides dev.webfx.stack.routing.uirouter.UiRoute with
+            one.modality.crm.backoffice.activities.letter.LetterUiRoute;
 }

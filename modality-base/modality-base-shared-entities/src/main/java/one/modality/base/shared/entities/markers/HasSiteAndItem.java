@@ -8,5 +8,4 @@ public interface HasSiteAndItem extends HasSite, HasItem {
     default boolean hasSiteAndItem() {
         return hasSite() && hasItem();
     }
-
 }

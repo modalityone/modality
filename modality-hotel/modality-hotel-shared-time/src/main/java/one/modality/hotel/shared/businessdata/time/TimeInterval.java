@@ -34,17 +34,19 @@ public final class TimeInterval {
     }
 
     public TimeInterval changeTimeUnit(TimeUnit newTimeUnit) {
-        if (newTimeUnit == timeUnit)
-            return this;
-        return new TimeInterval(getIncludedStart(newTimeUnit), getExcludedEnd(newTimeUnit), newTimeUnit);
+        if (newTimeUnit == timeUnit) return this;
+        return new TimeInterval(
+                getIncludedStart(newTimeUnit), getExcludedEnd(newTimeUnit), newTimeUnit);
     }
 
     public TimeInterval shift(long offset, TimeUnit timeUnit) {
-        if (offset == 0)
-            return this;
+        if (offset == 0) return this;
         TimeUnit smallestUnit = TimeConverter.smallestUnit(this.timeUnit, timeUnit);
         offset = TimeConverter.convertTime(offset, timeUnit, smallestUnit);
-        return new TimeInterval(getIncludedStart(smallestUnit) + offset, getExcludedEnd(smallestUnit) + offset, smallestUnit);
+        return new TimeInterval(
+                getIncludedStart(smallestUnit) + offset,
+                getExcludedEnd(smallestUnit) + offset,
+                smallestUnit);
     }
 
     public long getIncludedStart(TimeUnit timeUnit) {
@@ -56,7 +58,7 @@ public final class TimeInterval {
     }
 
     public TimeSeries toSeries() {
-        return new TimeSeries(new TimeInterval[]{this}, timeUnit);
+        return new TimeSeries(new TimeInterval[] {this}, timeUnit);
     }
 
     public String toText(String format) {
@@ -83,8 +85,7 @@ public final class TimeInterval {
         String startText = getStartText(format);
         sb.append(startText);
         String endText = getEndText(format);
-        if (!endText.equals(startText))
-            sb.append(" - ").append(endText);
+        if (!endText.equals(startText)) sb.append(" - ").append(endText);
         return sb;
     }
 
@@ -98,7 +99,6 @@ public final class TimeInterval {
         if (includedStart != interval.includedStart) return false;
         if (excludedEnd != interval.excludedEnd) return false;
         return timeUnit == interval.timeUnit;
-
     }
 
     @Override

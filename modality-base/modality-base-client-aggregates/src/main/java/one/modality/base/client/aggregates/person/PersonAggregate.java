@@ -1,7 +1,8 @@
 package one.modality.base.client.aggregates.person;
 
-import one.modality.base.shared.entities.Person;
 import dev.webfx.stack.orm.entity.EntityStore;
+
+import one.modality.base.shared.entities.Person;
 
 /**
  * @author Bruno Salmon
@@ -17,5 +18,4 @@ public interface PersonAggregate {
     }
 
     Person getPreselectionProfilePerson();
-
 }

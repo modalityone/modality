@@ -7,7 +7,4 @@ import one.modality.base.client.presentationmodel.HasEventIdProperty;
  * @author Bruno Salmon
  */
 public interface EventDependentPresentationModel
-        extends OrganizationDependentPresentationModel,
-        HasEventIdProperty {
-
-}
+        extends OrganizationDependentPresentationModel, HasEventIdProperty {}

@@ -5,10 +5,9 @@ package one.modality.crm.backoffice.activities.organizations.routing;
  */
 public final class OrganizationsRouting {
 
-    private final static String PATH = "/organizations";
+    private static final String PATH = "/organizations";
 
     public static String getPath() {
         return PATH;
     }
-
 }

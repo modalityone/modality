@@ -1,8 +1,9 @@
 package one.modality.base.shared.entities.markers;
 
-import one.modality.base.shared.entities.Organization;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
+
+import one.modality.base.shared.entities.Organization;
 
 /**
  * @author Bruno Salmon
@@ -23,6 +24,4 @@ public interface EntityHasOrganization extends Entity, HasOrganization {
     default Organization getOrganization() {
         return getForeignEntity("organization");
     }
-
-
 }

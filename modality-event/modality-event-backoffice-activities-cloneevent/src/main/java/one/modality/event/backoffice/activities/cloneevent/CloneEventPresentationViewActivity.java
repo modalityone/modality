@@ -1,5 +1,11 @@
 package one.modality.event.backoffice.activities.cloneevent;
 
+import static javafx.scene.layout.Region.USE_PREF_SIZE;
+
+import dev.webfx.stack.routing.uirouter.activity.presentation.view.impl.PresentationViewActivityImpl;
+import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.stack.ui.controls.dialog.DialogUtil;
+
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -8,13 +14,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+
 import one.modality.base.client.activity.themes.Theme;
 import one.modality.base.shared.domainmodel.formatters.DateFormatter;
-import dev.webfx.stack.routing.uirouter.activity.presentation.view.impl.PresentationViewActivityImpl;
-import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
-import dev.webfx.stack.ui.controls.dialog.DialogUtil;
-
-import static javafx.scene.layout.Region.USE_PREF_SIZE;
 
 /**
  * @author Bruno Salmon
@@ -52,7 +54,8 @@ public class CloneEventPresentationViewActivity
         ColumnConstraints cc2 = new ColumnConstraints();
         cc2.setHgrow(Priority.ALWAYS);
         gp.getColumnConstraints().setAll(cc1, cc2);
-        // Setting max width/height to pref width/height (otherwise the grid pane takes all space with cells in top left corner)
+        // Setting max width/height to pref width/height (otherwise the grid pane takes all space
+        // with cells in top left corner)
         gp.setMaxWidth(USE_PREF_SIZE);
         gp.setMaxHeight(USE_PREF_SIZE);
         gp.setPadding(new Insets(50, 50, 50, 50));
@@ -72,11 +75,14 @@ public class CloneEventPresentationViewActivity
         bp.borderProperty().bind(Theme.dialogBorderProperty());
 
         nameTextField.textProperty().bindBidirectional(pm.nameProperty());
-        dateTextField.textProperty().bindBidirectional(pm.dateProperty(), DateFormatter.SINGLETON.toStringConverter());
+        dateTextField
+                .textProperty()
+                .bindBidirectional(pm.dateProperty(), DateFormatter.SINGLETON.toStringConverter());
         submitButton.onActionProperty().bind(pm.onSubmitProperty());
 
         stackPane = new StackPane();
-        // Now that the grid pane doesn't take all space, we center it (if shown in a border pane which is very probable)
+        // Now that the grid pane doesn't take all space, we center it (if shown in a border pane
+        // which is very probable)
         DialogUtil.showModalNodeInGoldLayout(bp, stackPane);
     }
 

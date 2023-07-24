@@ -1,6 +1,7 @@
 package one.modality.base.shared.entities;
 
 import dev.webfx.stack.orm.entity.EntityId;
+
 import one.modality.base.shared.entities.markers.EntityHasCancelled;
 import one.modality.base.shared.entities.markers.EntityHasEvent;
 import one.modality.base.shared.entities.markers.EntityHasPerson;
@@ -9,11 +10,8 @@ import one.modality.base.shared.entities.markers.EntityHasPersonalDetailsCopy;
 /**
  * @author Bruno Salmon
  */
-public interface Document extends
-        EntityHasEvent,
-        EntityHasCancelled,
-        EntityHasPerson,
-        EntityHasPersonalDetailsCopy {
+public interface Document
+        extends EntityHasEvent, EntityHasCancelled, EntityHasPerson, EntityHasPersonalDetailsCopy {
 
     default void setRef(Integer ref) {
         setFieldValue("ref", ref);
@@ -74,5 +72,4 @@ public interface Document extends
     default Boolean isArrived() {
         return getBooleanFieldValue("arrived");
     }
-
 }

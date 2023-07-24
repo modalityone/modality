@@ -2,7 +2,8 @@ package one.modality.base.client.activity.organizationdependent;
 
 import javafx.beans.property.ObjectProperty;
 
-public interface OrganizationDependentPresentationModelMixin extends OrganizationDependentPresentationModel {
+public interface OrganizationDependentPresentationModelMixin
+        extends OrganizationDependentPresentationModel {
 
     OrganizationDependentPresentationModel getPresentationModel();
 
@@ -20,5 +21,4 @@ public interface OrganizationDependentPresentationModelMixin extends Organizatio
     default Object getOrganizationId() {
         return getPresentationModel().getOrganizationId();
     }
-
 }

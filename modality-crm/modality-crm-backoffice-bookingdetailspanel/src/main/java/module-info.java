@@ -31,5 +31,4 @@ module modality.crm.backoffice.bookingdetailspanel {
 
     // Exported packages
     exports one.modality.crm.backoffice.controls.bookingdetailspanel;
-
 }

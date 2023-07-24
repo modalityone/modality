@@ -5,7 +5,8 @@ package one.modality.base.client.validation;
  */
 final class ModalityValidationIcons {
 
-    public final static String validationErrorIcon16Url = "images/s16/validation/decoration-error.png";
-    public final static String validationRequiredIcon16Url = "images/s16/validation/required-indicator.png";
-
+    public static final String validationErrorIcon16Url =
+            "images/s16/validation/decoration-error.png";
+    public static final String validationRequiredIcon16Url =
+            "images/s16/validation/required-indicator.png";
 }

@@ -1,23 +1,24 @@
 package one.modality.ecommerce.frontoffice.activities.cart.base;
 
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.layout.Region;
-import one.modality.base.shared.entities.Event;
-import one.modality.base.client.activity.ModalityButtonFactoryMixin;
-import one.modality.base.client.aggregates.cart.CartAggregate;
-import one.modality.base.client.aggregates.event.EventAggregate;
-import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
-import dev.webfx.stack.i18n.I18n;
 import dev.webfx.extras.util.background.BackgroundFactory;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.Strings;
+import dev.webfx.stack.i18n.I18n;
+import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
+
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.layout.Region;
+
+import one.modality.base.client.activity.ModalityButtonFactoryMixin;
+import one.modality.base.client.aggregates.cart.CartAggregate;
+import one.modality.base.client.aggregates.event.EventAggregate;
+import one.modality.base.shared.entities.Event;
 
 /**
  * @author Bruno Salmon
  */
-public abstract class CartBasedActivity
-        extends ViewDomainActivityBase
+public abstract class CartBasedActivity extends ViewDomainActivityBase
         implements ModalityButtonFactoryMixin {
 
     private final Property<Object> cartUuidProperty = new SimpleObjectProperty<>();
@@ -47,8 +48,7 @@ public abstract class CartBasedActivity
     }
 
     protected void onDictionaryChange() {
-        if (cartAggregate().isLoaded())
-            onCartLoaded();
+        if (cartAggregate().isLoaded()) onCartLoaded();
     }
 
     private void loadCart() {
@@ -74,7 +74,7 @@ public abstract class CartBasedActivity
         if (uiNode != null && event != null) {
             // TODO: capitalize this code with BookingProcessActivity
             String css = event.getStringFieldValue("cssClass");
-            if (Strings.startsWith(css,"linear-gradient"))
+            if (Strings.startsWith(css, "linear-gradient"))
                 ((Region) uiNode).setBackground(BackgroundFactory.newLinearGradientBackground(css));
         }
     }

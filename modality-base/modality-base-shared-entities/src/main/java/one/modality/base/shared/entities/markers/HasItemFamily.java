@@ -1,8 +1,9 @@
 package one.modality.base.shared.entities.markers;
 
+import dev.webfx.stack.orm.entity.EntityId;
+
 import one.modality.base.shared.entities.ItemFamily;
 import one.modality.base.shared.entities.ItemFamilyType;
-import dev.webfx.stack.orm.entity.EntityId;
 
 /**
  * @author Bruno Salmon

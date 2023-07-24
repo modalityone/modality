@@ -40,7 +40,8 @@ module modality.hotel.backoffice.activities.roomsgraphic {
     exports one.modality.hotel.backoffice.operations.routes.roomsgraphic;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.hotel.backoffice.activities.roomsgraphic.RoomsGraphicUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.hotel.backoffice.activities.roomsgraphic.RouteToRoomsGraphicRequestEmitter;
-
+    provides dev.webfx.stack.routing.uirouter.UiRoute with
+            one.modality.hotel.backoffice.activities.roomsgraphic.RoomsGraphicUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with
+            one.modality.hotel.backoffice.activities.roomsgraphic.RouteToRoomsGraphicRequestEmitter;
 }

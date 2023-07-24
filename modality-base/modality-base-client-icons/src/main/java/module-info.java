@@ -32,5 +32,4 @@ module modality.base.client.icons {
     opens images.s32.system;
     opens images.svg.color;
     opens images.svg.mono;
-
 }

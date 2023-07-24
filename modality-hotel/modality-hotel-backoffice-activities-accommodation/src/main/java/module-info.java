@@ -29,7 +29,9 @@ module modality.hotel.backoffice.activities.accommodation {
     exports one.modality.hotel.backoffice.operations.routes.accommodation;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.hotel.backoffice.activities.accommodation.AccommodationUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.hotel.backoffice.activities.accommodation.RouteToAccommodationRequestEmitter;
-
+    provides dev.webfx.stack.routing.uirouter.UiRoute with
+            one.modality.hotel.backoffice.activities.accommodation.AccommodationUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with
+            one.modality.hotel.backoffice.activities.accommodation
+                    .RouteToAccommodationRequestEmitter;
 }

@@ -28,26 +28,30 @@ public class DaysArrayBuilder {
         long oneDay = TimeConverter.oneDay(timeUnit);
         long extra = oneDay <= 1 ? 0 : oneDay - 1;
         TimeUnit intervalTimeUnit = interval.getTimeUnit();
-        long includedFirstDay = TimeConverter.floorToDay(interval.getIncludedStart(), intervalTimeUnit);
-        long excludedLastDay = TimeConverter.floorToDay(interval.getExcludedEnd() + extra, intervalTimeUnit);
+        long includedFirstDay =
+                TimeConverter.floorToDay(interval.getIncludedStart(), intervalTimeUnit);
+        long excludedLastDay =
+                TimeConverter.floorToDay(interval.getExcludedEnd() + extra, intervalTimeUnit);
         long firstDayTime = interval.getIncludedStart() - includedFirstDay;
         long lastDayTime = interval.getExcludedEnd() + extra - excludedLastDay;
         includedFirstDay = TimeConverter.convertTime(includedFirstDay, intervalTimeUnit, timeUnit);
         excludedLastDay = TimeConverter.convertTime(excludedLastDay, intervalTimeUnit, timeUnit);
         if (dayTimeRange != null) {
-            if (firstDayTime >= dayTimeRange.getDayTimeInterval(includedFirstDay, intervalTimeUnit).getExcludedEnd())
-                includedFirstDay += oneDay;
-            if (lastDayTime < dayTimeRange.getDayTimeInterval(excludedLastDay, intervalTimeUnit).getIncludedStart())
-                excludedLastDay -= oneDay;
+            if (firstDayTime
+                    >= dayTimeRange
+                            .getDayTimeInterval(includedFirstDay, intervalTimeUnit)
+                            .getExcludedEnd()) includedFirstDay += oneDay;
+            if (lastDayTime
+                    < dayTimeRange
+                            .getDayTimeInterval(excludedLastDay, intervalTimeUnit)
+                            .getIncludedStart()) excludedLastDay -= oneDay;
         }
-        for (long day = includedFirstDay; day < excludedLastDay; day += oneDay)
-            days.add(day);
+        for (long day = includedFirstDay; day < excludedLastDay; day += oneDay) days.add(day);
         return this;
     }
 
     public DaysArrayBuilder addIntervals(TimeInterval[] intervals, DayTimeRange dayTimeRange) {
-        for (TimeInterval interval : intervals)
-            addInterval(interval, dayTimeRange);
+        for (TimeInterval interval : intervals) addInterval(interval, dayTimeRange);
         return this;
     }
 

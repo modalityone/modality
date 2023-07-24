@@ -16,6 +16,6 @@ module modality.ecommerce.payment.custom.server {
     uses one.modality.ecommerce.payment.gateway.custom.spi.CustomPaymentGatewayProvider;
 
     // Provided services
-    provides one.modality.ecommerce.payment.custom.spi.CustomPaymentProvider with one.modality.ecommerce.payment.custom.spi.impl.server.ServerCustomPaymentProvider;
-
+    provides one.modality.ecommerce.payment.custom.spi.CustomPaymentProvider with
+            one.modality.ecommerce.payment.custom.spi.impl.server.ServerCustomPaymentProvider;
 }

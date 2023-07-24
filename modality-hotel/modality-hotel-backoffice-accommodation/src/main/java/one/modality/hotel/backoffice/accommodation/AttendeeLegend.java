@@ -15,9 +15,10 @@ public final class AttendeeLegend {
     private static final double COLOR_BLOCK_SIZE = 20;
 
     public static GridPane createLegend() {
-        List<AttendeeCategory> categories = Stream.of(AttendeeCategory.values())
-                .sorted(Comparator.comparing(AttendeeCategory::getText))
-                .collect(Collectors.toList());
+        List<AttendeeCategory> categories =
+                Stream.of(AttendeeCategory.values())
+                        .sorted(Comparator.comparing(AttendeeCategory::getText))
+                        .collect(Collectors.toList());
 
         GridPane gridPane = new GridPane();
         gridPane.setHgap(5);
@@ -32,5 +33,4 @@ public final class AttendeeLegend {
         }
         return gridPane;
     }
-
 }

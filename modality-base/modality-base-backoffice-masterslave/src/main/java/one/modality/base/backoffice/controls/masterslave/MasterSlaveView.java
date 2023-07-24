@@ -1,5 +1,8 @@
 package one.modality.base.backoffice.controls.masterslave;
 
+import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.stack.orm.entity.Entity;
+
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -9,9 +12,8 @@ import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+
 import one.modality.base.backoffice.controls.masterslave.group.GroupView;
-import dev.webfx.stack.orm.entity.Entity;
-import dev.webfx.kit.util.properties.FXProperties;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +26,10 @@ import java.util.stream.Collectors;
 public class MasterSlaveView implements UiBuilder {
 
     private final SplitPane splitPane = new SplitPane();
-    private final StackPane stackPane = new StackPane(splitPane); // Embedding the split pane in a stack pane to be able to act as a parent pane for the dialog API
+    private final StackPane stackPane =
+            new StackPane(
+                    splitPane); // Embedding the split pane in a stack pane to be able to act as a
+                                // parent pane for the dialog API
 
     public MasterSlaveView() {
         this(null, null);
@@ -47,12 +52,13 @@ public class MasterSlaveView implements UiBuilder {
         return stackPane;
     }
 
-    private final ObjectProperty<Node> masterViewProperty = new SimpleObjectProperty<Node>() { // GWT doesn't accept <>
-        @Override
-        protected void invalidated() {
-            updateView();
-        }
-    };
+    private final ObjectProperty<Node> masterViewProperty =
+            new SimpleObjectProperty<Node>() { // GWT doesn't accept <>
+                @Override
+                protected void invalidated() {
+                    updateView();
+                }
+            };
 
     public ObjectProperty<Node> masterViewProperty() {
         return masterViewProperty;
@@ -66,12 +72,13 @@ public class MasterSlaveView implements UiBuilder {
         return masterViewProperty().get();
     }
 
-    private final ObjectProperty<Node> slaveViewProperty = new SimpleObjectProperty<Node>() { // GWT doesn't accept <>
-        @Override
-        protected void invalidated() {
-            updateView();
-        }
-    };
+    private final ObjectProperty<Node> slaveViewProperty =
+            new SimpleObjectProperty<Node>() { // GWT doesn't accept <>
+                @Override
+                protected void invalidated() {
+                    updateView();
+                }
+            };
 
     public ObjectProperty<Node> slaveViewProperty() {
         return slaveViewProperty;
@@ -85,12 +92,13 @@ public class MasterSlaveView implements UiBuilder {
         return slaveViewProperty().get();
     }
 
-    private final BooleanProperty slaveVisibleProperty = new SimpleBooleanProperty() {
-        @Override
-        protected void invalidated() {
-            updateView();
-        }
-    };
+    private final BooleanProperty slaveVisibleProperty =
+            new SimpleBooleanProperty() {
+                @Override
+                protected void invalidated() {
+                    updateView();
+                }
+            };
 
     public BooleanProperty slaveVisibleProperty() {
         return slaveVisibleProperty;
@@ -109,18 +117,29 @@ public class MasterSlaveView implements UiBuilder {
     }
 
     protected void updateSplitPane(Node... views) {
-        splitPane.getItems().setAll(Arrays.stream(views).filter(Objects::nonNull).collect(Collectors.toList()));
+        splitPane
+                .getItems()
+                .setAll(Arrays.stream(views).filter(Objects::nonNull).collect(Collectors.toList()));
     }
-
 
     /*==================================================================================================================
     =================================================== Data binding ===================================================
     ==================================================================================================================*/
 
-    public <E extends Entity> void doVisibilityBinding(GroupView<E> groupView, ObjectProperty<E> masterSelectedEntityProperty, Function<E, Boolean> additionalSlaveVisibilityCondition) {
-        slaveVisibleProperty().bind(FXProperties.compute(masterSelectedEntityProperty, selectedEntity -> selectedEntity != null && (additionalSlaveVisibilityCondition == null || additionalSlaveVisibilityCondition.apply(selectedEntity))));
+    public <E extends Entity> void doVisibilityBinding(
+            GroupView<E> groupView,
+            ObjectProperty<E> masterSelectedEntityProperty,
+            Function<E, Boolean> additionalSlaveVisibilityCondition) {
+        slaveVisibleProperty()
+                .bind(
+                        FXProperties.compute(
+                                masterSelectedEntityProperty,
+                                selectedEntity ->
+                                        selectedEntity != null
+                                                && (additionalSlaveVisibilityCondition == null
+                                                        || additionalSlaveVisibilityCondition.apply(
+                                                                selectedEntity))));
     }
-
 
     /*==================================================================================================================
     =========================================== Slave view builder registry ============================================
@@ -128,16 +147,22 @@ public class MasterSlaveView implements UiBuilder {
 
     @FunctionalInterface
     public interface SlaveViewBuilder {
-        UiBuilder createAndBindSlaveViewIfApplicable(Object pm, Object mixin, Supplier<Pane> containerGetter);
+        UiBuilder createAndBindSlaveViewIfApplicable(
+                Object pm, Object mixin, Supplier<Pane> containerGetter);
     }
 
-    private final static List<SlaveViewBuilder> slaveViewBuilders = new ArrayList<>();
+    private static final List<SlaveViewBuilder> slaveViewBuilders = new ArrayList<>();
 
     public static void registerSlaveViewBuilder(SlaveViewBuilder slaveViewBuilder) {
         slaveViewBuilders.add(slaveViewBuilder);
     }
 
-    public static UiBuilder createAndBindSlaveViewIfApplicable(Object pm, Object mixin, Supplier<Pane> containerGetter) {
-        return slaveViewBuilders.stream().map(svb -> svb.createAndBindSlaveViewIfApplicable(pm, mixin, containerGetter)).filter(Objects::nonNull).findFirst().orElse(null);
+    public static UiBuilder createAndBindSlaveViewIfApplicable(
+            Object pm, Object mixin, Supplier<Pane> containerGetter) {
+        return slaveViewBuilders.stream()
+                .map(svb -> svb.createAndBindSlaveViewIfApplicable(pm, mixin, containerGetter))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
     }
 }

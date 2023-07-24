@@ -23,6 +23,7 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.resource.Resource;
 import dev.webfx.platform.util.Objects;
 import dev.webfx.stack.i18n.I18n;
+
 import javafx.animation.Interpolator;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
@@ -37,6 +38,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+
 import one.modality.base.client.gantt.fx.highlight.FXGanttHighlight;
 import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
@@ -51,13 +53,19 @@ import java.time.temporal.ChronoUnit;
  */
 public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
 
-    private final LocalDateGanttLayout<Year> yearsLayer = LocalDateGanttLayout.createYearLocalDateGanttLayout();
-    private final LocalDateGanttLayout<YearMonth> monthsLayer = LocalDateGanttLayout.createYearMonthLocalDateGanttLayout();
-    private final LocalDateGanttLayout<YearWeek> weeksLayer = LocalDateGanttLayout.createYearWeekLocalDateGanttLayout();
-    private final LocalDateGanttLayout<LocalDate> daysLayer = LocalDateGanttLayout.createDayLocalDateGanttLayout();
+    private final LocalDateGanttLayout<Year> yearsLayer =
+            LocalDateGanttLayout.createYearLocalDateGanttLayout();
+    private final LocalDateGanttLayout<YearMonth> monthsLayer =
+            LocalDateGanttLayout.createYearMonthLocalDateGanttLayout();
+    private final LocalDateGanttLayout<YearWeek> weeksLayer =
+            LocalDateGanttLayout.createYearWeekLocalDateGanttLayout();
+    private final LocalDateGanttLayout<LocalDate> daysLayer =
+            LocalDateGanttLayout.createDayLocalDateGanttLayout();
     private final MultiLayerLocalDateLayout globalLayout = MultiLayerLocalDateLayout.create();
-    private final MultiLayerLocalDateCanvasDrawer globalCanvasDrawer = new MultiLayerLocalDateCanvasDrawer(globalLayout);
-    private final CanvasPane canvasPane = TimeCanvasUtil.createTimeCanvasPane(globalLayout, globalCanvasDrawer);
+    private final MultiLayerLocalDateCanvasDrawer globalCanvasDrawer =
+            new MultiLayerLocalDateCanvasDrawer(globalLayout);
+    private final CanvasPane canvasPane =
+            TimeCanvasUtil.createTimeCanvasPane(globalLayout, globalCanvasDrawer);
     private final BarDrawer yearBarDrawer = new BarDrawer();
     private final BarDrawer monthBarDrawer = new BarDrawer();
     private final BarDrawer weekBarDrawer = new BarDrawer();
@@ -66,12 +74,30 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
     private final String[] i18nDaysOfWeek = new String[7];
     private String i18nWeek;
     private double i18nWeekWidth;
-    // Layout properties computed by setLayoutPropertiesBeforeLayoutPass() and used by setDrawPropertiesBeforeDrawPass():
-    private double yearWidth, yearHeight, monthWidth, monthHeight, weekWidth, weekHeight, dayWidth, dayHeight;
+    // Layout properties computed by setLayoutPropertiesBeforeLayoutPass() and used by
+    // setDrawPropertiesBeforeDrawPass():
+    private double yearWidth,
+            yearHeight,
+            monthWidth,
+            monthHeight,
+            weekWidth,
+            weekHeight,
+            dayWidth,
+            dayHeight;
     // Draw properties computed by setDrawPropertiesBeforeDrawPass() and used by draw methods:
-    private Paint yearFill, yearSelectedFill, yearTextFill, yearSelectedTextFill, weekFill, weekSelectedFill, weekTextFill, weekSelectedTextFill, dayTextFill, daySelectedTextFill;
+    private Paint yearFill,
+            yearSelectedFill,
+            yearTextFill,
+            yearSelectedTextFill,
+            weekFill,
+            weekSelectedFill,
+            weekTextFill,
+            weekSelectedTextFill,
+            dayTextFill,
+            daySelectedTextFill;
     // Strip properties:
-    private GanttLayout<?, LocalDate> stripLayer; // depending on zoom level, strips may be days, months, weeks or years
+    private GanttLayout<?, LocalDate>
+            stripLayer; // depending on zoom level, strips may be days, months, weeks or years
     private Paint stripStroke;
 
     public DatedGanttCanvas() {
@@ -80,26 +106,34 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
         addLayer(weeksLayer, this::drawWeek);
         addLayer(monthsLayer, this::drawMonth);
         addLayer(yearsLayer, this::drawYear);
-        // Note: the order is important regarding the vertical strips, so they are always displayed "in the background".
-        // For example, if days are used to draw the strips, they must be drawn before drawing weeks, months, etc...
+        // Note: the order is important regarding the vertical strips, so they are always displayed
+        // "in the background".
+        // For example, if days are used to draw the strips, they must be drawn before drawing
+        // weeks, months, etc...
         // otherwise these strips would appear on top of them instead of behind.
 
-        // Some layout properties (such as layer visibilities, vertical position, height...) must be set before the layout pass
+        // Some layout properties (such as layer visibilities, vertical position, height...) must be
+        // set before the layout pass
         globalLayout.addOnBeforeLayout(this::setLayoutPropertiesBeforeLayoutPass);
-        // Some draw properties (such as fonts, colors, paddings, radius...) must be set before the draw pass
+        // Some draw properties (such as fonts, colors, paddings, radius...) must be set before the
+        // draw pass
         globalCanvasDrawer.addOnBeforeDraw(this::setDrawPropertiesBeforeDrawPass);
 
-        // Redrawing the canvas on theme mode changes (because some draw properties depend on the theme)
+        // Redrawing the canvas on theme mode changes (because some draw properties depend on the
+        // theme)
         ThemeRegistry.addModeChangeListener(this::markCanvasAsDirty);
 
         // Requesting a new layout pass on some events that impact the layout properties:
-        FXProperties.runOnPropertiesChange(this::markLayoutAsDirty,
-                // 1) when the layout mode changes (ex: compact mode) => impact the first layer height
+        FXProperties.runOnPropertiesChange(
+                this::markLayoutAsDirty,
+                // 1) when the layout mode changes (ex: compact mode) => impact the first layer
+                // height
                 FXLayoutMode.layoutModeProperty(),
-                // 2) when the gantt visibility changes (ex: with/without events) => impact layers visibility
-                FXGanttVisibility.ganttVisibilityProperty()
-        );
-        FXProperties.runOnPropertiesChange(this::markCanvasAsDirty, FXGanttHighlight.ganttHighlightedDayProperty());
+                // 2) when the gantt visibility changes (ex: with/without events) => impact layers
+                // visibility
+                FXGanttVisibility.ganttVisibilityProperty());
+        FXProperties.runOnPropertiesChange(
+                this::markCanvasAsDirty, FXGanttHighlight.ganttHighlightedDayProperty());
 
         // Updating i18n texts when necessary
         FXProperties.runNowAndOnPropertiesChange(this::updateI18nTexts, I18n.dictionaryProperty());
@@ -129,17 +163,16 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
         return globalLayout.timeWindowEndProperty();
     }
 
-
     public void setTimeWindow(LocalDate timeWindowStart, LocalDate timeWindowEnd) {
-        globalLayout.setTimeWindow(timeWindowStart, timeWindowEnd); // see globalLayout.setOnTimeWindowChanged() callback in constructor
+        globalLayout.setTimeWindow(
+                timeWindowStart,
+                timeWindowEnd); // see globalLayout.setOnTimeWindowChanged() callback in constructor
     }
 
     private void updateI18nTexts() {
-        for (int i = 0; i < 12; i++)
-            i18nMonths[i] = I18n.getI18nText(Month.of(i + 1));
+        for (int i = 0; i < 12; i++) i18nMonths[i] = I18n.getI18nText(Month.of(i + 1));
         i18nWeek = I18n.getI18nText("WEEK");
-        for (int i = 0; i < 7; i++)
-            i18nDaysOfWeek[i] = I18n.getI18nText(DayOfWeek.of(i + 1));
+        for (int i = 0; i < 7; i++) i18nDaysOfWeek[i] = I18n.getI18nText(DayOfWeek.of(i + 1));
         markCanvasAsDirty();
     }
 
@@ -153,7 +186,8 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
     }
 
     private void bindFXGanttSelection() {
-        FXGanttSelection.ganttSelectedObjectProperty().bindBidirectional(globalLayout.selectedChildProperty());
+        FXGanttSelection.ganttSelectedObjectProperty()
+                .bindBidirectional(globalLayout.selectedChildProperty());
     }
 
     public DatedGanttCanvas setInteractive(boolean interactive) {
@@ -174,11 +208,15 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
         globalCanvasDrawer.setLayerChildDrawer(layer, layerCanvasDrawer);
     }
 
-    public void markLayoutAsDirty() { // may be called several times, but only 1 call will happen in the animation frame
+    public void
+            markLayoutAsDirty() { // may be called several times, but only 1 call will happen in the
+                                  // animation frame
         globalLayout.markLayoutAsDirty();
     }
 
-    public void markCanvasAsDirty() { // may be called several times, but only 1 call will happen in the animation frame
+    public void
+            markCanvasAsDirty() { // may be called several times, but only 1 call will happen in the
+                                  // animation frame
         globalCanvasDrawer.markDrawAreaAsDirty();
     }
 
@@ -255,81 +293,102 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
         boolean compactMode = FXLayoutMode.isCompactMode();
 
         // ============= Year draw properties =============
-        // 1) Properties that apply to all years => set only once here (remain identical for all drawYear() calls)
+        // 1) Properties that apply to all years => set only once here (remain identical for all
+        // drawYear() calls)
         yearBarDrawer
                 .setTextFont(TextTheme.getFont(FontDef.font(fontSize(yearWidth, yearHeight))))
                 .sethPadding(10)
                 .setRadius(10)
                 .setStroke(compactMode ? TimeTheme.getYearBorderColor() : null);
-        // 2) Properties that depend on the year selection => drawYear() will set the correct value in yearBarDrawer on each call
+        // 2) Properties that depend on the year selection => drawYear() will set the correct value
+        // in yearBarDrawer on each call
         yearFill = TimeTheme.getYearBackgroundColor(false);
         yearSelectedFill = TimeTheme.getYearBackgroundColor(true);
         yearTextFill = TimeTheme.getYearTextColor(false);
         yearSelectedTextFill = TimeTheme.getYearTextColor(true);
 
         // ============= Month draw properties =============
-        // 1) Properties that apply to all months => set only once here (remain identical for all drawMonth() calls)
+        // 1) Properties that apply to all months => set only once here (remain identical for all
+        // drawMonth() calls)
         monthBarDrawer
                 .setStroke(compactMode ? TimeTheme.getMonthBorderColor() : null)
                 .setTextFill(TimeTheme.getMonthTextColor())
                 .setTextFont(TextTheme.getFont(FontDef.font(fontSize(monthWidth, monthHeight))))
                 .setRadius(monthWidth < 25 ? 0 : 0.5 * Math.min(monthWidth, monthHeight))
                 .sethPadding(monthWidth < 25 ? 0 : clamp(3, 0.02 * monthWidth, 10));
-        // 2) Properties that depend on the months => can't be precomputed because they may vary for each month
+        // 2) Properties that depend on the months => can't be precomputed because they may vary for
+        // each month
         // (ex: each month may have a different color in varied palette mode)
 
         // ============= Week draw properties =============
-        // 1) Properties that apply to all weeks => set only once here (remain identical for all drawWeek() calls)
+        // 1) Properties that apply to all weeks => set only once here (remain identical for all
+        // drawWeek() calls)
         double weekFontSize = fontSize(weekWidth, weekHeight / 2);
         Font weekFont = TextTheme.getFont(FontDef.font(weekFontSize / 3 * 2));
         weekBarDrawer
                 .setTopTextFont(weekFont) // top = week word
-                .setBottomTextFont(TextTheme.getFont(FontDef.font(FontWeight.BOLD, weekFontSize))) // bottom = week number
+                .setBottomTextFont(
+                        TextTheme.getFont(
+                                FontDef.font(
+                                        FontWeight.BOLD, weekFontSize))) // bottom = week number
                 .setStroke(compactMode ? TimeTheme.getWeekBorderColor() : null)
                 .setRadius(weekWidth < 25 ? 0 : 0.5 * Math.min(weekWidth, weekHeight))
                 .sethPadding(weekWidth < 25 ? 0 : clamp(3, 0.05 * weekWidth, 10));
         i18nWeekWidth = WebFxKitLauncher.measureText(i18nWeek, weekFont).getWidth();
-        // 2) Properties that depend on the week selection => drawWeek() will set the correct value in weekBarDrawer on each call
+        // 2) Properties that depend on the week selection => drawWeek() will set the correct value
+        // in weekBarDrawer on each call
         weekFill = TimeTheme.getWeekBackgroundColor(false);
         weekSelectedFill = TimeTheme.getWeekBackgroundColor(true);
         weekTextFill = TimeTheme.getWeekTextColor(false);
         weekSelectedTextFill = TimeTheme.getWeekTextColor(true);
 
         // ============= Day draw properties =============
-        // 1) Properties that apply to all days => set only once here (remain identical for all drawDay() calls)
+        // 1) Properties that apply to all days => set only once here (remain identical for all
+        // drawDay() calls)
         double dayOfMonthFontSize = fontSize(dayWidth, dayHeight / 2);
         dayBarDrawer
-                .setTopTextFont(TextTheme.getFont(FontDef.font(0.6 * dayOfMonthFontSize))) // top = day of week => smaller
-                .setBottomTextFont(TextTheme.getFont(FontDef.font(FontWeight.BOLD, dayOfMonthFontSize))) // bottom = day of month
+                .setTopTextFont(
+                        TextTheme.getFont(
+                                FontDef.font(
+                                        0.6 * dayOfMonthFontSize))) // top = day of week => smaller
+                .setBottomTextFont(
+                        TextTheme.getFont(
+                                FontDef.font(
+                                        FontWeight.BOLD,
+                                        dayOfMonthFontSize))) // bottom = day of month
                 .setStroke(TimeTheme.getDayOfWeekBorderColor())
                 .setRadius(dayWidth < 30 ? 0 : 0.5 * Math.min(dayWidth, dayHeight))
                 .sethPadding(dayWidth < 30 ? 0 : clamp(3, 0.05 * dayWidth, 10));
-        // 2) Properties that depend on the day selection => drawDay() will set the correct value in dayBarDrawer on each call
+        // 2) Properties that depend on the day selection => drawDay() will set the correct value in
+        // dayBarDrawer on each call
         dayTextFill = TimeTheme.getDayOfWeekTextColor(false);
         daySelectedTextFill = TimeTheme.getDayOfWeekTextColor(true);
 
         // ============= Strip draw properties =============
-        if (daysLayer.isVisible())
-            stripLayer = daysLayer;
-        else if (weeksLayer.isVisible())
-            stripLayer = weeksLayer;
-        else if (monthsLayer.isVisible())
-            stripLayer = monthsLayer;
-        else
-            stripLayer = yearsLayer;
+        if (daysLayer.isVisible()) stripLayer = daysLayer;
+        else if (weeksLayer.isVisible()) stripLayer = weeksLayer;
+        else if (monthsLayer.isVisible()) stripLayer = monthsLayer;
+        else stripLayer = yearsLayer;
         stripStroke = FXLuminanceMode.isDarkMode() ? Color.gray(0.2) : Color.gray(0.85);
     }
 
     // method to draw 1 strip - may be called many times during the draw pass
     private void strokeStrip(Bounds b, GraphicsContext gc) {
         double canvasHeight = gc.getCanvas().getHeight();
-        BarDrawer.strokeRect(b.getMinX(), 0, b.getWidth(), canvasHeight, 0, canvasHeight > b.getMaxY() ? stripStroke : Color.TRANSPARENT, 0, gc);
+        BarDrawer.strokeRect(
+                b.getMinX(),
+                0,
+                b.getWidth(),
+                canvasHeight,
+                0,
+                canvasHeight > b.getMaxY() ? stripStroke : Color.TRANSPARENT,
+                0,
+                gc);
     }
 
     // method to draw 1 year - may be called many times during the draw pass
     private void drawYear(Year year, Bounds b, GraphicsContext gc) {
-        if (stripLayer == yearsLayer)
-            strokeStrip(b, gc);
+        if (stripLayer == yearsLayer) strokeStrip(b, gc);
 
         boolean selected = Objects.areEquals(yearsLayer.getSelectedChild(), year);
 
@@ -342,8 +401,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
 
     // method to draw 1 month - may be called many times during the draw pass
     private void drawMonth(YearMonth yearMonth, Bounds b, GraphicsContext gc) {
-        if (stripLayer == monthsLayer)
-            strokeStrip(b, gc);
+        if (stripLayer == monthsLayer) strokeStrip(b, gc);
 
         Month month = yearMonth.getMonth();
         boolean selected = Objects.areEquals(monthsLayer.getSelectedChild(), yearMonth);
@@ -360,14 +418,10 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
                 m = monthWidth < 50;
                 mmm = monthWidth < 100;
             }
-            if (m)
-                text = text.substring(0, 1);
-            else if (mmm)
-                text = text.substring(0, 3);
-            if (yy)
-                text += " " + (yearMonth.getYear() % 100);
-            else if (yyyy)
-                text += " " + yearMonth.getYear();
+            if (m) text = text.substring(0, 1);
+            else if (mmm) text = text.substring(0, 3);
+            if (yy) text += " " + (yearMonth.getYear() % 100);
+            else if (yyyy) text += " " + yearMonth.getYear();
         }
 
         monthBarDrawer
@@ -378,14 +432,12 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
 
     // method to draw 1 week - may be called many times during the draw pass
     private void drawWeek(YearWeek yearWeek, Bounds b, GraphicsContext gc) {
-        if (stripLayer == weeksLayer)
-            strokeStrip(b, gc);
+        if (stripLayer == weeksLayer) strokeStrip(b, gc);
 
         boolean selected = Objects.areEquals(weeksLayer.getSelectedChild(), yearWeek);
         String week = i18nWeek;
         if (week != null) { // null may happen if i18n dictionary is not yet loaded
-            if (dayBarDrawer.getTextAreaWidth(b) < i18nWeekWidth)
-                week = week.substring(0, 1);
+            if (dayBarDrawer.getTextAreaWidth(b) < i18nWeekWidth) week = week.substring(0, 1);
         }
         String weekNumber = (yearWeek.getWeek() < 10 ? "0" : "") + yearWeek.getWeek();
 
@@ -397,13 +449,12 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
                 .drawBar(b, gc);
     }
 
-    private static final Image TODAY_IMAGE = new Image(Resource.toUrl("/images/s32/sun.png", DatedGanttCanvas.class), true);
-
+    private static final Image TODAY_IMAGE =
+            new Image(Resource.toUrl("/images/s32/sun.png", DatedGanttCanvas.class), true);
 
     // method to draw 1 day - may be called many times during the draw pass
     private void drawDay(LocalDate day, Bounds b, GraphicsContext gc) {
-        if (stripLayer == daysLayer)
-            strokeStrip(b, gc);
+        if (stripLayer == daysLayer) strokeStrip(b, gc);
 
         boolean today = Objects.areEquals(day, LocalDate.now());
 
@@ -412,13 +463,15 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
         boolean selected = Objects.areEquals(day, daysLayer.getSelectedChild());
         String dayOfWeek = i18nDaysOfWeek[day.getDayOfWeek().ordinal()];
         if (dayOfWeek != null) { // null may happen if i18n dictionary is not yet loaded
-            if (dayWidth < 100)
-                dayOfWeek = dayOfWeek.substring(0, 3);
+            if (dayWidth < 100) dayOfWeek = dayOfWeek.substring(0, 3);
         }
         String dayOfMonth = (day.getDayOfMonth() < 10 ? "0" : "") + day.getDayOfMonth();
 
         dayBarDrawer
-                .setBackgroundFill(highlighted ? Color.web("#B2FFFF") : TimeTheme.getDayOfWeekBackgroundColor(day, selected))
+                .setBackgroundFill(
+                        highlighted
+                                ? Color.web("#B2FFFF")
+                                : TimeTheme.getDayOfWeekBackgroundColor(day, selected))
                 .setIcon(today ? TODAY_IMAGE : null, Pos.TOP_RIGHT, HPos.CENTER, VPos.CENTER)
                 .setTopText(dayOfWeek)
                 .setBottomText(dayOfMonth)
@@ -428,24 +481,38 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
 
     // private static utility methods
 
-    private final static Interpolator FONT_SIZE_INTERPOLATOR = Interpolator.SPLINE(0.5, 0.5, 0.1, 1);
+    private static final Interpolator FONT_SIZE_INTERPOLATOR =
+            Interpolator.SPLINE(0.5, 0.5, 0.1, 1);
 
     private static double clamp(double min, double value, double max) {
         return value < min ? min : Math.min(value, max);
     }
 
-    private static double fontSize(double minSize, double minFontSize, double maxSize, double maxFontSize, double size) {
-        return FONT_SIZE_INTERPOLATOR.interpolate(minFontSize, maxFontSize, clamp(0, (size - minSize) / (maxSize - minSize), 1));
+    private static double fontSize(
+            double minSize, double minFontSize, double maxSize, double maxFontSize, double size) {
+        return FONT_SIZE_INTERPOLATOR.interpolate(
+                minFontSize, maxFontSize, clamp(0, (size - minSize) / (maxSize - minSize), 1));
     }
 
-    private static double fontSize(double minWidth, double minWidthFontSize, double maxWidth, double maxWidthFontSize, double minHeight, double minHeightFontSize, double maxHeight, double maxHeightFontSize, double width, double height) {
-        double widthFontSize = fontSize(minWidth, minWidthFontSize, maxWidth, maxWidthFontSize, width);
-        double heightFontSize = fontSize(minHeight, minHeightFontSize, maxHeight, maxHeightFontSize, height);
+    private static double fontSize(
+            double minWidth,
+            double minWidthFontSize,
+            double maxWidth,
+            double maxWidthFontSize,
+            double minHeight,
+            double minHeightFontSize,
+            double maxHeight,
+            double maxHeightFontSize,
+            double width,
+            double height) {
+        double widthFontSize =
+                fontSize(minWidth, minWidthFontSize, maxWidth, maxWidthFontSize, width);
+        double heightFontSize =
+                fontSize(minHeight, minHeightFontSize, maxHeight, maxHeightFontSize, height);
         return Math.min(widthFontSize, heightFontSize);
     }
 
     private static double fontSize(double width, double height) {
         return fontSize(70, 12, 700, 20, 10, 10, 50, 20, width, height);
     }
-
 }

@@ -1,6 +1,7 @@
 package one.modality.base.server.services.systemmetrics.spi.java;
 
 import com.sun.management.OperatingSystemMXBean;
+
 import one.modality.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider;
 import one.modality.base.shared.services.systemmetrics.SystemMetrics;
 
@@ -18,7 +19,8 @@ public final class JavaSystemMetricsServiceProvider implements SystemMetricsServ
         systemMetrics.setMemoryMax(runtime.maxMemory());
         systemMetrics.setMemoryTotal(runtime.totalMemory());
 
-        OperatingSystemMXBean osMXBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
+        OperatingSystemMXBean osMXBean =
+                ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
         systemMetrics.setSystemLoadAverage(osMXBean.getSystemLoadAverage());
         systemMetrics.setProcessCpuLoad(osMXBean.getProcessCpuLoad());
     }

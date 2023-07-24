@@ -1,15 +1,17 @@
 package one.modality.crm.backoffice.operations.entities.mail;
 
-import javafx.scene.layout.Pane;
-import one.modality.base.shared.entities.Document;
+import dev.webfx.platform.async.AsyncFunction;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
-import dev.webfx.platform.async.AsyncFunction;
 
-public final class ComposeNewMailRequest implements HasOperationCode,
-        HasOperationExecutor<ComposeNewMailRequest, Void> {
+import javafx.scene.layout.Pane;
 
-    private final static String OPERATION_CODE = "ComposeNewMail";
+import one.modality.base.shared.entities.Document;
+
+public final class ComposeNewMailRequest
+        implements HasOperationCode, HasOperationExecutor<ComposeNewMailRequest, Void> {
+
+    private static final String OPERATION_CODE = "ComposeNewMail";
 
     private final Document document;
     private final Pane parentContainer;

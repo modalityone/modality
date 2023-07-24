@@ -3,6 +3,7 @@ package one.modality.catering.backoffice.operations.routes.kitchen;
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.ui.operation.HasOperationCode;
+
 import one.modality.catering.backoffice.activities.kitchen.routing.KitchenRouting;
 
 /**
@@ -10,7 +11,7 @@ import one.modality.catering.backoffice.activities.kitchen.routing.KitchenRoutin
  */
 public final class RouteToKitchenRequest extends RoutePushRequest implements HasOperationCode {
 
-    private final static String OPERATION_CODE = "RouteToKitchen";
+    private static final String OPERATION_CODE = "RouteToKitchen";
 
     public RouteToKitchenRequest(BrowsingHistory history) {
         super(KitchenRouting.getPath(), history);
@@ -20,5 +21,4 @@ public final class RouteToKitchenRequest extends RoutePushRequest implements Has
     public Object getOperationCode() {
         return OPERATION_CODE;
     }
-
 }

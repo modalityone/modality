@@ -1,8 +1,9 @@
 package one.modality.crm.client.activities.unauthorized;
 
+import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
+
 import javafx.scene.Node;
 import javafx.scene.text.Text;
-import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 
 /**
  * @author Bruno Salmon

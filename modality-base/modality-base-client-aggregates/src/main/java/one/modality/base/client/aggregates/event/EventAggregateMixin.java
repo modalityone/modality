@@ -1,11 +1,11 @@
 package one.modality.base.client.aggregates.event;
 
+import dev.webfx.platform.async.Future;
+import dev.webfx.stack.db.query.QueryResult;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
-import dev.webfx.platform.async.Future;
-import dev.webfx.stack.db.query.QueryResult;
-import one.modality.base.shared.entities.*;
+
 import one.modality.base.client.aggregates.person.PersonAggregate;
 import one.modality.base.shared.entities.*;
 
@@ -19,12 +19,12 @@ public interface EventAggregateMixin extends EventAggregate {
 
     EventAggregate getEventService();
 
-/* Commented to avoid clash with DomainActivityContextMixin
-    @Override
-    default DataSourceModel getDataSourceModel() {
-        return getEventAggregate().getDataSourceModel();
-    }
-*/
+    /* Commented to avoid clash with DomainActivityContextMixin
+        @Override
+        default DataSourceModel getDataSourceModel() {
+            return getEventAggregate().getDataSourceModel();
+        }
+    */
 
     @Override
     default EntityStore getEventStore() {
@@ -87,7 +87,8 @@ public interface EventAggregateMixin extends EventAggregate {
     }
 
     @Override
-    default <E extends Entity> List<E> selectEntities(Iterable<E> entities, Predicate<? super E> predicate) {
+    default <E extends Entity> List<E> selectEntities(
+            Iterable<E> entities, Predicate<? super E> predicate) {
         return getEventService().selectEntities(entities, predicate);
     }
 

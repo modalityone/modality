@@ -19,5 +19,4 @@ module modality.base.backoffice.operations.generic {
 
     // Exported packages
     exports one.modality.base.backoffice.operations.entities.generic;
-
 }

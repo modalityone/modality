@@ -14,6 +14,7 @@ module modality.ecommerce.payment.gateway.direct.authorizedotnet {
     exports one.modality.ecommerce.payment.gateway.direct.spi.impl.authorizedotnet;
 
     // Provided services
-    provides one.modality.ecommerce.payment.gateway.direct.spi.DirectPaymentGatewayProvider with one.modality.ecommerce.payment.gateway.direct.spi.impl.authorizedotnet.AuthorizeDotNetDirectPaymentGatewayProvider;
-
+    provides one.modality.ecommerce.payment.gateway.direct.spi.DirectPaymentGatewayProvider with
+            one.modality.ecommerce.payment.gateway.direct.spi.impl.authorizedotnet
+                    .AuthorizeDotNetDirectPaymentGatewayProvider;
 }

@@ -16,5 +16,4 @@ module modality.ecommerce.backoffice.operations.moneyflow {
     // Exported packages
     exports one.modality.ecommerce.backoffice.operations.entities.moneyaccount;
     exports one.modality.ecommerce.backoffice.operations.entities.moneyflow;
-
 }

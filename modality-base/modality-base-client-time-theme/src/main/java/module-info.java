@@ -11,5 +11,4 @@ module modality.base.client.time.theme {
 
     // Exported packages
     exports one.modality.base.client.time.theme;
-
 }

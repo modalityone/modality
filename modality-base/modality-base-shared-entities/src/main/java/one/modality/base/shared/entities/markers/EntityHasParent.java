@@ -26,8 +26,7 @@ public interface EntityHasParent<P extends Entity> extends Entity, HasParent<P> 
 
     default Object getFieldValueOrParent(Object domainFieldId) {
         Object fieldValue = getFieldValue(domainFieldId);
-        if (fieldValue != null)
-            return fieldValue;
+        if (fieldValue != null) return fieldValue;
         P parent = getParent();
         if (parent instanceof EntityHasParent)
             return ((EntityHasParent) parent).getFieldValueOrParent(domainFieldId);

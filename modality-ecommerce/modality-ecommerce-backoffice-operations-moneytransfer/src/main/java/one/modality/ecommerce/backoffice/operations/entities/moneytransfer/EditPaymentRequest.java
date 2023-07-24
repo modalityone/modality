@@ -1,15 +1,17 @@
 package one.modality.ecommerce.backoffice.operations.entities.moneytransfer;
 
-import javafx.scene.layout.Pane;
-import one.modality.base.shared.entities.MoneyTransfer;
+import dev.webfx.platform.async.AsyncFunction;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
-import dev.webfx.platform.async.AsyncFunction;
 
-public final class EditPaymentRequest implements HasOperationCode,
-        HasOperationExecutor<EditPaymentRequest, Void> {
+import javafx.scene.layout.Pane;
 
-    private final static String OPERATION_CODE = "EditPayment";
+import one.modality.base.shared.entities.MoneyTransfer;
+
+public final class EditPaymentRequest
+        implements HasOperationCode, HasOperationExecutor<EditPaymentRequest, Void> {
+
+    private static final String OPERATION_CODE = "EditPayment";
 
     private final MoneyTransfer payment;
     private final Pane parentContainer;

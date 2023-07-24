@@ -8,5 +8,4 @@ module modality.ecommerce.payment.gateway.direct {
 
     // Exported packages
     exports one.modality.ecommerce.payment.gateway.direct.spi;
-
 }

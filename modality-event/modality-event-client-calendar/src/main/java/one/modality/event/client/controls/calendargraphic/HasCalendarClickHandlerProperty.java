@@ -10,11 +10,12 @@ import java.util.function.Consumer;
 interface HasCalendarClickHandlerProperty {
 
     Property<Consumer<CalendarClickEvent>> calendarClickHandlerProperty();
+
     default void setCalendarClickHandler(Consumer<CalendarClickEvent> calendarClickEventHandler) {
         calendarClickHandlerProperty().setValue(calendarClickEventHandler);
     }
+
     default Consumer<CalendarClickEvent> getCalendarClickHandler() {
         return calendarClickHandlerProperty().getValue();
     }
-
 }

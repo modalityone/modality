@@ -20,10 +20,12 @@ public class ModalityLocalDataSourceModuleBooter implements ApplicationModuleBoo
 
     @Override
     public void bootModule() {
-        QueryService.executeQuery(new QueryArgumentBuilder()
-                        .setDataSourceId(ModalityLocalDataSourceProvider.getModalityDataSourceId())
-                        .setStatement("select count(*) from document")
-                        .build())
+        QueryService.executeQuery(
+                        new QueryArgumentBuilder()
+                                .setDataSourceId(
+                                        ModalityLocalDataSourceProvider.getModalityDataSourceId())
+                                .setStatement("select count(*) from document")
+                                .build())
                 .onSuccess(r -> log("✅ Successfully connected to Modality database"))
                 .onFailure(e -> log("❌ Failed to connect to Modality database"));
     }

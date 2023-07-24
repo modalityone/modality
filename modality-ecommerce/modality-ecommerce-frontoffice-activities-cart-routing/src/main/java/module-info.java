@@ -23,5 +23,4 @@ module modality.ecommerce.frontoffice.activities.cart.routing {
     exports one.modality.ecommerce.frontoffice.activities.cart.base;
     exports one.modality.ecommerce.frontoffice.activities.cart.routing;
     exports one.modality.ecommerce.frontoffice.operations.cart;
-
 }

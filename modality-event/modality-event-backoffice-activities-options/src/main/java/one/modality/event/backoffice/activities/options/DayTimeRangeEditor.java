@@ -1,17 +1,19 @@
 package one.modality.event.backoffice.activities.options;
 
+import dev.webfx.stack.ui.controls.dialog.DialogCallback;
+import dev.webfx.stack.ui.controls.dialog.DialogUtil;
+import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
+
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
-import one.modality.hotel.shared.businessdata.time.DayTimeRange;
+
 import one.modality.event.client.businessdata.calendar.CalendarTimeline;
 import one.modality.event.client.controls.calendargraphic.impl.DayColumnBodyBlockViewModel;
 import one.modality.event.client.controls.calendargraphic.impl.DayColumnHeaderViewModel;
-import dev.webfx.stack.ui.controls.dialog.DialogCallback;
-import dev.webfx.stack.ui.controls.dialog.DialogUtil;
-import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
+import one.modality.hotel.shared.businessdata.time.DayTimeRange;
 
 import java.util.function.BiConsumer;
 
@@ -20,11 +22,21 @@ import java.util.function.BiConsumer;
  */
 final class DayTimeRangeEditor {
 
-    static void showDayTimeRangeEditorDialog(DayTimeRange dayTimeRange, long epochDay, CalendarTimeline timeline, BiConsumer<DayTimeRange, DialogCallback> okConsumer, Node parentOwner) {
+    static void showDayTimeRangeEditorDialog(
+            DayTimeRange dayTimeRange,
+            long epochDay,
+            CalendarTimeline timeline,
+            BiConsumer<DayTimeRange, DialogCallback> okConsumer,
+            Node parentOwner) {
         showDayTimeRangeInternDialog(dayTimeRange, epochDay, timeline, okConsumer, parentOwner);
     }
 
-    private static void showDayTimeRangeInternDialog(DayTimeRange dayTimeRange, long epochDay, CalendarTimeline timeline, BiConsumer<DayTimeRange, DialogCallback> okConsumer, Node parentOwner) {
+    private static void showDayTimeRangeInternDialog(
+            DayTimeRange dayTimeRange,
+            long epochDay,
+            CalendarTimeline timeline,
+            BiConsumer<DayTimeRange, DialogCallback> okConsumer,
+            Node parentOwner) {
         DayTimeRange.TimeRangeRule generalRule = dayTimeRange.getGeneralRule();
         DayTimeRange.TimeRangeRule ruleForDay = dayTimeRange.getRuleForDay(epochDay);
 
@@ -40,28 +52,45 @@ final class DayTimeRangeEditor {
         boolean hasException = !exceptionText.equals(generalText);
         exceptionCheckBox.setSelected(hasException);
 
-        DialogCallback dialogCallback = DialogUtil.showModalNodeInGoldLayout(new GridPaneBuilder()
-                        .addNodeFillingRow(new DayColumnBodyBlockViewModel(null, epochDay, generalRule.getDayTimeInterval(), timeline, true).getNode(), 2)
-                        .addLabelTextInputRow("Hours", generalTextField)
-                        .addNodeFillingRow(20, new DayColumnHeaderViewModel(epochDay).getNode())
-                        .addCheckBoxTextInputRow("Exception", exceptionCheckBox, exceptionTextField)
-                        .addButtons("Ok", okButton, "Cancel", cancelButton)
-                        .build(),
-                (Pane) parentOwner);
+        DialogCallback dialogCallback =
+                DialogUtil.showModalNodeInGoldLayout(
+                        new GridPaneBuilder()
+                                .addNodeFillingRow(
+                                        new DayColumnBodyBlockViewModel(
+                                                        null,
+                                                        epochDay,
+                                                        generalRule.getDayTimeInterval(),
+                                                        timeline,
+                                                        true)
+                                                .getNode(),
+                                        2)
+                                .addLabelTextInputRow("Hours", generalTextField)
+                                .addNodeFillingRow(
+                                        20, new DayColumnHeaderViewModel(epochDay).getNode())
+                                .addCheckBoxTextInputRow(
+                                        "Exception", exceptionCheckBox, exceptionTextField)
+                                .addButtons("Ok", okButton, "Cancel", cancelButton)
+                                .build(),
+                        (Pane) parentOwner);
 
-        okButton.setOnAction(e -> {
-            String newGeneralText = generalTextField.getText();
-            String newExceptionText = exceptionTextField.getText();
-            DayTimeRange newDayTimeRange = dayTimeRange.changeGeneralRule(newGeneralText);
-            boolean newHasException = exceptionCheckBox.isSelected() && !newExceptionText.equals(newGeneralText);
-            if (newHasException != hasException || newHasException && !newExceptionText.equals(exceptionText)) {
-                if (newHasException)
-                    newDayTimeRange = newDayTimeRange.addExceptionRuleForDay(epochDay, newExceptionText);
-                else
-                    newDayTimeRange = newDayTimeRange.removeExceptionRuleForDay(epochDay);
-            }
-            okConsumer.accept(newDayTimeRange, dialogCallback);
-        });
+        okButton.setOnAction(
+                e -> {
+                    String newGeneralText = generalTextField.getText();
+                    String newExceptionText = exceptionTextField.getText();
+                    DayTimeRange newDayTimeRange = dayTimeRange.changeGeneralRule(newGeneralText);
+                    boolean newHasException =
+                            exceptionCheckBox.isSelected()
+                                    && !newExceptionText.equals(newGeneralText);
+                    if (newHasException != hasException
+                            || newHasException && !newExceptionText.equals(exceptionText)) {
+                        if (newHasException)
+                            newDayTimeRange =
+                                    newDayTimeRange.addExceptionRuleForDay(
+                                            epochDay, newExceptionText);
+                        else newDayTimeRange = newDayTimeRange.removeExceptionRuleForDay(epochDay);
+                    }
+                    okConsumer.accept(newDayTimeRange, dialogCallback);
+                });
         cancelButton.setOnAction(e -> dialogCallback.closeDialog());
     }
 }

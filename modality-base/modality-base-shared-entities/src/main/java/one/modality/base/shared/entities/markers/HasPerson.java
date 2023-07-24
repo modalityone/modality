@@ -1,7 +1,8 @@
 package one.modality.base.shared.entities.markers;
 
-import one.modality.base.shared.entities.Person;
 import dev.webfx.stack.orm.entity.EntityId;
+
+import one.modality.base.shared.entities.Person;
 
 /**
  * @author Bruno Salmon
@@ -13,5 +14,4 @@ public interface HasPerson {
     EntityId getPersonId();
 
     Person getPerson();
-
 }

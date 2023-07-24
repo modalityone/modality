@@ -8,5 +8,4 @@ module modality.base.client.presentationmodel {
 
     // Exported packages
     exports one.modality.base.client.presentationmodel;
-
 }

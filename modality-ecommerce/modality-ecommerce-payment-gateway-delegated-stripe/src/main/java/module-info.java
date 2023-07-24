@@ -12,6 +12,8 @@ module modality.ecommerce.payment.gateway.delegated.stripe {
     exports one.modality.ecommerce.payment.gateway.delegated.spi.impl.stripe;
 
     // Provided services
-    provides one.modality.ecommerce.payment.gateway.delegated.spi.DelegatedPaymentGatewayProvider with one.modality.ecommerce.payment.gateway.delegated.spi.impl.stripe.StripeDelegatedPaymentGatewayProvider;
-
+    provides one.modality.ecommerce.payment.gateway.delegated.spi
+            .DelegatedPaymentGatewayProvider with
+            one.modality.ecommerce.payment.gateway.delegated.spi.impl.stripe
+                    .StripeDelegatedPaymentGatewayProvider;
 }

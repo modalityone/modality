@@ -37,5 +37,4 @@ module modality.base.client.application {
     // Resources packages
     opens images.buddhas;
     opens one.modality.base.client.images;
-
 }

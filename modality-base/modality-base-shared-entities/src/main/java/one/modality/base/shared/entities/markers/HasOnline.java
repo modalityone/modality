@@ -8,5 +8,4 @@ public interface HasOnline {
     void setOnline(Boolean online);
 
     Boolean isOnline();
-
 }

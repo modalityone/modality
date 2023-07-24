@@ -1,10 +1,11 @@
 package one.modality.event.client.businessdata.calendar.impl;
 
 import javafx.beans.property.Property;
+import javafx.scene.paint.Paint;
+
+import one.modality.event.client.businessdata.calendar.CalendarTimeline;
 import one.modality.hotel.shared.businessdata.time.DateTimeRange;
 import one.modality.hotel.shared.businessdata.time.DayTimeRange;
-import one.modality.event.client.businessdata.calendar.CalendarTimeline;
-import javafx.scene.paint.Paint;
 
 /**
  * @author Bruno Salmon
@@ -17,8 +18,12 @@ public final class CalendarTimelineImpl implements CalendarTimeline {
     private final Paint backgroundFill;
     private final Object source;
 
-
-    public CalendarTimelineImpl(DateTimeRange dateTimeRange, DayTimeRange dayTimeRange, Property<String> displayNameProperty, Paint backgroundFill, Object source) {
+    public CalendarTimelineImpl(
+            DateTimeRange dateTimeRange,
+            DayTimeRange dayTimeRange,
+            Property<String> displayNameProperty,
+            Paint backgroundFill,
+            Object source) {
         this.dateTimeRange = dateTimeRange;
         this.dayTimeRange = dayTimeRange;
         this.displayNameProperty = displayNameProperty;

@@ -8,5 +8,4 @@ public interface HasMaxDateTimeRange {
     void setMaxDateTimeRange(String maxDateTimeRange);
 
     String getMaxDateTimeRange();
-
 }

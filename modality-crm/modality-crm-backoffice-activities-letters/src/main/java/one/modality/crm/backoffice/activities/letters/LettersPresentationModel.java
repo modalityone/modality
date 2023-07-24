@@ -5,6 +5,4 @@ import one.modality.base.client.activity.eventdependent.EventDependentGenericTab
 /**
  * @author Bruno Salmon
  */
-final class LettersPresentationModel extends EventDependentGenericTablePresentationModel {
-
-}
+final class LettersPresentationModel extends EventDependentGenericTablePresentationModel {}

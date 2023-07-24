@@ -23,7 +23,9 @@ module modality.crm.backoffice.activities.authorizations {
     exports one.modality.crm.backoffice.activities.operations.authorizations;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.crm.backoffice.activities.authorizations.AuthorizationsUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.crm.backoffice.activities.authorizations.RouteToAuthorizationsRequestEmitter;
-
+    provides dev.webfx.stack.routing.uirouter.UiRoute with
+            one.modality.crm.backoffice.activities.authorizations.AuthorizationsUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with
+            one.modality.crm.backoffice.activities.authorizations
+                    .RouteToAuthorizationsRequestEmitter;
 }

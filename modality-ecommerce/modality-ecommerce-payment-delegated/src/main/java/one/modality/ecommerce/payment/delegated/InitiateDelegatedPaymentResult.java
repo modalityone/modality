@@ -14,5 +14,4 @@ public class InitiateDelegatedPaymentResult {
     public String getDelegatedPaymentUrl() {
         return delegatedPaymentUrl;
     }
-
 }

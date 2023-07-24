@@ -1,14 +1,17 @@
 package one.modality.ecommerce.client.activity.bookingprocess;
 
-import javafx.event.ActionEvent;
-import one.modality.base.client.activity.eventdependent.EventDependentPresentationLogicActivity;
 import dev.webfx.platform.util.function.Factory;
+
+import javafx.event.ActionEvent;
+
+import one.modality.base.client.activity.eventdependent.EventDependentPresentationLogicActivity;
 
 /**
  * @author Bruno Salmon
  */
-public abstract class BookingProcessPresentationLogicActivity<PM extends BookingProcessPresentationModel>
-    extends EventDependentPresentationLogicActivity<PM> {
+public abstract class BookingProcessPresentationLogicActivity<
+                PM extends BookingProcessPresentationModel>
+        extends EventDependentPresentationLogicActivity<PM> {
 
     public BookingProcessPresentationLogicActivity(Factory<PM> presentationModelFactory) {
         super(presentationModelFactory);
@@ -25,6 +28,5 @@ public abstract class BookingProcessPresentationLogicActivity<PM extends Booking
         getHistory().goBack();
     }
 
-    protected void onNextButtonPressed(ActionEvent event) {
-    }
+    protected void onNextButtonPressed(ActionEvent event) {}
 }

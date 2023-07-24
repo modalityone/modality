@@ -1,8 +1,9 @@
 package one.modality.base.shared.entities.markers;
 
-import one.modality.base.shared.entities.Person;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
+
+import one.modality.base.shared.entities.Person;
 
 /**
  * @author Bruno Salmon
@@ -23,5 +24,4 @@ public interface EntityHasPerson extends Entity, HasPerson {
     default Person getPerson() {
         return getForeignEntity("person");
     }
-
 }

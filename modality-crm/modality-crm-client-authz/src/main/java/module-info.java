@@ -19,7 +19,8 @@ module modality.crm.client.authz {
     exports one.modality.crm.client.services.authz;
 
     // Provided services
-    provides dev.webfx.platform.boot.spi.ApplicationModuleBooter with one.modality.crm.client.services.authz.ModalityAuthorizationClientModuleBooter;
-    provides dev.webfx.stack.authz.client.spi.AuthorizationClientServiceProvider with one.modality.crm.client.services.authz.ModalityAuthorizationClientServiceProvider;
-
+    provides dev.webfx.platform.boot.spi.ApplicationModuleBooter with
+            one.modality.crm.client.services.authz.ModalityAuthorizationClientModuleBooter;
+    provides dev.webfx.stack.authz.client.spi.AuthorizationClientServiceProvider with
+            one.modality.crm.client.services.authz.ModalityAuthorizationClientServiceProvider;
 }

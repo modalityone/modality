@@ -4,8 +4,10 @@ import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
+
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+
 import one.modality.base.shared.entities.Event;
 
 import java.util.Objects;
@@ -15,12 +17,13 @@ import java.util.Objects;
  */
 public final class FXEvent {
 
-    private final static ObjectProperty<Event> eventProperty = new SimpleObjectProperty<>() {
-        @Override
-        protected void invalidated() {
-            FXEventId.setEventId(getEventId());
-        }
-    };
+    private static final ObjectProperty<Event> eventProperty =
+            new SimpleObjectProperty<>() {
+                @Override
+                protected void invalidated() {
+                    FXEventId.setEventId(getEventId());
+                }
+            };
 
     static {
         FXEventId.init();
@@ -32,7 +35,9 @@ public final class FXEvent {
 
     static EntityStore getEventStore() {
         Event event = getEvent();
-        return event != null ? event.getStore() : EntityStore.create(DataSourceModelService.getDefaultDataSourceModel());
+        return event != null
+                ? event.getStore()
+                : EntityStore.create(DataSourceModelService.getDefaultDataSourceModel());
     }
 
     public static ObjectProperty<Event> eventProperty() {
@@ -44,8 +49,6 @@ public final class FXEvent {
     }
 
     public static void setEvent(Event event) {
-        if (!Objects.equals(event, getEvent()))
-            eventProperty.set(event);
+        if (!Objects.equals(event, getEvent())) eventProperty.set(event);
     }
-
 }

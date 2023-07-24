@@ -1,18 +1,14 @@
 package one.modality.base.shared.entities;
 
 import dev.webfx.stack.orm.entity.EntityId;
-import one.modality.base.shared.entities.markers.*;
+
 import one.modality.base.shared.entities.markers.*;
 
 /**
  * @author Bruno Salmon
  */
-public interface Item extends
-        EntityHasCode,
-        EntityHasName,
-        EntityHasLabel,
-        EntityHasIcon,
-        HasItemFamilyType {
+public interface Item
+        extends EntityHasCode, EntityHasName, EntityHasLabel, EntityHasIcon, HasItemFamilyType {
 
     //// Domain fields
 

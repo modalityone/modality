@@ -1,6 +1,8 @@
 package one.modality.event.client.controls.calendargraphic.impl;
 
+import dev.webfx.extras.util.background.BackgroundFactory;
 import dev.webfx.stack.i18n.I18n;
+
 import javafx.geometry.VPos;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -9,7 +11,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Translate;
-import dev.webfx.extras.util.background.BackgroundFactory;
 
 import java.time.LocalDate;
 
@@ -18,13 +19,15 @@ import java.time.LocalDate;
  */
 public final class DayColumnHeaderViewModel implements HorizontalDayPositioned {
 
-    final static double dayColumnHeaderHeight = 50d;
-    private final static LinearGradient dayColumnHeaderFill = LinearGradient.valueOf("from 0% 0% to 0% 100%, 0x75A9A3 0%, 0x375855 100%"); // Color.web("0x609993")
-    final static Color dayColumnHeaderTextColor = Color.WHITE;
-    private final static String fontFamily = "Verdana";
-    private final static Font dayOfWeekTextFont = Font.font(fontFamily, 11);
-    private final static Font dayOfMonthTextFont = Font.font(fontFamily, 20);
-    private final static Font monthTextFont = dayOfWeekTextFont;
+    static final double dayColumnHeaderHeight = 50d;
+    private static final LinearGradient dayColumnHeaderFill =
+            LinearGradient.valueOf(
+                    "from 0% 0% to 0% 100%, 0x75A9A3 0%, 0x375855 100%"); // Color.web("0x609993")
+    static final Color dayColumnHeaderTextColor = Color.WHITE;
+    private static final String fontFamily = "Verdana";
+    private static final Font dayOfWeekTextFont = Font.font(fontFamily, 11);
+    private static final Font dayOfMonthTextFont = Font.font(fontFamily, 20);
+    private static final Font monthTextFont = dayOfWeekTextFont;
 
     private long epochDay;
     private final Pane rootPane = new Pane();
@@ -53,10 +56,12 @@ public final class DayColumnHeaderViewModel implements HorizontalDayPositioned {
         rootPane.setBackground(BackgroundFactory.newBackground(dayColumnHeaderFill));
         rootPane.getChildren().setAll(dayOfWeekText, dayOfMonthText, monthText);
         rootPane.getTransforms().setAll(translate);
-        rootPane.heightProperty().addListener((observable, oldValue, height) -> {
-            dayOfMonthText.setY((double) height / 2);
-            monthText.setY((double) height - 3d);
-        });
+        rootPane.heightProperty()
+                .addListener(
+                        (observable, oldValue, height) -> {
+                            dayOfMonthText.setY((double) height / 2);
+                            monthText.setY((double) height - 3d);
+                        });
     }
 
     public DayColumnHeaderViewModel(long epochDay) {
@@ -83,7 +88,6 @@ public final class DayColumnHeaderViewModel implements HorizontalDayPositioned {
         dayOfMonthText.setText("" + date.getDayOfMonth());
         I18n.bindI18nProperties(monthText, date.getMonth().name());
     }
-
 
     @Override
     public void setXAndWidth(double x, double width) {

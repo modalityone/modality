@@ -8,8 +8,8 @@ import javafx.beans.property.SimpleObjectProperty;
  */
 public final class FXGanttSelection {
 
-    private final static ObjectProperty<Object> ganttSelectedObjectProperty = new SimpleObjectProperty<>();
-
+    private static final ObjectProperty<Object> ganttSelectedObjectProperty =
+            new SimpleObjectProperty<>();
 
     public static ObjectProperty<Object> ganttSelectedObjectProperty() {
         return ganttSelectedObjectProperty;
@@ -22,5 +22,4 @@ public final class FXGanttSelection {
     public static void setGanttSelectedObject(Object value) {
         ganttSelectedObjectProperty.set(value);
     }
-
 }

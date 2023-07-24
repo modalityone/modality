@@ -29,7 +29,8 @@ module modality.base.shared.domainmodel {
     opens one.modality.base.shared.domainmodel;
 
     // Provided services
-    provides dev.webfx.stack.orm.datasourcemodel.service.spi.DataSourceModelProvider with one.modality.base.shared.services.datasourcemodel.ModalityDataSourceModelProvider;
-    provides dev.webfx.stack.orm.domainmodel.service.spi.DomainModelProvider with one.modality.base.shared.services.domainmodel.ModalityDomainModelProvider;
-
+    provides dev.webfx.stack.orm.datasourcemodel.service.spi.DataSourceModelProvider with
+            one.modality.base.shared.services.datasourcemodel.ModalityDataSourceModelProvider;
+    provides dev.webfx.stack.orm.domainmodel.service.spi.DomainModelProvider with
+            one.modality.base.shared.services.domainmodel.ModalityDomainModelProvider;
 }

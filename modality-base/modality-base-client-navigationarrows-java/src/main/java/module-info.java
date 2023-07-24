@@ -10,6 +10,7 @@ module modality.base.client.navigationarrows.java {
     exports one.modality.base.client.navigationarrows;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.base.client.navigationarrows.RouteBackwardRequestEmitter, one.modality.base.client.navigationarrows.RouteForwardRequestEmitter;
-
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with
+            one.modality.base.client.navigationarrows.RouteBackwardRequestEmitter,
+            one.modality.base.client.navigationarrows.RouteForwardRequestEmitter;
 }

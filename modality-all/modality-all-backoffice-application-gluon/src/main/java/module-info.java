@@ -43,5 +43,4 @@ module modality.all.backoffice.application.gluon {
 
     // Meta Resource package
     opens dev.webfx.platform.meta.exe;
-
 }
