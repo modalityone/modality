@@ -6,8 +6,8 @@
 - [x] Establish [Modality Website][modality-web]
 - [x] Establish [Modality Docs][modality-docs]
 - [x] Establish CI/CD pipeline (using GitHub workflow)
+- [x] Define coding standards
 - [ ] Back-Office online demo
-- [ ] Define coding standards
 - [ ] JavaDoc existing code
 - [ ] Add automated testing coverage
   - [ ] Unit testing
