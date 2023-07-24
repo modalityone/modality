@@ -1,4 +1,4 @@
-name: Enforce Google Java Style Guidelines
+name: Enforce IntelliJ Java Style Guidelines
 
 on: [push]
 

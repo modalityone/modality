@@ -172,7 +172,8 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         resultPane.getChildren().add(resultAndStatusRow);
         resultPane.getChildren().add(resultsGrid);
         resultPane.setSpacing(10);
-        VBox.setMargin(resultPane, new Insets(20, 20, 20, 20));
+        VBox.setMargin(resultPane,
+                                        new Insets(20, 20, 20, 20));
 
         // The FilterPane border wrapper
         VBox resultPaneBorder = new VBox();
