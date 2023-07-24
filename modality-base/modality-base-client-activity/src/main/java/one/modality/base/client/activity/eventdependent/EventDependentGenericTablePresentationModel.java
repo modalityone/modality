@@ -8,14 +8,12 @@ import one.modality.base.client.activity.organizationdependent.OrganizationDepen
  * @author Bruno Salmon
  */
 public class EventDependentGenericTablePresentationModel
-        extends OrganizationDependentGenericTablePresentationModel
-        implements EventDependentPresentationModel {
+    extends OrganizationDependentGenericTablePresentationModel
+    implements EventDependentPresentationModel {
 
-    private final ObjectProperty<Object> eventIdProperty = new SimpleObjectProperty<>();
+  private final ObjectProperty<Object> eventIdProperty = new SimpleObjectProperty<>();
 
-    public ObjectProperty<Object> eventIdProperty() {
-        return this.eventIdProperty;
-    }
-
+  public ObjectProperty<Object> eventIdProperty() {
+    return this.eventIdProperty;
+  }
 }
-

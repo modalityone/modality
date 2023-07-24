@@ -7,12 +7,13 @@ import one.modality.hotel.shared.businessdata.time.DateTimeRange;
  */
 public interface HasDateTimeRange {
 
-    void setDateTimeRange(String dateTimeRange);
+  void setDateTimeRange(String dateTimeRange);
 
-    String getDateTimeRange();
+  String getDateTimeRange();
 
-    default DateTimeRange getParsedDateTimeRange() { // Should be overridden by implementing class to have a cached value
-        return DateTimeRange.parse(getDateTimeRange());
-    }
-
+  default DateTimeRange
+      getParsedDateTimeRange() { // Should be overridden by implementing class to have a cached
+                                 // value
+    return DateTimeRange.parse(getDateTimeRange());
+  }
 }

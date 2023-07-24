@@ -10,17 +10,16 @@ import one.modality.base.shared.entities.Filter;
  */
 public final class FilterToDqlStatementConverter {
 
-    public static DqlStatement toDqlStatement(Filter filter) {
-        return new DqlStatementBuilder(filter.getClassId())
-                .setAlias(filter.getAlias())
-                .setFields(filter.getFields())
-                .setColumns(filter.getColumns())
-                .setWhere(DqlClause.create(filter.getWhereClause()))
-                .setGroupBy(DqlClause.create(filter.getGroupByClause()))
-                .setHaving(DqlClause.create(filter.getHavingClause()))
-                .setLimit(DqlClause.create(filter.getLimitClause()))
-                .setOrderBy(DqlClause.create(filter.getOrderByClause()))
-                .build();
-    }
-
+  public static DqlStatement toDqlStatement(Filter filter) {
+    return new DqlStatementBuilder(filter.getClassId())
+        .setAlias(filter.getAlias())
+        .setFields(filter.getFields())
+        .setColumns(filter.getColumns())
+        .setWhere(DqlClause.create(filter.getWhereClause()))
+        .setGroupBy(DqlClause.create(filter.getGroupByClause()))
+        .setHaving(DqlClause.create(filter.getHavingClause()))
+        .setLimit(DqlClause.create(filter.getLimitClause()))
+        .setOrderBy(DqlClause.create(filter.getOrderByClause()))
+        .build();
+  }
 }

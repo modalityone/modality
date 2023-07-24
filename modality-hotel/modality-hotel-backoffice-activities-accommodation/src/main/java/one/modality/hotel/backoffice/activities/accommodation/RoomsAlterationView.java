@@ -14,23 +14,26 @@ import one.modality.hotel.backoffice.accommodation.ResourceConfigurationLoader;
  */
 public class RoomsAlterationView {
 
-    private final ResourceConfigurationLoader resourceConfigurationLoader;
+  private final ResourceConfigurationLoader resourceConfigurationLoader;
 
-    public RoomsAlterationView(AccommodationPresentationModel pm) {
-        resourceConfigurationLoader = ResourceConfigurationLoader.getOrCreate(pm);
-    }
+  public RoomsAlterationView(AccommodationPresentationModel pm) {
+    resourceConfigurationLoader = ResourceConfigurationLoader.getOrCreate(pm);
+  }
 
-    public Node buildView() {
-        VBox vBox = new VBox(10);
-        ObservableLists.bindConverted(vBox.getChildren(), resourceConfigurationLoader.getResourceConfigurations(), this::createRoomNode);
-        return LayoutUtil.createVerticalScrollPane(vBox);
-    }
+  public Node buildView() {
+    VBox vBox = new VBox(10);
+    ObservableLists.bindConverted(
+        vBox.getChildren(),
+        resourceConfigurationLoader.getResourceConfigurations(),
+        this::createRoomNode);
+    return LayoutUtil.createVerticalScrollPane(vBox);
+  }
 
-    private Node createRoomNode(ResourceConfiguration rc) {
-        return new Text(rc.getName());
-    }
+  private Node createRoomNode(ResourceConfiguration rc) {
+    return new Text(rc.getName());
+  }
 
-    public void startLogic(Object mixin) {
-        resourceConfigurationLoader.startLogic(mixin);
-    }
+  public void startLogic(Object mixin) {
+    resourceConfigurationLoader.startLogic(mixin);
+  }
 }

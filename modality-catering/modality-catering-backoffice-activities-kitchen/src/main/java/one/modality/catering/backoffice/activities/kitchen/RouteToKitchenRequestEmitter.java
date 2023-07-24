@@ -10,8 +10,8 @@ import one.modality.catering.backoffice.operations.routes.kitchen.RouteToKitchen
  */
 public final class RouteToKitchenRequestEmitter implements RouteRequestEmitter {
 
-    @Override
-    public RouteRequest instantiateRouteRequest(UiRouteActivityContext context) {
-        return new RouteToKitchenRequest(context.getHistory());
-    }
+  @Override
+  public RouteRequest instantiateRouteRequest(UiRouteActivityContext context) {
+    return new RouteToKitchenRequest(context.getHistory());
+  }
 }

@@ -7,13 +7,13 @@ import javafx.beans.property.ObjectProperty;
  */
 public interface HasEventIdProperty {
 
-    ObjectProperty<Object> eventIdProperty();
+  ObjectProperty<Object> eventIdProperty();
 
-    default void setEventId(Object eventId) {
-        eventIdProperty().setValue(eventId);
-    }
+  default void setEventId(Object eventId) {
+    eventIdProperty().setValue(eventId);
+  }
 
-    default Object getEventId() {
-        return eventIdProperty().getValue();
-    }
+  default Object getEventId() {
+    return eventIdProperty().getValue();
+  }
 }

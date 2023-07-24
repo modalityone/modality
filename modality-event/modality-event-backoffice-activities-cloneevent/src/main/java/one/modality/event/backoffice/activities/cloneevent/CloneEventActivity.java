@@ -7,7 +7,7 @@ import dev.webfx.stack.orm.domainmodel.activity.domainpresentation.impl.DomainPr
  */
 final class CloneEventActivity extends DomainPresentationActivityImpl<CloneEventPresentationModel> {
 
-    CloneEventActivity() {
-        super(CloneEventPresentationViewActivity::new, CloneEventPresentationLogicActivity::new);
-    }
+  CloneEventActivity() {
+    super(CloneEventPresentationViewActivity::new, CloneEventPresentationLogicActivity::new);
+  }
 }

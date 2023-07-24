@@ -7,6 +7,5 @@ import one.modality.base.shared.services.systemmetrics.SystemMetrics;
  */
 public interface SystemMetricsServiceProvider {
 
-    void takeSystemMetricsSnapshot(SystemMetrics systemMetrics);
-
+  void takeSystemMetricsSnapshot(SystemMetrics systemMetrics);
 }

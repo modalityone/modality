@@ -7,14 +7,13 @@ import one.modality.base.client.util.routing.ModalityRoutingUtil;
  */
 public final class CloneEventRouting {
 
-    private static final String PATH = "/event/:eventId/clone";
+  private static final String PATH = "/event/:eventId/clone";
 
-    public static String getPath() {
-        return PATH;
-    }
+  public static String getPath() {
+    return PATH;
+  }
 
-    public static String getCloneEventPath(Object eventId) {
-        return ModalityRoutingUtil.interpolateEventIdInPath(eventId, getPath());
-    }
-
+  public static String getCloneEventPath(Object eventId) {
+    return ModalityRoutingUtil.interpolateEventIdInPath(eventId, getPath());
+  }
 }

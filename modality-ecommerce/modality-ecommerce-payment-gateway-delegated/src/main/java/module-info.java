@@ -2,11 +2,10 @@
 
 module modality.ecommerce.payment.gateway.delegated {
 
-    // Direct dependencies modules
-    requires modality.ecommerce.payment.delegated;
-    requires webfx.platform.async;
+  // Direct dependencies modules
+  requires modality.ecommerce.payment.delegated;
+  requires webfx.platform.async;
 
-    // Exported packages
-    exports one.modality.ecommerce.payment.gateway.delegated.spi;
-
+  // Exported packages
+  exports one.modality.ecommerce.payment.gateway.delegated.spi;
 }

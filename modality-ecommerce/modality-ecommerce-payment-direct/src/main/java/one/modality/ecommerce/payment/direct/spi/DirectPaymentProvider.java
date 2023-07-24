@@ -11,9 +11,8 @@ import one.modality.ecommerce.payment.direct.MakeDirectPaymentResult;
  */
 public interface DirectPaymentProvider {
 
+  Future<MakeDirectPaymentResult> makeDirectPayment(MakeDirectPaymentArgument argument);
 
-    Future<MakeDirectPaymentResult> makeDirectPayment(MakeDirectPaymentArgument argument);
-
-    Future<GetDirectPaymentGatewayInfosResult> getDirectPaymentGatewayInfos(GetDirectPaymentGatewayInfosArgument argument);
-
+  Future<GetDirectPaymentGatewayInfosResult> getDirectPaymentGatewayInfos(
+      GetDirectPaymentGatewayInfosArgument argument);
 }

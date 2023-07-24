@@ -1,6 +1,14 @@
 package one.modality.ecommerce.backoffice.activities.statistics;
 
+import dev.webfx.extras.visual.VisualResult;
+import dev.webfx.extras.visual.VisualSelection;
+import dev.webfx.stack.orm.dql.DqlStatement;
+import dev.webfx.stack.orm.expression.builder.ReferenceResolver;
 import dev.webfx.stack.orm.reactive.dql.statement.conventions.*;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualResultProperty;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualSelectionProperty;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualSelectionProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import one.modality.base.client.activity.eventdependent.EventDependentGenericTablePresentationModel;
@@ -8,20 +16,12 @@ import one.modality.base.client.presentationmodel.HasSelectedDocumentLinePropert
 import one.modality.base.client.presentationmodel.HasSelectedDocumentProperty;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.DocumentLine;
-import dev.webfx.extras.visual.VisualResult;
-import dev.webfx.extras.visual.VisualSelection;
-import dev.webfx.stack.orm.dql.DqlStatement;
-import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualResultProperty;
-import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualSelectionProperty;
-import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
-import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualSelectionProperty;
-import dev.webfx.stack.orm.expression.builder.ReferenceResolver;
 
 /**
  * @author Bruno Salmon
  */
-final class StatisticsPresentationModel extends EventDependentGenericTablePresentationModel implements
-        HasConditionDqlStatementProperty,
+final class StatisticsPresentationModel extends EventDependentGenericTablePresentationModel
+    implements HasConditionDqlStatementProperty,
         HasGroupDqlStatementProperty,
         HasColumnsDqlStatementProperty,
         HasGroupVisualResultProperty,
@@ -35,52 +35,112 @@ final class StatisticsPresentationModel extends EventDependentGenericTablePresen
         HasSelectedDocumentLineProperty,
         HasSelectedDocumentProperty {
 
-    private final ObjectProperty<DqlStatement> conditionDqlStatementProperty = new SimpleObjectProperty<>();
-    @Override public final ObjectProperty<DqlStatement> conditionDqlStatementProperty() { return conditionDqlStatementProperty; }
+  private final ObjectProperty<DqlStatement> conditionDqlStatementProperty =
+      new SimpleObjectProperty<>();
 
-    private final ObjectProperty<DqlStatement> groupDqlStatementProperty = new SimpleObjectProperty<>();
-    @Override public final ObjectProperty<DqlStatement> groupDqlStatementProperty() { return groupDqlStatementProperty; }
+  @Override
+  public final ObjectProperty<DqlStatement> conditionDqlStatementProperty() {
+    return conditionDqlStatementProperty;
+  }
 
-    private final ObjectProperty<DqlStatement> columnsDqlStatementProperty = new SimpleObjectProperty<>();
-    @Override public final ObjectProperty<DqlStatement> columnsDqlStatementProperty() { return columnsDqlStatementProperty; }
+  private final ObjectProperty<DqlStatement> groupDqlStatementProperty =
+      new SimpleObjectProperty<>();
 
-    private final ObjectProperty<VisualResult> groupVisualResultProperty = new SimpleObjectProperty<>();
-    @Override public ObjectProperty<VisualResult> groupVisualResultProperty() { return groupVisualResultProperty; }
+  @Override
+  public final ObjectProperty<DqlStatement> groupDqlStatementProperty() {
+    return groupDqlStatementProperty;
+  }
 
-    private final ObjectProperty<VisualSelection> groupVisualSelectionProperty = new SimpleObjectProperty<>();
-    @Override public ObjectProperty<VisualSelection> groupVisualSelectionProperty() { return groupVisualSelectionProperty; }
+  private final ObjectProperty<DqlStatement> columnsDqlStatementProperty =
+      new SimpleObjectProperty<>();
 
-    private final ObjectProperty<DocumentLine> selectedGroupProperty = new SimpleObjectProperty<>();
-    @Override public ObjectProperty<DocumentLine> selectedGroupProperty() {
-        return selectedGroupProperty;
-    }
+  @Override
+  public final ObjectProperty<DqlStatement> columnsDqlStatementProperty() {
+    return columnsDqlStatementProperty;
+  }
 
-    private final ObjectProperty<DqlStatement> selectedGroupConditionDqlStatementProperty = new SimpleObjectProperty<>();
-    @Override public ObjectProperty<DqlStatement> selectedGroupConditionDqlStatementProperty() { return selectedGroupConditionDqlStatementProperty; }
+  private final ObjectProperty<VisualResult> groupVisualResultProperty =
+      new SimpleObjectProperty<>();
 
-    private ReferenceResolver selectedGroupReferenceResolver;
-    @Override public ReferenceResolver getSelectedGroupReferenceResolver() { return selectedGroupReferenceResolver; }
-    @Override public void setSelectedGroupReferenceResolver(ReferenceResolver referenceResolver) { this.selectedGroupReferenceResolver = referenceResolver; }
+  @Override
+  public ObjectProperty<VisualResult> groupVisualResultProperty() {
+    return groupVisualResultProperty;
+  }
 
-    private final ObjectProperty<VisualResult> masterVisualResultProperty = new SimpleObjectProperty<>();
-    @Override public ObjectProperty<VisualResult> masterVisualResultProperty() { return masterVisualResultProperty; }
+  private final ObjectProperty<VisualSelection> groupVisualSelectionProperty =
+      new SimpleObjectProperty<>();
 
-    private final ObjectProperty<VisualSelection> masterVisualSelectionProperty = new SimpleObjectProperty<>();
-    @Override public ObjectProperty<VisualSelection> masterVisualSelectionProperty() { return masterVisualSelectionProperty; }
+  @Override
+  public ObjectProperty<VisualSelection> groupVisualSelectionProperty() {
+    return groupVisualSelectionProperty;
+  }
 
-    @Override public ObjectProperty<DocumentLine> selectedMasterProperty() { return selectedDocumentLineProperty; }
+  private final ObjectProperty<DocumentLine> selectedGroupProperty = new SimpleObjectProperty<>();
 
-    private final ObjectProperty<DocumentLine> selectedDocumentLineProperty = new SimpleObjectProperty<DocumentLine/*GWT*/>() {
+  @Override
+  public ObjectProperty<DocumentLine> selectedGroupProperty() {
+    return selectedGroupProperty;
+  }
+
+  private final ObjectProperty<DqlStatement> selectedGroupConditionDqlStatementProperty =
+      new SimpleObjectProperty<>();
+
+  @Override
+  public ObjectProperty<DqlStatement> selectedGroupConditionDqlStatementProperty() {
+    return selectedGroupConditionDqlStatementProperty;
+  }
+
+  private ReferenceResolver selectedGroupReferenceResolver;
+
+  @Override
+  public ReferenceResolver getSelectedGroupReferenceResolver() {
+    return selectedGroupReferenceResolver;
+  }
+
+  @Override
+  public void setSelectedGroupReferenceResolver(ReferenceResolver referenceResolver) {
+    this.selectedGroupReferenceResolver = referenceResolver;
+  }
+
+  private final ObjectProperty<VisualResult> masterVisualResultProperty =
+      new SimpleObjectProperty<>();
+
+  @Override
+  public ObjectProperty<VisualResult> masterVisualResultProperty() {
+    return masterVisualResultProperty;
+  }
+
+  private final ObjectProperty<VisualSelection> masterVisualSelectionProperty =
+      new SimpleObjectProperty<>();
+
+  @Override
+  public ObjectProperty<VisualSelection> masterVisualSelectionProperty() {
+    return masterVisualSelectionProperty;
+  }
+
+  @Override
+  public ObjectProperty<DocumentLine> selectedMasterProperty() {
+    return selectedDocumentLineProperty;
+  }
+
+  private final ObjectProperty<DocumentLine> selectedDocumentLineProperty =
+      new SimpleObjectProperty<DocumentLine /*GWT*/>() {
         @Override
         protected void invalidated() {
-            DocumentLine dl = get();
-            setSelectedDocument(dl == null ? null : dl.getDocument());
+          DocumentLine dl = get();
+          setSelectedDocument(dl == null ? null : dl.getDocument());
         }
-    };
-    @Override public ObjectProperty<DocumentLine> selectedDocumentLineProperty() { return selectedDocumentLineProperty; }
+      };
 
-    private final ObjectProperty<Document> selectedDocumentProperty = new SimpleObjectProperty<>();
-    @Override public ObjectProperty<Document> selectedDocumentProperty() {
-        return selectedDocumentProperty;
-    }
+  @Override
+  public ObjectProperty<DocumentLine> selectedDocumentLineProperty() {
+    return selectedDocumentLineProperty;
+  }
+
+  private final ObjectProperty<Document> selectedDocumentProperty = new SimpleObjectProperty<>();
+
+  @Override
+  public ObjectProperty<Document> selectedDocumentProperty() {
+    return selectedDocumentProperty;
+  }
 }

@@ -1,16 +1,14 @@
 package one.modality.event.client.businessdata.calendar;
 
-import one.modality.hotel.shared.businessdata.time.TimeInterval;
-
 import java.util.Collection;
+import one.modality.hotel.shared.businessdata.time.TimeInterval;
 
 /**
  * @author Bruno Salmon
  */
 public interface Calendar {
 
-    TimeInterval getPeriod();
+  TimeInterval getPeriod();
 
-    Collection<CalendarTimeline> getTimelines();
-
+  Collection<CalendarTimeline> getTimelines();
 }

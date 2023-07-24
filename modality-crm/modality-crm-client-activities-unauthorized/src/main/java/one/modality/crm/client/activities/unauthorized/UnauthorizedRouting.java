@@ -5,10 +5,9 @@ package one.modality.crm.client.activities.unauthorized;
  */
 public final class UnauthorizedRouting {
 
-    private static final String PATH = "/unauthorized";
+  private static final String PATH = "/unauthorized";
 
-    public static String getPath() {
-        return PATH;
-    }
-
+  public static String getPath() {
+    return PATH;
+  }
 }

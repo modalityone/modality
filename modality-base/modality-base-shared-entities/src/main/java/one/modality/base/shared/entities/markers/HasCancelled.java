@@ -5,8 +5,7 @@ package one.modality.base.shared.entities.markers;
  */
 public interface HasCancelled {
 
-    void setCancelled(Boolean cancelled);
+  void setCancelled(Boolean cancelled);
 
-    Boolean isCancelled();
-
+  Boolean isCancelled();
 }

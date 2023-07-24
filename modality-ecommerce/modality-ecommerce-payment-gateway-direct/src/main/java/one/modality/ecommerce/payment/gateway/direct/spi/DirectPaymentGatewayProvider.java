@@ -9,6 +9,5 @@ import one.modality.ecommerce.payment.direct.MakeDirectPaymentResult;
  */
 public interface DirectPaymentGatewayProvider {
 
-    Future<MakeDirectPaymentResult> makeDirectPayment(MakeDirectPaymentArgument argument);
-
+  Future<MakeDirectPaymentResult> makeDirectPayment(MakeDirectPaymentArgument argument);
 }

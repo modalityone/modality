@@ -9,15 +9,17 @@ import one.modality.base.shared.entities.ResourceConfiguration;
 /**
  * @author Bruno Salmon
  */
-public final class ResourceConfigurationImpl extends DynamicEntity implements ResourceConfiguration {
+public final class ResourceConfigurationImpl extends DynamicEntity
+    implements ResourceConfiguration {
 
-    public ResourceConfigurationImpl(EntityId id, EntityStore store) {
-        super(id, store);
-    }
+  public ResourceConfigurationImpl(EntityId id, EntityStore store) {
+    super(id, store);
+  }
 
-    public static final class ProvidedFactory extends EntityFactoryProviderImpl<ResourceConfiguration> {
-        public ProvidedFactory() {
-            super(ResourceConfiguration.class, ResourceConfigurationImpl::new);
-        }
+  public static final class ProvidedFactory
+      extends EntityFactoryProviderImpl<ResourceConfiguration> {
+    public ProvidedFactory() {
+      super(ResourceConfiguration.class, ResourceConfigurationImpl::new);
     }
+  }
 }

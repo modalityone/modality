@@ -1,5 +1,3 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
-module modality.base.backoffice.activities.all {
-
-}
+module modality.base.backoffice.activities.all {}

@@ -6,6 +6,5 @@ import one.modality.ecommerce.payment.custom.InitiateCustomPaymentResult;
 
 public interface CustomPaymentGatewayProvider {
 
-    Future<InitiateCustomPaymentResult> initiateCustomPayment(InitiateCustomPaymentArgument argument);
-
+  Future<InitiateCustomPaymentResult> initiateCustomPayment(InitiateCustomPaymentArgument argument);
 }

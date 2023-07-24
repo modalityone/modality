@@ -7,7 +7,7 @@ import dev.webfx.stack.orm.domainmodel.activity.domainpresentation.impl.DomainPr
  */
 final class TermsActivity extends DomainPresentationActivityImpl<TermsPresentationModel> {
 
-    TermsActivity() {
-        super(TermsPresentationViewActivity::new, TermsPresentationLogicActivity::new);
-    }
+  TermsActivity() {
+    super(TermsPresentationViewActivity::new, TermsPresentationLogicActivity::new);
+  }
 }

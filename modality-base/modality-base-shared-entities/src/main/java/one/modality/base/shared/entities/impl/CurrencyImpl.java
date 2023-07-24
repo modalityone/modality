@@ -11,13 +11,13 @@ import one.modality.base.shared.entities.Currency;
  */
 public final class CurrencyImpl extends DynamicEntity implements Currency {
 
-    public CurrencyImpl(EntityId id, EntityStore store) {
-        super(id, store);
-    }
+  public CurrencyImpl(EntityId id, EntityStore store) {
+    super(id, store);
+  }
 
-    public static final class ProvidedFactory extends EntityFactoryProviderImpl<Currency> {
-        public ProvidedFactory() {
-            super(Currency.class, CurrencyImpl::new);
-        }
+  public static final class ProvidedFactory extends EntityFactoryProviderImpl<Currency> {
+    public ProvidedFactory() {
+      super(Currency.class, CurrencyImpl::new);
     }
+  }
 }

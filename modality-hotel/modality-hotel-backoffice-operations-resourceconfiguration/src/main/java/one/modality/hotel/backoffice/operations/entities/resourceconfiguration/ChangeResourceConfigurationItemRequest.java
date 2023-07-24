@@ -7,46 +7,51 @@ import dev.webfx.stack.ui.operation.HasOperationExecutor;
 import javafx.scene.layout.Pane;
 import one.modality.base.shared.entities.ResourceConfiguration;
 
-public final class ChangeResourceConfigurationItemRequest implements HasOperationCode,
+public final class ChangeResourceConfigurationItemRequest
+    implements HasOperationCode,
         HasOperationExecutor<ChangeResourceConfigurationItemRequest, Void> {
 
-    private final static String OPERATION_CODE = "ChangeResourceConfigurationItem";
+  private static final String OPERATION_CODE = "ChangeResourceConfigurationItem";
 
-    private final ResourceConfiguration resourceConfiguration;
-    private final Pane parentContainer;
-    private final String itemFamilyCode;
-    private final EntityId siteId;
+  private final ResourceConfiguration resourceConfiguration;
+  private final Pane parentContainer;
+  private final String itemFamilyCode;
+  private final EntityId siteId;
 
-    public ChangeResourceConfigurationItemRequest(ResourceConfiguration resourceConfiguration, Pane parentContainer, String itemFamilyCode, EntityId siteId) {
-        this.resourceConfiguration = resourceConfiguration;
-        this.parentContainer = parentContainer;
-        this.itemFamilyCode = itemFamilyCode;
-        this.siteId = siteId;
-    }
+  public ChangeResourceConfigurationItemRequest(
+      ResourceConfiguration resourceConfiguration,
+      Pane parentContainer,
+      String itemFamilyCode,
+      EntityId siteId) {
+    this.resourceConfiguration = resourceConfiguration;
+    this.parentContainer = parentContainer;
+    this.itemFamilyCode = itemFamilyCode;
+    this.siteId = siteId;
+  }
 
-    ResourceConfiguration getResourceConfiguration() {
-        return resourceConfiguration;
-    }
+  ResourceConfiguration getResourceConfiguration() {
+    return resourceConfiguration;
+  }
 
-    Pane getParentContainer() {
-        return parentContainer;
-    }
+  Pane getParentContainer() {
+    return parentContainer;
+  }
 
-    String getItemFamilyCode() {
-        return itemFamilyCode;
-    }
+  String getItemFamilyCode() {
+    return itemFamilyCode;
+  }
 
-    EntityId getSiteId() {
-        return siteId;
-    }
+  EntityId getSiteId() {
+    return siteId;
+  }
 
-    @Override
-    public Object getOperationCode() {
-        return OPERATION_CODE;
-    }
+  @Override
+  public Object getOperationCode() {
+    return OPERATION_CODE;
+  }
 
-    @Override
-    public AsyncFunction<ChangeResourceConfigurationItemRequest, Void> getOperationExecutor() {
-        return ChangeResourceConfigurationItemExecutor::executeRequest;
-    }
+  @Override
+  public AsyncFunction<ChangeResourceConfigurationItemRequest, Void> getOperationExecutor() {
+    return ChangeResourceConfigurationItemExecutor::executeRequest;
+  }
 }

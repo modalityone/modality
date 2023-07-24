@@ -8,10 +8,9 @@ import dev.webfx.stack.orm.entity.EntityId;
  */
 public interface HasParent<P extends Entity> {
 
-    void setParent(Object parent);
+  void setParent(Object parent);
 
-    EntityId getParentId();
+  EntityId getParentId();
 
-    P getParent();
-
+  P getParent();
 }

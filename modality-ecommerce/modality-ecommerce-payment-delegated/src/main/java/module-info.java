@@ -2,16 +2,15 @@
 
 module modality.ecommerce.payment.delegated {
 
-    // Direct dependencies modules
-    requires java.base;
-    requires transitive webfx.platform.async;
-    requires webfx.platform.util;
+  // Direct dependencies modules
+  requires java.base;
+  requires transitive webfx.platform.async;
+  requires webfx.platform.util;
 
-    // Exported packages
-    exports one.modality.ecommerce.payment.delegated;
-    exports one.modality.ecommerce.payment.delegated.spi;
+  // Exported packages
+  exports one.modality.ecommerce.payment.delegated;
+  exports one.modality.ecommerce.payment.delegated.spi;
 
-    // Used services
-    uses one.modality.ecommerce.payment.delegated.spi.DelegatedPaymentProvider;
-
+  // Used services
+  uses one.modality.ecommerce.payment.delegated.spi.DelegatedPaymentProvider;
 }

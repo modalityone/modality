@@ -10,15 +10,14 @@ import one.modality.hotel.backoffice.activities.household.routing.HouseholdRouti
  */
 public final class RouteToHouseholdRequest extends RoutePushRequest implements HasOperationCode {
 
-    private final static String OPERATION_CODE = "RouteToHousehold";
+  private static final String OPERATION_CODE = "RouteToHousehold";
 
-    public RouteToHouseholdRequest(BrowsingHistory history) {
-        super(HouseholdRouting.getAnyPath(), history);
-    }
+  public RouteToHouseholdRequest(BrowsingHistory history) {
+    super(HouseholdRouting.getAnyPath(), history);
+  }
 
-    @Override
-    public Object getOperationCode() {
-        return OPERATION_CODE;
-    }
-
+  @Override
+  public Object getOperationCode() {
+    return OPERATION_CODE;
+  }
 }

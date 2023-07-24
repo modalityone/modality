@@ -8,10 +8,9 @@ import one.modality.base.shared.entities.ResourceConfiguration;
  */
 public interface HasResourceConfiguration {
 
-    void setResourceConfiguration(Object resourceConfiguration);
+  void setResourceConfiguration(Object resourceConfiguration);
 
-    EntityId getResourceConfigurationId();
+  EntityId getResourceConfigurationId();
 
-    ResourceConfiguration getResourceConfiguration();
-
+  ResourceConfiguration getResourceConfiguration();
 }

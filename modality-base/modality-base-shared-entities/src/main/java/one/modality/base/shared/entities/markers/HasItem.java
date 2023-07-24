@@ -1,21 +1,20 @@
 package one.modality.base.shared.entities.markers;
 
-import one.modality.base.shared.entities.Item;
 import dev.webfx.stack.orm.entity.EntityId;
+import one.modality.base.shared.entities.Item;
 
 /**
  * @author Bruno Salmon
  */
 public interface HasItem {
 
-    void setItem(Object item);
+  void setItem(Object item);
 
-    EntityId getItemId();
+  EntityId getItemId();
 
-    Item getItem();
+  Item getItem();
 
-    default boolean hasItem() {
-        return getItem() != null;
-    }
-
+  default boolean hasItem() {
+    return getItem() != null;
+  }
 }

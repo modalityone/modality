@@ -2,12 +2,11 @@
 
 module modality.hotel.shared.time {
 
-    // Direct dependencies modules
-    requires java.base;
-    requires webfx.platform.json;
-    requires webfx.platform.util;
+  // Direct dependencies modules
+  requires java.base;
+  requires webfx.platform.json;
+  requires webfx.platform.util;
 
-    // Exported packages
-    exports one.modality.hotel.shared.businessdata.time;
-
+  // Exported packages
+  exports one.modality.hotel.shared.businessdata.time;
 }

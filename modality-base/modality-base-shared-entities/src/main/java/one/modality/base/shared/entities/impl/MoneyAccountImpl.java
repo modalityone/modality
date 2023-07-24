@@ -11,13 +11,13 @@ import one.modality.base.shared.entities.MoneyAccount;
  */
 public class MoneyAccountImpl extends DynamicEntity implements MoneyAccount {
 
-    public MoneyAccountImpl(EntityId id, EntityStore store) {
-        super(id, store);
-    }
+  public MoneyAccountImpl(EntityId id, EntityStore store) {
+    super(id, store);
+  }
 
-    public static final class ProvidedFactory extends EntityFactoryProviderImpl<MoneyAccount> {
-        public ProvidedFactory() {
-            super(MoneyAccount.class, MoneyAccountImpl::new);
-        }
+  public static final class ProvidedFactory extends EntityFactoryProviderImpl<MoneyAccount> {
+    public ProvidedFactory() {
+      super(MoneyAccount.class, MoneyAccountImpl::new);
     }
+  }
 }

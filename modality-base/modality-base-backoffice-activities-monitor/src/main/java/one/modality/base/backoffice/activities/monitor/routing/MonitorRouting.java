@@ -5,10 +5,9 @@ package one.modality.base.backoffice.activities.monitor.routing;
  */
 public final class MonitorRouting {
 
-    private final static String PATH = "/monitor";
+  private static final String PATH = "/monitor";
 
-    public static String getPath() {
-        return PATH;
-    }
-
+  public static String getPath() {
+    return PATH;
+  }
 }

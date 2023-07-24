@@ -9,9 +9,12 @@ import one.modality.base.client.activity.table.GenericTablePresentationModel;
  */
 final class OrganizationsPresentationModel extends GenericTablePresentationModel {
 
-    // Display input
+  // Display input
 
-    private final Property<Boolean> withEventsProperty = new SimpleObjectProperty<>(true); // Initially set to true
-    Property<Boolean> withEventsProperty() { return withEventsProperty; }
+  private final Property<Boolean> withEventsProperty =
+      new SimpleObjectProperty<>(true); // Initially set to true
 
+  Property<Boolean> withEventsProperty() {
+    return withEventsProperty;
+  }
 }

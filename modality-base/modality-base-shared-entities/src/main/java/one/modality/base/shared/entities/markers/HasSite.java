@@ -1,21 +1,20 @@
 package one.modality.base.shared.entities.markers;
 
-import one.modality.base.shared.entities.Site;
 import dev.webfx.stack.orm.entity.EntityId;
+import one.modality.base.shared.entities.Site;
 
 /**
  * @author Bruno Salmon
  */
 public interface HasSite {
 
-    void setSite(Object site);
+  void setSite(Object site);
 
-    EntityId getSiteId();
+  EntityId getSiteId();
 
-    Site getSite();
+  Site getSite();
 
-    default boolean hasSite() {
-        return getSite() != null;
-    }
-
+  default boolean hasSite() {
+    return getSite() != null;
+  }
 }

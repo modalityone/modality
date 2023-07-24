@@ -1,17 +1,16 @@
 package one.modality.base.shared.entities.markers;
 
-import one.modality.base.shared.entities.Label;
 import dev.webfx.stack.orm.entity.EntityId;
+import one.modality.base.shared.entities.Label;
 
 /**
  * @author Bruno Salmon
  */
 public interface HasLabel {
 
-    void setLabel(Object item);
+  void setLabel(Object item);
 
-    EntityId getLabelId();
+  EntityId getLabelId();
 
-    Label getLabel();
-
+  Label getLabel();
 }

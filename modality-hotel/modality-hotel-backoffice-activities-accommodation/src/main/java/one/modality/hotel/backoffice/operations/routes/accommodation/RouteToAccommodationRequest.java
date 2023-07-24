@@ -8,17 +8,17 @@ import one.modality.hotel.backoffice.activities.accommodation.routing.Accommodat
 /**
  * @author Bruno Salmon
  */
-public final class RouteToAccommodationRequest extends RoutePushRequest implements HasOperationCode {
+public final class RouteToAccommodationRequest extends RoutePushRequest
+    implements HasOperationCode {
 
-    private final static String OPERATION_CODE = "RouteToAccommodation";
+  private static final String OPERATION_CODE = "RouteToAccommodation";
 
-    public RouteToAccommodationRequest(BrowsingHistory history) {
-        super(AccommodationRouting.getAnyPath(), history);
-    }
+  public RouteToAccommodationRequest(BrowsingHistory history) {
+    super(AccommodationRouting.getAnyPath(), history);
+  }
 
-    @Override
-    public Object getOperationCode() {
-        return OPERATION_CODE;
-    }
-
+  @Override
+  public Object getOperationCode() {
+    return OPERATION_CODE;
+  }
 }

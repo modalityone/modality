@@ -7,5 +7,5 @@ import one.modality.event.client.controls.calendargraphic.HasEpochDay;
  */
 interface HorizontalDayPositioned extends HasEpochDay {
 
-    void setXAndWidth(double x, double width);
+  void setXAndWidth(double x, double width);
 }

@@ -5,10 +5,13 @@ import one.modality.base.shared.entities.Document;
 
 public interface HasSelectedDocumentProperty {
 
-    ObjectProperty<Document> selectedDocumentProperty();
+  ObjectProperty<Document> selectedDocumentProperty();
 
-    default Document getSelectedDocument() { return selectedDocumentProperty().getValue(); }
+  default Document getSelectedDocument() {
+    return selectedDocumentProperty().getValue();
+  }
 
-    default void setSelectedDocument(Document value) { selectedDocumentProperty().setValue(value); }
-
+  default void setSelectedDocument(Document value) {
+    selectedDocumentProperty().setValue(value);
+  }
 }

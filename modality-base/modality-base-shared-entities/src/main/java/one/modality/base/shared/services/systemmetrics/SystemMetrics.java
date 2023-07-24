@@ -7,29 +7,29 @@ import java.time.Instant;
  */
 public interface SystemMetrics {
 
-    void setDate(Instant date);
+  void setDate(Instant date);
 
-    Instant getDate();
+  Instant getDate();
 
-    void setMemoryTotal(Long memoryTotal);
+  void setMemoryTotal(Long memoryTotal);
 
-    Long getMemoryTotal();
+  Long getMemoryTotal();
 
-    void setMemoryFree(Long memoryFree);
+  void setMemoryFree(Long memoryFree);
 
-    Long getMemoryFree();
+  Long getMemoryFree();
 
-    void setMemoryMax(Long memoryMax);
+  void setMemoryMax(Long memoryMax);
 
-    Long getMemoryMax();
+  Long getMemoryMax();
 
-    void setSystemLoadAverage(Double systemLoadAverage);
+  void setSystemLoadAverage(Double systemLoadAverage);
 
-    Double getSystemLoadAverage();
+  Double getSystemLoadAverage();
 
-    void setProcessCpuLoad(Double processCpuLoad);
+  void setProcessCpuLoad(Double processCpuLoad);
 
-    Double getProcessCpuLoad();
+  Double getProcessCpuLoad();
 
-    Long getMemoryUsed();
+  Long getMemoryUsed();
 }

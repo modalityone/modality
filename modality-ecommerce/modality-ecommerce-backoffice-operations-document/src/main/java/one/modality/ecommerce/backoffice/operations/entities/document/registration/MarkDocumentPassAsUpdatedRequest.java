@@ -6,14 +6,14 @@ import one.modality.base.shared.entities.Document;
 
 public final class MarkDocumentPassAsUpdatedRequest extends SetEntityFieldRequest {
 
-    private final static String OPERATION_CODE = "MarkDocumentPassAsUpdated";
+  private static final String OPERATION_CODE = "MarkDocumentPassAsUpdated";
 
-    public MarkDocumentPassAsUpdatedRequest(Document document, Pane parentContainer) {
-        super(document, "read", "true", null, parentContainer);
-    }
+  public MarkDocumentPassAsUpdatedRequest(Document document, Pane parentContainer) {
+    super(document, "read", "true", null, parentContainer);
+  }
 
-    @Override
-    public Object getOperationCode() {
-        return OPERATION_CODE;
-    }
+  @Override
+  public Object getOperationCode() {
+    return OPERATION_CODE;
+  }
 }

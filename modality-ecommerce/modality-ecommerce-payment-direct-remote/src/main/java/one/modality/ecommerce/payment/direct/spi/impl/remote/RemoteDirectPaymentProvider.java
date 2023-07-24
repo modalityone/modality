@@ -14,13 +14,16 @@ import one.modality.ecommerce.payment.direct.spi.DirectPaymentProvider;
  */
 public class RemoteDirectPaymentProvider implements DirectPaymentProvider {
 
-    @Override
-    public Future<MakeDirectPaymentResult> makeDirectPayment(MakeDirectPaymentArgument argument) {
-        return BusCallService.call(DirectPaymentServiceBusAddress.MAKE_DIRECT_PAYMENT_METHOD_ADDRESS, argument);
-    }
+  @Override
+  public Future<MakeDirectPaymentResult> makeDirectPayment(MakeDirectPaymentArgument argument) {
+    return BusCallService.call(
+        DirectPaymentServiceBusAddress.MAKE_DIRECT_PAYMENT_METHOD_ADDRESS, argument);
+  }
 
-    @Override
-    public Future<GetDirectPaymentGatewayInfosResult> getDirectPaymentGatewayInfos(GetDirectPaymentGatewayInfosArgument argument) {
-        return BusCallService.call(DirectPaymentServiceBusAddress.GET_DIRECT_PAYMENT_GATEWAY_INFOS_METHOD_ADDRESS, argument);
-    }
+  @Override
+  public Future<GetDirectPaymentGatewayInfosResult> getDirectPaymentGatewayInfos(
+      GetDirectPaymentGatewayInfosArgument argument) {
+    return BusCallService.call(
+        DirectPaymentServiceBusAddress.GET_DIRECT_PAYMENT_GATEWAY_INFOS_METHOD_ADDRESS, argument);
+  }
 }

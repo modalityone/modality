@@ -10,15 +10,12 @@ import dev.webfx.stack.routing.uirouter.impl.UiRouteImpl;
  */
 public final class LoginUiRoute extends UiRouteImpl implements ProvidedLoginUiRoute {
 
-    public LoginUiRoute() {
-        super(uiRoute());
-    }
+  public LoginUiRoute() {
+    super(uiRoute());
+  }
 
-    public static UiRoute<?> uiRoute() {
-        return UiRoute.create(LoginRouting.getPath()
-                , false
-                , LoginViewActivity::new
-                , ViewDomainActivityContextFinal::new
-        );
-    }
+  public static UiRoute<?> uiRoute() {
+    return UiRoute.create(
+        LoginRouting.getPath(), false, LoginViewActivity::new, ViewDomainActivityContextFinal::new);
+  }
 }

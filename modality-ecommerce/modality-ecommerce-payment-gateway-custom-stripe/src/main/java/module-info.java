@@ -2,20 +2,21 @@
 
 module modality.ecommerce.payment.gateway.custom.stripe {
 
-    // Direct dependencies modules
-    requires modality.ecommerce.payment.custom;
-    requires modality.ecommerce.payment.gateway.custom;
-    requires stripe.java;
-    requires webfx.platform.async;
-    requires webfx.platform.resource;
+  // Direct dependencies modules
+  requires modality.ecommerce.payment.custom;
+  requires modality.ecommerce.payment.gateway.custom;
+  requires stripe.java;
+  requires webfx.platform.async;
+  requires webfx.platform.resource;
 
-    // Exported packages
-    exports one.modality.ecommerce.payment.gateway.custom.spi.impl.stripe;
+  // Exported packages
+  exports one.modality.ecommerce.payment.gateway.custom.spi.impl.stripe;
 
-    // Resources packages
-    opens one.modality.ecommerce.payment.gateway.custom.spi.impl.stripe;
+  // Resources packages
+  opens one.modality.ecommerce.payment.gateway.custom.spi.impl.stripe;
 
-    // Provided services
-    provides one.modality.ecommerce.payment.gateway.custom.spi.CustomPaymentGatewayProvider with one.modality.ecommerce.payment.gateway.custom.spi.impl.stripe.StripeCustomPaymentGatewayProvider;
-
+  // Provided services
+  provides one.modality.ecommerce.payment.gateway.custom.spi.CustomPaymentGatewayProvider with
+      one.modality.ecommerce.payment.gateway.custom.spi.impl.stripe
+          .StripeCustomPaymentGatewayProvider;
 }

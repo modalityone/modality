@@ -11,15 +11,15 @@ import one.modality.hotel.backoffice.activities.household.routing.HouseholdRouti
  */
 public final class HouseholdUiRoute extends UiRouteImpl {
 
-    public HouseholdUiRoute() {
-        super(uiRoute());
-    }
+  public HouseholdUiRoute() {
+    super(uiRoute());
+  }
 
-    public static UiRoute<?> uiRoute() {
-        return UiRoute.createRegex(PathBuilder.toRegexPath(HouseholdRouting.getAnyPath())
-                , false
-                , HouseholdActivity::new
-                , ViewDomainActivityContextFinal::new
-        );
-    }
+  public static UiRoute<?> uiRoute() {
+    return UiRoute.createRegex(
+        PathBuilder.toRegexPath(HouseholdRouting.getAnyPath()),
+        false,
+        HouseholdActivity::new,
+        ViewDomainActivityContextFinal::new);
+  }
 }

@@ -9,47 +9,48 @@ import one.modality.hotel.backoffice.accommodation.AccommodationBorderPane;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
 import one.modality.hotel.backoffice.accommodation.TodayAccommodationStatus;
 
-final class HouseholdActivity extends OrganizationDependentViewDomainActivity implements
-        OperationActionFactoryMixin {
+final class HouseholdActivity extends OrganizationDependentViewDomainActivity
+    implements OperationActionFactoryMixin {
 
-    private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
-    private final HouseholdView householdView = new HouseholdView(pm, this);
-    private final TodayAccommodationStatus todayAccommodationStatus = new TodayAccommodationStatus(pm);
+  private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
+  private final HouseholdView householdView = new HouseholdView(pm, this);
+  private final TodayAccommodationStatus todayAccommodationStatus =
+      new TodayAccommodationStatus(pm);
 
-    public HouseholdActivity() {
-        pm.doFXBindings();
-    }
+  public HouseholdActivity() {
+    pm.doFXBindings();
+  }
 
-    @Override
-    public Node buildUi() {
-        return AccommodationBorderPane.createAccommodationBorderPane(householdView.getAttendanceGantt(), todayAccommodationStatus);
-    }
+  @Override
+  public Node buildUi() {
+    return AccommodationBorderPane.createAccommodationBorderPane(
+        householdView.getAttendanceGantt(), todayAccommodationStatus);
+  }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        FXGanttVisibility.setGanttVisibility(GanttVisibility.EVENTS);
-    }
+  @Override
+  public void onResume() {
+    super.onResume();
+    FXGanttVisibility.setGanttVisibility(GanttVisibility.EVENTS);
+  }
 
-    @Override
-    public void onPause() {
-        FXGanttVisibility.setGanttVisibility(GanttVisibility.HIDDEN);
-        super.onPause();
-    }
+  @Override
+  public void onPause() {
+    FXGanttVisibility.setGanttVisibility(GanttVisibility.HIDDEN);
+    super.onPause();
+  }
 
-    /*==================================================================================================================
-    =================================================== Logical layer ==================================================
-    ==================================================================================================================*/
+  /*==================================================================================================================
+  =================================================== Logical layer ==================================================
+  ==================================================================================================================*/
 
-    @Override
-    protected void startLogic() {
-        householdView.startLogic(this);
-        todayAccommodationStatus.startLogic(this);
-    }
+  @Override
+  protected void startLogic() {
+    householdView.startLogic(this);
+    todayAccommodationStatus.startLogic(this);
+  }
 
-    @Override
-    public AccommodationPresentationModel getPresentationModel() {
-        return pm;
-    }
-
+  @Override
+  public AccommodationPresentationModel getPresentationModel() {
+    return pm;
+  }
 }

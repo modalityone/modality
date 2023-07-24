@@ -6,23 +6,23 @@ import one.modality.base.client.activity.organizationdependent.OrganizationDepen
 /**
  * @author Bruno Salmon
  */
-public interface EventDependentPresentationModelMixin extends EventDependentPresentationModel, OrganizationDependentPresentationModelMixin {
+public interface EventDependentPresentationModelMixin
+    extends EventDependentPresentationModel, OrganizationDependentPresentationModelMixin {
 
-    EventDependentPresentationModel getPresentationModel();
+  EventDependentPresentationModel getPresentationModel();
 
-    @Override
-    default ObjectProperty<Object> eventIdProperty() {
-        return getPresentationModel().eventIdProperty();
-    }
+  @Override
+  default ObjectProperty<Object> eventIdProperty() {
+    return getPresentationModel().eventIdProperty();
+  }
 
-    @Override
-    default void setEventId(Object eventId) {
-        getPresentationModel().setEventId(eventId);
-    }
+  @Override
+  default void setEventId(Object eventId) {
+    getPresentationModel().setEventId(eventId);
+  }
 
-    @Override
-    default Object getEventId() {
-        return getPresentationModel().getEventId();
-    }
-
+  @Override
+  default Object getEventId() {
+    return getPresentationModel().getEventId();
+  }
 }

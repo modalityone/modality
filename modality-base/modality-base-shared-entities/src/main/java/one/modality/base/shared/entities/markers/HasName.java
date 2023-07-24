@@ -5,8 +5,7 @@ package one.modality.base.shared.entities.markers;
  */
 public interface HasName {
 
-    void setName(String name);
+  void setName(String name);
 
-    String getName();
-
+  String getName();
 }

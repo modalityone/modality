@@ -7,7 +7,7 @@ import one.modality.base.client.application.ModalityClientApplication;
  */
 public class ModalityFrontOfficeApplication extends ModalityClientApplication {
 
-    public ModalityFrontOfficeApplication() {
-        super(new ModalityFrontOfficeStarterActivity());
-    }
+  public ModalityFrontOfficeApplication() {
+    super(new ModalityFrontOfficeStarterActivity());
+  }
 }

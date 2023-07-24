@@ -11,15 +11,15 @@ import one.modality.catering.backoffice.activities.home.routing.HomeRouting;
  */
 public final class HomeUiRoute extends UiRouteImpl {
 
-    public HomeUiRoute() {
-        super(uiRoute());
-    }
+  public HomeUiRoute() {
+    super(uiRoute());
+  }
 
-    public static UiRoute<?> uiRoute() {
-        return UiRoute.createRegex(PathBuilder.toRegexPath(HomeRouting.getPath())
-                , false
-                , HomeActivity::new
-                , ViewDomainActivityContextFinal::new
-        );
-    }
+  public static UiRoute<?> uiRoute() {
+    return UiRoute.createRegex(
+        PathBuilder.toRegexPath(HomeRouting.getPath()),
+        false,
+        HomeActivity::new,
+        ViewDomainActivityContextFinal::new);
+  }
 }

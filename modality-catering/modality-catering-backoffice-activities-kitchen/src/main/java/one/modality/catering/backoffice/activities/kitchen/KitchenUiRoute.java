@@ -11,15 +11,15 @@ import one.modality.catering.backoffice.activities.kitchen.routing.KitchenRoutin
  */
 public final class KitchenUiRoute extends UiRouteImpl {
 
-    public KitchenUiRoute() {
-        super(uiRoute());
-    }
+  public KitchenUiRoute() {
+    super(uiRoute());
+  }
 
-    public static UiRoute<?> uiRoute() {
-        return UiRoute.createRegex(PathBuilder.toRegexPath(KitchenRouting.getPath())
-                , false
-                , KitchenActivity::new
-                , ViewDomainActivityContextFinal::new
-        );
-    }
+  public static UiRoute<?> uiRoute() {
+    return UiRoute.createRegex(
+        PathBuilder.toRegexPath(KitchenRouting.getPath()),
+        false,
+        KitchenActivity::new,
+        ViewDomainActivityContextFinal::new);
+  }
 }

@@ -7,13 +7,13 @@ import one.modality.hotel.shared.businessdata.time.DateTimeRange;
  */
 public interface HasMinDateTimeRange {
 
-    void setMinDateTimeRange(String minDateTimeRange);
+  void setMinDateTimeRange(String minDateTimeRange);
 
-    String getMinDateTimeRange();
+  String getMinDateTimeRange();
 
-    default DateTimeRange getParsedMinDateTimeRange() { // Should be overridden by implementing class to have a cached value
-        return DateTimeRange.parse(getMinDateTimeRange());
-    }
-
-
+  default DateTimeRange
+      getParsedMinDateTimeRange() { // Should be overridden by implementing class to have a cached
+                                    // value
+    return DateTimeRange.parse(getMinDateTimeRange());
+  }
 }

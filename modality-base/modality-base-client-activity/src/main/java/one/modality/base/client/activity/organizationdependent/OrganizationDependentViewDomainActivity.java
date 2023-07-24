@@ -8,23 +8,21 @@ import one.modality.base.client.activity.eventdependent.EventDependentPresentati
 /**
  * @author Bruno Salmon
  */
-public abstract class OrganizationDependentViewDomainActivity
-        extends ViewDomainActivityBase
-        implements OrganizationDependentActivityMixin<ViewDomainActivityContextFinal>,
+public abstract class OrganizationDependentViewDomainActivity extends ViewDomainActivityBase
+    implements OrganizationDependentActivityMixin<ViewDomainActivityContextFinal>,
         ModalityButtonFactoryMixin {
 
-    protected OrganizationDependentPresentationModel pm;
+  protected OrganizationDependentPresentationModel pm;
 
-    @Override
-    public OrganizationDependentPresentationModel getPresentationModel() {
-        if (pm == null)
-            pm = new EventDependentPresentationModelImpl();
-        return pm;
-    }
+  @Override
+  public OrganizationDependentPresentationModel getPresentationModel() {
+    if (pm == null) pm = new EventDependentPresentationModelImpl();
+    return pm;
+  }
 
-    @Override
-    protected void updateModelFromContextParameters() {
-        updateOrganizationDependentPresentationModelFromContextParameters();
-        super.updateModelFromContextParameters();
-    }
+  @Override
+  protected void updateModelFromContextParameters() {
+    updateOrganizationDependentPresentationModelFromContextParameters();
+    super.updateModelFromContextParameters();
+  }
 }

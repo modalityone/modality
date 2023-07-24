@@ -7,5 +7,5 @@ import one.modality.event.client.controls.calendargraphic.HasDayTimeMinuteInterv
  */
 interface VerticalDayTimePositioned extends HasDayTimeMinuteInterval {
 
-    void setYAndHeight(double y, double height);
+  void setYAndHeight(double y, double height);
 }

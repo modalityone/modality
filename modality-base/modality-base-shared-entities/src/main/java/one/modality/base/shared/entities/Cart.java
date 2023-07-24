@@ -7,12 +7,11 @@ import dev.webfx.stack.orm.entity.Entity;
  */
 public interface Cart extends Entity {
 
-    default void setUuid(String uuid) {
-        setFieldValue("uuid", uuid);
-    }
+  default void setUuid(String uuid) {
+    setFieldValue("uuid", uuid);
+  }
 
-    default String getUuid() {
-        return getStringFieldValue("uuid");
-    }
-    
+  default String getUuid() {
+    return getStringFieldValue("uuid");
+  }
 }

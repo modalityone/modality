@@ -5,8 +5,7 @@ package one.modality.base.shared.entities.markers;
  */
 public interface HasSiteAndItem extends HasSite, HasItem {
 
-    default boolean hasSiteAndItem() {
-        return hasSite() && hasItem();
-    }
-
+  default boolean hasSiteAndItem() {
+    return hasSite() && hasItem();
+  }
 }

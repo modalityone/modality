@@ -6,32 +6,29 @@ import one.modality.base.shared.entities.markers.EntityHasName;
 /**
  * @author Bruno Salmon
  */
-public interface GatewayParameter extends
-        EntityHasName,
-        EntityHasIcon {
+public interface GatewayParameter extends EntityHasName, EntityHasIcon {
 
-    default void setValue(String value) {
-        setFieldValue("value", value);
-    }
+  default void setValue(String value) {
+    setFieldValue("value", value);
+  }
 
-    default String getValue() {
-        return getStringFieldValue("value");
-    }
-    
-    default void setTest(Boolean test) {
-        setFieldValue("test", test);
-    }
+  default String getValue() {
+    return getStringFieldValue("value");
+  }
 
-    default Boolean isTest() {
-        return getBooleanFieldValue("test");
-    }
+  default void setTest(Boolean test) {
+    setFieldValue("test", test);
+  }
 
-    default void setLive(Boolean live) {
-        setFieldValue("live", live);
-    }
+  default Boolean isTest() {
+    return getBooleanFieldValue("test");
+  }
 
-    default Boolean isLive() {
-        return getBooleanFieldValue("live");
-    }
+  default void setLive(Boolean live) {
+    setFieldValue("live", live);
+  }
 
+  default Boolean isLive() {
+    return getBooleanFieldValue("live");
+  }
 }

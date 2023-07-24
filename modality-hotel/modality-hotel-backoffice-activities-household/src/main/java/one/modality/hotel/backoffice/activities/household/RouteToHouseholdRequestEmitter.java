@@ -10,8 +10,8 @@ import one.modality.hotel.backoffice.operations.routes.household.RouteToHousehol
  */
 public final class RouteToHouseholdRequestEmitter implements RouteRequestEmitter {
 
-    @Override
-    public RouteRequest instantiateRouteRequest(UiRouteActivityContext context) {
-        return new RouteToHouseholdRequest(context.getHistory());
-    }
+  @Override
+  public RouteRequest instantiateRouteRequest(UiRouteActivityContext context) {
+    return new RouteToHouseholdRequest(context.getHistory());
+  }
 }

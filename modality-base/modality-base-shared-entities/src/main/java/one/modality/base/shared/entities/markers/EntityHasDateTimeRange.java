@@ -7,13 +7,13 @@ import dev.webfx.stack.orm.entity.Entity;
  */
 public interface EntityHasDateTimeRange extends Entity, HasDateTimeRange {
 
-    @Override
-    default void setDateTimeRange(String dateTimeRange) {
-        setFieldValue("dateTimeRange", dateTimeRange);
-    }
+  @Override
+  default void setDateTimeRange(String dateTimeRange) {
+    setFieldValue("dateTimeRange", dateTimeRange);
+  }
 
-    @Override
-    default String getDateTimeRange() {
-        return getStringFieldValue("dateTimeRange");
-    }
+  @Override
+  default String getDateTimeRange() {
+    return getStringFieldValue("dateTimeRange");
+  }
 }

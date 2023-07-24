@@ -1,39 +1,39 @@
 package one.modality.ecommerce.backoffice.operations.entities.documentline;
 
-import javafx.scene.layout.Pane;
-import one.modality.base.shared.entities.DocumentLine;
+import dev.webfx.platform.async.AsyncFunction;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
-import dev.webfx.platform.async.AsyncFunction;
+import javafx.scene.layout.Pane;
+import one.modality.base.shared.entities.DocumentLine;
 
-public final class DeleteDocumentLineRequest implements HasOperationCode,
-        HasOperationExecutor<DeleteDocumentLineRequest, Void> {
+public final class DeleteDocumentLineRequest
+    implements HasOperationCode, HasOperationExecutor<DeleteDocumentLineRequest, Void> {
 
-    private final static String OPERATION_CODE = "DeleteDocumentLine";
+  private static final String OPERATION_CODE = "DeleteDocumentLine";
 
-    private final DocumentLine documentLine;
-    private final Pane parentContainer;
+  private final DocumentLine documentLine;
+  private final Pane parentContainer;
 
-    public DeleteDocumentLineRequest(DocumentLine documentLine, Pane parentContainer) {
-        this.documentLine = documentLine;
-        this.parentContainer = parentContainer;
-    }
+  public DeleteDocumentLineRequest(DocumentLine documentLine, Pane parentContainer) {
+    this.documentLine = documentLine;
+    this.parentContainer = parentContainer;
+  }
 
-    DocumentLine getDocumentLine() {
-        return documentLine;
-    }
+  DocumentLine getDocumentLine() {
+    return documentLine;
+  }
 
-    Pane getParentContainer() {
-        return parentContainer;
-    }
+  Pane getParentContainer() {
+    return parentContainer;
+  }
 
-    @Override
-    public Object getOperationCode() {
-        return OPERATION_CODE;
-    }
+  @Override
+  public Object getOperationCode() {
+    return OPERATION_CODE;
+  }
 
-    @Override
-    public AsyncFunction<DeleteDocumentLineRequest, Void> getOperationExecutor() {
-        return DeleteDocumentLineExecutor::executeRequest;
-    }
+  @Override
+  public AsyncFunction<DeleteDocumentLineRequest, Void> getOperationExecutor() {
+    return DeleteDocumentLineExecutor::executeRequest;
+  }
 }

@@ -9,15 +9,15 @@ import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
  */
 public final class ModalityLocalDataSourceProvider implements LocalDataSourceProvider {
 
-    // Set by ModalityLocalDataSourceConfigurationConsumer on boot
-    static LocalDataSource MODALITY_DATA_SOURCE;
+  // Set by ModalityLocalDataSourceConfigurationConsumer on boot
+  static LocalDataSource MODALITY_DATA_SOURCE;
 
-    static Object getModalityDataSourceId() {
-        return DataSourceModelService.getDefaultDataSourceId();
-    }
+  static Object getModalityDataSourceId() {
+    return DataSourceModelService.getDefaultDataSourceId();
+  }
 
-    @Override
-    public LocalDataSource getLocalDataSource(Object dataSourceId) {
-        return getModalityDataSourceId().equals(dataSourceId) ? MODALITY_DATA_SOURCE : null;
-    }
+  @Override
+  public LocalDataSource getLocalDataSource(Object dataSourceId) {
+    return getModalityDataSourceId().equals(dataSourceId) ? MODALITY_DATA_SOURCE : null;
+  }
 }

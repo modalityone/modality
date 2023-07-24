@@ -1,39 +1,39 @@
 package one.modality.ecommerce.backoffice.operations.entities.documentline;
 
-import javafx.scene.layout.Pane;
-import one.modality.base.shared.entities.Document;
+import dev.webfx.platform.async.AsyncFunction;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
-import dev.webfx.platform.async.AsyncFunction;
+import javafx.scene.layout.Pane;
+import one.modality.base.shared.entities.Document;
 
-public final class AddNewDocumentLineRequest implements HasOperationCode,
-        HasOperationExecutor<AddNewDocumentLineRequest, Void> {
+public final class AddNewDocumentLineRequest
+    implements HasOperationCode, HasOperationExecutor<AddNewDocumentLineRequest, Void> {
 
-    private final static String OPERATION_CODE = "AddNewDocumentLine";
+  private static final String OPERATION_CODE = "AddNewDocumentLine";
 
-    private final Document document;
-    private final Pane parentContainer;
+  private final Document document;
+  private final Pane parentContainer;
 
-    public AddNewDocumentLineRequest(Document document, Pane parentContainer) {
-        this.document = document;
-        this.parentContainer = parentContainer;
-    }
+  public AddNewDocumentLineRequest(Document document, Pane parentContainer) {
+    this.document = document;
+    this.parentContainer = parentContainer;
+  }
 
-    Document getDocument() {
-        return document;
-    }
+  Document getDocument() {
+    return document;
+  }
 
-    Pane getParentContainer() {
-        return parentContainer;
-    }
+  Pane getParentContainer() {
+    return parentContainer;
+  }
 
-    @Override
-    public Object getOperationCode() {
-        return OPERATION_CODE;
-    }
+  @Override
+  public Object getOperationCode() {
+    return OPERATION_CODE;
+  }
 
-    @Override
-    public AsyncFunction<AddNewDocumentLineRequest, Void> getOperationExecutor() {
-        return AddNewDocumentLineExecutor::executeRequest;
-    }
+  @Override
+  public AsyncFunction<AddNewDocumentLineRequest, Void> getOperationExecutor() {
+    return AddNewDocumentLineExecutor::executeRequest;
+  }
 }

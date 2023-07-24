@@ -1,30 +1,30 @@
 package one.modality.ecommerce.client.activity.bookingprocess;
 
+import dev.webfx.platform.util.function.Factory;
 import javafx.event.ActionEvent;
 import one.modality.base.client.activity.eventdependent.EventDependentPresentationLogicActivity;
-import dev.webfx.platform.util.function.Factory;
 
 /**
  * @author Bruno Salmon
  */
-public abstract class BookingProcessPresentationLogicActivity<PM extends BookingProcessPresentationModel>
+public abstract class BookingProcessPresentationLogicActivity<
+        PM extends BookingProcessPresentationModel>
     extends EventDependentPresentationLogicActivity<PM> {
 
-    public BookingProcessPresentationLogicActivity(Factory<PM> presentationModelFactory) {
-        super(presentationModelFactory);
-    }
+  public BookingProcessPresentationLogicActivity(Factory<PM> presentationModelFactory) {
+    super(presentationModelFactory);
+  }
 
-    @Override
-    protected void initializePresentationModel(PM pm) {
-        super.initializePresentationModel(pm);
-        pm.setOnPreviousAction(this::onPreviousButtonPressed);
-        pm.setOnNextAction(this::onNextButtonPressed);
-    }
+  @Override
+  protected void initializePresentationModel(PM pm) {
+    super.initializePresentationModel(pm);
+    pm.setOnPreviousAction(this::onPreviousButtonPressed);
+    pm.setOnNextAction(this::onNextButtonPressed);
+  }
 
-    private void onPreviousButtonPressed(ActionEvent event) {
-        getHistory().goBack();
-    }
+  private void onPreviousButtonPressed(ActionEvent event) {
+    getHistory().goBack();
+  }
 
-    protected void onNextButtonPressed(ActionEvent event) {
-    }
+  protected void onNextButtonPressed(ActionEvent event) {}
 }

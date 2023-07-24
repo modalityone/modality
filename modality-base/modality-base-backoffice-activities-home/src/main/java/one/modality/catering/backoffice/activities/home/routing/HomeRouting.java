@@ -5,10 +5,9 @@ package one.modality.catering.backoffice.activities.home.routing;
  */
 public final class HomeRouting {
 
-    private final static String PATH = "/home";
+  private static final String PATH = "/home";
 
-    public static String getPath() {
-        return PATH;
-    }
-
+  public static String getPath() {
+    return PATH;
+  }
 }

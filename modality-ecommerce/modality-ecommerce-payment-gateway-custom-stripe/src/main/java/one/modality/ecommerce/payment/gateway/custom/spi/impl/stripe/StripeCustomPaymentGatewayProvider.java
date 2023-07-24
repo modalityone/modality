@@ -14,28 +14,32 @@ import one.modality.ecommerce.payment.gateway.custom.spi.CustomPaymentGatewayPro
  */
 public class StripeCustomPaymentGatewayProvider implements CustomPaymentGatewayProvider {
 
-    private final static String API_SECRET_KEY = "sk_test_26PHem9AhJZvU623DfE1x4sd";
-    private final static String API_PUBLIC_KEY = "pk_test_qblFNYngBkEdjEZ16jxxoWSM";
+  private static final String API_SECRET_KEY = "sk_test_26PHem9AhJZvU623DfE1x4sd";
+  private static final String API_PUBLIC_KEY = "pk_test_qblFNYngBkEdjEZ16jxxoWSM";
 
-    @Override
-    public Future<InitiateCustomPaymentResult> initiateCustomPayment(InitiateCustomPaymentArgument argument) {
-        try {
-            Stripe.apiKey = API_SECRET_KEY;
-            PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
-                    .setAmount(argument.getAmount())
-                    .setCurrency(argument.getCurrency())
-                    .setAutomaticPaymentMethods(
-                            PaymentIntentCreateParams.AutomaticPaymentMethods.builder().setEnabled(true).build()
-                    )
-                    .build();
-            String clientSecret = PaymentIntent.create(params).getClientSecret();
-            String html = Resource.getText(Resource.toUrl("stripe-checkout.html", getClass()))
-                    .replace("{{API_KEY}}", API_PUBLIC_KEY)
-                    .replace("{{CLIENT_SECRET}}", clientSecret)
-                    .replace("{{RETURN_URL}}", "http://127.0.0.1:8080/checkout/success/");
-            return Future.succeededFuture(new InitiateCustomPaymentResult(html));
-        } catch (Exception e) {
-            return Future.failedFuture(e);
-        }
+  @Override
+  public Future<InitiateCustomPaymentResult> initiateCustomPayment(
+      InitiateCustomPaymentArgument argument) {
+    try {
+      Stripe.apiKey = API_SECRET_KEY;
+      PaymentIntentCreateParams params =
+          PaymentIntentCreateParams.builder()
+              .setAmount(argument.getAmount())
+              .setCurrency(argument.getCurrency())
+              .setAutomaticPaymentMethods(
+                  PaymentIntentCreateParams.AutomaticPaymentMethods.builder()
+                      .setEnabled(true)
+                      .build())
+              .build();
+      String clientSecret = PaymentIntent.create(params).getClientSecret();
+      String html =
+          Resource.getText(Resource.toUrl("stripe-checkout.html", getClass()))
+              .replace("{{API_KEY}}", API_PUBLIC_KEY)
+              .replace("{{CLIENT_SECRET}}", clientSecret)
+              .replace("{{RETURN_URL}}", "http://127.0.0.1:8080/checkout/success/");
+      return Future.succeededFuture(new InitiateCustomPaymentResult(html));
+    } catch (Exception e) {
+      return Future.failedFuture(e);
     }
+  }
 }

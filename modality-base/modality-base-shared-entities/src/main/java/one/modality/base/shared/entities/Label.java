@@ -6,48 +6,45 @@ import one.modality.base.shared.entities.markers.EntityHasOrganization;
 /**
  * @author Bruno Salmon
  */
-public interface Label extends
-        EntityHasIcon,
-        EntityHasOrganization {
+public interface Label extends EntityHasIcon, EntityHasOrganization {
 
-    default void setDe(String de) {
-        setFieldValue("de", de);
-    }
+  default void setDe(String de) {
+    setFieldValue("de", de);
+  }
 
-    default String getDe() {
-        return getStringFieldValue("de");
-    }
+  default String getDe() {
+    return getStringFieldValue("de");
+  }
 
-    default void setEn(String en) {
-        setFieldValue("en", en);
-    }
+  default void setEn(String en) {
+    setFieldValue("en", en);
+  }
 
-    default String getEn() {
-        return getStringFieldValue("en");
-    }
+  default String getEn() {
+    return getStringFieldValue("en");
+  }
 
-    default void setEs(String es) {
-        setFieldValue("es", es);
-    }
+  default void setEs(String es) {
+    setFieldValue("es", es);
+  }
 
-    default String getEs() {
-        return getStringFieldValue("es");
-    }
+  default String getEs() {
+    return getStringFieldValue("es");
+  }
 
-    default void setFr(String fr) {
-        setFieldValue("fr", fr);
-    }
+  default void setFr(String fr) {
+    setFieldValue("fr", fr);
+  }
 
-    default String getFr() {
-        return getStringFieldValue("fr");
-    }
+  default String getFr() {
+    return getStringFieldValue("fr");
+  }
 
-    default void setPt(String pt) {
-        setFieldValue("pt", pt);
-    }
+  default void setPt(String pt) {
+    setFieldValue("pt", pt);
+  }
 
-    default String getPt() {
-        return getStringFieldValue("pt");
-    }
-
+  default String getPt() {
+    return getStringFieldValue("pt");
+  }
 }

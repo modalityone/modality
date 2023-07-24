@@ -1,5 +1,9 @@
 package one.modality.ecommerce.backoffice.activities.bookings;
 
+import static dev.webfx.extras.util.layout.LayoutUtil.setUnmanagedWhenInvisible;
+import static dev.webfx.stack.orm.dql.DqlStatement.fields;
+import static dev.webfx.stack.orm.dql.DqlStatement.where;
+
 import dev.webfx.extras.time.TimeUtil;
 import dev.webfx.extras.time.YearWeek;
 import dev.webfx.extras.util.layout.LayoutUtil;
@@ -7,6 +11,9 @@ import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
+import java.time.LocalDate;
+import java.time.Year;
+import java.time.YearMonth;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
@@ -33,143 +40,268 @@ import one.modality.ecommerce.backoffice.operations.entities.document.security.T
 import one.modality.ecommerce.backoffice.operations.routes.bookings.RouteToNewBackOfficeBookingRequest;
 import one.modality.event.backoffice.operations.routes.cloneevent.RouteToCloneEventRequest;
 
-import java.time.LocalDate;
-import java.time.Year;
-import java.time.YearMonth;
+final class BookingsActivity extends EventDependentViewDomainActivity
+    implements OperationActionFactoryMixin, ConventionalUiBuilderMixin {
 
-import static dev.webfx.extras.util.layout.LayoutUtil.setUnmanagedWhenInvisible;
-import static dev.webfx.stack.orm.dql.DqlStatement.fields;
-import static dev.webfx.stack.orm.dql.DqlStatement.where;
+  /*==================================================================================================================
+  ================================================= Graphical layer ==================================================
+  ==================================================================================================================*/
 
-final class BookingsActivity extends EventDependentViewDomainActivity implements
-        OperationActionFactoryMixin,
-        ConventionalUiBuilderMixin {
+  private final BookingsPresentationModel pm = new BookingsPresentationModel();
 
-    /*==================================================================================================================
-    ================================================= Graphical layer ==================================================
-    ==================================================================================================================*/
+  @Override
+  public BookingsPresentationModel getPresentationModel() {
+    return pm; // eventId and organizationId will then be updated from route
+  }
 
-    private final BookingsPresentationModel pm = new BookingsPresentationModel();
+  private ConventionalUiBuilder ui; // Keeping this reference for activity resume
 
-    @Override
-    public BookingsPresentationModel getPresentationModel() {
-        return pm; // eventId and organizationId will then be updated from route
-    }
+  @Override
+  public Node buildUi() {
+    ui = createAndBindGroupMasterSlaveViewWithFilterSearchBar(pm, "bookings", "Document");
 
-    private ConventionalUiBuilder ui; // Keeping this reference for activity resume
+    // Adding new booking button on left and clone event on right of the filter search bar
+    Button
+        newBookingButton =
+            newButton(
+                newOperationAction(
+                    () -> new RouteToNewBackOfficeBookingRequest(getEventId(), getHistory()))),
+        cloneEventButton =
+            newButton(
+                newOperationAction(() -> new RouteToCloneEventRequest(getEventId(), getHistory())));
+    ui.setLeftTopNodes(setUnmanagedWhenInvisible(newBookingButton));
+    ui.setRightTopNodes(setUnmanagedWhenInvisible(cloneEventButton));
 
-    @Override
-    public Node buildUi() {
-        ui = createAndBindGroupMasterSlaveViewWithFilterSearchBar(pm, "bookings", "Document");
+    Pane container = ui.buildUi();
 
-        // Adding new booking button on left and clone event on right of the filter search bar
-        Button newBookingButton = newButton(newOperationAction(() -> new RouteToNewBackOfficeBookingRequest(getEventId(), getHistory()))),
-                cloneEventButton = newButton(newOperationAction(() -> new RouteToCloneEventRequest(getEventId(), getHistory())));
-        ui.setLeftTopNodes(setUnmanagedWhenInvisible(newBookingButton));
-        ui.setRightTopNodes(setUnmanagedWhenInvisible(cloneEventButton));
-
-        Pane container = ui.buildUi();
-
-        setUpContextMenu(LayoutUtil.lookupChild(ui.getGroupMasterSlaveView().getMasterView(), n -> n instanceof VisualGrid), () -> newActionGroup(
+    setUpContextMenu(
+        LayoutUtil.lookupChild(
+            ui.getGroupMasterSlaveView().getMasterView(), n -> n instanceof VisualGrid),
+        () ->
+            newActionGroup(
                 newSnapshotActionGroup(container),
-                newOperationAction(() -> new SendLetterRequest(pm.getSelectedDocument(), container)),
-                newSeparatorActionGroup("Registration",
-                        newOperationAction(() -> new ToggleMarkDocumentAsReadRequest(pm.getSelectedDocument(), container), /* to update the i18n text when the selection change -> */ pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentAsWillPayRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleCancelDocumentRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleConfirmDocumentRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleFlagDocumentRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentPassAsReadyRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new MarkDocumentPassAsUpdatedRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentAsArrivedRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty())
-                ),
-                newSeparatorActionGroup("Security",
-                        newOperationAction(() -> new ToggleMarkDocumentAsUncheckedRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentAsUnknownRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentAsKnownRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentAsVerifiedRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty())
-                ),
+                newOperationAction(
+                    () -> new SendLetterRequest(pm.getSelectedDocument(), container)),
                 newSeparatorActionGroup(
-                        newOperationAction(() -> new CopySelectionRequest(masterVisualMapper.getSelectedEntities(), masterVisualMapper.getEntityColumns())),
-                        newOperationAction(() -> new CopyAllRequest(masterVisualMapper.getCurrentEntities(), masterVisualMapper.getEntityColumns()))
-                )
-        ));
+                    "Registration",
+                    newOperationAction(
+                        () ->
+                            new ToggleMarkDocumentAsReadRequest(
+                                pm.getSelectedDocument(),
+                                container), /* to update the i18n text when the selection change -> */
+                        pm.selectedDocumentProperty()),
+                    newOperationAction(
+                        () ->
+                            new ToggleMarkDocumentAsWillPayRequest(
+                                pm.getSelectedDocument(), container),
+                        pm.selectedDocumentProperty()),
+                    newOperationAction(
+                        () -> new ToggleCancelDocumentRequest(pm.getSelectedDocument(), container),
+                        pm.selectedDocumentProperty()),
+                    newOperationAction(
+                        () -> new ToggleConfirmDocumentRequest(pm.getSelectedDocument(), container),
+                        pm.selectedDocumentProperty()),
+                    newOperationAction(
+                        () -> new ToggleFlagDocumentRequest(pm.getSelectedDocument(), container),
+                        pm.selectedDocumentProperty()),
+                    newOperationAction(
+                        () ->
+                            new ToggleMarkDocumentPassAsReadyRequest(
+                                pm.getSelectedDocument(), container),
+                        pm.selectedDocumentProperty()),
+                    newOperationAction(
+                        () ->
+                            new MarkDocumentPassAsUpdatedRequest(
+                                pm.getSelectedDocument(), container),
+                        pm.selectedDocumentProperty()),
+                    newOperationAction(
+                        () ->
+                            new ToggleMarkDocumentAsArrivedRequest(
+                                pm.getSelectedDocument(), container),
+                        pm.selectedDocumentProperty())),
+                newSeparatorActionGroup(
+                    "Security",
+                    newOperationAction(
+                        () ->
+                            new ToggleMarkDocumentAsUncheckedRequest(
+                                pm.getSelectedDocument(), container),
+                        pm.selectedDocumentProperty()),
+                    newOperationAction(
+                        () ->
+                            new ToggleMarkDocumentAsUnknownRequest(
+                                pm.getSelectedDocument(), container),
+                        pm.selectedDocumentProperty()),
+                    newOperationAction(
+                        () ->
+                            new ToggleMarkDocumentAsKnownRequest(
+                                pm.getSelectedDocument(), container),
+                        pm.selectedDocumentProperty()),
+                    newOperationAction(
+                        () ->
+                            new ToggleMarkDocumentAsVerifiedRequest(
+                                pm.getSelectedDocument(), container),
+                        pm.selectedDocumentProperty())),
+                newSeparatorActionGroup(
+                    newOperationAction(
+                        () ->
+                            new CopySelectionRequest(
+                                masterVisualMapper.getSelectedEntities(),
+                                masterVisualMapper.getEntityColumns())),
+                    newOperationAction(
+                        () ->
+                            new CopyAllRequest(
+                                masterVisualMapper.getCurrentEntities(),
+                                masterVisualMapper.getEntityColumns())))));
 
-        pm.ganttSelectedObjectProperty().bind(FXGanttSelection.ganttSelectedObjectProperty());
+    pm.ganttSelectedObjectProperty().bind(FXGanttSelection.ganttSelectedObjectProperty());
 
-        return container;
-    }
+    return container;
+  }
 
-    // TODO move this into an interface
-    private ActionGroup newSnapshotActionGroup(Pane container) {
-        return newActionGroup("Snapshot", true,
-                newOperationAction(() -> new AddNewSnapshotRequest(masterVisualMapper.getSelectedEntities(), pm.getSelectedMaster().getOrganization(), container),  pm.selectedDocumentProperty()));
-    }
+  // TODO move this into an interface
+  private ActionGroup newSnapshotActionGroup(Pane container) {
+    return newActionGroup(
+        "Snapshot",
+        true,
+        newOperationAction(
+            () ->
+                new AddNewSnapshotRequest(
+                    masterVisualMapper.getSelectedEntities(),
+                    pm.getSelectedMaster().getOrganization(),
+                    container),
+            pm.selectedDocumentProperty()));
+  }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        ui.onResume(); // activate search text focus on activity resume
-        FXGanttVisibility.setGanttVisibility(GanttVisibility.EVENTS);
-        FXGanttInterstice.setGanttIntersticeRequired(true);
-    }
+  @Override
+  public void onResume() {
+    super.onResume();
+    ui.onResume(); // activate search text focus on activity resume
+    FXGanttVisibility.setGanttVisibility(GanttVisibility.EVENTS);
+    FXGanttInterstice.setGanttIntersticeRequired(true);
+  }
 
-    @Override
-    public void onPause() {
-        FXGanttVisibility.setGanttVisibility(GanttVisibility.HIDDEN);
-        FXGanttInterstice.setGanttIntersticeRequired(false);
-        super.onPause();
-    }
+  @Override
+  public void onPause() {
+    FXGanttVisibility.setGanttVisibility(GanttVisibility.HIDDEN);
+    FXGanttInterstice.setGanttIntersticeRequired(false);
+    super.onPause();
+  }
 
-    /*==================================================================================================================
-    =================================================== Logical layer ==================================================
-    ==================================================================================================================*/
+  /*==================================================================================================================
+  =================================================== Logical layer ==================================================
+  ==================================================================================================================*/
 
-    private ReactiveVisualMapper<Document> groupVisualMapper, masterVisualMapper;
+  private ReactiveVisualMapper<Document> groupVisualMapper, masterVisualMapper;
 
-    @Override
-    protected void startLogic() {
-        // Setting up the group mapper that build the content displayed in the group view
-        groupVisualMapper = ReactiveVisualMapper.<Document>createGroupReactiveChain(this, pm)
-                .always("{class: 'Document', alias: 'd'}")
-                // Applying the event condition
-                //.ifNotNullOtherwiseEmpty(pm.eventIdProperty(), eventId -> where("event=?", eventId))
-                .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), organizationId -> where("organization=?", organizationId))
-                .ifNotNullOtherwiseEmpty(pm.ganttSelectedObjectProperty(), x -> where("true"))
-                .ifInstanceOf(pm.ganttSelectedObjectProperty(), LocalDate.class, day   -> where("exists(select Attendance where documentLine.document=d and date = ?)", day))
-                .ifInstanceOf(pm.ganttSelectedObjectProperty(), YearWeek.class,  week  -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfWeek(week),   TimeUtil.getLastDayOfWeek(week)))
-                .ifInstanceOf(pm.ganttSelectedObjectProperty(), YearMonth.class, month -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfMonth(month), TimeUtil.getLastDayOfMonth(month)))
-                .ifInstanceOf(pm.ganttSelectedObjectProperty(), Year.class,      year  -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfYear(year),   TimeUtil.getLastDayOfYear(year)))
-                .ifInstanceOf(pm.ganttSelectedObjectProperty(), Event.class,     event -> where("event=?", event))
-                .start();
+  @Override
+  protected void startLogic() {
+    // Setting up the group mapper that build the content displayed in the group view
+    groupVisualMapper =
+        ReactiveVisualMapper.<Document>createGroupReactiveChain(this, pm)
+            .always("{class: 'Document', alias: 'd'}")
+            // Applying the event condition
+            // .ifNotNullOtherwiseEmpty(pm.eventIdProperty(), eventId -> where("event=?", eventId))
+            .ifNotNullOtherwiseEmpty(
+                pm.organizationIdProperty(),
+                organizationId -> where("organization=?", organizationId))
+            .ifNotNullOtherwiseEmpty(pm.ganttSelectedObjectProperty(), x -> where("true"))
+            .ifInstanceOf(
+                pm.ganttSelectedObjectProperty(),
+                LocalDate.class,
+                day ->
+                    where(
+                        "exists(select Attendance where documentLine.document=d and date = ?)",
+                        day))
+            .ifInstanceOf(
+                pm.ganttSelectedObjectProperty(),
+                YearWeek.class,
+                week ->
+                    where(
+                        "exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)",
+                        TimeUtil.getFirstDayOfWeek(week),
+                        TimeUtil.getLastDayOfWeek(week)))
+            .ifInstanceOf(
+                pm.ganttSelectedObjectProperty(),
+                YearMonth.class,
+                month ->
+                    where(
+                        "exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)",
+                        TimeUtil.getFirstDayOfMonth(month),
+                        TimeUtil.getLastDayOfMonth(month)))
+            .ifInstanceOf(
+                pm.ganttSelectedObjectProperty(),
+                Year.class,
+                year ->
+                    where(
+                        "exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)",
+                        TimeUtil.getFirstDayOfYear(year),
+                        TimeUtil.getLastDayOfYear(year)))
+            .ifInstanceOf(
+                pm.ganttSelectedObjectProperty(), Event.class, event -> where("event=?", event))
+            .start();
 
-        // Setting up the master mapper that build the content displayed in the master view
-        masterVisualMapper = ReactiveVisualMapper.<Document>createMasterPushReactiveChain(this, pm)
-                .always("{class: 'Document', alias: 'd', orderBy: 'ref desc'}")
-                // Always loading the fields required for viewing the booking details
-                .always(fields(BookingDetailsPanel.REQUIRED_FIELDS))
-                // Applying the event condition
-                //.ifNotNullOtherwiseEmpty(pm.eventIdProperty(), eventId -> where("event=?", eventId))
-                .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), organizationId -> where("organization=?", organizationId))
-                .ifNotNullOtherwiseEmpty(pm.ganttSelectedObjectProperty(), x -> where("true"))
-                .ifInstanceOf(pm.ganttSelectedObjectProperty(), LocalDate.class, day   -> where("exists(select Attendance where documentLine.document=d and date = ?)", day))
-                .ifInstanceOf(pm.ganttSelectedObjectProperty(), YearWeek.class,  week  -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfWeek(week),   TimeUtil.getLastDayOfWeek(week)))
-                .ifInstanceOf(pm.ganttSelectedObjectProperty(), YearMonth.class, month -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfMonth(month), TimeUtil.getLastDayOfMonth(month)))
-                .ifInstanceOf(pm.ganttSelectedObjectProperty(), Year.class,      year  -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfYear(year),   TimeUtil.getLastDayOfYear(year)))
-                .ifInstanceOf(pm.ganttSelectedObjectProperty(), Event.class,     event -> where("event=?", event))
-                // Applying the user search
-                .ifTrimNotEmpty(pm.searchTextProperty(), s ->
-                        Character.isDigit(s.charAt(0)) ? where("ref = ?", Integer.parseInt(s))
-                                : s.contains("@") ? where("lower(person_email) like ?", "%" + s.toLowerCase() + "%")
-                                : where("person_abcNames like ?", AbcNames.evaluate(s, true)))
-                .applyDomainModelRowStyle() // Colorizing the rows
-                .autoSelectSingleRow() // When the result is a singe row, automatically select it
-                .start();
-    }
+    // Setting up the master mapper that build the content displayed in the master view
+    masterVisualMapper =
+        ReactiveVisualMapper.<Document>createMasterPushReactiveChain(this, pm)
+            .always("{class: 'Document', alias: 'd', orderBy: 'ref desc'}")
+            // Always loading the fields required for viewing the booking details
+            .always(fields(BookingDetailsPanel.REQUIRED_FIELDS))
+            // Applying the event condition
+            // .ifNotNullOtherwiseEmpty(pm.eventIdProperty(), eventId -> where("event=?", eventId))
+            .ifNotNullOtherwiseEmpty(
+                pm.organizationIdProperty(),
+                organizationId -> where("organization=?", organizationId))
+            .ifNotNullOtherwiseEmpty(pm.ganttSelectedObjectProperty(), x -> where("true"))
+            .ifInstanceOf(
+                pm.ganttSelectedObjectProperty(),
+                LocalDate.class,
+                day ->
+                    where(
+                        "exists(select Attendance where documentLine.document=d and date = ?)",
+                        day))
+            .ifInstanceOf(
+                pm.ganttSelectedObjectProperty(),
+                YearWeek.class,
+                week ->
+                    where(
+                        "exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)",
+                        TimeUtil.getFirstDayOfWeek(week),
+                        TimeUtil.getLastDayOfWeek(week)))
+            .ifInstanceOf(
+                pm.ganttSelectedObjectProperty(),
+                YearMonth.class,
+                month ->
+                    where(
+                        "exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)",
+                        TimeUtil.getFirstDayOfMonth(month),
+                        TimeUtil.getLastDayOfMonth(month)))
+            .ifInstanceOf(
+                pm.ganttSelectedObjectProperty(),
+                Year.class,
+                year ->
+                    where(
+                        "exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)",
+                        TimeUtil.getFirstDayOfYear(year),
+                        TimeUtil.getLastDayOfYear(year)))
+            .ifInstanceOf(
+                pm.ganttSelectedObjectProperty(), Event.class, event -> where("event=?", event))
+            // Applying the user search
+            .ifTrimNotEmpty(
+                pm.searchTextProperty(),
+                s ->
+                    Character.isDigit(s.charAt(0))
+                        ? where("ref = ?", Integer.parseInt(s))
+                        : s.contains("@")
+                            ? where("lower(person_email) like ?", "%" + s.toLowerCase() + "%")
+                            : where("person_abcNames like ?", AbcNames.evaluate(s, true)))
+            .applyDomainModelRowStyle() // Colorizing the rows
+            .autoSelectSingleRow() // When the result is a singe row, automatically select it
+            .start();
+  }
 
-    @Override
-    protected void refreshDataOnActive() {
-        groupVisualMapper.refreshWhenActive();
-        masterVisualMapper.refreshWhenActive();
-    }
+  @Override
+  protected void refreshDataOnActive() {
+    groupVisualMapper.refreshWhenActive();
+    masterVisualMapper.refreshWhenActive();
+  }
 }

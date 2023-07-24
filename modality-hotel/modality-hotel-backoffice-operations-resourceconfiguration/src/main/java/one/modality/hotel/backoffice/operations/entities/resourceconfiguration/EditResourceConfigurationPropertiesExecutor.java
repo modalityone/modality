@@ -7,12 +7,14 @@ import one.modality.base.shared.entities.ResourceConfiguration;
 
 final class EditResourceConfigurationPropertiesExecutor {
 
-    static Future<Void> executeRequest(EditResourceConfigurationPropertiesRequest rq) {
-        return execute(rq.getResourceConfiguration(), rq.getParentContainer());
-    }
+  static Future<Void> executeRequest(EditResourceConfigurationPropertiesRequest rq) {
+    return execute(rq.getResourceConfiguration(), rq.getParentContainer());
+  }
 
-    private static Future<Void> execute(ResourceConfiguration resourceConfiguration, Pane parentContainer) {
-        EntityPropertiesSheet.editEntity(resourceConfiguration, "name,online,max,comment", parentContainer);
-        return Future.succeededFuture();
-    }
+  private static Future<Void> execute(
+      ResourceConfiguration resourceConfiguration, Pane parentContainer) {
+    EntityPropertiesSheet.editEntity(
+        resourceConfiguration, "name,online,max,comment", parentContainer);
+    return Future.succeededFuture();
+  }
 }

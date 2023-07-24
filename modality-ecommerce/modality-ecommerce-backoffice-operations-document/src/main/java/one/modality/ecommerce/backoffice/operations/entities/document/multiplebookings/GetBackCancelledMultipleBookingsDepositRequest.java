@@ -6,14 +6,19 @@ import one.modality.base.shared.entities.Document;
 
 public final class GetBackCancelledMultipleBookingsDepositRequest extends SetEntityFieldRequest {
 
-    private final static String OPERATION_CODE = "GetBackCancelledMultipleBookingsDeposit";
+  private static final String OPERATION_CODE = "GetBackCancelledMultipleBookingsDeposit";
 
-    public GetBackCancelledMultipleBookingsDepositRequest(Document document, Pane parentContainer) {
-        super(document, "triggerTransferFromOtherMultipleBookings", "true", "Please confirm", parentContainer);
-    }
+  public GetBackCancelledMultipleBookingsDepositRequest(Document document, Pane parentContainer) {
+    super(
+        document,
+        "triggerTransferFromOtherMultipleBookings",
+        "true",
+        "Please confirm",
+        parentContainer);
+  }
 
-    @Override
-    public Object getOperationCode() {
-        return OPERATION_CODE;
-    }
+  @Override
+  public Object getOperationCode() {
+    return OPERATION_CODE;
+  }
 }

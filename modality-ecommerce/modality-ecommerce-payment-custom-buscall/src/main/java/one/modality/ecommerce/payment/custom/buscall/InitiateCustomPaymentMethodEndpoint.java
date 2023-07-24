@@ -8,10 +8,13 @@ import one.modality.ecommerce.payment.custom.InitiateCustomPaymentResult;
 /**
  * @author Bruno Salmon
  */
-public final class InitiateCustomPaymentMethodEndpoint extends AsyncFunctionBusCallEndpoint<InitiateCustomPaymentArgument, InitiateCustomPaymentResult> {
+public final class InitiateCustomPaymentMethodEndpoint
+    extends AsyncFunctionBusCallEndpoint<
+        InitiateCustomPaymentArgument, InitiateCustomPaymentResult> {
 
-    public InitiateCustomPaymentMethodEndpoint() {
-        super(CustomPaymentServiceBusAddress.INITIATE_CUSTOM_PAYMENT_METHOD_ADDRESS, CustomPaymentService::initiateCustomPayment);
-    }
-
+  public InitiateCustomPaymentMethodEndpoint() {
+    super(
+        CustomPaymentServiceBusAddress.INITIATE_CUSTOM_PAYMENT_METHOD_ADDRESS,
+        CustomPaymentService::initiateCustomPayment);
+  }
 }

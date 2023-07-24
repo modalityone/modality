@@ -2,15 +2,15 @@
 
 module modality.base.server.systemmetrics.java {
 
-    // Direct dependencies modules
-    requires jdk.management;
-    requires modality.base.server.systemmetrics;
-    requires modality.base.shared.entities;
+  // Direct dependencies modules
+  requires jdk.management;
+  requires modality.base.server.systemmetrics;
+  requires modality.base.shared.entities;
 
-    // Exported packages
-    exports one.modality.base.server.services.systemmetrics.spi.java;
+  // Exported packages
+  exports one.modality.base.server.services.systemmetrics.spi.java;
 
-    // Provided services
-    provides one.modality.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider with one.modality.base.server.services.systemmetrics.spi.java.JavaSystemMetricsServiceProvider;
-
+  // Provided services
+  provides one.modality.base.server.services.systemmetrics.spi.SystemMetricsServiceProvider with
+      one.modality.base.server.services.systemmetrics.spi.java.JavaSystemMetricsServiceProvider;
 }

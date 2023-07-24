@@ -1,26 +1,20 @@
 package one.modality.base.shared.entities;
 
 import one.modality.base.shared.entities.markers.*;
-import one.modality.base.shared.entities.markers.*;
 
 /**
  * @author Bruno Salmon
  */
-public interface Site extends
-        EntityHasName,
-        EntityHasLabel,
-        EntityHasIcon,
-        EntityHasEvent,
-        EntityHasItemFamily {
+public interface Site
+    extends EntityHasName, EntityHasLabel, EntityHasIcon, EntityHasEvent, EntityHasItemFamily {
 
-    //// Domain fields
+  //// Domain fields
 
-    default void setMain(Boolean main) {
-        setFieldValue("main", main);
-    }
+  default void setMain(Boolean main) {
+    setFieldValue("main", main);
+  }
 
-    default Boolean isMain() {
-        return getBooleanFieldValue("main");
-    }
-
+  default Boolean isMain() {
+    return getBooleanFieldValue("main");
+  }
 }

@@ -10,29 +10,35 @@ import one.modality.base.client.activity.table.GenericTablePresentationViewActiv
 /**
  * @author Bruno Salmon
  */
-final class OrganizationsPresentationViewActivity extends GenericTablePresentationViewActivity<OrganizationsPresentationModel> {
+final class OrganizationsPresentationViewActivity
+    extends GenericTablePresentationViewActivity<OrganizationsPresentationModel> {
 
-    private CheckBox withEventsCheckBox;
+  private CheckBox withEventsCheckBox;
 
-    @Override
-    protected void createViewNodes(OrganizationsPresentationModel pm) {
-        super.createViewNodes(pm);
+  @Override
+  protected void createViewNodes(OrganizationsPresentationModel pm) {
+    super.createViewNodes(pm);
 
-        I18nControls.bindI18nProperties(genericTable.getSearchBox(), "YourCentre"); // Will translate the prompt
+    I18nControls.bindI18nProperties(
+        genericTable.getSearchBox(), "YourCentre"); // Will translate the prompt
 
-        withEventsCheckBox = newCheckBox("WithEvents");
+    withEventsCheckBox = newCheckBox("WithEvents");
 
-        // Initialization from the presentation model current state
-        withEventsCheckBox.setSelected(pm.withEventsProperty().getValue());
+    // Initialization from the presentation model current state
+    withEventsCheckBox.setSelected(pm.withEventsProperty().getValue());
 
-        // Binding the UI with the presentation model for further state changes
-        // User inputs: the UI state changes are transferred in the presentation model
-        pm.withEventsProperty().bind(withEventsCheckBox.selectedProperty());
-    }
+    // Binding the UI with the presentation model for further state changes
+    // User inputs: the UI state changes are transferred in the presentation model
+    pm.withEventsProperty().bind(withEventsCheckBox.selectedProperty());
+  }
 
-    @Override
-    protected Node assemblyViewNodes() {
-        return new BorderPane(genericTable.getTable(), genericTable.getSearchBox(), null, new HBox(10, withEventsCheckBox, genericTable.getLimitCheckBox()), null);
-    }
-
+  @Override
+  protected Node assemblyViewNodes() {
+    return new BorderPane(
+        genericTable.getTable(),
+        genericTable.getSearchBox(),
+        null,
+        new HBox(10, withEventsCheckBox, genericTable.getLimitCheckBox()),
+        null);
+  }
 }

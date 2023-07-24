@@ -8,9 +8,5 @@ import one.modality.base.shared.entities.markers.EntityHasSiteAndItem;
 /**
  * @author Bruno Salmon
  */
-public interface ScheduledItem extends Entity,
-        EntityHasEvent,
-        EntityHasDate,
-        EntityHasSiteAndItem {
-
-}
+public interface ScheduledItem
+    extends Entity, EntityHasEvent, EntityHasDate, EntityHasSiteAndItem {}

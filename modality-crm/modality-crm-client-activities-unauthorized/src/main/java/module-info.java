@@ -2,15 +2,15 @@
 
 module modality.crm.client.activities.unauthorized {
 
-    // Direct dependencies modules
-    requires javafx.graphics;
-    requires webfx.stack.orm.domainmodel.activity;
-    requires webfx.stack.routing.uirouter;
+  // Direct dependencies modules
+  requires javafx.graphics;
+  requires webfx.stack.orm.domainmodel.activity;
+  requires webfx.stack.routing.uirouter;
 
-    // Exported packages
-    exports one.modality.crm.client.activities.unauthorized;
+  // Exported packages
+  exports one.modality.crm.client.activities.unauthorized;
 
-    // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.crm.client.activities.unauthorized.UnauthorizedUiRoute;
-
+  // Provided services
+  provides dev.webfx.stack.routing.uirouter.UiRoute with
+      one.modality.crm.client.activities.unauthorized.UnauthorizedUiRoute;
 }

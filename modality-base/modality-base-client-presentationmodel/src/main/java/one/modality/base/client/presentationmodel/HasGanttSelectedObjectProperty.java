@@ -4,10 +4,13 @@ import javafx.beans.property.ObjectProperty;
 
 public interface HasGanttSelectedObjectProperty {
 
-    ObjectProperty<Object> ganttSelectedObjectProperty();
+  ObjectProperty<Object> ganttSelectedObjectProperty();
 
-    default Object getGanttSelectedObject() { return ganttSelectedObjectProperty().getValue(); }
+  default Object getGanttSelectedObject() {
+    return ganttSelectedObjectProperty().getValue();
+  }
 
-    default void setGanttSelectedObject(Object value) { ganttSelectedObjectProperty().setValue(value); }
-
+  default void setGanttSelectedObject(Object value) {
+    ganttSelectedObjectProperty().setValue(value);
+  }
 }

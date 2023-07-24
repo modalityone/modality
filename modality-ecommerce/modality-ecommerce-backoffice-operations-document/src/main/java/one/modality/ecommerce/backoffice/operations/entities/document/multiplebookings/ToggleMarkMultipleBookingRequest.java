@@ -6,14 +6,19 @@ import one.modality.base.shared.entities.Document;
 
 public final class ToggleMarkMultipleBookingRequest extends SetEntityFieldRequest {
 
-    private final static String OPERATION_CODE = "ToggleMarkMultipleBooking";
+  private static final String OPERATION_CODE = "ToggleMarkMultipleBooking";
 
-    public ToggleMarkMultipleBookingRequest(Document document, Pane parentContainer) {
-        super(document, "notMultipleBooking", "notMultipleBooking = null ? multipleBooking : null", "Please confirm", parentContainer);
-    }
+  public ToggleMarkMultipleBookingRequest(Document document, Pane parentContainer) {
+    super(
+        document,
+        "notMultipleBooking",
+        "notMultipleBooking = null ? multipleBooking : null",
+        "Please confirm",
+        parentContainer);
+  }
 
-    @Override
-    public Object getOperationCode() {
-        return OPERATION_CODE;
-    }
+  @Override
+  public Object getOperationCode() {
+    return OPERATION_CODE;
+  }
 }

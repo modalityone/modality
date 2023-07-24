@@ -8,19 +8,18 @@ import one.modality.base.shared.entities.markers.EntityHasResourceConfiguration;
 /**
  * @author Bruno Salmon
  */
-public interface DocumentLine extends
-        EntityHasDocument,
+public interface DocumentLine
+    extends EntityHasDocument,
         EntityHasCancelled,
         EntityHasArrivalSiteAndItem,
         EntityHasResourceConfiguration {
 
-    // Non-persistent bedNumber field using by Household screen (allocated arbitrary at runtime)
-    default Integer getBedNumber() {
-        return getIntegerFieldValue("bedNumber");
-    }
+  // Non-persistent bedNumber field using by Household screen (allocated arbitrary at runtime)
+  default Integer getBedNumber() {
+    return getIntegerFieldValue("bedNumber");
+  }
 
-    default void setBedNumber(Integer bedNumber) {
-        setFieldValue("bedNumber", bedNumber);
-    }
-
+  default void setBedNumber(Integer bedNumber) {
+    setFieldValue("bedNumber", bedNumber);
+  }
 }

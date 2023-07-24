@@ -11,8 +11,10 @@ import one.modality.ecommerce.payment.delegated.spi.DelegatedPaymentProvider;
  * @author Bruno Salmon
  */
 public class RemoteDelegatedPaymentProvider implements DelegatedPaymentProvider {
-    @Override
-    public Future<InitiateDelegatedPaymentResult> initiateDelegatedPayment(InitiateDelegatedPaymentArgument argument) {
-        return BusCallService.call(DelegatedPaymentServiceBusAddress.INITIATE_DELEGATED_PAYMENT_METHOD_ADDRESS, argument);
-    }
+  @Override
+  public Future<InitiateDelegatedPaymentResult> initiateDelegatedPayment(
+      InitiateDelegatedPaymentArgument argument) {
+    return BusCallService.call(
+        DelegatedPaymentServiceBusAddress.INITIATE_DELEGATED_PAYMENT_METHOD_ADDRESS, argument);
+  }
 }

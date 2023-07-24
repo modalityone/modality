@@ -1,21 +1,21 @@
 package one.modality.event.client.controls.calendargraphic;
 
+import javafx.scene.Node;
 import one.modality.event.client.businessdata.calendar.Calendar;
 import one.modality.event.client.controls.calendargraphic.impl.CalendarGraphicImpl;
-import javafx.scene.Node;
 
 /**
  * @author Bruno Salmon
  */
 public interface CalendarGraphic extends HasCalendarClickHandlerProperty {
 
-    Calendar getCalendar();
+  Calendar getCalendar();
 
-    Node getNode();
+  Node getNode();
 
-    void setCalendar(Calendar calendar);
+  void setCalendar(Calendar calendar);
 
-    static CalendarGraphic create(Calendar calendar) {
-        return new CalendarGraphicImpl(calendar);
-    }
+  static CalendarGraphic create(Calendar calendar) {
+    return new CalendarGraphicImpl(calendar);
+  }
 }

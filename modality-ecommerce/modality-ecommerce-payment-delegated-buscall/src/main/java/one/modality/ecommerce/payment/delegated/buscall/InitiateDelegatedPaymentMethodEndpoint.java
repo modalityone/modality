@@ -8,10 +8,13 @@ import one.modality.ecommerce.payment.delegated.InitiateDelegatedPaymentResult;
 /**
  * @author Bruno Salmon
  */
-public final class InitiateDelegatedPaymentMethodEndpoint extends AsyncFunctionBusCallEndpoint<InitiateDelegatedPaymentArgument, InitiateDelegatedPaymentResult> {
+public final class InitiateDelegatedPaymentMethodEndpoint
+    extends AsyncFunctionBusCallEndpoint<
+        InitiateDelegatedPaymentArgument, InitiateDelegatedPaymentResult> {
 
-    public InitiateDelegatedPaymentMethodEndpoint() {
-        super(DelegatedPaymentServiceBusAddress.INITIATE_DELEGATED_PAYMENT_METHOD_ADDRESS, DelegatedPaymentService::initiateDelegatedPayment);
-    }
-
+  public InitiateDelegatedPaymentMethodEndpoint() {
+    super(
+        DelegatedPaymentServiceBusAddress.INITIATE_DELEGATED_PAYMENT_METHOD_ADDRESS,
+        DelegatedPaymentService::initiateDelegatedPayment);
+  }
 }

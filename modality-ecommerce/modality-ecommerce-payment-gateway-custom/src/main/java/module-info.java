@@ -2,11 +2,10 @@
 
 module modality.ecommerce.payment.gateway.custom {
 
-    // Direct dependencies modules
-    requires modality.ecommerce.payment.custom;
-    requires webfx.platform.async;
+  // Direct dependencies modules
+  requires modality.ecommerce.payment.custom;
+  requires webfx.platform.async;
 
-    // Exported packages
-    exports one.modality.ecommerce.payment.gateway.custom.spi;
-
+  // Exported packages
+  exports one.modality.ecommerce.payment.gateway.custom.spi;
 }

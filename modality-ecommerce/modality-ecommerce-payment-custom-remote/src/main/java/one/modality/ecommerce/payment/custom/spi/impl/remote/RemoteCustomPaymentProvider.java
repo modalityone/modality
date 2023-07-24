@@ -11,8 +11,10 @@ import one.modality.ecommerce.payment.custom.spi.CustomPaymentProvider;
  * @author Bruno Salmon
  */
 public class RemoteCustomPaymentProvider implements CustomPaymentProvider {
-    @Override
-    public Future<InitiateCustomPaymentResult> initiateCustomPayment(InitiateCustomPaymentArgument argument) {
-        return BusCallService.call(CustomPaymentServiceBusAddress.INITIATE_CUSTOM_PAYMENT_METHOD_ADDRESS, argument);
-    }
+  @Override
+  public Future<InitiateCustomPaymentResult> initiateCustomPayment(
+      InitiateCustomPaymentArgument argument) {
+    return BusCallService.call(
+        CustomPaymentServiceBusAddress.INITIATE_CUSTOM_PAYMENT_METHOD_ADDRESS, argument);
+  }
 }

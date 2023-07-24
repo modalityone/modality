@@ -11,13 +11,13 @@ import one.modality.base.shared.entities.MoneyAccountType;
  */
 public class MoneyAccountTypeImpl extends DynamicEntity implements MoneyAccountType {
 
-    public MoneyAccountTypeImpl(EntityId id, EntityStore store) {
-        super(id, store);
-    }
+  public MoneyAccountTypeImpl(EntityId id, EntityStore store) {
+    super(id, store);
+  }
 
-    public static final class ProvidedFactory extends EntityFactoryProviderImpl<MoneyAccountType> {
-        public ProvidedFactory() {
-            super(MoneyAccountType.class, MoneyAccountTypeImpl::new);
-        }
+  public static final class ProvidedFactory extends EntityFactoryProviderImpl<MoneyAccountType> {
+    public ProvidedFactory() {
+      super(MoneyAccountType.class, MoneyAccountTypeImpl::new);
     }
+  }
 }

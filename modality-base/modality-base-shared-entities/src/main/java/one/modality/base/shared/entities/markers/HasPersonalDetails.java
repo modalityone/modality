@@ -1,124 +1,123 @@
 package one.modality.base.shared.entities.markers;
 
+import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Organization;
-import dev.webfx.stack.orm.entity.EntityId;
 
 /**
  * @author Bruno Salmon
  */
 public interface HasPersonalDetails {
 
-    void setFirstName(String firstName);
+  void setFirstName(String firstName);
 
-    String getFirstName();
+  String getFirstName();
 
-    void setLastName(String lastName);
+  void setLastName(String lastName);
 
-    String getLastName();
+  String getLastName();
 
-    default String getFullName() {
-        return getFirstName() + " " + getLastName();
-    }
+  default String getFullName() {
+    return getFirstName() + " " + getLastName();
+  }
 
-    void setLayName(String layName);
+  void setLayName(String layName);
 
-    String getLayName();
+  String getLayName();
 
-    void setMale(Boolean male);
+  void setMale(Boolean male);
 
-    Boolean isMale();
+  Boolean isMale();
 
-    void setOrdained(Boolean ordained);
+  void setOrdained(Boolean ordained);
 
-    Boolean isOrdained();
+  Boolean isOrdained();
 
-    void setAge(Integer age);
+  void setAge(Integer age);
 
-    Integer getAge();
+  Integer getAge();
 
-    void setCarer1Name(String carer1Name);
+  void setCarer1Name(String carer1Name);
 
-    String getCarer1Name();
+  String getCarer1Name();
 
-    void setCarer2Name(String carer2Name);
+  void setCarer2Name(String carer2Name);
 
-    String getCarer2Name();
+  String getCarer2Name();
 
-    void setEmail(String email);
+  void setEmail(String email);
 
-    String getEmail();
+  String getEmail();
 
-    void setPhone(String phone);
+  void setPhone(String phone);
 
-    String getPhone();
+  String getPhone();
 
-    void setStreet(String street);
+  void setStreet(String street);
 
-    String getStreet();
+  String getStreet();
 
-    void setPostCode(String postCode);
+  void setPostCode(String postCode);
 
-    String getPostCode();
+  String getPostCode();
 
-    void setCityName(String cityName);
+  void setCityName(String cityName);
 
-    String getCityName();
+  String getCityName();
 
-    void setAdmin1Name(String admin1Name);
+  void setAdmin1Name(String admin1Name);
 
-    String getAdmin1Name();
+  String getAdmin1Name();
 
-    void setAdmin2Name(String admin2Name);
+  void setAdmin2Name(String admin2Name);
 
-    String getAdmin2Name();
+  String getAdmin2Name();
 
-    void setCountryName(String countryName);
+  void setCountryName(String countryName);
 
-    String getCountryName();
+  String getCountryName();
 
-    void setCountry(Object country);
+  void setCountry(Object country);
 
-    Country getCountry();
+  Country getCountry();
 
-    EntityId getCountryId();
+  EntityId getCountryId();
 
-    void setOrganization(Object organization);
+  void setOrganization(Object organization);
 
-    Organization getOrganization();
+  Organization getOrganization();
 
-    EntityId getOrganizationId();
+  EntityId getOrganizationId();
 
-    void setUnemployed(Boolean unemployed);
+  void setUnemployed(Boolean unemployed);
 
-    Boolean isUnemployed();
+  Boolean isUnemployed();
 
-    void setFacilityFee(Boolean facilityFee);
+  void setFacilityFee(Boolean facilityFee);
 
-    Boolean isFacilityFee();
+  Boolean isFacilityFee();
 
-    void setWorkingVisit(Boolean workingVisit);
+  void setWorkingVisit(Boolean workingVisit);
 
-    Boolean isWorkingVisit();
+  Boolean isWorkingVisit();
 
-    void setDiscovery(Boolean discovery);
+  void setDiscovery(Boolean discovery);
 
-    Boolean isDiscovery();
+  Boolean isDiscovery();
 
-    void setDiscoveryReduced(Boolean discoveryReduced);
+  void setDiscoveryReduced(Boolean discoveryReduced);
 
-    Boolean isDiscoveryReduced();
+  Boolean isDiscoveryReduced();
 
-    void setGuest(Boolean guest);
+  void setGuest(Boolean guest);
 
-    Boolean isGuest();
+  Boolean isGuest();
 
-    void setResident(Boolean resident);
+  void setResident(Boolean resident);
 
-    Boolean isResident();
+  Boolean isResident();
 
-    void setResident2(Boolean resident2);
+  void setResident2(Boolean resident2);
 
-    Boolean isResident2();
-
+  Boolean isResident2();
 }

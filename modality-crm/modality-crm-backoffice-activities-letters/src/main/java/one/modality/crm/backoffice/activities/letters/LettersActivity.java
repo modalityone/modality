@@ -7,7 +7,7 @@ import dev.webfx.stack.orm.domainmodel.activity.domainpresentation.impl.DomainPr
  */
 final class LettersActivity extends DomainPresentationActivityImpl<LettersPresentationModel> {
 
-    LettersActivity() {
-        super(LettersPresentationViewActivity::new, LettersPresentationLogicActivity::new);
-    }
+  LettersActivity() {
+    super(LettersPresentationViewActivity::new, LettersPresentationLogicActivity::new);
+  }
 }

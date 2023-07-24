@@ -7,10 +7,9 @@ import one.modality.base.client.application.ModalityClientStarterActivity;
  */
 final class ModalityFrontOfficeStarterActivity extends ModalityClientStarterActivity {
 
-    private static final String DEFAULT_START_PATH = "/book/event/357/start";
+  private static final String DEFAULT_START_PATH = "/book/event/357/start";
 
-    ModalityFrontOfficeStarterActivity() {
-        super(DEFAULT_START_PATH);
-    }
-
+  ModalityFrontOfficeStarterActivity() {
+    super(DEFAULT_START_PATH);
+  }
 }

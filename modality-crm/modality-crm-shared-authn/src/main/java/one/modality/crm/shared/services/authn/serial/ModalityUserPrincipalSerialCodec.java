@@ -10,25 +10,22 @@ import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
  */
 public final class ModalityUserPrincipalSerialCodec extends SerialCodecBase<ModalityUserPrincipal> {
 
-    private static final String CODEC_ID = "ModalityUserPrincipal";
-    private static final String USER_PERSON_ID_KEY = "userPersonId";
-    private static final String USER_ACCOUNT_ID_KEY = "userAccountId";
+  private static final String CODEC_ID = "ModalityUserPrincipal";
+  private static final String USER_PERSON_ID_KEY = "userPersonId";
+  private static final String USER_ACCOUNT_ID_KEY = "userAccountId";
 
-    public ModalityUserPrincipalSerialCodec() {
-        super(ModalityUserPrincipal.class, CODEC_ID);
-    }
+  public ModalityUserPrincipalSerialCodec() {
+    super(ModalityUserPrincipal.class, CODEC_ID);
+  }
 
-    @Override
-    public void encodeToJson(ModalityUserPrincipal arg, JsonObject json) {
-        json.set(USER_PERSON_ID_KEY, arg.getUserPersonId());
-        json.set(USER_ACCOUNT_ID_KEY, arg.getUserAccountId());
-    }
+  @Override
+  public void encodeToJson(ModalityUserPrincipal arg, JsonObject json) {
+    json.set(USER_PERSON_ID_KEY, arg.getUserPersonId());
+    json.set(USER_ACCOUNT_ID_KEY, arg.getUserAccountId());
+  }
 
-    @Override
-    public ModalityUserPrincipal decodeFromJson(ReadOnlyJsonObject json) {
-        return new ModalityUserPrincipal(
-                json.get(USER_PERSON_ID_KEY),
-                json.get(USER_ACCOUNT_ID_KEY)
-        );
-    }
+  @Override
+  public ModalityUserPrincipal decodeFromJson(ReadOnlyJsonObject json) {
+    return new ModalityUserPrincipal(json.get(USER_PERSON_ID_KEY), json.get(USER_ACCOUNT_ID_KEY));
+  }
 }

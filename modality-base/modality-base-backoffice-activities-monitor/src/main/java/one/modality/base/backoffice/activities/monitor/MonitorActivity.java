@@ -7,7 +7,7 @@ import dev.webfx.stack.orm.domainmodel.activity.domainpresentation.impl.DomainPr
  */
 final class MonitorActivity extends DomainPresentationActivityImpl<MonitorPresentationModel> {
 
-    MonitorActivity() {
-        super(MonitorPresentationViewActivity::new, MonitorPresentationLogicActivity::new);
-    }
+  MonitorActivity() {
+    super(MonitorPresentationViewActivity::new, MonitorPresentationLogicActivity::new);
+  }
 }

@@ -17,37 +17,32 @@ import one.modality.event.backoffice.event.fx.FXEventId;
 /**
  * @author Bruno Salmon
  */
-public interface EventDependentActivityMixin
-        <C extends DomainActivityContext<C> & UiRouteActivityContext<C>>
-
-        extends OrganizationDependentActivityMixin<C>,
+public interface EventDependentActivityMixin<
+        C extends DomainActivityContext<C> & UiRouteActivityContext<C>>
+    extends OrganizationDependentActivityMixin<C>,
         EventAggregateMixin,
-        EventDependentPresentationModelMixin
-{
+        EventDependentPresentationModelMixin {
 
-    default EventAggregate getEventService() {
-        return EventAggregate.getOrCreate(getEventId(), getDataSourceModel());
-    }
+  default EventAggregate getEventService() {
+    return EventAggregate.getOrCreate(getEventId(), getDataSourceModel());
+  }
 
-    default void updateEventDependentPresentationModelFromContextParameters() {
-        Object eventId = getParameter("eventId");
-        if (eventId != null)
-            setEventId(eventId);
-        else
-            eventIdProperty().bind(FXEventId.eventIdProperty());
-        updateOrganizationDependentPresentationModelFromContextParameters();
-    }
+  default void updateEventDependentPresentationModelFromContextParameters() {
+    Object eventId = getParameter("eventId");
+    if (eventId != null) setEventId(eventId);
+    else eventIdProperty().bind(FXEventId.eventIdProperty());
+    updateOrganizationDependentPresentationModelFromContextParameters();
+  }
 
-    default WorkingDocument getEventActiveWorkingDocument() {
-        return ActiveWorkingDocumentsByEventStore.getEventActiveWorkingDocument(this);
-    }
+  default WorkingDocument getEventActiveWorkingDocument() {
+    return ActiveWorkingDocumentsByEventStore.getEventActiveWorkingDocument(this);
+  }
 
-    default Future<FeesGroup[]> onEventFeesGroups() {
-        return FeesGroupsByEventStore.onEventFeesGroups(this);
-    }
+  default Future<FeesGroup[]> onEventFeesGroups() {
+    return FeesGroupsByEventStore.onEventFeesGroups(this);
+  }
 
-    default OptionsPreselection getEventActiveOptionsPreselection() {
-        return ActiveOptionsPreselectionsByEventStore.getActiveOptionsPreselection(this);
-    }
-
+  default OptionsPreselection getEventActiveOptionsPreselection() {
+    return ActiveOptionsPreselectionsByEventStore.getActiveOptionsPreselection(this);
+  }
 }

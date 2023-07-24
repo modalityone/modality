@@ -13,20 +13,26 @@ import one.modality.ecommerce.payment.delegated.InitiateDelegatedPaymentArgument
  */
 public class DelegatedPaymentUI {
 
-    private final InitiateDelegatedPaymentArgument testPaymentArg =
-            new InitiateDelegatedPaymentArgument("Amazing event", 12500, "USD");
+  private final InitiateDelegatedPaymentArgument testPaymentArg =
+      new InitiateDelegatedPaymentArgument("Amazing event", 12500, "USD");
 
-    public Node buildNode() {
-        WebView webView = new WebView();
-        Button checkoutButton = new Button("Checkout");
-        checkoutButton.setOnAction(e -> DelegatedPaymentService.initiateDelegatedPayment(testPaymentArg)
-                .onSuccess(r -> Platform.runLater(() -> {
-                    String paymentUrl = r.getDelegatedPaymentUrl();
-                    dev.webfx.platform.console.Console.log("Loading webView at " + paymentUrl);
-                    webView.getEngine().load(paymentUrl);
-                })));
-        BorderPane borderPane = new BorderPane(webView);
-        borderPane.setTop(checkoutButton);
-        return borderPane;
-    }
+  public Node buildNode() {
+    WebView webView = new WebView();
+    Button checkoutButton = new Button("Checkout");
+    checkoutButton.setOnAction(
+        e ->
+            DelegatedPaymentService.initiateDelegatedPayment(testPaymentArg)
+                .onSuccess(
+                    r ->
+                        Platform.runLater(
+                            () -> {
+                              String paymentUrl = r.getDelegatedPaymentUrl();
+                              dev.webfx.platform.console.Console.log(
+                                  "Loading webView at " + paymentUrl);
+                              webView.getEngine().load(paymentUrl);
+                            })));
+    BorderPane borderPane = new BorderPane(webView);
+    borderPane.setTop(checkoutButton);
+    return borderPane;
+  }
 }

@@ -1,10 +1,14 @@
 package one.modality.crm.backoffice.activities.users;
 
+import static dev.webfx.stack.orm.dql.DqlStatement.where;
+
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.action.ActionGroupBuilder;
+import java.util.Arrays;
+import java.util.Collection;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -22,89 +26,96 @@ import one.modality.base.shared.domainmodel.functions.AbcNames;
 import one.modality.base.shared.entities.Person;
 import one.modality.ecommerce.backoffice.operations.entities.document.EditUsersPersonalDetailsRequest;
 
-import java.util.Arrays;
-import java.util.Collection;
+final class UsersActivity extends OrganizationDependentViewDomainActivity
+    implements ConventionalUiBuilderMixin {
 
-import static dev.webfx.stack.orm.dql.DqlStatement.where;
+  /*==================================================================================================================
+  ================================================= Graphical layer ==================================================
+  ==================================================================================================================*/
 
-final class UsersActivity extends OrganizationDependentViewDomainActivity implements
-        ConventionalUiBuilderMixin {
+  private final UsersPresentationModel pm = new UsersPresentationModel();
 
-    /*==================================================================================================================
-    ================================================= Graphical layer ==================================================
-    ==================================================================================================================*/
+  private Pane pane;
 
-    private final UsersPresentationModel pm = new UsersPresentationModel();
+  @Override
+  public UsersPresentationModel getPresentationModel() {
+    return pm; // eventId and organizationId will then be updated from route
+  }
 
-    private Pane pane;
+  private ConventionalUiBuilder ui; // Keeping this reference for activity resume
 
-    @Override
-    public UsersPresentationModel getPresentationModel() {
-        return pm; // eventId and organizationId will then be updated from route
-    }
+  @Override
+  public Node buildUi() {
+    ui = createAndBindGroupMasterSlaveViewWithFilterSearchBar(pm, "users", "Person");
+    pane = ui.buildUi();
+    setUpContextMenu(pane, this::createContextMenuActionGroup);
+    return pane;
+  }
 
-    private ConventionalUiBuilder ui; // Keeping this reference for activity resume
+  private ActionGroup createContextMenuActionGroup() {
+    ObservableStringValue textProperty = new SimpleStringProperty("Edit...");
+    ObservableObjectValue<Node> graphicProperty = new SimpleObjectProperty<>();
+    ObservableBooleanValue disabledProperty = new SimpleBooleanProperty(false);
+    ObservableBooleanValue visibleProperty = new SimpleBooleanProperty(true);
+    EventHandler<ActionEvent> actionHandler =
+        e -> new EditUsersPersonalDetailsRequest(getPerson(), this, pane);
+    Collection<Action> actions =
+        Arrays.asList(
+            Action.create(
+                textProperty, graphicProperty, disabledProperty, visibleProperty, actionHandler));
+    return new ActionGroupBuilder()
+        .setI18nKey(null)
+        .setActions(actions)
+        .setHasSeparators(false)
+        .build();
+  }
 
-    @Override
-    public Node buildUi() {
-        ui = createAndBindGroupMasterSlaveViewWithFilterSearchBar(pm, "users", "Person");
-        pane = ui.buildUi();
-        setUpContextMenu(pane, this::createContextMenuActionGroup);
-        return pane;
-    }
+  private Person getPerson() {
+    Person person = pm.selectedMasterProperty().get();
+    // person.setEvent(getEvent());
+    return person;
+  }
 
-    private ActionGroup createContextMenuActionGroup() {
-        ObservableStringValue textProperty = new SimpleStringProperty("Edit...");
-        ObservableObjectValue<Node> graphicProperty = new SimpleObjectProperty<>();
-        ObservableBooleanValue disabledProperty = new SimpleBooleanProperty(false);
-        ObservableBooleanValue visibleProperty = new SimpleBooleanProperty(true);
-        EventHandler<ActionEvent> actionHandler = e -> new EditUsersPersonalDetailsRequest(getPerson(), this, pane);
-        Collection<Action> actions = Arrays.asList(
-                Action.create(textProperty, graphicProperty, disabledProperty, visibleProperty, actionHandler)
-        );
-        return new ActionGroupBuilder().setI18nKey(null).setActions(actions).setHasSeparators(false).build();
-    }
+  @Override
+  public void onResume() {
+    super.onResume();
+    ui.onResume();
+  }
 
-    private Person getPerson() {
-        Person person = pm.selectedMasterProperty().get();
-        //person.setEvent(getEvent());
-        return person;
-    }
+  /*==================================================================================================================
+  =================================================== Logical layer ==================================================
+  ==================================================================================================================*/
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        ui.onResume();
-    }
+  private ReactiveVisualMapper<Person> groupVisualMapper, masterVisualMapper;
 
+  @Override
+  protected void startLogic() {
+    // Setting up the group mapper that build the content displayed in the group view
+    groupVisualMapper =
+        ReactiveVisualMapper.<Person>createGroupReactiveChain(this, pm)
+            .always("{class: 'Person', alias: 'p', orderBy: 'id'}")
+            .start();
 
-    /*==================================================================================================================
-    =================================================== Logical layer ==================================================
-    ==================================================================================================================*/
+    // Setting up the master mapper that build the content displayed in the master view
+    masterVisualMapper =
+        ReactiveVisualMapper.<Person>createMasterPushReactiveChain(this, pm)
+            .always("{class: 'Person', alias: 'p', orderBy: 'lastName,firstName,id'}")
+            // Applying the user search
+            .ifTrimNotEmpty(
+                pm.searchTextProperty(),
+                s ->
+                    s.contains("@")
+                        ? where("lower(email) like ?", "%" + s.toLowerCase() + "%")
+                        : DqlStatement.where(
+                            "abcNames(firstName + ' ' + lastName) like ?",
+                            AbcNames.evaluate(s, true)))
+            .applyDomainModelRowStyle() // Colorizing the rows
+            .start();
+  }
 
-    private ReactiveVisualMapper<Person> groupVisualMapper, masterVisualMapper;
-
-    @Override
-    protected void startLogic() {
-        // Setting up the group mapper that build the content displayed in the group view
-        groupVisualMapper = ReactiveVisualMapper.<Person>createGroupReactiveChain(this, pm)
-                .always("{class: 'Person', alias: 'p', orderBy: 'id'}")
-                .start();
-
-        // Setting up the master mapper that build the content displayed in the master view
-        masterVisualMapper = ReactiveVisualMapper.<Person>createMasterPushReactiveChain(this, pm)
-                .always("{class: 'Person', alias: 'p', orderBy: 'lastName,firstName,id'}")
-                // Applying the user search
-                .ifTrimNotEmpty(pm.searchTextProperty(), s ->
-                        s.contains("@") ? where("lower(email) like ?", "%" + s.toLowerCase() + "%")
-                                : DqlStatement.where("abcNames(firstName + ' ' + lastName) like ?", AbcNames.evaluate(s, true)))
-                .applyDomainModelRowStyle() // Colorizing the rows
-                .start();
-    }
-
-    @Override
-    protected void refreshDataOnActive() {
-        groupVisualMapper.refreshWhenActive();
-        masterVisualMapper.refreshWhenActive();
-    }
+  @Override
+  protected void refreshDataOnActive() {
+    groupVisualMapper.refreshWhenActive();
+    masterVisualMapper.refreshWhenActive();
+  }
 }

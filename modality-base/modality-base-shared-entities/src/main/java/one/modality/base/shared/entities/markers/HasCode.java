@@ -5,8 +5,7 @@ package one.modality.base.shared.entities.markers;
  */
 public interface HasCode {
 
-    void setCode(String code);
+  void setCode(String code);
 
-    String getCode();
-
+  String getCode();
 }

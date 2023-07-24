@@ -1,17 +1,16 @@
 package one.modality.base.shared.entities.markers;
 
-import one.modality.base.shared.entities.Document;
 import dev.webfx.stack.orm.entity.EntityId;
+import one.modality.base.shared.entities.Document;
 
 /**
  * @author Bruno Salmon
  */
 public interface HasDocument {
 
-    void setDocument(Object document);
+  void setDocument(Object document);
 
-    EntityId getDocumentId();
+  EntityId getDocumentId();
 
-    Document getDocument();
-
+  Document getDocument();
 }

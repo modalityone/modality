@@ -6,14 +6,14 @@ import one.modality.base.shared.entities.Document;
 
 public final class ToggleMarkDocumentAsWillPayRequest extends ToggleBooleanEntityFieldRequest {
 
-    private final static String OPERATION_CODE = "ToggleMarkDocumentAsWillPay";
+  private static final String OPERATION_CODE = "ToggleMarkDocumentAsWillPay";
 
-    public ToggleMarkDocumentAsWillPayRequest(Document document, Pane parentContainer) {
-        super(document, "willPay", null, parentContainer);
-    }
+  public ToggleMarkDocumentAsWillPayRequest(Document document, Pane parentContainer) {
+    super(document, "willPay", null, parentContainer);
+  }
 
-    @Override
-    public Object getOperationCode() {
-        return OPERATION_CODE;
-    }
+  @Override
+  public Object getOperationCode() {
+    return OPERATION_CODE;
+  }
 }

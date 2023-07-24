@@ -8,10 +8,12 @@ import one.modality.ecommerce.payment.direct.MakeDirectPaymentResult;
 /**
  * @author Bruno Salmon
  */
-public final class MakeDirectPaymentMethodEndpoint extends AsyncFunctionBusCallEndpoint<MakeDirectPaymentArgument, MakeDirectPaymentResult> {
+public final class MakeDirectPaymentMethodEndpoint
+    extends AsyncFunctionBusCallEndpoint<MakeDirectPaymentArgument, MakeDirectPaymentResult> {
 
-    public MakeDirectPaymentMethodEndpoint() {
-        super(DirectPaymentServiceBusAddress.MAKE_DIRECT_PAYMENT_METHOD_ADDRESS, DirectPaymentService::makeDirectPayment);
-    }
-
+  public MakeDirectPaymentMethodEndpoint() {
+    super(
+        DirectPaymentServiceBusAddress.MAKE_DIRECT_PAYMENT_METHOD_ADDRESS,
+        DirectPaymentService::makeDirectPayment);
+  }
 }

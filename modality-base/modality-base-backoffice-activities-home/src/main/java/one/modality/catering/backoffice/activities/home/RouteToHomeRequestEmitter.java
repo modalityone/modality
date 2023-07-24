@@ -10,8 +10,8 @@ import one.modality.catering.backoffice.operations.routes.home.RouteToHomeReques
  */
 public final class RouteToHomeRequestEmitter implements RouteRequestEmitter {
 
-    @Override
-    public RouteRequest instantiateRouteRequest(UiRouteActivityContext context) {
-        return new RouteToHomeRequest(context.getHistory());
-    }
+  @Override
+  public RouteRequest instantiateRouteRequest(UiRouteActivityContext context) {
+    return new RouteToHomeRequest(context.getHistory());
+  }
 }

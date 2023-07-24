@@ -11,15 +11,31 @@ import one.modality.base.client.activity.eventdependent.EventDependentGenericTab
  */
 public class MoneyFlowsPresentationModel extends EventDependentGenericTablePresentationModel {
 
-    private final ObjectProperty<VisualResult> moneyAccountsVisualResultProperty = new SimpleObjectProperty<>();
-    public ObjectProperty<VisualResult> moneyAccountsVisualResultProperty() { return moneyAccountsVisualResultProperty; }
+  private final ObjectProperty<VisualResult> moneyAccountsVisualResultProperty =
+      new SimpleObjectProperty<>();
 
-    private final ObjectProperty<VisualSelection> moneyAccountsVisualSelectionProperty = new SimpleObjectProperty<>();
-    public ObjectProperty<VisualSelection> moneyAccountsVisualSelectionProperty() { return moneyAccountsVisualSelectionProperty; }
+  public ObjectProperty<VisualResult> moneyAccountsVisualResultProperty() {
+    return moneyAccountsVisualResultProperty;
+  }
 
-    private final ObjectProperty<VisualResult> moneyFlowsVisualResultProperty = new SimpleObjectProperty<>();
-    public ObjectProperty<VisualResult> moneyFlowsVisualResultProperty() { return moneyFlowsVisualResultProperty; }
+  private final ObjectProperty<VisualSelection> moneyAccountsVisualSelectionProperty =
+      new SimpleObjectProperty<>();
 
-    private final ObjectProperty<VisualSelection> moneyFlowsVisualSelectionProperty = new SimpleObjectProperty<>();
-    public ObjectProperty<VisualSelection> moneyFlowsVisualSelectionProperty() { return moneyFlowsVisualSelectionProperty; }
+  public ObjectProperty<VisualSelection> moneyAccountsVisualSelectionProperty() {
+    return moneyAccountsVisualSelectionProperty;
+  }
+
+  private final ObjectProperty<VisualResult> moneyFlowsVisualResultProperty =
+      new SimpleObjectProperty<>();
+
+  public ObjectProperty<VisualResult> moneyFlowsVisualResultProperty() {
+    return moneyFlowsVisualResultProperty;
+  }
+
+  private final ObjectProperty<VisualSelection> moneyFlowsVisualSelectionProperty =
+      new SimpleObjectProperty<>();
+
+  public ObjectProperty<VisualSelection> moneyFlowsVisualSelectionProperty() {
+    return moneyFlowsVisualSelectionProperty;
+  }
 }

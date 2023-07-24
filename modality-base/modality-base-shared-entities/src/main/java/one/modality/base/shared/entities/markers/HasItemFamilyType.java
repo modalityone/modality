@@ -7,34 +7,33 @@ import one.modality.base.shared.entities.ItemFamilyType;
  */
 public interface HasItemFamilyType {
 
-    ItemFamilyType getItemFamilyType();
+  ItemFamilyType getItemFamilyType();
 
-    default boolean isAccommodation() {
-        return getItemFamilyType() == ItemFamilyType.ACCOMMODATION;
-    }
+  default boolean isAccommodation() {
+    return getItemFamilyType() == ItemFamilyType.ACCOMMODATION;
+  }
 
-    default boolean isMeals() {
-        return getItemFamilyType() == ItemFamilyType.MEALS;
-    }
+  default boolean isMeals() {
+    return getItemFamilyType() == ItemFamilyType.MEALS;
+  }
 
-    default boolean isDiet() {
-        return getItemFamilyType() == ItemFamilyType.DIET;
-    }
+  default boolean isDiet() {
+    return getItemFamilyType() == ItemFamilyType.DIET;
+  }
 
-    default boolean isTeaching() {
-        return getItemFamilyType() == ItemFamilyType.TEACHING;
-    }
+  default boolean isTeaching() {
+    return getItemFamilyType() == ItemFamilyType.TEACHING;
+  }
 
-    default boolean isTranslation() {
-        return getItemFamilyType() == ItemFamilyType.TRANSLATION;
-    }
+  default boolean isTranslation() {
+    return getItemFamilyType() == ItemFamilyType.TRANSLATION;
+  }
 
-    default boolean isTransport() {
-        return getItemFamilyType() == ItemFamilyType.TRANSPORT;
-    }
+  default boolean isTransport() {
+    return getItemFamilyType() == ItemFamilyType.TRANSPORT;
+  }
 
-    default boolean isTax() {
-        return getItemFamilyType() == ItemFamilyType.TAX;
-    }
-
+  default boolean isTax() {
+    return getItemFamilyType() == ItemFamilyType.TAX;
+  }
 }

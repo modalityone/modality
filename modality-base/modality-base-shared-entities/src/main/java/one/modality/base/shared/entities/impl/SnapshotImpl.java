@@ -11,13 +11,13 @@ import one.modality.base.shared.entities.Snapshot;
  */
 public class SnapshotImpl extends DynamicEntity implements Snapshot {
 
-    public SnapshotImpl(EntityId id, EntityStore store) {
-        super(id, store);
-    }
+  public SnapshotImpl(EntityId id, EntityStore store) {
+    super(id, store);
+  }
 
-    public static final class ProvidedFactory extends EntityFactoryProviderImpl<Snapshot> {
-        public ProvidedFactory() {
-            super(Snapshot.class, SnapshotImpl::new);
-        }
+  public static final class ProvidedFactory extends EntityFactoryProviderImpl<Snapshot> {
+    public ProvidedFactory() {
+      super(Snapshot.class, SnapshotImpl::new);
     }
+  }
 }

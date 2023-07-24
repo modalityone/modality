@@ -2,20 +2,20 @@
 
 module modality.ecommerce.payment.custom.server {
 
-    // Direct dependencies modules
-    requires java.base;
-    requires modality.ecommerce.payment.custom;
-    requires modality.ecommerce.payment.gateway.custom;
-    requires webfx.platform.async;
-    requires webfx.platform.util;
+  // Direct dependencies modules
+  requires java.base;
+  requires modality.ecommerce.payment.custom;
+  requires modality.ecommerce.payment.gateway.custom;
+  requires webfx.platform.async;
+  requires webfx.platform.util;
 
-    // Exported packages
-    exports one.modality.ecommerce.payment.custom.spi.impl.server;
+  // Exported packages
+  exports one.modality.ecommerce.payment.custom.spi.impl.server;
 
-    // Used services
-    uses one.modality.ecommerce.payment.gateway.custom.spi.CustomPaymentGatewayProvider;
+  // Used services
+  uses one.modality.ecommerce.payment.gateway.custom.spi.CustomPaymentGatewayProvider;
 
-    // Provided services
-    provides one.modality.ecommerce.payment.custom.spi.CustomPaymentProvider with one.modality.ecommerce.payment.custom.spi.impl.server.ServerCustomPaymentProvider;
-
+  // Provided services
+  provides one.modality.ecommerce.payment.custom.spi.CustomPaymentProvider with
+      one.modality.ecommerce.payment.custom.spi.impl.server.ServerCustomPaymentProvider;
 }

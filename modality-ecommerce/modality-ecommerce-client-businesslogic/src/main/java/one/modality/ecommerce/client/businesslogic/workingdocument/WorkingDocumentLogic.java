@@ -9,15 +9,15 @@ import one.modality.ecommerce.client.businesslogic.rules.*;
  */
 public final class WorkingDocumentLogic {
 
-    private final static BusinessRule[] BUSINESS_RULES = {
-            new BreakfastRule(),
-            new DietRule(),
-            new TouristTaxRule(),
-            new TranslationRule(),
-            new HotelShuttleRule()
-    };
+  private static final BusinessRule[] BUSINESS_RULES = {
+    new BreakfastRule(),
+    new DietRule(),
+    new TouristTaxRule(),
+    new TranslationRule(),
+    new HotelShuttleRule()
+  };
 
-    public static void applyBusinessRules(WorkingDocument workingDocument) {
-        Arrays.forEach(BUSINESS_RULES, rule -> rule.apply(workingDocument));
-    }
+  public static void applyBusinessRules(WorkingDocument workingDocument) {
+    Arrays.forEach(BUSINESS_RULES, rule -> rule.apply(workingDocument));
+  }
 }

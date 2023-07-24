@@ -5,14 +5,13 @@ package one.modality.ecommerce.payment.delegated;
  */
 public class InitiateDelegatedPaymentResult {
 
-    private final String delegatedPaymentUrl;
+  private final String delegatedPaymentUrl;
 
-    public InitiateDelegatedPaymentResult(String delegatedPaymentUrl) {
-        this.delegatedPaymentUrl = delegatedPaymentUrl;
-    }
+  public InitiateDelegatedPaymentResult(String delegatedPaymentUrl) {
+    this.delegatedPaymentUrl = delegatedPaymentUrl;
+  }
 
-    public String getDelegatedPaymentUrl() {
-        return delegatedPaymentUrl;
-    }
-
+  public String getDelegatedPaymentUrl() {
+    return delegatedPaymentUrl;
+  }
 }

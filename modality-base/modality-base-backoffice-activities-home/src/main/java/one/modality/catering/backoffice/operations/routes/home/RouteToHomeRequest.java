@@ -10,15 +10,14 @@ import one.modality.catering.backoffice.activities.home.routing.HomeRouting;
  */
 public final class RouteToHomeRequest extends RoutePushRequest implements HasOperationCode {
 
-    private final static String OPERATION_CODE = "RouteToHome";
+  private static final String OPERATION_CODE = "RouteToHome";
 
-    public RouteToHomeRequest(BrowsingHistory history) {
-        super(HomeRouting.getPath(), history);
-    }
+  public RouteToHomeRequest(BrowsingHistory history) {
+    super(HomeRouting.getPath(), history);
+  }
 
-    @Override
-    public Object getOperationCode() {
-        return OPERATION_CODE;
-    }
-
+  @Override
+  public Object getOperationCode() {
+    return OPERATION_CODE;
+  }
 }

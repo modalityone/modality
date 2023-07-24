@@ -2,10 +2,9 @@
 
 module modality.hotel.backoffice.icons {
 
-    // Direct dependencies modules
-    requires javafx.graphics;
+  // Direct dependencies modules
+  requires javafx.graphics;
 
-    // Exported packages
-    exports one.modality.hotel.backoffice.icons;
-
+  // Exported packages
+  exports one.modality.hotel.backoffice.icons;
 }

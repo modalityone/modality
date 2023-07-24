@@ -5,8 +5,7 @@ package one.modality.base.shared.entities.markers;
  */
 public interface HasMaxDateTimeRange {
 
-    void setMaxDateTimeRange(String maxDateTimeRange);
+  void setMaxDateTimeRange(String maxDateTimeRange);
 
-    String getMaxDateTimeRange();
-
+  String getMaxDateTimeRange();
 }

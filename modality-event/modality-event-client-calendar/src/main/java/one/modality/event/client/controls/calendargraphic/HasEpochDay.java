@@ -5,6 +5,5 @@ package one.modality.event.client.controls.calendargraphic;
  */
 public interface HasEpochDay {
 
-    long getEpochDay();
-
+  long getEpochDay();
 }

@@ -7,28 +7,31 @@ import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
 import one.modality.base.shared.entities.ResourceConfiguration;
 
-public final class ToggleResourceConfigurationOnlineOfflineRequest implements HasOperationCode,
+public final class ToggleResourceConfigurationOnlineOfflineRequest
+    implements HasOperationCode,
         HasOperationExecutor<ToggleResourceConfigurationOnlineOfflineRequest, Batch<SubmitResult>> {
 
-    private final static String OPERATION_CODE = "ToggleResourceConfigurationOnlineOffline";
+  private static final String OPERATION_CODE = "ToggleResourceConfigurationOnlineOffline";
 
-    private final ResourceConfiguration resourceConfiguration;
+  private final ResourceConfiguration resourceConfiguration;
 
-    public ToggleResourceConfigurationOnlineOfflineRequest(ResourceConfiguration resourceConfiguration) {
-        this.resourceConfiguration = resourceConfiguration;
-    }
+  public ToggleResourceConfigurationOnlineOfflineRequest(
+      ResourceConfiguration resourceConfiguration) {
+    this.resourceConfiguration = resourceConfiguration;
+  }
 
-    ResourceConfiguration getResourceConfiguration() {
-        return resourceConfiguration;
-    }
+  ResourceConfiguration getResourceConfiguration() {
+    return resourceConfiguration;
+  }
 
-    @Override
-    public Object getOperationCode() {
-        return OPERATION_CODE;
-    }
+  @Override
+  public Object getOperationCode() {
+    return OPERATION_CODE;
+  }
 
-    @Override
-    public AsyncFunction<ToggleResourceConfigurationOnlineOfflineRequest, Batch<SubmitResult>> getOperationExecutor() {
-        return ToggleResourceConfigurationOnlineOfflineExecutor::executeRequest;
-    }
+  @Override
+  public AsyncFunction<ToggleResourceConfigurationOnlineOfflineRequest, Batch<SubmitResult>>
+      getOperationExecutor() {
+    return ToggleResourceConfigurationOnlineOfflineExecutor::executeRequest;
+  }
 }

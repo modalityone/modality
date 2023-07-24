@@ -5,10 +5,9 @@ package one.modality.crm.client.activities.login;
  */
 public final class LoginRouting {
 
-    private static final String PATH = "/login";
+  private static final String PATH = "/login";
 
-    public static String getPath() {
-        return PATH;
-    }
-
+  public static String getPath() {
+    return PATH;
+  }
 }

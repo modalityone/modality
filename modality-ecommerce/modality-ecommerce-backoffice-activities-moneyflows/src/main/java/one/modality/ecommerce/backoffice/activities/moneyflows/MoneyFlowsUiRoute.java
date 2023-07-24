@@ -11,15 +11,15 @@ import one.modality.ecommerce.backoffice.activities.moneyflows.routing.MoneyFlow
  */
 public final class MoneyFlowsUiRoute extends UiRouteImpl {
 
-    public MoneyFlowsUiRoute() {
-        super(uiRoute());
-    }
+  public MoneyFlowsUiRoute() {
+    super(uiRoute());
+  }
 
-    public static UiRoute<?> uiRoute() {
-        return UiRoute.createRegex(PathBuilder.toRegexPath(MoneyFlowsRouting.getAnyPath())
-                , false
-                , MoneyFlowsActivity::new
-                , ViewDomainActivityContextFinal::new
-        );
-    }
+  public static UiRoute<?> uiRoute() {
+    return UiRoute.createRegex(
+        PathBuilder.toRegexPath(MoneyFlowsRouting.getAnyPath()),
+        false,
+        MoneyFlowsActivity::new,
+        ViewDomainActivityContextFinal::new);
+  }
 }

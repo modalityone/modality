@@ -7,7 +7,7 @@ import dev.webfx.stack.orm.domainmodel.activity.domainpresentation.impl.DomainPr
  */
 final class OperationsActivity extends DomainPresentationActivityImpl<OperationsPresentationModel> {
 
-    OperationsActivity() {
-        super(OperationsPresentationViewActivity::new, OperationsPresentationLogicActivity::new);
-    }
+  OperationsActivity() {
+    super(OperationsPresentationViewActivity::new, OperationsPresentationLogicActivity::new);
+  }
 }

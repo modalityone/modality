@@ -1,72 +1,81 @@
 package one.modality.ecommerce.client.businesslogic.workingdocument;
 
+import dev.webfx.platform.util.collection.Collections;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Predicate;
+import one.modality.base.shared.entities.Option;
 import one.modality.ecommerce.client.businessdata.workingdocument.WorkingDocument;
 import one.modality.ecommerce.client.businessdata.workingdocument.WorkingDocumentLine;
 import one.modality.ecommerce.client.businesslogic.option.OptionLogic;
-import one.modality.base.shared.entities.Option;
-import dev.webfx.platform.util.collection.Collections;
-import java.util.function.Predicate;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  * @author Bruno Salmon
  */
 public final class BusinessLines {
 
-    private final BusinessType businessType;
-    private final WorkingDocument workingDocument;
-    private List<WorkingDocumentLine> businessWorkingDocumentLines;
+  private final BusinessType businessType;
+  private final WorkingDocument workingDocument;
+  private List<WorkingDocumentLine> businessWorkingDocumentLines;
 
-    public BusinessLines(BusinessType businessType, WorkingDocument workingDocument) {
-        this.businessType = businessType;
-        this.workingDocument = workingDocument;
+  public BusinessLines(BusinessType businessType, WorkingDocument workingDocument) {
+    this.businessType = businessType;
+    this.workingDocument = workingDocument;
+  }
+
+  public List<WorkingDocumentLine> getBusinessWorkingDocumentLines() {
+    if (businessWorkingDocumentLines == null)
+      businessWorkingDocumentLines = findBusinessWorkingLines();
+    return businessWorkingDocumentLines;
+  }
+
+  public boolean isEmpty() {
+    // return getBusinessWorkingDocumentLines().isEmpty();
+    return Collections.noneMatch(
+        getBusinessWorkingDocumentLines(), wdl -> !wdl.getDaysArray().isEmpty());
+  }
+
+  public void removeAllLines() {
+    removeLines(getBusinessWorkingDocumentLines());
+  }
+
+  public void removeLines(Collection<WorkingDocumentLine> lines) {
+    if (lines != null) {
+      workingDocument.getWorkingDocumentLines().removeAll(lines);
+      businessWorkingDocumentLines = null;
     }
+  }
 
-    public List<WorkingDocumentLine> getBusinessWorkingDocumentLines() {
-        if (businessWorkingDocumentLines == null)
-            businessWorkingDocumentLines = findBusinessWorkingLines();
-        return businessWorkingDocumentLines;
+  private List<WorkingDocumentLine> findBusinessWorkingLines() {
+    switch (businessType) {
+      case TEACHING:
+        return findOptionLines(Option::isTeaching);
+      case TRANSLATION:
+        return findOptionLines(Option::isTranslation);
+      case ACCOMMODATION:
+        return findBusinessWorkingLines(WorkingDocumentLine::isAccommodation);
+      case BREAKFAST:
+        return findOptionLines(OptionLogic::isBreakfastOption);
+      case LUNCH:
+        return findOptionLines(OptionLogic::isLunchOption);
+      case SUPPER:
+        return findOptionLines(OptionLogic::isSupperOption);
+      case DIET:
+        return findBusinessWorkingLines(WorkingDocumentLine::isDiet);
+      case TOURIST_TAX:
+        return findOptionLines(OptionLogic::isTouristTaxOption);
+      case HOTEL_SHUTTLE:
+        return findOptionLines(OptionLogic::isHotelShuttleOption);
     }
+    return null; // shouldn't happen
+  }
 
-    public boolean isEmpty() {
-        //return getBusinessWorkingDocumentLines().isEmpty();
-        return Collections.noneMatch(getBusinessWorkingDocumentLines(), wdl -> !wdl.getDaysArray().isEmpty());
-    }
+  private List<WorkingDocumentLine> findBusinessWorkingLines(
+      Predicate<WorkingDocumentLine> predicate) {
+    return Collections.filter(workingDocument.getWorkingDocumentLines(), predicate);
+  }
 
-    public void removeAllLines() {
-        removeLines(getBusinessWorkingDocumentLines());
-    }
-
-    public void removeLines(Collection<WorkingDocumentLine> lines) {
-        if (lines != null) {
-            workingDocument.getWorkingDocumentLines().removeAll(lines);
-            businessWorkingDocumentLines = null;
-        }
-    }
-
-    private List<WorkingDocumentLine> findBusinessWorkingLines() {
-        switch (businessType) {
-            case TEACHING: return findOptionLines(Option::isTeaching);
-            case TRANSLATION: return findOptionLines(Option::isTranslation);
-            case ACCOMMODATION: return findBusinessWorkingLines(WorkingDocumentLine::isAccommodation);
-            case BREAKFAST: return findOptionLines(OptionLogic::isBreakfastOption);
-            case LUNCH: return findOptionLines(OptionLogic::isLunchOption);
-            case SUPPER: return findOptionLines(OptionLogic::isSupperOption);
-            case DIET: return findBusinessWorkingLines(WorkingDocumentLine::isDiet);
-            case TOURIST_TAX: return findOptionLines(OptionLogic::isTouristTaxOption);
-            case HOTEL_SHUTTLE: return findOptionLines(OptionLogic::isHotelShuttleOption);
-        }
-        return null; // shouldn't happen
-    }
-
-    private List<WorkingDocumentLine> findBusinessWorkingLines(Predicate<WorkingDocumentLine> predicate) {
-        return Collections.filter(workingDocument.getWorkingDocumentLines(), predicate);
-    }
-
-    private List<WorkingDocumentLine> findOptionLines(Predicate<Option> predicate) {
-        return findBusinessWorkingLines(wdl -> predicate.test(wdl.getOption()));
-    }
-
+  private List<WorkingDocumentLine> findOptionLines(Predicate<Option> predicate) {
+    return findBusinessWorkingLines(wdl -> predicate.test(wdl.getOption()));
+  }
 }

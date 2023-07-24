@@ -6,14 +6,19 @@ import one.modality.base.shared.entities.Document;
 
 public final class MergeMultipleBookingsOptionsRequest extends SetEntityFieldRequest {
 
-    private final static String OPERATION_CODE = "MergeMultipleBookingsOptions";
+  private static final String OPERATION_CODE = "MergeMultipleBookingsOptions";
 
-    public MergeMultipleBookingsOptionsRequest(Document document, Pane parentContainer) {
-        super(document, "triggerMergeFromOtherMultipleBookings", "true", "Please confirm", parentContainer);
-    }
+  public MergeMultipleBookingsOptionsRequest(Document document, Pane parentContainer) {
+    super(
+        document,
+        "triggerMergeFromOtherMultipleBookings",
+        "true",
+        "Please confirm",
+        parentContainer);
+  }
 
-    @Override
-    public Object getOperationCode() {
-        return OPERATION_CODE;
-    }
+  @Override
+  public Object getOperationCode() {
+    return OPERATION_CODE;
+  }
 }

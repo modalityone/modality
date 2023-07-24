@@ -1,54 +1,52 @@
 package one.modality.base.client.aggregates.cart;
 
+import dev.webfx.platform.async.Future;
+import dev.webfx.stack.orm.domainmodel.DataSourceModel;
+import dev.webfx.stack.orm.entity.EntityList;
+import java.util.List;
+import one.modality.base.client.aggregates.event.EventAggregate;
 import one.modality.base.shared.entities.Cart;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.MoneyTransfer;
-import one.modality.base.client.aggregates.event.EventAggregate;
-import dev.webfx.stack.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.orm.entity.EntityList;
-import dev.webfx.platform.async.Future;
-
-import java.util.List;
 
 /**
  * @author Bruno Salmon
  */
 public interface CartAggregate {
 
-    static CartAggregate get(Object cartIdOrUuid) {
-        return CartAggregateImpl.get(cartIdOrUuid);
-    }
+  static CartAggregate get(Object cartIdOrUuid) {
+    return CartAggregateImpl.get(cartIdOrUuid);
+  }
 
-    static CartAggregate getOrCreate(Object cartIdOrUuid, DataSourceModel dataSourceModel) {
-        return CartAggregateImpl.getOrCreate(cartIdOrUuid, dataSourceModel);
-    }
+  static CartAggregate getOrCreate(Object cartIdOrUuid, DataSourceModel dataSourceModel) {
+    return CartAggregateImpl.getOrCreate(cartIdOrUuid, dataSourceModel);
+  }
 
-    static CartAggregate getOrCreateFromCart(Cart cart) {
-        return CartAggregateImpl.getOrCreateFromCart(cart);
-    }
+  static CartAggregate getOrCreateFromCart(Cart cart) {
+    return CartAggregateImpl.getOrCreateFromCart(cart);
+  }
 
-    static CartAggregate getOrCreateFromDocument(Document document) {
-        return CartAggregateImpl.getOrCreateFromDocument(document);
-    }
+  static CartAggregate getOrCreateFromDocument(Document document) {
+    return CartAggregateImpl.getOrCreateFromDocument(document);
+  }
 
-    Future<Cart> onCart();
+  Future<Cart> onCart();
 
-    Cart getCart();
+  Cart getCart();
 
-    Future<List<Document>> onCartDocuments();
+  Future<List<Document>> onCartDocuments();
 
-    List<Document> getCartDocuments();
+  List<Document> getCartDocuments();
 
-    Future<EntityList> onCartPayments();
+  Future<EntityList> onCartPayments();
 
-    EntityList<MoneyTransfer> getCartPayments();
+  EntityList<MoneyTransfer> getCartPayments();
 
-    void unload();
+  void unload();
 
-    boolean isLoading();
+  boolean isLoading();
 
-    boolean isLoaded();
+  boolean isLoaded();
 
-    EventAggregate getEventAggregate();
-
+  EventAggregate getEventAggregate();
 }

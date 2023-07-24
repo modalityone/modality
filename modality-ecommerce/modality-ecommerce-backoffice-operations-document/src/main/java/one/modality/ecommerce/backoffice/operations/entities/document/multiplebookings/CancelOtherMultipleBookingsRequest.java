@@ -6,14 +6,15 @@ import one.modality.base.shared.entities.Document;
 
 public final class CancelOtherMultipleBookingsRequest extends SetEntityFieldRequest {
 
-    private final static String OPERATION_CODE = "CancelOtherMultipleBookings";
+  private static final String OPERATION_CODE = "CancelOtherMultipleBookings";
 
-    public CancelOtherMultipleBookingsRequest(Document document, Pane parentContainer) {
-        super(document, "triggerCancelOtherMultipleBookings", "true", "Please confirm", parentContainer);
-    }
+  public CancelOtherMultipleBookingsRequest(Document document, Pane parentContainer) {
+    super(
+        document, "triggerCancelOtherMultipleBookings", "true", "Please confirm", parentContainer);
+  }
 
-    @Override
-    public Object getOperationCode() {
-        return OPERATION_CODE;
-    }
+  @Override
+  public Object getOperationCode() {
+    return OPERATION_CODE;
+  }
 }

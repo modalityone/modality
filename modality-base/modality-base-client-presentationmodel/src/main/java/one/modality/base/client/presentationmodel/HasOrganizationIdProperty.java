@@ -7,14 +7,13 @@ import javafx.beans.property.ObjectProperty;
  */
 public interface HasOrganizationIdProperty {
 
-    ObjectProperty<Object> organizationIdProperty();
+  ObjectProperty<Object> organizationIdProperty();
 
-    default void setOrganizationId(Object organizationId) {
-        this.organizationIdProperty().setValue(organizationId);
-    }
+  default void setOrganizationId(Object organizationId) {
+    this.organizationIdProperty().setValue(organizationId);
+  }
 
-    default Object getOrganizationId() {
-        return this.organizationIdProperty().getValue();
-    }
-
+  default Object getOrganizationId() {
+    return this.organizationIdProperty().getValue();
+  }
 }

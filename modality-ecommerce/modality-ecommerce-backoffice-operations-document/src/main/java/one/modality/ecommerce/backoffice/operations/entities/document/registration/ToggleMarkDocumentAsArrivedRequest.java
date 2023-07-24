@@ -6,15 +6,14 @@ import one.modality.base.shared.entities.Document;
 
 public final class ToggleMarkDocumentAsArrivedRequest extends ToggleBooleanEntityFieldRequest {
 
-    private final static String OPERATION_CODE = "ToggleMarkDocumentAsArrived";
+  private static final String OPERATION_CODE = "ToggleMarkDocumentAsArrived";
 
-    public ToggleMarkDocumentAsArrivedRequest(Document document, Pane parentContainer) {
-        super(document, "arrived", null, parentContainer);
-    }
+  public ToggleMarkDocumentAsArrivedRequest(Document document, Pane parentContainer) {
+    super(document, "arrived", null, parentContainer);
+  }
 
-    @Override
-    public Object getOperationCode() {
-        return OPERATION_CODE;
-    }
-
+  @Override
+  public Object getOperationCode() {
+    return OPERATION_CODE;
+  }
 }

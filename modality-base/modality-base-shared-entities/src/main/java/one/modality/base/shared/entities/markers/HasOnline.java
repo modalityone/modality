@@ -5,8 +5,7 @@ package one.modality.base.shared.entities.markers;
  */
 public interface HasOnline {
 
-    void setOnline(Boolean online);
+  void setOnline(Boolean online);
 
-    Boolean isOnline();
-
+  Boolean isOnline();
 }

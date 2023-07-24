@@ -5,14 +5,13 @@ package one.modality.ecommerce.payment.direct;
  */
 public class MakeDirectPaymentResult {
 
-    private final boolean success;
+  private final boolean success;
 
-    public MakeDirectPaymentResult(boolean success) {
-        this.success = success;
-    }
+  public MakeDirectPaymentResult(boolean success) {
+    this.success = success;
+  }
 
-    public boolean isSuccess() {
-        return success;
-    }
-
+  public boolean isSuccess() {
+    return success;
+  }
 }

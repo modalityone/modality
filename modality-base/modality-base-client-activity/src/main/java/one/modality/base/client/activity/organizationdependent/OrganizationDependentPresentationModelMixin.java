@@ -2,23 +2,23 @@ package one.modality.base.client.activity.organizationdependent;
 
 import javafx.beans.property.ObjectProperty;
 
-public interface OrganizationDependentPresentationModelMixin extends OrganizationDependentPresentationModel {
+public interface OrganizationDependentPresentationModelMixin
+    extends OrganizationDependentPresentationModel {
 
-    OrganizationDependentPresentationModel getPresentationModel();
+  OrganizationDependentPresentationModel getPresentationModel();
 
-    @Override
-    default ObjectProperty<Object> organizationIdProperty() {
-        return getPresentationModel().organizationIdProperty();
-    }
+  @Override
+  default ObjectProperty<Object> organizationIdProperty() {
+    return getPresentationModel().organizationIdProperty();
+  }
 
-    @Override
-    default void setOrganizationId(Object organizationId) {
-        getPresentationModel().setOrganizationId(organizationId);
-    }
+  @Override
+  default void setOrganizationId(Object organizationId) {
+    getPresentationModel().setOrganizationId(organizationId);
+  }
 
-    @Override
-    default Object getOrganizationId() {
-        return getPresentationModel().getOrganizationId();
-    }
-
+  @Override
+  default Object getOrganizationId() {
+    return getPresentationModel().getOrganizationId();
+  }
 }

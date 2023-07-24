@@ -6,35 +6,34 @@ import one.modality.base.client.activity.eventdependent.EventDependentViewDomain
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 
-final class StatisticsActivity extends EventDependentViewDomainActivity implements
-        OperationActionFactoryMixin {
+final class StatisticsActivity extends EventDependentViewDomainActivity
+    implements OperationActionFactoryMixin {
 
-    private final StatisticsGanttCanvas statisticsGanttCanvas = new StatisticsGanttCanvas();
+  private final StatisticsGanttCanvas statisticsGanttCanvas = new StatisticsGanttCanvas();
 
-    @Override
-    public Node buildUi() {
-        return statisticsGanttCanvas.buildCanvasContainer();
-    }
+  @Override
+  public Node buildUi() {
+    return statisticsGanttCanvas.buildCanvasContainer();
+  }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        FXGanttVisibility.setGanttVisibility(GanttVisibility.EVENTS);
-    }
+  @Override
+  public void onResume() {
+    super.onResume();
+    FXGanttVisibility.setGanttVisibility(GanttVisibility.EVENTS);
+  }
 
-    @Override
-    public void onPause() {
-        FXGanttVisibility.setGanttVisibility(GanttVisibility.HIDDEN);
-        super.onPause();
-    }
+  @Override
+  public void onPause() {
+    FXGanttVisibility.setGanttVisibility(GanttVisibility.HIDDEN);
+    super.onPause();
+  }
 
-    /*==================================================================================================================
-    =================================================== Logical layer ==================================================
-    ==================================================================================================================*/
+  /*==================================================================================================================
+  =================================================== Logical layer ==================================================
+  ==================================================================================================================*/
 
-    @Override
-    protected void startLogic() {
-        statisticsGanttCanvas.startLogic(this);
-    }
-
+  @Override
+  protected void startLogic() {
+    statisticsGanttCanvas.startLogic(this);
+  }
 }

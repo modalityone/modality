@@ -11,13 +11,13 @@ import one.modality.base.shared.entities.ScheduledResource;
  */
 public final class ScheduledResourceImpl extends DynamicEntity implements ScheduledResource {
 
-    public ScheduledResourceImpl(EntityId id, EntityStore store) {
-        super(id, store);
-    }
+  public ScheduledResourceImpl(EntityId id, EntityStore store) {
+    super(id, store);
+  }
 
-    public static final class ProvidedFactory extends EntityFactoryProviderImpl<ScheduledResource> {
-        public ProvidedFactory() {
-            super(ScheduledResource.class, ScheduledResourceImpl::new);
-        }
+  public static final class ProvidedFactory extends EntityFactoryProviderImpl<ScheduledResource> {
+    public ProvidedFactory() {
+      super(ScheduledResource.class, ScheduledResourceImpl::new);
     }
+  }
 }

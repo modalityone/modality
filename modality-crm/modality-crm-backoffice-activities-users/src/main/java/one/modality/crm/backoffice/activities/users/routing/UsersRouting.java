@@ -5,10 +5,9 @@ package one.modality.crm.backoffice.activities.users.routing;
  */
 public final class UsersRouting {
 
-    private final static String PATH = "/users";
+  private static final String PATH = "/users";
 
-    public static String getPath() {
-        return PATH;
-    }
-
+  public static String getPath() {
+    return PATH;
+  }
 }

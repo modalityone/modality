@@ -2,11 +2,10 @@
 
 module modality.base.client.presentationmodel {
 
-    // Direct dependencies modules
-    requires javafx.base;
-    requires modality.base.shared.entities;
+  // Direct dependencies modules
+  requires javafx.base;
+  requires modality.base.shared.entities;
 
-    // Exported packages
-    exports one.modality.base.client.presentationmodel;
-
+  // Exported packages
+  exports one.modality.base.client.presentationmodel;
 }

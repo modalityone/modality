@@ -1,23 +1,22 @@
 package one.modality.event.client.businessdata.calendar;
 
 import javafx.beans.property.Property;
+import javafx.scene.paint.Paint;
 import one.modality.hotel.shared.businessdata.time.DateTimeRange;
 import one.modality.hotel.shared.businessdata.time.DayTimeRange;
-import javafx.scene.paint.Paint;
 
 /**
  * @author Bruno Salmon
  */
 public interface CalendarTimeline {
 
-    DateTimeRange getDateTimeRange();
+  DateTimeRange getDateTimeRange();
 
-    DayTimeRange getDayTimeRange();
+  DayTimeRange getDayTimeRange();
 
-    Property<String> displayNameProperty();
+  Property<String> displayNameProperty();
 
-    Paint getBackgroundFill();
+  Paint getBackgroundFill();
 
-    Object getSource();
-
+  Object getSource();
 }

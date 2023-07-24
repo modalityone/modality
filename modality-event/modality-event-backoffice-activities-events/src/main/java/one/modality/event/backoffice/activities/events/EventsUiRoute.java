@@ -11,16 +11,15 @@ import one.modality.event.backoffice.activities.events.routing.EventsRouting;
  */
 public final class EventsUiRoute extends UiRouteImpl {
 
-    public EventsUiRoute() {
-        super(uiRoute());
-    }
+  public EventsUiRoute() {
+    super(uiRoute());
+  }
 
-    public static UiRoute<?> uiRoute() {
-        return UiRoute.createRegex(
-                PathBuilder.toRegexPath(EventsRouting.getAnyPath())
-                , false
-                , EventsActivity::new
-                , ViewDomainActivityContextFinal::new
-        );
-    }
+  public static UiRoute<?> uiRoute() {
+    return UiRoute.createRegex(
+        PathBuilder.toRegexPath(EventsRouting.getAnyPath()),
+        false,
+        EventsActivity::new,
+        ViewDomainActivityContextFinal::new);
+  }
 }

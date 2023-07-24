@@ -7,14 +7,13 @@ import one.modality.base.client.util.routing.ModalityRoutingUtil;
  */
 public final class PersonRouting {
 
-    private final static String PATH = "/book/event/:eventId/person";
+  private static final String PATH = "/book/event/:eventId/person";
 
-    public static String getPath() {
-        return PATH;
-    }
+  public static String getPath() {
+    return PATH;
+  }
 
-    public static String getPersonPath(Object eventId) {
-        return ModalityRoutingUtil.interpolateEventIdInPath(eventId, PATH);
-    }
-
+  public static String getPersonPath(Object eventId) {
+    return ModalityRoutingUtil.interpolateEventIdInPath(eventId, PATH);
+  }
 }
