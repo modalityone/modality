@@ -58,13 +58,13 @@ public final class FXEventId {
                                         .onSuccess(
                                                 list -> // on successfully receiving the list
                                                         // (should be a singleton list)
-                                                FXEvent.setEvent(
+                                                        FXEvent.setEvent(
                                                                 list.isEmpty()
                                                                         ? null
                                                                         : list.get(
                                                                                 0))); // we finally
-                                                                                      // set
-                                                                                      // FXOrganization
+                            // set
+                            // FXOrganization
                         }
                     }
                 }

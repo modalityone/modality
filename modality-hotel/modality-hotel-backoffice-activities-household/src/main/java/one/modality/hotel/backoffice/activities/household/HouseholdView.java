@@ -48,7 +48,7 @@ final class HouseholdView {
                 new AttendanceGantt(
                         pm, // Presentation model
                         attendances, // attendances observable list that we provide as input to
-                                     // AttendanceGantt for bar conversion
+                        // AttendanceGantt for bar conversion
                         resourceConfigurationLoader
                                 .getResourceConfigurations()) // the provided parent rooms
                 { // We also override getBarColor() to show checked-in attendees as gray
@@ -265,7 +265,7 @@ final class HouseholdView {
                                         "a.date +1 >= ? and a.date -1 <= ? or a.documentLine.document.arrived and a.scheduledResource.configuration.(lastCleaningDate == null or lastCleaningDate < a.date)",
                                         pm.getTimeWindowStart(),
                                         endDate)) // -1 is to avoid the round corners on right for
-                                                  // bookings exceeding the time window
+                // bookings exceeding the time window
                 // Storing the result directly in the events layer
                 .storeEntitiesInto(attendances)
                 // We are now ready to start

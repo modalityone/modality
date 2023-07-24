@@ -21,7 +21,7 @@ public interface EntityHasMaxDateTimeRange extends Entity, HasMaxDateTimeRange {
 
     default DateTimeRange
             getParsedMaxDateTimeRange() { // Should be overridden by implementing class to have a
-                                          // cached value
+        // cached value
         return DateTimeRange.parse(getMaxDateTimeRange());
     }
 }

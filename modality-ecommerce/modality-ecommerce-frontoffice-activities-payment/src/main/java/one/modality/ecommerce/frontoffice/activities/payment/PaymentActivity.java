@@ -86,9 +86,8 @@ final class PaymentActivity extends CartBasedActivity {
 
     @Override
     protected void onCartLoaded() {
-        super
-                .onCartLoaded(); // Applying the css background of the event if provided and if ui
-                                 // is ready
+        super.onCartLoaded(); // Applying the css background of the event if provided and if ui
+        // is ready
         displayDocumentPaymentsIfReady();
     }
 
@@ -157,18 +156,16 @@ final class PaymentActivity extends CartBasedActivity {
 
         Node getNode() {
             if (node == null) {
-                String title =
-                        document.getRef()
-                                + " - "
-                                + document
-                                        .getFullName(); // + " - " +
-                                                        // I18n.instantTranslate("Booking") + " " +
-                                                        // document.getRef() + "   " +
-                                                        // I18n.instantTranslate("Fee:") + " " +
-                                                        // formatCurrency(document.getPriceNet()) +
-                                                        // "   " + I18n.instantTranslate("Deposit:")
-                                                        // + " " +
-                                                        // formatCurrency(document.getPriceDeposit()) + "   " + I18n.instantTranslate("MinDeposit:") + " " + formatCurrency(document.getPriceMinDeposit());
+                String title = document.getRef() + " - " + document.getFullName(); // + " - " +
+                // I18n.instantTranslate("Booking") + " " +
+                // document.getRef() + "   " +
+                // I18n.instantTranslate("Fee:") + " " +
+                // formatCurrency(document.getPriceNet()) +
+                // "   " + I18n.instantTranslate("Deposit:")
+                // + " " +
+                // formatCurrency(document.getPriceDeposit()) + "   " +
+                // I18n.instantTranslate("MinDeposit:") + " " +
+                // formatCurrency(document.getPriceMinDeposit());
                 BorderPane bp =
                         SectionPanelFactory.createSectionPanelWithHeaderNodes(
                                 new Label(title), LayoutUtil.createHGrowable(), newLabel("Amount"));
@@ -220,9 +217,8 @@ final class PaymentActivity extends CartBasedActivity {
         private RadioButton addRadioButton(int price, Object translationKey) {
             RadioButton rb =
                     new RadioButton(
-                            formatCurrency(
-                                    price)); // + (translationKey == null ? "" : " (" +
-                                             // I18n.instantTranslate(translationKey) + ")"));
+                            formatCurrency(price)); // + (translationKey == null ? "" : " (" +
+            // I18n.instantTranslate(translationKey) + ")"));
             rb.setToggleGroup(radioGroup);
             rb.setOnAction(e -> updateAmount(price, true));
             addNode(rb);

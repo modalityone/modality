@@ -53,9 +53,8 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity
         implements ConventionalUiBuilderMixin, OperationActionFactoryMixin {
 
     private static final DataFormat dndDataFormat =
-            DataFormat
-                    .PLAIN_TEXT; // Using standard plain text format to ensure drag & drop works
-                                 // between applications
+            DataFormat.PLAIN_TEXT; // Using standard plain text format to ensure drag & drop works
+    // between applications
 
     private final MoneyTransferEntityGraph graph = new MoneyTransferEntityGraph();
     private final MoneyFlowsPresentationModel pm = new MoneyFlowsPresentationModel();
@@ -216,7 +215,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity
                                 s -> DqlStatement.where("name like ?", AbcNames.evaluate(s, true)))
                         .applyDomainModelRowStyle() // Colorizing the rows
                         .autoSelectSingleRow() // When the result is a singe row, automatically
-                                               // select it
+                        // select it
                         .visualizeResultInto(pm.moneyAccountsVisualResultProperty())
                         .setVisualSelectionProperty(pm.moneyAccountsVisualSelectionProperty())
                         .setSelectedEntityHandler(
@@ -243,7 +242,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity
                                 organization -> where("organization=?", organization))
                         .applyDomainModelRowStyle() // Colorizing the rows
                         .autoSelectSingleRow() // When the result is a singe row, automatically
-                                               // select it
+                        // select it
                         .visualizeResultInto(pm.moneyFlowsVisualResultProperty())
                         .setVisualSelectionProperty(pm.moneyFlowsVisualSelectionProperty())
                         .setSelectedEntityHandler(entity -> graph.selectedMoneyFlow().set(entity))

@@ -43,7 +43,7 @@ public final class HotelShuttleRule extends BusinessRule {
                 hotelShuttleLines =
                         new ArrayList<>(
                                 hotelShuttleLines); // Duplicating the list because updated shuttle
-                                                    // lines will be removed from that list
+                // lines will be removed from that list
                 // Iterating over each accommodation line to add or update the associated hotel
                 // shuttle lines
                 for (WorkingDocumentLine accommodationLine :
@@ -84,7 +84,7 @@ public final class HotelShuttleRule extends BusinessRule {
             DaysArray hotelShuttleDays =
                     accommodationDays.shift(
                             shiftDays); // same attendance as accommodation for inward and +1 day
-                                        // for return shuttle
+            // for return shuttle
             // All checks passed, so we need to add hotel shuttle!
             // Trying to update an existing hotel shuttle line (it must be the one overlapping that
             // period if several)
@@ -105,7 +105,7 @@ public final class HotelShuttleRule extends BusinessRule {
                 hotelShuttleLine.setDaysArray(hotelShuttleDays);
                 hotelShuttleLines.remove(
                         hotelShuttleLine); // Also removing it from the list to not reuse it for a
-                                           // second update
+                // second update
             } else if (selectedHotelShuttleOption != null) // If not found, creating a new line
             addNewDependentLine(
                         accommodationLine.getWorkingDocument(),

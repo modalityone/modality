@@ -95,7 +95,7 @@ public class TimeTheme implements Theme {
 
     public static void
             register() {} // Can be called several times, but only the first call will trigger the
-                          // static initializer below
+    // static initializer below
 
     static {
         ThemeRegistry.registerTheme(TIME_THEME);

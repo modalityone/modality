@@ -77,9 +77,8 @@ final class SiteRateItemBlock {
                         if (startDate != null && date.compareTo(startDate) < 0
                                 || endDate != null && date.compareTo(endDate) > 0) continue;
                     }
-                    int quantity =
-                            1; // rate.perPerson && dl.share_owner && dl.capacity ?
-                               // dl.capacity.capacity : 1;
+                    int quantity = 1; // rate.perPerson && dl.share_owner && dl.capacity ?
+                    // dl.capacity.capacity : 1;
                     int ratePrice = getRatePrice(rate) * quantity;
                     int minDay = Objects.coalesce(rate.getMinDay(), 1);
                     int maxDay = rate.isPerDay() ? 1 : Objects.coalesce(rate.getMaxDay(), 10000);
@@ -94,9 +93,8 @@ final class SiteRateItemBlock {
                     if (blockLength < minDay
                             && maxDay == 1) { // So if the block is less than the rate min day,
                         ratePrice =
-                                ratePrice
-                                        * minDay; // we transform the daily rate into a fixed rate
-                                                  // with the upper limit
+                                ratePrice * minDay; // we transform the daily rate into a fixed rate
+                        // with the upper limit
                         maxDay = minDay; // that applies over that period
                     }
                     if (startDate == null

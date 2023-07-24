@@ -122,7 +122,7 @@ public final class GroupView<E extends Entity>
         GroupView<E> groupView =
                 new GroupView<>(
                         tableOnly); // Note: tableOnly=false (ie with charts)  may cause performance
-                                    // issue TODO: to be fixed
+        // issue TODO: to be fixed
         groupView.doDataBinding(pm);
         return groupView;
     }
@@ -224,9 +224,8 @@ public final class GroupView<E extends Entity>
             // Searching the value column where to extract figures of the series => simply choosing
             // the first column where type is numeric
             int valueCol =
-                    colCount
-                            - 1; // in case it's not found for any reason, we take the last column
-                                 // by default
+                    colCount - 1; // in case it's not found for any reason, we take the last column
+            // by default
             for (int col = 0; col < colCount; col++) {
                 VisualColumn column = rs.getColumns()[col];
                 Type type = column.getType();

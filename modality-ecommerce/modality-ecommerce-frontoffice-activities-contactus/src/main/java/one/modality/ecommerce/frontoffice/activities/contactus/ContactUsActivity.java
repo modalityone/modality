@@ -133,7 +133,7 @@ final class ContactUsActivity extends ViewDomainActivityBase implements Modality
         mail.setContent(content);
         mail.setOut(
                 false); // indicate that this mail is not an outgoing email (sent to booker) but an
-                        // ingoing mail (sent to registration team)
+        // ingoing mail (sent to registration team)
         History history = updateStore.insertEntity(History.class); // new server history entry
         history.setDocument(doc);
         history.setMail(mail);

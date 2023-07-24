@@ -33,13 +33,13 @@ public class AttendanceGantt extends AccommodationGantt<AttendanceBlock> {
         if (convertedBars == null) convertedBars = barsLayout.getChildren();
         TimeBarUtil.convertToBlocksThenGroupToBars(
                 attendancesToConvertToBars, // the observable list of Attendance entities to take as
-                                            // input
+                // input
                 Attendance::getDate, // the entity date reader that will be used to date each block
                 AttendanceBlock
                         ::new, // the factory that creates blocks, initially 1 instance per entity,
-                               // but then grouped into bars
+                // but then grouped into bars
                 convertedBars); // the final list of bars that will receive the result of grouping
-                                // blocks
+        // blocks
         showBeds();
     }
 

@@ -11,11 +11,11 @@ import one.modality.base.shared.entities.Event;
  */
 public final
 class EventTheme { // Used for canvas operations only so far but should implement Theme later for
-                   // Nodes
+    // Nodes
 
     public static Color getEventTextColor() {
         return // PaletteMode.isEssentialPalette() ?
-               // TextTheme.getTextColor(TextFacetCategory.PRIMARY_TEXT_FACET) :
+        // TextTheme.getTextColor(TextFacetCategory.PRIMARY_TEXT_FACET) :
         Color.WHITE;
     }
 

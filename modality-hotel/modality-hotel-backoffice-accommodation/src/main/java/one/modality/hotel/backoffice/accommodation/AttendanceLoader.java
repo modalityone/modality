@@ -79,16 +79,16 @@ public final class AttendanceLoader {
                                             where(
                                                     "a.date +1 >= ?",
                                                     startDate)) // +1 is to avoid the round corners
-                                                                // on left  for bookings exceeding
-                                                                // the time window
+                            // on left  for bookings exceeding
+                            // the time window
                             .always(
                                     pm.timeWindowEndProperty(),
                                     endDate ->
                                             where(
                                                     "a.date -1 <= ?",
                                                     endDate)) // -1 is to avoid the round corners on
-                                                              // right for bookings exceeding the
-                                                              // time window
+                            // right for bookings exceeding the
+                            // time window
                             // Storing the result directly in the events layer
                             .storeEntitiesInto(attendances)
                             // We are now ready to start

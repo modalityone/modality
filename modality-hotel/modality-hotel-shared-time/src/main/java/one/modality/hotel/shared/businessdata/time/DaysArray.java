@@ -75,7 +75,7 @@ public class DaysArray implements Iterable<Long> {
 
             public void
                     remove() { // necessary for GWT compilation (perhaps they haven't written the
-                               // default method)
+                // default method)
                 throw new UnsupportedOperationException("remove");
             }
         };
@@ -101,7 +101,7 @@ public class DaysArray implements Iterable<Long> {
 
             public void
                     remove() { // necessary for GWT compilation (perhaps they haven't written the
-                               // default method)
+                // default method)
                 throw new UnsupportedOperationException("remove");
             }
         };

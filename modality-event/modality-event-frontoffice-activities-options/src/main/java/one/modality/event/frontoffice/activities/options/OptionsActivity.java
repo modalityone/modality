@@ -49,8 +49,8 @@ public class OptionsActivity extends BookingProcessActivity {
     protected void startLogic() {
         boolean forceRefresh =
                 true; // getEventOptions() == null; // forcing refresh in case the working document
-                      // has changed (ex: going back from the personal details after having changed
-                      // the age)
+        // has changed (ex: going back from the personal details after having changed
+        // the age)
         onEventFeesGroups()
                 .onFailure(Console::log)
                 .onSuccess(

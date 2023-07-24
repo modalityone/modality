@@ -54,8 +54,8 @@ public final class FXOrganizationId {
                             // instance
                             if (organization != null) FXOrganization.setOrganization(organization);
                             else // Otherwise, we request the server to load that organization from
-                                 // that id
-                            organizationStore
+                                // that id
+                                organizationStore
                                         .<Organization>executeQuery(
                                                 "select name,type,country from Organization where id=?",
                                                 organizationId)
@@ -63,13 +63,13 @@ public final class FXOrganizationId {
                                         .onSuccess(
                                                 list -> // on successfully receiving the list
                                                         // (should be a singleton list)
-                                                FXOrganization.setOrganization(
+                                                        FXOrganization.setOrganization(
                                                                 list.isEmpty()
                                                                         ? null
                                                                         : list.get(
                                                                                 0))); // we finally
-                                                                                      // set
-                                                                                      // FXOrganization
+                            // set
+                            // FXOrganization
                         }
                     }
                 }

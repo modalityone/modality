@@ -250,15 +250,12 @@ final class OptionTreeNode {
                                         + option.getPrimaryKey()
                                         + " and online and site!=null', orderBy: 'ord'}",
                                 activity,
-                                () ->
-                                        (Pane)
-                                                activity
-                                                        .getNode(), // passing the parent getter for
-                                                                    // a future access because it is
-                                                                    // not immediately available
-                                                                    // (since we haven't yet
-                                                                    // finished building the
-                                                                    // activity UI)
+                                () -> (Pane) activity.getNode(), // passing the parent getter for
+                                // a future access because it is
+                                // not immediately available
+                                // (since we haven't yet
+                                // finished building the
+                                // activity UI)
                                 activity.getDataSourceModel());
                 childrenOptionSelector.setRestrictedFilterList(new ArrayList<>());
                 Node selectNode =
@@ -282,10 +279,9 @@ final class OptionTreeNode {
                             OptionTreeNode::createOptionBodyPane,
                             Objects::nonNull));
         }
-        if (parent
-                != null) // visibility binding is not necessary at top level because the body is
-                         // embed in the section where visibility is already managed
-        bindToVisibleProperty(optionBodyPane);
+        if (parent != null) // visibility binding is not necessary at top level because the body is
+            // embed in the section where visibility is already managed
+            bindToVisibleProperty(optionBodyPane);
         return optionBodyPane;
     }
 
@@ -338,7 +334,7 @@ final class OptionTreeNode {
                 optionButton = checkBox;
                 setUserExplicitSelection(
                         false); // A checkbox selection is always explicit and it is not selected at
-                                // application
+                // application
                 LayoutUtil.setUnmanagedWhenInvisible(checkBox);
             }
             if (optionButton != null) {
@@ -446,7 +442,7 @@ final class OptionTreeNode {
 
     private void syncUiOptionButtonSelected(boolean modelSelected) {
         if (canOptionButtonSelectionBeChanged()) { // obligatory options should not be ui updated
-                                                   // (ex: Airport transfer section)
+            // (ex: Airport transfer section)
             if (modelSelected
                     && topLevelOptionButton != null
                     && userExplicitSelection

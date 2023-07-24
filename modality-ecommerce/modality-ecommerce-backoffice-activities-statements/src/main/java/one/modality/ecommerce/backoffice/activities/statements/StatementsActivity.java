@@ -147,7 +147,7 @@ final class StatementsActivity extends EventDependentViewDomainActivity
                                                                 AbcNames.evaluate(s, true)))
                         .applyDomainModelRowStyle() // Colorizing the rows
                         .autoSelectSingleRow() // When the result is a singe row, automatically
-                                               // select it
+                        // select it
                         .start();
 
         slaveVisualMapper =

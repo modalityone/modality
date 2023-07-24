@@ -299,11 +299,8 @@ public final class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         // rsb.setValue(5, 1, model.getPostCode());
         rsb.setValue(5, 2, I18n.getI18nText("Country:"));
         rsb.setValue(5, 3, model.getCountryName());
-        VisualGrid visualGrid =
-                new VisualGrid(
-                        rsb
-                                .build()); // LayoutUtil.setMinMaxHeightToPref(new
-                                           // DataGrid(rsb.build()));
+        VisualGrid visualGrid = new VisualGrid(rsb.build()); // LayoutUtil.setMinMaxHeightToPref(new
+        // DataGrid(rsb.build()));
         visualGrid.setHeaderVisible(false);
         visualGrid.setFullHeight(true);
         visualGrid.setSelectionMode(SelectionMode.DISABLED);

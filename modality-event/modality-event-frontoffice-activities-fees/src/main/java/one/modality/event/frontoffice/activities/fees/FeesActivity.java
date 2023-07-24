@@ -105,10 +105,8 @@ final class FeesActivity extends BookingProcessActivity {
                                 I18n.dictionaryProperty(),
                                 activeProperty(),
                                 Pair::new), // combine function
-                        pair ->
-                                pair
-                                        .get2()), // filter function (GWT doesn't compile method
-                                                  // reference in this case)
+                        pair -> pair.get2()), // filter function (GWT doesn't compile method
+                // reference in this case)
                 pair -> refreshOnDictionaryChanged());
     }
 
@@ -148,9 +146,9 @@ final class FeesActivity extends BookingProcessActivity {
         if (getEvent() == null
                 || feesGroups
                         == null) // This can happen when reacting to active property while the event
-                                 // has just changed and is not yet loaded
-        return; // We return to avoid NPE (this method will be called again once the event is
-                // loaded)
+            // has just changed and is not yet loaded
+            return; // We return to avoid NPE (this method will be called again once the event is
+        // loaded)
         UiScheduler.runOutUiThread(this::displayFeesGroupsNow);
     }
 
@@ -241,25 +239,24 @@ final class FeesActivity extends BookingProcessActivity {
                                                             .hasAccommodationExcludingSharing()) // ... if it's an accommodation option (but not just sharing)
                                             availability =
                                                         0; // we show it as sold out - otherwise (if
-                                                           // it's a sharing option or no
-                                                           // accommodation) we show it as available
+                                            // it's a sharing option or no
+                                            // accommodation) we show it as available
                                             boolean soldout =
                                                     availability != null
                                                                     && Numbers.doubleValue(
                                                                                     availability)
                                                                             <= 0
                                                             || // Showing sold out if the
-                                                               // availability is zero
+                                                            // availability is zero
                                                             optionsPreselection.isForceSoldout()
                                                             || // or if the option has been forced
-                                                               // as sold out in the back-office
-                                                            feesGroup
-                                                                    .isForceSoldout(); // or if the
-                                                                                       // whole
-                                                                                       // FeesGroup
-                                                                                       // has been
-                                                                                       // forced as
-                                                                                       // sold out
+                                                            // as sold out in the back-office
+                                                            feesGroup.isForceSoldout(); // or if the
+                                            // whole
+                                            // FeesGroup
+                                            // has been
+                                            // forced as
+                                            // sold out
                                             if (soldout) return buttonFactory.newSoldoutButton();
                                             Button button = buttonFactory.newBookButton();
                                             button.setOnAction(

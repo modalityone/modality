@@ -21,7 +21,7 @@ final class Sha1 {
                     msg.getBytes(
                             StandardCharsets
                                     .UTF_8); // convert string to UTF-8, as SHA only deals with
-                                             // byte-streams
+            // byte-streams
             /* Commented as this code compile but doesn't work with GWT (NoSuchAlgorithmException is thrown)
                         MessageDigest crypt = MessageDigest.getInstance("SHA-1");
                         crypt.reset();
@@ -93,12 +93,8 @@ final class Sha1 {
 
             // 3 - main loop
             for (int t = 0; t < 80; t++) {
-                int s =
-                        (int)
-                                Math.floor(
-                                        t
-                                                / 20); // seq for blocks of 'f' functions and 'K'
-                                                       // constants
+                int s = (int) Math.floor(t / 20); // seq for blocks of 'f' functions and 'K'
+                // constants
                 int T = (rol(a, 5) + f(s, b, c, d) + e + K[s] + W[t]);
                 e = d;
                 d = c;

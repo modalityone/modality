@@ -70,7 +70,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity
                     private List<DomainClass> searchedClasses;
                     private final VisualGrid dialogVisualGrid =
                             new SkinnedVisualGrid(); // Better rendering in desktop JavaFX (but
-                                                     // might be slower in web version)
+                    // might be slower in web version)
 
                     {
                         dialogVisualGrid.setHeaderVisible(false);
@@ -321,7 +321,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity
                                 s -> where("lower(class) = ?", s.toLowerCase()))
                         .applyDomainModelRowStyle() // Colorizing the rows
                         .autoSelectSingleRow() // When the result is a singe row, automatically
-                                               // select it
+                        // select it
                         .visualizeResultInto(pm.filtersVisualResultProperty())
                         .setVisualSelectionProperty(pm.filtersVisualSelectionProperty())
                         .setSelectedEntityHandler(selectedFilter::set)
@@ -374,7 +374,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity
                                                 : where("1 = 0"))
                         .applyDomainModelRowStyle() // Colorizing the rows
                         .autoSelectSingleRow() // When the result is a singe row, automatically
-                                               // select it
+                        // select it
                         .visualizeResultInto(pm.fieldsVisualResultProperty())
                         .setVisualSelectionProperty(pm.fieldsVisualSelectionProperty())
                         .setSelectedEntityHandler(selectedFields::set)
@@ -425,7 +425,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity
                         // AbcNames.evaluate(s, true)))
                         .applyDomainModelRowStyle() // Colorizing the rows
                         .autoSelectSingleRow() // When the result is a singe row, automatically
-                                               // select it
+                        // select it
                         .visualizeResultInto(pm.filterFieldsVisualResultProperty())
                         .addEntitiesHandler(
                                 entities -> displayStatus(entities.size() + " rows displayed."))

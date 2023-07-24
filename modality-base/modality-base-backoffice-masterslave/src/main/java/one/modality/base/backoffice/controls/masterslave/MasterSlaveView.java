@@ -29,7 +29,7 @@ public class MasterSlaveView implements UiBuilder {
     private final StackPane stackPane =
             new StackPane(
                     splitPane); // Embedding the split pane in a stack pane to be able to act as a
-                                // parent pane for the dialog API
+    // parent pane for the dialog API
 
     public MasterSlaveView() {
         this(null, null);

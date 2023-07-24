@@ -163,10 +163,8 @@ public final class StatisticsGanttCanvas {
         // the bar middle
         parentItemDrawer
                 .setMiddleText(item.getName())
-                .drawBar(
-                        b,
-                        gc); // This also draws a rectangle stroke - see properties set in
-                             // constructor
+                .drawBar(b, gc); // This also draws a rectangle stroke - see properties set in
+        // constructor
         // But the wireframe doesn't show a stroke on the left, so we erase it to match the UX
         // design
         gc.fillRect(
@@ -184,12 +182,10 @@ public final class StatisticsGanttCanvas {
         ReactiveEntitiesMapper.<Attendance>createPushReactiveChain(mixin)
                 .always(
                         "{class: 'Attendance', alias: 'a', fields: 'documentLine.item.family,date,count(1) as count', where: 'present and !documentLine.cancelled', groupBy: 'documentLine.item.family,documentLine.item,date'}")
-                .always(
-                        orderBy(
-                                "documentLine.item.family.ord,documentLine.item,date")) // Order is
-                                                                                        // important
-                                                                                        // for
-                                                                                        // TimeBarUtil (see comment on barsLayout)
+                .always(orderBy("documentLine.item.family.ord,documentLine.item,date")) // Order is
+                // important
+                // for
+                // TimeBarUtil (see comment on barsLayout)
                 // Returning events for the selected organization only (or returning an empty set if
                 // no organization is selected)
                 .ifNotNullOtherwiseEmpty(

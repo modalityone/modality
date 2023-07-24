@@ -94,6 +94,6 @@ public final class WorkingDocumentSubmitter {
         wd.getUpdateStore()
                 .deleteEntity(
                         dl); // TODO: should probably be cancelled instead in some cases (and keep
-                             // the non refundable part)
+        // the non refundable part)
     }
 }

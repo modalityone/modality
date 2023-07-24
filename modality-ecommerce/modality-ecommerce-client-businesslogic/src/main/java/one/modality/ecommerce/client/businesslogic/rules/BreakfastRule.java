@@ -94,7 +94,7 @@ public final class BreakfastRule extends BusinessRule {
             breakfastLine.setDaysArray(breakfastDays);
             breakfastLines.remove(
                     breakfastLine); // Also removing it from the list to not reuse it for a second
-                                    // update
+            // update
         }
     }
 

@@ -98,7 +98,7 @@ public final class WorkingDocumentCalendarExtractor {
         final Option option;
         final List<WorkingDocumentLine> workingDocumentLines =
                 new ArrayList<>(); // List because possible multi-lines with same option (ex: early
-                                   // breakfast and festival breakfast)
+        // breakfast and festival breakfast)
         WorkingDocumentLine maxWorkingDocumentLine;
 
         OptionTimeline(Option option, WorkingDocumentLine workingDocumentLine, boolean isMax) {

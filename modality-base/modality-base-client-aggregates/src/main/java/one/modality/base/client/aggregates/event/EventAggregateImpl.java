@@ -157,11 +157,10 @@ final class EventAggregateImpl implements EventAggregate {
                     store.getEntity(
                             "Event",
                             eventId); // eventId may be from the wrong type (ex: String) because
-                                      // coming from the url
-            if (event
-                    == null) // If not found, trying now with integer (should work for Java
-                             // platforms)
-            event = store.getEntity("Event", Numbers.toInteger(eventId));
+            // coming from the url
+            if (event == null) // If not found, trying now with integer (should work for Java
+                // platforms)
+                event = store.getEntity("Event", Numbers.toInteger(eventId));
             if (event
                     == null) // If not found, trying now with double (should work for Web platforms)
             event = store.getEntity("Event", Numbers.toDouble(eventId));
@@ -266,11 +265,11 @@ final class EventAggregateImpl implements EventAggregate {
                                                             .setStatement(
                                                                     "with ra as (select * from resource_availability_by_event_items(?) where max>0),"
                                                                             + // resources with
-                                                                              // max(=max_online)=0
-                                                                              // (like private
-                                                                              // rooms) are not
-                                                                              // displayed in the
-                                                                              // front-office
+                                                                            // max(=max_online)=0
+                                                                            // (like private
+                                                                            // rooms) are not
+                                                                            // displayed in the
+                                                                            // front-office
                                                                             // let's see if some
                                                                             // options for this
                                                                             // event require to have
@@ -291,7 +290,7 @@ final class EventAggregateImpl implements EventAggregate {
                                                                             " (select row_number,      site_id as site,      item_id as item,      date,         max - current as available,      i.ord as ord      from ra join item i on i.id=item_id where     exists(select * from pda where site_id=ra.site_id and (item_id=ra.item_id or item_id is null and item_family_id=i.family_id)) )"
                                                                             + " union "
                                                                             + // union of both
-                                                                              // queries
+                                                                            // queries
                                                                             // for others, we group
                                                                             // by site and item (=>
                                                                             // dates disappears =>

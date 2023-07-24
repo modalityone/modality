@@ -210,13 +210,13 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
 
     public void
             markLayoutAsDirty() { // may be called several times, but only 1 call will happen in the
-                                  // animation frame
+        // animation frame
         globalLayout.markLayoutAsDirty();
     }
 
     public void
             markCanvasAsDirty() { // may be called several times, but only 1 call will happen in the
-                                  // animation frame
+        // animation frame
         globalCanvasDrawer.markDrawAreaAsDirty();
     }
 

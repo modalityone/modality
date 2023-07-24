@@ -111,7 +111,7 @@ public class KitchenActivity extends ViewDomainActivityBase
 
         LuminanceTheme.createPrimaryPanelFacet(container)
                 .style(); // To show the same background if the scroll pane doesn't cover the whole
-                          // area
+        // area
 
         // Updating the query each time the selected month or organization change (this will make
         // the reactive call sending the query to the server)

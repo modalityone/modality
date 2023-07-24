@@ -83,7 +83,7 @@ final class StartBookingActivity extends BookingProcessActivity {
                 .onComplete(
                         ar -> {
                             onEventOptions(); // Anticipating event options loading now (required
-                                              // for options and fees pages)
+                            // for options and fees pages)
                             UiScheduler.runInUiThread(
                                     () -> {
                                         String imageUrl = null;

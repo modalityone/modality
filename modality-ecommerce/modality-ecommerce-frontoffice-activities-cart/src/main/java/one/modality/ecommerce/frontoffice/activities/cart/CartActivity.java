@@ -364,7 +364,7 @@ final class CartActivity extends CartBasedActivity {
     private String getDocumentStatus(
             Document
                     document) { // TODO: return a structure instead with also background and message
-                                // to display in the booking panel (like in javascript version)
+        // to display in the booking panel (like in javascript version)
         if (document == null) return null;
         if (document.isCancelled()) return "CancelledStatus";
         if (!document.isConfirmed()) {

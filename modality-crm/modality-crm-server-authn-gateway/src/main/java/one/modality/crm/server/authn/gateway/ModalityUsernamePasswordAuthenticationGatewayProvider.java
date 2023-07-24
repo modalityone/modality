@@ -70,10 +70,10 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider
                                         usernamePasswordCredentials.getUsername(),
                                         usernamePasswordCredentials
                                                 .getPassword()) // "or true" is temporary to bypass
-                                                                // the password checking which is
-                                                                // now encrypted TODO: implement
-                                                                // encrypted version of password
-                                                                // checking
+                                // the password checking which is
+                                // now encrypted TODO: implement
+                                // encrypted version of password
+                                // checking
                                 .setDataSourceId(getDataSourceId())
                                 .build())
                 .compose(

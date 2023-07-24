@@ -88,9 +88,9 @@ public final class FeesGroupBuilder {
         if (optionsPreselections.isEmpty()
                 || // Ex: a day course or a section with no accommodation (like Food for Thought)
                 addNoAccommodationOption) // If there are accommodation options, checking we can
-                                          // offer no accommodation (not the case for Refresh and
-                                          // Revive Overnighter)
-        addOptionsPreselection(null, dateTimeRange, optionsPreselections);
+            // offer no accommodation (not the case for Refresh and
+            // Revive Overnighter)
+            addOptionsPreselection(null, dateTimeRange, optionsPreselections);
 
         return new FeesGroup(
                 getEvent(),

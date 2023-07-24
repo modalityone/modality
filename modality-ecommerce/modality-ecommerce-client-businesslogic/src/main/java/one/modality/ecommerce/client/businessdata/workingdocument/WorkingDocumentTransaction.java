@@ -72,7 +72,7 @@ public final class WorkingDocumentTransaction {
         // business rules),
         workingDocument
                 .markAsChangedForBusinessRules(); // we call this method to force business rules
-                                                  // execution.
+        // execution.
         workingDocument.applyBusinessRules();
         if (initialWorkingDocumentDateTimeRange != null) {
             // Finally we check if this transaction has changed the working document interval

@@ -144,7 +144,7 @@ public final class ModalityValidationSupport {
                             if (isTextInput) // inside for text inputs
                             isInside = true;
                             else { // for others, will be generally outside unless it is stretched
-                                   // to full width by its container
+                                // to full width by its container
                                 Parent parent = node.getParent();
                                 while (parent instanceof Pane
                                         && !(parent instanceof VBox)
@@ -155,7 +155,7 @@ public final class ModalityValidationSupport {
                                     isInside
                                             ? -1
                                             : 1; // positioning the decoration inside the control
-                                                 // for button and text input
+                            // for button and text input
                             double xOffset =
                                     isInside && isButton
                                             ? -20

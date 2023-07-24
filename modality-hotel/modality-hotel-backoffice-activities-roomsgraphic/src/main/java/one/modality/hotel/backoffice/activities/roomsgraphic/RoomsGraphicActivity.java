@@ -248,8 +248,8 @@ final class RoomsGraphicActivity extends EventDependentViewDomainActivity
                                                                     rc.getPrimaryKey())
                                                             .build())
                                     .unbindActiveProperty() // always active (under parent), no need
-                                                            // for additional (and costly) active
-                                                            // calls
+                                    // for additional (and costly) active
+                                    // calls
                                     .visualizeResultInto(peopleGrid)
                                     .applyDomainModelRowStyle()
                                     .setSelectedEntityHandler(
@@ -406,7 +406,6 @@ final class RoomsGraphicActivity extends EventDependentViewDomainActivity
             new Background(new BackgroundFill(DRAG_BOX_COLOR, BOX_RADII, null));
 
     private static final DataFormat dndDataFormat =
-            DataFormat
-                    .PLAIN_TEXT; // Using standard plain text format to ensure drag & drop works
-                                 // between applications
+            DataFormat.PLAIN_TEXT; // Using standard plain text format to ensure drag & drop works
+    // between applications
 }

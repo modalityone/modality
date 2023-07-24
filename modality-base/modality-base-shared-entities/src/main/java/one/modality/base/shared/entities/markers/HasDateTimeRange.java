@@ -13,7 +13,7 @@ public interface HasDateTimeRange {
 
     default DateTimeRange
             getParsedDateTimeRange() { // Should be overridden by implementing class to have a
-                                       // cached value
+        // cached value
         return DateTimeRange.parse(getDateTimeRange());
     }
 }

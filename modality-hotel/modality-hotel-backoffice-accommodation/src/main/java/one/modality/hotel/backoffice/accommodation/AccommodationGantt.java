@@ -233,10 +233,8 @@ public abstract class AccommodationGantt<B extends AccommodationBlock> {
         // the bar middle
         parentRoomDrawer
                 .setMiddleText(rc.getName())
-                .drawBar(
-                        b,
-                        gc); // This also draws a rectangle stroke - see properties set in
-                             // constructor
+                .drawBar(b, gc); // This also draws a rectangle stroke - see properties set in
+        // constructor
         // But the wireframe doesn't show a stroke on the left, so we erase it to match the UX
         // design
         gc.fillRect(

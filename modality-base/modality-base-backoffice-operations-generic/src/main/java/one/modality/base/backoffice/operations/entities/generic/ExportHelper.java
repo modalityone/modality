@@ -100,6 +100,6 @@ final class ExportHelper {
                         .replace(
                                 '\n',
                                 ' '); // removing \n in order to paste the whole content in the same
-                                      // Excel cell (ex: special needs)
+        // Excel cell (ex: special needs)
     }
 }
