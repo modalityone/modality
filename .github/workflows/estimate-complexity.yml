@@ -1,4 +1,4 @@
-name: SCC code complexity analysis
+name: Estimate Complexity Using SCC
 
 on: [push]
 
