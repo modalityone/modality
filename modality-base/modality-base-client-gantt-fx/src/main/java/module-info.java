@@ -19,5 +19,4 @@ module modality.base.client.gantt.fx {
     exports one.modality.base.client.gantt.fx.timewindow;
     exports one.modality.base.client.gantt.fx.today;
     exports one.modality.base.client.gantt.fx.visibility;
-
 }

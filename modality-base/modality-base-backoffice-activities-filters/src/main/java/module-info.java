@@ -35,7 +35,8 @@ module modality.base.backoffice.activities.filters {
     exports one.modality.base.backoffice.operations.routes.filters;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.base.backoffice.activities.filters.FiltersUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.base.backoffice.activities.filters.RouteToFiltersRequestEmitter;
-
+    provides dev.webfx.stack.routing.uirouter.UiRoute with
+            one.modality.base.backoffice.activities.filters.FiltersUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with
+            one.modality.base.backoffice.activities.filters.RouteToFiltersRequestEmitter;
 }

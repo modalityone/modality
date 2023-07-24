@@ -1,7 +1,9 @@
 package one.modality.hotel.backoffice.accommodation;
 
 import dev.webfx.platform.util.Numbers;
+
 import javafx.scene.paint.Color;
+
 import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Document;
@@ -24,10 +26,10 @@ public final class AttendanceBlock implements AccommodationBlock {
         this.resourceConfiguration = attendance.getScheduledResource().getResourceConfiguration();
         if (getPersonName().contains("Gen-la") || getPersonName().contains("Birch"))
             attendeeCategory = AttendeeCategory.SPECIAL_GUEST;
-        else if (Numbers.toInteger(getDocument().getEventId().getPrimaryKey()) == 480) // 480 = Working visit
-            attendeeCategory = AttendeeCategory.VOLUNTEER;
-        else
-            attendeeCategory = AttendeeCategory.GUEST;
+        else if (Numbers.toInteger(getDocument().getEventId().getPrimaryKey())
+                == 480) // 480 = Working visit
+        attendeeCategory = AttendeeCategory.VOLUNTEER;
+        else attendeeCategory = AttendeeCategory.GUEST;
     }
 
     public Attendance getAttendance() {
@@ -50,8 +52,7 @@ public final class AttendanceBlock implements AccommodationBlock {
         String name = getDocument().getFullName();
         if (attendeeCategory == AttendeeCategory.GUEST) {
             Object pk = getDocument().getEventId().getPrimaryKey();
-            if (Numbers.toInteger(pk) != 356)
-                name += " (" + pk + ")";
+            if (Numbers.toInteger(pk) != 356) name += " (" + pk + ")";
         }
         return name;
     }

@@ -14,5 +14,4 @@ module modality.base.backoffice.operations.filters {
 
     // Exported packages
     exports one.modality.base.backoffice.operations.entities.filters;
-
 }

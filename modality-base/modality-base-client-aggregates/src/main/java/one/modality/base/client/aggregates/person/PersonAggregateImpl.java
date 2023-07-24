@@ -1,7 +1,8 @@
 package one.modality.base.client.aggregates.person;
 
-import one.modality.base.shared.entities.Person;
 import dev.webfx.stack.orm.entity.EntityStore;
+
+import one.modality.base.shared.entities.Person;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -19,8 +20,7 @@ final class PersonAggregateImpl implements PersonAggregate {
 
     static PersonAggregate getOrCreate(EntityStore store) {
         PersonAggregate service = get(store);
-        if (service == null)
-            aggregates.put(store, service = new PersonAggregateImpl(store));
+        if (service == null) aggregates.put(store, service = new PersonAggregateImpl(store));
         return service;
     }
 

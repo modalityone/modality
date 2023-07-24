@@ -9,5 +9,4 @@ module modality.event.client.theme {
 
     // Exported packages
     exports one.modality.event.client.theme;
-
 }

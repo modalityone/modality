@@ -1,9 +1,9 @@
 package one.modality.hotel.shared.businessdata.time;
 
-import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.platform.json.Json;
 import dev.webfx.platform.json.ReadOnlyJsonArray;
 import dev.webfx.platform.json.ReadOnlyJsonObject;
+import dev.webfx.platform.util.collection.Collections;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,10 +37,8 @@ public class DayTimeRange {
                 String value = json.getString(key);
                 DateTimeRange coverage = key.equals("*") ? null : DateTimeRange.parse(key);
                 TimeRangeRule timeRangeRule = new TimeRangeRule(coverage, value);
-                if (coverage == null)
-                    _generalRule = timeRangeRule;
-                else
-                    exceptionRules.add(timeRangeRule);
+                if (coverage == null) _generalRule = timeRangeRule;
+                else exceptionRules.add(timeRangeRule);
             }
             generalRule = _generalRule;
         }
@@ -56,10 +54,12 @@ public class DayTimeRange {
             text = generalRule.getDayTimeSeries().toText();
             if (!Collections.isEmpty(exceptionRules)) {
                 StringBuilder sb = new StringBuilder("{'*': '").append(text).append('\'');
-                Collections.forEach(exceptionRules, rule -> {
-                    sb.append(", '").append(rule.getCoverage().getText()).append("': '");
-                    rule.getDayTimeSeries().toText(sb).append('\'');
-                });
+                Collections.forEach(
+                        exceptionRules,
+                        rule -> {
+                            sb.append(", '").append(rule.getCoverage().getText()).append("': '");
+                            rule.getDayTimeSeries().toText(sb).append('\'');
+                        });
                 text = sb.append('}').toString();
             }
         }
@@ -115,17 +115,20 @@ public class DayTimeRange {
         return addExceptionRuleForDay(day, TimeUnit.DAYS, exceptionDayTimeSeriesText);
     }
 
-    public DayTimeRange addExceptionRuleForDay(long day, TimeUnit timeUnit, String exceptionDayTimeSeriesText) {
+    public DayTimeRange addExceptionRuleForDay(
+            long day, TimeUnit timeUnit, String exceptionDayTimeSeriesText) {
         day = TimeConverter.convertTime(day, timeUnit, TimeUnit.MINUTES);
         long nextDay = day + TimeConverter.oneDay(TimeUnit.MINUTES);
-        TimeRangeRule exceptionRule = new TimeRangeRule(new DateTimeRange(new TimeInterval(day, nextDay, TimeUnit.MINUTES)), exceptionDayTimeSeriesText);
+        TimeRangeRule exceptionRule =
+                new TimeRangeRule(
+                        new DateTimeRange(new TimeInterval(day, nextDay, TimeUnit.MINUTES)),
+                        exceptionDayTimeSeriesText);
         return removeExceptionRuleForDay(day, timeUnit).addExceptionRule(exceptionRule);
     }
 
     public DayTimeRange addExceptionRule(TimeRangeRule exceptionRule) {
         List<TimeRangeRule> newExceptionRules = new ArrayList<>();
-        if (exceptionRules != null)
-            newExceptionRules.addAll(exceptionRules);
+        if (exceptionRules != null) newExceptionRules.addAll(exceptionRules);
         newExceptionRules.add(exceptionRule);
         return new DayTimeRange(generalRule, newExceptionRules);
     }
@@ -136,8 +139,7 @@ public class DayTimeRange {
 
     public DayTimeRange removeExceptionRuleForDay(long day, TimeUnit timeUnit) {
         TimeRangeRule ruleForDay = getRuleForDay(day, timeUnit);
-        if (ruleForDay == generalRule)
-            return this;
+        if (ruleForDay == generalRule) return this;
         List<TimeRangeRule> newExceptionRules = new ArrayList<>(exceptionRules);
         newExceptionRules.remove(ruleForDay);
         return new DayTimeRange(generalRule, newExceptionRules);
@@ -166,8 +168,7 @@ public class DayTimeRange {
         }
 
         public TimeInterval getDayTimeInterval() {
-            if (dayTimeInterval == null)
-                dayTimeInterval = dayTimeSeries.toInterval();
+            if (dayTimeInterval == null) dayTimeInterval = dayTimeSeries.toInterval();
             return dayTimeInterval;
         }
     }

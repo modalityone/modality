@@ -1,14 +1,16 @@
 package one.modality.event.frontoffice.activities.options;
 
+import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.util.collection.Collections;
+
 import javafx.scene.Node;
+
+import one.modality.base.client.util.functions.TranslateFunction;
+import one.modality.base.client.validation.ModalityValidationSupport;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Option;
 import one.modality.ecommerce.client.businessdata.workingdocument.WorkingDocument;
 import one.modality.ecommerce.client.businessdata.workingdocument.WorkingDocumentTransaction;
-import one.modality.base.client.util.functions.TranslateFunction;
-import one.modality.base.client.validation.ModalityValidationSupport;
-import dev.webfx.platform.uischeduler.UiScheduler;
-import dev.webfx.platform.util.collection.Collections;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,9 +33,11 @@ public final class OptionTree {
             @Override
             protected String translate(Option option) {
                 String optionTranslation = bestTranslationOrName(option);
-                boolean multiSite = option.getParent() != null && option.getParent().getSite() == null;
+                boolean multiSite =
+                        option.getParent() != null && option.getParent().getSite() == null;
                 if (multiSite)
-                    optionTranslation = bestTranslationOrName(option.getSite()) + " - " + optionTranslation;
+                    optionTranslation =
+                            bestTranslationOrName(option.getSite()) + " - " + optionTranslation;
                 return optionTranslation;
             }
         }.register();
@@ -50,7 +54,8 @@ public final class OptionTree {
     WorkingDocumentTransaction getWorkingDocumentTransaction() {
         WorkingDocument workingDocument = getWorkingDocument();
         workingDocument.setIsOptionSelectedInOptionTreePredicate(this::isOptionSelected);
-        if (workingDocumentTransaction == null || workingDocumentTransaction.getWorkingDocument() != workingDocument)
+        if (workingDocumentTransaction == null
+                || workingDocumentTransaction.getWorkingDocument() != workingDocument)
             workingDocumentTransaction = new WorkingDocumentTransaction(workingDocument);
         return workingDocumentTransaction;
     }
@@ -79,7 +84,8 @@ public final class OptionTree {
     }
 
     List<Node> getUpdatedTopLevelOptionButtons() {
-        return Collections.map(getTopLevelNonObligatoryOptions(), this::getUpdatedTopLevelOptionButton);
+        return Collections.map(
+                getTopLevelNonObligatoryOptions(), this::getUpdatedTopLevelOptionButton);
     }
 
     List<Node> getUpdatedTopLevelOptionSections() {
@@ -98,18 +104,20 @@ public final class OptionTree {
 
     private OptionTreeNode getOptionTreeNode(Option option) {
         OptionTreeNode optionTreeNode = optionTreeNodes.get(option);
-        if (optionTreeNode == null)
-            optionTreeNode = new OptionTreeNode(option, this);
+        if (optionTreeNode == null) optionTreeNode = new OptionTreeNode(option, this);
         return optionTreeNode;
     }
 
-    void registerOptionTreeNode(OptionTreeNode optionTreeNode) { // Called by OptionTreeNode constructor
+    void registerOptionTreeNode(
+            OptionTreeNode optionTreeNode) { // Called by OptionTreeNode constructor
         optionTreeNodes.put(optionTreeNode.getOption(), optionTreeNode);
     }
 
     public boolean isOptionSelected(Option option) {
         OptionTreeNode optionTreeNode = optionTreeNodes.get(option);
-        return optionTreeNode != null && (optionTreeNode.isOptionSelectedInModel() || optionTreeNode.isUiOptionSelected(true));
+        return optionTreeNode != null
+                && (optionTreeNode.isOptionSelectedInModel()
+                        || optionTreeNode.isUiOptionSelected(true));
     }
 
     private boolean pendingTransactionCommitAndUiSync;
@@ -117,11 +125,12 @@ public final class OptionTree {
     void deferTransactionCommitAndUiSync() {
         if (!pendingTransactionCommitAndUiSync) {
             pendingTransactionCommitAndUiSync = true;
-            UiScheduler.scheduleDeferred(() -> {
-                getWorkingDocumentTransaction().commit();
-                getActivity().createOrUpdateOptionPanelsIfReady(true);
-                pendingTransactionCommitAndUiSync = false;
-            });
+            UiScheduler.scheduleDeferred(
+                    () -> {
+                        getWorkingDocumentTransaction().commit();
+                        getActivity().createOrUpdateOptionPanelsIfReady(true);
+                        pendingTransactionCommitAndUiSync = false;
+                    });
         }
     }
 

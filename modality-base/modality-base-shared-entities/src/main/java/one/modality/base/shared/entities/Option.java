@@ -2,7 +2,7 @@ package one.modality.base.shared.entities;
 
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
-import one.modality.base.shared.entities.markers.*;
+
 import one.modality.base.shared.entities.markers.*;
 import one.modality.hotel.shared.businessdata.time.DateTimeRange;
 import one.modality.hotel.shared.businessdata.time.DayTimeRange;
@@ -10,15 +10,16 @@ import one.modality.hotel.shared.businessdata.time.DayTimeRange;
 /**
  * @author Bruno Salmon
  */
-public interface Option extends Entity,
-        EntityHasParent<Option>,
-        EntityHasEvent,
-        EntityHasName,
-        EntityHasLabel,
-        EntityHasIcon,
-        EntityHasArrivalSiteAndItem,
-        EntityHasItemFamily,
-        EntityHasDateTimeRange {
+public interface Option
+        extends Entity,
+                EntityHasParent<Option>,
+                EntityHasEvent,
+                EntityHasName,
+                EntityHasLabel,
+                EntityHasIcon,
+                EntityHasArrivalSiteAndItem,
+                EntityHasItemFamily,
+                EntityHasDateTimeRange {
 
     //// Domain fields
 
@@ -113,7 +114,7 @@ public interface Option extends Entity,
     default String getLayout() {
         return getStringFieldValue("layout");
     }
-    
+
     //// Enriched fields and methods
 
     default boolean isNotObligatory() {
@@ -122,11 +123,9 @@ public interface Option extends Entity,
 
     default ItemFamily findItemFamily() {
         Item item = getItem();
-        if (item != null)
-            return item.getFamily();
+        if (item != null) return item.getFamily();
         ItemFamily itemFamily = getItemFamily();
-        if (itemFamily != null)
-            return itemFamily;
+        if (itemFamily != null) return itemFamily;
         Option parent = getParent();
         return parent == null ? null : parent.findItemFamily();
     }

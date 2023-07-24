@@ -26,5 +26,4 @@ public class InitiateDelegatedPaymentArgument {
     public String getCurrency() {
         return currency;
     }
-
 }

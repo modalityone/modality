@@ -7,7 +7,7 @@ import one.modality.base.client.util.routing.ModalityRoutingUtil;
  */
 public final class PaymentsRouting {
 
-    private final static String PATH = "/payments/event/:eventId";
+    private static final String PATH = "/payments/event/:eventId";
 
     public static String getPath() {
         return PATH;
@@ -16,5 +16,4 @@ public final class PaymentsRouting {
     public static String getPaymentsPath(Object eventId) {
         return ModalityRoutingUtil.interpolateEventIdInPath(eventId, PATH);
     }
-
 }

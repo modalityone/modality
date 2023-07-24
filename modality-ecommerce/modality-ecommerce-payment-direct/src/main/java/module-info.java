@@ -13,5 +13,4 @@ module modality.ecommerce.payment.direct {
 
     // Used services
     uses one.modality.ecommerce.payment.direct.spi.DirectPaymentProvider;
-
 }

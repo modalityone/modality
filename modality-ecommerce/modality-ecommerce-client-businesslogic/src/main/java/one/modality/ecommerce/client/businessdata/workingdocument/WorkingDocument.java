@@ -1,24 +1,26 @@
 package one.modality.ecommerce.client.businessdata.workingdocument;
 
+import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import one.modality.ecommerce.client.businesslogic.pricing.WorkingDocumentPricing;
-import one.modality.ecommerce.client.businesslogic.workingdocument.BusinessLines;
-import one.modality.ecommerce.client.businesslogic.workingdocument.BusinessType;
-import one.modality.ecommerce.client.businesslogic.workingdocument.WorkingDocumentLogic;
-import one.modality.hotel.shared.businessdata.time.DateTimeRange;
+
 import one.modality.base.client.aggregates.event.EventAggregate;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Option;
 import one.modality.base.shared.entities.Person;
 import one.modality.base.shared.entities.markers.EntityHasPersonalDetails;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
-import dev.webfx.platform.util.collection.Collections;
+import one.modality.ecommerce.client.businesslogic.pricing.WorkingDocumentPricing;
+import one.modality.ecommerce.client.businesslogic.workingdocument.BusinessLines;
+import one.modality.ecommerce.client.businesslogic.workingdocument.BusinessType;
+import one.modality.ecommerce.client.businesslogic.workingdocument.WorkingDocumentLogic;
+import one.modality.hotel.shared.businessdata.time.DateTimeRange;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,36 +42,54 @@ public final class WorkingDocument {
     private boolean changedSinceLastApplyBusinessRules = true;
     private Predicate<Option> isOptionSelectedInOptionTreePredicate;
 
-    public WorkingDocument(EventAggregate eventAggregate, List<WorkingDocumentLine> workingDocumentLines) {
-        this(eventAggregate, eventAggregate.getPersonAggregate().getPreselectionProfilePerson(), workingDocumentLines);
+    public WorkingDocument(
+            EventAggregate eventAggregate, List<WorkingDocumentLine> workingDocumentLines) {
+        this(
+                eventAggregate,
+                eventAggregate.getPersonAggregate().getPreselectionProfilePerson(),
+                workingDocumentLines);
     }
 
-    public WorkingDocument(EventAggregate eventAggregate, WorkingDocument wd, List<WorkingDocumentLine> workingDocumentLines) {
+    public WorkingDocument(
+            EventAggregate eventAggregate,
+            WorkingDocument wd,
+            List<WorkingDocumentLine> workingDocumentLines) {
         this(eventAggregate, createDocument(wd.getDocument()), workingDocumentLines);
         loadedWorkingDocument = wd.loadedWorkingDocument;
     }
 
-    public WorkingDocument(EventAggregate eventAggregate, Person person, List<WorkingDocumentLine> workingDocumentLines) {
+    public WorkingDocument(
+            EventAggregate eventAggregate,
+            Person person,
+            List<WorkingDocumentLine> workingDocumentLines) {
         this(eventAggregate, createDocument(person), workingDocumentLines);
     }
 
-    public WorkingDocument(EventAggregate eventAggregate, Document document, List<WorkingDocumentLine> lines) {
+    public WorkingDocument(
+            EventAggregate eventAggregate, Document document, List<WorkingDocumentLine> lines) {
         this.eventAggregate = eventAggregate;
         this.document = document;
         workingDocumentLines = FXCollections.observableArrayList(lines);
         Collections.forEach(workingDocumentLines, wdl -> wdl.setWorkingDocument(this));
-        workingDocumentLines.addListener((ListChangeListener<WorkingDocumentLine>) c -> {
-            clearLinesCache();
-            clearComputedDateTimeRange();
-            clearComputedPrice();
-            markAsChangedForBusinessRules();
-        });
+        workingDocumentLines.addListener(
+                (ListChangeListener<WorkingDocumentLine>)
+                        c -> {
+                            clearLinesCache();
+                            clearComputedDateTimeRange();
+                            clearComputedPrice();
+                            markAsChangedForBusinessRules();
+                        });
     }
 
-    // Constructor used to make a copy (that can be changed) of a loaded working document (that shouldn't be changed).
-    // When submitting this copy, some decisions are made by comparison with the original loaded document.
+    // Constructor used to make a copy (that can be changed) of a loaded working document (that
+    // shouldn't be changed).
+    // When submitting this copy, some decisions are made by comparison with the original loaded
+    // document.
     public WorkingDocument(WorkingDocument loadedWorkingDocument) {
-        this(loadedWorkingDocument.getEventAggregate(), createDocument(loadedWorkingDocument.getDocument()), new ArrayList<>(loadedWorkingDocument.getWorkingDocumentLines()));
+        this(
+                loadedWorkingDocument.getEventAggregate(),
+                createDocument(loadedWorkingDocument.getDocument()),
+                new ArrayList<>(loadedWorkingDocument.getWorkingDocumentLines()));
         this.loadedWorkingDocument = loadedWorkingDocument;
     }
 
@@ -89,34 +109,41 @@ public final class WorkingDocument {
         return workingDocumentLines;
     }
 
-
     public Predicate<Option> getIsOptionSelectedInOptionTreePredicate() {
         return isOptionSelectedInOptionTreePredicate;
     }
 
-    public void setIsOptionSelectedInOptionTreePredicate(Predicate<Option> isOptionSelectedInOptionTreePredicate) {
+    public void setIsOptionSelectedInOptionTreePredicate(
+            Predicate<Option> isOptionSelectedInOptionTreePredicate) {
         this.isOptionSelectedInOptionTreePredicate = isOptionSelectedInOptionTreePredicate;
     }
 
     private DateTimeRange dateTimeRange;
 
     public DateTimeRange getDateTimeRange() {
-        if (dateTimeRange == null)
-            computeDocumentDateTimeRangeFromLines();
+        if (dateTimeRange == null) computeDocumentDateTimeRangeFromLines();
         return dateTimeRange;
     }
 
     private void computeDocumentDateTimeRangeFromLines() {
-        dateTimeRange = DateTimeRange.merge(Collections.filterMap(getWorkingDocumentLines(), WorkingDocument::isWorkingDocumentLineToBeIncludedInWorkingDocumentDateTimeRange, WorkingDocumentLine::getDateTimeRange));
-        //System.out.println(dateTimeRange.getText());
+        dateTimeRange =
+                DateTimeRange.merge(
+                        Collections.filterMap(
+                                getWorkingDocumentLines(),
+                                WorkingDocument
+                                        ::isWorkingDocumentLineToBeIncludedInWorkingDocumentDateTimeRange,
+                                WorkingDocumentLine::getDateTimeRange));
+        // System.out.println(dateTimeRange.getText());
     }
 
     void clearComputedDateTimeRange() {
         dateTimeRange = null;
     }
 
-    private static boolean isWorkingDocumentLineToBeIncludedInWorkingDocumentDateTimeRange(WorkingDocumentLine wdl) {
-        return wdl.getDayTimeRange() != null; // Excluding lines with no day time range (ex: diet option)
+    private static boolean isWorkingDocumentLineToBeIncludedInWorkingDocumentDateTimeRange(
+            WorkingDocumentLine wdl) {
+        return wdl.getDayTimeRange()
+                != null; // Excluding lines with no day time range (ex: diet option)
     }
 
     public void markAsChangedForBusinessRules() {
@@ -136,8 +163,7 @@ public final class WorkingDocument {
     }
 
     public int getComputedPrice() {
-        if (computedPrice == null)
-            computedPrice = computePrice();
+        if (computedPrice == null) computedPrice = computePrice();
         return computedPrice;
     }
 
@@ -154,7 +180,8 @@ public final class WorkingDocument {
     public BusinessLines getBusinessLines(BusinessType businessType) {
         BusinessLines businessLines = businessLinesMap.get(businessType);
         if (businessLines == null)
-            businessLinesMap.put(businessType, businessLines = new BusinessLines(businessType, this));
+            businessLinesMap.put(
+                    businessType, businessLines = new BusinessLines(businessType, this));
         return businessLines;
     }
 
@@ -203,7 +230,6 @@ public final class WorkingDocument {
     public boolean hasMeals() {
         return hasLunch() || hasSupper();
     }
-
 
     //// Diet line
 
@@ -258,14 +284,12 @@ public final class WorkingDocument {
         removeBusinessLines(BusinessType.HOTEL_SHUTTLE);
     }
 
-
     public void syncPersonDetails(HasPersonalDetails p) {
         syncPersonDetails(p, document);
     }
 
     public UpdateStore getUpdateStore() {
-        if (updateStore == null)
-            updateStore = getUpdateStore(document);
+        if (updateStore == null) updateStore = getUpdateStore(document);
         return updateStore;
     }
 
@@ -280,10 +304,11 @@ public final class WorkingDocument {
     private static Document createDocument(EntityHasPersonalDetails personDetailsEntity) {
         UpdateStore store = getUpdateStore(personDetailsEntity);
         Document document;
-        if (personDetailsEntity instanceof Document) // If from an original document, just making a copy
-            document = store.copyEntity((Document) personDetailsEntity);
+        if (personDetailsEntity
+                instanceof Document) // If from an original document, just making a copy
+        document = store.copyEntity((Document) personDetailsEntity);
         else // otherwise creating a new document
-            syncPersonDetails(personDetailsEntity, document = store.createEntity(Document.class));
+        syncPersonDetails(personDetailsEntity, document = store.createEntity(Document.class));
         return document;
     }
 
@@ -318,22 +343,21 @@ public final class WorkingDocument {
 
     public WorkingDocumentLine findSameWorkingDocumentLine(WorkingDocumentLine wdl) {
         for (WorkingDocumentLine thisWdl : getWorkingDocumentLines()) {
-            if (sameLine(thisWdl, wdl))
-                return thisWdl;
+            if (sameLine(thisWdl, wdl)) return thisWdl;
         }
         return null;
     }
 
     private static boolean sameLine(WorkingDocumentLine wdl1, WorkingDocumentLine wdl2) {
-        return wdl1 == wdl2 || wdl1 != null && (
-                wdl1.getOption() != null && wdl2.getOption() != null ? wdl1.getOption() == wdl2.getOption() :
-                Entities.sameId(wdl1.getSite(), wdl2.getSite()) &&
-                Entities.sameId(wdl1.getItem(), wdl2.getItem())
-        );
+        return wdl1 == wdl2
+                || wdl1 != null
+                        && (wdl1.getOption() != null && wdl2.getOption() != null
+                                ? wdl1.getOption() == wdl2.getOption()
+                                : Entities.sameId(wdl1.getSite(), wdl2.getSite())
+                                        && Entities.sameId(wdl1.getItem(), wdl2.getItem()));
     }
 
     public void setEventActive() {
         ActiveWorkingDocumentsByEventStore.setEventActiveWorkingDocument(this);
     }
-
 }

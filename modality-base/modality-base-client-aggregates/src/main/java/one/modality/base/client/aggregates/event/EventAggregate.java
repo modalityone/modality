@@ -1,14 +1,14 @@
 package one.modality.base.client.aggregates.event;
 
+import dev.webfx.platform.async.Future;
+import dev.webfx.platform.util.collection.Collections;
+import dev.webfx.stack.db.query.QueryResult;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.domainmodel.HasDataSourceModel;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
-import dev.webfx.platform.async.Future;
-import dev.webfx.stack.db.query.QueryResult;
-import dev.webfx.platform.util.collection.Collections;
-import one.modality.base.shared.entities.*;
+
 import one.modality.base.client.aggregates.person.PersonAggregate;
 import one.modality.base.shared.entities.*;
 
@@ -82,7 +82,8 @@ public interface EventAggregate extends HasDataSourceModel {
         return getEntityList(DATE_INFOS_LIST_ID);
     }
 
-    default <E extends Entity> List<E> selectEntities(Iterable<E> entities, Predicate<? super E> predicate) {
+    default <E extends Entity> List<E> selectEntities(
+            Iterable<E> entities, Predicate<? super E> predicate) {
         return Collections.filter(entities, predicate);
     }
 
@@ -131,5 +132,4 @@ public interface EventAggregate extends HasDataSourceModel {
     void setActiveCart(Cart activeCart);
 
     Cart getActiveCart();
-
 }

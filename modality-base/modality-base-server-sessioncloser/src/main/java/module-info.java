@@ -13,6 +13,7 @@ module modality.base.server.sessioncloser {
     exports one.modality.base.server.jobs.sessioncloser;
 
     // Provided services
-    provides dev.webfx.platform.boot.spi.ApplicationJob with one.modality.base.server.jobs.sessioncloser.ModalityServerUnresponsiveClientSessionCloserJob;
-
+    provides dev.webfx.platform.boot.spi.ApplicationJob with
+            one.modality.base.server.jobs.sessioncloser
+                    .ModalityServerUnresponsiveClientSessionCloserJob;
 }

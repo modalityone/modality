@@ -12,6 +12,6 @@ module modality.ecommerce.payment.direct.remote {
     exports one.modality.ecommerce.payment.direct.spi.impl.remote;
 
     // Provided services
-    provides one.modality.ecommerce.payment.direct.spi.DirectPaymentProvider with one.modality.ecommerce.payment.direct.spi.impl.remote.RemoteDirectPaymentProvider;
-
+    provides one.modality.ecommerce.payment.direct.spi.DirectPaymentProvider with
+            one.modality.ecommerce.payment.direct.spi.impl.remote.RemoteDirectPaymentProvider;
 }

@@ -25,5 +25,4 @@ module modality.base.client.gantt.canvas {
 
     // Exported packages
     exports one.modality.base.client.ganttcanvas;
-
 }

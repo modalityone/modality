@@ -14,5 +14,4 @@ module modality.ecommerce.backoffice.operations.documentline {
 
     // Exported packages
     exports one.modality.ecommerce.backoffice.operations.entities.documentline;
-
 }

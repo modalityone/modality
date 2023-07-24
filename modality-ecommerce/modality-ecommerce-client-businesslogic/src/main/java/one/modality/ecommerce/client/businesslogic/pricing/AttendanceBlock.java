@@ -13,7 +13,6 @@ final class AttendanceBlock implements Comparable<AttendanceBlock> {
     private final LocalDate date;
     private int price;
 
-
     AttendanceBlock(WorkingDocumentLine workingDocumentLine, LocalDate date) {
         this.workingDocumentLine = workingDocumentLine;
         this.date = date;
@@ -39,7 +38,8 @@ final class AttendanceBlock implements Comparable<AttendanceBlock> {
     public int compareTo(AttendanceBlock that) {
         int result = date.compareTo(that.date);
         if (result == 0)
-            result = workingDocumentLine.firstDate().compareTo(that.workingDocumentLine.firstDate());
+            result =
+                    workingDocumentLine.firstDate().compareTo(that.workingDocumentLine.firstDate());
         return result;
     }
 }

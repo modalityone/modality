@@ -30,7 +30,8 @@ module modality.hotel.backoffice.activities.household {
     exports one.modality.hotel.backoffice.operations.routes.household;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.hotel.backoffice.activities.household.HouseholdUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.hotel.backoffice.activities.household.RouteToHouseholdRequestEmitter;
-
+    provides dev.webfx.stack.routing.uirouter.UiRoute with
+            one.modality.hotel.backoffice.activities.household.HouseholdUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with
+            one.modality.hotel.backoffice.activities.household.RouteToHouseholdRequestEmitter;
 }

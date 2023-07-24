@@ -14,5 +14,4 @@ public class MakeDirectPaymentResult {
     public boolean isSuccess() {
         return success;
     }
-
 }

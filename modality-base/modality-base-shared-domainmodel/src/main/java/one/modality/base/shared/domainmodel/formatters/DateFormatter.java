@@ -1,14 +1,14 @@
 package one.modality.base.shared.domainmodel.formatters;
 
-import javafx.util.StringConverter;
-import dev.webfx.stack.orm.domainmodel.formatter.ValueFormatter;
-import dev.webfx.stack.orm.domainmodel.formatter.ValueParser;
 import dev.webfx.extras.type.PrimType;
 import dev.webfx.extras.type.Type;
 import dev.webfx.platform.util.Dates;
+import dev.webfx.stack.orm.domainmodel.formatter.ValueFormatter;
+import dev.webfx.stack.orm.domainmodel.formatter.ValueParser;
+
+import javafx.util.StringConverter;
 
 import java.time.LocalDate;
-
 
 /**
  * @author Bruno Salmon
@@ -17,8 +17,7 @@ public final class DateFormatter implements ValueFormatter, ValueParser {
 
     public static final DateFormatter SINGLETON = new DateFormatter();
 
-    private DateFormatter() {
-    }
+    private DateFormatter() {}
 
     @Override
     public Type getFormattedValueType() {
@@ -32,8 +31,7 @@ public final class DateFormatter implements ValueFormatter, ValueParser {
 
     @Override
     public Object parseValue(Object value) {
-        if (value == null)
-            return null;
+        if (value == null) return null;
         String text = value.toString();
         int p;
         int dayOfMonth = Integer.parseInt(text.substring(0, p = text.indexOf('/')));
@@ -43,7 +41,7 @@ public final class DateFormatter implements ValueFormatter, ValueParser {
     }
 
     public StringConverter<LocalDate> toStringConverter() {
-        return new StringConverter<LocalDate/*GWT*/>() {
+        return new StringConverter<LocalDate /*GWT*/>() {
             @Override
             public String toString(LocalDate date) {
                 return (String) formatValue(date);

@@ -19,5 +19,4 @@ module modality.event.client.calendar {
     exports one.modality.event.client.businessdata.calendar.impl;
     exports one.modality.event.client.controls.calendargraphic;
     exports one.modality.event.client.controls.calendargraphic.impl;
-
 }

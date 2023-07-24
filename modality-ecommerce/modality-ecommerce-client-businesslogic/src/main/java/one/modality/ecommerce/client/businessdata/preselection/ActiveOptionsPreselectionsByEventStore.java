@@ -1,8 +1,9 @@
 package one.modality.ecommerce.client.businessdata.preselection;
 
+import dev.webfx.stack.orm.entity.EntityId;
+
 import one.modality.base.client.aggregates.event.EventAggregate;
 import one.modality.base.shared.entities.Event;
-import dev.webfx.stack.orm.entity.EntityId;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,17 +13,21 @@ import java.util.Map;
  */
 public class ActiveOptionsPreselectionsByEventStore {
 
-    private final static Map<EntityId, OptionsPreselection> activeOptionsPreselectionsByEventMap = new HashMap<>();
+    private static final Map<EntityId, OptionsPreselection> activeOptionsPreselectionsByEventMap =
+            new HashMap<>();
 
-    public static void setActiveOptionsPreselection(OptionsPreselection activeOptionsPreselection, EventAggregate eventAggregate) {
+    public static void setActiveOptionsPreselection(
+            OptionsPreselection activeOptionsPreselection, EventAggregate eventAggregate) {
         setActiveOptionsPreselection(activeOptionsPreselection, eventAggregate.getEvent());
     }
 
-    public static void setActiveOptionsPreselection(OptionsPreselection activeOptionsPreselection, Event event) {
+    public static void setActiveOptionsPreselection(
+            OptionsPreselection activeOptionsPreselection, Event event) {
         setActiveOptionsPreselection(activeOptionsPreselection, event.getId());
     }
 
-    public static void setActiveOptionsPreselection(OptionsPreselection selectedOptionsPreselection, EntityId eventId) {
+    public static void setActiveOptionsPreselection(
+            OptionsPreselection selectedOptionsPreselection, EntityId eventId) {
         activeOptionsPreselectionsByEventMap.put(eventId, selectedOptionsPreselection);
     }
 

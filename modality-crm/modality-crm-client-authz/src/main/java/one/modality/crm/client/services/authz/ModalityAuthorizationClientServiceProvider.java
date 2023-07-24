@@ -8,7 +8,8 @@ import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 /**
  * @author Bruno Salmon
  */
-public final class ModalityAuthorizationClientServiceProvider extends AuthorizationClientServiceProviderBase {
+public final class ModalityAuthorizationClientServiceProvider
+        extends AuthorizationClientServiceProviderBase {
 
     private final DataSourceModel dataSourceModel;
 
@@ -27,9 +28,9 @@ public final class ModalityAuthorizationClientServiceProvider extends Authorizat
 
     @Override
     public Void onAuthorizationsPush(Object pushObject) {
-        //FXUserPrincipal.setUserPrincipal(FXUserId.getUserId());
-        ModalityInMemoryUserAuthorizationChecker checker = (ModalityInMemoryUserAuthorizationChecker)
-                getOrCreateUserAuthorizationChecker();
+        // FXUserPrincipal.setUserPrincipal(FXUserId.getUserId());
+        ModalityInMemoryUserAuthorizationChecker checker =
+                (ModalityInMemoryUserAuthorizationChecker) getOrCreateUserAuthorizationChecker();
         checker.onAuthorizationPush(pushObject);
         return null;
     }

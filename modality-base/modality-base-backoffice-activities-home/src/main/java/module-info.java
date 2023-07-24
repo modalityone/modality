@@ -29,7 +29,8 @@ module modality.base.backoffice.activities.home {
     exports one.modality.catering.backoffice.operations.routes.home;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.catering.backoffice.activities.home.HomeUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.catering.backoffice.activities.home.RouteToHomeRequestEmitter;
-
+    provides dev.webfx.stack.routing.uirouter.UiRoute with
+            one.modality.catering.backoffice.activities.home.HomeUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with
+            one.modality.catering.backoffice.activities.home.RouteToHomeRequestEmitter;
 }

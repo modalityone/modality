@@ -33,6 +33,6 @@ module modality.ecommerce.frontoffice.activities.payment {
     exports one.modality.ecommerce.frontoffice.operations.payment;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.ecommerce.frontoffice.activities.payment.PaymentUiRoute;
-
+    provides dev.webfx.stack.routing.uirouter.UiRoute with
+            one.modality.ecommerce.frontoffice.activities.payment.PaymentUiRoute;
 }

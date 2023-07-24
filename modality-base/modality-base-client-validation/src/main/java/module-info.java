@@ -18,5 +18,4 @@ module modality.base.client.validation {
 
     // Exported packages
     exports one.modality.base.client.validation;
-
 }

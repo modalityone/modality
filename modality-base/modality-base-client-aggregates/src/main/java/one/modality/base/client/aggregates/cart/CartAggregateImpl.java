@@ -1,15 +1,15 @@
 package one.modality.base.client.aggregates.cart;
 
+import dev.webfx.platform.async.Future;
+import dev.webfx.platform.async.Promise;
+import dev.webfx.platform.console.Console;
+import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
-import dev.webfx.platform.async.Future;
-import dev.webfx.platform.async.Promise;
-import dev.webfx.platform.console.Console;
-import dev.webfx.platform.util.Strings;
-import one.modality.base.shared.entities.*;
+
 import one.modality.base.client.aggregates.event.EventAggregate;
 import one.modality.base.shared.entities.*;
 
@@ -23,11 +23,14 @@ import java.util.Map;
  */
 public final class CartAggregateImpl implements CartAggregate {
 
-    public final static String DOCUMENT_LINE_LOAD_QUERY = "select <frontend_cart>,document.<frontend_cart> from DocumentLine where site!=null and document=? order by document desc";
-    public final static String ATTENDANCE_LOAD_QUERY = "select documentLine.id,date from Attendance where documentLine.document=? order by date";
-    private final static String PAYMENT_LOAD_QUERY = "select <frontend_cart> from MoneyTransfer where document=? order by date desc";
+    public static final String DOCUMENT_LINE_LOAD_QUERY =
+            "select <frontend_cart>,document.<frontend_cart> from DocumentLine where site!=null and document=? order by document desc";
+    public static final String ATTENDANCE_LOAD_QUERY =
+            "select documentLine.id,date from Attendance where documentLine.document=? order by date";
+    private static final String PAYMENT_LOAD_QUERY =
+            "select <frontend_cart> from MoneyTransfer where document=? order by date desc";
 
-    private final static Map<Object, CartAggregate> aggregates = new HashMap<>();
+    private static final Map<Object, CartAggregate> aggregates = new HashMap<>();
 
     private final EntityStore store;
     private Object id;
@@ -54,7 +57,8 @@ public final class CartAggregateImpl implements CartAggregate {
         cartIdOrUuid = Entities.getPrimaryKey(cartIdOrUuid);
         CartAggregate cartAggregate = get(cartIdOrUuid);
         if (cartAggregate == null)
-            aggregates.put(cartIdOrUuid, cartAggregate = new CartAggregateImpl(cartIdOrUuid, store));
+            aggregates.put(
+                    cartIdOrUuid, cartAggregate = new CartAggregateImpl(cartIdOrUuid, store));
         return cartAggregate;
     }
 
@@ -74,12 +78,9 @@ public final class CartAggregateImpl implements CartAggregate {
 
     public void setCart(Cart cart) {
         this.cart = cart;
-        if (id == null)
-            aggregates.put(id = Entities.getPrimaryKey((Object) cart.getId()), this);
-        if (uuid == null)
-            aggregates.put(uuid = cart.getUuid(), this);
-        if (eventAggregate != null)
-            eventAggregate.setActiveCart(cart);
+        if (id == null) aggregates.put(id = Entities.getPrimaryKey((Object) cart.getId()), this);
+        if (uuid == null) aggregates.put(uuid = cart.getUuid(), this);
+        if (eventAggregate != null) eventAggregate.setActiveCart(cart);
     }
 
     @Override
@@ -125,43 +126,59 @@ public final class CartAggregateImpl implements CartAggregate {
 
     @Override
     public Future<Cart> onCart() {
-        if (isLoaded())
-            return Future.succeededFuture(cart);
+        if (isLoaded()) return Future.succeededFuture(cart);
         loading = true;
         String documentCondition = "document.cart." + (id != null ? "id=?" : "uuid=?");
-        Object[] parameter = new Object[]{id != null ? id : uuid};
+        Object[] parameter = new Object[] {id != null ? id : uuid};
         return store.executeQueryBatch(
-              new EntityStoreQuery(Strings.replaceAll(DOCUMENT_LINE_LOAD_QUERY, "document=?", documentCondition), parameter)
-            , new EntityStoreQuery(Strings.replaceAll(ATTENDANCE_LOAD_QUERY, "document=?", documentCondition), parameter)
-            , new EntityStoreQuery(Strings.replaceAll(PAYMENT_LOAD_QUERY, "document=?", documentCondition), parameter)
-        ).compose(entityLists -> {
-            cartDocuments = new ArrayList<>();
-            cartDocumentLines = entityLists[0];
-            cartAttendances = entityLists[1];
-            cartPayments = entityLists[2];
-            if (cartDocumentLines.isEmpty()) {
-                loading = false;
-                return Future.succeededFuture();
-            }
-            eventAggregate = EventAggregate.getOrCreateFromDocument(cartDocumentLines.get(0).getDocument());
-            Promise<Cart> promise = Promise.promise();
-            eventAggregate.onEventOptions().onComplete(ar -> {
-                if (!cartDocuments.isEmpty()) {
-                    Console.log("Warning: CartAggregate.onCart() has been called again before the first call is finished");
-                    cartDocuments.clear();
-                }
-                Document currentDocument = null;
-                for (DocumentLine dl : cartDocumentLines) {
-                    Document document = dl.getDocument();
-                    if (document != currentDocument)
-                        cartDocuments.add(currentDocument = document);
-                }
-                setCart(cartDocuments.get(0).getCart());
-                loading = false;
-                promise.complete(cart);
-            });
-            return promise.future();
-        });
+                        new EntityStoreQuery(
+                                Strings.replaceAll(
+                                        DOCUMENT_LINE_LOAD_QUERY, "document=?", documentCondition),
+                                parameter),
+                        new EntityStoreQuery(
+                                Strings.replaceAll(
+                                        ATTENDANCE_LOAD_QUERY, "document=?", documentCondition),
+                                parameter),
+                        new EntityStoreQuery(
+                                Strings.replaceAll(
+                                        PAYMENT_LOAD_QUERY, "document=?", documentCondition),
+                                parameter))
+                .compose(
+                        entityLists -> {
+                            cartDocuments = new ArrayList<>();
+                            cartDocumentLines = entityLists[0];
+                            cartAttendances = entityLists[1];
+                            cartPayments = entityLists[2];
+                            if (cartDocumentLines.isEmpty()) {
+                                loading = false;
+                                return Future.succeededFuture();
+                            }
+                            eventAggregate =
+                                    EventAggregate.getOrCreateFromDocument(
+                                            cartDocumentLines.get(0).getDocument());
+                            Promise<Cart> promise = Promise.promise();
+                            eventAggregate
+                                    .onEventOptions()
+                                    .onComplete(
+                                            ar -> {
+                                                if (!cartDocuments.isEmpty()) {
+                                                    Console.log(
+                                                            "Warning: CartAggregate.onCart() has been called again before the first call is finished");
+                                                    cartDocuments.clear();
+                                                }
+                                                Document currentDocument = null;
+                                                for (DocumentLine dl : cartDocumentLines) {
+                                                    Document document = dl.getDocument();
+                                                    if (document != currentDocument)
+                                                        cartDocuments.add(
+                                                                currentDocument = document);
+                                                }
+                                                setCart(cartDocuments.get(0).getCart());
+                                                loading = false;
+                                                promise.complete(cart);
+                                            });
+                            return promise.future();
+                        });
     }
 
     @Override

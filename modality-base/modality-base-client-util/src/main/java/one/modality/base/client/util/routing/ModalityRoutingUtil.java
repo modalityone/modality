@@ -1,7 +1,7 @@
 package one.modality.base.client.util.routing;
 
-import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.platform.util.Strings;
+import dev.webfx.stack.orm.entity.Entities;
 
 /**
  * @author Bruno Salmon
@@ -17,7 +17,8 @@ public final class ModalityRoutingUtil {
     }
 
     public static String interpolateOrganizationIdInPath(Object organizationId, String path) {
-        return interpolateParamInPath(":organizationId", Entities.getPrimaryKey(organizationId), path);
+        return interpolateParamInPath(
+                ":organizationId", Entities.getPrimaryKey(organizationId), path);
     }
 
     public static String interpolateLetterIdInPath(Object letterId, String path) {
@@ -31,5 +32,4 @@ public final class ModalityRoutingUtil {
     public static String interpolateDocumentIdInPath(Object documentId, String path) {
         return interpolateParamInPath(":documentId", Entities.getPrimaryKey(documentId), path);
     }
-
 }

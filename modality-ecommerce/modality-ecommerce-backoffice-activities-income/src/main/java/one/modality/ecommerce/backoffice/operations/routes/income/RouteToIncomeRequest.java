@@ -1,16 +1,17 @@
 package one.modality.ecommerce.backoffice.operations.routes.income;
 
-import one.modality.ecommerce.backoffice.activities.income.routing.IncomeRouting;
+import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.ui.operation.HasOperationCode;
-import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
+
+import one.modality.ecommerce.backoffice.activities.income.routing.IncomeRouting;
 
 /**
  * @author Bruno Salmon
  */
 public final class RouteToIncomeRequest extends RoutePushRequest implements HasOperationCode {
 
-    private final static String OPERATION_CODE = "RouteToIncome";
+    private static final String OPERATION_CODE = "RouteToIncome";
 
     public RouteToIncomeRequest(Object eventId, BrowsingHistory history) {
         super(IncomeRouting.getEventIncomePath(eventId), history);
@@ -20,5 +21,4 @@ public final class RouteToIncomeRequest extends RoutePushRequest implements HasO
     public Object getOperationCode() {
         return OPERATION_CODE;
     }
-
 }

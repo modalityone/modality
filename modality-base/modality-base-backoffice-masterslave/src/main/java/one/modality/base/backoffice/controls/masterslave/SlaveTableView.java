@@ -1,8 +1,9 @@
 package one.modality.base.backoffice.controls.masterslave;
 
-import javafx.scene.Node;
-import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasSlaveVisualResultProperty;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasSlaveVisualResultProperty;
+
+import javafx.scene.Node;
 
 public class SlaveTableView implements UiBuilder {
 

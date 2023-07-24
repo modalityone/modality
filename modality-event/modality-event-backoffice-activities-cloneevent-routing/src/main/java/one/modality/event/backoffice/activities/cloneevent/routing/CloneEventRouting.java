@@ -16,5 +16,4 @@ public final class CloneEventRouting {
     public static String getCloneEventPath(Object eventId) {
         return ModalityRoutingUtil.interpolateEventIdInPath(eventId, getPath());
     }
-
 }

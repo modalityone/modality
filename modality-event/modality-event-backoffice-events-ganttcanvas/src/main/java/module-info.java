@@ -22,5 +22,4 @@ module modality.event.backoffice.events.ganttcanvas {
 
     // Exported packages
     exports one.modality.event.backoffice.events.ganttcanvas;
-
 }

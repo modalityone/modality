@@ -1,12 +1,13 @@
 package one.modality.base.shared.entities.impl;
 
-import one.modality.base.shared.entities.DateInfo;
-import one.modality.base.shared.entities.Label;
-import one.modality.hotel.shared.businessdata.time.DateTimeRange;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.impl.DynamicEntity;
 import dev.webfx.stack.orm.entity.impl.EntityFactoryProviderImpl;
+
+import one.modality.base.shared.entities.DateInfo;
+import one.modality.base.shared.entities.Label;
+import one.modality.hotel.shared.businessdata.time.DateTimeRange;
 
 /**
  * @author Bruno Salmon
@@ -33,6 +34,7 @@ public final class DateInfoImpl extends DynamicEntity implements DateInfo {
     }
 
     private DateTimeRange parsedDateTimeRange;
+
     @Override
     public DateTimeRange getParsedDateTimeRange() {
         if (parsedDateTimeRange == null)
@@ -41,6 +43,7 @@ public final class DateInfoImpl extends DynamicEntity implements DateInfo {
     }
 
     private DateTimeRange parsedMinDateTimeRange;
+
     @Override
     public DateTimeRange getParsedMinDateTimeRange() {
         if (parsedMinDateTimeRange == null)
@@ -49,6 +52,7 @@ public final class DateInfoImpl extends DynamicEntity implements DateInfo {
     }
 
     private DateTimeRange parsedMaxDateTimeRange;
+
     @Override
     public DateTimeRange getParsedMaxDateTimeRange() {
         if (parsedMaxDateTimeRange == null)

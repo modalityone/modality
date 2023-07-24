@@ -1,10 +1,11 @@
 package one.modality.base.shared.entities.impl;
 
-import one.modality.base.shared.entities.Teacher;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.impl.DynamicEntity;
 import dev.webfx.stack.orm.entity.impl.EntityFactoryProviderImpl;
+
+import one.modality.base.shared.entities.Teacher;
 
 /**
  * @author Bruno Salmon

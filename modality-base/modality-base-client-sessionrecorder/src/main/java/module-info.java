@@ -19,6 +19,6 @@ module modality.base.client.sessionrecorder {
     exports one.modality.base.client.jobs.sessionrecorder;
 
     // Provided services
-    provides dev.webfx.platform.boot.spi.ApplicationJob with one.modality.base.client.jobs.sessionrecorder.ClientSessionRecorderJob;
-
+    provides dev.webfx.platform.boot.spi.ApplicationJob with
+            one.modality.base.client.jobs.sessionrecorder.ClientSessionRecorderJob;
 }

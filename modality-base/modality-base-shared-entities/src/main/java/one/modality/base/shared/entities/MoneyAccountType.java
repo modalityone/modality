@@ -5,11 +5,8 @@ import one.modality.base.shared.entities.markers.EntityHasIcon;
 import one.modality.base.shared.entities.markers.EntityHasLabel;
 import one.modality.base.shared.entities.markers.EntityHasName;
 
-public interface MoneyAccountType extends
-        EntityHasName,
-        EntityHasLabel,
-        EntityHasIcon,
-        EntityHasCode {
+public interface MoneyAccountType
+        extends EntityHasName, EntityHasLabel, EntityHasIcon, EntityHasCode {
 
     default void setCustomer(Boolean customer) {
         setFieldValue("customer", customer);
@@ -34,5 +31,4 @@ public interface MoneyAccountType extends
     default Boolean isInternal() {
         return getBooleanFieldValue("internal");
     }
-
 }

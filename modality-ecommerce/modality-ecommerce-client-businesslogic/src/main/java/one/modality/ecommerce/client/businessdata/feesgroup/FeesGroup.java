@@ -1,11 +1,12 @@
 package one.modality.ecommerce.client.businessdata.feesgroup;
 
-import one.modality.base.client.entities.util.Labels;
-import one.modality.ecommerce.client.businessdata.preselection.OptionsPreselection;
-import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.Label;
 import dev.webfx.platform.util.Numbers;
 import dev.webfx.platform.util.Objects;
+
+import one.modality.base.client.entities.util.Labels;
+import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.Label;
+import one.modality.ecommerce.client.businessdata.preselection.OptionsPreselection;
 
 /**
  * @author Bruno Salmon
@@ -21,7 +22,15 @@ public final class FeesGroup {
     private final boolean forceSoldout;
     private final OptionsPreselection[] optionsPreselections;
 
-    FeesGroup(Event event, Object id, Label label, String i18nKey, Label feesBottomLabel, Label feesPopupLabel, boolean forceSoldout, OptionsPreselection[] optionsPreselections) {
+    FeesGroup(
+            Event event,
+            Object id,
+            Label label,
+            String i18nKey,
+            Label feesBottomLabel,
+            Label feesPopupLabel,
+            boolean forceSoldout,
+            OptionsPreselection[] optionsPreselections) {
         this.event = event;
         this.id = id;
         this.label = label;
@@ -69,8 +78,7 @@ public final class FeesGroup {
     }
 
     public String getFeesBottomText() {
-        if (isInternationalFestival())
-            return null;
+        if (isInternationalFestival()) return null;
         Label feesBottomLabel = Objects.coalesce(getFeesBottomLabel(), event.getFeesBottomLabel());
         return Labels.instantTranslateLabel(feesBottomLabel, "FeesExplanation");
     }

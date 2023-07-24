@@ -3,6 +3,7 @@ package one.modality.base.shared.entities.converters;
 import dev.webfx.stack.orm.dql.DqlClause;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.dql.DqlStatementBuilder;
+
 import one.modality.base.shared.entities.Filter;
 
 /**
@@ -22,5 +23,4 @@ public final class FilterToDqlStatementConverter {
                 .setOrderBy(DqlClause.create(filter.getOrderByClause()))
                 .build();
     }
-
 }

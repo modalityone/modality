@@ -1,5 +1,7 @@
 package one.modality.event.client.controls.calendargraphic.impl;
 
+import dev.webfx.extras.util.background.BackgroundFactory;
+
 import javafx.beans.property.Property;
 import javafx.collections.ObservableList;
 import javafx.geometry.VPos;
@@ -11,24 +13,25 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Translate;
+
 import one.modality.event.client.businessdata.calendar.CalendarTimeline;
 import one.modality.event.client.controls.calendargraphic.CalendarCell;
 import one.modality.event.client.controls.calendargraphic.CalendarClickEvent;
 import one.modality.event.client.controls.calendargraphic.CalendarGraphic;
 import one.modality.hotel.shared.businessdata.time.TimeInterval;
-import dev.webfx.extras.util.background.BackgroundFactory;
 
 import java.util.concurrent.TimeUnit;
 
 /**
  * @author Bruno Salmon
  */
-public final class DayColumnBodyBlockViewModel implements HorizontalDayPositioned, VerticalDayTimePositioned, CalendarCell {
+public final class DayColumnBodyBlockViewModel
+        implements HorizontalDayPositioned, VerticalDayTimePositioned, CalendarCell {
 
-    private final static String fontFamily = "Verdana";
-    private final static Font textFont = Font.font(fontFamily, 13);
-    private final static Font timeFont = Font.font(fontFamily, 10);
-    private final static Paint timeFill = Color.WHITE;
+    private static final String fontFamily = "Verdana";
+    private static final Font textFont = Font.font(fontFamily, 13);
+    private static final Font timeFont = Font.font(fontFamily, 10);
+    private static final Paint timeFill = Color.WHITE;
 
     private long epochDay;
     private TimeInterval dayTimeMinuteInterval;
@@ -49,37 +52,51 @@ public final class DayColumnBodyBlockViewModel implements HorizontalDayPositione
         rootPane.heightProperty().addListener((observable, oldValue, height) -> onHeightChanged());
     }
 
-    public DayColumnBodyBlockViewModel(CalendarGraphic calendarGraphic, long epochDay, TimeInterval dayTimeMinuteInterval, CalendarTimeline timeline, Boolean displayTimes) {
+    public DayColumnBodyBlockViewModel(
+            CalendarGraphic calendarGraphic,
+            long epochDay,
+            TimeInterval dayTimeMinuteInterval,
+            CalendarTimeline timeline,
+            Boolean displayTimes) {
         init(calendarGraphic, epochDay, dayTimeMinuteInterval, timeline, displayTimes);
     }
 
-    void init(CalendarGraphic calendarGraphic, long epochDay, TimeInterval dayTimeMinuteInterval, CalendarTimeline timeline, Boolean displayTimes) {
+    void init(
+            CalendarGraphic calendarGraphic,
+            long epochDay,
+            TimeInterval dayTimeMinuteInterval,
+            CalendarTimeline timeline,
+            Boolean displayTimes) {
         this.epochDay = epochDay;
-        // Setting dayTimeMinuteInterval for vertical positioning (=> same row as the timeline even for exceptions)
-        this.dayTimeMinuteInterval = timeline.getDayTimeRange().getDayTimeInterval(epochDay, TimeUnit.MINUTES); //dayTimeMinuteInterval;
+        // Setting dayTimeMinuteInterval for vertical positioning (=> same row as the timeline even
+        // for exceptions)
+        this.dayTimeMinuteInterval =
+                timeline.getDayTimeRange()
+                        .getDayTimeInterval(epochDay, TimeUnit.MINUTES); // dayTimeMinuteInterval;
         TextAlignment timeTextAlignment = TextAlignment.LEFT;
         if (displayTimes == null) {
             displayTimes = !this.dayTimeMinuteInterval.equals(dayTimeMinuteInterval);
             timeTextAlignment = TextAlignment.RIGHT;
         }
         Property<String> displayNameProperty = timeline.displayNameProperty();
-        if (displayNameProperty != null)
-            blockText.textProperty().bind(displayNameProperty);
+        if (displayNameProperty != null) blockText.textProperty().bind(displayNameProperty);
         else {
             blockText.textProperty().unbind();
             blockText.setText(null);
         }
         rootPane.setBackground(BackgroundFactory.newBackground(timeline.getBackgroundFill()));
         if (calendarGraphic != null)
-            rootPane.setOnMouseClicked(event -> {
-                if (calendarGraphic.getCalendarClickHandler() != null)
-                    calendarGraphic.getCalendarClickHandler().accept(new CalendarClickEvent(event, this, timeline));
-            });
+            rootPane.setOnMouseClicked(
+                    event -> {
+                        if (calendarGraphic.getCalendarClickHandler() != null)
+                            calendarGraphic
+                                    .getCalendarClickHandler()
+                                    .accept(new CalendarClickEvent(event, this, timeline));
+                    });
         ObservableList<Node> children = rootPane.getChildren();
         if (!displayTimes) {
             startTimeText = endTimeText = null;
-            if (children.size() != 2)
-                children.setAll(blockText);
+            if (children.size() != 2) children.setAll(blockText);
         } else {
             if (startTimeText == null) {
                 startTimeText = new Text();
@@ -100,10 +117,8 @@ public final class DayColumnBodyBlockViewModel implements HorizontalDayPositione
                 endTimeText.setMouseTransparent(true);
             }
             endTimeText.setText(dayTimeMinuteInterval.getEndText());
-            if (children.size() != 4)
-                children.setAll(blockText, startTimeText, endTimeText);
-            if (rootPane.getParent() != null)
-                onWidthChanged();
+            if (children.size() != 4) children.setAll(blockText, startTimeText, endTimeText);
+            if (rootPane.getParent() != null) onWidthChanged();
         }
         setYAndHeight(0, VerticalDayTimePositioner.slotHeight);
     }
@@ -120,8 +135,7 @@ public final class DayColumnBodyBlockViewModel implements HorizontalDayPositione
     private void onHeightChanged() {
         double height = rootPane.getHeight();
         blockText.setY(height / 2);
-        if (endTimeText != null)
-            endTimeText.setY(height - 1d);
+        if (endTimeText != null) endTimeText.setY(height - 1d);
     }
 
     public Pane getNode() {

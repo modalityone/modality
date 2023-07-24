@@ -11,5 +11,4 @@ module modality.base.backoffice.operations.snapshot {
 
     // Exported packages
     exports one.modality.base.backoffice.operations.snapshot;
-
 }

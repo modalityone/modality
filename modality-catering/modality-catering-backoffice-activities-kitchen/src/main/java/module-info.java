@@ -40,7 +40,8 @@ module modality.catering.backoffice.activities.kitchen {
     exports one.modality.catering.backoffice.operations.routes.kitchen;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.catering.backoffice.activities.kitchen.KitchenUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.catering.backoffice.activities.kitchen.RouteToKitchenRequestEmitter;
-
+    provides dev.webfx.stack.routing.uirouter.UiRoute with
+            one.modality.catering.backoffice.activities.kitchen.KitchenUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with
+            one.modality.catering.backoffice.activities.kitchen.RouteToKitchenRequestEmitter;
 }

@@ -30,6 +30,6 @@ module modality.ecommerce.frontoffice.activities.summary {
     exports one.modality.ecommerce.frontoffice.operations.summary;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.ecommerce.frontoffice.activities.summary.SummaryUiRoute;
-
+    provides dev.webfx.stack.routing.uirouter.UiRoute with
+            one.modality.ecommerce.frontoffice.activities.summary.SummaryUiRoute;
 }

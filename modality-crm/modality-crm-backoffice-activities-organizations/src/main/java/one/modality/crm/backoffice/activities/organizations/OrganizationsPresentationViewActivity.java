@@ -1,16 +1,19 @@
 package one.modality.crm.backoffice.activities.organizations;
 
 import dev.webfx.stack.i18n.controls.I18nControls;
+
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+
 import one.modality.base.client.activity.table.GenericTablePresentationViewActivity;
 
 /**
  * @author Bruno Salmon
  */
-final class OrganizationsPresentationViewActivity extends GenericTablePresentationViewActivity<OrganizationsPresentationModel> {
+final class OrganizationsPresentationViewActivity
+        extends GenericTablePresentationViewActivity<OrganizationsPresentationModel> {
 
     private CheckBox withEventsCheckBox;
 
@@ -18,7 +21,8 @@ final class OrganizationsPresentationViewActivity extends GenericTablePresentati
     protected void createViewNodes(OrganizationsPresentationModel pm) {
         super.createViewNodes(pm);
 
-        I18nControls.bindI18nProperties(genericTable.getSearchBox(), "YourCentre"); // Will translate the prompt
+        I18nControls.bindI18nProperties(
+                genericTable.getSearchBox(), "YourCentre"); // Will translate the prompt
 
         withEventsCheckBox = newCheckBox("WithEvents");
 
@@ -32,7 +36,11 @@ final class OrganizationsPresentationViewActivity extends GenericTablePresentati
 
     @Override
     protected Node assemblyViewNodes() {
-        return new BorderPane(genericTable.getTable(), genericTable.getSearchBox(), null, new HBox(10, withEventsCheckBox, genericTable.getLimitCheckBox()), null);
+        return new BorderPane(
+                genericTable.getTable(),
+                genericTable.getSearchBox(),
+                null,
+                new HBox(10, withEventsCheckBox, genericTable.getLimitCheckBox()),
+                null);
     }
-
 }

@@ -15,7 +15,12 @@ import java.time.Month;
 public final class DateIntervalFormat extends Function {
 
     public DateIntervalFormat() {
-        super("dateIntervalFormat", new String[] {"date1", "date2"}, new Type[] {null, null}, PrimType.STRING, true);
+        super(
+                "dateIntervalFormat",
+                new String[] {"date1", "date2"},
+                new Type[] {null, null},
+                PrimType.STRING,
+                true);
     }
 
     @Override
@@ -35,13 +40,17 @@ public final class DateIntervalFormat extends Function {
             StringBuffer sb = new StringBuffer();
             if (month1 == month2) {
                 sb.append(day1);
-                if (day2 != day1)
-                    sb.append('-').append(day2);
+                if (day2 != day1) sb.append('-').append(day2);
                 sb.append(' ').append(month1Name);
             } else
-                sb.append(day1).append(' ').append(month1Name).append(" - ").append(day2).append(' ').append(month2.name().toLowerCase());
-            if (year2 != LocalDate.now().getYear())
-                sb.append(' ').append(year2);
+                sb.append(day1)
+                        .append(' ')
+                        .append(month1Name)
+                        .append(" - ")
+                        .append(day2)
+                        .append(' ')
+                        .append(month2.name().toLowerCase());
+            if (year2 != LocalDate.now().getYear()) sb.append(' ').append(year2);
             return sb.toString();
         } catch (Exception e) {
             return argument;

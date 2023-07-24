@@ -1,14 +1,16 @@
 package one.modality.event.frontoffice.activities.program;
 
-import javafx.scene.layout.BorderPane;
-import one.modality.base.client.icons.ModalityIcons;
-import one.modality.ecommerce.client.businessdata.feesgroup.FeesGroup;
-import one.modality.ecommerce.client.businessdata.preselection.OptionsPreselection;
-import one.modality.event.client.controls.sectionpanel.SectionPanelFactory;
-import one.modality.event.client.controls.bookingcalendar.BookingCalendar;
-import one.modality.ecommerce.client.activity.bookingprocess.BookingProcessActivity;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.platform.console.Console;
+
+import javafx.scene.layout.BorderPane;
+
+import one.modality.base.client.icons.ModalityIcons;
+import one.modality.ecommerce.client.activity.bookingprocess.BookingProcessActivity;
+import one.modality.ecommerce.client.businessdata.feesgroup.FeesGroup;
+import one.modality.ecommerce.client.businessdata.preselection.OptionsPreselection;
+import one.modality.event.client.controls.bookingcalendar.BookingCalendar;
+import one.modality.event.client.controls.sectionpanel.SectionPanelFactory;
 
 /**
  * @author Bruno Salmon
@@ -22,32 +24,39 @@ final class ProgramActivity extends BookingProcessActivity {
     protected void createViewNodes() {
         super.createViewNodes();
         bookingCalendar = new BookingCalendar(false);
-        BorderPane calendarSection = SectionPanelFactory.createSectionPanel(ModalityIcons.calendarMonoSvg16JsonUrl, "Timetable");
+        BorderPane calendarSection =
+                SectionPanelFactory.createSectionPanel(
+                        ModalityIcons.calendarMonoSvg16JsonUrl, "Timetable");
         calendarSection.centerProperty().bind(bookingCalendar.calendarNodeProperty());
-        verticalStack.getChildren().setAll(calendarSection, LayoutUtil.setMaxWidthToInfinite(backButton));
+        verticalStack
+                .getChildren()
+                .setAll(calendarSection, LayoutUtil.setMaxWidthToInfinite(backButton));
         showBookingCalendarIfReady();
     }
 
     private void showBookingCalendarIfReady() {
         if (bookingCalendar != null && noAccommodationOptionsPreselection != null)
-            bookingCalendar.createOrUpdateCalendarGraphicFromOptionsPreselection(noAccommodationOptionsPreselection);
+            bookingCalendar.createOrUpdateCalendarGraphicFromOptionsPreselection(
+                    noAccommodationOptionsPreselection);
     }
 
     @Override
     protected void startLogic() {
         onEventFeesGroups()
                 .onFailure(Console::log)
-                .onSuccess(result -> {
-                    noAccommodationOptionsPreselection = findNoAccommodationOptionsPreselection(result);
-                    showBookingCalendarIfReady();
-                });
+                .onSuccess(
+                        result -> {
+                            noAccommodationOptionsPreselection =
+                                    findNoAccommodationOptionsPreselection(result);
+                            showBookingCalendarIfReady();
+                        });
     }
 
-    private static OptionsPreselection findNoAccommodationOptionsPreselection(FeesGroup[] feesGroups) {
+    private static OptionsPreselection findNoAccommodationOptionsPreselection(
+            FeesGroup[] feesGroups) {
         for (FeesGroup fg : feesGroups) {
             for (OptionsPreselection op : fg.getOptionsPreselections())
-                if (!op.hasAccommodation())
-                    return op;
+                if (!op.hasAccommodation()) return op;
         }
         return null;
     }

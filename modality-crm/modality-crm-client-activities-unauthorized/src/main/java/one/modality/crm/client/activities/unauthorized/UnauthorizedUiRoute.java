@@ -15,10 +15,10 @@ public final class UnauthorizedUiRoute extends UiRouteImpl implements ProvidedUn
     }
 
     public static UiRoute<?> uiRoute() {
-        return UiRoute.create(UnauthorizedRouting.getPath()
-                , false
-                , UnauthorizedViewActivity::new
-                , ViewDomainActivityContextFinal::new
-        );
+        return UiRoute.create(
+                UnauthorizedRouting.getPath(),
+                false,
+                UnauthorizedViewActivity::new,
+                ViewDomainActivityContextFinal::new);
     }
 }

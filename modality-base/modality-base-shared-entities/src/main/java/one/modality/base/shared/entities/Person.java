@@ -1,8 +1,9 @@
 package one.modality.base.shared.entities;
 
+import dev.webfx.stack.orm.entity.Entity;
+
 import one.modality.base.shared.entities.markers.EntityHasEvent;
 import one.modality.base.shared.entities.markers.EntityHasPersonalDetails;
-import dev.webfx.stack.orm.entity.Entity;
 
 import java.time.LocalDate;
 
@@ -11,7 +12,9 @@ import java.time.LocalDate;
  */
 public interface Person extends Entity, EntityHasPersonalDetails, EntityHasEvent {
 
-    default Object getBirthDateField() { return "birthdate";}
+    default Object getBirthDateField() {
+        return "birthdate";
+    }
 
     default void setBirthDate(LocalDate birthDate) {
         setFieldValue(getBirthDateField(), birthDate);
@@ -20,6 +23,4 @@ public interface Person extends Entity, EntityHasPersonalDetails, EntityHasEvent
     default LocalDate getBirthDate() {
         return getLocalDateFieldValue(getBirthDateField());
     }
-
-
 }

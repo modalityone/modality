@@ -5,10 +5,9 @@ package one.modality.base.backoffice.activities.operations.routing;
  */
 public final class OperationsRouting {
 
-    private final static String PATH = "/operations";
+    private static final String PATH = "/operations";
 
     public static String getPath() {
         return PATH;
     }
-
 }

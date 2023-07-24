@@ -32,7 +32,8 @@ module modality.ecommerce.backoffice.activities.statements {
     exports one.modality.ecommerce.backoffice.operations.routes.statements;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.ecommerce.backoffice.activities.statements.StatementsUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.ecommerce.backoffice.activities.statements.RouteToStatementsRequestEmitter;
-
+    provides dev.webfx.stack.routing.uirouter.UiRoute with
+            one.modality.ecommerce.backoffice.activities.statements.StatementsUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with
+            one.modality.ecommerce.backoffice.activities.statements.RouteToStatementsRequestEmitter;
 }

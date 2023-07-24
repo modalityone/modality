@@ -23,6 +23,6 @@ module modality.all.backoffice.application {
     exports one.modality.all.backoffice.application;
 
     // Provided services
-    provides javafx.application.Application with one.modality.all.backoffice.application.ModalityBackOfficeApplication;
-
+    provides javafx.application.Application with
+            one.modality.all.backoffice.application.ModalityBackOfficeApplication;
 }

@@ -7,5 +7,4 @@ module modality.hotel.backoffice.icons {
 
     // Exported packages
     exports one.modality.hotel.backoffice.icons;
-
 }

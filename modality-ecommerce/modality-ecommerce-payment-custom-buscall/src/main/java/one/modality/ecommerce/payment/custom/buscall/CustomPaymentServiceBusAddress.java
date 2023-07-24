@@ -5,6 +5,6 @@ package one.modality.ecommerce.payment.custom.buscall;
  */
 public class CustomPaymentServiceBusAddress {
 
-    public static final String INITIATE_CUSTOM_PAYMENT_METHOD_ADDRESS = "service/payment/custom/initiateCustomPayment";
-
+    public static final String INITIATE_CUSTOM_PAYMENT_METHOD_ADDRESS =
+            "service/payment/custom/initiateCustomPayment";
 }

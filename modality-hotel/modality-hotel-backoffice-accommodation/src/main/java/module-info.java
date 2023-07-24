@@ -31,5 +31,4 @@ module modality.hotel.backoffice.accommodation {
 
     // Exported packages
     exports one.modality.hotel.backoffice.accommodation;
-
 }

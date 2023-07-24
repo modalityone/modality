@@ -1,5 +1,8 @@
 package one.modality.crm.client.activities.login;
 
+import dev.webfx.extras.util.animation.Animations;
+import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.authn.AuthenticationRequest;
 import dev.webfx.stack.authn.UsernamePasswordCredentials;
@@ -7,9 +10,7 @@ import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.session.state.client.fx.FXUserPrincipal;
 import dev.webfx.stack.ui.controls.button.ButtonFactory;
 import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
-import dev.webfx.extras.util.animation.Animations;
-import dev.webfx.extras.util.layout.LayoutUtil;
-import dev.webfx.extras.util.scene.SceneUtil;
+
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.HPos;
@@ -21,10 +22,10 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.validation.ModalityValidationSupport;
 import one.modality.event.client.controls.sectionpanel.SectionPanelFactory;
-
 
 /**
  * @author Bruno Salmon
@@ -39,33 +40,40 @@ public final class LoginPanel implements ModalityButtonFactoryMixin {
 
     public LoginPanel() {
         BorderPane loginWindow = SectionPanelFactory.createSectionPanel("SignInWindowTitle");
-        Hyperlink hyperLink = newHyperlink("ForgotPassword?", e -> signInMode.setValue(!signInMode.getValue()));
+        Hyperlink hyperLink =
+                newHyperlink("ForgotPassword?", e -> signInMode.setValue(!signInMode.getValue()));
         GridPane gridPane;
         loginWindow.setCenter(
-                gridPane = new GridPaneBuilder()
-                        .addNodeFillingRow(usernameField = newMaterialTextField("Email"))
-                        .addNodeFillingRow(passwordField = newMaterialPasswordField("Password"))
-                        .addNewRow(hyperLink)
-                        .addNodeFillingRow(button = newLargeGreenButton(null))
-                        .build()
-        );
+                gridPane =
+                        new GridPaneBuilder()
+                                .addNodeFillingRow(usernameField = newMaterialTextField("Email"))
+                                .addNodeFillingRow(
+                                        passwordField = newMaterialPasswordField("Password"))
+                                .addNewRow(hyperLink)
+                                .addNodeFillingRow(button = newLargeGreenButton(null))
+                                .build());
         gridPane.setPadding(new Insets(20));
         GridPane.setHalignment(hyperLink, HPos.CENTER);
         hyperLink.setOnAction(e -> signInMode.setValue(!signInMode.getValue()));
         LayoutUtil.setUnmanagedWhenInvisible(passwordField, signInMode);
-        FXProperties.runNowAndOnPropertiesChange(() ->
-                        I18nControls.bindI18nProperties(button, signInMode.getValue() ? "SignIn>>" : "SendPassword>>")
-                , signInMode);
+        FXProperties.runNowAndOnPropertiesChange(
+                () ->
+                        I18nControls.bindI18nProperties(
+                                button, signInMode.getValue() ? "SignIn>>" : "SendPassword>>"),
+                signInMode);
         node = LayoutUtil.createGoldLayout(loginWindow);
         initValidation();
-        button.setOnAction(event -> {
-            if (validationSupport.isValid())
-                new AuthenticationRequest()
-                        .setUserCredentials(new UsernamePasswordCredentials(usernameField.getText(), passwordField.getText()))
-                        .executeAsync()
-                        .onFailure(cause -> Animations.shake(loginWindow))
-                        .onSuccess(FXUserPrincipal::setUserPrincipal);
-        });
+        button.setOnAction(
+                event -> {
+                    if (validationSupport.isValid())
+                        new AuthenticationRequest()
+                                .setUserCredentials(
+                                        new UsernamePasswordCredentials(
+                                                usernameField.getText(), passwordField.getText()))
+                                .executeAsync()
+                                .onFailure(cause -> Animations.shake(loginWindow))
+                                .onSuccess(FXUserPrincipal::setUserPrincipal);
+                });
         prepareShowing();
     }
 

@@ -5,11 +5,17 @@ package one.modality.base.shared.entities.markers;
  */
 public interface EntityHasPersonalDetailsCopy extends EntityHasPersonalDetails {
 
-    default Object getFirstNameField() { return "person_firstName";}
+    default Object getFirstNameField() {
+        return "person_firstName";
+    }
 
-    default Object getLastNameField() { return "person_lastName";}
+    default Object getLastNameField() {
+        return "person_lastName";
+    }
 
-    default Object getLayNameField() { return "person_layName";}
+    default Object getLayNameField() {
+        return "person_layName";
+    }
 
     @Override
     default Object getMaleField() {
@@ -21,7 +27,9 @@ public interface EntityHasPersonalDetailsCopy extends EntityHasPersonalDetails {
         return "person_ordained";
     }
 
-    default Object getAgeField() { return "person_age";}
+    default Object getAgeField() {
+        return "person_age";
+    }
 
     @Override
     default Object getCarer1NameField() {
@@ -83,20 +91,35 @@ public interface EntityHasPersonalDetailsCopy extends EntityHasPersonalDetails {
         return "person_organization";
     }
 
-    default Object getUnemployedField() { return "person_unemployed";}
+    default Object getUnemployedField() {
+        return "person_unemployed";
+    }
 
-    default Object getFacilityFeeField() { return "person_facilityFee";}
+    default Object getFacilityFeeField() {
+        return "person_facilityFee";
+    }
 
-    default Object getWorkingVisitField() { return "person_workingVisit";}
+    default Object getWorkingVisitField() {
+        return "person_workingVisit";
+    }
 
-    default Object getDiscoveryField() { return "person_discovery";}
+    default Object getDiscoveryField() {
+        return "person_discovery";
+    }
 
-    default Object getDiscoveryReducedField() { return "person_discoveryReduced";}
+    default Object getDiscoveryReducedField() {
+        return "person_discoveryReduced";
+    }
 
-    default Object getGuestField() { return "person_guest";}
+    default Object getGuestField() {
+        return "person_guest";
+    }
 
-    default Object getResidentField() { return "person_resident";}
+    default Object getResidentField() {
+        return "person_resident";
+    }
 
-    default Object getResident2Field() { return "person_resident2";}
-
+    default Object getResident2Field() {
+        return "person_resident2";
+    }
 }

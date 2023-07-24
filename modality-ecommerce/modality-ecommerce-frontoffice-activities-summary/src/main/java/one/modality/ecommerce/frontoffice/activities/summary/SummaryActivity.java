@@ -1,9 +1,10 @@
 package one.modality.ecommerce.frontoffice.activities.summary;
 
-import dev.webfx.platform.console.Console;
-import dev.webfx.stack.i18n.I18n;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Strings;
+import dev.webfx.stack.i18n.I18n;
+
 import javafx.application.Platform;
 import javafx.beans.value.ObservableStringValue;
 import javafx.event.ActionEvent;
@@ -16,16 +17,17 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+
+import one.modality.base.client.validation.ModalityValidationSupport;
+import one.modality.base.shared.entities.Cart;
 import one.modality.crm.client.controls.personaldetails.PersonalDetailsPanel;
 import one.modality.ecommerce.client.activity.bookingprocess.BookingProcessActivity;
 import one.modality.ecommerce.client.businessdata.workingdocument.WorkingDocument;
 import one.modality.ecommerce.client.businessdata.workingdocument.WorkingDocumentSubmitter;
 import one.modality.ecommerce.client.controls.bookingoptionspanel.BookingOptionsPanel;
-import one.modality.event.client.controls.sectionpanel.SectionPanelFactory;
-import one.modality.base.client.validation.ModalityValidationSupport;
-import one.modality.base.shared.entities.Cart;
 import one.modality.ecommerce.frontoffice.operations.cart.RouteToCartRequest;
 import one.modality.event.client.controls.bookingcalendar.BookingCalendar;
+import one.modality.event.client.controls.sectionpanel.SectionPanelFactory;
 
 /**
  * @author Bruno Salmon
@@ -58,45 +60,53 @@ final class SummaryActivity extends BookingProcessActivity {
         BorderPane.setAlignment(termsCheckBox, Pos.CENTER_LEFT);
         BorderPane.setMargin(termsCheckBox, new Insets(10));
         agreeTCTranslationProperty = I18n.i18nTextProperty("AgreeTC");
-        FXProperties.runNowAndOnPropertiesChange(p -> setTermsCheckBoxText(Strings.toSafeString(p.getValue())), agreeTCTranslationProperty);
+        FXProperties.runNowAndOnPropertiesChange(
+                p -> setTermsCheckBoxText(Strings.toSafeString(p.getValue())),
+                agreeTCTranslationProperty);
 
-        verticalStack.getChildren().setAll(
-                bookingOptionsPanel.getOptionsPanel(),
-                bookingCalendarSection,
-                personalDetailsPanel.getSectionPanel(),
-                commentPanel,
-                termsPanel,
-                nextButton
-        );
+        verticalStack
+                .getChildren()
+                .setAll(
+                        bookingOptionsPanel.getOptionsPanel(),
+                        bookingCalendarSection,
+                        personalDetailsPanel.getSectionPanel(),
+                        commentPanel,
+                        termsPanel,
+                        nextButton);
 
-        validationSupport.addValidationRule(termsCheckBox.selectedProperty(), termsCheckBox, "Please read and accept the terms and conditions");
+        validationSupport.addValidationRule(
+                termsCheckBox.selectedProperty(),
+                termsCheckBox,
+                "Please read and accept the terms and conditions");
     }
 
     private void setTermsCheckBoxText(String text) {
-        Platform.runLater(() -> {
-            int aStartPos = text.indexOf("<a");
-            int aTextStart = text.indexOf(">", aStartPos) + 1;
-            int aTextEnd = text.indexOf("</a>", aTextStart);
-            String leftText = text.substring(0, aStartPos - 1);
-            String hyperText = text.substring(aTextStart, aTextEnd);
-            String rightText = text.substring(aTextEnd + 4);
-            Label leftLabel = new Label(leftText);
-            Hyperlink hyperlink = new Hyperlink(hyperText);
-            hyperlink.setOnAction(e -> showTermsDialog());
-            Label rightLabel = new Label(rightText);
-/*
-            TextFlow textFlow = new TextFlow(leftLabel, hyperlink, rightLabel);
-            textFlow.setPrefHeight(hyperlink.getHeight());
-            termsCheckBox.setGraphic(textFlow);
-*/
-            FlowPane textContainer = new FlowPane(leftLabel, hyperlink, rightLabel);
-            textContainer.setAlignment(Pos.CENTER_LEFT);
-            termsCheckBox.setGraphic(textContainer);
-        });
+        Platform.runLater(
+                () -> {
+                    int aStartPos = text.indexOf("<a");
+                    int aTextStart = text.indexOf(">", aStartPos) + 1;
+                    int aTextEnd = text.indexOf("</a>", aTextStart);
+                    String leftText = text.substring(0, aStartPos - 1);
+                    String hyperText = text.substring(aTextStart, aTextEnd);
+                    String rightText = text.substring(aTextEnd + 4);
+                    Label leftLabel = new Label(leftText);
+                    Hyperlink hyperlink = new Hyperlink(hyperText);
+                    hyperlink.setOnAction(e -> showTermsDialog());
+                    Label rightLabel = new Label(rightText);
+                    /*
+                                TextFlow textFlow = new TextFlow(leftLabel, hyperlink, rightLabel);
+                                textFlow.setPrefHeight(hyperlink.getHeight());
+                                termsCheckBox.setGraphic(textFlow);
+                    */
+                    FlowPane textContainer = new FlowPane(leftLabel, hyperlink, rightLabel);
+                    textContainer.setAlignment(Pos.CENTER_LEFT);
+                    termsCheckBox.setGraphic(textContainer);
+                });
     }
 
     private void showTermsDialog() {
-        //new TermsDialog(getEventId(), getDataSourceModel(), getI18n(), pageContainer).setOnClose(() -> termsCheckBox.setSelected(true)).show();
+        // new TermsDialog(getEventId(), getDataSourceModel(), getI18n(),
+        // pageContainer).setOnClose(() -> termsCheckBox.setSelected(true)).show();
         // temporary removed new RouteToTermsRequest(getEventId(), getHistory()).execute();
     }
 
@@ -130,18 +140,22 @@ final class SummaryActivity extends BookingProcessActivity {
     @Override
     protected void onNextButtonPressed(ActionEvent event) {
         if (validationSupport.isValid())
-            WorkingDocumentSubmitter.submit(getEventActiveWorkingDocument(), commentTextArea.getText())
+            WorkingDocumentSubmitter.submit(
+                            getEventActiveWorkingDocument(), commentTextArea.getText())
                     .onFailure(cause -> Console.log("Error submitting booking", cause))
-                    .onSuccess(document -> {
-                        Cart cart = document.getCart();
-                        if (cart == null) {
-                            WorkingDocument workingDocument = getEventActiveWorkingDocument();
-                            if (workingDocument.getLoadedWorkingDocument() != null)
-                                workingDocument = workingDocument.getLoadedWorkingDocument();
-                            document = workingDocument.getDocument();
-                            cart = document.getCart();
-                        }
-                        new RouteToCartRequest(cart.getUuid(), getHistory()).execute();
-                    });
+                    .onSuccess(
+                            document -> {
+                                Cart cart = document.getCart();
+                                if (cart == null) {
+                                    WorkingDocument workingDocument =
+                                            getEventActiveWorkingDocument();
+                                    if (workingDocument.getLoadedWorkingDocument() != null)
+                                        workingDocument =
+                                                workingDocument.getLoadedWorkingDocument();
+                                    document = workingDocument.getDocument();
+                                    cart = document.getCart();
+                                }
+                                new RouteToCartRequest(cart.getUuid(), getHistory()).execute();
+                            });
     }
 }

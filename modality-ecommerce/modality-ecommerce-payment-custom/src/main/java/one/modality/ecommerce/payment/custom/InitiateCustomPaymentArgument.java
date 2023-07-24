@@ -13,7 +13,14 @@ public final class InitiateCustomPaymentArgument {
     private final String successUrl;
     private final String failUrl;
 
-    public InitiateCustomPaymentArgument(long amount, String currency, String productName, long quantity, String customerId, String successUrl, String failUrl) {
+    public InitiateCustomPaymentArgument(
+            long amount,
+            String currency,
+            String productName,
+            long quantity,
+            String customerId,
+            String successUrl,
+            String failUrl) {
         this.amount = amount;
         this.currency = currency;
         this.productName = productName;

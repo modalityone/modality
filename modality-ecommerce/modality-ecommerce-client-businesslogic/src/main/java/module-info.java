@@ -27,5 +27,4 @@ module modality.ecommerce.client.businesslogic {
     exports one.modality.ecommerce.client.businesslogic.pricing;
     exports one.modality.ecommerce.client.businesslogic.rules;
     exports one.modality.ecommerce.client.businesslogic.workingdocument;
-
 }

@@ -1,9 +1,10 @@
 package one.modality.catering.backoffice.operations.entities.allocationrule;
 
-import javafx.scene.layout.Pane;
-import dev.webfx.stack.orm.entity.controls.entity.sheet.EntityPropertiesSheet;
-import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.platform.async.Future;
+import dev.webfx.stack.orm.entity.Entity;
+import dev.webfx.stack.orm.entity.controls.entity.sheet.EntityPropertiesSheet;
+
+import javafx.scene.layout.Pane;
 
 final class EditAllocationRuleExecutor {
 

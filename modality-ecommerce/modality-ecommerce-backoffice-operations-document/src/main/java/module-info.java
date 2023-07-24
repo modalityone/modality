@@ -19,5 +19,4 @@ module modality.ecommerce.backoffice.operations.document {
     exports one.modality.ecommerce.backoffice.operations.entities.document.multiplebookings;
     exports one.modality.ecommerce.backoffice.operations.entities.document.registration;
     exports one.modality.ecommerce.backoffice.operations.entities.document.security;
-
 }

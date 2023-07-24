@@ -1,8 +1,10 @@
 package one.modality.ecommerce.backoffice.operations.entities.moneytransfer;
 
-import javafx.scene.layout.Pane;
-import one.modality.base.shared.entities.Document;
 import dev.webfx.platform.async.Future;
+
+import javafx.scene.layout.Pane;
+
+import one.modality.base.shared.entities.Document;
 
 final class AddNewTransferExecutor {
 

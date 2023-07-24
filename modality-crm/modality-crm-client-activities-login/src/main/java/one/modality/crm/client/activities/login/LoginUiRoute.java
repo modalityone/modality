@@ -15,10 +15,10 @@ public final class LoginUiRoute extends UiRouteImpl implements ProvidedLoginUiRo
     }
 
     public static UiRoute<?> uiRoute() {
-        return UiRoute.create(LoginRouting.getPath()
-                , false
-                , LoginViewActivity::new
-                , ViewDomainActivityContextFinal::new
-        );
+        return UiRoute.create(
+                LoginRouting.getPath(),
+                false,
+                LoginViewActivity::new,
+                ViewDomainActivityContextFinal::new);
     }
 }

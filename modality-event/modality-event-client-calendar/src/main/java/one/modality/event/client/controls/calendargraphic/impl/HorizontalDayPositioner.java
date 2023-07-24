@@ -1,8 +1,9 @@
 package one.modality.event.client.controls.calendargraphic.impl;
 
+import dev.webfx.platform.util.collection.Collections;
+
 import one.modality.event.client.businessdata.calendar.Calendar;
 import one.modality.hotel.shared.businessdata.time.TimeInterval;
-import dev.webfx.platform.util.collection.Collections;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +42,7 @@ final class HorizontalDayPositioner {
     void addHorizontalDayPositioned(int index, HorizontalDayPositioned horizontalDayPositioned) {
         if (index < horizontalDayPositionedList.size())
             horizontalDayPositionedList.add(index, horizontalDayPositioned);
-        else
-            addHorizontalDayPositioned(horizontalDayPositioned);
+        else addHorizontalDayPositioned(horizontalDayPositioned);
     }
 
     void addHorizontalDayPositioned(HorizontalDayPositioned horizontalDayPositioned) {
@@ -54,14 +54,12 @@ final class HorizontalDayPositioner {
     }
 
     long getFirstDisplayedEpochDay() {
-        if (firstDisplayedEpochDay == -1)
-            initFirstAndLastDisplayedEpochDays();
+        if (firstDisplayedEpochDay == -1) initFirstAndLastDisplayedEpochDays();
         return firstDisplayedEpochDay;
     }
 
     long getLastDisplayedEpochDay() {
-        if (lastDisplayedEpochDay == -1)
-            initFirstAndLastDisplayedEpochDays();
+        if (lastDisplayedEpochDay == -1) initFirstAndLastDisplayedEpochDays();
         return lastDisplayedEpochDay;
     }
 

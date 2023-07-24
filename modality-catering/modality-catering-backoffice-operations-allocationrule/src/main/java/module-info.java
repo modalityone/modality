@@ -14,5 +14,4 @@ module modality.catering.backoffice.operations.allocationrule {
 
     // Exported packages
     exports one.modality.catering.backoffice.operations.entities.allocationrule;
-
 }

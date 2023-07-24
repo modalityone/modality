@@ -1,8 +1,9 @@
 package one.modality.ecommerce.backoffice.activities.moneyflows;
 
-import dev.webfx.stack.orm.entity.controls.entity.sheet.EntityRenderer;
 import dev.webfx.extras.util.background.BackgroundFactory;
 import dev.webfx.extras.util.border.BorderFactory;
+import dev.webfx.stack.orm.entity.controls.entity.sheet.EntityRenderer;
+
 import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -10,6 +11,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+
 import one.modality.base.shared.entities.MoneyAccount;
 
 /**
@@ -24,7 +26,8 @@ public class MoneyAccountPane extends StackPane {
     private boolean hovering;
     private Region body;
 
-    public MoneyAccountPane(MoneyAccount moneyAccount, ObservableObjectValue<MoneyAccount> selectedMoneyAccount) {
+    public MoneyAccountPane(
+            MoneyAccount moneyAccount, ObservableObjectValue<MoneyAccount> selectedMoneyAccount) {
         this.moneyAccount = moneyAccount;
         this.selectedMoneyAccount = selectedMoneyAccount;
         selectedMoneyAccount.addListener(e -> updateBorder());
@@ -50,8 +53,7 @@ public class MoneyAccountPane extends StackPane {
         ObservableList<String> styleClass = body.getStyleClass();
         if (!moneyAccount.equals(selectedMoneyAccount.get())) {
             styleClass.removeAll("grid-row", "selected");
-        } else if (!styleClass.contains("selected"))
-            styleClass.addAll("grid-row", "selected");
+        } else if (!styleClass.contains("selected")) styleClass.addAll("grid-row", "selected");
     }
 
     private Paint determineBorderColor() {

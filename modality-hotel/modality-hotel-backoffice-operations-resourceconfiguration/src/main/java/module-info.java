@@ -16,5 +16,4 @@ module modality.hotel.backoffice.operations.resourceconfiguration {
 
     // Exported packages
     exports one.modality.hotel.backoffice.operations.entities.resourceconfiguration;
-
 }

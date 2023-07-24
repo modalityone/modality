@@ -16,6 +16,6 @@ module modality.ecommerce.payment.direct.server {
     uses one.modality.ecommerce.payment.gateway.direct.spi.DirectPaymentGatewayProvider;
 
     // Provided services
-    provides one.modality.ecommerce.payment.direct.spi.DirectPaymentProvider with one.modality.ecommerce.payment.direct.spi.impl.server.ServerDirectPaymentProvider;
-
+    provides one.modality.ecommerce.payment.direct.spi.DirectPaymentProvider with
+            one.modality.ecommerce.payment.direct.spi.impl.server.ServerDirectPaymentProvider;
 }

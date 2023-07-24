@@ -1,10 +1,11 @@
 package one.modality.base.shared.entities.impl;
 
-import one.modality.base.shared.entities.Cart;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.impl.DynamicEntity;
 import dev.webfx.stack.orm.entity.impl.EntityFactoryProviderImpl;
+
+import one.modality.base.shared.entities.Cart;
 
 /**
  * @author Bruno Salmon
@@ -20,5 +21,4 @@ public final class CartImpl extends DynamicEntity implements Cart {
             super(Cart.class, CartImpl::new);
         }
     }
-
 }

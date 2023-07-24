@@ -1,14 +1,15 @@
 package one.modality.ecommerce.client.businessdata.feesgroup;
 
-import one.modality.ecommerce.client.businessdata.preselection.OptionsPreselection;
-import one.modality.ecommerce.client.businessdata.preselection.OptionsPreselectionBuilder;
-import one.modality.hotel.shared.businessdata.time.DateTimeRange;
+import dev.webfx.platform.util.collection.Collections;
+
+import one.modality.base.client.aggregates.event.EventAggregate;
 import one.modality.base.shared.entities.DateInfo;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Label;
 import one.modality.base.shared.entities.Option;
-import one.modality.base.client.aggregates.event.EventAggregate;
-import dev.webfx.platform.util.collection.Collections;
+import one.modality.ecommerce.client.businessdata.preselection.OptionsPreselection;
+import one.modality.ecommerce.client.businessdata.preselection.OptionsPreselectionBuilder;
+import one.modality.hotel.shared.businessdata.time.DateTimeRange;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,24 +79,39 @@ public final class FeesGroupBuilder {
 
     public FeesGroup build() {
         DateTimeRange dateTimeRange = dateInfo == null ? null : dateInfo.getParsedDateTimeRange();
-        if (dateTimeRange == null)
-            dateTimeRange = getEvent().getParsedDateTimeRange();
+        if (dateTimeRange == null) dateTimeRange = getEvent().getParsedDateTimeRange();
         List<OptionsPreselection> optionsPreselections = new ArrayList<>();
         if (accommodationOptions != null)
             for (Option accommodationOption : accommodationOptions)
                 addOptionsPreselection(accommodationOption, dateTimeRange, optionsPreselections);
         // Adding Course or No accommodation option
-        if (optionsPreselections.isEmpty() || // Ex: a day course or a section with no accommodation (like Food for Thought)
-                addNoAccommodationOption)     // If there are accommodation options, checking we can offer no accommodation (not the case for Refresh and Revive Overnighter)
-            addOptionsPreselection(null, dateTimeRange, optionsPreselections);
+        if (optionsPreselections.isEmpty()
+                || // Ex: a day course or a section with no accommodation (like Food for Thought)
+                addNoAccommodationOption) // If there are accommodation options, checking we can
+                                          // offer no accommodation (not the case for Refresh and
+                                          // Revive Overnighter)
+        addOptionsPreselection(null, dateTimeRange, optionsPreselections);
 
-        return new FeesGroup(getEvent(), id, label, i18nKey, feesBottomLabel, feesPopupLabel, forceSoldout, Collections.toArray(optionsPreselections, OptionsPreselection[]::new));
+        return new FeesGroup(
+                getEvent(),
+                id,
+                label,
+                i18nKey,
+                feesBottomLabel,
+                feesPopupLabel,
+                forceSoldout,
+                Collections.toArray(optionsPreselections, OptionsPreselection[]::new));
     }
 
-    private void addOptionsPreselection(Option accommodationOption, DateTimeRange dateTimeRange, List<OptionsPreselection> optionsPreselections) {
-        Collections.addIfNotNull(new OptionsPreselectionBuilder(eventAggregate, dateTimeRange)
-                .addDefaultOptions(defaultOptions)
-                .addAccommodationOption(accommodationOption)
-                .build(), optionsPreselections);
+    private void addOptionsPreselection(
+            Option accommodationOption,
+            DateTimeRange dateTimeRange,
+            List<OptionsPreselection> optionsPreselections) {
+        Collections.addIfNotNull(
+                new OptionsPreselectionBuilder(eventAggregate, dateTimeRange)
+                        .addDefaultOptions(defaultOptions)
+                        .addAccommodationOption(accommodationOption)
+                        .build(),
+                optionsPreselections);
     }
 }

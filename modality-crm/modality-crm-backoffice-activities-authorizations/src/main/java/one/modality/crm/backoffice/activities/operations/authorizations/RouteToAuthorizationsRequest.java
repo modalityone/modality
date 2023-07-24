@@ -1,17 +1,18 @@
 package one.modality.crm.backoffice.activities.operations.authorizations;
 
-
-import one.modality.crm.backoffice.activities.authorizations.routing.AuthorizationsRouting;
+import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.ui.operation.HasOperationCode;
-import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
+
+import one.modality.crm.backoffice.activities.authorizations.routing.AuthorizationsRouting;
 
 /**
  * @author Bruno Salmon
  */
-public final class RouteToAuthorizationsRequest extends RoutePushRequest implements HasOperationCode {
+public final class RouteToAuthorizationsRequest extends RoutePushRequest
+        implements HasOperationCode {
 
-    private final static String OPERATION_CODE = "RouteToAuthorizations";
+    private static final String OPERATION_CODE = "RouteToAuthorizations";
 
     public RouteToAuthorizationsRequest(BrowsingHistory history) {
         super(AuthorizationsRouting.getPath(), history);
@@ -21,5 +22,4 @@ public final class RouteToAuthorizationsRequest extends RoutePushRequest impleme
     public Object getOperationCode() {
         return OPERATION_CODE;
     }
-
 }

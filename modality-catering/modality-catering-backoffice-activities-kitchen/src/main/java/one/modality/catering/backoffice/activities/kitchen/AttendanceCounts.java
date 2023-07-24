@@ -30,11 +30,16 @@ public class AttendanceCounts {
                 .flatMap(Collection::stream)
                 .map(Row::getDietaryOption)
                 .distinct()
-                .sorted((dietaryOption1, dietaryOption2) -> {
-                    int ordinal1 = dietaryOptionOrders.getOrDefault(dietaryOption1, Integer.MAX_VALUE);
-                    int ordinal2 = dietaryOptionOrders.getOrDefault(dietaryOption2, Integer.MAX_VALUE);
-                    return Integer.compare(ordinal1, ordinal2);
-                })
+                .sorted(
+                        (dietaryOption1, dietaryOption2) -> {
+                            int ordinal1 =
+                                    dietaryOptionOrders.getOrDefault(
+                                            dietaryOption1, Integer.MAX_VALUE);
+                            int ordinal2 =
+                                    dietaryOptionOrders.getOrDefault(
+                                            dietaryOption2, Integer.MAX_VALUE);
+                            return Integer.compare(ordinal1, ordinal2);
+                        })
                 .collect(Collectors.toList());
     }
 

@@ -1,9 +1,10 @@
 package one.modality.crm.backoffice.activities.authorizations;
 
-import one.modality.crm.backoffice.activities.operations.authorizations.RouteToAuthorizationsRequest;
+import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
-import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
+
+import one.modality.crm.backoffice.activities.operations.authorizations.RouteToAuthorizationsRequest;
 
 /**
  * @author Bruno Salmon

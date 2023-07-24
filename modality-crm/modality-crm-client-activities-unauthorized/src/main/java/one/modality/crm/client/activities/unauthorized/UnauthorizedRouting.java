@@ -10,5 +10,4 @@ public final class UnauthorizedRouting {
     public static String getPath() {
         return PATH;
     }
-
 }

@@ -42,6 +42,7 @@ module modality.all.frontoffice.application.openjfx {
     opens dev.webfx.platform.meta.exe;
 
     // Provided services
-    provides dev.webfx.stack.conf.spi.ConfigurationSupplier with one.modality.all.frontoffice.conf.openjfx.ModalityAllFrontOfficeEnvironmentConfigurationSupplier;
-
+    provides dev.webfx.stack.conf.spi.ConfigurationSupplier with
+            one.modality.all.frontoffice.conf.openjfx
+                    .ModalityAllFrontOfficeEnvironmentConfigurationSupplier;
 }

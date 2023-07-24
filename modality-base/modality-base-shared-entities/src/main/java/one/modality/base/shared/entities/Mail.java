@@ -1,7 +1,8 @@
 package one.modality.base.shared.entities;
 
-import one.modality.base.shared.entities.markers.EntityHasDocument;
 import dev.webfx.stack.orm.entity.Entity;
+
+import one.modality.base.shared.entities.markers.EntityHasDocument;
 
 /**
  * @author Bruno Salmon
@@ -47,5 +48,4 @@ public interface Mail extends Entity, EntityHasDocument {
     default Boolean isOut() {
         return getBooleanFieldValue("out");
     }
-
 }

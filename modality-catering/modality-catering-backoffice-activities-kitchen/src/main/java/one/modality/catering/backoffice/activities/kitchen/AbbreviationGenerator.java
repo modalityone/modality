@@ -28,10 +28,11 @@ public class AbbreviationGenerator {
                 for (int wordIndex = 0; wordIndex < words.length; wordIndex++) {
                     String sourceWord = words[wordIndex];
                     final int finalWordIndex = wordIndex;
-                    Collection<String> acronymTwins = capitalizedAcronymInputs.get(acronym.toUpperCase()).stream()
-                            .filter(acronymTwin -> !acronymTwin.equals(string))
-                            .map(acronymTwin -> splitIntoWords(acronymTwin)[finalWordIndex])
-                            .collect(Collectors.toList());
+                    Collection<String> acronymTwins =
+                            capitalizedAcronymInputs.get(acronym.toUpperCase()).stream()
+                                    .filter(acronymTwin -> !acronymTwin.equals(string))
+                                    .map(acronymTwin -> splitIntoWords(acronymTwin)[finalWordIndex])
+                                    .collect(Collectors.toList());
                     String prefix = findShortestUniquePrefix(sourceWord, acronymTwins);
                     complexAcronym += prefix;
                 }

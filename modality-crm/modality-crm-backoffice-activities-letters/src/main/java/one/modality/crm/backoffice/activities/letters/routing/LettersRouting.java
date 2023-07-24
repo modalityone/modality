@@ -7,7 +7,8 @@ import one.modality.base.client.util.routing.ModalityRoutingUtil;
  */
 public final class LettersRouting {
 
-    private static final String ANY_PATH = "/letters(/organization/:organizationId)?(/event/:eventId)?";
+    private static final String ANY_PATH =
+            "/letters(/organization/:organizationId)?(/event/:eventId)?";
     private static final String EVENT_PATH = "/letters/event/:eventId";
 
     public static String getAnyPath() {
@@ -15,7 +16,8 @@ public final class LettersRouting {
     }
 
     public static String getEventLettersPath(Object eventId) {
-        return eventId == null ? "/letters" : ModalityRoutingUtil.interpolateEventIdInPath(eventId, EVENT_PATH);
+        return eventId == null
+                ? "/letters"
+                : ModalityRoutingUtil.interpolateEventIdInPath(eventId, EVENT_PATH);
     }
-
 }

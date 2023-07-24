@@ -1,8 +1,9 @@
 package one.modality.ecommerce.backoffice.activities.moneyflows;
 
+import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
-import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
+
 import one.modality.ecommerce.backoffice.operations.routes.moneyflows.RouteToMoneyFlowsRequest;
 
 /**
@@ -12,6 +13,7 @@ public final class RouteToMoneyFlowsRequestEmitter implements RouteRequestEmitte
 
     @Override
     public RouteRequest instantiateRouteRequest(UiRouteActivityContext context) {
-        return new RouteToMoneyFlowsRequest(context.getParameter("organizationId"), context.getHistory());
+        return new RouteToMoneyFlowsRequest(
+                context.getParameter("organizationId"), context.getHistory());
     }
 }

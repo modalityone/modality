@@ -26,6 +26,6 @@ module modality.event.frontoffice.activities.terms {
     exports one.modality.event.frontoffice.operations.terms;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.terms.TermsUiRoute;
-
+    provides dev.webfx.stack.routing.uirouter.UiRoute with
+            one.modality.event.frontoffice.activities.terms.TermsUiRoute;
 }

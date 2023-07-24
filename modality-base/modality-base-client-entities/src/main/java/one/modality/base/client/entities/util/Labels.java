@@ -1,15 +1,17 @@
 package one.modality.base.client.entities.util;
 
+import dev.webfx.platform.util.Objects;
+import dev.webfx.stack.i18n.I18n;
+
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Labeled;
+
 import one.modality.base.shared.entities.Label;
 import one.modality.base.shared.entities.impl.LabelImpl;
 import one.modality.base.shared.entities.markers.HasItem;
 import one.modality.base.shared.entities.markers.HasLabel;
 import one.modality.base.shared.entities.markers.HasName;
-import dev.webfx.stack.i18n.I18n;
-import dev.webfx.platform.util.Objects;
 
 /**
  * @author Bruno Salmon
@@ -18,21 +20,16 @@ public final class Labels {
 
     public static Label bestLabel(Object o) {
         Label label = null;
-        if (o instanceof HasLabel)
-            label = ((HasLabel) o).getLabel();
-        if (label == null && o instanceof HasItem)
-            label = bestLabel(((HasItem) o).getItem());
-        if (label == null && o instanceof Label)
-            label = (Label) o;
+        if (o instanceof HasLabel) label = ((HasLabel) o).getLabel();
+        if (label == null && o instanceof HasItem) label = bestLabel(((HasItem) o).getItem());
+        if (label == null && o instanceof Label) label = (Label) o;
         return label;
     }
 
     public static String bestName(Object o) {
         String name = null;
-        if (o instanceof HasName)
-            name = ((HasName) o).getName();
-        if (name == null && o instanceof HasItem)
-            name = bestName(((HasItem) o).getItem());
+        if (o instanceof HasName) name = ((HasName) o).getName();
+        if (name == null && o instanceof HasItem) name = bestName(((HasItem) o).getItem());
         return name;
     }
 
@@ -40,8 +37,7 @@ public final class Labels {
         Label label = bestLabel(o);
         String name = bestName(o);
         if (name != null) {
-            if (label == null)
-                label = new LabelImpl(null, null);
+            if (label == null) label = new LabelImpl(null, null);
             label.setFieldValue("name", name);
         }
         return label;
@@ -49,7 +45,10 @@ public final class Labels {
 
     public static Property<String> translateLabel(Label label) {
         Property<String> translation = new SimpleObjectProperty<>(instantTranslateLabel(label));
-        I18n.languageProperty().addListener((observable, oldValue, newValue) -> translation.setValue(instantTranslateLabel(label)));
+        I18n.languageProperty()
+                .addListener(
+                        (observable, oldValue, newValue) ->
+                                translation.setValue(instantTranslateLabel(label)));
         return translation;
     }
 
@@ -74,12 +73,19 @@ public final class Labels {
         return instantTranslateLabel(label, I18n.getLanguage(), I18n.getI18nText(keyIfNull));
     }
 
-    public static String instantTranslateLabel(Label label, Object language, String translationIfNull) {
-        if (label == null)
-            return translationIfNull;
+    public static String instantTranslateLabel(
+            Label label, Object language, String translationIfNull) {
+        if (label == null) return translationIfNull;
         String translation = label.getStringFieldValue(language);
         if (translation == null)
-            translation = Objects.coalesce(label.getStringFieldValue("name"), label.getEn(), label.getFr(), label.getEs(), label.getPt(), label.getDe());
+            translation =
+                    Objects.coalesce(
+                            label.getStringFieldValue("name"),
+                            label.getEn(),
+                            label.getFr(),
+                            label.getEs(),
+                            label.getPt(),
+                            label.getDe());
         return translation != null ? translation : translationIfNull;
     }
 }

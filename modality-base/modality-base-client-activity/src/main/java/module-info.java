@@ -34,5 +34,4 @@ module modality.base.client.activity {
     exports one.modality.base.client.activity.organizationdependent;
     exports one.modality.base.client.activity.table;
     exports one.modality.base.client.activity.themes;
-
 }

@@ -31,6 +31,6 @@ module modality.event.frontoffice.activities.startbooking {
     exports one.modality.event.frontoffice.operations.startbooking;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.startbooking.StartBookingUiRoute;
-
+    provides dev.webfx.stack.routing.uirouter.UiRoute with
+            one.modality.event.frontoffice.activities.startbooking.StartBookingUiRoute;
 }

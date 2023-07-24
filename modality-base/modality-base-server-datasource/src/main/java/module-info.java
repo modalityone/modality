@@ -19,8 +19,11 @@ module modality.base.server.datasource {
     opens one.modality.base.server.services.datasource;
 
     // Provided services
-    provides dev.webfx.platform.boot.spi.ApplicationModuleBooter with one.modality.base.server.services.datasource.ModalityLocalDataSourceModuleBooter;
-    provides dev.webfx.stack.conf.spi.ConfigurationConsumer with one.modality.base.server.services.datasource.ModalityLocalDataSourceConfigurationConsumer;
-    provides dev.webfx.stack.db.datasource.spi.LocalDataSourceProvider with one.modality.base.server.services.datasource.ModalityLocalDataSourceProvider;
-
+    provides dev.webfx.platform.boot.spi.ApplicationModuleBooter with
+            one.modality.base.server.services.datasource.ModalityLocalDataSourceModuleBooter;
+    provides dev.webfx.stack.conf.spi.ConfigurationConsumer with
+            one.modality.base.server.services.datasource
+                    .ModalityLocalDataSourceConfigurationConsumer;
+    provides dev.webfx.stack.db.datasource.spi.LocalDataSourceProvider with
+            one.modality.base.server.services.datasource.ModalityLocalDataSourceProvider;
 }

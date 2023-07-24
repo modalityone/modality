@@ -5,6 +5,4 @@ import one.modality.base.client.activity.table.GenericTablePresentationModel;
 /**
  * @author Bruno Salmon
  */
-final class OperationsPresentationModel extends GenericTablePresentationModel {
-
-}
+final class OperationsPresentationModel extends GenericTablePresentationModel {}

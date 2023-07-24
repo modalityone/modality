@@ -1,15 +1,16 @@
 package one.modality.catering.backoffice.operations.entities.allocationrule;
 
-import javafx.scene.layout.Pane;
+import dev.webfx.platform.async.AsyncFunction;
+import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
-import dev.webfx.stack.orm.entity.Entity;
-import dev.webfx.platform.async.AsyncFunction;
 
-public final class EditAllocationRuleRequest implements HasOperationCode,
-        HasOperationExecutor<EditAllocationRuleRequest, Void> {
+import javafx.scene.layout.Pane;
 
-    private final static String OPERATION_CODE = "EditAllocationRule";
+public final class EditAllocationRuleRequest
+        implements HasOperationCode, HasOperationExecutor<EditAllocationRuleRequest, Void> {
+
+    private static final String OPERATION_CODE = "EditAllocationRule";
 
     private final Entity allocationRule;
     private final Pane parentContainer;

@@ -5,10 +5,9 @@ package one.modality.catering.backoffice.activities.kitchen.routing;
  */
 public final class KitchenRouting {
 
-    private final static String PATH = "/kitchen";
+    private static final String PATH = "/kitchen";
 
     public static String getPath() {
         return PATH;
     }
-
 }

@@ -1,16 +1,17 @@
 package one.modality.ecommerce.client.businessdata.workingdocument;
 
-import one.modality.hotel.shared.businessdata.time.DaysArray;
+import dev.webfx.platform.async.Future;
+import dev.webfx.platform.util.collection.Collections;
+import dev.webfx.platform.util.uuid.Uuid;
+import dev.webfx.stack.db.submit.SubmitArgument;
+import dev.webfx.stack.orm.entity.UpdateStore;
+
 import one.modality.base.client.aggregates.event.EventAggregate;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Cart;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.DocumentLine;
-import dev.webfx.stack.orm.entity.UpdateStore;
-import dev.webfx.stack.db.submit.SubmitArgument;
-import dev.webfx.platform.async.Future;
-import dev.webfx.platform.util.collection.Collections;
-import dev.webfx.platform.util.uuid.Uuid;
+import one.modality.hotel.shared.businessdata.time.DaysArray;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -51,30 +52,29 @@ public final class WorkingDocumentSubmitter {
             if (dl == null) {
                 dlu = store.insertEntity(DocumentLine.class);
                 dlu.setDocument(du);
-            } else
-                dlu = store.updateEntity(dl);
+            } else dlu = store.updateEntity(dl);
             dlu.setSite(wdl.getSite());
             dlu.setItem(wdl.getItem());
 
             DaysArray daysArray = wdl.getDaysArray();
             int j = 0, m = Collections.size(attendances), n = daysArray.getArray().length;
             if (m > 0 && n == 0) // means that all attendances have been removed
-                removeLine(wd, dl);
+            removeLine(wd, dl);
             else {
                 for (int i = 0; i < n; i++) {
                     LocalDate date = daysArray.getDate(i);
-                    while (j < m && attendances.get(j).getDate().compareTo(date) < 0) // isBefore() doesn't work on Android
-                        store.deleteEntity(attendances.get(j++));
-                    if (j < m && attendances.get(j).getDate().equals(date))
-                        j++;
+                    while (j < m
+                            && attendances.get(j).getDate().compareTo(date)
+                                    < 0) // isBefore() doesn't work on Android
+                    store.deleteEntity(attendances.get(j++));
+                    if (j < m && attendances.get(j).getDate().equals(date)) j++;
                     else {
                         Attendance au = store.insertEntity(Attendance.class);
                         au.setDate(date);
                         au.setDocumentLine(dlu);
                     }
                 }
-                while (j < m)
-                    store.deleteEntity(attendances.get(j++));
+                while (j < m) store.deleteEntity(attendances.get(j++));
             }
         }
         if (loadedWorkingDocument != null)
@@ -82,14 +82,18 @@ public final class WorkingDocumentSubmitter {
                 if (wd.findSameWorkingDocumentLine(lastWdl) == null)
                     removeLine(wd, lastWdl.getDocumentLine());
             }
-        return store.submitChanges(SubmitArgument.builder()
-                .setStatement("select set_transaction_parameters(false)")
-                .setDataSourceId(store.getDataSourceId())
-                .build())
+        return store.submitChanges(
+                        SubmitArgument.builder()
+                                .setStatement("select set_transaction_parameters(false)")
+                                .setDataSourceId(store.getDataSourceId())
+                                .build())
                 .map(batch -> du);
     }
 
     private static void removeLine(WorkingDocument wd, DocumentLine dl) {
-        wd.getUpdateStore().deleteEntity(dl); // TODO: should probably be cancelled instead in some cases (and keep the non refundable part)
+        wd.getUpdateStore()
+                .deleteEntity(
+                        dl); // TODO: should probably be cancelled instead in some cases (and keep
+                             // the non refundable part)
     }
 }

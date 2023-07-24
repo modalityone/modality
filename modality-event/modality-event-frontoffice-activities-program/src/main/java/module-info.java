@@ -23,6 +23,6 @@ module modality.event.frontoffice.activities.program {
     exports one.modality.event.frontoffice.operations.program;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.program.ProgramUiRoute;
-
+    provides dev.webfx.stack.routing.uirouter.UiRoute with
+            one.modality.event.frontoffice.activities.program.ProgramUiRoute;
 }

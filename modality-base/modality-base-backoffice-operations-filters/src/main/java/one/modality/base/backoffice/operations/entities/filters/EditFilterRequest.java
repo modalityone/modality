@@ -1,15 +1,17 @@
 package one.modality.base.backoffice.operations.entities.filters;
 
+import dev.webfx.platform.async.AsyncFunction;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
-import dev.webfx.platform.async.AsyncFunction;
+
 import javafx.scene.layout.Pane;
+
 import one.modality.base.shared.entities.Filter;
 
-public final class EditFilterRequest implements HasOperationCode,
-        HasOperationExecutor<EditFilterRequest, Void> {
+public final class EditFilterRequest
+        implements HasOperationCode, HasOperationExecutor<EditFilterRequest, Void> {
 
-    private final static String OPERATION_CODE = "EditFilter";
+    private static final String OPERATION_CODE = "EditFilter";
 
     private final Filter filter;
     private final Pane parentContainer;
@@ -24,7 +26,9 @@ public final class EditFilterRequest implements HasOperationCode,
         return OPERATION_CODE;
     }
 
-    public Filter getFilter() { return filter; }
+    public Filter getFilter() {
+        return filter;
+    }
 
     public Pane getParentContainer() {
         return parentContainer;

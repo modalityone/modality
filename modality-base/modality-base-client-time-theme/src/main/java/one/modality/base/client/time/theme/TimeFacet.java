@@ -2,6 +2,7 @@ package one.modality.base.client.time.theme;
 
 import dev.webfx.extras.theme.Facet;
 import dev.webfx.stack.i18n.I18n;
+
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -16,7 +17,6 @@ import java.time.YearMonth;
  * @author Bruno Salmon
  */
 public enum TimeFacet {
-
     MONTH_FACET,
 
     DAY_OF_WEEK_FACET,
@@ -58,15 +58,14 @@ public enum TimeFacet {
 
     public static Facet createYearMonthFacet(YearMonth yearMonth) {
         Text text = new Text();
-        I18n.bindI18nProperties(text, "[" + yearMonth.getMonth().name() + "] " + (yearMonth.getYear() % 1000));
+        I18n.bindI18nProperties(
+                text, "[" + yearMonth.getMonth().name() + "] " + (yearMonth.getYear() % 1000));
         StackPane stackPane = new StackPane(text);
         HBox.setHgrow(stackPane, Priority.ALWAYS);
-        return createYearMonthFacet(yearMonth, text,stackPane);
+        return createYearMonthFacet(yearMonth, text, stackPane);
     }
 
     public static Facet createYearMonthFacet(YearMonth yearMonth, Text text, Region container) {
-        return new Facet(MONTH_FACET, container)
-                .setLogicValue(yearMonth)
-                .setTextNode(text);
+        return new Facet(MONTH_FACET, container).setLogicValue(yearMonth).setTextNode(text);
     }
 }

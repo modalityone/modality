@@ -1,16 +1,14 @@
 package one.modality.base.shared.entities;
 
 import dev.webfx.stack.orm.entity.EntityId;
+
 import one.modality.base.shared.entities.markers.EntityHasEvent;
 import one.modality.base.shared.entities.markers.EntityHasIcon;
 import one.modality.base.shared.entities.markers.EntityHasName;
 import one.modality.base.shared.entities.markers.EntityHasOrganization;
 
-public interface MoneyAccount extends
-        EntityHasOrganization,
-        EntityHasEvent,
-        EntityHasIcon,
-        EntityHasName {
+public interface MoneyAccount
+        extends EntityHasOrganization, EntityHasEvent, EntityHasIcon, EntityHasName {
 
     default void setCurrency(Object currency) {
         setForeignField("currency", currency);
@@ -43,5 +41,4 @@ public interface MoneyAccount extends
     default Boolean isClosed() {
         return getBooleanFieldValue("closed");
     }
-
 }

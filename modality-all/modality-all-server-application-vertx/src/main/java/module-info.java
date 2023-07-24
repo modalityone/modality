@@ -37,5 +37,4 @@ module modality.all.server.application.vertx {
 
     // Meta Resource package
     opens dev.webfx.platform.meta.exe;
-
 }

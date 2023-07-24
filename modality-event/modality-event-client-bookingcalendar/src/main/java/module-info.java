@@ -18,5 +18,4 @@ module modality.event.client.bookingcalendar {
 
     // Exported packages
     exports one.modality.event.client.controls.bookingcalendar;
-
 }

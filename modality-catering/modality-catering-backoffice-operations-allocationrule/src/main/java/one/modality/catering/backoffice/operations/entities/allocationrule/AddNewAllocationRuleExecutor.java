@@ -1,8 +1,10 @@
 package one.modality.catering.backoffice.operations.entities.allocationrule;
 
-import javafx.scene.layout.Pane;
-import one.modality.base.shared.entities.Event;
 import dev.webfx.platform.async.Future;
+
+import javafx.scene.layout.Pane;
+
+import one.modality.base.shared.entities.Event;
 
 final class AddNewAllocationRuleExecutor {
 

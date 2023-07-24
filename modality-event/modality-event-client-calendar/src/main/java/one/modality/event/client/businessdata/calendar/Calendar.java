@@ -12,5 +12,4 @@ public interface Calendar {
     TimeInterval getPeriod();
 
     Collection<CalendarTimeline> getTimelines();
-
 }

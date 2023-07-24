@@ -1,15 +1,17 @@
 package one.modality.ecommerce.backoffice.operations.entities.documentline;
 
-import javafx.scene.layout.Pane;
-import one.modality.base.shared.entities.DocumentLine;
+import dev.webfx.platform.async.AsyncFunction;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
-import dev.webfx.platform.async.AsyncFunction;
 
-public final class EditDocumentLineRequest implements HasOperationCode,
-        HasOperationExecutor<EditDocumentLineRequest, Void> {
+import javafx.scene.layout.Pane;
 
-    private final static String OPERATION_CODE = "EditDocumentLine";
+import one.modality.base.shared.entities.DocumentLine;
+
+public final class EditDocumentLineRequest
+        implements HasOperationCode, HasOperationExecutor<EditDocumentLineRequest, Void> {
+
+    private static final String OPERATION_CODE = "EditDocumentLine";
 
     private final DocumentLine documentLine;
     private final Pane parentContainer;

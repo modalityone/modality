@@ -18,5 +18,4 @@ public interface EntityHasDate extends Entity, HasDate {
     default LocalDate getDate() {
         return getLocalDateFieldValue("date");
     }
-
 }

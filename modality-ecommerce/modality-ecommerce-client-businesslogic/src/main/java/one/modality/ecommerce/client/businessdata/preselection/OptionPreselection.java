@@ -1,8 +1,8 @@
 package one.modality.ecommerce.client.businessdata.preselection;
 
+import one.modality.base.shared.entities.Option;
 import one.modality.hotel.shared.businessdata.time.DateTimeRange;
 import one.modality.hotel.shared.businessdata.time.DayTimeRange;
-import one.modality.base.shared.entities.Option;
 
 /**
  * @author Bruno Salmon
@@ -37,5 +37,4 @@ public final class OptionPreselection {
     public DayTimeRange getDayTimeRange() {
         return dayTimeRange;
     }
-
 }

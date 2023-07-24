@@ -7,7 +7,7 @@ import one.modality.base.client.util.routing.ModalityRoutingUtil;
  */
 public final class ContactUsRouting {
 
-    private final static String PATH = "/contact-us/:documentId";
+    private static final String PATH = "/contact-us/:documentId";
 
     public static String getPath() {
         return PATH;
@@ -16,5 +16,4 @@ public final class ContactUsRouting {
     public static String getContactUsPath(Object documentId) {
         return ModalityRoutingUtil.interpolateDocumentIdInPath(documentId, getPath());
     }
-
 }

@@ -1,6 +1,7 @@
 package one.modality.base.shared.entities;
 
 import dev.webfx.stack.orm.entity.EntityId;
+
 import one.modality.base.shared.entities.markers.EntityHasDocument;
 import one.modality.base.shared.entities.markers.EntityHasIcon;
 
@@ -9,9 +10,7 @@ import java.time.LocalDateTime;
 /**
  * @author Bruno Salmon
  */
-public interface MoneyTransfer extends
-        EntityHasDocument,
-        EntityHasIcon {
+public interface MoneyTransfer extends EntityHasDocument, EntityHasIcon {
 
     default void setAmount(Integer amount) {
         setFieldValue("amount", amount);
@@ -76,5 +75,4 @@ public interface MoneyTransfer extends
     default Boolean isSuccessful() {
         return getBooleanFieldValue("successful");
     }
-
 }

@@ -30,7 +30,8 @@ module modality.ecommerce.backoffice.activities.income {
     exports one.modality.ecommerce.backoffice.operations.routes.income;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.ecommerce.backoffice.activities.income.IncomeUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.ecommerce.backoffice.activities.income.RouteToIncomeRequestEmitter;
-
+    provides dev.webfx.stack.routing.uirouter.UiRoute with
+            one.modality.ecommerce.backoffice.activities.income.IncomeUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with
+            one.modality.ecommerce.backoffice.activities.income.RouteToIncomeRequestEmitter;
 }

@@ -18,5 +18,4 @@ module modality.base.client.aggregates {
     exports one.modality.base.client.aggregates.cart;
     exports one.modality.base.client.aggregates.event;
     exports one.modality.base.client.aggregates.person;
-
 }

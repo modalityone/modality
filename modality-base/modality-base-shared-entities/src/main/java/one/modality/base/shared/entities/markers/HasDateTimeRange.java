@@ -11,8 +11,9 @@ public interface HasDateTimeRange {
 
     String getDateTimeRange();
 
-    default DateTimeRange getParsedDateTimeRange() { // Should be overridden by implementing class to have a cached value
+    default DateTimeRange
+            getParsedDateTimeRange() { // Should be overridden by implementing class to have a
+                                       // cached value
         return DateTimeRange.parse(getDateTimeRange());
     }
-
 }

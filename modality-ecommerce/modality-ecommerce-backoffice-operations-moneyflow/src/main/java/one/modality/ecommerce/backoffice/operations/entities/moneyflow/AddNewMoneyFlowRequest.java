@@ -1,14 +1,15 @@
 package one.modality.ecommerce.backoffice.operations.entities.moneyflow;
 
+import dev.webfx.platform.async.AsyncFunction;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
-import dev.webfx.platform.async.AsyncFunction;
+
 import javafx.scene.layout.Pane;
 
-public final class AddNewMoneyFlowRequest implements HasOperationCode,
-        HasOperationExecutor<AddNewMoneyFlowRequest, Void> {
+public final class AddNewMoneyFlowRequest
+        implements HasOperationCode, HasOperationExecutor<AddNewMoneyFlowRequest, Void> {
 
-    private final static String OPERATION_CODE = "AddNewMoneyFlow";
+    private static final String OPERATION_CODE = "AddNewMoneyFlow";
 
     private final Pane parentContainer;
 

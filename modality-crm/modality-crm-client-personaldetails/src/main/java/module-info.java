@@ -29,5 +29,4 @@ module modality.crm.client.personaldetails {
 
     // Exported packages
     exports one.modality.crm.client.controls.personaldetails;
-
 }

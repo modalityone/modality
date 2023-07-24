@@ -32,7 +32,9 @@ module modality.catering.backoffice.activities.diningareas {
     exports one.modality.catering.backoffice.operations.routes.diningareas;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.catering.backoffice.activities.diningareas.DiningAreasUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.catering.backoffice.activities.diningareas.RouteToDiningAreasRequestEmitter;
-
+    provides dev.webfx.stack.routing.uirouter.UiRoute with
+            one.modality.catering.backoffice.activities.diningareas.DiningAreasUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with
+            one.modality.catering.backoffice.activities.diningareas
+                    .RouteToDiningAreasRequestEmitter;
 }

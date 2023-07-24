@@ -4,6 +4,7 @@ import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivi
 import dev.webfx.stack.routing.router.util.PathBuilder;
 import dev.webfx.stack.routing.uirouter.UiRoute;
 import dev.webfx.stack.routing.uirouter.impl.UiRouteImpl;
+
 import one.modality.catering.backoffice.activities.kitchen.routing.KitchenRouting;
 
 /**
@@ -16,10 +17,10 @@ public final class KitchenUiRoute extends UiRouteImpl {
     }
 
     public static UiRoute<?> uiRoute() {
-        return UiRoute.createRegex(PathBuilder.toRegexPath(KitchenRouting.getPath())
-                , false
-                , KitchenActivity::new
-                , ViewDomainActivityContextFinal::new
-        );
+        return UiRoute.createRegex(
+                PathBuilder.toRegexPath(KitchenRouting.getPath()),
+                false,
+                KitchenActivity::new,
+                ViewDomainActivityContextFinal::new);
     }
 }

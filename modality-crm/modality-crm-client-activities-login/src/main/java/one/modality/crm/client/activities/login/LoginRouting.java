@@ -10,5 +10,4 @@ public final class LoginRouting {
     public static String getPath() {
         return PATH;
     }
-
 }

@@ -1,15 +1,17 @@
 package one.modality.ecommerce.backoffice.operations.entities.document;
 
-import javafx.scene.layout.Pane;
-import one.modality.base.shared.entities.Document;
+import dev.webfx.platform.async.AsyncFunction;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
-import dev.webfx.platform.async.AsyncFunction;
 
-public final class SendLetterRequest implements HasOperationCode,
-        HasOperationExecutor<SendLetterRequest, Void> {
+import javafx.scene.layout.Pane;
 
-    private final static String OPERATION_CODE = "SendLetter";
+import one.modality.base.shared.entities.Document;
+
+public final class SendLetterRequest
+        implements HasOperationCode, HasOperationExecutor<SendLetterRequest, Void> {
+
+    private static final String OPERATION_CODE = "SendLetter";
 
     private final Document document;
     private final Pane parentContainer;

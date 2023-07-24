@@ -40,7 +40,8 @@ module modality.ecommerce.backoffice.activities.moneyflows {
     exports one.modality.ecommerce.backoffice.operations.routes.moneyflows;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.ecommerce.backoffice.activities.moneyflows.MoneyFlowsUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.ecommerce.backoffice.activities.moneyflows.RouteToMoneyFlowsRequestEmitter;
-
+    provides dev.webfx.stack.routing.uirouter.UiRoute with
+            one.modality.ecommerce.backoffice.activities.moneyflows.MoneyFlowsUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with
+            one.modality.ecommerce.backoffice.activities.moneyflows.RouteToMoneyFlowsRequestEmitter;
 }

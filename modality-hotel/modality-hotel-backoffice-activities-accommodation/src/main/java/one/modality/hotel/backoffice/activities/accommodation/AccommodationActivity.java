@@ -1,11 +1,13 @@
 package one.modality.hotel.backoffice.activities.accommodation;
 
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
+
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
+
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
@@ -15,15 +17,16 @@ import one.modality.hotel.backoffice.accommodation.TodayAccommodationStatus;
 
 import java.util.function.Supplier;
 
-final class AccommodationActivity extends OrganizationDependentViewDomainActivity implements
-        OperationActionFactoryMixin {
+final class AccommodationActivity extends OrganizationDependentViewDomainActivity
+        implements OperationActionFactoryMixin {
 
     private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
     private final RoomView roomView = new RoomView(pm);
     private final GuestView guestView = new GuestView(pm);
 
     private final RoomsAlterationView roomsAlterationView = new RoomsAlterationView(pm);
-    private final TodayAccommodationStatus todayAccommodationStatus = new TodayAccommodationStatus(pm);
+    private final TodayAccommodationStatus todayAccommodationStatus =
+            new TodayAccommodationStatus(pm);
 
     public AccommodationActivity() {
         pm.doFXBindings();
@@ -32,11 +35,11 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
     @Override
     public Node buildUi() {
         TabPane tabPane = new TabPane();
-        tabPane.getTabs().setAll(
-                createTab("Rooms", this::buildRoomView),
-                createTab("Guests", this::buildGuestView),
-                createTab("Rooms alteration", this::buildRoomsAlterationView)
-        );
+        tabPane.getTabs()
+                .setAll(
+                        createTab("Rooms", this::buildRoomView),
+                        createTab("Guests", this::buildGuestView),
+                        createTab("Rooms alteration", this::buildRoomsAlterationView));
         return tabPane;
     }
 
@@ -56,7 +59,8 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
     }
 
     private Node buildGuestView() {
-        return AccommodationBorderPane.createAccommodationBorderPane(guestView.getAttendanceGantt(), todayAccommodationStatus);
+        return AccommodationBorderPane.createAccommodationBorderPane(
+                guestView.getAttendanceGantt(), todayAccommodationStatus);
     }
 
     private Node buildRoomsAlterationView() {
@@ -91,5 +95,4 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
     public AccommodationPresentationModel getPresentationModel() {
         return pm;
     }
-
 }

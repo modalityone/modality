@@ -3,13 +3,13 @@ name: Enforce Google Java Style Guidelines
 on: [push]
 
 jobs:
-  Google-Java-Format:
+  Enforce-Google-Java-Style:
+
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - uses: axel-op/googlejavaformat-action@v3
-        with:
-          args: "-n --set-exit-if-changed"
+      - name: Enforce Google Java Style Guidelines
+        run: mvn com.spotify.fmt:fmt-maven-plugin:check -Dverbose=true -Dstyle=aosp

@@ -7,7 +7,7 @@ import one.modality.base.client.util.routing.ModalityRoutingUtil;
  */
 public final class LetterRouting {
 
-    private final static String PATH = "/letter/:letterId";
+    private static final String PATH = "/letter/:letterId";
 
     public static String getPath() {
         return PATH;
@@ -16,5 +16,4 @@ public final class LetterRouting {
     public static String getEditLetterPath(Object letterId) {
         return ModalityRoutingUtil.interpolateLetterIdInPath(letterId, PATH);
     }
-
 }

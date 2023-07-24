@@ -1,17 +1,18 @@
 package one.modality.ecommerce.client.businessdata.preselection;
 
-import one.modality.base.client.entities.util.Labels;
-import one.modality.ecommerce.client.businessdata.workingdocument.WorkingDocument;
-import one.modality.ecommerce.client.businessdata.workingdocument.WorkingDocumentLine;
-import one.modality.hotel.shared.businessdata.time.DateTimeRange;
+import dev.webfx.platform.util.Booleans;
+import dev.webfx.platform.util.collection.Collections;
+import dev.webfx.stack.db.query.QueryResult;
+import dev.webfx.stack.orm.entity.Entities;
+
 import one.modality.base.client.aggregates.event.EventAggregate;
+import one.modality.base.client.entities.util.Labels;
 import one.modality.base.shared.entities.Label;
 import one.modality.base.shared.entities.Option;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
-import dev.webfx.stack.orm.entity.Entities;
-import dev.webfx.stack.db.query.QueryResult;
-import dev.webfx.platform.util.Booleans;
-import dev.webfx.platform.util.collection.Collections;
+import one.modality.ecommerce.client.businessdata.workingdocument.WorkingDocument;
+import one.modality.ecommerce.client.businessdata.workingdocument.WorkingDocumentLine;
+import one.modality.hotel.shared.businessdata.time.DateTimeRange;
 
 import java.util.List;
 
@@ -25,7 +26,11 @@ public final class OptionsPreselection {
     private final String i18nKey; // alternative i18n key if label is null
     private final List<OptionPreselection> optionPreselections;
 
-    public OptionsPreselection(EventAggregate eventAggregate, Label label, String i18nKey, List<OptionPreselection> optionPreselections) {
+    public OptionsPreselection(
+            EventAggregate eventAggregate,
+            Label label,
+            String i18nKey,
+            List<OptionPreselection> optionPreselections) {
         this.eventAggregate = eventAggregate;
         this.label = label;
         this.i18nKey = i18nKey;
@@ -41,22 +46,28 @@ public final class OptionsPreselection {
     }
 
     private WorkingDocument workingDocument;
+
     public WorkingDocument initializeNewWorkingDocument() {
-        if (workingDocument == null)
-            workingDocument = createNewWorkingDocument(null);
+        if (workingDocument == null) workingDocument = createNewWorkingDocument(null);
         else
-            workingDocument.syncPersonDetails(eventAggregate.getPersonAggregate().getPreselectionProfilePerson());
+            workingDocument.syncPersonDetails(
+                    eventAggregate.getPersonAggregate().getPreselectionProfilePerson());
         return workingDocument;
     }
 
     public WorkingDocument getWorkingDocument() {
-        if (workingDocument == null)
-            initializeNewWorkingDocument();
+        if (workingDocument == null) initializeNewWorkingDocument();
         return workingDocument;
     }
 
     public WorkingDocument createNewWorkingDocument(DateTimeRange workingDocumentDateTimeRange) {
-        return new WorkingDocument(eventAggregate, Collections.map(optionPreselections, optionPreselection -> new WorkingDocumentLine(optionPreselection, workingDocumentDateTimeRange)));
+        return new WorkingDocument(
+                eventAggregate,
+                Collections.map(
+                        optionPreselections,
+                        optionPreselection ->
+                                new WorkingDocumentLine(
+                                        optionPreselection, workingDocumentDateTimeRange)));
     }
 
     public WorkingDocumentLine getAccommodationLine() {
@@ -69,7 +80,8 @@ public final class OptionsPreselection {
 
     public boolean hasAccommodationExcludingSharing() {
         WorkingDocumentLine accommodationLine = getAccommodationLine();
-        return accommodationLine != null && Booleans.isFalse(accommodationLine.getItem().isShare_mate());
+        return accommodationLine != null
+                && Booleans.isFalse(accommodationLine.getItem().isShare_mate());
     }
 
     public Option getAccommodationOption() {
@@ -106,7 +118,8 @@ public final class OptionsPreselection {
                 Object sitePk = Entities.getPrimaryKey(accommodationLine.getSite());
                 Object itemPk = Entities.getPrimaryKey(accommodationLine.getItem());
                 for (int rowIndex = 0; rowIndex < rs.getRowCount(); rowIndex++) {
-                    if (rs.getValue(rowIndex, 1).equals(sitePk) && rs.getValue(rowIndex, 2).equals(itemPk))
+                    if (rs.getValue(rowIndex, 1).equals(sitePk)
+                            && rs.getValue(rowIndex, 2).equals(itemPk))
                         return rs.getValue(rowIndex, 4);
                 }
             }

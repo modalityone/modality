@@ -1,15 +1,14 @@
 package one.modality.base.backoffice.operations.entities.generic;
 
+import dev.webfx.platform.async.AsyncFunction;
+import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.reactive.entities.entities_to_grid.EntityColumn;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
-import dev.webfx.stack.orm.entity.Entity;
-import dev.webfx.platform.async.AsyncFunction;
 
 import java.util.Collection;
 
-abstract class CopyRequest implements HasOperationCode,
-        HasOperationExecutor<CopyRequest, Void> {
+abstract class CopyRequest implements HasOperationCode, HasOperationExecutor<CopyRequest, Void> {
 
     private final Collection<? extends Entity> entities;
     private final EntityColumn[] columns;

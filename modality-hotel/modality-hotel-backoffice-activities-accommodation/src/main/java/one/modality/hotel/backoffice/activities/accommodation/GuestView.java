@@ -11,7 +11,11 @@ public class GuestView {
     public GuestView(AccommodationPresentationModel pm) {
         resourceConfigurationLoader = ResourceConfigurationLoader.getOrCreate(pm);
         attendanceLoader = AttendanceLoader.getOrCreate(pm);
-        attendanceGantt = new AttendanceGantt(pm, attendanceLoader.getAttendances(), resourceConfigurationLoader.getResourceConfigurations());
+        attendanceGantt =
+                new AttendanceGantt(
+                        pm,
+                        attendanceLoader.getAttendances(),
+                        resourceConfigurationLoader.getResourceConfigurations());
     }
 
     public AttendanceGantt getAttendanceGantt() {

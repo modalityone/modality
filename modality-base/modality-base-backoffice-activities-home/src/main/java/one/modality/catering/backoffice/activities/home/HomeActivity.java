@@ -16,6 +16,7 @@ import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionBinder;
 import dev.webfx.stack.ui.action.ActionBuilder;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
+
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
@@ -25,6 +26,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
+
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.application.RoutingActions;
 
@@ -35,65 +37,66 @@ import java.util.*;
  */
 public class HomeActivity extends ViewDomainActivityBase
         implements UiRouteActivityContextMixin<ViewDomainActivityContextFinal>,
-        ModalityButtonFactoryMixin,
-        OperationActionFactoryMixin {
+                ModalityButtonFactoryMixin,
+                OperationActionFactoryMixin {
 
-    private final static String[] sortedPossibleHomeRoutingOperations = {
-            // New tiles (from wireframes)
-            "RouteToKitchen", // routed
-            "RouteToUserAccount", // temporarily redirected to RouteToUsers
-            "RouteToReception", // temporarily redirected to RouteToFilters
-            "RouteToTranslationAndRecordings", // temporarily redirected to RouteToLetters
-            "RouteToCafe",
-            "RouteToBookingsAndSearch", // temporarily redirected to RouteToBookings
-            "RouteToAdmin", // temporarily redirected to RouteToAuthorizations
-            "RouteToFinancesAndStats", // temporarily redirected to RouteToMoneyFlows
-            "RouteToVolunteering",
-            "RouteToShop",
-            "RouteToMarketing",
-            "RouteToRecurringClasses",
-            "RouteToEventsPlanner", // temporarily redirected to RouteToEvents
-            "RouteToHousehold", // temporarily redirected to RouteToRoomCalendar
-            "RouteToQR",
-            "RouteToTransportation",
-            "RouteToOrganizations", // temporarily routed
-            "RouteToHumanResources", // temporarily redirected to RouteToStatistics
-            "RouteToAccommodation", // temporarily redirected to RouteToRoomsGraphic
-            "RouteToExtras", // temporarily redirected to RouteToRoomsGraphic
-            "---",
-            // Old tiles (from prototype)
-            "RouteToEvents", // Shown in RouteToEventsPlanner
-            "RouteToBookings", // Shown in RouteToBookingsAndSearch
-            "RouteToStatistics", // Shown in RouteToHumanResources
-            "RouteToPayments",
-            "RouteToStatements",
-            "RouteToIncome",
-            "RouteToLetters", // Shown in RouteToTranslationAndRecordings
-            "RouteToRoomsGraphic", // Shown in RouteToAccommodation
-            "RouteToDiningAreas",
-            "RouteToMonitor",
-            "RouteToTester",
-            "RouteToUsers", // Shown in RouteToUserAccount
-            "RouteToOperations", // Shown in RouteToExtras
-            "RouteToAuthorizations", // Shown in RouteToAdmin
-            "RouteToMoneyFlows", // Shown in RouteToFinancesAndStats
-            "RouteToFilters", // Shown in RouteToReception
+    private static final String[] sortedPossibleHomeRoutingOperations = {
+        // New tiles (from wireframes)
+        "RouteToKitchen", // routed
+        "RouteToUserAccount", // temporarily redirected to RouteToUsers
+        "RouteToReception", // temporarily redirected to RouteToFilters
+        "RouteToTranslationAndRecordings", // temporarily redirected to RouteToLetters
+        "RouteToCafe",
+        "RouteToBookingsAndSearch", // temporarily redirected to RouteToBookings
+        "RouteToAdmin", // temporarily redirected to RouteToAuthorizations
+        "RouteToFinancesAndStats", // temporarily redirected to RouteToMoneyFlows
+        "RouteToVolunteering",
+        "RouteToShop",
+        "RouteToMarketing",
+        "RouteToRecurringClasses",
+        "RouteToEventsPlanner", // temporarily redirected to RouteToEvents
+        "RouteToHousehold", // temporarily redirected to RouteToRoomCalendar
+        "RouteToQR",
+        "RouteToTransportation",
+        "RouteToOrganizations", // temporarily routed
+        "RouteToHumanResources", // temporarily redirected to RouteToStatistics
+        "RouteToAccommodation", // temporarily redirected to RouteToRoomsGraphic
+        "RouteToExtras", // temporarily redirected to RouteToRoomsGraphic
+        "---",
+        // Old tiles (from prototype)
+        "RouteToEvents", // Shown in RouteToEventsPlanner
+        "RouteToBookings", // Shown in RouteToBookingsAndSearch
+        "RouteToStatistics", // Shown in RouteToHumanResources
+        "RouteToPayments",
+        "RouteToStatements",
+        "RouteToIncome",
+        "RouteToLetters", // Shown in RouteToTranslationAndRecordings
+        "RouteToRoomsGraphic", // Shown in RouteToAccommodation
+        "RouteToDiningAreas",
+        "RouteToMonitor",
+        "RouteToTester",
+        "RouteToUsers", // Shown in RouteToUserAccount
+        "RouteToOperations", // Shown in RouteToExtras
+        "RouteToAuthorizations", // Shown in RouteToAdmin
+        "RouteToMoneyFlows", // Shown in RouteToFinancesAndStats
+        "RouteToFilters", // Shown in RouteToReception
     };
 
     // Temporary redirects from new wireframes area to old prototype activities
     private final Map<String, String> redirects = new HashMap<>();
+
     {
         redirects.put("RouteToUserAccount", "RouteToUsers");
         redirects.put("RouteToEventsPlanner", "RouteToEvents");
         redirects.put("RouteToBookingsAndSearch", "RouteToBookings");
         redirects.put("RouteToAdmin", "RouteToAuthorizations");
-        //redirects.put("RouteToAccommodation", "RouteToRoomsGraphic");
+        // redirects.put("RouteToAccommodation", "RouteToRoomsGraphic");
         redirects.put("RouteToTranslationAndRecordings", "RouteToLetters");
         redirects.put("RouteToFinancesAndStats", "RouteToMoneyFlows");
         redirects.put("RouteToHumanResources", "RouteToStatistics");
         redirects.put("RouteToReception", "RouteToFilters");
         redirects.put("RouteToExtras", "RouteToOperations");
-        //redirects.put("RouteToHousehold", "RouteToRoomCalendar");
+        // redirects.put("RouteToHousehold", "RouteToRoomCalendar");
     }
 
     @Override
@@ -104,13 +107,16 @@ public class HomeActivity extends ViewDomainActivityBase
     }
 
     protected Collection<Action> homeRoutingActions() {
-        return RoutingActions.filterRoutingActions(this::operationCodeToAction, sortedPossibleHomeRoutingOperations);
+        return RoutingActions.filterRoutingActions(
+                this::operationCodeToAction, sortedPossibleHomeRoutingOperations);
     }
 
     private Action operationCodeToAction(String operationCode) {
-        RouteRequestEmitter routeRequestEmitter = RoutingActions.findRouteRequestEmitter(operationCode, this);
+        RouteRequestEmitter routeRequestEmitter =
+                RoutingActions.findRouteRequestEmitter(operationCode, this);
         // Temporary code for main areas that don't have a route yet
-        List<String> sortedPossibleHomeRoutingOperationsList = Arrays.asList(sortedPossibleHomeRoutingOperations);
+        List<String> sortedPossibleHomeRoutingOperationsList =
+                Arrays.asList(sortedPossibleHomeRoutingOperations);
         int operationIndex = sortedPossibleHomeRoutingOperationsList.indexOf(operationCode);
         int areaLastIndex = sortedPossibleHomeRoutingOperationsList.indexOf("---");
         if (operationIndex < areaLastIndex) {
@@ -120,17 +126,17 @@ public class HomeActivity extends ViewDomainActivityBase
                 if (redirect == null) {
                     redirectAction = null;
                 } else {
-                    RouteRequestEmitter routeRequestEmitter1 = RoutingActions.findRouteRequestEmitter(redirect, this);
-                    redirectAction = RoutingActions.getRouteEmitterAction(routeRequestEmitter1, this, this);
+                    RouteRequestEmitter routeRequestEmitter1 =
+                            RoutingActions.findRouteRequestEmitter(redirect, this);
+                    redirectAction =
+                            RoutingActions.getRouteEmitterAction(routeRequestEmitter1, this, this);
                 }
                 return new ActionBuilder()
                         .setI18nKey(operationCode.substring(7))
                         .setActionHandler(redirectAction)
                         .build();
-            } else
-                return RoutingActions.getRouteEmitterAction(routeRequestEmitter, this, this);
-        } else
-            return null;
+            } else return RoutingActions.getRouteEmitterAction(routeRequestEmitter, this, this);
+        } else return null;
     }
 
     static class HomePane extends Pane {
@@ -144,20 +150,27 @@ public class HomeActivity extends ViewDomainActivityBase
             int q = (int) Math.sqrt(n);
             int p = n / q;
             if (p * q < n) {
-                if (width > height)
-                    p++;
-                else
-                    q++;
+                if (width > height) p++;
+                else q++;
             }
             double gap = 0.01 * width;
             Insets margin = new Insets(0, gap, gap, 0);
-            double wp = (width ) / p;
-            double hp = (height ) / q;
+            double wp = (width) / p;
+            double hp = (height) / q;
             ObservableList<Node> children = getChildren();
             for (int i = 0; i < n; i++) {
                 Node child = children.get(i);
                 int col = i % p, row = i / p;
-                layoutInArea(child, hMargins + col * wp, vMargins + row * hp, wp, hp, 0, margin, HPos.LEFT, VPos.TOP);
+                layoutInArea(
+                        child,
+                        hMargins + col * wp,
+                        vMargins + row * hp,
+                        wp,
+                        hp,
+                        0,
+                        margin,
+                        HPos.LEFT,
+                        VPos.TOP);
             }
         }
     }
@@ -170,39 +183,50 @@ public class HomeActivity extends ViewDomainActivityBase
         private ScalePane scaledGraphic;
         private final Facet luminanceFacet, textFacet;
 
-        private final Pane clippedTextGraphicPane = new Pane() {
-            private final Rectangle clip = new Rectangle();
-            {
-                setClip(clip);
-                setCursor(Cursor.HAND);
-            }
-            @Override
-            protected void layoutChildren() {
-                double width = getWidth(), height = getHeight(), h2 = height / 2, h4 = h2 / 2, h8 = h4 / 2;
-                if (scaledGraphic != null)
-                    layoutInArea(scaledGraphic, 0, h4, width, h4, 0, HPos.CENTER, VPos.CENTER);
-                setFontSize(Math.min(width * 0.125, h4 * 0.55));
-                layoutInArea(htmlText, 0, h2 + h8, width, h4, 0, HPos.CENTER, VPos.CENTER);
-                clip.setWidth(width);
-                clip.setHeight(height);
-            }
-        };
+        private final Pane clippedTextGraphicPane =
+                new Pane() {
+                    private final Rectangle clip = new Rectangle();
+
+                    {
+                        setClip(clip);
+                        setCursor(Cursor.HAND);
+                    }
+
+                    @Override
+                    protected void layoutChildren() {
+                        double width = getWidth(),
+                                height = getHeight(),
+                                h2 = height / 2,
+                                h4 = h2 / 2,
+                                h8 = h4 / 2;
+                        if (scaledGraphic != null)
+                            layoutInArea(
+                                    scaledGraphic, 0, h4, width, h4, 0, HPos.CENTER, VPos.CENTER);
+                        setFontSize(Math.min(width * 0.125, h4 * 0.55));
+                        layoutInArea(htmlText, 0, h2 + h8, width, h4, 0, HPos.CENTER, VPos.CENTER);
+                        clip.setWidth(width);
+                        clip.setHeight(height);
+                    }
+                };
 
         public Tile(Action action) {
             this.action = action;
-            luminanceFacet = LuminanceTheme.createSecondaryPanelFacet(this)
-                    .setShadowed(true)
-                    .style();
-            textFacet = TextTheme.createPrimaryTextFacet(htmlText)
-                    .setFillProperty(htmlText.fillProperty())
-                    .setFontProperty(htmlText.fontProperty())
-                    .style();
+            luminanceFacet =
+                    LuminanceTheme.createSecondaryPanelFacet(this).setShadowed(true).style();
+            textFacet =
+                    TextTheme.createPrimaryTextFacet(htmlText)
+                            .setFillProperty(htmlText.fillProperty())
+                            .setFontProperty(htmlText.fontProperty())
+                            .style();
             LayoutUtil.setMaxWidthToInfinite(this);
             LayoutUtil.setMaxHeightToInfinite(this);
             setOnMouseClicked(e -> action.handle(new ActionEvent()));
             setOnMouseEntered(e -> onHover(true));
             setOnMouseExited(e -> onHover(false));
-            FXProperties.runNowAndOnPropertiesChange(this::onActionPropertiesChanged, action.textProperty(), action.graphicProperty());
+            FXProperties.runNowAndOnPropertiesChange(
+                    this::onActionPropertiesChanged,
+                    action.textProperty(),
+                    action.graphicProperty());
         }
 
         private void setFontSize(double fontSize) {
@@ -224,10 +248,8 @@ public class HomeActivity extends ViewDomainActivityBase
                 graphic = action.getGraphic();
                 scaledGraphic = graphic == null ? null : new ScalePane(graphic);
             }
-            if (scaledGraphic == null)
-                clippedTextGraphicPane.getChildren().setAll(htmlText);
-            else
-                clippedTextGraphicPane.getChildren().setAll(htmlText, scaledGraphic);
+            if (scaledGraphic == null) clippedTextGraphicPane.getChildren().setAll(htmlText);
+            else clippedTextGraphicPane.getChildren().setAll(htmlText, scaledGraphic);
             getChildren().setAll(clippedTextGraphicPane);
             textFacet.setGraphicNode(graphic);
         }
@@ -238,5 +260,4 @@ public class HomeActivity extends ViewDomainActivityBase
             layoutInArea(clippedTextGraphicPane, 0, 0, width, height, 0, HPos.LEFT, VPos.TOP);
         }
     }
-
 }

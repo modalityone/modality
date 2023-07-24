@@ -1,10 +1,13 @@
 package one.modality.crm.backoffice.activities.users;
 
+import static dev.webfx.stack.orm.dql.DqlStatement.where;
+
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.action.ActionGroupBuilder;
+
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -15,6 +18,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
+
 import one.modality.base.backoffice.controls.masterslave.ConventionalUiBuilder;
 import one.modality.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
@@ -25,10 +29,8 @@ import one.modality.ecommerce.backoffice.operations.entities.document.EditUsersP
 import java.util.Arrays;
 import java.util.Collection;
 
-import static dev.webfx.stack.orm.dql.DqlStatement.where;
-
-final class UsersActivity extends OrganizationDependentViewDomainActivity implements
-        ConventionalUiBuilderMixin {
+final class UsersActivity extends OrganizationDependentViewDomainActivity
+        implements ConventionalUiBuilderMixin {
 
     /*==================================================================================================================
     ================================================= Graphical layer ==================================================
@@ -58,16 +60,26 @@ final class UsersActivity extends OrganizationDependentViewDomainActivity implem
         ObservableObjectValue<Node> graphicProperty = new SimpleObjectProperty<>();
         ObservableBooleanValue disabledProperty = new SimpleBooleanProperty(false);
         ObservableBooleanValue visibleProperty = new SimpleBooleanProperty(true);
-        EventHandler<ActionEvent> actionHandler = e -> new EditUsersPersonalDetailsRequest(getPerson(), this, pane);
-        Collection<Action> actions = Arrays.asList(
-                Action.create(textProperty, graphicProperty, disabledProperty, visibleProperty, actionHandler)
-        );
-        return new ActionGroupBuilder().setI18nKey(null).setActions(actions).setHasSeparators(false).build();
+        EventHandler<ActionEvent> actionHandler =
+                e -> new EditUsersPersonalDetailsRequest(getPerson(), this, pane);
+        Collection<Action> actions =
+                Arrays.asList(
+                        Action.create(
+                                textProperty,
+                                graphicProperty,
+                                disabledProperty,
+                                visibleProperty,
+                                actionHandler));
+        return new ActionGroupBuilder()
+                .setI18nKey(null)
+                .setActions(actions)
+                .setHasSeparators(false)
+                .build();
     }
 
     private Person getPerson() {
         Person person = pm.selectedMasterProperty().get();
-        //person.setEvent(getEvent());
+        // person.setEvent(getEvent());
         return person;
     }
 
@@ -76,7 +88,6 @@ final class UsersActivity extends OrganizationDependentViewDomainActivity implem
         super.onResume();
         ui.onResume();
     }
-
 
     /*==================================================================================================================
     =================================================== Logical layer ==================================================
@@ -87,19 +98,28 @@ final class UsersActivity extends OrganizationDependentViewDomainActivity implem
     @Override
     protected void startLogic() {
         // Setting up the group mapper that build the content displayed in the group view
-        groupVisualMapper = ReactiveVisualMapper.<Person>createGroupReactiveChain(this, pm)
-                .always("{class: 'Person', alias: 'p', orderBy: 'id'}")
-                .start();
+        groupVisualMapper =
+                ReactiveVisualMapper.<Person>createGroupReactiveChain(this, pm)
+                        .always("{class: 'Person', alias: 'p', orderBy: 'id'}")
+                        .start();
 
         // Setting up the master mapper that build the content displayed in the master view
-        masterVisualMapper = ReactiveVisualMapper.<Person>createMasterPushReactiveChain(this, pm)
-                .always("{class: 'Person', alias: 'p', orderBy: 'lastName,firstName,id'}")
-                // Applying the user search
-                .ifTrimNotEmpty(pm.searchTextProperty(), s ->
-                        s.contains("@") ? where("lower(email) like ?", "%" + s.toLowerCase() + "%")
-                                : DqlStatement.where("abcNames(firstName + ' ' + lastName) like ?", AbcNames.evaluate(s, true)))
-                .applyDomainModelRowStyle() // Colorizing the rows
-                .start();
+        masterVisualMapper =
+                ReactiveVisualMapper.<Person>createMasterPushReactiveChain(this, pm)
+                        .always("{class: 'Person', alias: 'p', orderBy: 'lastName,firstName,id'}")
+                        // Applying the user search
+                        .ifTrimNotEmpty(
+                                pm.searchTextProperty(),
+                                s ->
+                                        s.contains("@")
+                                                ? where(
+                                                        "lower(email) like ?",
+                                                        "%" + s.toLowerCase() + "%")
+                                                : DqlStatement.where(
+                                                        "abcNames(firstName + ' ' + lastName) like ?",
+                                                        AbcNames.evaluate(s, true)))
+                        .applyDomainModelRowStyle() // Colorizing the rows
+                        .start();
     }
 
     @Override

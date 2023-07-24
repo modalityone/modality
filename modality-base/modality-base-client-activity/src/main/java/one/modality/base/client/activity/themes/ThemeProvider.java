@@ -6,5 +6,4 @@ package one.modality.base.client.activity.themes;
 public interface ThemeProvider {
 
     void apply();
-
 }

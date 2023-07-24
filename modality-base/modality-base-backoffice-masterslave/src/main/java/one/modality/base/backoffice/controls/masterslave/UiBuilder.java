@@ -5,5 +5,4 @@ import javafx.scene.Node;
 public interface UiBuilder {
 
     Node buildUi();
-
 }

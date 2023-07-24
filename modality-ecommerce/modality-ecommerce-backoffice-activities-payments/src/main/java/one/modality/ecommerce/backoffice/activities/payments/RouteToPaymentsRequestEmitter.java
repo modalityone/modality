@@ -1,9 +1,10 @@
 package one.modality.ecommerce.backoffice.activities.payments;
 
-import one.modality.ecommerce.backoffice.operations.routes.payments.RouteToPaymentsRequest;
+import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
-import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
+
+import one.modality.ecommerce.backoffice.operations.routes.payments.RouteToPaymentsRequest;
 
 /**
  * @author Bruno Salmon

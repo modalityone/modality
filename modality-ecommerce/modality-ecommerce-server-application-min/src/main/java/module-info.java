@@ -1,5 +1,3 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
-module modality.ecommerce.server.application.min {
-
-}
+module modality.ecommerce.server.application.min {}

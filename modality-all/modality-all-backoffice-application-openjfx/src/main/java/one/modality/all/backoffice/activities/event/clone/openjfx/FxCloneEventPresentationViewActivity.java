@@ -1,6 +1,7 @@
 package one.modality.all.backoffice.activities.event.clone.openjfx;
 
 import javafx.scene.control.DatePicker;
+
 import one.modality.base.shared.domainmodel.formatters.DateFormatter;
 import one.modality.event.backoffice.activities.cloneevent.CloneEventPresentationModel;
 import one.modality.event.backoffice.activities.cloneevent.CloneEventPresentationViewActivity;
@@ -20,5 +21,4 @@ final class FxCloneEventPresentationViewActivity extends CloneEventPresentationV
         datePicker.valueProperty().bindBidirectional(pm.dateProperty());
         datePicker.setConverter(DateFormatter.SINGLETON.toStringConverter());
     }
-
 }

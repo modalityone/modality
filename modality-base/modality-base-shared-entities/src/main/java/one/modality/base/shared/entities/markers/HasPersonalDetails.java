@@ -1,8 +1,9 @@
 package one.modality.base.shared.entities.markers;
 
+import dev.webfx.stack.orm.entity.EntityId;
+
 import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Organization;
-import dev.webfx.stack.orm.entity.EntityId;
 
 /**
  * @author Bruno Salmon
@@ -120,5 +121,4 @@ public interface HasPersonalDetails {
     void setResident2(Boolean resident2);
 
     Boolean isResident2();
-
 }

@@ -1,17 +1,18 @@
 package one.modality.crm.backoffice.operations.routes.organizations;
 
-
-import one.modality.crm.backoffice.activities.organizations.routing.OrganizationsRouting;
+import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.ui.operation.HasOperationCode;
-import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
+
+import one.modality.crm.backoffice.activities.organizations.routing.OrganizationsRouting;
 
 /**
  * @author Bruno Salmon
  */
-public final class RouteToOrganizationsRequest extends RoutePushRequest implements HasOperationCode {
+public final class RouteToOrganizationsRequest extends RoutePushRequest
+        implements HasOperationCode {
 
-    private final static String OPERATION_CODE = "RouteToOrganizations";
+    private static final String OPERATION_CODE = "RouteToOrganizations";
 
     public RouteToOrganizationsRequest(BrowsingHistory history) {
         super(OrganizationsRouting.getPath(), history);
@@ -21,5 +22,4 @@ public final class RouteToOrganizationsRequest extends RoutePushRequest implemen
     public Object getOperationCode() {
         return OPERATION_CODE;
     }
-
 }

@@ -54,6 +54,7 @@ module modality.all.backoffice.application.openjfx {
     opens dev.webfx.platform.meta.exe;
 
     // Provided services
-    provides dev.webfx.stack.conf.spi.ConfigurationSupplier with one.modality.all.backoffice.conf.openjfx.ModalityAllBackOfficeEnvironmentConfigurationSupplier;
-
+    provides dev.webfx.stack.conf.spi.ConfigurationSupplier with
+            one.modality.all.backoffice.conf.openjfx
+                    .ModalityAllBackOfficeEnvironmentConfigurationSupplier;
 }

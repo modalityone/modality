@@ -10,6 +10,6 @@ module modality.all.frontoffice.application {
     exports one.modality.all.frontoffice.application;
 
     // Provided services
-    provides javafx.application.Application with one.modality.all.frontoffice.application.ModalityFrontOfficeApplication;
-
+    provides javafx.application.Application with
+            one.modality.all.frontoffice.application.ModalityFrontOfficeApplication;
 }

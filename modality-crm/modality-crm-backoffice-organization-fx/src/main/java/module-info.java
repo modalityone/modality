@@ -14,5 +14,4 @@ module modality.crm.backoffice.organization.fx {
 
     // Exported packages
     exports one.modality.crm.backoffice.organization.fx;
-
 }

@@ -13,6 +13,6 @@ module modality.base.client.busconfig {
     opens one.modality.base.client.busconfig;
 
     // Provided services
-    provides dev.webfx.stack.conf.spi.ConfigurationSupplier with one.modality.base.client.busconfig.ModalityClientBusOptionsConfigurationSupplier;
-
+    provides dev.webfx.stack.conf.spi.ConfigurationSupplier with
+            one.modality.base.client.busconfig.ModalityClientBusOptionsConfigurationSupplier;
 }

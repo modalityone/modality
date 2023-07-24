@@ -1,15 +1,17 @@
 package one.modality.ecommerce.backoffice.operations.entities.moneyaccount;
 
+import dev.webfx.platform.async.AsyncFunction;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
-import dev.webfx.platform.async.AsyncFunction;
+
 import javafx.scene.layout.Pane;
+
 import one.modality.base.shared.entities.MoneyAccount;
 
-public final class EditMoneyAccountRequest implements HasOperationCode,
-        HasOperationExecutor<EditMoneyAccountRequest, Void> {
+public final class EditMoneyAccountRequest
+        implements HasOperationCode, HasOperationExecutor<EditMoneyAccountRequest, Void> {
 
-    private final static String OPERATION_CODE = "EditMoneyAccount";
+    private static final String OPERATION_CODE = "EditMoneyAccount";
 
     private final MoneyAccount moneyAccount;
     private final Pane parentContainer;
@@ -24,7 +26,9 @@ public final class EditMoneyAccountRequest implements HasOperationCode,
         return OPERATION_CODE;
     }
 
-    public MoneyAccount getMoneyAccount() { return moneyAccount; }
+    public MoneyAccount getMoneyAccount() {
+        return moneyAccount;
+    }
 
     public Pane getParentContainer() {
         return parentContainer;

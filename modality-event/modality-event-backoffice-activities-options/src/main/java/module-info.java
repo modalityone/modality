@@ -30,6 +30,6 @@ module modality.event.backoffice.activities.options {
     exports one.modality.event.backoffice.activities.options;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.backoffice.activities.options.EditableOptionsUiRoute;
-
+    provides dev.webfx.stack.routing.uirouter.UiRoute with
+            one.modality.event.backoffice.activities.options.EditableOptionsUiRoute;
 }

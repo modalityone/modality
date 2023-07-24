@@ -1,8 +1,8 @@
 package one.modality.event.client.businessdata.calendar.impl;
 
-import one.modality.hotel.shared.businessdata.time.TimeInterval;
 import one.modality.event.client.businessdata.calendar.Calendar;
 import one.modality.event.client.businessdata.calendar.CalendarTimeline;
+import one.modality.hotel.shared.businessdata.time.TimeInterval;
 
 import java.util.Collection;
 

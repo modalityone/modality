@@ -11,9 +11,9 @@ public interface HasMinDateTimeRange {
 
     String getMinDateTimeRange();
 
-    default DateTimeRange getParsedMinDateTimeRange() { // Should be overridden by implementing class to have a cached value
+    default DateTimeRange
+            getParsedMinDateTimeRange() { // Should be overridden by implementing class to have a
+                                          // cached value
         return DateTimeRange.parse(getMinDateTimeRange());
     }
-
-
 }

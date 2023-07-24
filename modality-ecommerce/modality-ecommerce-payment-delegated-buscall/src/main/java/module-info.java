@@ -13,7 +13,11 @@ module modality.ecommerce.payment.delegated.buscall {
     exports one.modality.ecommerce.payment.delegated.buscall.serial;
 
     // Provided services
-    provides dev.webfx.stack.com.bus.call.spi.BusCallEndpoint with one.modality.ecommerce.payment.delegated.buscall.InitiateDelegatedPaymentMethodEndpoint;
-    provides dev.webfx.stack.com.serial.spi.SerialCodec with one.modality.ecommerce.payment.delegated.buscall.serial.InitiateDelegatedPaymentArgumentSerialCodec, one.modality.ecommerce.payment.delegated.buscall.serial.InitiateDelegatedPaymentResultSerialCodec;
-
+    provides dev.webfx.stack.com.bus.call.spi.BusCallEndpoint with
+            one.modality.ecommerce.payment.delegated.buscall.InitiateDelegatedPaymentMethodEndpoint;
+    provides dev.webfx.stack.com.serial.spi.SerialCodec with
+            one.modality.ecommerce.payment.delegated.buscall.serial
+                    .InitiateDelegatedPaymentArgumentSerialCodec,
+            one.modality.ecommerce.payment.delegated.buscall.serial
+                    .InitiateDelegatedPaymentResultSerialCodec;
 }

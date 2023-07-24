@@ -8,6 +8,9 @@ module modality.base.server.application.min {
     requires webfx.stack.conf.file.java;
 
     // Provided services
-    provides dev.webfx.stack.conf.spi.ConfigurationSupplier with one.modality.base.server.application.min.conf.ModalityServerEnvironmentConfigurationSupplier, one.modality.base.server.application.min.conf.ModalityServerDirectoryConfigurationSupplier;
-
+    provides dev.webfx.stack.conf.spi.ConfigurationSupplier with
+            one.modality.base.server.application.min.conf
+                    .ModalityServerEnvironmentConfigurationSupplier,
+            one.modality.base.server.application.min.conf
+                    .ModalityServerDirectoryConfigurationSupplier;
 }

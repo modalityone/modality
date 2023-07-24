@@ -1,9 +1,10 @@
 package one.modality.base.shared.services.domainmodel;
 
-import one.modality.base.shared.services.datasourcemodel.ModalityDataSourceModelProvider;
+import dev.webfx.platform.async.Future;
 import dev.webfx.stack.orm.domainmodel.DomainModel;
 import dev.webfx.stack.orm.domainmodel.service.spi.DomainModelProvider;
-import dev.webfx.platform.async.Future;
+
+import one.modality.base.shared.services.datasourcemodel.ModalityDataSourceModelProvider;
 
 /**
  * @author Bruno Salmon

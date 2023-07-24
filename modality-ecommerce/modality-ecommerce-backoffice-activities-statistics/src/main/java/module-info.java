@@ -50,7 +50,8 @@ module modality.ecommerce.backoffice.activities.statistics {
     exports one.modality.ecommerce.backoffice.operations.routes.statistics;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.ecommerce.backoffice.activities.statistics.StatisticsUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.ecommerce.backoffice.activities.statistics.RouteToStatisticsRequestEmitter;
-
+    provides dev.webfx.stack.routing.uirouter.UiRoute with
+            one.modality.ecommerce.backoffice.activities.statistics.StatisticsUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with
+            one.modality.ecommerce.backoffice.activities.statistics.RouteToStatisticsRequestEmitter;
 }

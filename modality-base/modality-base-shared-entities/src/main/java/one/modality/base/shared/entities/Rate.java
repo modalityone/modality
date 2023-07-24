@@ -9,10 +9,7 @@ import java.time.LocalDate;
 /**
  * @author Bruno Salmon
  */
-public interface Rate extends
-        EntityHasIcon,
-        EntityHasSiteAndItem,
-        EntityHasArrivalSiteAndItem {
+public interface Rate extends EntityHasIcon, EntityHasSiteAndItem, EntityHasArrivalSiteAndItem {
 
     default void setStartDate(LocalDate startDate) {
         setFieldValue("startDate", startDate);

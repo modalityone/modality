@@ -8,5 +8,4 @@ public interface HasCode {
     void setCode(String code);
 
     String getCode();
-
 }

@@ -1,14 +1,15 @@
 package one.modality.ecommerce.client.businesslogic.workingdocument;
 
+import dev.webfx.platform.util.collection.Collections;
+
+import one.modality.base.shared.entities.Option;
 import one.modality.ecommerce.client.businessdata.workingdocument.WorkingDocument;
 import one.modality.ecommerce.client.businessdata.workingdocument.WorkingDocumentLine;
 import one.modality.ecommerce.client.businesslogic.option.OptionLogic;
-import one.modality.base.shared.entities.Option;
-import dev.webfx.platform.util.collection.Collections;
-import java.util.function.Predicate;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * @author Bruno Salmon
@@ -31,8 +32,9 @@ public final class BusinessLines {
     }
 
     public boolean isEmpty() {
-        //return getBusinessWorkingDocumentLines().isEmpty();
-        return Collections.noneMatch(getBusinessWorkingDocumentLines(), wdl -> !wdl.getDaysArray().isEmpty());
+        // return getBusinessWorkingDocumentLines().isEmpty();
+        return Collections.noneMatch(
+                getBusinessWorkingDocumentLines(), wdl -> !wdl.getDaysArray().isEmpty());
     }
 
     public void removeAllLines() {
@@ -48,25 +50,34 @@ public final class BusinessLines {
 
     private List<WorkingDocumentLine> findBusinessWorkingLines() {
         switch (businessType) {
-            case TEACHING: return findOptionLines(Option::isTeaching);
-            case TRANSLATION: return findOptionLines(Option::isTranslation);
-            case ACCOMMODATION: return findBusinessWorkingLines(WorkingDocumentLine::isAccommodation);
-            case BREAKFAST: return findOptionLines(OptionLogic::isBreakfastOption);
-            case LUNCH: return findOptionLines(OptionLogic::isLunchOption);
-            case SUPPER: return findOptionLines(OptionLogic::isSupperOption);
-            case DIET: return findBusinessWorkingLines(WorkingDocumentLine::isDiet);
-            case TOURIST_TAX: return findOptionLines(OptionLogic::isTouristTaxOption);
-            case HOTEL_SHUTTLE: return findOptionLines(OptionLogic::isHotelShuttleOption);
+            case TEACHING:
+                return findOptionLines(Option::isTeaching);
+            case TRANSLATION:
+                return findOptionLines(Option::isTranslation);
+            case ACCOMMODATION:
+                return findBusinessWorkingLines(WorkingDocumentLine::isAccommodation);
+            case BREAKFAST:
+                return findOptionLines(OptionLogic::isBreakfastOption);
+            case LUNCH:
+                return findOptionLines(OptionLogic::isLunchOption);
+            case SUPPER:
+                return findOptionLines(OptionLogic::isSupperOption);
+            case DIET:
+                return findBusinessWorkingLines(WorkingDocumentLine::isDiet);
+            case TOURIST_TAX:
+                return findOptionLines(OptionLogic::isTouristTaxOption);
+            case HOTEL_SHUTTLE:
+                return findOptionLines(OptionLogic::isHotelShuttleOption);
         }
         return null; // shouldn't happen
     }
 
-    private List<WorkingDocumentLine> findBusinessWorkingLines(Predicate<WorkingDocumentLine> predicate) {
+    private List<WorkingDocumentLine> findBusinessWorkingLines(
+            Predicate<WorkingDocumentLine> predicate) {
         return Collections.filter(workingDocument.getWorkingDocumentLines(), predicate);
     }
 
     private List<WorkingDocumentLine> findOptionLines(Predicate<Option> predicate) {
         return findBusinessWorkingLines(wdl -> predicate.test(wdl.getOption()));
     }
-
 }

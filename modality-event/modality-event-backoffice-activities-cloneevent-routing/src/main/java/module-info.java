@@ -11,5 +11,4 @@ module modality.event.backoffice.activities.cloneevent.routing {
     // Exported packages
     exports one.modality.event.backoffice.activities.cloneevent.routing;
     exports one.modality.event.backoffice.operations.routes.cloneevent;
-
 }

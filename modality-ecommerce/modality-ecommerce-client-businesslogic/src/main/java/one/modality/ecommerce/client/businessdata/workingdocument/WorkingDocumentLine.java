@@ -1,16 +1,17 @@
 package one.modality.ecommerce.client.businessdata.workingdocument;
 
-import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.platform.util.collection.Collections;
+import dev.webfx.stack.orm.entity.Entities;
+
+import one.modality.base.client.aggregates.event.EventAggregate;
 import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.markers.HasItemFamilyType;
+import one.modality.ecommerce.client.businessdata.preselection.OptionPreselection;
 import one.modality.ecommerce.client.businesslogic.option.OptionLogic;
 import one.modality.hotel.shared.businessdata.time.DateTimeRange;
 import one.modality.hotel.shared.businessdata.time.DayTimeRange;
 import one.modality.hotel.shared.businessdata.time.DaysArray;
 import one.modality.hotel.shared.businessdata.time.DaysArrayBuilder;
-import one.modality.base.client.aggregates.event.EventAggregate;
-import one.modality.base.shared.entities.markers.HasItemFamilyType;
-import one.modality.ecommerce.client.businessdata.preselection.OptionPreselection;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -38,7 +39,8 @@ public final class WorkingDocumentLine implements HasItemFamilyType {
         this(optionPreselection, null);
     }
 
-    public WorkingDocumentLine(OptionPreselection optionPreselection, DateTimeRange workingDocumentDateTimeRange) {
+    public WorkingDocumentLine(
+            OptionPreselection optionPreselection, DateTimeRange workingDocumentDateTimeRange) {
         this.optionPreselection = optionPreselection;
         option = optionPreselection.getOption();
         site = option.getSite();
@@ -54,7 +56,10 @@ public final class WorkingDocumentLine implements HasItemFamilyType {
         this(option, workingDocument, workingDocument.getDateTimeRange());
     }
 
-    public WorkingDocumentLine(Option option, WorkingDocument workingDocument, DateTimeRange workingDocumentDateTimeRange) {
+    public WorkingDocumentLine(
+            Option option,
+            WorkingDocument workingDocument,
+            DateTimeRange workingDocumentDateTimeRange) {
         optionPreselection = null;
         this.option = option;
         site = option.getSite();
@@ -67,7 +72,10 @@ public final class WorkingDocumentLine implements HasItemFamilyType {
         setWorkingDocument(workingDocument);
     }
 
-    public WorkingDocumentLine(DocumentLine documentLine, List<Attendance> attendances, EventAggregate eventAggregate) {
+    public WorkingDocumentLine(
+            DocumentLine documentLine,
+            List<Attendance> attendances,
+            EventAggregate eventAggregate) {
         this.documentLine = documentLine;
         this.attendances = attendances;
         optionPreselection = null;
@@ -81,7 +89,8 @@ public final class WorkingDocumentLine implements HasItemFamilyType {
         setDaysArray(dab.build());
     }
 
-    public WorkingDocumentLine(WorkingDocumentLine wdl, DateTimeRange workingDocumentDateTimeRange) {
+    public WorkingDocumentLine(
+            WorkingDocumentLine wdl, DateTimeRange workingDocumentDateTimeRange) {
         documentLine = wdl.documentLine;
         attendances = wdl.attendances;
         optionPreselection = wdl.optionPreselection;
@@ -94,21 +103,33 @@ public final class WorkingDocumentLine implements HasItemFamilyType {
     }
 
     public void initializeDateTimeRange(DateTimeRange workingDocumentDateTimeRange) {
-        setDateTimeRange(computeCroppedOptionDateTimeRange(option, dayTimeRange, workingDocumentDateTimeRange, optionPreselection));
+        setDateTimeRange(
+                computeCroppedOptionDateTimeRange(
+                        option, dayTimeRange, workingDocumentDateTimeRange, optionPreselection));
     }
 
-    public static DateTimeRange computeCroppedOptionDateTimeRange(Option option, DateTimeRange workingDocumentDateTimeRange) {
-        return computeCroppedOptionDateTimeRange(option, option.getParsedTimeRangeOrParent(), workingDocumentDateTimeRange, null);
+    public static DateTimeRange computeCroppedOptionDateTimeRange(
+            Option option, DateTimeRange workingDocumentDateTimeRange) {
+        return computeCroppedOptionDateTimeRange(
+                option, option.getParsedTimeRangeOrParent(), workingDocumentDateTimeRange, null);
     }
 
-    public static DateTimeRange computeCroppedOptionDateTimeRange(Option option, DayTimeRange dayTimeRange, DateTimeRange workingDocumentDateTimeRange, OptionPreselection optionPreselection) {
+    public static DateTimeRange computeCroppedOptionDateTimeRange(
+            Option option,
+            DayTimeRange dayTimeRange,
+            DateTimeRange workingDocumentDateTimeRange,
+            OptionPreselection optionPreselection) {
         DateTimeRange dateTimeRangeToCrop;
         if (!OptionLogic.isOptionAttendanceVariable(option))
             dateTimeRangeToCrop = option.getParsedDateTimeRangeOrParent();
         else
-            dateTimeRangeToCrop = workingDocumentDateTimeRange != null ?
-                    workingDocumentDateTimeRange.intersect(option.getParsedDateTimeRangeOrParent())
-                    : optionPreselection != null ? optionPreselection.getDateTimeRange() : null;
+            dateTimeRangeToCrop =
+                    workingDocumentDateTimeRange != null
+                            ? workingDocumentDateTimeRange.intersect(
+                                    option.getParsedDateTimeRangeOrParent())
+                            : optionPreselection != null
+                                    ? optionPreselection.getDateTimeRange()
+                                    : null;
         return DateTimeRange.cropDateTimeRangeWithDayTime(dateTimeRangeToCrop, dayTimeRange);
     }
 
@@ -178,14 +199,15 @@ public final class WorkingDocumentLine implements HasItemFamilyType {
     private void clearAttendanceCache() {
         dateTimeRange = null; // will be lazy computed on getter from daysArray (if set)
         daysArray = null; // will be lazy computed on getter from dateTimeRange (if set)
-        if (workingDocument != null)
-            workingDocument.clearComputedDateTimeRange();
+        if (workingDocument != null) workingDocument.clearComputedDateTimeRange();
     }
 
     public DateTimeRange getDateTimeRange() {
         // Lazy computation if not set
         if (dateTimeRange == null && daysArray != null)
-            dateTimeRange = DateTimeRange.cropDateTimeRangeWithDayTime(new DateTimeRange(daysArray.toSeries()), dayTimeRange);
+            dateTimeRange =
+                    DateTimeRange.cropDateTimeRangeWithDayTime(
+                            new DateTimeRange(daysArray.toSeries()), dayTimeRange);
         return dateTimeRange;
     }
 
@@ -210,7 +232,7 @@ public final class WorkingDocumentLine implements HasItemFamilyType {
     }
 
     public LocalDate firstDate() {
-        //return attendances.get(0).getDate();
+        // return attendances.get(0).getDate();
         return getDaysArray().getFirstDate();
     }
 

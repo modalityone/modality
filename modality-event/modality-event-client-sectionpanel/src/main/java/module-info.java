@@ -16,5 +16,4 @@ module modality.event.client.sectionpanel {
 
     // Exported packages
     exports one.modality.event.client.controls.sectionpanel;
-
 }

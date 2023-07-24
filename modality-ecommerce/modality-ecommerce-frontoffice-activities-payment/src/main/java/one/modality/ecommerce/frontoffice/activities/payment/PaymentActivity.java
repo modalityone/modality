@@ -1,5 +1,6 @@
 package one.modality.ecommerce.frontoffice.activities.payment;
 
+import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
@@ -15,16 +16,17 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.session.state.client.fx.FXServerSessionId;
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.controls.dialog.DialogUtil;
-import dev.webfx.extras.util.layout.LayoutUtil;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+
 import one.modality.base.client.entities.util.Labels;
 import one.modality.base.shared.domainmodel.formatters.PriceFormatter;
 import one.modality.base.shared.entities.*;
@@ -40,7 +42,11 @@ import java.util.List;
  */
 final class PaymentActivity extends CartBasedActivity {
 
-    private final Action makePaymentAction = newAction("MakePayment>>", "{url: 'images/svg/mono/pay-circle.svg', width: 32, height: 32}", this::submitPayment);
+    private final Action makePaymentAction =
+            newAction(
+                    "MakePayment>>",
+                    "{url: 'images/svg/mono/pay-circle.svg', width: 32, height: 32}",
+                    this::submitPayment);
 
     private VBox paymentsVBox;
     private List<DocumentPayment> documentPayments;
@@ -56,8 +62,18 @@ final class PaymentActivity extends CartBasedActivity {
         HtmlText paymentPrompt = new HtmlText();
         I18n.bindI18nTextProperty(paymentPrompt.textProperty(), "PaymentPrompt:");
 
-        BorderPane totalSection = SectionPanelFactory.createSectionPanelWithHeaderNodes(newLabel("TotalAmount:"), LayoutUtil.createHGrowable(), totalLabel = new Label());
-        VBox vBox = new VBox(20, paymentPrompt, paymentsVBox, totalSection, newLargeGreenButton(makePaymentAction));
+        BorderPane totalSection =
+                SectionPanelFactory.createSectionPanelWithHeaderNodes(
+                        newLabel("TotalAmount:"),
+                        LayoutUtil.createHGrowable(),
+                        totalLabel = new Label());
+        VBox vBox =
+                new VBox(
+                        20,
+                        paymentPrompt,
+                        paymentsVBox,
+                        totalSection,
+                        newLargeGreenButton(makePaymentAction));
         BorderPane container = new BorderPane(LayoutUtil.createVerticalScrollPaneWithPadding(vBox));
 
         displayDocumentPaymentsIfReady();
@@ -70,7 +86,9 @@ final class PaymentActivity extends CartBasedActivity {
 
     @Override
     protected void onCartLoaded() {
-        super.onCartLoaded(); // Applying the css background of the event if provided and if ui is ready
+        super
+                .onCartLoaded(); // Applying the css background of the event if provided and if ui
+                                 // is ready
         displayDocumentPaymentsIfReady();
     }
 
@@ -78,11 +96,18 @@ final class PaymentActivity extends CartBasedActivity {
         List<Document> cartDocuments = cartAggregate().getCartDocuments();
         if (cartDocuments != null && paymentsVBox != null) {
             notPaidEnoughCount = notPaidFullCount = 0;
-            documentPayments = Collections.mapFilter(cartDocuments, DocumentPayment::new, DocumentPayment::hasBalance);
-            UiScheduler.runInUiThread(() -> {
-                paymentsVBox.getChildren().setAll(Collections.map(documentPayments, DocumentPayment::getNode));
-                updateTotal();
-            });
+            documentPayments =
+                    Collections.mapFilter(
+                            cartDocuments, DocumentPayment::new, DocumentPayment::hasBalance);
+            UiScheduler.runInUiThread(
+                    () -> {
+                        paymentsVBox
+                                .getChildren()
+                                .setAll(
+                                        Collections.map(
+                                                documentPayments, DocumentPayment::getNode));
+                        updateTotal();
+                    });
         }
     }
 
@@ -120,12 +145,10 @@ final class PaymentActivity extends CartBasedActivity {
             maxAmount = document.getPriceNet() - priceDeposit;
             int min = priceMinDeposit - priceDeposit;
             if (min <= MIN_AMOUNT_TO_PAY) // 10.00 as minimum amount to pay
-                min = Math.min(MIN_AMOUNT_TO_PAY, maxAmount);
+            min = Math.min(MIN_AMOUNT_TO_PAY, maxAmount);
             minAmount = min;
-            if (hasBalance())
-                notPaidFullCount++;
-            if (!document.isCancelled() && priceDeposit < priceMinDeposit)
-                notPaidEnoughCount++;
+            if (hasBalance()) notPaidFullCount++;
+            if (!document.isCancelled() && priceDeposit < priceMinDeposit) notPaidEnoughCount++;
         }
 
         boolean hasBalance() {
@@ -134,29 +157,55 @@ final class PaymentActivity extends CartBasedActivity {
 
         Node getNode() {
             if (node == null) {
-                String title = document.getRef() + " - " + document.getFullName(); // + " - " + I18n.instantTranslate("Booking") + " " + document.getRef() + "   " + I18n.instantTranslate("Fee:") + " " + formatCurrency(document.getPriceNet()) + "   " + I18n.instantTranslate("Deposit:") + " " + formatCurrency(document.getPriceDeposit()) + "   " + I18n.instantTranslate("MinDeposit:") + " " + formatCurrency(document.getPriceMinDeposit());
-                BorderPane bp = SectionPanelFactory.createSectionPanelWithHeaderNodes(new Label(title), LayoutUtil.createHGrowable(), newLabel("Amount"));
+                String title =
+                        document.getRef()
+                                + " - "
+                                + document
+                                        .getFullName(); // + " - " +
+                                                        // I18n.instantTranslate("Booking") + " " +
+                                                        // document.getRef() + "   " +
+                                                        // I18n.instantTranslate("Fee:") + " " +
+                                                        // formatCurrency(document.getPriceNet()) +
+                                                        // "   " + I18n.instantTranslate("Deposit:")
+                                                        // + " " +
+                                                        // formatCurrency(document.getPriceDeposit()) + "   " + I18n.instantTranslate("MinDeposit:") + " " + formatCurrency(document.getPriceMinDeposit());
+                BorderPane bp =
+                        SectionPanelFactory.createSectionPanelWithHeaderNodes(
+                                new Label(title), LayoutUtil.createHGrowable(), newLabel("Amount"));
                 hBox = new HBox(20);
                 hBox.setAlignment(Pos.CENTER_LEFT);
                 hBox.setPadding(new Insets(10));
                 radioGroup = new ToggleGroup();
                 amountTextField = newTextField();
                 amountTextField.setAlignment(Pos.BASELINE_RIGHT);
-                amountTextField.textProperty().addListener((observable, oldValue, text) -> {
-                    try {
-                        updateAmount((int) (Float.parseFloat(text) * 100), true);
-                    } catch (NumberFormatException e) {
-                    }
-                });
+                amountTextField
+                        .textProperty()
+                        .addListener(
+                                (observable, oldValue, text) -> {
+                                    try {
+                                        updateAmount((int) (Float.parseFloat(text) * 100), true);
+                                    } catch (NumberFormatException e) {
+                                    }
+                                });
                 amountTextField.setPrefWidth(100d);
-                //LayoutUtil.setPrefMaxWidthToMin(amountTextField);
-                amountTextField.focusedProperty().addListener((observable, oldValue, focused) -> updateAmount(amount, false));
+                // LayoutUtil.setPrefMaxWidthToMin(amountTextField);
+                amountTextField
+                        .focusedProperty()
+                        .addListener(
+                                (observable, oldValue, focused) -> updateAmount(amount, false));
                 slider = new Slider(minAmount, maxAmount, maxAmount);
-                slider.valueProperty().addListener((observable, oldValue, newValue) -> updateAmount(newValue.intValue(), true));
-                if (notPaidFullCount > 1)
-                    zeroRadioButton = addRadioButton(0, "notNow");
+                slider.valueProperty()
+                        .addListener(
+                                (observable, oldValue, newValue) ->
+                                        updateAmount(newValue.intValue(), true));
+                if (notPaidFullCount > 1) zeroRadioButton = addRadioButton(0, "notNow");
                 if (minAmount > 0 && minAmount < maxAmount)
-                    minRadioButton = addRadioButton(minAmount, document.getPriceDeposit() < document.getPriceMinDeposit() ? "minDeposit" : null);
+                    minRadioButton =
+                            addRadioButton(
+                                    minAmount,
+                                    document.getPriceDeposit() < document.getPriceMinDeposit()
+                                            ? "minDeposit"
+                                            : null);
                 addNode(slider);
                 maxRadioButton = addRadioButton(maxAmount, "payInFull");
                 updateAmount(minAmount, false);
@@ -169,7 +218,11 @@ final class PaymentActivity extends CartBasedActivity {
         }
 
         private RadioButton addRadioButton(int price, Object translationKey) {
-            RadioButton rb = new RadioButton(formatCurrency(price)); // + (translationKey == null ? "" : " (" + I18n.instantTranslate(translationKey) + ")"));
+            RadioButton rb =
+                    new RadioButton(
+                            formatCurrency(
+                                    price)); // + (translationKey == null ? "" : " (" +
+                                             // I18n.instantTranslate(translationKey) + ")"));
             rb.setToggleGroup(radioGroup);
             rb.setOnAction(e -> updateAmount(price, true));
             addNode(rb);
@@ -183,23 +236,23 @@ final class PaymentActivity extends CartBasedActivity {
         private boolean updating;
 
         private void updateAmount(int amount, boolean updateTotal) {
-            if (updating)
-                return;
+            if (updating) return;
             updating = true;
-            if (amount < minAmount)
-                amount = 0;
+            if (amount < minAmount) amount = 0;
             else if (amount > minAmount && amount < maxAmount)
                 amount = Math.max(minAmount, (amount / CENTS) * CENTS);
-            else if (amount > maxAmount)
-                amount = maxAmount;
+            else if (amount > maxAmount) amount = maxAmount;
             this.amount = amount;
-            if (!amountTextField.isFocused())
-                amountTextField.setText(formatPrice(amount));
+            if (!amountTextField.isFocused()) amountTextField.setText(formatPrice(amount));
             slider.setValue((double) amount);
-            radioGroup.selectToggle(amount == maxAmount ? maxRadioButton : amount == minAmount ? minRadioButton : amount == 0 ? zeroRadioButton : null);
+            radioGroup.selectToggle(
+                    amount == maxAmount
+                            ? maxRadioButton
+                            : amount == minAmount
+                                    ? minRadioButton
+                                    : amount == 0 ? zeroRadioButton : null);
             updating = false;
-            if (updateTotal)
-                updateTotal();
+            if (updateTotal) updateTotal();
         }
 
         int getAmount() {
@@ -212,9 +265,9 @@ final class PaymentActivity extends CartBasedActivity {
     private String paymentRef;
 
     private void submitPayment() {
-        List<DocumentPayment> payments = Collections.filter(documentPayments, p -> p.getAmount() > 0);
-        if (payments.isEmpty())
-            return;
+        List<DocumentPayment> payments =
+                Collections.filter(documentPayments, p -> p.getAmount() > 0);
+        if (payments.isEmpty()) return;
         EntityStore loadStore = getEvent().getStore();
         UpdateStore updateStore = UpdateStore.createAbove(loadStore);
         MoneyTransfer moneyTransfer = updateStore.insertEntity(MoneyTransfer.class);
@@ -234,32 +287,57 @@ final class PaymentActivity extends CartBasedActivity {
                 childTransfer.setDocument(payment.document);
                 childTransfer.setAmount(payment.getAmount());
                 childTransfer.setParent(moneyTransfer);
-                if (doc == null)
-                    doc = payment.document;
-                paymentRef = (paymentRef == null ? "" : paymentRef + "-") + payment.document.getRef().toString();
+                if (doc == null) doc = payment.document;
+                paymentRef =
+                        (paymentRef == null ? "" : paymentRef + "-")
+                                + payment.document.getRef().toString();
             }
         }
-        updateStore.submitChanges()
+        updateStore
+                .submitChanges()
                 .onFailure(cause -> Console.log("Error submitting payment", cause))
-                .onSuccess(submitBatch -> {
-                    cartAggregate().unload();
-                    Object[] paymentIdParameter = { submitBatch.getArray()[0].getGeneratedKeys()[0] };
-                    loadStore.executeQueryBatch(
-                                    new EntityStoreQuery("select <frontoffice_loadEvent> from GatewayParameter gp where exists(select MoneyTransfer mt where mt=? and (gp.account=mt.toMoneyAccount or gp.account=null and gp.company=mt.toMoneyAccount.gatewayCompany)) order by company", paymentIdParameter, "gatewayParameters"),
-                                    new EntityStoreQuery("select <frontoffice_cart> from MoneyTransfer where id=?", paymentIdParameter, "lastPayment")
-                            )
-                            .onFailure(cause -> Console.log("Error submitting payment", cause))
-                            .onSuccess(entityLists -> {
-                                EntityList<GatewayParameter> gatewayParameters = entityLists[0];
-                                lastPayment = (MoneyTransfer) entityLists[1].get(0);
-                                UiScheduler.runInUiThread(() -> {
-                                    String innerHtml = generateHtmlForm(gatewayParameters);
-                                    //Logger.log(innerHtml);
-                                    HtmlText htmlText = LayoutUtil.setMaxPrefSizeToInfinite(new HtmlText(innerHtml));
-                                    DialogUtil.showModalNodeInGoldLayout(htmlText, (Pane) getNode(), 0.9, 0.8);
-                                });
-                            });
-                });
+                .onSuccess(
+                        submitBatch -> {
+                            cartAggregate().unload();
+                            Object[] paymentIdParameter = {
+                                submitBatch.getArray()[0].getGeneratedKeys()[0]
+                            };
+                            loadStore
+                                    .executeQueryBatch(
+                                            new EntityStoreQuery(
+                                                    "select <frontoffice_loadEvent> from GatewayParameter gp where exists(select MoneyTransfer mt where mt=? and (gp.account=mt.toMoneyAccount or gp.account=null and gp.company=mt.toMoneyAccount.gatewayCompany)) order by company",
+                                                    paymentIdParameter,
+                                                    "gatewayParameters"),
+                                            new EntityStoreQuery(
+                                                    "select <frontoffice_cart> from MoneyTransfer where id=?",
+                                                    paymentIdParameter,
+                                                    "lastPayment"))
+                                    .onFailure(
+                                            cause -> Console.log("Error submitting payment", cause))
+                                    .onSuccess(
+                                            entityLists -> {
+                                                EntityList<GatewayParameter> gatewayParameters =
+                                                        entityLists[0];
+                                                lastPayment = (MoneyTransfer) entityLists[1].get(0);
+                                                UiScheduler.runInUiThread(
+                                                        () -> {
+                                                            String innerHtml =
+                                                                    generateHtmlForm(
+                                                                            gatewayParameters);
+                                                            // Logger.log(innerHtml);
+                                                            HtmlText htmlText =
+                                                                    LayoutUtil
+                                                                            .setMaxPrefSizeToInfinite(
+                                                                                    new HtmlText(
+                                                                                            innerHtml));
+                                                            DialogUtil.showModalNodeInGoldLayout(
+                                                                    htmlText,
+                                                                    (Pane) getNode(),
+                                                                    0.9,
+                                                                    0.8);
+                                                        });
+                                            });
+                        });
     }
 
     private String paymentUrl;
@@ -268,7 +346,9 @@ final class PaymentActivity extends CartBasedActivity {
         boolean live = getEvent().isLive();
         boolean test = !live;
         String certificate = paymentUrl = null;
-        gatewayParameters = Collections.filter(gatewayParameters, gp -> live && gp.isLive() || test && gp.isTest());
+        gatewayParameters =
+                Collections.filter(
+                        gatewayParameters, gp -> live && gp.isLive() || test && gp.isTest());
         StringBuilder sb = new StringBuilder();
         for (GatewayParameter gp : gatewayParameters) {
             switch (gp.getName()) {
@@ -279,7 +359,11 @@ final class PaymentActivity extends CartBasedActivity {
                     certificate = gp.getValue();
                     break;
                 default:
-                    sb.append("\n<input type='hidden' name=").append(htmlQuote(gp.getName())).append(" value=").append(htmlQuote(replaceBrackets(gp.getValue()))).append("/>");
+                    sb.append("\n<input type='hidden' name=")
+                            .append(htmlQuote(gp.getName()))
+                            .append(" value=")
+                            .append(htmlQuote(replaceBrackets(gp.getValue())))
+                            .append("/>");
             }
         }
         if (certificate != null) { // certificate => computing vads signature
@@ -291,9 +375,14 @@ final class PaymentActivity extends CartBasedActivity {
             }
             signature += certificate;
             signature = Sha1.hash(signature);
-            sb.append("\n<input type='hidden' name='signature' value=").append(htmlQuote(signature)).append("/>");
+            sb.append("\n<input type='hidden' name='signature' value=")
+                    .append(htmlQuote(signature))
+                    .append("/>");
         }
-        return replaceBrackets("<html><body><form id='gatewayForm' action='[paymentUrl]' method='POST' accept-charset='UTF-8'>") + sb + "\n</form><script type='text/javascript'>document.getElementById('gatewayForm').submit();</script></body></html>";
+        return replaceBrackets(
+                        "<html><body><form id='gatewayForm' action='[paymentUrl]' method='POST' accept-charset='UTF-8'>")
+                + sb
+                + "\n</form><script type='text/javascript'>document.getElementById('gatewayForm').submit();</script></body></html>";
     }
 
     private String replaceBrackets(String value) {
@@ -301,34 +390,61 @@ final class PaymentActivity extends CartBasedActivity {
         value = Strings.replaceAllSafe(value, "[paymentUrl]", paymentUrl);
         value = Strings.replaceAllSafe(value, "[ref]", paymentRef);
         value = Strings.replaceAllSafe(value, "[bref]", doc.getRef().toString());
-        value = Strings.replaceAllSafe(value, "[amount]", PriceFormatter.INSTANCE.format(lastPayment.getAmount(), true).toString());
+        value =
+                Strings.replaceAllSafe(
+                        value,
+                        "[amount]",
+                        PriceFormatter.INSTANCE.format(lastPayment.getAmount(), true).toString());
         value = Strings.replaceAllSafe(value, "[amount_int]", lastPayment.getAmount().toString());
         value = Strings.replaceAllSafe(value, "[event]", Labels.instantTranslate(event));
         value = Strings.replaceAllSafe(value, "[eventid]", event.getPrimaryKey().toString());
-        value = Strings.replaceAllSafe(value, "[eventid5]", digits(event.getPrimaryKey().toString(), 5, true));
+        value =
+                Strings.replaceAllSafe(
+                        value, "[eventid5]", digits(event.getPrimaryKey().toString(), 5, true));
         value = Strings.replaceAllSafe(value, "[firstName]", doc.getFirstName());
         value = Strings.replaceAllSafe(value, "[lastName]", doc.getLastName());
-        value = Strings.replaceAllSafe(value, "[name]", doc.isOrdained() ? doc.getLayName() : doc.getFullName());
+        value =
+                Strings.replaceAllSafe(
+                        value, "[name]", doc.isOrdained() ? doc.getLayName() : doc.getFullName());
         value = Strings.replaceAllSafe(value, "[street]", doc.getStreet());
         value = Strings.replaceAllSafe(value, "[city]", doc.getCityName());
         value = Strings.replaceAllSafe(value, "[admin1]", doc.getAdmin1Name());
         value = Strings.replaceAllSafe(value, "[admin2]", doc.getAdmin2Name());
-        ////"[state_2c]": firstDocument.person_state == null ? null : firstDocument.person_state.substr(0, 2),
+        //// "[state_2c]": firstDocument.person_state == null ? null :
+        // firstDocument.person_state.substr(0, 2),
         value = Strings.replaceAllSafe(value, "[postCode]", doc.getPostCode());
-        value = Strings.replaceAllSafe(value, "[country]", doc.getCountry() != null ? doc.getCountry().getName() : doc.getCountryName());
-        value = Strings.replaceAllSafe(value, "[countryCode]", doc.getCountry() != null ? doc.getCountry().getIsoAlpha2() : null);
-        ////"[postcode_int]": keepDigitsOnly(firstDocument.person_postCode),
+        value =
+                Strings.replaceAllSafe(
+                        value,
+                        "[country]",
+                        doc.getCountry() != null
+                                ? doc.getCountry().getName()
+                                : doc.getCountryName());
+        value =
+                Strings.replaceAllSafe(
+                        value,
+                        "[countryCode]",
+                        doc.getCountry() != null ? doc.getCountry().getIsoAlpha2() : null);
+        //// "[postcode_int]": keepDigitsOnly(firstDocument.person_postCode),
         value = Strings.replaceAllSafe(value, "[phone]", doc.getPhone());
-        ////"[phone_int]": keepDigitsOnly(firstDocument.person_phone),
+        //// "[phone_int]": keepDigitsOnly(firstDocument.person_phone),
         value = Strings.replaceAllSafe(value, "[email]", doc.getEmail());
         value = Strings.replaceAllSafe(value, "[frontofficeUrl]", WindowLocation.getOrigin());
         String cartUrl = Strings.removeSuffix(WindowLocation.getHref(), "/payment");
         value = Strings.replaceAllSafe(value, "[cartUrl]", cartUrl);
         value = Strings.replaceAllSafe(value, "[session]", FXServerSessionId.getServerSessionId());
         value = Strings.replaceAllSafe(value, "[lang]", I18n.getLanguage().toString());
-        value = Strings.replaceAllSafe(value, "[paymentId]", lastPayment.getPrimaryKey().toString());
-        value = Strings.replaceAllSafe(value, "[paymentId6]", digits(lastPayment.getPrimaryKey().toString(), 6, false));
-        value = Strings.replaceAllSafe(value, "[date]", Dates.format(lastPayment.getDate(), "yyyyMMddHHmmss"));
+        value =
+                Strings.replaceAllSafe(
+                        value, "[paymentId]", lastPayment.getPrimaryKey().toString());
+        value =
+                Strings.replaceAllSafe(
+                        value,
+                        "[paymentId6]",
+                        digits(lastPayment.getPrimaryKey().toString(), 6, false));
+        value =
+                Strings.replaceAllSafe(
+                        value, "[date]", Dates.format(lastPayment.getDate(), "yyyyMMddHHmmss"));
         return value;
     }
 
@@ -344,16 +460,14 @@ final class PaymentActivity extends CartBasedActivity {
                 sb.append("&#");
                 sb.append((int) c);
                 sb.append(';');
-            } else
-                sb.append(c);
+            } else sb.append(c);
         }
         return sb.toString();
     }
 
     private static String digits(String s, int n, boolean right) {
         s = "" + s;
-        while (s.length() < n)
-            s = right ? s + '0' : '0' + s;
+        while (s.length() < n) s = right ? s + '0' : '0' + s;
         return s.substring(s.length() - n);
     }
 }

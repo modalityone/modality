@@ -1,16 +1,17 @@
 package one.modality.crm.backoffice.operations.routes.letters;
 
-import one.modality.crm.backoffice.activities.letters.routing.LettersRouting;
+import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.ui.operation.HasOperationCode;
-import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
+
+import one.modality.crm.backoffice.activities.letters.routing.LettersRouting;
 
 /**
  * @author Bruno Salmon
  */
 public final class RouteToLettersRequest extends RoutePushRequest implements HasOperationCode {
 
-    private final static String OPERATION_CODE = "RouteToLetters";
+    private static final String OPERATION_CODE = "RouteToLetters";
 
     public RouteToLettersRequest(Object eventId, BrowsingHistory history) {
         super(LettersRouting.getEventLettersPath(eventId), history);
@@ -20,5 +21,4 @@ public final class RouteToLettersRequest extends RoutePushRequest implements Has
     public Object getOperationCode() {
         return OPERATION_CODE;
     }
-
 }

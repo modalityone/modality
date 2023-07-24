@@ -35,7 +35,8 @@ module modality.ecommerce.backoffice.activities.payments {
     exports one.modality.ecommerce.backoffice.operations.routes.payments;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.ecommerce.backoffice.activities.payments.PaymentsUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.ecommerce.backoffice.activities.payments.RouteToPaymentsRequestEmitter;
-
+    provides dev.webfx.stack.routing.uirouter.UiRoute with
+            one.modality.ecommerce.backoffice.activities.payments.PaymentsUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with
+            one.modality.ecommerce.backoffice.activities.payments.RouteToPaymentsRequestEmitter;
 }

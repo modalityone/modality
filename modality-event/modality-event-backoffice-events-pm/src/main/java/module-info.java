@@ -10,5 +10,4 @@ module modality.event.backoffice.events.pm {
 
     // Exported packages
     exports one.modality.event.backoffice.events.pm;
-
 }

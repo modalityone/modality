@@ -38,6 +38,6 @@ module modality.event.frontoffice.activities.options {
     exports one.modality.event.frontoffice.operations.options;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.options.OptionsUiRoute;
-
+    provides dev.webfx.stack.routing.uirouter.UiRoute with
+            one.modality.event.frontoffice.activities.options.OptionsUiRoute;
 }

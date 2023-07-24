@@ -13,7 +13,12 @@ module modality.ecommerce.payment.direct.buscall {
     exports one.modality.ecommerce.payment.direct.buscall.serial;
 
     // Provided services
-    provides dev.webfx.stack.com.bus.call.spi.BusCallEndpoint with one.modality.ecommerce.payment.direct.buscall.MakeDirectPaymentMethodEndpoint, one.modality.ecommerce.payment.direct.buscall.GetDirectPaymentGatewayInfosMethodEndpoint;
-    provides dev.webfx.stack.com.serial.spi.SerialCodec with one.modality.ecommerce.payment.direct.buscall.serial.MakeDirectPaymentArgumentSerialCodec, one.modality.ecommerce.payment.direct.buscall.serial.MakeDirectPaymentResultSerialCodec;
-
+    provides dev.webfx.stack.com.bus.call.spi.BusCallEndpoint with
+            one.modality.ecommerce.payment.direct.buscall.MakeDirectPaymentMethodEndpoint,
+            one.modality.ecommerce.payment.direct.buscall
+                    .GetDirectPaymentGatewayInfosMethodEndpoint;
+    provides dev.webfx.stack.com.serial.spi.SerialCodec with
+            one.modality.ecommerce.payment.direct.buscall.serial
+                    .MakeDirectPaymentArgumentSerialCodec,
+            one.modality.ecommerce.payment.direct.buscall.serial.MakeDirectPaymentResultSerialCodec;
 }

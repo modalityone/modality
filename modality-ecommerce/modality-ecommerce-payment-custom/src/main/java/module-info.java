@@ -13,5 +13,4 @@ module modality.ecommerce.payment.custom {
 
     // Used services
     uses one.modality.ecommerce.payment.custom.spi.CustomPaymentProvider;
-
 }

@@ -9,5 +9,4 @@ module modality.hotel.shared.time {
 
     // Exported packages
     exports one.modality.hotel.shared.businessdata.time;
-
 }

@@ -8,5 +8,4 @@ public interface HasName {
     void setName(String name);
 
     String getName();
-
 }

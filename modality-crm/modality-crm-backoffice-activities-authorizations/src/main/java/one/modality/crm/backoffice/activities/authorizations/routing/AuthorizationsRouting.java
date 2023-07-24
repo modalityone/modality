@@ -10,5 +10,4 @@ public final class AuthorizationsRouting {
     public static String getPath() {
         return PATH;
     }
-
 }
