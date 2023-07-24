@@ -1,4 +1,4 @@
-name: CodeQL code security analysis
+name: Discover Vulnerabilities
 
 on: [push]
 
