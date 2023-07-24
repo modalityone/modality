@@ -3,13 +3,17 @@ name: Enforce Google Java Style Guidelines
 on: [push]
 
 jobs:
-  Google-Java-Format:
+  Enforce-IntelliJ-Java-Style-Guidelines:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - uses: axel-op/googlejavaformat-action@v3
+      - name: Check IntelliJ Formatting
+        uses: sidhant92/intellij-format-action@v1
         with:
-          args: "-n --set-exit-if-changed"
+          tool_name: 'IntelliJ Diff'
+          fail_on_changes: true
+          path: '.'
+          file_mask: '*.java'
