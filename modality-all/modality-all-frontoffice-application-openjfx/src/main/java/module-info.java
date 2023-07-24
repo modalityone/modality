@@ -4,6 +4,7 @@ module modality.all.frontoffice.application.openjfx {
 
     // Direct dependencies modules
     requires modality.all.frontoffice.application;
+    requires webfx.extras.webtext.peers.openjfx;
     requires webfx.kit.openjfx;
     requires webfx.kit.platform.visibility.openjfx;
     requires webfx.platform.boot.java;
