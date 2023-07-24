@@ -6,7 +6,7 @@
 [![Scc Lines Count Badge](https://sloc.xyz/github/modalityone/modality/?category=lines)](https://github.com/modalityone/modality/)
 [![Scc Comments Count Badge](https://sloc.xyz/github/modalityone/modality/?category=comments)](https://github.com/modalityone/modality/)
 [![Scc COCOMO Badge](https://sloc.xyz/github/modalityone/modality/?category=cocomo)](https://github.com/modalityone/modality/)
-[![CodeQL](https://github.com/modalityone/modality/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/modalityone/modality/actions/workflows/codeql-analysis.yml)
+[![Discover Vulnerabilities Using CodeQL](https://github.com/modalityone/modality/actions/workflows/discover-vulnerabilities.yml/badge.svg)](https://github.com/modalityone/modality/actions/workflows/discover-vulnerabilities.yml)
 [![Enforce AOSP Java Style Guidelines](https://github.com/modalityone/modality/actions/workflows/enforce-aosp-java-style-guidelines.yml/badge.svg)](https://github.com/modalityone/modality/actions/workflows/enforce-aosp-java-style-guidelines.yml)
 
 
