@@ -6,7 +6,7 @@
 [![Scc Lines Count Badge](https://sloc.xyz/github/modalityone/modality/?category=lines)](https://github.com/modalityone/modality/)
 [![Scc Comments Count Badge](https://sloc.xyz/github/modalityone/modality/?category=comments)](https://github.com/modalityone/modality/)
 [![Scc COCOMO Badge](https://sloc.xyz/github/modalityone/modality/?category=cocomo)](https://github.com/modalityone/modality/)
-[![CodeQL](https://github.com/modalityone/modality/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/modalityone/modality/actions/workflows/codeql-analysis.yml)
+[![Discover Vulnerabilities Using CodeQL](https://github.com/modalityone/modality/actions/workflows/discover-vulnerabilities.yml/badge.svg)](https://github.com/modalityone/modality/actions/workflows/discover-vulnerabilities.yml)
 
 # Modality
 Modality is a free, open-source, hospitality-oriented booking system, currently in development. It will support significant event complexity, unmatched by any existing solution that we are aware of.
