@@ -1,4 +1,5 @@
-FROM __ECR_ACCOUNT_ID__.dkr.ecr.__AWS_REGION__.amazonaws.com/oracle_java
+#FROM __ECR_ACCOUNT_ID__.dkr.ecr.__AWS_REGION__.amazonaws.com/oracle_java
+FROM azul/zulu-openjdk:19
 
 RUN set -eux; \
         mkdir -p /opt/modality/conf
