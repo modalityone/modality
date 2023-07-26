@@ -21,12 +21,12 @@
 # 15) App-iOS-arm64-native-package.ipa : iOS native app (Gluon)                                                  #
 ##################################################################################################################
 
-name: Multi-OS builds
+name: Build for Multiple OS
 
 on:
   push:
     branches: [ main ]
-  pull_request:
+  pull_request_target:
      branches: [ main ]
 
 jobs:
@@ -93,6 +93,7 @@ jobs:
       jdk-version: '19'
       xcode-version: '14.2.0'
       API_GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GLUON_LICENSE: ${{ secrets.GLUON_LICENSE }}
       GLUON_ANDROID_VERSION_CODE: ${{ vars.GLUON_ANDROID_VERSION_CODE }}
       GLUON_ANDROID_VERSION_NAME: ${{ vars.GLUON_ANDROID_VERSION_NAME }}

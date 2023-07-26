@@ -1,3 +1,13 @@
+[![Build for Multiple OS](https://github.com/modalityone/modality/actions/workflows/build-for-multiple-os.yml/badge.svg)](https://github.com/modalityone/modality/actions/workflows/build-for-multiple-os.yml)
+[![Build and Deploy to AWS](https://github.com/modalityone/modality/actions/workflows/build-and-deploy-to-aws.yml/badge.svg)](https://github.com/modalityone/modality/actions/workflows/build-and-deploy-to-aws.yml)
+[![Deploy to Sonatype](https://github.com/modalityone/modality/actions/workflows/deploy-to-sonatype.yml/badge.svg)](https://github.com/modalityone/modality/actions/workflows/deploy-to-sonatype.yml)
+[![Scc Code Count Badge](https://sloc.xyz/github/modalityone/modality/?category=code)](https://github.com/modalityone/modality/)
+[![Scc Blanks Count Badge](https://sloc.xyz/github/modalityone/modality/?category=blanks)](https://github.com/modalityone/modality/)
+[![Scc Lines Count Badge](https://sloc.xyz/github/modalityone/modality/?category=lines)](https://github.com/modalityone/modality/)
+[![Scc Comments Count Badge](https://sloc.xyz/github/modalityone/modality/?category=comments)](https://github.com/modalityone/modality/)
+[![Scc COCOMO Badge](https://sloc.xyz/github/modalityone/modality/?category=cocomo)](https://github.com/modalityone/modality/)
+[![Discover Vulnerabilities Using CodeQL](https://github.com/modalityone/modality/actions/workflows/discover-vulnerabilities.yml/badge.svg)](https://github.com/modalityone/modality/actions/workflows/discover-vulnerabilities.yml)
+
 # Modality
 Modality is a free, open-source, hospitality-oriented booking system, currently in development. It will support significant event complexity, unmatched by any existing solution that we are aware of.
 

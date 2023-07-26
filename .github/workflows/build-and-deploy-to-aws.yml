@@ -6,13 +6,13 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Modality AWS environment CI
+name: Build and Deploy to AWS
 
 on:
   push:
-    branches: [ "main", "feature/aws-pipeline" ]
-  pull_request:
-    branches: [ "main", "feature/aws-pipeline" ]
+    branches: [ "main" ]
+  pull_request_target:
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -29,12 +29,10 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: 19
-          # website: oracle.com
-          # release: 19
       - name: Build with Maven
         run: mvn package -B -P 'vertx-fatjar,gwt-compile'
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -65,11 +63,12 @@ jobs:
           MODALITY_DATABASE_USERNAME: ${{ secrets.MODALITY_DATABASE_USERNAME }}
           MODALITY_DATABASE_PASSWORD: ${{ env.MODALITY_DATABASE_PASSWORD }}
           IMAGE_TAG: ${{ github.sha }}
+          DOCKER_CONF_DIR: ".github/workflows/docker"
         run: |
-          cp $FAT_JAR docker/aws-service/modality-service
-          cp $BACK_OFFICE_WAR docker/aws-service/modality-service
-          cp $FRONT_OFFICE_WAR docker/aws-service/modality-service
-          cd docker/aws-service/modality-service
+          cp $FAT_JAR $DOCKER_CONF_DIR
+          cp $BACK_OFFICE_WAR $DOCKER_CONF_DIR
+          cp $FRONT_OFFICE_WAR $DOCKER_CONF_DIR
+          cd $DOCKER_CONF_DIR
           sed -i "s/__ECR_ACCOUNT_ID__/${ECR_ACCOUNT_ID}/g" Dockerfile
           sed -i "s/__AWS_REGION__/${AWS_REGION}/g" Dockerfile
           sed -i "s/__MODALITY_DATABASE_HOST__/${MODALITY_DATABASE_HOST}/g" ModalityDatabase.json
