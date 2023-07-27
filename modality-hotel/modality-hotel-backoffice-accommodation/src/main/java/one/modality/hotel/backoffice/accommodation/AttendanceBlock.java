@@ -5,6 +5,7 @@ import javafx.scene.paint.Color;
 import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Document;
+import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.event.client.theme.EventTheme;
 
@@ -43,7 +44,11 @@ public final class AttendanceBlock implements AccommodationBlock {
     }
 
     private Document getDocument() {
-        return attendance.getDocumentLine().getDocument();
+        return getDocumentLine().getDocument();
+    }
+
+    public DocumentLine getDocumentLine() {
+        return attendance.getDocumentLine();
     }
 
     public String getPersonName() {
