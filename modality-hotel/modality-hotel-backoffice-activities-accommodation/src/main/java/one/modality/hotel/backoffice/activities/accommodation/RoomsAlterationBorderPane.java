@@ -28,7 +28,7 @@ class RoomsAlterationBorderPane {
     private static final FontDef SELECT_ROOM_TYPE_FONT = FontDef.font(FontWeight.BOLD, 15);
 
     public static BorderPane createAccommodationBorderPane(RoomsAlterationView roomsAlterationView, AccommodationActivity activity) {
-        Node body = roomsAlterationView.buildView(activity);
+        Node body = roomsAlterationView.buildView();
         BorderPane borderPane = new BorderPane(body);
 
         EntityButtonSelector<Item> roomTypeSelector = new EntityButtonSelector<Item>(

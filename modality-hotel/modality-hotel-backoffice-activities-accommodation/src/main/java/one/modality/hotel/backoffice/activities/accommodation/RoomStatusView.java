@@ -6,12 +6,14 @@ import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -21,9 +23,10 @@ import javafx.scene.text.FontWeight;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.Rate;
 import one.modality.base.shared.entities.ResourceConfiguration;
-import one.modality.base.shared.entities.ScheduledResource;
+import one.modality.base.shared.entities.markers.EntityHasItem;
 import one.modality.hotel.backoffice.accommodation.*;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -35,9 +38,10 @@ public class RoomStatusView {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yy");
     private static final FontDef TOP_ROW_FONT = FontDef.font(FontWeight.BOLD, 15);
+    private static final FontDef RATE_FONT = FontDef.font(FontWeight.NORMAL, 12);
 
     private final AccommodationPresentationModel pm;
-    private final ObservableList<ScheduledResource> scheduledResources = FXCollections.observableArrayList();
+    private final ResourceConfigurationLoader resourceConfigurationLoader;
     private final ObservableList<Rate> rates = FXCollections.observableArrayList();
     private final ObjectProperty<LocalDate> fromProperty = new SimpleObjectProperty<>();
     public ObjectProperty<LocalDate> fromProperty() { return fromProperty;}
@@ -46,33 +50,142 @@ public class RoomStatusView {
     public ObjectProperty<LocalDate> toProperty() { return toProperty; }
 
     private ObservableValue<Boolean> activeProperty;
-    private ReactiveEntitiesMapper<ScheduledResource> rem;
     private ReactiveEntitiesMapper<Rate> ratesRem;
     private final ObjectProperty<String> commaSeparatedRoomIds = new SimpleObjectProperty<>();
-
     public RoomStatusView(AccommodationPresentationModel pm) {
         this.pm = pm;
-    }
-
-    public Node buildView() {
-        VBox body = new VBox();
-        scheduledResources.addListener((ListChangeListener<? super ScheduledResource>) change -> {
-            //body.getChildren().setAll(createRows());
-            String commaSeparatedRoomIdsString = scheduledResources.stream()
-                    .map(scheduledResource -> scheduledResource.getResourceConfiguration().getItem().getPrimaryKey())
-                    .map(String::valueOf)
+        resourceConfigurationLoader = ResourceConfigurationLoader.getOrCreate(pm);
+        resourceConfigurationLoader.getResourceConfigurations().addListener((ListChangeListener<? super ResourceConfiguration>) change -> {
+            String roomIds = resourceConfigurationLoader.getResourceConfigurations().stream()
+                    .map(rc -> rc.getItem().getId().getPrimaryKey().toString())
                     .distinct()
                     .collect(Collectors.joining(","));
-            commaSeparatedRoomIds.set(commaSeparatedRoomIdsString);
+            commaSeparatedRoomIds.set(roomIds);
         });
+    }
+    public Node buildView() {
+        ScrollPane roomTypesScrollPane = new ScrollPane();
         rates.addListener((ListChangeListener<? super Rate>) change -> {
-            int size = rates.size();
-            System.out.println(size);
+            roomTypesScrollPane.setContent(createRoomTypePanes());
         });
         HBox topRow = createTopRow();
-        BorderPane borderPane = new BorderPane(new ScrollPane(body));
+        BorderPane borderPane = new BorderPane(roomTypesScrollPane);
         borderPane.setTop(topRow);
         return borderPane;
+    }
+
+    private VBox createRoomTypePanes() {
+        List<Item> roomTypes = resourceConfigurationLoader.getResourceConfigurations().stream()
+                .map(EntityHasItem::getItem)
+                .distinct()
+                .collect(Collectors.toList());
+
+        VBox roomTypePanes = new VBox();
+        for (Item roomType : roomTypes) {
+            VBox roomsPane = new VBox();
+            for (ResourceConfiguration rc : listRoomsOfType(roomType)) {
+                roomsPane.getChildren().add(createRoomPane(rc));
+            }
+            CollapsiblePane rooms = new CollapsiblePane(roomType.getName(), 0, roomsPane);
+            roomTypePanes.getChildren().add(rooms);
+        }
+        return roomTypePanes;
+    }
+
+    private List<ResourceConfiguration> listRoomsOfType(Item roomType) {
+        return resourceConfigurationLoader.getResourceConfigurations().stream()
+                .filter(rc -> rc.getItem().equals(roomType))
+                .collect(Collectors.toList());
+    }
+
+    private VBox createRoomPane(ResourceConfiguration rc) {
+        return new CollapsiblePane(rc.getName(), 1, createRateHistoryGridPane(rc));
+    }
+
+    private static class CollapsiblePane extends VBox {
+
+        private static final String PREFIX_EXPAND = "(+)";
+        private static final String PREFIX_COLLAPSE = "(-)";
+        private static final FontDef ROOM_NAME_FONT = FontDef.font(FontWeight.BOLD, 15);
+
+        private final String headingText;
+        private final Label headingLabel = new Label();
+        private final Node body;
+
+        public CollapsiblePane(String headingText, int indentationLevel, Node body) {
+            this.headingText = headingText;
+            this.body = body;
+            headingLabel.setOnMouseClicked(e -> expandOrCollapse());
+            headingLabel.setPadding(new Insets(0, 0, 0, 32 * indentationLevel));
+            expandOrCollapse();
+        }
+
+        public void expandOrCollapse() {
+            boolean wasExpanded = !headingLabel.getText().startsWith(PREFIX_COLLAPSE);
+            String newHeadingText = (wasExpanded ? PREFIX_COLLAPSE : PREFIX_EXPAND) + headingText;
+            Platform.runLater(() -> {
+                headingLabel.setText(newHeadingText);
+                if (wasExpanded) {
+                    getChildren().setAll(headingLabel);
+                } else {
+                    getChildren().setAll(headingLabel, body);
+                }
+            });
+            updateLabelStyle(headingLabel, !wasExpanded);
+        }
+
+        private void updateLabelStyle(Label label, boolean selected) {
+            if (selected) {
+                TextTheme.createPrimaryTextFacet(label)
+                        .requestedFont(ROOM_NAME_FONT)
+                        .style();
+            } else {
+                TextTheme.createSecondaryTextFacet(label)
+                        .requestedFont(ROOM_NAME_FONT)
+                        .style();
+            }
+        }
+    }
+
+    private GridPane createRateHistoryGridPane(ResourceConfiguration rc) {
+        // TODO find all rates between the start and end date for the resource item
+        List<Rate> ratesForRoom = rates.stream()
+                .filter(rate -> rate.getItem().equals(rc.getItem()))
+                .sorted(Comparator.comparing(Rate::getStartDate))
+                .collect(Collectors.toList());
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(16);
+        int rowIndex = 0;
+        for (Rate rate : ratesForRoom) {
+            gridPane.add(createRateLabel("From"), 0, rowIndex);
+            gridPane.add(createRateLabel(formatDate(rate.getStartDate())), 1, rowIndex);
+            gridPane.add(createRateLabel("To"), 2, rowIndex);
+            gridPane.add(createRateLabel(formatDate(rate.getEndDate())), 3, rowIndex);
+            gridPane.add(createRateLabel("Price"), 4, rowIndex);
+            gridPane.add(createRateLabel(priceToString(rate.getPrice()) + " / night"), 5, rowIndex);
+            rowIndex++;
+        }
+        return gridPane;
+    }
+
+    private Label createRateLabel(String text) {
+        Label label = new Label(text);
+        TextTheme.createDefaultTextFacet(label)
+                .requestedFont(RATE_FONT)
+                .style();
+        return label;
+    }
+
+    private static String formatDate(LocalDate date) {
+        return DATE_FORMATTER.format(date);
+    }
+
+    private static String priceToString(int price) {
+        if ((price % 100) == 0) {
+            return String.valueOf(price / 100);
+        } else {
+            return new DecimalFormat("#.00").format(price / 100.0);
+        }
     }
 
     private HBox createTopRow() {
@@ -90,70 +203,11 @@ public class RoomStatusView {
         Region topRowPadding = new Region();
         HBox.setHgrow(topRowPadding, Priority.ALWAYS);
         HBox topRow = new HBox(topLeftLabel, topRowPadding, topRightLabel);
+        topRow.setSpacing(32);
         topRightLabel.setAlignment(Pos.TOP_RIGHT);
         LuminanceTheme.createTopPanelFacet(topRow)
                 .style();
         return topRow;
-    }
-
-    private List<Node> createRows() {
-        List<Node> rows = new ArrayList<>();
-        List<Item> roomTypes = listRoomTypes();
-        for (Item roomType : roomTypes) {
-            rows.add(buildItemPane(roomType));
-        }
-        return rows;
-    }
-
-    private List<Item> listRoomTypes() {
-        return scheduledResources.stream()
-                .map(scheduledResource -> scheduledResource.getResourceConfiguration().getItem())
-                .distinct()
-                //.sorted((item1, item2) -> Integer.valueOf(item1.getOrd()).compareTo(item2.getOrd()))
-                .collect(Collectors.toList());
-    }
-
-    private Pane buildItemPane(Item item) {
-        Label itemLabel = new Label(item.getName());
-        TextTheme.createPrimaryTextFacet(itemLabel)
-                .requestedFont(TOP_ROW_FONT)
-                .style();
-        VBox itemPane = new VBox(itemLabel);
-        List<ResourceConfiguration> resourceConfigurationsForItem = getResourcesForItem(item, scheduledResources);
-        List<String> roomNames = resourceConfigurationsForItem.stream()
-                .map(ResourceConfiguration::getName)
-                .distinct()
-                .collect(Collectors.toList());
-        for (String roomName : roomNames) {
-            itemPane.getChildren().add(new Label(roomName));
-
-            List<ResourceConfiguration> itemsForRoom = resourceConfigurationsForItem.stream()
-                    .filter(rc -> rc.getName().equals(roomName))
-                    .collect(Collectors.toList());
-
-            for (ResourceConfiguration itemForRoom : itemsForRoom) {
-                itemPane.getChildren().add(buildRow(itemForRoom));
-            }
-        }
-        return itemPane;
-    }
-
-    private List<ResourceConfiguration> getResourcesForItem(Item item, List<ScheduledResource> scheduledResources) {
-        return scheduledResources.stream()
-                .map(ScheduledResource::getResourceConfiguration)
-                .filter(resourceConfiguration -> resourceConfiguration.getItem().equals(item))
-                .collect(Collectors.toList());
-    }
-
-    private HBox buildRow(ResourceConfiguration resourceConfiguration) {
-        Label nameLabel = new Label(resourceConfiguration.getName());
-        Label fromLabel = new Label("From");
-        Label fromDateLabel = new Label(resourceConfiguration.getStartDate() != null ? resourceConfiguration.getEndDate().toString() : "Unknown");
-        Label toLabel = new Label("To");
-        Label toDateLabel = new Label(resourceConfiguration.getEndDate() != null ? resourceConfiguration.getEndDate().toString() : "Unknown");
-        HBox hBox = new HBox(nameLabel, fromLabel, fromDateLabel, toLabel, toDateLabel);
-        hBox.setSpacing(8);
-        return hBox;
     }
 
     public void startLogic(Object mixin) { // may be called several times with different mixins (due to workaround)
@@ -165,40 +219,22 @@ public class RoomStatusView {
             else
                 activeProperty = FXProperties.combine(activeProperty, ap, (a1, a2) -> a1 || a2);
         }
-        if (rem == null) { // first call
-            rem = ReactiveEntitiesMapper.<ScheduledResource>createPushReactiveChain(mixin)
-                    .always("{class: 'ScheduledResource', alias: 'sr', fields: 'date,available,online,max,configuration.(name,item.name)'}")
-                    // Returning events for the selected organization only (or returning an empty set if no organization is selected)
-                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("configuration.resource.site.organization=?", o))
-                    // Restricting events to those appearing in the time window
-                    .ifNotNullOtherwise(fromProperty, startDate -> where("sr.date >= ?", startDate), where("1 = 0"))
-                    .ifNotNullOtherwise(toProperty, endDate -> where("sr.date <= ?", endDate), where("1 = 0"))
-                    // Storing the result directly in the events layer
-                    .storeEntitiesInto(scheduledResources)
-                    // We are now ready to start
-                    .start();
-
+        if (ratesRem == null) { // first call
             ratesRem = ReactiveEntitiesMapper.<Rate>createPushReactiveChain(mixin)
-                    .always("{class: 'Rate', alias: 'r', fields: 'startDate,endDate,item.id'}")
+                    .always("{class: 'Rate', alias: 'r', fields: 'startDate,endDate,item.id,price'}")
                     // Returning events for the selected organization only (or returning an empty set if no organization is selected)
-                    //.ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("site.organization=?", o))
+                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("site.organization=?", o))
                     // Restricting events to those appearing in the time window
                     .ifNotNullOtherwise(fromProperty, startDate -> where("r.startDate >= ?", startDate), where("1 = 0"))
                     .ifNotNullOtherwise(toProperty, endDate -> where("r.endDate <= ?", endDate), where("1 = 0"))
-                    .ifNotNull(commaSeparatedRoomIds, ids -> where("item.id IN (" + ids + ")"))
+                    .ifNotNullOtherwise(commaSeparatedRoomIds, ids -> where("item.id in (" + ids + ")"), where("1 = 0"))
                     // Storing the result directly in the events layer
                     .storeEntitiesInto(rates)
                     // We are now ready to start
                     .start();
         } else if (activeProperty != null) { // subsequent calls
-            rem.bindActivePropertyTo(activeProperty); // updating the reactive entities mapper active property
-            ratesRem.bindActivePropertyTo(activeProperty);
+            ratesRem.bindActivePropertyTo(activeProperty); // updating the reactive entities mapper active property
         }
     }
 
-    private static String commaSepratedIntegers(Collection<Integer> ints) {
-        return ints.stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(","));
-    }
 }
