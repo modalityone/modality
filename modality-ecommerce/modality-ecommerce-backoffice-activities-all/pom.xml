@@ -24,13 +24,6 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-backoffice-activities-income</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
             <artifactId>modality-ecommerce-backoffice-activities-moneyflows</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
@@ -38,21 +31,28 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-backoffice-activities-payments</artifactId>
+            <artifactId>modality-ecommerce-backoffice2018-activities-income</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-backoffice-activities-statements</artifactId>
+            <artifactId>modality-ecommerce-backoffice2018-activities-payments</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-backoffice-activities-statistics</artifactId>
+            <artifactId>modality-ecommerce-backoffice2018-activities-statements</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-ecommerce-backoffice2018-activities-statistics</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>

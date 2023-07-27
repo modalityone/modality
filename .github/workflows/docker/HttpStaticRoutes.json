@@ -1,0 +1,13 @@
+{
+  "httpStaticRoutes": [
+    {
+      "routePattern": "/*",
+      "hostnamePatterns": ["backoffice.*"],
+      "pathToStaticFolder": "/opt/modality/modality-all-backoffice-application-gwt-1.0.0-SNAPSHOT.war!/modality_all_backoffice_application_gwt"
+    },
+    {
+      "routePattern": "/*",
+      "pathToStaticFolder": "/opt/modality/modality-all-frontoffice-application-gwt-1.0.0-SNAPSHOT.war!/modality_all_frontoffice_application_gwt"
+    }
+  ]
+}

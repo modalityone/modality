@@ -1,0 +1,527 @@
+##################################################################################################################
+#         This Github workflow will generate the following builds on each push made on the main branch:          #
+##################################################################################################################
+# Builds generated on Ubuntu:                                                                                    #
+#  1) App-Web.war : Web app (built with GWT)                                                                     #
+#  2) App-Linux-x64-runnable.jar : Java archive (fat jar with OpenJFX for Linux)                                 #
+#  3) App-Linux-x64-jvm-package.deb                                                                              #
+#  4) App-Linux-x64-jvm-package.rpm                                                                              #
+#  5) App-Linux-x64-native-runnable : Linux desktop native app (Gluon)                                           #
+#  6) App-Android-aarch64-native-package.apk : Android native app (Gluon)                                        #
+# Builds generated on Windows:                                                                                   #
+#  7) App-Windows-x64-runnable.jar : Java archive (fat jar with OpenJFX for Windows)                             #
+#  8) App-Windows-x64-jvm-installer.exe : Windows installer (exe)                                                #
+#  9) App-Windows-x64-jvm-installer.msi : Windows installer (msi)                                                #
+# 10) App-Windows-x64-native-runnable.exe : Windows desktop native app (Gluon)                                   #
+# Builds generated on MacOS:                                                                                     #
+# 11) App-MacOS-x64-runnable.jar : Java archive (fat jar with OpenJFX for MacOS)                                 #
+# 12) App-MacOs-x64-jvm-package.dmg                                                                              #
+# 13) App-MacOS-x64-jvm-package.pkg                                                                              #
+# 14) App-macOS-x64-native-runnable : MacOS desktop native app (Gluon)                                           #
+# 15) App-iOS-arm64-native-package.ipa : iOS native app (Gluon)                                                  #
+##################################################################################################################
+
+name: Build for Multiple OS
+
+on:
+  push:
+    branches: [ main ]
+  pull_request_target:
+     branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        app: [
+          { name: 'ModalityBackOffice',  parent-module: "modality-all", module-token: 'modality-all-backoffice',  gwt-token: 'modality_all_backoffice',  gluon-token: 'ModalityAllBackoffice',  web-push-branch: 'backoffice',  android-package-name: 'one.modality.backoffice',  android-track: 'beta', ios-bundle-id: 'one.modality.backoffice',  version: '1.0.0-SNAPSHOT' },
+          { name: 'ModalityFrontOffice', parent-module: "modality-all", module-token: 'modality-all-frontoffice', gwt-token: 'modality_all_frontoffice', gluon-token: 'ModalityAllFrontoffice', web-push-branch: 'frontoffice', android-package-name: 'one.modality.frontoffice', android-track: 'beta', ios-bundle-id: 'one.modality.frontoffice', version: '1.0.0-SNAPSHOT' }
+        ]
+        os-config:  [1, 2, 3, 4]
+        include:
+          - os-config: 1 # Generates builds 1) 2) 3) 4) & 5)
+            os: ubuntu-latest
+            # Note: 1) must run on Ubuntu because the GitHub push action (to update the web-build branch) works only on Ubuntu
+            web-artifact-suffix:           'Web.war'                            # build 1)
+            fatjar-artifact-suffix:        'Linux-x64-runnable.jar'             # build 2)
+            #jvm-deb-artifact-suffix:       'Linux-x64-jvm-package.deb'          # build 3)
+            #jvm-rpm-artifact-suffix:       'Linux-x64-jvm-package.rpm'          # build 4)
+            gluon-desktop-arch-token:      'x86_64-linux'                       # build 5)
+            gluon-desktop-artifact-suffix: 'Linux-x64-native-runnable'          # build 5)
+
+          - os-config: 2 # Generates build 6) - Could be in os-config 1 but moved it a separate config to speed up (parallel run)
+            os: ubuntu-latest
+            gluon-android-arch-token:      'aarch64-android'                    # build 6)
+            gluon-android-apk-suffix:      'Android-aarch64.apk'                # build 6)
+            gluon-android-aab-suffix:      'Android-aarch64.aab'                # build 6)
+
+          - os-config: 3 # Generates builds 7) 8) 9) & 10)
+            os: windows-latest
+            fatjar-artifact-suffix:        'Windows-x64-runnable.jar'           # build 7)
+            #jvm-exe-artifact-suffix:       'Windows-x64-jvm-installer.exe'      # build 8)
+            #jvm-msi-artifact-suffix:       'Windows-x64-jvm-installer.msi'      # build 9)
+            gluon-desktop-arch-token:      'x86_64-windows'                     # build 10)
+            # Commented as getting error: Error running candle to generate wixobj
+            # gluon-desktop-artifact-suffix: 'Windows-x64-native-runnable.exe'    # build 10)
+            # msi-desktop-artifact-suffix:   'Windows-x64-jvm-installer.msi'      # build 9)
+
+          - os-config: 4 # Generates builds 11) 12) 13) 14) & 15)
+            os: macos-latest
+            fatjar-artifact-suffix:        'MacOS-x64.jar'                      # build 11)
+            #jvm-dmg-artifact-suffix:       'MacOS-x64-jvm.dmg'                  # build 12)
+            #jvm-pkg-artifact-suffix:       'MacOS-x64-jvm.pkg'                  # build 13)
+            # Commented macOS Desktop due to new error from Gluon plugin: No valid Identity (Certificate) found for macOS development.
+            # gluon-desktop-arch-token:      'x86_64-darwin'                      # build 14)
+            # gluon-desktop-Artifact-suffix: 'MacOS-x64-native-runnable'          # build 14)
+            # Note: the iOS build needs the Apple certificate in secrets (the steps will be skipped otherwise)
+            gluon-ios-arch-token:          'arm64-ios'                          # build 15)
+            gluon-ios-artifact-suffix:     'iOS-arm64-native.ipa'               # build 15)
+
+    env:
+      app-name:  ${{ matrix.app.name }}
+      app-repo-dir:              ./
+      app-parent-module-dir:     ./${{ matrix.app.parent-module }}
+      app-openjfx-module-dir:    ./${{ matrix.app.parent-module }}/${{ matrix.app.module-token }}-application-openjfx
+      app-gwt-module-dir:        ./${{ matrix.app.parent-module }}/${{ matrix.app.module-token }}-application-gwt
+      app-gwt-build-dir:         ./${{ matrix.app.parent-module }}/${{ matrix.app.module-token }}-application-gwt/target/${{ matrix.app.module-token }}-application-gwt-${{ matrix.app.version }}/${{ matrix.app.gwt-token }}_application_gwt
+      app-gluon-module-dir:      ./${{ matrix.app.parent-module }}/${{ matrix.app.module-token }}-application-gluon
+      web-push-repository-name:  'modality-netlify'
+      web-push-repository-owner: ${{ github.repository_owner }}
+      web-push-username: ${{ github.actor }}
+      web-push-email: ${{ secrets.API_GITHUB_EMAIL }}
+      jdk-version: '19'
+      xcode-version: '14.2.0'
+      API_GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GLUON_LICENSE: ${{ secrets.GLUON_LICENSE }}
+      GLUON_ANDROID_VERSION_CODE: ${{ vars.GLUON_ANDROID_VERSION_CODE }}
+      GLUON_ANDROID_VERSION_NAME: ${{ vars.GLUON_ANDROID_VERSION_NAME }}
+      GLUON_ANDROID_KEYSTORE_BASE64: ${{ secrets.GLUON_ANDROID_KEYSTORE_BASE64 }}
+      GLUON_ANDROID_KEYSTORE_PASSWORD: ${{ secrets.GLUON_ANDROID_KEYSTORE_PASSWORD }}
+      GLUON_ANDROID_KEYALIAS: ${{ secrets.GLUON_ANDROID_KEYALIAS }}
+      GLUON_ANDROID_KEYALIAS_PASSWORD: ${{ secrets.GLUON_ANDROID_KEYALIAS_PASSWORD }}
+      GLUON_ANDROID_SERVICE_ACCOUNT_JSON: ${{ secrets.GLUON_ANDROID_SERVICE_ACCOUNT_JSON }}
+      GLUON_IOS_CERTIFICATES_BASE64: ${{ secrets.GLUON_IOS_CERTIFICATES_BASE64 }}
+      GLUON_IOS_CERTIFICATES_PASSWORD: ${{ secrets.GLUON_IOS_CERTIFICATES_PASSWORD }}
+      GLUON_IOS_APPSTORE_KEY_ID: ${{ secrets.GLUON_IOS_APPSTORE_KEY_ID }}
+      GLUON_IOS_APPSTORE_PRIVATE_KEY: ${{ secrets.GLUON_IOS_APPSTORE_PRIVATE_KEY }}
+      GLUON_IOS_APPSTORE_ISSUER_ID: ${{ secrets.GLUON_IOS_APPSTORE_ISSUER_ID }}
+
+    steps:
+
+      ##################################################################################################################
+      #                                              Preparation                                                       #
+      ##################################################################################################################
+
+      # Configure Git for long filenames on Windows (otherwise the WebFX repository checkout will fail)
+      - if: runner.os == 'Windows'
+        name: Configure Git for long filenames (Windows only)
+        run: git config --global core.longpaths true
+
+      # Set up the JDK (WebFX requires JDK13+ due to javac bugs in prior versions - otherwise JDK11+ should be enough in theory)
+      - name: Set up JDK ${{ env.jdk-version }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: ${{ env.jdk-version }}
+
+      # Checkout this repository
+      - name: Checkout this repository
+        uses: actions/checkout@v3
+        with:
+          path: ${{ env.app-repo-dir }}
+
+      # The staging directory will be used to store all artifacts built in this job for upload
+      - name: Make staging directory
+        run: mkdir staging
+
+
+      ##################################################################################################################
+      #      Building WebFX + this repository (jars + OpenJFX fat jar + javapackager + Web build (GWT) if required)    #
+      ##################################################################################################################
+      # Builds generated on Ubuntu:                                                                                    #
+      #  1) App-Web.war : Web app (built with GWT)                                                                     #
+      #  2) App-Linux-x64-runnable.jar : Java archive (fat jar with OpenJFX for Linux)                                 #
+      #  3) App-Linux-x64-jvm-package.deb                                                                              #
+      #  4) App-Linux-x64-jvm-package.rpm                                                                              #
+      # Builds generated on Windows:                                                                                   #
+      #  7) App-Windows-x64-runnable.jar : Java archive (fat jar with OpenJFX for Windows)                             #
+      #  8) App-Windows-x64-jvm-installer.exe : Windows installer (exe)                                                #
+      #  9) App-Windows-x64-jvm-installer.msi : Windows installer (msi)                                                #
+      # Builds generated on MacOS:                                                                                     #
+      # 11) App-MacOS-x64-runnable.jar : Java archive (fat jar with OpenJFX for MacOS)                                 #
+      # 12) App-MacOs-x64-jvm-package.dmg                                                                              #
+      # 13) App-MacOS-x64-jvm-package.pkg                                                                              #
+      ##################################################################################################################
+
+      # Building this repository with JDK 13+ (Java 11 target)
+      - name: Build this repository (no OpenJFX fat jar - no GWT build)
+        run: mvn -B -P '!gwt-compile,!openjfx-fatjar,!openjfx-desktop' install
+        working-directory: ${{ env.app-repo-dir }}
+
+      # Building this repository with JDK 13+ (Java 11 target) including a GWT compilation (if required)
+      - if: matrix.web-artifact-suffix != null
+        name: Build this application (OpenJFX fat jar + GWT build)
+        # Note: profile openjfx-desktop removed due to module error with Java-WebSocket
+        run: mvn -B -P 'gwt-compile,openjfx-fatjar,!openjfx-desktop' package
+        working-directory: ${{ env.app-parent-module-dir }}
+
+      # Or building this repository with JDK 13+ (Java 11 target) excluding a GWT compilation
+      - if: matrix.web-artifact-suffix == null
+        name: Build this application (OpenJFX fat jar - no GWT build)
+        # Note: profile openjfx-desktop removed due to module error with Java-WebSocket
+        run: mvn -B -P '!gwt-compile,openjfx-fatjar,!openjfx-desktop' package
+        working-directory: ${{ env.app-parent-module-dir }}
+
+
+      ##################################################################################################################
+      #                        Updating the Web build branch (will update the live demo)                               #
+      ##################################################################################################################
+
+      - if: matrix.web-artifact-suffix != null && env.API_GITHUB_TOKEN != ''
+        name: Push GWT build to ${{ matrix.app.web-push-branch }} branch
+        uses: cpina/github-action-push-to-another-repository@master
+        env:
+          API_TOKEN_GITHUB: ${{ env.API_GITHUB_TOKEN }}
+        with:
+          source-directory: ${{ env.app-gwt-build-dir }}
+          destination-repository-username: ${{ env.web-push-repository-owner }}
+          destination-repository-name: ${{ env.web-push-repository-name }}
+          target-branch: ${{ matrix.app.web-push-branch }}
+          destination-github-username: ${{ env.web-push-username }}
+          user-email: ${{ env.web-push-email }}
+
+
+      ##################################################################################################################
+      #                                           Staging artifacts                                                    #
+      ##################################################################################################################
+      # On Ubuntu:                                                                                                     #
+      #  1) App-Web.war : Web app (built with GWT)                                                                     #
+      #  2) App-Linux-x64-runnable.jar : Java archive (fat jar with OpenJFX for Linux)                                 #
+      #  3) App-Linux-x64-jvm-package.deb                                                                              #
+      #  4) App-Linux-x64-jvm-package.rpm                                                                              #
+      # On Windows:                                                                                                    #
+      #  7) App-Windows-x64-runnable.jar : Java archive (fat jar with OpenJFX for Windows)                             #
+      #  8) App-Windows-x64-jvm-installer.exe : Windows installer (exe)                                                #
+      #  9) App-Windows-x64-jvm-installer.msi : Windows installer (msi)                                                #
+      # On MacOS:                                                                                                      #
+      # 11) App-MacOS-x64-runnable.jar : Java archive (fat jar with OpenJFX for MacOS)                                 #
+      # 12) App-MacOs-x64-jvm-package.dmg                                                                              #
+      # 13) App-MacOS-x64-jvm-package.pkg                                                                              #
+      ##################################################################################################################
+
+      # Staging 1)
+      - if: matrix.web-artifact-suffix != null
+        name: Copy Web archive to staging
+        run: cp ${{ env.app-gwt-module-dir }}/target/*.war staging/${{ env.app-name }}-${{ matrix.web-artifact-suffix }}
+
+      # Staging 2) | 7) | 11)
+      - if: matrix.fatjar-artifact-suffix != null
+        name: Copy fat jar with OpenJFX to staging
+        run: cp ${{ env.app-openjfx-module-dir }}/target/*-fat.jar staging/${{ env.app-name }}-${{ matrix.fatjar-artifact-suffix }}
+
+      # Staging 3)
+      - if: matrix.jvm-deb-artifact-suffix != null
+        run: cp ${{ env.app-openjfx-module-dir }}/target/javapackager/*.deb staging/${{ env.app-name }}-${{ matrix.jvm-deb-artifact-suffix }} | true
+
+      # Staging 4)
+      - if: matrix.jvm-rpm-artifact-suffix != null
+        run: cp ${{ env.app-openjfx-module-dir }}/target/javapackager/*.rpm staging/${{ env.app-name }}-${{ matrix.jvm-rpm-artifact-suffix }} | true
+
+      # Staging 8)
+      - if: matrix.jvm-exe-artifact-suffix != null
+        run: Copy-Item "${{ env.app-openjfx-module-dir }}/target/javapackager/*.exe" -Destination "staging/${{ env.app-name }}-${{ matrix.jvm-exe-artifact-suffix }}"
+
+      # Staging 9)
+      - if: matrix.jvm-msi-artifact-suffix != null
+        run: |
+          dir ${{ env.app-openjfx-module-dir }}/target/javapackager/
+          Copy-Item "${{ env.app-openjfx-module-dir }}/target/javapackager/*.msi" -Destination "staging/${{ env.app-name }}-${{ matrix.jvm-msi-artifact-suffix }}"
+
+      # Staging 12)
+      - if: matrix.jvm-dmg-artifact-suffix != null
+        run: cp ${{ env.app-openjfx-module-dir }}/target/javapackager/*.dmg staging/${{ env.app-name }}-${{ matrix.jvm-dmg-artifact-suffix }} | true
+
+      # Staging 13)
+      - if: matrix.jvm-pkg-artifact-suffix != null
+        run: cp ${{ env.app-openjfx-module-dir }}/target/javapackager/*.pkg staging/${{ env.app-name }}-${{ matrix.jvm-pkg-artifact-suffix }} | true
+
+
+      ##################################################################################################################
+      #                             Building and staging the Windows installer (msi)                                   #
+      ##################################################################################################################
+      #  9) App-Windows-x64-jvm-installer.msi : Windows installer (msi)                                                #
+      ##################################################################################################################
+
+      # Creating the runtime with jlink and msi with jpackage
+      # ${{ env.JAVA_HOME }}\bin\jlink -p "${{ env.JAVA_HOME }}\jmods" --add-modules java.desktop --strip-debug --no-header-files --no-man-pages --strip-native-commands --vm=server --compress=2 --output jlinkImage
+      - if: matrix.msi-desktop-artifact-suffix != null
+        name: Create Windows Installer (msi)
+        run: |
+          mvn -B javafx:jlink
+          ${{ env.JAVA_HOME }}\bin\jpackage --input .\target\ --name ${{ env.app-name }} --main-jar ${{ matrix.app.module-token }}-application-openjfx-${{ matrix.app.version }}.jar --main-class dev.webfx.platform.shared.services.boot.ApplicationBooter --type msi --runtime-image .\target\jlinkImage --app-version 0.0.0 --win-per-user-install --win-menu --win-menu-group WebFX
+        working-directory: ${{ env.app-openjfx-module-dir }}
+
+      # Staging 9)
+      - if: matrix.msi-desktop-artifact-suffix != null
+        name: Copy Windows installer to staging
+        run: cp ${{ env.app-openjfx-module-dir }}/*.msi staging/${{ env.app-name }}-${{ matrix.msi-desktop-artifact-suffix }}
+
+
+      ##################################################################################################################
+      #                           Building the native desktop apps using Gluon/GraalVM                                 #
+      ##################################################################################################################
+      #  5) App-Linux-x64-native-runnable : Linux desktop native app (Gluon)                                           #
+      # 10) App-Windows-x64-native-runnable.exe : Windows desktop native app (Gluon)                                   #
+      # 14) App-macOS-x64-native-runnable : MacOS desktop native app (Gluon)                                           #
+      ##################################################################################################################
+
+      # Windows prerequisite: msbuild
+      - if: runner.os == 'Windows'
+        name: Add msbuild to PATH (Windows only)
+        uses: microsoft/setup-msbuild@v1.0.2
+
+      # Windows prerequisite: Visual Studio shell
+      - if: runner.os == 'Windows'
+        name: Visual Studio shell (Windows only)
+        uses: egor-tensin/vs-shell@v1
+
+      # MacOS prerequisite: Xcode
+      - if: runner.os == 'macOS'
+        name: Set up Xcode ${{ env.xcode-version }} (MacOS only)
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ env.xcode-version }}
+
+      # Using Gluon action to set up the GraalVM environment
+      - uses: gluonhq/setup-graalvm@master
+        # set GITHUB_TOKEN to avoid exceeding GitHub's API rate limit
+        env:
+          GITHUB_TOKEN: ${{ env.API_GITHUB_TOKEN }}
+
+      # Gluon needs additional libraries on Linux
+      - if: runner.os == 'Linux'
+        name: Install libraries required for Gluon on Linux
+        run: sudo apt update; sudo apt install libasound2-dev libavcodec-dev libavformat-dev libavutil-dev libgl-dev libgtk-3-dev libpango1.0-dev libxtst-dev
+
+      # Passing the Gluon License (if set)
+      - if: env.GLUON_LICENSE != ''
+        name: Gluon License
+        uses: gluonhq/gluon-build-license@v1
+        with:
+          gluon-license: ${{ env.GLUON_LICENSE }}
+
+      # Invoking the Gluon Client Maven plugin to build the native Desktop app (chaining build & package goals)
+      - if: matrix.gluon-desktop-artifact-suffix != null
+        name: Gluon Build for Desktop
+        run: mvn -B -P 'gluon-desktop' gluonfx:build gluonfx:package # May take a while
+        env:
+          GRAALVM_HOME: ${{ env.JAVA_HOME }}
+        working-directory: ${{ env.app-gluon-module-dir }}
+
+
+      ##################################################################################################################
+      #                                    Staging the native desktop apps                                             #
+      ##################################################################################################################
+      #  5) App-Linux-x64-native-runnable : Linux desktop native app (Gluon)                                           #
+      # 10) App-Windows-x64-native-runnable.exe : Windows desktop native app (Gluon)                                   #
+      # 14) App-macOS-x64-native-runnable : MacOS desktop native app (Gluon)                                           #
+      ##################################################################################################################
+
+      # Staging 5) | 14)
+      - if: matrix.gluon-desktop-artifact-suffix != null && runner.os != 'Windows'
+        name: Copy native Desktop to staging (Linux or MacOS)
+        run: cp ${{ env.app-gluon-module-dir }}/target/gluonfx/${{ matrix.gluon-desktop-arch-token }}/${{ matrix.app.gluon-token }}* staging/${{ env.app-name }}-${{ matrix.gluon-desktop-artifact-suffix }}
+
+      # Staging 10)
+      - if: matrix.gluon-desktop-artifact-suffix != null && runner.os == 'Windows'
+        name: Copy native Desktop to staging (Windows)
+        run: Copy-Item "${{ env.app-gluon-module-dir }}/target/gluonfx/${{ matrix.gluon-desktop-arch-token }}/*.exe" -Destination "staging/${{ env.app-name }}-${{ matrix.gluon-desktop-artifact-suffix }}"
+
+
+      ##################################################################################################################
+      #                      Building and staging the native Android app using Gluon/GraalVM                           #
+      ##################################################################################################################
+      #  6) App-Android-aarch64-native-package.apk : Android native app (Gluon)                                        #
+      ##################################################################################################################
+
+      # Importing the Android keystore if provided
+      - if: matrix.gluon-android-arch-token != null && env.GLUON_ANDROID_KEYSTORE_BASE64 != '' && env.GLUON_ANDROID_KEYALIAS != ''
+        name: Setup Android Keystore
+        id: android_keystore_file
+        uses: timheuer/base64-to-file@v1.2
+        with:
+          fileName: 'android.keystore'
+          encodedString: ${{ env.GLUON_ANDROID_KEYSTORE_BASE64 }}
+
+
+      # Invoking the Gluon Client Maven plugin to build the native Android app (chaining build & package goals)
+      - if: matrix.gluon-android-arch-token != null
+        id: android_gluon_build
+        name: Gluon Build for Android
+        run: |
+          export ANDROID_SDK=$ANDROID_HOME # Otherwise GluonFX 1.0.16 package task is failing
+          mvn -B -P 'gluon-android' clean gluonfx:build gluonfx:package # May take a while
+        env:
+          GRAALVM_HOME: ${{ env.JAVA_HOME }}
+          GLUON_ANDROID_KEYSTOREPATH: ${{ steps.android_keystore_file.outputs.filePath }}
+        working-directory: ${{ env.app-gluon-module-dir }}
+        continue-on-error: true # So that we print the Gluon logs in the next step to help investigating the error
+
+      - if: matrix.gluon-android-arch-token != null
+        name: Print Android Gluon build logs (for debug)
+        run: tail -n+1 ${{ env.app-gluon-module-dir }}/target/gluonfx/log/*.log
+
+      - if: steps.android_gluon_build.outcome == 'failure'
+        name: Exit if Android Gluon build failed
+        run: exit 1
+
+      # Staging 6)
+      - if: matrix.gluon-android-arch-token != null
+        name: Copy Android APK & AAB to staging
+        run: |
+          cp ${{ env.app-gluon-module-dir }}/target/gluonfx/${{ matrix.gluon-android-arch-token }}/gvm/*.apk staging/${{ env.app-name }}-${{ matrix.gluon-android-apk-suffix }}
+          cp ${{ env.app-gluon-module-dir }}/target/gluonfx/${{ matrix.gluon-android-arch-token }}/gvm/*.aab staging/${{ env.app-name }}-${{ matrix.gluon-android-aab-suffix }}
+
+      # Uploading to Google Play (if json provided)
+      - if: matrix.gluon-ios-arch-token != null && env.GLUON_ANDROID_SERVICE_ACCOUNT_JSON != ''
+        name: Upload to Google Play
+        uses: r0adkll/upload-google-play@v1.0.19
+        with:
+          serviceAccountJsonPlainText: ${{ env.GLUON_ANDROID_SERVICE_ACCOUNT_JSON }}
+          packageName: ${{ matrix.android-package-name }}
+          releaseFiles: ${{ env.app-gluon-module-dir }}/target/gluonfx/${{ matrix.gluon-android-arch-token }}/gvm/*.aab
+          track: ${{ matrix.android-track }}
+
+      ##################################################################################################################
+      #                        Building and staging the native iOS app using Gluon/GraalVM                             #
+      ##################################################################################################################
+      # 10) App-iOS-arm64-native-package.ipa : iOS native app (Gluon)                                                  #
+      ##################################################################################################################
+
+      # Importing the Apple codesign certificates
+      - if: env.GLUON_IOS_CERTIFICATES_BASE64 != ''
+        uses: Apple-Actions/import-codesign-certs@v1
+        with:
+          p12-file-base64: ${{ env.GLUON_IOS_CERTIFICATES_BASE64 }}
+          p12-password: ${{ env.GLUON_IOS_CERTIFICATES_PASSWORD }}
+
+      # Importing the Apple codesign certificates
+      - if: env.GLUON_IOS_APPSTORE_KEY_ID != ''
+        uses: Apple-Actions/download-provisioning-profiles@v1
+        with:
+          ios-bundle-id: ${{ matrix.app.ios-bundle-id }}
+          issuer-id: ${{ env.GLUON_IOS_APPSTORE_ISSUER_ID }}
+          api-key-id: ${{ env.GLUON_IOS_APPSTORE_KEY_ID }}
+          api-private-key: ${{ env.GLUON_IOS_APPSTORE_PRIVATE_KEY }}
+
+      # Invoking the Gluon Client Maven plugin to build the native iOS app (chaining build & package goals)
+      - if: matrix.gluon-ios-arch-token != null && env.GLUON_IOS_CERTIFICATES_BASE64 != ''
+        name: Gluon Build for iOS
+        run: mvn -B -P 'gluon-ios' clean gluonfx:build gluonfx:package # May take a while
+        env:
+          GRAALVM_HOME: ${{ env.JAVA_HOME }}
+        working-directory: ${{ env.app-gluon-module-dir }}
+
+      # Staging 10)
+      - if: matrix.gluon-ios-arch-token != null && env.GLUON_IOS_CERTIFICATES_BASE64 != ''
+        name: Copy iOS native application to staging
+        run: cp ${{ env.app-gluon-module-dir }}/target/gluonfx/${{ matrix.gluon-ios-arch-token }}/gvm/*.ipa staging/${{ env.app-name }}-${{ matrix.gluon-ios-artifact-suffix }}
+
+
+      ##################################################################################################################
+      #                             Publishing the native iOS app in the Apple Store                                   #
+      ##################################################################################################################
+      # 10) App-iOS-arm64.ipa : iOS native app (Gluon)                                                                 #
+      ##################################################################################################################
+
+      - if: env.GLUON_IOS_APPSTORE_KEY_ID != ''
+        uses: Apple-Actions/upload-testflight-build@master
+        with:
+          app-path: staging/${{ env.app-name }}-${{ matrix.gluon-ios-artifact-suffix }}
+          issuer-id: ${{ env.GLUON_IOS_APPSTORE_ISSUER_ID }}
+          api-key-id: ${{ env.GLUON_IOS_APPSTORE_KEY_ID }}
+          api-private-key: ${{ env.GLUON_IOS_APPSTORE_PRIVATE_KEY }}
+
+
+      ##################################################################################################################
+      #                            Uploading staging artifacts into this workflow assets                               #
+      ##################################################################################################################
+      # Build-1-assets:                                                                                                #
+      #  1) App-Web.war : Web app (built with GWT)                                                                     #
+      #  2) App-Linux-x64-runnable.jar : Java archive (fat jar with OpenJFX for Linux)                                 #
+      #  3) App-Linux-x64-jvm-package.deb                                                                              #
+      #  4) App-Linux-x64-jvm-package.rpm                                                                              #
+      #  5) App-Linux-x64-native-runnable : Linux desktop native app (Gluon)                                           #
+      # Build-2-assets:                                                                                                #
+      #  6) App-Android-aarch64-native-package.apk : Android native app (Gluon)                                        #
+      # Build-3-assets:                                                                                                #
+      #  7) App-Windows-x64-runnable.jar : Java archive (fat jar with OpenJFX for Windows)                             #
+      #  8) App-Windows-x64-jvm-installer.exe : Windows installer (exe)                                                #
+      #  9) App-Windows-x64-jvm-installer.msi : Windows installer (msi)                                                #
+      # 10) App-Windows-x64-native-runnable.exe : Windows desktop native app (Gluon)                                   #
+      # Build-4-assets:                                                                                                #
+      # 11) App-MacOS-x64-runnable.jar : Java archive (fat jar with OpenJFX for MacOS)                                 #
+      # 12) App-MacOs-x64-jvm-package.dmg                                                                              #
+      # 13) App-MacOS-x64-jvm-package.pkg                                                                              #
+      # 14) App-macOS-x64-native-runnable : MacOS desktop native app (Gluon)                                           #
+      # 15) App-iOS-arm64-native-package.ipa : iOS native app (Gluon)                                                  #
+      ##################################################################################################################
+
+      # Uploading all artifacts in the assets of this workflow run
+      - name: Upload artifacts in the assets of this workflow run
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-${{ matrix.os-config }}-assets
+          path: staging/*
+
+
+
+      ##################################################################################################################
+      #                         Uploading all artifacts into the SNAPSHOT release assets                               #
+      ##################################################################################################################
+
+  upload:
+    needs: build # Doing it only once all previous builds have been completed
+    runs-on: ubuntu-latest
+    env:
+      API_GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
+
+    steps:
+
+      - name: Make download directory
+        run: mkdir download
+
+      # Downloading the assets generated by the build job in to the staging directory
+      # Note: each asset will be a folder containing the artifacts
+      - if: env.API_GITHUB_TOKEN != ''
+        name: Download artifacts into staging directory
+        uses: actions/download-artifact@v2
+        with:
+          path: download
+
+      - name: Make upload directory
+        run: mkdir upload
+
+      # Moving all artifact into the upload directory
+      - run: find download -type f -exec mv -t upload {} +
+
+      # Clearing SNAPSHOT release assets
+      - if: env.API_GITHUB_TOKEN != ''
+        name: Delete old assets in SNAPSHOT release
+        uses: mknejp/delete-release-assets@v1
+        with:
+          tag: SNAPSHOT
+          assets: '*'
+          fail-if-no-assets: false
+          token: ${{ env.API_GITHUB_TOKEN }}
+
+      # Upload all artifacts into the SNAPSHOT release assets
+      - if: env.API_GITHUB_TOKEN != ''
+        name: Upload artifacts to the SNAPSHOT release assets
+        uses: AButler/upload-release-assets@v2.0
+        with:
+          release-tag: SNAPSHOT
+          files: upload/*
+          repo-token: ${{ env.API_GITHUB_TOKEN }}

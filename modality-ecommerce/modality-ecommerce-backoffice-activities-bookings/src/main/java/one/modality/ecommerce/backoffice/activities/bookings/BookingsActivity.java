@@ -23,7 +23,7 @@ import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.shared.domainmodel.functions.AbcNames;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
-import one.modality.crm.backoffice.controls.bookingdetailspanel.BookingDetailsPanel;
+import one.modality.crm.backoffice2018.controls.bookingdetailspanel.BookingDetailsPanel;
 import one.modality.ecommerce.backoffice.operations.entities.document.SendLetterRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.registration.*;
 import one.modality.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsKnownRequest;
@@ -31,7 +31,6 @@ import one.modality.ecommerce.backoffice.operations.entities.document.security.T
 import one.modality.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsUnknownRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsVerifiedRequest;
 import one.modality.ecommerce.backoffice.operations.routes.bookings.RouteToNewBackOfficeBookingRequest;
-import one.modality.event.backoffice.operations.routes.cloneevent.RouteToCloneEventRequest;
 
 import java.time.LocalDate;
 import java.time.Year;
@@ -63,10 +62,10 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
         ui = createAndBindGroupMasterSlaveViewWithFilterSearchBar(pm, "bookings", "Document");
 
         // Adding new booking button on left and clone event on right of the filter search bar
-        Button newBookingButton = newButton(newOperationAction(() -> new RouteToNewBackOfficeBookingRequest(getEventId(), getHistory()))),
-                cloneEventButton = newButton(newOperationAction(() -> new RouteToCloneEventRequest(getEventId(), getHistory())));
+        Button newBookingButton = newButton(newOperationAction(() -> new RouteToNewBackOfficeBookingRequest(getEventId(), getHistory())));
+                //cloneEventButton = newButton(newOperationAction(() -> new RouteToCloneEventRequest(getEventId(), getHistory())));
         ui.setLeftTopNodes(setUnmanagedWhenInvisible(newBookingButton));
-        ui.setRightTopNodes(setUnmanagedWhenInvisible(cloneEventButton));
+        //ui.setRightTopNodes(setUnmanagedWhenInvisible(cloneEventButton));
 
         Pane container = ui.buildUi();
 

@@ -8,14 +8,11 @@ import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.stack.authn.logout.client.operation.LogoutRequest;
 import dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
-import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionBinder;
-import dev.webfx.stack.ui.action.ActionBuilder;
 import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -23,9 +20,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
-
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * @author Bruno Salmon
@@ -87,14 +81,8 @@ public class ModalityClientFrameContainerActivity extends ViewDomainActivityBase
         return null;
     }
 
-    private final Collection<RouteRequestEmitter> providedEmitters = RouteRequestEmitter.getProvidedEmitters();
-    private final Action invisibleVoidAction = new ActionBuilder().setVisibleProperty(new SimpleBooleanProperty(false)).build();
-
     private Action routeOperationCodeToAction(String operationCode) {
-        Optional<RouteRequestEmitter> routeRequestEmitter = providedEmitters.stream()
-                .filter(instantiator -> hasRequestOperationCode(instantiator.instantiateRouteRequest(this), operationCode))
-                .findFirst();
-        return routeRequestEmitter.isEmpty() ? invisibleVoidAction : newOperationAction(() -> routeRequestEmitter.get().instantiateRouteRequest(this));
+        return RoutingActions.routeOperationCodeToAction(operationCode, this, this);
     }
 
     protected ActionGroup contextMenuActionGroup() {

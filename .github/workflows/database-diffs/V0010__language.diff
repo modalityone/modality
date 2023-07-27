@@ -1,0 +1,17 @@
+--- V0010__language.sql	2023-01-22 13:32:03
++++ tmp/V0010__language.sql	2022-11-20 16:12:43
+@@ -9,7 +9,7 @@
+ SET client_min_messages = warning;
+ SET row_security = off;
+ 
+-ALTER TABLE public.language DISABLE TRIGGER ALL;
++SET session_replication_role = replica;
+ INSERT INTO public.language VALUES (43, 'fa', 'fas / per* ', 'fas', 108, true, 'Persian', NULL, false);
+ INSERT INTO public.language VALUES (7, 'an', NULL, NULL, NULL, true, 'Aragonese', NULL, false);
+ INSERT INTO public.language VALUES (9, 'as', NULL, NULL, NULL, true, 'Assamese', NULL, false);
+@@ -202,4 +202,4 @@
+ INSERT INTO public.language VALUES (40, 'es', 'spa', 'spa', 68, true, 'Spanish', NULL, true);
+ INSERT INTO public.language VALUES (38, 'en', 'eng', 'eng', 77, true, 'English', NULL, true);
+ INSERT INTO public.language VALUES (131, 'pt', 'por', 'por', 185, true, 'Portuguese', NULL, true);
+-ALTER TABLE public.language ENABLE TRIGGER ALL;
++SET session_replication_role = default;

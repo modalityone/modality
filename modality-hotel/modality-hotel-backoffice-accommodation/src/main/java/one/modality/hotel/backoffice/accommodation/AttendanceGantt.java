@@ -35,7 +35,7 @@ public class AttendanceGantt extends AccommodationGantt<AttendanceBlock> {
         // The bar wraps a block over 1 or several days (or always 1 day if the user hasn't ticked the grouping block
         // checkbox). So the bar instance is that block that was repeated over that period.
         barDrawer
-                .setBackgroundFill(getBarColor(bar))
+                .setBackgroundFill(getBarColor(bar, b))
                 .setMiddleText(bar.getInstance().getPersonName())
                 // First draw the un-clipped text in a dark colour which contrasts with the background of the chart
                 .setClipText(false)
@@ -47,7 +47,7 @@ public class AttendanceGantt extends AccommodationGantt<AttendanceBlock> {
                 .drawTexts(b, gc);
     }
 
-    protected Color getBarColor(LocalDateBar<AttendanceBlock> bar) {
+    protected Color getBarColor(LocalDateBar<AttendanceBlock> bar, Bounds b) {
         return bar.getInstance().getBlockColor();
     }
 
