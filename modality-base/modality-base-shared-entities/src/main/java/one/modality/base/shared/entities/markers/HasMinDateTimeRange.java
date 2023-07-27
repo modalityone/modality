@@ -1,6 +1,6 @@
 package one.modality.base.shared.entities.markers;
 
-import one.modality.hotel.shared.businessdata.time.DateTimeRange;
+import one.modality.hotel.shared2018.businessdata.time.DateTimeRange;
 
 /**
  * @author Bruno Salmon

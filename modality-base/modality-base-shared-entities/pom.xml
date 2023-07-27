@@ -23,7 +23,7 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-hotel-shared-time</artifactId>
+            <artifactId>modality-hotel-shared2018-time</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
