@@ -18,25 +18,25 @@
     <modules>
         <module>modality-ecommerce-backoffice-activities-all</module>
         <module>modality-ecommerce-backoffice-activities-bookings</module>
-        <module>modality-ecommerce-backoffice-activities-income</module>
         <module>modality-ecommerce-backoffice-activities-moneyflows</module>
-        <module>modality-ecommerce-backoffice-activities-payments</module>
-        <module>modality-ecommerce-backoffice-activities-statements</module>
-        <module>modality-ecommerce-backoffice-activities-statistics</module>
         <module>modality-ecommerce-backoffice-operations-document</module>
         <module>modality-ecommerce-backoffice-operations-documentline</module>
         <module>modality-ecommerce-backoffice-operations-moneyflow</module>
         <module>modality-ecommerce-backoffice-operations-moneytransfer</module>
-        <module>modality-ecommerce-client-bookingoptionspanel</module>
-        <module>modality-ecommerce-client-bookingprocess</module>
-        <module>modality-ecommerce-client-businesslogic</module>
-        <module>modality-ecommerce-frontoffice-activities-all</module>
-        <module>modality-ecommerce-frontoffice-activities-cart</module>
-        <module>modality-ecommerce-frontoffice-activities-cart-routing</module>
-        <module>modality-ecommerce-frontoffice-activities-contactus</module>
-        <module>modality-ecommerce-frontoffice-activities-payment</module>
-        <module>modality-ecommerce-frontoffice-activities-person</module>
-        <module>modality-ecommerce-frontoffice-activities-summary</module>
+        <module>modality-ecommerce-backoffice2018-activities-income</module>
+        <module>modality-ecommerce-backoffice2018-activities-payments</module>
+        <module>modality-ecommerce-backoffice2018-activities-statements</module>
+        <module>modality-ecommerce-backoffice2018-activities-statistics</module>
+        <module>modality-ecommerce-client2018-bookingoptionspanel</module>
+        <module>modality-ecommerce-client2018-bookingprocess</module>
+        <module>modality-ecommerce-client2018-businesslogic</module>
+        <module>modality-ecommerce-frontoffice2018-activities-all</module>
+        <module>modality-ecommerce-frontoffice2018-activities-cart</module>
+        <module>modality-ecommerce-frontoffice2018-activities-cart-routing</module>
+        <module>modality-ecommerce-frontoffice2018-activities-contactus</module>
+        <module>modality-ecommerce-frontoffice2018-activities-payment</module>
+        <module>modality-ecommerce-frontoffice2018-activities-person</module>
+        <module>modality-ecommerce-frontoffice2018-activities-summary</module>
         <module>modality-ecommerce-payment-custom</module>
         <module>modality-ecommerce-payment-custom-buscall</module>
         <module>modality-ecommerce-payment-custom-remote</module>
