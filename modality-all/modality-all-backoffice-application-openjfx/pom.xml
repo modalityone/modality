@@ -71,13 +71,13 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-event-backoffice-activities-cloneevent</artifactId>
+            <artifactId>modality-event-backoffice2018-activities-cloneevent</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-event-backoffice-activities-cloneevent-routing</artifactId>
+            <artifactId>modality-event-backoffice2018-activities-cloneevent-routing</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 

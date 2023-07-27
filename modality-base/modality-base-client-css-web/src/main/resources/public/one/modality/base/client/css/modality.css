@@ -30,10 +30,10 @@
 }
 
 body, input, textarea, keygen, select, button {
-    font-family: 'Roboto', 'Noto', sans-serif;
+    font-family: 'Montserrat';
     -webkit-font-smoothing: antialiased;
-    font-size: 13.5px;
-    font-weight: 400;
+    font-size: 12px;
+    font-weight: 500;
     line-height: 24px;
     color: rgba(0, 0, 0, 0.87);
 }

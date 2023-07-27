@@ -6,10 +6,10 @@ module modality.base.client.activity {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
-    requires transitive modality.base.client.aggregates;
     requires modality.base.client.presentationmodel;
+    requires transitive modality.base.client2018.aggregates;
     requires modality.crm.backoffice.organization.fx;
-    requires modality.ecommerce.client.businesslogic;
+    requires modality.ecommerce.client2018.businesslogic;
     requires modality.event.backoffice.event.fx;
     requires webfx.extras.util.background;
     requires webfx.extras.util.border;

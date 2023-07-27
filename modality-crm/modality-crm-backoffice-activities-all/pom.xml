@@ -17,35 +17,35 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-crm-backoffice-activities-authorizations</artifactId>
+            <artifactId>modality-crm-backoffice2018-activities-authorizations</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-crm-backoffice-activities-letter</artifactId>
+            <artifactId>modality-crm-backoffice2018-activities-letter</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-crm-backoffice-activities-letters</artifactId>
+            <artifactId>modality-crm-backoffice2018-activities-letters</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-crm-backoffice-activities-organizations</artifactId>
+            <artifactId>modality-crm-backoffice2018-activities-organizations</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-crm-backoffice-activities-users</artifactId>
+            <artifactId>modality-crm-backoffice2018-activities-users</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
