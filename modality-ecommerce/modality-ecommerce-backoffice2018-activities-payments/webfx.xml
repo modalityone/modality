@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <providers>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.ecommerce.backoffice2018.activities.payments.PaymentsUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.ecommerce.backoffice2018.activities.payments.RouteToPaymentsRequestEmitter</provider>
+    </providers>
+
+    <dependencies>
+        <used-by-source-modules/>
+    </dependencies>
+
+</project>

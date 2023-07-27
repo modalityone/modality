@@ -1,7 +1,7 @@
 package one.modality.all.backoffice.application;
 
 import one.modality.base.client.application.ModalityClientStarterActivity;
-import one.modality.crm.backoffice.controls.bookingdetailspanel.BookingDetailsPanel;
+import one.modality.crm.backoffice2018.controls.bookingdetailspanel.BookingDetailsPanel;
 import one.modality.base.backoffice.controls.masterslave.MasterSlaveView;
 
 /**

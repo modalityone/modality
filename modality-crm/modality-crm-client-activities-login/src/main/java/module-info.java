@@ -8,7 +8,7 @@ module modality.crm.client.activities.login {
     requires javafx.graphics;
     requires modality.base.client.activity;
     requires modality.base.client.validation;
-    requires modality.event.client.sectionpanel;
+    requires modality.event.client2018.sectionpanel;
     requires webfx.extras.util.animation;
     requires webfx.extras.util.layout;
     requires webfx.extras.util.scene;

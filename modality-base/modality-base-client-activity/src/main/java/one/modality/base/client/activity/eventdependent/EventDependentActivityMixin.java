@@ -4,14 +4,14 @@ import dev.webfx.platform.async.Future;
 import dev.webfx.stack.orm.domainmodel.activity.domain.DomainActivityContext;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentActivityMixin;
-import one.modality.base.client.aggregates.event.EventAggregate;
-import one.modality.base.client.aggregates.event.EventAggregateMixin;
-import one.modality.ecommerce.client.businessdata.feesgroup.FeesGroup;
-import one.modality.ecommerce.client.businessdata.feesgroup.FeesGroupsByEventStore;
-import one.modality.ecommerce.client.businessdata.preselection.ActiveOptionsPreselectionsByEventStore;
-import one.modality.ecommerce.client.businessdata.preselection.OptionsPreselection;
-import one.modality.ecommerce.client.businessdata.workingdocument.ActiveWorkingDocumentsByEventStore;
-import one.modality.ecommerce.client.businessdata.workingdocument.WorkingDocument;
+import one.modality.base.client2018.aggregates.event.EventAggregate;
+import one.modality.base.client2018.aggregates.event.EventAggregateMixin;
+import one.modality.ecommerce.client2018.businessdata.feesgroup.FeesGroup;
+import one.modality.ecommerce.client2018.businessdata.feesgroup.FeesGroupsByEventStore;
+import one.modality.ecommerce.client2018.businessdata.preselection.ActiveOptionsPreselectionsByEventStore;
+import one.modality.ecommerce.client2018.businessdata.preselection.OptionsPreselection;
+import one.modality.ecommerce.client2018.businessdata.workingdocument.ActiveWorkingDocumentsByEventStore;
+import one.modality.ecommerce.client2018.businessdata.workingdocument.WorkingDocument;
 import one.modality.event.backoffice.event.fx.FXEventId;
 
 /**

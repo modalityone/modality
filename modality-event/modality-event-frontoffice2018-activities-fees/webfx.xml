@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <providers>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.event.frontoffice2018.activities.fees.FeesUiRoute</provider>
+    </providers>
+
+    <dependencies>
+        <used-by-source-modules/>
+    </dependencies>
+
+</project>
