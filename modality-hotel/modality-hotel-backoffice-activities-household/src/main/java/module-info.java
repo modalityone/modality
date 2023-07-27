@@ -13,6 +13,7 @@ module modality.hotel.backoffice.activities.household {
     requires modality.hotel.backoffice.operations.documentline;
     requires webfx.extras.geometry;
     requires webfx.extras.time.layout;
+    requires webfx.extras.time.layout.gantt;
     requires webfx.extras.time.window;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
