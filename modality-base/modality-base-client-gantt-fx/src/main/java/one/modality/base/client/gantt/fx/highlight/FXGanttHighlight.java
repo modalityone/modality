@@ -44,9 +44,9 @@ public class FXGanttHighlight {
             public boolean handleMouseMoved(MouseEvent e, Canvas canvas) {
                 LocalDate day = hasTimeProjector.getTimeProjector().xToTime(e.getX());
                 FXGanttHighlight.setGanttHighlighted(day);
-                return true;
+                return true; // Ok to continue propagation
             }
-        });
+        }, true); // The day highlight should always work, so this handler should be the first in the list
     }
 
 }

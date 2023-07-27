@@ -69,8 +69,6 @@
     <source path="javafx/stage"/>
     <!--================================< javafx-graphics >=================================-->
     <source path="javafx/concurrent"/>
-    <!--===================================< javafx-web >===================================-->
-    <source path="javafx/scene/web"/>
     <!--============================< webfx-kit-javafxweb-emul >============================-->
     <source path="javafx/scene/web"/>
     <!--=====================================< charba >=====================================-->
@@ -446,6 +444,8 @@
     <source path="one/modality/hotel/backoffice/operations/routes/household"/>
     <!--========================< modality-hotel-backoffice-icons >=========================-->
     <source path="one/modality/hotel/backoffice/icons"/>
+    <!--===============< modality-hotel-backoffice-operations-documentline >================-->
+    <source path="one/modality/hotel/backoffice/operations/entities/documentline"/>
     <!--===========< modality-hotel-backoffice-operations-resourceconfiguration >===========-->
     <source path="one/modality/hotel/backoffice/operations/entities/resourceconfiguration"/>
     <!--=============< modality-hotel-backoffice2018-activities-roomsgraphic >==============-->
