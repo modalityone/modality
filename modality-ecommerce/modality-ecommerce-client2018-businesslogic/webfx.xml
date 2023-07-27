@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules>
+            <module transitive="true">webfx-platform-async</module>
+            <module transitive="true">modality-base-client2018-aggregates</module>
+            <undetected-module>javafx-controls</undetected-module>
+        </used-by-source-modules>
+    </dependencies>
+
+</project>

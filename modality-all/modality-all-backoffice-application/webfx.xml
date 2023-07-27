@@ -25,7 +25,7 @@
         <plugin-module>modality-hotel-backoffice-activities-all</plugin-module>
 
         <!-- Event activities -->
-        <plugin-module>modality-event-backoffice-activities-all</plugin-module>
+        <plugin-module>modality-event-backoffice2018-activities-all</plugin-module>
 
         <!-- Catering activities -->
         <plugin-module>modality-catering-backoffice-activities-all</plugin-module>

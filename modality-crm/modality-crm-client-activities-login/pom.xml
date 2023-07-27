@@ -47,7 +47,7 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-event-client-sectionpanel</artifactId>
+            <artifactId>modality-event-client2018-sectionpanel</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
