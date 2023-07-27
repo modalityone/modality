@@ -14,6 +14,14 @@ public interface DocumentLine extends
         EntityHasArrivalSiteAndItem,
         EntityHasResourceConfiguration {
 
+    default boolean isCleaned() {
+        return getBooleanFieldValue("cleaned");
+    }
+
+    default void setCleaned(boolean cleaned) {
+        setFieldValue("cleaned", cleaned);
+    }
+
     // Non-persistent bedNumber field using by Household screen (allocated arbitrary at runtime)
     default Integer getBedNumber() {
         return getIntegerFieldValue("bedNumber");
