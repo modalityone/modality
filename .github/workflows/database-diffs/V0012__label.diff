@@ -1,0 +1,17 @@
+--- V0012__label.sql	2023-01-22 13:32:03
++++ tmp/V0012__label.sql	2022-11-20 16:13:06
+@@ -9,7 +9,7 @@
+ SET client_min_messages = warning;
+ SET row_security = off;
+ 
+-ALTER TABLE public.label DISABLE TRIGGER ALL;
++SET session_replication_role = replica;
+ INSERT INTO public.label VALUES (447, NULL, 'Spende', 'Donation', 'Donación', 'Don', 'Donation', 1, false);
+ INSERT INTO public.label VALUES (2, NULL, 'Mahlzeiten', 'Meals', 'Comidas', 'Repas', 'Meals', 1, false);
+ INSERT INTO public.label VALUES (1, NULL, 'Unterkunft', 'Accommodation', 'Alojamiento', 'Logement', 'Accommodation', 1, false);
+@@ -29,4 +29,4 @@
+ INSERT INTO public.label VALUES (1038, NULL, 'Banküberweisung', 'Bank transfer', 'Transferencia bancaria', 'Virement', 'Bank transfer', 1, false);
+ INSERT INTO public.label VALUES (1039, NULL, 'Contra', 'Contra', 'Contra', 'Contra', 'Contra', 1, false);
+ INSERT INTO public.label VALUES (1037, NULL, 'Online', 'Online', 'En línea', 'En ligne', 'Online', 1, false);
+-ALTER TABLE public.label ENABLE TRIGGER ALL;
++SET session_replication_role = default;

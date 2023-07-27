@@ -1,0 +1,8 @@
+{
+    "httpServers": [
+      {
+        "protocol": "http",
+        "port": "${{ HTTP_PORT | 80 }}"
+      }
+    ]
+}

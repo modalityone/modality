@@ -13,7 +13,7 @@ final class HouseholdActivity extends OrganizationDependentViewDomainActivity im
         OperationActionFactoryMixin {
 
     private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
-    private final HouseholdView householdView = new HouseholdView(pm);
+    private final HouseholdView householdView = new HouseholdView(pm, this);
     private final TodayAccommodationStatus todayAccommodationStatus = new TodayAccommodationStatus(pm);
 
     public HouseholdActivity() {

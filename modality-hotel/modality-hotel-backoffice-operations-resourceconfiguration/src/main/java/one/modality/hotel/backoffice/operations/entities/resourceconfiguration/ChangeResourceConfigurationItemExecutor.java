@@ -1,20 +1,20 @@
 package one.modality.hotel.backoffice.operations.entities.resourceconfiguration;
 
+import dev.webfx.platform.async.Future;
+import dev.webfx.platform.async.Promise;
+import dev.webfx.stack.db.submit.SubmitArgument;
+import dev.webfx.stack.orm.domainmodel.DataSourceModel;
+import dev.webfx.stack.orm.entity.EntityId;
+import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
+import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.controls.dialog.DialogUtil;
-import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
-import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.stack.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.orm.entity.Entity;
-import dev.webfx.stack.orm.entity.EntityId;
-import dev.webfx.stack.orm.entity.UpdateStore;
-import dev.webfx.stack.db.submit.SubmitArgument;
-import dev.webfx.platform.async.Future;
-import dev.webfx.platform.async.Promise;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import one.modality.base.shared.entities.Item;
+import one.modality.base.shared.entities.ResourceConfiguration;
 
 final class ChangeResourceConfigurationItemExecutor {
 
@@ -22,7 +22,7 @@ final class ChangeResourceConfigurationItemExecutor {
         return execute(rq.getResourceConfiguration(), rq.getParentContainer(), rq.getItemFamilyCode(), rq.getSiteId());
     }
 
-    private static Future<Void> execute(Entity resourceConfiguration, Pane parentContainer, String itemFamilyCode, EntityId siteId) {
+    private static Future<Void> execute(ResourceConfiguration resourceConfiguration, Pane parentContainer, String itemFamilyCode, EntityId siteId) {
         Promise<Void> promise = Promise.promise();
         DataSourceModel dataSourceModel = resourceConfiguration.getStore().getDataSourceModel();
         EntityButtonSelector<Item> itemSelector = new EntityButtonSelector<>("{class: `Item`, alias: `i`, where: `family.code='" + itemFamilyCode + "' and exists(select Option where item=i and site=" + siteId.getPrimaryKey() + ")`, orderBy: `ord,id`}", new ButtonFactoryMixin() {
@@ -39,7 +39,7 @@ final class ChangeResourceConfigurationItemExecutor {
                 });
                 DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
                     UpdateStore updateStore = UpdateStore.create(dataSourceModel);
-                    updateStore.updateEntity(resourceConfiguration).setForeignField("item", selectedItem);
+                    updateStore.updateEntity(resourceConfiguration).setItem(selectedItem);
                     updateStore.submitChanges(SubmitArgument.builder()
                             .setStatement("select set_transaction_parameters(true)")
                             .setDataSourceId(dataSourceModel.getDataSourceId())

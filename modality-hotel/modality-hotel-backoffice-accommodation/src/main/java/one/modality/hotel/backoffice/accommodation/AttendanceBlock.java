@@ -30,6 +30,10 @@ public final class AttendanceBlock implements AccommodationBlock {
             attendeeCategory = AttendeeCategory.GUEST;
     }
 
+    public Attendance getAttendance() {
+        return attendance;
+    }
+
     public Color getBlockColor() {
         if (attendeeCategory == AttendeeCategory.GUEST) {
             if (Objects.equals(FXGanttSelection.getGanttSelectedObject(), getDocument().getEvent()))
@@ -57,12 +61,8 @@ public final class AttendanceBlock implements AccommodationBlock {
         return resourceConfiguration;
     }
 
-    public AttendeeCategory getAttendeeCategory() {
-        return attendeeCategory;
-    }
-
     public boolean isCheckedIn() {
-        return getDocument().getBooleanFieldValue("arrived");
+        return getDocument().isArrived();
     }
 
     @Override

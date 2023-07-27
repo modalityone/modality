@@ -1,5 +1,6 @@
 one.modality.base.shared.entities.impl.AttendanceImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.CartImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.ChannelImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.CountryImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.CurrencyImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.DateInfoImpl$ProvidedFactory
@@ -19,11 +20,12 @@ one.modality.base.shared.entities.impl.MoneyTransferImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.MoneyAccountImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.MoneyAccountTypeImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.MoneyFlowImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.NewsImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.OptionImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.OrganizationImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.OrganizationTypeImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.PersonImpl$ProvidedFactory
-one.modality.base.shared.entities.impl.ResourceImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.PodcastImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.ResourceConfigurationImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.RateImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.ScheduledItemImpl$ProvidedFactory

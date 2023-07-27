@@ -1,19 +1,19 @@
 package one.modality.hotel.backoffice.operations.entities.resourceconfiguration;
 
+import dev.webfx.platform.async.AsyncFunction;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
-import dev.webfx.stack.orm.entity.Entity;
-import dev.webfx.platform.async.AsyncFunction;
+import one.modality.base.shared.entities.ResourceConfiguration;
 
 public final class MoveToResourceConfigurationRequest implements HasOperationCode,
         HasOperationExecutor<MoveToResourceConfigurationRequest, Void> {
 
     private final static String OPERATION_CODE = "MoveToResourceConfiguration";
 
-    private final Entity resourceConfiguration;
+    private final ResourceConfiguration resourceConfiguration;
     private final Object[] documentLinePrimaryKeys;
 
-    public MoveToResourceConfigurationRequest(Entity resourceConfiguration, Object[] documentLinePrimaryKeys) {
+    public MoveToResourceConfigurationRequest(ResourceConfiguration resourceConfiguration, Object[] documentLinePrimaryKeys) {
         this.resourceConfiguration = resourceConfiguration;
         this.documentLinePrimaryKeys = documentLinePrimaryKeys;
     }
@@ -23,7 +23,7 @@ public final class MoveToResourceConfigurationRequest implements HasOperationCod
         return OPERATION_CODE;
     }
 
-    public Entity getResourceConfiguration() {
+    public ResourceConfiguration getResourceConfiguration() {
         return resourceConfiguration;
     }
 
