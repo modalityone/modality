@@ -4,8 +4,7 @@ import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.platform.util.Objects;
 import one.modality.base.shared.entities.markers.*;
-import one.modality.base.shared.entities.markers.*;
-import one.modality.hotel.shared.businessdata.time.DateTimeRange;
+import one.modality.hotel.shared2018.businessdata.time.DateTimeRange;
 
 import java.time.LocalDate;
 

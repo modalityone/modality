@@ -1,13 +1,13 @@
 package one.modality.base.client.application;
 
 import dev.webfx.platform.util.function.Factory;
-import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
-import one.modality.base.client.actions.ModalityActions;
-import dev.webfx.stack.routing.activity.Activity;
-import dev.webfx.stack.routing.activity.ActivityContext;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.ViewDomainActivityContext;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.ViewDomainActivityContextMixin;
+import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
+import dev.webfx.stack.routing.activity.Activity;
+import dev.webfx.stack.routing.activity.ActivityContext;
 import dev.webfx.stack.routing.uirouter.UiRouter;
+import one.modality.base.client.actions.ModalityActions;
 
 /**
  * @author Bruno Salmon

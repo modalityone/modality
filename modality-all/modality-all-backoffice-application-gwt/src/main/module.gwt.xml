@@ -160,10 +160,6 @@
     <source path="one/modality/catering/backoffice/activities/home"/>
     <source path="one/modality/catering/backoffice/activities/home/routing"/>
     <source path="one/modality/catering/backoffice/operations/routes/home"/>
-    <!--==================< modality-base-backoffice-activities-monitor >===================-->
-    <source path="one/modality/base/backoffice/activities/monitor"/>
-    <source path="one/modality/base/backoffice/activities/monitor/routing"/>
-    <source path="one/modality/base/backoffice/operations/routes/monitor"/>
     <!--=================< modality-base-backoffice-activities-operations >=================-->
     <source path="one/modality/base/backoffice/activities/operations"/>
     <source path="one/modality/base/backoffice/activities/operations/routing"/>
@@ -171,22 +167,22 @@
     <!--======================< modality-base-backoffice-masterslave >======================-->
     <source path="one/modality/base/backoffice/controls/masterslave"/>
     <source path="one/modality/base/backoffice/controls/masterslave/group"/>
-    <!--====================< modality-base-backoffice-multilangeditor >====================-->
-    <source path="one/modality/base/backoffice/controls/multilangeditor"/>
     <!--==================< modality-base-backoffice-operations-filters >===================-->
     <source path="one/modality/base/backoffice/operations/entities/filters"/>
     <!--==================< modality-base-backoffice-operations-generic >===================-->
     <source path="one/modality/base/backoffice/operations/entities/generic"/>
+    <!--================< modality-base-backoffice2018-activities-monitor >=================-->
+    <source path="one/modality/base/backoffice2018/activities/monitor"/>
+    <source path="one/modality/base/backoffice2018/activities/monitor/routing"/>
+    <source path="one/modality/base/backoffice2018/operations/routes/monitor"/>
+    <!--==================< modality-base-backoffice2018-multilangeditor >==================-->
+    <source path="one/modality/base/backoffice2018/controls/multilangeditor"/>
     <!--=========================< modality-base-client-activity >==========================-->
     <source path="one/modality/base/client/activity"/>
     <source path="one/modality/base/client/activity/eventdependent"/>
     <source path="one/modality/base/client/activity/organizationdependent"/>
     <source path="one/modality/base/client/activity/table"/>
     <source path="one/modality/base/client/activity/themes"/>
-    <!--========================< modality-base-client-aggregates >=========================-->
-    <source path="one/modality/base/client/aggregates/cart"/>
-    <source path="one/modality/base/client/aggregates/event"/>
-    <source path="one/modality/base/client/aggregates/person"/>
     <!--========================< modality-base-client-application >========================-->
     <source path="one/modality/base/client/application"/>
     <resource path="images/buddhas"/>
@@ -267,6 +263,10 @@
     <source path="one/modality/base/client/util/routing"/>
     <!--========================< modality-base-client-validation >=========================-->
     <source path="one/modality/base/client/validation"/>
+    <!--======================< modality-base-client2018-aggregates >=======================-->
+    <source path="one/modality/base/client2018/aggregates/cart"/>
+    <source path="one/modality/base/client2018/aggregates/event"/>
+    <source path="one/modality/base/client2018/aggregates/person"/>
     <!--========================< modality-base-shared-domainmodel >========================-->
     <source path="one/modality/base/shared/domainmodel/formatters"/>
     <source path="one/modality/base/shared/domainmodel/functions"/>
@@ -281,49 +281,49 @@
     <source path="one/modality/base/shared/entities/impl"/>
     <source path="one/modality/base/shared/entities/markers"/>
     <source path="one/modality/base/shared/services/systemmetrics"/>
-    <!--==============< modality-catering-backoffice-activities-diningareas >===============-->
-    <source path="one/modality/catering/backoffice/activities/diningareas"/>
-    <source path="one/modality/catering/backoffice/activities/diningareas/routing"/>
-    <source path="one/modality/catering/backoffice/operations/routes/diningareas"/>
     <!--================< modality-catering-backoffice-activities-kitchen >=================-->
     <source path="one/modality/catering/backoffice/activities/kitchen"/>
     <source path="one/modality/catering/backoffice/activities/kitchen/routing"/>
     <source path="one/modality/catering/backoffice/operations/routes/kitchen"/>
-    <!--=============< modality-catering-backoffice-operations-allocationrule >=============-->
-    <source path="one/modality/catering/backoffice/operations/entities/allocationrule"/>
-    <!--===============< modality-crm-backoffice-activities-authorizations >================-->
-    <source path="one/modality/crm/backoffice/activities/authorizations"/>
-    <source path="one/modality/crm/backoffice/activities/authorizations/routing"/>
-    <source path="one/modality/crm/backoffice/activities/operations/authorizations"/>
-    <!--===================< modality-crm-backoffice-activities-letter >====================-->
-    <source path="one/modality/crm/backoffice/activities/letter"/>
-    <source path="one/modality/crm/backoffice/activities/letter/routing"/>
-    <source path="one/modality/crm/backoffice/operations/routes/letter"/>
-    <!--===================< modality-crm-backoffice-activities-letters >===================-->
-    <source path="one/modality/crm/backoffice/activities/letters"/>
-    <source path="one/modality/crm/backoffice/activities/letters/routing"/>
-    <source path="one/modality/crm/backoffice/operations/routes/letters"/>
-    <!--================< modality-crm-backoffice-activities-organizations >================-->
-    <source path="one/modality/crm/backoffice/activities/organizations"/>
-    <source path="one/modality/crm/backoffice/activities/organizations/routing"/>
-    <source path="one/modality/crm/backoffice/operations/routes/organizations"/>
-    <!--====================< modality-crm-backoffice-activities-users >====================-->
-    <source path="one/modality/crm/backoffice/activities/users"/>
-    <source path="one/modality/crm/backoffice/activities/users/routing"/>
-    <source path="one/modality/crm/backoffice/operations/routes/users"/>
-    <!--==================< modality-crm-backoffice-bookingdetailspanel >===================-->
-    <source path="one/modality/crm/backoffice/controls/bookingdetailspanel"/>
-    <!--====================< modality-crm-backoffice-operations-mail >=====================-->
-    <source path="one/modality/crm/backoffice/operations/entities/mail"/>
+    <!--============< modality-catering-backoffice2018-activities-diningareas >=============-->
+    <source path="one/modality/catering/backoffice2018/activities/diningareas"/>
+    <source path="one/modality/catering/backoffice2018/activities/diningareas/routing"/>
+    <source path="one/modality/catering/backoffice2018/operations/routes/diningareas"/>
+    <!--===========< modality-catering-backoffice2018-operations-allocationrule >===========-->
+    <source path="one/modality/catering/backoffice2018/operations/entities/allocationrule"/>
     <!--====================< modality-crm-backoffice-organization-fx >=====================-->
     <source path="one/modality/crm/backoffice/organization/fx"/>
+    <!--=============< modality-crm-backoffice2018-activities-authorizations >==============-->
+    <source path="one/modality/crm/backoffice2018/activities/authorizations"/>
+    <source path="one/modality/crm/backoffice2018/activities/authorizations/routing"/>
+    <source path="one/modality/crm/backoffice2018/activities/operations/authorizations"/>
+    <!--=================< modality-crm-backoffice2018-activities-letter >==================-->
+    <source path="one/modality/crm/backoffice2018/activities/letter"/>
+    <source path="one/modality/crm/backoffice2018/activities/letter/routing"/>
+    <source path="one/modality/crm/backoffice2018/operations/routes/letter"/>
+    <!--=================< modality-crm-backoffice2018-activities-letters >=================-->
+    <source path="one/modality/crm/backoffice2018/activities/letters"/>
+    <source path="one/modality/crm/backoffice2018/activities/letters/routing"/>
+    <source path="one/modality/crm/backoffice2018/operations/routes/letters"/>
+    <!--==============< modality-crm-backoffice2018-activities-organizations >==============-->
+    <source path="one/modality/crm/backoffice2018/activities/organizations"/>
+    <source path="one/modality/crm/backoffice2018/activities/organizations/routing"/>
+    <source path="one/modality/crm/backoffice2018/operations/routes/organizations"/>
+    <!--==================< modality-crm-backoffice2018-activities-users >==================-->
+    <source path="one/modality/crm/backoffice2018/activities/users"/>
+    <source path="one/modality/crm/backoffice2018/activities/users/routing"/>
+    <source path="one/modality/crm/backoffice2018/operations/routes/users"/>
+    <!--================< modality-crm-backoffice2018-bookingdetailspanel >=================-->
+    <source path="one/modality/crm/backoffice2018/controls/bookingdetailspanel"/>
+    <!--==================< modality-crm-backoffice2018-operations-mail >===================-->
+    <source path="one/modality/crm/backoffice2018/operations/entities/mail"/>
     <!--======================< modality-crm-client-activities-login >======================-->
     <source path="one/modality/crm/client/activities/login"/>
     <!--==================< modality-crm-client-activities-unauthorized >===================-->
     <source path="one/modality/crm/client/activities/unauthorized"/>
     <!--===========================< modality-crm-client-authz >============================-->
     <source path="one/modality/crm/client/services/authz"/>
-    <!--======================< modality-crm-client-personaldetails >=======================-->
+    <!--====================< modality-crm-client2018-personaldetails >=====================-->
     <source path="one/modality/crm/client/controls/personaldetails"/>
     <!--===========================< modality-crm-shared-authn >============================-->
     <source path="one/modality/crm/shared/services/authn"/>
@@ -332,26 +332,10 @@
     <source path="one/modality/ecommerce/backoffice/activities/bookings"/>
     <source path="one/modality/ecommerce/backoffice/activities/bookings/routing"/>
     <source path="one/modality/ecommerce/backoffice/operations/routes/bookings"/>
-    <!--================< modality-ecommerce-backoffice-activities-income >=================-->
-    <source path="one/modality/ecommerce/backoffice/activities/income"/>
-    <source path="one/modality/ecommerce/backoffice/activities/income/routing"/>
-    <source path="one/modality/ecommerce/backoffice/operations/routes/income"/>
     <!--==============< modality-ecommerce-backoffice-activities-moneyflows >===============-->
     <source path="one/modality/ecommerce/backoffice/activities/moneyflows"/>
     <source path="one/modality/ecommerce/backoffice/activities/moneyflows/routing"/>
     <source path="one/modality/ecommerce/backoffice/operations/routes/moneyflows"/>
-    <!--===============< modality-ecommerce-backoffice-activities-payments >================-->
-    <source path="one/modality/ecommerce/backoffice/activities/payments"/>
-    <source path="one/modality/ecommerce/backoffice/activities/payments/routing"/>
-    <source path="one/modality/ecommerce/backoffice/operations/routes/payments"/>
-    <!--==============< modality-ecommerce-backoffice-activities-statements >===============-->
-    <source path="one/modality/ecommerce/backoffice/activities/statements"/>
-    <source path="one/modality/ecommerce/backoffice/activities/statements/routing"/>
-    <source path="one/modality/ecommerce/backoffice/operations/routes/statements"/>
-    <!--==============< modality-ecommerce-backoffice-activities-statistics >===============-->
-    <source path="one/modality/ecommerce/backoffice/activities/statistics"/>
-    <source path="one/modality/ecommerce/backoffice/activities/statistics/routing"/>
-    <source path="one/modality/ecommerce/backoffice/operations/routes/statistics"/>
     <!--===============< modality-ecommerce-backoffice-operations-document >================-->
     <source path="one/modality/ecommerce/backoffice/operations/entities/document"/>
     <source path="one/modality/ecommerce/backoffice/operations/entities/document/cart"/>
@@ -365,28 +349,44 @@
     <source path="one/modality/ecommerce/backoffice/operations/entities/moneyflow"/>
     <!--=============< modality-ecommerce-backoffice-operations-moneytransfer >=============-->
     <source path="one/modality/ecommerce/backoffice/operations/entities/moneytransfer"/>
-    <!--=================< modality-ecommerce-client-bookingoptionspanel >==================-->
-    <source path="one/modality/ecommerce/client/controls/bookingoptionspanel"/>
-    <!--====================< modality-ecommerce-client-bookingprocess >====================-->
-    <source path="one/modality/ecommerce/client/activity/bookingprocess"/>
-    <!--====================< modality-ecommerce-client-businesslogic >=====================-->
-    <source path="one/modality/ecommerce/client/businessdata/feesgroup"/>
-    <source path="one/modality/ecommerce/client/businessdata/preselection"/>
-    <source path="one/modality/ecommerce/client/businessdata/workingdocument"/>
-    <source path="one/modality/ecommerce/client/businesslogic/feesgroup"/>
-    <source path="one/modality/ecommerce/client/businesslogic/option"/>
-    <source path="one/modality/ecommerce/client/businesslogic/pricing"/>
-    <source path="one/modality/ecommerce/client/businesslogic/rules"/>
-    <source path="one/modality/ecommerce/client/businesslogic/workingdocument"/>
-    <!--=============< modality-ecommerce-frontoffice-activities-cart-routing >=============-->
+    <!--==============< modality-ecommerce-backoffice2018-activities-income >===============-->
+    <source path="one/modality/ecommerce/backoffice2018/activities/income"/>
+    <source path="one/modality/ecommerce/backoffice2018/activities/income/routing"/>
+    <source path="one/modality/ecommerce/backoffice2018/operations/routes/income"/>
+    <!--=============< modality-ecommerce-backoffice2018-activities-payments >==============-->
+    <source path="one/modality/ecommerce/backoffice2018/activities/payments"/>
+    <source path="one/modality/ecommerce/backoffice2018/activities/payments/routing"/>
+    <source path="one/modality/ecommerce/backoffice2018/operations/routes/payments"/>
+    <!--============< modality-ecommerce-backoffice2018-activities-statements >=============-->
+    <source path="one/modality/ecommerce/backoffice2018/activities/statements"/>
+    <source path="one/modality/ecommerce/backoffice2018/activities/statements/routing"/>
+    <source path="one/modality/ecommerce/backoffice2018/operations/routes/statements"/>
+    <!--============< modality-ecommerce-backoffice2018-activities-statistics >=============-->
+    <source path="one/modality/ecommerce/backoffice2018/activities/statistics"/>
+    <source path="one/modality/ecommerce/backoffice2018/activities/statistics/routing"/>
+    <source path="one/modality/ecommerce/backoffice2018/operations/routes/statistics"/>
+    <!--===============< modality-ecommerce-client2018-bookingoptionspanel >================-->
+    <source path="one/modality/ecommerce/client2018/controls/bookingoptionspanel"/>
+    <!--==================< modality-ecommerce-client2018-bookingprocess >==================-->
+    <source path="one/modality/ecommerce/client2018/activity/bookingprocess"/>
+    <!--==================< modality-ecommerce-client2018-businesslogic >===================-->
+    <source path="one/modality/ecommerce/client2018/businessdata/feesgroup"/>
+    <source path="one/modality/ecommerce/client2018/businessdata/preselection"/>
+    <source path="one/modality/ecommerce/client2018/businessdata/workingdocument"/>
+    <source path="one/modality/ecommerce/client2018/businesslogic/feesgroup"/>
+    <source path="one/modality/ecommerce/client2018/businesslogic/option"/>
+    <source path="one/modality/ecommerce/client2018/businesslogic/pricing"/>
+    <source path="one/modality/ecommerce/client2018/businesslogic/rules"/>
+    <source path="one/modality/ecommerce/client2018/businesslogic/workingdocument"/>
+    <!--===========< modality-ecommerce-frontoffice2018-activities-cart-routing >===========-->
     <source path="one/modality/ecommerce/frontoffice/activities/cart/base"/>
     <source path="one/modality/ecommerce/frontoffice/activities/cart/routing"/>
     <source path="one/modality/ecommerce/frontoffice/operations/cart"/>
-    <!--================< modality-ecommerce-frontoffice-activities-person >================-->
+    <!--==============< modality-ecommerce-frontoffice2018-activities-person >==============-->
     <source path="one/modality/ecommerce/frontoffice/activities/person"/>
     <source path="one/modality/ecommerce/frontoffice/activities/person/routing"/>
     <source path="one/modality/ecommerce/frontoffice/operations/person"/>
-    <!--===============< modality-ecommerce-frontoffice-activities-summary >================-->
+    <!--=============< modality-ecommerce-frontoffice2018-activities-summary >==============-->
     <source path="one/modality/ecommerce/frontoffice/activities/summary"/>
     <source path="one/modality/ecommerce/frontoffice/activities/summary/routing"/>
     <source path="one/modality/ecommerce/frontoffice/operations/summary"/>
@@ -398,42 +398,42 @@
     <source path="one/modality/ecommerce/payment/custom/buscall/serial"/>
     <!--====================< modality-ecommerce-payment-custom-remote >====================-->
     <source path="one/modality/ecommerce/payment/custom/spi/impl/remote"/>
-    <!--================< modality-event-backoffice-activities-cloneevent >=================-->
-    <source path="one/modality/event/backoffice/activities/cloneevent"/>
-    <!--============< modality-event-backoffice-activities-cloneevent-routing >=============-->
-    <source path="one/modality/event/backoffice/activities/cloneevent/routing"/>
-    <source path="one/modality/event/backoffice/operations/routes/cloneevent"/>
-    <!--==================< modality-event-backoffice-activities-events >===================-->
-    <source path="one/modality/event/backoffice/activities/events"/>
-    <source path="one/modality/event/backoffice/activities/events/routing"/>
-    <source path="one/modality/event/backoffice/operations/routes/events"/>
-    <!--==================< modality-event-backoffice-activities-options >==================-->
-    <source path="one/modality/event/backoffice/activities/options"/>
     <!--=======================< modality-event-backoffice-event-fx >=======================-->
     <source path="one/modality/event/backoffice/event/fx"/>
     <!--==================< modality-event-backoffice-events-ganttcanvas >==================-->
     <source path="one/modality/event/backoffice/events/ganttcanvas"/>
     <!--======================< modality-event-backoffice-events-pm >=======================-->
     <source path="one/modality/event/backoffice/events/pm"/>
-    <!--=====================< modality-event-client-bookingcalendar >======================-->
-    <source path="one/modality/event/client/controls/bookingcalendar"/>
-    <!--=========================< modality-event-client-calendar >=========================-->
-    <source path="one/modality/event/client/businessdata/calendar"/>
-    <source path="one/modality/event/client/businessdata/calendar/impl"/>
-    <source path="one/modality/event/client/controls/calendargraphic"/>
-    <source path="one/modality/event/client/controls/calendargraphic/impl"/>
-    <!--=======================< modality-event-client-sectionpanel >=======================-->
-    <source path="one/modality/event/client/controls/sectionpanel"/>
+    <!--==============< modality-event-backoffice2018-activities-cloneevent >===============-->
+    <source path="one/modality/event/backoffice2018/activities/cloneevent"/>
+    <!--==========< modality-event-backoffice2018-activities-cloneevent-routing >===========-->
+    <source path="one/modality/event/backoffice2018/activities/cloneevent/routing"/>
+    <source path="one/modality/event/backoffice2018/operations/routes/cloneevent"/>
+    <!--================< modality-event-backoffice2018-activities-events >=================-->
+    <source path="one/modality/event/backoffice2018/activities/events"/>
+    <source path="one/modality/event/backoffice2018/activities/events/routing"/>
+    <source path="one/modality/event/backoffice2018/operations/routes/events"/>
+    <!--================< modality-event-backoffice2018-activities-options >================-->
+    <source path="one/modality/event/backoffice2018/activities/options"/>
     <!--==========================< modality-event-client-theme >===========================-->
     <source path="one/modality/event/client/theme"/>
-    <!--===================< modality-event-frontoffice-activities-fees >===================-->
-    <source path="one/modality/event/frontoffice/activities/fees"/>
-    <source path="one/modality/event/frontoffice/activities/fees/routing"/>
-    <source path="one/modality/event/frontoffice/operations/fees"/>
-    <!--=================< modality-event-frontoffice-activities-options >==================-->
-    <source path="one/modality/event/frontoffice/activities/options"/>
-    <source path="one/modality/event/frontoffice/activities/options/routing"/>
-    <source path="one/modality/event/frontoffice/operations/options"/>
+    <!--===================< modality-event-client2018-bookingcalendar >====================-->
+    <source path="one/modality/event/client2018/controls/bookingcalendar"/>
+    <!--=======================< modality-event-client2018-calendar >=======================-->
+    <source path="one/modality/event/client2018/businessdata/calendar"/>
+    <source path="one/modality/event/client2018/businessdata/calendar/impl"/>
+    <source path="one/modality/event/client2018/controls/calendargraphic"/>
+    <source path="one/modality/event/client2018/controls/calendargraphic/impl"/>
+    <!--=====================< modality-event-client2018-sectionpanel >=====================-->
+    <source path="one/modality/event/client2018/controls/sectionpanel"/>
+    <!--=================< modality-event-frontoffice2018-activities-fees >=================-->
+    <source path="one/modality/event/frontoffice2018/activities/fees"/>
+    <source path="one/modality/event/frontoffice2018/activities/fees/routing"/>
+    <source path="one/modality/event/frontoffice2018/operations/fees"/>
+    <!--===============< modality-event-frontoffice2018-activities-options >================-->
+    <source path="one/modality/event/frontoffice2018/activities/options"/>
+    <source path="one/modality/event/frontoffice2018/activities/options/routing"/>
+    <source path="one/modality/event/frontoffice2018/operations/options"/>
     <!--====================< modality-hotel-backoffice-accommodation >=====================-->
     <source path="one/modality/hotel/backoffice/accommodation"/>
     <!--===============< modality-hotel-backoffice-activities-accommodation >===============-->
@@ -444,16 +444,16 @@
     <source path="one/modality/hotel/backoffice/activities/household"/>
     <source path="one/modality/hotel/backoffice/activities/household/routing"/>
     <source path="one/modality/hotel/backoffice/operations/routes/household"/>
-    <!--===============< modality-hotel-backoffice-activities-roomsgraphic >================-->
-    <source path="one/modality/hotel/backoffice/activities/roomsgraphic"/>
-    <source path="one/modality/hotel/backoffice/activities/roomsgraphic/routing"/>
-    <source path="one/modality/hotel/backoffice/operations/routes/roomsgraphic"/>
     <!--========================< modality-hotel-backoffice-icons >=========================-->
     <source path="one/modality/hotel/backoffice/icons"/>
     <!--===========< modality-hotel-backoffice-operations-resourceconfiguration >===========-->
     <source path="one/modality/hotel/backoffice/operations/entities/resourceconfiguration"/>
-    <!--===========================< modality-hotel-shared-time >===========================-->
-    <source path="one/modality/hotel/shared/businessdata/time"/>
+    <!--=============< modality-hotel-backoffice2018-activities-roomsgraphic >==============-->
+    <source path="one/modality/hotel/backoffice2018/activities/roomsgraphic"/>
+    <source path="one/modality/hotel/backoffice2018/activities/roomsgraphic/routing"/>
+    <source path="one/modality/hotel/backoffice2018/operations/routes/roomsgraphic"/>
+    <!--=========================< modality-hotel-shared2018-time >=========================-->
+    <source path="one/modality/hotel/shared2018/businessdata/time"/>
     <!--==============================< webfx-extras-canvas >===============================-->
     <source path="dev/webfx/extras/canvas"/>
     <source path="dev/webfx/extras/canvas/impl"/>
@@ -771,8 +771,6 @@
     <source path="dev/webfx/stack/conf/spi/impl/localstorage"/>
     <!--===========================< webfx-stack-conf-resource >============================-->
     <source path="dev/webfx/stack/conf/spi/impl/resource"/>
-    <!--========================< webfx-stack-conf-windowlocation >=========================-->
-    <source path="dev/webfx/stack/conf/spi/impl/windowlocation"/>
     <!--============================< webfx-stack-db-datascope >============================-->
     <source path="dev/webfx/stack/db/datascope"/>
     <source path="dev/webfx/stack/db/datascope/aggregate"/>

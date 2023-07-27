@@ -53,12 +53,6 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-client-aggregates</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
             <artifactId>modality-base-client-gantt-fx</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
@@ -77,6 +71,12 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-base-client2018-aggregates</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-base-shared-domainmodel</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
@@ -89,7 +89,7 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-crm-backoffice-bookingdetailspanel</artifactId>
+            <artifactId>modality-crm-backoffice2018-bookingdetailspanel</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
@@ -101,13 +101,7 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-event-backoffice-activities-cloneevent-routing</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-event-frontoffice-activities-fees</artifactId>
+            <artifactId>modality-event-frontoffice2018-activities-fees</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 

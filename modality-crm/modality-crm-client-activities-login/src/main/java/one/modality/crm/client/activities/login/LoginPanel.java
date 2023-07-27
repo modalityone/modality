@@ -23,7 +23,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.validation.ModalityValidationSupport;
-import one.modality.event.client.controls.sectionpanel.SectionPanelFactory;
+import one.modality.event.client2018.controls.sectionpanel.SectionPanelFactory;
 
 
 /**
