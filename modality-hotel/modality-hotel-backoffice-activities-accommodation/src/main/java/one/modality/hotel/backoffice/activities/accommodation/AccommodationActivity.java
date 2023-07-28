@@ -22,7 +22,7 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
     private final RoomView roomView = new RoomView(pm);
     private final GuestView guestView = new GuestView(pm);
 
-    private final RoomsAlterationView roomsAlterationView = new RoomsAlterationView(pm);
+    private final RoomsAlterationView roomsAlterationView = new RoomsAlterationView(pm, this);
     private final TodayAccommodationStatus todayAccommodationStatus = new TodayAccommodationStatus(pm);
 
     final BorderPane container = new BorderPane();
