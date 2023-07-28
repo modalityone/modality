@@ -17,20 +17,23 @@ module modality.hotel.backoffice.activities.accommodation {
     requires webfx.extras.theme;
     requires webfx.extras.time.layout;
     requires webfx.extras.util.layout;
+    requires webfx.extras.visual;
+    requires webfx.extras.visual.grid;
+    requires webfx.kit.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
+    requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
+    requires webfx.stack.orm.reactive.entities;
     requires webfx.stack.orm.reactive.visual;
+    requires webfx.stack.routing.activity;
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
+    requires webfx.stack.ui.controls;
     requires webfx.stack.ui.operation;
     requires webfx.stack.ui.operation.action;
-    requires webfx.kit.util;
-    requires webfx.stack.orm.reactive.entities;
-    requires webfx.extras.visual.grid;
-    requires webfx.extras.visual;
 
     // Exported packages
     exports one.modality.hotel.backoffice.activities.accommodation;
