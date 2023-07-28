@@ -23,13 +23,8 @@ public final class AttendanceBlock implements AccommodationBlock {
     public AttendanceBlock(Attendance attendance) {
         this.attendance = attendance;
         this.resourceConfiguration = attendance.getScheduledResource().getResourceConfiguration();
-        if (getPersonName().contains("Gen-la") || getPersonName().contains("Birch"))
-            attendeeCategory = AttendeeCategory.SPECIAL_GUEST;
-        else if (Numbers.toInteger(getDocument().getEventId().getPrimaryKey()) == 480) // 480 = Working visit
-            attendeeCategory = AttendeeCategory.VOLUNTEER;
-        else
-            attendeeCategory = AttendeeCategory.GUEST;
-    }
+        attendeeCategory = AttendeeCategory.fromDocument(getDocument());
+     }
 
     public Attendance getAttendance() {
         return attendance;
