@@ -1,11 +1,15 @@
 package one.modality.hotel.backoffice.activities.accommodation;
 
+import dev.webfx.extras.type.PrimType;
+import dev.webfx.extras.visual.VisualColumn;
+import dev.webfx.extras.visual.VisualResultBuilder;
 import dev.webfx.extras.visual.VisualSelection;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
@@ -20,9 +24,14 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.scene.control.*;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.Resource;
@@ -35,7 +44,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.IntStream;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
@@ -58,24 +71,25 @@ public class AlterRoomPane extends VBox {
     private GridPane detailsGridPane;
     private EntityButtonSelector<Item> roomTypeSelector;
     private TextField roomNameTextField;
-    private ComboBox<Integer> bedsInRoomComboBox;
-    private Map<AttendeeCategory, CheckBox> attendeeCategoryCheckBoxMap = new HashMap<>();
+    private ButtonSelector<Integer> bedsInRoomButtonSelector;
+    private final Map<AttendeeCategory, CheckBox> attendeeCategoryCheckBoxMap = new HashMap<>();
     private CheckBox allowsFemaleCheckBox;
     private CheckBox allowsMaleCheckBox;
     private TextField fromDateField;
     private TextField toDateField;
     private VisualGrid table;
 
-    private Button createButton;
-    private Button updateButton;
-    private Button deleteButton;
-    private Button deleteRoomButton;
-    private Button saveButton;
-    private Button cancelButton;
-    private Label statusLabel;
+    private final Button createButton;
+    private final Button updateButton;
+    private final Button deleteButton;
+    private final Button deleteRoomButton;
+    private final Button saveButton;
+    private final Button cancelButton;
+    private final Label statusLabel;
 
-    public AlterRoomPane(AccommodationPresentationModel pm) {
+    public AlterRoomPane(AccommodationPresentationModel pm, ButtonFactoryMixin mixin) {
         this.pm = pm;
+        this.mixin = mixin;
 
         resourceConfigurations.addListener((ListChangeListener<ResourceConfiguration>) change -> {
             // Select the configuration applicable today
@@ -118,8 +132,8 @@ public class AlterRoomPane extends VBox {
                 selectedResourceConfigurationProperty.get().setName(newValue);
             }
         });
-        bedsInRoomComboBox = createBedsInRoomComboBox();
-        bedsInRoomComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+        bedsInRoomButtonSelector = createBedsInRoomButtonSelector();
+        bedsInRoomButtonSelector.selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (selectedResourceConfigurationProperty.get() != null && newValue != null) {
                 selectedResourceConfigurationProperty.get().setMax(newValue);
             }
@@ -147,7 +161,7 @@ public class AlterRoomPane extends VBox {
         detailsGridPane.add(createLabel("Name"), 0, 1);
         detailsGridPane.add(roomNameTextField, 1, 1);
         detailsGridPane.add(createLabel("Beds in the room"), 0, 2);
-        detailsGridPane.add(bedsInRoomComboBox, 1, 2);
+        detailsGridPane.add(bedsInRoomButtonSelector.getButton(), 1, 2);
         detailsGridPane.add(createLabel("Eligibility for booking"), 0, 3);
         detailsGridPane.add(eligibilityForBookingGrid, 1, 3);
         detailsGridPane.add(createLabel("From / To"), 0, 4);
@@ -164,13 +178,35 @@ public class AlterRoomPane extends VBox {
         }
     }
 
-    private ComboBox<Integer> createBedsInRoomComboBox() {
+    private ButtonSelector<Integer> createBedsInRoomButtonSelector() {
         final int maxBedsInRoom = 50;
-        List<Integer> items = new ArrayList<>();
-        for (int i = 1; i <= maxBedsInRoom; i++) {
-            items.add(i);
-        }
-        return new ComboBox<>(FXCollections.observableList(items));
+        VisualResultBuilder vrb = VisualResultBuilder.create(maxBedsInRoom, VisualColumn.create(null, PrimType.INTEGER));
+        IntStream.range(0, maxBedsInRoom).forEach(i -> vrb.setValue(i, 0, i + 1));
+        VisualGrid bedsGrid = new VisualGrid(vrb.build());
+        return new ButtonSelector<>(mixin, this) {
+
+            {
+                setSearchEnabled(false);
+                setShowMode(ShowMode.DROP_DOWN);
+                bedsGrid.visualSelectionProperty().addListener((observable, oldValue, newValue) -> {
+                    setSelectedItem(newValue.getSelectedRow() + 1);
+                    closeDialog();
+                });
+            }
+
+            @Override
+            protected Node getOrCreateButtonContentFromSelectedItem() {
+                return new Label(String.valueOf(getSelectedItem()));
+            }
+
+            @Override
+            protected void startLoading() {}
+
+            @Override
+            protected Region getOrCreateDialogContent() {
+                return bedsGrid;
+            }
+        };
     }
 
     private GridPane createEligibilityForBookingGrid() {
@@ -232,7 +268,7 @@ public class AlterRoomPane extends VBox {
         }
         roomTypeSelector.setSelectedItem(rc.getItem());
         roomNameTextField.setText(rc.getName());
-        bedsInRoomComboBox.setValue(rc.getMax());
+        bedsInRoomButtonSelector.setSelectedItem(rc.getMax());
 
         for (AttendeeCategory attendeeCategory : AttendeeCategory.values()) {
             CheckBox checkBox = attendeeCategoryCheckBoxMap.get(attendeeCategory);
@@ -450,7 +486,7 @@ public class AlterRoomPane extends VBox {
             roomTypeSelector.setReadOnly(disabled);
         }
         roomNameTextField.setDisable(disabled);
-        bedsInRoomComboBox.setDisable(disabled);
+        bedsInRoomButtonSelector.getButton().setDisable(disabled);
         attendeeCategoryCheckBoxMap.values().forEach(checkBox -> checkBox.setDisable(disabled));
         allowsFemaleCheckBox.setDisable(disabled);
         allowsMaleCheckBox.setDisable(disabled);
@@ -459,9 +495,6 @@ public class AlterRoomPane extends VBox {
     }
 
     public void startLogic(Object mixin) { // may be called several times with different mixins (due to workaround)
-        if (mixin instanceof ButtonFactoryMixin) {
-            this.mixin = (ButtonFactoryMixin) mixin;
-        }
         // Updating the active property with a OR => mixin1.active || mixin2.active || mixin3.active ...
         if (mixin instanceof HasActiveProperty) {
             ObservableValue<Boolean> ap = ((HasActiveProperty) mixin).activeProperty();

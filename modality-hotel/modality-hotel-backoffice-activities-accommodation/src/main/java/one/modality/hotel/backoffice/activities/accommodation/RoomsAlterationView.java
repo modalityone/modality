@@ -3,6 +3,7 @@ package one.modality.hotel.backoffice.activities.accommodation;
 import dev.webfx.extras.theme.Facet;
 import dev.webfx.extras.theme.luminance.LuminanceFacetCategory;
 import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import dev.webfx.stack.ui.controls.dialog.DialogCallback;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.controls.dialog.DialogUtil;
@@ -37,10 +38,10 @@ public class RoomsAlterationView {
     private GridPane roomListPane;
     private ScrollPane scrollPane;
 
-    public RoomsAlterationView(AccommodationPresentationModel pm) {
+    public RoomsAlterationView(AccommodationPresentationModel pm, ButtonFactoryMixin mixin) {
         resourceConfigurationLoader = ResourceConfigurationLoader.getOrCreate(pm);
         roomStatusView = new RoomStatusView(pm);
-        alterRoomPane = new AlterRoomPane(pm);
+        alterRoomPane = new AlterRoomPane(pm, mixin);
     }
 
     public Node buildView() {

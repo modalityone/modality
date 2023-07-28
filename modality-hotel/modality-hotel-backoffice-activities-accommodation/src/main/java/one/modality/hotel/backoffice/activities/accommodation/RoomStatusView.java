@@ -20,16 +20,18 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.text.FontWeight;
+import one.modality.base.shared.domainmodel.formatters.PriceFormatter;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.Rate;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.base.shared.entities.markers.EntityHasItem;
-import one.modality.hotel.backoffice.accommodation.*;
+import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
+import one.modality.hotel.backoffice.accommodation.ResourceConfigurationLoader;
 
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
@@ -181,11 +183,7 @@ public class RoomStatusView {
     }
 
     private static String priceToString(int price) {
-        if ((price % 100) == 0) {
-            return String.valueOf(price / 100);
-        } else {
-            return new DecimalFormat("#.00").format(price / 100.0);
-        }
+        return PriceFormatter.formatWithoutCurrency(price);
     }
 
     private HBox createTopRow() {
