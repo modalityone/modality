@@ -2,6 +2,7 @@ package one.modality.hotel.backoffice.icons;
 
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.SVGPath;
 
 /**
  * @author Bruno Salmon
@@ -11,5 +12,12 @@ public final class RoomSvgIcon {
     public static final Paint ROOM_ICON_SVG_FILL = Color.web("#838788");
     public static final double ROOM_ICON_SVG_WIDTH = 20.3;
     public static final double ROOM_ICON_SVG_HEIGHT = 16;
+
+    public static SVGPath createSVGPath() {
+        SVGPath iconSvgPath = new SVGPath();
+        iconSvgPath.setContent(ROOM_ICON_SVG_PATH);
+        iconSvgPath.setFill(ROOM_ICON_SVG_FILL);
+        return iconSvgPath;
+    }
 
 }

@@ -54,7 +54,8 @@ public final class ResourceConfigurationLoader {
         if (rem == null) { // first call
             // Loading room types (for when parents are provided ie "All rooms" ticked)
             rem = ReactiveEntitiesMapper.<ResourceConfiguration>createPushReactiveChain(mixin)
-                    .always("{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,item.name'}")
+                    .always("{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,item.name,max,allowsGuest,allowsResident,allowsResidentFamily,allowsSpecialGuest,allowsVolunteer'}")
+                    .always(where("endDate is null or !exists(select ResourceConfiguration where resource=rc.resource and startDate > rc.endDate)"))
                     .always(orderBy("item.ord,name"))
                     // Returning events for the selected organization only (or returning an empty set if no organization is selected)
                     .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("resource.site.(organization=? and event=null)", o))
