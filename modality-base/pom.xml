@@ -47,7 +47,6 @@
         <module>modality-base-client2018-sessionrecorder</module>
         <module>modality-base-frontoffice-activities-account</module>
         <module>modality-base-frontoffice-activities-alerts</module>
-        <module>modality-base-frontoffice-activities-home</module>
         <module>modality-base-frontoffice-utility</module>
         <module>modality-base-server-application-all</module>
         <module>modality-base-server-application-min</module>

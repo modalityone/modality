@@ -13,7 +13,6 @@
         <used-by-source-modules/>
 
         <!-- Event activities -->
-        <plugin-module>modality-base-frontoffice-activities-home</plugin-module>
         <plugin-module>modality-event-frontoffice-activities-booking</plugin-module>
         <plugin-module>modality-base-frontoffice-activities-alerts</plugin-module>
         <plugin-module>modality-base-frontoffice-activities-account</plugin-module>
