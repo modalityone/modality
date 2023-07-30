@@ -3,7 +3,6 @@
 module modality.all.frontoffice.application.openjfx {
 
     // Direct dependencies modules
-    requires javafx.media;
     requires modality.all.frontoffice.application;
     requires webfx.extras.webtext.peers.openjfx;
     requires webfx.kit.openjfx;

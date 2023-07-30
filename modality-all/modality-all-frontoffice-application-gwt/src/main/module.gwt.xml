@@ -67,18 +67,12 @@
     <source path="javafx/scene/text"/>
     <source path="javafx/scene/transform"/>
     <source path="javafx/stage"/>
-    <!--===========================< webfx-kit-javafxmedia-emul >===========================-->
-    <source path="dev/webfx/kit/mapper/peers/javafxmedia"/>
-    <source path="dev/webfx/kit/mapper/peers/javafxmedia/spi"/>
-    <source path="javafx/scene/media"/>
     <!--============================< webfx-kit-javafxweb-emul >============================-->
     <source path="javafx/scene/web"/>
     <!--================================< elemental2-core >=================================-->
     <inherits name="elemental2.core.Core"/>
     <!--=================================< elemental2-dom >=================================-->
     <inherits name="elemental2.dom.Dom"/>
-    <!--================================< elemental2-media >================================-->
-    <source path="elemental2/media"/>
     <!--===============================< elemental2-promise >===============================-->
     <source path="elemental2/promise"/>
     <!--=================================< elemental2-svg >=================================-->
@@ -178,11 +172,6 @@
     <source path="one/modality/base/frontoffice/activities/alerts"/>
     <source path="one/modality/base/frontoffice/activities/alerts/routing"/>
     <source path="one/modality/base/frontoffice/operations/routes/alerts"/>
-    <!--===================< modality-base-frontoffice-activities-home >====================-->
-    <source path="one/modality/base/frontoffice/activities/home"/>
-    <source path="one/modality/base/frontoffice/activities/home/routing"/>
-    <source path="one/modality/base/frontoffice/activities/home/views"/>
-    <source path="one/modality/base/frontoffice/operations/routes/home"/>
     <!--=======================< modality-base-frontoffice-utility >========================-->
     <source path="one/modality/base/frontoffice/entities"/>
     <source path="one/modality/base/frontoffice/fx"/>
@@ -254,8 +243,6 @@
     <source path="dev/webfx/extras/materialdesign/util/background"/>
     <source path="dev/webfx/extras/materialdesign/util/layout"/>
     <source path="dev/webfx/extras/materialdesign/util/scene"/>
-    <!--=============================< webfx-extras-scalepane >=============================-->
-    <source path="dev/webfx/extras/scalepane"/>
     <!--===============================< webfx-extras-theme >===============================-->
     <source path="dev/webfx/extras/theme"/>
     <source path="dev/webfx/extras/theme/layout"/>
@@ -326,10 +313,6 @@
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics/gwt/util"/>
     <!--=====================< webfx-kit-javafxgraphics-registry-gwt >======================-->
     <source path="dev/webfx/kit/registry/javafxgraphics"/>
-    <!--========================< webfx-kit-javafxmedia-peers-gwt >=========================-->
-    <source path="dev/webfx/kit/mapper/peers/javafxmedia/spi/gwt"/>
-    <!--=======================< webfx-kit-javafxmedia-registry-gwt >=======================-->
-    <source path="dev/webfx/kit/registry/javafxmedia"/>
     <!--=========================< webfx-kit-javafxweb-peers-base >=========================-->
     <source path="dev/webfx/kit/mapper/peers/javafxweb/base"/>
     <!--=========================< webfx-kit-javafxweb-peers-gwt >==========================-->
