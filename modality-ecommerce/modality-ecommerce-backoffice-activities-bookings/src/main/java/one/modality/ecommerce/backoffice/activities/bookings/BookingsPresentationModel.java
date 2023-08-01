@@ -3,7 +3,7 @@ package one.modality.ecommerce.backoffice.activities.bookings;
 import dev.webfx.stack.orm.reactive.dql.statement.conventions.*;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import one.modality.base.client.activity.eventdependent.EventDependentGenericTablePresentationModel;
+import one.modality.event.client.activity.eventdependent.EventDependentGenericTablePresentationModel;
 import one.modality.base.client.presentationmodel.HasGanttSelectedObjectProperty;
 import one.modality.base.client.presentationmodel.HasSelectedDocumentProperty;
 import one.modality.base.shared.entities.Document;

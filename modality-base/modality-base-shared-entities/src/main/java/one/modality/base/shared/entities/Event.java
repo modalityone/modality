@@ -2,9 +2,10 @@ package one.modality.base.shared.entities;
 
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
-import dev.webfx.platform.util.Objects;
-import one.modality.base.shared.entities.markers.*;
-import one.modality.hotel.shared2018.businessdata.time.DateTimeRange;
+import one.modality.base.shared.entities.markers.EntityHasIcon;
+import one.modality.base.shared.entities.markers.EntityHasLabel;
+import one.modality.base.shared.entities.markers.EntityHasName;
+import one.modality.base.shared.entities.markers.EntityHasOrganization;
 
 import java.time.LocalDate;
 
@@ -15,10 +16,7 @@ public interface Event extends Entity,
         EntityHasName,
         EntityHasLabel,
         EntityHasIcon,
-        EntityHasOrganization,
-        EntityHasDateTimeRange,
-        EntityHasMinDateTimeRange,
-        EntityHasMaxDateTimeRange {
+        EntityHasOrganization {
 
     default LocalDate getStartDate() {
         return getLocalDateFieldValue("startDate");
@@ -46,10 +44,6 @@ public interface Event extends Entity,
 
     default Label getFeesBottomLabel() {
         return getForeignEntity("feesBottomLabel");
-    }
-
-    default DateTimeRange computeMaxDateTimeRange() {
-        return Objects.coalesce(getParsedMaxDateTimeRange(), getParsedDateTimeRange());
     }
 
 

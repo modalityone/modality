@@ -397,7 +397,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
                 .drawBar(b, gc);
     }
 
-    private static final Image TODAY_IMAGE = new Image(Resource.toUrl("/images/s32/sun.png", DatedGanttCanvas.class), true);
+    private static final Image TODAY_IMAGE = new Image(Resource.toUrl("images/s32/sun.png", DatedGanttCanvas.class), true);
 
 
     // method to draw 1 day - may be called many times during the draw pass

@@ -18,7 +18,6 @@
         <resource-package>images.s16.security</resource-package>
         <resource-package>images.s16.system</resource-package>
         <resource-package>images.s16.validation</resource-package>
-        <resource-package>images.s32</resource-package>
         <resource-package>images.s32.system</resource-package>
         <resource-package>images.svg.color</resource-package>
         <resource-package>images.svg.mono</resource-package>
@@ -27,12 +26,5 @@
     <dependencies>
         <used-by-source-modules/>
     </dependencies>
-
-    <embed-resources>
-        <resource>images/svg/mono/certificate.svg</resource>
-        <resource>images/svg/mono/calendar.svg</resource>
-        <resource>images/svg/mono/price-tag.svg</resource>
-        <resource>images/svg/color/price-tag.svg</resource>
-    </embed-resources>
 
 </project>

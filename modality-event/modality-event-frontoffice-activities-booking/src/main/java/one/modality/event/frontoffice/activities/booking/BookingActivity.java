@@ -87,6 +87,7 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
         ReactiveObjectsMapper.<Event, Node>createPushReactiveChain(this)
                 .always("{class: 'Event', fields:'name, label.<loadAll>, startDate, endDate', where: 'endDate > now()', orderBy: 'startDate'}")
                 .ifNotNullOtherwiseEmpty(FXBooking.displayCenterProperty, localCenter -> where("organization=?", localCenter))
+                .setIndividualEntityToObjectMapperFactory(IndividualEntityToObjectMapper.createFactory(EventView::new, EventView::setEvent, EventView::getView))
                 .storeMappedObjectsInto(localEventsContainer.getChildren())
                 .start();
     }

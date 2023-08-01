@@ -8,6 +8,7 @@ import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.domainmodel.DomainClass;
 import dev.webfx.stack.orm.entity.Entity;
+import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.ui.action.ActionGroup;
@@ -28,7 +29,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import one.modality.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
 import one.modality.base.backoffice.operations.entities.filters.*;
-import one.modality.base.client.activity.eventdependent.EventDependentViewDomainActivity;
+import one.modality.event.client.activity.eventdependent.EventDependentViewDomainActivity;
 import one.modality.base.shared.entities.Filter;
 
 import java.util.List;
@@ -104,7 +105,8 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         };
         TextField filterSearchField = new TextField();
         pm.searchTextProperty().bind(filterSearchField.textProperty());
-        Button addNewFilterButton = newButton(newOperationAction(() -> new AddNewFilterRequest(getEventStore(), container)));
+        EntityStore entityStore = EntityStore.create(getDataSourceModel());
+        Button addNewFilterButton = newButton(newOperationAction(() -> new AddNewFilterRequest(entityStore, container)));
         HBox filterSearchRow = new HBox(classLabel, classSelector.getButton(), filterSearchField, addNewFilterButton);
         HBox.setHgrow(filterSearchField, Priority.ALWAYS);
         filterSearchRow.setAlignment(Pos.CENTER);
@@ -123,7 +125,7 @@ final class FiltersActivity extends EventDependentViewDomainActivity implements 
         //BooleanBinding isSelectedFilterNull = selectedFilter.isNull(); // Not yet emulated by WebFX
         ObservableValue<Boolean> isSelectedFilterNull = FXProperties.compute(selectedFilter, Objects::isNull); // WebFX replacement
         fieldSearchField.disableProperty().bind(isSelectedFilterNull);
-        Button addNewFieldsButton = newButton(newOperationAction(() -> new AddNewFieldsRequest(getEventStore(), container)));
+        Button addNewFieldsButton = newButton(newOperationAction(() -> new AddNewFieldsRequest(entityStore, container)));
         HBox fieldsSearchRow = new HBox(fieldSearchField, addNewFieldsButton);
         HBox.setHgrow(fieldSearchField, Priority.ALWAYS);
         pm.fieldsSearchTextProperty().bind(fieldSearchField.textProperty());

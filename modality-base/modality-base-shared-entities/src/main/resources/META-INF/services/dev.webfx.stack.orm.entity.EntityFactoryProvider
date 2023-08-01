@@ -3,7 +3,6 @@ one.modality.base.shared.entities.impl.CartImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.ChannelImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.CountryImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.CurrencyImpl$ProvidedFactory
-one.modality.base.shared.entities.impl.DateInfoImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.DocumentImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.DocumentLineImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.EventImpl$ProvidedFactory
@@ -21,7 +20,6 @@ one.modality.base.shared.entities.impl.MoneyAccountImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.MoneyAccountTypeImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.MoneyFlowImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.NewsImpl$ProvidedFactory
-one.modality.base.shared.entities.impl.OptionImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.OrganizationImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.OrganizationTypeImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.PersonImpl$ProvidedFactory
@@ -33,5 +31,4 @@ one.modality.base.shared.entities.impl.ScheduledItemImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.ScheduledResourceImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.SiteImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.SnapshotImpl$ProvidedFactory
-one.modality.base.shared.entities.impl.SystemMetricsEntityImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.TeacherImpl$ProvidedFactory

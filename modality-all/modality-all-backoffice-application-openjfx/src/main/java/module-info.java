@@ -3,13 +3,9 @@
 module modality.all.backoffice.application.openjfx {
 
     // Direct dependencies modules
-    requires javafx.controls;
     requires modality.all.backoffice.application;
-    requires modality.base.shared.domainmodel;
     requires modality.ecommerce.payment.custom.buscall;
     requires modality.ecommerce.payment.custom.remote;
-    requires modality.event.backoffice2018.activities.cloneevent;
-    requires modality.event.backoffice2018.activities.cloneevent.routing;
     requires webfx.extras.webtext.peers.openjfx;
     requires webfx.kit.openjfx;
     requires webfx.kit.platform.visibility.openjfx;
@@ -30,30 +26,20 @@ module modality.all.backoffice.application.openjfx {
     requires webfx.stack.authn.login.ui.gateway.webviewbased.openjfx;
     requires webfx.stack.authn.login.ui.portal;
     requires webfx.stack.authn.remote;
+    requires webfx.stack.com.bus.json.client;
     requires webfx.stack.com.bus.json.client.websocket.java;
     requires webfx.stack.com.websocket.java;
-    requires webfx.stack.conf;
-    requires webfx.stack.conf.env.java;
     requires webfx.stack.conf.format.json;
     requires webfx.stack.db.query.buscall;
     requires webfx.stack.db.querysubmit.java.jdbc;
     requires webfx.stack.db.submit.buscall;
-    requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql.query.interceptor;
     requires webfx.stack.orm.dql.querypush.interceptor;
     requires webfx.stack.orm.dql.submit.interceptor;
-    requires webfx.stack.routing.uirouter;
     requires webfx.stack.session.client;
     requires webfx.stack.ui.fxraiser.json;
 
-    // Exported packages
-    exports one.modality.all.backoffice.activities.event.clone.openjfx;
-    exports one.modality.all.backoffice.conf.openjfx;
-
     // Meta Resource package
     opens dev.webfx.platform.meta.exe;
-
-    // Provided services
-    provides dev.webfx.stack.conf.spi.ConfigurationSupplier with one.modality.all.backoffice.conf.openjfx.ModalityAllBackOfficeEnvironmentConfigurationSupplier;
 
 }

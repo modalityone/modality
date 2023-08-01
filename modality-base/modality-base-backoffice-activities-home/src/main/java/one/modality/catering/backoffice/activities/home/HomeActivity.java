@@ -83,12 +83,12 @@ public class HomeActivity extends ViewDomainActivityBase
     // Temporary redirects from new wireframes area to old prototype activities
     private final Map<String, String> redirects = new HashMap<>();
     {
-        redirects.put("RouteToUserAccount", "RouteToUsers");
-        redirects.put("RouteToEventsPlanner", "RouteToEvents");
+        //redirects.put("RouteToUserAccount", "RouteToUsers");
+        //redirects.put("RouteToEventsPlanner", "RouteToEvents");
         redirects.put("RouteToBookingsAndSearch", "RouteToBookings");
-        redirects.put("RouteToAdmin", "RouteToAuthorizations");
+        //redirects.put("RouteToAdmin", "RouteToAuthorizations");
         //redirects.put("RouteToAccommodation", "RouteToRoomsGraphic");
-        redirects.put("RouteToTranslationAndRecordings", "RouteToLetters");
+        //redirects.put("RouteToTranslationAndRecordings", "RouteToLetters");
         redirects.put("RouteToFinancesAndStats", "RouteToMoneyFlows");
         redirects.put("RouteToHumanResources", "RouteToStatistics");
         redirects.put("RouteToReception", "RouteToFilters");
@@ -120,8 +120,11 @@ public class HomeActivity extends ViewDomainActivityBase
                 if (redirect == null) {
                     redirectAction = null;
                 } else {
-                    RouteRequestEmitter routeRequestEmitter1 = RoutingActions.findRouteRequestEmitter(redirect, this);
-                    redirectAction = RoutingActions.getRouteEmitterAction(routeRequestEmitter1, this, this);
+                    routeRequestEmitter = RoutingActions.findRouteRequestEmitter(redirect, this);
+                    if (routeRequestEmitter == null)
+                        redirectAction = null;
+                    else
+                        redirectAction = RoutingActions.getRouteEmitterAction(routeRequestEmitter, this, this);
                 }
                 return new ActionBuilder()
                         .setI18nKey(operationCode.substring(7))

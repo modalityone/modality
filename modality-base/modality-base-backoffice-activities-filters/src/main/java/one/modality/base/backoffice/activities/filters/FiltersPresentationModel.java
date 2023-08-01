@@ -4,7 +4,7 @@ import dev.webfx.extras.visual.VisualResult;
 import dev.webfx.extras.visual.VisualSelection;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import one.modality.base.client.activity.eventdependent.EventDependentGenericTablePresentationModel;
+import one.modality.event.client.activity.eventdependent.EventDependentGenericTablePresentationModel;
 
 /**
  * @author Ben Vickers

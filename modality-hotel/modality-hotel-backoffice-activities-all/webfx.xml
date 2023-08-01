@@ -11,8 +11,6 @@
         <plugin-module>modality-hotel-backoffice-activities-accommodation</plugin-module>
         <plugin-module>modality-hotel-backoffice-activities-household</plugin-module>
 
-        <plugin-module>modality-hotel-backoffice2018-activities-roomsgraphic</plugin-module>
-
     </dependencies>
 
 </project>

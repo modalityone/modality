@@ -6,7 +6,7 @@ module modality.hotel.backoffice.activities.household {
     requires java.base;
     requires javafx.base;
     requires javafx.graphics;
-    requires modality.base.client.activity;
+    requires modality.base.client.activity.organizationdependent;
     requires modality.base.client.gantt.fx;
     requires modality.base.shared.entities;
     requires modality.hotel.backoffice.accommodation;
