@@ -30,7 +30,7 @@
         <dependency>
             <groupId>com.stripe</groupId>
             <artifactId>stripe-java</artifactId>
-            <version>21.0.0</version>
+            <version>22.29.0</version>
         </dependency>
 
         <dependency>

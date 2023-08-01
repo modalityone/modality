@@ -10,11 +10,7 @@
 
         <plugin-module>modality-ecommerce-backoffice-activities-bookings</plugin-module>
         <plugin-module>modality-ecommerce-backoffice-activities-moneyflows</plugin-module>
-
-        <plugin-module>modality-ecommerce-backoffice2018-activities-income</plugin-module>
-        <plugin-module>modality-ecommerce-backoffice2018-activities-payments</plugin-module>
-        <plugin-module>modality-ecommerce-backoffice2018-activities-statistics</plugin-module>
-        <plugin-module>modality-ecommerce-backoffice2018-activities-statements</plugin-module>
+        <plugin-module>modality-ecommerce-backoffice-activities-statistics</plugin-module>
 
     </dependencies>
 

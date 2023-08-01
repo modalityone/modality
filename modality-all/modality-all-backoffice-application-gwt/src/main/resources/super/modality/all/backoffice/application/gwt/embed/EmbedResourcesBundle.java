@@ -12,43 +12,27 @@ public interface EmbedResourcesBundle extends ClientBundle {
     @Source("dev/webfx/platform/meta/exe/exe.properties")
     TextResource r1();
 
-    @Source("images/svg/color/price-tag.svg")
+    @Source("one/modality/base/client/busconfig/ClientBusOptions.default.json")
     TextResource r2();
 
-    @Source("images/svg/mono/calendar.svg")
+    @Source("one/modality/base/client/services/i18n/dictionaries/en.json")
     TextResource r3();
 
-    @Source("images/svg/mono/certificate.svg")
+    @Source("one/modality/base/client/services/i18n/dictionaries/fr.json")
     TextResource r4();
 
-    @Source("images/svg/mono/price-tag.svg")
-    TextResource r5();
-
-    @Source("one/modality/base/client/busconfig/ClientBusOptions.default.json")
-    TextResource r6();
-
-    @Source("one/modality/base/client/services/i18n/dictionaries/en.json")
-    TextResource r7();
-
-    @Source("one/modality/base/client/services/i18n/dictionaries/fr.json")
-    TextResource r8();
-
     @Source("one/modality/base/shared/domainmodel/DomainModelSnapshot.json")
-    TextResource r9();
+    TextResource r5();
 
 
 
     final class ProvidedGwtResourceBundle extends GwtResourceBundleBase {
         public ProvidedGwtResourceBundle() {
             registerResource("dev/webfx/platform/meta/exe/exe.properties", R.r1());
-            registerResource("images/svg/color/price-tag.svg", R.r2());
-            registerResource("images/svg/mono/calendar.svg", R.r3());
-            registerResource("images/svg/mono/certificate.svg", R.r4());
-            registerResource("images/svg/mono/price-tag.svg", R.r5());
-            registerResource("one/modality/base/client/busconfig/ClientBusOptions.default.json", R.r6());
-            registerResource("one/modality/base/client/services/i18n/dictionaries/en.json", R.r7());
-            registerResource("one/modality/base/client/services/i18n/dictionaries/fr.json", R.r8());
-            registerResource("one/modality/base/shared/domainmodel/DomainModelSnapshot.json", R.r9());
+            registerResource("one/modality/base/client/busconfig/ClientBusOptions.default.json", R.r2());
+            registerResource("one/modality/base/client/services/i18n/dictionaries/en.json", R.r3());
+            registerResource("one/modality/base/client/services/i18n/dictionaries/fr.json", R.r4());
+            registerResource("one/modality/base/shared/domainmodel/DomainModelSnapshot.json", R.r5());
 
         }
     }

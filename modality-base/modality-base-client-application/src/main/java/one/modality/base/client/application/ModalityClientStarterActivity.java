@@ -7,7 +7,6 @@ import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivi
 import dev.webfx.stack.routing.activity.Activity;
 import dev.webfx.stack.routing.activity.ActivityContext;
 import dev.webfx.stack.routing.uirouter.UiRouter;
-import one.modality.base.client.actions.ModalityActions;
 
 /**
  * @author Bruno Salmon
@@ -46,7 +45,7 @@ public abstract class ModalityClientStarterActivity
 
     @Override
     public void onStart() {
-        ModalityActions.registerActions();
+        //ModalityActions.registerActions();
         UiRouter uiRouter = getUiRouter();
         uiRouter.setDefaultInitialHistoryPath(defaultInitialHistoryPath);
         uiRouter.start();

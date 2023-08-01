@@ -8,11 +8,12 @@ module modality.ecommerce.backoffice.activities.moneyflows {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.backoffice.masterslave;
-    requires modality.base.client.activity;
+    requires modality.base.client.activity.organizationdependent;
     requires modality.base.client.util;
     requires modality.base.shared.domainmodel;
     requires modality.base.shared.entities;
     requires modality.ecommerce.backoffice.operations.moneyflow;
+    requires modality.event.client.activity.eventdependent;
     requires webfx.extras.util.background;
     requires webfx.extras.util.border;
     requires webfx.extras.visual;

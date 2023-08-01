@@ -36,7 +36,7 @@ public class FXAccount {
         persons.addListener((ListChangeListener<Person>) change -> {
             System.out.println("Persons Loading Triggered");
             System.out.println(persons);
-            if (persons.size() > 0) {
+            if (!persons.isEmpty()) {
                 accountOwnerProperty.set(persons.get(0));
                 accountFriendsAndFamily.setAll(persons.subList(1, persons.size()-1));
                 ownerPM.set(persons.get(0));

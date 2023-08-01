@@ -16,7 +16,6 @@
         <plugin-module>modality-base-backoffice-activities-all</plugin-module>
 
         <!-- CRM activities -->
-        <plugin-module>modality-crm-backoffice-activities-all</plugin-module>
 
         <!-- Ecommerce activities -->
         <plugin-module>modality-ecommerce-backoffice-activities-all</plugin-module>
@@ -25,7 +24,6 @@
         <plugin-module>modality-hotel-backoffice-activities-all</plugin-module>
 
         <!-- Event activities -->
-        <plugin-module>modality-event-backoffice2018-activities-all</plugin-module>
 
         <!-- Catering activities -->
         <plugin-module>modality-catering-backoffice-activities-all</plugin-module>

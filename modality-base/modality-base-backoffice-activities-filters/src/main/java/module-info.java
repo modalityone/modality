@@ -9,8 +9,8 @@ module modality.base.backoffice.activities.filters {
     requires javafx.graphics;
     requires modality.base.backoffice.masterslave;
     requires modality.base.backoffice.operations.filters;
-    requires modality.base.client.activity;
     requires modality.base.shared.entities;
+    requires modality.event.client.activity.eventdependent;
     requires webfx.extras.cell;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;

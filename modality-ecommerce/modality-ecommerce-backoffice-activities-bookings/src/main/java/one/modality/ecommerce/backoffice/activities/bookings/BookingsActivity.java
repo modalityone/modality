@@ -8,14 +8,13 @@ import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMap
 import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import one.modality.base.backoffice.controls.masterslave.ConventionalUiBuilder;
 import one.modality.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
 import one.modality.base.backoffice.operations.entities.generic.AddNewSnapshotRequest;
 import one.modality.base.backoffice.operations.entities.generic.CopyAllRequest;
 import one.modality.base.backoffice.operations.entities.generic.CopySelectionRequest;
-import one.modality.base.client.activity.eventdependent.EventDependentViewDomainActivity;
+import one.modality.event.client.activity.eventdependent.EventDependentViewDomainActivity;
 import one.modality.base.client.gantt.fx.interstice.FXGanttInterstice;
 import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
@@ -23,20 +22,18 @@ import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.shared.domainmodel.functions.AbcNames;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
-import one.modality.crm.backoffice2018.controls.bookingdetailspanel.BookingDetailsPanel;
 import one.modality.ecommerce.backoffice.operations.entities.document.SendLetterRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.registration.*;
 import one.modality.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsKnownRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsUncheckedRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsUnknownRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsVerifiedRequest;
-import one.modality.ecommerce.backoffice.operations.routes.bookings.RouteToNewBackOfficeBookingRequest;
+import one.modality.crm.backoffice.controls.bookingdetailspanel.BookingDetailsPanel;
 
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.YearMonth;
 
-import static dev.webfx.extras.util.layout.LayoutUtil.setUnmanagedWhenInvisible;
 import static dev.webfx.stack.orm.dql.DqlStatement.fields;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
@@ -62,9 +59,9 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
         ui = createAndBindGroupMasterSlaveViewWithFilterSearchBar(pm, "bookings", "Document");
 
         // Adding new booking button on left and clone event on right of the filter search bar
-        Button newBookingButton = newButton(newOperationAction(() -> new RouteToNewBackOfficeBookingRequest(getEventId(), getHistory())));
+        //Button newBookingButton = newButton(newOperationAction(() -> new RouteToNewBackOfficeBookingRequest(getEventId(), getHistory())));
                 //cloneEventButton = newButton(newOperationAction(() -> new RouteToCloneEventRequest(getEventId(), getHistory())));
-        ui.setLeftTopNodes(setUnmanagedWhenInvisible(newBookingButton));
+        //ui.setLeftTopNodes(setUnmanagedWhenInvisible(newBookingButton));
         //ui.setRightTopNodes(setUnmanagedWhenInvisible(cloneEventButton));
 
         Pane container = ui.buildUi();
