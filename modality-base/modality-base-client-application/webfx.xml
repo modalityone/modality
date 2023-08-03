@@ -7,8 +7,7 @@
 
     <exported-packages>
         <source-packages/>
-        <resource-package>one.modality.base.client.images</resource-package>
-        <resource-package>images.buddhas</resource-package>
+        <resource-packages/>
     </exported-packages>
 
     <dependencies>

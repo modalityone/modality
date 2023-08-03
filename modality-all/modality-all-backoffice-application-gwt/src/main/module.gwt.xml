@@ -28,8 +28,8 @@
     <source path="com/sun/javafx/scene/control/skin"/>
     <source path="javafx/scene/control"/>
     <source path="javafx/scene/control/skin"/>
-    <resource path="images/checkbox"/>
-    <public includes="images/checkbox/" path=""/>
+    <resource path="javafx/scene/control/skin/checkbox"/>
+    <public includes="javafx/scene/control/skin/checkbox/" path=""/>
     <!--================================< javafx-controls >=================================-->
     <source path="javafx/scene/chart"/>
     <!--=========================< webfx-kit-javafxgraphics-emul >==========================-->
@@ -209,6 +209,8 @@
     <public includes="images/s16/actions/" path=""/>
     <resource path="images/s16/continents"/>
     <public includes="images/s16/continents/" path=""/>
+    <resource path="images/s16/continents/org"/>
+    <public includes="images/s16/continents/org/" path=""/>
     <resource path="images/s16/countries"/>
     <public includes="images/s16/countries/" path=""/>
     <resource path="images/s16/currencies"/>

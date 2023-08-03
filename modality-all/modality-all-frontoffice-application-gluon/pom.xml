@@ -332,8 +332,27 @@
                         <list>dev/webfx/stack/authn/login/ui/spi/impl/gateway/google/[^/]+$</list>
                         <list>dev/webfx/stack/ui/validation/controlsfx/images/[^/]+$</list>
                         <list>images/buddhas/[^/]+$</list>
-                        <list>images/checkbox/[^/]+$</list>
+                        <list>images/s16/[^/]+$</list>
+                        <list>images/s16/actions/[^/]+$</list>
+                        <list>images/s16/continents/[^/]+$</list>
+                        <list>images/s16/continents/org/[^/]+$</list>
                         <list>images/s16/controls/[^/]+$</list>
+                        <list>images/s16/countries/[^/]+$</list>
+                        <list>images/s16/currencies/[^/]+$</list>
+                        <list>images/s16/event/[^/]+$</list>
+                        <list>images/s16/itemFamilies/[^/]+$</list>
+                        <list>images/s16/languages/[^/]+$</list>
+                        <list>images/s16/methods/[^/]+$</list>
+                        <list>images/s16/moneyAccountTypes/[^/]+$</list>
+                        <list>images/s16/multipleBookings/[^/]+$</list>
+                        <list>images/s16/organizations/[^/]+$</list>
+                        <list>images/s16/security/[^/]+$</list>
+                        <list>images/s16/system/[^/]+$</list>
+                        <list>images/s16/validation/[^/]+$</list>
+                        <list>images/s32/system/[^/]+$</list>
+                        <list>images/svg/color/[^/]+$</list>
+                        <list>images/svg/mono/[^/]+$</list>
+                        <list>javafx/scene/control/skin/checkbox/[^/]+$</list>
                         <list>one/modality/base/client/busconfig/[^/]+$</list>
                         <list>one/modality/base/client/css/[^/]+$</list>
                         <list>one/modality/base/client/fonts/[^/]+$</list>
