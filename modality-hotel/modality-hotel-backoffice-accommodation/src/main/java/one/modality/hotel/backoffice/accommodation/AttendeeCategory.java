@@ -1,6 +1,7 @@
 package one.modality.hotel.backoffice.accommodation;
 
 import dev.webfx.platform.util.Numbers;
+import dev.webfx.stack.orm.entity.EntityId;
 import javafx.scene.paint.Color;
 import one.modality.base.shared.entities.Document;
 
@@ -35,7 +36,8 @@ public enum AttendeeCategory {
         String fullName = document.getFullName().toLowerCase();
         if (fullName.contains("gen-la") || fullName.contains("birch"))
             return AttendeeCategory.SPECIAL_GUEST;
-        if (Numbers.toInteger(document.getEventId().getPrimaryKey()) == 480) // 480 = Working visit
+        EntityId eventId = document.getEventId();
+        if (Numbers.toInteger(eventId.getPrimaryKey()) == 480) // 480 = Working visit
             return AttendeeCategory.VOLUNTEER;
         return AttendeeCategory.GUEST;
     }

@@ -3,7 +3,6 @@
 module modality.all.frontoffice.application.openjfx {
 
     // Direct dependencies modules
-    requires javafx.media;
     requires modality.all.frontoffice.application;
     requires webfx.extras.webtext.peers.openjfx;
     requires webfx.kit.openjfx;
@@ -28,6 +27,7 @@ module modality.all.frontoffice.application.openjfx {
     requires webfx.stack.authn.login.ui.gateway.webviewbased.openjfx;
     requires webfx.stack.authn.login.ui.portal;
     requires webfx.stack.authn.remote;
+    requires webfx.stack.com.bus.json.client;
     requires webfx.stack.com.bus.json.client.websocket.java;
     requires webfx.stack.com.websocket.java;
     requires webfx.stack.conf;

@@ -18,8 +18,5 @@
         -->
     </maven-pom-manual>
 
-    <providers>
-        <provider interface="dev.webfx.stack.conf.spi.ConfigurationSupplier">one.modality.all.backoffice.conf.openjfx.ModalityAllBackOfficeEnvironmentConfigurationSupplier</provider>
-    </providers>
 
 </project>

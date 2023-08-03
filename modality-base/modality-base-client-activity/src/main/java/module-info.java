@@ -7,10 +7,6 @@ module modality.base.client.activity {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.presentationmodel;
-    requires transitive modality.base.client2018.aggregates;
-    requires modality.crm.backoffice.organization.fx;
-    requires modality.ecommerce.client2018.businesslogic;
-    requires modality.event.backoffice.event.fx;
     requires webfx.extras.util.background;
     requires webfx.extras.util.border;
     requires webfx.extras.util.scene;
@@ -30,8 +26,6 @@ module modality.base.client.activity {
 
     // Exported packages
     exports one.modality.base.client.activity;
-    exports one.modality.base.client.activity.eventdependent;
-    exports one.modality.base.client.activity.organizationdependent;
     exports one.modality.base.client.activity.table;
     exports one.modality.base.client.activity.themes;
 

@@ -7,7 +7,7 @@ module modality.ecommerce.backoffice.operations.document {
     requires javafx.graphics;
     requires modality.base.backoffice.operations.generic;
     requires modality.base.shared.entities;
-    requires modality.crm.client2018.personaldetails;
+    requires modality.crm.client.personaldetails;
     requires webfx.kit.launcher;
     requires webfx.platform.async;
     requires webfx.stack.ui.controls;

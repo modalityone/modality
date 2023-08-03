@@ -9,10 +9,6 @@
         <used-by-source-modules/>
         <plugin-module>modality-base-server-application-min</plugin-module>
 
-<!-- Commented while it's not necessary during the development phase (and creates logs on the server every second which may pollute other logs)
-        <plugin-module>modality-base-server-systemmetrics</plugin-module>
--->
-
         <!-- Facebook SSO -->
         <plugin-module>webfx-stack-authn-login-server-gateway-facebook</plugin-module>
         <plugin-module>webfx-stack-authn-server-gateway-facebook</plugin-module>
@@ -24,12 +20,6 @@
         <!-- MojoAuth SSO -->
         <plugin-module>webfx-stack-authn-login-server-gateway-mojoauth</plugin-module>
         <plugin-module>webfx-stack-authn-server-gateway-mojoauth</plugin-module>
-
-        <!-- Temporary specific modules (will be moved to KBS3) -->
-<!-- Commented during the development phase on local machines
-        <plugin-module>modality-base-server-podcastsimport</plugin-module>
-        <plugin-module>modality-base-server-newsimport</plugin-module>
--->
 
     </dependencies>
 

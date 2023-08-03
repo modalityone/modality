@@ -9,8 +9,8 @@ module modality.all.backoffice.application {
     requires modality.base.client.application;
     requires modality.base.client.gantt.fx;
     requires modality.base.shared.entities;
+    requires modality.crm.backoffice.bookingdetailspanel;
     requires modality.crm.backoffice.organization.fx;
-    requires modality.crm.backoffice2018.bookingdetailspanel;
     requires modality.event.backoffice.event.fx;
     requires modality.event.backoffice.events.ganttcanvas;
     requires webfx.extras.theme;

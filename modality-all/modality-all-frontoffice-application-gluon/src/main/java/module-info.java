@@ -3,14 +3,12 @@
 module modality.all.frontoffice.application.gluon {
 
     // Direct dependencies modules
-    requires javafx.media;
     requires modality.all.frontoffice.application;
     requires modality.base.client.css;
     requires webfx.extras.visual.grid.peers.openjfx;
     requires webfx.extras.webtext.peers.openjfx;
     requires webfx.kit.openjfx;
     requires webfx.kit.statusbar.gluon;
-    requires webfx.platform.audio.gluon;
     requires webfx.platform.boot.java;
     requires webfx.platform.console.java;
     requires webfx.platform.fetch.java;
@@ -31,6 +29,7 @@ module modality.all.frontoffice.application.gluon {
     requires webfx.stack.authn.login.ui.gateway.webviewbased.openjfx;
     requires webfx.stack.authn.login.ui.portal;
     requires webfx.stack.authn.remote;
+    requires webfx.stack.com.bus.json.client;
     requires webfx.stack.com.bus.json.client.websocket.java;
     requires webfx.stack.com.websocket.java;
     requires webfx.stack.conf.format.json;

@@ -23,8 +23,6 @@
         <module>modality-hotel-backoffice-icons</module>
         <module>modality-hotel-backoffice-operations-documentline</module>
         <module>modality-hotel-backoffice-operations-resourceconfiguration</module>
-        <module>modality-hotel-backoffice2018-activities-roomsgraphic</module>
-        <module>modality-hotel-shared2018-time</module>
     </modules>
 
 </project>

@@ -7,7 +7,7 @@ module modality.hotel.backoffice.accommodation {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
-    requires modality.base.client.activity;
+    requires modality.base.client.activity.organizationdependent;
     requires modality.base.client.gantt.fx;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
@@ -26,6 +26,7 @@ module modality.hotel.backoffice.accommodation {
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
     requires webfx.stack.orm.dql;
+    requires webfx.stack.orm.entity;
     requires webfx.stack.orm.reactive.entities;
     requires webfx.stack.routing.activity;
 

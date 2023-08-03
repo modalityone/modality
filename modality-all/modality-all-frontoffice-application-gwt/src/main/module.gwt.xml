@@ -67,18 +67,12 @@
     <source path="javafx/scene/text"/>
     <source path="javafx/scene/transform"/>
     <source path="javafx/stage"/>
-    <!--===========================< webfx-kit-javafxmedia-emul >===========================-->
-    <source path="dev/webfx/kit/mapper/peers/javafxmedia"/>
-    <source path="dev/webfx/kit/mapper/peers/javafxmedia/spi"/>
-    <source path="javafx/scene/media"/>
     <!--============================< webfx-kit-javafxweb-emul >============================-->
     <source path="javafx/scene/web"/>
     <!--================================< elemental2-core >=================================-->
     <inherits name="elemental2.core.Core"/>
     <!--=================================< elemental2-dom >=================================-->
     <inherits name="elemental2.dom.Dom"/>
-    <!--================================< elemental2-media >================================-->
-    <source path="elemental2/media"/>
     <!--===============================< elemental2-promise >===============================-->
     <source path="elemental2/promise"/>
     <!--=================================< elemental2-svg >=================================-->
@@ -91,8 +85,6 @@
     <source path="one/modality/all/frontoffice/application"/>
     <!--=========================< modality-base-client-activity >==========================-->
     <source path="one/modality/base/client/activity"/>
-    <source path="one/modality/base/client/activity/eventdependent"/>
-    <source path="one/modality/base/client/activity/organizationdependent"/>
     <source path="one/modality/base/client/activity/table"/>
     <source path="one/modality/base/client/activity/themes"/>
     <!--========================< modality-base-client-application >========================-->
@@ -105,69 +97,15 @@
     <source path="one/modality/base/client/busconfig"/>
     <resource path="one/modality/base/client/busconfig"/>
     <public includes="one/modality/base/client/busconfig/" path=""/>
-    <!--=========================< modality-base-client-entities >==========================-->
-    <source path="one/modality/base/client/entities/util"/>
-    <source path="one/modality/base/client/entities/util/filters"/>
     <!--===========================< modality-base-client-i18n >============================-->
     <source path="one/modality/base/client/operations/i18n"/>
     <source path="one/modality/base/client/services/i18n"/>
     <resource path="one/modality/base/client/services/i18n/dictionaries"/>
     <public includes="one/modality/base/client/services/i18n/dictionaries/" path=""/>
-    <!--===========================< modality-base-client-icons >===========================-->
-    <source path="one/modality/base/client/actions"/>
-    <source path="one/modality/base/client/icons"/>
-    <resource path="images/s16"/>
-    <public includes="images/s16/" path=""/>
-    <resource path="images/s16/actions"/>
-    <public includes="images/s16/actions/" path=""/>
-    <resource path="images/s16/continents"/>
-    <public includes="images/s16/continents/" path=""/>
-    <resource path="images/s16/countries"/>
-    <public includes="images/s16/countries/" path=""/>
-    <resource path="images/s16/currencies"/>
-    <public includes="images/s16/currencies/" path=""/>
-    <resource path="images/s16/event"/>
-    <public includes="images/s16/event/" path=""/>
-    <resource path="images/s16/itemFamilies"/>
-    <public includes="images/s16/itemFamilies/" path=""/>
-    <resource path="images/s16/languages"/>
-    <public includes="images/s16/languages/" path=""/>
-    <resource path="images/s16/methods"/>
-    <public includes="images/s16/methods/" path=""/>
-    <resource path="images/s16/moneyAccountTypes"/>
-    <public includes="images/s16/moneyAccountTypes/" path=""/>
-    <resource path="images/s16/multipleBookings"/>
-    <public includes="images/s16/multipleBookings/" path=""/>
-    <resource path="images/s16/organizations"/>
-    <public includes="images/s16/organizations/" path=""/>
-    <resource path="images/s16/security"/>
-    <public includes="images/s16/security/" path=""/>
-    <resource path="images/s16/system"/>
-    <public includes="images/s16/system/" path=""/>
-    <resource path="images/s16/validation"/>
-    <public includes="images/s16/validation/" path=""/>
-    <resource path="images/s32"/>
-    <public includes="images/s32/" path=""/>
-    <resource path="images/s32/system"/>
-    <public includes="images/s32/system/" path=""/>
-    <resource path="images/svg/color"/>
-    <public includes="images/svg/color/" path=""/>
-    <resource path="images/svg/mono"/>
-    <public includes="images/svg/mono/" path=""/>
     <!--==================< modality-base-client-operationactionsloading >==================-->
     <source path="one/modality/base/client/operationactionsloading"/>
     <!--=====================< modality-base-client-presentationmodel >=====================-->
     <source path="one/modality/base/client/presentationmodel"/>
-    <!--===========================< modality-base-client-util >============================-->
-    <source path="one/modality/base/client/util/functions"/>
-    <source path="one/modality/base/client/util/log"/>
-    <source path="one/modality/base/client/util/routing"/>
-    <!--========================< modality-base-client-validation >=========================-->
-    <source path="one/modality/base/client/validation"/>
-    <!--======================< modality-base-client2018-aggregates >=======================-->
-    <source path="one/modality/base/client2018/aggregates/cart"/>
-    <source path="one/modality/base/client2018/aggregates/event"/>
-    <source path="one/modality/base/client2018/aggregates/person"/>
     <!--==================< modality-base-frontoffice-activities-account >==================-->
     <source path="one/modality/base/frontoffice/activities/account"/>
     <source path="one/modality/base/frontoffice/activities/account/routing"/>
@@ -178,11 +116,6 @@
     <source path="one/modality/base/frontoffice/activities/alerts"/>
     <source path="one/modality/base/frontoffice/activities/alerts/routing"/>
     <source path="one/modality/base/frontoffice/operations/routes/alerts"/>
-    <!--===================< modality-base-frontoffice-activities-home >====================-->
-    <source path="one/modality/base/frontoffice/activities/home"/>
-    <source path="one/modality/base/frontoffice/activities/home/routing"/>
-    <source path="one/modality/base/frontoffice/activities/home/views"/>
-    <source path="one/modality/base/frontoffice/operations/routes/home"/>
     <!--=======================< modality-base-frontoffice-utility >========================-->
     <source path="one/modality/base/frontoffice/entities"/>
     <source path="one/modality/base/frontoffice/fx"/>
@@ -201,43 +134,18 @@
     <source path="one/modality/base/shared/entities/formatters"/>
     <source path="one/modality/base/shared/entities/impl"/>
     <source path="one/modality/base/shared/entities/markers"/>
-    <source path="one/modality/base/shared/services/systemmetrics"/>
-    <!--====================< modality-crm-backoffice-organization-fx >=====================-->
-    <source path="one/modality/crm/backoffice/organization/fx"/>
     <!--======================< modality-crm-client-activities-login >======================-->
     <source path="one/modality/crm/client/activities/login"/>
     <!--==================< modality-crm-client-activities-unauthorized >===================-->
     <source path="one/modality/crm/client/activities/unauthorized"/>
     <!--===========================< modality-crm-client-authz >============================-->
     <source path="one/modality/crm/client/services/authz"/>
-    <!--==================< modality-ecommerce-client2018-businesslogic >===================-->
-    <source path="one/modality/ecommerce/client2018/businessdata/feesgroup"/>
-    <source path="one/modality/ecommerce/client2018/businessdata/preselection"/>
-    <source path="one/modality/ecommerce/client2018/businessdata/workingdocument"/>
-    <source path="one/modality/ecommerce/client2018/businesslogic/feesgroup"/>
-    <source path="one/modality/ecommerce/client2018/businesslogic/option"/>
-    <source path="one/modality/ecommerce/client2018/businesslogic/pricing"/>
-    <source path="one/modality/ecommerce/client2018/businesslogic/rules"/>
-    <source path="one/modality/ecommerce/client2018/businesslogic/workingdocument"/>
-    <!--=======================< modality-event-backoffice-event-fx >=======================-->
-    <source path="one/modality/event/backoffice/event/fx"/>
-    <!--===================< modality-event-client2018-bookingcalendar >====================-->
-    <source path="one/modality/event/client2018/controls/bookingcalendar"/>
-    <!--=======================< modality-event-client2018-calendar >=======================-->
-    <source path="one/modality/event/client2018/businessdata/calendar"/>
-    <source path="one/modality/event/client2018/businessdata/calendar/impl"/>
-    <source path="one/modality/event/client2018/controls/calendargraphic"/>
-    <source path="one/modality/event/client2018/controls/calendargraphic/impl"/>
-    <!--=====================< modality-event-client2018-sectionpanel >=====================-->
-    <source path="one/modality/event/client2018/controls/sectionpanel"/>
     <!--=================< modality-event-frontoffice-activities-booking >==================-->
     <source path="one/modality/event/frontoffice/activities/booking"/>
     <source path="one/modality/event/frontoffice/activities/booking/routing"/>
     <source path="one/modality/event/frontoffice/activities/booking/steps"/>
     <source path="one/modality/event/frontoffice/activities/booking/views"/>
     <source path="one/modality/event/frontoffice/operations/routes/booking"/>
-    <!--=========================< modality-hotel-shared2018-time >=========================-->
-    <source path="one/modality/hotel/shared2018/businessdata/time"/>
     <!--===============================< webfx-extras-cell >================================-->
     <source path="dev/webfx/extras/cell/collator"/>
     <source path="dev/webfx/extras/cell/renderer"/>
@@ -254,8 +162,6 @@
     <source path="dev/webfx/extras/materialdesign/util/background"/>
     <source path="dev/webfx/extras/materialdesign/util/layout"/>
     <source path="dev/webfx/extras/materialdesign/util/scene"/>
-    <!--=============================< webfx-extras-scalepane >=============================-->
-    <source path="dev/webfx/extras/scalepane"/>
     <!--===============================< webfx-extras-theme >===============================-->
     <source path="dev/webfx/extras/theme"/>
     <source path="dev/webfx/extras/theme/layout"/>
@@ -326,10 +232,6 @@
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics/gwt/util"/>
     <!--=====================< webfx-kit-javafxgraphics-registry-gwt >======================-->
     <source path="dev/webfx/kit/registry/javafxgraphics"/>
-    <!--========================< webfx-kit-javafxmedia-peers-gwt >=========================-->
-    <source path="dev/webfx/kit/mapper/peers/javafxmedia/spi/gwt"/>
-    <!--=======================< webfx-kit-javafxmedia-registry-gwt >=======================-->
-    <source path="dev/webfx/kit/registry/javafxmedia"/>
     <!--=========================< webfx-kit-javafxweb-peers-base >=========================-->
     <source path="dev/webfx/kit/mapper/peers/javafxweb/base"/>
     <!--=========================< webfx-kit-javafxweb-peers-gwt >==========================-->
@@ -530,8 +432,6 @@
     <source path="dev/webfx/stack/conf/spi/impl"/>
     <!--==========================< webfx-stack-conf-format-json >==========================-->
     <source path="dev/webfx/stack/conf/spi/impl/format/json"/>
-    <!--=========================< webfx-stack-conf-localstorage >==========================-->
-    <source path="dev/webfx/stack/conf/spi/impl/localstorage"/>
     <!--===========================< webfx-stack-conf-resource >============================-->
     <source path="dev/webfx/stack/conf/spi/impl/resource"/>
     <!--============================< webfx-stack-db-datascope >============================-->
