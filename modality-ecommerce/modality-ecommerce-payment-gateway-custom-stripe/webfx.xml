@@ -3,7 +3,7 @@
 
     <exported-packages>
         <source-packages/>
-        <resource-package>one.modality.ecommerce.payment.gateway.custom.spi.impl.stripe</resource-package>
+        <resource-packages/>
     </exported-packages>
 
     <dependencies>

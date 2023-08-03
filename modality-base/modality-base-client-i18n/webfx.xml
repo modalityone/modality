@@ -3,7 +3,7 @@
 
     <exported-packages>
         <source-packages/>
-        <resource-package>one.modality.base.client.services.i18n.dictionaries</resource-package>
+        <resource-packages/>
     </exported-packages>
 
     <providers>
@@ -16,6 +16,7 @@
         <used-by-source-modules>
             <undetected-module>javafx-base</undetected-module>
         </used-by-source-modules>
+        <plugin-module>modality-base-client-icons</plugin-module>
     </dependencies>
 
     <embed-resources>

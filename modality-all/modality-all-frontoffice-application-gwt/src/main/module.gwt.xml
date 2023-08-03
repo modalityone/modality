@@ -28,8 +28,8 @@
     <source path="com/sun/javafx/scene/control/skin"/>
     <source path="javafx/scene/control"/>
     <source path="javafx/scene/control/skin"/>
-    <resource path="images/checkbox"/>
-    <public includes="images/checkbox/" path=""/>
+    <resource path="javafx/scene/control/skin/checkbox"/>
+    <public includes="javafx/scene/control/skin/checkbox/" path=""/>
     <!--================================< javafx-controls >=================================-->
     <source path="javafx/scene/chart"/>
     <!--=========================< webfx-kit-javafxgraphics-emul >==========================-->
@@ -102,6 +102,45 @@
     <source path="one/modality/base/client/services/i18n"/>
     <resource path="one/modality/base/client/services/i18n/dictionaries"/>
     <public includes="one/modality/base/client/services/i18n/dictionaries/" path=""/>
+    <!--===========================< modality-base-client-icons >===========================-->
+    <resource path="images/s16"/>
+    <public includes="images/s16/" path=""/>
+    <resource path="images/s16/actions"/>
+    <public includes="images/s16/actions/" path=""/>
+    <resource path="images/s16/continents"/>
+    <public includes="images/s16/continents/" path=""/>
+    <resource path="images/s16/continents/org"/>
+    <public includes="images/s16/continents/org/" path=""/>
+    <resource path="images/s16/countries"/>
+    <public includes="images/s16/countries/" path=""/>
+    <resource path="images/s16/currencies"/>
+    <public includes="images/s16/currencies/" path=""/>
+    <resource path="images/s16/event"/>
+    <public includes="images/s16/event/" path=""/>
+    <resource path="images/s16/itemFamilies"/>
+    <public includes="images/s16/itemFamilies/" path=""/>
+    <resource path="images/s16/languages"/>
+    <public includes="images/s16/languages/" path=""/>
+    <resource path="images/s16/methods"/>
+    <public includes="images/s16/methods/" path=""/>
+    <resource path="images/s16/moneyAccountTypes"/>
+    <public includes="images/s16/moneyAccountTypes/" path=""/>
+    <resource path="images/s16/multipleBookings"/>
+    <public includes="images/s16/multipleBookings/" path=""/>
+    <resource path="images/s16/organizations"/>
+    <public includes="images/s16/organizations/" path=""/>
+    <resource path="images/s16/security"/>
+    <public includes="images/s16/security/" path=""/>
+    <resource path="images/s16/system"/>
+    <public includes="images/s16/system/" path=""/>
+    <resource path="images/s16/validation"/>
+    <public includes="images/s16/validation/" path=""/>
+    <resource path="images/s32/system"/>
+    <public includes="images/s32/system/" path=""/>
+    <resource path="images/svg/color"/>
+    <public includes="images/svg/color/" path=""/>
+    <resource path="images/svg/mono"/>
+    <public includes="images/svg/mono/" path=""/>
     <!--==================< modality-base-client-operationactionsloading >==================-->
     <source path="one/modality/base/client/operationactionsloading"/>
     <!--=====================< modality-base-client-presentationmodel >=====================-->
