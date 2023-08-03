@@ -10,8 +10,6 @@
 
         <plugin-module>modality-catering-backoffice-activities-kitchen</plugin-module>
 
-        <plugin-module>modality-catering-backoffice2018-activities-diningareas</plugin-module>
-
     </dependencies>
 
 </project>

@@ -8,7 +8,6 @@
     <dependencies>
         <used-by-source-modules>
             <module transitive="true">webfx-platform-async</module>
-            <module transitive="true">modality-base-client2018-aggregates</module>
         </used-by-source-modules>
     </dependencies>
 

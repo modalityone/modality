@@ -16,11 +16,6 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>one.modality</groupId>
             <artifactId>modality-all-backoffice-application</artifactId>
             <version>1.0.0-SNAPSHOT</version>
@@ -47,12 +42,6 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-shared-domainmodel</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
             <artifactId>modality-crm-client-authz</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
@@ -66,18 +55,6 @@
         <dependency>
             <groupId>one.modality</groupId>
             <artifactId>modality-ecommerce-payment-custom-remote</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-event-backoffice2018-activities-cloneevent</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-event-backoffice2018-activities-cloneevent-routing</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
@@ -281,12 +258,6 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-conf-env-java</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-conf-format-json</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
@@ -317,12 +288,6 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-orm-domainmodel-activity</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-orm-dql-query-interceptor</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
@@ -336,12 +301,6 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-orm-dql-submit-interceptor</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-routing-uirouter</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

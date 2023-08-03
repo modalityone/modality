@@ -26,4 +26,7 @@ module modality.base.client.gantt.canvas {
     // Exported packages
     exports one.modality.base.client.ganttcanvas;
 
+    // Resources packages
+    opens one.modality.base.client.ganttcanvas.images.s32;
+
 }

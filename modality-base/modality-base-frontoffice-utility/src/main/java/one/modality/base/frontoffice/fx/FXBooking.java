@@ -2,7 +2,12 @@ package one.modality.base.frontoffice.fx;
 
 
 import javafx.beans.property.*;
+import javafx.collections.ListChangeListener;
+import one.modality.base.frontoffice.states.PersonPM;
 import one.modality.base.shared.entities.Organization;
+import one.modality.base.shared.entities.Person;
+
+import java.util.stream.Collectors;
 
 public class FXBooking {
 

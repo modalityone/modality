@@ -11,7 +11,9 @@
     </providers>
 
     <dependencies>
-        <used-by-source-modules/>
+        <used-by-source-modules>
+            <undetected-module>javafx-controls</undetected-module>
+        </used-by-source-modules>
     </dependencies>
 
 </project>

@@ -16,19 +16,14 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>modality-crm-backoffice-activities-all</module>
+        <module>modality-crm-backoffice-bookingdetailspanel</module>
+        <module>modality-crm-backoffice-operations-mail</module>
         <module>modality-crm-backoffice-organization-fx</module>
-        <module>modality-crm-backoffice2018-activities-authorizations</module>
-        <module>modality-crm-backoffice2018-activities-letter</module>
-        <module>modality-crm-backoffice2018-activities-letters</module>
-        <module>modality-crm-backoffice2018-activities-organizations</module>
-        <module>modality-crm-backoffice2018-activities-users</module>
-        <module>modality-crm-backoffice2018-bookingdetailspanel</module>
-        <module>modality-crm-backoffice2018-operations-mail</module>
         <module>modality-crm-client-activities-login</module>
         <module>modality-crm-client-activities-unauthorized</module>
+        <module>modality-crm-client-authn-fx</module>
         <module>modality-crm-client-authz</module>
-        <module>modality-crm-client2018-personaldetails</module>
+        <module>modality-crm-client-personaldetails</module>
         <module>modality-crm-server-application-all</module>
         <module>modality-crm-server-application-min</module>
         <module>modality-crm-server-authn-gateway</module>

@@ -354,13 +354,13 @@
                         <list>images/s16/security/[^/]+$</list>
                         <list>images/s16/system/[^/]+$</list>
                         <list>images/s16/validation/[^/]+$</list>
-                        <list>images/s32/[^/]+$</list>
                         <list>images/s32/system/[^/]+$</list>
                         <list>images/svg/color/[^/]+$</list>
                         <list>images/svg/mono/[^/]+$</list>
                         <list>one/modality/base/client/busconfig/[^/]+$</list>
                         <list>one/modality/base/client/css/[^/]+$</list>
                         <list>one/modality/base/client/fonts/[^/]+$</list>
+                        <list>one/modality/base/client/ganttcanvas/images/s32/[^/]+$</list>
                         <list>one/modality/base/client/images/[^/]+$</list>
                         <list>one/modality/base/client/services/i18n/dictionaries/[^/]+$</list>
                         <list>one/modality/base/shared/domainmodel/[^/]+$</list>
