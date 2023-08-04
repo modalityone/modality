@@ -42,7 +42,7 @@ module modality.all.frontoffice.application.gluon {
     requires webfx.stack.session.client;
     requires webfx.stack.ui.fxraiser.json;
 
-    // Meta Resource package
+    // Resources packages
     opens dev.webfx.platform.meta.exe;
 
 }

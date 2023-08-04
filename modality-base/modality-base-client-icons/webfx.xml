@@ -3,24 +3,7 @@
 
     <exported-packages>
         <source-packages/>
-        <resource-package>images.s16</resource-package>
-        <resource-package>images.s16.actions</resource-package>
-        <resource-package>images.s16.continents</resource-package>
-        <resource-package>images.s16.countries</resource-package>
-        <resource-package>images.s16.currencies</resource-package>
-        <resource-package>images.s16.event</resource-package>
-        <resource-package>images.s16.itemFamilies</resource-package>
-        <resource-package>images.s16.languages</resource-package>
-        <resource-package>images.s16.methods</resource-package>
-        <resource-package>images.s16.moneyAccountTypes</resource-package>
-        <resource-package>images.s16.multipleBookings</resource-package>
-        <resource-package>images.s16.organizations</resource-package>
-        <resource-package>images.s16.security</resource-package>
-        <resource-package>images.s16.system</resource-package>
-        <resource-package>images.s16.validation</resource-package>
-        <resource-package>images.s32.system</resource-package>
-        <resource-package>images.svg.color</resource-package>
-        <resource-package>images.svg.mono</resource-package>
+        <resource-packages/>
     </exported-packages>
 
     <dependencies>
