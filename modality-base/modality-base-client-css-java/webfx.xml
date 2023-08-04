@@ -7,8 +7,7 @@
 
     <exported-packages>
         <source-packages/>
-        <resource-package>one.modality.base.client.css</resource-package>
-        <resource-package>one.modality.base.client.fonts</resource-package>
+        <resource-packages/>
     </exported-packages>
 
     <dependencies>

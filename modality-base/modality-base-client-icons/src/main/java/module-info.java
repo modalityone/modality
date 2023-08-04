@@ -6,6 +6,7 @@ module modality.base.client.icons {
     opens images.s16;
     opens images.s16.actions;
     opens images.s16.continents;
+    opens images.s16.continents.org;
     opens images.s16.countries;
     opens images.s16.currencies;
     opens images.s16.event;
