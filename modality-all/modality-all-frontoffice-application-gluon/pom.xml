@@ -331,7 +331,6 @@
                         <list>dev/webfx/stack/authn/login/ui/spi/impl/gateway/facebook/[^/]+$</list>
                         <list>dev/webfx/stack/authn/login/ui/spi/impl/gateway/google/[^/]+$</list>
                         <list>dev/webfx/stack/ui/validation/controlsfx/images/[^/]+$</list>
-                        <list>images/[^/]+$</list>
                         <list>images/buddhas/[^/]+$</list>
                         <list>images/s16/[^/]+$</list>
                         <list>images/s16/actions/[^/]+$</list>
@@ -354,8 +353,6 @@
                         <list>images/svg/color/[^/]+$</list>
                         <list>images/svg/mono/[^/]+$</list>
                         <list>javafx/scene/control/skin/checkbox/[^/]+$</list>
-                        <list>one/modality/base/[^/]+$</list>
-                        <list>one/modality/base/client/[^/]+$</list>
                         <list>one/modality/base/client/busconfig/[^/]+$</list>
                         <list>one/modality/base/client/css/[^/]+$</list>
                         <list>one/modality/base/client/fonts/[^/]+$</list>

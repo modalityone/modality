@@ -3,7 +3,6 @@
 module modality.base.client.icons {
 
     // Resources packages
-    opens images;
     opens images.s16;
     opens images.s16.actions;
     opens images.s16.continents;
