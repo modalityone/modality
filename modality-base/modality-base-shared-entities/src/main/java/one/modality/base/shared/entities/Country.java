@@ -20,4 +20,28 @@ public interface Country extends
         return getStringFieldValue("iso_alpha2");
     }
 
+    default void setFipsCode(String fipsCode) {
+        setFieldValue("fipsCode", fipsCode);
+    }
+
+    default String getFipsCode() {
+        return getStringFieldValue("fipsCode");
+    }
+
+    default Float getLatitude() {
+        return getFloatFieldValue("latitude");
+    }
+
+    default void setLatitude(Float latitude) {
+        setFieldValue("latitude", latitude);
+    }
+
+    default Float getLongitude() {
+        return getFloatFieldValue("longitude");
+    }
+
+    default void setLongitude(Float longitude) {
+        setFieldValue("longitude", longitude);
+    }
+
 }
