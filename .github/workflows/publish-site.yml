@@ -36,7 +36,7 @@ jobs:
 
       # Build JavaDoc
       - name: Build JavaDoc
-        run: mvn -B site site:stage
+        run: mvn -B install site site:stage
 
       - name: Publish Maven site to ${{ env.web-push-branch }} branch
         uses: cpina/github-action-push-to-another-repository@master
