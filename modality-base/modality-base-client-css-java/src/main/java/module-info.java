@@ -10,6 +10,8 @@ module modality.base.client.css {
     exports one.modality.base.client.fonts;
 
     // Resources packages
+    opens one.modality.base;
+    opens one.modality.base.client;
     opens one.modality.base.client.css;
     opens one.modality.base.client.fonts;
 

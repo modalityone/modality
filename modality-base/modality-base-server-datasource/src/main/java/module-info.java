@@ -16,6 +16,8 @@ module modality.base.server.datasource {
     exports one.modality.base.server.services.datasource;
 
     // Resources packages
+    opens db;
+    opens kbs2;
     opens one.modality.base.server.services.datasource;
 
     // Provided services

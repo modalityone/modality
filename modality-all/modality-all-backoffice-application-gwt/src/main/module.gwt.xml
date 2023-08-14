@@ -203,6 +203,8 @@
     <resource path="one/modality/base/client/services/i18n/dictionaries"/>
     <public includes="one/modality/base/client/services/i18n/dictionaries/" path=""/>
     <!--===========================< modality-base-client-icons >===========================-->
+    <resource path="images"/>
+    <public includes="images/" path=""/>
     <resource path="images/s16"/>
     <public includes="images/s16/" path=""/>
     <resource path="images/s16/actions"/>
