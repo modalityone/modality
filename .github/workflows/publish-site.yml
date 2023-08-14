@@ -5,14 +5,15 @@ on:
     branches: [ main ]
 
 jobs:
-  javadoc:
+  site:
     runs-on: ubuntu-latest
 
     env:
       # WebFX requires at least JDK 13 due to javac bugs in prior versions (otherwise JDK 11+ should be enough in theory)
       jdk-version: '19'
       repo-dir: .
-      target-javadoc-dir: './target/staging/modality'
+      target-site-dir: './target/staging/modality'
+      web-site-url: 'https://site.modality.one'
       web-push-repository-name:  'modality-netlify'
       web-push-repository-owner: 'modalityone'
       web-push-branch: 'site'
@@ -34,16 +35,16 @@ jobs:
         with:
           path: ${{ env.repo-dir }}
 
-      # Build JavaDoc
-      - name: Build JavaDoc
-        run: mvn -B install site site:stage
+      # Build Maven site
+      - name: Build Maven site
+        run: mvn -B -Dplugin.site.param.topSiteURL=${{ env.web-site-url }} install site site:stage
 
       - name: Publish Maven site to ${{ env.web-push-branch }} branch
         uses: cpina/github-action-push-to-another-repository@master
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_GITHUB_TOKEN }}
         with:
-          source-directory: ${{ env.target-javadoc-dir }}
+          source-directory: ${{ env.target-site-dir }}
           destination-repository-username: ${{ env.web-push-repository-owner }}
           destination-repository-name: ${{ env.web-push-repository-name }}
           target-branch: ${{ env.web-push-branch }}
