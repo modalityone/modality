@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="modality">
+<project name="modality" deployRepositoryId="modality-sonatype-deploy">
 
     <parent name="webfx-parent"/>
 
@@ -33,17 +33,9 @@
 
     </required-libraries>
 
-    <maven-pom-manual>
-        <distributionManagement>
-
-            <!-- To tell mvn deploy to deploy snapshots to Sonatype repository  -->
-            <snapshotRepository>
-                <id>modality-sonatype-deploy</id>                <!-- server username & password must be set in settings.xml -->
-                <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-            </snapshotRepository>
-
-        </distributionManagement>
-
-    </maven-pom-manual>
+    <maven-repositories>
+        <snapshot-repository id="webfx-snapshots">https://oss.sonatype.org/content/repositories/snapshots/</snapshot-repository>
+        <snapshot-repository id="modality-sonatype-deploy">https://s01.oss.sonatype.org/content/repositories/snapshots/</snapshot-repository>
+    </maven-repositories>
 
 </project>

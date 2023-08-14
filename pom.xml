@@ -16,9 +16,14 @@
     <artifactId>modality</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
-    <repositories>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>modality-sonatype-deploy</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
-        <!-- For WebFX snapshots download (including webfx-parent) -->
+    <repositories>
         <repository>
             <id>webfx-snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
@@ -29,19 +34,7 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
-
     </repositories>
-
-
-    <distributionManagement>
-
-        <!-- To tell mvn deploy to deploy snapshots to Sonatype repository  -->
-        <snapshotRepository>
-            <id>modality-sonatype-deploy</id>            <!-- server username & password must be set in settings.xml -->
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-
-    </distributionManagement>
 
     <packaging>pom</packaging>
 
