@@ -51,6 +51,7 @@
         <module>modality-base-server-application-all</module>
         <module>modality-base-server-application-min</module>
         <module>modality-base-server-datasource</module>
+        <module>modality-base-server-geoimport</module>
         <module>modality-base-shared-domainmodel</module>
         <module>modality-base-shared-entities</module>
     </modules>
