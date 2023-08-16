@@ -13,7 +13,7 @@
 
     <artifactId>modality-ecommerce</artifactId>
 
-    <description>Ecommerce layer that contains modules required for building a e-commerce solution.</description>
+    <description>Layer that contains modules for building an E-commerce solution.</description>
 
     <packaging>pom</packaging>
 

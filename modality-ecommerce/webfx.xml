@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
 
-    <description>Ecommerce layer that contains modules required for building a e-commerce solution.</description>
+    <description>Layer that contains modules for building an E-commerce solution.</description>
 
     <modules>
         <subdirectories-modules/>

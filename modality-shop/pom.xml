@@ -13,7 +13,7 @@
 
     <artifactId>modality-shop</artifactId>
 
-    <description>Shop layer that contains modules required for managing a shop (future plan).</description>
+    <description>Layer that contains modules for managing a shop (future plan).</description>
 
     <packaging>pom</packaging>
 

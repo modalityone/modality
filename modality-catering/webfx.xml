@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
 
-    <description>Catering layer that contains modules required for catering management.</description>
+    <description>Layer that contains modules for catering management.</description>
 
     <modules>
         <subdirectories-modules/>

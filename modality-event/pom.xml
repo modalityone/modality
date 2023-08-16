@@ -13,7 +13,7 @@
 
     <artifactId>modality-event</artifactId>
 
-    <description>Event layer that contains modules required for managing events.</description>
+    <description>Layer that contains modules for managing events.</description>
 
     <packaging>pom</packaging>
 
