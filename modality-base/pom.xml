@@ -13,7 +13,7 @@
 
     <artifactId>modality-base</artifactId>
 
-    <description>Base layer that contains modules for the technical foundation of Modality.</description>
+    <description>Layer that contains modules for the technical foundation of Modality.</description>
 
     <packaging>pom</packaging>
 

@@ -13,7 +13,7 @@
 
     <artifactId>modality-restaurant</artifactId>
 
-    <description>Restaurant layer that contains modules required for managing a restaurant (future plan).</description>
+    <description>Layer that contains modules for managing a restaurant (future plan).</description>
 
     <packaging>pom</packaging>
 

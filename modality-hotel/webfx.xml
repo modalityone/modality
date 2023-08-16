@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
 
-    <description>Hotel layer that contains modules required for managing a hotel.</description>
+    <description>Layer that contains modules for managing a hotel.</description>
 
     <modules>
         <subdirectories-modules/>

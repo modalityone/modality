@@ -13,7 +13,7 @@
 
     <artifactId>modality-hotel</artifactId>
 
-    <description>Hotel layer that contains modules required for managing a hotel.</description>
+    <description>Layer that contains modules for managing a hotel.</description>
 
     <packaging>pom</packaging>
 

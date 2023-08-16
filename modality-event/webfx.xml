@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
 
-    <description>Event layer that contains modules required for managing events.</description>
+    <description>Layer that contains modules for managing events.</description>
 
     <modules>
         <subdirectories-modules/>

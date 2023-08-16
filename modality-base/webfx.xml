@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
 
-    <description>Base layer that contains modules for the technical foundation of Modality.</description>
+    <description>Layer that contains modules for the technical foundation of Modality.</description>
 
     <modules>
         <subdirectories-modules/>
