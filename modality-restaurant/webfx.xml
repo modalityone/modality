@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
 
+    <description>Restaurant layer that contains modules required for managing a restaurant (future plan).</description>
+
     <modules>
         <subdirectories-modules/>
     </modules>

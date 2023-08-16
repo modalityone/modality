@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="modality" deployRepositoryId="modality-sonatype-deploy">
 
+    <description>Modality is a free, open-source, hospitality-oriented booking system.</description>
+
     <parent name="webfx-parent"/>
 
     <groupId>one.modality</groupId>

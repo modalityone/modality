@@ -13,6 +13,8 @@
 
     <artifactId>modality-all</artifactId>
 
+    <description>Layer that contains the Modality back-office, front-office and server with all features enabled (all modules in all layers).</description>
+
     <packaging>pom</packaging>
 
     <modules>
