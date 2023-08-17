@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Define some class materials to build organization-dependent client activities.
+ */
 module modality.base.client.activity.organizationdependent {
 
     // Direct dependencies modules

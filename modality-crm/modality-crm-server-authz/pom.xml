@@ -13,6 +13,8 @@
 
     <artifactId>modality-crm-server-authz</artifactId>
 
+    <description>Server-side module responsible for pushing the user authorization data to the client just after a successful authentication.</description>
+
     <dependencies>
 
         <dependency>

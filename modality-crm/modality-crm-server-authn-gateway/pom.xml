@@ -13,6 +13,8 @@
 
     <artifactId>modality-crm-server-authn-gateway</artifactId>
 
+    <description>Server-side module responsible for checking username/password authentication requests.</description>
+
     <dependencies>
 
         <dependency>

@@ -13,6 +13,8 @@
 
     <artifactId>modality-ecommerce-payment-direct-server</artifactId>
 
+    <description>The actual server-side implementation of the direct payment API, which decides which payment gateway to use and calls it.</description>
+
     <dependencies>
 
         <dependency>

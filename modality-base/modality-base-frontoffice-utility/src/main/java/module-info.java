@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * A set of utility classes for the front-office.
+ */
 module modality.base.frontoffice.utility {
 
     // Direct dependencies modules

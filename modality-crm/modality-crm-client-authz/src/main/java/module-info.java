@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Client-side module responsible for checking if the user is authorised to access a route or execute an operation.
+ */
 module modality.crm.client.authz {
 
     // Direct dependencies modules

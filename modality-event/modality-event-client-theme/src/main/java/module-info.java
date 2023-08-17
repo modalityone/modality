@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Theme for visual components representing events.
+ */
 module modality.event.client.theme {
 
     // Direct dependencies modules

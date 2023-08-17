@@ -13,6 +13,8 @@
 
     <artifactId>modality-all-backoffice-application-gluon</artifactId>
 
+    <description>The Gluon executable module of the Modality Back-Office (for tablets).</description>
+
     <name>ModalityAllBackoffice</name>
 
     <dependencies>

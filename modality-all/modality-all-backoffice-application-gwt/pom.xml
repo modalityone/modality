@@ -13,6 +13,8 @@
 
     <artifactId>modality-all-backoffice-application-gwt</artifactId>
 
+    <description>The GWT executable module of the Modality Back-Office (for browsers).</description>
+
     <packaging>gwt-app</packaging>
 
     <dependencies>

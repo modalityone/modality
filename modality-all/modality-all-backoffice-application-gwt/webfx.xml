@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project executable="true" application-module="modality-all-backoffice-application">
 
+    <description>The GWT executable module of the Modality Back-Office (for browsers).</description>
+
     <dependencies>
         <used-by-source-modules/>
         <plugin-module>modality-all-backoffice-application</plugin-module>

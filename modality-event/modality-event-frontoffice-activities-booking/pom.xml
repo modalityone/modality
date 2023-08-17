@@ -13,6 +13,8 @@
 
     <artifactId>modality-event-frontoffice-activities-booking</artifactId>
 
+    <description>The front-office booking activity.</description>
+
     <dependencies>
 
         <dependency>
