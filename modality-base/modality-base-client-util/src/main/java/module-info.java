@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * A set of client-side utility classes (translate function &amp; route interpolator).
+ */
 module modality.base.client.util {
 
     // Direct dependencies modules

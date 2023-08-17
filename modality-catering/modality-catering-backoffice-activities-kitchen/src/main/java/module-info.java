@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The Kitchen activity that displays the meals figures for the selected month.
+ */
 module modality.catering.backoffice.activities.kitchen {
 
     // Direct dependencies modules

@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The SPI payment gateway implementation for making custom payments with Stripe.
+ */
 module modality.ecommerce.payment.gateway.custom.stripe {
 
     // Direct dependencies modules

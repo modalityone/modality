@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The actual server-side implementation of the delegated payment API, which decides which payment gateway to use and calls it.
+ */
 module modality.ecommerce.payment.delegated.server {
 
     // Direct dependencies modules

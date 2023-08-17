@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project executable="true">
 
+    <description>The OpenJFX executable module of the Modality Back-Office (for desktops &amp; development).</description>
+
     <exported-packages>
         <source-packages/>
     </exported-packages>

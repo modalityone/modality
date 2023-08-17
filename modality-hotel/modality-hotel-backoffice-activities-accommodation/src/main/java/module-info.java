@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The back-office Accommodation activity.
+ */
 module modality.hotel.backoffice.activities.accommodation {
 
     // Direct dependencies modules

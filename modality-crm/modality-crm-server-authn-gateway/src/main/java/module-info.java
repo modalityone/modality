@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Server-side module responsible for checking username/password authentication requests.
+ */
 module modality.crm.server.authn.gateway {
 
     // Direct dependencies modules

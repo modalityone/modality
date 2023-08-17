@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Module that defines the default client bus configuration (with configuration variables and default values).
+ */
 module modality.base.client.busconfig {
 
     // Direct dependencies modules

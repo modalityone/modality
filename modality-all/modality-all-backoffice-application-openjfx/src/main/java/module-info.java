@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The OpenJFX executable module of the Modality Back-Office (for desktops &amp; development).
+ */
 module modality.all.backoffice.application.openjfx {
 
     // Direct dependencies modules

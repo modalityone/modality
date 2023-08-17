@@ -13,6 +13,8 @@
 
     <artifactId>modality-ecommerce-payment-gateway-direct-authorizedotnet</artifactId>
 
+    <description>The SPI payment gateway implementation for making direct payments with Authorize.net.</description>
+
     <dependencies>
 
         <dependency>

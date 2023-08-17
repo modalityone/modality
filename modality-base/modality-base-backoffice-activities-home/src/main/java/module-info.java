@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The back-office Home page that displays activities as browsable tiles (only the authorized ones are displayed).
+ */
 module modality.base.backoffice.activities.home {
 
     // Direct dependencies modules

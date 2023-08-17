@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The front-office booking activity.
+ */
 module modality.event.frontoffice.activities.booking {
 
     // Direct dependencies modules

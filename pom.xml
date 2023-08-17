@@ -16,9 +16,16 @@
     <artifactId>modality</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
-    <repositories>
+    <description>Modality is a free, open-source, hospitality-oriented booking system.</description>
 
-        <!-- For WebFX snapshots download (including webfx-parent) -->
+    <distributionManagement>
+        <snapshotRepository>
+            <id>modality-sonatype-deploy</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <repositories>
         <repository>
             <id>webfx-snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
@@ -29,19 +36,23 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
-
     </repositories>
 
 
-    <distributionManagement>
-
-        <!-- To tell mvn deploy to deploy snapshots to Sonatype repository  -->
-        <snapshotRepository>
-            <id>modality-sonatype-deploy</id>            <!-- server username & password must be set in settings.xml -->
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-
-    </distributionManagement>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- Removing implementation modules from JavaDoc because 1) they are not useful for users 2) gwt modules don't have a module-info.java which generates JavaDoc errors -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <configuration>
+                        <skippedModules>modality-base-client-css-java,modality-base-client-css-web</skippedModules>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
     <packaging>pom</packaging>
 

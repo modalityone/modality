@@ -13,6 +13,8 @@
 
     <artifactId>modality-base-client-navigationarrows-java</artifactId>
 
+    <description>Plugin module to declare the backward and forward navigation operations in Java.</description>
+
     <dependencies>
 
         <dependency>

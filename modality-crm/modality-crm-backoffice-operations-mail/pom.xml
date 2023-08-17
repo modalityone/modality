@@ -13,6 +13,8 @@
 
     <artifactId>modality-crm-backoffice-operations-mail</artifactId>
 
+    <description>The UI operations for mails: opening a mail, and composing a new mail.</description>
+
     <dependencies>
 
         <dependency>

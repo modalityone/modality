@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * A JavaFX property holder of an authenticated Modality user (ModalityUserPrincipal).
+ */
 module modality.crm.client.authn.fx {
 
     // Direct dependencies modules

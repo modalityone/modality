@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The Gantt canvas that displays events over the current Gantt time window.
+ */
 module modality.event.backoffice.events.ganttcanvas {
 
     // Direct dependencies modules

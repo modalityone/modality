@@ -13,6 +13,8 @@
 
     <artifactId>modality-all-frontoffice-application-openjfx</artifactId>
 
+    <description>The OpenJFX executable module of the Modality Front-Office (for development).</description>
+
     <dependencies>
 
         <dependency>
