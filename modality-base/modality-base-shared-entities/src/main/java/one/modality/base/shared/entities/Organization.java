@@ -1,6 +1,7 @@
 package one.modality.base.shared.entities;
 
 import dev.webfx.stack.orm.entity.EntityId;
+import one.modality.base.shared.entities.markers.EntityHasCountry;
 import one.modality.base.shared.entities.markers.EntityHasIcon;
 import one.modality.base.shared.entities.markers.EntityHasLabel;
 import one.modality.base.shared.entities.markers.EntityHasName;
@@ -11,9 +12,22 @@ import one.modality.base.shared.entities.markers.EntityHasName;
 public interface Organization extends
         EntityHasName,
         EntityHasLabel,
-        EntityHasIcon {
+        EntityHasIcon,
+        EntityHasCountry {
 
-    default void setKdmCenter(KdmCenter kdmCenter) {
+    default void setType(Object type) {
+        setForeignField("type", type);
+    }
+
+    default EntityId getTypeId() {
+        return getForeignEntityId("type");
+    }
+
+    default OrganizationType getType() {
+        return getForeignEntity("type");
+    }
+
+    default void setKdmCenter(Object kdmCenter) {
         setForeignField("kdmCenter", kdmCenter);
     }
 

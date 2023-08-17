@@ -7,7 +7,9 @@ import dev.webfx.stack.orm.entity.EntityId;
 /**
  * @author Bruno Salmon
  */
-public interface EntityHasPersonalDetails extends EntityHasOrganization, HasPersonalDetails {
+public interface EntityHasPersonalDetails extends EntityHasOrganization,
+        EntityHasCountry,
+        HasPersonalDetails {
 
     default Object getFirstNameField() { return "firstName";}
 
