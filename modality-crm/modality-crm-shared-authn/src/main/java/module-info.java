@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Defines the authentication data (ModalityUserPrincipal) sent by the server to the client over the network.
+ */
 module modality.crm.shared.authn {
 
     // Direct dependencies modules

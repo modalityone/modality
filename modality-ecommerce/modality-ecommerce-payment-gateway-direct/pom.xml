@@ -13,6 +13,8 @@
 
     <artifactId>modality-ecommerce-payment-gateway-direct</artifactId>
 
+    <description>The generic Server Provider Interface for custom payments to call a payment gateway.</description>
+
     <dependencies>
 
         <dependency>

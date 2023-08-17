@@ -13,6 +13,8 @@
 
     <artifactId>modality-crm-server-application-min</artifactId>
 
+    <description>Convenient module that embeds the minimal set of server plugin modules required for the CRM layer.</description>
+
     <dependencies>
 
         <dependency>

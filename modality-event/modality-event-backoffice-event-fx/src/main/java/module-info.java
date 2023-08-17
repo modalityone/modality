@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * A JavaFX property holder of the current Event viewed by the user in the back-office.
+ */
 module modality.event.backoffice.event.fx {
 
     // Direct dependencies modules

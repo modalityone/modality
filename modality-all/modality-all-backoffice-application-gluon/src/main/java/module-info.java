@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The Gluon executable module of the Modality Back-Office (for tablets).
+ */
 module modality.all.backoffice.application.gluon {
 
     // Direct dependencies modules

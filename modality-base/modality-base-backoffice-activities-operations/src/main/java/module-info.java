@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The back-office Operations activity.
+ */
 module modality.base.backoffice.activities.operations {
 
     // Direct dependencies modules

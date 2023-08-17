@@ -13,6 +13,8 @@
 
     <artifactId>modality-ecommerce-backoffice-activities-bookings</artifactId>
 
+    <description>The bookings activity to view, search, and amend bookings.</description>
+
     <dependencies>
 
         <dependency>

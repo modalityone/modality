@@ -13,6 +13,8 @@
 
     <artifactId>modality-all-backoffice-application-openjfx</artifactId>
 
+    <description>The OpenJFX executable module of the Modality Back-Office (for desktops &amp; development).</description>
+
     <dependencies>
 
         <dependency>

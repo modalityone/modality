@@ -13,6 +13,8 @@
 
     <artifactId>modality-ecommerce-payment-delegated-remote</artifactId>
 
+    <description>The client-side implementation of the delegated payment API (just forwards the request to the server).</description>
+
     <dependencies>
 
         <dependency>

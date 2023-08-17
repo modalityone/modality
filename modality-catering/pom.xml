@@ -13,7 +13,7 @@
 
     <artifactId>modality-catering</artifactId>
 
-    <description>Layer that contains modules for catering management.</description>
+    <description>Layer that contains modules for the catering management.</description>
 
     <packaging>pom</packaging>
 

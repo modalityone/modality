@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Modality implementation of client validation support.
+ */
 module modality.base.client.validation {
 
     // Direct dependencies modules
