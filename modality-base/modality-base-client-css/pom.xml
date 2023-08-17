@@ -13,4 +13,6 @@
 
     <artifactId>modality-base-client-css</artifactId>
 
+    <description>Cross-platform interface module for CSS (empty).</description>
+
 </project>

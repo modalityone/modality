@@ -13,6 +13,8 @@
 
     <artifactId>modality-hotel-backoffice-accommodation</artifactId>
 
+    <description>A set of classes shared by the Accommodation &amp; Household activities.</description>
+
     <dependencies>
 
         <dependency>

@@ -13,6 +13,8 @@
 
     <artifactId>modality-event-backoffice-events-ganttcanvas</artifactId>
 
+    <description>The Gantt canvas that displays events over the current Gantt time window.</description>
+
     <dependencies>
 
         <dependency>

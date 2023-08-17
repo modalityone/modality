@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Declares the direct payment endpoint address, and implements the data serialisation.
+ */
 module modality.ecommerce.payment.direct.buscall {
 
     // Direct dependencies modules

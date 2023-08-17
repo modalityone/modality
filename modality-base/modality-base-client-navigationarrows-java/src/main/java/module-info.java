@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Plugin module to declare the backward and forward navigation operations in Java.
+ */
 module modality.base.client.navigationarrows.java {
 
     // Direct dependencies modules

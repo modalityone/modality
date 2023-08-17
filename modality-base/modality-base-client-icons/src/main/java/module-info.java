@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * A resource module containing most icons used in Modality.
+ */
 module modality.base.client.icons {
 
     // Resources packages

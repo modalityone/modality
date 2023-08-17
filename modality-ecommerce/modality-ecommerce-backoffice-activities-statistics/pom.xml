@@ -13,6 +13,8 @@
 
     <artifactId>modality-ecommerce-backoffice-activities-statistics</artifactId>
 
+    <description>The statistics activity to view the number of booked options over the time.</description>
+
     <dependencies>
 
         <dependency>

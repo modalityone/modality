@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The statistics activity to view the number of booked options over the time.
+ */
 module modality.ecommerce.backoffice.activities.statistics {
 
     // Direct dependencies modules

@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Define some generic class materials to build Modality client activities.
+ */
 module modality.base.client.activity {
 
     // Direct dependencies modules

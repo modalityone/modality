@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The bookings activity to view, search, and amend bookings.
+ */
 module modality.ecommerce.backoffice.activities.bookings {
 
     // Direct dependencies modules

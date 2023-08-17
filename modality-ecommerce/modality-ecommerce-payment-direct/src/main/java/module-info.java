@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The logical starting point to initiate direct payments (this API can be called either on client or server).
+ */
 module modality.ecommerce.payment.direct {
 
     // Direct dependencies modules

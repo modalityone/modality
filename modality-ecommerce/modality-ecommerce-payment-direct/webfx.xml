@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
 
+    <description>The logical starting point to initiate direct payments (this API can be called either on client or server).</description>
+
     <exported-packages>
         <source-packages/>
     </exported-packages>

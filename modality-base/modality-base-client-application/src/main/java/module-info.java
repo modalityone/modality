@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Define a generic Modality JavaFX application (common code to the back-office and front-office).
+ */
 module modality.base.client.application {
 
     // Direct dependencies modules
