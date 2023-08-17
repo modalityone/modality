@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Module that loads the domain model in memory (on both client &amp; server).
+ */
 module modality.base.shared.domainmodel {
 
     // Direct dependencies modules

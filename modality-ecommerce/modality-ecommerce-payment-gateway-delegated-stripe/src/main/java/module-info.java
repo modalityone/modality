@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The SPI payment gateway implementation for making delegated payments with Stripe.
+ */
 module modality.ecommerce.payment.gateway.delegated.stripe {
 
     // Direct dependencies modules

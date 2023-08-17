@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The back-office Filters activity to create, modify, delete filters (displayed in other activities).
+ */
 module modality.base.backoffice.activities.filters {
 
     // Direct dependencies modules

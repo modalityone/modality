@@ -13,6 +13,8 @@
 
     <artifactId>modality-ecommerce-backoffice-activities-moneyflows</artifactId>
 
+    <description>The money flows activity to define the Organization money accounts and the possible money flows between them.</description>
+
     <dependencies>
 
         <dependency>

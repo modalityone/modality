@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The front-office Alerts activity.
+ */
 module modality.base.frontoffice.activities.alerts {
 
     // Direct dependencies modules

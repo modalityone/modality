@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The Vert.x executable module of the Modality Server.
+ */
 module modality.all.server.application.vertx {
 
     // Direct dependencies modules

@@ -13,6 +13,8 @@
 
     <artifactId>modality-base-backoffice-activities-all</artifactId>
 
+    <description>Convenient module that embeds all back-office activities modules of the Base layer.</description>
+
     <dependencies>
 
         <dependency>

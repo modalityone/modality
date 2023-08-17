@@ -13,6 +13,8 @@
 
     <artifactId>modality-all-server-application</artifactId>
 
+    <description>The Modality Server application (cross-platform non-executable module).</description>
+
     <dependencies>
 
         <dependency>

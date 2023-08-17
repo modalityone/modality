@@ -13,6 +13,8 @@
 
     <artifactId>modality-hotel-backoffice-activities-all</artifactId>
 
+    <description>Convenient module that embeds all back-office activities modules of the Hotel layer.</description>
+
     <dependencies>
 
         <dependency>

@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The SPI payment gateway implementation for making direct payments with Authorize.net.
+ */
 module modality.ecommerce.payment.gateway.direct.authorizedotnet {
 
     // Direct dependencies modules

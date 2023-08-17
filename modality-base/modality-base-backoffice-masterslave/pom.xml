@@ -13,6 +13,8 @@
 
     <artifactId>modality-base-backoffice-masterslave</artifactId>
 
+    <description>Some class materials to build master/slaves views, with optionally an additional group view.</description>
+
     <dependencies>
 
         <dependency>

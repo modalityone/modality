@@ -13,6 +13,8 @@
 
     <artifactId>modality-crm-backoffice-bookingdetailspanel</artifactId>
 
+    <description>The UI panel that displays all booking details, including the personal details.</description>
+
     <dependencies>
 
         <dependency>

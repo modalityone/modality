@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Server-side module responsible for pushing the user authorization data to the client just after a successful authentication.
+ */
 module modality.crm.server.authz {
 
     // Direct dependencies modules

@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Module that defines the database connection (configurable variables with default values), and test the connection on server start.
+ */
 module modality.base.server.datasource {
 
     // Direct dependencies modules

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
 
+    <description>Convenient module that embeds the minimal set of server plugin modules required for the Base layer.</description>
+
     <dependencies>
         <used-by-source-modules/>
 

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project applicationId="one.modality.backoffice" applicationLabel="Modality BackOffice">
 
+    <description>The Modality Back-Office application (cross-platform non-executable module).</description>
+
     <exported-packages>
         <source-packages/>
     </exported-packages>
