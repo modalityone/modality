@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Module responsible for loading all information about operations from the database on client start.
+ */
 module modality.base.client.operationactionsloading {
 
     // Direct dependencies modules

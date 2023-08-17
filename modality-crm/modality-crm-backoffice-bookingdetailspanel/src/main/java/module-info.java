@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The UI panel that displays all booking details, including the personal details.
+ */
 module modality.crm.backoffice.bookingdetailspanel {
 
     // Direct dependencies modules

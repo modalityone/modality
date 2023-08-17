@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Defines the basic operations that a back-office user can execute on filters.
+ */
 module modality.base.backoffice.operations.filters {
 
     // Direct dependencies modules

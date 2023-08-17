@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The login activity displayed by the UI router to an unauthenticated user trying to access a route requiring authorization.
+ */
 module modality.crm.client.activities.login {
 
     // Direct dependencies modules

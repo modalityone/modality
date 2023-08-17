@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * A generic event-dependent activity that can be extended.
+ */
 module modality.event.client.activity.eventdependent {
 
     // Direct dependencies modules

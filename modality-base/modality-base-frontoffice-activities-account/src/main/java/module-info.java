@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The front-office Account activity.
+ */
 module modality.base.frontoffice.activities.account {
 
     // Direct dependencies modules

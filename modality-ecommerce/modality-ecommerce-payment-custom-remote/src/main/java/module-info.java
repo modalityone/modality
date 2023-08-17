@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The client-side implementation of the custom payment API (just forwards the request to the server).
+ */
 module modality.ecommerce.payment.custom.remote {
 
     // Direct dependencies modules

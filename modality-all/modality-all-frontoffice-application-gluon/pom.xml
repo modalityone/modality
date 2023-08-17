@@ -13,6 +13,8 @@
 
     <artifactId>modality-all-frontoffice-application-gluon</artifactId>
 
+    <description>The Gluon executable module of the Modality Front-Office (for mobiles &amp; tablets).</description>
+
     <name>ModalityAllFrontoffice</name>
 
     <dependencies>

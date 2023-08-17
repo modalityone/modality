@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Declares the delegated payment endpoint address, and implements the data serialisation.
+ */
 module modality.ecommerce.payment.delegated.buscall {
 
     // Direct dependencies modules

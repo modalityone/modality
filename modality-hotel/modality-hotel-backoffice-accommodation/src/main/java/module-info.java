@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * A set of classes shared by the Accommodation &amp; Household activities.
+ */
 module modality.hotel.backoffice.accommodation {
 
     // Direct dependencies modules

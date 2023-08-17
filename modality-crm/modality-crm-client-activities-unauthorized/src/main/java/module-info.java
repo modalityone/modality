@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The unauthorised activity displayed by the UI router to an authenticated user trying to access an unauthorised route.
+ */
 module modality.crm.client.activities.unauthorized {
 
     // Direct dependencies modules

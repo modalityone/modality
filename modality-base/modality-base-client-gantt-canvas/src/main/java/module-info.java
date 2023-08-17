@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * A zoomable Gantt canvas that can displays years, months, weeks and days over a time window.
+ */
 module modality.base.client.gantt.canvas {
 
     // Direct dependencies modules

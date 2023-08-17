@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The money flows activity to define the Organization money accounts and the possible money flows between them.
+ */
 module modality.ecommerce.backoffice.activities.moneyflows {
 
     // Direct dependencies modules
