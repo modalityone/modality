@@ -24,4 +24,29 @@ public interface Organization extends
     default KdmCenter getKdmCenter() {
         return getForeignEntity("kdmCenter");
     }
+
+    default Float getLatitude() {
+        return getFloatFieldValue("latitude");
+    }
+
+    default void setLatitude(Float latitude) {
+        setFieldValue("latitude", latitude);
+    }
+
+    default Float getLongitude() {
+        return getFloatFieldValue("longitude");
+    }
+
+    default void setLongitude(Float longitude) {
+        setFieldValue("longitude", longitude);
+    }
+
+    default void setImportIssue(String importIssue) {
+        setFieldValue("importIssue", importIssue);
+    }
+
+    default String getImportIssue() {
+        return getStringFieldValue("importIssue");
+    }
+
 }
