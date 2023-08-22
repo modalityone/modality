@@ -10,6 +10,5 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 INSERT INTO public.operation VALUES (65, 'Logout', 'Logout', 'Logout', NULL, true, true, false, false);
-ALTER TABLE public.authorization_assignment alter column management_id DROP NOT NULL;
 INSERT INTO public.authorization_assignment VALUES (8, NULL, NULL, NULL, NULL, true, NULL, 65);
 
