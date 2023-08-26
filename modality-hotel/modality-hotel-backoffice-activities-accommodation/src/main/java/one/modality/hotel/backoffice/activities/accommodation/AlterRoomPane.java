@@ -507,7 +507,7 @@ public class AlterRoomPane extends VBox {
         if (rvm == null) { // first call
             rvm = ReactiveVisualMapper.<ResourceConfiguration>createPushReactiveChain(mixin)
                     .always("{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,item.name,max,allowsGuest,allowsResident,allowsResidentFamily,allowsSpecialGuest,allowsVolunteer,allowsFemale,allowsMale,startDate,endDate'}")
-                    .always(orderBy("item.ord,name"))
+                    .always(orderBy("endDate desc"))
                     .setEntityColumns("[" +
                             "{label: 'Name', expression: 'name'}," +
                             "{label: 'Product', expression: 'item.name'}," +
