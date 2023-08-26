@@ -279,6 +279,7 @@ public class AlterRoomPane extends VBox {
         allowsMaleCheckBox.setSelected(rc.allowsMale());
 
         fromDateField.setText(rc.getStartDate() != null ? DATE_FORMATTER.format(rc.getStartDate()) : null);
+        toDateField.setText(rc.getEndDate() != null ? DATE_FORMATTER.format(rc.getEndDate()) : null);
     }
 
     private void createProductComboBox() {
