@@ -11,10 +11,10 @@ module modality.all.frontoffice.application.openjfx {
     requires webfx.kit.openjfx;
     requires webfx.kit.platform.visibility.openjfx;
     requires webfx.kit.statusbar.none;
+    requires webfx.platform.blob.java;
     requires webfx.platform.boot.java;
     requires webfx.platform.console.java;
     requires webfx.platform.fetch.java;
-    requires webfx.platform.file.java;
     requires webfx.platform.json.java;
     requires webfx.platform.os.java;
     requires webfx.platform.resource.java;
