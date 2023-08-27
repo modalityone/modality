@@ -296,6 +296,11 @@
     <!--==============================< webfx-platform-async >==============================-->
     <source path="dev/webfx/platform/async"/>
     <source path="dev/webfx/platform/async/impl"/>
+    <!--==============================< webfx-platform-blob >===============================-->
+    <source path="dev/webfx/platform/blob"/>
+    <source path="dev/webfx/platform/blob/spi"/>
+    <!--============================< webfx-platform-blob-gwt >=============================-->
+    <source path="dev/webfx/platform/blob/spi/impl/gwt"/>
     <!--==============================< webfx-platform-boot >===============================-->
     <source path="dev/webfx/platform/boot"/>
     <source path="dev/webfx/platform/boot/spi"/>
@@ -314,11 +319,6 @@
     <!--============================< webfx-platform-fetch-gwt >============================-->
     <source path="dev/webfx/platform/fetch/spi/impl/gwt"/>
     <source path="dev/webfx/platform/streams/spi/impl/gwt"/>
-    <!--==============================< webfx-platform-file >===============================-->
-    <source path="dev/webfx/platform/file"/>
-    <source path="dev/webfx/platform/file/spi"/>
-    <!--============================< webfx-platform-file-gwt >=============================-->
-    <source path="dev/webfx/platform/file/spi/impl/gwt"/>
     <!--========================< webfx-platform-javabase-emul-gwt >========================-->
     <super-source includes="java/lang/ref/" path=""/>
     <super-source includes="java/net/" path=""/>
