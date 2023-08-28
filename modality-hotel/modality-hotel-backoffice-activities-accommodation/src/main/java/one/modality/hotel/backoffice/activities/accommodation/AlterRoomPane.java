@@ -501,6 +501,7 @@ public class AlterRoomPane extends VBox {
         ResourceConfiguration selectedResourceConfiguration = resourceConfigurations.get(selectedRow);
         selectedResourceConfigurationProperty.set(selectedResourceConfiguration);
         displayStatus(null);
+        displayDetails(selectedResourceConfiguration);
     }
 
     private void setDetailsPaneDisabled(boolean disabled) {
