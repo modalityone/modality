@@ -304,10 +304,21 @@ public class AlterRoomPane extends VBox {
 
     private void create() {
         ResourceConfiguration previousRc = selectedResourceConfigurationProperty.get();
-        Resource resource = previousRc.getResource();
-
         updateStore = UpdateStore.create(previousRc.getStore().getDataSourceModel());
         ResourceConfiguration newRc = updateStore.insertEntity(ResourceConfiguration.class);
+        cloneSelectedResourceConfiguration(newRc);
+        newRc.setStartDate(previousRc.getEndDate() != null ? previousRc.getEndDate().plusDays(1) : LocalDate.now());
+        selectedResourceConfigurationProperty.set(newRc);
+
+        setDetailsPaneDisabled(false);
+        table.setDisable(true);
+        saveButton.setVisible(true);
+        cancelButton.setVisible(true);
+    }
+
+    private void cloneSelectedResourceConfiguration(ResourceConfiguration newRc) {
+        ResourceConfiguration previousRc = selectedResourceConfigurationProperty.get();
+        Resource resource = previousRc.getResource();
         newRc.setResource(resource);
         newRc.setItem(previousRc.getItem());
         newRc.setName(previousRc.getName());
@@ -319,15 +330,19 @@ public class AlterRoomPane extends VBox {
         newRc.setAllowsVolunteer(previousRc.allowsVolunteer());
         newRc.setAllowsFemale(previousRc.allowsFemale());
         newRc.setAllowsMale(previousRc.allowsMale());
-        newRc.setStartDate(previousRc.getEndDate() != null ? previousRc.getEndDate().plus(1, ChronoUnit.DAYS) : LocalDate.now());
+
         selectedResourceConfigurationProperty.set(newRc);
-        setDetailsPaneDisabled(false);
-        table.setDisable(true);
-        saveButton.setVisible(true);
-        cancelButton.setVisible(true);
     }
 
     private void update() {
+        ResourceConfiguration updateRc = selectedResourceConfigurationProperty.get();
+        updateStore = UpdateStore.create(updateRc.getStore().getDataSourceModel());
+        ResourceConfiguration newRc = updateStore.updateEntity(updateRc);
+        cloneSelectedResourceConfiguration(newRc);
+        newRc.setStartDate(updateRc.getStartDate());
+        newRc.setEndDate(updateRc.getEndDate());
+        selectedResourceConfigurationProperty.set(newRc);
+
         setDetailsPaneDisabled(false);
         table.setDisable(true);
         saveButton.setVisible(true);
@@ -469,7 +484,12 @@ public class AlterRoomPane extends VBox {
     }
 
     private void saveUpdate() {
-        // TODO
+        updateStore.submitChanges()
+                .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
+                .onSuccess(result -> {
+                    displayStatus("Saved.");
+                    cancel();
+                });
     }
 
     private void cancel() {
@@ -480,6 +500,7 @@ public class AlterRoomPane extends VBox {
         int selectedRow = table.getVisualSelection().getSelectedRow();
         ResourceConfiguration selectedResourceConfiguration = resourceConfigurations.get(selectedRow);
         selectedResourceConfigurationProperty.set(selectedResourceConfiguration);
+        displayStatus(null);
     }
 
     private void setDetailsPaneDisabled(boolean disabled) {
