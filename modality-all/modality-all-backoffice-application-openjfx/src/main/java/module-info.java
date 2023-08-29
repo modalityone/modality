@@ -32,7 +32,6 @@ module modality.all.backoffice.application.openjfx {
     requires webfx.stack.com.bus.json.client;
     requires webfx.stack.com.bus.json.client.websocket.java;
     requires webfx.stack.com.websocket.java;
-    requires webfx.stack.conf.format.json;
     requires webfx.stack.db.query.buscall;
     requires webfx.stack.db.querysubmit.java.jdbc;
     requires webfx.stack.db.submit.buscall;
@@ -41,8 +40,5 @@ module modality.all.backoffice.application.openjfx {
     requires webfx.stack.orm.dql.submit.interceptor;
     requires webfx.stack.session.client;
     requires webfx.stack.ui.fxraiser.json;
-
-    // Resources packages
-    opens dev.webfx.platform.meta.exe;
 
 }

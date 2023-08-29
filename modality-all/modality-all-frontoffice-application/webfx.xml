@@ -7,12 +7,16 @@
         <source-packages/>
     </exported-packages>
 
-    <providers>
-        <provider interface="javafx.application.Application">one.modality.all.frontoffice.application.ModalityFrontOfficeApplication</provider>
-    </providers>
-
     <dependencies>
         <used-by-source-modules/>
+
+        <!-- Allow configuration variables from environment in Java executables (OpenJFX or Gluon) -->
+        <plugin-module executable-target="java">webfx-platform-substitution-var-env</plugin-module>
+        <!-- Allow configuration variables from local storage in GWT executables -->
+        <plugin-module executable-target="gwt">webfx-platform-substitution-var-localstorage</plugin-module>
+        <plugin-module executable-target="gwt">webfx-platform-substitution-var-windowlocation</plugin-module>
+
+        <plugin-module>modality-base-frontoffice-application</plugin-module>
 
         <!-- Event activities -->
         <plugin-module>modality-event-frontoffice-activities-booking</plugin-module>

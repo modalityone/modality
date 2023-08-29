@@ -11,7 +11,6 @@ module modality.all.frontoffice.application.gluon {
     requires webfx.extras.visual.grid.peers.openjfx;
     requires webfx.extras.webtext.peers.openjfx;
     requires webfx.kit.openjfx;
-    requires webfx.kit.statusbar.gluon;
     requires webfx.platform.blob.java;
     requires webfx.platform.boot.java;
     requires webfx.platform.console.java;
@@ -35,7 +34,6 @@ module modality.all.frontoffice.application.gluon {
     requires webfx.stack.com.bus.json.client;
     requires webfx.stack.com.bus.json.client.websocket.java;
     requires webfx.stack.com.websocket.java;
-    requires webfx.stack.conf.format.json;
     requires webfx.stack.db.query.buscall;
     requires webfx.stack.db.querysubmit.java.jdbc;
     requires webfx.stack.db.submit.buscall;
@@ -44,8 +42,5 @@ module modality.all.frontoffice.application.gluon {
     requires webfx.stack.orm.dql.submit.interceptor;
     requires webfx.stack.session.client;
     requires webfx.stack.ui.fxraiser.json;
-
-    // Resources packages
-    opens dev.webfx.platform.meta.exe;
 
 }

@@ -17,6 +17,7 @@ module modality.base.backoffice.activities.home {
     requires webfx.extras.util.layout;
     requires webfx.extras.webtext;
     requires webfx.kit.util;
+    requires webfx.platform.conf;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.routing.router;
