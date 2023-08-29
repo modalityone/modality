@@ -18,18 +18,6 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-graphics</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>one.modality</groupId>
             <artifactId>modality-base-backoffice-activities-all</artifactId>
             <version>1.0.0-SNAPSHOT</version>
@@ -38,26 +26,9 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-backoffice-masterslave</artifactId>
+            <artifactId>modality-base-backoffice-application</artifactId>
             <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-base-client-application</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-base-client-gantt-fx</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-base-shared-entities</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
@@ -69,18 +40,6 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-crm-backoffice-bookingdetailspanel</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-crm-backoffice-organization-fx</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
             <artifactId>modality-ecommerce-backoffice-activities-all</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
@@ -88,51 +47,9 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-event-backoffice-event-fx</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-event-backoffice-events-ganttcanvas</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
             <artifactId>modality-hotel-backoffice-activities-all</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-extras-theme</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-kit-util</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-util</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-orm-entity</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-orm-entity-controls</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
     </dependencies>

@@ -26,6 +26,27 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-conf-file-java</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-substitution-var-conf</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-substitution-var-sysprop</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-authn-login-server-gateway-facebook</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <scope>runtime</scope>

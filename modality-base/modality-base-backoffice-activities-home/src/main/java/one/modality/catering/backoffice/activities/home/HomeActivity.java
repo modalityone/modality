@@ -8,6 +8,7 @@ import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContextMixin;
@@ -28,7 +29,7 @@ import javafx.scene.shape.Rectangle;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.application.RoutingActions;
 
-import java.util.*;
+import java.util.Collection;
 
 /**
  * @author Bruno Salmon
@@ -38,63 +39,9 @@ public class HomeActivity extends ViewDomainActivityBase
         ModalityButtonFactoryMixin,
         OperationActionFactoryMixin {
 
-    private final static String[] sortedPossibleHomeRoutingOperations = {
-            // New tiles (from wireframes)
-            "RouteToKitchen", // routed
-            "RouteToUserAccount", // temporarily redirected to RouteToUsers
-            "RouteToReception", // temporarily redirected to RouteToFilters
-            "RouteToTranslationAndRecordings", // temporarily redirected to RouteToLetters
-            "RouteToCafe",
-            "RouteToBookingsAndSearch", // temporarily redirected to RouteToBookings
-            "RouteToAdmin", // temporarily redirected to RouteToAuthorizations
-            "RouteToFinancesAndStats", // temporarily redirected to RouteToMoneyFlows
-            "RouteToVolunteering",
-            "RouteToShop",
-            "RouteToMarketing",
-            "RouteToRecurringClasses",
-            "RouteToEventsPlanner", // temporarily redirected to RouteToEvents
-            "RouteToHousehold", // temporarily redirected to RouteToRoomCalendar
-            "RouteToQR",
-            "RouteToTransportation",
-            "RouteToOrganizations", // temporarily routed
-            "RouteToHumanResources", // temporarily redirected to RouteToStatistics
-            "RouteToAccommodation", // temporarily redirected to RouteToRoomsGraphic
-            "RouteToExtras", // temporarily redirected to RouteToRoomsGraphic
-            "---",
-            // Old tiles (from prototype)
-            "RouteToEvents", // Shown in RouteToEventsPlanner
-            "RouteToBookings", // Shown in RouteToBookingsAndSearch
-            "RouteToStatistics", // Shown in RouteToHumanResources
-            "RouteToPayments",
-            "RouteToStatements",
-            "RouteToIncome",
-            "RouteToLetters", // Shown in RouteToTranslationAndRecordings
-            "RouteToRoomsGraphic", // Shown in RouteToAccommodation
-            "RouteToDiningAreas",
-            "RouteToMonitor",
-            "RouteToTester",
-            "RouteToUsers", // Shown in RouteToUserAccount
-            "RouteToOperations", // Shown in RouteToExtras
-            "RouteToAuthorizations", // Shown in RouteToAdmin
-            "RouteToMoneyFlows", // Shown in RouteToFinancesAndStats
-            "RouteToFilters", // Shown in RouteToReception
-    };
-
-    // Temporary redirects from new wireframes area to old prototype activities
-    private final Map<String, String> redirects = new HashMap<>();
-    {
-        //redirects.put("RouteToUserAccount", "RouteToUsers");
-        //redirects.put("RouteToEventsPlanner", "RouteToEvents");
-        redirects.put("RouteToBookingsAndSearch", "RouteToBookings");
-        //redirects.put("RouteToAdmin", "RouteToAuthorizations");
-        //redirects.put("RouteToAccommodation", "RouteToRoomsGraphic");
-        //redirects.put("RouteToTranslationAndRecordings", "RouteToLetters");
-        redirects.put("RouteToFinancesAndStats", "RouteToMoneyFlows");
-        redirects.put("RouteToHumanResources", "RouteToStatistics");
-        redirects.put("RouteToReception", "RouteToFilters");
-        redirects.put("RouteToExtras", "RouteToOperations");
-        //redirects.put("RouteToHousehold", "RouteToRoomCalendar");
-    }
+    private final static String[] sortedPossibleHomeRoutingOperations =
+            SourcesConfig.getSourcesRootConfig().childConfigAt("modality.base.backoffice.home")
+                    .getString("homeRoutingOperations").split(",");
 
     @Override
     public Node buildUi() {
@@ -109,31 +56,12 @@ public class HomeActivity extends ViewDomainActivityBase
 
     private Action operationCodeToAction(String operationCode) {
         RouteRequestEmitter routeRequestEmitter = RoutingActions.findRouteRequestEmitter(operationCode, this);
-        // Temporary code for main areas that don't have a route yet
-        List<String> sortedPossibleHomeRoutingOperationsList = Arrays.asList(sortedPossibleHomeRoutingOperations);
-        int operationIndex = sortedPossibleHomeRoutingOperationsList.indexOf(operationCode);
-        int areaLastIndex = sortedPossibleHomeRoutingOperationsList.indexOf("---");
-        if (operationIndex < areaLastIndex) {
-            if (routeRequestEmitter == null) {
-                String redirect = redirects.get(operationCode);
-                Action redirectAction;
-                if (redirect == null) {
-                    redirectAction = null;
-                } else {
-                    routeRequestEmitter = RoutingActions.findRouteRequestEmitter(redirect, this);
-                    if (routeRequestEmitter == null)
-                        redirectAction = null;
-                    else
-                        redirectAction = RoutingActions.getRouteEmitterAction(routeRequestEmitter, this, this);
-                }
-                return new ActionBuilder()
-                        .setI18nKey(operationCode.substring(7))
-                        .setActionHandler(redirectAction)
-                        .build();
-            } else
-                return RoutingActions.getRouteEmitterAction(routeRequestEmitter, this, this);
-        } else
-            return null;
+        if (routeRequestEmitter == null) {
+            return new ActionBuilder()
+                    .setI18nKey(operationCode.substring(7))
+                    .build();
+        }
+        return RoutingActions.getRouteEmitterAction(routeRequestEmitter, this, this);
     }
 
     static class HomePane extends Pane {

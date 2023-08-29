@@ -1,7 +1,0 @@
-{
-  "serverHost": "${{ BUS_SERVER_HOST | WINDOW_LOCATION_HOSTNAME | 'localhost' }}",
-  "serverPort": "${{ BUS_SERVER_PORT | WINDOW_LOCATION_PORT | 80 }}",
-  "serverSSL": "${{ BUS_SERVER_SSL | WINDOW_LOCATION_SSL | false }}",
-  "busPrefix": "${{ BUS_PREFIX | 'eventbus' }}",
-  "pingInterval": "${{ BUS_PING_INTERVAL | 5000 }}"
-}

@@ -21,7 +21,6 @@
         </used-by-source-modules>
 
         <resource-module>modality-base-client-css</resource-module>
-        <plugin-module>modality-base-client-busconfig</plugin-module>
 
         <plugin-module executable-target="java">modality-base-client-navigationarrows-java</plugin-module>
         <plugin-module>modality-base-client-i18n</plugin-module>

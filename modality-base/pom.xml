@@ -22,6 +22,7 @@
         <module>modality-base-backoffice-activities-filters</module>
         <module>modality-base-backoffice-activities-home</module>
         <module>modality-base-backoffice-activities-operations</module>
+        <module>modality-base-backoffice-application</module>
         <module>modality-base-backoffice-masterslave</module>
         <module>modality-base-backoffice-operations-filters</module>
         <module>modality-base-backoffice-operations-generic</module>
@@ -29,7 +30,6 @@
         <module>modality-base-client-activity</module>
         <module>modality-base-client-activity-organizationdependent</module>
         <module>modality-base-client-application</module>
-        <module>modality-base-client-busconfig</module>
         <module>modality-base-client-css</module>
         <module>modality-base-client-css-java</module>
         <module>modality-base-client-css-web</module>
@@ -46,6 +46,7 @@
         <module>modality-base-client-validation</module>
         <module>modality-base-frontoffice-activities-account</module>
         <module>modality-base-frontoffice-activities-alerts</module>
+        <module>modality-base-frontoffice-application</module>
         <module>modality-base-frontoffice-utility</module>
         <module>modality-base-server-application-all</module>
         <module>modality-base-server-application-min</module>
