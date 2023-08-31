@@ -12,7 +12,7 @@ final class ModalityFrontOfficeStarterActivity extends ModalityClientStarterActi
             .childConfigAt("modality.base.frontoffice.application").getString("startPath");
 
     ModalityFrontOfficeStarterActivity() {
-        super(DEFAULT_START_PATH, ModalityFrontOfficeFrameContainerActivity::new);
+        super(DEFAULT_START_PATH, ModalityFrontOfficeMainFrameContainerActivity::new);
     }
 
 }

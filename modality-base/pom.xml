@@ -23,6 +23,7 @@
         <module>modality-base-backoffice-activities-home</module>
         <module>modality-base-backoffice-activities-operations</module>
         <module>modality-base-backoffice-application</module>
+        <module>modality-base-backoffice-gantt-canvas</module>
         <module>modality-base-backoffice-masterslave</module>
         <module>modality-base-backoffice-operations-filters</module>
         <module>modality-base-backoffice-operations-generic</module>
@@ -34,7 +35,6 @@
         <module>modality-base-client-css-java</module>
         <module>modality-base-client-css-web</module>
         <module>modality-base-client-entities</module>
-        <module>modality-base-client-gantt-canvas</module>
         <module>modality-base-client-gantt-fx</module>
         <module>modality-base-client-i18n</module>
         <module>modality-base-client-icons</module>

@@ -12,7 +12,7 @@ final class ModalityBackOfficeStarterActivity extends ModalityClientStarterActiv
     private static final String DEFAULT_START_PATH = "/home";
 
     ModalityBackOfficeStarterActivity() {
-        super(DEFAULT_START_PATH, ModalityBackOfficeFrameContainerActivity::new);
+        super(DEFAULT_START_PATH, ModalityBackOfficeMainFrameContainerActivity::new);
         MasterSlaveView.registerSlaveViewBuilder(BookingDetailsPanel::createAndBindIfApplicable);
     }
 
