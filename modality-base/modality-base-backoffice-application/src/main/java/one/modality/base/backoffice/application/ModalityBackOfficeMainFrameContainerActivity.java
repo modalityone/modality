@@ -4,28 +4,23 @@ import dev.webfx.extras.theme.layout.FXLayoutMode;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.conf.SourcesConfig;
+import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
-import dev.webfx.stack.orm.entity.Entities;
-import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Text;
+import one.modality.base.backoffice.ganttcanvas.MainFrameGanttCanvas;
 import one.modality.base.client.application.ModalityClientMainFrameContainerActivity;
 import one.modality.base.client.gantt.fx.interstice.FXGanttInterstice;
-import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
-import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
-import one.modality.base.backoffice.ganttcanvas.MainFrameGanttCanvas;
-import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.Organization;
-import one.modality.crm.backoffice.organization.fx.FXOrganization;
-import one.modality.event.backoffice.event.fx.FXEvent;
+
+import java.util.Comparator;
 
 /**
  * @author Bruno Salmon
@@ -94,31 +89,12 @@ public class ModalityBackOfficeMainFrameContainerActivity extends ModalityClient
 
     @Override
     protected HBox createContainerHeaderCenterItem() {
-        // Creating the organization selector
-        EntityButtonSelector<Organization> organizationSelector = new EntityButtonSelector<>(
-                "{class: 'Organization', alias: 'o', where: 'exists(select Event where organization=o)'}",
-                this, frameContainer, getDataSourceModel()
-        );
-        // Doing a bidirectional binding with FXOrganization
-        organizationSelector.selectedItemProperty().bindBidirectional(FXOrganization.organizationProperty());
-        Button organizationButton = organizationSelector.getButton();
-        // Creating the event selector
-        EntityButtonSelector<Event> eventSelector = new EntityButtonSelector<>(
-                "{class: 'Event'}",
-                this, frameContainer, getDataSourceModel()
-        );
-        // Doing a bidirectional binding with FXOrganization
-        FXEvent.eventProperty().bindBidirectional(eventSelector.selectedItemProperty());
-        Button eventButton = eventSelector.getButton();
-        // Updating the event condition when organisation changes
-        FXProperties.runNowAndOnPropertiesChange(() ->
-                eventSelector.setJsonOrClass("{class: 'Event', alias: 'e', columns: 'icon,name,dateIntervalFormat(startDate,endDate)', where: 'organization=" + Entities.getPrimaryKey(organizationSelector.getSelectedItem()) + "', orderBy: 'startDate desc'}")
-        , organizationSelector.selectedItemProperty());
-        //
-        eventButton.visibleProperty().bind(FXProperties.compute(FXGanttVisibility.ganttVisibilityProperty(), value -> value == GanttVisibility.EVENTS));
-        eventButton.managedProperty().bind(eventButton.visibleProperty());
-        // Returning the button of that organization selector
-        return new HBox(5, organizationButton, eventButton);
+        String[] expectedOrder = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.base.backoffice.application")
+                .getString("headerNodesOrder").split(",");
+        return new HBox(5, MainFrameHeaderNodeProvider.getProviders().stream()
+                .sorted(Comparator.comparingInt(o -> Arrays.indexOf(expectedOrder, o.getName())))
+                .map(p -> p.getHeaderNode(this, frameContainer, getDataSourceModel()))
+                .toArray(Node[]::new));
     }
 
     @Override
