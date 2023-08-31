@@ -55,6 +55,8 @@ public class HomeActivity extends ViewDomainActivityBase
     }
 
     private Action operationCodeToAction(String operationCode) {
+        if (operationCode.equals("RouteToBookingsAndSearch"))
+            operationCode = "RouteToBookings";
         RouteRequestEmitter routeRequestEmitter = RoutingActions.findRouteRequestEmitter(operationCode, this);
         if (routeRequestEmitter == null) {
             return new ActionBuilder()

@@ -11,4 +11,8 @@
         <used-by-source-modules/>
     </dependencies>
 
+    <providers>
+        <provider interface="dev.webfx.platform.boot.spi.ApplicationJob">one.modality.crm.backoffice.controls.bookingdetailspanel.BookingDetailsPanelApplicationJob</provider>
+    </providers>
+
 </project>

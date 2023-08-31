@@ -274,6 +274,7 @@
     <source path="one/modality/crm/backoffice/operations/entities/mail"/>
     <!--====================< modality-crm-backoffice-organization-fx >=====================-->
     <source path="one/modality/crm/backoffice/organization/fx"/>
+    <source path="one/modality/crm/backoffice/organization/fx/impl"/>
     <!--======================< modality-crm-client-activities-login >======================-->
     <source path="one/modality/crm/client/activities/login"/>
     <!--==================< modality-crm-client-activities-unauthorized >===================-->
@@ -322,6 +323,7 @@
     <source path="one/modality/ecommerce/payment/custom/spi/impl/remote"/>
     <!--=======================< modality-event-backoffice-event-fx >=======================-->
     <source path="one/modality/event/backoffice/event/fx"/>
+    <source path="one/modality/event/backoffice/event/fx/impl"/>
     <!--=================< modality-event-client-activity-eventdependent >==================-->
     <source path="one/modality/event/client/activity/eventdependent"/>
     <!--==========================< modality-event-client-theme >===========================-->
