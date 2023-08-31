@@ -11,4 +11,8 @@
         <used-by-source-modules/>
     </dependencies>
 
+    <providers>
+        <provider interface="one.modality.base.backoffice.ganttcanvas.spi.MainFrameGanttCanvasProvider">one.modality.event.backoffice.events.ganttcanvas.spi.impl.event.MainFrameEventsGanttCanvasProvider</provider>
+    </providers>
+
 </project>

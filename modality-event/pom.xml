@@ -18,6 +18,8 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>modality-event-backoffice-activities-all</module>
+        <module>modality-event-backoffice-activities-min</module>
         <module>modality-event-backoffice-event-fx</module>
         <module>modality-event-backoffice-events-ganttcanvas</module>
         <module>modality-event-backoffice-events-pm</module>

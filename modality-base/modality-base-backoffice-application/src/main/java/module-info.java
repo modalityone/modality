@@ -5,6 +5,7 @@ module modality.base.backoffice.application {
     // Direct dependencies modules
     requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.backoffice.gantt.canvas;
     requires modality.base.backoffice.masterslave;
     requires modality.base.client.application;
     requires modality.base.client.gantt.fx;
@@ -12,7 +13,6 @@ module modality.base.backoffice.application {
     requires modality.crm.backoffice.bookingdetailspanel;
     requires modality.crm.backoffice.organization.fx;
     requires modality.event.backoffice.event.fx;
-    requires modality.event.backoffice.events.ganttcanvas;
     requires webfx.extras.theme;
     requires webfx.kit.util;
     requires webfx.platform.util;

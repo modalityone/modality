@@ -362,9 +362,9 @@
                         <list>images/svg/color/[^/]+$</list>
                         <list>images/svg/mono/[^/]+$</list>
                         <list>javafx/scene/control/skin/checkbox/[^/]+$</list>
+                        <list>one/modality/base/backoffice/ganttcanvas/images/s32/[^/]+$</list>
                         <list>one/modality/base/client/css/[^/]+$</list>
                         <list>one/modality/base/client/fonts/[^/]+$</list>
-                        <list>one/modality/base/client/ganttcanvas/images/s32/[^/]+$</list>
                         <list>one/modality/base/client/images/[^/]+$</list>
                         <list>one/modality/base/client/services/i18n/dictionaries/[^/]+$</list>
                         <list>one/modality/base/shared/domainmodel/[^/]+$</list>

@@ -160,6 +160,12 @@
     <source path="one/modality/base/backoffice/operations/routes/operations"/>
     <!--======================< modality-base-backoffice-application >======================-->
     <source path="one/modality/base/backoffice/application"/>
+    <!--=====================< modality-base-backoffice-gantt-canvas >======================-->
+    <source path="one/modality/base/backoffice/ganttcanvas"/>
+    <source path="one/modality/base/backoffice/ganttcanvas/spi"/>
+    <source path="one/modality/base/backoffice/ganttcanvas/spi/impl/dated"/>
+    <resource path="one/modality/base/backoffice/ganttcanvas/images/s32"/>
+    <public includes="one/modality/base/backoffice/ganttcanvas/images/s32/" path=""/>
     <!--======================< modality-base-backoffice-masterslave >======================-->
     <source path="one/modality/base/backoffice/controls/masterslave"/>
     <source path="one/modality/base/backoffice/controls/masterslave/group"/>
@@ -182,10 +188,6 @@
     <!--=========================< modality-base-client-entities >==========================-->
     <source path="one/modality/base/client/entities/util"/>
     <source path="one/modality/base/client/entities/util/filters"/>
-    <!--=======================< modality-base-client-gantt-canvas >========================-->
-    <source path="one/modality/base/client/ganttcanvas"/>
-    <resource path="one/modality/base/client/ganttcanvas/images/s32"/>
-    <public includes="one/modality/base/client/ganttcanvas/images/s32/" path=""/>
     <!--=========================< modality-base-client-gantt-fx >==========================-->
     <source path="one/modality/base/client/gantt/fx/highlight"/>
     <source path="one/modality/base/client/gantt/fx/interstice"/>
@@ -320,10 +322,6 @@
     <source path="one/modality/ecommerce/payment/custom/spi/impl/remote"/>
     <!--=======================< modality-event-backoffice-event-fx >=======================-->
     <source path="one/modality/event/backoffice/event/fx"/>
-    <!--==================< modality-event-backoffice-events-ganttcanvas >==================-->
-    <source path="one/modality/event/backoffice/events/ganttcanvas"/>
-    <!--======================< modality-event-backoffice-events-pm >=======================-->
-    <source path="one/modality/event/backoffice/events/pm"/>
     <!--=================< modality-event-client-activity-eventdependent >==================-->
     <source path="one/modality/event/client/activity/eventdependent"/>
     <!--==========================< modality-event-client-theme >===========================-->

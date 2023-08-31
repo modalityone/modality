@@ -8,7 +8,7 @@ module modality.event.backoffice.events.ganttcanvas {
     // Direct dependencies modules
     requires javafx.base;
     requires javafx.graphics;
-    requires modality.base.client.gantt.canvas;
+    requires modality.base.backoffice.gantt.canvas;
     requires modality.base.client.gantt.fx;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
@@ -25,5 +25,9 @@ module modality.event.backoffice.events.ganttcanvas {
 
     // Exported packages
     exports one.modality.event.backoffice.events.ganttcanvas;
+    exports one.modality.event.backoffice.events.ganttcanvas.spi.impl.event;
+
+    // Provided services
+    provides one.modality.base.backoffice.ganttcanvas.spi.MainFrameGanttCanvasProvider with one.modality.event.backoffice.events.ganttcanvas.spi.impl.event.MainFrameEventsGanttCanvasProvider;
 
 }

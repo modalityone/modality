@@ -16,7 +16,7 @@ import javafx.scene.text.FontWeight;
 import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
-import one.modality.base.client.ganttcanvas.DatedGanttCanvas;
+import one.modality.base.backoffice.ganttcanvas.DatedGanttCanvas;
 import one.modality.base.shared.entities.Event;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.event.backoffice.event.fx.FXEvent;
