@@ -112,7 +112,7 @@ public class AlterRoomPane extends VBox {
         deleteButton.setOnAction(e -> confirmDelete());
         deleteRoomButton = new Button("Delete room");
         saveButton = new Button("Save");
-        saveButton.setOnAction(e -> save());
+        saveButton.setOnAction(e -> confirmSave());
         saveButton.setVisible(false);
         cancelButton = new Button("Cancel");
         cancelButton.setOnAction(e -> cancel());
@@ -360,7 +360,7 @@ public class AlterRoomPane extends VBox {
             String msg = "Are you sure you wish to delete the selected resource configuration?";
             DialogContent dialogContent = new DialogContent().setContentText(msg).setYesNo();
             DialogUtil.showModalNodeInGoldLayout(dialogContent, this);
-            DialogUtil.armDialogContentButtons(dialogContent,dialogCallback -> {
+            DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
                 delete();
                 dialogCallback.closeDialog();
             });
@@ -405,6 +405,49 @@ public class AlterRoomPane extends VBox {
         deleteUpdateStore.submitChanges()
                 .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
                 .onSuccess(b -> displayStatus("Saved."));
+    }
+
+    private void confirmSave() {
+        if (!areResourceConfigurationDatesContiguous()) {
+            String msg = "Configuration dates do not all join. Continue with save?";
+            DialogContent dialogContent = new DialogContent().setContentText(msg).setYesNo();
+            DialogUtil.showModalNodeInGoldLayout(dialogContent, this);
+            DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
+                save();
+                dialogCallback.closeDialog();;
+            });
+        } else {
+            save();
+        }
+    }
+
+    private boolean areResourceConfigurationDatesContiguous() {
+        for (ResourceConfiguration rc : resourceConfigurations) {
+            if (rc.getStartDate() != null) {
+                LocalDate dayBefore = rc.getStartDate().minusDays(1);
+                if (dayBefore.equals(selectedResourceConfigurationProperty.get().getEndDate())) {
+                    continue;
+                }
+                if (resourceConfigurations.stream().anyMatch(rc2 -> dayBefore.equals(rc2.getEndDate())
+                        && !rc2.equals(selectedResourceConfigurationProperty.get()) )) {
+                    continue;
+                }
+                return false;
+            }
+
+            if (rc.getEndDate() != null) {
+                LocalDate dayAfter = rc.getEndDate().plusDays(1);
+                if (dayAfter.equals(selectedResourceConfigurationProperty.get().getStartDate())) {
+                    continue;
+                }
+                if (resourceConfigurations.stream().anyMatch(rc2 -> dayAfter.equals(rc2.getStartDate())
+                        && !rc2.equals(selectedResourceConfigurationProperty.get()))) {
+                    continue;
+                }
+                return false;
+            }
+        }
+        return true;
     }
 
     private void save() {
