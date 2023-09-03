@@ -14,9 +14,9 @@ import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
-import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
+import dev.webfx.stack.ui.controls.dialog.DialogCallback;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
-import dev.webfx.stack.ui.dialog.DialogCallback;
+import dev.webfx.stack.ui.controls.dialog.DialogUtil;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -112,7 +112,7 @@ public class AlterRoomPane extends VBox {
         deleteButton.setOnAction(e -> confirmDelete());
         deleteRoomButton = new Button("Delete room");
         saveButton = new Button("Save");
-        saveButton.setOnAction(e -> save());
+        saveButton.setOnAction(e -> confirmSave());
         saveButton.setVisible(false);
         cancelButton = new Button("Cancel");
         cancelButton.setOnAction(e -> cancel());
@@ -289,8 +289,8 @@ public class AlterRoomPane extends VBox {
         )
                 .always(FXOrganizationId.organizationIdProperty(), orgId -> DqlStatement.where("exists(select ScheduledResource where configuration.(item=i and resource.site.organization=?))", Entities.getPrimaryKey(orgId)))
                 .setAutoOpenOnMouseEntered(true)
-                .appendNullEntity(true)
-                .setReadOnly(true);
+                .appendNullEntity(true);
+        roomTypeSelector.setReadOnly(true);
         detailsGridPane.add(roomTypeSelector.getButton(), 1, 0);
     }
 
@@ -354,13 +354,13 @@ public class AlterRoomPane extends VBox {
             String msg = "This is the only configuration for this resource. It cannot be deleted.";
             DialogContent dialogContent = new DialogContent().setContentText(msg);
             dialogContent.getCancelButton().setVisible(false);
-            DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, this);
-            DialogBuilderUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
+            DialogUtil.showModalNodeInGoldLayout(dialogContent, this);
+            DialogUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
         } else {
             String msg = "Are you sure you wish to delete the selected resource configuration?";
             DialogContent dialogContent = new DialogContent().setContentText(msg).setYesNo();
-            DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, this);
-            DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
+            DialogUtil.showModalNodeInGoldLayout(dialogContent, this);
+            DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
                 delete();
                 dialogCallback.closeDialog();
             });
@@ -405,6 +405,49 @@ public class AlterRoomPane extends VBox {
         deleteUpdateStore.submitChanges()
                 .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
                 .onSuccess(b -> displayStatus("Saved."));
+    }
+
+    private void confirmSave() {
+        if (!areResourceConfigurationDatesContiguous()) {
+            String msg = "Configuration dates do not all join. Continue with save?";
+            DialogContent dialogContent = new DialogContent().setContentText(msg).setYesNo();
+            DialogUtil.showModalNodeInGoldLayout(dialogContent, this);
+            DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
+                save();
+                dialogCallback.closeDialog();;
+            });
+        } else {
+            save();
+        }
+    }
+
+    private boolean areResourceConfigurationDatesContiguous() {
+        for (ResourceConfiguration rc : resourceConfigurations) {
+            if (rc.getStartDate() != null) {
+                LocalDate dayBefore = rc.getStartDate().minusDays(1);
+                if (dayBefore.equals(selectedResourceConfigurationProperty.get().getEndDate())) {
+                    continue;
+                }
+                if (resourceConfigurations.stream().anyMatch(rc2 -> dayBefore.equals(rc2.getEndDate())
+                        && !rc2.equals(selectedResourceConfigurationProperty.get()) )) {
+                    continue;
+                }
+                return false;
+            }
+
+            if (rc.getEndDate() != null) {
+                LocalDate dayAfter = rc.getEndDate().plusDays(1);
+                if (dayAfter.equals(selectedResourceConfigurationProperty.get().getStartDate())) {
+                    continue;
+                }
+                if (resourceConfigurations.stream().anyMatch(rc2 -> dayAfter.equals(rc2.getStartDate())
+                        && !rc2.equals(selectedResourceConfigurationProperty.get()))) {
+                    continue;
+                }
+                return false;
+            }
+        }
+        return true;
     }
 
     private void save() {
