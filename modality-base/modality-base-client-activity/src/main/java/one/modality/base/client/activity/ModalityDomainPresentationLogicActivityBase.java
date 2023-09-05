@@ -1,10 +1,10 @@
 package one.modality.base.client.activity;
 
 import dev.webfx.platform.console.Console;
-import dev.webfx.platform.json.JsonObject;
+import dev.webfx.platform.ast.json.JsonObject;
 import dev.webfx.stack.orm.domainmodel.activity.domainpresentationlogic.impl.DomainPresentationLogicActivityImpl;
-import dev.webfx.platform.json.Json;
-import dev.webfx.platform.json.ReadOnlyJsonObject;
+import dev.webfx.platform.ast.json.Json;
+import dev.webfx.platform.ast.json.ReadOnlyJsonObject;
 import dev.webfx.stack.db.query.QueryArgument;
 import dev.webfx.stack.db.query.QueryService;
 import dev.webfx.platform.util.function.Factory;

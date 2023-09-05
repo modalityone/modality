@@ -1,10 +1,10 @@
 package one.modality.base.backoffice.operations.entities.filters;
 
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
-import dev.webfx.stack.ui.controls.dialog.DialogUtil;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.platform.async.Future;
 import dev.webfx.stack.db.submit.SubmitArgument;
+import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
 import javafx.scene.layout.Pane;
 import one.modality.base.shared.entities.Filter;
 
@@ -17,13 +17,13 @@ final class DeleteFilterExecutor {
     private static Future<Void> execute(Filter filter, Pane parentContainer) {
         if (filter == null) {
             DialogContent dialogContent = new DialogContent().setContentText("No filter selected.");
-            DialogUtil.showModalNodeInGoldLayout(dialogContent, parentContainer);
-            DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> dialogCallback.closeDialog());
+            DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, parentContainer);
+            DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> dialogCallback.closeDialog());
         } else {
             String msg = "Please confirm.\n\nDelete filter \"" + filter.getName() + "\"?";
             DialogContent dialogContent = new DialogContent().setContentText(msg);
-            DialogUtil.showModalNodeInGoldLayout(dialogContent, parentContainer);
-            DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
+            DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, parentContainer);
+            DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
                 deleteFilter(filter);
                 dialogCallback.closeDialog();
             });

@@ -3,8 +3,8 @@ package one.modality.base.server.jobs.geoimport;
 import dev.webfx.platform.boot.spi.ApplicationJob;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.fetch.json.JsonFetch;
-import dev.webfx.platform.util.keyobject.ReadOnlyIndexedArray;
-import dev.webfx.platform.util.keyobject.ReadOnlyKeyObject;
+import dev.webfx.platform.ast.ReadOnlyAstArray;
+import dev.webfx.platform.ast.ReadOnlyAstObject;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -33,10 +33,10 @@ public class GeoImportJob implements ApplicationJob {
                                 .onFailure(error -> Console.log("Error while fetching " + GEO_FETCH_URL, error))
                                 .onSuccess(geoJsonObject -> {
 
-                                    ReadOnlyIndexedArray geonames = geoJsonObject.getArray("geonames");
+                                    ReadOnlyAstArray geonames = geoJsonObject.getArray("geonames");
                                     for (int i = 0; i < geonames.size(); i++) {
 
-                                        ReadOnlyKeyObject geonameCountry = geonames.getObject(i);
+                                        ReadOnlyAstObject geonameCountry = geonames.getObject(i);
                                         Integer geonameId = geonameCountry.getInteger("geonameId");
                                         Double north = geonameCountry.getDouble("north");
                                         Double south = geonameCountry.getDouble("south");

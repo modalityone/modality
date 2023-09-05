@@ -2,7 +2,7 @@ package one.modality.event.frontoffice.activities.booking;
 
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.fetch.json.JsonFetch;
-import dev.webfx.platform.util.keyobject.ReadOnlyKeyObject;
+import dev.webfx.platform.ast.ReadOnlyAstObject;
 import dev.webfx.platform.util.tuples.Pair;
 import one.modality.base.frontoffice.entities.Center;
 import one.modality.base.frontoffice.fx.FXApp;
@@ -19,7 +19,7 @@ public class BookingUtility {
                 .onFailure(error -> Console.log("Fetch failure: " + error))
                 .onSuccess(jsonObject -> {
                     System.out.println(jsonObject);
-                    ReadOnlyKeyObject o = jsonObject.getArray("geonames").getObject(0);
+                    ReadOnlyAstObject o = jsonObject.getArray("geonames").getObject(0);
                     String name = o.get("asciiName");
                     Double lat = o.getDouble("lat");
                     Double lng = o.getDouble("lng");

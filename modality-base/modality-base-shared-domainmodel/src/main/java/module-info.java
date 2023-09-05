@@ -9,8 +9,8 @@ module modality.base.shared.domainmodel {
     requires java.base;
     requires javafx.base;
     requires webfx.extras.type;
+    requires webfx.platform.ast.json;
     requires webfx.platform.async;
-    requires webfx.platform.json;
     requires webfx.platform.resource;
     requires webfx.platform.util;
     requires webfx.stack.com.serial;

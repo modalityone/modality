@@ -1,10 +1,10 @@
 package one.modality.ecommerce.backoffice.operations.entities.moneyflow;
 
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
-import dev.webfx.stack.ui.controls.dialog.DialogUtil;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.db.submit.SubmitArgument;
 import dev.webfx.platform.async.Future;
+import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
 import javafx.scene.layout.Pane;
 import one.modality.base.shared.entities.MoneyFlow;
 
@@ -18,8 +18,8 @@ final class DeleteMoneyFlowExecutor {
         if (deleteEntity != null) {
             String msg = "Delete money flow from " + deleteEntity.getFromMoneyAccount().getName() + " to " + deleteEntity.getToMoneyAccount().getName() + "?";
             DialogContent dialogContent = new DialogContent().setTitle("Confirm money flow deletion").setContentText(msg);
-            DialogUtil.showModalNodeInGoldLayout(dialogContent, parentContainer);
-            DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
+            DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, parentContainer);
+            DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
                 deleteMoneyFlow(deleteEntity);
                 dialogCallback.closeDialog();
             });

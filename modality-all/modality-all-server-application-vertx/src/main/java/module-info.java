@@ -13,11 +13,11 @@ module modality.all.server.application.vertx {
     requires modality.ecommerce.payment.custom.server;
     requires modality.ecommerce.payment.delegated.server;
     requires modality.ecommerce.payment.direct.server;
+    requires webfx.platform.ast.json.vertx;
     requires webfx.platform.blob.java;
     requires webfx.platform.boot.vertx;
     requires webfx.platform.console.java;
     requires webfx.platform.fetch.vertx;
-    requires webfx.platform.json.vertx;
     requires webfx.platform.resource.java;
     requires webfx.platform.scheduler.vertx;
     requires webfx.platform.shutdown.java;

@@ -11,6 +11,9 @@ public class ServiceLoader<S> implements Iterable<S> {
         switch (serviceClass.getName()) {
             case "dev.webfx.kit.launcher.spi.WebFxKitLauncherProvider": return new ServiceLoader<S>(dev.webfx.kit.launcher.spi.impl.gwt.GwtWebFxKitLauncherProvider::new);
             case "dev.webfx.kit.mapper.spi.WebFxKitMapperProvider": return new ServiceLoader<S>(dev.webfx.kit.mapper.spi.impl.gwt.GwtWebFxKitHtmlMapperProvider::new);
+            case "dev.webfx.platform.ast.formatter.spi.AstFormatterProvider": return new ServiceLoader<S>(dev.webfx.platform.ast.json.JsonFormatterProvider::new);
+            case "dev.webfx.platform.ast.json.spi.JsonProvider": return new ServiceLoader<S>(dev.webfx.platform.ast.json.spi.impl.gwt.GwtJsonObject::create);
+            case "dev.webfx.platform.ast.parser.spi.AstParserProvider": return new ServiceLoader<S>(dev.webfx.platform.ast.json.JsonAstParserProvider::new);
             case "dev.webfx.platform.blob.spi.BlobProvider": return new ServiceLoader<S>(dev.webfx.platform.blob.spi.impl.gwt.GwtBlobProvider::new);
             case "dev.webfx.platform.boot.spi.ApplicationBooterProvider": return new ServiceLoader<S>(dev.webfx.platform.boot.spi.impl.gwt.GwtApplicationBooterProvider::new);
             case "dev.webfx.platform.boot.spi.ApplicationJob": return new ServiceLoader<S>();
@@ -18,7 +21,6 @@ public class ServiceLoader<S> implements Iterable<S> {
             case "dev.webfx.platform.conf.spi.ConfigLoaderProvider": return new ServiceLoader<S>();
             case "dev.webfx.platform.console.spi.ConsoleProvider": return new ServiceLoader<S>(dev.webfx.platform.console.spi.impl.gwt.GwtConsoleProvider::new);
             case "dev.webfx.platform.fetch.spi.FetchProvider": return new ServiceLoader<S>(dev.webfx.platform.fetch.spi.impl.gwt.GwtFetchProvider::new);
-            case "dev.webfx.platform.json.spi.JsonProvider": return new ServiceLoader<S>(dev.webfx.platform.json.spi.impl.gwt.GwtJsonObject::create);
             case "dev.webfx.platform.os.spi.OperatingSystemProvider": return new ServiceLoader<S>(dev.webfx.platform.os.spi.impl.gwt.GwtOperatingSystemProvider::new);
             case "dev.webfx.platform.resource.spi.ResourceProvider": return new ServiceLoader<S>(dev.webfx.platform.resource.spi.impl.gwt.GwtResourceProvider::new);
             case "dev.webfx.platform.resource.spi.impl.gwt.GwtResourceBundle": return new ServiceLoader<S>(modality.all.frontoffice.application.gwt.embed.EmbedResourcesBundle.ProvidedGwtResourceBundle::new);
@@ -29,8 +31,6 @@ public class ServiceLoader<S> implements Iterable<S> {
             case "dev.webfx.platform.substitution.spi.SubstitutorProvider": return new ServiceLoader<S>(dev.webfx.platform.substitution.spi.impl.var.VariablesSubstitutorProvider::new);
             case "dev.webfx.platform.substitution.var.spi.VariablesResolver": return new ServiceLoader<S>(dev.webfx.platform.substitution.var.spi.impl.localstorage.LocalStorageVariablesResolver::new, dev.webfx.platform.substitution.var.spi.impl.windowlocation.WindowLocationVariablesResolver::new);
             case "dev.webfx.platform.uischeduler.spi.UiSchedulerProvider": return new ServiceLoader<S>(dev.webfx.platform.uischeduler.spi.impl.gwt.GwtUiSchedulerProvider::new);
-            case "dev.webfx.platform.util.keyobject.formatter.spi.AstFormatterProvider": return new ServiceLoader<S>(dev.webfx.platform.json.tree.JsonTreeFormatterProvider::new);
-            case "dev.webfx.platform.util.keyobject.parser.spi.AstParserProvider": return new ServiceLoader<S>(dev.webfx.platform.json.tree.JsonAstParserProvider::new);
             case "dev.webfx.platform.windowhistory.spi.WindowHistoryProvider": return new ServiceLoader<S>(dev.webfx.platform.windowhistory.spi.impl.web.WebWindowHistoryProvider::new);
             case "dev.webfx.platform.windowhistory.spi.impl.web.JsWindowHistory": return new ServiceLoader<S>(dev.webfx.platform.windowhistory.spi.impl.gwt.GwtJsWindowHistory::new);
             case "dev.webfx.platform.windowlocation.spi.WindowLocationProvider": return new ServiceLoader<S>(dev.webfx.platform.windowlocation.spi.impl.gwt.GwtWindowLocationProvider::new);
