@@ -135,17 +135,17 @@
     <public includes="images/svg/color/" path=""/>
     <resource path="images/svg/mono"/>
     <public includes="images/svg/mono/" path=""/>
-    <!--==================< modality-base-client-operationactionsloading >==================-->
+    <!--==============< modality-base-client-operationactionsloading-plugin >===============-->
     <source path="one/modality/base/client/operationactionsloading"/>
     <!--=====================< modality-base-client-presentationmodel >=====================-->
     <source path="one/modality/base/client/presentationmodel"/>
-    <!--==================< modality-base-frontoffice-activities-account >==================-->
+    <!--===============< modality-base-frontoffice-activity-account-plugin >================-->
     <source path="one/modality/base/frontoffice/activities/account"/>
     <source path="one/modality/base/frontoffice/activities/account/routing"/>
     <source path="one/modality/base/frontoffice/operations/routes/account"/>
     <resource path="one/modality/base/frontoffice/activities/account/images"/>
     <public includes="one/modality/base/frontoffice/activities/account/images/" path=""/>
-    <!--==================< modality-base-frontoffice-activities-alerts >===================-->
+    <!--================< modality-base-frontoffice-activity-alerts-plugin >================-->
     <source path="one/modality/base/frontoffice/activities/alerts"/>
     <source path="one/modality/base/frontoffice/activities/alerts/routing"/>
     <source path="one/modality/base/frontoffice/operations/routes/alerts"/>
@@ -169,13 +169,13 @@
     <source path="one/modality/base/shared/entities/formatters"/>
     <source path="one/modality/base/shared/entities/impl"/>
     <source path="one/modality/base/shared/entities/markers"/>
-    <!--======================< modality-crm-client-activities-login >======================-->
+    <!--===================< modality-crm-client-activity-login-plugin >====================-->
     <source path="one/modality/crm/client/activities/login"/>
-    <!--==================< modality-crm-client-activities-unauthorized >===================-->
+    <!--================< modality-crm-client-activity-unauthorized-plugin >================-->
     <source path="one/modality/crm/client/activities/unauthorized"/>
-    <!--===========================< modality-crm-client-authz >============================-->
+    <!--===================< modality-crm-client-authz-required-plugin >====================-->
     <source path="one/modality/crm/client/services/authz"/>
-    <!--=================< modality-event-frontoffice-activities-booking >==================-->
+    <!--===============< modality-event-frontoffice-activity-booking-plugin >===============-->
     <source path="one/modality/event/frontoffice/activities/booking"/>
     <source path="one/modality/event/frontoffice/activities/booking/routing"/>
     <source path="one/modality/event/frontoffice/activities/booking/steps"/>
@@ -293,15 +293,15 @@
     <source path="dev/webfx/platform/ast/parser"/>
     <source path="dev/webfx/platform/ast/parser/spi"/>
     <source path="dev/webfx/platform/ast/parser/spi/impl/properties"/>
-    <!--============================< webfx-platform-ast-json >=============================-->
+    <!--==========================< webfx-platform-ast-json-gwt >===========================-->
+    <source path="dev/webfx/platform/ast/json/spi/impl/gwt"/>
+    <!--=========================< webfx-platform-ast-json-plugin >=========================-->
     <source path="dev/webfx/platform/ast/json"/>
     <source path="dev/webfx/platform/ast/json/parser"/>
     <source path="dev/webfx/platform/ast/json/parser/javacup"/>
     <source path="dev/webfx/platform/ast/json/parser/jflex"/>
     <source path="dev/webfx/platform/ast/json/spi"/>
     <source path="dev/webfx/platform/ast/json/spi/impl/listmap"/>
-    <!--==========================< webfx-platform-ast-json-gwt >===========================-->
-    <source path="dev/webfx/platform/ast/json/spi/impl/gwt"/>
     <!--==============================< webfx-platform-async >==============================-->
     <source path="dev/webfx/platform/async"/>
     <source path="dev/webfx/platform/async/impl"/>
@@ -374,9 +374,9 @@
     <!--========================< webfx-platform-substitution-var >=========================-->
     <source path="dev/webfx/platform/substitution/spi/impl/var"/>
     <source path="dev/webfx/platform/substitution/var/spi"/>
-    <!--==================< webfx-platform-substitution-var-localstorage >==================-->
+    <!--==============< webfx-platform-substitution-var-localstorage-plugin >===============-->
     <source path="dev/webfx/platform/substitution/var/spi/impl/localstorage"/>
-    <!--=================< webfx-platform-substitution-var-windowlocation >=================-->
+    <!--=============< webfx-platform-substitution-var-windowlocation-plugin >==============-->
     <source path="dev/webfx/platform/substitution/var/spi/impl/windowlocation"/>
     <!--===========================< webfx-platform-uischeduler >===========================-->
     <source path="dev/webfx/platform/uischeduler"/>
@@ -426,17 +426,17 @@
     <source path="dev/webfx/stack/authn/login/ui/spi"/>
     <!--=======================< webfx-stack-authn-login-ui-gateway >=======================-->
     <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway"/>
-    <!--==================< webfx-stack-authn-login-ui-gateway-facebook >===================-->
+    <!--===============< webfx-stack-authn-login-ui-gateway-facebook-plugin >===============-->
     <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/facebook"/>
     <resource path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/facebook"/>
     <public includes="dev/webfx/stack/authn/login/ui/spi/impl/gateway/facebook/" path=""/>
-    <!--===================< webfx-stack-authn-login-ui-gateway-google >====================-->
+    <!--================< webfx-stack-authn-login-ui-gateway-google-plugin >================-->
     <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/google"/>
     <resource path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/google"/>
     <public includes="dev/webfx/stack/authn/login/ui/spi/impl/gateway/google/" path=""/>
-    <!--==================< webfx-stack-authn-login-ui-gateway-mojoauth >===================-->
+    <!--===============< webfx-stack-authn-login-ui-gateway-mojoauth-plugin >===============-->
     <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/mojoauth"/>
-    <!--==================< webfx-stack-authn-login-ui-gateway-password >===================-->
+    <!--===============< webfx-stack-authn-login-ui-gateway-password-plugin >===============-->
     <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/password"/>
     <!--================< webfx-stack-authn-login-ui-gateway-webviewbased >=================-->
     <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/webview"/>

@@ -57,7 +57,7 @@ public class ServiceLoader<S> implements Iterable<S> {
             case "dev.webfx.stack.session.spi.SessionServiceProvider": return new ServiceLoader<S>(dev.webfx.stack.session.spi.impl.client.ClientSessionServiceProvider::new);
             case "javafx.application.Application": return new ServiceLoader<S>(one.modality.base.backoffice.application.ModalityBackOfficeApplication::new);
             case "one.modality.base.backoffice.application.MainFrameHeaderNodeProvider": return new ServiceLoader<S>(one.modality.crm.backoffice.organization.fx.impl.MainFrameHeaderOrganizationSelectorProvider::new, one.modality.event.backoffice.event.fx.impl.MainFrameHeaderEventSelectorProvider::new);
-            case "one.modality.base.backoffice.ganttcanvas.spi.MainFrameGanttCanvasProvider": return new ServiceLoader<S>(one.modality.base.backoffice.ganttcanvas.spi.impl.dated.MainFrameDatedGanttCanvasProvider::new);
+            case "one.modality.base.backoffice.ganttcanvas.spi.MainFrameGanttCanvasProvider": return new ServiceLoader<S>(one.modality.event.backoffice.events.ganttcanvas.spi.impl.event.MainFrameEventsGanttCanvasProvider::new);
             case "one.modality.ecommerce.payment.custom.spi.CustomPaymentProvider": return new ServiceLoader<S>(one.modality.ecommerce.payment.custom.spi.impl.remote.RemoteCustomPaymentProvider::new);
 
             // UNKNOWN SPI

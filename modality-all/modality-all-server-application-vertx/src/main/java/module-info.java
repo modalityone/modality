@@ -9,7 +9,7 @@ module modality.all.server.application.vertx {
     requires javafx.base;
     requires modality.all.server.application;
     requires modality.base.shared.domainmodel;
-    requires modality.crm.server.authz;
+    requires modality.crm.server.authz.required.plugin;
     requires modality.ecommerce.payment.custom.server;
     requires modality.ecommerce.payment.delegated.server;
     requires modality.ecommerce.payment.direct.server;
@@ -29,7 +29,7 @@ module modality.all.server.application.vertx {
     requires webfx.stack.db.querypush.server.simple;
     requires webfx.stack.db.querysubmit.vertx;
     requires webfx.stack.db.submit.listener;
-    requires webfx.stack.http.server.vertx;
+    requires webfx.stack.http.server.vertx.plugin;
     requires webfx.stack.orm.dql.query.interceptor;
     requires webfx.stack.orm.dql.querypush.interceptor;
     requires webfx.stack.orm.dql.submit.interceptor;

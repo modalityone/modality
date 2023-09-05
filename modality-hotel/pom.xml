@@ -20,9 +20,9 @@
     <modules>
         <module>modality-hotel-backoffice-accommodation</module>
         <module>modality-hotel-backoffice-activities-accommodation</module>
-        <module>modality-hotel-backoffice-activities-all</module>
         <module>modality-hotel-backoffice-activities-household</module>
         <module>modality-hotel-backoffice-icons</module>
+        <module>modality-hotel-backoffice-max-plugin</module>
         <module>modality-hotel-backoffice-operations-documentline</module>
         <module>modality-hotel-backoffice-operations-resourceconfiguration</module>
     </modules>

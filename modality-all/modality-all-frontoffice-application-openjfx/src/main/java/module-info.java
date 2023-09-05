@@ -35,11 +35,14 @@ module modality.all.frontoffice.application.openjfx {
     requires webfx.stack.com.bus.json.client.websocket.java;
     requires webfx.stack.com.websocket.java;
     requires webfx.stack.db.query.buscall;
+    requires webfx.stack.db.querypush.buscall;
+    requires webfx.stack.db.querypush.client.simple;
     requires webfx.stack.db.querysubmit.java.jdbc;
     requires webfx.stack.db.submit.buscall;
     requires webfx.stack.orm.dql.query.interceptor;
     requires webfx.stack.orm.dql.querypush.interceptor;
     requires webfx.stack.orm.dql.submit.interceptor;
+    requires webfx.stack.push.client.simple;
     requires webfx.stack.session.client;
     requires webfx.stack.ui.fxraiser.json;
 

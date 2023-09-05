@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+
+        <plugin-module>modality-base-client-min-plugin</plugin-module>
+
+        <plugin-module>webfx-stack-authn-login-ui-gateway-facebook-plugin</plugin-module>
+        <plugin-module>webfx-stack-authn-login-ui-gateway-google-plugin</plugin-module>
+        <plugin-module>webfx-stack-authn-login-ui-gateway-mojoauth-plugin</plugin-module>
+        <plugin-module>webfx-stack-authn-login-ui-gateway-password-plugin</plugin-module>
+    </dependencies>
+
+</project>

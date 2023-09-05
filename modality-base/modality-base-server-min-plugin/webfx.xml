@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <description>Convenient module that embeds the minimal set of server plugin modules required for the Base layer.</description>
+
+    <dependencies>
+        <used-by-source-modules/>
+
+        <plugin-module>modality-base-server-datasource-plugin</plugin-module>
+
+        <plugin-module>webfx-stack-authn-buscall</plugin-module>
+        <plugin-module>webfx-stack-authn-login-buscall</plugin-module>
+        <plugin-module>webfx-stack-authz-server</plugin-module>
+        <plugin-module>webfx-stack-com-bus-call-job</plugin-module>
+        <plugin-module>webfx-stack-db-query-buscall</plugin-module>
+        <plugin-module>webfx-stack-db-submit-buscall</plugin-module>
+        <plugin-module>webfx-stack-db-querypush-buscall</plugin-module>
+
+        <!-- Injection auto-conditions don't work, so adding it manually for now TODO: REMOVE THIS ONCE FIXED -->
+        <plugin-module>webfx-stack-push-server-liveclient-interceptor</plugin-module>
+
+    </dependencies>
+
+</project>

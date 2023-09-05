@@ -29,15 +29,11 @@ module modality.base.backoffice.gantt.canvas {
     // Exported packages
     exports one.modality.base.backoffice.ganttcanvas;
     exports one.modality.base.backoffice.ganttcanvas.spi;
-    exports one.modality.base.backoffice.ganttcanvas.spi.impl.dated;
 
     // Resources packages
     opens one.modality.base.backoffice.ganttcanvas.images.s32;
 
     // Used services
     uses one.modality.base.backoffice.ganttcanvas.spi.MainFrameGanttCanvasProvider;
-
-    // Provided services
-    provides one.modality.base.backoffice.ganttcanvas.spi.MainFrameGanttCanvasProvider with one.modality.base.backoffice.ganttcanvas.spi.impl.dated.MainFrameDatedGanttCanvasProvider;
 
 }
