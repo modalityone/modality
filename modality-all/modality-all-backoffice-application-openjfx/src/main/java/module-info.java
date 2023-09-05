@@ -7,6 +7,11 @@ module modality.all.backoffice.application.openjfx {
 
     // Direct dependencies modules
     requires modality.all.backoffice.application;
+    requires modality.base.client.css;
+    requires modality.ecommerce.payment.custom.buscall;
+    requires modality.ecommerce.payment.custom.remote;
+    requires webfx.extras.visual.charts.peers.openjfx;
+    requires webfx.extras.visual.grid.peers.openjfx;
     requires webfx.extras.webtext.peers.openjfx;
     requires webfx.kit.openjfx;
     requires webfx.kit.platform.visibility.openjfx;

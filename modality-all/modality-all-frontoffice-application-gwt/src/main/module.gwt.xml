@@ -309,12 +309,15 @@
     <!--============================< webfx-platform-fetch-gwt >============================-->
     <source path="dev/webfx/platform/fetch/spi/impl/gwt"/>
     <source path="dev/webfx/platform/streams/spi/impl/gwt"/>
+    <!--===========================< webfx-platform-fetch-json >============================-->
+    <source path="dev/webfx/platform/fetch/json"/>
     <!--==============================< webfx-platform-file >===============================-->
     <source path="dev/webfx/platform/file"/>
     <source path="dev/webfx/platform/file/spi"/>
     <!--============================< webfx-platform-file-gwt >=============================-->
     <source path="dev/webfx/platform/file/spi/impl/gwt"/>
     <!--========================< webfx-platform-javabase-emul-gwt >========================-->
+    <super-source includes="java/io/" path=""/>
     <super-source includes="java/lang/ref/" path=""/>
     <super-source includes="java/net/" path=""/>
     <super-source includes="java/util/" path=""/>
@@ -327,6 +330,7 @@
     <source path="dev/webfx/platform/json/parser/jflex"/>
     <source path="dev/webfx/platform/json/spi"/>
     <source path="dev/webfx/platform/json/spi/impl/listmap"/>
+    <source path="dev/webfx/platform/json/tree"/>
     <!--============================< webfx-platform-json-gwt >=============================-->
     <source path="dev/webfx/platform/json/spi/impl/gwt"/>
     <!--==============================< webfx-platform-meta >===============================-->
@@ -377,10 +381,13 @@
     <source path="dev/webfx/platform/util/collection"/>
     <source path="dev/webfx/platform/util/function"/>
     <source path="dev/webfx/platform/util/keyobject"/>
+    <source path="dev/webfx/platform/util/keyobject/formatter"/>
+    <source path="dev/webfx/platform/util/keyobject/formatter/spi"/>
+    <source path="dev/webfx/platform/util/keyobject/impl"/>
+    <source path="dev/webfx/platform/util/keyobject/impl/listmap"/>
     <source path="dev/webfx/platform/util/keyobject/parser"/>
     <source path="dev/webfx/platform/util/keyobject/parser/spi"/>
     <source path="dev/webfx/platform/util/keyobject/parser/spi/impl/properties"/>
-    <source path="dev/webfx/platform/util/keyobject/util"/>
     <source path="dev/webfx/platform/util/serviceloader"/>
     <source path="dev/webfx/platform/util/tuples"/>
     <source path="dev/webfx/platform/util/uuid"/>
