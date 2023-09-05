@@ -15,6 +15,8 @@ public interface Organization extends
         EntityHasIcon,
         EntityHasCountry {
 
+    default void setClosed(boolean closed) { setFieldValue("closed", closed); }
+
     default void setType(Object type) {
         setForeignField("type", type);
     }
