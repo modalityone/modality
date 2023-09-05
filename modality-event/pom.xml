@@ -18,14 +18,16 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>modality-event-backoffice-activities-all</module>
-        <module>modality-event-backoffice-activities-min</module>
         <module>modality-event-backoffice-event-fx</module>
-        <module>modality-event-backoffice-events-ganttcanvas</module>
+        <module>modality-event-backoffice-events-ganttcanvas-plugin</module>
         <module>modality-event-backoffice-events-pm</module>
+        <module>modality-event-backoffice-max-plugin</module>
+        <module>modality-event-backoffice-min-plugin</module>
         <module>modality-event-client-activity-eventdependent</module>
         <module>modality-event-client-theme</module>
-        <module>modality-event-frontoffice-activities-booking</module>
+        <module>modality-event-frontoffice-activity-booking-plugin</module>
+        <module>modality-event-frontoffice-max-plugin</module>
+        <module>modality-event-frontoffice-min-plugin</module>
     </modules>
 
 </project>

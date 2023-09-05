@@ -21,15 +21,15 @@
         <module>modality-crm-backoffice-bookingdetailspanel</module>
         <module>modality-crm-backoffice-operations-mail</module>
         <module>modality-crm-backoffice-organization-fx</module>
-        <module>modality-crm-client-activities-login</module>
-        <module>modality-crm-client-activities-unauthorized</module>
+        <module>modality-crm-client-activity-login-plugin</module>
+        <module>modality-crm-client-activity-unauthorized-plugin</module>
         <module>modality-crm-client-authn-fx</module>
-        <module>modality-crm-client-authz</module>
+        <module>modality-crm-client-authz-required-plugin</module>
         <module>modality-crm-client-personaldetails</module>
-        <module>modality-crm-server-application-all</module>
-        <module>modality-crm-server-application-min</module>
-        <module>modality-crm-server-authn-gateway</module>
-        <module>modality-crm-server-authz</module>
+        <module>modality-crm-server-authn-gateway-usernamepassword-plugin</module>
+        <module>modality-crm-server-authz-required-plugin</module>
+        <module>modality-crm-server-max-plugin</module>
+        <module>modality-crm-server-min-plugin</module>
         <module>modality-crm-shared-authn</module>
     </modules>
 

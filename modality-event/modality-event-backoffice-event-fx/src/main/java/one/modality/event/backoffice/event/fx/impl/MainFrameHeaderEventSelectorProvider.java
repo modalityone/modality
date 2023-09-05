@@ -23,6 +23,10 @@ public class MainFrameHeaderEventSelectorProvider implements MainFrameHeaderNode
 
     private EntityButtonSelector<Event> eventSelector;
 
+    public MainFrameHeaderEventSelectorProvider() {
+        System.out.println();
+    }
+
     @Override
     public String getName() {
         return "eventSelector";

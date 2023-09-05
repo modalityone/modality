@@ -33,20 +33,20 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-client-navigationarrows-java</artifactId>
+            <artifactId>modality-base-client-navigationarrows-java-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-client-operationactionsloading</artifactId>
+            <artifactId>modality-base-client-operationactionsloading-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-crm-client-authz</artifactId>
+            <artifactId>modality-crm-client-authz-required-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
@@ -160,7 +160,7 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-substitution-var-env</artifactId>
+            <artifactId>webfx-platform-substitution-var-env-plugin</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
@@ -257,6 +257,12 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-db-querypush-buscall</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-db-querypush-client-simple</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
@@ -288,6 +294,12 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-orm-dql-submit-interceptor</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-push-client-simple</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

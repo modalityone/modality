@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <description>Convenient module that embeds the minimal back-office modules of the Catering layer.</description>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+
+        <plugin-module>modality-catering-backoffice-activity-kitchen-plugin</plugin-module>
+    </dependencies>
+
+</project>
