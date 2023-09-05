@@ -2,9 +2,9 @@ package one.modality.base.server.jobs.geoimport;
 
 import dev.webfx.platform.boot.spi.ApplicationJob;
 import dev.webfx.platform.console.Console;
-import dev.webfx.platform.fetch.Fetch;
-import dev.webfx.platform.json.JsonArray;
-import dev.webfx.platform.json.JsonObject;
+import dev.webfx.platform.fetch.json.JsonFetch;
+import dev.webfx.platform.util.keyobject.ReadOnlyIndexedArray;
+import dev.webfx.platform.util.keyobject.ReadOnlyKeyObject;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -28,48 +28,43 @@ public class GeoImportJob implements ApplicationJob {
 
         UpdateStore updateStore = UpdateStore.create(dataSourceModel);
         EntityStore.create(dataSourceModel).<Country>executeQuery("select id,iso_alpha2,latitude,longitude,north,south,east,west,geonameid from Country")
-
-                .onFailure(error -> Console.log(error))
-                .onSuccess(countries -> Fetch.fetch(GEO_FETCH_URL)
-
+                .onFailure(Console::log)
+                .onSuccess(countries -> JsonFetch.fetchJsonObject(GEO_FETCH_URL)
                                 .onFailure(error -> Console.log("Error while fetching " + GEO_FETCH_URL, error))
-                                .onSuccess(response -> response.jsonObject()
+                                .onSuccess(geoJsonObject -> {
 
-                                        .onFailure(error -> Console.log("Error while parsing json object from " + GEO_FETCH_URL, error))
-                                        .onSuccess(geoJsonObject -> {
+                                    ReadOnlyIndexedArray geonames = geoJsonObject.getArray("geonames");
+                                    for (int i = 0; i < geonames.size(); i++) {
 
-                                            JsonArray geonames = (JsonArray) geoJsonObject.getArray("geonames");
-                                            for (int i = 0; i < geonames.size(); i++) {
+                                        ReadOnlyKeyObject geonameCountry = geonames.getObject(i);
+                                        Integer geonameId = geonameCountry.getInteger("geonameId");
+                                        Double north = geonameCountry.getDouble("north");
+                                        Double south = geonameCountry.getDouble("south");
+                                        Double east = geonameCountry.getDouble("east");
+                                        Double west = geonameCountry.getDouble("west");
 
-                                                JsonObject geonameCountry = (JsonObject) geonames.getObject(i);
-                                                Integer geonameId = geonameCountry.getInteger("geonameId");
-                                                Double north = geonameCountry.getDouble("north");
-                                                Double south = geonameCountry.getDouble("south");
-                                                Double east = geonameCountry.getDouble("east");
-                                                Double west = geonameCountry.getDouble("west");
+                                        for (Country currentCountry : countries) {
 
-                                                for (Country currentCountry : countries) {
-
-                                                    if (currentCountry.getGeonameid().equals(geonameId)) {
-                                                        currentCountry = updateStore.updateEntity(currentCountry);
-                                                        currentCountry.setNorth(north.floatValue());
-                                                        currentCountry.setSouth(south.floatValue());
-                                                        currentCountry.setEast(east.floatValue());
-                                                        currentCountry.setWest(west.floatValue());
-                                                        break;
-                                                    }
-
-                                                }
+                                            if (currentCountry.getGeonameid().equals(geonameId)) {
+                                                currentCountry = updateStore.updateEntity(currentCountry);
+                                                currentCountry.setNorth(north.floatValue());
+                                                currentCountry.setSouth(south.floatValue());
+                                                currentCountry.setEast(east.floatValue());
+                                                currentCountry.setWest(west.floatValue());
+                                                break;
                                             }
 
-                                            if (!updateStore.hasChanges()) {
-                                                Console.log("No Countries to update");
-                                            } else {
-                                                Console.log("Updating Countries... ");
-                                                updateStore.submitChanges().onFailure(Console::log);
-                                            }
+                                        }
+                                    }
 
-                                        })));
+                                    if (!updateStore.hasChanges()) {
+                                        Console.log("No Countries to update");
+                                    } else {
+                                        Console.log("Updating Countries... ");
+                                        updateStore.submitChanges().onFailure(Console::log);
+                                    }
+
+                                }));
     }
 
 }
