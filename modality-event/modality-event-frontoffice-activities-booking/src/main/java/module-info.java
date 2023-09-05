@@ -16,8 +16,7 @@ module modality.event.frontoffice.activities.booking {
     requires webfx.extras.util.layout;
     requires webfx.kit.util;
     requires webfx.platform.console;
-    requires webfx.platform.fetch;
-    requires webfx.platform.json;
+    requires webfx.platform.fetch.json;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.i18n;

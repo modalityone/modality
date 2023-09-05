@@ -30,7 +30,8 @@ public class ServiceLoader<S> implements Iterable<S> {
             case "dev.webfx.platform.substitution.spi.SubstitutorProvider": return new ServiceLoader<S>(dev.webfx.platform.substitution.spi.impl.var.VariablesSubstitutorProvider::new);
             case "dev.webfx.platform.substitution.var.spi.VariablesResolver": return new ServiceLoader<S>(dev.webfx.platform.substitution.var.spi.impl.localstorage.LocalStorageVariablesResolver::new, dev.webfx.platform.substitution.var.spi.impl.windowlocation.WindowLocationVariablesResolver::new);
             case "dev.webfx.platform.uischeduler.spi.UiSchedulerProvider": return new ServiceLoader<S>(dev.webfx.platform.uischeduler.spi.impl.gwt.GwtUiSchedulerProvider::new);
-            case "dev.webfx.platform.util.keyobject.parser.spi.TreeParserProvider": return new ServiceLoader<S>(dev.webfx.platform.json.JsonTreeParserProvider::new);
+            case "dev.webfx.platform.util.keyobject.formatter.spi.AstFormatterProvider": return new ServiceLoader<S>(dev.webfx.platform.json.tree.JsonTreeFormatterProvider::new);
+            case "dev.webfx.platform.util.keyobject.parser.spi.AstParserProvider": return new ServiceLoader<S>(dev.webfx.platform.json.tree.JsonAstParserProvider::new);
             case "dev.webfx.platform.windowhistory.spi.WindowHistoryProvider": return new ServiceLoader<S>(dev.webfx.platform.windowhistory.spi.impl.web.WebWindowHistoryProvider::new);
             case "dev.webfx.platform.windowhistory.spi.impl.web.JsWindowHistory": return new ServiceLoader<S>(dev.webfx.platform.windowhistory.spi.impl.gwt.GwtJsWindowHistory::new);
             case "dev.webfx.platform.windowlocation.spi.WindowLocationProvider": return new ServiceLoader<S>(dev.webfx.platform.windowlocation.spi.impl.gwt.GwtWindowLocationProvider::new);
