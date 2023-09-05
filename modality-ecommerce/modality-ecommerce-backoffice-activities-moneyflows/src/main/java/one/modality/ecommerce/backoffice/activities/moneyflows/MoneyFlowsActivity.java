@@ -12,7 +12,7 @@ import dev.webfx.stack.orm.reactive.entities.entities_to_objects.ReactiveObjects
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
-import dev.webfx.stack.ui.controls.dialog.DialogUtil;
+import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import dev.webfx.extras.util.background.BackgroundFactory;
 import javafx.scene.Node;
@@ -261,8 +261,8 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
             Label label = new Label(msg);
             DialogContent dialogContent = new DialogContent().setContent(label);
             dialogContent.getCancelButton().setVisible(false);
-            DialogUtil.showModalNodeInGoldLayout(dialogContent, graph);
-            DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> dialogCallback.closeDialog());
+            DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, graph);
+            DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> dialogCallback.closeDialog());
         }
 
         private MoneyAccount getSelectedMoneyAccount() {

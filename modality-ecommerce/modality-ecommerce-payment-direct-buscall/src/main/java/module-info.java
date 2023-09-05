@@ -7,7 +7,7 @@ module modality.ecommerce.payment.direct.buscall {
 
     // Direct dependencies modules
     requires modality.ecommerce.payment.direct;
-    requires webfx.platform.json;
+    requires webfx.platform.ast.json;
     requires webfx.stack.com.bus.call;
     requires webfx.stack.com.serial;
 

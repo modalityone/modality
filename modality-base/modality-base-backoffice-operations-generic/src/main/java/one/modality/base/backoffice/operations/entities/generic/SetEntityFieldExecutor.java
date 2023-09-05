@@ -1,15 +1,15 @@
 package one.modality.base.backoffice.operations.entities.generic;
 
 import dev.webfx.stack.ui.controls.alert.AlertUtil;
-import dev.webfx.stack.ui.controls.dialog.DialogCallback;
+import dev.webfx.stack.ui.dialog.DialogCallback;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
-import dev.webfx.stack.ui.controls.dialog.DialogUtil;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.expression.Expression;
 import dev.webfx.stack.db.submit.SubmitArgument;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
+import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
@@ -25,8 +25,8 @@ final class SetEntityFieldExecutor {
             updateAndSave(entity, leftExpression, rightExpression, null, parentContainer);
         else {
             DialogContent dialogContent = new DialogContent().setContent(new Text(confirmationText));
-            DialogUtil.showModalNodeInGoldLayout(dialogContent, parentContainer).addCloseHook(promise::complete);
-            DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> updateAndSave(entity, leftExpression, rightExpression, dialogCallback, parentContainer));
+            DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, parentContainer).addCloseHook(promise::complete);
+            DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> updateAndSave(entity, leftExpression, rightExpression, dialogCallback, parentContainer));
         }
         return promise.future();
     }
