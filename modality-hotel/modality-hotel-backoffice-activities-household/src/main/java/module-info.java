@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The back-office Household activity.
+ */
 module modality.hotel.backoffice.activities.household {
 
     // Direct dependencies modules

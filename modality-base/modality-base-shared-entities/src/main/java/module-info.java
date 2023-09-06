@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Module that defines a set of Java wrappers for domain entities (easier to interact with Java code).
+ */
 module modality.base.shared.entities {
 
     // Direct dependencies modules

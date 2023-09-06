@@ -13,6 +13,8 @@
 
     <artifactId>modality-ecommerce-payment-custom-ui</artifactId>
 
+    <description>The UI displayed to the user for initiating a custom payment before calling the custom payment API.</description>
+
     <dependencies>
 
         <dependency>

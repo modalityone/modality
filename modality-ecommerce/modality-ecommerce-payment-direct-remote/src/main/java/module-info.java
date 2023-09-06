@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The client-side implementation of the direct payment API (just forwards the request to the server).
+ */
 module modality.ecommerce.payment.direct.remote {
 
     // Direct dependencies modules

@@ -13,6 +13,8 @@
 
     <artifactId>modality-hotel-backoffice-activities-accommodation</artifactId>
 
+    <description>The back-office Accommodation activity.</description>
+
     <dependencies>
 
         <dependency>
@@ -192,6 +194,12 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-ui-controls</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-ui-dialog</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Java implementation of the CSS module (using JavaFX CSS).
+ */
 module modality.base.client.css {
 
     // Direct dependencies modules

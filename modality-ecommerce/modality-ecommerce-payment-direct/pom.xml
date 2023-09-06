@@ -13,6 +13,8 @@
 
     <artifactId>modality-ecommerce-payment-direct</artifactId>
 
+    <description>The logical starting point to initiate direct payments (this API can be called either on client or server).</description>
+
     <dependencies>
 
         <dependency>

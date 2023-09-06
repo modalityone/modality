@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Set of HasXXX JavaFX markers designed for building presentation models.
+ */
 module modality.base.client.presentationmodel {
 
     // Direct dependencies modules

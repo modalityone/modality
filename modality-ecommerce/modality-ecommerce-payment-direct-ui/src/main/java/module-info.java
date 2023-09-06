@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The UI displayed to the user for initiating a direct payment before calling the direct payment API.
+ */
 module modality.ecommerce.payment.direct.ui {
 
     // Direct dependencies modules

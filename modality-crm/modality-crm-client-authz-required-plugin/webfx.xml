@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <description>Client-side module responsible for checking if the user is authorised to access a route or execute an operation.</description>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <providers>
+        <provider interface="dev.webfx.platform.boot.spi.ApplicationModuleBooter">one.modality.crm.client.services.authz.ModalityAuthorizationClientModuleBooter</provider>
+        <provider interface="dev.webfx.stack.authz.client.spi.AuthorizationClientServiceProvider">one.modality.crm.client.services.authz.ModalityAuthorizationClientServiceProvider</provider>
+    </providers>
+
+    <dependencies>
+        <used-by-source-modules/>
+    </dependencies>
+
+</project>

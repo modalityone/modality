@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Some class materials to build master/slaves views, with optionally an additional group view.
+ */
 module modality.base.backoffice.masterslave {
 
     // Direct dependencies modules

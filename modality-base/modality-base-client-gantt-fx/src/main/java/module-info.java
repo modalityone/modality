@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * A set of Gantt-related JavaFX properties (time window, selection, visibility, etc...).
+ */
 module modality.base.client.gantt.fx {
 
     // Direct dependencies modules

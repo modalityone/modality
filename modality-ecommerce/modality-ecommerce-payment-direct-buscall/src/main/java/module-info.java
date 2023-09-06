@@ -1,10 +1,13 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Declares the direct payment endpoint address, and implements the data serialisation.
+ */
 module modality.ecommerce.payment.direct.buscall {
 
     // Direct dependencies modules
     requires modality.ecommerce.payment.direct;
-    requires webfx.platform.json;
+    requires webfx.platform.ast.json.plugin;
     requires webfx.stack.com.bus.call;
     requires webfx.stack.com.serial;
 

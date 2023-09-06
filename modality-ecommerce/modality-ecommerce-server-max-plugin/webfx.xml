@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <description>Convenient module that embeds all other server plugin modules of the E-commerce layer.</description>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+
+        <plugin-module>modality-ecommerce-server-min-plugin</plugin-module>
+
+        <plugin-module>modality-ecommerce-payment-gateway-direct-authorizedotnet-plugin</plugin-module>
+        <plugin-module>modality-ecommerce-payment-gateway-delegated-stripe-plugin</plugin-module>
+        <plugin-module>modality-ecommerce-payment-gateway-custom-stripe-plugin</plugin-module>
+
+    </dependencies>
+
+</project>

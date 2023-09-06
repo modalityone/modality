@@ -13,4 +13,6 @@
 
     <artifactId>modality-base-client-icons</artifactId>
 
+    <description>A resource module containing most icons used in Modality.</description>
+
 </project>

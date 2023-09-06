@@ -13,6 +13,8 @@
 
     <artifactId>modality-hotel-backoffice-operations-documentline</artifactId>
 
+    <description>Defines an additional operation (mark bed as cleaned) that a back-office user can execute on an accommodation option.</description>
+
     <dependencies>
 
         <dependency>

@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * A theme for visual component representing time.
+ */
 module modality.base.client.time.theme {
 
     // Direct dependencies modules

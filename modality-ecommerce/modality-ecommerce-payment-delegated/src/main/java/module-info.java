@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The logical starting point to initiate delegated payments (this API can be called either on client or server).
+ */
 module modality.ecommerce.payment.delegated {
 
     // Direct dependencies modules

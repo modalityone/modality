@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Utility classes for working with entities on client side.
+ */
 module modality.base.client.entities {
 
     // Direct dependencies modules
