@@ -13,6 +13,8 @@
 
     <artifactId>modality-base-client-application</artifactId>
 
+    <description>Define a generic Modality JavaFX application (common code to the back-office and front-office).</description>
+
     <dependencies>
 
         <dependency>
@@ -41,13 +43,6 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-client-busconfig</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
             <artifactId>modality-base-client-css</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>provided</scope>
@@ -55,37 +50,9 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-client-i18n</artifactId>
+            <artifactId>modality-base-client-icons</artifactId>
             <version>1.0.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-base-client-operationactionsloading</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-crm-client-activities-login</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-crm-client-activities-unauthorized</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-crm-client-authz</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>runtime</scope>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -144,34 +111,6 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-authn-login-ui-gateway-facebook</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-authn-login-ui-gateway-google</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-authn-login-ui-gateway-mojoauth</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-authn-login-ui-gateway-password</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-authn-logout-client</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
@@ -180,13 +119,6 @@
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-com-bus-call</artifactId>
             <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-db-querypush-client-simple</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>
@@ -205,13 +137,6 @@
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-orm-domainmodel-activity</artifactId>
             <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-push-client-simple</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>

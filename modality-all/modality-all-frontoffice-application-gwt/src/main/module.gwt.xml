@@ -81,8 +81,6 @@
     <inherits name="com.google.gwt.user.User"/>
     <!--=================================< java-nio-emul >==================================-->
     <inherits name="org.gwtproject.nio.GwtNioSupport"/>
-    <!--======================< modality-all-frontoffice-application >======================-->
-    <source path="one/modality/all/frontoffice/application"/>
     <!--=========================< modality-base-client-activity >==========================-->
     <source path="one/modality/base/client/activity"/>
     <source path="one/modality/base/client/activity/table"/>
@@ -93,10 +91,6 @@
     <public includes="images/buddhas/" path=""/>
     <resource path="one/modality/base/client/images"/>
     <public includes="one/modality/base/client/images/" path=""/>
-    <!--=========================< modality-base-client-busconfig >=========================-->
-    <source path="one/modality/base/client/busconfig"/>
-    <resource path="one/modality/base/client/busconfig"/>
-    <public includes="one/modality/base/client/busconfig/" path=""/>
     <!--===========================< modality-base-client-i18n >============================-->
     <source path="one/modality/base/client/operations/i18n"/>
     <source path="one/modality/base/client/services/i18n"/>
@@ -141,20 +135,22 @@
     <public includes="images/svg/color/" path=""/>
     <resource path="images/svg/mono"/>
     <public includes="images/svg/mono/" path=""/>
-    <!--==================< modality-base-client-operationactionsloading >==================-->
+    <!--==============< modality-base-client-operationactionsloading-plugin >===============-->
     <source path="one/modality/base/client/operationactionsloading"/>
     <!--=====================< modality-base-client-presentationmodel >=====================-->
     <source path="one/modality/base/client/presentationmodel"/>
-    <!--==================< modality-base-frontoffice-activities-account >==================-->
+    <!--===============< modality-base-frontoffice-activity-account-plugin >================-->
     <source path="one/modality/base/frontoffice/activities/account"/>
     <source path="one/modality/base/frontoffice/activities/account/routing"/>
     <source path="one/modality/base/frontoffice/operations/routes/account"/>
     <resource path="one/modality/base/frontoffice/activities/account/images"/>
     <public includes="one/modality/base/frontoffice/activities/account/images/" path=""/>
-    <!--==================< modality-base-frontoffice-activities-alerts >===================-->
+    <!--================< modality-base-frontoffice-activity-alerts-plugin >================-->
     <source path="one/modality/base/frontoffice/activities/alerts"/>
     <source path="one/modality/base/frontoffice/activities/alerts/routing"/>
     <source path="one/modality/base/frontoffice/operations/routes/alerts"/>
+    <!--=====================< modality-base-frontoffice-application >======================-->
+    <source path="one/modality/base/frontoffice/application"/>
     <!--=======================< modality-base-frontoffice-utility >========================-->
     <source path="one/modality/base/frontoffice/entities"/>
     <source path="one/modality/base/frontoffice/fx"/>
@@ -173,13 +169,13 @@
     <source path="one/modality/base/shared/entities/formatters"/>
     <source path="one/modality/base/shared/entities/impl"/>
     <source path="one/modality/base/shared/entities/markers"/>
-    <!--======================< modality-crm-client-activities-login >======================-->
+    <!--===================< modality-crm-client-activity-login-plugin >====================-->
     <source path="one/modality/crm/client/activities/login"/>
-    <!--==================< modality-crm-client-activities-unauthorized >===================-->
+    <!--================< modality-crm-client-activity-unauthorized-plugin >================-->
     <source path="one/modality/crm/client/activities/unauthorized"/>
-    <!--===========================< modality-crm-client-authz >============================-->
+    <!--===================< modality-crm-client-authz-required-plugin >====================-->
     <source path="one/modality/crm/client/services/authz"/>
-    <!--=================< modality-event-frontoffice-activities-booking >==================-->
+    <!--===============< modality-event-frontoffice-activity-booking-plugin >===============-->
     <source path="one/modality/event/frontoffice/activities/booking"/>
     <source path="one/modality/event/frontoffice/activities/booking/routing"/>
     <source path="one/modality/event/frontoffice/activities/booking/steps"/>
@@ -281,11 +277,6 @@
     <source path="dev/webfx/kit/launcher"/>
     <source path="dev/webfx/kit/launcher/spi"/>
     <source path="dev/webfx/kit/launcher/spi/impl/base"/>
-    <!--==============================< webfx-kit-statusbar >===============================-->
-    <source path="dev/webfx/kit/statusbar"/>
-    <source path="dev/webfx/kit/statusbar/spi"/>
-    <!--============================< webfx-kit-statusbar-none >============================-->
-    <source path="dev/webfx/kit/statusbar/spi/impl/none"/>
     <!--=================================< webfx-kit-util >=================================-->
     <source path="dev/webfx/kit/util/properties"/>
     <source path="dev/webfx/kit/util/properties/conversion"/>
@@ -293,15 +284,42 @@
     <source path="dev/webfx/kit/util/scene"/>
     <!--============================< webfx-lib-javacupruntime >============================-->
     <source path="java_cup/runtime"/>
+    <!--===============================< webfx-platform-ast >===============================-->
+    <source path="dev/webfx/platform/ast"/>
+    <source path="dev/webfx/platform/ast/formatter"/>
+    <source path="dev/webfx/platform/ast/formatter/spi"/>
+    <source path="dev/webfx/platform/ast/impl"/>
+    <source path="dev/webfx/platform/ast/impl/listmap"/>
+    <source path="dev/webfx/platform/ast/parser"/>
+    <source path="dev/webfx/platform/ast/parser/spi"/>
+    <source path="dev/webfx/platform/ast/parser/spi/impl/properties"/>
+    <!--==========================< webfx-platform-ast-json-gwt >===========================-->
+    <source path="dev/webfx/platform/ast/json/spi/impl/gwt"/>
+    <!--=========================< webfx-platform-ast-json-plugin >=========================-->
+    <source path="dev/webfx/platform/ast/json"/>
+    <source path="dev/webfx/platform/ast/json/parser"/>
+    <source path="dev/webfx/platform/ast/json/parser/javacup"/>
+    <source path="dev/webfx/platform/ast/json/parser/jflex"/>
+    <source path="dev/webfx/platform/ast/json/spi"/>
+    <source path="dev/webfx/platform/ast/json/spi/impl/listmap"/>
     <!--==============================< webfx-platform-async >==============================-->
     <source path="dev/webfx/platform/async"/>
     <source path="dev/webfx/platform/async/impl"/>
+    <!--==============================< webfx-platform-blob >===============================-->
+    <source path="dev/webfx/platform/blob"/>
+    <source path="dev/webfx/platform/blob/spi"/>
+    <!--============================< webfx-platform-blob-gwt >=============================-->
+    <source path="dev/webfx/platform/blob/spi/impl/gwt"/>
     <!--==============================< webfx-platform-boot >===============================-->
     <source path="dev/webfx/platform/boot"/>
     <source path="dev/webfx/platform/boot/spi"/>
     <source path="dev/webfx/platform/boot/spi/impl"/>
     <!--============================< webfx-platform-boot-gwt >=============================-->
     <source path="dev/webfx/platform/boot/spi/impl/gwt"/>
+    <!--==============================< webfx-platform-conf >===============================-->
+    <source path="dev/webfx/platform/conf"/>
+    <source path="dev/webfx/platform/conf/impl"/>
+    <source path="dev/webfx/platform/conf/spi"/>
     <!--=============================< webfx-platform-console >=============================-->
     <source path="dev/webfx/platform/console"/>
     <source path="dev/webfx/platform/console/spi"/>
@@ -311,29 +329,18 @@
     <source path="dev/webfx/platform/fetch"/>
     <source path="dev/webfx/platform/fetch/spi"/>
     <source path="dev/webfx/platform/streams"/>
+    <!--=========================< webfx-platform-fetch-ast-json >==========================-->
+    <source path="dev/webfx/platform/fetch/json"/>
     <!--============================< webfx-platform-fetch-gwt >============================-->
     <source path="dev/webfx/platform/fetch/spi/impl/gwt"/>
     <source path="dev/webfx/platform/streams/spi/impl/gwt"/>
-    <!--==============================< webfx-platform-file >===============================-->
-    <source path="dev/webfx/platform/file"/>
-    <source path="dev/webfx/platform/file/spi"/>
-    <!--============================< webfx-platform-file-gwt >=============================-->
-    <source path="dev/webfx/platform/file/spi/impl/gwt"/>
     <!--========================< webfx-platform-javabase-emul-gwt >========================-->
+    <super-source includes="java/io/" path=""/>
     <super-source includes="java/lang/ref/" path=""/>
     <super-source includes="java/net/" path=""/>
     <super-source includes="java/util/" path=""/>
     <super-source includes="java/util/function/" path=""/>
     <super-source includes="java/util/regex/" path=""/>
-    <!--==============================< webfx-platform-json >===============================-->
-    <source path="dev/webfx/platform/json"/>
-    <source path="dev/webfx/platform/json/parser"/>
-    <source path="dev/webfx/platform/json/parser/javacup"/>
-    <source path="dev/webfx/platform/json/parser/jflex"/>
-    <source path="dev/webfx/platform/json/spi"/>
-    <source path="dev/webfx/platform/json/spi/impl/listmap"/>
-    <!--============================< webfx-platform-json-gwt >=============================-->
-    <source path="dev/webfx/platform/json/spi/impl/gwt"/>
     <!--==============================< webfx-platform-meta >===============================-->
     <source path="dev/webfx/platform/meta"/>
     <!--===============================< webfx-platform-os >================================-->
@@ -361,6 +368,17 @@
     <source path="dev/webfx/platform/storage/spi"/>
     <!--===========================< webfx-platform-storage-gwt >===========================-->
     <source path="dev/webfx/platform/storage/spi/impl/gwt"/>
+    <!--==========================< webfx-platform-substitution >===========================-->
+    <source path="dev/webfx/platform/substitution"/>
+    <source path="dev/webfx/platform/substitution/spi"/>
+    <!--========================< webfx-platform-substitution-var >=========================-->
+    <source path="dev/webfx/platform/substitution/spi/impl/var"/>
+    <source path="dev/webfx/platform/substitution/var/spi"/>
+    <source path="dev/webfx/platform/substitution/var/spi/impl"/>
+    <!--==============< webfx-platform-substitution-var-localstorage-plugin >===============-->
+    <source path="dev/webfx/platform/substitution/var/spi/impl/localstorage"/>
+    <!--=============< webfx-platform-substitution-var-windowlocation-plugin >==============-->
+    <source path="dev/webfx/platform/substitution/var/spi/impl/windowlocation"/>
     <!--===========================< webfx-platform-uischeduler >===========================-->
     <source path="dev/webfx/platform/uischeduler"/>
     <source path="dev/webfx/platform/uischeduler/spi"/>
@@ -371,7 +389,6 @@
     <source path="dev/webfx/platform/util"/>
     <source path="dev/webfx/platform/util/collection"/>
     <source path="dev/webfx/platform/util/function"/>
-    <source path="dev/webfx/platform/util/keyobject"/>
     <source path="dev/webfx/platform/util/serviceloader"/>
     <source path="dev/webfx/platform/util/tuples"/>
     <source path="dev/webfx/platform/util/uuid"/>
@@ -410,17 +427,17 @@
     <source path="dev/webfx/stack/authn/login/ui/spi"/>
     <!--=======================< webfx-stack-authn-login-ui-gateway >=======================-->
     <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway"/>
-    <!--==================< webfx-stack-authn-login-ui-gateway-facebook >===================-->
+    <!--===============< webfx-stack-authn-login-ui-gateway-facebook-plugin >===============-->
     <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/facebook"/>
     <resource path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/facebook"/>
     <public includes="dev/webfx/stack/authn/login/ui/spi/impl/gateway/facebook/" path=""/>
-    <!--===================< webfx-stack-authn-login-ui-gateway-google >====================-->
+    <!--================< webfx-stack-authn-login-ui-gateway-google-plugin >================-->
     <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/google"/>
     <resource path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/google"/>
     <public includes="dev/webfx/stack/authn/login/ui/spi/impl/gateway/google/" path=""/>
-    <!--==================< webfx-stack-authn-login-ui-gateway-mojoauth >===================-->
+    <!--===============< webfx-stack-authn-login-ui-gateway-mojoauth-plugin >===============-->
     <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/mojoauth"/>
-    <!--==================< webfx-stack-authn-login-ui-gateway-password >===================-->
+    <!--===============< webfx-stack-authn-login-ui-gateway-password-plugin >===============-->
     <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/password"/>
     <!--================< webfx-stack-authn-login-ui-gateway-webviewbased >=================-->
     <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/webview"/>
@@ -444,10 +461,11 @@
     <!--==============================< webfx-stack-com-bus >===============================-->
     <source path="dev/webfx/stack/com/bus"/>
     <source path="dev/webfx/stack/com/bus/spi"/>
-    <source path="dev/webfx/stack/com/bus/spi/impl"/>
     <!--============================< webfx-stack-com-bus-call >============================-->
     <source path="dev/webfx/stack/com/bus/call"/>
     <source path="dev/webfx/stack/com/bus/call/spi"/>
+    <!--===========================< webfx-stack-com-bus-client >===========================-->
+    <source path="dev/webfx/stack/com/bus/spi/impl/client"/>
     <!--============================< webfx-stack-com-bus-json >============================-->
     <source path="dev/webfx/stack/com/bus/spi/impl/json"/>
     <!--========================< webfx-stack-com-bus-json-client >=========================-->
@@ -465,14 +483,6 @@
     <source path="dev/webfx/stack/com/websocket/spi"/>
     <!--=========================< webfx-stack-com-websocket-gwt >==========================-->
     <source path="dev/webfx/stack/com/websocket/spi/impl/gwt"/>
-    <!--================================< webfx-stack-conf >================================-->
-    <source path="dev/webfx/stack/conf"/>
-    <source path="dev/webfx/stack/conf/spi"/>
-    <source path="dev/webfx/stack/conf/spi/impl"/>
-    <!--==========================< webfx-stack-conf-format-json >==========================-->
-    <source path="dev/webfx/stack/conf/spi/impl/format/json"/>
-    <!--===========================< webfx-stack-conf-resource >============================-->
-    <source path="dev/webfx/stack/conf/spi/impl/resource"/>
     <!--============================< webfx-stack-db-datascope >============================-->
     <source path="dev/webfx/stack/db/datascope"/>
     <source path="dev/webfx/stack/db/datascope/aggregate"/>
@@ -657,6 +667,8 @@
     <source path="dev/webfx/stack/ui/controls/dialog"/>
     <resource path="images/s16/controls"/>
     <public includes="images/s16/controls/" path=""/>
+    <!--=============================< webfx-stack-ui-dialog >==============================-->
+    <source path="dev/webfx/stack/ui/dialog"/>
     <!--============================< webfx-stack-ui-fxraiser >=============================-->
     <source path="dev/webfx/stack/ui/fxraiser"/>
     <source path="dev/webfx/stack/ui/fxraiser/impl"/>

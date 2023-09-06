@@ -14,9 +14,9 @@ import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
-import dev.webfx.stack.ui.controls.dialog.DialogCallback;
+import dev.webfx.stack.ui.dialog.DialogCallback;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
-import dev.webfx.stack.ui.controls.dialog.DialogUtil;
+import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -354,13 +354,13 @@ public class AlterRoomPane extends VBox {
             String msg = "This is the only configuration for this resource. It cannot be deleted.";
             DialogContent dialogContent = new DialogContent().setContentText(msg);
             dialogContent.getCancelButton().setVisible(false);
-            DialogUtil.showModalNodeInGoldLayout(dialogContent, this);
-            DialogUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
+            DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, this);
+            DialogBuilderUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
         } else {
             String msg = "Are you sure you wish to delete the selected resource configuration?";
             DialogContent dialogContent = new DialogContent().setContentText(msg).setYesNo();
-            DialogUtil.showModalNodeInGoldLayout(dialogContent, this);
-            DialogUtil.armDialogContentButtons(dialogContent,dialogCallback -> {
+            DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, this);
+            DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
                 delete();
                 dialogCallback.closeDialog();
             });

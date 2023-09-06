@@ -1,10 +1,10 @@
 package one.modality.ecommerce.backoffice.operations.entities.moneyaccount;
 
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
-import dev.webfx.stack.ui.controls.dialog.DialogUtil;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.db.submit.SubmitArgument;
 import dev.webfx.platform.async.Future;
+import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
 import javafx.scene.layout.Pane;
 import one.modality.base.shared.entities.MoneyAccount;
 import one.modality.base.shared.entities.MoneyFlow;
@@ -21,8 +21,8 @@ final class DeleteMoneyAccountExecutor {
     private static Future<Void> execute(MoneyAccount moneyAccount, List<MoneyFlow> moneyFlows, Pane parentContainer) {
         String msg = buildDeleteMoneyAccountMsg(moneyAccount, moneyFlows);
         DialogContent dialogContent = new DialogContent().setContentText(msg);
-        DialogUtil.showModalNodeInGoldLayout(dialogContent, parentContainer);
-        DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
+        DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, parentContainer);
+        DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
             deleteSelectedMoneyAccount(moneyAccount, moneyFlows);
             dialogCallback.closeDialog();
         });

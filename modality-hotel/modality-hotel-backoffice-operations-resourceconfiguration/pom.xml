@@ -13,6 +13,8 @@
 
     <artifactId>modality-hotel-backoffice-operations-resourceconfiguration</artifactId>
 
+    <description>Defines the basic operations that a back-office user can execute on a resource configuration (= room configuration here).</description>
+
     <dependencies>
 
         <dependency>

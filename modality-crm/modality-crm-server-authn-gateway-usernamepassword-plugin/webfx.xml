@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <description>Server-side module responsible for checking username/password authentication requests.</description>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+    </dependencies>
+
+    <providers>
+        <provider interface="dev.webfx.stack.authn.server.gateway.spi.ServerAuthenticationGatewayProvider">one.modality.crm.server.authn.gateway.ModalityUsernamePasswordAuthenticationGatewayProvider</provider>
+    </providers>
+
+</project>

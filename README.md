@@ -7,6 +7,7 @@
 [![Scc Lines Count Badge](https://sloc.xyz/github/modalityone/modality/?category=lines)](https://github.com/modalityone/modality/)
 [![Scc COCOMO Badge](https://sloc.xyz/github/modalityone/modality/?category=cocomo)](https://github.com/modalityone/modality/)
 [![Discover Vulnerabilities Using CodeQL](https://github.com/modalityone/modality/actions/workflows/discover-vulnerabilities.yml/badge.svg)](https://github.com/modalityone/modality/actions/workflows/discover-vulnerabilities.yml)
+[![GitHub](https://img.shields.io/badge/Framework-WebFX-blue?logo=github)](https://github.com/webfx-project/webfx)
 
 # Modality
 Modality is a free, open-source, hospitality-oriented booking system, currently in development. It will support significant event complexity, unmatched by any existing solution that we are aware of.

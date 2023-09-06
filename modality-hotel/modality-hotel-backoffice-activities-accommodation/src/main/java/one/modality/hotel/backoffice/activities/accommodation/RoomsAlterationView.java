@@ -4,9 +4,9 @@ import dev.webfx.extras.theme.Facet;
 import dev.webfx.extras.theme.luminance.LuminanceFacetCategory;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
-import dev.webfx.stack.ui.controls.dialog.DialogCallback;
+import dev.webfx.stack.ui.dialog.DialogCallback;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
-import dev.webfx.stack.ui.controls.dialog.DialogUtil;
+import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.ListChangeListener;
@@ -93,8 +93,8 @@ public class RoomsAlterationView {
         roomsAlterationRoomPane.setOnMouseClicked(e -> {
             alterRoomPane.resourceConfigurationProperty().set(rc);
             DialogContent dialogContent = new DialogContent().setContent(alterRoomPane);
-            DialogUtil.showModalNodeInGoldLayout(dialogContent, (Pane) roomsAlterationRoomPane.getParent());
-            DialogUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
+            DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, (Pane) roomsAlterationRoomPane.getParent());
+            DialogBuilderUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
         });
         return createPrimaryPanelFacet(roomsAlterationRoomPane).getContainerNode(); // TODO replace this with a call to a Theme class
     }
@@ -116,7 +116,7 @@ public class RoomsAlterationView {
         roomStatusView.toProperty().set(to);
         Node roomStatusNode = roomStatusView.buildView();
         DialogContent dialogContent = new DialogContent().setContent(roomStatusNode);
-        DialogUtil.showModalNodeInGoldLayout(dialogContent, (Pane) scrollPane.getParent());
-        DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> dialogCallback.closeDialog());
+        DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, (Pane) scrollPane.getParent());
+        DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> dialogCallback.closeDialog());
     }
 }

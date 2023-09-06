@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
 
+    <description>A JavaFX property holder of an authenticated Modality user (ModalityUserPrincipal).</description>
+
     <exported-packages>
         <source-packages/>
     </exported-packages>
 
     <dependencies>
-        <used-by-source-modules/>
+        <used-by-source-modules>
+            <module transitive="true">modality-crm-shared-authn</module>
+        </used-by-source-modules>
     </dependencies>
 
 </project>

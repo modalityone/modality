@@ -1,7 +1,7 @@
 package one.modality.ecommerce.payment.delegated.buscall.serial;
 
-import dev.webfx.platform.json.JsonObject;
-import dev.webfx.platform.json.ReadOnlyJsonObject;
+import dev.webfx.platform.ast.json.JsonObject;
+import dev.webfx.platform.ast.json.ReadOnlyJsonObject;
 import dev.webfx.stack.com.serial.spi.impl.SerialCodecBase;
 import one.modality.ecommerce.payment.delegated.InitiateDelegatedPaymentResult;
 
