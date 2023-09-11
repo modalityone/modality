@@ -10,7 +10,7 @@ module modality.crm.backoffice.organization.fx {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
-    requires modality.base.backoffice.mainframe.activity;
+    requires modality.base.backoffice.mainframe.headernode;
     requires modality.base.shared.entities;
     requires webfx.kit.util;
     requires webfx.stack.orm.datasourcemodel.service;
@@ -26,6 +26,6 @@ module modality.crm.backoffice.organization.fx {
     exports one.modality.crm.backoffice.organization.fx.impl;
 
     // Provided services
-    provides one.modality.base.backoffice.activities.mainframe.MainFrameHeaderNodeProvider with one.modality.crm.backoffice.organization.fx.impl.MainFrameHeaderOrganizationSelectorProvider;
+    provides one.modality.base.backoffice.activities.mainframe.headernode.MainFrameHeaderNodeProvider with one.modality.crm.backoffice.organization.fx.impl.MainFrameHeaderOrganizationSelectorProvider;
 
 }

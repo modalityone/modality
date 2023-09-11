@@ -16,6 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Text;
+import one.modality.base.backoffice.activities.mainframe.headernode.MainFrameHeaderNodeProvider;
 import one.modality.base.backoffice.ganttcanvas.MainFrameGanttCanvas;
 import one.modality.base.client.application.ModalityClientMainFrameActivity;
 import one.modality.base.client.gantt.fx.interstice.FXGanttInterstice;
@@ -89,7 +90,7 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
 
     @Override
     protected HBox createMainFrameHeaderCenterItem() {
-        String[] expectedOrder = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.base.backoffice.application")
+        String[] expectedOrder = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.base.backoffice.mainframe.headernode")
                 .getString("headerNodesOrder").split(",");
         return new HBox(5, MainFrameHeaderNodeProvider.getProviders().stream()
                 .sorted(Comparator.comparingInt(o -> Arrays.indexOf(expectedOrder, o.getName())))
