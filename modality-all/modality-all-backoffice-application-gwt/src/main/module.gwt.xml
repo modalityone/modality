@@ -165,6 +165,8 @@
     <source path="one/modality/base/backoffice/ganttcanvas/spi"/>
     <resource path="one/modality/base/backoffice/ganttcanvas/images/s32"/>
     <public includes="one/modality/base/backoffice/ganttcanvas/images/s32/" path=""/>
+    <!--==================< modality-base-backoffice-mainframe-activity >===================-->
+    <source path="one/modality/base/backoffice/activities/mainframe"/>
     <!--======================< modality-base-backoffice-masterslave >======================-->
     <source path="one/modality/base/backoffice/controls/masterslave"/>
     <source path="one/modality/base/backoffice/controls/masterslave/group"/>

@@ -1,4 +1,4 @@
-package one.modality.base.backoffice.application;
+package one.modality.base.backoffice.activities.mainframe;
 
 import dev.webfx.extras.theme.layout.FXLayoutMode;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;

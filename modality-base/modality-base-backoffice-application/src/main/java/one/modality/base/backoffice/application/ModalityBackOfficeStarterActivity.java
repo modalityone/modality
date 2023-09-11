@@ -1,5 +1,6 @@
 package one.modality.base.backoffice.application;
 
+import one.modality.base.backoffice.activities.mainframe.ModalityBackOfficeMainFrameContainerActivity;
 import one.modality.base.client.application.ModalityClientStarterActivity;
 
 /**
