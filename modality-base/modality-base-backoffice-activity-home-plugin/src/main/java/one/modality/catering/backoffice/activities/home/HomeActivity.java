@@ -9,6 +9,7 @@ import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.conf.SourcesConfig;
+import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContextMixin;
@@ -17,6 +18,7 @@ import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionBinder;
 import dev.webfx.stack.ui.action.ActionBuilder;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
@@ -55,12 +57,12 @@ public class HomeActivity extends ViewDomainActivityBase
     }
 
     private Action operationCodeToAction(String operationCode) {
-        if (operationCode.equals("RouteToBookingsAndSearch"))
-            operationCode = "RouteToBookings";
         RouteRequestEmitter routeRequestEmitter = RoutingActions.findRouteRequestEmitter(operationCode, this);
         if (routeRequestEmitter == null) {
             return new ActionBuilder()
-                    .setI18nKey(operationCode.substring(7))
+                    .setI18nKey(Strings.removePrefix(operationCode, "RouteTo"))
+                    .setDisabledProperty(new SimpleBooleanProperty(true))
+                    .setHiddenWhenDisabled(false)
                     .build();
         }
         return RoutingActions.getRouteEmitterAction(routeRequestEmitter, this, this);
@@ -127,6 +129,7 @@ public class HomeActivity extends ViewDomainActivityBase
                     .setShadowed(true)
                     .style();
             textFacet = TextTheme.createPrimaryTextFacet(htmlText)
+                    .setDisabledProperty(action.disabledProperty())
                     .setFillProperty(htmlText.fillProperty())
                     .setFontProperty(htmlText.fontProperty())
                     .style();
