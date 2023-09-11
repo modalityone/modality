@@ -25,6 +25,7 @@
         <module>modality-base-backoffice-gantt-canvas</module>
         <module>modality-base-backoffice-gantt-canvas-basic-plugin</module>
         <module>modality-base-backoffice-mainframe-activity</module>
+        <module>modality-base-backoffice-mainframe-headernode</module>
         <module>modality-base-backoffice-masterslave</module>
         <module>modality-base-backoffice-max-plugin</module>
         <module>modality-base-backoffice-min-plugin</module>
