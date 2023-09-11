@@ -17,7 +17,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Text;
 import one.modality.base.backoffice.ganttcanvas.MainFrameGanttCanvas;
-import one.modality.base.client.application.ModalityClientMainFrameContainerActivity;
+import one.modality.base.client.application.ModalityClientMainFrameActivity;
 import one.modality.base.client.gantt.fx.interstice.FXGanttInterstice;
 
 import java.util.Comparator;
@@ -25,25 +25,25 @@ import java.util.Comparator;
 /**
  * @author Bruno Salmon
  */
-public class ModalityBackOfficeMainFrameContainerActivity extends ModalityClientMainFrameContainerActivity {
+public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrameActivity {
 
-    protected Pane frameContainer;
-    private Region containerHeader;
-    private Region containerFooter;
+    protected Pane mainFrame;
+    private Region mainFrameHeader;
+    private Region mainFrameFooter;
     private final Region ganttCanvasContainer = MainFrameGanttCanvas.getCanvasContainer();
     private Insets breathingPadding; // actual value will be computed depending on compact mode
 
     @Override
     public Node buildUi() {
-        frameContainer = new Pane() {
+        mainFrame = new Pane() {
             @Override
             protected void layoutChildren() {
                 // TODO determine value to use for canvasPane based on which activity we are in
                 double width = getWidth(), height = getHeight();
-                double headerHeight = containerHeader.prefHeight(width);
-                double footerHeight = containerFooter.prefHeight(width);
-                layoutInArea(containerHeader, 0, 0, width, headerHeight, 0, HPos.CENTER, VPos.TOP);
-                layoutInArea(containerFooter, 0, height - footerHeight, width, footerHeight, 0, HPos.CENTER, VPos.BOTTOM);
+                double headerHeight = mainFrameHeader.prefHeight(width);
+                double footerHeight = mainFrameFooter.prefHeight(width);
+                layoutInArea(mainFrameHeader, 0, 0, width, headerHeight, 0, HPos.CENTER, VPos.TOP);
+                layoutInArea(mainFrameFooter, 0, height - footerHeight, width, footerHeight, 0, HPos.CENTER, VPos.BOTTOM);
                 double nodeY = FXLayoutMode.isCompactMode() ? 0 : headerHeight;
                 double nodeHeight = 0;
                 if (ganttCanvasContainer.isVisible()) {
@@ -57,22 +57,22 @@ public class ModalityBackOfficeMainFrameContainerActivity extends ModalityClient
                 }
             }
         };
-        containerHeader = createContainerHeader();
-        containerFooter = createContainerFooter();
+        mainFrameHeader = createMainFrameHeader();
+        mainFrameFooter = createMainFrameFooter();
         FXProperties.runNowAndOnPropertiesChange(this::updateMountNode, mountNodeProperty());
         // Requesting a layout for containerPane on layout mode changes
         FXProperties.runNowAndOnPropertiesChange(() -> {
             boolean compactMode = FXLayoutMode.isCompactMode();
-            double hBreathing = compactMode ? 0 : 0.03 * frameContainer.getWidth();
-            double vBreathing = compactMode ? 0 : 0.03 * frameContainer.getHeight();
+            double hBreathing = compactMode ? 0 : 0.03 * mainFrame.getWidth();
+            double vBreathing = compactMode ? 0 : 0.03 * mainFrame.getHeight();
             breathingPadding = new Insets(vBreathing, hBreathing, vBreathing, hBreathing);
-            frameContainer.requestLayout();
-        }, FXLayoutMode.layoutModeProperty(), FXGanttInterstice.ganttIntersticeRequiredProperty(), frameContainer.widthProperty(), frameContainer.heightProperty());
+            mainFrame.requestLayout();
+        }, FXLayoutMode.layoutModeProperty(), FXGanttInterstice.ganttIntersticeRequiredProperty(), mainFrame.widthProperty(), mainFrame.heightProperty());
         // When not in compact mode, the nodes don't cover the whole surface of this container, because there are some
         // breathing areas (see breathingPadding) which appear as empty areas but with this container background, so we
         // need to give these areas the same color as the nodes background (seen as primary facets by the LuminanceTheme).
-        LuminanceTheme.createPrimaryPanelFacet(frameContainer).style(); // => will have the same background as the nodes
-        return frameContainer;
+        LuminanceTheme.createPrimaryPanelFacet(mainFrame).style(); // => will have the same background as the nodes
+        return mainFrame;
     }
 
     @Override
@@ -84,21 +84,21 @@ public class ModalityBackOfficeMainFrameContainerActivity extends ModalityClient
         // Note: the order of the children is important in compact mode, where the container header overlaps the mount
         // node (as a transparent button bar on top of it) -> so the container header must be after the mount node,
         // otherwise it will be hidden.
-        frameContainer.getChildren().setAll(Collections.listOfRemoveNulls(ganttCanvasContainer, getMountNode(), containerHeader, containerFooter));
+        mainFrame.getChildren().setAll(Collections.listOfRemoveNulls(ganttCanvasContainer, getMountNode(), mainFrameHeader, mainFrameFooter));
     }
 
     @Override
-    protected HBox createContainerHeaderCenterItem() {
+    protected HBox createMainFrameHeaderCenterItem() {
         String[] expectedOrder = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.base.backoffice.application")
                 .getString("headerNodesOrder").split(",");
         return new HBox(5, MainFrameHeaderNodeProvider.getProviders().stream()
                 .sorted(Comparator.comparingInt(o -> Arrays.indexOf(expectedOrder, o.getName())))
-                .map(p -> p.getHeaderNode(this, frameContainer, getDataSourceModel()))
+                .map(p -> p.getHeaderNode(this, mainFrame, getDataSourceModel()))
                 .toArray(Node[]::new));
     }
 
     @Override
-    protected Region createContainerFooter() {
+    protected Region createMainFrameFooter() {
         Text text = new Text(" ");
         TextTheme.createDefaultTextFacet(text).style();
         HBox containerFooter = new HBox(text);

@@ -12,18 +12,18 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
-import one.modality.base.client.application.ModalityClientMainFrameContainerActivity;
+import one.modality.base.client.application.ModalityClientMainFrameActivity;
 import one.modality.base.client.application.RoutingActions;
 
-public class ModalityFrontOfficeMainFrameContainerActivity extends ModalityClientMainFrameContainerActivity {
+public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFrameActivity {
 
     @Override
-    protected Region createContainerHeader() {
+    protected Region createMainFrameHeader() {
         return null;
     }
 
     @Override
-    protected Region createContainerFooter() {
+    protected Region createMainFrameFooter() {
         return new FlexBox(
                 RoutingActions.filterRoutingActions(this, this,
                                 "RouteToHome", "RouteToBooking", "RouteToAlerts", "RouteToAccount")

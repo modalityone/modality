@@ -24,22 +24,22 @@ import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 /**
  * @author Bruno Salmon
  */
-public class ModalityClientMainFrameContainerActivity extends ViewDomainActivityBase
+public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
         implements ModalityButtonFactoryMixin
         , OperationActionFactoryMixin {
 
     @Override
     public Node buildUi() {
-        BorderPane frameContainer = new BorderPane();
-        frameContainer.centerProperty().bind(mountNodeProperty());
-        frameContainer.setTop(createContainerHeader());
-        frameContainer.setBottom(createContainerFooter());
-        return frameContainer;
+        BorderPane mainFrame = new BorderPane();
+        mainFrame.centerProperty().bind(mountNodeProperty());
+        mainFrame.setTop(createMainFrameHeader());
+        mainFrame.setBottom(createMainFrameFooter());
+        return mainFrame;
     }
 
-    protected Region createContainerHeader() {
-        Node headerCenterItem = createContainerHeaderCenterItem();
-        HBox containerHeader = new HBox(
+    protected Region createMainFrameHeader() {
+        Node headerCenterItem = createMainFrameHeaderCenterItem();
+        HBox mainFrameHeader = new HBox(
                 // Home button
                 ActionBinder.bindButtonToAction(newButton(), routeOperationCodeToAction("RouteToHome")),
                 LayoutUtil.createHSpace(6),
@@ -55,10 +55,10 @@ public class ModalityClientMainFrameContainerActivity extends ViewDomainActivity
                 // Logout button
                 ActionBinder.bindButtonToAction(newButton(), newOperationAction(LogoutRequest::new))
         );
-        containerHeader.setAlignment(Pos.CENTER_LEFT);
-        containerHeader.setPadding(new Insets(5));
-        setUpContextMenu(containerHeader, this::contextMenuActionGroup);
-        LuminanceTheme.createApplicationFrameFacet(containerHeader)
+        mainFrameHeader.setAlignment(Pos.CENTER_LEFT);
+        mainFrameHeader.setPadding(new Insets(5));
+        setUpContextMenu(mainFrameHeader, this::contextMenuActionGroup);
+        LuminanceTheme.createApplicationFrameFacet(mainFrameHeader)
                 .setOnMouseClicked(e -> { // Temporary for testing
                     if (e.isAltDown())
                         FXPaletteMode.setVariedPalette(!FXPaletteMode.isVariedPalette());
@@ -70,14 +70,14 @@ public class ModalityClientMainFrameContainerActivity extends ViewDomainActivity
                 .style();
         // Hiding the center item in compact mode
         FXLayoutMode.layoutModeProperty().addListener(observable -> headerCenterItem.setVisible(!FXLayoutMode.isCompactMode()));
-        return containerHeader;
+        return mainFrameHeader;
     }
 
-    protected Node createContainerHeaderCenterItem() {
+    protected Node createMainFrameHeaderCenterItem() {
         return LayoutUtil.createHSpace(0);
     }
 
-    protected Region createContainerFooter() {
+    protected Region createMainFrameFooter() {
         return null;
     }
 
