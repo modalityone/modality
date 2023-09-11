@@ -1,6 +1,6 @@
 package one.modality.base.backoffice.application;
 
-import one.modality.base.backoffice.activities.mainframe.ModalityBackOfficeMainFrameContainerActivity;
+import one.modality.base.backoffice.activities.mainframe.ModalityBackOfficeMainFrameActivity;
 import one.modality.base.client.application.ModalityClientStarterActivity;
 
 /**
@@ -11,7 +11,7 @@ final class ModalityBackOfficeStarterActivity extends ModalityClientStarterActiv
     private static final String DEFAULT_START_PATH = "/home";
 
     ModalityBackOfficeStarterActivity() {
-        super(DEFAULT_START_PATH, ModalityBackOfficeMainFrameContainerActivity::new);
+        super(DEFAULT_START_PATH, ModalityBackOfficeMainFrameActivity::new);
     }
 
 }
