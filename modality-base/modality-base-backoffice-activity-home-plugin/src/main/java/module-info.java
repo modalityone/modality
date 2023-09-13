@@ -8,15 +8,11 @@ module modality.base.backoffice.activity.home.plugin {
     // Direct dependencies modules
     requires java.base;
     requires javafx.base;
-    requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.backoffice.tile;
     requires modality.base.client.activity;
     requires modality.base.client.application;
-    requires webfx.extras.scalepane;
     requires webfx.extras.theme;
-    requires webfx.extras.util.layout;
-    requires webfx.extras.webtext;
-    requires webfx.kit.util;
     requires webfx.platform.conf;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
@@ -29,12 +25,12 @@ module modality.base.backoffice.activity.home.plugin {
     requires webfx.stack.ui.operation.action;
 
     // Exported packages
-    exports one.modality.catering.backoffice.activities.home;
-    exports one.modality.catering.backoffice.activities.home.routing;
-    exports one.modality.catering.backoffice.operations.routes.home;
+    exports one.modality.base.backoffice.activities.home;
+    exports one.modality.base.backoffice.activities.home.routing;
+    exports one.modality.base.backoffice.operations.routes.home;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.catering.backoffice.activities.home.HomeUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.catering.backoffice.activities.home.RouteToHomeRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.base.backoffice.activities.home.HomeUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.base.backoffice.activities.home.RouteToHomeRequestEmitter;
 
 }

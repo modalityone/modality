@@ -1,9 +1,9 @@
-package one.modality.catering.backoffice.activities.home;
+package one.modality.base.backoffice.activities.home;
 
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
-import one.modality.catering.backoffice.operations.routes.home.RouteToHomeRequest;
+import one.modality.base.backoffice.operations.routes.home.RouteToHomeRequest;
 
 /**
  * @author Bruno Salmon

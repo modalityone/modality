@@ -1,9 +1,9 @@
-package one.modality.catering.backoffice.operations.routes.home;
+package one.modality.base.backoffice.operations.routes.home;
 
 import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.ui.operation.HasOperationCode;
-import one.modality.catering.backoffice.activities.home.routing.HomeRouting;
+import one.modality.base.backoffice.activities.home.routing.HomeRouting;
 
 /**
  * @author Bruno Salmon
