@@ -11,7 +11,6 @@ import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivi
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionBinder;
 import dev.webfx.stack.ui.action.ActionGroup;
-import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,6 +18,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 
 /**
@@ -38,8 +38,11 @@ public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
     }
 
     protected Region createMainFrameHeader() {
+        // mainFrameHeader consists of 1) headerButtonsBar on top, and eventually 2) headerTabsBar at the bottom.
+
+        // 1) Building headerButtonsBar containing a home button, navigation buttons, customisable center item & logout button
         Node headerCenterItem = createMainFrameHeaderCenterItem();
-        HBox mainFrameHeader = new HBox(
+        HBox headerButtonsBar = new HBox(
                 // Home button
                 ActionBinder.bindButtonToAction(newButton(), routeOperationCodeToAction("RouteToHome")),
                 LayoutUtil.createHSpace(6),
@@ -55,10 +58,18 @@ public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
                 // Logout button
                 ActionBinder.bindButtonToAction(newButton(), newOperationAction(LogoutRequest::new))
         );
-        mainFrameHeader.setAlignment(Pos.CENTER_LEFT);
-        mainFrameHeader.setPadding(new Insets(5));
-        setUpContextMenu(mainFrameHeader, this::contextMenuActionGroup);
-        LuminanceTheme.createApplicationFrameFacet(mainFrameHeader)
+        headerButtonsBar.setAlignment(Pos.CENTER_LEFT);
+        headerButtonsBar.setPadding(new Insets(5));
+
+        // 2) Building a customisable headerTabsBar (used only in the backoffice so far)
+        Region headerTabsBar = createHeaderTabsBar();
+
+        // Assembling 1) & 2) into the mainFrameHeader
+        Region mainFrameHeader = headerTabsBar == null ? headerButtonsBar : new VBox(headerButtonsBar, headerTabsBar);
+
+        setUpContextMenu(headerButtonsBar, this::contextMenuActionGroup);
+        LuminanceTheme.createApplicationFrameFacet(headerButtonsBar)
+                .setBordered(true)
                 .setOnMouseClicked(e -> { // Temporary for testing
                     if (e.isAltDown())
                         FXPaletteMode.setVariedPalette(!FXPaletteMode.isVariedPalette());
@@ -77,6 +88,10 @@ public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
         return LayoutUtil.createHSpace(0);
     }
 
+    protected Region createHeaderTabsBar() {
+        return null;
+    }
+
     protected Region createMainFrameFooter() {
         return null;
     }
@@ -91,9 +106,5 @@ public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
                         .map(instantiator -> newOperationAction(instantiator::emitLanguageRequest))
                         .toArray(Action[]::new)
         );
-    }
-
-    private static boolean hasRequestOperationCode(Object request, Object operationCode) {
-        return request instanceof HasOperationCode && operationCode.equals(((HasOperationCode) request).getOperationCode());
     }
 }

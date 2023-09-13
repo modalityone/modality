@@ -46,8 +46,7 @@ public class HomeActivity extends ViewDomainActivityBase
     private Tile createHomeTile(Action action) {
         return new Tile(action)
                 .setAdaptativeFontSize(true)
-                .setShadowed(true)
-                .setSelected(true);
+                .setShadowed(true);
     }
 
     protected Collection<Action> homeRoutingActions() {

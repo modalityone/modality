@@ -10,6 +10,8 @@ module modality.hotel.backoffice.activities.accommodation {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.backoffice.mainframe.fx;
+    requires modality.base.backoffice.tile;
     requires modality.base.client.activity.organizationdependent;
     requires modality.base.client.gantt.fx;
     requires modality.base.shared.domainmodel;
@@ -36,6 +38,7 @@ module modality.hotel.backoffice.activities.accommodation {
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
+    requires webfx.stack.ui.action;
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.dialog;
     requires webfx.stack.ui.operation;
