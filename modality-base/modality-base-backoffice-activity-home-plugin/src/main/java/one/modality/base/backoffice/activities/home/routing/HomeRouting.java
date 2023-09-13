@@ -1,4 +1,4 @@
-package one.modality.catering.backoffice.activities.home.routing;
+package one.modality.base.backoffice.activities.home.routing;
 
 /**
  * @author Bruno Salmon

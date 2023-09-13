@@ -1,10 +1,10 @@
-package one.modality.catering.backoffice.activities.home;
+package one.modality.base.backoffice.activities.home;
 
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.routing.router.util.PathBuilder;
 import dev.webfx.stack.routing.uirouter.UiRoute;
 import dev.webfx.stack.routing.uirouter.impl.UiRouteImpl;
-import one.modality.catering.backoffice.activities.home.routing.HomeRouting;
+import one.modality.base.backoffice.activities.home.routing.HomeRouting;
 
 /**
  * @author Bruno Salmon

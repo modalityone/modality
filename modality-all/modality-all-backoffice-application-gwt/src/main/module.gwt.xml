@@ -151,9 +151,9 @@
     <source path="one/modality/base/backoffice/activities/filters/routing"/>
     <source path="one/modality/base/backoffice/operations/routes/filters"/>
     <!--=================< modality-base-backoffice-activity-home-plugin >==================-->
-    <source path="one/modality/catering/backoffice/activities/home"/>
-    <source path="one/modality/catering/backoffice/activities/home/routing"/>
-    <source path="one/modality/catering/backoffice/operations/routes/home"/>
+    <source path="one/modality/base/backoffice/activities/home"/>
+    <source path="one/modality/base/backoffice/activities/home/routing"/>
+    <source path="one/modality/base/backoffice/operations/routes/home"/>
     <!--==============< modality-base-backoffice-activity-operations-plugin >===============-->
     <source path="one/modality/base/backoffice/activities/operations"/>
     <source path="one/modality/base/backoffice/activities/operations/routing"/>
