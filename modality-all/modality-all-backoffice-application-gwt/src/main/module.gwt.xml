@@ -167,6 +167,8 @@
     <public includes="one/modality/base/backoffice/ganttcanvas/images/s32/" path=""/>
     <!--==================< modality-base-backoffice-mainframe-activity >===================-->
     <source path="one/modality/base/backoffice/activities/mainframe"/>
+    <!--=====================< modality-base-backoffice-mainframe-fx >======================-->
+    <source path="one/modality/base/backoffice/activities/mainframe/fx"/>
     <!--=================< modality-base-backoffice-mainframe-headernode >==================-->
     <source path="one/modality/base/backoffice/activities/mainframe/headernode"/>
     <!--======================< modality-base-backoffice-masterslave >======================-->
@@ -176,6 +178,8 @@
     <source path="one/modality/base/backoffice/operations/entities/filters"/>
     <!--==================< modality-base-backoffice-operations-generic >===================-->
     <source path="one/modality/base/backoffice/operations/entities/generic"/>
+    <!--=========================< modality-base-backoffice-tile >==========================-->
+    <source path="one/modality/base/backoffice/tile"/>
     <!--=========================< modality-base-client-activity >==========================-->
     <source path="one/modality/base/client/activity"/>
     <source path="one/modality/base/client/activity/table"/>
@@ -422,6 +426,8 @@
     <source path="dev/webfx/extras/util/layout"/>
     <!--============================< webfx-extras-util-paint >=============================-->
     <source path="dev/webfx/extras/util/paint"/>
+    <!--=============================< webfx-extras-util-pane >=============================-->
+    <source path="dev/webfx/extras/util/pane"/>
     <!--============================< webfx-extras-util-scene >=============================-->
     <source path="dev/webfx/extras/util/scene"/>
     <!--==============================< webfx-extras-visual >===============================-->
