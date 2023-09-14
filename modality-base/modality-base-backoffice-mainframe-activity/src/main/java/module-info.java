@@ -17,11 +17,14 @@ module modality.base.backoffice.mainframe.activity {
     requires webfx.extras.util.pane;
     requires webfx.kit.util;
     requires webfx.platform.conf;
-    requires webfx.platform.console;
+    requires webfx.platform.resource;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
 
     // Exported packages
     exports one.modality.base.backoffice.activities.mainframe;
+
+    // Resources packages
+    opens one.modality.base.backoffice.activities.mainframe;
 
 }
