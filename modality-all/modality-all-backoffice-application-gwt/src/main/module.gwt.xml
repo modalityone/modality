@@ -167,6 +167,8 @@
     <public includes="one/modality/base/backoffice/ganttcanvas/images/s32/" path=""/>
     <!--==================< modality-base-backoffice-mainframe-activity >===================-->
     <source path="one/modality/base/backoffice/activities/mainframe"/>
+    <resource path="one/modality/base/backoffice/activities/mainframe"/>
+    <public includes="one/modality/base/backoffice/activities/mainframe/" path=""/>
     <!--=====================< modality-base-backoffice-mainframe-fx >======================-->
     <source path="one/modality/base/backoffice/activities/mainframe/fx"/>
     <!--=================< modality-base-backoffice-mainframe-headernode >==================-->

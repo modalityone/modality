@@ -8,6 +8,7 @@ import dev.webfx.extras.util.animation.Animations;
 import dev.webfx.extras.util.pane.MonoClipPane;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.conf.SourcesConfig;
+import dev.webfx.platform.resource.Resource;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
@@ -19,10 +20,11 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import one.modality.base.backoffice.activities.mainframe.fx.FXMainFrameHeaderTabsBar;
 import one.modality.base.backoffice.activities.mainframe.headernode.MainFrameHeaderNodeProvider;
@@ -117,13 +119,30 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
     }
 
     @Override
+    protected Node createBrandNode() {
+        ImageView logo = new ImageView(Resource.toUrl("modality-logo.png", getClass()));
+        Text modality = new Text("modality");
+        Text one = new Text("one");
+        modality.setFont(Font.font("Montserrat", FontWeight.NORMAL, 18));
+        one.setFont(Font.font("Montserrat", FontWeight.BOLD, 18));
+        modality.setFill(Color.web("4D4D4D"));
+        one.setFill(Color.web("1589BF"));
+        HBox brand = new HBox(logo, modality, one);
+        HBox.setMargin(logo, new Insets(0, 3, 0, 0)); // 3px gap between logo and text
+        brand.setAlignment(Pos.CENTER);
+        return brand;
+    }
+
+    @Override
     protected HBox createMainFrameHeaderCenterItem() {
         String[] expectedOrder = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.base.backoffice.mainframe.headernode")
                 .getString("headerNodesOrder").split(",");
-        return new HBox(5, MainFrameHeaderNodeProvider.getProviders().stream()
+        HBox hBox = new HBox(5, MainFrameHeaderNodeProvider.getProviders().stream()
                 .sorted(Comparator.comparingInt(o -> Arrays.indexOf(expectedOrder, o.getName())))
                 .map(p -> p.getHeaderNode(this, mainFrame, getDataSourceModel()))
                 .toArray(Node[]::new));
+        hBox.setAlignment(Pos.CENTER);
+        return hBox;
     }
 
     @Override
