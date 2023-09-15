@@ -13,6 +13,7 @@ import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
 import javafx.animation.Timeline;
+import javafx.beans.InvalidationListener;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
@@ -21,14 +22,18 @@ import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import one.modality.base.backoffice.activities.mainframe.fx.FXMainFrameHeaderTabsBar;
+import one.modality.base.backoffice.activities.mainframe.fx.FXMainFrame;
 import one.modality.base.backoffice.activities.mainframe.headernode.MainFrameHeaderNodeProvider;
 import one.modality.base.backoffice.ganttcanvas.MainFrameGanttCanvas;
+import one.modality.base.backoffice.tile.Tab;
 import one.modality.base.client.application.ModalityClientMainFrameActivity;
 import one.modality.base.client.gantt.fx.interstice.FXGanttInterstice;
 
@@ -44,6 +49,7 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
     private Region mainFrameHeader;
     private Region mainFrameFooter;
     private final Region ganttCanvasContainer = MainFrameGanttCanvas.getCanvasContainer();
+    private Pane dialogArea;
     private Insets breathingPadding; // actual value will be computed depending on compact mode
     private boolean wasGanttCanvasShowingBeforeTabsChange;
 
@@ -60,6 +66,9 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
                 layoutInArea(mainFrameFooter, 0, height - footerHeight, width, footerHeight, 0, HPos.CENTER, VPos.BOTTOM);
                 double nodeY = FXLayoutMode.isCompactMode() ? 0 : headerHeight;
                 double nodeHeight = 0;
+                if (dialogArea != null) {
+                    layoutInArea(dialogArea, 0, nodeY, width, height - nodeY - footerHeight, 0, breathingPadding, HPos.CENTER, VPos.TOP);
+                }
                 if (ganttCanvasContainer.isVisible()) {
                     nodeHeight = ganttCanvasContainer.prefHeight(width) + breathingPadding.getTop() + (FXGanttInterstice.isGanttIntersticeRequired() ? breathingPadding.getBottom() : 0);
                     layoutInArea(ganttCanvasContainer, 0, nodeY, width, nodeHeight, 0, breathingPadding, HPos.CENTER, VPos.TOP);
@@ -116,6 +125,46 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
                 getMountNode(),
                 mainFrameHeader,
                 mainFrameFooter));
+        updateDialogArea();
+    }
+
+    private void updateDialogArea() {
+        if (dialogArea != null)
+            mainFrame.getChildren().remove(dialogArea);
+        Node relatedDialogNode = null;
+        for (Tab headerTab : FXMainFrame.getHeaderTabsObservableList()) {
+            var properties = headerTab.getProperties();
+            String arbitraryKey = "modality-mainframe-listener-installed";
+            if (properties.get(arbitraryKey) == null) {
+                headerTab.selectedProperty().addListener(observable -> updateDialogArea());
+                properties.put(arbitraryKey, true);
+            }
+            if (headerTab.isSelected()) {
+                relatedDialogNode = headerTab;
+                break;
+            }
+        }
+        if (relatedDialogNode == null)
+            relatedDialogNode = getMountNode();
+        if (relatedDialogNode != null) {
+            var properties = relatedDialogNode.getProperties();
+            String arbitraryKey = "modality-dialogArea";
+            dialogArea = (Pane) properties.get(arbitraryKey);
+            if (dialogArea == null) {
+                properties.put(arbitraryKey, dialogArea = new Pane());
+                dialogArea.getChildren().addListener((InvalidationListener) observable -> showHideDialogArea());
+            } else
+                showHideDialogArea();
+        }
+        FXMainFrame.setDialogArea(dialogArea);
+    }
+
+    private void showHideDialogArea() {
+        ObservableList<Node> mainFrameChildren = mainFrame.getChildren();
+        if (dialogArea.getChildren().isEmpty())
+            mainFrameChildren.remove(dialogArea);
+        else if (!mainFrameChildren.contains(dialogArea))
+            mainFrameChildren.add(dialogArea);
     }
 
     @Override
@@ -157,7 +206,7 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
         // The clipPane is initially contracted. Will be expanded (eventually through animation) once not empty.
         clipPane.setPrefHeight(0);
         // The tabs are communicated from the activities to this main frame through FXMainFrameHeaderTabsBar
-        ObservableList<Node> tabs = FXMainFrameHeaderTabsBar.getTabsBarButtonsObservableList();
+        ObservableList<Tab> tabs = FXMainFrame.getHeaderTabsObservableList();
         // We don't bind them directly to the flow pane children, because we want to animate them. So the following code
         // is the animation management:
         tabs.addListener((ListChangeListener<Node>) c -> { // We listen to the tabs changes
