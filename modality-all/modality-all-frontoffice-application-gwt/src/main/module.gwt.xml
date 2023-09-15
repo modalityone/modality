@@ -446,8 +446,6 @@
     <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/webview/spi/impl/gwt"/>
     <!--=======================< webfx-stack-authn-login-ui-portal >========================-->
     <source path="dev/webfx/stack/authn/login/ui/spi/impl/portal"/>
-    <!--========================< webfx-stack-authn-logout-client >=========================-->
-    <source path="dev/webfx/stack/authn/logout/client/operation"/>
     <!--============================< webfx-stack-authn-remote >============================-->
     <source path="dev/webfx/stack/authn/spi/impl/remote"/>
     <!--============================< webfx-stack-authz-client >============================-->

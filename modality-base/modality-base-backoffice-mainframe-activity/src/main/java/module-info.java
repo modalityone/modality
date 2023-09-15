@@ -9,6 +9,7 @@ module modality.base.backoffice.mainframe.activity {
     requires modality.base.backoffice.gantt.canvas;
     requires modality.base.backoffice.mainframe.fx;
     requires modality.base.backoffice.mainframe.headernode;
+    requires modality.base.backoffice.tile;
     requires modality.base.client.application;
     requires modality.base.client.gantt.fx;
     requires webfx.extras.canvas.pane;

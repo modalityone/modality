@@ -6,6 +6,7 @@ module modality.base.backoffice.mainframe.fx {
     requires java.base;
     requires javafx.base;
     requires javafx.graphics;
+    requires modality.base.backoffice.tile;
 
     // Exported packages
     exports one.modality.base.backoffice.activities.mainframe.fx;

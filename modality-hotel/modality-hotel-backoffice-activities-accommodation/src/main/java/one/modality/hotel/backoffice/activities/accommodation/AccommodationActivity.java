@@ -8,8 +8,8 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.BorderPane;
-import one.modality.base.backoffice.activities.mainframe.fx.FXMainFrameHeaderTabsBar;
-import one.modality.base.backoffice.tile.Tile;
+import one.modality.base.backoffice.activities.mainframe.fx.FXMainFrame;
+import one.modality.base.backoffice.tile.Tab;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 final class AccommodationActivity extends OrganizationDependentViewDomainActivity implements
         OperationActionFactoryMixin {
 
-    private final ObservableList<Tile> tabsButtons = FXCollections.observableArrayList();
+    private final ObservableList<Tab> headerTabs = FXCollections.observableArrayList();
     private final AccommodationPresentationModel pm = new AccommodationPresentationModel();
     private final RoomView roomView = new RoomView(pm);
     private final GuestView guestView = new GuestView(pm);
@@ -38,33 +38,33 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
     @Override
     public Node buildUi() {
         // Creating the tabs buttons that will appear in the main frame header tabs bar (see onResume())
-        tabsButtons.setAll(
-                createTabButton("Rooms", this::buildRoomView),
-                createTabButton("Guests", this::buildGuestView),
-                createTabButton("Rooms alteration", this::buildRoomsAlterationView)
+        headerTabs.setAll(
+                createTab("Rooms", this::buildRoomView),
+                createTab("Guests", this::buildGuestView),
+                createTab("Rooms alteration", this::buildRoomsAlterationView)
         );
         // Firing the first tab (= Rooms)
-        tabsButtons.get(0).fireAction(); // Will show the rooms view in the container
+        headerTabs.get(0).fireAction(); // Will show the rooms view in the container
         // returning the container
         return container;
     }
 
-    private Tile selectedTile;
+    private Tab selectedTab;
 
-    private Tile createTabButton(String text, Supplier<Node> nodeSupplier) {
-        Tile[] tabTile = { null };
+    private Tab createTab(String text, Supplier<Node> nodeSupplier) {
+        Tab[] tab = { null };
         Node[] tabContent = { null };
         Action action = newAction(text, () -> {
             if (tabContent[0] == null)
                 tabContent[0] = nodeSupplier.get();
             container.setCenter(tabContent[0]);
-            if (selectedTile != null)
-                selectedTile.setSelected(false);
-            selectedTile = tabTile[0].setSelected(true);
+            if (selectedTab != null)
+                selectedTab.setSelected(false);
+            selectedTab = tab[0].setSelected(true);
         });
-        tabTile[0] = new Tile(action).setFontSize(14).setSelected(false).setTransparentBackground(true);
-        tabTile[0].setPadding(new Insets(5, 30, 5, 30));
-        return tabTile[0];
+        tab[0] = new Tab(action);
+        tab[0].setPadding(new Insets(5, 30, 5, 30));
+        return tab[0];
     }
 
     private Node buildRoomView() {
@@ -86,13 +86,13 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
     @Override
     public void onResume() {
         super.onResume();
-        FXMainFrameHeaderTabsBar.setTabsBarButtons(tabsButtons);
+        FXMainFrame.setHeaderTabs(headerTabs);
         FXGanttVisibility.setGanttVisibility(GanttVisibility.EVENTS);
     }
 
     @Override
     public void onPause() {
-        FXMainFrameHeaderTabsBar.clearTabsBarButtons();
+        FXMainFrame.clearHeaderTabs();
         FXGanttVisibility.setGanttVisibility(GanttVisibility.HIDDEN);
         super.onPause();
     }
