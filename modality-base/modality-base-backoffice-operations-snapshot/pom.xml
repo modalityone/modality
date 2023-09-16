@@ -13,6 +13,8 @@
 
     <artifactId>modality-base-backoffice-operations-snapshot</artifactId>
 
+    <description>Defines operations to create a snapshot of an entity.</description>
+
     <dependencies>
 
         <dependency>

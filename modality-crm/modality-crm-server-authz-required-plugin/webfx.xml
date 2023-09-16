@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <description>Server-side module responsible for pushing the user authorization data to the client just after a successful authentication.</description>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+    </dependencies>
+
+    <providers>
+        <provider interface="dev.webfx.stack.authz.server.spi.AuthorizationServerServiceProvider">one.modality.crm.server.services.authz.ModalityAuthorizationServerServiceProvider</provider>
+    </providers>
+
+</project>

@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The Modality implementation of i18n with English &amp; French dictionaries.
+ */
 module modality.base.client.i18n {
 
     // Direct dependencies modules

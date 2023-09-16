@@ -1,13 +1,16 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Module that loads the domain model in memory (on both client &amp; server).
+ */
 module modality.base.shared.domainmodel {
 
     // Direct dependencies modules
     requires java.base;
     requires javafx.base;
     requires webfx.extras.type;
+    requires webfx.platform.ast.json.plugin;
     requires webfx.platform.async;
-    requires webfx.platform.json;
     requires webfx.platform.resource;
     requires webfx.platform.util;
     requires webfx.stack.com.serial;

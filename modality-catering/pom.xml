@@ -13,11 +13,14 @@
 
     <artifactId>modality-catering</artifactId>
 
+    <description>Layer that contains modules for the catering management.</description>
+
     <packaging>pom</packaging>
 
     <modules>
-        <module>modality-catering-backoffice-activities-all</module>
-        <module>modality-catering-backoffice-activities-kitchen</module>
+        <module>modality-catering-backoffice-activity-kitchen-plugin</module>
+        <module>modality-catering-backoffice-max-plugin</module>
+        <module>modality-catering-backoffice-min-plugin</module>
     </modules>
 
 </project>

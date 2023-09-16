@@ -7,7 +7,7 @@ import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
-import dev.webfx.stack.ui.controls.dialog.DialogUtil;
+import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -18,7 +18,6 @@ import javafx.scene.text.FontWeight;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ItemFamily;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
-import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
 
 import java.time.LocalDate;
 
@@ -60,8 +59,8 @@ class RoomsAlterationBorderPane {
         roomStatusButton.setOnAction(e -> {
             RoomStatusDateSelectionPane roomStatusDateSelectionPane = new RoomStatusDateSelectionPane();
             DialogContent dialogContent = new DialogContent().setContent(roomStatusDateSelectionPane);
-            DialogUtil.showModalNodeInGoldLayout(dialogContent, borderPane);
-            DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
+            DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, borderPane);
+            DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
                 dialogCallback.closeDialog();
                 showRoomStatusDialog(roomStatusDateSelectionPane, roomsAlterationView);
             });

@@ -13,4 +13,6 @@
 
     <artifactId>modality-base-client-css-web</artifactId>
 
+    <description>Web implementation of the CSS module (using HTML CSS).</description>
+
 </project>

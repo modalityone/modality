@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Defines the different operations that a back-office user can possibly execute on money flows.
+ */
 module modality.ecommerce.backoffice.operations.moneyflow {
 
     // Direct dependencies modules
