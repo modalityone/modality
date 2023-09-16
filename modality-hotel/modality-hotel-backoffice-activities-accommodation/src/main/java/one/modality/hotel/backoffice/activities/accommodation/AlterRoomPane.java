@@ -96,7 +96,7 @@ public class AlterRoomPane extends VBox {
         resourceConfigurations.addListener((ListChangeListener<ResourceConfiguration>) change -> {
             // Select the configuration applicable today
             displayStatus(null);
-            LocalDate tomorrow = LocalDate.now().plus(1, ChronoUnit.DAYS);
+            LocalDate tomorrow = LocalDate.now().plusDays(1);
             ResourceConfiguration todayResourceConfiguration = findLatestResourceConfigurationBeforeDate(tomorrow);
             int rowIndex = resourceConfigurations.indexOf(todayResourceConfiguration);
             table.setVisualSelection(VisualSelection.createBuilder().addSelectedRow(rowIndex).build());
@@ -518,7 +518,7 @@ public class AlterRoomPane extends VBox {
         if (latestEndDate == null || latestEndDate.isAfter(fromDate)) {
             // Ensure the resource configuration immediately before the new one ends the day before the new one begins
             ResourceConfiguration updatedLatestResourceConfiguration = otherUpdateStore.updateEntity(latestResourceConfigurationBeforeNewOne);
-            updatedLatestResourceConfiguration.setEndDate(fromDate.minus(1, ChronoUnit.DAYS));
+            updatedLatestResourceConfiguration.setEndDate(fromDate.minusDays(1));
         }
 
         Optional<ResourceConfiguration> resourceConfigurationImmediatelyAfterNewOne = resourceConfigurations.stream()
@@ -527,7 +527,7 @@ public class AlterRoomPane extends VBox {
         if (resourceConfigurationImmediatelyAfterNewOne.isPresent()) {
             // If there is a resource configuration with a start date later than the one entered then set the end date of this one
             // to the day before it starts
-            LocalDate endDate = resourceConfigurationImmediatelyAfterNewOne.get().getStartDate().minus(1, ChronoUnit.DAYS);
+            LocalDate endDate = resourceConfigurationImmediatelyAfterNewOne.get().getStartDate().minusDays(1);
             newRc.setEndDate(endDate);
         }
 
