@@ -13,6 +13,7 @@ import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
+import one.modality.base.backoffice.activities.mainframe.fx.FXMainFrame;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
@@ -93,7 +94,7 @@ public class RoomsAlterationView {
         roomsAlterationRoomPane.setOnMouseClicked(e -> {
             alterRoomPane.resourceConfigurationProperty().set(rc);
             DialogContent dialogContent = new DialogContent().setContent(alterRoomPane);
-            DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, (Pane) roomsAlterationRoomPane.getParent());
+            DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, FXMainFrame.getDialogArea());
             DialogBuilderUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
         });
         return createPrimaryPanelFacet(roomsAlterationRoomPane).getContainerNode(); // TODO replace this with a call to a Theme class
