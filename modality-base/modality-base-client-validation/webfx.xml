@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
 
+    <description>Modality implementation of client validation support.</description>
+
     <exported-packages>
         <source-packages/>
     </exported-packages>
 
     <dependencies>
         <used-by-source-modules/>
-
-        <!-- Temporary for DEBUG, we use the local storage as possible configuration supplier, so we can manually change the bus options (BUS_SERVER_HOST, etc... variables) -->
-        <plugin-module>webfx-stack-conf-localstorage</plugin-module>
-
     </dependencies>
 
 </project>

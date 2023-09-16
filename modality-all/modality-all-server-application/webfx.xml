@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
 
+    <description>The Modality Server application (cross-platform non-executable module).</description>
+
     <exported-packages>
         <source-packages/>
     </exported-packages>
@@ -8,9 +10,9 @@
     <dependencies>
         <used-by-source-modules/>
 
-        <plugin-module>modality-base-server-application-all</plugin-module>
-        <plugin-module>modality-crm-server-application-all</plugin-module>
-        <plugin-module>modality-ecommerce-server-application-all</plugin-module>
+        <plugin-module>modality-base-server-max-plugin</plugin-module>
+        <plugin-module>modality-crm-server-max-plugin</plugin-module>
+        <plugin-module>modality-ecommerce-server-max-plugin</plugin-module>
 
     </dependencies>
 

@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * The Gluon executable module of the Modality Front-Office (for mobiles &amp; tablets).
+ */
 module modality.all.frontoffice.application.gluon {
 
     // Direct dependencies modules
@@ -8,12 +11,11 @@ module modality.all.frontoffice.application.gluon {
     requires webfx.extras.visual.grid.peers.openjfx;
     requires webfx.extras.webtext.peers.openjfx;
     requires webfx.kit.openjfx;
-    requires webfx.kit.statusbar.gluon;
+    requires webfx.platform.ast.json.java;
+    requires webfx.platform.blob.java;
     requires webfx.platform.boot.java;
     requires webfx.platform.console.java;
     requires webfx.platform.fetch.java;
-    requires webfx.platform.file.java;
-    requires webfx.platform.json.java;
     requires webfx.platform.os.gluon;
     requires webfx.platform.resource.gluon;
     requires webfx.platform.scheduler.java;
@@ -32,17 +34,16 @@ module modality.all.frontoffice.application.gluon {
     requires webfx.stack.com.bus.json.client;
     requires webfx.stack.com.bus.json.client.websocket.java;
     requires webfx.stack.com.websocket.java;
-    requires webfx.stack.conf.format.json;
     requires webfx.stack.db.query.buscall;
+    requires webfx.stack.db.querypush.buscall;
+    requires webfx.stack.db.querypush.client.simple;
     requires webfx.stack.db.querysubmit.java.jdbc;
     requires webfx.stack.db.submit.buscall;
     requires webfx.stack.orm.dql.query.interceptor;
     requires webfx.stack.orm.dql.querypush.interceptor;
     requires webfx.stack.orm.dql.submit.interceptor;
+    requires webfx.stack.push.client.simple;
     requires webfx.stack.session.client;
     requires webfx.stack.ui.fxraiser.json;
-
-    // Resources packages
-    opens dev.webfx.platform.meta.exe;
 
 }

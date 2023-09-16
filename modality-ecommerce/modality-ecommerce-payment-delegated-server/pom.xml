@@ -13,6 +13,8 @@
 
     <artifactId>modality-ecommerce-payment-delegated-server</artifactId>
 
+    <description>The actual server-side implementation of the delegated payment API, which decides which payment gateway to use and calls it.</description>
+
     <dependencies>
 
         <dependency>

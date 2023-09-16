@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Defines the basic operations that a back-office user can possibly execute on an option booked within a booking.
+ */
 module modality.ecommerce.backoffice.operations.documentline {
 
     // Direct dependencies modules

@@ -10,7 +10,7 @@ import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
-import dev.webfx.stack.ui.controls.dialog.DialogUtil;
+import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import one.modality.base.shared.entities.Item;
@@ -33,11 +33,11 @@ final class ChangeResourceConfigurationItemExecutor {
             Item selectedItem = itemSelector.getSelectedItem();
             if (selectedItem != null) {
                 DialogContent dialogContent = new DialogContent().setContent(new Text("Are you sure?"));
-                DialogUtil.showModalNodeInGoldLayout(dialogContent, parentContainer).addCloseHook(() -> {
+                DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, parentContainer).addCloseHook(() -> {
                     if (!promise.future().isComplete())
                         promise.complete();
                 });
-                DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
+                DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
                     UpdateStore updateStore = UpdateStore.create(dataSourceModel);
                     updateStore.updateEntity(resourceConfiguration).setItem(selectedItem);
                     updateStore.submitChanges(SubmitArgument.builder()

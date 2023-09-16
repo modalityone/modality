@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <description>Convenient module that embeds the minimal front-office modules for the Base layer.</description>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+
+        <plugin-module>modality-base-frontoffice-application</plugin-module>
+
+        <plugin-module>modality-base-client-min-plugin</plugin-module>
+
+        <plugin-module>modality-base-frontoffice-activity-account-plugin</plugin-module>
+        <plugin-module>modality-base-frontoffice-activity-alerts-plugin</plugin-module>
+
+    </dependencies>
+
+</project>

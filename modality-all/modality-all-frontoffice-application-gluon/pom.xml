@@ -13,6 +13,8 @@
 
     <artifactId>modality-all-frontoffice-application-gluon</artifactId>
 
+    <description>The Gluon executable module of the Modality Front-Office (for mobiles &amp; tablets).</description>
+
     <name>ModalityAllFrontoffice</name>
 
     <dependencies>
@@ -31,20 +33,20 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-client-navigationarrows-java</artifactId>
+            <artifactId>modality-base-client-navigationarrows-java-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-client-operationactionsloading</artifactId>
+            <artifactId>modality-base-client-operationactionsloading-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-crm-client-authz</artifactId>
+            <artifactId>modality-crm-client-authz-required-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
@@ -86,7 +88,13 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-kit-statusbar-gluon</artifactId>
+            <artifactId>webfx-platform-ast-json-java</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-blob-java</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -111,18 +119,6 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-fetch-java</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-file-java</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-json-java</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -160,6 +156,13 @@
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-storagelocation-gluon</artifactId>
             <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-substitution-var-env-plugin</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
@@ -248,19 +251,13 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-conf</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-conf-format-json</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-db-query-buscall</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-db-querypush-buscall</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -302,6 +299,12 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-push-client-simple</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-session-client</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
@@ -322,11 +325,11 @@
                 <configuration>
                     <attachList>
                         <list>lifecycle</list>
-                        <list>statusbar</list>
                         <list>storage</list>
                         <list>util</list>
                     </attachList>
                     <resourcesList>
+                        <list>dev/webfx/platform/conf/[^/]+$</list>
                         <list>dev/webfx/platform/meta/exe/[^/]+$</list>
                         <list>dev/webfx/stack/authn/login/ui/spi/impl/gateway/facebook/[^/]+$</list>
                         <list>dev/webfx/stack/authn/login/ui/spi/impl/gateway/google/[^/]+$</list>
@@ -353,7 +356,6 @@
                         <list>images/svg/color/[^/]+$</list>
                         <list>images/svg/mono/[^/]+$</list>
                         <list>javafx/scene/control/skin/checkbox/[^/]+$</list>
-                        <list>one/modality/base/client/busconfig/[^/]+$</list>
                         <list>one/modality/base/client/css/[^/]+$</list>
                         <list>one/modality/base/client/fonts/[^/]+$</list>
                         <list>one/modality/base/client/images/[^/]+$</list>

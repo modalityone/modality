@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <description>The statistics activity to view the number of booked options over the time.</description>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <providers>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.ecommerce.backoffice.activities.statistics.StatisticsUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.ecommerce.backoffice.activities.statistics.RouteToStatisticsRequestEmitter</provider>
+    </providers>
+
+    <dependencies>
+        <used-by-source-modules>
+            <undetected-module>javafx-controls</undetected-module>
+        </used-by-source-modules>
+    </dependencies>
+
+</project>

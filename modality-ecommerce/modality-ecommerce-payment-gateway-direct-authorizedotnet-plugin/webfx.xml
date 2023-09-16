@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <description>The SPI payment gateway implementation for making direct payments with Authorize.net.</description>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+        <plugin-module>jakarta.xml.bind-api</plugin-module>
+        <plugin-module>jaxb-runtime</plugin-module>
+    </dependencies>
+
+    <providers>
+        <provider interface="one.modality.ecommerce.payment.gateway.direct.spi.DirectPaymentGatewayProvider">one.modality.ecommerce.payment.gateway.direct.spi.impl.authorizedotnet.AuthorizeDotNetDirectPaymentGatewayProvider</provider>
+    </providers>
+
+    <required-libraries>
+        <library artifact="net.authorize:anet-java-sdk:2.0.6"/>
+        <library artifact="jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"/>
+        <library artifact="org.glassfish.jaxb:jaxb-runtime:2.3.2"/>
+    </required-libraries>
+
+
+</project>

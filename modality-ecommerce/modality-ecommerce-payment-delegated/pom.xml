@@ -13,6 +13,8 @@
 
     <artifactId>modality-ecommerce-payment-delegated</artifactId>
 
+    <description>The logical starting point to initiate delegated payments (this API can be called either on client or server).</description>
+
     <dependencies>
 
         <dependency>

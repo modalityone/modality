@@ -13,6 +13,8 @@
 
     <artifactId>modality-base-backoffice-operations-filters</artifactId>
 
+    <description>Defines the basic operations that a back-office user can execute on filters.</description>
+
     <dependencies>
 
         <dependency>

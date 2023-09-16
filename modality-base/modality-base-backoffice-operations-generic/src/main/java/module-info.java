@@ -1,5 +1,8 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
+/**
+ * Defines some generic operations that a back-office user can execute on any entity (ex: copy to clipboard, set a field, toggle a boolean field).
+ */
 module modality.base.backoffice.operations.generic {
 
     // Direct dependencies modules
@@ -15,6 +18,7 @@ module modality.base.backoffice.operations.generic {
     requires webfx.stack.orm.expression;
     requires webfx.stack.orm.reactive.entities;
     requires webfx.stack.ui.controls;
+    requires webfx.stack.ui.dialog;
     requires webfx.stack.ui.operation;
 
     // Exported packages

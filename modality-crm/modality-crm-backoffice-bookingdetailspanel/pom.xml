@@ -13,6 +13,8 @@
 
     <artifactId>modality-crm-backoffice-bookingdetailspanel</artifactId>
 
+    <description>The UI panel that displays all booking details, including the personal details.</description>
+
     <dependencies>
 
         <dependency>
@@ -102,6 +104,12 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-kit-util</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-boot</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
