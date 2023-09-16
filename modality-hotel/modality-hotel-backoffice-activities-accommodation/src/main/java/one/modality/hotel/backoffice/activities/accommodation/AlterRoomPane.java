@@ -2,9 +2,11 @@ package one.modality.hotel.backoffice.activities.accommodation;
 
 import dev.webfx.extras.type.PrimType;
 import dev.webfx.extras.visual.VisualColumn;
+import dev.webfx.extras.visual.VisualResult;
 import dev.webfx.extras.visual.VisualResultBuilder;
 import dev.webfx.extras.visual.VisualSelection;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.extras.visual.impl.VisualResultImpl;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.Entities;
@@ -408,17 +410,50 @@ public class AlterRoomPane extends VBox {
     }
 
     private void confirmSave() {
-        if (!areResourceConfigurationDatesContiguous()) {
+        ResourceConfiguration overlappingRc = findFirstOverlappingResourceConfiguration();
+        if (overlappingRc != null) {
+            Label msgLabel = new Label("Your configuration is overlapping the following existing configuration:");
+            int rowIndex = resourceConfigurations.indexOf(overlappingRc);
+            int columnCount = table.getVisualResult().getColumnCount();
+            Object[] values = new Object[columnCount];
+            for (int i = 0; i < columnCount; i++) {
+                values[i] = table.getVisualResult().getValue(rowIndex, i);
+            }
+            VisualResult visualResult = new VisualResultImpl(1, values, table.getVisualResult().getColumns());
+            VisualGrid table = new VisualGrid(visualResult);
+            VBox overlappingMsgPane = new VBox(msgLabel, table);
+            DialogContent dialogContent = new DialogContent().setContent(overlappingMsgPane);
+            DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, this);
+            DialogBuilderUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
+        }
+        else if (!areResourceConfigurationDatesContiguous()) {
             String msg = "Configuration dates do not all join. Continue with save?";
             DialogContent dialogContent = new DialogContent().setContentText(msg).setYesNo();
-            DialogUtil.showModalNodeInGoldLayout(dialogContent, this);
-            DialogUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
+            DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, this);
+            DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
                 save();
-                dialogCallback.closeDialog();;
+                dialogCallback.closeDialog();
             });
         } else {
             save();
         }
+    }
+
+    private ResourceConfiguration findFirstOverlappingResourceConfiguration() {
+        ResourceConfiguration selectedRc = selectedResourceConfigurationProperty.get();
+        for (ResourceConfiguration rc : resourceConfigurations) {
+            if (rc.equals(selectedRc)) {
+                continue;
+            }
+            if (rc.getStartDate() != null && !rc.getStartDate().isBefore(selectedRc.getEndDate())) {
+                continue;
+            }
+            if (rc.getEndDate() != null && !rc.getEndDate().isAfter(selectedRc.getStartDate())) {
+                continue;
+            }
+            return rc;
+        }
+        return null;
     }
 
     private boolean areResourceConfigurationDatesContiguous() {
