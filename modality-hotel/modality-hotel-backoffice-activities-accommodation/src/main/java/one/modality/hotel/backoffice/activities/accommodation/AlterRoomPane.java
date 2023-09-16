@@ -422,6 +422,7 @@ public class AlterRoomPane extends VBox {
             VisualGrid table = new VisualGrid(visualResult);
             VBox overlappingMsgPane = new VBox(msgLabel, table);
             DialogContent dialogContent = new DialogContent().setContent(overlappingMsgPane);
+            dialogContent.getOkButton().setVisible(false);
             DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, this);
             DialogBuilderUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
         }
