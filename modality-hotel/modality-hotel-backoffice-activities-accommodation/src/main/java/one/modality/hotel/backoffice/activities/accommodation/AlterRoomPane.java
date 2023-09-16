@@ -411,32 +411,14 @@ public class AlterRoomPane extends VBox {
     private void confirmSave() {
         ResourceConfiguration overlappingRc = findFirstOverlappingResourceConfiguration();
         if (overlappingRc != null) {
-            Label msgLabel = new Label("Your configuration is overlapping the following existing configuration:");
-            int rowIndex = resourceConfigurations.indexOf(overlappingRc);
-            int columnCount = table.getVisualResult().getColumnCount();
-            Object[] values = new Object[columnCount];
-            for (int i = 0; i < columnCount; i++) {
-                values[i] = table.getVisualResult().getValue(rowIndex, i);
-            }
-            VisualResult visualResult = new VisualResultImpl(1, values, table.getVisualResult().getColumns());
-            VisualGrid table = new VisualGrid(visualResult);
-            VBox overlappingMsgPane = new VBox(msgLabel, table);
-            DialogContent dialogContent = new DialogContent().setContent(overlappingMsgPane);
-            dialogContent.getOkButton().setVisible(false);
-            DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, this);
-            DialogBuilderUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
+            showOverlappingConfigurationPopup(overlappingRc);
+            return;
         }
-        else if (!areResourceConfigurationDatesContiguous()) {
-            String msg = "Configuration dates do not all join. Continue with save?";
-            DialogContent dialogContent = new DialogContent().setContentText(msg).setYesNo();
-            DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, this);
-            DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
-                save();
-                dialogCallback.closeDialog();
-            });
-        } else {
-            save();
+        if (!areResourceConfigurationDatesContiguous()) {
+            showContinueWithSavePopup("Configuration dates do not all join. Continue with save?");
+            return;
         }
+        save();
     }
 
     private ResourceConfiguration findFirstOverlappingResourceConfiguration() {
@@ -454,6 +436,32 @@ public class AlterRoomPane extends VBox {
             return rc;
         }
         return null;
+    }
+
+    private void showOverlappingConfigurationPopup(ResourceConfiguration overlappingRc) {
+        Label msgLabel = new Label("Your configuration is overlapping the following existing configuration:");
+        int rowIndex = resourceConfigurations.indexOf(overlappingRc);
+        int columnCount = table.getVisualResult().getColumnCount();
+        Object[] values = new Object[columnCount];
+        for (int i = 0; i < columnCount; i++) {
+            values[i] = table.getVisualResult().getValue(rowIndex, i);
+        }
+        VisualResult visualResult = new VisualResultImpl(1, values, table.getVisualResult().getColumns());
+        VisualGrid table = new VisualGrid(visualResult);
+        VBox overlappingMsgPane = new VBox(msgLabel, table);
+        DialogContent dialogContent = new DialogContent().setContent(overlappingMsgPane);
+        dialogContent.getOkButton().setVisible(false);
+        DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, this);
+        DialogBuilderUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
+    }
+
+    private void showContinueWithSavePopup(String msg) {
+        DialogContent dialogContent = new DialogContent().setContentText(msg).setYesNo();
+        DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, this);
+        DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
+            save();
+            dialogCallback.closeDialog();
+        });
     }
 
     private boolean areResourceConfigurationDatesContiguous() {
