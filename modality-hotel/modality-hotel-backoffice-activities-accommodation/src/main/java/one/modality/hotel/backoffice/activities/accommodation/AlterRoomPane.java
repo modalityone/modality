@@ -8,8 +8,13 @@ import dev.webfx.extras.visual.VisualSelection;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.extras.visual.impl.VisualResultImpl;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.console.Console;
+import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
+import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.Entities;
+import dev.webfx.stack.orm.entity.EntityId;
+import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
@@ -20,6 +25,7 @@ import dev.webfx.stack.ui.controls.dialog.DialogCallback;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.controls.dialog.DialogUtil;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
@@ -35,9 +41,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import one.modality.base.shared.entities.Item;
-import one.modality.base.shared.entities.Resource;
-import one.modality.base.shared.entities.ResourceConfiguration;
+import one.modality.base.shared.entities.*;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
 import one.modality.hotel.backoffice.accommodation.AttendeeCategory;
@@ -409,16 +413,23 @@ public class AlterRoomPane extends VBox {
     }
 
     private void confirmSave() {
+        new ValidationQueue(this::save)
+                // Perform blocking validations first
+                .addValidation(this::validateNotOverlapping)
+                .addValidation(this::validateAgainstExistingBookings)
+                // Perform non-blocking validations second
+                .addValidation(this::validateResourceConfigurationDatesContiguous)
+                .run();
+    }
+
+    private void validateNotOverlapping(BooleanProperty success) {
         ResourceConfiguration overlappingRc = findFirstOverlappingResourceConfiguration();
         if (overlappingRc != null) {
             showOverlappingConfigurationPopup(overlappingRc);
-            return;
+            success.set(false);
+        } else {
+            success.set(true);
         }
-        if (!areResourceConfigurationDatesContiguous()) {
-            showContinueWithSavePopup("Configuration dates do not all join. Continue with save?");
-            return;
-        }
-        save();
     }
 
     private ResourceConfiguration findFirstOverlappingResourceConfiguration() {
@@ -455,16 +466,22 @@ public class AlterRoomPane extends VBox {
         DialogBuilderUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
     }
 
-    private void showContinueWithSavePopup(String msg) {
+    private void showContinueWithSavePopup(String msg, BooleanProperty success) {
         DialogContent dialogContent = new DialogContent().setContentText(msg).setYesNo();
-        DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, this);
-        DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
-            save();
-            dialogCallback.closeDialog();
+        Platform.runLater(() -> {
+            DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, this);
+            DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
+                success.set(true);
+                dialogCallback.closeDialog();
+            });
+            dialogContent.getCancelButton().setOnAction(event -> {
+                success.set(false);
+                dialogContent.getDialogCallback().closeDialog();
+            });
         });
     }
 
-    private boolean areResourceConfigurationDatesContiguous() {
+    private void validateResourceConfigurationDatesContiguous(BooleanProperty success) {
         for (ResourceConfiguration rc : resourceConfigurations) {
             if (rc.getStartDate() != null) {
                 LocalDate dayBefore = rc.getStartDate().minusDays(1);
@@ -475,7 +492,8 @@ public class AlterRoomPane extends VBox {
                         && !rc2.equals(selectedResourceConfigurationProperty.get()) )) {
                     continue;
                 }
-                return false;
+                showContinueWithSavePopup("Configuration dates do not all join. Continue with save?", success);
+                return;
             }
 
             if (rc.getEndDate() != null) {
@@ -487,10 +505,45 @@ public class AlterRoomPane extends VBox {
                         && !rc2.equals(selectedResourceConfigurationProperty.get()))) {
                     continue;
                 }
-                return false;
+                showContinueWithSavePopup("Configuration dates do not all join. Continue with save?", success);
+                return;
             }
         }
-        return true;
+        success.set(true);
+    }
+
+    private void validateAgainstExistingBookings(BooleanProperty success) {
+        DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
+        ResourceConfiguration selectedRc = selectedResourceConfigurationProperty.get();
+        EntityId organizationId = (EntityId) pm.organizationIdProperty().get();
+        EntityId resourceId = selectedResourceConfigurationProperty.get().getResourceId();
+        // TODO restrict to attendees in time window
+        EntityStore.create(dataSourceModel).<Attendance>executeQuery("select a.date,a.documentLine.document.person_male from Attendance a where a.documentLine.document.event.organization=" + organizationId.getPrimaryKey() + " and a.scheduledResource.configuration.resource.id=" + resourceId.getPrimaryKey())
+                .onFailure(error -> {
+                    Console.log("Error while reading attendances", error);
+                    success.set(false);
+                })
+                .onSuccess(attendances -> {
+                    if (!selectedRc.allowsMale()) {
+                        boolean maleAttendees = attendances.stream()
+                                .anyMatch(attendance -> attendance.getDocumentLine().getDocument().isMale());
+                        if (maleAttendees) {
+                            displayStatus("Unable to save. Male attendees already booked during this period.");
+                            success.set(false);
+                            return;
+                        }
+                    }
+                    if (!selectedRc.allowsFemale()) {
+                        boolean femaleAttendees = attendances.stream()
+                                .anyMatch(attendance -> !attendance.getDocumentLine().getDocument().isMale());
+                        if (femaleAttendees) {
+                            displayStatus("Unable to save. Female attendees already booked during this period.");
+                            success.set(false);
+                            return;
+                        }
+                    }
+                    success.set(true);
+                });
     }
 
     private void save() {
@@ -542,11 +595,9 @@ public class AlterRoomPane extends VBox {
         // Submit changes
         otherUpdateStore.submitChanges()
                 .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
-                .onSuccess(b -> {
-                    updateStore.submitChanges()
-                            .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
-                            .onSuccess(b2 -> displayStatus("Saved."));
-                });
+                .onSuccess(b -> updateStore.submitChanges()
+                        .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
+                        .onSuccess(b2 -> displayStatus("Saved.")));
     }
 
     private void displayStatus(String status) {
