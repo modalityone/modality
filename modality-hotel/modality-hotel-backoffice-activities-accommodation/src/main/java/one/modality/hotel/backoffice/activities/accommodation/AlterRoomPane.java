@@ -42,6 +42,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.markers.EntityHasDate;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
 import one.modality.hotel.backoffice.accommodation.AttendeeCategory;
@@ -49,10 +50,8 @@ import one.modality.hotel.backoffice.accommodation.AttendeeCategory;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
@@ -65,7 +64,7 @@ public class AlterRoomPane extends VBox {
     private final AccommodationPresentationModel pm;
     private final ObjectProperty<ResourceConfiguration> resourceConfigurationProperty = new SimpleObjectProperty<>();
     public ObjectProperty<ResourceConfiguration> resourceConfigurationProperty() { return resourceConfigurationProperty; }
-    private final ObjectProperty<ResourceConfiguration>  selectedResourceConfigurationProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<ResourceConfiguration> selectedResourceConfigurationProperty = new SimpleObjectProperty<>();
     private final ObservableList<ResourceConfiguration> resourceConfigurations = FXCollections.observableArrayList();
 
     private ButtonFactoryMixin mixin;
@@ -341,7 +340,7 @@ public class AlterRoomPane extends VBox {
 
     private void update() {
         ResourceConfiguration updateRc = selectedResourceConfigurationProperty.get();
-        updateStore = UpdateStore.create(updateRc.getStore().getDataSourceModel());
+        updateStore = UpdateStore.createAbove(updateRc.getStore());
         ResourceConfiguration newRc = updateStore.updateEntity(updateRc);
         cloneSelectedResourceConfiguration(newRc);
         newRc.setStartDate(updateRc.getStartDate());
@@ -610,12 +609,50 @@ public class AlterRoomPane extends VBox {
             newRc.setEndDate(endDate);
         }
 
-        // Submit changes
-        otherUpdateStore.submitChanges()
-                .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
-                .onSuccess(b -> updateStore.submitChanges()
-                        .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
-                        .onSuccess(b2 -> displayStatus("Saved.")));
+        new ValidationQueue(() -> {
+            // Submit changes
+            otherUpdateStore.submitChanges()
+                    .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
+                    .onSuccess(b -> updateStore.submitChanges()
+                            .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
+                            .onSuccess(b2 -> displayStatus("Saved.")));})
+                .addValidation(this::ensureScheduledItemForEachDay)
+                .run();
+    }
+
+    private void ensureScheduledItemForEachDay(BooleanProperty success) {
+        ResourceConfiguration selectedRc = selectedResourceConfigurationProperty.get();
+
+        // TODO if start date or end date is null then use site item family start or end date
+        LocalDate startDate = selectedRc.getStartDate() != null ? selectedRc.getStartDate() : LocalDate.of(2022, 9, 1);
+        LocalDate endDate = selectedRc.getEndDate() != null ? selectedRc.getEndDate() : LocalDate.of(2023, 8, 31);
+
+        // Find ScheduledItems with this item type
+        DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
+        Object itemId = selectedRc.getItem().getPrimaryKey();
+        EntityStore.create(dataSourceModel).<ScheduledItem>executeQuery("select date from ScheduledItem si where si.item.id=" + itemId)
+                .onFailure(error -> {
+                    Console.log("Error while reading attendances", error);
+                    success.set(false);
+                })
+                .onSuccess(attendances -> {
+                    List<LocalDate> populatedDates = attendances.stream()
+                            .map(EntityHasDate::getDate)
+                            .collect(Collectors.toList());
+
+                    Site site = selectedRc.getResource().getSite();
+                    // Check that a ScheduledItem exists for each day between the start date and end date
+                    for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+                        if (!populatedDates.contains(date)) {
+                            // If no existing ScheduledItem exists for this item for this date then create one
+                            ScheduledItem newScheduledItem = updateStore.insertEntity(ScheduledItem.class);
+                            newScheduledItem.setDate(date);
+                            newScheduledItem.setItem(selectedRc.getItem());
+                            newScheduledItem.setSite(site);
+                        }
+                    }
+                    success.set(true);
+                });
     }
 
     private void displayStatus(String status) {
@@ -639,12 +676,15 @@ public class AlterRoomPane extends VBox {
     }
 
     private void saveUpdate() {
+        new ValidationQueue(() -> {
         updateStore.submitChanges()
                 .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
                 .onSuccess(result -> {
                     displayStatus("Saved.");
                     cancel();
-                });
+                });})
+                .addValidation(this::ensureScheduledItemForEachDay)
+                .run();
     }
 
     private void cancel() {
@@ -683,7 +723,7 @@ public class AlterRoomPane extends VBox {
         }
         if (rvm == null) { // first call
             rvm = ReactiveVisualMapper.<ResourceConfiguration>createPushReactiveChain(mixin)
-                    .always("{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,item.name,max,allowsGuest,allowsResident,allowsResidentFamily,allowsSpecialGuest,allowsVolunteer,allowsFemale,allowsMale,startDate,endDate'}")
+                    .always("{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,item.name,max,allowsGuest,allowsResident,allowsResidentFamily,allowsSpecialGuest,allowsVolunteer,allowsFemale,allowsMale,startDate,endDate,resource.site'}")
                     .always(orderBy("endDate desc"))
                     .setEntityColumns("[" +
                             "{label: 'Name', expression: 'name'}," +
