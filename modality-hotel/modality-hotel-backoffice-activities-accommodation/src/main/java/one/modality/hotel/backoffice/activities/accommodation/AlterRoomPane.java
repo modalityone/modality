@@ -515,8 +515,8 @@ public class AlterRoomPane extends VBox {
     private void validateAgainstExistingBookings(BooleanProperty success) {
         DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
         ResourceConfiguration selectedRc = selectedResourceConfigurationProperty.get();
+        EntityId resourceId = selectedRc.getResourceId();
         EntityId organizationId = (EntityId) pm.organizationIdProperty().get();
-        EntityId resourceId = selectedResourceConfigurationProperty.get().getResourceId();
         // TODO restrict to attendees in time window
         EntityStore.create(dataSourceModel).<Attendance>executeQuery("select date,documentLine.document.(person_guest,person_male,person_resident) from Attendance a where a.documentLine.document.event.organization=" + organizationId.getPrimaryKey() + " and a.scheduledResource.configuration.resource.id=" + resourceId.getPrimaryKey())
                 .onFailure(error -> {
