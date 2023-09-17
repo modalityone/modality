@@ -518,7 +518,7 @@ public class AlterRoomPane extends VBox {
         EntityId organizationId = (EntityId) pm.organizationIdProperty().get();
         EntityId resourceId = selectedResourceConfigurationProperty.get().getResourceId();
         // TODO restrict to attendees in time window
-        EntityStore.create(dataSourceModel).<Attendance>executeQuery("select a.date,a.documentLine.document.person_male from Attendance a where a.documentLine.document.event.organization=" + organizationId.getPrimaryKey() + " and a.scheduledResource.configuration.resource.id=" + resourceId.getPrimaryKey())
+        EntityStore.create(dataSourceModel).<Attendance>executeQuery("select date,documentLine.document.(person_guest,person_male,person_resident) from Attendance a where a.documentLine.document.event.organization=" + organizationId.getPrimaryKey() + " and a.scheduledResource.configuration.resource.id=" + resourceId.getPrimaryKey())
                 .onFailure(error -> {
                     Console.log("Error while reading attendances", error);
                     success.set(false);
@@ -538,6 +538,24 @@ public class AlterRoomPane extends VBox {
                                 .anyMatch(attendance -> !attendance.getDocumentLine().getDocument().isMale());
                         if (femaleAttendees) {
                             displayStatus("Unable to save. Female attendees already booked during this period.");
+                            success.set(false);
+                            return;
+                        }
+                    }
+                    if (!selectedRc.allowsGuest()) {
+                        boolean guestAttendees = attendances.stream()
+                                .anyMatch(attendance -> attendance.getDocumentLine().getDocument().isGuest());
+                        if (guestAttendees) {
+                            displayStatus("Unable to save. Guest attendees already booked during this period.");
+                            success.set(false);
+                            return;
+                        }
+                    }
+                    if (!selectedRc.allowsResident()) {
+                        boolean residentAttendees = attendances.stream()
+                                .anyMatch(attendance -> attendance.getDocumentLine().getDocument().isResident());
+                        if (residentAttendees) {
+                            displayStatus("Unable to save. Resident attendees already booked during this period.");
                             success.set(false);
                             return;
                         }
