@@ -438,10 +438,10 @@ public class AlterRoomPane extends VBox {
             if (rc.equals(selectedRc)) {
                 continue;
             }
-            if (rc.getStartDate() != null && !rc.getStartDate().isBefore(selectedRc.getEndDate())) {
+            if (selectedRc.getEndDate() != null && rc.getStartDate() != null && !rc.getStartDate().isBefore(selectedRc.getEndDate())) {
                 continue;
             }
-            if (rc.getEndDate() != null && !rc.getEndDate().isAfter(selectedRc.getStartDate())) {
+            if (selectedRc.getStartDate() != null && rc.getEndDate() != null && !rc.getEndDate().isAfter(selectedRc.getStartDate())) {
                 continue;
             }
             return rc;
