@@ -14,7 +14,7 @@ module modality.all.backoffice.application.gluon {
     requires webfx.extras.visual.grid.peers.openjfx;
     requires webfx.extras.webtext.peers.openjfx;
     requires webfx.kit.openjfx;
-    requires webfx.platform.ast.json.java;
+    requires webfx.platform.ast.factory.generic;
     requires webfx.platform.boot.java;
     requires webfx.platform.console.java;
     requires webfx.platform.os.gluon;

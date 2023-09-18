@@ -1,7 +1,7 @@
 package one.modality.ecommerce.payment.direct.buscall.serial;
 
-import dev.webfx.platform.ast.json.ReadOnlyJsonObject;
-import dev.webfx.platform.ast.json.JsonObject;
+import dev.webfx.platform.ast.ReadOnlyAstObject;
+import dev.webfx.platform.ast.AstObject;
 import dev.webfx.stack.com.serial.spi.impl.SerialCodecBase;
 import one.modality.ecommerce.payment.direct.MakeDirectPaymentArgument;
 
@@ -22,7 +22,7 @@ public final class MakeDirectPaymentArgumentSerialCodec extends SerialCodecBase<
     }
 
     @Override
-    public void encodeToJson(MakeDirectPaymentArgument arg, JsonObject json) {
+    public void encodeToJson(MakeDirectPaymentArgument arg, AstObject json) {
         json.set(AMOUNT_KEY, arg.getAmount());
         json.set(CURRENCY_KEY, arg.getCurrency());
         json.set(CC_NUMBER_KEY, arg.getCcNumber());
@@ -30,7 +30,7 @@ public final class MakeDirectPaymentArgumentSerialCodec extends SerialCodecBase<
     }
 
     @Override
-    public MakeDirectPaymentArgument decodeFromJson(ReadOnlyJsonObject json) {
+    public MakeDirectPaymentArgument decodeFromJson(ReadOnlyAstObject json) {
         return new MakeDirectPaymentArgument(
                 json.get(AMOUNT_KEY),
                 json.getString(CURRENCY_KEY),

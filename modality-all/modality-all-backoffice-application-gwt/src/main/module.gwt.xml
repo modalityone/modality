@@ -504,22 +504,19 @@
     <source path="java_cup/runtime"/>
     <!--===============================< webfx-platform-ast >===============================-->
     <source path="dev/webfx/platform/ast"/>
-    <source path="dev/webfx/platform/ast/formatter"/>
-    <source path="dev/webfx/platform/ast/formatter/spi"/>
-    <source path="dev/webfx/platform/ast/impl"/>
-    <source path="dev/webfx/platform/ast/impl/listmap"/>
-    <source path="dev/webfx/platform/ast/parser"/>
-    <source path="dev/webfx/platform/ast/parser/spi"/>
-    <source path="dev/webfx/platform/ast/parser/spi/impl/properties"/>
-    <!--==========================< webfx-platform-ast-json-gwt >===========================-->
-    <source path="dev/webfx/platform/ast/json/spi/impl/gwt"/>
+    <source path="dev/webfx/platform/ast/spi/factory"/>
+    <source path="dev/webfx/platform/ast/spi/factory/nativeast"/>
+    <source path="dev/webfx/platform/ast/spi/formatter"/>
+    <source path="dev/webfx/platform/ast/spi/parser"/>
+    <source path="dev/webfx/platform/ast/spi/parser/impl/properties"/>
+    <!--=========================< webfx-platform-ast-factory-gwt >=========================-->
+    <source path="dev/webfx/platform/ast/spi/factory/impl/gwt"/>
     <!--=========================< webfx-platform-ast-json-plugin >=========================-->
     <source path="dev/webfx/platform/ast/json"/>
+    <source path="dev/webfx/platform/ast/json/formatter"/>
     <source path="dev/webfx/platform/ast/json/parser"/>
     <source path="dev/webfx/platform/ast/json/parser/javacup"/>
     <source path="dev/webfx/platform/ast/json/parser/jflex"/>
-    <source path="dev/webfx/platform/ast/json/spi"/>
-    <source path="dev/webfx/platform/ast/json/spi/impl/listmap"/>
     <!--==============================< webfx-platform-async >==============================-->
     <source path="dev/webfx/platform/async"/>
     <source path="dev/webfx/platform/async/impl"/>

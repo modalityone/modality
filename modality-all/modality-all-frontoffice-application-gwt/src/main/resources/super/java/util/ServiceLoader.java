@@ -11,9 +11,9 @@ public class ServiceLoader<S> implements Iterable<S> {
         switch (serviceClass.getName()) {
             case "dev.webfx.kit.launcher.spi.WebFxKitLauncherProvider": return new ServiceLoader<S>(dev.webfx.kit.launcher.spi.impl.gwt.GwtWebFxKitLauncherProvider::new);
             case "dev.webfx.kit.mapper.spi.WebFxKitMapperProvider": return new ServiceLoader<S>(dev.webfx.kit.mapper.spi.impl.gwt.GwtWebFxKitHtmlMapperProvider::new);
-            case "dev.webfx.platform.ast.formatter.spi.AstFormatterProvider": return new ServiceLoader<S>(dev.webfx.platform.ast.json.JsonFormatterProvider::new);
-            case "dev.webfx.platform.ast.json.spi.JsonProvider": return new ServiceLoader<S>(dev.webfx.platform.ast.json.spi.impl.gwt.GwtJsonObject::create);
-            case "dev.webfx.platform.ast.parser.spi.AstParserProvider": return new ServiceLoader<S>(dev.webfx.platform.ast.json.JsonAstParserProvider::new);
+            case "dev.webfx.platform.ast.spi.factory.AstFactoryProvider": return new ServiceLoader<S>(dev.webfx.platform.ast.spi.factory.impl.gwt.GwtAstFactoryProvider::new);
+            case "dev.webfx.platform.ast.spi.formatter.AstFormatterProvider": return new ServiceLoader<S>(dev.webfx.platform.ast.json.formatter.JsonFormatterProvider::new);
+            case "dev.webfx.platform.ast.spi.parser.AstParserProvider": return new ServiceLoader<S>(dev.webfx.platform.ast.json.parser.JsonParserProvider::new);
             case "dev.webfx.platform.blob.spi.BlobProvider": return new ServiceLoader<S>(dev.webfx.platform.blob.spi.impl.gwt.GwtBlobProvider::new);
             case "dev.webfx.platform.boot.spi.ApplicationBooterProvider": return new ServiceLoader<S>(dev.webfx.platform.boot.spi.impl.gwt.GwtApplicationBooterProvider::new);
             case "dev.webfx.platform.boot.spi.ApplicationJob": return new ServiceLoader<S>();
