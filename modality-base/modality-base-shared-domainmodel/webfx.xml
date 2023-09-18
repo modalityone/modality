@@ -19,6 +19,8 @@
 
     <dependencies>
         <used-by-source-modules/>
+        <!-- Ensuring JSON format is plugged-in (as the snapshot is in JSON) -->
+        <plugin-module>webfx-platform-ast-json-plugin</plugin-module>
     </dependencies>
 
 </project>

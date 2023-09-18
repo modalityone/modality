@@ -14,9 +14,9 @@ import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
-import dev.webfx.stack.ui.dialog.DialogCallback;
-import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
+import dev.webfx.stack.ui.controls.dialog.DialogContent;
+import dev.webfx.stack.ui.dialog.DialogCallback;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -289,8 +289,8 @@ public class AlterRoomPane extends VBox {
         )
                 .always(FXOrganizationId.organizationIdProperty(), orgId -> DqlStatement.where("exists(select ScheduledResource where configuration.(item=i and resource.site.organization=?))", Entities.getPrimaryKey(orgId)))
                 .setAutoOpenOnMouseEntered(true)
-                .appendNullEntity(true);
-        roomTypeSelector.setReadOnly(true);
+                .appendNullEntity(true)
+                .setReadOnly(true);
         detailsGridPane.add(roomTypeSelector.getButton(), 1, 0);
     }
 

@@ -19,7 +19,7 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-ast-json-plugin</artifactId>
+            <artifactId>webfx-platform-ast</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

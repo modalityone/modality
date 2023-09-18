@@ -60,7 +60,7 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-ast-json-vertx</artifactId>
+            <artifactId>webfx-platform-ast-factory-vertx</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
