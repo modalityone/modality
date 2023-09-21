@@ -17,7 +17,7 @@ public final class MoneyFlowsUiRoute extends UiRouteImpl {
 
     public static UiRoute<?> uiRoute() {
         return UiRoute.createRegex(PathBuilder.toRegexPath(MoneyFlowsRouting.getAnyPath())
-                , false
+                , true
                 , MoneyFlowsActivity::new
                 , ViewDomainActivityContextFinal::new
         );

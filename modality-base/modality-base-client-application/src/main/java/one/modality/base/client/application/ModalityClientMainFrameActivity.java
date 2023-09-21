@@ -6,6 +6,7 @@ import dev.webfx.extras.theme.luminance.LuminanceTheme;
 import dev.webfx.extras.theme.palette.FXPaletteMode;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.platform.util.Arrays;
+import dev.webfx.stack.authn.logout.client.operation.LogoutRequest;
 import dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.ui.action.Action;
@@ -43,14 +44,14 @@ public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
 
         // 1) Building headerButtonsBar containing a home button, navigation buttons, customisable center item & logout button
         // Home button
-        Button homeButton = operationButton("RouteToHome");
+        Button homeButton = routeOperationButton("RouteToHome");
         // Back navigation button (will be hidden in browsers as they already have one)
-        Button backButton = operationButton("RouteBackward");
+        Button backButton = routeOperationButton("RouteBackward");
         // Forward navigation button (will be hidden in browsers as they already have one)
-        Button forwardButton = operationButton("RouteForward");
+        Button forwardButton = routeOperationButton("RouteForward");
         Node brandNode = createBrandNode();
         Node headerCenterItem = createMainFrameHeaderCenterItem();
-        Button logoutButton = operationButton("Logout");
+        Button logoutButton = ActionBinder.bindButtonToAction(newButton(), newOperationAction(LogoutRequest::new)); //operationButton("Logout");
         Pane headerButtonsBar = new Pane(Arrays.nonNulls(Node[]::new, homeButton, backButton, forwardButton, brandNode, headerCenterItem, logoutButton)) {
             @Override
             protected void layoutChildren() {
@@ -97,10 +98,10 @@ public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
         return mainFrameHeader;
     }
 
-    private Button operationButton(String routeOperationCode) {
+    private Button routeOperationButton(String routeOperationCode) {
         // Creating the route button
         Button routeButton = ActionBinder.bindButtonToAction(newButton(), routeOperationCodeToAction(routeOperationCode));
-        // Automatically removing the button if not visible
+        // Automatically removing the button from layout if not visible
         routeButton.managedProperty().bind(routeButton.visibleProperty());
         return routeButton;
     }

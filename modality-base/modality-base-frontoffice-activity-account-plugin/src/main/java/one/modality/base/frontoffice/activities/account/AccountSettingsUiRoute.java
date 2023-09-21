@@ -16,7 +16,7 @@ public final class AccountSettingsUiRoute extends UiRouteImpl {
 
     public static UiRoute<?> uiRoute() {
         return UiRoute.create(AccountSettingsRouting.getPath()
-                , false
+                , true
                 , AccountSettingsActivity::new
                 , ViewDomainActivityContextFinal::new
         );

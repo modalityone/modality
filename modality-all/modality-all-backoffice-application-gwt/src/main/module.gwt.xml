@@ -194,6 +194,8 @@
     <public includes="images/buddhas/" path=""/>
     <resource path="one/modality/base/client/images"/>
     <public includes="one/modality/base/client/images/" path=""/>
+    <!--===========================< modality-base-client-conf >============================-->
+    <source path="one/modality/base/client/conf"/>
     <!--=========================< modality-base-client-entities >==========================-->
     <source path="one/modality/base/client/entities/util"/>
     <source path="one/modality/base/client/entities/util/filters"/>
@@ -647,6 +649,8 @@
     <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/webview/spi/impl/gwt"/>
     <!--=======================< webfx-stack-authn-login-ui-portal >========================-->
     <source path="dev/webfx/stack/authn/login/ui/spi/impl/portal"/>
+    <!--========================< webfx-stack-authn-logout-client >=========================-->
+    <source path="dev/webfx/stack/authn/logout/client/operation"/>
     <!--============================< webfx-stack-authn-remote >============================-->
     <source path="dev/webfx/stack/authn/spi/impl/remote"/>
     <!--============================< webfx-stack-authz-client >============================-->

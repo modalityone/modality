@@ -28,6 +28,7 @@ import javafx.scene.text.Text;
 public class Tile extends MonoPane {
     private final Action action;
     private final boolean useHtml;
+    private final boolean allowsGraphic;
     private final HtmlText htmlText = new HtmlText();
     private final Text text = new Text();
     private double fontSize;
@@ -66,12 +67,13 @@ public class Tile extends MonoPane {
     }
 
     public Tile(Action action) {
-        this(action, false);
+        this(action, true, true);
     }
 
-    public Tile(Action action, boolean useHtml) {
+    public Tile(Action action, boolean useHtml, boolean allowsGraphic) {
         this.action = action;
         this.useHtml = useHtml;
+        this.allowsGraphic = allowsGraphic;
         luminanceFacet = LuminanceTheme.createSecondaryPanelFacet(this)
                 .style();
         textFacet = TextTheme.createPrimaryTextFacet(getTextNode())
@@ -131,7 +133,7 @@ public class Tile extends MonoPane {
         else
             text.setText(action.getText());
         Node newGraphic = action.getGraphic();
-        if (graphic != newGraphic) {
+        if (graphic != newGraphic && allowsGraphic) {
             graphic = action.getGraphic();
             scaledGraphic = graphic == null ? null : new ScalePane(graphic);
         }

@@ -17,7 +17,7 @@ public final class BookingsUiRoute extends UiRouteImpl {
 
     public static UiRoute<?> uiRoute() {
         return UiRoute.createRegex(PathBuilder.toRegexPath(BookingsRouting.getAnyPath())
-                , false
+                , true
                 , BookingsActivity::new
                 , ViewDomainActivityContextFinal::new
         );

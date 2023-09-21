@@ -17,7 +17,7 @@ public final class AccommodationUiRoute extends UiRouteImpl {
 
     public static UiRoute<?> uiRoute() {
         return UiRoute.createRegex(PathBuilder.toRegexPath(AccommodationRouting.getAnyPath())
-                , false
+                , true
                 , AccommodationActivity::new
                 , ViewDomainActivityContextFinal::new
         );

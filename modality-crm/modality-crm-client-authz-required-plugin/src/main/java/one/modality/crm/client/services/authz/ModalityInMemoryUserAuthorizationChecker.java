@@ -1,33 +1,32 @@
 package one.modality.crm.client.services.authz;
 
+import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.authz.client.operation.OperationAuthorizationRuleParser;
-import dev.webfx.stack.authz.client.spi.impl.inmemory.AuthorizationRuleType;
 import dev.webfx.stack.authz.client.spi.impl.inmemory.InMemoryUserAuthorizationChecker;
 import dev.webfx.stack.db.query.QueryResult;
+import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.dql.sqlcompiler.mapping.QueryRowToEntityMapping;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.query_result_to_entities.QueryResultToEntitiesMapper;
-import dev.webfx.stack.routing.router.auth.authz.RoutingAuthorizationRule;
 import dev.webfx.stack.routing.router.auth.authz.RoutingAuthorizationRuleParser;
 import dev.webfx.stack.session.state.client.fx.FXAuthorizationsChanged;
+import one.modality.base.client.conf.ModalityClientConfig;
 
 /**
  * @author Bruno Salmon
  */
 final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthorizationChecker {
 
-    // TODO: share this constant with the server counterpart.
-    private final static String AUTHZ_QUERY_BASE = "select rule.rule,activityState.route,operation.operationCode from AuthorizationAssignment";
+    // TODO: share this constant with the server counterpart (ModalityAuthorizationServerServiceProvider).
+    private final static String AUTHZ_QUERY_BASE = "select rule.rule,activityState.route,operation.(code, grantRoute) from AuthorizationAssignment";
 
     private final DataSourceModel dataSourceModel;
-    //private final Promise<Void> promise = Promise.promise();
 
     ModalityInMemoryUserAuthorizationChecker(DataSourceModel dataSourceModel) {
-        super();
         this.dataSourceModel = dataSourceModel;
         // Registering the authorization (requests and rules) parsers
         ruleRegistry.addAuthorizationRuleParser(new RoutingAuthorizationRuleParser());
@@ -41,11 +40,12 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
         EntityList<Entity> assignments = QueryResultToEntitiesMapper.mapQueryResultToEntities(queryResult, queryMapping, entityStore, "assignments");
         ruleRegistry.clear();
         for (Entity assignment: assignments) {
-            // If it is an authorization rule assignment, registering it
+            // Case of a rule (ex: "grant route:*" or "grant operation:*")
             Entity authorizationRule = assignment.getForeignEntity("rule");
             if (authorizationRule != null) // if yes, passing the rule as a string (will be parsed)
                 ruleRegistry.registerAuthorizationRule(authorizationRule.getStringFieldValue("rule"));
-            // If it is a shared activity state, automatically granting the route to it (when provided)
+/* Commented as activity state was experimental (not sure if we will use it)
+            // Case when it's an activity state => automatically granting the route to it (when provided)
             Entity activityState = assignment.getForeignEntity("activityState");
             if (activityState != null) {
                 String route = activityState.getStringFieldValue("route");
@@ -54,10 +54,35 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
                     ruleRegistry.registerAuthorizationRule(new RoutingAuthorizationRule(AuthorizationRuleType.GRANT, route, false));
                 }
             }
+*/
+            // Case of a specific operation
             Entity operation = assignment.getForeignEntity("operation");
-            if (operation != null)
-                ruleRegistry.registerAuthorizationRule("grant operation:" + operation.getStringFieldValue("operationCode"));
+            if (operation != null) {
+                // Granting that specific operation
+                ruleRegistry.registerAuthorizationRule("grant operation:" + operation.evaluate("code"));
+                // Granting the associated route if provided
+                String route = operation.getStringFieldValue("grantRoute");
+                if (!Strings.isEmpty(route)) {
+                    ruleRegistry.registerAuthorizationRule("grant route:" + route);
+                }
+            }
         }
+
+        // Note: the pushObject sent by the server contained all permissions specifically assigned to the user.
+        // In addition, we may have public operations. Since they are public, they don't need authorizations, however
+        // some may have a route associated, and we need therefore to authorize those public routes.
+        EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
+                .executeQuery("select grantRoute from Operation where public and grantRoute!=null and " + (ModalityClientConfig.isBackOffice() ? "backoffice" : "frontoffice"))
+                        .onFailure(Console::log)
+                        .onSuccess(operations -> {
+                            operations.forEach(op -> {
+                                String route = op.getStringFieldValue("grantRoute");
+                                if (!Strings.isEmpty(route)) {
+                                    ruleRegistry.registerAuthorizationRule("grant route:" + route);
+                                }
+                            });
+                        });
+
         FXAuthorizationsChanged.fireAuthorizationsChanged();
     }
 }

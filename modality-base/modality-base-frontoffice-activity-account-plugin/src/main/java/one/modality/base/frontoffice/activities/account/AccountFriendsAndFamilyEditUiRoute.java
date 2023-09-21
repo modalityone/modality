@@ -16,7 +16,7 @@ public final class AccountFriendsAndFamilyEditUiRoute extends UiRouteImpl {
 
     public static UiRoute<?> uiRoute() {
         return UiRoute.create(AccountFriendsAndFamilyEditRouting.getPath()
-                , false
+                , true
                 , AccountFriendsAndFamilyEditActivity::new
                 , ViewDomainActivityContextFinal::new
         );

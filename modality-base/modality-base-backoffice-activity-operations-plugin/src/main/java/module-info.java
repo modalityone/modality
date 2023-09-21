@@ -6,10 +6,13 @@
 module modality.base.backoffice.activity.operations.plugin {
 
     // Direct dependencies modules
+    requires javafx.base;
+    requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.backoffice.mainframe.fx;
+    requires modality.base.backoffice.tile;
     requires modality.base.client.activity;
-    requires webfx.kit.launcher;
-    requires webfx.platform.util;
+    requires webfx.extras.visual.grid;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
