@@ -58,25 +58,24 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
         mainFrame = new Pane() {
             @Override
             protected void layoutChildren() {
-                // TODO determine value to use for canvasPane based on which activity we are in
                 double width = getWidth(), height = getHeight();
                 double headerHeight = mainFrameHeader.prefHeight(width);
                 double footerHeight = mainFrameFooter.prefHeight(width);
                 layoutInArea(mainFrameHeader, 0, 0, width, headerHeight, 0, HPos.CENTER, VPos.TOP);
                 layoutInArea(mainFrameFooter, 0, height - footerHeight, width, footerHeight, 0, HPos.CENTER, VPos.BOTTOM);
-                double nodeY = FXLayoutMode.isCompactMode() ? 0 : headerHeight;
+                double nodeY = FXLayoutMode.isCompactMode() ? 0 : headerHeight; // Note: breathingPadding is passed as margin in layoutInArea() calls
                 double nodeHeight = 0;
                 if (dialogArea != null) {
                     layoutInArea(dialogArea, 0, nodeY, width, height - nodeY - footerHeight, 0, breathingPadding, HPos.CENTER, VPos.TOP);
                 }
                 if (ganttCanvasContainer.isVisible()) {
-                    nodeHeight = ganttCanvasContainer.prefHeight(width) + breathingPadding.getTop() + (FXGanttInterstice.isGanttIntersticeRequired() ? breathingPadding.getBottom() : 0);
+                    nodeHeight = ganttCanvasContainer.prefHeight(width) + (FXGanttInterstice.isGanttIntersticeRequired() ? breathingPadding.getBottom() : 0);
                     layoutInArea(ganttCanvasContainer, 0, nodeY, width, nodeHeight, 0, breathingPadding, HPos.CENTER, VPos.TOP);
                 }
                 Node mountNode = getMountNode();
                 if (mountNode != null) {
-                    nodeY += nodeHeight - breathingPadding.getTop();
-                    layoutInArea(mountNode, 0, nodeY, width, height - nodeY - footerHeight, 0, breathingPadding, HPos.CENTER, VPos.TOP);
+                    nodeY += nodeHeight;
+                    layoutInArea(mountNode, 0, nodeY, width, height - nodeY - footerHeight, 0, breathingPadding, HPos.CENTER, VPos.CENTER);
                 }
                 wasGanttCanvasShowingBeforeTabsChange = isGanttCanvasShowing();
             }

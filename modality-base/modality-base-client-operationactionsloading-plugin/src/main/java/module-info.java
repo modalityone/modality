@@ -8,7 +8,9 @@ module modality.base.client.operationactionsloading.plugin {
     // Direct dependencies modules
     requires java.base;
     requires javafx.base;
+    requires modality.base.client.conf;
     requires webfx.platform.boot;
+    requires webfx.platform.conf;
     requires webfx.platform.console;
     requires webfx.stack.authz.client;
     requires webfx.stack.i18n;

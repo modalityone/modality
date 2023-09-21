@@ -3,6 +3,7 @@
 module modality.base.backoffice.tile {
 
     // Direct dependencies modules
+    requires java.base;
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
@@ -12,6 +13,7 @@ module modality.base.backoffice.tile {
     requires webfx.extras.util.pane;
     requires webfx.extras.webtext;
     requires webfx.kit.util;
+    requires webfx.platform.util;
     requires webfx.stack.ui.action;
 
     // Exported packages

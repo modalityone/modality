@@ -8,6 +8,7 @@ module modality.crm.client.authn.fx {
     // Direct dependencies modules
     requires javafx.base;
     requires transitive modality.crm.shared.authn;
+    requires webfx.kit.util;
     requires webfx.stack.session.state.client.fx;
 
     // Exported packages

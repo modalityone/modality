@@ -13,7 +13,7 @@ public class AlertsUiRoute extends UiRouteImpl {
 
     public static UiRoute<?> uiRoute() {
         return UiRoute.create(AlertsRouting.getPath()
-                , false
+                , true
                 , AlertsActivity::new
                 , ViewDomainActivityContextFinal::new
         );

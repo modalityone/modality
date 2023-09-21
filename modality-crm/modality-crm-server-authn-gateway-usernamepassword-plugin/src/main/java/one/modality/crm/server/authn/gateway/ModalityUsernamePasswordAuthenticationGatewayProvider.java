@@ -17,6 +17,9 @@ import dev.webfx.stack.session.state.StateAccessor;
 import dev.webfx.stack.session.state.ThreadLocalStateHolder;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 
 /**
  * @author Bruno Salmon
@@ -54,10 +57,18 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
             return Future.failedFuture(getClass().getSimpleName() + " requires a " + UsernamePasswordCredentials.class.getSimpleName() + " argument");
         String runId = ThreadLocalStateHolder.getRunId();
         UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials) userCredentials;
+        String username = usernamePasswordCredentials.getUsername();
+        String password = usernamePasswordCredentials.getPassword();
+        String encryptedPassword;
+        try {
+            encryptedPassword = encryptPassword(username, password);
+        } catch (NoSuchAlgorithmException e) {
+            return Future.failedFuture(e);
+        }
         return QueryService.executeQuery(QueryArgument.builder()
                 .setLanguage("DQL")
-                .setStatement("select id,frontendAccount.id from Person where frontendAccount.(corporation=? and username=? and 'password'=?) order by id limit 1")
-                .setParameters(1, usernamePasswordCredentials.getUsername(), usernamePasswordCredentials.getPassword()) // "or true" is temporary to bypass the password checking which is now encrypted TODO: implement encrypted version of password checking
+                .setStatement("select id,frontendAccount.id from Person where frontendAccount.(corporation=? and username=? and password=?) order by id limit 1")
+                .setParameters(1, username, encryptedPassword)
                 .setDataSourceId(getDataSourceId())
                 .build()
         ).compose(result -> {
@@ -68,6 +79,28 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
             ModalityUserPrincipal modalityUserPrincipal = new ModalityUserPrincipal(personId, accountId);
             return PushServerService.pushState(StateAccessor.setUserId(null, modalityUserPrincipal), runId);
         });
+    }
+
+    private String encryptPassword(String username, String password) throws NoSuchAlgorithmException {
+        String toEncrypt = username + ":" + md5(password);
+        String encrypted = md5(toEncrypt);
+        return encrypted;
+    }
+
+    private String md5(String toEncrypt) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        md.update(toEncrypt.getBytes());
+        byte[] digest = md.digest();
+        String encrypted = hex(digest).toLowerCase();
+        return encrypted;
+    }
+
+    private String hex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02X", b));
+        }
+        return sb.toString();
     }
 
     @Override

@@ -16,7 +16,7 @@ public final class AccountPersonalInformationUiRoute extends UiRouteImpl {
 
     public static UiRoute<?> uiRoute() {
         return UiRoute.create(AccountPersonalInformationRouting.getPath()
-                , false
+                , true
                 , AccountPersonalInformationActivity::new
                 , ViewDomainActivityContextFinal::new
         );

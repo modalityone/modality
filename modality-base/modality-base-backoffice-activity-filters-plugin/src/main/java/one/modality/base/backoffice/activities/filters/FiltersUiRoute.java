@@ -14,7 +14,7 @@ public final class FiltersUiRoute extends UiRouteImpl {
 
     public static UiRoute<?> uiRoute() {
         return UiRoute.createRegex(PathBuilder.toRegexPath(FiltersRouting.getPath())
-                , false
+                , true
                 , FiltersActivity::new
                 , ViewDomainActivityContextFinal::new
         );

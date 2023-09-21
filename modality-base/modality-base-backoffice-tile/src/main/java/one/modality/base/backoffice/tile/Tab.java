@@ -4,6 +4,7 @@ import dev.webfx.extras.theme.FacetState;
 import dev.webfx.stack.ui.action.Action;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Insets;
 import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
 
@@ -16,16 +17,10 @@ public final class Tab extends Tile {
     // forcing a transparent background when not hovered, and a black color for the text when not selected.
     // TODO: make the Theme configurable to allow this kind of customisation
     public Tab(Action action) {
-        super(action);
-    }
-
-    public Tab(Action action, boolean useHtml) {
-        super(action, useHtml);
-    }
-
-    {
+        super(action, false, false);
         setFontSize(14);
         setSelected(false);
+        setPadding(new Insets(5, 30, 5, 30));
     }
 
     private void applyTransparentBackgroundHack() {
