@@ -61,7 +61,9 @@ public final class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
     public PersonalDetailsPanel(Event event, ButtonFactoryMixin buttonFactoryMixin, Pane parent) {
         this.event = event;
         container = new BorderPane();
-        container.setTop(I18nControls.bindI18nProperties(new Label(), "YourPersonalDetails"));
+        Label topLabel = I18nControls.bindI18nProperties(new Label(), "YourPersonalDetails");
+        container.setTop(topLabel);
+        BorderPane.setMargin(topLabel, new Insets(5));
         firstNameTextField = newMaterialTextField("FirstName");
         lastNameTextField = newMaterialTextField("LastName");
         maleRadioButton = newRadioButton("Male");
@@ -152,7 +154,7 @@ public final class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         organizationSelector.setReadOnly(profileDisable);
     }
 
-    public BorderPane getSectionPanel() {
+    public BorderPane getContainer() {
         return container;
     }
 
@@ -190,7 +192,7 @@ public final class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
     }
 
     private VBox createPersonVBox() {
-        VBox vBox = new VBox(15,
+        VBox vBox = new VBox(3,
                 firstNameTextField,
                 lastNameTextField,
                 newMaterialRegion(genderBox, "Gender"),

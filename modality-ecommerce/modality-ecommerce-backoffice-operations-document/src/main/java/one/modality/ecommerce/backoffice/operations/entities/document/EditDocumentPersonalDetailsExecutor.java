@@ -20,7 +20,7 @@ final class EditDocumentPersonalDetailsExecutor {
         PersonalDetailsPanel details = new PersonalDetailsPanel(document.getEvent(), buttonFactoryMixin, parentContainer);
         details.setEditable(true);
         details.syncUiFromModel(document);
-        BorderPane sectionPanel = details.getSectionPanel();
+        BorderPane sectionPanel = details.getContainer();
         ScrollPane scrollPane = new ScrollPane(sectionPanel);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         sectionPanel.setPrefWidth(400);
