@@ -21,10 +21,10 @@ final class EditUsersPersonalDetailsExecutor {
         PersonalDetailsPanel details = new PersonalDetailsPanel(person.getEvent(), buttonFactoryMixin, parentContainer);
         details.setEditable(true);
         details.syncUiFromModel(person);
-        BorderPane sectionPanel = details.getSectionPanel();
-        ScrollPane scrollPane = new ScrollPane(sectionPanel);
+        BorderPane detailsContainer = details.getContainer();
+        ScrollPane scrollPane = new ScrollPane(detailsContainer);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        sectionPanel.setPrefWidth(400);
+        detailsContainer.setPrefWidth(400);
         scrollPane.setPrefWidth(400);
         scrollPane.setPrefHeight(600);
         //scrollPane.setFitToWidth(true);
