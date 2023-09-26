@@ -62,7 +62,7 @@ public class ConventionalUiBuilder implements UiBuilder {
             }
 
             if (pm instanceof HasGroupVisualResultProperty && pm instanceof HasMasterVisualResultProperty && pm instanceof HasSelectedMasterProperty) {
-                groupMasterSlaveView = GroupMasterSlaveView.createAndBind((HasGroupVisualResultProperty & HasMasterVisualResultProperty & HasSelectedMasterProperty<Entity/*necessary for GWT 2.9*/>) pm, mixin, () -> container);
+                groupMasterSlaveView = GroupMasterSlaveView.createAndBind((HasGroupVisualResultProperty & HasMasterVisualResultProperty & HasSelectedMasterProperty<Entity/*necessary for GWT 2.9*/>) pm, mixin);
                 container.setCenter(groupMasterSlaveView.buildUi());
             }
         }

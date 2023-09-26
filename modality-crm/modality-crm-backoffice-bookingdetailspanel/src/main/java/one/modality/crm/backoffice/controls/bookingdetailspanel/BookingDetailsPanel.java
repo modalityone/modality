@@ -24,6 +24,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import one.modality.base.backoffice.activities.mainframe.fx.FXMainFrame;
 import one.modality.base.backoffice.controls.masterslave.UiBuilder;
 import one.modality.base.backoffice.operations.entities.generic.CopyAllRequest;
 import one.modality.base.backoffice.operations.entities.generic.CopySelectionRequest;
@@ -58,13 +59,11 @@ public final class BookingDetailsPanel implements
     private final ObjectProperty<Document> selectedDocumentProperty = new SimpleObjectProperty<>();
     private final BooleanProperty activeProperty = new SimpleBooleanProperty(true);
 
-    private final Supplier<Pane> parentGetter;
     private final GridPane gridPane = new GridPane();
     private final ButtonFactoryMixin mixin;
     private final DataSourceModel dataSourceModel;
 
-    public BookingDetailsPanel(Supplier<Pane> parentGetter, ButtonFactoryMixin mixin, DataSourceModel dataSourceModel) {
-        this.parentGetter = parentGetter;
+    public BookingDetailsPanel(ButtonFactoryMixin mixin, DataSourceModel dataSourceModel) {
         this.mixin = mixin;
         this.dataSourceModel = dataSourceModel;
     }
@@ -134,11 +133,11 @@ public final class BookingDetailsPanel implements
         switch (i18nKey) {
             case "Options":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new AddNewDocumentLineRequest(getSelectedDocument(), parentGetter.get())),
+                        newOperationAction(() -> new AddNewDocumentLineRequest(getSelectedDocument(), FXMainFrame.getDialogArea())),
                         newSeparatorActionGroup(
-                                newOperationAction(() -> new EditDocumentLineRequest(get(selectedEntityProperty), parentGetter.get())),
-                                newOperationAction(() -> new ToggleCancelDocumentLineRequest(get(selectedEntityProperty), parentGetter.get()), selectedEntityProperty),
-                                newOperationAction(() -> new DeleteDocumentLineRequest(get(selectedEntityProperty), parentGetter.get()))
+                                newOperationAction(() -> new EditDocumentLineRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea())),
+                                newOperationAction(() -> new ToggleCancelDocumentLineRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea()), selectedEntityProperty),
+                                newOperationAction(() -> new DeleteDocumentLineRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea()))
                         ),
                         newSeparatorActionGroup(
                                 newOperationAction(() -> new CopySelectionRequest(visualMapper.getSelectedEntities(), visualMapper.getEntityColumns())),
@@ -148,11 +147,11 @@ public final class BookingDetailsPanel implements
                 break;
             case "Payments":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new AddNewPaymentRequest(getSelectedDocument(), parentGetter.get())),
-                        newOperationAction(() -> new AddNewTransferRequest(getSelectedDocument(), parentGetter.get())),
+                        newOperationAction(() -> new AddNewPaymentRequest(getSelectedDocument(), FXMainFrame.getDialogArea())),
+                        newOperationAction(() -> new AddNewTransferRequest(getSelectedDocument(), FXMainFrame.getDialogArea())),
                         newSeparatorActionGroup(
-                                newOperationAction(() -> new EditPaymentRequest(get(selectedEntityProperty), parentGetter.get())),
-                                newOperationAction(() -> new DeletePaymentRequest(get(selectedEntityProperty), parentGetter.get()))
+                                newOperationAction(() -> new EditPaymentRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea())),
+                                newOperationAction(() -> new DeletePaymentRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea()))
                         ),
                         newSeparatorActionGroup(
                                 newOperationAction(() -> new CopySelectionRequest(visualMapper.getSelectedEntities(), visualMapper.getEntityColumns())),
@@ -162,21 +161,21 @@ public final class BookingDetailsPanel implements
                 break;
             case "MultipleBookings":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new MergeMultipleBookingsOptionsRequest(get(selectedEntityProperty), parentGetter.get())),
-                        newOperationAction(() -> new CancelOtherMultipleBookingsRequest(get(selectedEntityProperty), parentGetter.get())),
-                        newOperationAction(() -> new GetBackCancelledMultipleBookingsDepositRequest(get(selectedEntityProperty), parentGetter.get())),
-                        newOperationAction(() -> new ToggleMarkMultipleBookingRequest(get(selectedEntityProperty), parentGetter.get()))
+                        newOperationAction(() -> new MergeMultipleBookingsOptionsRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea())),
+                        newOperationAction(() -> new CancelOtherMultipleBookingsRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea())),
+                        newOperationAction(() -> new GetBackCancelledMultipleBookingsDepositRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea())),
+                        newOperationAction(() -> new ToggleMarkMultipleBookingRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea()))
                 );
                 break;
             case "Cart":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new OpenBookingCartRequest(get(selectedEntityProperty), parentGetter.get()))
+                        newOperationAction(() -> new OpenBookingCartRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea()))
                 );
                 break;
             case "Mails":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new OpenMailRequest(get(selectedEntityProperty), parentGetter.get())),
-                        newOperationAction(() -> new ComposeNewMailRequest(getSelectedDocument(), parentGetter.get())),
+                        newOperationAction(() -> new OpenMailRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea())),
+                        newOperationAction(() -> new ComposeNewMailRequest(getSelectedDocument(), FXMainFrame.getDialogArea())),
                         newSeparatorActionGroup(
                                 newOperationAction(() -> new CopySelectionRequest(visualMapper.getSelectedEntities(), visualMapper.getEntityColumns())),
                                 newOperationAction(() -> new CopyAllRequest(visualMapper.getCurrentEntities(), visualMapper.getEntityColumns()))
@@ -233,11 +232,11 @@ public final class BookingDetailsPanel implements
         addFieldLabelAndValue(4, 7, 6, "person_carer2Name");
 
         mixin.setUpContextMenu(gridPane, () -> newActionGroup(
-                newOperationAction(() -> new EditDocumentPersonalDetailsRequest(getSelectedDocument(), mixin, parentGetter.get()))
+                newOperationAction(() -> new EditDocumentPersonalDetailsRequest(getSelectedDocument(), mixin, FXMainFrame.getDialogArea()))
         ));
         gridPane.setOnMouseClicked(e -> {
             if (e.getClickCount() == 2)
-                executeOperation(new EditDocumentPersonalDetailsRequest(getSelectedDocument(), mixin, parentGetter.get()));
+                executeOperation(new EditDocumentPersonalDetailsRequest(getSelectedDocument(), mixin, FXMainFrame.getDialogArea()));
         });
 
         return gridPane;
@@ -303,12 +302,12 @@ public final class BookingDetailsPanel implements
     ============================================== Static factory methods ==============================================
     ==================================================================================================================*/
 
-    public static <M extends ButtonFactoryMixin & HasDataSourceModel> BookingDetailsPanel createAndBind(HasSelectedDocumentProperty pm, M mixin, Supplier<Pane> containerGetter) {
-        return createAndBind(pm, mixin, containerGetter, mixin.getDataSourceModel());
+    public static <M extends ButtonFactoryMixin & HasDataSourceModel> BookingDetailsPanel createAndBind(HasSelectedDocumentProperty pm, M mixin) {
+        return createAndBind(pm, mixin, mixin.getDataSourceModel());
     }
 
-    public static BookingDetailsPanel createAndBind(HasSelectedDocumentProperty pm, ButtonFactoryMixin mixin, Supplier<Pane> containerGetter, DataSourceModel dataSourceModel) {
-        BookingDetailsPanel bookingDetailsPanel = new BookingDetailsPanel(containerGetter, mixin, dataSourceModel);
+    public static BookingDetailsPanel createAndBind(HasSelectedDocumentProperty pm, ButtonFactoryMixin mixin, DataSourceModel dataSourceModel) {
+        BookingDetailsPanel bookingDetailsPanel = new BookingDetailsPanel(mixin, dataSourceModel);
         bookingDetailsPanel.selectedDocumentProperty().bind(pm.selectedDocumentProperty());
         if (mixin instanceof HasActiveProperty)
             bookingDetailsPanel.activeProperty().bind(((HasActiveProperty) mixin).activeProperty());
@@ -316,9 +315,9 @@ public final class BookingDetailsPanel implements
     }
 
 
-    public static BookingDetailsPanel createAndBindIfApplicable(Object pm, Object mixin, Supplier<Pane> containerGetter) {
+    public static BookingDetailsPanel createAndBindIfApplicable(Object pm, Object mixin) {
         if (pm instanceof HasSelectedDocumentProperty && mixin instanceof ButtonFactoryMixin && mixin instanceof HasDataSourceModel)
-            return createAndBind((HasSelectedDocumentProperty) pm, (ButtonFactoryMixin & HasDataSourceModel) mixin, containerGetter);
+            return createAndBind((HasSelectedDocumentProperty) pm, (ButtonFactoryMixin & HasDataSourceModel) mixin);
         return null;
     }
 }
