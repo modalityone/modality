@@ -74,7 +74,7 @@
   "ForgotPassword": "Forgot password",
   "SignInWindowTitle": "Sign In",
   "SignIn": "Sign In",
-  "SendPassword": "Send password",
+  "SendLink": "Send link",
   "PasswordSent": "Your password has been sent, please check your emails",
   "PasswordNotSent": "There is no account associated with this email",
   "LoginFailed": "Incorrect email or password",

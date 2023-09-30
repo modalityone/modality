@@ -13,6 +13,7 @@ module modality.base.client.application {
     requires modality.base.client.activity;
     requires modality.base.client.css;
     requires modality.base.client.icons;
+    requires modality.base.client.profile.fx;
     requires webfx.extras.imagestore;
     requires webfx.extras.theme;
     requires webfx.extras.util.layout;
@@ -30,6 +31,7 @@ module modality.base.client.application {
     requires transitive webfx.stack.routing.activity;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
+    requires webfx.stack.session.state.client.fx;
     requires webfx.stack.ui.action;
     requires webfx.stack.ui.operation;
     requires webfx.stack.ui.operation.action;

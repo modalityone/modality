@@ -254,6 +254,8 @@
     <source path="one/modality/base/client/operationactionsloading"/>
     <!--=====================< modality-base-client-presentationmodel >=====================-->
     <source path="one/modality/base/client/presentationmodel"/>
+    <!--========================< modality-base-client-profile-fx >=========================-->
+    <source path="one/modality/base/client/profile/fx"/>
     <!--========================< modality-base-client-time-theme >=========================-->
     <source path="one/modality/base/client/time/theme"/>
     <!--===========================< modality-base-client-util >============================-->
@@ -372,6 +374,8 @@
     <source path="dev/webfx/extras/cell/collator"/>
     <source path="dev/webfx/extras/cell/renderer"/>
     <source path="dev/webfx/extras/cell/rowstyle"/>
+    <!--=============================< webfx-extras-flippane >==============================-->
+    <source path="dev/webfx/extras/flippane"/>
     <!--=============================< webfx-extras-geometry >==============================-->
     <source path="dev/webfx/extras/geometry"/>
     <!--============================< webfx-extras-imagestore >=============================-->

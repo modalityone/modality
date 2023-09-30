@@ -5,15 +5,18 @@ import dev.webfx.extras.theme.luminance.FXLuminanceMode;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
 import dev.webfx.extras.theme.palette.FXPaletteMode;
 import dev.webfx.extras.util.layout.LayoutUtil;
-import dev.webfx.platform.util.Arrays;
+import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.authn.logout.client.operation.LogoutRequest;
 import dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.stack.session.state.client.fx.FXLoggedIn;
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionBinder;
 import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -22,6 +25,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
+import one.modality.base.client.profile.fx.FXProfile;
 
 /**
  * @author Bruno Salmon
@@ -51,8 +55,9 @@ public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
         Button forwardButton = routeOperationButton("RouteForward");
         Node brandNode = createBrandNode();
         Node headerCenterItem = createMainFrameHeaderCenterItem();
-        Button logoutButton = ActionBinder.bindButtonToAction(newButton(), newOperationAction(LogoutRequest::new)); //operationButton("Logout");
-        Pane headerButtonsBar = new Pane(Arrays.nonNulls(Node[]::new, homeButton, backButton, forwardButton, brandNode, headerCenterItem, logoutButton)) {
+        headerCenterItem.visibleProperty().bind(FXLoggedIn.loggedInProperty());
+
+        Pane headerButtonsBar = new Pane() { // Children will be set just after
             @Override
             protected void layoutChildren() {
                 double width = getWidth(), height = getHeight();
@@ -63,10 +68,11 @@ public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
                 if (forwardButton.isManaged())
                     layoutInArea(forwardButton, x += w + 3, y, w = forwardButton.prefWidth(h), h, 0, HPos.LEFT, VPos.CENTER);
                 if (brandNode != null)
-                    layoutInArea(brandNode, x += w + 8, y, w = brandNode.prefWidth(h), h, 0, HPos.LEFT, VPos.CENTER);
-                layoutInArea(headerCenterItem, x += w + 5, y - 2, w = Math.max(width - 2 * x, headerCenterItem.prefWidth(h)), height, 0, HPos.CENTER, VPos.CENTER);
-                if (logoutButton.isManaged())
-                    layoutInArea(logoutButton, x += w + 8, y, width - 5 - x, h, 0, HPos.RIGHT, VPos.CENTER);
+                    layoutInArea(brandNode, x += w + 8, y, w = brandNode.prefWidth(h), h, 0, Insets.EMPTY, false, false, HPos.LEFT, VPos.CENTER);
+                layoutInArea(headerCenterItem, x += w + 5, y, w = Math.max(width - 2 * x, headerCenterItem.prefWidth(h)), h, 0, Insets.EMPTY, false, false, HPos.CENTER, VPos.CENTER);
+                Node profileButton = FXProfile.getProfileButton();
+                if (profileButton != null && profileButton.isManaged())
+                    layoutInArea(profileButton, x += w + 8, y, width - 5 - x, h, 0, HPos.RIGHT, VPos.CENTER);
             }
 
             @Override
@@ -74,6 +80,14 @@ public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
                 return super.computePrefHeight(width) + 6;
             }
         };
+
+        // The profile button can be customized (ex: ModalityClientProfileInitJob)
+        if (FXProfile.getProfileButton() == null) // If not, we just display a logout button instead
+            FXProfile.setProfileButton(actionButton(newOperationAction(LogoutRequest::new)));
+        // Setting all children, including the profile button
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            headerButtonsBar.getChildren().setAll(Collections.listOfRemoveNulls(homeButton, backButton, forwardButton, brandNode, headerCenterItem, FXProfile.getProfileButton()));
+        }, FXProfile.profileButtonProperty(), FXProfile.profilePanelProperty());
 
         // 2) Building a customisable headerTabsBar (used only in the backoffice so far)
         Region headerTabsBar = createHeaderTabsBar();
@@ -99,11 +113,18 @@ public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
     }
 
     private Button routeOperationButton(String routeOperationCode) {
-        // Creating the route button
-        Button routeButton = ActionBinder.bindButtonToAction(newButton(), routeOperationCodeToAction(routeOperationCode));
-        // Automatically removing the button from layout if not visible
-        routeButton.managedProperty().bind(routeButton.visibleProperty());
-        return routeButton;
+        return actionButton(routeOperationCodeToAction(routeOperationCode));
+    }
+
+    private Button actionButton(Action action) {
+        return ActionBinder.bindButtonToAction(newButton(), action);
+    }
+
+    @Override
+    public Button newButton() {
+        Button button = ModalityButtonFactoryMixin.super.newButton();
+        button.setPadding(new Insets(5));
+        return button;
     }
 
     protected Node createBrandNode() {

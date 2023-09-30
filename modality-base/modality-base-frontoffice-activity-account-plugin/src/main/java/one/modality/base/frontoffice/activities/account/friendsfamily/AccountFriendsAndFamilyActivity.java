@@ -1,4 +1,4 @@
-package one.modality.base.frontoffice.activities.account;
+package one.modality.base.frontoffice.activities.account.friendsfamily;
 
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.stack.i18n.I18n;
@@ -13,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import one.modality.base.frontoffice.activities.account.AccountUtility;
 import one.modality.base.frontoffice.fx.FXAccount;
 import one.modality.base.frontoffice.states.PersonPM;
 import one.modality.base.frontoffice.utility.GeneralUtility;

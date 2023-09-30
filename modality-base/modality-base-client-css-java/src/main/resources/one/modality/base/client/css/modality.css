@@ -3,31 +3,6 @@ VisualGrid, VisualLineChart, VisualPieChart, VisualBarChart, VisualAreaChart, Gr
 }
 
 @font-face {
-    font-family: 'Roboto';
-    font-style: normal;
-    src: url('../fonts/Roboto-Regular.ttf');
-}
-
-@font-face {
-    font-family: 'Roboto';
-    font-weight: bold;
-    src: url('../fonts/Roboto-Bold.ttf');
-}
-
-@font-face {
-    font-family: 'Roboto';
-    font-style: italic;
-    src: url('../fonts/Roboto-Italic.ttf');
-}
-
-@font-face {
-    font-family: 'Roboto';
-    font-weight: bold;
-    font-style: italic;
-    src: url('../fonts/Roboto-BoldItalic.ttf');
-}
-
-@font-face {
     font-family: 'Montserrat';
     font-style: normal;
     src: url('../fonts/Montserrat-Regular.ttf');
@@ -54,6 +29,18 @@ VisualGrid, VisualLineChart, VisualPieChart, VisualBarChart, VisualAreaChart, Gr
 
 Text, Label, Button, TextField {
     -fx-font-family: 'Montserrat';
+}
+
+
+.login {
+    -fx-font-size: 18px;
+}
+
+
+.login Button {
+    -fx-background-color: #0096D6FF;
+    -fx-background-radius: 10px;
+    -fx-text-fill: white;
 }
 
 .scroll-pane > .viewport {

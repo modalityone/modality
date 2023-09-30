@@ -1,4 +1,4 @@
-package one.modality.base.frontoffice.activities.account;
+package one.modality.base.frontoffice.activities.account.settings;
 
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.routing.uirouter.UiRoute;

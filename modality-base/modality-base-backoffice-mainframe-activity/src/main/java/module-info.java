@@ -5,6 +5,7 @@ module modality.base.backoffice.mainframe.activity {
     // Direct dependencies modules
     requires java.base;
     requires javafx.base;
+    requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.backoffice.gantt.canvas;
     requires modality.base.backoffice.mainframe.fx;
@@ -12,6 +13,7 @@ module modality.base.backoffice.mainframe.activity {
     requires modality.base.backoffice.tile;
     requires modality.base.client.application;
     requires modality.base.client.gantt.fx;
+    requires modality.base.client.profile.fx;
     requires webfx.extras.canvas.pane;
     requires webfx.extras.theme;
     requires webfx.extras.util.animation;
