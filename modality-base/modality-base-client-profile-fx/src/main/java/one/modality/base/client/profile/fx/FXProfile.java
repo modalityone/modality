@@ -1,8 +1,14 @@
 package one.modality.base.client.profile.fx;
 
+import dev.webfx.extras.materialdesign.util.scene.SceneUtil;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Bruno Salmon
@@ -24,8 +30,30 @@ public final class FXProfile {
         profileButtonProperty.set(button);
     }
 
+    private final static Set<Scene> LISTENED_SCENES = new HashSet<>();
+    private final static ObjectProperty<Node> profilePanelProperty = new SimpleObjectProperty<>() {
+        @Override
+        protected void invalidated() {
+            SceneUtil.onSceneReady(get(), scene -> {
+                if (!LISTENED_SCENES.contains(scene)) {
+                    scene.focusOwnerProperty().addListener(observable -> hideProfilePanelIfNodeOutsideProfile(scene.getFocusOwner()));
+                    // TODO: implement scene.addEventFilter() in WebFX Kit.
+                    scene.getRoot().addEventFilter(MouseEvent.MOUSE_CLICKED, me -> hideProfilePanelIfNodeOutsideProfile(me.getPickResult().getIntersectedNode()));
+                    LISTENED_SCENES.add(scene);
+                }
+            });
+        }
+    };
 
-    private final static ObjectProperty<Node> profilePanelProperty = new SimpleObjectProperty<>();
+    private static void hideProfilePanelIfNodeOutsideProfile(Node node) {
+        if (node != null && getProfilePanel() != null) {
+            // Does the new focus owner belong to the profile panel?
+            if (SceneUtil.hasAncestor(node, getProfilePanel()) || SceneUtil.hasAncestor(node, getProfileButton()))
+                return;
+            // If not, we hide the profile panel
+            setProfilePanel(null);
+        }
+    }
 
 
     public static ObjectProperty<Node> profilePanelProperty() {

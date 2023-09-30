@@ -7,7 +7,7 @@ import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import one.modality.crm.client.controls.personaldetails.PersonalDetailsPanel;
+import one.modality.crm.client.controls.personaldetails.BookingPersonalDetailsPanel;
 import one.modality.base.shared.entities.Person;
 
 final class EditUsersPersonalDetailsExecutor {
@@ -18,7 +18,7 @@ final class EditUsersPersonalDetailsExecutor {
     }
 
     private static Future<Void> execute(Person person, ButtonFactoryMixin buttonFactoryMixin, Pane parentContainer) {
-        PersonalDetailsPanel details = new PersonalDetailsPanel(person.getEvent(), buttonFactoryMixin, parentContainer);
+        BookingPersonalDetailsPanel details = new BookingPersonalDetailsPanel(person.getEvent(), buttonFactoryMixin, parentContainer);
         details.setEditable(true);
         details.syncUiFromModel(person);
         BorderPane detailsContainer = details.getContainer();

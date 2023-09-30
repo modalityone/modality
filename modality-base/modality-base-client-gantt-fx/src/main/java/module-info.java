@@ -12,7 +12,6 @@ module modality.base.client.gantt.fx {
     requires webfx.extras.canvas.layer;
     requires webfx.extras.time.window;
     requires webfx.kit.util;
-    requires webfx.platform.console;
     requires webfx.platform.scheduler;
 
     // Exported packages

@@ -39,6 +39,10 @@ public class Tile extends MonoPane {
 
     private final Pane clippedTextGraphicPane = new ClipPane() {
 
+        {
+            setContentValignment(VPos.BOTTOM); // for a possible folding animation from bottom to top
+        }
+
         @Override
         protected void layoutChildren() {
             double width = getWidth(), height = getHeight(), h2 = height / 2, h4 = h2 / 2, h8 = h4 / 2;
