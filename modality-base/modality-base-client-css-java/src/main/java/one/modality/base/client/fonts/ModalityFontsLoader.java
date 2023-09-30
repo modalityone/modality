@@ -15,10 +15,6 @@ public final class ModalityFontsLoader implements ApplicationJob {
                 "Montserrat-BoldItalic.ttf",
                 "Montserrat-Italic.ttf",
                 "Montserrat-Regular.ttf",
-                "Roboto-Bold.ttf",
-                "Roboto-BoldItalic.ttf",
-                "Roboto-Italic.ttf",
-                "Roboto-Regular.ttf",
         };
         for (String file : files)
             Font.loadFont(getClass().getResourceAsStream(file), 16);

@@ -1,4 +1,4 @@
-package one.modality.base.frontoffice.activities.account;
+package one.modality.base.frontoffice.activities.account.friendsfamily.edit;
 
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.stack.i18n.I18n;
@@ -10,6 +10,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import one.modality.base.frontoffice.activities.account.AccountUtility;
 import one.modality.base.frontoffice.fx.FXAccount;
 import one.modality.base.frontoffice.utility.GeneralUtility;
 

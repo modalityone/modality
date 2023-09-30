@@ -1,4 +1,4 @@
-package one.modality.base.frontoffice.activities.account;
+package one.modality.base.frontoffice.activities.account.personalinfo;
 
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;

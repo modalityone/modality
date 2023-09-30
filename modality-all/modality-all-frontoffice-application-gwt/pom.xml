@@ -148,6 +148,13 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-profile-fx</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-base-frontoffice-activity-account-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
@@ -265,6 +272,13 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-flippane</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-imagestore</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
@@ -280,6 +294,13 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-materialdesign</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-scalepane</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
@@ -336,6 +357,13 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-util-paint</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-util-pane</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>

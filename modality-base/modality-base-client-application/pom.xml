@@ -56,6 +56,12 @@
         </dependency>
 
         <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-profile-fx</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-imagestore</artifactId>
             <version>0.1.0-SNAPSHOT</version>
@@ -154,6 +160,12 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-routing-uirouter</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-session-state-client-fx</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

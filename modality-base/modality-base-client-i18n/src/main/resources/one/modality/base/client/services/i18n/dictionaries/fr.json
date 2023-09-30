@@ -76,7 +76,7 @@
   "ForgotPassword": "Mot de passe oublié",
   "SignInWindowTitle": "Connexion à votre compte",
   "SignIn": "Identifiez-vous",
-  "SendPassword": "Envoyer le mot de passe",
+  "SendPassword": "Envoyer le lien",
   "PasswordSent": "Votre mot de passe a été envoyé, veuillez consulter votre messagerie",
   "PasswordNotSent": "Il n'y a aucun compte associé à cet email",
   "LoginFailed": "L'email ou le mot de passe saisi est incorrect",

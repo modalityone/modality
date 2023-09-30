@@ -14,16 +14,16 @@
 
     <providers>
         <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.frontoffice.activities.account.AccountUiRoute</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.frontoffice.activities.account.AccountPersonalInformationUiRoute</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.frontoffice.activities.account.AccountSettingsUiRoute</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.frontoffice.activities.account.AccountFriendsAndFamilyUiRoute</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.frontoffice.activities.account.AccountFriendsAndFamilyEditUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.frontoffice.activities.account.personalinfo.AccountPersonalInformationUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.frontoffice.activities.account.settings.AccountSettingsUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.frontoffice.activities.account.friendsfamily.AccountFriendsAndFamilyUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.frontoffice.activities.account.friendsfamily.edit.AccountFriendsAndFamilyEditUiRoute</provider>
 
         <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.frontoffice.activities.account.RouteToAccountRequestEmitter</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.frontoffice.activities.account.RouteToAccountSettingsRequestEmitter</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.frontoffice.activities.account.RouteToAccountPersonalInformationEmitter</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.frontoffice.activities.account.RouteToAccountFriendsAndFamilyEmitter</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.frontoffice.activities.account.RouteToAccountFriendsAndFamilyEditEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.frontoffice.activities.account.settings.RouteToAccountSettingsRequestEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.frontoffice.activities.account.personalinfo.RouteToAccountPersonalInformationEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.frontoffice.activities.account.friendsfamily.RouteToAccountFriendsAndFamilyEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.frontoffice.activities.account.friendsfamily.edit.RouteToAccountFriendsAndFamilyEditEmitter</provider>
 
     </providers>
 

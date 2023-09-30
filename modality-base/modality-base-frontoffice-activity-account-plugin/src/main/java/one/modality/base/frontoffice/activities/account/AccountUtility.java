@@ -31,23 +31,18 @@ public final class AccountUtility {
         ImageView imageView = new ImageView(Resource.toUrl(GENERIC_AVATAR_IMAGE_RESOURCE_PATH, AccountUtility.class)) ;
         imageView.setFitHeight(50);
         imageView.setFitWidth(50);
-        Circle clip = new Circle(25, 25, 25);
-        imageView.setClip(clip);
-
-        HBox row = new HBox();
+        imageView.setClip(new Circle(25, 25, 25));
 
         Text title = TextUtility.getNameText("");
+        HBox hBox = new HBox(imageView, title);
+
+        hBox.setPadding(new Insets(20));
+        hBox.setAlignment(Pos.CENTER);
+        hBox.setSpacing(10);
+
         title.textProperty().bind(FXAccount.ownerPM.NAME_FULL);
 
-        row.getChildren().addAll(
-                imageView, title
-        );
-
-        row.setPadding(new Insets(20));
-        row.setAlignment(Pos.CENTER);
-        row.setSpacing(10);
-
-        return row;
+        return hBox;
     }
 
     public static Node createHorizontalRadioButtons(String option1, String option2, BooleanProperty isFirstSelected, boolean isDisabled) {
@@ -58,20 +53,12 @@ public final class AccountUtility {
 
     public static Node createAccountHeader(String title, String subTitle, ViewDomainActivityBase activity) {
         Button friendsFamilyBackButton = new Button("<-");
-
-        friendsFamilyBackButton.setOnAction(e -> {
-            activity.getHistory().goBack();
-        });
-
-        VBox container = new VBox();
-
-        container.getChildren().addAll(
+        friendsFamilyBackButton.setOnAction(e -> activity.getHistory().goBack());
+        return new VBox(
                 GeneralUtility.createSplitRow(friendsFamilyBackButton, TextUtility.getAccountHeaderText(title), 10, 0),
                 GeneralUtility.createSplitRow(new Text(" "), TextUtility.getSubText(subTitle), 10, 0),
                 GeneralUtility.createSpace(20)
         );
-
-        return container;
     }
 
     public static Node displayInformation(ViewDomainActivityBase activity, ButtonFactoryMixin activityMixin, PersonPM personPM) {
@@ -161,11 +148,7 @@ public final class AccountUtility {
         HBox cb = new HBox();
         cb.setAlignment(Pos.CENTER);
         cb.getChildren().add(b);
-//        b.setId();
-//        b.getStyleClass().addAll("hhh", "kkk");
-        b.setOnAction(e -> {
-            FXAccount.updatePerson(personPM);
-        });
+        b.setOnAction(e -> FXAccount.updatePerson(personPM));
 
         container.getChildren().addAll(
                 GeneralUtility.createSpace(20),

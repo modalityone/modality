@@ -36,6 +36,7 @@ import one.modality.base.backoffice.ganttcanvas.MainFrameGanttCanvas;
 import one.modality.base.backoffice.tile.Tab;
 import one.modality.base.client.application.ModalityClientMainFrameActivity;
 import one.modality.base.client.gantt.fx.interstice.FXGanttInterstice;
+import one.modality.base.client.profile.fx.FXProfile;
 
 import java.util.Comparator;
 import java.util.function.Consumer;
@@ -50,12 +51,13 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
     private Region mainFrameFooter;
     private final Region ganttCanvasContainer = MainFrameGanttCanvas.getCanvasContainer();
     private Pane dialogArea;
+    private Node profilePanel;
     private Insets breathingPadding; // actual value will be computed depending on compact mode
     private boolean wasGanttCanvasShowingBeforeTabsChange;
 
     @Override
     public Node buildUi() {
-        mainFrame = new Pane() {
+        mainFrame = new Pane() { // Children are set later in updateMountNode()
             @Override
             protected void layoutChildren() {
                 double width = getWidth(), height = getHeight();
@@ -67,6 +69,16 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
                 double nodeHeight = 0;
                 if (dialogArea != null) {
                     layoutInArea(dialogArea, 0, nodeY, width, height - nodeY - footerHeight, 0, breathingPadding, HPos.CENTER, VPos.TOP);
+                }
+                if (profilePanel != null) {
+                    layoutInArea(profilePanel, width - profilePanel.prefWidth(-1), nodeY, profilePanel.prefWidth(-1), profilePanel.prefHeight(-1), 0, HPos.RIGHT, VPos.TOP);
+                    if (startProfilePanelEnteringAnimationOnLayout) {
+                        if (profilePanelAnimation != null)
+                            profilePanelAnimation.stop();
+                        profilePanel.setTranslateX(profilePanel.prefWidth(-1));
+                        profilePanelAnimation = Animations.animateProperty(profilePanel.translateXProperty(), 0);
+                    }
+                    startProfilePanelEnteringAnimationOnLayout = false;
                 }
                 if (ganttCanvasContainer.isVisible()) {
                     nodeHeight = ganttCanvasContainer.prefHeight(width) + (FXGanttInterstice.isGanttIntersticeRequired() ? breathingPadding.getBottom() : 0);
@@ -82,7 +94,8 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
         };
         mainFrameHeader = createMainFrameHeader();
         mainFrameFooter = createMainFrameFooter();
-        FXProperties.runNowAndOnPropertiesChange(this::updateMountNode, mountNodeProperty());
+        FXProperties.runNowAndOnPropertiesChange(this::updateMountNode, mountNodeProperty(), FXProfile.profilePanelProperty());
+
         // Requesting a layout for containerPane on layout mode changes
         FXProperties.runNowAndOnPropertiesChange(() -> {
             boolean compactMode = FXLayoutMode.isCompactMode();
@@ -115,7 +128,29 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
         MainFrameGanttCanvas.setupFXBindingsAndStartLogic(this);
     }
 
+    private Timeline profilePanelAnimation;
+    private boolean startProfilePanelEnteringAnimationOnLayout;
+
     private void updateMountNode() {
+        Node oldProfilePanel = profilePanel;
+        Node newProfilePanel = FXProfile.getProfilePanel();
+        // When the profile panel is set to null, we animate its exit
+        if (newProfilePanel == null && mainFrame.getChildren().contains(oldProfilePanel)) {
+            if (profilePanelAnimation != null)
+                profilePanelAnimation.stop();
+            profilePanelAnimation = Animations.animateProperty(oldProfilePanel.translateXProperty(), oldProfilePanel.prefWidth(-1));
+            profilePanelAnimation.setOnFinished(e -> {
+                mainFrame.getChildren().remove(oldProfilePanel);
+                if (profilePanel == oldProfilePanel)
+                    profilePanel = null;
+                profilePanelAnimation = null;
+            });
+        } else {
+            if ((oldProfilePanel == null || profilePanelAnimation != null) && newProfilePanel != null) {
+                startProfilePanelEnteringAnimationOnLayout = true;
+            }
+            profilePanel = newProfilePanel;
+        }
         // Note: the order of the children is important in compact mode, where the container header overlaps the mount
         // node (as a transparent button bar on top of it) -> so the container header must be after the mount node,
         // otherwise it will be hidden.
@@ -123,7 +158,8 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
                 ganttCanvasContainer,
                 getMountNode(),
                 mainFrameHeader,
-                mainFrameFooter));
+                mainFrameFooter,
+                profilePanel));
         updateDialogArea();
     }
 

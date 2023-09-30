@@ -17,7 +17,7 @@ public final class AccountUiRoute extends UiRouteImpl {
     public static UiRoute<?> uiRoute() {
         return UiRoute.create(AccountRouting.getPath()
                 , true
-                , AccountHomeActivity::new
+                , AccountActivity::new
                 , ViewDomainActivityContextFinal::new
         );
     }

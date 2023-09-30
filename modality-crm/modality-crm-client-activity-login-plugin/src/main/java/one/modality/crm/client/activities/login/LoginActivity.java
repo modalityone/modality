@@ -7,25 +7,12 @@ import javafx.scene.Node;
 /**
  * @author Bruno Salmon
  */
-final class LoginViewActivity extends ViewDomainActivityBase {
+final class LoginActivity extends ViewDomainActivityBase {
 
-    //private LoginPanel loginPanel;
 
     @Override
     public Node buildUi() {
         return LoginUiService.createLoginUI();
-/*
-        loginPanel = new LoginPanel(getUiSession());
-        return loginPanel.getNode();
-*/
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-/*
-        if (loginPanel != null)
-            loginPanel.prepareShowing();
-*/
-    }
 }

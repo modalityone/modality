@@ -141,9 +141,15 @@
     <source path="one/modality/base/client/operationactionsloading"/>
     <!--=====================< modality-base-client-presentationmodel >=====================-->
     <source path="one/modality/base/client/presentationmodel"/>
+    <!--========================< modality-base-client-profile-fx >=========================-->
+    <source path="one/modality/base/client/profile/fx"/>
     <!--===============< modality-base-frontoffice-activity-account-plugin >================-->
     <source path="one/modality/base/frontoffice/activities/account"/>
+    <source path="one/modality/base/frontoffice/activities/account/friendsfamily"/>
+    <source path="one/modality/base/frontoffice/activities/account/friendsfamily/edit"/>
+    <source path="one/modality/base/frontoffice/activities/account/personalinfo"/>
     <source path="one/modality/base/frontoffice/activities/account/routing"/>
+    <source path="one/modality/base/frontoffice/activities/account/settings"/>
     <source path="one/modality/base/frontoffice/operations/routes/account"/>
     <resource path="one/modality/base/frontoffice/activities/account/images"/>
     <public includes="one/modality/base/frontoffice/activities/account/images/" path=""/>
@@ -189,6 +195,8 @@
     <source path="dev/webfx/extras/cell/rowstyle"/>
     <!--==============================< webfx-extras-flexbox >==============================-->
     <source path="dev/webfx/extras/flexbox"/>
+    <!--=============================< webfx-extras-flippane >==============================-->
+    <source path="dev/webfx/extras/flippane"/>
     <!--============================< webfx-extras-imagestore >=============================-->
     <source path="dev/webfx/extras/imagestore"/>
     <!--===============================< webfx-extras-label >===============================-->
@@ -198,6 +206,8 @@
     <source path="dev/webfx/extras/materialdesign/util"/>
     <source path="dev/webfx/extras/materialdesign/util/layout"/>
     <source path="dev/webfx/extras/materialdesign/util/scene"/>
+    <!--=============================< webfx-extras-scalepane >=============================-->
+    <source path="dev/webfx/extras/scalepane"/>
     <!--===============================< webfx-extras-theme >===============================-->
     <source path="dev/webfx/extras/theme"/>
     <source path="dev/webfx/extras/theme/layout"/>
@@ -219,6 +229,8 @@
     <source path="dev/webfx/extras/util/layout"/>
     <!--============================< webfx-extras-util-paint >=============================-->
     <source path="dev/webfx/extras/util/paint"/>
+    <!--=============================< webfx-extras-util-pane >=============================-->
+    <source path="dev/webfx/extras/util/pane"/>
     <!--============================< webfx-extras-util-scene >=============================-->
     <source path="dev/webfx/extras/util/scene"/>
     <!--==============================< webfx-extras-visual >===============================-->

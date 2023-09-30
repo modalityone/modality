@@ -1,5 +1,5 @@
 one.modality.base.frontoffice.activities.account.RouteToAccountRequestEmitter
-one.modality.base.frontoffice.activities.account.RouteToAccountSettingsRequestEmitter
-one.modality.base.frontoffice.activities.account.RouteToAccountPersonalInformationEmitter
-one.modality.base.frontoffice.activities.account.RouteToAccountFriendsAndFamilyEmitter
-one.modality.base.frontoffice.activities.account.RouteToAccountFriendsAndFamilyEditEmitter
+one.modality.base.frontoffice.activities.account.settings.RouteToAccountSettingsRequestEmitter
+one.modality.base.frontoffice.activities.account.personalinfo.RouteToAccountPersonalInformationEmitter
+one.modality.base.frontoffice.activities.account.friendsfamily.RouteToAccountFriendsAndFamilyEmitter
+one.modality.base.frontoffice.activities.account.friendsfamily.edit.RouteToAccountFriendsAndFamilyEditEmitter
