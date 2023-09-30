@@ -25,7 +25,6 @@ module modality.base.client.application {
     requires transitive webfx.platform.util;
     requires webfx.stack.authn.logout.client;
     requires webfx.stack.com.bus.call;
-    requires webfx.stack.i18n;
     requires webfx.stack.orm.datasourcemodel.service;
     requires transitive webfx.stack.orm.domainmodel.activity;
     requires transitive webfx.stack.routing.activity;

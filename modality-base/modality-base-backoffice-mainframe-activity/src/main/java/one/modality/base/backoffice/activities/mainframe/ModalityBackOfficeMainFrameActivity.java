@@ -71,12 +71,15 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
                     layoutInArea(dialogArea, 0, nodeY, width, height - nodeY - footerHeight, 0, breathingPadding, HPos.CENTER, VPos.TOP);
                 }
                 if (profilePanel != null) {
-                    layoutInArea(profilePanel, width - profilePanel.prefWidth(-1), nodeY, profilePanel.prefWidth(-1), profilePanel.prefHeight(-1), 0, HPos.RIGHT, VPos.TOP);
+                    layoutInArea(profilePanel, width - profilePanel.prefWidth(-1) - 10, nodeY + 10, profilePanel.prefWidth(-1), profilePanel.prefHeight(-1), 0, HPos.RIGHT, VPos.TOP);
                     if (startProfilePanelEnteringAnimationOnLayout) {
                         if (profilePanelAnimation != null)
                             profilePanelAnimation.stop();
-                        profilePanel.setTranslateX(profilePanel.prefWidth(-1));
+                        profilePanel.setTranslateX(profilePanel.prefWidth(-1) + 10);
                         profilePanelAnimation = Animations.animateProperty(profilePanel.translateXProperty(), 0);
+                        profilePanelAnimation.setOnFinished(e -> {
+                            profilePanelAnimation = null;
+                        });
                     }
                     startProfilePanelEnteringAnimationOnLayout = false;
                 }
@@ -138,7 +141,7 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
         if (newProfilePanel == null && mainFrame.getChildren().contains(oldProfilePanel)) {
             if (profilePanelAnimation != null)
                 profilePanelAnimation.stop();
-            profilePanelAnimation = Animations.animateProperty(oldProfilePanel.translateXProperty(), oldProfilePanel.prefWidth(-1));
+            profilePanelAnimation = Animations.animateProperty(oldProfilePanel.translateXProperty(), oldProfilePanel.prefWidth(-1) + 10);
             profilePanelAnimation.setOnFinished(e -> {
                 mainFrame.getChildren().remove(oldProfilePanel);
                 if (profilePanel == oldProfilePanel)
@@ -198,8 +201,13 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
         ObservableList<Node> mainFrameChildren = mainFrame.getChildren();
         if (dialogArea.getChildren().isEmpty())
             mainFrameChildren.remove(dialogArea);
-        else if (!mainFrameChildren.contains(dialogArea))
-            mainFrameChildren.add(dialogArea);
+        else if (!mainFrameChildren.contains(dialogArea)) {
+            int profilePanelIndex = mainFrameChildren.indexOf(profilePanel);
+            if (profilePanelIndex > 0)
+                mainFrameChildren.add(profilePanelIndex, dialogArea);
+            else
+                mainFrameChildren.add(dialogArea);
+        }
     }
 
     @Override
