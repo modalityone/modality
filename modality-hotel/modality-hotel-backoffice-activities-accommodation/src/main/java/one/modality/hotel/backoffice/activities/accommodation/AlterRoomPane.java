@@ -12,10 +12,7 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.dql.DqlStatement;
-import dev.webfx.stack.orm.entity.Entities;
-import dev.webfx.stack.orm.entity.EntityId;
-import dev.webfx.stack.orm.entity.EntityStore;
-import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.*;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
@@ -60,6 +57,7 @@ import static dev.webfx.stack.orm.dql.DqlStatement.where;
 public class AlterRoomPane extends VBox {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-uu");
+    private static final DateTimeFormatter DQL_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     private final AccommodationPresentationModel pm;
     private final ObjectProperty<ResourceConfiguration> resourceConfigurationProperty = new SimpleObjectProperty<>();
@@ -71,6 +69,7 @@ public class AlterRoomPane extends VBox {
     private ObservableValue<Boolean> activeProperty;
     private ReactiveVisualMapper<ResourceConfiguration> rvm;
     private UpdateStore updateStore;
+    private List<ScheduledItem> scheduledItemsForRoom = Collections.emptyList();
 
     private GridPane detailsGridPane;
     private EntityButtonSelector<Item> roomTypeSelector;
@@ -628,10 +627,13 @@ public class AlterRoomPane extends VBox {
         LocalDate startDate = getSelectedResourceConfigurationStartDate();
         LocalDate endDate = getSelectedResourceConfigurationEndDate();
 
+        String formattedStartDate = "'" + DQL_FORMATTER.format(startDate) + "'";
+        String formattedEndDate = "'" + DQL_FORMATTER.format(endDate) + "'";
+
         // Find ScheduledItems with this item type
         DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
         Object itemId = selectedRc.getItem().getPrimaryKey();
-        EntityStore.create(dataSourceModel).<ScheduledItem>executeQuery("select date from ScheduledItem si where si.item.id=" + itemId)
+        EntityStore.create(dataSourceModel).<ScheduledItem>executeQuery("select id,timeline,site,item,date,startTime,endTime,available,online,resource from ScheduledItem si where si.item.id=" + itemId + " and si.date>=" + formattedStartDate + " and si.date<=" + formattedEndDate)
                 .onFailure(error -> {
                     Console.log("Error while reading scheduled items.", error);
                     success.set(false);
@@ -640,6 +642,8 @@ public class AlterRoomPane extends VBox {
                     List<LocalDate> populatedDates = attendances.stream()
                             .map(EntityHasDate::getDate)
                             .collect(Collectors.toList());
+
+                    scheduledItemsForRoom = attendances;
 
                     Site site = selectedRc.getResource().getSite();
                     // Check that a ScheduledItem exists for each day between the start date and end date
@@ -650,6 +654,7 @@ public class AlterRoomPane extends VBox {
                             newScheduledItem.setDate(date);
                             newScheduledItem.setItem(selectedRc.getItem());
                             newScheduledItem.setSite(site);
+                            scheduledItemsForRoom.add(newScheduledItem);
                         }
                     }
                     success.set(true);
@@ -679,6 +684,10 @@ public class AlterRoomPane extends VBox {
     private void ensureScheduledResourceForEachDay(BooleanProperty success) {
         LocalDate startDate = getSelectedResourceConfigurationStartDate();
         LocalDate endDate = getSelectedResourceConfigurationEndDate();
+
+        String formattedStartDate = "'" + DQL_FORMATTER.format(startDate) + "'";
+        String formattedEndDate = "'" + DQL_FORMATTER.format(endDate) + "'";
+
         DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
         ResourceConfiguration selectedRc = selectedResourceConfigurationProperty.get();
         Object itemId = selectedRc.getItem().getPrimaryKey();
@@ -688,7 +697,7 @@ public class AlterRoomPane extends VBox {
             success.set(false);
         } else {
             // For each day: if the ScheduledResource doesn't exist (with same date, same configuration, same scheduledItem) then create it
-            EntityStore.create(dataSourceModel).<ScheduledResource>executeQuery("select date,sr.configuration.(name,item.name,max,allowsGuest,allowsResident,allowsResidentFamily,allowsSpecialGuest,allowsVolunteer,allowsFemale,allowsMale,startDate,endDate,resource.site) from ScheduledResource sr where sr.scheduledItem.item.id=" + itemId)
+            EntityStore.create(dataSourceModel).<ScheduledResource>executeQuery("select date,sr.configuration.(name,item.name,max,allowsGuest,allowsResident,allowsResidentFamily,allowsSpecialGuest,allowsVolunteer,allowsFemale,allowsMale,startDate,endDate,resource.site) from ScheduledResource sr where sr.scheduledItem.item.id=" + itemId + " and sr.date>=" + formattedStartDate + " and sr.date<=" + formattedEndDate)
                     .onFailure(error -> {
                         Console.log("Error while reading scheduled resources.", error);
                         success.set(false);
@@ -717,7 +726,11 @@ public class AlterRoomPane extends VBox {
         newScheduledResource.setResourceConfiguration(sourceResourceConfiguration);
         newScheduledResource.setMax(sourceResourceConfiguration.getMax());
         newScheduledResource.setOnline(false);
-        newScheduledResource.setForeignField("scheduledItem", sourceResourceConfiguration.getItem());
+        Entity scheduledItem = scheduledItemsForRoom.stream()
+                .filter(si -> si.getDate().equals(date))
+                .findAny()
+                .get();
+        newScheduledResource.setForeignField("scheduledItem", scheduledItem);
     }
 
     private boolean hasConfigurationChanged() {
