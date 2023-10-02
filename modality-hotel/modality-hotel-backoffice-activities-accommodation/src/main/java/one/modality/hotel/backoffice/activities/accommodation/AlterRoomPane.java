@@ -514,8 +514,9 @@ public class AlterRoomPane extends VBox {
         ResourceConfiguration selectedRc = selectedResourceConfigurationProperty.get();
         EntityId resourceId = selectedRc.getResourceId();
         EntityId organizationId = (EntityId) pm.organizationIdProperty().get();
-        // TODO restrict to attendees in time window
-        EntityStore.create(dataSourceModel).<Attendance>executeQuery("select date,documentLine.document.(person_guest,person_male,person_resident) from Attendance a where a.documentLine.document.event.organization=" + organizationId.getPrimaryKey() + " and a.scheduledResource.configuration.resource.id=" + resourceId.getPrimaryKey())
+        LocalDate startDate = getSelectedResourceConfigurationStartDate();
+        LocalDate endDate = getSelectedResourceConfigurationEndDate();
+        EntityStore.create(dataSourceModel).<Attendance>executeQuery("select date,documentLine.document.(person_guest,person_male,person_resident) from Attendance a where a.documentLine.document.event.organization=? and a.scheduledResource.configuration.resource.id=? and a.scheduledResource.date>=? and a.scheduledResource.date<=?", organizationId.getPrimaryKey(), resourceId.getPrimaryKey(), startDate, endDate)
                 .onFailure(error -> {
                     Console.log("Error while reading attendances", error);
                     success.set(false);
