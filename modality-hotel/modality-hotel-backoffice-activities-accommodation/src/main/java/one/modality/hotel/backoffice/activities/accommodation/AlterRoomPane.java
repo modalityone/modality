@@ -764,6 +764,56 @@ public class AlterRoomPane extends VBox {
                 Objects.equals(rc1.getName(), rc2.getName());
     }
 
+    /**
+     * Deletes ScheduledResource entities with dates in gaps created by the user bringing the "from" date
+     * forward or putting the "to" date back.
+     * @param success set to indicate whether transaction succeeds
+     */
+    private void removeScheduledResourceFromGaps(BooleanProperty success) {
+        ResourceConfiguration before = getSelectedResourceConfigurationBeforeChanges();
+        ResourceConfiguration after = selectedResourceConfigurationProperty.get();
+
+        // Determine min and max dates for the gap
+        LocalDate min = null, max = null;
+        if (before.getStartDate().isBefore(after.getStartDate())) {
+            min = before.getStartDate();
+            max = after.getStartDate();
+        }
+        if (before.getEndDate().isAfter(after.getEndDate())) {
+            if (min == null) {
+                min = after.getEndDate();
+            }
+            max = before.getEndDate();
+        }
+        if (min == null) {
+            // If no time gap has been introduced by changing the "from" and "to" dates the no deletion is necessary
+            success.set(true);
+            return;
+        }
+
+        // Select all ScheduledResources for the item within the time window
+        DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
+        Object itemId = selectedResourceConfigurationProperty.get().getItem().getPrimaryKey();
+        EntityStore.create(dataSourceModel).<ScheduledResource>executeQuery("select date from ScheduledResource sr where sr.scheduledItem.item.id=? and sr.date>=? and sr.date<=?", itemId, min, max)
+                .onFailure(error -> {
+                    Console.log("Error while reading scheduled resources.", error);
+                    success.set(false);
+                })
+                .onSuccess(scheduledResources -> {
+                    // Delete ScheduledResources in the time gap
+                    UpdateStore deleteUpdateStore = UpdateStore.createAbove(scheduledResources.iterator().next().getStore());
+                    for (ScheduledResource scheduledResource : scheduledResources) {
+                        boolean inGap = scheduledResource.getDate().isBefore(after.getStartDate()) || scheduledResource.getDate().isAfter(after.getEndDate());
+                        if (inGap) {
+                            deleteUpdateStore.deleteEntity(scheduledResource);
+                        }
+                    }
+                    deleteUpdateStore.submitChanges()
+                            .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
+                            .onSuccess(b -> success.set(true));
+                });
+    }
+
     private void displayStatus(String status) {
         Platform.runLater(() -> statusLabel.setText(status));
     }
@@ -792,6 +842,7 @@ public class AlterRoomPane extends VBox {
                     displayStatus("Saved.");
                     cancel();
                 });})
+                .addValidation(this::removeScheduledResourceFromGaps)
                 .addValidation(this::ensureScheduledItemForEachDay)
                 .addValidation(this::ensureScheduledResourceForEachDay)
                 .run();
