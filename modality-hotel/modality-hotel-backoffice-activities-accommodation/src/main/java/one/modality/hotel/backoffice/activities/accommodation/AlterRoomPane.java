@@ -57,7 +57,6 @@ import static dev.webfx.stack.orm.dql.DqlStatement.where;
 public class AlterRoomPane extends VBox {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-uu");
-    private static final DateTimeFormatter DQL_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     private final AccommodationPresentationModel pm;
     private final ObjectProperty<ResourceConfiguration> resourceConfigurationProperty = new SimpleObjectProperty<>();
@@ -627,13 +626,10 @@ public class AlterRoomPane extends VBox {
         LocalDate startDate = getSelectedResourceConfigurationStartDate();
         LocalDate endDate = getSelectedResourceConfigurationEndDate();
 
-        String formattedStartDate = "'" + DQL_FORMATTER.format(startDate) + "'";
-        String formattedEndDate = "'" + DQL_FORMATTER.format(endDate) + "'";
-
         // Find ScheduledItems with this item type
         DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
         Object itemId = selectedRc.getItem().getPrimaryKey();
-        EntityStore.create(dataSourceModel).<ScheduledItem>executeQuery("select id,timeline,site,item,date,startTime,endTime,available,online,resource from ScheduledItem si where si.item.id=" + itemId + " and si.date>=" + formattedStartDate + " and si.date<=" + formattedEndDate)
+        EntityStore.create(dataSourceModel).<ScheduledItem>executeQuery("select id,timeline,site,item,date,startTime,endTime,available,online,resource from ScheduledItem si where si.item.id=? and si.date>=? and si.date<=?", itemId, startDate, endDate)
                 .onFailure(error -> {
                     Console.log("Error while reading scheduled items.", error);
                     success.set(false);
@@ -685,9 +681,6 @@ public class AlterRoomPane extends VBox {
         LocalDate startDate = getSelectedResourceConfigurationStartDate();
         LocalDate endDate = getSelectedResourceConfigurationEndDate();
 
-        String formattedStartDate = "'" + DQL_FORMATTER.format(startDate) + "'";
-        String formattedEndDate = "'" + DQL_FORMATTER.format(endDate) + "'";
-
         DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
         ResourceConfiguration selectedRc = selectedResourceConfigurationProperty.get();
         Object itemId = selectedRc.getItem().getPrimaryKey();
@@ -697,7 +690,7 @@ public class AlterRoomPane extends VBox {
             success.set(false);
         } else {
             // For each day: if the ScheduledResource doesn't exist (with same date, same configuration, same scheduledItem) then create it
-            EntityStore.create(dataSourceModel).<ScheduledResource>executeQuery("select date,sr.configuration.(name,item.name,max,allowsGuest,allowsResident,allowsResidentFamily,allowsSpecialGuest,allowsVolunteer,allowsFemale,allowsMale,startDate,endDate,resource.site) from ScheduledResource sr where sr.scheduledItem.item.id=" + itemId + " and sr.date>=" + formattedStartDate + " and sr.date<=" + formattedEndDate)
+            EntityStore.create(dataSourceModel).<ScheduledResource>executeQuery("select date,sr.configuration.(name,item.name,max,allowsGuest,allowsResident,allowsResidentFamily,allowsSpecialGuest,allowsVolunteer,allowsFemale,allowsMale,startDate,endDate,resource.site) from ScheduledResource sr where sr.scheduledItem.item.id=? and sr.date>=? and sr.date<=?", itemId, startDate, endDate)
                     .onFailure(error -> {
                         Console.log("Error while reading scheduled resources.", error);
                         success.set(false);
