@@ -685,31 +685,46 @@ public class AlterRoomPane extends VBox {
         ResourceConfiguration selectedRc = selectedResourceConfigurationProperty.get();
         Object itemId = selectedRc.getItem().getPrimaryKey();
 
-        if (hasConfigurationChanged()) {
-            // TODO encode Rule 5b
-            success.set(false);
-        } else {
-            // For each day: if the ScheduledResource doesn't exist (with same date, same configuration, same scheduledItem) then create it
-            EntityStore.create(dataSourceModel).<ScheduledResource>executeQuery("select date,sr.configuration.(name,item.name,max,allowsGuest,allowsResident,allowsResidentFamily,allowsSpecialGuest,allowsVolunteer,allowsFemale,allowsMale,startDate,endDate,resource.site) from ScheduledResource sr where sr.scheduledItem.item.id=? and sr.date>=? and sr.date<=?", itemId, startDate, endDate)
-                    .onFailure(error -> {
-                        Console.log("Error while reading scheduled resources.", error);
-                        success.set(false);
-                    })
-                    .onSuccess(scheduledResources -> {
+        EntityStore.create(dataSourceModel).<ScheduledResource>executeQuery("select date,sr.configuration.(name,item.name,max,allowsGuest,allowsResident,allowsResidentFamily,allowsSpecialGuest,allowsVolunteer,allowsFemale,allowsMale,startDate,endDate,resource.site) from ScheduledResource sr where sr.scheduledItem.item.id=? and sr.date>=? and sr.date<=?", itemId, startDate, endDate)
+                .onFailure(error -> {
+                    Console.log("Error while reading scheduled resources.", error);
+                    success.set(false);
+                })
+                .onSuccess(scheduledResources -> {
+                    if (hasConfigurationChanged()) {
+                        ResourceConfiguration previousResourceConfiguration = getSelectedResourceConfigurationBeforeChanges();
+                        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+                            final LocalDate finalDate = date;
+                            Optional<ScheduledResource> matchingPreviousConfig = scheduledResources.stream()
+                                    .filter(sr -> sr.getDate().equals(finalDate) && sr.getResourceConfiguration().equals(previousResourceConfiguration))
+                                    .findAny();
+                            if (matchingPreviousConfig.isEmpty()) {
+                                // If there is no existing ScheduledResource for this date then create it...
+                                newScheduledResource(selectedRc, date);
+                            } else {
+                                // ...else update the existing ScheduledResource for this date to point to the new configuration and Scheduled Item
+                                ScheduledResource scheduledResource = matchingPreviousConfig.get();
+                                ScheduledResource updatedScheduledResource = updateStore.updateEntity(scheduledResource);
+                                updatedScheduledResource.setResourceConfiguration(selectedRc);
+                                Entity scheduledItem = scheduledItemForDate(date);
+                                updatedScheduledResource.setForeignField("scheduledItem", scheduledItem);
+                            }
+                        }
+                    } else {
+                        // Check that a ScheduledResource exists for each day between the start date and end date
                         List<LocalDate> datesWithMatchingConfig = scheduledResources.stream()
                                 .filter(sr -> matchesIgnoringDates(sr.getResourceConfiguration(), selectedRc))
                                 .map(EntityHasDate::getDate)
                                 .collect(Collectors.toList());
 
-                        // Check that a ScheduledResource exists for each day between the start date and end date
                         for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
                             if (!datesWithMatchingConfig.contains(date)) {
                                 newScheduledResource(selectedRc, date);
                             }
                         }
-                        success.set(true);
-                    });
-        }
+                    }
+                    success.set(true);
+                });
     }
 
     private void newScheduledResource(ResourceConfiguration sourceResourceConfiguration, LocalDate date) {
@@ -719,16 +734,19 @@ public class AlterRoomPane extends VBox {
         newScheduledResource.setResourceConfiguration(sourceResourceConfiguration);
         newScheduledResource.setMax(sourceResourceConfiguration.getMax());
         newScheduledResource.setOnline(false);
-        Entity scheduledItem = scheduledItemsForRoom.stream()
-                .filter(si -> si.getDate().equals(date))
-                .findAny()
-                .get();
+        Entity scheduledItem = scheduledItemForDate(date);
         newScheduledResource.setForeignField("scheduledItem", scheduledItem);
     }
 
+    private ScheduledItem scheduledItemForDate(LocalDate date) {
+        return scheduledItemsForRoom.stream()
+                .filter(si -> si.getDate().equals(date))
+                .findAny()
+                .get();
+    }
+
     private boolean hasConfigurationChanged() {
-        int selectedRow = table.getVisualSelection().getSelectedRow();
-        ResourceConfiguration before = resourceConfigurations.get(selectedRow);
+        ResourceConfiguration before = getSelectedResourceConfigurationBeforeChanges();
         ResourceConfiguration after = selectedResourceConfigurationProperty.get();
         return !matchesIgnoringDates(before, after);
     }
@@ -784,11 +802,15 @@ public class AlterRoomPane extends VBox {
         cancelButton.setVisible(false);
         setDetailsPaneDisabled(true);
         table.setDisable(false);
-        int selectedRow = table.getVisualSelection().getSelectedRow();
-        ResourceConfiguration selectedResourceConfiguration = resourceConfigurations.get(selectedRow);
+        ResourceConfiguration selectedResourceConfiguration = getSelectedResourceConfigurationBeforeChanges();
         selectedResourceConfigurationProperty.set(selectedResourceConfiguration);
         displayStatus(null);
         displayDetails(selectedResourceConfiguration);
+    }
+
+    private ResourceConfiguration getSelectedResourceConfigurationBeforeChanges() {
+        int selectedRow = table.getVisualSelection().getSelectedRow();
+        return resourceConfigurations.get(selectedRow);
     }
 
     private void setDetailsPaneDisabled(boolean disabled) {
