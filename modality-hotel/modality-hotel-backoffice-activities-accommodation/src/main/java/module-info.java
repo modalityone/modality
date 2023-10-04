@@ -27,7 +27,11 @@ module modality.hotel.backoffice.activities.accommodation {
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
     requires webfx.kit.util;
+    requires webfx.platform.console;
+    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
+    requires webfx.stack.orm.datasourcemodel.service;
+    requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;

@@ -227,10 +227,11 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
 
     @Override
     protected HBox createMainFrameHeaderCenterItem() {
-        String[] expectedOrder = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.base.backoffice.mainframe.headernode")
-                .getString("headerNodesOrder").split(",");
+        String[] expectedNodes = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.base.backoffice.mainframe.headernode")
+                .getString("headerNodes").split(",");
         HBox hBox = new HBox(5, MainFrameHeaderNodeProvider.getProviders().stream()
-                .sorted(Comparator.comparingInt(o -> Arrays.indexOf(expectedOrder, o.getName())))
+                .filter(o -> Arrays.contains(expectedNodes, o.getName()))
+                .sorted(Comparator.comparingInt(o -> Arrays.indexOf(expectedNodes, o.getName())))
                 .map(p -> p.getHeaderNode(this, mainFrame, getDataSourceModel()))
                 .toArray(Node[]::new));
         hBox.setAlignment(Pos.CENTER);

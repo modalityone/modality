@@ -11,6 +11,7 @@ module modality.crm.client.profile.plugin {
     requires modality.base.client.activity;
     requires modality.base.client.profile.fx;
     requires modality.base.shared.entities;
+    requires modality.crm.backoffice.organization.fx;
     requires modality.crm.client.authn.fx;
     requires modality.crm.client.personaldetails;
     requires modality.crm.shared.authn;
@@ -26,9 +27,9 @@ module modality.crm.client.profile.plugin {
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.entity;
+    requires webfx.stack.orm.entity.controls;
     requires webfx.stack.session.state.client.fx;
     requires webfx.stack.ui.action;
-    requires webfx.stack.ui.controls;
     requires webfx.stack.ui.operation.action;
 
     // Exported packages

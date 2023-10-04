@@ -8,6 +8,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
 
@@ -115,5 +116,9 @@ public class BookingPersonalDetailsPanel extends PersonalDetailsPanel {
                 age = null;
         }
         return age;
+    }
+
+    public static void editBookingPersonalDetails(Document document, ButtonFactoryMixin buttonFactoryMixin, Pane parent) {
+        editPersonalDetails(document, new BookingPersonalDetailsPanel(document.getEvent(), buttonFactoryMixin, parent), parent);
     }
 }

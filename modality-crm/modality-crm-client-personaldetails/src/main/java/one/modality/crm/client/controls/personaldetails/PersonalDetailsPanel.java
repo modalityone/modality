@@ -16,8 +16,11 @@ import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityStore;
+import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
+import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -30,6 +33,7 @@ import one.modality.base.shared.domainmodel.functions.AbcNames;
 import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Organization;
 import one.modality.base.shared.entities.Person;
+import one.modality.base.shared.entities.markers.EntityHasPersonalDetails;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
 
 import java.time.LocalDate;
@@ -292,5 +296,39 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
                 age = null;
         }
         return age;
+    }
+
+    public static void editPersonalDetails(EntityHasPersonalDetails person, ButtonFactoryMixin buttonFactoryMixin, Pane parent) {
+        editPersonalDetails(person, new PersonalDetailsPanel(person.getStore().getDataSourceModel(), buttonFactoryMixin, parent), parent);
+    }
+
+    protected static void editPersonalDetails(EntityHasPersonalDetails person, PersonalDetailsPanel details, Pane parent) {
+        UpdateStore updateStore = UpdateStore.createAbove(person.getStore());
+        EntityHasPersonalDetails updatingPerson = updateStore.updateEntity(person);
+        details.setEditable(true);
+        details.syncUiFromModel(updatingPerson);
+        BorderPane sectionPanel = details.getContainer();
+        ScrollPane scrollPane = new ScrollPane(sectionPanel);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        sectionPanel.setPrefWidth(400);
+        scrollPane.setPrefWidth(400);
+        scrollPane.setPrefHeight(600);
+        DialogContent dialogContent = new DialogContent().setContent(scrollPane);
+        DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, parent, 0, 0.9);
+        DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
+            if (!details.isValid())
+                return;
+            details.syncModelFromUi(updatingPerson);
+            if (!updateStore.hasChanges())
+                dialogCallback.closeDialog();
+            else {
+                updateStore.submitChanges()
+                        .onFailure(dialogCallback::showException)
+                        .onSuccess(x -> {
+                            details.syncModelFromUi(person);
+                            dialogCallback.closeDialog();
+                        });
+            }
+        });
     }
 }

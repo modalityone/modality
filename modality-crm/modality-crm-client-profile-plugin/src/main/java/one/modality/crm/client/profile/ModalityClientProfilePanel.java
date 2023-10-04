@@ -7,11 +7,10 @@ import dev.webfx.stack.authn.logout.client.operation.LogoutRequest;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.operations.ChangeLanguageRequest;
 import dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter;
-import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
+import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionBinder;
-import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
-import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -21,14 +20,15 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Hyperlink;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import one.modality.base.backoffice.activities.mainframe.fx.FXMainFrame;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.profile.fx.FXProfile;
+import one.modality.base.shared.entities.Organization;
 import one.modality.base.shared.entities.Person;
+import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.crm.client.controls.personaldetails.PersonalDetailsPanel;
 
 import java.util.List;
@@ -48,34 +48,7 @@ final class ModalityClientProfilePanel {
                 identityLink.setText(userPerson.getFullName());
                 identityLink.setOnAction(e -> {
                     FXProfile.setProfilePanel(null);
-                    UpdateStore updateStore = UpdateStore.createAbove(userPerson.getStore());
-                    Person updatingPerson = updateStore.updateEntity(userPerson);
-                    PersonalDetailsPanel details = new PersonalDetailsPanel(updateStore.getDataSourceModel(), buttonFactoryMixin, FXMainFrame.getDialogArea());
-                    details.setEditable(true);
-                    details.syncUiFromModel(updatingPerson);
-                    BorderPane sectionPanel = details.getContainer();
-                    ScrollPane scrollPane = new ScrollPane(sectionPanel);
-                    scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-                    sectionPanel.setPrefWidth(400);
-                    scrollPane.setPrefWidth(400);
-                    scrollPane.setPrefHeight(600);
-                    DialogContent dialogContent = new DialogContent().setContent(scrollPane);
-                    DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, FXMainFrame.getDialogArea(), 0, 0.9);
-                    DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
-                        if (!details.isValid())
-                            return;
-                        details.syncModelFromUi(updatingPerson);
-                        if (!updateStore.hasChanges())
-                            dialogCallback.closeDialog();
-                        else {
-                            updateStore.submitChanges()
-                                    .onFailure(dialogCallback::showException)
-                                    .onSuccess(x -> {
-                                        details.syncModelFromUi(userPerson);
-                                        dialogCallback.closeDialog();
-                                    });
-                        }
-                    });
+                    PersonalDetailsPanel.editPersonalDetails(userPerson, buttonFactoryMixin, FXMainFrame.getDialogArea());
                 });
             } else {
                 UserClaims userClaims = FXUserClaims.getUserClaims();
@@ -102,9 +75,16 @@ final class ModalityClientProfilePanel {
             });
         }), I18n.dictionaryProperty());
 
+        EntityButtonSelector<Organization> organizationSelector = new EntityButtonSelector<>(
+                "{class: 'Organization', alias: 'o', where: 'exists(select Event where organization=o)'}",
+                buttonFactoryMixin, vBox, DataSourceModelService.getDefaultDataSourceModel()
+        );
+        // Doing a bidirectional binding with FXOrganization
+        organizationSelector.selectedItemProperty().bindBidirectional(FXOrganization.organizationProperty());
+
         Button logoutButton = ActionBinder.bindButtonToAction(new Button(), actionFactory.newOperationAction(LogoutRequest::new));
 
-        vBox.getChildren().setAll(identityLink, langButton, logoutButton);
+        vBox.getChildren().setAll(identityLink, organizationSelector.getButton(), langButton, logoutButton);
         vBox.setAlignment(Pos.CENTER);
         langButton.setMaxWidth(Double.MAX_VALUE);
         logoutButton.setMaxWidth(Double.MAX_VALUE);
