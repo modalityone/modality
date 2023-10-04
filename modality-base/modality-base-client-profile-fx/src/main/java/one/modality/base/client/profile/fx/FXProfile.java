@@ -1,6 +1,8 @@
 package one.modality.base.client.profile.fx;
 
 import dev.webfx.extras.materialdesign.util.scene.SceneUtil;
+import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.stack.session.state.client.fx.FXLoggedIn;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
@@ -66,6 +68,15 @@ public final class FXProfile {
 
     public static void setProfilePanel(Node panel) {
         profilePanelProperty.set(panel);
+    }
+
+    static {
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            if (!FXLoggedIn.isLoggedIn()) {
+                setProfileButton(null);
+                setProfilePanel(null);
+            }
+        }, FXLoggedIn.loggedInProperty());
     }
 
 }
