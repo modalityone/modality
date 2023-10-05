@@ -71,7 +71,7 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
                     layoutInArea(dialogArea, 0, nodeY, width, height - nodeY - footerHeight, 0, breathingPadding, HPos.CENTER, VPos.TOP);
                 }
                 if (profilePanel != null) {
-                    layoutInArea(profilePanel, width - profilePanel.prefWidth(-1) - 10, nodeY + 10, profilePanel.prefWidth(-1), profilePanel.prefHeight(-1), 0, HPos.RIGHT, VPos.TOP);
+                    layoutInArea(profilePanel, width - profilePanel.prefWidth(-1) - 10, headerHeight + 10, profilePanel.prefWidth(-1), profilePanel.prefHeight(-1), 0, HPos.RIGHT, VPos.TOP);
                     if (startProfilePanelEnteringAnimationOnLayout) {
                         if (profilePanelAnimation != null)
                             profilePanelAnimation.stop();
@@ -97,7 +97,8 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
         };
         mainFrameHeader = createMainFrameHeader();
         mainFrameFooter = createMainFrameFooter();
-        FXProperties.runNowAndOnPropertiesChange(this::updateMountNode, mountNodeProperty(), FXProfile.profilePanelProperty());
+        FXProperties.runNowAndOnPropertiesChange(this::updateMountNode,
+                mountNodeProperty(), FXProfile.profilePanelProperty(), FXProfile.showProfilePanelProperty());
 
         // Requesting a layout for containerPane on layout mode changes
         FXProperties.runNowAndOnPropertiesChange(() -> {
@@ -136,7 +137,7 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
 
     private void updateMountNode() {
         Node oldProfilePanel = profilePanel;
-        Node newProfilePanel = FXProfile.getProfilePanel();
+        Node newProfilePanel = FXProfile.isProfilePanelShown() ? FXProfile.getProfilePanel() : null;
         // When the profile panel is set to null, we animate its exit
         if (newProfilePanel == null && mainFrame.getChildren().contains(oldProfilePanel)) {
             if (profilePanelAnimation != null)
