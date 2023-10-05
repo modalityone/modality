@@ -76,12 +76,6 @@
         </dependency>
 
         <dependency>
-            <groupId>one.modality</groupId>
-            <artifactId>modality-crm-shared-authn</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-switches</artifactId>
             <version>0.1.0-SNAPSHOT</version>
@@ -102,12 +96,6 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-util-pane</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-kit-launcher</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -162,18 +150,6 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-orm-datasourcemodel-service</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-orm-domainmodel</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-orm-entity</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

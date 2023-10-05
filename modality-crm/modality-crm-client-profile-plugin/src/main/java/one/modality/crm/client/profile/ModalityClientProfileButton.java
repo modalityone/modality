@@ -9,6 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import one.modality.base.client.profile.fx.FXProfile;
 import one.modality.base.shared.entities.Person;
+import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 
 /**
  * @author Bruno Salmon
