@@ -36,6 +36,7 @@ import one.modality.base.shared.entities.Organization;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.crm.client.controls.personaldetails.PersonalDetailsPanel;
+import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 
 import java.util.List;
 import java.util.stream.Collectors;
