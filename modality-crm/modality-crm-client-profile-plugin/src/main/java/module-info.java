@@ -4,7 +4,6 @@ module modality.crm.client.profile.plugin {
 
     // Direct dependencies modules
     requires java.base;
-    requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.backoffice.mainframe.fx;
@@ -20,8 +19,6 @@ module modality.crm.client.profile.plugin {
     requires webfx.extras.util.pane;
     requires webfx.kit.util;
     requires webfx.platform.boot;
-    requires webfx.platform.console;
-    requires webfx.platform.uischeduler;
     requires webfx.platform.util;
     requires webfx.stack.authn;
     requires webfx.stack.authn.logout.client;
