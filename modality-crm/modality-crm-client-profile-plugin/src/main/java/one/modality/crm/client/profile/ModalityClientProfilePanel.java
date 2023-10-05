@@ -1,5 +1,10 @@
 package one.modality.crm.client.profile;
 
+import dev.webfx.extras.switches.Switch;
+import dev.webfx.extras.theme.layout.FXLayoutMode;
+import dev.webfx.extras.theme.luminance.FXLuminanceMode;
+import dev.webfx.extras.theme.palette.FXPaletteMode;
+import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.authn.UserClaims;
@@ -20,6 +25,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -40,14 +46,18 @@ import java.util.stream.Collectors;
 final class ModalityClientProfilePanel {
 
     public static Node createProfilePanel() {
+        VBox vBox = new VBox(10);
+
         ModalityButtonFactoryMixin buttonFactoryMixin = new ModalityButtonFactoryMixin() {};
+        OperationActionFactoryMixin actionFactory = new OperationActionFactoryMixin() {};
+
         Hyperlink identityLink = new Hyperlink();
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Person userPerson = FXUserPerson.getUserPerson();
             if (userPerson != null) {
                 identityLink.setText(userPerson.getFullName());
                 identityLink.setOnAction(e -> {
-                    FXProfile.setProfilePanel(null);
+                    FXProfile.hideProfilePanel();
                     PersonalDetailsPanel.editPersonalDetails(userPerson, buttonFactoryMixin, FXMainFrame.getDialogArea());
                 });
             } else {
@@ -56,9 +66,6 @@ final class ModalityClientProfilePanel {
                 identityLink.setOnAction(null);
             }
         }, FXUserPerson.userPersonProperty(), FXUserClaims.userClaimsProperty());
-        OperationActionFactoryMixin actionFactory = new OperationActionFactoryMixin() {};
-
-        VBox vBox = new VBox(10);
 
         Button langButton = new Button();
         List<ChangeLanguageRequest> langRequests = ChangeLanguageRequestEmitter.getProvidedEmitters().stream()
@@ -82,9 +89,40 @@ final class ModalityClientProfilePanel {
         // Doing a bidirectional binding with FXOrganization
         organizationSelector.selectedItemProperty().bindBidirectional(FXOrganization.organizationProperty());
 
+        // Dark mode
+        Switch darkModeSwitch = new Switch();
+        HBox darkModeHBox = new HBox(new Label("Dark mode"), LayoutUtil.createHGrowable(), darkModeSwitch);
+        darkModeSwitch.setSelected(FXLuminanceMode.isDarkMode());
+        FXProperties.runOnPropertiesChange(() -> {
+            FXLuminanceMode.setDarkMode(darkModeSwitch.isSelected());
+        }, darkModeSwitch.selectedProperty());
+
+        // Colorful palette
+        Switch paletteModeSwitch = new Switch();
+        HBox paletteModeHBox = new HBox(new Label("Colorful palette"), LayoutUtil.createHGrowable(), paletteModeSwitch);
+        paletteModeSwitch.setSelected(FXPaletteMode.isVariedPalette());
+        FXProperties.runOnPropertiesChange(() -> {
+            FXPaletteMode.setVariedPalette(paletteModeSwitch.isSelected());
+        }, paletteModeSwitch.selectedProperty());
+
+        // Compact mode
+        Switch compactModeSwitch = new Switch();
+        HBox compactModeHBox = new HBox(new Label("Compact mode"), LayoutUtil.createHGrowable(), compactModeSwitch);
+        compactModeSwitch.setSelected(FXLayoutMode.isCompactMode());
+        FXProperties.runOnPropertiesChange(() -> {
+            FXLayoutMode.setCompactMode(compactModeSwitch.isSelected());
+        }, compactModeSwitch.selectedProperty());
+
+        // Logout button
         Button logoutButton = ActionBinder.bindButtonToAction(new Button(), actionFactory.newOperationAction(LogoutRequest::new));
 
-        vBox.getChildren().setAll(identityLink, organizationSelector.getButton(), langButton, logoutButton);
+        vBox.getChildren().setAll(
+                identityLink,
+                organizationSelector.getButton(),
+                langButton,
+                darkModeHBox, paletteModeHBox,
+                compactModeHBox,
+                logoutButton);
         vBox.setAlignment(Pos.CENTER);
         langButton.setMaxWidth(Double.MAX_VALUE);
         logoutButton.setMaxWidth(Double.MAX_VALUE);

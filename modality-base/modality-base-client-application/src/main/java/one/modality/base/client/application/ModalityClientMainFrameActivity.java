@@ -1,9 +1,6 @@
 package one.modality.base.client.application;
 
-import dev.webfx.extras.theme.layout.FXLayoutMode;
-import dev.webfx.extras.theme.luminance.FXLuminanceMode;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
-import dev.webfx.extras.theme.palette.FXPaletteMode;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.collection.Collections;
@@ -99,17 +96,10 @@ public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
 
         LuminanceTheme.createApplicationFrameFacet(headerButtonsBar)
                 .setBordered(true)
-                .setOnMouseClicked(e -> { // Temporary for testing
-                    if (e.isAltDown())
-                        FXPaletteMode.setVariedPalette(!FXPaletteMode.isVariedPalette());
-                    if (e.isShiftDown())
-                        FXLuminanceMode.setDarkMode(!FXLuminanceMode.isDarkMode());
-                    if (e.isMetaDown())
-                        FXLayoutMode.setCompactMode(!FXLayoutMode.isCompactMode());
-                })
                 .style();
         // Hiding the center item in compact mode
-        FXLayoutMode.layoutModeProperty().addListener(observable -> headerCenterItem.setVisible(!FXLayoutMode.isCompactMode()));
+        // Commented as headerCenterItem.visibleProperty() is bound
+        //FXLayoutMode.layoutModeProperty().addListener(observable -> headerCenterItem.setVisible(!FXLayoutMode.isCompactMode()));
         return mainFrameHeader;
     }
 

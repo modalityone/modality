@@ -23,13 +23,7 @@ final class ModalityClientProfileButton {
         circleButton.setBackground(Background.fill(Color.rgb(0, 150, 214)));
         FXProperties.runNowAndOnPropertiesChange(() -> updateButtonText(buttonText), FXUserPerson.userPersonProperty(), FXUserClaims.userClaimsProperty());
         FXProfile.setProfileButton(circleButton);
-        circleButton.setOnMouseClicked(e -> {
-            boolean profilePanelWasShowing = FXProfile.getProfilePanel() != null;
-            if (profilePanelWasShowing) // Hiding the profile panel if it was showing
-                FXProfile.setProfilePanel(null);
-            else // Otherwise showing the profile panel
-                FXProfile.setProfilePanel(ModalityClientProfilePanel.createProfilePanel());
-        });
+        circleButton.setOnMouseClicked(e -> FXProfile.toggleShowProfilePanel());
         return circleButton;
     }
 
