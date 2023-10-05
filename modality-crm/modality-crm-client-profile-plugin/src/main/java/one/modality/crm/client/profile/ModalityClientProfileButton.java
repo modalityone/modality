@@ -3,6 +3,7 @@ package one.modality.crm.client.profile;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.authn.UserClaims;
+import dev.webfx.stack.session.state.client.fx.FXUserClaims;
 import javafx.scene.Node;
 import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
