@@ -1,11 +1,13 @@
 package one.modality.crm.client.profile;
 
+import dev.webfx.extras.imagestore.ImageStore;
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.layout.FXLayoutMode;
 import dev.webfx.extras.theme.luminance.FXLuminanceMode;
 import dev.webfx.extras.theme.palette.FXPaletteMode;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.authn.UserClaims;
 import dev.webfx.stack.authn.logout.client.operation.LogoutRequest;
@@ -13,6 +15,7 @@ import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.operations.ChangeLanguageRequest;
 import dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
+import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.session.state.client.fx.FXUserClaims;
 import dev.webfx.stack.ui.action.Action;
@@ -28,6 +31,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import one.modality.base.backoffice.activities.mainframe.fx.FXMainFrame;
@@ -54,6 +58,9 @@ final class ModalityClientProfilePanel {
         OperationActionFactoryMixin actionFactory = new OperationActionFactoryMixin() {};
 
         Hyperlink identityLink = new Hyperlink();
+        VBox rolesBox = new VBox(10);
+        rolesBox.setAlignment(Pos.CENTER);
+
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Person userPerson = FXUserPerson.getUserPerson();
             if (userPerson != null) {
@@ -62,12 +69,19 @@ final class ModalityClientProfilePanel {
                     FXProfile.hideProfilePanel();
                     PersonalDetailsPanel.editPersonalDetails(userPerson, buttonFactoryMixin, FXMainFrame.getDialogArea());
                 });
+                userPerson.getStore().<Entity>executeQuery("select role.name,management.manager.fullName from AuthorizationAssignment where management.user=?", userPerson)
+                        .onFailure(Console::log)
+                        .onSuccess(aas -> rolesBox.getChildren().setAll(
+                                Collections.map(aas, aa -> new Label((String) aa.evaluate("role.name + ' (granted by ' + management.manager.fullName + ')'"), new ImageView(ImageStore.getOrCreateImage("images/s16/security/security.png")))))
+                        );
             } else {
                 UserClaims userClaims = FXUserClaims.getUserClaims();
                 identityLink.setText(userClaims == null ? null : userClaims.getEmail());
                 identityLink.setOnAction(null);
+                rolesBox.getChildren().clear();
             }
         }, FXUserPerson.userPersonProperty(), FXUserClaims.userClaimsProperty());
+
 
         Button langButton = new Button();
         List<ChangeLanguageRequest> langRequests = ChangeLanguageRequestEmitter.getProvidedEmitters().stream()
@@ -91,6 +105,14 @@ final class ModalityClientProfilePanel {
         // Doing a bidirectional binding with FXOrganization
         organizationSelector.selectedItemProperty().bindBidirectional(FXOrganization.organizationProperty());
 
+        // Compact mode
+        Switch compactModeSwitch = new Switch();
+        HBox compactModeHBox = new HBox(new Label("Compact mode"), LayoutUtil.createHGrowable(), compactModeSwitch);
+        compactModeSwitch.setSelected(FXLayoutMode.isCompactMode());
+        FXProperties.runOnPropertiesChange(() -> {
+            FXLayoutMode.setCompactMode(compactModeSwitch.isSelected());
+        }, compactModeSwitch.selectedProperty());
+
         // Dark mode
         Switch darkModeSwitch = new Switch();
         HBox darkModeHBox = new HBox(new Label("Dark mode"), LayoutUtil.createHGrowable(), darkModeSwitch);
@@ -107,23 +129,17 @@ final class ModalityClientProfilePanel {
             FXPaletteMode.setVariedPalette(paletteModeSwitch.isSelected());
         }, paletteModeSwitch.selectedProperty());
 
-        // Compact mode
-        Switch compactModeSwitch = new Switch();
-        HBox compactModeHBox = new HBox(new Label("Compact mode"), LayoutUtil.createHGrowable(), compactModeSwitch);
-        compactModeSwitch.setSelected(FXLayoutMode.isCompactMode());
-        FXProperties.runOnPropertiesChange(() -> {
-            FXLayoutMode.setCompactMode(compactModeSwitch.isSelected());
-        }, compactModeSwitch.selectedProperty());
-
         // Logout button
         Button logoutButton = ActionBinder.bindButtonToAction(new Button(), actionFactory.newOperationAction(LogoutRequest::new));
 
         vBox.getChildren().setAll(
                 identityLink,
+                rolesBox,
                 organizationSelector.getButton(),
                 langButton,
-                darkModeHBox, paletteModeHBox,
                 compactModeHBox,
+                darkModeHBox,
+                paletteModeHBox,
                 logoutButton);
         vBox.setAlignment(Pos.CENTER);
         langButton.setMaxWidth(Double.MAX_VALUE);
