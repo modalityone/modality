@@ -5,7 +5,7 @@ import dev.webfx.extras.theme.layout.FXLayoutMode;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.animation.Animations;
-import dev.webfx.extras.util.pane.MonoClipPane;
+import dev.webfx.extras.panes.MonoClipPane;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.platform.resource.Resource;

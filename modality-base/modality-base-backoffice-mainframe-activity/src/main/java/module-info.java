@@ -15,9 +15,9 @@ module modality.base.backoffice.mainframe.activity {
     requires modality.base.client.gantt.fx;
     requires modality.base.client.profile.fx;
     requires webfx.extras.canvas.pane;
+    requires webfx.extras.panes;
     requires webfx.extras.theme;
     requires webfx.extras.util.animation;
-    requires webfx.extras.util.pane;
     requires webfx.kit.util;
     requires webfx.platform.conf;
     requires webfx.platform.resource;

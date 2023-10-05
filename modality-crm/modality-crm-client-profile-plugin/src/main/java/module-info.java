@@ -13,10 +13,10 @@ module modality.crm.client.profile.plugin {
     requires modality.crm.backoffice.organization.fx;
     requires modality.crm.client.authn.fx;
     requires modality.crm.client.personaldetails;
+    requires webfx.extras.panes;
     requires webfx.extras.switches;
     requires webfx.extras.theme;
     requires webfx.extras.util.layout;
-    requires webfx.extras.util.pane;
     requires webfx.kit.util;
     requires webfx.platform.boot;
     requires webfx.platform.util;

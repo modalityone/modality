@@ -1,5 +1,6 @@
 package one.modality.crm.client.profile;
 
+import dev.webfx.extras.panes.CirclePane;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.authn.UserClaims;
