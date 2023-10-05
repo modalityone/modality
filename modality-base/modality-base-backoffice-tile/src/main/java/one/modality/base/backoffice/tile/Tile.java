@@ -1,13 +1,13 @@
 package one.modality.base.backoffice.tile;
 
-import dev.webfx.extras.scalepane.ScalePane;
+import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.theme.Facet;
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.layout.LayoutUtil;
-import dev.webfx.extras.util.pane.ClipPane;
-import dev.webfx.extras.util.pane.MonoPane;
+import dev.webfx.extras.panes.ClipPane;
+import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.ui.action.Action;

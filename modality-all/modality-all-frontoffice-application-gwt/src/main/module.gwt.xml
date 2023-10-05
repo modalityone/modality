@@ -195,8 +195,6 @@
     <source path="dev/webfx/extras/cell/rowstyle"/>
     <!--==============================< webfx-extras-flexbox >==============================-->
     <source path="dev/webfx/extras/flexbox"/>
-    <!--=============================< webfx-extras-flippane >==============================-->
-    <source path="dev/webfx/extras/flippane"/>
     <!--============================< webfx-extras-imagestore >=============================-->
     <source path="dev/webfx/extras/imagestore"/>
     <!--===============================< webfx-extras-label >===============================-->
@@ -206,8 +204,8 @@
     <source path="dev/webfx/extras/materialdesign/util"/>
     <source path="dev/webfx/extras/materialdesign/util/layout"/>
     <source path="dev/webfx/extras/materialdesign/util/scene"/>
-    <!--=============================< webfx-extras-scalepane >=============================-->
-    <source path="dev/webfx/extras/scalepane"/>
+    <!--===============================< webfx-extras-panes >===============================-->
+    <source path="dev/webfx/extras/panes"/>
     <!--===============================< webfx-extras-theme >===============================-->
     <source path="dev/webfx/extras/theme"/>
     <source path="dev/webfx/extras/theme/layout"/>
@@ -229,8 +227,6 @@
     <source path="dev/webfx/extras/util/layout"/>
     <!--============================< webfx-extras-util-paint >=============================-->
     <source path="dev/webfx/extras/util/paint"/>
-    <!--=============================< webfx-extras-util-pane >=============================-->
-    <source path="dev/webfx/extras/util/pane"/>
     <!--============================< webfx-extras-util-scene >=============================-->
     <source path="dev/webfx/extras/util/scene"/>
     <!--==============================< webfx-extras-visual >===============================-->

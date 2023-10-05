@@ -15,7 +15,7 @@ module modality.catering.backoffice.activity.kitchen.plugin {
     requires modality.base.client.time.theme;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
-    requires webfx.extras.scalepane;
+    requires webfx.extras.panes;
     requires webfx.extras.theme;
     requires webfx.extras.time;
     requires webfx.extras.time.layout;
