@@ -10,7 +10,7 @@ import one.modality.ecommerce.backoffice.activities.statistics.routing.Statistic
  */
 public final class RouteToStatisticsRequest extends RoutePushRequest implements HasOperationCode {
 
-    private final static String OPERATION_CODE = "RouteToStatistics";
+    private final static String OPERATION_CODE = "RouteToFinancesAndStats";
 
     public RouteToStatisticsRequest(Object eventId, BrowsingHistory history) {
         super(StatisticsRouting.getEventStatisticsPath(eventId), history);
