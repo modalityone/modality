@@ -19,15 +19,14 @@ public final class FXUserPerson {
 
     static {
         FXProperties.runNowAndOnPropertiesChange(() -> {
-            setUserPerson(null);
             ModalityUserPrincipal modalityUserPrincipal = FXModalityUserPrincipal.getModalityUserPrincipal();
-            if (modalityUserPrincipal != null) {
+            if (modalityUserPrincipal == null)
+                setUserPerson(null);
+            else {
                 DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
                 EntityStore.create(dataSourceModel).<Person>executeQuery("select firstName,lastName,male,ordained,email,phone,street,postCode,cityName,country,organization from Person where id=?", modalityUserPrincipal.getUserPersonId())
                         .onFailure(Console::log)
-                        .onSuccess(persons -> {
-                            setUserPerson(persons.get(0));
-                        });
+                        .onSuccess(persons -> setUserPerson(persons.get(0)));
             }
         }, FXModalityUserPrincipal.modalityUserPrincipalProperty());
     }

@@ -39,7 +39,7 @@ public final class FXModalityUserPrincipal {
     static {
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Object userId = FXUserId.getUserId();
-            if (userId instanceof ModalityUserPrincipal)
+            if (userId == null || userId instanceof ModalityUserPrincipal)
                 setModalityUserPrincipal((ModalityUserPrincipal) userId);
         }, FXUserId.userIdProperty());
     }
