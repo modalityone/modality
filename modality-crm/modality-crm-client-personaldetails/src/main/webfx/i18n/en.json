@@ -1,0 +1,23 @@
+{
+  "YourPersonalDetails": "Your personal details",
+  "FirstName": {"text": "First name", "prompt": "Your first name (ex: John)"},
+  "LastName": {"text": "Last name",  "prompt": "Your family name (ex: Smith)"},
+  "Gender": "Gender",
+  "Male": "Male",
+  "Female": "Female",
+  "Age": "Age",
+  "Adult": "Adult",
+  "Child": "Child",
+  "BirthDate": {"text": "Birth date", "prompt": "Child birth date"},
+  "Carer1": {"text": "Carer 1", "prompt": "First carer"},
+  "Carer2": {"text": "Carer 2", "prompt": "Second carer"},
+  "Email": {"text": "Email", "prompt": "Your email address"},
+  "Phone": {"text": "Phone", "prompt": "Mobile no. preferred (in case we need to contact you urgently)"},
+  "Address": "Address",
+  "Country": {"text": "Country", "prompt": "Your country"},
+  "State": {"text": "State/Region", "prompt": "Your state"},
+  "City": {"text": "City", "prompt": "Your city"},
+  "Postcode": {"text": "Postcode", "prompt": "Your postcode (optional)"},
+  "Street": {"text": "Street", "prompt": "Your street address (optional)"},
+  "Centre": "Centre"
+}

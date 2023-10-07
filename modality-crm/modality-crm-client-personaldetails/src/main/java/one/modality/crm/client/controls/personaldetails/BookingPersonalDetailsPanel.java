@@ -10,6 +10,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.Person;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
 
 import java.time.LocalDate;
@@ -120,5 +121,9 @@ public class BookingPersonalDetailsPanel extends PersonalDetailsPanel {
 
     public static void editBookingPersonalDetails(Document document, ButtonFactoryMixin buttonFactoryMixin, Pane parent) {
         editPersonalDetails(document, new BookingPersonalDetailsPanel(document.getEvent(), buttonFactoryMixin, parent), parent);
+    }
+
+    public static void editBookingPersonalDetails(Person person, ButtonFactoryMixin buttonFactoryMixin, Pane parent) {
+        editPersonalDetails(person, new BookingPersonalDetailsPanel(person.getEvent(), buttonFactoryMixin, parent), parent);
     }
 }

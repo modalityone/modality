@@ -3,17 +3,17 @@ package one.modality.base.client.services.i18n;
 import dev.webfx.stack.i18n.Dictionary;
 import dev.webfx.stack.i18n.TokenKey;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
-import dev.webfx.stack.i18n.spi.impl.json.JsonI18nProvider;
+import dev.webfx.stack.i18n.spi.impl.ast.AstI18nProvider;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.HasEntity;
 
 /**
  * @author Bruno Salmon
  */
-public final class ModalityI18nProvider extends JsonI18nProvider {
+public final class ModalityI18nProvider extends AstI18nProvider {
 
     public ModalityI18nProvider() {
-        super("one/modality/base/client/services/i18n/dictionaries/{lang}.json");
+        super("dev/webfx/stack/i18n/{lang}.properties");
     }
 
     @Override

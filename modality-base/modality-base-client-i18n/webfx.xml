@@ -22,8 +22,8 @@
     </dependencies>
 
     <embed-resources>
-        <resource>one/modality/base/client/services/i18n/dictionaries/en.json</resource>
-        <resource>one/modality/base/client/services/i18n/dictionaries/fr.json</resource>
+        <resource>dev/webfx/stack/i18n/en.properties</resource>
+        <resource>dev/webfx/stack/i18n/fr.properties</resource>
     </embed-resources>
 
 </project>

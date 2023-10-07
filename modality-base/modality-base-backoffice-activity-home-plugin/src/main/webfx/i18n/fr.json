@@ -1,0 +1,22 @@
+{
+  "Kitchen": "Cuisine",
+  "UserAccount": "Compte utilisateur",
+  "Reception": "Accueil",
+  "TranslationAndRecordings": "Traduction & enregistrements",
+  "Cafe": "Café",
+  "BookingsAndSearch": "Inscriptions & recherche",
+  "Admin": "Administration",
+  "FinancesAndStats": "Finances & Stats",
+  "Volunteering": "Entraide",
+  "Shop": "Boutique",
+  "Marketing": "Marketing",
+  "RecurringClasses": "Cours réguliers",
+  "EventsPlanner": "Planificateur d'événements",
+  "Household": "Gouvernance",
+  "QR": "QR",
+  "Transportation": "Transport",
+  "Organizations": "Organisations",
+  "HumanResources": "Resources humaines",
+  "Accommodation": "Hébergement",
+  "Extras": "Extras"
+}

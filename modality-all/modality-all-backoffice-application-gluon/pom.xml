@@ -379,7 +379,6 @@
                         <list>one/modality/base/client/css/[^/]+$</list>
                         <list>one/modality/base/client/fonts/[^/]+$</list>
                         <list>one/modality/base/client/images/[^/]+$</list>
-                        <list>one/modality/base/client/services/i18n/dictionaries/[^/]+$</list>
                         <list>one/modality/base/shared/domainmodel/[^/]+$</list>
                     </resourcesList>
                     <appIdentifier>one.modality.backoffice</appIdentifier>

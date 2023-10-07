@@ -9,7 +9,9 @@ module modality.base.frontoffice.application {
     requires webfx.extras.flexbox;
     requires webfx.platform.conf;
     requires webfx.platform.os;
+    requires webfx.stack.i18n;
     requires webfx.stack.ui.action;
+    requires webfx.stack.ui.operation.action;
 
     // Exported packages
     exports one.modality.base.frontoffice.application;

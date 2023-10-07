@@ -12,7 +12,9 @@ module modality.base.frontoffice.activity.account.plugin {
     requires javafx.graphics;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
+    requires webfx.extras.panes;
     requires webfx.extras.util.layout;
+    requires webfx.kit.util;
     requires webfx.platform.resource;
     requires webfx.platform.windowhistory;
     requires webfx.stack.i18n;
