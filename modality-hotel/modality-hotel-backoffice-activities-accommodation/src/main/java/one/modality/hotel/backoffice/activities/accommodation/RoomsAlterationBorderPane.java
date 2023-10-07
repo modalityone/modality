@@ -66,7 +66,18 @@ class RoomsAlterationBorderPane {
             });
         });
 
-        HBox bottomBar = new HBox(10, selectRoomTypeLabel, roomTypeSelector.getButton(), selectedRoomLabel, roomStatusButton);
+        Button createAnnualScheduleButton = new Button("Create annual schedule");
+        createAnnualScheduleButton.setOnAction(e -> {
+            CreateAnnualSchedulePane createAnnualSchedulePane = new CreateAnnualSchedulePane(borderPane);
+            DialogContent dialogContent = new DialogContent().setContent(createAnnualSchedulePane);
+            DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, borderPane);
+            DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
+                dialogCallback.closeDialog();
+                createAnnualSchedulePane.createAnnualSchedule();
+            });
+        });
+
+        HBox bottomBar = new HBox(10, selectRoomTypeLabel, roomTypeSelector.getButton(), selectedRoomLabel, roomStatusButton, createAnnualScheduleButton);
         bottomBar.setBackground(new Background(new BackgroundFill(Color.web("#e0dcdc"), null, null)));
         bottomBar.setAlignment(Pos.CENTER_LEFT);
         borderPane.setBottom(bottomBar);
