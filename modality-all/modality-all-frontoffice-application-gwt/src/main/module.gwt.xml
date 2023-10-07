@@ -96,8 +96,6 @@
     <!--===========================< modality-base-client-i18n >============================-->
     <source path="one/modality/base/client/operations/i18n"/>
     <source path="one/modality/base/client/services/i18n"/>
-    <resource path="one/modality/base/client/services/i18n/dictionaries"/>
-    <public includes="one/modality/base/client/services/i18n/dictionaries/" path=""/>
     <!--===========================< modality-base-client-icons >===========================-->
     <resource path="images/s16"/>
     <public includes="images/s16/" path=""/>
@@ -538,10 +536,10 @@
     <source path="dev/webfx/stack/i18n/operations"/>
     <source path="dev/webfx/stack/i18n/spi"/>
     <source path="dev/webfx/stack/i18n/spi/impl"/>
+    <!--==============================< webfx-stack-i18n-ast >==============================-->
+    <source path="dev/webfx/stack/i18n/spi/impl/ast"/>
     <!--===========================< webfx-stack-i18n-controls >============================-->
     <source path="dev/webfx/stack/i18n/controls"/>
-    <!--=============================< webfx-stack-i18n-json >==============================-->
-    <source path="dev/webfx/stack/i18n/spi/impl/json"/>
     <!--====================< webfx-stack-orm-datasourcemodel-service >=====================-->
     <source path="dev/webfx/stack/orm/datasourcemodel/service"/>
     <source path="dev/webfx/stack/orm/datasourcemodel/service/spi"/>

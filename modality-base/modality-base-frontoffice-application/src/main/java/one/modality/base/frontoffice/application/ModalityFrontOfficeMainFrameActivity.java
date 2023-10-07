@@ -2,8 +2,10 @@ package one.modality.base.frontoffice.application;
 
 import dev.webfx.extras.flexbox.FlexBox;
 import dev.webfx.platform.os.OperatingSystem;
+import dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter;
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionBinder;
+import dev.webfx.stack.ui.action.ActionGroup;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -16,6 +18,21 @@ import one.modality.base.client.application.ModalityClientMainFrameActivity;
 import one.modality.base.client.application.RoutingActions;
 
 public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFrameActivity {
+
+    @Override
+    public Node buildUi() {
+        Node node = super.buildUi();
+        setUpContextMenu(node, this::contextMenuActionGroup);
+        return node;
+    }
+
+    protected ActionGroup contextMenuActionGroup() {
+        return newActionGroup(
+                ChangeLanguageRequestEmitter.getProvidedEmitters().stream()
+                        .map(instantiator -> newOperationAction(instantiator::emitLanguageRequest))
+                        .toArray(Action[]::new)
+        );
+    }
 
     @Override
     protected Region createMainFrameHeader() {
