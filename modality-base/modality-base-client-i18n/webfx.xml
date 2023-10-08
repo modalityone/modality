@@ -21,9 +21,4 @@
         <plugin-module>modality-base-client-icons</plugin-module>
     </dependencies>
 
-    <embed-resources>
-        <resource>dev/webfx/stack/i18n/en.properties</resource>
-        <resource>dev/webfx/stack/i18n/fr.properties</resource>
-    </embed-resources>
-
 </project>
