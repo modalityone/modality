@@ -97,8 +97,12 @@ public class CreateAnnualSchedulePane extends VBox {
     }
 
     public void createAnnualSchedule() {
-        LocalDate date = parseDate();
-        if (date == null) {
+        LocalDate fromDate = getFromDate();
+        if (fromDate == null) {
+            return;
+        }
+        LocalDate toDate = getToDate();
+        if (toDate == null) {
             return;
         }
 
@@ -113,13 +117,27 @@ public class CreateAnnualSchedulePane extends VBox {
         // TODO create ScheduleResource for each Item for each date for which one does not exist
     }
 
-    private LocalDate parseDate() {
+    private LocalDate getFromDate() {
+        String text = fromDateTextField.getText();
+        if (text.isBlank()) {
+            showMsg("No \"from\" date entered.\n\nAnnual schedule not created.");
+            return null;
+        } else {
+            return parseDate(text);
+        }
+    }
+
+    private LocalDate getToDate() {
         String text = toDateTextField.getText();
         if (text.isBlank()) {
-            showMsg("No date entered.\n\nAnnual schedule not created.");
+            showMsg("No \"to\" date entered.\n\nAnnual schedule not created.");
             return null;
+        } else {
+            return parseDate(text);
         }
+    }
 
+    private LocalDate parseDate(String text) {
         try {
             return LocalDate.parse(text, DATE_FORMATTER);
         } catch (DateTimeParseException | NullPointerException e) {
