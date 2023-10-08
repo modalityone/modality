@@ -12,10 +12,6 @@ import dev.webfx.stack.orm.entity.HasEntity;
  */
 public final class ModalityI18nProvider extends AstI18nProvider {
 
-    public ModalityI18nProvider() {
-        super("dev/webfx/stack/i18n/{lang}.properties");
-    }
-
     @Override
     protected <TK extends Enum<?> & TokenKey> Object getDictionaryTokenValueImpl(Object i18nKey, TK tokenKey, Dictionary dictionary, boolean skipDefaultDictionary, boolean skipMessageKeyInterpretation, boolean skipMessageLoading) {
         Object messageKey = i18nKeyToDictionaryMessageKey(i18nKey);
