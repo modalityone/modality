@@ -50,7 +50,7 @@ public class ModalityClientOperationActionsLoader implements ApplicationModuleBo
                         String operationCode = (String) operation.evaluate("code");
                         String i18nCode = operation.getStringFieldValue("i18nCode");
                         boolean isPublic = operation.getBooleanFieldValue("public");
-                        Object i18nKey = new ModalityOperationI18nKey(i18nCode);
+                        Object i18nKey = new ModalityOperationI18nKey(i18nCode, operationCode);
                         Action operationGraphicalAction;
                         if (isPublic) {
                             operationGraphicalAction = newAction(i18nKey);
