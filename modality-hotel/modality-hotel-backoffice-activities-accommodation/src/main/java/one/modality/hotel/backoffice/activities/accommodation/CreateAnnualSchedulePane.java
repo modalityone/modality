@@ -32,7 +32,8 @@ public class CreateAnnualSchedulePane extends VBox {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-uu");
 
     private final Pane parent;
-    private final TextField dateTextField;
+    private final TextField toDateTextField;
+    private final TextField fromDateTextField;
     private final VBox selectedItemsPane = new VBox(new Label("Loading items. Please wait."));
 
     private Map<CheckBox, Item> comboBoxItems;
@@ -40,12 +41,28 @@ public class CreateAnnualSchedulePane extends VBox {
     public CreateAnnualSchedulePane(Pane parent) {
         this.parent = parent;
         setPadding(new Insets(16));
+        Label fromLabel = new Label("from");
+        fromDateTextField = new TextField();
+        fromDateTextField.setPromptText("e.g. 16-01-22");
+        fromDateTextField.textProperty().addListener(change -> setToDateUsingFromDate());
+        HBox fromDateRow = new HBox(fromLabel, fromDateTextField);
         Label toLabel = new Label("to");
-        dateTextField = new TextField();
-        dateTextField.setPromptText("e.g. 16-01-22");
-        HBox dateRow = new HBox(toLabel, dateTextField);
-        getChildren().setAll(dateRow, selectedItemsPane);
+        toDateTextField = new TextField();
+        toDateTextField.setPromptText("e.g. 15-01-23");
+        HBox toDateRow = new HBox(toLabel, toDateTextField);
+        getChildren().setAll(fromDateRow, toDateRow, selectedItemsPane);
         displayItemsWithOpenConfiguration();
+    }
+
+    private void setToDateUsingFromDate() {
+        try {
+            LocalDate fromDate = LocalDate.parse(fromDateTextField.getText(), DATE_FORMATTER);
+            LocalDate toDate = fromDate.plusYears(1).minusDays(1);
+            String toDateText = DATE_FORMATTER.format(toDate);
+            toDateTextField.setText(toDateText);
+        } catch (DateTimeParseException | NullPointerException e) {
+            // If the user has not entered a valid date then do nothing
+        }
     }
 
     private void displayItemsWithOpenConfiguration() {
@@ -89,7 +106,7 @@ public class CreateAnnualSchedulePane extends VBox {
     }
 
     private LocalDate parseDate() {
-        String text = dateTextField.getText();
+        String text = toDateTextField.getText();
         if (text.isBlank()) {
             showMsg("No date entered.\n\nAnnual schedule not created.");
             return null;
