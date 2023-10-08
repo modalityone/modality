@@ -1,5 +1,7 @@
 package one.modality.hotel.backoffice.activities.accommodation;
 
+import dev.webfx.extras.theme.FontDef;
+import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
@@ -13,9 +15,10 @@ import javafx.geometry.Insets;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.FontWeight;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.base.shared.entities.markers.EntityHasName;
@@ -41,16 +44,21 @@ public class CreateAnnualSchedulePane extends VBox {
     public CreateAnnualSchedulePane(Pane parent) {
         this.parent = parent;
         setPadding(new Insets(16));
-        Label fromLabel = new Label("from");
+        Label headingLabel = new Label("Create Annual Schedule");
+        headingLabel.setFont(TextTheme.getFont(FontDef.font(FontWeight.BOLD, 14)));
+        Label fromLabel = new Label("From");
         fromDateTextField = new TextField();
         fromDateTextField.setPromptText("e.g. 16-01-22");
         fromDateTextField.textProperty().addListener(change -> setToDateUsingFromDate());
-        HBox fromDateRow = new HBox(fromLabel, fromDateTextField);
-        Label toLabel = new Label("to");
+        Label toLabel = new Label("To");
         toDateTextField = new TextField();
         toDateTextField.setPromptText("e.g. 15-01-23");
-        HBox toDateRow = new HBox(toLabel, toDateTextField);
-        getChildren().setAll(fromDateRow, toDateRow, selectedItemsPane);
+        GridPane dateGridPane = new GridPane();
+        dateGridPane.add(fromLabel, 0, 0);
+        dateGridPane.add(fromDateTextField, 1, 0);
+        dateGridPane.add(toLabel, 0, 1);
+        dateGridPane.add(toDateTextField, 1, 1);
+        getChildren().setAll(headingLabel, dateGridPane, selectedItemsPane);
         displayItemsWithOpenConfiguration();
     }
 
