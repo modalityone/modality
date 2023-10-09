@@ -14,7 +14,7 @@ import dev.webfx.extras.time.layout.gantt.HeaderPosition;
 import dev.webfx.extras.time.layout.gantt.HeaderRotation;
 import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
 import dev.webfx.extras.time.layout.gantt.canvas.ParentsCanvasDrawer;
-import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import javafx.beans.property.BooleanProperty;
@@ -164,7 +164,7 @@ public abstract class AccommodationGantt<B extends AccommodationBlock> {
         VirtualCanvasPane virtualCanvasPane = TimeCanvasUtil.createTimeVirtualCanvasPane(barsLayout, barsDrawer,
                 scrollPane.viewportBoundsProperty(), scrollPane.vvalueProperty());
         // We finally set up the scrollPane for vertical scrolling only (no horizontal scrollbar, etc...), and return it
-        LayoutUtil.setupVerticalScrollPane(scrollPane, virtualCanvasPane);
+        ControlUtil.setupVerticalScrollPane(scrollPane, virtualCanvasPane);
         return scrollPane;
     }
 

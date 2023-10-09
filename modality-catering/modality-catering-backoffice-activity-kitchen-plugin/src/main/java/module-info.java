@@ -20,6 +20,7 @@ module modality.catering.backoffice.activity.kitchen.plugin {
     requires webfx.extras.time;
     requires webfx.extras.time.layout;
     requires webfx.extras.time.layout.calendar;
+    requires webfx.extras.util.control;
     requires webfx.extras.util.layout;
     requires webfx.kit.launcher;
     requires webfx.kit.util;

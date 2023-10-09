@@ -13,7 +13,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires webfx.extras.imagestore;
-    requires webfx.extras.util.layout;
+    requires webfx.extras.util.control;
     requires webfx.kit.util;
     requires webfx.platform.ast;
     requires webfx.platform.console;

@@ -425,6 +425,8 @@
     <source path="dev/webfx/extras/util/border"/>
     <!--============================< webfx-extras-util-color >=============================-->
     <source path="dev/webfx/extras/util/color"/>
+    <!--===========================< webfx-extras-util-control >============================-->
+    <source path="dev/webfx/extras/util/control"/>
     <!--============================< webfx-extras-util-layout >============================-->
     <source path="dev/webfx/extras/util/layout"/>
     <!--============================< webfx-extras-util-paint >=============================-->

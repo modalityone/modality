@@ -2,7 +2,7 @@ package one.modality.ecommerce.backoffice.activities.bookings;
 
 import dev.webfx.extras.time.TimeUtil;
 import dev.webfx.extras.time.YearWeek;
-import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.ui.action.ActionGroup;
@@ -14,7 +14,6 @@ import one.modality.base.backoffice.controls.masterslave.ConventionalUiBuilderMi
 import one.modality.base.backoffice.operations.entities.generic.AddNewSnapshotRequest;
 import one.modality.base.backoffice.operations.entities.generic.CopyAllRequest;
 import one.modality.base.backoffice.operations.entities.generic.CopySelectionRequest;
-import one.modality.event.client.activity.eventdependent.EventDependentViewDomainActivity;
 import one.modality.base.client.gantt.fx.interstice.FXGanttInterstice;
 import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
@@ -22,13 +21,14 @@ import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.shared.domainmodel.functions.AbcNames;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
+import one.modality.crm.backoffice.controls.bookingdetailspanel.BookingDetailsPanel;
 import one.modality.ecommerce.backoffice.operations.entities.document.SendLetterRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.registration.*;
 import one.modality.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsKnownRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsUncheckedRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsUnknownRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsVerifiedRequest;
-import one.modality.crm.backoffice.controls.bookingdetailspanel.BookingDetailsPanel;
+import one.modality.event.client.activity.eventdependent.EventDependentViewDomainActivity;
 
 import java.time.LocalDate;
 import java.time.Year;
@@ -66,7 +66,7 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
 
         Pane container = ui.buildUi();
 
-        setUpContextMenu(LayoutUtil.lookupChild(ui.getGroupMasterSlaveView().getMasterView(), n -> n instanceof VisualGrid), () -> newActionGroup(
+        setUpContextMenu(ControlUtil.lookupChild(ui.getGroupMasterSlaveView().getMasterView(), n -> n instanceof VisualGrid), () -> newActionGroup(
                 newSnapshotActionGroup(container),
                 newOperationAction(() -> new SendLetterRequest(pm.getSelectedDocument(), container)),
                 newSeparatorActionGroup("Registration",

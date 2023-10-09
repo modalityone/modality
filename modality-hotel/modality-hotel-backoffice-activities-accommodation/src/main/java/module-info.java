@@ -23,7 +23,7 @@ module modality.hotel.backoffice.activities.accommodation {
     requires webfx.extras.theme;
     requires webfx.extras.time.layout;
     requires webfx.extras.type;
-    requires webfx.extras.util.layout;
+    requires webfx.extras.util.control;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
     requires webfx.kit.util;
