@@ -2,6 +2,7 @@ package one.modality.crm.client.controls.personaldetails;
 
 import dev.webfx.extras.materialdesign.textfield.MaterialTextFieldPane;
 import dev.webfx.extras.type.PrimType;
+import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.extras.visual.SelectionMode;
 import dev.webfx.extras.visual.VisualColumn;
@@ -308,13 +309,12 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         details.setEditable(true);
         details.syncUiFromModel(updatingPerson);
         BorderPane detailsContainer = details.getContainer();
-        ScrollPane scrollPane = new ScrollPane(detailsContainer);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        detailsContainer.setPrefWidth(400);
-        scrollPane.setPrefWidth(400);
-        scrollPane.setPrefHeight(600);
+        detailsContainer.setMaxWidth(400);
+        //detailsContainer.setBackground(Background.fill(Color.LIGHTPINK));
+        ScrollPane scrollPane = ControlUtil.createScalableVerticalScrollPane(detailsContainer);
+        //scrollPane.setBorder(new Border(new BorderStroke(Color.PURPLE, BorderStrokeStyle.SOLID, null, BorderStroke.THICK)));
         DialogContent dialogContent = new DialogContent().setContent(scrollPane);
-        DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, parent, 0, 0.9);
+        DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, parent, 0.5, 0.95);
         DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
             if (!details.isValid())
                 return;
@@ -324,7 +324,7 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
             else {
                 updateStore.submitChanges()
                         .onFailure(dialogCallback::showException)
-                        .onSuccess(x -> {
+                        .onSuccess(submitResultBatch -> {
                             details.syncModelFromUi(person);
                             dialogCallback.closeDialog();
                         });
