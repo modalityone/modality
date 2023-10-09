@@ -1,6 +1,7 @@
 package one.modality.base.frontoffice.activities.account;
 
 import dev.webfx.extras.panes.ScalePane;
+import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.i18n.I18n;
@@ -72,7 +73,7 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
         ScalePane scalePane = new ScalePane(vBox);
         scalePane.setCanShrink(false);
         scalePane.setFillHeight(false);
-        ScrollPane scrollPane = LayoutUtil.createVerticalScrollPane(scalePane);
+        ScrollPane scrollPane = ControlUtil.createVerticalScrollPane(scalePane);
         FXProperties.runOnPropertiesChange(p -> {
             Bounds viewportBounds = scrollPane.getViewportBounds();
             double width = viewportBounds.getWidth();

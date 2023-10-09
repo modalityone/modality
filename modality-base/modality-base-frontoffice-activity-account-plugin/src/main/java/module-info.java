@@ -13,6 +13,7 @@ module modality.base.frontoffice.activity.account.plugin {
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires webfx.extras.panes;
+    requires webfx.extras.util.control;
     requires webfx.extras.util.layout;
     requires webfx.kit.util;
     requires webfx.platform.resource;

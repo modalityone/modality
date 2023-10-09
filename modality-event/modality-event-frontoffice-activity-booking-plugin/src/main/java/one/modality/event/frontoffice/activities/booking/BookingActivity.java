@@ -1,7 +1,7 @@
 package one.modality.event.frontoffice.activities.booking;
 
 import dev.webfx.extras.imagestore.ImageStore;
-import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.reactive.entities.entities_to_objects.IndividualEntityToObjectMapper;
@@ -72,7 +72,7 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
             GeneralUtility.screenChangeListened(container.getWidth());
         }, container.widthProperty());
 
-        return LayoutUtil.createVerticalScrollPane(container);
+        return ControlUtil.createVerticalScrollPane(container);
     }
 
     protected void startLogic() {

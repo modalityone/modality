@@ -307,10 +307,10 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         EntityHasPersonalDetails updatingPerson = updateStore.updateEntity(person);
         details.setEditable(true);
         details.syncUiFromModel(updatingPerson);
-        BorderPane sectionPanel = details.getContainer();
-        ScrollPane scrollPane = new ScrollPane(sectionPanel);
+        BorderPane detailsContainer = details.getContainer();
+        ScrollPane scrollPane = new ScrollPane(detailsContainer);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        sectionPanel.setPrefWidth(400);
+        detailsContainer.setPrefWidth(400);
         scrollPane.setPrefWidth(400);
         scrollPane.setPrefHeight(600);
         DialogContent dialogContent = new DialogContent().setContent(scrollPane);

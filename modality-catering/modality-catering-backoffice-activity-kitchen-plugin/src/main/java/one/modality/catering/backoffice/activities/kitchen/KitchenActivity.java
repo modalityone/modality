@@ -3,10 +3,12 @@ package one.modality.catering.backoffice.activities.kitchen;
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
 import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.extras.time.layout.node.TimeGridPane;
-import dev.webfx.extras.time.layout.node.TimePane;
 import dev.webfx.extras.time.TimeUtil;
 import dev.webfx.extras.time.layout.calendar.CalendarLayout;
+import dev.webfx.extras.time.layout.node.TimeGridPane;
+import dev.webfx.extras.time.layout.node.TimePane;
+import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
@@ -18,7 +20,6 @@ import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivi
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.reactive.call.query.ReactiveQueryCall;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContextMixin;
-import dev.webfx.extras.util.layout.LayoutUtil;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -31,12 +32,12 @@ import javafx.scene.layout.*;
 import javafx.scene.text.FontWeight;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
-import one.modality.base.shared.entities.Item;
-import one.modality.base.client.time.theme.TimeFacet;
-import one.modality.crm.backoffice.organization.fx.FXOrganization;
-import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
+import one.modality.base.client.time.theme.TimeFacet;
+import one.modality.base.shared.entities.Item;
+import one.modality.crm.backoffice.organization.fx.FXOrganization;
+import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -87,7 +88,7 @@ public class KitchenActivity extends ViewDomainActivityBase
         LuminanceTheme.createPrimaryPanelFacet(daysOfMonthPane).style();
 
         // Building the container
-        ScrollPane verticalScrollPane = LayoutUtil.createVerticalScrollPane(daysOfMonthPane);
+        ScrollPane verticalScrollPane = ControlUtil.createVerticalScrollPane(daysOfMonthPane);
         verticalScrollPane.setFitToWidth(true);
 
         BorderPane container = new BorderPane();

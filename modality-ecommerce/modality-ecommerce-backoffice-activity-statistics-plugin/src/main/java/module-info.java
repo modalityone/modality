@@ -25,7 +25,7 @@ module modality.ecommerce.backoffice.activity.statistics.plugin {
     requires webfx.extras.time.layout;
     requires webfx.extras.time.layout.gantt;
     requires webfx.extras.time.window;
-    requires webfx.extras.util.layout;
+    requires webfx.extras.util.control;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
