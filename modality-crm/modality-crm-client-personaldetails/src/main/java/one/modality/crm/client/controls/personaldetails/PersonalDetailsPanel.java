@@ -11,6 +11,7 @@ import dev.webfx.extras.visual.VisualStyle;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.Booleans;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
@@ -154,7 +155,7 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
     }
 
     private Node createPanelBody() {
-        return editable ? createPersonVBox() /*createPersonGridPane()*/ : createPersonDataGrid();
+        return editable ? createPersonVBox() /*createPersonGridPane()*/ : createPersonVisualGrid();
     }
 
     protected GridPane createPersonGridPane() {
@@ -180,19 +181,18 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         return gridPane;
     }
 
-    protected VBox createPersonVBox() {
-        VBox vBox = new VBox(3,
+    private VBox createPersonVBox() {
+        VBox vBox = new VBox(3, materialChildren());
+        return LayoutUtil.setPadding(vBox, 10, 18);
+    }
+
+    protected Node[] materialChildren() {
+        return Arrays.nonNulls(Node[]::new,
                 firstNameTextField,
                 lastNameTextField,
                 newMaterialRegion(genderBox, "Gender"),
-                newMaterialRegion(ageBox, "Age")
-        );
-        /*if (personButton != null)
-            vBox.getChildren().add(0, LayoutUtil.setUnmanagedWhenInvisible(personButton));*/
-        if (childRadioButton.isSelected())
-            vBox.getChildren().addAll(
-                    newMaterialRegion(birthDatePicker, "BirthDate"));
-        vBox.getChildren().addAll(
+                newMaterialRegion(ageBox, "Age"),
+                childRadioButton.isSelected() ? newMaterialRegion(birthDatePicker, "BirthDate") : null,
                 emailTextField,
                 phoneTextField,
                 streetTextField,
@@ -201,10 +201,11 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
                 countryButton,
                 organizationButton
         );
-        return LayoutUtil.setPadding(vBox, 10, 18);
     }
 
-    private Node createPersonDataGrid() {
+
+
+    private Node createPersonVisualGrid() {
         VisualColumn keyColumn = VisualColumn.create(null, PrimType.STRING, VisualStyle.RIGHT_STYLE);
         VisualColumn valueColumn = VisualColumn.create(null, PrimType.STRING);
         VisualResultBuilder rsb = VisualResultBuilder.create(6, keyColumn, valueColumn, keyColumn, valueColumn);

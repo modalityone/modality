@@ -3,14 +3,15 @@ package one.modality.crm.client.controls.personaldetails;
 import dev.webfx.extras.materialdesign.textfield.MaterialTextFieldPane;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.util.Arrays;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
@@ -59,22 +60,17 @@ public final class MyBookingPersonalDetailsPanel extends BookingPersonalDetailsP
     }
 
     @Override
-    protected VBox createPersonVBox() {
-        VBox vBox = new VBox(3,
+    protected Node[] materialChildren() {
+        boolean isChild = childRadioButton.isSelected();
+        return Arrays.nonNulls(Node[]::new,
+             personButton != null ? LayoutUtil.setUnmanagedWhenInvisible(personButton) : null,
                 firstNameTextField,
                 lastNameTextField,
                 newMaterialRegion(genderBox, "Gender"),
-                newMaterialRegion(ageBox, "Age")
-        );
-        if (personButton != null)
-            vBox.getChildren().add(0, LayoutUtil.setUnmanagedWhenInvisible(personButton));
-        if (childRadioButton.isSelected())
-            vBox.getChildren().addAll(
-                    newMaterialRegion(birthDatePicker, "BirthDate"),
-                    carer1NameTextField,
-                    carer2NameTextField
-            );
-        vBox.getChildren().addAll(
+                newMaterialRegion(ageBox, "Age"),
+                isChild ? newMaterialRegion(birthDatePicker, "BirthDate") : null,
+                isChild ? carer1NameTextField : null,
+                isChild ? carer2NameTextField : null,
                 emailTextField,
                 phoneTextField,
                 streetTextField,
@@ -83,7 +79,5 @@ public final class MyBookingPersonalDetailsPanel extends BookingPersonalDetailsP
                 countryButton,
                 organizationButton
         );
-        return LayoutUtil.setPadding(vBox, 10, 18);
     }
-
 }
