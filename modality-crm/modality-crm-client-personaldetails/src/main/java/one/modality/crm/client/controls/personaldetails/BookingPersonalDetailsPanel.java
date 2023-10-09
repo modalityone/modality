@@ -1,13 +1,13 @@
 package one.modality.crm.client.controls.personaldetails;
 
-import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.platform.util.Arrays;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Person;
@@ -68,20 +68,16 @@ public class BookingPersonalDetailsPanel extends PersonalDetailsPanel {
     }
 
     @Override
-    protected VBox createPersonVBox() {
-        VBox vBox = new VBox(3,
+    protected Node[] materialChildren() {
+        boolean isChild = childRadioButton.isSelected();
+        return Arrays.nonNulls(Node[]::new,
                 firstNameTextField,
                 lastNameTextField,
                 newMaterialRegion(genderBox, "Gender"),
-                newMaterialRegion(ageBox, "Age")
-        );
-        if (childRadioButton.isSelected())
-            vBox.getChildren().addAll(
-                    newMaterialRegion(birthDatePicker, "BirthDate"),
-                    carer1NameTextField,
-                    carer2NameTextField
-            );
-        vBox.getChildren().addAll(
+                newMaterialRegion(ageBox, "Age"),
+                isChild ? newMaterialRegion(birthDatePicker, "BirthDate") : null,
+                isChild ? carer1NameTextField : null,
+                isChild ? carer2NameTextField : null,
                 emailTextField,
                 phoneTextField,
                 streetTextField,
@@ -90,7 +86,6 @@ public class BookingPersonalDetailsPanel extends PersonalDetailsPanel {
                 countryButton,
                 organizationButton
         );
-        return LayoutUtil.setPadding(vBox, 10, 18);
     }
 
     @Override
