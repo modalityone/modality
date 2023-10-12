@@ -10,9 +10,9 @@ module modality.crm.backoffice.bookingdetailspanel {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
-    requires modality.base.backoffice.mainframe.fx;
     requires modality.base.backoffice.masterslave;
     requires modality.base.backoffice.operations.generic;
+    requires modality.base.client.mainframe.dialogarea.fx;
     requires modality.base.client.presentationmodel;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.operations.mail;
@@ -28,6 +28,7 @@ module modality.crm.backoffice.bookingdetailspanel {
     requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.entity;
+    requires webfx.stack.orm.entity.controls;
     requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.routing.activity;
     requires webfx.stack.ui.action;

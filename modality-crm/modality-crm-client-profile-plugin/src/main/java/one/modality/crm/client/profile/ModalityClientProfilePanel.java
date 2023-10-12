@@ -15,6 +15,7 @@ import dev.webfx.stack.i18n.operations.ChangeLanguageRequest;
 import dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.dql.DqlStatement;
+import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.session.state.client.fx.FXUserClaims;
@@ -33,7 +34,7 @@ import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import one.modality.base.backoffice.activities.mainframe.fx.FXMainFrame;
+import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.profile.fx.FXProfile;
 import one.modality.base.shared.entities.Organization;
@@ -66,7 +67,7 @@ final class ModalityClientProfilePanel {
                 identityLink.setText(userPerson.getFullName());
                 identityLink.setOnAction(e -> {
                     FXProfile.hideProfilePanel();
-                    PersonalDetailsPanel.editPersonalDetails(userPerson, buttonFactoryMixin, FXMainFrame.getDialogArea());
+                    PersonalDetailsPanel.editPersonalDetails(userPerson, new ButtonSelectorParameters().setButtonFactory(buttonFactoryMixin).setDialogParent(FXMainFrameDialogArea.getDialogArea()));
                 });
                 ReactiveVisualMapper.createReactiveChain(null)
                     .setDataSourceModel(userPerson.getStore().getDataSourceModel())

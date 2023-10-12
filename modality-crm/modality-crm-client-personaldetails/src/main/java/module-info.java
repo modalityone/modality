@@ -20,6 +20,7 @@ module modality.crm.client.personaldetails {
     requires webfx.extras.util.layout;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
+    requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;

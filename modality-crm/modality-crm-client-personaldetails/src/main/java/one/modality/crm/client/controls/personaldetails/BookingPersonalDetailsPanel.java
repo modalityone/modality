@@ -1,13 +1,12 @@
 package one.modality.crm.client.controls.personaldetails;
 
 import dev.webfx.platform.util.Arrays;
-import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
 import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Person;
@@ -24,8 +23,8 @@ public class BookingPersonalDetailsPanel extends PersonalDetailsPanel {
     protected final TextField carer1NameTextField = newMaterialTextField("Carer1");
     protected final TextField carer2NameTextField = newMaterialTextField("Carer2");
 
-    public BookingPersonalDetailsPanel(Event event, ButtonFactoryMixin buttonFactoryMixin, Pane parent) {
-        super(event.getStore().getDataSourceModel(), buttonFactoryMixin, parent);
+    public BookingPersonalDetailsPanel(Event event, ButtonSelectorParameters buttonSelectorParameters) {
+        super(event.getStore().getDataSourceModel(), buttonSelectorParameters);
         this.event = event;
     }
 
@@ -114,11 +113,11 @@ public class BookingPersonalDetailsPanel extends PersonalDetailsPanel {
         return age;
     }
 
-    public static void editBookingPersonalDetails(Document document, ButtonFactoryMixin buttonFactoryMixin, Pane parent) {
-        editPersonalDetails(document, new BookingPersonalDetailsPanel(document.getEvent(), buttonFactoryMixin, parent), parent);
+    public static void editBookingPersonalDetails(Document document, ButtonSelectorParameters buttonSelectorParameters) {
+        editPersonalDetails(document, new BookingPersonalDetailsPanel(document.getEvent(), buttonSelectorParameters), buttonSelectorParameters.getDialogParent());
     }
 
-    public static void editBookingPersonalDetails(Person person, ButtonFactoryMixin buttonFactoryMixin, Pane parent) {
-        editPersonalDetails(person, new BookingPersonalDetailsPanel(person.getEvent(), buttonFactoryMixin, parent), parent);
+    public static void editBookingPersonalDetails(Person person, ButtonSelectorParameters buttonSelectorParameters) {
+        editPersonalDetails(person, new BookingPersonalDetailsPanel(person.getEvent(), buttonSelectorParameters), buttonSelectorParameters.getDialogParent());
     }
 }

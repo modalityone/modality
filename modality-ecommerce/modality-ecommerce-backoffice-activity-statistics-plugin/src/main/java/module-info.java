@@ -10,7 +10,7 @@ module modality.ecommerce.backoffice.activity.statistics.plugin {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
-    requires modality.base.backoffice.mainframe.fx;
+    requires modality.base.backoffice.mainframe.headertabs.fx;
     requires modality.base.backoffice.tile;
     requires modality.base.client.activity.organizationdependent;
     requires modality.base.client.gantt.fx;

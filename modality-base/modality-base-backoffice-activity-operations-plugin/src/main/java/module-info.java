@@ -9,9 +9,10 @@ module modality.base.backoffice.activity.operations.plugin {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
-    requires modality.base.backoffice.mainframe.fx;
+    requires modality.base.backoffice.mainframe.headertabs.fx;
     requires modality.base.backoffice.tile;
     requires modality.base.client.activity;
+    requires modality.base.client.mainframe.dialogarea.fx;
     requires webfx.extras.visual.grid;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;

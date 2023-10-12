@@ -9,6 +9,7 @@ import dev.webfx.extras.visual.VisualColumn;
 import dev.webfx.extras.visual.VisualResultBuilder;
 import dev.webfx.extras.visual.VisualStyle;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Arrays;
@@ -19,12 +20,13 @@ import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -60,10 +62,11 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
     protected final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
     private boolean validationSupportInitialised;
 
-    public PersonalDetailsPanel(DataSourceModel dataSourceModel, ButtonFactoryMixin buttonFactoryMixin, Pane parent) {
+    public PersonalDetailsPanel(DataSourceModel dataSourceModel, ButtonSelectorParameters buttonSelectorParameters) {
         container = new BorderPane();
         Label topLabel = I18nControls.bindI18nProperties(new Label(), "YourPersonalDetails");
         container.setTop(topLabel);
+        BorderPane.setAlignment(topLabel, Pos.CENTER);
         BorderPane.setMargin(topLabel, new Insets(5));
         firstNameTextField = newMaterialTextField("FirstName");
         lastNameTextField = newMaterialTextField("LastName");
@@ -86,9 +89,15 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         streetTextField = newMaterialTextField("Street");
         postCodeTextField = newMaterialTextField("Postcode");
         cityNameTextField = newMaterialTextField("City");
-        countrySelector = createEntityButtonSelector("{class: 'Country', orderBy: 'name'}", buttonFactoryMixin, parent, dataSourceModel);
+        String countryJson = "{class: 'Country', orderBy: 'name'}";
+        if (WebFxKitLauncher.supportsSvgImageFormat())
+            countryJson = "{class: 'Country', orderBy: 'name', columns: [{expression: '[image(`images/s16/countries/svg/` + iso_alpha2 + `.svg`),name]'}] }";
+        countrySelector = createEntityButtonSelector(countryJson, dataSourceModel, buttonSelectorParameters);
         countryButton = countrySelector.toMaterialButton("Country");
-        organizationSelector = createEntityButtonSelector("{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name'}", buttonFactoryMixin, parent, dataSourceModel);
+        String organizationJson = "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name'}";
+        if (WebFxKitLauncher.supportsSvgImageFormat())
+            organizationJson = "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name', columns: [{expression: '[image(`images/s16/organizations/svg/` + (type=2 ? `kmc` : type=3 ? `kbc` : type=4 ? `branch` : `generic`) + `.svg`),name]'}] }";
+        organizationSelector = createEntityButtonSelector(organizationJson, dataSourceModel, buttonSelectorParameters);
         organizationButton = organizationSelector.toMaterialButton("Centre");
     }
 
@@ -107,8 +116,8 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         return validationSupport.isValid();
     }
 
-    protected static <T extends Entity> EntityButtonSelector<T> createEntityButtonSelector(Object jsonOrClass, ButtonFactoryMixin buttonFactory, Pane parent, DataSourceModel dataSourceModel) {
-        return new EntityButtonSelector<T>(jsonOrClass, buttonFactory, parent, dataSourceModel) {
+    protected static <T extends Entity> EntityButtonSelector<T> createEntityButtonSelector(Object jsonOrClass, DataSourceModel dataSourceModel, ButtonSelectorParameters buttonSelectorParameters) {
+        return new EntityButtonSelector<T>(jsonOrClass, dataSourceModel, buttonSelectorParameters) {
             @Override
             protected void setSearchParameters(String search, EntityStore store) {
                 super.setSearchParameters(search, store);
@@ -155,7 +164,7 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
     }
 
     private Node createPanelBody() {
-        return editable ? createPersonVBox() /*createPersonGridPane()*/ : createPersonVisualGrid();
+        return editable ? createPerson2ColumnsBox() /*createPersonGridPane()*/ : createPersonVisualGrid();
     }
 
     protected GridPane createPersonGridPane() {
@@ -186,6 +195,21 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         return LayoutUtil.setPadding(vBox, 10, 18);
     }
 
+    private Node createPerson2ColumnsBox() {
+        Node[] children = materialChildren();
+        int i1 = children.length / 2;
+        VBox vbox1 = new VBox(3, Arrays.subArray(Node[]::new, 0, i1, children));
+        VBox vbox2 = new VBox(3, Arrays.subArray(Node[]::new, i1, children.length, children));
+        GridPane gridPane = new GridPane();
+        ColumnConstraints columnConstraints = new ColumnConstraints();
+        columnConstraints.setPercentWidth(50);
+        gridPane.getColumnConstraints().setAll(columnConstraints, columnConstraints);
+        gridPane.add(vbox1, 0, 0);
+        gridPane.add(vbox2, 1, 0);
+        gridPane.setHgap(18);
+        return LayoutUtil.setPadding(gridPane, 10, 18);
+    }
+
     protected Node[] materialChildren() {
         return Arrays.nonNulls(Node[]::new,
                 firstNameTextField,
@@ -202,8 +226,6 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
                 organizationButton
         );
     }
-
-
 
     private Node createPersonVisualGrid() {
         VisualColumn keyColumn = VisualColumn.create(null, PrimType.STRING, VisualStyle.RIGHT_STYLE);
@@ -300,8 +322,8 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         return age;
     }
 
-    public static void editPersonalDetails(EntityHasPersonalDetails person, ButtonFactoryMixin buttonFactoryMixin, Pane parent) {
-        editPersonalDetails(person, new PersonalDetailsPanel(person.getStore().getDataSourceModel(), buttonFactoryMixin, parent), parent);
+    public static void editPersonalDetails(EntityHasPersonalDetails person, ButtonSelectorParameters buttonSelectorParameters) {
+        editPersonalDetails(person, new PersonalDetailsPanel(person.getStore().getDataSourceModel(), buttonSelectorParameters), buttonSelectorParameters.getDialogParent());
     }
 
     protected static void editPersonalDetails(EntityHasPersonalDetails person, PersonalDetailsPanel details, Pane parent) {
@@ -311,9 +333,7 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         details.syncUiFromModel(updatingPerson);
         BorderPane detailsContainer = details.getContainer();
         detailsContainer.setMaxWidth(400);
-        //detailsContainer.setBackground(Background.fill(Color.LIGHTPINK));
         ScrollPane scrollPane = ControlUtil.createScalableVerticalScrollPane(detailsContainer);
-        //scrollPane.setBorder(new Border(new BorderStroke(Color.PURPLE, BorderStrokeStyle.SOLID, null, BorderStroke.THICK)));
         DialogContent dialogContent = new DialogContent().setContent(scrollPane);
         DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, parent, 0.5, 0.95);
         DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {

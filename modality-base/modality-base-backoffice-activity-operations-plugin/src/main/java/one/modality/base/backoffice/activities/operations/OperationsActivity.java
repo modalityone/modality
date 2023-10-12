@@ -15,9 +15,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import one.modality.base.backoffice.activities.mainframe.fx.FXMainFrame;
+import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
 import one.modality.base.backoffice.tile.TabsBar;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
+import one.modality.base.backoffice.mainframe.headertabs.fx.FXMainFrameHeaderTabs;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
@@ -82,12 +83,12 @@ final class OperationsActivity extends ViewDomainActivityBase implements Modalit
     @Override
     public void onResume() {
         super.onResume();
-        FXMainFrame.setHeaderTabs(headerTabsBar.getTabs());
+        FXMainFrameHeaderTabs.setHeaderTabs(headerTabsBar.getTabs());
     }
 
     @Override
     public void onPause() {
-        FXMainFrame.clearHeaderTabs();
+        FXMainFrameHeaderTabs.clearHeaderTabs();
         super.onPause();
     }
 
@@ -112,7 +113,7 @@ final class OperationsActivity extends ViewDomainActivityBase implements Modalit
     }
 
     private void editOperation(Entity operation) {
-        EntityPropertiesSheet.editEntity(operation, OPERATION_COLUMNS, FXMainFrame.getDialogArea());
+        EntityPropertiesSheet.editEntity(operation, OPERATION_COLUMNS, FXMainFrameDialogArea.getDialogArea());
     }
 
 }

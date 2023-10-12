@@ -1,4 +1,4 @@
-package one.modality.base.backoffice.activities.mainframe.headernode;
+package one.modality.base.backoffice.mainframe.headernode;
 
 import dev.webfx.platform.util.serviceloader.MultipleServiceProviders;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;

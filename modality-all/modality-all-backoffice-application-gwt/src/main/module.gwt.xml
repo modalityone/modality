@@ -169,10 +169,10 @@
     <source path="one/modality/base/backoffice/activities/mainframe"/>
     <resource path="one/modality/base/backoffice/activities/mainframe"/>
     <public includes="one/modality/base/backoffice/activities/mainframe/" path=""/>
-    <!--=====================< modality-base-backoffice-mainframe-fx >======================-->
-    <source path="one/modality/base/backoffice/activities/mainframe/fx"/>
     <!--=================< modality-base-backoffice-mainframe-headernode >==================-->
-    <source path="one/modality/base/backoffice/activities/mainframe/headernode"/>
+    <source path="one/modality/base/backoffice/mainframe/headernode"/>
+    <!--================< modality-base-backoffice-mainframe-headertabs-fx >================-->
+    <source path="one/modality/base/backoffice/mainframe/headertabs/fx"/>
     <!--======================< modality-base-backoffice-masterslave >======================-->
     <source path="one/modality/base/backoffice/controls/masterslave"/>
     <source path="one/modality/base/backoffice/controls/masterslave/group"/>
@@ -220,6 +220,8 @@
     <public includes="images/s16/continents/org/" path=""/>
     <resource path="images/s16/countries"/>
     <public includes="images/s16/countries/" path=""/>
+    <resource path="images/s16/countries/svg"/>
+    <public includes="images/s16/countries/svg/" path=""/>
     <resource path="images/s16/currencies"/>
     <public includes="images/s16/currencies/" path=""/>
     <resource path="images/s16/event"/>
@@ -236,6 +238,8 @@
     <public includes="images/s16/multipleBookings/" path=""/>
     <resource path="images/s16/organizations"/>
     <public includes="images/s16/organizations/" path=""/>
+    <resource path="images/s16/organizations/svg"/>
+    <public includes="images/s16/organizations/svg/" path=""/>
     <resource path="images/s16/security"/>
     <public includes="images/s16/security/" path=""/>
     <resource path="images/s16/system"/>
@@ -248,6 +252,8 @@
     <public includes="images/svg/color/" path=""/>
     <resource path="images/svg/mono"/>
     <public includes="images/svg/mono/" path=""/>
+    <!--==================< modality-base-client-mainframe-dialogarea-fx >==================-->
+    <source path="one/modality/base/client/mainframe/dialogarea/fx"/>
     <!--==============< modality-base-client-operationactionsloading-plugin >===============-->
     <source path="one/modality/base/client/operationactionsloading"/>
     <!--=====================< modality-base-client-presentationmodel >=====================-->

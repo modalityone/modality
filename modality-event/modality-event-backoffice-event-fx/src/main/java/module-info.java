@@ -29,6 +29,6 @@ module modality.event.backoffice.event.fx {
     exports one.modality.event.backoffice.event.fx.impl;
 
     // Provided services
-    provides one.modality.base.backoffice.activities.mainframe.headernode.MainFrameHeaderNodeProvider with one.modality.event.backoffice.event.fx.impl.MainFrameHeaderEventSelectorProvider;
+    provides one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider with one.modality.event.backoffice.event.fx.impl.MainFrameHeaderEventSelectorProvider;
 
 }

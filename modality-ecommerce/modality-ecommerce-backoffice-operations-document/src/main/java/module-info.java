@@ -12,6 +12,7 @@ module modality.ecommerce.backoffice.operations.document {
     requires modality.crm.client.personaldetails;
     requires webfx.kit.launcher;
     requires webfx.platform.async;
+    requires webfx.stack.orm.entity.controls;
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.operation;
 

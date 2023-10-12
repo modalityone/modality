@@ -15,6 +15,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -79,8 +80,7 @@ public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
         // The profile button can be customized (ex: ModalityClientProfileInitJob)
         if (FXProfile.getProfileButton() == null) { // If not, we just display a logout button instead
             Button button = actionButton(newOperationAction(LogoutRequest::new));
-            button.textProperty().unbind();
-            button.setText(null);
+            button.setContentDisplay(ContentDisplay.GRAPHIC_ONLY); // We display just the icon, not the text
             FXProfile.setProfileButton(button);
         }
         // Setting all children, including the profile button

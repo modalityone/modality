@@ -30,12 +30,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import one.modality.base.backoffice.activities.mainframe.fx.FXMainFrame;
-import one.modality.base.backoffice.activities.mainframe.headernode.MainFrameHeaderNodeProvider;
+import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
+import one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider;
 import one.modality.base.backoffice.ganttcanvas.MainFrameGanttCanvas;
 import one.modality.base.backoffice.tile.Tab;
 import one.modality.base.client.application.ModalityClientMainFrameActivity;
 import one.modality.base.client.gantt.fx.interstice.FXGanttInterstice;
+import one.modality.base.backoffice.mainframe.headertabs.fx.FXMainFrameHeaderTabs;
 import one.modality.base.client.profile.fx.FXProfile;
 
 import java.util.Comparator;
@@ -72,16 +73,7 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
                 }
                 if (profilePanel != null) {
                     layoutInArea(profilePanel, width - profilePanel.prefWidth(-1) - 10, headerHeight + 10, profilePanel.prefWidth(-1), profilePanel.prefHeight(-1), 0, HPos.RIGHT, VPos.TOP);
-                    if (startProfilePanelEnteringAnimationOnLayout) {
-                        if (profilePanelAnimation != null)
-                            profilePanelAnimation.stop();
-                        profilePanel.setTranslateX(profilePanel.prefWidth(-1) + 10);
-                        profilePanelAnimation = Animations.animateProperty(profilePanel.translateXProperty(), 0);
-                        profilePanelAnimation.setOnFinished(e -> {
-                            profilePanelAnimation = null;
-                        });
-                    }
-                    startProfilePanelEnteringAnimationOnLayout = false;
+                    onProfileLayout(); // for profile panel animation management
                 }
                 if (ganttCanvasContainer.isVisible()) {
                     nodeHeight = ganttCanvasContainer.prefHeight(width) + (FXGanttInterstice.isGanttIntersticeRequired() ? breathingPadding.getBottom() : 0);
@@ -167,11 +159,24 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
         updateDialogArea();
     }
 
+    private void onProfileLayout() {
+        if (startProfilePanelEnteringAnimationOnLayout) {
+            if (profilePanelAnimation != null)
+                profilePanelAnimation.stop();
+            profilePanel.setTranslateX(profilePanel.prefWidth(-1) + 10);
+            profilePanelAnimation = Animations.animateProperty(profilePanel.translateXProperty(), 0);
+            profilePanelAnimation.setOnFinished(e -> {
+                profilePanelAnimation = null;
+            });
+            startProfilePanelEnteringAnimationOnLayout = false;
+        }
+    }
+
     private void updateDialogArea() {
         if (dialogArea != null)
             mainFrame.getChildren().remove(dialogArea);
         Node relatedDialogNode = null;
-        for (Tab headerTab : FXMainFrame.getHeaderTabsObservableList()) {
+        for (Tab headerTab : FXMainFrameHeaderTabs.getHeaderTabsObservableList()) {
             var properties = headerTab.getProperties();
             String arbitraryKey = "modality-mainframe-listener-installed";
             if (properties.get(arbitraryKey) == null) {
@@ -195,7 +200,7 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
             } else
                 showHideDialogArea();
         }
-        FXMainFrame.setDialogArea(dialogArea);
+        FXMainFrameDialogArea.setDialogArea(dialogArea);
     }
 
     private void showHideDialogArea() {
@@ -251,7 +256,7 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
         // The clipPane is initially contracted. Will be expanded (eventually through animation) once not empty.
         clipPane.setPrefHeight(0);
         // The tabs are communicated from the activities to this main frame through FXMainFrameHeaderTabsBar
-        ObservableList<Tab> tabs = FXMainFrame.getHeaderTabsObservableList();
+        ObservableList<Tab> tabs = FXMainFrameHeaderTabs.getHeaderTabsObservableList();
         // We don't bind them directly to the flow pane children, because we want to animate them. So the following code
         // is the animation management:
         tabs.addListener((ListChangeListener<Node>) c -> { // We listen to the tabs changes
