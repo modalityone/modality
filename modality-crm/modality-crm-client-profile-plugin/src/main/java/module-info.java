@@ -6,8 +6,8 @@ module modality.crm.client.profile.plugin {
     requires java.base;
     requires javafx.controls;
     requires javafx.graphics;
-    requires modality.base.backoffice.mainframe.fx;
     requires modality.base.client.activity;
+    requires modality.base.client.mainframe.dialogarea.fx;
     requires modality.base.client.profile.fx;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;

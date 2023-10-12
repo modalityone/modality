@@ -1,17 +1,12 @@
 package one.modality.base.frontoffice.activities.account;
 
-import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.util.layout.LayoutUtil;
-import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
-import javafx.geometry.Bounds;
-import javafx.geometry.VPos;
 import javafx.scene.Node;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -70,18 +65,7 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
                 )
         );
         vBox.setMaxWidth(Region.USE_PREF_SIZE);
-        ScalePane scalePane = new ScalePane(vBox);
-        scalePane.setCanShrink(false);
-        scalePane.setFillHeight(false);
-        ScrollPane scrollPane = ControlUtil.createVerticalScrollPane(scalePane);
-        FXProperties.runOnPropertiesChange(p -> {
-            Bounds viewportBounds = scrollPane.getViewportBounds();
-            double width = viewportBounds.getWidth();
-            double height = viewportBounds.getHeight();
-            scalePane.setFixedSize(width, height);
-            scalePane.setVAlignment(height > vBox.prefHeight(width) ? VPos.CENTER : VPos.TOP);
-        }, scrollPane.viewportBoundsProperty());
-        return scrollPane;
+        return ControlUtil.createScalableVerticalScrollPane(vBox);
     }
 
     private Node createRow(String title, String subtitle, String svgPath, Supplier<RoutePushRequest> requestSupplier) {

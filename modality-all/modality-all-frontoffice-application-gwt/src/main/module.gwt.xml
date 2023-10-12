@@ -107,6 +107,8 @@
     <public includes="images/s16/continents/org/" path=""/>
     <resource path="images/s16/countries"/>
     <public includes="images/s16/countries/" path=""/>
+    <resource path="images/s16/countries/svg"/>
+    <public includes="images/s16/countries/svg/" path=""/>
     <resource path="images/s16/currencies"/>
     <public includes="images/s16/currencies/" path=""/>
     <resource path="images/s16/event"/>
@@ -123,6 +125,8 @@
     <public includes="images/s16/multipleBookings/" path=""/>
     <resource path="images/s16/organizations"/>
     <public includes="images/s16/organizations/" path=""/>
+    <resource path="images/s16/organizations/svg"/>
+    <public includes="images/s16/organizations/svg/" path=""/>
     <resource path="images/s16/security"/>
     <public includes="images/s16/security/" path=""/>
     <resource path="images/s16/system"/>
@@ -135,12 +139,16 @@
     <public includes="images/svg/color/" path=""/>
     <resource path="images/svg/mono"/>
     <public includes="images/svg/mono/" path=""/>
+    <!--==================< modality-base-client-mainframe-dialogarea-fx >==================-->
+    <source path="one/modality/base/client/mainframe/dialogarea/fx"/>
     <!--==============< modality-base-client-operationactionsloading-plugin >===============-->
     <source path="one/modality/base/client/operationactionsloading"/>
     <!--=====================< modality-base-client-presentationmodel >=====================-->
     <source path="one/modality/base/client/presentationmodel"/>
     <!--========================< modality-base-client-profile-fx >=========================-->
     <source path="one/modality/base/client/profile/fx"/>
+    <!--========================< modality-base-client-validation >=========================-->
+    <source path="one/modality/base/client/validation"/>
     <!--===============< modality-base-frontoffice-activity-account-plugin >================-->
     <source path="one/modality/base/frontoffice/activities/account"/>
     <source path="one/modality/base/frontoffice/activities/account/friendsfamily"/>
@@ -179,8 +187,15 @@
     <source path="one/modality/crm/client/activities/login"/>
     <!--================< modality-crm-client-activity-unauthorized-plugin >================-->
     <source path="one/modality/crm/client/activities/unauthorized"/>
+    <!--==========================< modality-crm-client-authn-fx >==========================-->
+    <source path="one/modality/crm/shared/services/authn/fx"/>
     <!--===================< modality-crm-client-authz-required-plugin >====================-->
     <source path="one/modality/crm/client/services/authz"/>
+    <!--======================< modality-crm-client-personaldetails >=======================-->
+    <source path="one/modality/crm/client/controls/personaldetails"/>
+    <!--===========================< modality-crm-shared-authn >============================-->
+    <source path="one/modality/crm/shared/services/authn"/>
+    <source path="one/modality/crm/shared/services/authn/serial"/>
     <!--===============< modality-event-frontoffice-activity-booking-plugin >===============-->
     <source path="one/modality/event/frontoffice/activities/booking"/>
     <source path="one/modality/event/frontoffice/activities/booking/routing"/>
@@ -191,8 +206,6 @@
     <source path="dev/webfx/extras/cell/collator"/>
     <source path="dev/webfx/extras/cell/renderer"/>
     <source path="dev/webfx/extras/cell/rowstyle"/>
-    <!--==============================< webfx-extras-flexbox >==============================-->
-    <source path="dev/webfx/extras/flexbox"/>
     <!--============================< webfx-extras-imagestore >=============================-->
     <source path="dev/webfx/extras/imagestore"/>
     <!--===============================< webfx-extras-label >===============================-->

@@ -9,6 +9,7 @@ import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.domainmodel.HasDataSourceModel;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
+import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
 import dev.webfx.stack.ui.action.ActionGroup;
@@ -24,7 +25,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import one.modality.base.backoffice.activities.mainframe.fx.FXMainFrame;
+import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
 import one.modality.base.backoffice.controls.masterslave.UiBuilder;
 import one.modality.base.backoffice.operations.entities.generic.CopyAllRequest;
 import one.modality.base.backoffice.operations.entities.generic.CopySelectionRequest;
@@ -133,11 +134,11 @@ public final class BookingDetailsPanel implements
         switch (i18nKey) {
             case "Options":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new AddNewDocumentLineRequest(getSelectedDocument(), FXMainFrame.getDialogArea())),
+                        newOperationAction(() -> new AddNewDocumentLineRequest(getSelectedDocument(), FXMainFrameDialogArea.getDialogArea())),
                         newSeparatorActionGroup(
-                                newOperationAction(() -> new EditDocumentLineRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea())),
-                                newOperationAction(() -> new ToggleCancelDocumentLineRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea()), selectedEntityProperty),
-                                newOperationAction(() -> new DeleteDocumentLineRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea()))
+                                newOperationAction(() -> new EditDocumentLineRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea())),
+                                newOperationAction(() -> new ToggleCancelDocumentLineRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea()), selectedEntityProperty),
+                                newOperationAction(() -> new DeleteDocumentLineRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea()))
                         ),
                         newSeparatorActionGroup(
                                 newOperationAction(() -> new CopySelectionRequest(visualMapper.getSelectedEntities(), visualMapper.getEntityColumns())),
@@ -147,11 +148,11 @@ public final class BookingDetailsPanel implements
                 break;
             case "Payments":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new AddNewPaymentRequest(getSelectedDocument(), FXMainFrame.getDialogArea())),
-                        newOperationAction(() -> new AddNewTransferRequest(getSelectedDocument(), FXMainFrame.getDialogArea())),
+                        newOperationAction(() -> new AddNewPaymentRequest(getSelectedDocument(), FXMainFrameDialogArea.getDialogArea())),
+                        newOperationAction(() -> new AddNewTransferRequest(getSelectedDocument(), FXMainFrameDialogArea.getDialogArea())),
                         newSeparatorActionGroup(
-                                newOperationAction(() -> new EditPaymentRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea())),
-                                newOperationAction(() -> new DeletePaymentRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea()))
+                                newOperationAction(() -> new EditPaymentRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea())),
+                                newOperationAction(() -> new DeletePaymentRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea()))
                         ),
                         newSeparatorActionGroup(
                                 newOperationAction(() -> new CopySelectionRequest(visualMapper.getSelectedEntities(), visualMapper.getEntityColumns())),
@@ -161,21 +162,21 @@ public final class BookingDetailsPanel implements
                 break;
             case "MultipleBookings":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new MergeMultipleBookingsOptionsRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea())),
-                        newOperationAction(() -> new CancelOtherMultipleBookingsRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea())),
-                        newOperationAction(() -> new GetBackCancelledMultipleBookingsDepositRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea())),
-                        newOperationAction(() -> new ToggleMarkMultipleBookingRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea()))
+                        newOperationAction(() -> new MergeMultipleBookingsOptionsRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea())),
+                        newOperationAction(() -> new CancelOtherMultipleBookingsRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea())),
+                        newOperationAction(() -> new GetBackCancelledMultipleBookingsDepositRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea())),
+                        newOperationAction(() -> new ToggleMarkMultipleBookingRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea()))
                 );
                 break;
             case "Cart":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new OpenBookingCartRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea()))
+                        newOperationAction(() -> new OpenBookingCartRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea()))
                 );
                 break;
             case "Mails":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new OpenMailRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea())),
-                        newOperationAction(() -> new ComposeNewMailRequest(getSelectedDocument(), FXMainFrame.getDialogArea())),
+                        newOperationAction(() -> new OpenMailRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea())),
+                        newOperationAction(() -> new ComposeNewMailRequest(getSelectedDocument(), FXMainFrameDialogArea.getDialogArea())),
                         newSeparatorActionGroup(
                                 newOperationAction(() -> new CopySelectionRequest(visualMapper.getSelectedEntities(), visualMapper.getEntityColumns())),
                                 newOperationAction(() -> new CopyAllRequest(visualMapper.getCurrentEntities(), visualMapper.getEntityColumns()))
@@ -231,12 +232,14 @@ public final class BookingDetailsPanel implements
         addFieldLabelAndValue(3, 7, 6, "person_carer1Name");
         addFieldLabelAndValue(4, 7, 6, "person_carer2Name");
 
+        ButtonSelectorParameters buttonSelectorParameters = new ButtonSelectorParameters().setButtonFactory(mixin).setDialogParentGetter(FXMainFrameDialogArea::getDialogArea);
+
         mixin.setUpContextMenu(gridPane, () -> newActionGroup(
-                newOperationAction(() -> new EditDocumentPersonalDetailsRequest(getSelectedDocument(), mixin, FXMainFrame.getDialogArea()))
-        ));
+                newOperationAction(() -> new EditDocumentPersonalDetailsRequest(getSelectedDocument(), buttonSelectorParameters)
+        )));
         gridPane.setOnMouseClicked(e -> {
             if (e.getClickCount() == 2)
-                executeOperation(new EditDocumentPersonalDetailsRequest(getSelectedDocument(), mixin, FXMainFrame.getDialogArea()));
+                executeOperation(new EditDocumentPersonalDetailsRequest(getSelectedDocument(), buttonSelectorParameters));
         });
 
         return gridPane;

@@ -5,6 +5,7 @@ import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.stack.orm.dql.DqlStatement;
+import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
@@ -23,9 +24,9 @@ public final class MyBookingPersonalDetailsPanel extends BookingPersonalDetailsP
 
     private final MaterialTextFieldPane personButton;
 
-    public MyBookingPersonalDetailsPanel(Event event, ButtonFactoryMixin buttonFactoryMixin, Pane parent) {
-        super(event, buttonFactoryMixin, parent);
-        EntityButtonSelector<Person> personSelector = MyBookingPersonalDetailsPanel.<Person>createEntityButtonSelector("{class: 'Person', alias: 'p', fields: 'genderIcon,firstName,lastName,birthdate,email,phone,street,postCode,cityName,organization,country', columns: `[{expression: 'genderIcon,firstName,lastName'}]`, where: '!removed', orderBy: 'id'}", buttonFactoryMixin, parent, event.getStore().getDataSourceModel())
+    public MyBookingPersonalDetailsPanel(Event event, ButtonSelectorParameters buttonSelectorParameters) {
+        super(event, buttonSelectorParameters);
+        EntityButtonSelector<Person> personSelector = MyBookingPersonalDetailsPanel.<Person>createEntityButtonSelector("{class: 'Person', alias: 'p', fields: 'genderIcon,firstName,lastName,birthdate,email,phone,street,postCode,cityName,organization,country', columns: `[{expression: 'genderIcon,firstName,lastName'}]`, where: '!removed', orderBy: 'id'}", event.getStore().getDataSourceModel(), buttonSelectorParameters)
                 .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> DqlStatement.where("frontendAccount=?", mup.getUserAccountId()))
                 .autoSelectFirstEntity();
         personButton = personSelector.toMaterialButton("PersonToBook");

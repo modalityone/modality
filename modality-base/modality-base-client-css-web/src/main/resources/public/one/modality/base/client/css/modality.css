@@ -98,7 +98,7 @@ fx-homepane fx-tile * {
 
 /***** Declaring some variables used in several selectors *****/
 :root {
-    --grid-border-color: #bbbbbb;
+    --grid-border-color: #D3D3D3;
     --grid-row-height: 28px;
 }
 
