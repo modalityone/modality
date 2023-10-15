@@ -96,7 +96,7 @@ public class CreateAnnualSchedulePane extends VBox {
                 });
     }
 
-    public void createAnnualSchedule() {
+    public void confirmCreateAnnualSchedule() {
         LocalDate fromDate = getFromDate();
         if (fromDate == null) {
             return;
@@ -112,9 +112,20 @@ public class CreateAnnualSchedulePane extends VBox {
             return;
         }
 
-        // TODO create ScheduledItem for each Item for each date for which one does not exist
-
-        // TODO create ScheduleResource for each Item for each date for which one does not exist
+        String fromDateString = DATE_FORMATTER.format(fromDate);
+        String toDateString = DATE_FORMATTER.format(toDate);
+        String commaSeparatedItemNames = selectedItems.stream()
+                .map(EntityHasName::getName)
+                .sorted()
+                .collect(Collectors.joining("\n"));
+        String msg = "Please confirm:\n\nAnnual snapshot will be created\n\nfrom " + fromDateString + "\nto " + toDateString
+                + "\n\nFor the following items\n\n" + commaSeparatedItemNames + "\n\nThis process cannot be undone.";
+        DialogContent dialogContent = new DialogContent().setContentText(msg);
+        DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, parent);
+        DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
+            createAnnualSchedule(fromDate, toDate, selectedItems);
+            dialogCallback.closeDialog();
+        });
     }
 
     private LocalDate getFromDate() {
@@ -159,6 +170,12 @@ public class CreateAnnualSchedulePane extends VBox {
         dialogContent.getOkButton().setVisible(false);
         DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, parent);
         DialogBuilderUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
+    }
+
+    private void createAnnualSchedule(LocalDate fromDate, LocalDate toDate, List<Item> selectedItems) {
+        // TODO create ScheduledItem for each Item for each date for which one does not exist
+
+        // TODO create ScheduleResource for each Item for each date for which one does not exist
     }
 
 }
