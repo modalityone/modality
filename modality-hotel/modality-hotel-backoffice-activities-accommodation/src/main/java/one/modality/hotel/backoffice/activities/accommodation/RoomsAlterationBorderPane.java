@@ -73,7 +73,7 @@ class RoomsAlterationBorderPane {
             DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, borderPane);
             DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
                 dialogCallback.closeDialog();
-                createAnnualSchedulePane.createAnnualSchedule();
+                createAnnualSchedulePane.confirmCreateAnnualSchedule();
             });
         });
 
