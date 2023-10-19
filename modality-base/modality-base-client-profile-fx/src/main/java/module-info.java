@@ -6,7 +6,7 @@ module modality.base.client.profile.fx {
     requires java.base;
     requires javafx.base;
     requires javafx.graphics;
-    requires webfx.extras.materialdesign;
+    requires webfx.extras.util.scene;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.stack.session.state.client.fx;
