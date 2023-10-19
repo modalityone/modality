@@ -15,6 +15,7 @@ import dev.webfx.stack.i18n.operations.ChangeLanguageRequest;
 import dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.dql.DqlStatement;
+import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
@@ -40,6 +41,7 @@ import one.modality.base.client.profile.fx.FXProfile;
 import one.modality.base.shared.entities.Organization;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
+import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.crm.client.controls.personaldetails.PersonalDetailsPanel;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 
@@ -69,6 +71,12 @@ final class ModalityClientProfilePanel {
                     FXProfile.hideProfilePanel();
                     PersonalDetailsPanel.editPersonalDetails(userPerson, new ButtonSelectorParameters().setButtonFactory(buttonFactoryMixin).setDialogParent(FXMainFrameDialogArea.getDialogArea()));
                 });
+                // If there is no organization selected by the user (which happens on very first login), then we set it to its affiliated organization by default
+                if (FXOrganization.getOrganization() == null
+                        // Also checking organizationId because if it's non-null (ex: retrieved from session), it means the Organization is loading
+                        && Entities.getPrimaryKey(FXOrganizationId.getOrganizationId()) == null) {
+                    FXOrganization.setOrganization(userPerson.getOrganization());
+                }
                 ReactiveVisualMapper.createReactiveChain(null)
                     .setDataSourceModel(userPerson.getStore().getDataSourceModel())
                     .always("{class: 'AuthorizationAssignment', columns: [{expression: 'role.name', label:'Role', textAlign: 'center'},{expression: 'management.manager.fullName', label:'Granted by', textAlign: 'center'}]}")

@@ -26,6 +26,7 @@ module modality.crm.client.profile.plugin {
     requires webfx.stack.i18n;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.dql;
+    requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
     requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.session.state.client.fx;
