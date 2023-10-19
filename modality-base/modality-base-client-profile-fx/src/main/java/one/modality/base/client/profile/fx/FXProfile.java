@@ -1,10 +1,9 @@
 package one.modality.base.client.profile.fx;
 
-import dev.webfx.extras.materialdesign.util.scene.SceneUtil;
+import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.session.state.client.fx.FXLoggedIn;
-import dev.webfx.stack.session.state.client.fx.FXUserId;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -117,14 +116,14 @@ public final class FXProfile {
     static {
         // Managing profile button & panel creation, destruction, and visibility
         WebFxKitLauncher.onReady(() -> FXProperties.runNowAndOnPropertiesChange(() -> {
-            Object userId = FXLoggedIn.isLoggedIn() ? FXUserId.getUserId() : null;
-            if (userId == null)
+            boolean loggedOut = !FXLoggedIn.isLoggedIn();
+            if (loggedOut)
                 hideProfilePanel();
             Supplier<Node> profileButtonFactory = profileButtonFactoryProperty.get();
-            FXProfile.setProfileButton(userId == null || profileButtonFactory == null ? null : profileButtonFactory.get());
+            FXProfile.setProfileButton(loggedOut || profileButtonFactory == null ? null : profileButtonFactory.get());
             Supplier<Node> profilePanelFactory = profilePanelFactoryProperty.get();
-            FXProfile.setProfilePanel(userId == null || profilePanelFactory == null ? null : profilePanelFactory.get());
-        }, FXUserId.userIdProperty(), FXLoggedIn.loggedInProperty(), profileButtonFactoryProperty, profilePanelFactoryProperty));
+            FXProfile.setProfilePanel(loggedOut || profilePanelFactory == null ? null : profilePanelFactory.get());
+        }, FXLoggedIn.loggedInProperty(), profileButtonFactoryProperty, profilePanelFactoryProperty));
     }
 
 }
