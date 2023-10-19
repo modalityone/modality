@@ -1,6 +1,7 @@
 package one.modality.crm.client.controls.personaldetails;
 
 import dev.webfx.platform.util.Arrays;
+import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
 import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
 import javafx.geometry.Insets;
@@ -8,9 +9,9 @@ import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import one.modality.base.shared.entities.Document;
-import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Person;
-import one.modality.base.shared.entities.markers.HasPersonalDetails;
+import one.modality.base.shared.entities.markers.EntityHasPersonalDetails;
+import one.modality.base.shared.entities.markers.HasEvent;
 
 import java.time.LocalDate;
 
@@ -19,13 +20,15 @@ import java.time.LocalDate;
  */
 public class BookingPersonalDetailsPanel extends PersonalDetailsPanel {
 
-    private final Event event;
     protected final TextField carer1NameTextField = newMaterialTextField("Carer1");
     protected final TextField carer2NameTextField = newMaterialTextField("Carer2");
 
-    public BookingPersonalDetailsPanel(Event event, ButtonSelectorParameters buttonSelectorParameters) {
-        super(event.getStore().getDataSourceModel(), buttonSelectorParameters);
-        this.event = event;
+    public BookingPersonalDetailsPanel(EntityHasPersonalDetails entity, ButtonSelectorParameters buttonSelectorParameters) {
+        super(entity, buttonSelectorParameters);
+    }
+
+    public BookingPersonalDetailsPanel(DataSourceModel dataSourceModel, ButtonSelectorParameters buttonSelectorParameters) {
+        super(dataSourceModel, buttonSelectorParameters);
     }
 
     @Override
@@ -37,6 +40,7 @@ public class BookingPersonalDetailsPanel extends PersonalDetailsPanel {
     @Override
     protected void updateUiEditable() {
         super.updateUiEditable();
+        boolean editable = isEditable();
         carer1NameTextField.setEditable(editable);
         carer2NameTextField.setEditable(editable);
     }
@@ -88,36 +92,29 @@ public class BookingPersonalDetailsPanel extends PersonalDetailsPanel {
     }
 
     @Override
-    public void syncUiFromModel(HasPersonalDetails p) {
+    public void syncUiFromModel(EntityHasPersonalDetails p) {
         super.syncUiFromModel(p);
         carer1NameTextField.setText(p.getCarer1Name());
         carer2NameTextField.setText(p.getCarer2Name());
     }
 
     @Override
-    public void syncModelFromUi(HasPersonalDetails p) {
+    public void syncModelFromUi(EntityHasPersonalDetails p) {
         super.syncModelFromUi(p);
         p.setCarer1Name(carer1NameTextField.getText());
         p.setCarer2Name(carer2NameTextField.getText());
     }
 
     @Override
-    protected Integer computeAge(LocalDate birthDate) {
-        Integer age = null;
-        if (birthDate != null) {
-            // Integer age = (int) birthDate.until(event.getStartDate(), ChronoUnit.YEARS); // Doesn't compile with GWT
-            age = (int) (event.getStartDate().toEpochDay() - birthDate.toEpochDay()) / 365;
-            if (age > CHILD_MAX_AGE) // TODO: move this later in a applyBusinessRules() method
-                age = null;
-        }
-        return age;
+    protected LocalDate getDateForAgeComputation() {
+        return ((HasEvent) entity).getEvent().getStartDate();
     }
 
     public static void editBookingPersonalDetails(Document document, ButtonSelectorParameters buttonSelectorParameters) {
-        editPersonalDetails(document, new BookingPersonalDetailsPanel(document.getEvent(), buttonSelectorParameters), buttonSelectorParameters.getDialogParent());
+        editPersonalDetails(new BookingPersonalDetailsPanel(document, buttonSelectorParameters), buttonSelectorParameters.getDialogParent());
     }
 
     public static void editBookingPersonalDetails(Person person, ButtonSelectorParameters buttonSelectorParameters) {
-        editPersonalDetails(person, new BookingPersonalDetailsPanel(person.getEvent(), buttonSelectorParameters), buttonSelectorParameters.getDialogParent());
+        editPersonalDetails(new BookingPersonalDetailsPanel(person, buttonSelectorParameters), buttonSelectorParameters.getDialogParent());
     }
 }

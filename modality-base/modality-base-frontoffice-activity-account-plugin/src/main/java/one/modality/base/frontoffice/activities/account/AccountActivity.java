@@ -65,7 +65,7 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
                 )
         );
         vBox.setMaxWidth(Region.USE_PREF_SIZE);
-        return ControlUtil.createScalableVerticalScrollPane(vBox);
+        return ControlUtil.createScalableVerticalScrollPane(vBox, false);
     }
 
     private Node createRow(String title, String subtitle, String svgPath, Supplier<RoutePushRequest> requestSupplier) {

@@ -7,14 +7,12 @@ import dev.webfx.platform.util.Arrays;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Person;
+import one.modality.base.shared.entities.markers.EntityHasPersonalDetails;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 
 /**
@@ -24,9 +22,9 @@ public final class MyBookingPersonalDetailsPanel extends BookingPersonalDetailsP
 
     private final MaterialTextFieldPane personButton;
 
-    public MyBookingPersonalDetailsPanel(Event event, ButtonSelectorParameters buttonSelectorParameters) {
-        super(event, buttonSelectorParameters);
-        EntityButtonSelector<Person> personSelector = MyBookingPersonalDetailsPanel.<Person>createEntityButtonSelector("{class: 'Person', alias: 'p', fields: 'genderIcon,firstName,lastName,birthdate,email,phone,street,postCode,cityName,organization,country', columns: `[{expression: 'genderIcon,firstName,lastName'}]`, where: '!removed', orderBy: 'id'}", event.getStore().getDataSourceModel(), buttonSelectorParameters)
+    public MyBookingPersonalDetailsPanel(EntityHasPersonalDetails entity, ButtonSelectorParameters buttonSelectorParameters) {
+        super(entity, buttonSelectorParameters);
+        EntityButtonSelector<Person> personSelector = MyBookingPersonalDetailsPanel.<Person>createEntityButtonSelector("{class: 'Person', alias: 'p', fields: 'genderIcon,firstName,lastName,birthdate,email,phone,street,postCode,cityName,organization,country', columns: `[{expression: 'genderIcon,firstName,lastName'}]`, where: '!removed', orderBy: 'id'}", entity.getStore().getDataSourceModel(), buttonSelectorParameters)
                 .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> DqlStatement.where("frontendAccount=?", mup.getUserAccountId()))
                 .autoSelectFirstEntity();
         personButton = personSelector.toMaterialButton("PersonToBook");

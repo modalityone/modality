@@ -16,11 +16,11 @@ module modality.crm.backoffice.bookingdetailspanel {
     requires modality.base.client.presentationmodel;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.operations.mail;
+    requires modality.crm.client.personaldetails;
     requires modality.ecommerce.backoffice.operations.document;
     requires modality.ecommerce.backoffice.operations.documentline;
     requires modality.ecommerce.backoffice.operations.moneytransfer;
-    requires webfx.extras.imagestore;
-    requires webfx.extras.label;
+    requires webfx.extras.panes;
     requires webfx.extras.visual.grid;
     requires webfx.kit.util;
     requires webfx.platform.boot;

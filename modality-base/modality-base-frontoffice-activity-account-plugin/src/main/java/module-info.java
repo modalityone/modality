@@ -21,7 +21,6 @@ module modality.base.frontoffice.activity.account.plugin {
     requires webfx.platform.windowhistory;
     requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel.activity;
-    requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;

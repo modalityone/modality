@@ -213,8 +213,6 @@
     <!--==========================< webfx-extras-materialdesign >===========================-->
     <source path="dev/webfx/extras/materialdesign/textfield"/>
     <source path="dev/webfx/extras/materialdesign/util"/>
-    <source path="dev/webfx/extras/materialdesign/util/layout"/>
-    <source path="dev/webfx/extras/materialdesign/util/scene"/>
     <!--===============================< webfx-extras-panes >===============================-->
     <source path="dev/webfx/extras/panes"/>
     <!--===============================< webfx-extras-theme >===============================-->
