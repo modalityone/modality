@@ -15,6 +15,7 @@ module modality.event.backoffice.event.fx {
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
     requires webfx.kit.util;
+    requires webfx.platform.console;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.dql;
