@@ -1,6 +1,8 @@
 package one.modality.crm.shared.services.authn.fx;
 
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.console.Console;
+import dev.webfx.stack.session.state.client.fx.FXLoggedIn;
 import dev.webfx.stack.session.state.client.fx.FXUserId;
 import javafx.beans.property.*;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
@@ -15,7 +17,7 @@ public final class FXModalityUserPrincipal {
     private final static ObjectProperty<ModalityUserPrincipal> modalityUserPrincipalProperty = new SimpleObjectProperty<>() {
         @Override
         protected void invalidated() {
-            loggedInProperty.setValue(get() != null);
+            Console.log("modalityUserPrincipal = " + get());
         }
     };
 
@@ -39,9 +41,9 @@ public final class FXModalityUserPrincipal {
     static {
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Object userId = FXUserId.getUserId();
-            if (userId == null || userId instanceof ModalityUserPrincipal)
-                setModalityUserPrincipal((ModalityUserPrincipal) userId);
-        }, FXUserId.userIdProperty());
+            setModalityUserPrincipal(userId instanceof ModalityUserPrincipal ? (ModalityUserPrincipal) userId : null);
+            loggedInProperty.set(getModalityUserPrincipal() != null && FXLoggedIn.isLoggedIn());
+        }, FXUserId.userIdProperty(), FXLoggedIn.loggedInProperty());
     }
 
 }
