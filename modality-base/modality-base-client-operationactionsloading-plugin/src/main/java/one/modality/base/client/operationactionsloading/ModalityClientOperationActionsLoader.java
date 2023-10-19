@@ -4,6 +4,7 @@ import dev.webfx.platform.boot.spi.ApplicationModuleBooter;
 import dev.webfx.platform.conf.Config;
 import dev.webfx.platform.conf.ConfigLoader;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.stack.authz.client.factory.AuthorizationFactory;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
@@ -42,7 +43,11 @@ public class ModalityClientOperationActionsLoader implements ApplicationModuleBo
 
         EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
                 .executeQuery("select code,i18nCode,public from Operation where " + (ModalityClientConfig.isBackOffice() ? "backoffice" : "frontoffice"))
-                .onFailure(cause -> Console.log("Failed loading operations", cause))
+                .onFailure(cause -> {
+                    Console.log("Failed loading operations", cause);
+                    // Schedule a retry, as the client won't work anyway without a successful load
+                    Scheduler.scheduleDeferred(this::bootModule);
+                })
                 .onSuccess(operations -> {
                     OperationActionRegistry registry = getOperationActionRegistry();
                     // Registering graphical properties for all loaded operations
