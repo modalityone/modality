@@ -7,8 +7,11 @@ module modality.crm.client.activity.unauthorized.plugin {
 
     // Direct dependencies modules
     requires javafx.graphics;
+    requires webfx.extras.panes;
+    requires webfx.kit.util;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.routing.uirouter;
+    requires webfx.stack.session.state.client.fx;
 
     // Exported packages
     exports one.modality.crm.client.activities.unauthorized;

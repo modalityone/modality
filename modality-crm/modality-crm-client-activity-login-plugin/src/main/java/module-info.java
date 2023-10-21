@@ -10,6 +10,7 @@ module modality.crm.client.activity.login.plugin {
     requires webfx.stack.authn.login.ui;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.routing.uirouter;
+    requires webfx.stack.session.state.client.fx;
 
     // Exported packages
     exports one.modality.crm.client.activities.login;
