@@ -178,6 +178,7 @@ public class CreateAnnualSchedulePane extends VBox {
     }
 
     private void createAnnualSchedule(LocalDate fromDate, LocalDate toDate, List<Item> selectedItems) {
+        // Retrieve the latest ScheduledItem for each selected Item to use as a template for the ScheduledItem created in the annual snapshot
         String commaSeparatedItemIds = selectedItems.stream()
                 .map(si -> si.getId().getPrimaryKey().toString())
                 .collect(Collectors.joining(","));
@@ -203,6 +204,7 @@ public class CreateAnnualSchedulePane extends VBox {
                     .findFirst()
                     .orElseGet(() -> null);
             for (LocalDate date = fromDate; date.isBefore(toDate); date = date.plusDays(1)) {
+                // TODO check no record exists for this date
                 ScheduledItem scheduledItem = updateStore.insertEntity(ScheduledItem.class);
                 scheduledItem.setItem(item);
                 scheduledItem.setDate(date);
