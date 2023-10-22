@@ -7,6 +7,7 @@ import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
+import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.dialog.DialogCallback;
@@ -19,8 +20,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.FontWeight;
-import one.modality.base.shared.entities.Item;
-import one.modality.base.shared.entities.ResourceConfiguration;
+import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.markers.EntityHasDate;
 import one.modality.base.shared.entities.markers.EntityHasName;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 
@@ -40,6 +41,7 @@ public class CreateAnnualSchedulePane extends VBox {
     private final VBox selectedItemsPane = new VBox(new Label("Loading items. Please wait."));
 
     private Map<CheckBox, Item> comboBoxItems;
+    private Site site;
 
     public CreateAnnualSchedulePane(Pane parent) {
         this.parent = parent;
@@ -81,6 +83,7 @@ public class CreateAnnualSchedulePane extends VBox {
                     Console.log("Error while reading scheduled items.", error);
                 })
                 .onSuccess(resourceConfigurations -> {
+                    site = resourceConfigurations.iterator().next().getSite();
                     comboBoxItems = new LinkedHashMap<>();
                     List<Item> sortedItems = resourceConfigurations.stream()
                             .map(ResourceConfiguration::getItem)
@@ -105,6 +108,8 @@ public class CreateAnnualSchedulePane extends VBox {
         if (toDate == null) {
             return;
         }
+
+        // TODO validate from date if before to date
 
         List<Item> selectedItems = getSelectedItems();
         if (selectedItems.isEmpty()) {
@@ -173,7 +178,43 @@ public class CreateAnnualSchedulePane extends VBox {
     }
 
     private void createAnnualSchedule(LocalDate fromDate, LocalDate toDate, List<Item> selectedItems) {
-        // TODO create ScheduledItem for each Item for each date for which one does not exist
+        String commaSeparatedItemIds = selectedItems.stream()
+                .map(si -> si.getId().getPrimaryKey().toString())
+                .collect(Collectors.joining(","));
+
+        DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
+        EntityStore.create(dataSourceModel).<ScheduledItem>executeQuery("select item.id, max(date) as date, available, online, resource from ScheduledItem si where item.id in (" + commaSeparatedItemIds + ") group by item.id, available, online, resource")
+                .onFailure(error -> {
+                    Console.log("Error while reading scheduled items.", error);
+                })
+                .onSuccess(scheduledItemsWithLatestDates -> {
+                    createAnnualSchedule(fromDate, toDate, selectedItems, scheduledItemsWithLatestDates);
+                });
+    }
+
+    private void createAnnualSchedule(LocalDate fromDate, LocalDate toDate, List<Item> selectedItems, List<ScheduledItem> scheduledItemsWithLatestDates) {
+        UpdateStore updateStore = UpdateStore.createAbove(selectedItems.iterator().next().getStore());
+
+        // Create ScheduledItem for each Item for each date for which one does not exist
+        for (Item item : selectedItems) {
+            ScheduledItem scheduledItemWithLatestDate = scheduledItemsWithLatestDates.stream()
+                    .filter(scheduledItem -> scheduledItem.getItem().equals(item))
+                    .sorted((scheduledItem1, scheduledItem2) -> scheduledItem2.getDate().compareTo(scheduledItem1.getDate()))
+                    .findFirst()
+                    .orElseGet(() -> null);
+            for (LocalDate date = fromDate; date.isBefore(toDate); date = date.plusDays(1)) {
+                ScheduledItem scheduledItem = updateStore.insertEntity(ScheduledItem.class);
+                scheduledItem.setItem(item);
+                scheduledItem.setDate(date);
+                scheduledItem.setSite(site);
+                Boolean available = scheduledItemWithLatestDate != null ? scheduledItemWithLatestDate.getBooleanFieldValue("available") : true;
+                Boolean online = scheduledItemWithLatestDate != null ? scheduledItemWithLatestDate.getBooleanFieldValue("online") : true;
+                Boolean resource = scheduledItemWithLatestDate != null ? scheduledItemWithLatestDate.getBooleanFieldValue("resource") : true;
+                scheduledItem.setFieldValue("available", available);
+                scheduledItem.setFieldValue("online", online);
+                scheduledItem.setFieldValue("resource", resource);
+            }
+        }
 
         // TODO create ScheduleResource for each Item for each date for which one does not exist
     }
