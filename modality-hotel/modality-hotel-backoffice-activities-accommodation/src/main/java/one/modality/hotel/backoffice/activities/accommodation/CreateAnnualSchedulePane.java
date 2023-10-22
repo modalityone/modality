@@ -207,7 +207,10 @@ public class CreateAnnualSchedulePane extends VBox {
                     .findFirst()
                     .orElseGet(() -> null);
             for (LocalDate date = fromDate; date.isBefore(toDate); date = date.plusDays(1)) {
-                // TODO check no record exists for this date
+                if (scheduledItemWithLatestDate != null && !date.isAfter(scheduledItemWithLatestDate.getDate())) {
+                    // Check no record exists for this date
+                    continue;
+                }
                 ScheduledItem scheduledItem = updateStore.insertEntity(ScheduledItem.class);
                 scheduledItem.setItem(item);
                 scheduledItem.setDate(date);
