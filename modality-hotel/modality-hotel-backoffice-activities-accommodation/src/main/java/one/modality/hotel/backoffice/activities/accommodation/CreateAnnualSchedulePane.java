@@ -21,9 +21,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.FontWeight;
 import one.modality.base.shared.entities.*;
-import one.modality.base.shared.entities.markers.EntityHasDate;
 import one.modality.base.shared.entities.markers.EntityHasName;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
+import one.modality.hotel.backoffice.accommodation.ResourceConfigurationLoader;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -35,6 +35,7 @@ public class CreateAnnualSchedulePane extends VBox {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-uu");
 
+    private final ResourceConfigurationLoader resourceConfigurationLoader;
     private final Pane parent;
     private final TextField toDateTextField;
     private final TextField fromDateTextField;
@@ -43,8 +44,9 @@ public class CreateAnnualSchedulePane extends VBox {
     private Map<CheckBox, Item> comboBoxItems;
     private Site site;
 
-    public CreateAnnualSchedulePane(Pane parent) {
+    public CreateAnnualSchedulePane(Pane parent, ResourceConfigurationLoader resourceConfigurationLoader) {
         this.parent = parent;
+        this.resourceConfigurationLoader = resourceConfigurationLoader;
         setPadding(new Insets(16));
         Label headingLabel = new Label("Create Annual Schedule");
         headingLabel.setFont(TextTheme.getFont(FontDef.font(FontWeight.BOLD, 14)));
@@ -199,32 +201,49 @@ public class CreateAnnualSchedulePane extends VBox {
     private void createAnnualSchedule(LocalDate fromDate, LocalDate toDate, List<Item> selectedItems, List<ScheduledItem> scheduledItemsWithLatestDates) {
         UpdateStore updateStore = UpdateStore.createAbove(selectedItems.iterator().next().getStore());
 
-        // Create ScheduledItem for each Item for each date for which one does not exist
         for (Item item : selectedItems) {
             ScheduledItem scheduledItemWithLatestDate = scheduledItemsWithLatestDates.stream()
                     .filter(scheduledItem -> scheduledItem.getItem().equals(item))
                     .sorted((scheduledItem1, scheduledItem2) -> scheduledItem2.getDate().compareTo(scheduledItem1.getDate()))
                     .findFirst()
                     .orElseGet(() -> null);
+
+            Boolean available = scheduledItemWithLatestDate != null ? scheduledItemWithLatestDate.getBooleanFieldValue("available") : true;
+            Boolean online = scheduledItemWithLatestDate != null ? scheduledItemWithLatestDate.getBooleanFieldValue("online") : true;
+            Boolean resource = scheduledItemWithLatestDate != null ? scheduledItemWithLatestDate.getBooleanFieldValue("resource") : true;
+
             for (LocalDate date = fromDate; date.isBefore(toDate); date = date.plusDays(1)) {
                 if (scheduledItemWithLatestDate != null && !date.isAfter(scheduledItemWithLatestDate.getDate())) {
                     // Check no record exists for this date
                     continue;
                 }
+                // Create ScheduledItem for each Item for each date for which one does not exist
                 ScheduledItem scheduledItem = updateStore.insertEntity(ScheduledItem.class);
                 scheduledItem.setItem(item);
                 scheduledItem.setDate(date);
                 scheduledItem.setSite(site);
-                Boolean available = scheduledItemWithLatestDate != null ? scheduledItemWithLatestDate.getBooleanFieldValue("available") : true;
-                Boolean online = scheduledItemWithLatestDate != null ? scheduledItemWithLatestDate.getBooleanFieldValue("online") : true;
-                Boolean resource = scheduledItemWithLatestDate != null ? scheduledItemWithLatestDate.getBooleanFieldValue("resource") : true;
+
                 scheduledItem.setFieldValue("available", available);
                 scheduledItem.setFieldValue("online", online);
                 scheduledItem.setFieldValue("resource", resource);
+
+                // Create ScheduleResource for each Item for each date for which one does not exist
+                for (ResourceConfiguration rc : resourceConfigurationLoader.getResourceConfigurations()) {
+                    if (!selectedItems.contains(rc.getItem())) {
+                        continue;
+                    }
+                    ScheduledResource scheduledResource = updateStore.insertEntity(ScheduledResource.class);
+                    scheduledResource.setAvailable(available);
+                    scheduledResource.setFieldValue("clean", true);
+                    scheduledResource.setResourceConfiguration(rc);
+                    scheduledResource.setDate(date);
+                    scheduledResource.setMax(rc.getMax());
+                    scheduledResource.setOnline(online);
+                }
             }
         }
-
-        // TODO create ScheduleResource for each Item for each date for which one does not exist
+        updateStore.submitChanges();
+        showMsg("Annual schedule created.");
     }
 
 }
