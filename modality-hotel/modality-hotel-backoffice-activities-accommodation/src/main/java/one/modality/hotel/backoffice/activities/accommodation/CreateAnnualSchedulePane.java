@@ -109,7 +109,10 @@ public class CreateAnnualSchedulePane extends VBox {
             return;
         }
 
-        // TODO validate from date if before to date
+        if (!toDate.isAfter(fromDate)) {
+            showMsg("\"To\" date " + toDateTextField.getText() + " is not after \"from\" date " + fromDateTextField.getText() + ".\n\nAnnual schedule not created.");
+            return;
+        }
 
         List<Item> selectedItems = getSelectedItems();
         if (selectedItems.isEmpty()) {
