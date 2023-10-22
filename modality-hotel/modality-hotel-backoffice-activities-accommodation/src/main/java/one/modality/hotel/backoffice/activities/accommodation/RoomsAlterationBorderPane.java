@@ -68,7 +68,7 @@ class RoomsAlterationBorderPane {
 
         Button createAnnualScheduleButton = new Button("Create annual schedule");
         createAnnualScheduleButton.setOnAction(e -> {
-            CreateAnnualSchedulePane createAnnualSchedulePane = new CreateAnnualSchedulePane(borderPane);
+            CreateAnnualSchedulePane createAnnualSchedulePane = new CreateAnnualSchedulePane(borderPane, roomsAlterationView.getResourceConfigurationLoader());
             DialogContent dialogContent = new DialogContent().setContent(createAnnualSchedulePane);
             DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, borderPane);
             DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {

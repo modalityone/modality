@@ -121,4 +121,8 @@ public class RoomsAlterationView {
         DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, (Pane) scrollPane.getParent());
         DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> dialogCallback.closeDialog());
     }
+
+    public ResourceConfigurationLoader getResourceConfigurationLoader() {
+        return resourceConfigurationLoader;
+    }
 }
