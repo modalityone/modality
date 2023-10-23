@@ -59,6 +59,11 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
         UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials) userCredentials;
         String username = usernamePasswordCredentials.getUsername();
         String password = usernamePasswordCredentials.getPassword();
+        if (username == null || password == null)
+            return Future.failedFuture("Username and password must be non-null");
+        username = username.trim(); // Ignoring leading and tailing spaces in username
+        if (username.contains("@")) // If username is an email address, it shouldn't be case-sensitive
+            username = username.toLowerCase(); // emails are stored in lowercase in the database
         String encryptedPassword;
         try {
             encryptedPassword = encryptPassword(username, password);
