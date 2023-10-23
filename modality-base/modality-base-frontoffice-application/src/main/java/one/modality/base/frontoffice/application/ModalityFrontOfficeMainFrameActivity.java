@@ -159,8 +159,11 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
         ScalePane scalePane = new ScalePane(button);
         scalePane.setStretchWidth(true);
         scalePane.setStretchHeight(true);
-        if (OperatingSystem.isMobile())
+        /* Commented as this is not good for mobiles other than iPad
+        // Adding some bottom padding due to the iPad bar overlay at the bottom
+        if (OperatingSystem.isMobile()) // Should we implement OperatingSystem.isIPad()?
             scalePane.setPadding(new Insets(0, 0, 10, 0));
+        */
         return scalePane;
     }
 
