@@ -22,8 +22,14 @@ module modality.base.backoffice.mainframe.activity {
     requires webfx.kit.util;
     requires webfx.platform.conf;
     requires webfx.platform.resource;
+    requires webfx.platform.scheduler;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
+    requires webfx.stack.com.bus;
+    requires webfx.stack.com.bus.call;
+    requires webfx.stack.com.bus.client;
+    requires webfx.stack.i18n;
+    requires webfx.stack.session.state.client.fx;
 
     // Exported packages
     exports one.modality.base.backoffice.activities.mainframe;
