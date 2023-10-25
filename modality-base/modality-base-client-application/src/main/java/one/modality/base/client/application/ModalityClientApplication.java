@@ -1,28 +1,18 @@
 package one.modality.base.client.application;
 
+import dev.webfx.extras.util.scene.SceneUtil;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.scene.DeviceSceneUtil;
+import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
+import dev.webfx.stack.orm.domainmodel.activity.viewdomain.ViewDomainActivityContext;
+import dev.webfx.stack.routing.activity.ActivityManager;
 import javafx.application.Application;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import dev.webfx.extras.imagestore.ImageStore;
-import dev.webfx.stack.routing.activity.ActivityManager;
-import dev.webfx.stack.orm.domainmodel.activity.viewdomain.ViewDomainActivityContext;
-import dev.webfx.extras.util.scene.SceneUtil;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
-import dev.webfx.kit.launcher.WebFxKitLauncher;
-import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.platform.uischeduler.UiScheduler;
-import dev.webfx.stack.com.bus.call.PendingBusCall;
-
-import java.util.function.Consumer;
 
 /**
  * @author Bruno Salmon
@@ -50,16 +40,16 @@ public class ModalityClientApplication extends Application {
         double height = screenVisualBounds.getHeight() * 0.9;
         Scene scene = DeviceSceneUtil.newScene(root, width, height);
         scene.getStylesheets().addAll("one/modality/base/client/css/modality.css");
-        //root.centerProperty().bind(modalityClientActivity.nodeProperty()); //
         scene.rootProperty().bind(FXProperties.compute(modalityClientStarterActivity.nodeProperty(), n -> (Parent) n));
         // Activating focus owner auto scroll
         SceneUtil.installSceneFocusOwnerAutoScroll(scene);
         primaryStage.setScene(scene);
         primaryStage.show();
-        setLoadingSpinnerVisibleConsumer(this::setLoadingSpinnerVisible);
+        // Commented Spinner, as the backoffice status bas has now its own indicators
+        //setLoadingSpinnerVisibleConsumer(this::setLoadingSpinnerVisible);
     }
 
-    private static void setLoadingSpinnerVisibleConsumer(Consumer<Boolean> consumer) {
+    /*private static void setLoadingSpinnerVisibleConsumer(Consumer<Boolean> consumer) {
         consumeInUiThread(FXProperties.compute(PendingBusCall.pendingCallsCountProperty(), pendingCallsCount -> pendingCallsCount > 0)
                 , consumer);
     }
@@ -88,5 +78,5 @@ public class ModalityClientApplication extends Application {
                 rootPane.getChildren().add(spinner);
             }
         }
-    }
+    }*/
 }
