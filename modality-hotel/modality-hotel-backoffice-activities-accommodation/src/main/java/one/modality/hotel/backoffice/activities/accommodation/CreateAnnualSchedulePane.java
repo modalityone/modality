@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 public class CreateAnnualSchedulePane extends VBox {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-uu");
+    private static final int MAX_INSERTS_PER_TRANSACTION = 10;
 
     private final ResourceConfigurationLoader resourceConfigurationLoader;
     private final Pane parent;
@@ -200,6 +201,7 @@ public class CreateAnnualSchedulePane extends VBox {
 
     private void createAnnualSchedule(LocalDate fromDate, LocalDate toDate, List<Item> selectedItems, List<ScheduledItem> scheduledItemsWithLatestDates) {
         UpdateStore updateStore = UpdateStore.createAbove(selectedItems.iterator().next().getStore());
+        int numEntitiesInserted = 0;
 
         for (Item item : selectedItems) {
             ScheduledItem scheduledItemWithLatestDate = scheduledItemsWithLatestDates.stream()
@@ -222,10 +224,18 @@ public class CreateAnnualSchedulePane extends VBox {
                 scheduledItem.setItem(item);
                 scheduledItem.setDate(date);
                 scheduledItem.setSite(site);
-
                 scheduledItem.setFieldValue("available", available);
                 scheduledItem.setFieldValue("online", online);
                 scheduledItem.setFieldValue("resource", resource);
+
+                numEntitiesInserted++;
+                if (numEntitiesInserted >= MAX_INSERTS_PER_TRANSACTION) {
+                    // Submit changes to the database each time a maximum number of insertions have been performed.
+                    // This is to prevent a web socket issue caused by the submitted text frame exceeding the buffer size.
+                    updateStore.submitChanges();
+                    updateStore = UpdateStore.createAbove(selectedItems.iterator().next().getStore());
+                    numEntitiesInserted = 0;
+                }
 
                 // Create ScheduleResource for each Item for each date for which one does not exist
                 for (ResourceConfiguration rc : resourceConfigurationLoader.getResourceConfigurations()) {
@@ -239,6 +249,15 @@ public class CreateAnnualSchedulePane extends VBox {
                     scheduledResource.setDate(date);
                     scheduledResource.setMax(rc.getMax());
                     scheduledResource.setOnline(online);
+
+                    numEntitiesInserted++;
+                    if (numEntitiesInserted >= MAX_INSERTS_PER_TRANSACTION) {
+                        // Submit changes to the database each time a maximum number of insertions have been performed.
+                        // This is to prevent a web socket issue caused by the submitted text frame exceeding the buffer size.
+                        updateStore.submitChanges();
+                        updateStore = UpdateStore.createAbove(selectedItems.iterator().next().getStore());
+                        numEntitiesInserted = 0;
+                    }
                 }
             }
         }
