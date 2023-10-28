@@ -212,7 +212,7 @@ public class CreateAnnualSchedulePane extends VBox {
             Boolean online = scheduledItemWithLatestDate != null ? scheduledItemWithLatestDate.getBooleanFieldValue("online") : true;
             Boolean resource = scheduledItemWithLatestDate != null ? scheduledItemWithLatestDate.getBooleanFieldValue("resource") : true;
 
-            for (LocalDate date = fromDate; date.isBefore(toDate); date = date.plusDays(1)) {
+            for (LocalDate date = fromDate; !date.isAfter(toDate); date = date.plusDays(1)) {
                 if (scheduledItemWithLatestDate != null && !date.isAfter(scheduledItemWithLatestDate.getDate())) {
                     // Check no record exists for this date
                     continue;
@@ -229,7 +229,7 @@ public class CreateAnnualSchedulePane extends VBox {
 
                 // Create ScheduleResource for each Item for each date for which one does not exist
                 for (ResourceConfiguration rc : resourceConfigurationLoader.getResourceConfigurations()) {
-                    if (!selectedItems.contains(rc.getItem())) {
+                    if (!item.equals(rc.getItem())) {
                         continue;
                     }
                     ScheduledResource scheduledResource = updateStore.insertEntity(ScheduledResource.class);
