@@ -12,7 +12,6 @@ module modality.base.frontoffice.application {
     requires webfx.extras.panes;
     requires webfx.kit.util;
     requires webfx.platform.conf;
-    requires webfx.platform.os;
     requires webfx.platform.util;
     requires webfx.stack.i18n;
     requires webfx.stack.ui.action;
