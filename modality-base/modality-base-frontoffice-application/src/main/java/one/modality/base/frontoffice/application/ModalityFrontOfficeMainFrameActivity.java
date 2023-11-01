@@ -1,9 +1,8 @@
 package one.modality.base.frontoffice.application;
 
-import dev.webfx.extras.panes.FlexPane;
+import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.platform.os.OperatingSystem;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter;
@@ -141,7 +140,7 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
             double maxPrefWidth = java.util.Arrays.stream(buttons).mapToDouble(b -> b.prefWidth(-1)).max().orElse(-1);
             setButtonPrefWidth(buttons, maxPrefWidth);
         }, Arrays.map(buttons, Labeled::textProperty, StringProperty[]::new));
-        return new FlexPane(Arrays.map(buttons, ModalityFrontOfficeMainFrameActivity::scaleButton, Node[]::new));
+        return new ColumnsPane(Arrays.map(buttons, ModalityFrontOfficeMainFrameActivity::scaleButton, Node[]::new));
     }
 
     private Button createRouteButton(Action routeAction) {
@@ -149,8 +148,6 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
         button.setContentDisplay(ContentDisplay.TOP);
         button.setTextFill(Color.web("#838788")); // Same color as SVG
         button.setCursor(Cursor.HAND);
-        if (OperatingSystem.isMobile())
-            button.setPadding(new Insets(0, 0, 10, 0));
         ActionBinder.bindButtonToAction(button, routeAction);
         return button;
     }
