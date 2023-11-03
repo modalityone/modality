@@ -20,6 +20,7 @@ module modality.base.frontoffice.activity.account.plugin {
     requires webfx.platform.resource;
     requires webfx.platform.windowhistory;
     requires webfx.stack.i18n;
+    requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.entity.controls;
     requires webfx.stack.routing.router.client;

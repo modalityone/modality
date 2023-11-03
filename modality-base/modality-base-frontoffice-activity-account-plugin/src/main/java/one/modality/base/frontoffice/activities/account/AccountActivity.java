@@ -2,15 +2,15 @@ package one.modality.base.frontoffice.activities.account;
 
 import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.util.layout.LayoutUtil;
-import dev.webfx.stack.i18n.I18n;
+import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import one.modality.base.frontoffice.operations.routes.account.RouteToAccountFriendsAndFamilyRequest;
 import one.modality.base.frontoffice.operations.routes.account.RouteToAccountPersonalInformationRequest;
 import one.modality.base.frontoffice.operations.routes.account.RouteToAccountSettingsRequest;
@@ -70,13 +70,15 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
 
     private Node createRow(String title, String subtitle, String svgPath, Supplier<RoutePushRequest> requestSupplier) {
         Node icon = GeneralUtility.createSVGIcon(svgPath);
-        Text titleText = I18n.bindI18nProperties(new Text(), title);
-        Text subtitleText = I18n.bindI18nProperties(new Text(), subtitle);
+        Label titleLabel = I18nControls.bindI18nProperties(new Label(), title);
+        titleLabel.setWrapText(true);
+        Label subtitleLabel = I18nControls.bindI18nProperties(new Label(), subtitle);
+        subtitleLabel.setWrapText(true);
 
-        subtitleText.setOpacity(0.3d);
+        subtitleLabel.setOpacity(0.3d);
 
         Node row = GeneralUtility.createHList(10, 10,
-                icon, GeneralUtility.createVList(2, 0, titleText, subtitleText)
+                icon, GeneralUtility.createVList(2, 0, titleLabel, subtitleLabel)
         );
 
         row.setOnMouseClicked(e -> executeOperation(requestSupplier.get()));
