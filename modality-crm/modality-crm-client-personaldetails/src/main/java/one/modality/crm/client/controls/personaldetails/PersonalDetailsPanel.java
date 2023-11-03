@@ -1,8 +1,9 @@
 package one.modality.crm.client.controls.personaldetails;
 
 import dev.webfx.extras.materialdesign.textfield.MaterialTextFieldPane;
+import dev.webfx.extras.panes.FlexColumnPane;
 import dev.webfx.extras.panes.MonoPane;
-import dev.webfx.extras.panes.PrefRatioBorderPane;
+import dev.webfx.extras.panes.ScalableBorderPane;
 import dev.webfx.extras.type.PrimType;
 import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.util.layout.LayoutUtil;
@@ -89,6 +90,7 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
     private final MonoPane switchButton;
     private Runnable previousSceneCancelAccelerator;
     private Runnable closeHook;
+    private boolean validationEnabled;
     protected final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
     private boolean validationSupportInitialised;
 
@@ -99,7 +101,7 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
 
     public PersonalDetailsPanel(DataSourceModel dataSourceModel, ButtonSelectorParameters buttonSelectorParameters) {
         this.parameters = buttonSelectorParameters;
-        container = new PrefRatioBorderPane();
+        container = new ScalableBorderPane();
         if (buttonSelectorParameters.getDropParent() == null)
             buttonSelectorParameters.setDropParent(container);
         buttonSelectorParameters.checkValid();
@@ -150,6 +152,10 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         });
     }
 
+    public void setValidationEnabled(boolean validationEnabled) {
+        this.validationEnabled = validationEnabled;
+    }
+
     public void setEntity(EntityHasPersonalDetails entity) {
         this.entity = entity;
         if (entity != null) {
@@ -192,7 +198,7 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
     }
 
     private void save() {
-        if (isEditable() && isValid()) {
+        if (isEditable() && (!validationEnabled || isValid())) {
             syncModelFromUi(updatingEntity);
             if (updateStore.hasChanges()) {
                 updateStore.submitChanges()
@@ -290,7 +296,11 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
     }
 
     private void updatePanelBody() {
-        container.setCenter(createPanelBody());
+        Node panelBody = createPanelBody();
+        // Adding left & right margins (it's mainly to prevent an overflow of the borders of the country & organization
+        // buttons due to a WebFX issue with borders mapping in the browsers).
+        BorderPane.setMargin(panelBody, new Insets(0, 5, 5, 5));
+        container.setCenter(panelBody);
     }
 
     private Node createPanelBody() {
@@ -340,11 +350,9 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         return LayoutUtil.setPadding(gridPane, 10, 18);
     }
 
-/*
     private Node createPersonFlexColumnPane() {
         return new FlexColumnPane(materialChildren());
     }
-*/
 
     protected Node[] materialChildren() {
         return Arrays.nonNulls(Node[]::new,
@@ -467,12 +475,14 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         return LocalDate.now();
     }
 
-    public static void editPersonalDetails(EntityHasPersonalDetails person, ButtonSelectorParameters buttonSelectorParameters) {
-        editPersonalDetails(person, buttonSelectorParameters, null);
+    public static void editPersonalDetails(EntityHasPersonalDetails person, boolean validationEnabled, ButtonSelectorParameters buttonSelectorParameters) {
+        editPersonalDetails(person, validationEnabled, buttonSelectorParameters, null);
     }
 
-    public static void editPersonalDetails(EntityHasPersonalDetails person, ButtonSelectorParameters buttonSelectorParameters, Runnable closeHook) {
-        editPersonalDetails(new PersonalDetailsPanel(person, buttonSelectorParameters), buttonSelectorParameters.getDialogParent(), closeHook);
+    public static void editPersonalDetails(EntityHasPersonalDetails person, boolean validationEnabled, ButtonSelectorParameters buttonSelectorParameters, Runnable closeHook) {
+        PersonalDetailsPanel details = new PersonalDetailsPanel(person, buttonSelectorParameters);
+        details.setValidationEnabled(validationEnabled);
+        editPersonalDetails(details, buttonSelectorParameters.getDialogParent(), closeHook);
     }
 
     protected static void editPersonalDetails(PersonalDetailsPanel details, Pane parent) {
