@@ -18,6 +18,7 @@ public class AccountPersonalInformationActivity extends ViewDomainActivityBase i
     public Node buildUi() {
         Person person = FXUserPerson.getUserPerson();
         PersonalDetailsPanel details = new PersonalDetailsPanel(person, new ButtonSelectorParameters().setButtonFactory(this).setDialogParentGetter(FXMainFrameDialogArea::getDialogArea));
+        details.setValidationEnabled(true);
         return ControlUtil.createScalableVerticalScrollPane(details.getContainer(), true);
     }
 }

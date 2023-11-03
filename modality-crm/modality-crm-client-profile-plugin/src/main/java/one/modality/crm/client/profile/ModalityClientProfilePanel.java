@@ -69,7 +69,7 @@ final class ModalityClientProfilePanel {
                 identityLink.setText(userPerson.getFullName());
                 identityLink.setOnAction(e -> {
                     FXProfile.hideProfilePanel();
-                    PersonalDetailsPanel.editPersonalDetails(userPerson, new ButtonSelectorParameters().setButtonFactory(buttonFactoryMixin).setDialogParent(FXMainFrameDialogArea.getDialogArea()));
+                    PersonalDetailsPanel.editPersonalDetails(userPerson, true, new ButtonSelectorParameters().setButtonFactory(buttonFactoryMixin).setDialogParent(FXMainFrameDialogArea.getDialogArea()));
                 });
                 // If there is no organization selected by the user (which happens on very first login), then we set it to its affiliated organization by default
                 if (FXOrganization.getOrganization() == null
