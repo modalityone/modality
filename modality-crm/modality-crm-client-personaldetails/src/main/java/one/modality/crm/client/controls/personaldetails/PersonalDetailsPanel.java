@@ -304,7 +304,7 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
     }
 
     private Node createPanelBody() {
-        return createPerson2ColumnsBox(); // isEditable() ? createPerson2ColumnsBox() /*createPersonGridPane()*/ : createPersonVisualGrid();
+        return createPersonFlexColumnPane(); // isEditable() ? createPerson2ColumnsBox() /*createPersonGridPane()*/ : createPersonVisualGrid();
     }
 
     protected GridPane createPersonGridPane() {
