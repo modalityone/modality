@@ -33,7 +33,7 @@ public class AnnualScheduleDatabaseWriter {
             itemDatesToInsert.put(item, new ArrayList<>());
 
             ResourceConfigurationDates resourceConfigurationDates = new ResourceConfigurationDates(item);
-            ScheduledItem latestScheduledItem = latestScheduledItem(item, scheduledItemsWithLatestDates);
+            ScheduledItem latestScheduledItem = latestScheduledItem(item);
             for (LocalDate date = fromDate; !date.isAfter(toDate); date = date.plusDays(1)) {
                 if (latestScheduledItem != null && !date.isAfter(latestScheduledItem.getDate())) {
                     // Check no record exists for this date
@@ -95,6 +95,7 @@ public class AnnualScheduleDatabaseWriter {
                     updateStore.submitChanges()
                             .onFailure(Console::log)
                             .onSuccess(result -> continueSaving());
+                    return;
                 }
             }
             itemDatesToInsert.remove(entry.getKey());
@@ -122,7 +123,7 @@ public class AnnualScheduleDatabaseWriter {
                     scheduledResource.setDate(date);
                     scheduledResource.setMax(rc.getMax());
                     scheduledResource.setOnline(online);
-                    //scheduledResource.setForeignField("scheduled_item_id", scheduledItem);
+                    scheduledResource.setForeignField("scheduledItem", scheduledItem);
 
                     entry.getValue().remove(date);
 
@@ -131,12 +132,17 @@ public class AnnualScheduleDatabaseWriter {
                         updateStore.submitChanges()
                                 .onFailure(Console::log)
                                 .onSuccess(result -> continueSaving());
+                        return;
                     }
                 }
                 resourceConfigurationDates.dates.remove(entry.getKey());
             }
             resourceConfigurationDatesToInsert.remove(resourceConfigurationDates);
         }
+
+        updateStore.submitChanges()
+                .onFailure(Console::log)
+                .onSuccess(result -> System.out.println("Finished.\n" + result));
     }
 
     private ScheduledItem latestScheduledItem(Item item) {
