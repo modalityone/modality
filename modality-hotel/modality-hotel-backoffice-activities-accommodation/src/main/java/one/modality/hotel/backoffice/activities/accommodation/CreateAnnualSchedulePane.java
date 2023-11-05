@@ -195,74 +195,10 @@ public class CreateAnnualSchedulePane extends VBox {
                     Console.log("Error while reading scheduled items.", error);
                 })
                 .onSuccess(scheduledItemsWithLatestDates -> {
-                    createAnnualSchedule(fromDate, toDate, selectedItems, scheduledItemsWithLatestDates);
+                    UpdateStore updateStore = UpdateStore.createAbove(selectedItems.iterator().next().getStore());
+                    AnnualScheduleDatabaseWriter writer = new AnnualScheduleDatabaseWriter(site, fromDate, toDate, selectedItems, scheduledItemsWithLatestDates, resourceConfigurationLoader);
+                    writer.saveToUpdateStore(updateStore);
                 });
-    }
-
-    private void createAnnualSchedule(LocalDate fromDate, LocalDate toDate, List<Item> selectedItems, List<ScheduledItem> scheduledItemsWithLatestDates) {
-        UpdateStore updateStore = UpdateStore.createAbove(selectedItems.iterator().next().getStore());
-        int numEntitiesInserted = 0;
-
-        for (Item item : selectedItems) {
-            ScheduledItem scheduledItemWithLatestDate = scheduledItemsWithLatestDates.stream()
-                    .filter(scheduledItem -> scheduledItem.getItem().equals(item))
-                    .sorted((scheduledItem1, scheduledItem2) -> scheduledItem2.getDate().compareTo(scheduledItem1.getDate()))
-                    .findFirst()
-                    .orElseGet(() -> null);
-
-            Boolean available = scheduledItemWithLatestDate != null ? scheduledItemWithLatestDate.getBooleanFieldValue("available") : true;
-            Boolean online = scheduledItemWithLatestDate != null ? scheduledItemWithLatestDate.getBooleanFieldValue("online") : true;
-            Boolean resource = scheduledItemWithLatestDate != null ? scheduledItemWithLatestDate.getBooleanFieldValue("resource") : true;
-
-            for (LocalDate date = fromDate; !date.isAfter(toDate); date = date.plusDays(1)) {
-                if (scheduledItemWithLatestDate != null && !date.isAfter(scheduledItemWithLatestDate.getDate())) {
-                    // Check no record exists for this date
-                    continue;
-                }
-                // Create ScheduledItem for each Item for each date for which one does not exist
-                ScheduledItem scheduledItem = updateStore.insertEntity(ScheduledItem.class);
-                scheduledItem.setItem(item);
-                scheduledItem.setDate(date);
-                scheduledItem.setSite(site);
-                scheduledItem.setFieldValue("available", available);
-                scheduledItem.setFieldValue("online", online);
-                scheduledItem.setFieldValue("resource", resource);
-
-                numEntitiesInserted++;
-                if (numEntitiesInserted >= MAX_INSERTS_PER_TRANSACTION) {
-                    // Submit changes to the database each time a maximum number of insertions have been performed.
-                    // This is to prevent a web socket issue caused by the submitted text frame exceeding the buffer size.
-                    updateStore.submitChanges();
-                    updateStore = UpdateStore.createAbove(selectedItems.iterator().next().getStore());
-                    numEntitiesInserted = 0;
-                }
-
-                // Create ScheduleResource for each Item for each date for which one does not exist
-                for (ResourceConfiguration rc : resourceConfigurationLoader.getResourceConfigurations()) {
-                    if (!item.equals(rc.getItem())) {
-                        continue;
-                    }
-                    ScheduledResource scheduledResource = updateStore.insertEntity(ScheduledResource.class);
-                    scheduledResource.setAvailable(available);
-                    scheduledResource.setFieldValue("clean", true);
-                    scheduledResource.setResourceConfiguration(rc);
-                    scheduledResource.setDate(date);
-                    scheduledResource.setMax(rc.getMax());
-                    scheduledResource.setOnline(online);
-
-                    numEntitiesInserted++;
-                    if (numEntitiesInserted >= MAX_INSERTS_PER_TRANSACTION) {
-                        // Submit changes to the database each time a maximum number of insertions have been performed.
-                        // This is to prevent a web socket issue caused by the submitted text frame exceeding the buffer size.
-                        updateStore.submitChanges();
-                        updateStore = UpdateStore.createAbove(selectedItems.iterator().next().getStore());
-                        numEntitiesInserted = 0;
-                    }
-                }
-            }
-        }
-        updateStore.submitChanges();
-        showMsg("Annual schedule created.");
     }
 
 }
