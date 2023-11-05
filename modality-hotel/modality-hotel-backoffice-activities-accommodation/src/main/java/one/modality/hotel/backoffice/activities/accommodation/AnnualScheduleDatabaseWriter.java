@@ -13,16 +13,16 @@ public class AnnualScheduleDatabaseWriter {
     private static final int MAX_INSERTS_PER_TRANSACTION = 5;
 
     private final Site site;
-    private final List<ScheduledItem> scheduledItemsWithLatestDates;
+    private final List<ScheduledItem> latestScheduledItems;
 
     private List<ResourceConfigurationDates> resourceConfigurationDatesToInsert;
     private Map<Item, List<LocalDate>> itemDatesToInsert;
     private Map<ItemDate, ScheduledItem> scheduledItemForDate = new HashMap<>();
     private UpdateStore updateStore;
 
-    public AnnualScheduleDatabaseWriter(Site site, LocalDate fromDate, LocalDate toDate, List<Item> selectedItems, List<ScheduledItem> scheduledItemsWithLatestDates, ResourceConfigurationLoader resourceConfigurationLoader) {
+    public AnnualScheduleDatabaseWriter(Site site, LocalDate fromDate, LocalDate toDate, List<Item> selectedItems, List<ScheduledItem> latestScheduledItems, ResourceConfigurationLoader resourceConfigurationLoader) {
         this.site = site;
-        this.scheduledItemsWithLatestDates = scheduledItemsWithLatestDates;
+        this.latestScheduledItems = latestScheduledItems;
         determineRecordsToInsert(fromDate, toDate, selectedItems, resourceConfigurationLoader);
     }
 
@@ -140,7 +140,7 @@ public class AnnualScheduleDatabaseWriter {
     }
 
     private ScheduledItem latestScheduledItem(Item item) {
-        return scheduledItemsWithLatestDates.stream()
+        return latestScheduledItems.stream()
                 .filter(scheduledItem -> scheduledItem.getItem().equals(item))
                 .sorted((scheduledItem1, scheduledItem2) -> scheduledItem2.getDate().compareTo(scheduledItem1.getDate()))
                 .findFirst()

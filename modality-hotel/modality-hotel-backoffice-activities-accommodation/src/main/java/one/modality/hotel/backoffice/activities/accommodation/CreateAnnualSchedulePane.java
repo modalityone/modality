@@ -193,9 +193,9 @@ public class CreateAnnualSchedulePane extends VBox {
                 .onFailure(error -> {
                     Console.log("Error while reading scheduled items.", error);
                 })
-                .onSuccess(scheduledItemsWithLatestDates -> {
+                .onSuccess(latestScheduledItems -> {
                     UpdateStore updateStore = UpdateStore.createAbove(selectedItems.iterator().next().getStore());
-                    AnnualScheduleDatabaseWriter writer = new AnnualScheduleDatabaseWriter(site, fromDate, toDate, selectedItems, scheduledItemsWithLatestDates, resourceConfigurationLoader);
+                    AnnualScheduleDatabaseWriter writer = new AnnualScheduleDatabaseWriter(site, fromDate, toDate, selectedItems, latestScheduledItems, resourceConfigurationLoader);
                     writer.saveToUpdateStore(updateStore);
                 });
     }
