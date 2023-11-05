@@ -1,69 +1,120 @@
 package one.modality.crm.client.controls.personaldetails;
 
 import dev.webfx.extras.materialdesign.textfield.MaterialTextFieldPane;
+import dev.webfx.extras.panes.FlexColumnPane;
+import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.panes.ScalableBorderPane;
 import dev.webfx.extras.type.PrimType;
+import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.extras.visual.SelectionMode;
 import dev.webfx.extras.visual.VisualColumn;
 import dev.webfx.extras.visual.VisualResultBuilder;
 import dev.webfx.extras.visual.VisualStyle;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.Booleans;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityStore;
+import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
-import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.stack.ui.dialog.DialogCallback;
+import dev.webfx.stack.ui.dialog.DialogUtil;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.SVGPath;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.validation.ModalityValidationSupport;
 import one.modality.base.shared.domainmodel.formatters.DateFormatter;
 import one.modality.base.shared.domainmodel.functions.AbcNames;
 import one.modality.base.shared.entities.Country;
-import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Organization;
 import one.modality.base.shared.entities.Person;
-import one.modality.base.shared.entities.markers.HasPersonalDetails;
-import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
+import one.modality.base.shared.entities.markers.EntityHasPersonalDetails;
 
 import java.time.LocalDate;
 
 /**
  * @author Bruno Salmon
  */
-public final class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
+public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
 
-    private static final int CHILD_MAX_AGE = 17;
+    protected static final int CHILD_MAX_AGE = 17;
 
-    private final Event event;
-    private final TextField firstNameTextField, lastNameTextField, carer1NameTextField, carer2NameTextField, emailTextField, phoneTextField, streetTextField, postCodeTextField, cityNameTextField;
-    private final RadioButton maleRadioButton, femaleRadioButton, childRadioButton, adultRadioButton;
-    private final HBox genderBox, ageBox;
-    private final DatePicker birthDatePicker;
-    private final EntityButtonSelector<Person> personSelector;
-    private final EntityButtonSelector<Country> countrySelector;
-    private final EntityButtonSelector<Organization> organizationSelector;
-    private final MaterialTextFieldPane personButton, countryButton, organizationButton;
-    private final BorderPane container;
-    private HasPersonalDetails model;
-    private boolean editable = true;
-    private final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
+    protected final TextField firstNameTextField, lastNameTextField, emailTextField, phoneTextField, streetTextField, postCodeTextField, cityNameTextField;
+    protected final RadioButton maleRadioButton, femaleRadioButton, childRadioButton, adultRadioButton;
+    protected final HBox genderBox, ageBox;
+    protected final DatePicker birthDatePicker;
+    protected final EntityButtonSelector<Country> countrySelector;
+    protected final EntityButtonSelector<Organization> organizationSelector;
+    protected final MaterialTextFieldPane countryButton, organizationButton;
+    protected final BorderPane container;
+    protected EntityHasPersonalDetails entity;
+    private EntityHasPersonalDetails updatingEntity;
+    private UpdateStore updateStore;
+    private final ButtonSelectorParameters parameters;
 
-    public PersonalDetailsPanel(Event event, ButtonFactoryMixin buttonFactoryMixin, Pane parent) {
-        this.event = event;
-        container = new BorderPane();
+    private final BooleanProperty editableProperty = new SimpleBooleanProperty(false) {
+        @Override
+        protected void invalidated() {
+            boolean editable = get();
+            if (editable) {
+                if (updateStore == null)
+                    updateStore = UpdateStore.createAbove(entity.getStore());
+                updatingEntity = updateStore.updateEntity(entity);
+            }
+            updateUiEditable();
+        }
+    };
+
+    private final Hyperlink updateLink = newHyperlink("Update", e -> setEditable(true));
+    private final Hyperlink saveLink = newHyperlink("Save", e -> save());
+    private final Hyperlink cancelLink = newHyperlink("Cancel", e -> cancel()); { cancelLink.setContentDisplay(ContentDisplay.TEXT_ONLY); }
+    private final Hyperlink closeLink = newHyperlink("Close", e -> close());
+    private final MonoPane switchButton;
+    private Runnable previousSceneCancelAccelerator;
+    private Runnable closeHook;
+    private boolean validationEnabled;
+    protected final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
+    private boolean validationSupportInitialised;
+
+    public PersonalDetailsPanel(EntityHasPersonalDetails entity, ButtonSelectorParameters buttonSelectorParameters) {
+        this(entity.getStore().getDataSourceModel(), buttonSelectorParameters);
+        setEntity(entity);
+    }
+
+    public PersonalDetailsPanel(DataSourceModel dataSourceModel, ButtonSelectorParameters buttonSelectorParameters) {
+        this.parameters = buttonSelectorParameters;
+        container = new ScalableBorderPane();
+        if (buttonSelectorParameters.getDropParent() == null)
+            buttonSelectorParameters.setDropParent(container);
+        buttonSelectorParameters.checkValid();
         Label topLabel = I18nControls.bindI18nProperties(new Label(), "YourPersonalDetails");
-        container.setTop(topLabel);
-        BorderPane.setMargin(topLabel, new Insets(5));
+        SVGPath switchIcon = new SVGPath();
+        switchIcon.setContent("M 2.2857143,10.285714 H 0 V 16 H 5.7142857 V 13.714286 H 2.2857143 Z M 0,5.7142857 H 2.2857143 V 2.2857143 H 5.7142857 V 0 H 0 Z M 13.714286,13.714286 H 10.285714 V 16 H 16 V 10.285714 H 13.714286 Z M 10.285714,0 v 2.2857143 h 3.428572 V 5.7142857 H 16 V 0 Z");
+        switchIcon.setFill(Color.GRAY);
+        switchButton = new MonoPane(switchIcon);
+        switchButton.setCursor(Cursor.HAND);
+        HBox top = new HBox(10, topLabel, LayoutUtil.createHGrowable(), updateLink, closeLink, saveLink, cancelLink, switchButton);
+        top.setAlignment(Pos.CENTER);
+        BorderPane.setMargin(top, new Insets(15, 15, 0, 15));
+        container.setTop(top);
         firstNameTextField = newMaterialTextField("FirstName");
         lastNameTextField = newMaterialTextField("LastName");
         maleRadioButton = newRadioButton("Male");
@@ -80,41 +131,115 @@ public final class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         ageBox = new HBox(20, adultRadioButton, childRadioButton);
         birthDatePicker = LayoutUtil.setMaxWidthToInfinite(new DatePicker());
         birthDatePicker.setConverter(DateFormatter.SINGLETON.toStringConverter());
-        carer1NameTextField = newMaterialTextField("Carer1");
-        carer2NameTextField = newMaterialTextField("Carer2");
         emailTextField = newMaterialTextField("Email");
         phoneTextField = newMaterialTextField("Phone");
         streetTextField = newMaterialTextField("Street");
         postCodeTextField = newMaterialTextField("Postcode");
         cityNameTextField = newMaterialTextField("City");
-        DataSourceModel dataSourceModel = event.getStore().getDataSourceModel();
-        countrySelector = createEntityButtonSelector("{class: 'Country', orderBy: 'name'}", buttonFactoryMixin, parent, dataSourceModel);
+        String countryJson = "{class: 'Country', orderBy: 'name'}";
+        if (WebFxKitLauncher.supportsSvgImageFormat())
+            countryJson = "{class: 'Country', orderBy: 'name', columns: [{expression: '[image(`images/s16/countries/svg/` + iso_alpha2 + `.svg`),name]'}] }";
+        countrySelector = createEntityButtonSelector(countryJson, dataSourceModel, buttonSelectorParameters);
         countryButton = countrySelector.toMaterialButton("Country");
-        organizationSelector = createEntityButtonSelector("{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name'}", buttonFactoryMixin, parent, dataSourceModel);
+        String organizationJson = "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name'}";
+        if (WebFxKitLauncher.supportsSvgImageFormat())
+            organizationJson = "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name', columns: [{expression: '[image(`images/s16/organizations/svg/` + (type=2 ? `kmc` : type=3 ? `kbc` : type=4 ? `branch` : `generic`) + `.svg`),name]'}] }";
+        organizationSelector = createEntityButtonSelector(organizationJson, dataSourceModel, buttonSelectorParameters);
         organizationButton = organizationSelector.toMaterialButton("Centre");
-        personSelector = PersonalDetailsPanel.<Person>createEntityButtonSelector("{class: 'Person', alias: 'p', fields: 'genderIcon,firstName,lastName,birthdate,email,phone,street,postCode,cityName,organization,country', columns: `[{expression: 'genderIcon,firstName,lastName'}]`, where: '!removed', orderBy: 'id'}", buttonFactoryMixin, parent, dataSourceModel)
-                .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> DqlStatement.where("frontendAccount=?", mup.getUserAccountId()))
-                .autoSelectFirstEntity()
-        ;
-        personButton = personSelector.toMaterialButton("PersonToBook");
-        personButton.visibleProperty().bind(FXModalityUserPrincipal.loggedInProperty());
-        FXProperties.runOnPropertiesChange(p -> syncUiFromModel((Person) p.getValue()), personSelector.selectedItemProperty());
-        initValidation();
+        SceneUtil.onSceneReady(getContainer(), scene -> {
+            previousSceneCancelAccelerator = SceneUtil.getCancelAccelerator(scene);
+            SceneUtil.setCancelAccelerator(scene, this::onCancelAccelerator);
+        });
     }
 
-    private void initValidation() {
+    public void setValidationEnabled(boolean validationEnabled) {
+        this.validationEnabled = validationEnabled;
+    }
+
+    public void setEntity(EntityHasPersonalDetails entity) {
+        this.entity = entity;
+        if (entity != null) {
+            EntityStore store = entity.getStore();
+            countrySelector.setLoadingStore(store);
+            organizationSelector.setLoadingStore(store);
+            UiScheduler.runInUiThread(() -> {
+                syncUiFromModel();
+                updateUiEditable();
+            });
+        }
+    }
+
+    public void enableBigViewButton(Runnable onSwitchBackRunnable) {
+        switchButton.setOnMouseClicked(e -> {
+            switchButton.setOnMouseClicked(null);
+            updateLinks();
+            editPersonalDetails(this, parameters.getDialogParent(), () -> {
+                onSwitchBackRunnable.run();
+                enableBigViewButton(onSwitchBackRunnable);
+                setCloseHook(null);
+            });
+        });
+        updateLinks();
+    }
+
+    protected void initValidation() {
         validationSupport.addRequiredInputs(firstNameTextField, lastNameTextField);
         validationSupport.addRequiredInput(maleRadioButton.getToggleGroup().selectedToggleProperty(), genderBox);
-        validationSupport.addRequiredInputs(emailTextField, phoneTextField, carer1NameTextField, carer2NameTextField);
+        validationSupport.addRequiredInputs(emailTextField, phoneTextField);
         validationSupport.addRequiredInput(countrySelector.selectedItemProperty(), countrySelector.getButton());
     }
 
     public boolean isValid() {
+        if (!validationSupportInitialised) {
+            initValidation();
+            validationSupportInitialised = true;
+        }
         return validationSupport.isValid();
     }
 
-    private static <T extends Entity> EntityButtonSelector<T> createEntityButtonSelector(Object jsonOrClass, ButtonFactoryMixin buttonFactory, Pane parent, DataSourceModel dataSourceModel) {
-        return new EntityButtonSelector<T>(jsonOrClass, buttonFactory, parent, dataSourceModel) {
+    private void save() {
+        if (isEditable() && (!validationEnabled || isValid())) {
+            syncModelFromUi(updatingEntity);
+            if (updateStore.hasChanges()) {
+                updateStore.submitChanges()
+                        .onFailure(dev.webfx.platform.console.Console::log)
+                        .onSuccess(submitResultBatch -> {
+                            syncModelFromUi(entity);
+                            setEditable(false);
+                        });
+            }
+        }
+    }
+
+    private void cancel() {
+        if (isEditable()) {
+            updateStore.cancelChanges();
+            syncUiFromModel(entity);
+            setEditable(false);
+        }
+    }
+
+    private void close() {
+        if (closeHook != null) {
+            SceneUtil.setCancelAccelerator(getContainer().getScene(), previousSceneCancelAccelerator);
+            closeHook.run();
+        }
+    }
+
+    public void setCloseHook(Runnable closeHook) {
+        this.closeHook = closeHook;
+        updateLinks();
+    }
+
+    private void onCancelAccelerator() {
+        if (isEditable())
+            cancel();
+        else
+            close();
+    }
+
+    protected static <T extends Entity> EntityButtonSelector<T> createEntityButtonSelector(Object jsonOrClass, DataSourceModel dataSourceModel, ButtonSelectorParameters buttonSelectorParameters) {
+        return new EntityButtonSelector<T>(jsonOrClass, dataSourceModel, buttonSelectorParameters) {
             @Override
             protected void setSearchParameters(String search, EntityStore store) {
                 super.setSearchParameters(search, store);
@@ -123,18 +248,32 @@ public final class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         };
     }
 
-    public void setLoadingStore(EntityStore store) {
-        countrySelector.setLoadingStore(store);
-        organizationSelector.setLoadingStore(store);
-    }
-
     public void setEditable(boolean editable) {
-        this.editable = editable;
-        updateUiEditable();
+        editableProperty.setValue(editable);
     }
 
-    private void updateUiEditable() {
-        boolean profileEditable = editable && (personSelector == null || personSelector.getSelectedItem() == null);
+    public boolean isEditable() {
+        return editableProperty.get();
+    }
+
+    private void updateLinks() {
+        boolean editable = isEditable();
+        updateLink.setVisible(!editable);
+        updateLink.setManaged(!editable);
+        closeLink.setVisible(!editable && closeHook != null);
+        closeLink.setManaged(!editable && closeHook != null);
+        saveLink.setVisible(editable);
+        saveLink.setManaged(editable);
+        cancelLink.setVisible(editable);
+        cancelLink.setManaged(editable);
+        switchButton.setVisible(switchButton.getOnMouseClicked() != null);
+        switchButton.setManaged(switchButton.getOnMouseClicked() != null);
+    }
+
+    protected void updateUiEditable() {
+        updateLinks();
+        boolean editable = isEditable();
+        boolean profileEditable = editable; // && (personSelector == null || personSelector.getSelectedItem() == null);
         boolean profileDisable = !profileEditable;
         firstNameTextField.setEditable(profileEditable);
         lastNameTextField.setEditable(profileEditable);
@@ -143,8 +282,6 @@ public final class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         adultRadioButton.setDisable(profileDisable);
         childRadioButton.setDisable(profileDisable);
         birthDatePicker.setEditable(profileEditable);
-        carer1NameTextField.setEditable(editable);
-        carer2NameTextField.setEditable(editable);
         emailTextField.setEditable(editable);
         phoneTextField.setEditable(editable);
         streetTextField.setEditable(editable);
@@ -159,25 +296,27 @@ public final class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
     }
 
     private void updatePanelBody() {
-        container.setCenter(createPanelBody());
+        Node panelBody = createPanelBody();
+        // Adding left & right margins (it's mainly to prevent an overflow of the borders of the country & organization
+        // buttons due to a WebFX issue with borders mapping in the browsers).
+        BorderPane.setMargin(panelBody, new Insets(0, 5, 5, 5));
+        container.setCenter(panelBody);
     }
 
     private Node createPanelBody() {
-        return editable ? createPersonVBox() /*createPersonGridPane()*/ : createPersonDataGrid();
+        return createPersonFlexColumnPane(); // isEditable() ? createPerson2ColumnsBox() /*createPersonGridPane()*/ : createPersonVisualGrid();
     }
 
-    private GridPane createPersonGridPane() {
+    protected GridPane createPersonGridPane() {
         GridPaneBuilder gridPaneBuilder = new GridPaneBuilder()
-                .addLabelNodeRow("PersonToBook:", personButton)
+                //.addLabelNodeRow("PersonToBook:", personButton)
                 .addLabelTextInputRow("FirstName:", firstNameTextField)
                 .addLabelTextInputRow("LastName:", lastNameTextField)
                 .addLabelNodeRow("Gender:", genderBox)
                 .addLabelNodeRow("Age:", ageBox);
         if (childRadioButton.isSelected())
             gridPaneBuilder
-                    .addLabelNodeRow("BirthDate:", birthDatePicker)
-                    .addLabelTextInputRow("Carer1:", carer1NameTextField)
-                    .addLabelTextInputRow("Carer2:", carer2NameTextField);
+                    .addLabelNodeRow("BirthDate:", birthDatePicker);
         GridPane gridPane = gridPaneBuilder
                 .addLabelTextInputRow("Email:", emailTextField)
                 .addLabelTextInputRow("Phone:", phoneTextField)
@@ -192,21 +331,36 @@ public final class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
     }
 
     private VBox createPersonVBox() {
-        VBox vBox = new VBox(3,
+        VBox vBox = new VBox(3, materialChildren());
+        return LayoutUtil.setPadding(vBox, 10, 18);
+    }
+
+    private Node createPerson2ColumnsBox() {
+        Node[] children = materialChildren();
+        int i1 = children.length / 2;
+        VBox vbox1 = new VBox(3, Arrays.subArray(Node[]::new, 0, i1, children));
+        VBox vbox2 = new VBox(3, Arrays.subArray(Node[]::new, i1, children.length, children));
+        GridPane gridPane = new GridPane();
+        ColumnConstraints columnConstraints = new ColumnConstraints();
+        columnConstraints.setPercentWidth(50);
+        gridPane.getColumnConstraints().setAll(columnConstraints, columnConstraints);
+        gridPane.add(vbox1, 0, 0);
+        gridPane.add(vbox2, 1, 0);
+        gridPane.setHgap(18);
+        return LayoutUtil.setPadding(gridPane, 10, 18);
+    }
+
+    private Node createPersonFlexColumnPane() {
+        return new FlexColumnPane(materialChildren());
+    }
+
+    protected Node[] materialChildren() {
+        return Arrays.nonNulls(Node[]::new,
                 firstNameTextField,
                 lastNameTextField,
                 newMaterialRegion(genderBox, "Gender"),
-                newMaterialRegion(ageBox, "Age")
-        );
-        if (personButton != null)
-            vBox.getChildren().add(0, LayoutUtil.setUnmanagedWhenInvisible(personButton));
-        if (childRadioButton.isSelected())
-            vBox.getChildren().addAll(
-                    newMaterialRegion(birthDatePicker, "BirthDate"),
-                    carer1NameTextField,
-                    carer2NameTextField
-            );
-        vBox.getChildren().addAll(
+                newMaterialRegion(ageBox, "Age"),
+                childRadioButton.isSelected() ? newMaterialRegion(birthDatePicker, "BirthDate") : null,
                 emailTextField,
                 phoneTextField,
                 streetTextField,
@@ -215,13 +369,13 @@ public final class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
                 countryButton,
                 organizationButton
         );
-        return LayoutUtil.setPadding(vBox, 10, 18);
     }
 
-    private Node createPersonDataGrid() {
+    private Node createPersonVisualGrid() {
         VisualColumn keyColumn = VisualColumn.create(null, PrimType.STRING, VisualStyle.RIGHT_STYLE);
         VisualColumn valueColumn = VisualColumn.create(null, PrimType.STRING);
-        VisualResultBuilder rsb = VisualResultBuilder.create(6, new VisualColumn[]{keyColumn, valueColumn, keyColumn, valueColumn});
+        VisualResultBuilder rsb = VisualResultBuilder.create(6, keyColumn, valueColumn, keyColumn, valueColumn);
+        EntityHasPersonalDetails model = entity;
         Organization organization = model.getOrganization();
         rsb.setValue(0, 0, I18n.getI18nText("FirstName:"));
         rsb.setValue(0, 1, model.getFirstName());
@@ -254,10 +408,11 @@ public final class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         return visualGrid;
     }
 
-    public void syncUiFromModel(HasPersonalDetails p) {
-        model = p;
-        if (p instanceof Entity)
-            setLoadingStore(((Entity) p).getStore());
+    public void syncUiFromModel() {
+        syncUiFromModel(isEditable() ? updatingEntity : entity);
+    }
+
+    public void syncUiFromModel(EntityHasPersonalDetails p) {
         firstNameTextField.setText(p.getFirstName());
         lastNameTextField.setText(p.getLastName());
         maleRadioButton.setSelected(Booleans.isTrue(p.isMale()));
@@ -272,8 +427,6 @@ public final class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         Integer age = p.getAge();
         adultRadioButton.setSelected(age == null || age > CHILD_MAX_AGE);
         childRadioButton.setSelected((age != null && age <= CHILD_MAX_AGE));
-        carer1NameTextField.setText(p.getCarer1Name());
-        carer2NameTextField.setText(p.getCarer2Name());
         emailTextField.setText(p.getEmail());
         phoneTextField.setText(p.getPhone());
         streetTextField.setText(p.getStreet());
@@ -281,20 +434,21 @@ public final class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         cityNameTextField.setText(p.getCityName());
         organizationSelector.setSelectedItem(p.getOrganization());
         countrySelector.setSelectedItem(p.getCountry());
-        updateUiEditable();
         if (container.getCenter() == null)
             FXProperties.runNowAndOnPropertiesChange(this::updatePanelBody, childRadioButton.selectedProperty(), I18n.dictionaryProperty());
-        if (!editable)
+        if (!isEditable())
             UiScheduler.runInUiThread(this::updatePanelBody);
     }
 
-    public void syncModelFromUi(HasPersonalDetails p) {
+    public void syncModelFromUi() {
+        syncModelFromUi(isEditable() ? updatingEntity : entity);
+    }
+
+    public void syncModelFromUi(EntityHasPersonalDetails p) {
         p.setFirstName(firstNameTextField.getText());
         p.setLastName(lastNameTextField.getText());
         p.setMale(maleRadioButton.isSelected());
         p.setAge(childRadioButton.isSelected() ? computeAge(birthDatePicker.getValue()) : null);
-        p.setCarer1Name(carer1NameTextField.getText());
-        p.setCarer2Name(carer2NameTextField.getText());
         p.setEmail(emailTextField.getText());
         p.setPhone(phoneTextField.getText());
         p.setStreet(streetTextField.getText());
@@ -310,10 +464,38 @@ public final class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         Integer age = null;
         if (birthDate != null) {
             // Integer age = (int) birthDate.until(event.getStartDate(), ChronoUnit.YEARS); // Doesn't compile with GWT
-            age = (int) (event.getStartDate().toEpochDay() - birthDate.toEpochDay()) / 365;
+            age = (int) (getDateForAgeComputation().toEpochDay() - birthDate.toEpochDay()) / 365;
             if (age > CHILD_MAX_AGE) // TODO: move this later in a applyBusinessRules() method
                 age = null;
         }
         return age;
+    }
+
+    protected LocalDate getDateForAgeComputation() {
+        return LocalDate.now();
+    }
+
+    public static void editPersonalDetails(EntityHasPersonalDetails person, boolean validationEnabled, ButtonSelectorParameters buttonSelectorParameters) {
+        editPersonalDetails(person, validationEnabled, buttonSelectorParameters, null);
+    }
+
+    public static void editPersonalDetails(EntityHasPersonalDetails person, boolean validationEnabled, ButtonSelectorParameters buttonSelectorParameters, Runnable closeHook) {
+        PersonalDetailsPanel details = new PersonalDetailsPanel(person, buttonSelectorParameters);
+        details.setValidationEnabled(validationEnabled);
+        editPersonalDetails(details, buttonSelectorParameters.getDialogParent(), closeHook);
+    }
+
+    protected static void editPersonalDetails(PersonalDetailsPanel details, Pane parent) {
+        editPersonalDetails(details, parent, null);
+    }
+
+    protected static void editPersonalDetails(PersonalDetailsPanel details, Pane parent, Runnable closeHook) {
+        BorderPane detailsContainer = details.getContainer();
+        ScrollPane scrollPane = ControlUtil.createScalableVerticalScrollPane(detailsContainer, true);
+        DialogCallback dialogCallback = DialogUtil.showModalNodeInGoldLayout(scrollPane, parent, 0.95, 0.95);
+        scrollPane.setMaxSize(10000, 1000); // Undoing max size = pref size
+        details.setCloseHook(dialogCallback::closeDialog);
+        if (closeHook != null)
+            dialogCallback.addCloseHook(closeHook);
     }
 }

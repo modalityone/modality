@@ -1,11 +1,12 @@
 package one.modality.base.shared.domainmodel.formatters;
 
-import javafx.util.StringConverter;
-import dev.webfx.stack.orm.domainmodel.formatter.ValueFormatter;
-import dev.webfx.stack.orm.domainmodel.formatter.ValueParser;
 import dev.webfx.extras.type.PrimType;
 import dev.webfx.extras.type.Type;
 import dev.webfx.platform.util.Dates;
+import dev.webfx.platform.util.Strings;
+import dev.webfx.stack.orm.domainmodel.formatter.ValueFormatter;
+import dev.webfx.stack.orm.domainmodel.formatter.ValueParser;
+import javafx.util.StringConverter;
 
 import java.time.LocalDate;
 
@@ -32,9 +33,9 @@ public final class DateFormatter implements ValueFormatter, ValueParser {
 
     @Override
     public Object parseValue(Object value) {
-        if (value == null)
+        String text = Strings.toSafeString(value);
+        if (text.isEmpty())
             return null;
-        String text = value.toString();
         int p;
         int dayOfMonth = Integer.parseInt(text.substring(0, p = text.indexOf('/')));
         int month = Integer.parseInt(text.substring(p + 1, p = text.indexOf('/', p + 1)));

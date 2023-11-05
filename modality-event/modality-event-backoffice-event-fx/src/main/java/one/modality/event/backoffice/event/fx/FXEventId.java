@@ -1,6 +1,7 @@
 package one.modality.event.backoffice.event.fx;
 
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.console.Console;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -33,7 +34,7 @@ public final class FXEventId {
             }
             // Synchronizing FXOrganization to match that new organization id (FXOrganizationId => FXOrganization)
             if (!Objects.equals(eventId, FXEvent.getEventId())) { // Sync only if ids differ.
-                // If the new organization id is null, we set the FXOrganization to null
+                // If the new event id is null, we set the FXEvent to null
                 if (Entities.getPrimaryKey(eventId) == null)
                     FXEvent.setEvent(null);
                 else {
@@ -47,7 +48,7 @@ public final class FXEventId {
                     else // Otherwise, we request the server to load that event from that id
                         eventStore
                                 .<Event>executeQuery("select icon,name,startDate,endDate from Event where id=?", eventId)
-                                .onFailure(System.out::println)
+                                .onFailure(Console::log)
                                 .onSuccess(list -> // on successfully receiving the list (should be a singleton list)
                                         FXEvent.setEvent(list.isEmpty() ? null : list.get(0))); // we finally set FXOrganization
                 }

@@ -41,13 +41,13 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-backoffice-mainframe-fx</artifactId>
+            <artifactId>modality-base-backoffice-mainframe-headernode</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-backoffice-mainframe-headernode</artifactId>
+            <artifactId>modality-base-backoffice-mainframe-headertabs-fx</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
@@ -71,6 +71,12 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-mainframe-dialogarea-fx</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-base-client-profile-fx</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
@@ -83,6 +89,12 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-panes</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-theme</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
@@ -90,12 +102,6 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-util-animation</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-extras-util-pane</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -119,6 +125,12 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-scheduler</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-uischeduler</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
@@ -126,6 +138,36 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-util</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-com-bus</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-com-bus-call</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-com-bus-client</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-i18n</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-session-state-client-fx</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

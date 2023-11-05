@@ -37,12 +37,6 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-backoffice-mainframe-fx</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>one.modality</groupId>
             <artifactId>modality-base-backoffice-masterslave</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
@@ -50,6 +44,12 @@
         <dependency>
             <groupId>one.modality</groupId>
             <artifactId>modality-base-backoffice-operations-generic</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-mainframe-dialogarea-fx</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
@@ -73,6 +73,12 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-crm-client-personaldetails</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-ecommerce-backoffice-operations-document</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
@@ -91,13 +97,7 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-extras-imagestore</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-extras-label</artifactId>
+            <artifactId>webfx-extras-panes</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -140,6 +140,12 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-orm-entity</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-orm-entity-controls</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

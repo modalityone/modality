@@ -1,10 +1,9 @@
 package one.modality.ecommerce.backoffice.operations.entities.document;
 
-import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.platform.async.AsyncFunction;
+import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
-import dev.webfx.platform.async.AsyncFunction;
-import javafx.scene.layout.Pane;
 import one.modality.base.shared.entities.Person;
 
 public final class EditUsersPersonalDetailsRequest implements HasOperationCode,
@@ -13,25 +12,20 @@ public final class EditUsersPersonalDetailsRequest implements HasOperationCode,
     private final static String OPERATION_CODE = "EditUsersPersonalDetails";
 
     private final Person person;
-    private final ButtonFactoryMixin buttonFactoryMixin;
-    private final Pane parentContainer;
 
-    public EditUsersPersonalDetailsRequest(Person person, ButtonFactoryMixin buttonFactoryMixin, Pane parentContainer) {
+    private final ButtonSelectorParameters buttonSelectorParameters;
+
+    public EditUsersPersonalDetailsRequest(Person person, ButtonSelectorParameters buttonSelectorParameters) {
         this.person = person;
-        this.buttonFactoryMixin = buttonFactoryMixin;
-        this.parentContainer = parentContainer;
+        this.buttonSelectorParameters = buttonSelectorParameters;
     }
 
     Person getPerson() {
         return person;
     }
 
-    public ButtonFactoryMixin getButtonFactoryMixin() {
-        return buttonFactoryMixin;
-    }
-
-    Pane getParentContainer() {
-        return parentContainer;
+    public ButtonSelectorParameters getButtonSelectorParameters() {
+        return buttonSelectorParameters;
     }
 
     @Override

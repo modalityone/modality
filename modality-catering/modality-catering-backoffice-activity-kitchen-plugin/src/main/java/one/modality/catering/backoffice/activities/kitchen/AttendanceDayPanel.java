@@ -1,6 +1,6 @@
 package one.modality.catering.backoffice.activities.kitchen;
 
-import dev.webfx.extras.scalepane.ScalePane;
+import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.extras.theme.text.TextTheme;

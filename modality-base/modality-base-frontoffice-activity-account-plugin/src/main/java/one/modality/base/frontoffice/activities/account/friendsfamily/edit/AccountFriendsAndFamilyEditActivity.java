@@ -1,6 +1,6 @@
 package one.modality.base.frontoffice.activities.account.friendsfamily.edit;
 
-import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
@@ -42,6 +42,6 @@ public class AccountFriendsAndFamilyEditActivity extends ViewDomainActivityBase 
 
         container.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
 
-        return LayoutUtil.createVerticalScrollPane(container);
+        return ControlUtil.createVerticalScrollPane(container);
     }
 }

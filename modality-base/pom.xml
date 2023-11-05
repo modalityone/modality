@@ -25,8 +25,8 @@
         <module>modality-base-backoffice-gantt-canvas</module>
         <module>modality-base-backoffice-gantt-canvas-basic-plugin</module>
         <module>modality-base-backoffice-mainframe-activity</module>
-        <module>modality-base-backoffice-mainframe-fx</module>
         <module>modality-base-backoffice-mainframe-headernode</module>
+        <module>modality-base-backoffice-mainframe-headertabs-fx</module>
         <module>modality-base-backoffice-masterslave</module>
         <module>modality-base-backoffice-max-plugin</module>
         <module>modality-base-backoffice-min-plugin</module>
@@ -45,6 +45,7 @@
         <module>modality-base-client-gantt-fx</module>
         <module>modality-base-client-i18n</module>
         <module>modality-base-client-icons</module>
+        <module>modality-base-client-mainframe-dialogarea-fx</module>
         <module>modality-base-client-max-plugin</module>
         <module>modality-base-client-min-plugin</module>
         <module>modality-base-client-navigationarrows-java-plugin</module>

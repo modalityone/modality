@@ -359,6 +359,7 @@
                         <list>images/s16/continents/org/[^/]+$</list>
                         <list>images/s16/controls/[^/]+$</list>
                         <list>images/s16/countries/[^/]+$</list>
+                        <list>images/s16/countries/svg/[^/]+$</list>
                         <list>images/s16/currencies/[^/]+$</list>
                         <list>images/s16/event/[^/]+$</list>
                         <list>images/s16/itemFamilies/[^/]+$</list>
@@ -367,6 +368,7 @@
                         <list>images/s16/moneyAccountTypes/[^/]+$</list>
                         <list>images/s16/multipleBookings/[^/]+$</list>
                         <list>images/s16/organizations/[^/]+$</list>
+                        <list>images/s16/organizations/svg/[^/]+$</list>
                         <list>images/s16/security/[^/]+$</list>
                         <list>images/s16/system/[^/]+$</list>
                         <list>images/s16/validation/[^/]+$</list>
@@ -379,7 +381,6 @@
                         <list>one/modality/base/client/css/[^/]+$</list>
                         <list>one/modality/base/client/fonts/[^/]+$</list>
                         <list>one/modality/base/client/images/[^/]+$</list>
-                        <list>one/modality/base/client/services/i18n/dictionaries/[^/]+$</list>
                         <list>one/modality/base/shared/domainmodel/[^/]+$</list>
                     </resourcesList>
                     <appIdentifier>one.modality.backoffice</appIdentifier>

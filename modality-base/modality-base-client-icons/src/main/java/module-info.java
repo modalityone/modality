@@ -11,6 +11,7 @@ module modality.base.client.icons {
     opens images.s16.continents;
     opens images.s16.continents.org;
     opens images.s16.countries;
+    opens images.s16.countries.svg;
     opens images.s16.currencies;
     opens images.s16.event;
     opens images.s16.itemFamilies;
@@ -19,6 +20,7 @@ module modality.base.client.icons {
     opens images.s16.moneyAccountTypes;
     opens images.s16.multipleBookings;
     opens images.s16.organizations;
+    opens images.s16.organizations.svg;
     opens images.s16.security;
     opens images.s16.system;
     opens images.s16.validation;

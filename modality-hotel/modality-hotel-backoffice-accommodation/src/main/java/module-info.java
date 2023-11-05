@@ -24,7 +24,7 @@ module modality.hotel.backoffice.accommodation {
     requires transitive webfx.extras.time.layout.gantt;
     requires webfx.extras.time.window;
     requires webfx.extras.util.animation;
-    requires webfx.extras.util.layout;
+    requires webfx.extras.util.control;
     requires webfx.kit.util;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
