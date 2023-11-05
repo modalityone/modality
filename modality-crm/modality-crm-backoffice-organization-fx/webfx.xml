@@ -12,7 +12,7 @@
     </dependencies>
 
     <providers>
-        <provider interface="one.modality.base.backoffice.activities.mainframe.headernode.MainFrameHeaderNodeProvider">one.modality.crm.backoffice.organization.fx.impl.MainFrameHeaderOrganizationSelectorProvider</provider>
+        <provider interface="one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider">one.modality.crm.backoffice.organization.fx.impl.MainFrameHeaderOrganizationSelectorProvider</provider>
     </providers>
 
 </project>

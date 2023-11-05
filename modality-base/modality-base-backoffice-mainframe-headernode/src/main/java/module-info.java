@@ -10,9 +10,9 @@ module modality.base.backoffice.mainframe.headernode {
     requires webfx.stack.ui.controls;
 
     // Exported packages
-    exports one.modality.base.backoffice.activities.mainframe.headernode;
+    exports one.modality.base.backoffice.mainframe.headernode;
 
     // Used services
-    uses one.modality.base.backoffice.activities.mainframe.headernode.MainFrameHeaderNodeProvider;
+    uses one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider;
 
 }

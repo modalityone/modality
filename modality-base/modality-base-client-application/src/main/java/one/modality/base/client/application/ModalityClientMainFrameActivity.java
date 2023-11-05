@@ -1,25 +1,21 @@
 package one.modality.base.client.application;
 
-import dev.webfx.extras.theme.layout.FXLayoutMode;
-import dev.webfx.extras.theme.luminance.FXLuminanceMode;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
-import dev.webfx.extras.theme.palette.FXPaletteMode;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.authn.logout.client.operation.LogoutRequest;
-import dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.session.state.client.fx.FXLoggedIn;
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionBinder;
-import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -82,8 +78,11 @@ public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
         };
 
         // The profile button can be customized (ex: ModalityClientProfileInitJob)
-        if (FXProfile.getProfileButton() == null) // If not, we just display a logout button instead
-            FXProfile.setProfileButton(actionButton(newOperationAction(LogoutRequest::new)));
+        if (FXProfile.getProfileButton() == null) { // If not, we just display a logout button instead
+            Button button = actionButton(newOperationAction(LogoutRequest::new));
+            button.setContentDisplay(ContentDisplay.GRAPHIC_ONLY); // We display just the icon, not the text
+            FXProfile.setProfileButton(button);
+        }
         // Setting all children, including the profile button
         FXProperties.runNowAndOnPropertiesChange(() -> {
             headerButtonsBar.getChildren().setAll(Collections.listOfRemoveNulls(homeButton, backButton, forwardButton, brandNode, headerCenterItem, FXProfile.getProfileButton()));
@@ -95,20 +94,12 @@ public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
         // Assembling 1) & 2) into the mainFrameHeader
         Region mainFrameHeader = headerTabsBar == null ? headerButtonsBar : new VBox(headerButtonsBar, headerTabsBar);
 
-        setUpContextMenu(headerButtonsBar, this::contextMenuActionGroup);
         LuminanceTheme.createApplicationFrameFacet(headerButtonsBar)
                 .setBordered(true)
-                .setOnMouseClicked(e -> { // Temporary for testing
-                    if (e.isAltDown())
-                        FXPaletteMode.setVariedPalette(!FXPaletteMode.isVariedPalette());
-                    if (e.isShiftDown())
-                        FXLuminanceMode.setDarkMode(!FXLuminanceMode.isDarkMode());
-                    if (e.isMetaDown())
-                        FXLayoutMode.setCompactMode(!FXLayoutMode.isCompactMode());
-                })
                 .style();
         // Hiding the center item in compact mode
-        FXLayoutMode.layoutModeProperty().addListener(observable -> headerCenterItem.setVisible(!FXLayoutMode.isCompactMode()));
+        // Commented as headerCenterItem.visibleProperty() is bound
+        //FXLayoutMode.layoutModeProperty().addListener(observable -> headerCenterItem.setVisible(!FXLayoutMode.isCompactMode()));
         return mainFrameHeader;
     }
 
@@ -145,13 +136,5 @@ public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
 
     private Action routeOperationCodeToAction(String operationCode) {
         return RoutingActions.routeOperationCodeToAction(operationCode, this, this);
-    }
-
-    protected ActionGroup contextMenuActionGroup() {
-        return newActionGroup(
-                ChangeLanguageRequestEmitter.getProvidedEmitters().stream()
-                        .map(instantiator -> newOperationAction(instantiator::emitLanguageRequest))
-                        .toArray(Action[]::new)
-        );
     }
 }

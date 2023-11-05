@@ -21,7 +21,7 @@ module modality.ecommerce.backoffice.activity.bookings.plugin {
     requires modality.ecommerce.backoffice.operations.document;
     requires modality.event.client.activity.eventdependent;
     requires webfx.extras.time;
-    requires webfx.extras.util.layout;
+    requires webfx.extras.util.control;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
     requires webfx.platform.windowhistory;

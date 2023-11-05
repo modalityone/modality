@@ -1,17 +1,24 @@
 package one.modality.base.backoffice.activities.mainframe;
 
 import dev.webfx.extras.canvas.pane.CanvasPane;
+import dev.webfx.extras.panes.MonoClipPane;
 import dev.webfx.extras.theme.layout.FXLayoutMode;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.animation.Animations;
-import dev.webfx.extras.util.pane.MonoClipPane;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.platform.resource.Resource;
+import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
+import dev.webfx.stack.com.bus.Bus;
+import dev.webfx.stack.com.bus.BusService;
+import dev.webfx.stack.com.bus.call.PendingBusCall;
+import dev.webfx.stack.com.bus.spi.impl.client.NetworkBus;
+import dev.webfx.stack.i18n.I18n;
+import dev.webfx.stack.session.state.client.fx.FXConnected;
 import javafx.animation.Timeline;
 import javafx.beans.InvalidationListener;
 import javafx.collections.ListChangeListener;
@@ -21,21 +28,24 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import one.modality.base.backoffice.activities.mainframe.fx.FXMainFrame;
-import one.modality.base.backoffice.activities.mainframe.headernode.MainFrameHeaderNodeProvider;
+import javafx.util.Duration;
 import one.modality.base.backoffice.ganttcanvas.MainFrameGanttCanvas;
+import one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider;
+import one.modality.base.backoffice.mainframe.headertabs.fx.FXMainFrameHeaderTabs;
 import one.modality.base.backoffice.tile.Tab;
 import one.modality.base.client.application.ModalityClientMainFrameActivity;
 import one.modality.base.client.gantt.fx.interstice.FXGanttInterstice;
+import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
 import one.modality.base.client.profile.fx.FXProfile;
 
 import java.util.Comparator;
@@ -71,14 +81,8 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
                     layoutInArea(dialogArea, 0, nodeY, width, height - nodeY - footerHeight, 0, breathingPadding, HPos.CENTER, VPos.TOP);
                 }
                 if (profilePanel != null) {
-                    layoutInArea(profilePanel, width - profilePanel.prefWidth(-1), nodeY, profilePanel.prefWidth(-1), profilePanel.prefHeight(-1), 0, HPos.RIGHT, VPos.TOP);
-                    if (startProfilePanelEnteringAnimationOnLayout) {
-                        if (profilePanelAnimation != null)
-                            profilePanelAnimation.stop();
-                        profilePanel.setTranslateX(profilePanel.prefWidth(-1));
-                        profilePanelAnimation = Animations.animateProperty(profilePanel.translateXProperty(), 0);
-                    }
-                    startProfilePanelEnteringAnimationOnLayout = false;
+                    layoutInArea(profilePanel, width - profilePanel.prefWidth(-1) - 10, headerHeight + 10, profilePanel.prefWidth(-1), profilePanel.prefHeight(-1), 0, HPos.RIGHT, VPos.TOP);
+                    onProfileLayout(); // for profile panel animation management
                 }
                 if (ganttCanvasContainer.isVisible()) {
                     nodeHeight = ganttCanvasContainer.prefHeight(width) + (FXGanttInterstice.isGanttIntersticeRequired() ? breathingPadding.getBottom() : 0);
@@ -94,7 +98,8 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
         };
         mainFrameHeader = createMainFrameHeader();
         mainFrameFooter = createMainFrameFooter();
-        FXProperties.runNowAndOnPropertiesChange(this::updateMountNode, mountNodeProperty(), FXProfile.profilePanelProperty());
+        FXProperties.runNowAndOnPropertiesChange(this::updateMountNode,
+                mountNodeProperty(), FXProfile.profilePanelProperty(), FXProfile.showProfilePanelProperty());
 
         // Requesting a layout for containerPane on layout mode changes
         FXProperties.runNowAndOnPropertiesChange(() -> {
@@ -133,12 +138,12 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
 
     private void updateMountNode() {
         Node oldProfilePanel = profilePanel;
-        Node newProfilePanel = FXProfile.getProfilePanel();
+        Node newProfilePanel = FXProfile.isProfilePanelShown() ? FXProfile.getProfilePanel() : null;
         // When the profile panel is set to null, we animate its exit
         if (newProfilePanel == null && mainFrame.getChildren().contains(oldProfilePanel)) {
             if (profilePanelAnimation != null)
                 profilePanelAnimation.stop();
-            profilePanelAnimation = Animations.animateProperty(oldProfilePanel.translateXProperty(), oldProfilePanel.prefWidth(-1));
+            profilePanelAnimation = Animations.animateProperty(oldProfilePanel.translateXProperty(), oldProfilePanel.prefWidth(-1) + 10);
             profilePanelAnimation.setOnFinished(e -> {
                 mainFrame.getChildren().remove(oldProfilePanel);
                 if (profilePanel == oldProfilePanel)
@@ -163,11 +168,24 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
         updateDialogArea();
     }
 
+    private void onProfileLayout() {
+        if (startProfilePanelEnteringAnimationOnLayout) {
+            if (profilePanelAnimation != null)
+                profilePanelAnimation.stop();
+            profilePanel.setTranslateX(profilePanel.prefWidth(-1) + 10);
+            profilePanelAnimation = Animations.animateProperty(profilePanel.translateXProperty(), 0);
+            profilePanelAnimation.setOnFinished(e -> {
+                profilePanelAnimation = null;
+            });
+            startProfilePanelEnteringAnimationOnLayout = false;
+        }
+    }
+
     private void updateDialogArea() {
         if (dialogArea != null)
             mainFrame.getChildren().remove(dialogArea);
         Node relatedDialogNode = null;
-        for (Tab headerTab : FXMainFrame.getHeaderTabsObservableList()) {
+        for (Tab headerTab : FXMainFrameHeaderTabs.getHeaderTabsObservableList()) {
             var properties = headerTab.getProperties();
             String arbitraryKey = "modality-mainframe-listener-installed";
             if (properties.get(arbitraryKey) == null) {
@@ -191,15 +209,20 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
             } else
                 showHideDialogArea();
         }
-        FXMainFrame.setDialogArea(dialogArea);
+        FXMainFrameDialogArea.setDialogArea(dialogArea);
     }
 
     private void showHideDialogArea() {
         ObservableList<Node> mainFrameChildren = mainFrame.getChildren();
         if (dialogArea.getChildren().isEmpty())
             mainFrameChildren.remove(dialogArea);
-        else if (!mainFrameChildren.contains(dialogArea))
-            mainFrameChildren.add(dialogArea);
+        else if (!mainFrameChildren.contains(dialogArea)) {
+            int profilePanelIndex = mainFrameChildren.indexOf(profilePanel);
+            if (profilePanelIndex > 0)
+                mainFrameChildren.add(profilePanelIndex, dialogArea);
+            else
+                mainFrameChildren.add(dialogArea);
+        }
     }
 
     @Override
@@ -219,10 +242,11 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
 
     @Override
     protected HBox createMainFrameHeaderCenterItem() {
-        String[] expectedOrder = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.base.backoffice.mainframe.headernode")
-                .getString("headerNodesOrder").split(",");
+        String[] expectedNodes = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.base.backoffice.mainframe.headernode")
+                .getString("headerNodes").split(",");
         HBox hBox = new HBox(5, MainFrameHeaderNodeProvider.getProviders().stream()
-                .sorted(Comparator.comparingInt(o -> Arrays.indexOf(expectedOrder, o.getName())))
+                .filter(o -> Arrays.contains(expectedNodes, o.getName()))
+                .sorted(Comparator.comparingInt(o -> Arrays.indexOf(expectedNodes, o.getName())))
                 .map(p -> p.getHeaderNode(this, mainFrame, getDataSourceModel()))
                 .toArray(Node[]::new));
         hBox.setAlignment(Pos.CENTER);
@@ -241,7 +265,7 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
         // The clipPane is initially contracted. Will be expanded (eventually through animation) once not empty.
         clipPane.setPrefHeight(0);
         // The tabs are communicated from the activities to this main frame through FXMainFrameHeaderTabsBar
-        ObservableList<Tab> tabs = FXMainFrame.getHeaderTabsObservableList();
+        ObservableList<Tab> tabs = FXMainFrameHeaderTabs.getHeaderTabsObservableList();
         // We don't bind them directly to the flow pane children, because we want to animate them. So the following code
         // is the animation management:
         tabs.addListener((ListChangeListener<Node>) c -> { // We listen to the tabs changes
@@ -286,14 +310,75 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
         return clipPane;
     }
 
+    private static final Color CONNECTED_COLOR = Color.web("#21BF73");
+    private static final Color DISCONNECTED_COLOR = Color.web("#FF1E00");
+    private static final Color TRAFFIC_COLOR = Color.web("#F7EA00");
+    private static final Color NO_TRAFFIC_COLOR = Color.gray(0.75);
+    private static final long TRAFFIC_MILLIS = 100;
+
+
     @Override
     protected Region createMainFrameFooter() {
-        Text text = new Text(" ");
-        TextTheme.createDefaultTextFacet(text).style();
-        HBox containerFooter = new HBox(text);
-        containerFooter.setAlignment(Pos.CENTER);
-        containerFooter.setPadding(new Insets(5));
-        LuminanceTheme.createApplicationFrameFacet(containerFooter).style();
-        return containerFooter;
+        Text connectionText = createStatusText("Connection");
+        Shape connectionLed = new Circle(8);
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            connectionLed.setFill(FXConnected.isConnected() ? CONNECTED_COLOR : DISCONNECTED_COLOR);
+        }, FXConnected.connectedProperty());
+        HBox statusBar = new HBox(10, connectionText, connectionLed);
+        Bus bus = BusService.bus();
+        if (bus instanceof NetworkBus) { // Actually always true
+            NetworkBus networkBus = (NetworkBus) bus;
+            Text trafficText = createStatusText("Traffic");
+            // Outgoing traffic (from client to server)
+            Shape outgoingTrafficLed = new Circle(8, NO_TRAFFIC_COLOR);
+            Scheduled[] noOutgoingTrafficScheduled = { UiScheduler.scheduleDeferred(() -> {}) };
+            networkBus.setOutgoingTrafficListener(() -> {
+                outgoingTrafficLed.setFill(TRAFFIC_COLOR);
+                noOutgoingTrafficScheduled[0].cancel();
+                noOutgoingTrafficScheduled[0] = UiScheduler.scheduleDelay(TRAFFIC_MILLIS, () -> outgoingTrafficLed.setFill(NO_TRAFFIC_COLOR));
+            });
+            // Outgoing traffic (from server to client)
+            Shape incomingTrafficLed = new Circle(8, NO_TRAFFIC_COLOR);
+            Scheduled[] noIncomingTrafficScheduled = { UiScheduler.scheduleDeferred(() -> {}) };
+            networkBus.setIncomingTrafficListener(() -> {
+                incomingTrafficLed.setFill(TRAFFIC_COLOR);
+                noIncomingTrafficScheduled[0].cancel();
+                noIncomingTrafficScheduled[0] = UiScheduler.scheduleDelay(TRAFFIC_MILLIS, () -> incomingTrafficLed.setFill(NO_TRAFFIC_COLOR));
+            });
+            statusBar.getChildren().addAll(new Rectangle(10, 0), trafficText, outgoingTrafficLed, incomingTrafficLed);
+        }
+        // Pending operations
+        Text pendingText = createStatusText("PendingCalls");
+        Text pendingCountText = createStatusText(null);
+        ProgressIndicator pendingIndicator = new ProgressIndicator();
+        Timeline[] pendingFadeTimeline = { new Timeline() };
+        FXProperties.runNowAndOnPropertiesChange(() -> UiScheduler.runInUiThread(() -> {
+            int pendingCalls = PendingBusCall.pendingCallsCountProperty().getValue();
+            pendingCountText.setText("" + pendingCalls);
+            if (pendingCalls > 0) {
+                pendingIndicator.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
+                pendingFadeTimeline[0].stop();
+                pendingIndicator.setOpacity(1);
+            } else {
+                pendingFadeTimeline[0] = Animations.animateProperty(pendingIndicator.opacityProperty(), 0, Duration.seconds(2));
+                pendingFadeTimeline[0].setOnFinished(e -> pendingIndicator.setProgress(0));
+            }
+        }), PendingBusCall.pendingCallsCountProperty());
+        StackPane pendingPane = new StackPane(pendingIndicator, pendingCountText);
+        pendingPane.setPrefSize(16, 16);
+        statusBar.getChildren().addAll(new Rectangle(10, 0), pendingText, pendingPane);
+
+        statusBar.setAlignment(Pos.CENTER);
+        statusBar.setPadding(new Insets(5));
+        LuminanceTheme.createApplicationFrameFacet(statusBar).style();
+        return statusBar;
+    }
+
+    private static Text createStatusText(String i18nKey) {
+        Text statusText = new Text();
+        if (i18nKey != null)
+            I18n.bindI18nProperties(statusText, i18nKey);
+        TextTheme.createDefaultTextFacet(statusText).style();
+        return statusText;
     }
 }

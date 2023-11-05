@@ -1,6 +1,7 @@
 package one.modality.crm.server.authn.gateway;
 
 import dev.webfx.platform.async.Future;
+import dev.webfx.platform.console.Console;
 import dev.webfx.stack.authn.UserClaims;
 import dev.webfx.stack.authn.UsernamePasswordCredentials;
 import dev.webfx.stack.authn.logout.server.LogoutPush;
@@ -59,6 +60,11 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
         UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials) userCredentials;
         String username = usernamePasswordCredentials.getUsername();
         String password = usernamePasswordCredentials.getPassword();
+        if (username == null || password == null)
+            return Future.failedFuture("Username and password must be non-null");
+        username = username.trim(); // Ignoring leading and tailing spaces in username
+        if (username.contains("@")) // If username is an email address, it shouldn't be case-sensitive
+            username = username.toLowerCase(); // emails are stored in lowercase in the database
         String encryptedPassword;
         try {
             encryptedPassword = encryptPassword(username, password);
@@ -112,6 +118,7 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
     @Override
     public Future<?> verifyAuthenticated() {
         Object userId = ThreadLocalStateHolder.getUserId();
+        Console.log("👮👮👮👮👮 Checking userId=" + userId);
         return queryModalityUserInfo("id")
                 .map(ignoredQueryResult -> userId);
     }

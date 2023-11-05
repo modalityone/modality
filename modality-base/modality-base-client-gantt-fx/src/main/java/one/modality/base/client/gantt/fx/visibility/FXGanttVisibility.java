@@ -8,12 +8,7 @@ import javafx.beans.property.SimpleObjectProperty;
  */
 public final class FXGanttVisibility {
 
-    private final static ObjectProperty<GanttVisibility> ganttVisibilityProperty = new SimpleObjectProperty<>(GanttVisibility.HIDDEN) {
-        @Override
-        protected void invalidated() {
-            dev.webfx.platform.console.Console.log(get());
-        }
-    };
+    private final static ObjectProperty<GanttVisibility> ganttVisibilityProperty = new SimpleObjectProperty<>(GanttVisibility.HIDDEN);
 
     public static ObjectProperty<GanttVisibility> ganttVisibilityProperty() {
         return ganttVisibilityProperty;

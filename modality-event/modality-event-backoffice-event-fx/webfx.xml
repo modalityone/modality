@@ -12,7 +12,7 @@
     </dependencies>
 
     <providers>
-        <provider interface="one.modality.base.backoffice.activities.mainframe.headernode.MainFrameHeaderNodeProvider">one.modality.event.backoffice.event.fx.impl.MainFrameHeaderEventSelectorProvider</provider>
+        <provider interface="one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider">one.modality.event.backoffice.event.fx.impl.MainFrameHeaderEventSelectorProvider</provider>
     </providers>
 
 </project>

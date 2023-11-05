@@ -26,6 +26,6 @@ module modality.crm.backoffice.organization.fx {
     exports one.modality.crm.backoffice.organization.fx.impl;
 
     // Provided services
-    provides one.modality.base.backoffice.activities.mainframe.headernode.MainFrameHeaderNodeProvider with one.modality.crm.backoffice.organization.fx.impl.MainFrameHeaderOrganizationSelectorProvider;
+    provides one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider with one.modality.crm.backoffice.organization.fx.impl.MainFrameHeaderOrganizationSelectorProvider;
 
 }

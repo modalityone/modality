@@ -94,12 +94,12 @@ Text, Label, Button, TextField {
 }
 
 .grid-head, .grid-row {
-    -fx-border-color: #bbbbbb;
+    -fx-border-color: #D3D3D3;
     -fx-border-width: 0 0 1px 0;
 }
 
 .grid-col {
-    -fx-border-color: #bbbbbb;
+    -fx-border-color: #D3D3D3;
     -fx-border-width: 0 1px 0 0;
 }
 

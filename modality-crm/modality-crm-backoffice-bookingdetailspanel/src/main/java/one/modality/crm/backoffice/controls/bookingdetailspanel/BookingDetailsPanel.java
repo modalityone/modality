@@ -1,6 +1,6 @@
 package one.modality.crm.backoffice.controls.bookingdetailspanel;
 
-import dev.webfx.extras.imagestore.ImageStore;
+import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.Strings;
@@ -8,7 +8,7 @@ import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.domainmodel.HasDataSourceModel;
 import dev.webfx.stack.orm.entity.Entity;
-import dev.webfx.stack.orm.entity.EntityId;
+import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
 import dev.webfx.stack.ui.action.ActionGroup;
@@ -18,21 +18,27 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import one.modality.base.backoffice.activities.mainframe.fx.FXMainFrame;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TitledPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
 import one.modality.base.backoffice.controls.masterslave.UiBuilder;
 import one.modality.base.backoffice.operations.entities.generic.CopyAllRequest;
 import one.modality.base.backoffice.operations.entities.generic.CopySelectionRequest;
+import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
 import one.modality.base.client.presentationmodel.HasSelectedDocumentProperty;
 import one.modality.base.shared.entities.Document;
 import one.modality.crm.backoffice.operations.entities.mail.ComposeNewMailRequest;
 import one.modality.crm.backoffice.operations.entities.mail.OpenMailRequest;
-import one.modality.ecommerce.backoffice.operations.entities.document.EditDocumentPersonalDetailsRequest;
+import one.modality.crm.client.controls.personaldetails.BookingPersonalDetailsPanel;
 import one.modality.ecommerce.backoffice.operations.entities.document.cart.OpenBookingCartRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.multiplebookings.CancelOtherMultipleBookingsRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.multiplebookings.GetBackCancelledMultipleBookingsDepositRequest;
@@ -56,17 +62,23 @@ public final class BookingDetailsPanel implements
 
     public static final String REQUIRED_FIELDS = "person_firstName,person_lastName,person_age,person_email,person_organization,person_phone,person_cityName,person_country,person_carer1Name,person_carer2Name,event.startDate"; // event.startDate is required for the personal details panel
 
-    private final ObjectProperty<Document> selectedDocumentProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<Document> selectedDocumentProperty = new SimpleObjectProperty<>() {
+        @Override
+        protected void invalidated() {
+            detailsPanel.setEditable(false);
+            detailsPanel.setEntity(get());
+        }
+    };
     private final BooleanProperty activeProperty = new SimpleBooleanProperty(true);
 
-    private final GridPane gridPane = new GridPane();
     private final ButtonFactoryMixin mixin;
     private final DataSourceModel dataSourceModel;
+    private final BookingPersonalDetailsPanel detailsPanel;
 
     public BookingDetailsPanel(ButtonFactoryMixin mixin, DataSourceModel dataSourceModel) {
         this.mixin = mixin;
         this.dataSourceModel = dataSourceModel;
-    }
+        detailsPanel = new BookingPersonalDetailsPanel(dataSourceModel, new ButtonSelectorParameters().setButtonFactory(mixin).setDialogParentGetter(FXMainFrameDialogArea::getDialogArea));    }
 
     @Override
     public BooleanProperty activeProperty() {
@@ -87,7 +99,7 @@ public final class BookingDetailsPanel implements
 
     @Override
     public Node buildUi() {
-        return new VBox(/*button, */new TabPane(
+        TabPane tabPane = new TabPane(
                 createTab("PersonalDetails", buildPersonalDetailsView()),
                 createFilterTab("Options", "{class: 'DocumentLine', columns: `site,item,dates,lockAllocation,resourceConfiguration,comment,price_isCustom,price_net,price_nonRefundable,price_minDeposit,price_deposit`, where: 'document=${selectedDocument}', orderBy: 'item.family.ord,site..ord,item.ord'}"),
                 createFilterTab("Payments", "{class: 'MoneyTransfer', columns: `date,method,transactionRef,comment,amount,verified`, where: 'document=${selectedDocument}', orderBy: 'date,id'}"),
@@ -97,7 +109,8 @@ public final class BookingDetailsPanel implements
                 createFilterTab("Family", "{class: 'Document', columns:`ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_deposit,plainOptions`, where: 'person_carer1Document=${selectedDocument} or person_carer2Document=${selectedDocument} or id=(select person_carer1Document from Document where id=${selectedDocument}) or id=(select person_carer2Document from Document where id=${selectedDocument})', orderBy: 'ref'}"),
                 createFilterTab("Mails", "{class: 'Mail', columns: 'date,subject,transmitted,error', where: 'document=${selectedDocument}', orderBy: 'date desc'}"),
                 createFilterTab("History", "{class: 'History', columns: 'date,username,comment,request', where: 'document=${selectedDocument}', orderBy: 'date desc'}")
-        ));
+        );
+        return tabPane;
     }
 
     private static Tab createTab(String i18nKey, Node node) {
@@ -133,11 +146,11 @@ public final class BookingDetailsPanel implements
         switch (i18nKey) {
             case "Options":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new AddNewDocumentLineRequest(getSelectedDocument(), FXMainFrame.getDialogArea())),
+                        newOperationAction(() -> new AddNewDocumentLineRequest(getSelectedDocument(), FXMainFrameDialogArea.getDialogArea())),
                         newSeparatorActionGroup(
-                                newOperationAction(() -> new EditDocumentLineRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea())),
-                                newOperationAction(() -> new ToggleCancelDocumentLineRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea()), selectedEntityProperty),
-                                newOperationAction(() -> new DeleteDocumentLineRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea()))
+                                newOperationAction(() -> new EditDocumentLineRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea())),
+                                newOperationAction(() -> new ToggleCancelDocumentLineRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea()), selectedEntityProperty),
+                                newOperationAction(() -> new DeleteDocumentLineRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea()))
                         ),
                         newSeparatorActionGroup(
                                 newOperationAction(() -> new CopySelectionRequest(visualMapper.getSelectedEntities(), visualMapper.getEntityColumns())),
@@ -147,11 +160,11 @@ public final class BookingDetailsPanel implements
                 break;
             case "Payments":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new AddNewPaymentRequest(getSelectedDocument(), FXMainFrame.getDialogArea())),
-                        newOperationAction(() -> new AddNewTransferRequest(getSelectedDocument(), FXMainFrame.getDialogArea())),
+                        newOperationAction(() -> new AddNewPaymentRequest(getSelectedDocument(), FXMainFrameDialogArea.getDialogArea())),
+                        newOperationAction(() -> new AddNewTransferRequest(getSelectedDocument(), FXMainFrameDialogArea.getDialogArea())),
                         newSeparatorActionGroup(
-                                newOperationAction(() -> new EditPaymentRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea())),
-                                newOperationAction(() -> new DeletePaymentRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea()))
+                                newOperationAction(() -> new EditPaymentRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea())),
+                                newOperationAction(() -> new DeletePaymentRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea()))
                         ),
                         newSeparatorActionGroup(
                                 newOperationAction(() -> new CopySelectionRequest(visualMapper.getSelectedEntities(), visualMapper.getEntityColumns())),
@@ -161,21 +174,21 @@ public final class BookingDetailsPanel implements
                 break;
             case "MultipleBookings":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new MergeMultipleBookingsOptionsRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea())),
-                        newOperationAction(() -> new CancelOtherMultipleBookingsRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea())),
-                        newOperationAction(() -> new GetBackCancelledMultipleBookingsDepositRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea())),
-                        newOperationAction(() -> new ToggleMarkMultipleBookingRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea()))
+                        newOperationAction(() -> new MergeMultipleBookingsOptionsRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea())),
+                        newOperationAction(() -> new CancelOtherMultipleBookingsRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea())),
+                        newOperationAction(() -> new GetBackCancelledMultipleBookingsDepositRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea())),
+                        newOperationAction(() -> new ToggleMarkMultipleBookingRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea()))
                 );
                 break;
             case "Cart":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new OpenBookingCartRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea()))
+                        newOperationAction(() -> new OpenBookingCartRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea()))
                 );
                 break;
             case "Mails":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new OpenMailRequest(get(selectedEntityProperty), FXMainFrame.getDialogArea())),
-                        newOperationAction(() -> new ComposeNewMailRequest(getSelectedDocument(), FXMainFrame.getDialogArea())),
+                        newOperationAction(() -> new OpenMailRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea())),
+                        newOperationAction(() -> new ComposeNewMailRequest(getSelectedDocument(), FXMainFrameDialogArea.getDialogArea())),
                         newSeparatorActionGroup(
                                 newOperationAction(() -> new CopySelectionRequest(visualMapper.getSelectedEntities(), visualMapper.getEntityColumns())),
                                 newOperationAction(() -> new CopyAllRequest(visualMapper.getCurrentEntities(), visualMapper.getEntityColumns()))
@@ -199,68 +212,29 @@ public final class BookingDetailsPanel implements
     }
 
     private Node buildPersonalDetailsView() {
-        gridPane.setHgap(0);
-        gridPane.setVgap(10);
-        gridPane.setPadding(new Insets(20));
-        gridPane.setMinHeight(150);
+        BorderPane container = detailsPanel.getContainer();
+        if (false)
+            return container;
+        ScalePane scalePane = new ScalePane(container);
+        scalePane.setCanShrink(false);
+        scalePane.setFillWidth(false);
+        scalePane.setFillHeight(false);
+        scalePane.setScaleRegion(true);
+        scalePane.setVAlignment(VPos.TOP);
+        scalePane.setStretchWidth(true);
+        detailsPanel.enableBigViewButton(() -> scalePane.setContent(container));
 
-        ColumnConstraints cc5p = new ColumnConstraints();
-        cc5p.setPercentWidth(5);
-        cc5p.setHgrow(Priority.NEVER);
-        ColumnConstraints cc10p = new ColumnConstraints();
-        cc10p.setPercentWidth(10);
-        cc10p.setHgrow(Priority.NEVER);
-        ColumnConstraints cc15p = new ColumnConstraints();
-        cc15p.setPercentWidth(15);
-        cc15p.setHgrow(Priority.NEVER);
+        /*ButtonSelectorParameters buttonSelectorParameters = new ButtonSelectorParameters().setButtonFactory(mixin).setDialogParentGetter(FXMainFrameDialogArea::getDialogArea);
 
-        gridPane.getColumnConstraints().setAll(cc10p, cc10p, cc5p, cc5p, cc5p, cc10p, cc5p, cc10p, cc10p, cc5p, cc5p, cc5p, cc10p, cc5p);
-
-        RowConstraints rc = new RowConstraints();
-        rc.setMinHeight(3.5);
-        gridPane.getRowConstraints().setAll(rc, rc, rc, rc, rc);
-
-        addFieldLabelAndValue(0, 0, 6, "person_firstName");
-        addFieldLabelAndValue(1, 0, 6, "person_lastName");
-        addFieldLabelAndValue(2, 0, 1, "person_age");
-        addFieldLabelAndValue(3, 0, 6, "person_email");
-        addFieldLabelAndValue(4, 0, 6, "person_organization");
-        addFieldLabelAndValue(0, 7, 6, "person_phone");
-        addFieldLabelAndValue(1, 7, 6, "person_cityName");
-        addFieldLabelAndValue(2, 7, 6, "person_country");
-        addFieldLabelAndValue(3, 7, 6, "person_carer1Name");
-        addFieldLabelAndValue(4, 7, 6, "person_carer2Name");
-
-        mixin.setUpContextMenu(gridPane, () -> newActionGroup(
-                newOperationAction(() -> new EditDocumentPersonalDetailsRequest(getSelectedDocument(), mixin, FXMainFrame.getDialogArea()))
-        ));
-        gridPane.setOnMouseClicked(e -> {
+        mixin.setUpContextMenu(scalePane, () -> newActionGroup(
+                newOperationAction(() -> new EditDocumentPersonalDetailsRequest(getSelectedDocument(), buttonSelectorParameters)
+                )));
+        scalePane.setOnMouseClicked(e -> {
             if (e.getClickCount() == 2)
-                executeOperation(new EditDocumentPersonalDetailsRequest(getSelectedDocument(), mixin, FXMainFrame.getDialogArea()));
-        });
+                executeOperation(new EditDocumentPersonalDetailsRequest(getSelectedDocument(), buttonSelectorParameters));
+        });*/
 
-        return gridPane;
-    }
-
-    private void addFieldLabelAndValue(int rowIndex, int columnIndex, int columnSpan, String fieldName) {
-        dev.webfx.extras.label.Label fieldLabel = dataSourceModel.getDomainModel().getClass("Document").getField(fieldName).getLabel();
-        ObservableValue<String> fieldValueProperty = FXProperties.compute(selectedDocumentProperty, document -> {
-            Object fieldValue = document == null ? null : document.getFieldValue(fieldName);
-            if (fieldValue instanceof EntityId)
-                fieldValue = document.getForeignEntity(fieldName).getFieldValue("name");
-            return fieldValue == null ? null : fieldValue.toString();
-        });
-        Label valueLabel = new Label();
-        valueLabel.textProperty().bind(fieldValueProperty);
-        addNodeToGrid(rowIndex, columnIndex, 1, I18nControls.bindI18nProperties(new Label(null, ImageStore.createImageView(fieldLabel.getIconPath())), fieldLabel.getCode()));
-        addNodeToGrid(rowIndex, columnIndex + 1, columnSpan, valueLabel);
-    }
-
-    private void addNodeToGrid(int rowIndex, int columnIndex, int columnSpan, Node node) {
-        GridPane.setRowIndex(node, rowIndex);
-        GridPane.setColumnIndex(node, columnIndex);
-        GridPane.setColumnSpan(node, columnSpan);
-        gridPane.getChildren().add(node);
+        return scalePane;
     }
 
     private Node buildCommentView() {

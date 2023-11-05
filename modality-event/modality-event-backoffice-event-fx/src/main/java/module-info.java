@@ -15,6 +15,7 @@ module modality.event.backoffice.event.fx {
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
     requires webfx.kit.util;
+    requires webfx.platform.console;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.dql;
@@ -29,6 +30,6 @@ module modality.event.backoffice.event.fx {
     exports one.modality.event.backoffice.event.fx.impl;
 
     // Provided services
-    provides one.modality.base.backoffice.activities.mainframe.headernode.MainFrameHeaderNodeProvider with one.modality.event.backoffice.event.fx.impl.MainFrameHeaderEventSelectorProvider;
+    provides one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider with one.modality.event.backoffice.event.fx.impl.MainFrameHeaderEventSelectorProvider;
 
 }

@@ -14,18 +14,13 @@ module modality.base.client.application {
     requires modality.base.client.css;
     requires modality.base.client.icons;
     requires modality.base.client.profile.fx;
-    requires webfx.extras.imagestore;
     requires webfx.extras.theme;
     requires webfx.extras.util.layout;
     requires webfx.extras.util.scene;
-    requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.kit.util.scene;
-    requires webfx.platform.uischeduler;
     requires transitive webfx.platform.util;
     requires webfx.stack.authn.logout.client;
-    requires webfx.stack.com.bus.call;
-    requires webfx.stack.i18n;
     requires webfx.stack.orm.datasourcemodel.service;
     requires transitive webfx.stack.orm.domainmodel.activity;
     requires transitive webfx.stack.routing.activity;

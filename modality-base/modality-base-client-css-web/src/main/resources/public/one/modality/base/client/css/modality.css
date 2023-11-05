@@ -4,7 +4,13 @@
 
 @font-face {
     font-family: "Montserrat";
-    src: url("Montserrat-VF.woff2") format(woff2) tech(variations);
+    src: url("./Montserrat-VF.woff2") format("woff2");
+    font-weight: 100 900;
+}
+
+@font-face {
+    font-family: "Password";
+    src: url("./password.woff") format("woff");
     font-weight: 100 900;
 }
 
@@ -79,9 +85,8 @@ input[type="text"], input[type="password"] {
    selector. Normally "value" refers to the initial value of the input only. However HtmlTextInputControlPeer keeps
    updating "value" to "" or "not-empty" whether the user has typed something, so this CSS rule finally works: */
 input[type="password"]:not([value=""]) {
-    font-family: Verdana;
-    font-size: 36px;
-    translate: 0px -5px; /* 5px up translation otherwise the dots appear at the bottom */
+    font-family: "Password";
+    letter-spacing: 0.15em;
 }
 
 ::placeholder {
@@ -98,7 +103,7 @@ fx-homepane fx-tile * {
 
 /***** Declaring some variables used in several selectors *****/
 :root {
-    --grid-border-color: #bbbbbb;
+    --grid-border-color: #D3D3D3;
     --grid-row-height: 28px;
 }
 
