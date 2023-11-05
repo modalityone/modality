@@ -2,6 +2,8 @@ package one.modality.hotel.backoffice.activities.accommodation;
 
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.orm.entity.UpdateStore;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import one.modality.base.shared.entities.*;
 import one.modality.hotel.backoffice.accommodation.ResourceConfigurationLoader;
 
@@ -15,9 +17,13 @@ public class AnnualScheduleDatabaseWriter {
     private final Site site;
     private final List<ScheduledItem> latestScheduledItems;
 
+    private final DoubleProperty percentageCompleteProperty = new SimpleDoubleProperty();
+    public DoubleProperty percentageCompleteProperty() { return percentageCompleteProperty; }
+
     private List<ResourceConfigurationDates> resourceConfigurationDatesToInsert;
     private Map<Item, List<LocalDate>> itemDatesToInsert;
     private Map<ItemDate, ScheduledItem> scheduledItemForDate = new HashMap<>();
+    private int totalRecordsInTransaction;
     private UpdateStore updateStore;
 
     public AnnualScheduleDatabaseWriter(Site site, LocalDate fromDate, LocalDate toDate, List<Item> selectedItems, List<ScheduledItem> latestScheduledItems, ResourceConfigurationLoader resourceConfigurationLoader) {
@@ -62,7 +68,29 @@ public class AnnualScheduleDatabaseWriter {
 
     public void saveToUpdateStore(UpdateStore updateStore) {
         this.updateStore = updateStore;
+        totalRecordsInTransaction = getNumRemainingRecordsToInsert();
+        percentageCompleteProperty.set(0);
         continueSaving();
+    }
+
+    private int getNumRemainingRecordsToInsert() {
+        int numScheduledItemsToInsert = itemDatesToInsert.values().stream()
+                .map(List::size)
+                .mapToInt(Integer::intValue)
+                .sum();
+
+        int numScheduledResourceToInsert = resourceConfigurationDatesToInsert.stream()
+                .map(rc -> rc.dates.values().size())
+                .mapToInt(Integer::intValue)
+                .sum();
+
+        return numScheduledItemsToInsert + numScheduledResourceToInsert;
+    }
+
+    private void updatePercentageComplete() {
+        int numRemainingRecordsToInsert = getNumRemainingRecordsToInsert();
+        double percentageComplete = 1 - (numRemainingRecordsToInsert / (double) totalRecordsInTransaction);
+        percentageCompleteProperty.set(percentageComplete);
     }
 
     private void continueSaving() {
@@ -90,6 +118,7 @@ public class AnnualScheduleDatabaseWriter {
                 scheduledItemForDate.put(new ItemDate(item, date), scheduledItem);
 
                 entry.getValue().remove(date);
+                updatePercentageComplete();
                 numInsertions++;
                 if (numInsertions >= MAX_INSERTS_PER_TRANSACTION) {
                     updateStore.submitChanges()
@@ -126,7 +155,7 @@ public class AnnualScheduleDatabaseWriter {
                     scheduledResource.setForeignField("scheduledItem", scheduledItem);
 
                     entry.getValue().remove(date);
-
+                    updatePercentageComplete();
                     numInsertions++;
                     if (numInsertions >= MAX_INSERTS_PER_TRANSACTION) {
                         updateStore.submitChanges()
