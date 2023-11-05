@@ -196,6 +196,9 @@ public class CreateAnnualSchedulePane extends VBox {
                 .onSuccess(latestScheduledItems -> {
                     UpdateStore updateStore = UpdateStore.createAbove(selectedItems.iterator().next().getStore());
                     AnnualScheduleDatabaseWriter writer = new AnnualScheduleDatabaseWriter(site, fromDate, toDate, selectedItems, latestScheduledItems, resourceConfigurationLoader);
+                    writer.percentageCompleteProperty().addListener(((observableValue, oldValue, newValue) -> {
+                        System.out.println(newValue + "% complete.");
+                    }));
                     writer.saveToUpdateStore(updateStore);
                 });
     }
