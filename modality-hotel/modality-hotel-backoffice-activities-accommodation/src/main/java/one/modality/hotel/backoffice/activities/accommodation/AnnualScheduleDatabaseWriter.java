@@ -2,6 +2,8 @@ package one.modality.hotel.backoffice.activities.accommodation;
 
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.orm.entity.UpdateStore;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import one.modality.base.shared.entities.*;
 import one.modality.hotel.backoffice.accommodation.ResourceConfigurationLoader;
 
@@ -13,16 +15,20 @@ public class AnnualScheduleDatabaseWriter {
     private static final int MAX_INSERTS_PER_TRANSACTION = 5;
 
     private final Site site;
-    private final List<ScheduledItem> scheduledItemsWithLatestDates;
+    private final List<ScheduledItem> latestScheduledItems;
+
+    private final DoubleProperty percentageCompleteProperty = new SimpleDoubleProperty();
+    public DoubleProperty percentageCompleteProperty() { return percentageCompleteProperty; }
 
     private List<ResourceConfigurationDates> resourceConfigurationDatesToInsert;
     private Map<Item, List<LocalDate>> itemDatesToInsert;
     private Map<ItemDate, ScheduledItem> scheduledItemForDate = new HashMap<>();
+    private int totalRecordsInTransaction;
     private UpdateStore updateStore;
 
-    public AnnualScheduleDatabaseWriter(Site site, LocalDate fromDate, LocalDate toDate, List<Item> selectedItems, List<ScheduledItem> scheduledItemsWithLatestDates, ResourceConfigurationLoader resourceConfigurationLoader) {
+    public AnnualScheduleDatabaseWriter(Site site, LocalDate fromDate, LocalDate toDate, List<Item> selectedItems, List<ScheduledItem> latestScheduledItems, ResourceConfigurationLoader resourceConfigurationLoader) {
         this.site = site;
-        this.scheduledItemsWithLatestDates = scheduledItemsWithLatestDates;
+        this.latestScheduledItems = latestScheduledItems;
         determineRecordsToInsert(fromDate, toDate, selectedItems, resourceConfigurationLoader);
     }
 
@@ -33,7 +39,7 @@ public class AnnualScheduleDatabaseWriter {
             itemDatesToInsert.put(item, new ArrayList<>());
 
             ResourceConfigurationDates resourceConfigurationDates = new ResourceConfigurationDates(item);
-            ScheduledItem latestScheduledItem = latestScheduledItem(item, scheduledItemsWithLatestDates);
+            ScheduledItem latestScheduledItem = latestScheduledItem(item);
             for (LocalDate date = fromDate; !date.isAfter(toDate); date = date.plusDays(1)) {
                 if (latestScheduledItem != null && !date.isAfter(latestScheduledItem.getDate())) {
                     // Check no record exists for this date
@@ -62,7 +68,29 @@ public class AnnualScheduleDatabaseWriter {
 
     public void saveToUpdateStore(UpdateStore updateStore) {
         this.updateStore = updateStore;
+        totalRecordsInTransaction = getNumRemainingRecordsToInsert();
+        percentageCompleteProperty.set(0);
         continueSaving();
+    }
+
+    private int getNumRemainingRecordsToInsert() {
+        int numScheduledItemsToInsert = itemDatesToInsert.values().stream()
+                .map(List::size)
+                .mapToInt(Integer::intValue)
+                .sum();
+
+        int numScheduledResourceToInsert = resourceConfigurationDatesToInsert.stream()
+                .map(rc -> rc.dates.values().size())
+                .mapToInt(Integer::intValue)
+                .sum();
+
+        return numScheduledItemsToInsert + numScheduledResourceToInsert;
+    }
+
+    private void updatePercentageComplete() {
+        int numRemainingRecordsToInsert = getNumRemainingRecordsToInsert();
+        double percentageComplete = 1 - (numRemainingRecordsToInsert / (double) totalRecordsInTransaction);
+        percentageCompleteProperty.set(percentageComplete);
     }
 
     private void continueSaving() {
@@ -90,11 +118,13 @@ public class AnnualScheduleDatabaseWriter {
                 scheduledItemForDate.put(new ItemDate(item, date), scheduledItem);
 
                 entry.getValue().remove(date);
+                updatePercentageComplete();
                 numInsertions++;
                 if (numInsertions >= MAX_INSERTS_PER_TRANSACTION) {
                     updateStore.submitChanges()
                             .onFailure(Console::log)
                             .onSuccess(result -> continueSaving());
+                    return;
                 }
             }
             itemDatesToInsert.remove(entry.getKey());
@@ -122,25 +152,30 @@ public class AnnualScheduleDatabaseWriter {
                     scheduledResource.setDate(date);
                     scheduledResource.setMax(rc.getMax());
                     scheduledResource.setOnline(online);
-                    //scheduledResource.setForeignField("scheduled_item_id", scheduledItem);
+                    scheduledResource.setForeignField("scheduledItem", scheduledItem);
 
                     entry.getValue().remove(date);
-
+                    updatePercentageComplete();
                     numInsertions++;
                     if (numInsertions >= MAX_INSERTS_PER_TRANSACTION) {
                         updateStore.submitChanges()
                                 .onFailure(Console::log)
                                 .onSuccess(result -> continueSaving());
+                        return;
                     }
                 }
                 resourceConfigurationDates.dates.remove(entry.getKey());
             }
             resourceConfigurationDatesToInsert.remove(resourceConfigurationDates);
         }
+
+        updateStore.submitChanges()
+                .onFailure(Console::log)
+                .onSuccess(result -> System.out.println("Finished.\n" + result));
     }
 
     private ScheduledItem latestScheduledItem(Item item) {
-        return scheduledItemsWithLatestDates.stream()
+        return latestScheduledItems.stream()
                 .filter(scheduledItem -> scheduledItem.getItem().equals(item))
                 .sorted((scheduledItem1, scheduledItem2) -> scheduledItem2.getDate().compareTo(scheduledItem1.getDate()))
                 .findFirst()

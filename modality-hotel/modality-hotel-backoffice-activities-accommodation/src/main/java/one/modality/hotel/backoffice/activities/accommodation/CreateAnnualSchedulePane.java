@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 public class CreateAnnualSchedulePane extends VBox {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-uu");
-    private static final int MAX_INSERTS_PER_TRANSACTION = 10;
 
     private final ResourceConfigurationLoader resourceConfigurationLoader;
     private final Pane parent;
@@ -81,12 +80,12 @@ public class CreateAnnualSchedulePane extends VBox {
     private void displayItemsWithOpenConfiguration() {
         EntityId organizationId = FXOrganizationId.getOrganizationId();
         DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
-        EntityStore.create(dataSourceModel).<ResourceConfiguration>executeQuery("select distinct rc.item.name from ResourceConfiguration rc where rc.item.family.code='acco' and rc.resource.site.organization.id=? and rc.resource.site.event is null and rc.endDate is null", organizationId)
+        EntityStore.create(dataSourceModel).<ResourceConfiguration>executeQuery("select distinct rc.item.name, rc.resource.site from ResourceConfiguration rc where rc.item.family.code='acco' and rc.resource.site.organization.id=? and rc.resource.site.event is null and rc.endDate is null", organizationId)
                 .onFailure(error -> {
                     Console.log("Error while reading scheduled items.", error);
                 })
                 .onSuccess(resourceConfigurations -> {
-                    site = resourceConfigurations.iterator().next().getSite();
+                    site = resourceConfigurations.iterator().next().getResource().getSite();
                     comboBoxItems = new LinkedHashMap<>();
                     List<Item> sortedItems = resourceConfigurations.stream()
                             .map(ResourceConfiguration::getItem)
@@ -194,9 +193,12 @@ public class CreateAnnualSchedulePane extends VBox {
                 .onFailure(error -> {
                     Console.log("Error while reading scheduled items.", error);
                 })
-                .onSuccess(scheduledItemsWithLatestDates -> {
+                .onSuccess(latestScheduledItems -> {
                     UpdateStore updateStore = UpdateStore.createAbove(selectedItems.iterator().next().getStore());
-                    AnnualScheduleDatabaseWriter writer = new AnnualScheduleDatabaseWriter(site, fromDate, toDate, selectedItems, scheduledItemsWithLatestDates, resourceConfigurationLoader);
+                    AnnualScheduleDatabaseWriter writer = new AnnualScheduleDatabaseWriter(site, fromDate, toDate, selectedItems, latestScheduledItems, resourceConfigurationLoader);
+                    writer.percentageCompleteProperty().addListener(((observableValue, oldValue, newValue) -> {
+                        System.out.println(newValue + "% complete.");
+                    }));
                     writer.saveToUpdateStore(updateStore);
                 });
     }
