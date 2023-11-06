@@ -26,6 +26,9 @@ public final class DateIntervalFormat extends Function {
             LocalDate date1 = Dates.toLocalDate(arguments[0]);
             LocalDate date2 = Dates.toLocalDate(arguments[1]);
 
+            if (date1 == null || date2 == null)
+                return null;
+
             int day1 = date1.getDayOfMonth();
             Month month1 = date1.getMonth();
             String month1Name = month1.name().toLowerCase();
