@@ -3,6 +3,7 @@ package one.modality.hotel.backoffice.activities.accommodation;
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.EntityId;
@@ -140,7 +141,7 @@ public class CreateAnnualSchedulePane extends VBox {
 
     private LocalDate getFromDate() {
         String text = fromDateTextField.getText();
-        if (text.isBlank()) {
+        if (Strings.isBlank(text)) {
             showMsg("No \"from\" date entered.\n\nAnnual schedule not created.");
             return null;
         } else {
@@ -150,7 +151,7 @@ public class CreateAnnualSchedulePane extends VBox {
 
     private LocalDate getToDate() {
         String text = toDateTextField.getText();
-        if (text.isBlank()) {
+        if (Strings.isBlank(text)) {
             showMsg("No \"to\" date entered.\n\nAnnual schedule not created.");
             return null;
         } else {
