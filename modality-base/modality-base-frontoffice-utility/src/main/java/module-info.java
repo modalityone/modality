@@ -14,6 +14,7 @@ module modality.base.frontoffice.utility {
     requires webfx.kit.util;
     requires webfx.platform.uischeduler;
     requires webfx.stack.i18n;
+    requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
 

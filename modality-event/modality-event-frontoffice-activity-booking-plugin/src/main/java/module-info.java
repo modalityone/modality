@@ -10,12 +10,14 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.client.mainframe.dialogarea.fx;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires webfx.extras.imagestore;
     requires webfx.extras.util.control;
     requires webfx.kit.util;
     requires webfx.platform.ast;
+    requires webfx.platform.conf;
     requires webfx.platform.console;
     requires webfx.platform.fetch.ast.json;
     requires webfx.platform.util;

@@ -4,6 +4,7 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.Unregisterable;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.i18n.I18n;
+import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.BooleanProperty;
@@ -254,7 +255,9 @@ public class GeneralUtility {
 
 
     public static Label createLabel(String text, Color color, double fontSize) {
-        Label label = new Label(text);
+        Label label = new Label();
+        if (text != null)
+            I18nControls.bindI18nProperties(label, text);
         label.setTextFill(color);
         FXProperties.runNowAndOnPropertiesChange(() -> {
             double size = fontSize * FXApp.fontRatio.get();

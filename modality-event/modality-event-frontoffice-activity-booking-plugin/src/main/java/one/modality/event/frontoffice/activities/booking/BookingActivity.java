@@ -3,6 +3,7 @@ package one.modality.event.frontoffice.activities.booking;
 import dev.webfx.extras.imagestore.ImageStore;
 import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.reactive.entities.entities_to_objects.IndividualEntityToObjectMapper;
 import dev.webfx.stack.orm.reactive.entities.entities_to_objects.ReactiveObjectsMapper;
@@ -32,17 +33,18 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
 
     @Override
     public Node buildUi() {
-        Label headerLabel = GeneralUtility.getMainHeaderLabel("YOUR NEXT MEANINGFUL EVENT IS HERE");
+        Label headerLabel = GeneralUtility.getMainHeaderLabel("eventsHeader");
         headerLabel.setTextAlignment(TextAlignment.CENTER);
 
-        ImageView headerImageView = ImageStore.createImageView("https://kadampafestivals.org/wp-content/uploads/2022/08/Puja_0028.jpg");
+        String headerImageUrl = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.event.frontoffice.activity.booking").getString("headerImageUrl");
+        ImageView headerImageView = ImageStore.createImageView(headerImageUrl);
         headerImageView.setPreserveRatio(true);
 
-        Label internationalEventsLabel = GeneralUtility.createLabel("International Festivals", Color.web(StyleUtility.VICTOR_BATTLE_BLACK), 16);
+        Label internationalEventsLabel = GeneralUtility.createLabel("internationalEvents", Color.web(StyleUtility.VICTOR_BATTLE_BLACK), 16);
 
         Node centerDisplay = new CenterDisplayView().getView( this, this);
 
-        Label localEventsLabel = GeneralUtility.createLabel("Local Events", Color.web(StyleUtility.VICTOR_BATTLE_BLACK), 16);
+        Label localEventsLabel = GeneralUtility.createLabel("localEvents", Color.web(StyleUtility.VICTOR_BATTLE_BLACK), 16);
 
         Node searchBar = new SearchBarView().getView();
 
