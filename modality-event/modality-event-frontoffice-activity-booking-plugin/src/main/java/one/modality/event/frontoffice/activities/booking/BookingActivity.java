@@ -14,13 +14,14 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
-import one.modality.base.frontoffice.fx.FXBooking;
 import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.base.frontoffice.utility.StyleUtility;
 import one.modality.base.shared.entities.Event;
+import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.event.frontoffice.activities.booking.views.CenterDisplayView;
 import one.modality.event.frontoffice.activities.booking.views.EventView;
 import one.modality.event.frontoffice.activities.booking.views.SearchBarView;
@@ -64,6 +65,7 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
                 localEventsContainer);
         container.setAlignment(Pos.CENTER);
         container.setBackground(Background.fill(Color.WHITE));
+        container.setMaxWidth(1200);
 
         FXProperties.runOnPropertiesChange(() -> {
             double width = container.getWidth();
@@ -72,21 +74,21 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
             GeneralUtility.screenChangeListened(container.getWidth());
         }, container.widthProperty());
 
-        return ControlUtil.createVerticalScrollPane(container);
+        return ControlUtil.createVerticalScrollPane(new BorderPane(container));
     }
 
     protected void startLogic() {
         // Loading NKT Festivals
         ReactiveObjectsMapper.<Event, Node>createPushReactiveChain(this)
-                .always("{class: 'Event', fields:'name, label.<loadAll>, startDate, endDate', where: 'organization.type.code = `CORP` and endDate > now()', orderBy: 'startDate desc, id'}")
+                .always("{class: 'Event', fields:'name, label.<loadAll>, startDate, endDate, organization, host, frontend', where: 'organization.type.code = `CORP`', orderBy: 'startDate desc, id', limit: 6}")
                 .setIndividualEntityToObjectMapperFactory(IndividualEntityToObjectMapper.createFactory(EventView::new, EventView::setEvent, EventView::getView))
                 .storeMappedObjectsInto(internationalEventsContainer.getChildren())
                 .start();
 
         // Loading local events
         ReactiveObjectsMapper.<Event, Node>createPushReactiveChain(this)
-                .always("{class: 'Event', fields:'name, label.<loadAll>, startDate, endDate', where: 'endDate > now()', orderBy: 'startDate'}")
-                .ifNotNullOtherwiseEmpty(FXBooking.displayCenterProperty, localCenter -> where("organization=?", localCenter))
+                .always("{class: 'Event', fields:'name, label.<loadAll>, startDate, endDate, organization, host, frontend', where: 'endDate > now()', orderBy: 'startDate'}")
+                .ifNotNullOtherwiseEmpty(FXOrganizationId.organizationIdProperty(), orgId -> where("organization=?", orgId))
                 .setIndividualEntityToObjectMapperFactory(IndividualEntityToObjectMapper.createFactory(EventView::new, EventView::setEvent, EventView::getView))
                 .storeMappedObjectsInto(localEventsContainer.getChildren())
                 .start();

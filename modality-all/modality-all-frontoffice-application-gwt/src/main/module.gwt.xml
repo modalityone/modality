@@ -81,6 +81,8 @@
     <inherits name="com.google.gwt.user.User"/>
     <!--=================================< java-nio-emul >==================================-->
     <inherits name="org.gwtproject.nio.GwtNioSupport"/>
+    <!--=================< modality-base-backoffice-mainframe-headernode >==================-->
+    <source path="one/modality/base/backoffice/mainframe/headernode"/>
     <!--=========================< modality-base-client-activity >==========================-->
     <source path="one/modality/base/client/activity"/>
     <source path="one/modality/base/client/activity/table"/>
@@ -183,6 +185,9 @@
     <source path="one/modality/base/shared/entities/formatters"/>
     <source path="one/modality/base/shared/entities/impl"/>
     <source path="one/modality/base/shared/entities/markers"/>
+    <!--====================< modality-crm-backoffice-organization-fx >=====================-->
+    <source path="one/modality/crm/backoffice/organization/fx"/>
+    <source path="one/modality/crm/backoffice/organization/fx/impl"/>
     <!--===================< modality-crm-client-activity-login-plugin >====================-->
     <source path="one/modality/crm/client/activities/login"/>
     <!--================< modality-crm-client-activity-unauthorized-plugin >================-->

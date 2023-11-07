@@ -32,7 +32,7 @@ public final class CenterDisplayView {
     public Node getView(ButtonFactoryMixin factoryMixin, ViewDomainActivityBase activityBase) {
 
         EntityButtonSelector<Organization> centersButtonSelector = new EntityButtonSelector<>(
-                "{class: 'organization', orderBy: 'name'}",
+                "{class: 'Organization', orderBy: 'name'}",
                 factoryMixin, FXMainFrameDialogArea.getDialogArea(), activityBase.getDataSourceModel()
         );
 
@@ -51,8 +51,8 @@ public final class CenterDisplayView {
                 GeneralUtility.createVList(5, 0,
                         GeneralUtility.createLabel("localCentreWebsite", Color.WHITE, StyleUtility.SUB_TEXT_SIZE),
                         GeneralUtility.createLabel("localCentreAddress", Color.WHITE, StyleUtility.SUB_TEXT_SIZE),
-                        GeneralUtility.createLabel("localCentrePhone", Color.WHITE, StyleUtility.SUB_TEXT_SIZE),
-                        GeneralUtility.createLabel("localCentreEmail", Color.WHITE, StyleUtility.SUB_TEXT_SIZE)
+                        GeneralUtility.createLabel("localCentrePhone",   Color.WHITE, StyleUtility.SUB_TEXT_SIZE),
+                        GeneralUtility.createLabel("localCentreEmail",   Color.WHITE, StyleUtility.SUB_TEXT_SIZE)
                 ),50, 10
         );
 

@@ -58,6 +58,7 @@ public class ServiceLoader<S> implements Iterable<S> {
             case "dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter": return new ServiceLoader<S>(one.modality.base.frontoffice.activities.account.RouteToAccountRequestEmitter::new, one.modality.base.frontoffice.activities.account.friendsfamily.RouteToAccountFriendsAndFamilyEmitter::new, one.modality.base.frontoffice.activities.account.friendsfamily.edit.RouteToAccountFriendsAndFamilyEditEmitter::new, one.modality.base.frontoffice.activities.account.personalinfo.RouteToAccountPersonalInformationEmitter::new, one.modality.base.frontoffice.activities.account.settings.RouteToAccountSettingsRequestEmitter::new, one.modality.base.frontoffice.activities.alerts.RouteToAlertsRequestEmitter::new, one.modality.event.frontoffice.activities.booking.RouteToBookingRequestEmitter::new);
             case "dev.webfx.stack.session.spi.SessionServiceProvider": return new ServiceLoader<S>(dev.webfx.stack.session.spi.impl.client.ClientSessionServiceProvider::new);
             case "javafx.application.Application": return new ServiceLoader<S>(one.modality.base.frontoffice.application.ModalityFrontOfficeApplication::new);
+            case "one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider": return new ServiceLoader<S>();
 
             // UNKNOWN SPI
             default:
