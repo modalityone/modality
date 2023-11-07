@@ -2,6 +2,8 @@ package one.modality.event.frontoffice.activities.booking.views;
 
 import dev.webfx.extras.imagestore.ImageStore;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.conf.SourcesConfig;
+import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
@@ -16,12 +18,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
 import one.modality.base.frontoffice.fx.FXAccount;
 import one.modality.base.frontoffice.fx.FXBooking;
 import one.modality.base.frontoffice.states.BookingPM;
 import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.base.frontoffice.utility.StyleUtility;
-import one.modality.base.frontoffice.utility.SvgUtility;
 import one.modality.base.frontoffice.utility.TextUtility;
 import one.modality.base.shared.entities.Organization;
 
@@ -29,44 +31,28 @@ public final class CenterDisplayView {
 
     public Node getView(ButtonFactoryMixin factoryMixin, ViewDomainActivityBase activityBase) {
 
-        VBox container = new VBox();
-
         EntityButtonSelector<Organization> centersButtonSelector = new EntityButtonSelector<>(
-                "{class:'organization', orderBy:'name'}",
-                factoryMixin, container, activityBase.getDataSourceModel()
+                "{class: 'organization', orderBy: 'name'}",
+                factoryMixin, FXMainFrameDialogArea.getDialogArea(), activityBase.getDataSourceModel()
         );
 
         centersButtonSelector.selectedItemProperty().bindBidirectional(FXAccount.ownerPM.LOCAL_CENTER);
 
-        ImageView map = ImageStore.createImageView("https://maps.googleapis.com/maps/api/staticmap?center=40.714728,-73.998672&zoom=12&size=400x400&key=AIzaSyAihoCYFho8rqJwnBjxzBlk56SR0uL7_Ks");
+        String staticMapUrl = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.event.frontoffice.activity.booking").getString("centreStaticMapUrl");
+        ImageView map = ImageStore.createImageView(staticMapUrl);
+        map.setPreserveRatio(true);
 
         FXBooking.centerImageProperty.addListener(change -> {
             map.setImage(new Image(FXBooking.centerImageProperty.get(), true));
         });
 
-
-        map.setPreserveRatio(true);
-        FXProperties.runNowAndOnPropertiesChange(() -> map.setFitWidth(container.getWidth() * 0.25), container.widthProperty());
-
-        Label addressWeb = GeneralUtility.createLabel("manjushri.org", Color.web(StyleUtility.RUPAVAJRA_WHITE), StyleUtility.SUB_TEXT_SIZE);
-        addressWeb.graphicProperty().set(GeneralUtility.createSvgPath(SvgUtility.ADDRESS_WEB, StyleUtility.RUPAVAJRA_WHITE));
-
-        Label addressLocation = GeneralUtility.createLabel("Manjushri Kadampa Meditation Centre Conishead Priory, Ulverston LA12 9QQ", Color.web(StyleUtility.RUPAVAJRA_WHITE), StyleUtility.SUB_TEXT_SIZE);
-        addressLocation.graphicProperty().set(GeneralUtility.createSvgPath(SvgUtility.ADDRESS_LOCATION, StyleUtility.RUPAVAJRA_WHITE));
-
-        Label addressPhone = GeneralUtility.createLabel("+44 (0)1229 584029", Color.web(StyleUtility.RUPAVAJRA_WHITE), StyleUtility.SUB_TEXT_SIZE);
-        addressPhone.graphicProperty().set(GeneralUtility.createSvgPath(SvgUtility.ADDRESS_PHONE, StyleUtility.RUPAVAJRA_WHITE));
-
-        Label addressEmail = GeneralUtility.createLabel("info@manjushri.org", Color.web(StyleUtility.RUPAVAJRA_WHITE), StyleUtility.SUB_TEXT_SIZE);
-        addressEmail.graphicProperty().set(GeneralUtility.createSvgPath(SvgUtility.ADDRESS_EMAIL, StyleUtility.RUPAVAJRA_WHITE));
-
         Node location = GeneralUtility.createSplitRow(
                 map,
                 GeneralUtility.createVList(5, 0,
-                        addressWeb,
-                        addressLocation,
-                        addressPhone,
-                        addressEmail
+                        GeneralUtility.createLabel("localCentreWebsite", Color.WHITE, StyleUtility.SUB_TEXT_SIZE),
+                        GeneralUtility.createLabel("localCentreAddress", Color.WHITE, StyleUtility.SUB_TEXT_SIZE),
+                        GeneralUtility.createLabel("localCentrePhone", Color.WHITE, StyleUtility.SUB_TEXT_SIZE),
+                        GeneralUtility.createLabel("localCentreEmail", Color.WHITE, StyleUtility.SUB_TEXT_SIZE)
                 ),50, 10
         );
 
@@ -77,15 +63,15 @@ public final class CenterDisplayView {
         });
         changeLocation.setTextAlignment(TextAlignment.CENTER);
 
-        Label localCenterText = GeneralUtility.createLabel("Your centre"/* FXAccount.ownerPM.LOCAL_CENTER.getValue().getName()*/, Color.web(StyleUtility.VICTOR_BATTLE_BLACK), StyleUtility.MAIN_TEXT_SIZE);
-        localCenterText.setTextAlignment(TextAlignment.CENTER);
+        Label localCenterNameLabel = GeneralUtility.createLabel("localCentreName"/* FXAccount.ownerPM.LOCAL_CENTER.getValue().getName()*/, Color.web(StyleUtility.VICTOR_BATTLE_BLACK), StyleUtility.MAIN_TEXT_SIZE);
+        localCenterNameLabel.setTextAlignment(TextAlignment.CENTER);
 
-        container.getChildren().addAll(
+        VBox container = new VBox(
                 //TextUtility.getSubText("Your Country", StyleUtility.RUPAVAJRA_WHITE),
                 //BookingPM.CHANGE_CENTER.get() ? countriesButtonSelector.getButton() : GeneralUtility.createLabel(FXAccount.ownerPM.ADDRESS_COUNTRY.getValue().getName(), Color.web(StyleUtility.VICTOR_BATTLE_BLACK), StyleUtility.MAIN_TEXT_SIZE),
                 GeneralUtility.createSpace(20),
-                TextUtility.getSubText("Your Local Dharma Center", StyleUtility.RUPAVAJRA_WHITE),
-                BookingPM.CHANGE_CENTER.get() ? centersButtonSelector.getButton() : localCenterText,
+                I18n.bindI18nProperties(TextUtility.getSubText(null, StyleUtility.RUPAVAJRA_WHITE), "yourLocalCentre"),
+                BookingPM.CHANGE_CENTER.get() ? centersButtonSelector.getButton() : localCenterNameLabel,
                 GeneralUtility.createSpace(20),
                 location,
                 GeneralUtility.createSpace(20),
@@ -95,6 +81,8 @@ public final class CenterDisplayView {
         container.setBackground(Background.fill(Color.web(StyleUtility.MAIN_BLUE)));
         container.setPadding(new Insets(35));
         container.setAlignment(Pos.CENTER);
+
+        FXProperties.runNowAndOnPropertiesChange(() -> map.setFitWidth(container.getWidth() * 0.25), container.widthProperty());
 
         return container;
     }
