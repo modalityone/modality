@@ -10,7 +10,6 @@ import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionBinder;
 import dev.webfx.stack.ui.action.ActionGroup;
 import javafx.beans.InvalidationListener;
-import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -19,7 +18,6 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Labeled;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
@@ -135,11 +133,6 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
                         "RouteToHome", "RouteToBooking", "RouteToAlerts", "RouteToAccount")
                 .stream().map(this::createRouteButton)
                 .toArray(Button[]::new);
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            setButtonPrefWidth(buttons, Region.USE_COMPUTED_SIZE);
-            double maxPrefWidth = java.util.Arrays.stream(buttons).mapToDouble(b -> b.prefWidth(-1)).max().orElse(-1);
-            setButtonPrefWidth(buttons, maxPrefWidth);
-        }, Arrays.map(buttons, Labeled::textProperty, StringProperty[]::new));
         return new ColumnsPane(Arrays.map(buttons, ModalityFrontOfficeMainFrameActivity::scaleButton, Node[]::new));
     }
 
@@ -161,6 +154,7 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
         if (OperatingSystem.isMobile()) // Should we implement OperatingSystem.isIPad()?
             scalePane.setPadding(new Insets(0, 0, 10, 0));
         */
+        scalePane.managedProperty().bind(button.managedProperty()); // Should it be in MonoPane?
         return scalePane;
     }
 
