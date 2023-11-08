@@ -8,14 +8,18 @@ module modality.base.shared.entities {
     // Direct dependencies modules
     requires java.base;
     requires modality.base.shared.domainmodel;
+    requires webfx.extras.type;
     requires webfx.platform.util;
+    requires webfx.stack.i18n;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
+    requires webfx.stack.orm.expression;
 
     // Exported packages
     exports one.modality.base.shared.entities;
     exports one.modality.base.shared.entities.converters;
     exports one.modality.base.shared.entities.formatters;
+    exports one.modality.base.shared.entities.functions;
     exports one.modality.base.shared.entities.impl;
     exports one.modality.base.shared.entities.markers;
 
