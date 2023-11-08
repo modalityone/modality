@@ -20,7 +20,8 @@ public final class ModalityI18nProvider extends AstI18nProvider {
             if (s.startsWith("expression:")) {
                 Entity entity = findEntity(i18nKey);
                 if (entity != null) {
-                    Object tokenValue = entity.evaluate(s.substring(11));
+                    String expression = s.substring(11);
+                    Object tokenValue = entity.evaluate(expression);
                     if (tokenValue instanceof String)
                         i18nKey = new I18nSubKey(tokenValue, i18nKey);
                     else
@@ -32,6 +33,8 @@ public final class ModalityI18nProvider extends AstI18nProvider {
     }
 
     private Entity findEntity(Object i18nKey) {
+        if (i18nKey instanceof Entity)
+            return (Entity) i18nKey;
         if (i18nKey instanceof HasEntity)
             return ((HasEntity) i18nKey).getEntity();
         if (i18nKey instanceof I18nSubKey)
