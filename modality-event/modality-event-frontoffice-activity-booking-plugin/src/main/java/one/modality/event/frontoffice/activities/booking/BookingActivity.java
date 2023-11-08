@@ -69,7 +69,7 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
 
         FXProperties.runOnPropertiesChange(() -> {
             double width = container.getWidth();
-            headerImageView.setFitWidth(Math.min(width, 600));
+            headerImageView.setFitWidth(Math.min(width, 800));
 
             GeneralUtility.screenChangeListened(container.getWidth());
         }, container.widthProperty());
