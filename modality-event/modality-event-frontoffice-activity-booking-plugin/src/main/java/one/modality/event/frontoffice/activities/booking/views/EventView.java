@@ -3,6 +3,7 @@ package one.modality.event.frontoffice.activities.booking.views;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
+import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -27,13 +28,15 @@ public final class EventView {
     private final Label eventNameLabel = GeneralUtility.getMediumLabel(null, StyleUtility.MAIN_BLUE);
     private final Label eventDescriptionLabel = GeneralUtility.createLabel("eventDescription", Color.web(StyleUtility.VICTOR_BATTLE_BLACK), 10);
     private final Text eventDateText = TextUtility.getText(null, 10, StyleUtility.VICTOR_BATTLE_BLACK);
+    private final Text eventCentreLocationText = I18n.bindI18nProperties(
+            TextUtility.weight(TextUtility.getText(null, 8, StyleUtility.ELEMENT_GRAY), FontWeight.THIN),
+            "eventCentreLocation");
+    private final Text eventCityLocationText = I18n.bindI18nProperties(
+            TextUtility.weight(TextUtility.getText(null, 8, StyleUtility.ELEMENT_GRAY), FontWeight.MEDIUM),
+            "eventCityLocation");
     private final Node eventLocation = GeneralUtility.createVList(0, 0,
-            I18n.bindI18nProperties(
-                    TextUtility.weight(TextUtility.getText(null, 8, StyleUtility.ELEMENT_GRAY), FontWeight.THIN),
-                    "eventCentreLocation"),
-            I18n.bindI18nProperties(
-                    TextUtility.weight(TextUtility.getText(null, 8, StyleUtility.ELEMENT_GRAY), FontWeight.MEDIUM),
-                    "eventCityLocation")
+            eventCentreLocationText,
+            eventCityLocationText
             //distance < 0 ? new VBox() : TextUtility.getText(distance.toString(), 8, StyleUtility.ELEMENT_GRAY)
     );
     private final Button bookButton = I18nControls.bindI18nProperties(
@@ -64,10 +67,7 @@ public final class EventView {
 
     public void setEvent(Event event) {
         this.event = event;
-        Object language = I18n.getLanguage();
-        String titleStr = (event.getLabel() != null) ? event.getLabel().getStringFieldValue(language) : event.getName();
-        titleStr = (titleStr == null) ? event.getName() : titleStr;
-        eventNameLabel.setText(titleStr);
+        I18nControls.bindI18nProperties(eventNameLabel, new I18nSubKey("expression: i18n(this)", event));
         eventDateText.setText(event.getStartDate().toString());
         buttonContainer.setCenter(event.getEndDate().isAfter(LocalDate.now()) ? bookButton : closedButton);
     }
