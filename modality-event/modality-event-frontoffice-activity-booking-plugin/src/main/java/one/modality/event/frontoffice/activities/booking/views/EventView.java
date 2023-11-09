@@ -28,15 +28,13 @@ public final class EventView {
     private final Label eventNameLabel = GeneralUtility.getMediumLabel(null, StyleUtility.MAIN_BLUE);
     private final Label eventDescriptionLabel = GeneralUtility.createLabel("eventDescription", Color.web(StyleUtility.VICTOR_BATTLE_BLACK), 10);
     private final Text eventDateText = TextUtility.getText(null, 10, StyleUtility.VICTOR_BATTLE_BLACK);
-    private final Text eventCentreLocationText = I18n.bindI18nProperties(
-            TextUtility.weight(TextUtility.getText(null, 8, StyleUtility.ELEMENT_GRAY), FontWeight.THIN),
-            "eventCentreLocation");
-    private final Text eventCityLocationText = I18n.bindI18nProperties(
-            TextUtility.weight(TextUtility.getText(null, 8, StyleUtility.ELEMENT_GRAY), FontWeight.MEDIUM),
-            "eventCityLocation");
+    private final Text eventCentreLocationText =
+            TextUtility.weight(TextUtility.getText(null, 8, StyleUtility.ELEMENT_GRAY), FontWeight.THIN);
+    private final Text eventCountryLocationText =
+            TextUtility.weight(TextUtility.getText(null, 8, StyleUtility.ELEMENT_GRAY), FontWeight.MEDIUM);
     private final Node eventLocation = GeneralUtility.createVList(0, 0,
             eventCentreLocationText,
-            eventCityLocationText
+            eventCountryLocationText
             //distance < 0 ? new VBox() : TextUtility.getText(distance.toString(), 8, StyleUtility.ELEMENT_GRAY)
     );
     private final Button bookButton = I18nControls.bindI18nProperties(
@@ -68,6 +66,8 @@ public final class EventView {
     public void setEvent(Event event) {
         this.event = event;
         I18nControls.bindI18nProperties(eventNameLabel, new I18nSubKey("expression: i18n(this)", event));
+        I18n.bindI18nProperties(eventCentreLocationText, new I18nSubKey("expression: '[At] ' + coalesce(i18n(venue), i18n(organization))", event));
+        I18n.bindI18nProperties(eventCountryLocationText, new I18nSubKey("expression: coalesce(i18n(venue.country), i18n(organization.country))", event));
         eventDateText.setText(event.getStartDate().toString());
         buttonContainer.setCenter(event.getEndDate().isAfter(LocalDate.now()) ? bookButton : closedButton);
     }
