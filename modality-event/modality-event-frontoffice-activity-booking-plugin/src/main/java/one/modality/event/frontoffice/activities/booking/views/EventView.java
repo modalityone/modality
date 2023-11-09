@@ -44,7 +44,7 @@ public final class EventView {
 
     private final Button comingSoonButton = I18nControls.bindI18nProperties(
             GeneralUtility.createButton(Color.web(StyleUtility.IMPORTANT_RED), 4, null, 11),
-            "coming soon");
+            "comingSoon");
 
     private final Button bookButton = I18nControls.bindI18nProperties(
             GeneralUtility.createButton(Color.web(StyleUtility.MAIN_BLUE), 4, null, 11),
