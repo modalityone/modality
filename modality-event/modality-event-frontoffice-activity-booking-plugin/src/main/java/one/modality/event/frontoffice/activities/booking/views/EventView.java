@@ -2,6 +2,8 @@ package one.modality.event.frontoffice.activities.booking.views;
 
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
+import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
@@ -30,7 +32,7 @@ public final class EventView {
     private final ImageView eventImageView = new ImageView();
     private final ScalePane eventImageScalePane = new ScalePane(eventImageView);
     private final Label eventNameLabel = GeneralUtility.getMediumLabel(null, StyleUtility.MAIN_BLUE);
-    private final Label eventDescriptionLabel = GeneralUtility.createLabel("eventDescription", Color.web(StyleUtility.VICTOR_BATTLE_BLACK), 10);
+    private final Label eventDescriptionLabel = GeneralUtility.createLabel(null, Color.web(StyleUtility.VICTOR_BATTLE_BLACK), 10);
     private final Text eventDateText = TextUtility.getText(null, 10, StyleUtility.VICTOR_BATTLE_BLACK);
     private final Text eventCentreLocationText =
             TextUtility.weight(TextUtility.getText(null, 8, StyleUtility.ELEMENT_GRAY), FontWeight.THIN);
@@ -58,12 +60,11 @@ public final class EventView {
     private final VBox container = new VBox(10,
             eventImageScalePane,
             GeneralUtility.createSplitRow(eventNameLabel, eventDateText, 80, 0),
-            GeneralUtility.createSplitRow(eventDescriptionLabel, new Text(""), 80, 0),
+            eventDescriptionLabel,
             GeneralUtility.createSplitRow(eventLocation, buttonContainer, 80, 0)
     );
 
     {
-        eventImageView.setPreserveRatio(true);
         bookButton.setOnAction(e -> {
             String bookingFormUrl = (String) event.evaluate("bookingFormUrl");
             bookingFormUrl = bookingFormUrl.replace("{host}", "kadampabookings.org");
@@ -72,6 +73,9 @@ public final class EventView {
         bookButton.setCursor(Cursor.HAND);
         container.setPadding(new Insets(40));
         container.setBackground(Background.fill(Color.web(StyleUtility.BACKGROUND_GRAY)));
+        FXProperties.runNowAndOnPropertiesChange(() ->
+            eventDescriptionLabel.setManaged(Strings.isNotEmpty(eventDescriptionLabel.getText()))
+        , eventDescriptionLabel.textProperty());
     }
 
     public void setEvent(Event event) {
@@ -84,6 +88,7 @@ public final class EventView {
             eventImageView.setImage(new Image(imageUrl, true));
         }
         I18nControls.bindI18nProperties(eventNameLabel, new I18nSubKey("expression: i18n(this)", event));
+        I18nControls.bindI18nProperties(eventDescriptionLabel, new I18nSubKey("expression: i18n(shortDescriptionLabel)", event));
         I18n.bindI18nProperties(eventCentreLocationText, new I18nSubKey("expression: '[At] ' + coalesce(i18n(venue), i18n(organization))", event));
         I18n.bindI18nProperties(eventCountryLocationText, new I18nSubKey("expression: coalesce(i18n(venue.country), i18n(organization.country))", event));
         eventDateText.setText(event.getStartDate().toString());
