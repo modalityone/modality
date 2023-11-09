@@ -15,6 +15,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
     requires webfx.extras.imagestore;
+    requires webfx.extras.panes;
     requires webfx.extras.util.control;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
