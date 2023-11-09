@@ -80,14 +80,14 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
     protected void startLogic() {
         // Loading NKT Festivals
         ReactiveObjectsMapper.<Event, Node>createPushReactiveChain(this)
-                .always("{class: 'Event', fields:'name, label.<loadAll>, startDate, endDate, organization, host, frontend', where: 'organization.type.code = `CORP`', orderBy: 'startDate desc, id', limit: 6}")
+                .always("{class: 'Event', alias: 'e', fields:'name, label.<loadAll>, startDate, endDate, organization, organization.country, venue.(name, label.<loadAll>, country), host, frontend', where: 'organization.type.code = `CORP`', orderBy: 'startDate desc, id', limit: 6}")
                 .setIndividualEntityToObjectMapperFactory(IndividualEntityToObjectMapper.createFactory(EventView::new, EventView::setEvent, EventView::getView))
                 .storeMappedObjectsInto(internationalEventsContainer.getChildren())
                 .start();
 
         // Loading local events
         ReactiveObjectsMapper.<Event, Node>createPushReactiveChain(this)
-                .always("{class: 'Event', fields:'name, label.<loadAll>, startDate, endDate, organization, host, frontend', where: 'endDate > now()', orderBy: 'startDate'}")
+                .always("{class: 'Event', fields:'name, label.<loadAll>, startDate, endDate, organization, organization.country, venue.(name, label.<loadAll>, country), host, frontend', where: 'endDate > now()', orderBy: 'startDate'}")
                 .ifNotNullOtherwiseEmpty(FXOrganizationId.organizationIdProperty(), orgId -> where("organization=?", orgId))
                 .setIndividualEntityToObjectMapperFactory(IndividualEntityToObjectMapper.createFactory(EventView::new, EventView::setEvent, EventView::getView))
                 .storeMappedObjectsInto(localEventsContainer.getChildren())
