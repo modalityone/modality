@@ -3,7 +3,7 @@ package one.modality.ecommerce.backoffice.activities.statistics;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
-import one.modality.base.backoffice.tile.TabsBar;
+import one.modality.base.client.tile.TabsBar;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.backoffice.mainframe.headertabs.fx.FXMainFrameHeaderTabs;

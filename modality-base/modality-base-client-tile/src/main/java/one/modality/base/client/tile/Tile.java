@@ -1,4 +1,4 @@
-package one.modality.base.backoffice.tile;
+package one.modality.base.client.tile;
 
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.theme.Facet;
@@ -41,6 +41,7 @@ public class Tile extends MonoPane {
 
         {
             setContentValignment(VPos.BOTTOM); // for a possible folding animation from bottom to top
+            setMinWidth(USE_PREF_SIZE);
         }
 
         @Override

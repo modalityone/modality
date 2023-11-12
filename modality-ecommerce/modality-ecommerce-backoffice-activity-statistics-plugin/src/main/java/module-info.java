@@ -11,9 +11,9 @@ module modality.ecommerce.backoffice.activity.statistics.plugin {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.backoffice.mainframe.headertabs.fx;
-    requires modality.base.backoffice.tile;
     requires modality.base.client.activity.organizationdependent;
     requires modality.base.client.gantt.fx;
+    requires modality.base.client.tile;
     requires modality.base.client.util;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;

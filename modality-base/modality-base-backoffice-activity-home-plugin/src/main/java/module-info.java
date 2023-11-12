@@ -9,9 +9,9 @@ module modality.base.backoffice.activity.home.plugin {
     requires java.base;
     requires javafx.base;
     requires javafx.graphics;
-    requires modality.base.backoffice.tile;
     requires modality.base.client.activity;
     requires modality.base.client.application;
+    requires modality.base.client.tile;
     requires webfx.extras.theme;
     requires webfx.platform.conf;
     requires webfx.platform.util;

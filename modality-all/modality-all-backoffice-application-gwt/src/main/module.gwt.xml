@@ -180,8 +180,6 @@
     <source path="one/modality/base/backoffice/operations/entities/filters"/>
     <!--==================< modality-base-backoffice-operations-generic >===================-->
     <source path="one/modality/base/backoffice/operations/entities/generic"/>
-    <!--=========================< modality-base-backoffice-tile >==========================-->
-    <source path="one/modality/base/backoffice/tile"/>
     <!--=========================< modality-base-client-activity >==========================-->
     <source path="one/modality/base/client/activity"/>
     <source path="one/modality/base/client/activity/table"/>
@@ -260,6 +258,8 @@
     <source path="one/modality/base/client/presentationmodel"/>
     <!--========================< modality-base-client-profile-fx >=========================-->
     <source path="one/modality/base/client/profile/fx"/>
+    <!--===========================< modality-base-client-tile >============================-->
+    <source path="one/modality/base/client/tile"/>
     <!--========================< modality-base-client-time-theme >=========================-->
     <source path="one/modality/base/client/time/theme"/>
     <!--===========================< modality-base-client-util >============================-->

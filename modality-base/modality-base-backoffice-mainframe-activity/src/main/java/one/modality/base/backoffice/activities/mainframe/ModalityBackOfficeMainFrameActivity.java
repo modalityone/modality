@@ -42,7 +42,7 @@ import javafx.util.Duration;
 import one.modality.base.backoffice.ganttcanvas.MainFrameGanttCanvas;
 import one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider;
 import one.modality.base.backoffice.mainframe.headertabs.fx.FXMainFrameHeaderTabs;
-import one.modality.base.backoffice.tile.Tab;
+import one.modality.base.client.tile.Tab;
 import one.modality.base.client.application.ModalityClientMainFrameActivity;
 import one.modality.base.client.gantt.fx.interstice.FXGanttInterstice;
 import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;

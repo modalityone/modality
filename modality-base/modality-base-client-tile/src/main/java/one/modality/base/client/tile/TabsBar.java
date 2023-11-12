@@ -1,4 +1,4 @@
-package one.modality.base.backoffice.tile;
+package one.modality.base.client.tile;
 
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.stack.ui.action.Action;
