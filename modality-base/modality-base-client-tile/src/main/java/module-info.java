@@ -1,6 +1,6 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
-module modality.base.backoffice.tile {
+module modality.base.client.tile {
 
     // Direct dependencies modules
     requires java.base;
@@ -16,6 +16,6 @@ module modality.base.backoffice.tile {
     requires webfx.stack.ui.action;
 
     // Exported packages
-    exports one.modality.base.backoffice.tile;
+    exports one.modality.base.client.tile;
 
 }

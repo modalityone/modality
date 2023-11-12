@@ -11,10 +11,10 @@ module modality.hotel.backoffice.activities.accommodation {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.backoffice.mainframe.headertabs.fx;
-    requires modality.base.backoffice.tile;
     requires modality.base.client.activity.organizationdependent;
     requires modality.base.client.gantt.fx;
     requires modality.base.client.mainframe.dialogarea.fx;
+    requires modality.base.client.tile;
     requires modality.base.shared.domainmodel;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;

@@ -20,7 +20,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.application.RoutingActions;
-import one.modality.base.backoffice.tile.Tile;
+import one.modality.base.client.tile.Tile;
 
 import java.util.Collection;
 

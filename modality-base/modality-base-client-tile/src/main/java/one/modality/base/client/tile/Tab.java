@@ -1,4 +1,4 @@
-package one.modality.base.backoffice.tile;
+package one.modality.base.client.tile;
 
 import dev.webfx.extras.theme.FacetState;
 import dev.webfx.stack.ui.action.Action;

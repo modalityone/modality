@@ -2,7 +2,7 @@ package one.modality.base.backoffice.mainframe.headertabs.fx;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import one.modality.base.backoffice.tile.Tab;
+import one.modality.base.client.tile.Tab;
 
 import java.util.Collection;
 
