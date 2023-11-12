@@ -8,6 +8,7 @@ import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -59,9 +60,14 @@ public final class EventView {
 
     private final VBox container = new VBox(10,
             eventImageScalePane,
-            GeneralUtility.createSplitRow(eventNameLabel, eventDateText, 80, 0),
-            eventDescriptionLabel,
-            GeneralUtility.createSplitRow(eventLocation, buttonContainer, 80, 0)
+            GeneralUtility.createSplitRow(
+                    new VBox(10,
+                            eventNameLabel,
+                            eventDescriptionLabel,
+                            eventLocation),
+                    centeredVBox(10,
+                            eventDateText,
+                            buttonContainer), 80, 0)
     );
 
     {
@@ -74,8 +80,14 @@ public final class EventView {
         container.setPadding(new Insets(40));
         container.setBackground(Background.fill(Color.web(StyleUtility.BACKGROUND_GRAY)));
         FXProperties.runNowAndOnPropertiesChange(() ->
-            eventDescriptionLabel.setManaged(Strings.isNotEmpty(eventDescriptionLabel.getText()))
-        , eventDescriptionLabel.textProperty());
+                        eventDescriptionLabel.setManaged(Strings.isNotEmpty(eventDescriptionLabel.getText()))
+                , eventDescriptionLabel.textProperty());
+    }
+
+    private static VBox centeredVBox(double spacing, Node... children) {
+        VBox vBox = new VBox(spacing, children);
+        vBox.setAlignment(Pos.CENTER);
+        return vBox;
     }
 
     public void setEvent(Event event) {

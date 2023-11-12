@@ -11,6 +11,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.mainframe.dialogarea.fx;
+    requires modality.base.client.tile;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
