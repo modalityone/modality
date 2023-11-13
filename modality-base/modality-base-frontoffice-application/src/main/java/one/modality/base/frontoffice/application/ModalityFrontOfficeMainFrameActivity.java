@@ -133,7 +133,9 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
                         "RouteToHome", "RouteToBooking", "RouteToAlerts", "RouteToAccount")
                 .stream().map(this::createRouteButton)
                 .toArray(Button[]::new);
-        return new ColumnsPane(Arrays.map(buttons, ModalityFrontOfficeMainFrameActivity::scaleButton, Node[]::new));
+        ColumnsPane buttonBar = new ColumnsPane(Arrays.map(buttons, ModalityFrontOfficeMainFrameActivity::scaleButton, Node[]::new));
+        buttonBar.getStyleClass().setAll("button-bar"); // Style class used in Modality.css to make buttons square (remove round corners)
+        return buttonBar;
     }
 
     private Button createRouteButton(Action routeAction) {
