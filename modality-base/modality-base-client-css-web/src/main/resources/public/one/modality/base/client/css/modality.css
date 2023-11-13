@@ -43,18 +43,32 @@ iframe {
     border: none;
 }
 
+/*
+
 fx-button .text {
-    display: inline-flex; /* Not sure if it's necessary => investigate later */
-    align-items: center;  /* Not sure if it's necessary => investigate later */
-    color: #444; /* doesn't work yet (because of hardcoded style in app code) */
+    display: inline-flex; */
+/* Not sure if it's necessary => investigate later *//*
+
+    align-items: center;  */
+/* Not sure if it's necessary => investigate later *//*
+
+    color: #444; */
+/* doesn't work yet (because of hardcoded style in app code) *//*
+
 }
 
-fx-button { /* doesn't work yet (because of hardcoded style in app code) */
+*/
+fx-button > fx-background {
     background: linear-gradient(180deg, white, #e0e0e0);
     border-color: #c0c0c0;
     border-style: solid;
     border-width: 1px;
     border-radius: 5px;
+    box-sizing : border-box;
+}
+
+.button-bar fx-button > fx-background {
+    border-radius: 0px;
 }
 
 .login * {
