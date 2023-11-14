@@ -38,6 +38,7 @@ import one.modality.event.frontoffice.activities.booking.views.EventView;
 import one.modality.event.frontoffice.activities.booking.views.SearchBarView;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
@@ -100,6 +101,7 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
                 if (!localEventTypes.contains(eventType))
                     localEventTypes.add(eventType);
             }
+            localEventTypes.sort(Comparator.comparing(type -> type.getIntegerFieldValue("ord")));
             tabsBar.setTabs(Collections.toArray(Collections.map(localEventTypes, eventType -> {
                 Tab tab = tabsBar.createTab(eventType.getStringFieldValue("name"), eventType);
                 tab.setPadding(new Insets(5));
@@ -131,7 +133,7 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
 
         // Loading local events
         ReactiveObjectsMapper.<Event, Node>createPushReactiveChain(this)
-                .always("{class: 'Event', fields:'name, label.<loadAll>, live, openingDate, startDate, endDate, organization, organization.country, venue.(name, label.<loadAll>, country), host, frontend, image.url, shortDescriptionLabel.<loadAll>, type.name', where: 'endDate > now() and type.name != `Not event`', orderBy: 'startDate'}")
+                .always("{class: 'Event', fields:'name, label.<loadAll>, live, openingDate, startDate, endDate, organization, organization.country, venue.(name, label.<loadAll>, country), host, frontend, image.url, shortDescriptionLabel.<loadAll>, type.(name,label.<loadAll>,ord)', where: 'endDate > now() and type.name != `Not event`', orderBy: 'startDate'}")
                 .ifNotNullOtherwiseEmpty(FXOrganizationId.organizationIdProperty(), orgId -> where("organization=?", orgId))
                 .storeEntitiesInto(localEvents)
                 .start();
