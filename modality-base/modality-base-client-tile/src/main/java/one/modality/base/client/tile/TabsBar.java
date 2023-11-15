@@ -27,7 +27,8 @@ public class TabsBar<T> {
     public void setTabs(Tab... tabsArray) {
         tabs.clear();
         tabs.addAll(Arrays.asList(tabsArray));
-        tabs.get(0).fireAction();
+        if (!tabs.isEmpty())
+            tabs.get(0).fireAction();
     }
 
     public List<Tab> getTabs() {
