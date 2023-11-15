@@ -5,7 +5,7 @@ package one.modality.base.frontoffice.activities.account.routing;
  */
 public final class AccountPersonalInformationRouting {
 
-    private final static String PATH = "/app-account/personal-information";
+    private final static String PATH = "/account/personal-information";
 
     public static String getPath() {
         return PATH;
