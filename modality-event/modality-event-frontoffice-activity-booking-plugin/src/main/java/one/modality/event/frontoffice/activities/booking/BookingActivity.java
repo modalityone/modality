@@ -2,6 +2,7 @@ package one.modality.event.frontoffice.activities.booking;
 
 import dev.webfx.extras.imagestore.ImageStore;
 import dev.webfx.extras.panes.FlexPane;
+import dev.webfx.extras.panes.GrowingPane;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -84,7 +85,7 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
                 localEventsLabel,
                 searchBar,
                 localEventTypeTabsPane,
-                localEventsContainer);
+                new GrowingPane(localEventsContainer));
         container.setAlignment(Pos.CENTER);
         container.setBackground(Background.fill(Color.WHITE));
         container.setMaxWidth(1200);
