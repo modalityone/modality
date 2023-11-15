@@ -33,7 +33,7 @@ public final class CenterDisplayView {
 
         EntityButtonSelector<Organization> centersButtonSelector = new EntityButtonSelector<>(
                 "{class: 'Organization', orderBy: 'name'}",
-                factoryMixin, FXMainFrameDialogArea.getDialogArea(), activityBase.getDataSourceModel()
+                factoryMixin, FXMainFrameDialogArea::getDialogArea, activityBase.getDataSourceModel()
         );
 
         centersButtonSelector.selectedItemProperty().bindBidirectional(FXAccount.ownerPM.LOCAL_CENTER);
