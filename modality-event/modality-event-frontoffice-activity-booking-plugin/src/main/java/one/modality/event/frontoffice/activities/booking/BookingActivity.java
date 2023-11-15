@@ -76,6 +76,7 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
         VBox.setMargin(centerDisplay, new Insets(10, 0, 25, 0));
         VBox.setMargin(searchBar, new Insets(25));
 
+        GrowingPane growingPane = new GrowingPane(localEventsContainer);
         VBox container = new VBox(
                 headerLabel,
                 headerImageScalePane,
@@ -85,7 +86,7 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
                 localEventsLabel,
                 searchBar,
                 localEventTypeTabsPane,
-                new GrowingPane(localEventsContainer));
+                growingPane);
         container.setAlignment(Pos.CENTER);
         container.setBackground(Background.fill(Color.WHITE));
         container.setMaxWidth(1200);
@@ -96,6 +97,8 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
 
 
         localEvents.addListener((InvalidationListener) observable -> {
+            localEventsContainer.getChildren().clear();
+            growingPane.reset();
             List<Entity> localEventTypes = new ArrayList<>();
             for (Event event : localEvents) {
                 Entity eventType = event.getForeignEntity("type");
