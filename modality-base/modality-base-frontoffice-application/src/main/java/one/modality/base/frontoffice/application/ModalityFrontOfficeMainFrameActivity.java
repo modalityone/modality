@@ -3,6 +3,7 @@ package one.modality.base.frontoffice.application;
 import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter;
@@ -26,6 +27,10 @@ import one.modality.base.client.application.RoutingActions;
 import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
 
 public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFrameActivity {
+
+    private final static String[] sortedPossibleRoutingOperations =
+            SourcesConfig.getSourcesRootConfig().childConfigAt("modality.base.frontoffice.application")
+                    .getString("buttonRoutingOperations").split(",");
 
     protected Pane mainFrame;
     //private Region mainFrameHeader;
@@ -129,8 +134,7 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
 
     @Override
     protected Region createMainFrameFooter() {
-        Button[] buttons = RoutingActions.filterRoutingActions(this, this,
-                        "RouteToHome", "RouteToBooking", "RouteToAlerts", "RouteToAccount")
+        Button[] buttons = RoutingActions.filterRoutingActions(this, this, sortedPossibleRoutingOperations)
                 .stream().map(this::createRouteButton)
                 .toArray(Button[]::new);
         ColumnsPane buttonBar = new ColumnsPane(Arrays.map(buttons, ModalityFrontOfficeMainFrameActivity::scaleButton, Node[]::new));
