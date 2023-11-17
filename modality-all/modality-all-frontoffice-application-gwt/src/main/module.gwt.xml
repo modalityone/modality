@@ -169,6 +169,10 @@
     <source path="one/modality/base/frontoffice/operations/routes/alerts"/>
     <!--=====================< modality-base-frontoffice-application >======================-->
     <source path="one/modality/base/frontoffice/application"/>
+    <!--==================< modality-base-frontoffice-mainframe-activity >==================-->
+    <source path="one/modality/base/frontoffice/activities/mainframe"/>
+    <!--=============< modality-base-frontoffice-mainframe-backgroundnode-fx >==============-->
+    <source path="one/modality/base/frontoffice/mainframe/backgroundnode/fx"/>
     <!--=======================< modality-base-frontoffice-utility >========================-->
     <source path="one/modality/base/frontoffice/entities"/>
     <source path="one/modality/base/frontoffice/fx"/>
