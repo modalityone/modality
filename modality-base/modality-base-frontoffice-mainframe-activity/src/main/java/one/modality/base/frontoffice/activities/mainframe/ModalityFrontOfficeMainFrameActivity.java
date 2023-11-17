@@ -18,12 +18,14 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import one.modality.base.client.application.ModalityClientMainFrameActivity;
 import one.modality.base.client.application.RoutingActions;
 import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
+import one.modality.base.frontoffice.mainframe.backgroundnode.fx.FXBackgroundNode;
 
 public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFrameActivity {
 
@@ -32,6 +34,8 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
                     .getString("buttonRoutingOperations").split(",");
 
     protected Pane mainFrame;
+    private Node backgroundNode; // can be used to hold a WebView, and prevent iFrame reload in the web version
+    private final BorderPane mountNodeContainer = new BorderPane();
     private Region mainFrameFooter;
     private Pane dialogArea;
 
@@ -45,20 +49,45 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
                 double footerHeight = mainFrameFooter.prefHeight(width);
                 layoutInArea(mainFrameFooter, 0, height - footerHeight, width, footerHeight, 0, HPos.CENTER, VPos.BOTTOM);
                 double nodeY = headerHeight;
-                double nodeHeight = 0;
-                if (dialogArea != null) {
-                    layoutInArea(dialogArea, 0, nodeY, width, height - nodeY - footerHeight, 0, null, HPos.CENTER, VPos.TOP);
+                layoutInArea(mountNodeContainer, 0, nodeY, width, height - nodeY - footerHeight, 0, null, HPos.CENTER, VPos.TOP);
+                if (backgroundNode != null) { // Same position & size as the mount node (if present)
+                    layoutInArea(backgroundNode, 0, nodeY, width, height - nodeY - footerHeight, 0, null, HPos.CENTER, VPos.TOP);
                 }
-                Node mountNode = getMountNode();
-                if (mountNode != null) {
-                    nodeY += nodeHeight;
-                    layoutInArea(mountNode, 0, nodeY, width, height - nodeY - footerHeight, 0, null, HPos.CENTER, VPos.CENTER);
+                if (dialogArea != null) { // Same position & size as the mount node (if present)
+                    layoutInArea(dialogArea, 0, nodeY, width, height - nodeY - footerHeight, 0, null, HPos.CENTER, VPos.TOP);
                 }
             }
         };
         mainFrameFooter = createMainFrameFooter();
-        FXProperties.runNowAndOnPropertiesChange(this::updateMountNode,
-                mountNodeProperty());
+
+        // To be aware: if backgroundNode is set to a WebView (which is actually its main purpose), then modifying the
+        // mainFrame children again will cause the iFrame to reload in the web version, which is what we want to prevent
+        // here: when the user is navigating back to the WebView, we want him to retrieve the WebView in the exact same
+        // state as when he left it. So we try to not modify these children anymore once the backgroundNode is set.
+        // That's why we encapsulated the mount node inside a container that won't change in that list.
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            backgroundNode = FXBackgroundNode.getBackgroundNode();
+            mainFrame.getChildren().setAll(Collections.listOfRemoveNulls(
+                    backgroundNode,     // may be a WebView
+                    mountNodeContainer, // contains a standard mount node, or null if we want to display the backgroundNode
+                    mainFrameFooter));  // the footer (front-office navigation buttons bar)
+        }, FXBackgroundNode.backgroundNodeProperty());
+
+        // Reacting to the mount node changes:
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            // Updating the mount node container with the new mount node
+            Node mountNode = getMountNode();
+            mountNodeContainer.setCenter(mountNode);
+            // When the mount node is null, this is to indicate that we want to display the background node instead
+            boolean displayBackgroundNode = mountNode == null;
+            // We make the background node visible only when we want to display it
+            if (backgroundNode != null)
+                backgroundNode.setVisible(displayBackgroundNode);
+            // Also when we display the background node, we need make the mount node container transparent to the mouse
+            // (as the background node is behind) to allow the user to interact with it (ex: WebView).
+            mountNodeContainer.setMouseTransparent(displayBackgroundNode);
+            updateDialogArea();
+        }, mountNodeProperty());
 
         // Requesting a layout for containerPane on layout mode changes
         FXProperties.runNowAndOnPropertiesChange(() -> {
@@ -66,20 +95,8 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
             mainFrameFooter.getChildrenUnmodifiable().forEach(n -> ((ScalePane) n).setPrefHeight(footerHeight));
         }, mainFrame.widthProperty(), mainFrame.heightProperty());
 
-
         setUpContextMenu(mainFrame, this::contextMenuActionGroup);
         return mainFrame;
-    }
-
-    private void updateMountNode() {
-        // Note: the order of the children is important in compact mode, where the container header overlaps the mount
-        // node (as a transparent button bar on top of it) -> so the container header must be after the mount node,
-        // otherwise it will be hidden.
-        mainFrame.getChildren().setAll(Collections.listOfRemoveNulls(
-                getMountNode(),
-                //mainFrameHeader,
-                mainFrameFooter));
-        updateDialogArea();
     }
 
     private void updateDialogArea() {
