@@ -3,18 +3,10 @@
 module modality.base.frontoffice.application {
 
     // Direct dependencies modules
-    requires javafx.base;
-    requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.application;
-    requires modality.base.client.mainframe.dialogarea.fx;
-    requires webfx.extras.panes;
-    requires webfx.kit.util;
+    requires modality.base.frontoffice.mainframe.activity;
     requires webfx.platform.conf;
-    requires webfx.platform.util;
-    requires webfx.stack.i18n;
-    requires webfx.stack.ui.action;
-    requires webfx.stack.ui.operation.action;
 
     // Exported packages
     exports one.modality.base.frontoffice.application;

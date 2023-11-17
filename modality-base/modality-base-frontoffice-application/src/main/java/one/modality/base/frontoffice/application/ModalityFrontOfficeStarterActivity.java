@@ -2,6 +2,7 @@ package one.modality.base.frontoffice.application;
 
 import dev.webfx.platform.conf.SourcesConfig;
 import one.modality.base.client.application.ModalityClientStarterActivity;
+import one.modality.base.frontoffice.activities.mainframe.ModalityFrontOfficeMainFrameActivity;
 
 /**
  * @author Bruno Salmon
