@@ -1,6 +1,5 @@
 package one.modality.event.frontoffice.activities.booking.views;
 
-import dev.webfx.extras.imagestore.ImageStore;
 import dev.webfx.extras.panes.ScaleMode;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
@@ -10,6 +9,7 @@ import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -44,21 +44,40 @@ public final class CenterDisplayView {
 
         centersButtonSelector.selectedItemProperty().bindBidirectional(FXOrganization.organizationProperty());
 
-        String staticMapUrl = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.event.frontoffice.activity.booking").getString("centreStaticMapUrl");
-        ImageView map = ImageStore.createImageView(staticMapUrl);
-        map.setPreserveRatio(true);
+        String centreStaticMapUrlTemplate = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.event.frontoffice.activity.booking").getString("centreStaticMapUrl");
+        ImageView centreStaticMapImageView = new ImageView();
+        centreStaticMapImageView.setPreserveRatio(true);
 
         FXBooking.centerImageProperty.addListener(change -> {
-            map.setImage(new Image(FXBooking.centerImageProperty.get(), true));
+            centreStaticMapImageView.setImage(new Image(FXBooking.centerImageProperty.get(), true));
         });
 
+        Label centreWebsiteLabel = GeneralUtility.createLabel("localCentreWebsite", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
+        Label centreAddressLabel = GeneralUtility.createLabel("localCentreAddress", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
+        Label centrePhoneLabel = GeneralUtility.createLabel("localCentrePhone", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
+        Label centreEmailLabel = GeneralUtility.createLabel("localCentreEmail", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
+
+        FXProperties.runNowAndOnPropertiesChange(e -> {
+            Organization organization = FXOrganization.getOrganization();
+            if (organization != null) {
+                organization.onExpressionLoaded("latitude,longitude,domainName,street,cityName,postCode,country.name,phone,email")
+                    .onSuccess(ignored -> Platform.runLater(() -> {
+                        centreStaticMapImageView.setImage(new Image(centreStaticMapUrlTemplate.replace("{latitude}", Float.toString(organization.getLatitude())).replace("{longitude}", Float.toString(organization.getLongitude())), true));
+                        FXProperties.setEvenIfBound(centreWebsiteLabel.textProperty(), organization.getStringFieldValue("domainName"));
+                        FXProperties.setEvenIfBound(centreAddressLabel.textProperty(), (String) organization.evaluate("street + ' - ' + cityName + ' ' + postCode + ' - ' + country.name "));
+                        FXProperties.setEvenIfBound(centrePhoneLabel.textProperty(), organization.getStringFieldValue("phone"));
+                        FXProperties.setEvenIfBound(centreEmailLabel.textProperty(), organization.getStringFieldValue("email"));
+                    }));
+            }
+        }, FXOrganization.organizationProperty());
+
         Node location = GeneralUtility.createSplitRow(
-                map,
-                GeneralUtility.createVList(5, 0,
-                        GeneralUtility.createLabel("localCentreWebsite", Color.WHITE, StyleUtility.SUB_TEXT_SIZE),
-                        GeneralUtility.createLabel("localCentreAddress", Color.WHITE, StyleUtility.SUB_TEXT_SIZE),
-                        GeneralUtility.createLabel("localCentrePhone",   Color.WHITE, StyleUtility.SUB_TEXT_SIZE),
-                        GeneralUtility.createLabel("localCentreEmail",   Color.WHITE, StyleUtility.SUB_TEXT_SIZE)
+                centreStaticMapImageView,
+                GeneralUtility.createVList(10, 0,
+                        centreWebsiteLabel,
+                        centreAddressLabel,
+                        centrePhoneLabel,
+                        centreEmailLabel
                 ),50, 10
         );
 
@@ -88,7 +107,7 @@ public final class CenterDisplayView {
         container.setPadding(new Insets(35));
         container.setAlignment(Pos.CENTER);
 
-        FXProperties.runNowAndOnPropertiesChange(() -> map.setFitWidth(container.getWidth() * 0.25), container.widthProperty());
+        FXProperties.runNowAndOnPropertiesChange(() -> centreStaticMapImageView.setFitWidth(container.getWidth() * 0.25), container.widthProperty());
 
         return container;
     }
