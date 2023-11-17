@@ -1,4 +1,4 @@
-package one.modality.base.frontoffice.application;
+package one.modality.base.frontoffice.activities.mainframe;
 
 import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.ScalePane;
@@ -13,7 +13,6 @@ import dev.webfx.stack.ui.action.ActionGroup;
 import javafx.beans.InvalidationListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
-import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -33,10 +32,8 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
                     .getString("buttonRoutingOperations").split(",");
 
     protected Pane mainFrame;
-    //private Region mainFrameHeader;
     private Region mainFrameFooter;
     private Pane dialogArea;
-    private Insets breathingPadding; // actual value will be computed depending on compact mode
 
     @Override
     public Node buildUi() {
@@ -44,34 +41,27 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
             @Override
             protected void layoutChildren() {
                 double width = getWidth(), height = getHeight();
-                double headerHeight = 0; //mainFrameHeader.prefHeight(width);
+                double headerHeight = 0;
                 double footerHeight = mainFrameFooter.prefHeight(width);
-                //layoutInArea(mainFrameHeader, 0, 0, width, headerHeight, 0, HPos.CENTER, VPos.TOP);
                 layoutInArea(mainFrameFooter, 0, height - footerHeight, width, footerHeight, 0, HPos.CENTER, VPos.BOTTOM);
-                double nodeY = /*FXLayoutMode.isCompactMode() ? 0 :*/ headerHeight; // Note: breathingPadding is passed as margin in layoutInArea() calls
+                double nodeY = headerHeight;
                 double nodeHeight = 0;
                 if (dialogArea != null) {
-                    layoutInArea(dialogArea, 0, nodeY, width, height - nodeY - footerHeight, 0, breathingPadding, HPos.CENTER, VPos.TOP);
+                    layoutInArea(dialogArea, 0, nodeY, width, height - nodeY - footerHeight, 0, null, HPos.CENTER, VPos.TOP);
                 }
                 Node mountNode = getMountNode();
                 if (mountNode != null) {
                     nodeY += nodeHeight;
-                    layoutInArea(mountNode, 0, nodeY, width, height - nodeY - footerHeight, 0, breathingPadding, HPos.CENTER, VPos.CENTER);
+                    layoutInArea(mountNode, 0, nodeY, width, height - nodeY - footerHeight, 0, null, HPos.CENTER, VPos.CENTER);
                 }
             }
         };
-        //mainFrameHeader = createMainFrameHeader();
         mainFrameFooter = createMainFrameFooter();
         FXProperties.runNowAndOnPropertiesChange(this::updateMountNode,
                 mountNodeProperty());
 
         // Requesting a layout for containerPane on layout mode changes
         FXProperties.runNowAndOnPropertiesChange(() -> {
-            /*boolean compactMode = false; //FXLayoutMode.isCompactMode();
-            double hBreathing = compactMode ? 0 : 0.03 * mainFrame.getWidth();
-            double vBreathing = compactMode ? 0 : 0.03 * mainFrame.getHeight();
-            breathingPadding = new Insets(vBreathing, hBreathing, vBreathing, hBreathing);
-            mainFrame.requestLayout();*/
             double footerHeight = Math.max(0.08 * (Math.min(mainFrame.getHeight(), mainFrame.getWidth())), 40);
             mainFrameFooter.getChildrenUnmodifiable().forEach(n -> ((ScalePane) n).setPrefHeight(footerHeight));
         }, mainFrame.widthProperty(), mainFrame.heightProperty());
@@ -162,9 +152,5 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
         */
         scalePane.managedProperty().bind(button.managedProperty()); // Should it be in MonoPane?
         return scalePane;
-    }
-
-    private static void setButtonPrefWidth(Button[] buttons, double prefWidth) {
-        Arrays.forEach(buttons, b -> b.setPrefWidth(prefWidth));
     }
 }

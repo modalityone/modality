@@ -7,9 +7,7 @@
     </exported-packages>
 
     <dependencies>
-        <used-by-source-modules>
-            <undetected-module>webfx-stack-ui-operation-action</undetected-module>
-        </used-by-source-modules>
+        <used-by-source-modules/>
     </dependencies>
 
     <providers>
