@@ -17,6 +17,18 @@ public interface Podcast extends EntityHasDate {
         return getForeignEntity("channel");
     }
 
+    default void setTeacher(Object teacher) {
+        setForeignField("teacher", teacher);
+    }
+
+    default EntityId getTeacherId() {
+        return getForeignEntityId("teacher");
+    }
+
+    default Teacher getTeacher() {
+        return getForeignEntity("teacher");
+    }
+
     default void setChannelPodcastId(String channelPodcastId) {
         setFieldValue("channelPodcastId", channelPodcastId);
     }
