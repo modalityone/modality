@@ -5,6 +5,7 @@ import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionFactory;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -25,10 +26,22 @@ public class TabsBar<T> {
     }
 
     public void setTabs(Tab... tabsArray) {
-        tabs.clear();
-        tabs.addAll(Arrays.asList(tabsArray));
+        setTabs(Arrays.asList(tabsArray));
+    }
+
+    public void setTabs(Collection<Tab> tabs) {
+        this.tabs.clear();
+        addTabs(tabs);
+    }
+
+    public void addTabs(Tab... tabsArray) {
+        addTabs(Arrays.asList(tabsArray));
+    }
+
+    public void addTabs(Collection<Tab> tabs) {
+        this.tabs.addAll(tabs);
         if (!tabs.isEmpty())
-            tabs.get(0).fireAction();
+            this.tabs.get(0).fireAction();
     }
 
     public List<Tab> getTabs() {
