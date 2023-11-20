@@ -82,7 +82,7 @@ public interface Podcast extends EntityHasDate {
         setFieldValue("durationMillis", durationMillis);
     }
 
-    default long getDurationMillis() {
+    default Long getDurationMillis() {
         return getLongFieldValue("durationMillis");
     }
 
