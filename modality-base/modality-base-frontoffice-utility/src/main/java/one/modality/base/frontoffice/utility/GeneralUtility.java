@@ -48,8 +48,8 @@ public class GeneralUtility {
         if (lat1 == null || lat2 == null || lon1 == null || lon2 == null)
             return null;
 
-        Double theta = lon1 - lon2;
-        Double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+        double theta = lon1 - lon2;
+        double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
         dist = Math.acos(dist);
         dist = rad2deg(dist);
         dist = dist * 60 * 1.1515;
@@ -248,11 +248,6 @@ public class GeneralUtility {
     public static Label getMediumLabel(String content, String color) {
         return createLabel(content, Color.web(color), StyleUtility.MEDIUM_TEXT_SIZE);
     }
-
-    public static Label getSubLabel(String content, String color) {
-        return createLabel(content, Color.web(color), StyleUtility.SUB_TEXT_SIZE);
-    }
-
 
     public static Label createLabel(String text, Color color, double fontSize) {
         Label label = new Label();

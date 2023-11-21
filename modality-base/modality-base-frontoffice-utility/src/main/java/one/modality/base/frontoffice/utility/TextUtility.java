@@ -29,7 +29,7 @@ public class TextUtility {
         FXProperties.runNowAndOnPropertiesChange(() -> {
             double fontSize = size * FXApp.fontRatio.get();
             t.setFont(Font.font(family));
-            t.setStyle("-fx-font-family: " + family);
+            t.setStyle("-fx-font-family: " + family + "; -fx-font-size: " + fontSize);
         }, FXApp.fontRatio);
     }
 
@@ -43,20 +43,12 @@ public class TextUtility {
         return getText(content, StyleUtility.MAIN_TEXT_SIZE, color);
     }
 
-    public static Text getMediumText(String content, String color) {
-        return getText(content, StyleUtility.MEDIUM_TEXT_SIZE, color);
-    }
-
     public static Text getSubText(String content, String color) {
         return getText(content, StyleUtility.SUB_TEXT_SIZE, color);
     }
 
     public static Text getAccountHeaderText(String content) {
         return weight(getText(content, 20, StyleUtility.VICTOR_BATTLE_BLACK), FontWeight.findByWeight(600));
-    }
-
-    public static Text getMainHeaderText(String content) {
-        return weight(getText(content, 21, StyleUtility.MAIN_BLUE), FontWeight.findByWeight(600));
     }
 
     public static Text getSubText(String content) {

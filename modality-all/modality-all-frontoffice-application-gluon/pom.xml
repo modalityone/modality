@@ -339,6 +339,7 @@
                         <list>dev/webfx/platform/meta/exe/[^/]+$</list>
                         <list>dev/webfx/stack/authn/login/ui/spi/impl/gateway/facebook/[^/]+$</list>
                         <list>dev/webfx/stack/authn/login/ui/spi/impl/gateway/google/[^/]+$</list>
+                        <list>dev/webfx/stack/i18n/[^/]+$</list>
                         <list>dev/webfx/stack/ui/validation/controlsfx/images/[^/]+$</list>
                         <list>images/buddhas/[^/]+$</list>
                         <list>images/s16/[^/]+$</list>
