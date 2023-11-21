@@ -21,43 +21,15 @@ body * {
     -webkit-font-smoothing: antialiased;
 }
 
-button {
-    border: none;
-    background: none;
-}
-
-button:focus {
-    outline: 0;
-}
-
-button:disabled span {
-    color: gray;
-}
-
-/* This is mainly to avoid the outline when clicking on hyperlinks like "Forgot password?" in login */
-a {
-    outline: 0px;
-}
-
 iframe {
     border: none;
 }
 
-/*
-
-fx-button .text {
-    display: inline-flex; */
-/* Not sure if it's necessary => investigate later *//*
-
-    align-items: center;  */
-/* Not sure if it's necessary => investigate later *//*
-
-    color: #444; */
-/* doesn't work yet (because of hardcoded style in app code) *//*
-
+/* TODO: move this rule to WebFX */
+fx-hyperlink fx-text:hover {
+    text-decoration: underline;
 }
 
-*/
 fx-button > fx-background {
     background: linear-gradient(180deg, white, #e0e0e0);
     border-color: #c0c0c0;

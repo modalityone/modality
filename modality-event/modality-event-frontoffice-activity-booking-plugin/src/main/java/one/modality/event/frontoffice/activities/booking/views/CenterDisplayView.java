@@ -14,6 +14,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -52,7 +53,7 @@ public final class CenterDisplayView {
             centreStaticMapImageView.setImage(new Image(FXBooking.centerImageProperty.get(), true));
         });
 
-        Label centreWebsiteLabel = GeneralUtility.createLabel("localCentreWebsite", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
+        Hyperlink centreWebsiteLink = GeneralUtility.setupLabeled(new Hyperlink(), "localCentreWebsite", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
         Label centreAddressLabel = GeneralUtility.createLabel("localCentreAddress", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
         Label centrePhoneLabel = GeneralUtility.createLabel("localCentrePhone", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
         Label centreEmailLabel = GeneralUtility.createLabel("localCentreEmail", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
@@ -64,7 +65,9 @@ public final class CenterDisplayView {
                     .onSuccess(ignored -> Platform.runLater(() -> {
                         String mapUrl = centreStaticMapUrlTemplate.replace("{latitude}", Float.toString(organization.getLatitude())).replace("{longitude}", Float.toString(organization.getLongitude()));
                         centreStaticMapImageView.setImage(new Image(mapUrl, true));
-                        FXProperties.setEvenIfBound(centreWebsiteLabel.textProperty(), organization.getStringFieldValue("domainName"));
+                        String domainName = organization.getStringFieldValue("domainName");
+                        FXProperties.setEvenIfBound(centreWebsiteLink.textProperty(), domainName);
+                        centreWebsiteLink.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("https://" + domainName));
                         FXProperties.setEvenIfBound(centreAddressLabel.textProperty(), (String) organization.evaluate("street + ' - ' + cityName + ' ' + postCode + ' - ' + country.name "));
                         FXProperties.setEvenIfBound(centrePhoneLabel.textProperty(), organization.getStringFieldValue("phone"));
                         FXProperties.setEvenIfBound(centreEmailLabel.textProperty(), organization.getStringFieldValue("email"));
@@ -75,7 +78,7 @@ public final class CenterDisplayView {
         Node location = GeneralUtility.createSplitRow(
                 centreStaticMapImageView,
                 GeneralUtility.createVList(10, 0,
-                        centreWebsiteLabel,
+                        centreWebsiteLink,
                         centreAddressLabel,
                         centrePhoneLabel,
                         centreEmailLabel

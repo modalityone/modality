@@ -14,6 +14,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -250,19 +251,21 @@ public class GeneralUtility {
     }
 
     public static Label createLabel(String text, Color color, double fontSize) {
-        Label label = new Label();
+        return setupLabeled(new Label(), text, color, fontSize);
+    }
+
+    public static <T extends Labeled> T setupLabeled(T labeled, String text, Color color, double fontSize) {
         if (text != null)
-            I18nControls.bindI18nProperties(label, text);
-        label.setTextFill(color);
+            I18nControls.bindI18nProperties(labeled, text);
+        labeled.setTextFill(color);
         FXProperties.runNowAndOnPropertiesChange(() -> {
             double size = fontSize * FXApp.fontRatio.get();
-            label.setFont(Font.font(StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), size));
-            label.setStyle("-fx-font-family: " + StyleUtility.TEXT_FAMILY + "; -fx-font-size: " + size);
+            labeled.setFont(Font.font(StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), size));
+            labeled.setStyle("-fx-font-family: " + StyleUtility.TEXT_FAMILY + "; -fx-font-size: " + size);
         }, FXApp.fontRatio);
 
-        label.setWrapText(true);
-
-        return label;
+        labeled.setWrapText(true);
+        return labeled;
     }
 
     public static Label weight(Label t, FontWeight weight) {
