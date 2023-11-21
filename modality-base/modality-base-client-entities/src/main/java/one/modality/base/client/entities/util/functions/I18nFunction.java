@@ -1,4 +1,4 @@
-package one.modality.base.shared.entities.functions;
+package one.modality.base.client.entities.util.functions;
 
 import dev.webfx.extras.type.PrimType;
 import dev.webfx.extras.type.Type;

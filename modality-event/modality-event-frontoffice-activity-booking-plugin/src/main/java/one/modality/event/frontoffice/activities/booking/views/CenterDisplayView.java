@@ -62,7 +62,8 @@ public final class CenterDisplayView {
             if (organization != null) {
                 organization.onExpressionLoaded("latitude,longitude,domainName,street,cityName,postCode,country.name,phone,email")
                     .onSuccess(ignored -> Platform.runLater(() -> {
-                        centreStaticMapImageView.setImage(new Image(centreStaticMapUrlTemplate.replace("{latitude}", Float.toString(organization.getLatitude())).replace("{longitude}", Float.toString(organization.getLongitude())), true));
+                        String mapUrl = centreStaticMapUrlTemplate.replace("{latitude}", Float.toString(organization.getLatitude())).replace("{longitude}", Float.toString(organization.getLongitude()));
+                        centreStaticMapImageView.setImage(new Image(mapUrl, true));
                         FXProperties.setEvenIfBound(centreWebsiteLabel.textProperty(), organization.getStringFieldValue("domainName"));
                         FXProperties.setEvenIfBound(centreAddressLabel.textProperty(), (String) organization.evaluate("street + ' - ' + cityName + ' ' + postCode + ' - ' + country.name "));
                         FXProperties.setEvenIfBound(centrePhoneLabel.textProperty(), organization.getStringFieldValue("phone"));

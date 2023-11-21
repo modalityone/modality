@@ -26,6 +26,10 @@ public interface Event extends Entity,
         return getLocalDateFieldValue("endDate");
     }
 
+    default LocalDate getOpeningDate() {
+        return getLocalDateFieldValue("openingDate");
+    }
+
     default void setLive(Boolean live) {
         setFieldValue("live", live);
     }
