@@ -56,7 +56,7 @@ public final class CenterDisplayView {
         Hyperlink centreWebsiteLink = GeneralUtility.setupLabeled(new Hyperlink(), "localCentreWebsite", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
         Label centreAddressLabel = GeneralUtility.createLabel("localCentreAddress", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
         Label centrePhoneLabel = GeneralUtility.createLabel("localCentrePhone", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
-        Label centreEmailLabel = GeneralUtility.createLabel("localCentreEmail", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
+        Hyperlink centreEmailLabel = GeneralUtility.setupLabeled(new Hyperlink(), "localCentreEmail", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
 
         FXProperties.runNowAndOnPropertiesChange(e -> {
             Organization organization = FXOrganization.getOrganization();
@@ -70,7 +70,9 @@ public final class CenterDisplayView {
                         centreWebsiteLink.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("https://" + domainName));
                         FXProperties.setEvenIfBound(centreAddressLabel.textProperty(), (String) organization.evaluate("street + ' - ' + cityName + ' ' + postCode + ' - ' + country.name "));
                         FXProperties.setEvenIfBound(centrePhoneLabel.textProperty(), organization.getStringFieldValue("phone"));
-                        FXProperties.setEvenIfBound(centreEmailLabel.textProperty(), organization.getStringFieldValue("email"));
+                        String email = organization.getStringFieldValue("email");
+                        FXProperties.setEvenIfBound(centreEmailLabel.textProperty(), email);
+                        centreEmailLabel.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("mailto://" + email));
                     }));
             }
         }, FXOrganization.organizationProperty());
