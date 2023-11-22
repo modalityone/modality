@@ -67,6 +67,7 @@
         <module>modality-base-server-geoimport-plugin</module>
         <module>modality-base-server-max-plugin</module>
         <module>modality-base-server-min-plugin</module>
+        <module>modality-base-server-organizationmap-vertx-plugin</module>
         <module>modality-base-shared-domainmodel</module>
         <module>modality-base-shared-entities</module>
     </modules>
