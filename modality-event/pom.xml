@@ -28,6 +28,8 @@
         <module>modality-event-frontoffice-activity-booking-plugin</module>
         <module>modality-event-frontoffice-max-plugin</module>
         <module>modality-event-frontoffice-min-plugin</module>
+        <module>modality-event-server-max-plugin</module>
+        <module>modality-event-server-min-plugin</module>
     </modules>
 
 </project>
