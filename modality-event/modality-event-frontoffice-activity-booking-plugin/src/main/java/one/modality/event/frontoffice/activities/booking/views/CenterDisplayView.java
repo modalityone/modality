@@ -50,7 +50,7 @@ public final class CenterDisplayView {
 
         Hyperlink centreWebsiteLink = GeneralUtility.setupLabeled(new Hyperlink(), "localCentreWebsite", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
         Label centreAddressLabel = GeneralUtility.createLabel("localCentreAddress", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
-        Label centrePhoneLabel = GeneralUtility.createLabel("localCentrePhone", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
+        Hyperlink centrePhoneLink = GeneralUtility.setupLabeled(new Hyperlink(), "localCentrePhone", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
         Hyperlink centreEmailLabel = GeneralUtility.setupLabeled(new Hyperlink(), "localCentreEmail", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
 
         FXProperties.runNowAndOnPropertiesChange(e -> {
@@ -67,7 +67,9 @@ public final class CenterDisplayView {
                         FXProperties.setEvenIfBound(centreWebsiteLink.textProperty(), domainName);
                         centreWebsiteLink.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("https://" + domainName));
                         FXProperties.setEvenIfBound(centreAddressLabel.textProperty(), (String) organization.evaluate("street + ' - ' + cityName + ' ' + postCode + ' - ' + country.name "));
-                        FXProperties.setEvenIfBound(centrePhoneLabel.textProperty(), organization.getStringFieldValue("phone"));
+                        String phone = organization.getStringFieldValue("phone");
+                        FXProperties.setEvenIfBound(centrePhoneLink.textProperty(), phone);
+                        centrePhoneLink.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("tel://" + phone));
                         String email = organization.getStringFieldValue("email");
                         FXProperties.setEvenIfBound(centreEmailLabel.textProperty(), email);
                         centreEmailLabel.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("mailto://" + email));
@@ -80,7 +82,7 @@ public final class CenterDisplayView {
                 GeneralUtility.createVList(10, 0,
                         centreWebsiteLink,
                         centreAddressLabel,
-                        centrePhoneLabel,
+                        centrePhoneLink,
                         centreEmailLabel
                 ),50, 10
         );
