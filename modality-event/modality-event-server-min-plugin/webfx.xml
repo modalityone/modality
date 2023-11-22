@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+
+        <!-- Including organization map REST API /organization-map/:organizationId required for modality-event-frontoffice-activity-booking-plugin -->
+        <plugin-module executable-target="vertx">modality-base-server-organizationmap-vertx-plugin</plugin-module>
+    </dependencies>
+
+</project>
