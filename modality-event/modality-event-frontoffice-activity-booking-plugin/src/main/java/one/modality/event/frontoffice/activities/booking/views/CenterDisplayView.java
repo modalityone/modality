@@ -4,6 +4,7 @@ import dev.webfx.extras.panes.ScaleMode;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.conf.Config;
 import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
@@ -25,7 +26,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
-import one.modality.base.frontoffice.fx.FXBooking;
 import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.base.frontoffice.utility.StyleUtility;
 import one.modality.base.frontoffice.utility.TextUtility;
@@ -45,13 +45,8 @@ public final class CenterDisplayView {
 
         centersButtonSelector.selectedItemProperty().bindBidirectional(FXOrganization.organizationProperty());
 
-        String centreStaticMapUrlTemplate = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.event.frontoffice.activity.booking").getString("centreStaticMapUrl");
         ImageView centreStaticMapImageView = new ImageView();
         centreStaticMapImageView.setPreserveRatio(true);
-
-        FXBooking.centerImageProperty.addListener(change -> {
-            centreStaticMapImageView.setImage(new Image(FXBooking.centerImageProperty.get(), true));
-        });
 
         Hyperlink centreWebsiteLink = GeneralUtility.setupLabeled(new Hyperlink(), "localCentreWebsite", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
         Label centreAddressLabel = GeneralUtility.createLabel("localCentreAddress", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
@@ -61,9 +56,12 @@ public final class CenterDisplayView {
         FXProperties.runNowAndOnPropertiesChange(e -> {
             Organization organization = FXOrganization.getOrganization();
             if (organization != null) {
-                organization.onExpressionLoaded("latitude,longitude,domainName,street,cityName,postCode,country.name,phone,email")
+                organization.onExpressionLoaded("domainName,street,cityName,postCode,country.name,phone,email")
                     .onSuccess(ignored -> Platform.runLater(() -> {
-                        String mapUrl = centreStaticMapUrlTemplate.replace("{latitude}", Float.toString(organization.getLatitude())).replace("{longitude}", Float.toString(organization.getLongitude()));
+                        Config webConfig = SourcesConfig.getSourcesRootConfig().childConfigAt("webfx.stack.com.client.websocket");
+                        String serverHost = webConfig.getString("serverHost");
+                        boolean serverSSL = webConfig.getBoolean("serverSSL");
+                        String mapUrl = (serverSSL ? "https://" : "http://") + serverHost + "/organization-map/" + organization.getPrimaryKey();
                         centreStaticMapImageView.setImage(new Image(mapUrl, true));
                         String domainName = organization.getStringFieldValue("domainName");
                         FXProperties.setEvenIfBound(centreWebsiteLink.textProperty(), domainName);
@@ -95,15 +93,14 @@ public final class CenterDisplayView {
         Label localCenterNameLabel = GeneralUtility.createLabel("localCentreName"/* FXAccount.ownerPM.LOCAL_CENTER.getValue().getName()*/, Color.web(StyleUtility.VICTOR_BATTLE_BLACK), StyleUtility.MAIN_TEXT_SIZE);
         localCenterNameLabel.setTextAlignment(TextAlignment.CENTER);
 
-        Button button = centersButtonSelector.getButton();
-        button.setMaxWidth(Region.USE_PREF_SIZE);
-        ScalePane scalePane = new ScalePane(ScaleMode.FIT_WIDTH, button);
-        scalePane.setMaxScale(2.5);
+        Button centerButton = centersButtonSelector.getButton();
+        centerButton.setMaxWidth(Region.USE_PREF_SIZE);
+        ScalePane centerScalePane = new ScalePane(ScaleMode.FIT_WIDTH, centerButton);
+        centerScalePane.setMaxScale(2.5);
+
         VBox container = new VBox(20,
-                //TextUtility.getSubText("Your Country", StyleUtility.RUPAVAJRA_WHITE),
-                //BookingPM.CHANGE_CENTER.get() ? countriesButtonSelector.getButton() : GeneralUtility.createLabel(FXAccount.ownerPM.ADDRESS_COUNTRY.getValue().getName(), Color.web(StyleUtility.VICTOR_BATTLE_BLACK), StyleUtility.MAIN_TEXT_SIZE),
                 I18n.bindI18nProperties(TextUtility.getSubText(null, StyleUtility.RUPAVAJRA_WHITE), "yourLocalCentre"),
-                scalePane,
+                centerScalePane,
                 GeneralUtility.createSpace(10),
                 location,
                 changeLocation
