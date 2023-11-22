@@ -17,12 +17,9 @@ module modality.crm.client.personaldetails {
     requires modality.crm.client.authn.fx;
     requires webfx.extras.materialdesign;
     requires webfx.extras.panes;
-    requires webfx.extras.type;
     requires webfx.extras.util.control;
     requires webfx.extras.util.layout;
     requires webfx.extras.util.scene;
-    requires webfx.extras.visual;
-    requires webfx.extras.visual.grid;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.console;
@@ -34,7 +31,6 @@ module modality.crm.client.personaldetails {
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
-    requires webfx.stack.ui.controls;
     requires webfx.stack.ui.dialog;
 
     // Exported packages
