@@ -3,11 +3,8 @@ package one.modality.crm.client.controls.personaldetails;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
-import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Person;
 import one.modality.base.shared.entities.markers.EntityHasPersonalDetails;
@@ -45,6 +42,7 @@ public class BookingPersonalDetailsPanel extends PersonalDetailsPanel {
         carer2NameTextField.setEditable(editable);
     }
 
+/*
     @Override
     protected GridPane createPersonGridPane() {
         GridPaneBuilder gridPaneBuilder = new GridPaneBuilder()
@@ -69,6 +67,7 @@ public class BookingPersonalDetailsPanel extends PersonalDetailsPanel {
         gridPane.setPadding(new Insets(10));
         return gridPane;
     }
+*/
 
     @Override
     protected Node[] materialChildren() {

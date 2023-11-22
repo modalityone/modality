@@ -7,10 +7,7 @@ import dev.webfx.platform.util.Arrays;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.layout.GridPane;
 import one.modality.base.shared.entities.Person;
 import one.modality.base.shared.entities.markers.EntityHasPersonalDetails;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
@@ -32,6 +29,7 @@ public final class MyBookingPersonalDetailsPanel extends BookingPersonalDetailsP
         FXProperties.runOnPropertiesChange(p -> syncUiFromModel((Person) p.getValue()), personSelector.selectedItemProperty());
     }
 
+/*
     @Override
     protected GridPane createPersonGridPane() {
         GridPaneBuilder gridPaneBuilder = new GridPaneBuilder()
@@ -57,6 +55,7 @@ public final class MyBookingPersonalDetailsPanel extends BookingPersonalDetailsP
         gridPane.setPadding(new Insets(10));
         return gridPane;
     }
+*/
 
     @Override
     protected Node[] materialChildren() {

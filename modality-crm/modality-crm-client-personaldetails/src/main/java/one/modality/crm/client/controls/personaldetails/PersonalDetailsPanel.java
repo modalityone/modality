@@ -4,15 +4,9 @@ import dev.webfx.extras.materialdesign.textfield.MaterialTextFieldPane;
 import dev.webfx.extras.panes.FlexColumnPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.ScalableBorderPane;
-import dev.webfx.extras.type.PrimType;
 import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.extras.util.scene.SceneUtil;
-import dev.webfx.extras.visual.SelectionMode;
-import dev.webfx.extras.visual.VisualColumn;
-import dev.webfx.extras.visual.VisualResultBuilder;
-import dev.webfx.extras.visual.VisualStyle;
-import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
@@ -26,7 +20,6 @@ import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
 import dev.webfx.stack.ui.dialog.DialogCallback;
 import dev.webfx.stack.ui.dialog.DialogUtil;
 import javafx.beans.property.BooleanProperty;
@@ -36,7 +29,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
@@ -307,6 +302,28 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         return createPersonFlexColumnPane(); // isEditable() ? createPerson2ColumnsBox() /*createPersonGridPane()*/ : createPersonVisualGrid();
     }
 
+    private Node createPersonFlexColumnPane() {
+        return new FlexColumnPane(materialChildren());
+    }
+
+    protected Node[] materialChildren() {
+        return Arrays.nonNulls(Node[]::new,
+                firstNameTextField,
+                lastNameTextField,
+                newMaterialRegion(genderBox, "Gender"),
+                newMaterialRegion(ageBox, "Age"),
+                childRadioButton.isSelected() ? newMaterialRegion(birthDatePicker, "BirthDate") : null,
+                emailTextField,
+                phoneTextField,
+                streetTextField,
+                postCodeTextField,
+                cityNameTextField,
+                countryButton,
+                organizationButton
+        );
+    }
+/*
+
     protected GridPane createPersonGridPane() {
         GridPaneBuilder gridPaneBuilder = new GridPaneBuilder()
                 //.addLabelNodeRow("PersonToBook:", personButton)
@@ -350,27 +367,6 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         return LayoutUtil.setPadding(gridPane, 10, 18);
     }
 
-    private Node createPersonFlexColumnPane() {
-        return new FlexColumnPane(materialChildren());
-    }
-
-    protected Node[] materialChildren() {
-        return Arrays.nonNulls(Node[]::new,
-                firstNameTextField,
-                lastNameTextField,
-                newMaterialRegion(genderBox, "Gender"),
-                newMaterialRegion(ageBox, "Age"),
-                childRadioButton.isSelected() ? newMaterialRegion(birthDatePicker, "BirthDate") : null,
-                emailTextField,
-                phoneTextField,
-                streetTextField,
-                postCodeTextField,
-                cityNameTextField,
-                countryButton,
-                organizationButton
-        );
-    }
-
     private Node createPersonVisualGrid() {
         VisualColumn keyColumn = VisualColumn.create(null, PrimType.STRING, VisualStyle.RIGHT_STYLE);
         VisualColumn valueColumn = VisualColumn.create(null, PrimType.STRING);
@@ -407,6 +403,7 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         visualGrid.setSelectionMode(SelectionMode.DISABLED);
         return visualGrid;
     }
+*/
 
     public void syncUiFromModel() {
         syncUiFromModel(isEditable() ? updatingEntity : entity);
