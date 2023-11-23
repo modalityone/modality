@@ -7,7 +7,7 @@
     </exported-packages>
 
     <providers>
-        <provider interface="dev.webfx.platform.boot.spi.ApplicationModuleBooter">one.modality.server.base.rest.organizationmap.RestOrganizationMapModuleBooter</provider>
+        <provider interface="dev.webfx.platform.boot.spi.ApplicationModuleBooter">one.modality.server.base.rest.map.RestMapModuleBooter</provider>
     </providers>
 
     <dependencies>
