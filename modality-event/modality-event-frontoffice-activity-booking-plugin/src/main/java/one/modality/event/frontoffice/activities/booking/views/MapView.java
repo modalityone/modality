@@ -5,10 +5,13 @@ import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.platform.conf.Config;
 import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.stack.orm.entity.Entity;
+import javafx.beans.InvalidationListener;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -18,7 +21,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.StrokeLineCap;
 
@@ -27,10 +29,11 @@ import javafx.scene.shape.StrokeLineCap;
  */
 final class MapView {
 
-    private static final String MARKER_SVG_PATH = "m 8.0408158,27.932173 c 0.2040781,-3.908096 2.3550612,-10.256967 5.4754162,-14.250776 1.699971,-2.177513 2.48363,-4.2978848 2.48363,-5.5856178 A 8.0488411,8.0488411 0 0 0 8.0000002,2.1599999e-7 v 0 A 8.0488411,8.0488411 0 0 0 1.378808e-4,8.0957792 c 0,1.287733 0.7816191992,3.4081048 2.4836307192,5.5856178 3.1203545,3.99585 5.2754194,10.34268 5.475416,14.250776 z";
     private static final String ZOOM_PLUS_SVG_PATH = "M 13,8 H 3 M 8,13 V 3";
     private static final String ZOOM_MINUS_SVG_PATH = "M 13,8 H 3";
-    private static final int ZOOM_MIN = 5, ZOOM_MAX = 18, ZOOM_INITIAL = 12;
+    private final int zoomMin, zoomMax;
+
+    private double mapCenterLatitude, mapCenterLongitude;
 
     private final ObjectProperty<Entity> entityProperty = new SimpleObjectProperty<>() {
         @Override
@@ -38,15 +41,30 @@ final class MapView {
             updateImage();
         }
     };
-    private final IntegerProperty zoomProperty = new SimpleIntegerProperty(ZOOM_INITIAL) {
+    private final IntegerProperty zoomProperty = new SimpleIntegerProperty() {
         @Override
         protected void invalidated() {
             updateImage();
+            updateMarkers();
         }
     };
     private final ImageView mapImageView = new ImageView();
     private final Button zoomInButton = createZoomButton(ZOOM_PLUS_SVG_PATH);
     private final Button zoomOutButton = createZoomButton(ZOOM_MINUS_SVG_PATH);
+    private final ObservableList<MapMarker> markers = FXCollections.observableArrayList();
+    private ScalePane scalePane;
+
+    public MapView(int zoomMin, int zoomMax, int zoomInitial) {
+        this.zoomMin = zoomMin;
+        this.zoomMax = zoomMax;
+        zoomProperty.set(zoomInitial);
+        markers.addListener((InvalidationListener) observable -> updateMarkers());
+    }
+
+    public void setMapCenter(double mapCenterLatitude, double mapCenterLongitude) {
+        this.mapCenterLatitude = mapCenterLatitude;
+        this.mapCenterLongitude = mapCenterLongitude;
+    }
 
     public Entity getEntity() {
         return entityProperty.get();
@@ -60,21 +78,14 @@ final class MapView {
         this.entityProperty.set(entity);
     }
 
-    Node buildMapNode() {
+    public ObservableList<MapMarker> getMarkers() {
+        return markers;
+    }
+
+    Node buildMapNode(boolean showCenterMarker) {
         //mapImageView.setPreserveRatio(true);
         mapImageView.setFitWidth(600);
         mapImageView.setFitHeight(600);
-        SVGPath markerSvgPath = new SVGPath();
-        markerSvgPath.setContent(MARKER_SVG_PATH);
-        markerSvgPath.setFill(Color.web("#EA4335"));
-        markerSvgPath.setStroke(Color.web("#DA352D"));
-        // We want the bottom tip of the marker to be in the center of the map. The SVG is 28px high, so we need to move
-        // it up by 8px (otherwise this will be the point at y = 14px in SVG that will be in the center).
-        markerSvgPath.setTranslateY(-14);
-
-        // We add a little white circle on top of the red marker
-        Circle markerCircle = new Circle(3.5, Color.WHITE);
-        markerCircle.setTranslateY(-20); // Moving it up to the right position
 
         zoomInButton.setOnAction(e -> incrementZoom( +1));
         zoomOutButton.setOnAction(e -> incrementZoom(-1));
@@ -82,7 +93,19 @@ final class MapView {
         zoomBar.setAlignment(Pos.BOTTOM_RIGHT);
         zoomBar.setPadding(new Insets(5));
 
-        return new StackPane(new ScalePane(ScaleMode.FIT_WIDTH, mapImageView), zoomBar, markerSvgPath, markerCircle);
+        scalePane = new ScalePane(ScaleMode.FIT_WIDTH, mapImageView);
+        scalePane.setCanGrow(false);
+        StackPane stackPane = new StackPane(scalePane, zoomBar);
+        stackPane.setMaxSize(600, 600);
+
+        if (showCenterMarker) {
+            Node centerMarker = MapMarker.createMarkerNode();
+            // We want the bottom tip of the marker to be in the center of the map. The SVG is 28px high, so we need to move
+            // it up by 8px (otherwise this will be the point at y = 14px in SVG that will be in the center).
+            centerMarker.setTranslateY(-14);
+            stackPane.getChildren().add(centerMarker);
+        }
+        return stackPane;
     }
 
     private void updateImage() {
@@ -100,12 +123,43 @@ final class MapView {
         });
     }
 
+    private void updateMarkers() {
+        if (scalePane == null)
+            return;
+        StackPane stackPane = new StackPane(mapImageView);
+        for (MapMarker marker : markers) {
+            double mapCenterLatitudeRad = Math.toRadians(mapCenterLatitude);
+            double mapCenterLongitudeRad = Math.toRadians(mapCenterLongitude);
+            double latitudeRad = Math.toRadians(marker.getLatitude());
+            double longitudeRad = Math.toRadians(marker.getLongitude());
+            double zoom = zoomProperty.doubleValue();
+            double x = 256 * Math.pow(2, zoom) * ((longitudeRad - mapCenterLongitudeRad) / (2 * Math.PI));
+            double y = 256 * Math.pow(2, zoom) * (- (Math.log(Math.tan((Math.PI / 4) + latitudeRad / 2)) - Math.log(Math.tan((Math.PI / 4) + mapCenterLatitudeRad / 2))) / (2 * Math.PI));
+            if (x >= -300 && x <= 300 && y >= -300 && y <= 300) {
+                Node markerNode = marker.getNode();
+                markerNode.setManaged(false);
+                markerNode.relocate(300 + x,300 + y);
+                stackPane.getChildren().add(markerNode);
+            }
+        }
+        if (stackPane.getChildren().size() == 1)
+            scalePane.setContent(mapImageView);
+        else {
+            stackPane.setMinSize(600, 600);
+            stackPane.setPrefSize(600, 600);
+            stackPane.setMaxSize(600, 600);
+            mapImageView.setScaleX(1);
+            mapImageView.setScaleY(1);
+            scalePane.setContent(stackPane);
+        }
+    }
+
     private void incrementZoom(int deltaZoom) {
         int zoomValue = zoomProperty.get() + deltaZoom;
-        zoomValue = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, zoomValue));
+        zoomValue = Math.max(zoomMin, Math.min(zoomMax, zoomValue));
         zoomProperty.set(zoomValue);
-        zoomInButton.setDisable(zoomValue == ZOOM_MAX);
-        zoomOutButton.setDisable(zoomValue == ZOOM_MIN);
+        /*zoomInButton.setDisable(zoomValue == ZOOM_MAX);
+        zoomOutButton.setDisable(zoomValue == ZOOM_MIN);*/
     }
 
     private static Button createZoomButton(String path) {
@@ -113,6 +167,7 @@ final class MapView {
         SVGPath svgPath = new SVGPath();
         svgPath.setContent(path);
         svgPath.setStroke(Color.BLACK);
+        svgPath.setStrokeWidth(1.5);
         svgPath.setStrokeLineCap(StrokeLineCap.ROUND);
         b.setGraphic(svgPath);
         b.setMinSize(24, 24); // For the web version, otherwise the minus button is not square (because minus SVG is not square)

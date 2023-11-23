@@ -12,10 +12,7 @@ import javafx.beans.property.StringProperty;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Labeled;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -252,6 +249,10 @@ public class GeneralUtility {
 
     public static Label createLabel(String text, Color color, double fontSize) {
         return setupLabeled(new Label(), text, color, fontSize);
+    }
+
+    public static Hyperlink createHyperlink(String text, Color color, double fontSize) {
+        return setupLabeled(new Hyperlink(), text, color, fontSize);
     }
 
     public static <T extends Labeled> T setupLabeled(T labeled, String text, Color color, double fontSize) {

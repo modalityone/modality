@@ -34,8 +34,8 @@ import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.base.frontoffice.utility.StyleUtility;
 import one.modality.base.shared.entities.Event;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
-import one.modality.event.frontoffice.activities.booking.views.CenterDisplayView;
 import one.modality.event.frontoffice.activities.booking.views.EventView;
+import one.modality.event.frontoffice.activities.booking.views.OrganizationSelectorView;
 import one.modality.event.frontoffice.activities.booking.views.SearchBarView;
 
 import java.util.ArrayList;
@@ -65,7 +65,7 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
 
         Label internationalEventsLabel = GeneralUtility.createLabel("internationalEvents", Color.web(StyleUtility.VICTOR_BATTLE_BLACK), 16);
 
-        Node centerDisplay = new CenterDisplayView().getView( this, this);
+        Node centerDisplay = new OrganizationSelectorView(this, this).getView();
 
         Label localEventsLabel = GeneralUtility.createLabel("localEvents", Color.web(StyleUtility.VICTOR_BATTLE_BLACK), 16);
 
@@ -94,7 +94,6 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
         FXProperties.runOnPropertiesChange(() -> {
             GeneralUtility.screenChangeListened(container.getWidth());
         }, container.widthProperty());
-
 
         localEvents.addListener((InvalidationListener) observable -> {
             localEventsContainer.getChildren().clear();
