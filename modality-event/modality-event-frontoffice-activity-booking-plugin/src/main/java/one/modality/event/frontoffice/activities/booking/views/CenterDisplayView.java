@@ -12,6 +12,8 @@ import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivi
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -22,8 +24,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.SVGPath;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
@@ -34,6 +39,14 @@ import one.modality.base.shared.entities.Organization;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 
 public final class CenterDisplayView {
+
+    private static final String ZOOM_PLUS_SVG_PATH = "M 13,8 H 3 M 8,13 V 3";
+    private static final String ZOOM_MINUS_SVG_PATH = "M 13,8 H 3";
+    private static final int ZOOM_MIN = 5, ZOOM_MAX = 18, ZOOM_INITIAL = 12;
+
+    private final IntegerProperty zoomProperty = new SimpleIntegerProperty(ZOOM_INITIAL);
+    private final Button zoomInButton = createZoomButton(ZOOM_PLUS_SVG_PATH);
+    private final Button zoomOutButton = createZoomButton(ZOOM_MINUS_SVG_PATH);
 
     public Node getView(ButtonFactoryMixin factoryMixin, ViewDomainActivityBase activityBase) {
 
@@ -62,8 +75,12 @@ public final class CenterDisplayView {
                         Config webConfig = SourcesConfig.getSourcesRootConfig().childConfigAt("webfx.stack.com.client.websocket");
                         String serverHost = webConfig.getString("serverHost");
                         boolean serverSSL = webConfig.getBoolean("serverSSL");
-                        String mapUrl = (serverSSL ? "https://" : "http://") + serverHost + "/organization-map/" + organization.getPrimaryKey();
-                        centreStaticMapImageView.setImage(new Image(mapUrl, true));
+                        String mapUrl = (serverSSL ? "https://" : "http://") + serverHost + "/map/organization/" + organization.getPrimaryKey() + "?zoom=" + zoomProperty.get();
+                        Image image = new Image(mapUrl, true);
+                        image.progressProperty().addListener(observable -> {
+                            if (image.getProgress() >= 1)
+                                centreStaticMapImageView.setImage(image);
+                        });
                         String domainName = organization.getStringFieldValue("domainName");
                         FXProperties.setEvenIfBound(centreWebsiteLink.textProperty(), domainName);
                         centreWebsiteLink.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("https://" + domainName));
@@ -77,7 +94,7 @@ public final class CenterDisplayView {
                         centreEmailLabel.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("mailto://" + email));
                     }));
             }
-        }, FXOrganization.organizationProperty());
+        }, FXOrganization.organizationProperty(), zoomProperty);
 
         VBox centreInfoBox = GeneralUtility.createVList(10, 0,
                 centreWebsiteLink,
@@ -88,8 +105,13 @@ public final class CenterDisplayView {
         centreInfoBox.setAlignment(Pos.CENTER_LEFT);
         centreInfoBox.setPadding(new Insets(0, 0, 0, 35));
 
+        zoomInButton.setOnAction(e -> incrementZoom( +1));
+        zoomOutButton.setOnAction(e -> incrementZoom(-1));
+        VBox zoomBar = new VBox(5, zoomInButton, zoomOutButton);
+        zoomBar.setAlignment(Pos.BOTTOM_RIGHT);
+        zoomBar.setPadding(new Insets(5));
         Node location = new ColumnsPane(
-                new ScalePane(ScaleMode.FIT_WIDTH, centreStaticMapImageView),
+                new StackPane(new ScalePane(ScaleMode.FIT_WIDTH, centreStaticMapImageView), zoomBar),
                 centreInfoBox
         );
 
@@ -121,5 +143,24 @@ public final class CenterDisplayView {
         FXProperties.runNowAndOnPropertiesChange(() -> centreStaticMapImageView.setFitWidth(container.getWidth() * 0.25), container.widthProperty());
 
         return container;
+    }
+
+    private void incrementZoom(int incValue) {
+        int zoomValue = zoomProperty.get() + incValue;
+        zoomValue = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, zoomValue));
+        zoomProperty.set(zoomValue);
+        zoomInButton.setDisable(zoomValue == ZOOM_MAX);
+        zoomOutButton.setDisable(zoomValue == ZOOM_MIN);
+    }
+
+    private static Button createZoomButton(String path) {
+        Button b = new Button();
+        SVGPath svgPath = new SVGPath();
+        svgPath.setContent(path);
+        svgPath.setStroke(Color.BLACK);
+        svgPath.setStrokeLineCap(StrokeLineCap.ROUND);
+        b.setGraphic(svgPath);
+        b.setMinSize(24, 24); // For the web version, otherwise the minus button is not square (because minus SVG is not square)
+        return b;
     }
 }
