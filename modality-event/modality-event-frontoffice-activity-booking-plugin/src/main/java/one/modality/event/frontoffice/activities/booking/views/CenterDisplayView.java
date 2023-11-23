@@ -27,6 +27,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Text;
@@ -40,6 +41,7 @@ import one.modality.crm.backoffice.organization.fx.FXOrganization;
 
 public final class CenterDisplayView {
 
+    private static final String MARKER_SVG_PATH = "m 8.0408158,27.932173 c 0.2040781,-3.908096 2.3550612,-10.256967 5.4754162,-14.250776 1.699971,-2.177513 2.48363,-4.2978848 2.48363,-5.5856178 A 8.0488411,8.0488411 0 0 0 8.0000002,2.1599999e-7 v 0 A 8.0488411,8.0488411 0 0 0 1.378808e-4,8.0957792 c 0,1.287733 0.7816191992,3.4081048 2.4836307192,5.5856178 3.1203545,3.99585 5.2754194,10.34268 5.475416,14.250776 z";
     private static final String ZOOM_PLUS_SVG_PATH = "M 13,8 H 3 M 8,13 V 3";
     private static final String ZOOM_MINUS_SVG_PATH = "M 13,8 H 3";
     private static final int ZOOM_MIN = 5, ZOOM_MAX = 18, ZOOM_INITIAL = 12;
@@ -110,8 +112,21 @@ public final class CenterDisplayView {
         VBox zoomBar = new VBox(5, zoomInButton, zoomOutButton);
         zoomBar.setAlignment(Pos.BOTTOM_RIGHT);
         zoomBar.setPadding(new Insets(5));
+
+        SVGPath markerSvgPath = new SVGPath();
+        markerSvgPath.setContent(MARKER_SVG_PATH);
+        markerSvgPath.setFill(Color.web("#EA4335"));
+        markerSvgPath.setStroke(Color.web("#DA352D"));
+        // We want the bottom tip of the marker to be in the center of the map. The SVG is 16px high, so we need to move
+        // it up by 8px (otherwise this will be the point at y = 8px in SVG that will be in the center).
+        markerSvgPath.setTranslateY(-8);
+
+        // We add a little white circle on top of the red marker
+        Circle markerCircle = new Circle(3.5, Color.WHITE);
+        markerCircle.setTranslateY(-14); // Moving it up to the right position
+
         Node location = new ColumnsPane(
-                new StackPane(new ScalePane(ScaleMode.FIT_WIDTH, centreStaticMapImageView), zoomBar),
+                new StackPane(new ScalePane(ScaleMode.FIT_WIDTH, centreStaticMapImageView), zoomBar, markerSvgPath, markerCircle),
                 centreInfoBox
         );
 
@@ -145,8 +160,8 @@ public final class CenterDisplayView {
         return container;
     }
 
-    private void incrementZoom(int incValue) {
-        int zoomValue = zoomProperty.get() + incValue;
+    private void incrementZoom(int deltaZoom) {
+        int zoomValue = zoomProperty.get() + deltaZoom;
         zoomValue = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, zoomValue));
         zoomProperty.set(zoomValue);
         zoomInButton.setDisable(zoomValue == ZOOM_MAX);
