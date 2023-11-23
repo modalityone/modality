@@ -11,7 +11,7 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>modality-base-server-organizationmap-vertx-plugin</artifactId>
+    <artifactId>modality-base-server-rest-organizationmap-vertx-plugin</artifactId>
 
     <dependencies>
 
