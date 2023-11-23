@@ -1,4 +1,4 @@
-package one.modality.server.base.organizationmap;
+package one.modality.server.base.rest.organizationmap;
 
 import dev.webfx.platform.boot.spi.ApplicationModuleBooter;
 import dev.webfx.platform.conf.SourcesConfig;
@@ -14,11 +14,11 @@ import one.modality.base.shared.entities.Organization;
 /**
  * @author Bruno Salmon
  */
-public class OrganizationMapModuleBooter implements ApplicationModuleBooter {
+public class RestOrganizationMapModuleBooter implements ApplicationModuleBooter {
 
     @Override
     public String getModuleName() {
-        return "modality-base-server-organizationmap-vertx-plugin";
+        return "modality-base-server-rest-organizationmap-vertx-plugin";
     }
 
     @Override
@@ -29,7 +29,7 @@ public class OrganizationMapModuleBooter implements ApplicationModuleBooter {
     @Override
     public void bootModule() {
         String organizationStaticMapUrlTemplate = SourcesConfig.getSourcesRootConfig()
-                .childConfigAt("modality.base.server.organizationmap")
+                .childConfigAt("modality.base.server.rest.organizationmap")
                 .getString("organizationStaticMapUrl");
         WebClient webClient = WebClient.create(VertxInstance.getVertx());
         Router router = VertxInstance.getHttpRouter();

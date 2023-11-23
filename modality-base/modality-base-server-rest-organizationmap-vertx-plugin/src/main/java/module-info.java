@@ -1,6 +1,6 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
-module modality.base.server.organizationmap.vertx.plugin {
+module modality.base.server.rest.organizationmap.vertx.plugin {
 
     // Direct dependencies modules
     requires io.vertx.core;
@@ -14,9 +14,9 @@ module modality.base.server.organizationmap.vertx.plugin {
     requires webfx.stack.orm.entity;
 
     // Exported packages
-    exports one.modality.server.base.organizationmap;
+    exports one.modality.server.base.rest.organizationmap;
 
     // Provided services
-    provides dev.webfx.platform.boot.spi.ApplicationModuleBooter with one.modality.server.base.organizationmap.OrganizationMapModuleBooter;
+    provides dev.webfx.platform.boot.spi.ApplicationModuleBooter with one.modality.server.base.rest.organizationmap.RestOrganizationMapModuleBooter;
 
 }
