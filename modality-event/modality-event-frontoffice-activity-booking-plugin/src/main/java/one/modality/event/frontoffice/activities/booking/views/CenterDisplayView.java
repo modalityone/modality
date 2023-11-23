@@ -1,5 +1,6 @@
 package one.modality.event.frontoffice.activities.booking.views;
 
+import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.ScaleMode;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
@@ -49,14 +50,14 @@ public final class CenterDisplayView {
         centreStaticMapImageView.setPreserveRatio(true);
 
         Hyperlink centreWebsiteLink = GeneralUtility.setupLabeled(new Hyperlink(), "localCentreWebsite", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
-        Label centreAddressLabel = GeneralUtility.createLabel("localCentreAddress", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
+        Hyperlink centreAddressLink = GeneralUtility.setupLabeled(new Hyperlink(),"localCentreAddress", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
         Hyperlink centrePhoneLink = GeneralUtility.setupLabeled(new Hyperlink(), "localCentrePhone", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
         Hyperlink centreEmailLabel = GeneralUtility.setupLabeled(new Hyperlink(), "localCentreEmail", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
 
         FXProperties.runNowAndOnPropertiesChange(e -> {
             Organization organization = FXOrganization.getOrganization();
             if (organization != null) {
-                organization.onExpressionLoaded("domainName,street,cityName,postCode,country.name,phone,email")
+                organization.onExpressionLoaded("domainName,latitude,longitude,street,cityName,postCode,country.name,phone,email")
                     .onSuccess(ignored -> Platform.runLater(() -> {
                         Config webConfig = SourcesConfig.getSourcesRootConfig().childConfigAt("webfx.stack.com.client.websocket");
                         String serverHost = webConfig.getString("serverHost");
@@ -66,7 +67,8 @@ public final class CenterDisplayView {
                         String domainName = organization.getStringFieldValue("domainName");
                         FXProperties.setEvenIfBound(centreWebsiteLink.textProperty(), domainName);
                         centreWebsiteLink.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("https://" + domainName));
-                        FXProperties.setEvenIfBound(centreAddressLabel.textProperty(), (String) organization.evaluate("street + ' - ' + cityName + ' ' + postCode + ' - ' + country.name "));
+                        FXProperties.setEvenIfBound(centreAddressLink.textProperty(), (String) organization.evaluate("street + ' - ' + cityName + ' ' + postCode + ' - ' + country.name "));
+                        centreAddressLink.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("https://google.com/maps/search/kadampa/@" + organization.getLatitude() + "," + organization.getLongitude() + ",12z"));
                         String phone = organization.getStringFieldValue("phone");
                         FXProperties.setEvenIfBound(centrePhoneLink.textProperty(), phone);
                         centrePhoneLink.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("tel://" + phone));
@@ -77,14 +79,18 @@ public final class CenterDisplayView {
             }
         }, FXOrganization.organizationProperty());
 
-        Node location = GeneralUtility.createSplitRow(
-                centreStaticMapImageView,
-                GeneralUtility.createVList(10, 0,
-                        centreWebsiteLink,
-                        centreAddressLabel,
-                        centrePhoneLink,
-                        centreEmailLabel
-                ),50, 10
+        VBox centreInfoBox = GeneralUtility.createVList(10, 0,
+                centreWebsiteLink,
+                centreAddressLink,
+                centrePhoneLink,
+                centreEmailLabel
+        );
+        centreInfoBox.setAlignment(Pos.CENTER_LEFT);
+        centreInfoBox.setPadding(new Insets(0, 0, 0, 35));
+
+        Node location = new ColumnsPane(
+                new ScalePane(ScaleMode.FIT_WIDTH, centreStaticMapImageView),
+                centreInfoBox
         );
 
         Text changeLocation = TextUtility.getText("Change your location", 10, StyleUtility.RUPAVAJRA_WHITE);
