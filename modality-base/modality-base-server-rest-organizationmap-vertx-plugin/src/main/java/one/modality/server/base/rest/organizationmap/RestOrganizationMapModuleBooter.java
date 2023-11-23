@@ -33,9 +33,10 @@ public class RestOrganizationMapModuleBooter implements ApplicationModuleBooter 
                 .getString("organizationStaticMapUrl");
         WebClient webClient = WebClient.create(VertxInstance.getVertx());
         Router router = VertxInstance.getHttpRouter();
-        router.route(HttpMethod.GET, "/organization-map/:organizationId")
+        router.route(HttpMethod.GET, "/map/organization/:organizationId")
                 .handler(ctx -> {
                     int organizationId = Integer.parseInt(ctx.pathParam("organizationId"));
+                    String zoom = ctx.queryParams().contains("zoom") ? ctx.queryParams().get("zoom") : "12";
                     EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
                             .<Organization>executeQuery("select latitude,longitude from Organization where id=?", organizationId)
                             .onFailure(err -> ctx.response().setStatusCode(500).send()) // Internal server error
@@ -53,7 +54,9 @@ public class RestOrganizationMapModuleBooter implements ApplicationModuleBooter 
                                 }
                                 String url = organizationStaticMapUrlTemplate
                                         .replace("{latitude}",  Float.toString(latitude))
-                                        .replace("{longitude}", Float.toString(longitude));
+                                        .replace("{longitude}", Float.toString(longitude))
+                                        .replace("{zoom}", zoom)
+                                        ;
                                 webClient.getAbs(url)
                                         .send()
                                         .onFailure(err -> ctx.response().setStatusCode(503).send()) // Service unavailable
