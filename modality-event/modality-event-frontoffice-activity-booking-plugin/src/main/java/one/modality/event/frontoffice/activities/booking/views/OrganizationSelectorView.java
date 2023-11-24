@@ -85,15 +85,23 @@ public final class OrganizationSelectorView {
                             FXProperties.setEvenIfBound(websiteLink.textProperty(), domainName);
                             websiteLink.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("https://" + domainName));
                             FXProperties.setEvenIfBound(addressLink.textProperty(), (String) organization.evaluate("street + ' - ' + cityName + ' ' + postCode + ' - ' + country.name "));
-                            addressLink.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("https://google.com/maps/search/kadampa/@" + organization.getLatitude() + "," + organization.getLongitude() + ",12z"));
+                            Float latitude = organization.getLatitude();
+                            Float longitude = organization.getLongitude();
+                            if (latitude == null || longitude == null) {
+                                addressLink.setOnAction(null);
+                                organizationMapView.setMapCenterPoint(null);
+                                organizationMapView.getMarkers().clear();
+                            } else {
+                                addressLink.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("https://google.com/maps/search/kadampa/@" + latitude + "," + longitude + ",12z"));
+                                organizationMapView.setMapCenterPoint(latitude, longitude);
+                                organizationMapView.getMarkers().setAll(new MapMarker(latitude, longitude));
+                            }
                             String phone = organization.getStringFieldValue("phone");
                             FXProperties.setEvenIfBound(phoneLink.textProperty(), phone);
                             phoneLink.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("tel://" + phone));
                             String email = organization.getStringFieldValue("email");
                             FXProperties.setEvenIfBound(emailLink.textProperty(), email);
                             emailLink.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("mailto://" + email));
-                            organizationMapView.setMapCenter(organization.getLatitude(), organization.getLongitude());
-                            organizationMapView.getMarkers().setAll(new MapMarker(organization.getLatitude(), organization.getLongitude()));
                             FXCountry.setCountry(organization.getCountry());
                         }));
             }
@@ -108,7 +116,7 @@ public final class OrganizationSelectorView {
         contactBox.setAlignment(Pos.CENTER_LEFT);
         contactBox.setPadding(new Insets(0, 0, 0, 35));
 
-        Node mapAndContactPane = new ColumnsPane(organizationMapView.buildMapNode(false), contactBox);
+        Node mapAndContactPane = new ColumnsPane(organizationMapView.buildMapNode(), contactBox);
 
         Hyperlink changeLocation = GeneralUtility.createHyperlink("Change your location", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
         changeLocation.setOnMouseClicked(event -> flipPane.flipToBack());
@@ -149,7 +157,7 @@ public final class OrganizationSelectorView {
                 Float latitude = country.getLatitude();
                 Float longitude = country.getLongitude();
                 if (latitude != null && longitude != null)
-                    countryMapView.setMapCenter(latitude, longitude);
+                    countryMapView.setMapCenterPoint(latitude, longitude);
             }
         }, FXCountry.countryProperty());
 
@@ -171,7 +179,7 @@ public final class OrganizationSelectorView {
         VBox container = new VBox(20,
                 I18n.bindI18nProperties(TextUtility.getSubText(null, StyleUtility.RUPAVAJRA_WHITE), "yourLocalCentre"),
                 countryButtonScalePane,
-                new ColumnsPane(countryMapView.buildMapNode(false), scrollPane)
+                new ColumnsPane(countryMapView.buildMapNode(), scrollPane)
         );
 
         container.setBackground(Background.fill(Color.web(StyleUtility.MAIN_BLUE)));
