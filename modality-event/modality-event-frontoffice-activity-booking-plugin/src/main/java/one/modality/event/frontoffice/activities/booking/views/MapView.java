@@ -14,10 +14,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -29,11 +31,14 @@ import javafx.scene.shape.StrokeLineCap;
  */
 final class MapView {
 
+    // Downloaded map image is always 600px x 600px, then eventually scaled down
+    private static final double MAP_WIDTH = 600;
+    private static final double MAP_HEIGHT = 600;
+
     private static final String ZOOM_PLUS_SVG_PATH = "M 13,8 H 3 M 8,13 V 3";
     private static final String ZOOM_MINUS_SVG_PATH = "M 13,8 H 3";
     private final int zoomMin, zoomMax;
-
-    private double mapCenterLatitude, mapCenterLongitude;
+    private MapPoint mapCenterPoint;
 
     private final ObjectProperty<Entity> entityProperty = new SimpleObjectProperty<>() {
         @Override
@@ -61,9 +66,12 @@ final class MapView {
         markers.addListener((InvalidationListener) observable -> updateMarkers());
     }
 
-    public void setMapCenter(double mapCenterLatitude, double mapCenterLongitude) {
-        this.mapCenterLatitude = mapCenterLatitude;
-        this.mapCenterLongitude = mapCenterLongitude;
+    public void setMapCenterPoint(double mapCenterLatitude, double mapCenterLongitude) {
+        setMapCenterPoint(new MapPoint(mapCenterLatitude, mapCenterLongitude));
+    }
+
+    public void setMapCenterPoint(MapPoint mapCenterPoint) {
+        this.mapCenterPoint = mapCenterPoint;
     }
 
     public Entity getEntity() {
@@ -82,29 +90,24 @@ final class MapView {
         return markers;
     }
 
-    Node buildMapNode(boolean showCenterMarker) {
-        //mapImageView.setPreserveRatio(true);
-        mapImageView.setFitWidth(600);
-        mapImageView.setFitHeight(600);
+    Node buildMapNode() {
+        mapImageView.setFitWidth(MAP_WIDTH);
+        mapImageView.setFitHeight(MAP_HEIGHT);
 
         zoomInButton.setOnAction(e -> incrementZoom( +1));
         zoomOutButton.setOnAction(e -> incrementZoom(-1));
         VBox zoomBar = new VBox(5, zoomInButton, zoomOutButton);
-        zoomBar.setAlignment(Pos.BOTTOM_RIGHT);
+        // We set the max size to the pref size, otherwise it will cover the whole image map and prevent user
+        // interaction with markers.
+        zoomBar.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         zoomBar.setPadding(new Insets(5));
+        StackPane.setAlignment(zoomBar, Pos.BOTTOM_RIGHT);
 
         scalePane = new ScalePane(ScaleMode.FIT_WIDTH, mapImageView);
-        scalePane.setCanGrow(false);
+        scalePane.setCanGrow(false); // We only eventually scale down the image, never scale up (otherwise will be pixelated)
         StackPane stackPane = new StackPane(scalePane, zoomBar);
-        stackPane.setMaxSize(600, 600);
+        stackPane.setMaxSize(MAP_WIDTH, MAP_HEIGHT);
 
-        if (showCenterMarker) {
-            Node centerMarker = MapMarker.createMarkerNode();
-            // We want the bottom tip of the marker to be in the center of the map. The SVG is 28px high, so we need to move
-            // it up by 8px (otherwise this will be the point at y = 14px in SVG that will be in the center).
-            centerMarker.setTranslateY(-14);
-            stackPane.getChildren().add(centerMarker);
-        }
         return stackPane;
     }
 
@@ -124,30 +127,33 @@ final class MapView {
     }
 
     private void updateMarkers() {
-        if (scalePane == null)
+        if (scalePane == null || mapCenterPoint == null)
             return;
         StackPane stackPane = new StackPane(mapImageView);
+        double zoom = zoomProperty.doubleValue();
+        double scaleFactor = Math.pow(2, zoom);
         for (MapMarker marker : markers) {
-            double mapCenterLatitudeRad = Math.toRadians(mapCenterLatitude);
-            double mapCenterLongitudeRad = Math.toRadians(mapCenterLongitude);
-            double latitudeRad = Math.toRadians(marker.getLatitude());
-            double longitudeRad = Math.toRadians(marker.getLongitude());
-            double zoom = zoomProperty.doubleValue();
-            double x = 256 * Math.pow(2, zoom) * ((longitudeRad - mapCenterLongitudeRad) / (2 * Math.PI));
-            double y = 256 * Math.pow(2, zoom) * (- (Math.log(Math.tan((Math.PI / 4) + latitudeRad / 2)) - Math.log(Math.tan((Math.PI / 4) + mapCenterLatitudeRad / 2))) / (2 * Math.PI));
-            if (x >= -300 && x <= 300 && y >= -300 && y <= 300) {
+            // Computing the marker coordinates from the map image center
+            double x = (marker.getMapPoint().getX() - mapCenterPoint.getX()) * scaleFactor;
+            double y = (marker.getMapPoint().getY() - mapCenterPoint.getY()) * scaleFactor;
+            // Translating the marker coordinates to be from the map image left top corner
+            x += MAP_WIDTH / 2;
+            y += MAP_HEIGHT / 2;
+            // Checking that the marker point is visible (within the map image)
+            if (x >= 0 && x <= MAP_WIDTH && y >= 0 && y <= MAP_HEIGHT) {
                 Node markerNode = marker.getNode();
+                markerNode.relocate(x, y);
                 markerNode.setManaged(false);
-                markerNode.relocate(300 + x,300 + y);
+                markerNode.setCursor(Cursor.HAND);
                 stackPane.getChildren().add(markerNode);
             }
         }
         if (stackPane.getChildren().size() == 1)
             scalePane.setContent(mapImageView);
         else {
-            stackPane.setMinSize(600, 600);
-            stackPane.setPrefSize(600, 600);
-            stackPane.setMaxSize(600, 600);
+            stackPane.setMinSize(MAP_WIDTH, MAP_HEIGHT);
+            stackPane.setPrefSize(MAP_WIDTH, MAP_HEIGHT);
+            stackPane.setMaxSize(MAP_WIDTH, MAP_HEIGHT);
             mapImageView.setScaleX(1);
             mapImageView.setScaleY(1);
             scalePane.setContent(stackPane);
@@ -170,6 +176,7 @@ final class MapView {
         svgPath.setStrokeWidth(1.5);
         svgPath.setStrokeLineCap(StrokeLineCap.ROUND);
         b.setGraphic(svgPath);
+        b.setCursor(Cursor.HAND);
         b.setMinSize(24, 24); // For the web version, otherwise the minus button is not square (because minus SVG is not square)
         return b;
     }
