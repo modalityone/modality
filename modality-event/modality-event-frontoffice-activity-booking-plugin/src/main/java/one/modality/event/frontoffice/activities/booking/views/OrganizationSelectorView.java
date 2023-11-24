@@ -8,6 +8,7 @@ import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
+import dev.webfx.platform.util.Numbers;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.Entities;
@@ -24,6 +25,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.web.WebView;
 import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
 import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.base.frontoffice.utility.StyleUtility;
@@ -67,17 +69,36 @@ public final class OrganizationSelectorView {
         MapView organizationMapView = new MapView(0, 20, 10);
         organizationMapView.entityProperty().bind(FXOrganization.organizationProperty());
 
+        WebView webView = new WebView();
+        webView.widthProperty().addListener(observable -> webView.setMaxHeight(webView.getWidth() / (16d / 9)));
+
         Hyperlink websiteLink = GeneralUtility.createHyperlink("localCentreWebsite", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
         Hyperlink addressLink = GeneralUtility.createHyperlink("localCentreAddress", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
         Hyperlink phoneLink   = GeneralUtility.createHyperlink("localCentrePhone",   Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
         Hyperlink emailLink   = GeneralUtility.createHyperlink("localCentreEmail",   Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
+
+        webView.managedProperty().bind(webView.visibleProperty());
+        websiteLink.managedProperty().bind(websiteLink.visibleProperty());
+        addressLink.managedProperty().bind(addressLink.visibleProperty());
+        phoneLink.managedProperty().bind(phoneLink.visibleProperty());
+        emailLink.managedProperty().bind(emailLink.visibleProperty());
 
         FXProperties.runNowAndOnPropertiesChange(e -> {
             Organization organization = FXOrganization.getOrganization();
             if (organization != null) {
                 organization.onExpressionLoaded("domainName,latitude,longitude,street,cityName,postCode,country.(name,latitude,longitude,iso_alpha2),phone,email")
                         .onSuccess(ignored -> Platform.runLater(() -> {
+                            Integer organizationId = Numbers.toInteger(organization.getPrimaryKey());
+                            String videoLink = // hardcoded for now
+                                // Manjushri KMC
+                                organizationId == 151 ? "https://www.youtube.com/embed/jwptdnO_f-I"
+                                // KMC France
+                                : organizationId == 2 ? "https://www.youtube.com/embed/alIoC9_oD5w"
+                                : null;
+                            webView.setVisible(videoLink != null);
+                            webView.getEngine().load(videoLink);
                             String domainName = organization.getStringFieldValue("domainName");
+                            websiteLink.setVisible(domainName != null);
                             FXProperties.setEvenIfBound(websiteLink.textProperty(), domainName);
                             websiteLink.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("https://" + domainName));
                             FXProperties.setEvenIfBound(addressLink.textProperty(), (String) organization.evaluate("street + ' - ' + cityName + ' ' + postCode + ' - ' + country.name "));
@@ -93,9 +114,11 @@ public final class OrganizationSelectorView {
                                 organizationMapView.getMarkers().setAll(new MapMarker(latitude, longitude));
                             }
                             String phone = organization.getStringFieldValue("phone");
+                            phoneLink.setVisible(phone != null);
                             FXProperties.setEvenIfBound(phoneLink.textProperty(), phone);
                             phoneLink.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("tel://" + phone));
                             String email = organization.getStringFieldValue("email");
+                            emailLink.setVisible(email != null);
                             FXProperties.setEvenIfBound(emailLink.textProperty(), email);
                             emailLink.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("mailto://" + email));
                             FXCountry.setCountry(organization.getCountry());
@@ -104,6 +127,7 @@ public final class OrganizationSelectorView {
         }, FXOrganization.organizationProperty());
 
         VBox contactBox = GeneralUtility.createVList(10, 0,
+                webView,
                 websiteLink,
                 addressLink,
                 phoneLink,
