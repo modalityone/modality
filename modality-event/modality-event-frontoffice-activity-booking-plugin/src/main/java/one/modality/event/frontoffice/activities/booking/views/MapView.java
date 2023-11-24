@@ -32,8 +32,8 @@ import javafx.scene.shape.StrokeLineCap;
 final class MapView {
 
     // Downloaded map image is always 600px x 600px, then eventually scaled down
-    private static final double MAP_WIDTH = 600;
-    private static final double MAP_HEIGHT = 600;
+    static final double MAP_WIDTH = 600;
+    static final double MAP_HEIGHT = 600;
 
     private static final String ZOOM_PLUS_SVG_PATH = "M 13,8 H 3 M 8,13 V 3";
     private static final String ZOOM_MINUS_SVG_PATH = "M 13,8 H 3";

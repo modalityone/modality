@@ -7,17 +7,13 @@ import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
-import dev.webfx.stack.orm.dql.DqlStatement;
+import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.stack.orm.reactive.entities.entities_to_objects.IndividualEntityToObjectMapper;
-import dev.webfx.stack.orm.reactive.entities.entities_to_objects.ReactiveObjectsMapper;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -68,7 +64,7 @@ public final class OrganizationSelectorView {
         ScalePane organizationButtonScalePane = new ScalePane(ScaleMode.FIT_WIDTH, organizationButton);
         organizationButtonScalePane.setMaxScale(2.5);
 
-        MapView organizationMapView = new MapView(5, 18, 10);
+        MapView organizationMapView = new MapView(0, 20, 10);
         organizationMapView.entityProperty().bind(FXOrganization.organizationProperty());
 
         Hyperlink websiteLink = GeneralUtility.createHyperlink("localCentreWebsite", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
@@ -149,7 +145,7 @@ public final class OrganizationSelectorView {
         ScalePane countryButtonScalePane = new ScalePane(ScaleMode.FIT_WIDTH, countryButton);
         countryButtonScalePane.setMaxScale(2.5);
 
-        MapView countryMapView = new MapView(4, 7, 5);
+        MapView countryMapView = new MapView(0, 20, 5);
         countryMapView.entityProperty().bind(FXCountry.countryProperty());
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Country country = FXCountry.getCountry();
@@ -164,18 +160,8 @@ public final class OrganizationSelectorView {
         VBox countryOrganizationsBox = new VBox(10);
         countryOrganizationsBox.setPadding(new Insets(0, 0, 0, 20));
 
-        ObservableList<Organization> countryOrganizations = FXCollections.observableArrayList();
-
-        ReactiveObjectsMapper.<Organization, Node>createReactiveChain(factoryMixin)
-                .always("{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'name', fields: 'type,name,latitude,longitude'}")
-                .ifNotNullOtherwiseEmpty(FXCountry.countryProperty(), country -> DqlStatement.where("country=?", country))
-                .setIndividualEntityToObjectMapperFactory(IndividualEntityToObjectMapper.createFactory(Hyperlink::new, this::setOrganizationHyperlink, h -> h))
-                .storeEntitiesInto(countryOrganizations)
-                .storeMappedObjectsInto(countryOrganizationsBox.getChildren())
-                .start();
-
         ScrollPane scrollPane = ControlUtil.createVerticalScrollPane(countryOrganizationsBox);
-        scrollPane.setMaxHeight(600);
+        scrollPane.setMaxHeight(MapView.MAP_HEIGHT);
         VBox container = new VBox(20,
                 I18n.bindI18nProperties(TextUtility.getSubText(null, StyleUtility.RUPAVAJRA_WHITE), "yourLocalCentre"),
                 countryButtonScalePane,
@@ -186,26 +172,48 @@ public final class OrganizationSelectorView {
         container.setPadding(new Insets(35));
         container.setAlignment(Pos.CENTER);
 
-        countryOrganizations.addListener((InvalidationListener) observable -> {
-            countryMapView.getMarkers().setAll(
-                    countryOrganizations.stream()
-                            .filter(o -> o.getLatitude() != null && o.getLongitude() != null)
-                            .map(this::createOrganizationMarker)
-                            .collect(Collectors.toList()));
-        });
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            recreateOrganizationMarkers(countryMapView);
+            recreateOrganizationHyperLinks(countryOrganizationsBox);
+        }, FXCountry.countryProperty());
+
+        ObservableLists.runNowAndOnListChange(x -> {
+            recreateOrganizationMarkers(countryMapView);
+            recreateOrganizationHyperLinks(countryOrganizationsBox);
+        }, FXOrganizations.organizations());
 
         return container;
     }
 
-    private void setOrganizationHyperlink(Hyperlink h, Organization o) {
-        GeneralUtility.setupLabeled(h, "localCentreAddress", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
+    private void recreateOrganizationMarkers(MapView mapView) {
+        mapView.getMarkers().setAll(
+                FXOrganizations.organizations().stream()
+                        .filter(o -> o.getLatitude() != null && o.getLongitude() != null)
+                        .map(this::createOrganizationMarker)
+                        .collect(Collectors.toList()));
+    }
+
+    private void recreateOrganizationHyperLinks(VBox countryOrganizationsBox) {
+        countryOrganizationsBox.getChildren().setAll(
+                FXOrganizations.organizations().stream()
+                        .filter(o -> Entities.sameId(o.getCountry(), FXCountry.getCountry()))
+                        .map(this::createOrganizationHyperlink)
+                        .collect(Collectors.toList()));
+    }
+
+    private Hyperlink createOrganizationHyperlink(Organization o) {
+        Hyperlink h = GeneralUtility.createHyperlink("localCentreAddress", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
         FXProperties.setEvenIfBound(h.textProperty(), o.getName());
         h.setOnAction(e -> flipBackToOrganization(o));
+        return h;
     }
 
     private MapMarker createOrganizationMarker(Organization o) {
         MapMarker marker = new MapMarker(o.getLatitude(), o.getLongitude());
         marker.getNode().setOnMousePressed(e -> flipBackToOrganization(o));
+        if (!Entities.sameId(o.getCountry(), FXCountry.getCountry())) {
+            marker.setColours(Color.ORANGE, Color.DARKORANGE);
+        }
         return marker;
     }
 
