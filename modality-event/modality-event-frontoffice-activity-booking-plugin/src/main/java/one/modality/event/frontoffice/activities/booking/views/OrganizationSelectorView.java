@@ -190,7 +190,7 @@ public final class OrganizationSelectorView {
             countryMapView.getMarkers().setAll(
                     countryOrganizations.stream()
                             .filter(o -> o.getLatitude() != null && o.getLongitude() != null)
-                            .map(o -> new MapMarker(o.getLatitude(), o.getLongitude()))
+                            .map(this::createOrganizationMarker)
                             .collect(Collectors.toList()));
         });
 
@@ -200,9 +200,17 @@ public final class OrganizationSelectorView {
     private void setOrganizationHyperlink(Hyperlink h, Organization o) {
         GeneralUtility.setupLabeled(h, "localCentreAddress", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
         FXProperties.setEvenIfBound(h.textProperty(), o.getName());
-        h.setOnAction(e -> {
-            FXOrganization.setOrganization(o);
-            flipPane.flipToFront();
-        });
+        h.setOnAction(e -> flipBackToOrganization(o));
+    }
+
+    private MapMarker createOrganizationMarker(Organization o) {
+        MapMarker marker = new MapMarker(o.getLatitude(), o.getLongitude());
+        marker.getNode().setOnMousePressed(e -> flipBackToOrganization(o));
+        return marker;
+    }
+
+    private void flipBackToOrganization(Organization o) {
+        FXOrganization.setOrganization(o);
+        flipPane.flipToFront();
     }
 }
