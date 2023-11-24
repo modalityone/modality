@@ -10,6 +10,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires javafx.web;
     requires modality.base.client.mainframe.dialogarea.fx;
     requires modality.base.client.tile;
     requires modality.base.frontoffice.utility;
@@ -28,6 +29,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires webfx.platform.windowhistory;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;
+    requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
@@ -37,7 +39,6 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.operation;
-    requires webfx.stack.orm.datasourcemodel.service;
 
     // Exported packages
     exports one.modality.event.frontoffice.activities.booking;
