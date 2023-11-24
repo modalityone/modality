@@ -37,6 +37,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.operation;
+    requires webfx.stack.orm.datasourcemodel.service;
 
     // Exported packages
     exports one.modality.event.frontoffice.activities.booking;
