@@ -19,12 +19,14 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires webfx.extras.imagestore;
     requires webfx.extras.panes;
     requires webfx.extras.util.control;
+    requires webfx.extras.util.scene;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.ast;
     requires webfx.platform.conf;
     requires webfx.platform.console;
     requires webfx.platform.fetch.ast.json;
+    requires webfx.platform.useragent;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.i18n;
