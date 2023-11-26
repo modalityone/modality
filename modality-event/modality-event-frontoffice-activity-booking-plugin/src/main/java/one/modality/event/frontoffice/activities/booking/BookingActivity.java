@@ -36,7 +36,6 @@ import one.modality.base.shared.entities.Event;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.event.frontoffice.activities.booking.views.EventView;
 import one.modality.event.frontoffice.activities.booking.views.OrganizationSelectorView;
-import one.modality.event.frontoffice.activities.booking.views.SearchBarView;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -47,6 +46,8 @@ import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
 public final class BookingActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
     private final VBox internationalEventsContainer = new VBox(20);
+    private final OrganizationSelectorView organizationSelectorView = new OrganizationSelectorView(this, this);
+
     private final VBox localEventsContainer = new VBox(20);
     private final TabsBar<Entity> tabsBar = new TabsBar<>(this, this::showLocalEventsOfType);
     private final FlexPane localEventTypeTabsPane = new FlexPane();
@@ -65,16 +66,16 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
 
         Label internationalEventsLabel = GeneralUtility.createLabel("internationalEvents", Color.web(StyleUtility.VICTOR_BATTLE_BLACK), 16);
 
-        Node centerDisplay = new OrganizationSelectorView(this, this).getView();
+        Node centerDisplay = organizationSelectorView.getView();
 
         Label localEventsLabel = GeneralUtility.createLabel("localEvents", Color.web(StyleUtility.VICTOR_BATTLE_BLACK), 16);
 
-        Node searchBar = new SearchBarView().getView();
+        //Node searchBar = new SearchBarView().getView();
 
         VBox.setMargin(headerLabel, new Insets(5, 0, 5, 0));
         VBox.setMargin(internationalEventsLabel, new Insets(20));
         VBox.setMargin(centerDisplay, new Insets(10, 0, 25, 0));
-        VBox.setMargin(searchBar, new Insets(25));
+        //VBox.setMargin(searchBar, new Insets(25));
 
         GrowingPane growingPane = new GrowingPane(localEventsContainer);
         VBox container = new VBox(
@@ -84,7 +85,7 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
                 internationalEventsContainer,
                 centerDisplay,
                 localEventsLabel,
-                searchBar,
+                //searchBar,
                 localEventTypeTabsPane,
                 growingPane);
         container.setAlignment(Pos.CENTER);
@@ -124,6 +125,12 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
 
     private void showLocalEventsOfType(Entity eventType) {
         localEventsOfSelectedType.setAll(localEvents.filtered(e -> e.getForeignEntity("type") == eventType));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        organizationSelectorView.onResume();
     }
 
     protected void startLogic() {

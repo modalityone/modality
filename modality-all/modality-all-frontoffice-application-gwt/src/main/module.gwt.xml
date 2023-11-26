@@ -413,6 +413,12 @@
     <source path="dev/webfx/platform/uischeduler/spi/impl"/>
     <!--=========================< webfx-platform-uischeduler-gwt >=========================-->
     <source path="dev/webfx/platform/uischeduler/spi/impl/gwt"/>
+    <!--============================< webfx-platform-useragent >============================-->
+    <source path="dev/webfx/platform/useragent"/>
+    <source path="dev/webfx/platform/useragent/spi"/>
+    <source path="dev/webfx/platform/useragent/spi/impl"/>
+    <!--==========================< webfx-platform-useragent-gwt >==========================-->
+    <source path="dev/webfx/platform/useragent/spi/impl/gwt"/>
     <!--==============================< webfx-platform-util >===============================-->
     <source path="dev/webfx/platform/util"/>
     <source path="dev/webfx/platform/util/collection"/>
