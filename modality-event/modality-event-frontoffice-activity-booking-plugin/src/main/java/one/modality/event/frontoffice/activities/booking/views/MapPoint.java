@@ -3,7 +3,7 @@ package one.modality.event.frontoffice.activities.booking.views;
 /**
  * @author Bruno Salmon
  */
-final class MapPoint {
+public final class MapPoint {
 
     private static final double TILE_SIZE = 256;  // Standard tile size for Google Maps
     private final double latitude;
