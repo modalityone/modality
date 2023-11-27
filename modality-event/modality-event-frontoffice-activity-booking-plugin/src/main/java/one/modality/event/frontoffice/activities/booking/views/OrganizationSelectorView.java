@@ -47,7 +47,7 @@ public final class OrganizationSelectorView {
     private final ButtonFactoryMixin factoryMixin;
     private final ViewDomainActivityBase activityBase;
     private final FlipPane flipPane = new FlipPane();
-    private final MapView organizationMapView = new MapView(0, 20, 10);
+    private final MapView organizationMapView = new StaticMapView(0, 20, 10);
     private final MonoPane presentationPane = new MonoPane();
     private final WebView presentationVideoView = new WebView();
     private final Hyperlink websiteLink = GeneralUtility.createHyperlink("localCentreWebsite", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
@@ -59,7 +59,7 @@ public final class OrganizationSelectorView {
         this.factoryMixin = factoryMixin;
         this.activityBase = activityBase;
 
-        organizationMapView.entityProperty().bind(FXOrganization.organizationProperty());
+        organizationMapView.placeEntityProperty().bind(FXOrganization.organizationProperty());
 
         presentationPane.managedProperty().bind(presentationPane.visibleProperty());
         websiteLink.managedProperty().bind(websiteLink.visibleProperty());
@@ -183,11 +183,11 @@ public final class OrganizationSelectorView {
                         Float longitude = organization.getLongitude();
                         if (latitude == null || longitude == null) {
                             addressLink.setOnAction(null);
-                            organizationMapView.setMapCenterPoint(null);
+                            organizationMapView.setMapCenter(null);
                             organizationMapView.getMarkers().clear();
                         } else {
                             addressLink.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("https://google.com/maps/search/kadampa/@" + latitude + "," + longitude + ",12z"));
-                            organizationMapView.setMapCenterPoint(latitude, longitude);
+                            organizationMapView.setMapCenter(latitude, longitude);
                             organizationMapView.getMarkers().setAll(new MapMarker(latitude, longitude));
                         }
                         String phone = organization.getStringFieldValue("phone");
@@ -216,15 +216,15 @@ public final class OrganizationSelectorView {
         ScalePane countryButtonScalePane = new ScalePane(ScaleMode.FIT_WIDTH, countryButton);
         countryButtonScalePane.setMaxScale(2.5);
 
-        MapView countryMapView = new MapView(0, 20, 5);
-        countryMapView.entityProperty().bind(FXCountry.countryProperty());
+        MapView countryMapView = new StaticMapView(0, 20, 5);
+        countryMapView.placeEntityProperty().bind(FXCountry.countryProperty());
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Country country = FXCountry.getCountry();
             if (country != null) {
                 Float latitude = country.getLatitude();
                 Float longitude = country.getLongitude();
                 if (latitude != null && longitude != null)
-                    countryMapView.setMapCenterPoint(latitude, longitude);
+                    countryMapView.setMapCenter(latitude, longitude);
             }
         }, FXCountry.countryProperty());
 
