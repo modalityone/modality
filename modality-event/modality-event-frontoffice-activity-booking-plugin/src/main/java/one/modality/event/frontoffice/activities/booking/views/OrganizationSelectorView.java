@@ -150,11 +150,11 @@ public final class OrganizationSelectorView {
                                         : organizationId == 2 ? "https://www.youtube.com/embed/alIoC9_oD5w"
                                         : null;
                         presentationPane.setVisible(imageLink != null || videoLink != null);
+                        presentationVideoView.getEngine().load(videoLink);
                         if (imageLink != null) {
                             ImageView imageView = new ImageView(new Image(imageLink, true));
                             ScalePane scalePane = new ScalePane(ScaleMode.BEST_ZOOM, imageView);
                             presentationPane.setContent(scalePane);
-                            presentationVideoView.getEngine().load(videoLink);
                             if (videoLink != null) {
                                 SVGPath playSvgPath = new SVGPath();
                                 playSvgPath.setContent(PLAY_SVG);
@@ -172,7 +172,6 @@ public final class OrganizationSelectorView {
                                 stackPane.setCursor(Cursor.HAND);
                             }
                         } else if (videoLink != null) {
-                            presentationVideoView.getEngine().load(videoLink);
                             presentationPane.setContent(presentationVideoView);
                         }
                         String domainName = organization.getStringFieldValue("domainName");
