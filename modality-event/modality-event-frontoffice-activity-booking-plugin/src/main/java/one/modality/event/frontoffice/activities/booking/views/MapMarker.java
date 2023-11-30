@@ -6,6 +6,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
+import one.modality.base.shared.entities.Organization;
 
 /**
  * @author Bruno Salmon
@@ -16,6 +17,13 @@ public final class MapMarker {
     private final MapPoint mapPoint;
     private Node node;
     private SVGPath markerSvgPath;
+    private Organization organization;
+    private Runnable onAction;
+
+    public MapMarker(Organization organization) {
+        this(organization.getLatitude(), organization.getLongitude());
+        this.organization = organization;
+    }
 
     public MapMarker(double latitude, double longitude) {
         this(new MapPoint(latitude, longitude));
@@ -29,14 +37,30 @@ public final class MapMarker {
         return mapPoint;
     }
 
+    public Organization getOrganization() {
+        return organization;
+    }
+
+    public void setOnAction(Runnable onAction) {
+        this.onAction = onAction;
+    }
+
+    public Runnable getOnAction() {
+        return onAction;
+    }
+
     public Node getNode() {
         if (node == null) {
             node = createMarkerNode();
+            if (onAction != null)
+                node.setOnMousePressed(e -> onAction.run());
         }
         return node;
     }
 
     public void setColours(Paint fill, Paint stroke) {
+        if (markerSvgPath == null)
+            getNode();
         markerSvgPath.setFill(fill);
         markerSvgPath.setStroke(stroke);
     }

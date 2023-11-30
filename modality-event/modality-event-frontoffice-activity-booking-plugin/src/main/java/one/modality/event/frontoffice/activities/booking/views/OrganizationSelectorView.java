@@ -1,7 +1,6 @@
 package one.modality.event.frontoffice.activities.booking.views;
 
 import dev.webfx.extras.panes.*;
-import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -20,7 +19,6 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
@@ -134,7 +132,7 @@ public final class OrganizationSelectorView {
     private void updateFromOrganization() {
         Organization organization = FXOrganization.getOrganization();
         if (organization != null) {
-            organization.onExpressionLoaded("domainName,latitude,longitude,street,cityName,postCode,country.(name,latitude,longitude,iso_alpha2),phone,email")
+            organization.onExpressionLoaded("domainName,latitude,longitude,street,cityName,postCode,country.(name,iso_alpha2,latitude,longitude,north,south,east,west),phone,email")
                     .onSuccess(ignored -> Platform.runLater(() -> {
                         Integer organizationId = Numbers.toInteger(organization.getPrimaryKey());
                         String imageLink = // Temporarily hardcoded
@@ -145,9 +143,9 @@ public final class OrganizationSelectorView {
                                         : null;
                         String videoLink = // Temporarily hardcoded
                                 // Manjushri KMC
-                                organizationId == 151 ? "https://www.youtube.com/embed/jwptdnO_f-I"
+                                organizationId == 151 ? "https://fast.wistia.net/embed/iframe/z3pqhk7lhs?seo=false&videoFoam=true" // "https://www.youtube.com/embed/jwptdnO_f-I?rel=0"
                                         // KMC France
-                                        : organizationId == 2 ? "https://www.youtube.com/embed/alIoC9_oD5w"
+                                        : organizationId == 2 ? "https://www.youtube.com/embed/alIoC9_oD5w?rel=0"
                                         : null;
                         presentationPane.setVisible(imageLink != null || videoLink != null);
                         presentationVideoView.getEngine().load(videoLink);
@@ -188,7 +186,7 @@ public final class OrganizationSelectorView {
                         } else {
                             addressLink.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("https://google.com/maps/search/kadampa/@" + latitude + "," + longitude + ",12z"));
                             organizationMapView.setMapCenter(latitude, longitude);
-                            organizationMapView.getMarkers().setAll(new MapMarker(latitude, longitude));
+                            organizationMapView.getMarkers().setAll(new MapMarker(organization));
                         }
                         String phone = organization.getStringFieldValue("phone");
                         phoneLink.setVisible(phone != null);
@@ -204,7 +202,7 @@ public final class OrganizationSelectorView {
     }
 
     private Node getChangeLocationView() {
-        String countryJson = "{class: 'Country', fields: 'latitude,longitude', orderBy: 'name'}";
+        String countryJson = "{class: 'Country', fields: 'latitude,longitude,north,south,east,west', orderBy: 'name'}";
         if (WebFxKitLauncher.supportsSvgImageFormat())
             countryJson = countryJson.replace("}", ", columns: [{expression: '[image(`images/s16/countries/svg/` + iso_alpha2 + `.svg`),name]'}] }");
         EntityButtonSelector<Country> countryButtonSelector = new EntityButtonSelector<>(
@@ -216,7 +214,7 @@ public final class OrganizationSelectorView {
         ScalePane countryButtonScalePane = new ScalePane(ScaleMode.FIT_WIDTH, countryButton);
         countryButtonScalePane.setMaxScale(2.5);
 
-        MapView countryMapView = new StaticMapView(0, 20, 5);
+        MapView countryMapView = new DynamicMapView();
         countryMapView.placeEntityProperty().bind(FXCountry.countryProperty());
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Country country = FXCountry.getCountry();
@@ -228,30 +226,24 @@ public final class OrganizationSelectorView {
             }
         }, FXCountry.countryProperty());
 
-        VBox countryOrganizationsBox = new VBox(10);
-        countryOrganizationsBox.setPadding(new Insets(0, 0, 0, 20));
+        Hyperlink backLink = GeneralUtility.createHyperlink("Back", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
+        backLink.setOnAction(e -> flipPane.flipToFront());
 
-        ScrollPane scrollPane = ControlUtil.createVerticalScrollPane(countryOrganizationsBox);
-        scrollPane.setMaxHeight(MapView.MAP_HEIGHT);
         VBox container = new VBox(20,
-                I18n.bindI18nProperties(TextUtility.getSubText(null, StyleUtility.RUPAVAJRA_WHITE), "yourLocalCentre"),
                 countryButtonScalePane,
-                new ColumnsPane(countryMapView.buildMapNode(), scrollPane)
+                countryMapView.buildMapNode(),
+                backLink
         );
 
         container.setBackground(Background.fill(Color.web(StyleUtility.MAIN_BLUE)));
         container.setPadding(new Insets(35));
         container.setAlignment(Pos.CENTER);
 
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            recreateOrganizationMarkers(countryMapView);
-            recreateOrganizationHyperLinks(countryOrganizationsBox);
-        }, FXCountry.countryProperty());
+        FXProperties.runNowAndOnPropertiesChange(() ->
+                recreateOrganizationMarkers(countryMapView), FXCountry.countryProperty());
 
-        ObservableLists.runNowAndOnListChange(x -> {
-            recreateOrganizationMarkers(countryMapView);
-            recreateOrganizationHyperLinks(countryOrganizationsBox);
-        }, FXOrganizations.organizations());
+        ObservableLists.runNowAndOnListChange(x ->
+                recreateOrganizationMarkers(countryMapView), FXOrganizations.organizations());
 
         return container;
     }
@@ -264,24 +256,9 @@ public final class OrganizationSelectorView {
                         .collect(Collectors.toList()));
     }
 
-    private void recreateOrganizationHyperLinks(VBox countryOrganizationsBox) {
-        countryOrganizationsBox.getChildren().setAll(
-                FXOrganizations.organizations().stream()
-                        .filter(o -> Entities.sameId(o.getCountry(), FXCountry.getCountry()))
-                        .map(this::createOrganizationHyperlink)
-                        .collect(Collectors.toList()));
-    }
-
-    private Hyperlink createOrganizationHyperlink(Organization o) {
-        Hyperlink h = GeneralUtility.createHyperlink("localCentreAddress", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
-        FXProperties.setEvenIfBound(h.textProperty(), o.getName());
-        h.setOnAction(e -> flipBackToOrganization(o));
-        return h;
-    }
-
     private MapMarker createOrganizationMarker(Organization o) {
-        MapMarker marker = new MapMarker(o.getLatitude(), o.getLongitude());
-        marker.getNode().setOnMousePressed(e -> flipBackToOrganization(o));
+        MapMarker marker = new MapMarker(o);
+        marker.setOnAction(() -> flipBackToOrganization(o));
         if (!Entities.sameId(o.getCountry(), FXCountry.getCountry())) {
             marker.setColours(Color.ORANGE, Color.DARKORANGE);
         }

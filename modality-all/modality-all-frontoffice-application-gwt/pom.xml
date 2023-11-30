@@ -48,6 +48,13 @@
         </dependency>
 
         <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-javafxweb-enginepeer-emul</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
             <groupId>com.google.elemental2</groupId>
             <artifactId>elemental2-promise</artifactId>
         </dependency>
