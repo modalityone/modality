@@ -74,7 +74,8 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
 
         VBox.setMargin(headerLabel, new Insets(5, 0, 5, 0));
         VBox.setMargin(internationalEventsLabel, new Insets(20));
-        VBox.setMargin(centerDisplay, new Insets(10, 0, 25, 0));
+        VBox.setMargin(centerDisplay, new Insets(10, 0, 0, 0));
+        VBox.setMargin(localEventsLabel, new Insets(25));
         //VBox.setMargin(searchBar, new Insets(25));
 
         GrowingPane growingPane = new GrowingPane(localEventsContainer);
