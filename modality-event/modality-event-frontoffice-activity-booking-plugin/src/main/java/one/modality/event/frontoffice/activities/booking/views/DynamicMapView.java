@@ -22,6 +22,7 @@ public class DynamicMapView extends MapViewBase {
 
     private final WebView webView = new WebView();
     private JSObject window;
+    private boolean googleMapLoaded;
     private final List<JSObject> googleMarkers = new ArrayList<>();
 
     @Override
@@ -52,9 +53,16 @@ public class DynamicMapView extends MapViewBase {
                         "        mapId: 'DEMO_MAP_ID'\n" +
                         "    });\n" +
                         "    window.AdvancedMarkerElement = AdvancedMarkerElement; window.PinElement = PinElement;\n" +
-                        "    if (!window.ResizeObserver) { var script = document.createElement('script'); script.src = 'https://unpkg.com/resize-observer-polyfill@1.5.1/dist/ResizeObserver.global.js'; document.body.appendChild(script); } \n" +
-                        "    java.updateMapPosition(); java.updateMarkers();\n" +
-                        "    console.log('Map initialized');\n" +
+                        "    var javaCallbackFunction = function() { java.onGoogleMapLoaded(); };\n" +
+                        // Google map markers use ResizeObserver which is not supported by default on OpenJFX WebView, so we use a polyfill in that case
+                        "    if (!window.ResizeObserver) {\n" +
+                        "       var script = document.createElement('script');\n" +
+                        "       document.body.appendChild(script);\n" +
+                        "       script.onload = javaCallbackFunction; \n" +
+                        "       script.src = 'https://unpkg.com/resize-observer-polyfill@1.5.1/dist/ResizeObserver.global.js';\n" +
+                        "    } else {\n" +
+                        "       javaCallbackFunction();\n" +
+                        "    }\n" +
                         "}\n" +
                         "function createMarker(lat, lng, title, javaMarker) {\n" +
                         "    var marker = new AdvancedMarkerElement({map: googleMap, position: {lat: lat, lng: lng}, title: title, content: new PinElement().element});\n" +
@@ -70,9 +78,24 @@ public class DynamicMapView extends MapViewBase {
         return webView;
     }
 
+    // Java callbacks called from JavaScript => must be declared in webfx.xml (required for successful GWT compilation)
+
+    public void onGoogleMapLoaded() { // Java callback called from JavaScript when Google map is loaded
+        Console.log("Google map loaded");
+        googleMapLoaded = true;
+        updateMapPosition();
+        updateMarkers();
+    }
+
+    public void onMarkerClicked(MapMarker marker) { // Java callback called from JavaScript when clicking on a Google marker
+        Runnable onAction = marker.getOnAction();
+        if (onAction != null)
+            onAction.run();
+    }
+
     @Override
     protected void updateMapPosition() {
-        if (window != null) {
+        if (googleMapLoaded) {
             String script = null;
             Entity placeEntity = getPlaceEntity();
             if (placeEntity instanceof Country) {
@@ -89,7 +112,7 @@ public class DynamicMapView extends MapViewBase {
 
     @Override
     protected void updateMarkers() {
-        if (window != null) {
+        if (googleMapLoaded) {
             int i = 0;
             for (MapMarker marker : markers) {
                 MapPoint mp = marker.getMapPoint();
@@ -111,12 +134,6 @@ public class DynamicMapView extends MapViewBase {
                 googleMarkers.remove(i);
             }
         }
-    }
-
-    public void onMarkerClicked(MapMarker marker) { // Called by callback from JavaScript when clicking on a Google marker
-        Runnable onAction = marker.getOnAction();
-        if (onAction != null)
-            onAction.run();
     }
 
 }
