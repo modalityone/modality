@@ -54,16 +54,7 @@ public class DynamicMapView extends MapViewBase {
                         "        mapId: 'DEMO_MAP_ID'\n" +
                         "    });\n" +
                         "    window.AdvancedMarkerElement = AdvancedMarkerElement; window.PinElement = PinElement;\n" +
-                        "    var javaCallbackFunction = function() { java.onGoogleMapLoaded(); };\n" +
-                        // Google map markers use ResizeObserver which is not supported by default on OpenJFX WebView, so we use a polyfill in that case
-                        "    if (!window.ResizeObserver) {\n" +
-                        "       var script = document.createElement('script');\n" +
-                        "       document.body.appendChild(script);\n" +
-                        "       script.onload = javaCallbackFunction; \n" +
-                        "       script.src = 'https://unpkg.com/resize-observer-polyfill@1.5.1/dist/ResizeObserver.global.js';\n" +
-                        "    } else {\n" +
-                        "       javaCallbackFunction();\n" +
-                        "    }\n" +
+                        "    java.onGoogleMapLoaded();\n" +
                         "}\n" +
                         "function createMarker(lat, lng, title, javaMarker) {\n" +
                         "    var marker = new AdvancedMarkerElement({map: googleMap, position: {lat: lat, lng: lng}, title: title, content: new PinElement().element});\n" +
@@ -73,13 +64,31 @@ public class DynamicMapView extends MapViewBase {
                         "function createEmptyObject() {\n" +
                         "    return {};\n" +
                         "}\n" +
-                        "initMap();");
+                        "console.log = function(message) { java.consoleLog(message); };\n" +
+                        "console.error = function(message) { java.consoleError(message); };\n" +
+                        // Google map use ResizeObserver which is not supported by default on OpenJFX WebView, so we use a polyfill in that case
+                        "if (!window.ResizeObserver) {\n" +
+                        "   var script = document.createElement('script');\n" +
+                        "   document.body.appendChild(script);\n" +
+                        "   script.onload = initMap; \n" +
+                        "   script.src = 'https://unpkg.com/resize-observer-polyfill@1.5.1/dist/ResizeObserver.global.js';\n" +
+                        "} else {\n" +
+                        "   initMap();\n" +
+                        "};");
             }
         }, webEngine.getLoadWorker().stateProperty());
         return webView;
     }
 
     // Java callbacks called from JavaScript => must be declared in webfx.xml (required for successful GWT compilation)
+
+    public void consoleLog(String message) {
+        Console.log("[WebView console.log] " + message);
+    }
+
+    public void consoleError(String message) {
+        Console.log("[WebView console.error] " + message);
+    }
 
     public void onGoogleMapLoaded() { // Java callback called from JavaScript when Google map is loaded
         Console.log("Google map loaded");
