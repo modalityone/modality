@@ -1,5 +1,16 @@
 [
 
+{
+  "name" : "one.modality.event.frontoffice.activities.booking.views.DynamicMapView",
+  "methods" : [
+    { "name" : "consoleLog", "parameterTypes" : ["java.lang.String"] },
+    { "name" : "consoleWarn", "parameterTypes" : ["java.lang.String"] },
+    { "name" : "consoleError", "parameterTypes" : ["java.lang.String"] },
+    { "name" : "onGoogleMapLoaded", "parameterTypes" : [] },
+    { "name" : "onMarkerClicked", "parameterTypes" : ["one.modality.event.frontoffice.activities.booking.views.MapMarker"] }
+  ]
+}
+,
    {
        "name" : "dev.webfx.kit.launcher.spi.impl.openjfx.JavaFxWebFxKitLauncherProvider$FxKitWrapperApplication",
        "methods" : [

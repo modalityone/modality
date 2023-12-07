@@ -376,6 +376,7 @@
                         <list>one/modality/base/client/images/[^/]+$</list>
                         <list>one/modality/base/frontoffice/activities/account/images/[^/]+$</list>
                         <list>one/modality/base/shared/domainmodel/[^/]+$</list>
+                        <list>one/modality/event/frontoffice/activities/booking/views/[^/]+$</list>
                     </resourcesList>
                     <appIdentifier>one.modality.frontoffice</appIdentifier>
                     <releaseConfiguration>

@@ -71,8 +71,8 @@ public final class OrganizationSelectorView {
     }
 
     public Node getView() {
-        flipPane.setFront(getOrganizationView());
-        flipPane.setBack(getChangeLocationView());
+        flipToFrontOrganization();
+        //flipToBackWordMap();
         return flipPane;
     }
 
@@ -102,7 +102,7 @@ public final class OrganizationSelectorView {
         Node mapAndContactPane = new ColumnsPane(organizationMapView.buildMapNode(), contactBox);
 
         Hyperlink changeLocation = GeneralUtility.createHyperlink("Change your location", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
-        changeLocation.setOnMouseClicked(event -> flipPane.flipToBack());
+        changeLocation.setOnMouseClicked(event -> flipToBackWordMap());
 
         VBox container = new VBox(20,
                 I18n.bindI18nProperties(TextUtility.getSubText(null, StyleUtility.RUPAVAJRA_WHITE), "yourLocalCentre"),
@@ -143,12 +143,13 @@ public final class OrganizationSelectorView {
                                         : null;
                         String videoLink = // Temporarily hardcoded
                                 // Manjushri KMC
-                                organizationId == 151 ? "https://fast.wistia.net/embed/iframe/z3pqhk7lhs?seo=false&videoFoam=true" // "https://www.youtube.com/embed/jwptdnO_f-I?rel=0"
+                                organizationId == 151 ? "https://fast.wistia.net/embed/iframe/z3pqhk7lhs" // "https://www.youtube.com/embed/jwptdnO_f-I?rel=0"
                                         // KMC France
                                         : organizationId == 2 ? "https://www.youtube.com/embed/alIoC9_oD5w?rel=0"
                                         : null;
                         presentationPane.setVisible(imageLink != null || videoLink != null);
-                        presentationVideoView.getEngine().load(videoLink);
+                        if (videoLink == null)
+                            presentationVideoView.getEngine().load(null); // Unloading possible previous video (stops the video if playing)
                         if (imageLink != null) {
                             ImageView imageView = new ImageView(new Image(imageLink, true));
                             ScalePane scalePane = new ScalePane(ScaleMode.BEST_ZOOM, imageView);
@@ -157,19 +158,31 @@ public final class OrganizationSelectorView {
                                 SVGPath playSvgPath = new SVGPath();
                                 playSvgPath.setContent(PLAY_SVG);
                                 playSvgPath.setFill(Color.WHITE);
-                                StackPane stackPane = new StackPane(presentationVideoView, scalePane, playSvgPath);
-                                presentationPane.setContent(stackPane);
-                                scalePane.setMouseTransparent(true);
-                                playSvgPath.setMouseTransparent(true);
-                                scalePane.setVisible(true);
-                                playSvgPath.setVisible(true);
-                                SceneUtil.runOnceFocusIsInside(presentationVideoView, false, () -> {
-                                    scalePane.setVisible(false);
-                                    playSvgPath.setVisible(false);
-                                });
+                                StackPane stackPane = new StackPane();
                                 stackPane.setCursor(Cursor.HAND);
+                                presentationPane.setContent(stackPane);
+                                boolean isGluon = UserAgent.isNative();
+                                if (!isGluon) { // ex: desktop JRE & browser
+                                    presentationVideoView.getEngine().load(videoLink);
+                                    stackPane.getChildren().setAll(presentationVideoView, scalePane, playSvgPath);
+                                    scalePane.setMouseTransparent(true);
+                                    playSvgPath.setMouseTransparent(true);
+                                    scalePane.setVisible(true);
+                                    playSvgPath.setVisible(true);
+                                    SceneUtil.runOnceFocusIsInside(presentationVideoView, false, () -> {
+                                        scalePane.setVisible(false);
+                                        playSvgPath.setVisible(false);
+                                    });
+                                } else { // ex: mobile app
+                                    stackPane.getChildren().setAll(scalePane, playSvgPath);
+                                    stackPane.setOnMouseClicked(e -> {
+                                        presentationVideoView.getEngine().load(videoLink);
+                                        presentationPane.setContent(presentationVideoView);
+                                    });
+                                }
                             }
                         } else if (videoLink != null) {
+                            presentationVideoView.getEngine().load(videoLink);
                             presentationPane.setContent(presentationVideoView);
                         }
                         String domainName = organization.getStringFieldValue("domainName");
@@ -202,17 +215,6 @@ public final class OrganizationSelectorView {
     }
 
     private Node getChangeLocationView() {
-        String countryJson = "{class: 'Country', fields: 'latitude,longitude,north,south,east,west', orderBy: 'name'}";
-        if (WebFxKitLauncher.supportsSvgImageFormat())
-            countryJson = countryJson.replace("}", ", columns: [{expression: '[image(`images/s16/countries/svg/` + iso_alpha2 + `.svg`),name]'}] }");
-        EntityButtonSelector<Country> countryButtonSelector = new EntityButtonSelector<>(
-                countryJson, factoryMixin, FXMainFrameDialogArea::getDialogArea, activityBase.getDataSourceModel()
-        );
-        countryButtonSelector.selectedItemProperty().bindBidirectional(FXCountry.countryProperty());
-        Button countryButton = countryButtonSelector.getButton();
-        countryButton.setMaxWidth(Region.USE_PREF_SIZE);
-        ScalePane countryButtonScalePane = new ScalePane(ScaleMode.FIT_WIDTH, countryButton);
-        countryButtonScalePane.setMaxScale(2.5);
 
         MapView countryMapView = new DynamicMapView();
         countryMapView.placeEntityProperty().bind(FXCountry.countryProperty());
@@ -227,10 +229,9 @@ public final class OrganizationSelectorView {
         }, FXCountry.countryProperty());
 
         Hyperlink backLink = GeneralUtility.createHyperlink("Back", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
-        backLink.setOnAction(e -> flipPane.flipToFront());
+        backLink.setOnAction(e -> flipToFrontOrganization());
 
         VBox container = new VBox(20,
-                countryButtonScalePane,
                 countryMapView.buildMapNode(),
                 backLink
         );
@@ -258,15 +259,41 @@ public final class OrganizationSelectorView {
 
     private MapMarker createOrganizationMarker(Organization o) {
         MapMarker marker = new MapMarker(o);
-        marker.setOnAction(() -> flipBackToOrganization(o));
+        marker.setOnAction(() -> flipToFrontOrganization(o));
         if (!Entities.sameId(o.getCountry(), FXCountry.getCountry())) {
             marker.setColours(Color.ORANGE, Color.DARKORANGE);
         }
         return marker;
     }
 
-    private void flipBackToOrganization(Organization o) {
+    private void flipToFrontOrganization(Organization o) {
         FXOrganization.setOrganization(o);
-        flipPane.flipToFront();
+        flipToFrontOrganization();
+    }
+
+    private final static boolean INVERT_FLIP = false;
+
+    private void flipToFrontOrganization() {
+        if (INVERT_FLIP) {
+            if (flipPane.getBack() == null)
+                flipPane.setBack(getOrganizationView());
+            flipPane.flipToBack();
+        } else {
+            if (flipPane.getFront() == null)
+                flipPane.setFront(getOrganizationView());
+            flipPane.flipToFront();
+        }
+    }
+
+    private void flipToBackWordMap() {
+        if (INVERT_FLIP) {
+            if (flipPane.getFront() == null)
+                flipPane.setFront(getChangeLocationView());
+            flipPane.flipToFront();
+        } else {
+            if (flipPane.getBack() == null)
+                flipPane.setBack(getChangeLocationView());
+            flipPane.flipToBack();
+        }
     }
 }
