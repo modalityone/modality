@@ -5,7 +5,12 @@
 
     <exported-packages>
         <source-packages/>
+        <resource-packages/>
     </exported-packages>
+
+    <embed-resources>
+        <resource>one/modality/event/frontoffice/activities/booking/views/DynamicMapView.js</resource>
+    </embed-resources>
 
     <dependencies>
         <used-by-source-modules/>
@@ -16,13 +21,39 @@
         <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.event.frontoffice.activities.booking.RouteToBookingRequestEmitter</provider>
     </providers>
 
-    <web-callbacks> <!-- not yet considered by WebFX CLI but will be in the future to automatically generate WebToJavaCallbacks super source in final executable GWT module -->
+    <java-callbacks> <!-- not yet considered by WebFX CLI but will be in the future to automatically generate WebToJavaCallbacks super source in final executable GWT module -->
         <callback-class name="one.modality.event.frontoffice.activities.booking.views.DynamicMapView">
+            <callback-method name="consoleLog">
+                <callback-argument class="java.lang.String"/>
+            </callback-method>
+            <callback-method name="consoleWarn">
+                <callback-argument class="java.lang.String"/>
+            </callback-method>
+            <callback-method name="consoleError">
+                <callback-argument class="java.lang.String"/>
+            </callback-method>
             <callback-method name="onGoogleMapLoaded"/>
             <callback-method name="onMarkerClicked">
                 <callback-argument class="one.modality.event.frontoffice.activities.booking.views.MapMarker"/>
             </callback-method>
         </callback-class>
-    </web-callbacks>
+    </java-callbacks>
+
+    <graalvm-reflection-json> <!-- Should be generated from callbacks declaration instead -->
+        <![CDATA[
+[
+  {
+    "name" : "one.modality.event.frontoffice.activities.booking.views.DynamicMapView",
+    "methods" : [
+      { "name" : "consoleLog", "parameterTypes" : ["java.lang.String"] },
+      { "name" : "consoleWarn", "parameterTypes" : ["java.lang.String"] },
+      { "name" : "consoleError", "parameterTypes" : ["java.lang.String"] },
+      { "name" : "onGoogleMapLoaded", "parameterTypes" : [] },
+      { "name" : "onMarkerClicked", "parameterTypes" : ["one.modality.event.frontoffice.activities.booking.views.MapMarker"] }
+    ]
+  }
+]
+        ]]>
+    </graalvm-reflection-json>
 
 </project>

@@ -1,11 +1,16 @@
 package one.modality.event.frontoffice.activities.booking.views;
 
+import dev.webfx.extras.panes.RatioPane;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.resource.Resource;
+import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.useragent.UserAgent;
 import dev.webfx.stack.orm.entity.Entity;
 import javafx.concurrent.Worker;
 import javafx.scene.Node;
+import javafx.scene.layout.Region;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
@@ -20,6 +25,7 @@ import java.util.List;
  */
 public class DynamicMapView extends MapViewBase {
 
+    private final RatioPane container = new RatioPane(16d/9);
     private final WebView webView = new WebView();
     private JSObject window;
     private boolean googleMapLoaded;
@@ -28,62 +34,58 @@ public class DynamicMapView extends MapViewBase {
     @Override
     public Node buildMapNode() {
         WebEngine webEngine = webView.getEngine();
-        webEngine.setOnError(event -> Console.log("Received error event: " + event));
+        webEngine.setOnError(error -> Console.log("WebView error: " + error));
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Worker.State state = webEngine.getLoadWorker().getState();
             if (state == Worker.State.READY) { // happens on first view, but also on subsequent views in the browser when the user navigates back here (as the browser unloads the iFrame each time it's removed from the DOM)
-                String GOOGLE_MAP_JS_API_KEY = SourcesConfig.getSourcesRootConfig().getString("GOOGLE_MAP_JS_API_KEY");
-                window = (JSObject) webEngine.executeScript("window");
-                window.setMember("java", DynamicMapView.this);
+                googleMapLoaded = false;
                 googleMarkers.clear(); // Also important to clear googleMarkers on subsequent views, because we need to recreate them all
-                webEngine.executeScript("var googleMap; \n" +
-                        "(g=>{var h,a,k,p=\"The Google Maps JavaScript API\",c=\"google\",l=\"importLibrary\",q=\"__ib__\",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement(\"script\"));e.set(\"libraries\",[...r]+\"\");for(k in g)e.set(k.replace(/[A-Z]/g,t=>\"_\"+t[0].toLowerCase()),g[k]);e.set(\"callback\",c+\".maps.\"+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+\" could not load.\"));a.nonce=m.querySelector(\"script[nonce]\")?.nonce||\"\";m.head.append(a)}));d[l]?console.warn(p+\" only loads once. Ignoring:\",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({\n" +
-                        "    key: \"" + GOOGLE_MAP_JS_API_KEY + "\",\n" +
-                        //"    v: \"weekly\",\n" +
-                        "});\n" +
-                        "\n" +
-                        "async function initMap() {\n" +
-                        "    const { Map } = await google.maps.importLibrary('maps');\n" +
-                        "    const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary('marker');\n" +
-                        "    googleMap = new Map(document.body, {\n" +
-                        "        center: { lat: -34.397, lng: 150.644 },\n" +
-                        "        zoom: 8,\n" +
-                        "        mapTypeControl: false,\n" +
-                        "        navigationControlOptions: {style: google.maps.NavigationControlStyle.SMALL},\n" +
-                        "        mapTypeId: google.maps.MapTypeId.ROADMAP," +
-                        "        mapId: 'DEMO_MAP_ID'\n" +
-                        "    });\n" +
-                        "    window.AdvancedMarkerElement = AdvancedMarkerElement; window.PinElement = PinElement;\n" +
-                        "    java.onGoogleMapLoaded();\n" +
-                        "}\n" +
-                        "function createMarker(lat, lng, title, javaMarker) {\n" +
-                        "    var marker = new AdvancedMarkerElement({map: googleMap, position: {lat: lat, lng: lng}, title: title, content: new PinElement().element});\n" +
-                        "    marker.addListener('click', x => { java.onMarkerClicked(javaMarker); } );\n" +
-                        "    return marker;\n" +
-                        "}\n" +
-                        "function createEmptyObject() {\n" +
-                        "    return {};\n" +
-                        "}\n" +
-                        "console.log = function(message) { java.consoleLog(message); };\n" +
-                        "console.error = function(message) { java.consoleError(message); };\n" +
-                        // Google map use ResizeObserver which is not supported by default on OpenJFX WebView, so we use a polyfill in that case
-                        "if (!window.ResizeObserver) {\n" +
-                        "   var script = document.createElement('script');\n" +
-                        "   document.body.appendChild(script);\n" +
-                        "   script.onload = initMap; \n" +
-                        "   script.src = 'https://unpkg.com/resize-observer-polyfill@1.5.1/dist/ResizeObserver.global.js';\n" +
-                        "} else {\n" +
-                        "   initMap();\n" +
-                        "};");
+                String GOOGLE_MAP_JS_API_KEY = SourcesConfig.getSourcesRootConfig().getString("GOOGLE_MAP_JS_API_KEY");
+                String script =
+                        Resource.getText(Resource.toUrl("DynamicMapView.js", getClass()))
+                        .replace("YOUR_API_KEY", GOOGLE_MAP_JS_API_KEY);
+                boolean isGluon = UserAgent.isNative();
+                if (!isGluon) { // ex: desktop JRE & browser
+                    window = (JSObject) webEngine.executeScript("window");
+                    window.setMember("java", DynamicMapView.this);
+                    webEngine.executeScript(script);
+                    container.setContent(webView);
+                } else { // ex: mobile app
+                    Region region = new Region();
+                    region.setMaxSize(1200, 1200);
+                    container.setContent(region);
+                    UiScheduler.scheduleDelay(800, () -> {
+                        webEngine.loadContent("<html>" +
+                                "<head>\n" +
+                                "        <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>\n" +
+                                "        <meta name='viewport' content='user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1'>\n" +
+                                "</head>\n" +
+                                "<body style='width: 100%; height: 100vh;'><p>Loading map...</p><script type='text/javascript'>" + script + "</script></body></html>");
+                        container.setContent(webView);
+                        UiScheduler.schedulePeriodic(100, scheduled -> {
+                            window = (JSObject) webEngine.executeScript("window");
+                            if (window != null) {
+                                window.call("injectJava", DynamicMapView.this);
+                                scheduled.cancel();
+                            }
+                        });
+                    });
+                }
             }
         }, webEngine.getLoadWorker().stateProperty());
-        return webView;
+        if (UserAgent.isBrowser())
+            container.setContent(webView);
+        return container;
     }
 
-    // Java callbacks called from JavaScript => must be declared in webfx.xml (required for successful GWT compilation)
+    // Java callbacks called from JavaScript => must be declared in webfx.xml (required for successful GWT & Gluon compilation)
 
     public void consoleLog(String message) {
         Console.log("[WebView console.log] " + message);
+    }
+
+    public void consoleWarn(String message) {
+        Console.log("[WebView console.warn] " + message);
     }
 
     public void consoleError(String message) {
@@ -128,7 +130,7 @@ public class DynamicMapView extends MapViewBase {
                 MapPoint mp = marker.getMapPoint();
                 if (i < googleMarkers.size()) {
                     JSObject googleMarker = googleMarkers.get(i);
-                    JSObject p = (JSObject) webView.getEngine().executeScript("createEmptyObject()");
+                    JSObject p = (JSObject) window.call("createJSObject");
                     p.setMember("lat", mp.getLatitude());
                     p.setMember("lng", mp.getLongitude());
                     googleMarker.call("setPosition", p);

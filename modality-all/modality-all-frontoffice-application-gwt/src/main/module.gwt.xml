@@ -216,6 +216,8 @@
     <source path="one/modality/event/frontoffice/activities/booking/steps"/>
     <source path="one/modality/event/frontoffice/activities/booking/views"/>
     <source path="one/modality/event/frontoffice/operations/routes/booking"/>
+    <resource path="one/modality/event/frontoffice/activities/booking/views"/>
+    <public includes="one/modality/event/frontoffice/activities/booking/views/" path=""/>
     <!--===============================< webfx-extras-cell >================================-->
     <source path="dev/webfx/extras/cell/collator"/>
     <source path="dev/webfx/extras/cell/renderer"/>
