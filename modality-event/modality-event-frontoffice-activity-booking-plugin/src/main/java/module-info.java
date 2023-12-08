@@ -20,6 +20,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires webfx.extras.imagestore;
     requires webfx.extras.panes;
     requires webfx.extras.util.control;
+    requires webfx.extras.util.layout;
     requires webfx.extras.util.scene;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
@@ -27,6 +28,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires webfx.platform.conf;
     requires webfx.platform.console;
     requires webfx.platform.fetch.ast.json;
+    requires webfx.platform.os;
     requires webfx.platform.resource;
     requires webfx.platform.uischeduler;
     requires webfx.platform.useragent;

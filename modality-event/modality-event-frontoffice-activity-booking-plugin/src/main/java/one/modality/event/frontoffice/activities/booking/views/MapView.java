@@ -32,6 +32,10 @@ public interface MapView {
 
     ObservableList<MapMarker> getMarkers();
 
-    Node buildMapNode();
+    Node getMapNode();
+
+    default void onBeforeFlip() { }
+
+    default void onAfterFlip() { }
 
 }

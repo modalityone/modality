@@ -8,6 +8,8 @@ import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.conf.SourcesConfig;
+import dev.webfx.platform.os.OperatingSystem;
+import dev.webfx.platform.useragent.UserAgent;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.Entity;
@@ -66,17 +68,15 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
 
         Label internationalEventsLabel = GeneralUtility.createLabel("internationalEvents", Color.web(StyleUtility.VICTOR_BATTLE_BLACK), 16);
 
-        Node centerDisplay = organizationSelectorView.getView();
+        Node localCenterDisplay = organizationSelectorView.getView();
 
         Label localEventsLabel = GeneralUtility.createLabel("localEvents", Color.web(StyleUtility.VICTOR_BATTLE_BLACK), 16);
 
-        //Node searchBar = new SearchBarView().getView();
-
-        VBox.setMargin(headerLabel, new Insets(5, 0, 5, 0));
+        double mobileStatusBarHeight = OperatingSystem.isMobile() && UserAgent.isNative() ? 15 : 0;
+        VBox.setMargin(headerLabel, new Insets(5 + mobileStatusBarHeight, 0, 5, 0));
         VBox.setMargin(internationalEventsLabel, new Insets(20));
-        VBox.setMargin(centerDisplay, new Insets(10, 0, 0, 0));
+        VBox.setMargin(localCenterDisplay, new Insets(10, 0, 0, 0));
         VBox.setMargin(localEventsLabel, new Insets(25));
-        //VBox.setMargin(searchBar, new Insets(25));
 
         GrowingPane growingPane = new GrowingPane(localEventsContainer);
         VBox container = new VBox(
@@ -84,9 +84,8 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
                 headerImageScalePane,
                 internationalEventsLabel,
                 internationalEventsContainer,
-                centerDisplay,
                 localEventsLabel,
-                //searchBar,
+                localCenterDisplay,
                 localEventTypeTabsPane,
                 growingPane);
         container.setAlignment(Pos.CENTER);

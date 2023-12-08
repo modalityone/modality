@@ -1,14 +1,15 @@
 package one.modality.event.frontoffice.activities.booking.views;
 
-import dev.webfx.extras.panes.ScaleMode;
-import dev.webfx.extras.panes.ScalePane;
+import dev.webfx.extras.panes.ClipPane;
+import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.platform.conf.Config;
 import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.stack.orm.entity.Entity;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -28,6 +29,8 @@ final class StaticMapView extends MapViewBase {
 
     private static final String ZOOM_PLUS_SVG_PATH = "M 13,8 H 3 M 8,13 V 3";
     private static final String ZOOM_MINUS_SVG_PATH = "M 13,8 H 3";
+    private static final Insets ZOOM_BAR_INSETS = new Insets(5);
+
     private final int zoomMin, zoomMax;
 
     private final IntegerProperty zoomProperty = new SimpleIntegerProperty() {
@@ -40,7 +43,11 @@ final class StaticMapView extends MapViewBase {
     private final ImageView mapImageView = new ImageView();
     private final Button zoomInButton = createZoomButton(ZOOM_PLUS_SVG_PATH);
     private final Button zoomOutButton = createZoomButton(ZOOM_MINUS_SVG_PATH);
-    private ScalePane scalePane;
+    private MonoPane mapContainer;
+
+    public StaticMapView(int zoomInitial) {
+        this(0, 20, zoomInitial);
+    }
 
     public StaticMapView(int zoomMin, int zoomMax, int zoomInitial) {
         this.zoomMin = zoomMin;
@@ -48,7 +55,8 @@ final class StaticMapView extends MapViewBase {
         zoomProperty.set(zoomInitial);
     }
 
-    public Node buildMapNode() {
+    @Override
+    protected Node buildMapNode() {
         mapImageView.setFitWidth(MAP_WIDTH);
         mapImageView.setFitHeight(MAP_HEIGHT);
 
@@ -58,15 +66,18 @@ final class StaticMapView extends MapViewBase {
         // We set the max size to the pref size, otherwise it will cover the whole image map and prevent user
         // interaction with markers.
         zoomBar.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-        zoomBar.setPadding(new Insets(5));
-        StackPane.setAlignment(zoomBar, Pos.BOTTOM_RIGHT);
 
-        scalePane = new ScalePane(ScaleMode.FIT_WIDTH, mapImageView);
-        scalePane.setCanGrow(false); // We only eventually scale down the image, never scale up (otherwise will be pixelated)
-        StackPane stackPane = new StackPane(scalePane, zoomBar);
-        stackPane.setMaxSize(MAP_WIDTH, MAP_HEIGHT);
+        mapContainer = new MonoPane(mapImageView);
 
-        return stackPane;
+        return new ClipPane(mapContainer, zoomBar) {
+            @Override
+            protected void layoutChildren() {
+                double width = getWidth(), height = getHeight();
+                layoutInArea(mapContainer, 0, 0, width, height, 0, HPos.CENTER, VPos.CENTER);
+                layoutInArea(zoomBar, 0, 0, width, height, 0, ZOOM_BAR_INSETS, HPos.RIGHT, VPos.BOTTOM);
+                resizeClip();
+            }
+        };
     }
 
     @Override
@@ -87,15 +98,15 @@ final class StaticMapView extends MapViewBase {
 
     @Override
     protected void updateMarkers() {
-        if (scalePane == null || mapCenterPoint == null)
+        if (mapContainer == null || mapCenter == null)
             return;
         StackPane stackPane = new StackPane(mapImageView);
         double zoom = zoomProperty.doubleValue();
         double scaleFactor = Math.pow(2, zoom);
         for (MapMarker marker : markers) {
             // Computing the marker coordinates from the map image center
-            double x = (marker.getMapPoint().getX() - mapCenterPoint.getX()) * scaleFactor;
-            double y = (marker.getMapPoint().getY() - mapCenterPoint.getY()) * scaleFactor;
+            double x = (marker.getMapPoint().getX() - mapCenter.getX()) * scaleFactor;
+            double y = (marker.getMapPoint().getY() - mapCenter.getY()) * scaleFactor;
             // Translating the marker coordinates to be from the map image left top corner
             x += MAP_WIDTH / 2;
             y += MAP_HEIGHT / 2;
@@ -109,14 +120,14 @@ final class StaticMapView extends MapViewBase {
             }
         }
         if (stackPane.getChildren().size() == 1)
-            scalePane.setContent(mapImageView);
+            mapContainer.setContent(mapImageView);
         else {
             stackPane.setMinSize(MAP_WIDTH, MAP_HEIGHT);
             stackPane.setPrefSize(MAP_WIDTH, MAP_HEIGHT);
             stackPane.setMaxSize(MAP_WIDTH, MAP_HEIGHT);
             mapImageView.setScaleX(1);
             mapImageView.setScaleY(1);
-            scalePane.setContent(stackPane);
+            mapContainer.setContent(stackPane);
         }
     }
 
