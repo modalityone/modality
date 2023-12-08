@@ -6,13 +6,15 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 
 /**
  * @author Bruno Salmon
  */
 public abstract class MapViewBase implements MapView {
 
-    protected MapPoint mapCenterPoint;
+    protected MapPoint mapCenter;
+    private Node mapNode;
 
     private final ObjectProperty<Entity> placeEntityProperty = new SimpleObjectProperty<>() {
         @Override
@@ -28,7 +30,7 @@ public abstract class MapViewBase implements MapView {
     }
 
     public void setMapCenter(MapPoint mapCenter) {
-        this.mapCenterPoint = mapCenter;
+        this.mapCenter = mapCenter;
     }
 
     public ObjectProperty<Entity> placeEntityProperty() {
@@ -43,4 +45,12 @@ public abstract class MapViewBase implements MapView {
 
     protected abstract void updateMarkers();
 
+    @Override
+    public Node getMapNode() {
+        if (mapNode == null)
+            mapNode = buildMapNode();
+        return mapNode;
+    }
+
+    protected abstract Node buildMapNode();
 }

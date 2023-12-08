@@ -1,27 +1,31 @@
 package one.modality.event.frontoffice.activities.booking.views;
 
-import dev.webfx.extras.panes.*;
+import dev.webfx.extras.panes.FlipPane;
+import dev.webfx.extras.panes.RatioPane;
+import dev.webfx.extras.panes.ScaleMode;
+import dev.webfx.extras.panes.ScalePane;
+import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.useragent.UserAgent;
 import dev.webfx.platform.util.Numbers;
-import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.application.Platform;
-import javafx.geometry.Insets;
+import javafx.geometry.HPos;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -31,7 +35,6 @@ import javafx.scene.web.WebView;
 import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
 import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.base.frontoffice.utility.StyleUtility;
-import one.modality.base.frontoffice.utility.TextUtility;
 import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Organization;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
@@ -45,8 +48,9 @@ public final class OrganizationSelectorView {
     private final ButtonFactoryMixin factoryMixin;
     private final ViewDomainActivityBase activityBase;
     private final FlipPane flipPane = new FlipPane();
-    private final MapView organizationMapView = new StaticMapView(0, 20, 10);
-    private final MonoPane presentationPane = new MonoPane();
+    private final MapView organizationMapView = new StaticMapView(10);
+    private MapView worldMapView;
+    private final RatioPane presentationPane = new RatioPane(16d/9);
     private final WebView presentationVideoView = new WebView();
     private final Hyperlink websiteLink = GeneralUtility.createHyperlink("localCentreWebsite", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
     private final Hyperlink addressLink = GeneralUtility.createHyperlink("localCentreAddress", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
@@ -57,22 +61,14 @@ public final class OrganizationSelectorView {
         this.factoryMixin = factoryMixin;
         this.activityBase = activityBase;
 
+        LayoutUtil.setAllUnmanagedWhenInvisible(presentationPane, websiteLink, addressLink, phoneLink, emailLink);
+
         organizationMapView.placeEntityProperty().bind(FXOrganization.organizationProperty());
-
-        presentationPane.managedProperty().bind(presentationPane.visibleProperty());
-        websiteLink.managedProperty().bind(websiteLink.visibleProperty());
-        addressLink.managedProperty().bind(addressLink.visibleProperty());
-        phoneLink.managedProperty().bind(phoneLink.visibleProperty());
-        emailLink.managedProperty().bind(emailLink.visibleProperty());
-
-        presentationPane.widthProperty().addListener(observable -> presentationPane.setMaxHeight(presentationPane.getWidth() / (16d / 9)));
-
         FXProperties.runNowAndOnPropertiesChange(e -> updateFromOrganization(), FXOrganization.organizationProperty());
     }
 
     public Node getView() {
         flipToFrontOrganization();
-        //flipToBackWordMap();
         return flipPane;
     }
 
@@ -90,33 +86,42 @@ public final class OrganizationSelectorView {
         organizationButtonScalePane.setMaxScale(2.5);
 
         VBox contactBox = GeneralUtility.createVList(10, 0,
-                presentationPane,
                 websiteLink,
                 addressLink,
                 phoneLink,
                 emailLink
         );
-        contactBox.setAlignment(Pos.CENTER_LEFT);
-        contactBox.setPadding(new Insets(0, 0, 0, 35));
-
-        Node mapAndContactPane = new ColumnsPane(organizationMapView.buildMapNode(), contactBox);
 
         Hyperlink changeLocation = GeneralUtility.createHyperlink("Change your location", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
         changeLocation.setOnMouseClicked(event -> flipToBackWordMap());
 
-        VBox container = new VBox(20,
-                I18n.bindI18nProperties(TextUtility.getSubText(null, StyleUtility.RUPAVAJRA_WHITE), "yourLocalCentre"),
-                organizationButtonScalePane,
-                GeneralUtility.createSpace(10),
-                mapAndContactPane,
-                changeLocation
-        );
-
-        container.setBackground(Background.fill(Color.web(StyleUtility.MAIN_BLUE)));
-        container.setPadding(new Insets(35));
-        container.setAlignment(Pos.CENTER);
-
-        return container;
+        Node organizationMapNode = organizationMapView.getMapNode();
+        return BlueFrame.createBlueFrame(
+                "yourLocalCentre",
+                new Pane(organizationButtonScalePane, organizationMapNode, presentationPane, contactBox) {
+                    @Override
+                    protected void layoutChildren() {
+                        double width = getWidth(), height = getHeight(), x = 0, y = 0, w = width, h = organizationButtonScalePane.prefHeight(width);
+                        layoutInArea(organizationButtonScalePane, x, y, w, h, 0, HPos.CENTER, VPos.CENTER);
+                        double space = Math.min(35, width * 0.03);
+                        y += h + space;
+                        if (organizationMapNode.isVisible()) {
+                            w = width / 2;
+                            layoutInArea(organizationMapNode, x, y, w, height - y, 0, HPos.CENTER, VPos.TOP);
+                            x = w + space;
+                            w = width - x;
+                            contactBox.setAlignment(Pos.CENTER_LEFT);
+                        } else
+                            contactBox.setAlignment(Pos.CENTER);
+                        if (presentationPane.isVisible()) {
+                            h = presentationPane.prefHeight(w);
+                            layoutInArea(presentationPane, x, y, w, h, 0, HPos.CENTER, VPos.TOP);
+                            y += h + 10;
+                        }
+                        layoutInArea(contactBox, x, y, w, height - y, 0, HPos.CENTER, VPos.CENTER);
+                    }
+                },
+                changeLocation);
     }
 
     public void onResume() {
@@ -196,10 +201,12 @@ public final class OrganizationSelectorView {
                             addressLink.setOnAction(null);
                             organizationMapView.setMapCenter(null);
                             organizationMapView.getMarkers().clear();
+                            organizationMapView.getMapNode().setVisible(false);
                         } else {
                             addressLink.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("https://google.com/maps/search/kadampa/@" + latitude + "," + longitude + ",12z"));
                             organizationMapView.setMapCenter(latitude, longitude);
                             organizationMapView.getMarkers().setAll(new MapMarker(organization));
+                            organizationMapView.getMapNode().setVisible(true);
                         }
                         String phone = organization.getStringFieldValue("phone");
                         phoneLink.setVisible(phone != null);
@@ -215,38 +222,32 @@ public final class OrganizationSelectorView {
     }
 
     private Node getChangeLocationView() {
-
-        MapView countryMapView = new DynamicMapView();
-        countryMapView.placeEntityProperty().bind(FXCountry.countryProperty());
+        worldMapView = new DynamicMapView();
+        worldMapView.placeEntityProperty().bind(FXCountry.countryProperty());
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Country country = FXCountry.getCountry();
             if (country != null) {
                 Float latitude = country.getLatitude();
                 Float longitude = country.getLongitude();
                 if (latitude != null && longitude != null)
-                    countryMapView.setMapCenter(latitude, longitude);
+                    worldMapView.setMapCenter(latitude, longitude);
             }
         }, FXCountry.countryProperty());
 
         Hyperlink backLink = GeneralUtility.createHyperlink("Back", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
         backLink.setOnAction(e -> flipToFrontOrganization());
 
-        VBox container = new VBox(20,
-                countryMapView.buildMapNode(),
-                backLink
-        );
-
-        container.setBackground(Background.fill(Color.web(StyleUtility.MAIN_BLUE)));
-        container.setPadding(new Insets(35));
-        container.setAlignment(Pos.CENTER);
-
         FXProperties.runNowAndOnPropertiesChange(() ->
-                recreateOrganizationMarkers(countryMapView), FXCountry.countryProperty());
+                recreateOrganizationMarkers(worldMapView), FXCountry.countryProperty());
 
         ObservableLists.runNowAndOnListChange(x ->
-                recreateOrganizationMarkers(countryMapView), FXOrganizations.organizations());
+                recreateOrganizationMarkers(worldMapView), FXOrganizations.organizations());
 
-        return container;
+        return BlueFrame.createBlueFrame(
+                "findYourLocalCentre",
+                worldMapView.getMapNode(),
+                backLink
+        );
     }
 
     private void recreateOrganizationMarkers(MapView mapView) {
@@ -271,29 +272,18 @@ public final class OrganizationSelectorView {
         flipToFrontOrganization();
     }
 
-    private final static boolean INVERT_FLIP = false;
-
     private void flipToFrontOrganization() {
-        if (INVERT_FLIP) {
-            if (flipPane.getBack() == null)
-                flipPane.setBack(getOrganizationView());
-            flipPane.flipToBack();
-        } else {
-            if (flipPane.getFront() == null)
-                flipPane.setFront(getOrganizationView());
-            flipPane.flipToFront();
-        }
+        if (flipPane.getFront() == null)
+            flipPane.setFront(getOrganizationView());
+        organizationMapView.onBeforeFlip();
+        flipPane.flipToFront(organizationMapView::onAfterFlip);
     }
 
     private void flipToBackWordMap() {
-        if (INVERT_FLIP) {
-            if (flipPane.getFront() == null)
-                flipPane.setFront(getChangeLocationView());
-            flipPane.flipToFront();
-        } else {
-            if (flipPane.getBack() == null)
-                flipPane.setBack(getChangeLocationView());
-            flipPane.flipToBack();
-        }
+        if (flipPane.getBack() == null)
+            flipPane.setBack(getChangeLocationView());
+        worldMapView.onBeforeFlip();
+        flipPane.flipToBack(worldMapView::onAfterFlip);
     }
+
 }
