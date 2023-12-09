@@ -96,7 +96,7 @@ public final class OrganizationSelectorView {
         changeLocation.setOnMouseClicked(event -> flipToBackWordMap());
 
         Node organizationMapNode = organizationMapView.getMapNode();
-        return BlueFrame.createBlueFrame(
+        return OrangeFrame.createOrangeFrame(
                 "yourLocalCentre",
                 new Pane(organizationButtonScalePane, organizationMapNode, presentationPane, contactBox) {
                     @Override
@@ -243,7 +243,7 @@ public final class OrganizationSelectorView {
         ObservableLists.runNowAndOnListChange(x ->
                 recreateOrganizationMarkers(worldMapView), FXOrganizations.organizations());
 
-        return BlueFrame.createBlueFrame(
+        return OrangeFrame.createOrangeFrame(
                 "findYourLocalCentre",
                 worldMapView.getMapNode(),
                 backLink

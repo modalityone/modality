@@ -66,11 +66,11 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
         ScalePane headerImageScalePane = new ScalePane(headerImageView);
         headerImageScalePane.setMaxHeight(300);
 
-        Label internationalEventsLabel = GeneralUtility.createLabel("internationalEvents", Color.web(StyleUtility.VICTOR_BATTLE_BLACK), 16);
+        Label internationalEventsLabel = GeneralUtility.createLabel("internationalEvents", Color.web(StyleUtility.VICTOR_BATTLE_BLACK), true, 16);
 
         Node localCenterDisplay = organizationSelectorView.getView();
 
-        Label localEventsLabel = GeneralUtility.createLabel("localEvents", Color.web(StyleUtility.VICTOR_BATTLE_BLACK), 16);
+        Label localEventsLabel = GeneralUtility.createLabel("localEvents", Color.web(StyleUtility.VICTOR_BATTLE_BLACK), true, 16);
 
         double mobileStatusBarHeight = OperatingSystem.isMobile() && UserAgent.isNative() ? 15 : 0;
         VBox.setMargin(headerLabel, new Insets(5 + mobileStatusBarHeight, 0, 5, 0));
