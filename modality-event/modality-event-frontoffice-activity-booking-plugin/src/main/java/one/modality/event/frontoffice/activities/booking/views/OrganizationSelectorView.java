@@ -193,7 +193,7 @@ public final class OrganizationSelectorView {
                         String domainName = organization.getStringFieldValue("domainName");
                         websiteLink.setVisible(domainName != null);
                         FXProperties.setEvenIfBound(websiteLink.textProperty(), domainName);
-                        websiteLink.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("https://" + domainName));
+                        websiteLink.setOnAction(e2 -> BrowserUtil.openBrowser("https://" + domainName));
                         FXProperties.setEvenIfBound(addressLink.textProperty(), (String) organization.evaluate("street + ' - ' + cityName + ' ' + postCode + ' - ' + country.name "));
                         Float latitude = organization.getLatitude();
                         Float longitude = organization.getLongitude();
@@ -203,7 +203,7 @@ public final class OrganizationSelectorView {
                             organizationMapView.getMarkers().clear();
                             organizationMapView.getMapNode().setVisible(false);
                         } else {
-                            addressLink.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("https://google.com/maps/search/kadampa/@" + latitude + "," + longitude + ",12z"));
+                            addressLink.setOnAction(e2 -> BrowserUtil.openBrowser("https://google.com/maps/search/kadampa/@" + latitude + "," + longitude + ",12z"));
                             organizationMapView.setMapCenter(latitude, longitude);
                             organizationMapView.getMarkers().setAll(new MapMarker(organization));
                             organizationMapView.getMapNode().setVisible(true);
@@ -211,11 +211,11 @@ public final class OrganizationSelectorView {
                         String phone = organization.getStringFieldValue("phone");
                         phoneLink.setVisible(phone != null);
                         FXProperties.setEvenIfBound(phoneLink.textProperty(), phone);
-                        phoneLink.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("tel://" + phone));
+                        phoneLink.setOnAction(e2 -> BrowserUtil.openBrowser("tel:" + phone));
                         String email = organization.getStringFieldValue("email");
                         emailLink.setVisible(email != null);
                         FXProperties.setEvenIfBound(emailLink.textProperty(), email);
-                        emailLink.setOnAction(e2 -> WebFxKitLauncher.getApplication().getHostServices().showDocument("mailto://" + email));
+                        emailLink.setOnAction(e2 -> BrowserUtil.openBrowser("mailto:" + email));
                         FXCountry.setCountry(organization.getCountry());
                     }));
         }

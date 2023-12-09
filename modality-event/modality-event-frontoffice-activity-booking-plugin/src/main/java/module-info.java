@@ -25,6 +25,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.ast;
+    requires webfx.platform.browser;
     requires webfx.platform.conf;
     requires webfx.platform.console;
     requires webfx.platform.fetch.ast.json;

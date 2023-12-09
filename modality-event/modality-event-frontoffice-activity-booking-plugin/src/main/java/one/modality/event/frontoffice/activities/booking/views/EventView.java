@@ -1,7 +1,6 @@
 package one.modality.event.frontoffice.activities.booking.views;
 
 import dev.webfx.extras.panes.ScalePane;
-import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.i18n.I18n;
@@ -74,7 +73,7 @@ public final class EventView {
         bookButton.setOnAction(e -> {
             String bookingFormUrl = (String) event.evaluate("bookingFormUrl");
             bookingFormUrl = bookingFormUrl.replace("{host}", "kadampabookings.org");
-            WebFxKitLauncher.getApplication().getHostServices().showDocument(bookingFormUrl);
+            BrowserUtil.openBrowser(bookingFormUrl);
         });
         bookButton.setCursor(Cursor.HAND);
         container.setPadding(new Insets(40));

@@ -349,6 +349,11 @@
     <source path="dev/webfx/platform/boot/spi/impl"/>
     <!--============================< webfx-platform-boot-gwt >=============================-->
     <source path="dev/webfx/platform/boot/spi/impl/gwt"/>
+    <!--=============================< webfx-platform-browser >=============================-->
+    <source path="dev/webfx/platform/browser"/>
+    <source path="dev/webfx/platform/browser/spi"/>
+    <!--===========================< webfx-platform-browser-gwt >===========================-->
+    <source path="dev/webfx/platform/browser/spi/impl/gwt"/>
     <!--==============================< webfx-platform-conf >===============================-->
     <source path="dev/webfx/platform/conf"/>
     <source path="dev/webfx/platform/conf/impl"/>
