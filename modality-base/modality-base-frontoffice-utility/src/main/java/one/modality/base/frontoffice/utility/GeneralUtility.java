@@ -256,13 +256,17 @@ public class GeneralUtility {
     }
 
     public static <T extends Labeled> T setupLabeled(T labeled, String text, Color color, boolean bold, double fontSize) {
+        return setupLabeled(labeled, text, color, bold ? FontWeight.BOLD : FontWeight.NORMAL, fontSize);
+    }
+
+    public static <T extends Labeled> T setupLabeled(T labeled, String text, Color color, FontWeight fontWeight, double fontSize) {
         if (text != null)
             I18nControls.bindI18nProperties(labeled, text);
         labeled.setTextFill(color);
         FXProperties.runNowAndOnPropertiesChange(() -> {
             double size = fontSize * FXApp.fontRatio.get();
-            labeled.setFont(Font.font(StyleUtility.TEXT_FAMILY, bold ? FontWeight.BOLD : FontWeight.NORMAL, size));
-            labeled.setStyle("-fx-font-family: " + StyleUtility.TEXT_FAMILY + "; -fx-font-weight: " + (bold ? "bold" : "normal") + "; -fx-font-size: " + size);
+            labeled.setFont(Font.font(StyleUtility.TEXT_FAMILY, fontWeight, size));
+            labeled.setStyle("-fx-font-family: " + StyleUtility.TEXT_FAMILY + "; -fx-font-weight: " + fontWeight.getWeight() + "; -fx-font-size: " + size);
         }, FXApp.fontRatio);
 
         labeled.setWrapText(true);
