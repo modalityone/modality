@@ -236,44 +236,39 @@ public class GeneralUtility {
     }
 
     public static Label getMainLabel(String content, String color) {
-        return createLabel(content, Color.web(color), StyleUtility.MAIN_TEXT_SIZE);
+        return createLabel(content, Color.web(color), false, StyleUtility.MAIN_TEXT_SIZE);
     }
 
     public static Label getMainHeaderLabel(String content) {
-        return weight(createLabel(content, Color.web(StyleUtility.MAIN_BLUE), 21), FontWeight.findByWeight(600));
+        return createLabel(content, Color.web(StyleUtility.MAIN_ORANGE), true, 21);
     }
 
     public static Label getMediumLabel(String content, String color) {
-        return createLabel(content, Color.web(color), StyleUtility.MEDIUM_TEXT_SIZE);
+        return createLabel(content, Color.web(color), false, StyleUtility.MEDIUM_TEXT_SIZE);
     }
 
-    public static Label createLabel(String text, Color color, double fontSize) {
-        return setupLabeled(new Label(), text, color, fontSize);
+    public static Label createLabel(String text, Color color, boolean bold, double fontSize) {
+        return setupLabeled(new Label(), text, color, bold, fontSize);
     }
 
     public static Hyperlink createHyperlink(String text, Color color, double fontSize) {
-        return setupLabeled(new Hyperlink(), text, color, fontSize);
+        return setupLabeled(new Hyperlink(), text, color, false, fontSize);
     }
 
-    public static <T extends Labeled> T setupLabeled(T labeled, String text, Color color, double fontSize) {
+    public static <T extends Labeled> T setupLabeled(T labeled, String text, Color color, boolean bold, double fontSize) {
         if (text != null)
             I18nControls.bindI18nProperties(labeled, text);
         labeled.setTextFill(color);
         FXProperties.runNowAndOnPropertiesChange(() -> {
             double size = fontSize * FXApp.fontRatio.get();
-            labeled.setFont(Font.font(StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), size));
-            labeled.setStyle("-fx-font-family: " + StyleUtility.TEXT_FAMILY + "; -fx-font-size: " + size);
+            labeled.setFont(Font.font(StyleUtility.TEXT_FAMILY, bold ? FontWeight.BOLD : FontWeight.NORMAL, size));
+            labeled.setStyle("-fx-font-family: " + StyleUtility.TEXT_FAMILY + "; -fx-font-weight: " + (bold ? "bold" : "normal") + "; -fx-font-size: " + size);
         }, FXApp.fontRatio);
 
         labeled.setWrapText(true);
+        labeled.setLineSpacing(6);
         return labeled;
     }
-
-    public static Label weight(Label t, FontWeight weight) {
-        t.setFont(Font.font(StyleUtility.TEXT_FAMILY, weight, t.getFont().getSize()));
-        return t;
-    }
-
 
     public static SVGPath createSvgPath(String content, String color) {
         SVGPath p = new SVGPath();

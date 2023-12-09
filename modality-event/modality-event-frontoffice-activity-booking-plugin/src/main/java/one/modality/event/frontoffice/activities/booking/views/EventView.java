@@ -33,7 +33,7 @@ public final class EventView {
     private final ImageView eventImageView = new ImageView();
     private final ScalePane eventImageScalePane = new ScalePane(eventImageView);
     private final Label eventNameLabel = GeneralUtility.getMediumLabel(null, StyleUtility.MAIN_BLUE);
-    private final Label eventDescriptionLabel = GeneralUtility.createLabel(null, Color.web(StyleUtility.VICTOR_BATTLE_BLACK), 10);
+    private final Label eventDescriptionLabel = GeneralUtility.createLabel(null, Color.web(StyleUtility.VICTOR_BATTLE_BLACK), false, 10);
     private final Text eventDateText = TextUtility.getText(null, 10, StyleUtility.VICTOR_BATTLE_BLACK);
     private final Text eventCentreLocationText =
             TextUtility.weight(TextUtility.getText(null, 8, StyleUtility.ELEMENT_GRAY), FontWeight.THIN);

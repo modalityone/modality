@@ -13,15 +13,20 @@ import dev.webfx.stack.ui.action.ActionGroup;
 import javafx.beans.InvalidationListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import one.modality.base.client.application.ModalityClientMainFrameActivity;
 import one.modality.base.client.application.RoutingActions;
 import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
@@ -146,15 +151,22 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
                 .toArray(Button[]::new);
         ColumnsPane buttonBar = new ColumnsPane(Arrays.map(buttons, ModalityFrontOfficeMainFrameActivity::scaleButton, Node[]::new));
         buttonBar.getStyleClass().setAll("button-bar"); // Style class used in Modality.css to make buttons square (remove round corners)
+        buttonBar.setEffect(new DropShadow());
         return buttonBar;
     }
 
     private Button createRouteButton(Action routeAction) {
         Button button = new Button();
-        button.setContentDisplay(ContentDisplay.TOP);
-        button.setTextFill(Color.web("#838788")); // Same color as SVG
-        button.setCursor(Cursor.HAND);
         ActionBinder.bindButtonToAction(button, routeAction);
+        button.setCursor(Cursor.HAND);
+        button.setContentDisplay(ContentDisplay.TOP);
+        button.setGraphicTextGap(0);
+        // Temporarily hardcoded style. TODO: move to CSS
+        button.setTextFill(Color.web("#838788")); // Same color as SVG
+        button.setBackground(Background.fill(Color.WHITE));
+        button.setFont(Font.font("Montserrat", FontWeight.BOLD, 6));
+        button.setStyle("-fx-font-family: Montserrat; -fx-font-weight: bold; -fx-font-size: 6px; -fx-background-color: white; -fx-background-radius: 0");
+        button.setPadding(new Insets(5));
         return button;
     }
 

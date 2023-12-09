@@ -40,7 +40,7 @@ fx-button > fx-background {
 }
 
 .button-bar fx-button > fx-background {
-    border-radius: 0px;
+    border-style: none;
 }
 
 .login * {

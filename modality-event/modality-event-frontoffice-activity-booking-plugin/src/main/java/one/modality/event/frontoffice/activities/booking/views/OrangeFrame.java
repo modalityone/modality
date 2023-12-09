@@ -16,9 +16,9 @@ import one.modality.base.frontoffice.utility.TextUtility;
 /**
  * @author Bruno Salmon
  */
-final class BlueFrame {
+final class OrangeFrame {
 
-    public static VBox createBlueFrame(String headerI18nKey, Node center, Node bottom) {
+    public static VBox createOrangeFrame(String headerI18nKey, Node center, Node bottom) {
         RatioPane ratioPane = new RatioPane(16d / 9, center);
         VBox blueFrame = new VBox(20,
                 I18n.bindI18nProperties(TextUtility.getMainText(null, StyleUtility.RUPAVAJRA_WHITE), headerI18nKey),
@@ -26,7 +26,7 @@ final class BlueFrame {
                 bottom
         );
 
-        blueFrame.setBackground(Background.fill(Color.web(StyleUtility.MAIN_BLUE)));
+        blueFrame.setBackground(Background.fill(Color.web(StyleUtility.MAIN_ORANGE)));
         blueFrame.setAlignment(Pos.CENTER);
 
         FXProperties.runOnPropertiesChange(() -> {
