@@ -75,6 +75,19 @@ input[type="password"]:not([value=""]) {
     letter-spacing: 0.15em;
 }
 
+progress {
+    border-top: 10px solid transparent; /* to reduce height */
+    border-bottom: 10px solid transparent; /* to reduce height */
+}
+
+progress::-webkit-progress-bar {
+    background-color: lightgray;
+}
+
+progress::-webkit-progress-value {
+    background-color: #EE7130;
+}
+
 ::placeholder {
   color: #888;
 }

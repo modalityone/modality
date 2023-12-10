@@ -43,6 +43,24 @@ Text, Label, Button, TextField {
     -fx-text-fill: white;
 }
 
+.progress-bar {
+    -fx-progress-color: red;
+}
+
+
+.progress-bar .track {
+    -fx-background-color: lightgray;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.progress-bar .bar {
+    -fx-background-color: #EE7130;
+    -fx-background-insets: 0;
+    -fx-padding: 5px;
+}
+
+
 .scroll-pane > .viewport {
    -fx-background-color: transparent;
 }

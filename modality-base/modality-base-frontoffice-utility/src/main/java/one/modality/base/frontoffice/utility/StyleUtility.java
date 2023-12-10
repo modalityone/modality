@@ -2,8 +2,9 @@ package one.modality.base.frontoffice.utility;
 
 public class StyleUtility {
 
-    public static String MAIN_ORANGE = "EE7130";
     public static String MAIN_BLUE = "#0096D6";
+    public static String MAIN_OLD_BLUE_NOW_ORANGE = "#EE7130";
+    public static String MAIN_ORANGE = "#EE7130";
     public static String POSITIVE_GREEN = "#41BA4D";
     public static String ELEMENT_GRAY = "#838788";
     public static String SEPARATOR_GRAY = "#D9D9D9";
