@@ -140,10 +140,10 @@ public class GeneralUtility {
     public static Node createCheckBoxDirect(BooleanProperty property, boolean isRadio, boolean isReverse, String label, boolean isDisabled) {
         Rectangle b = createCheckBoxRaw();
 
-        b.setFill((isReverse != property.get()) ? Color.web(StyleUtility.MAIN_BLUE) : Color.WHITE);
+        b.setFill((isReverse != property.get()) ? Color.web(StyleUtility.MAIN_OLD_BLUE_NOW_ORANGE) : Color.WHITE);
 
         property.addListener((observableValue, aBoolean, t1) -> {
-            b.setFill((isReverse != property.get()) ? Color.web(StyleUtility.MAIN_BLUE) : Color.WHITE);
+            b.setFill((isReverse != property.get()) ? Color.web(StyleUtility.MAIN_OLD_BLUE_NOW_ORANGE) : Color.WHITE);
         });
 
         if (!isDisabled) b.setOnMouseClicked(e -> property.set(isRadio ? !isReverse : !property.get()));
@@ -154,10 +154,10 @@ public class GeneralUtility {
     public static Node createRadioCheckBoxBySelection(StringProperty selectedProperty, String label) {
         Rectangle b = createCheckBoxRaw();
 
-        b.setFill(selectedProperty.get().equals(label) ? Color.web(StyleUtility.MAIN_BLUE) : Color.WHITE);
+        b.setFill(selectedProperty.get().equals(label) ? Color.web(StyleUtility.MAIN_OLD_BLUE_NOW_ORANGE) : Color.WHITE);
 
         selectedProperty.addListener((observableValue, aBoolean, t1) -> {
-            b.setFill(selectedProperty.get().equals(label) ? Color.web(StyleUtility.MAIN_BLUE) : Color.WHITE);
+            b.setFill(selectedProperty.get().equals(label) ? Color.web(StyleUtility.MAIN_OLD_BLUE_NOW_ORANGE) : Color.WHITE);
         });
 
         b.setOnMouseClicked(e -> { selectedProperty.set(selectedProperty.get().equals(label) ? "" : label); });
@@ -236,7 +236,7 @@ public class GeneralUtility {
     }
 
     public static Label getMainLabel(String content, String color) {
-        return createLabel(content, Color.web(color), false, StyleUtility.MAIN_TEXT_SIZE);
+        return createLabel(content, Color.web(color), FontWeight.SEMI_BOLD, StyleUtility.MAIN_TEXT_SIZE);
     }
 
     public static Label getMainHeaderLabel(String content) {
@@ -249,6 +249,10 @@ public class GeneralUtility {
 
     public static Label createLabel(String text, Color color, boolean bold, double fontSize) {
         return setupLabeled(new Label(), text, color, bold, fontSize);
+    }
+
+    public static Label createLabel(String text, Color color, FontWeight fontWeight, double fontSize) {
+        return setupLabeled(new Label(), text, color, fontWeight, fontSize);
     }
 
     public static Hyperlink createHyperlink(String text, Color color, double fontSize) {
