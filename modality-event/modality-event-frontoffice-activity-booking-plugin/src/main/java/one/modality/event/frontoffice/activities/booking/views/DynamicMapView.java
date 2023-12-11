@@ -10,6 +10,7 @@ import dev.webfx.platform.useragent.UserAgent;
 import dev.webfx.stack.orm.entity.Entity;
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
+import javafx.event.Event;
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import javafx.scene.web.WebEngine;
@@ -26,6 +27,7 @@ import java.util.List;
  */
 public class DynamicMapView extends MapViewBase {
 
+    private static final boolean IS_BROWSER = UserAgent.isBrowser();
     private static final boolean IS_GLUON = UserAgent.isNative();
     private final MonoPane webViewContainer = new MonoPane();
     private final WebView webView = new WebView();
@@ -63,8 +65,26 @@ public class DynamicMapView extends MapViewBase {
 
     private String getLoadScript() {
         String GOOGLE_MAP_JS_API_KEY = SourcesConfig.getSourcesRootConfig().getString("GOOGLE_MAP_JS_API_KEY");
-        return Resource.getText(Resource.toUrl("DynamicMapView.js", getClass()))
-                        .replace("YOUR_API_KEY", GOOGLE_MAP_JS_API_KEY);
+        String script = Resource.getText(Resource.toUrl("DynamicMapView.js", getClass()))
+                .replace("YOUR_API_KEY", GOOGLE_MAP_JS_API_KEY);
+        if (IS_BROWSER) { // In the browser, Google Maps can integrate seamlessly without an iFrame
+            // Note: this is not only lighter but also necessary for FireFox, because Google Maps JS API bugs when
+            // inside a FireFox iFrame (map images are not loaded & displayed).
+            // So, we give the webView an id (will be mapped to the id of the HTML tag <fx-webview> which contains the iFrame)
+            webView.setId("googleMap");
+            // And instead of displaying the map in the iFrame body, we will display it directly inside <fx-webview>
+            script = script.replace("document.body", "document.getElementById('googleMap')");
+            // Note: displaying the map in this way will actually remove the default iFrame within <fx-webview>
+            // Also we don't redirect the console, otherwise this would create an infinite loop (because the java WebFX
+            // Console already relies on the current window console).
+            script = script.replace("redirectConsole = true", "redirectConsole = false");
+            // Another benefit of the seamless integration is that the user can zoom with the mouse scroll only (while
+            // in an iFrame he needs to hold the command button in addition).
+            // Last detail: scroll events are used by Google Maps to zoom in or out the map, so we don't want them to
+            // be handled also in JavaFX, otherwise this would scroll the window while zooming.
+            webView.setOnScroll(Event::consume);
+        }
+        return script;
     }
 
     @Override
@@ -85,7 +105,7 @@ public class DynamicMapView extends MapViewBase {
                         "        <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>\n" +
                         "        <meta name='viewport' content='user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1'>\n" +
                         "</head>\n" +
-                        "<body style='width: 100%; height: 100vh;'><p>Loading map...</p><script type='text/javascript'>" + getLoadScript() + "</script></body></html>");
+                        "<body style='width: 100%; height: 100vh;'><script type='text/javascript'>" + getLoadScript() + "</script></body></html>");
                 webViewContainer.setContent(webView);
                 UiScheduler.schedulePeriodic(100, scheduled -> {
                     window = (JSObject) webEngine.executeScript("window");
