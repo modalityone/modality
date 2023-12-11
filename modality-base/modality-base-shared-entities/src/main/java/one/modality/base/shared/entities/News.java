@@ -41,12 +41,12 @@ public interface News extends EntityHasDate {
         return getStringFieldValue("excerpt");
     }
 
-    default void setContent(String content) {
-        setFieldValue("content", content);
+    default void setLang(String lang) {
+        setFieldValue("lang", lang);
     }
 
-    default String getContent() {
-        return getStringFieldValue("content");
+    default String getLang() {
+        return getStringFieldValue("lang");
     }
 
     default void setImageUrl(String imageUrl) {
