@@ -75,18 +75,25 @@ input[type="password"]:not([value=""]) {
     letter-spacing: 0.15em;
 }
 
+/* Customizing the progress bar (used for podcasts) */
+
 progress {
-    border-top: 10px solid transparent; /* to reduce height */
-    border-bottom: 10px solid transparent; /* to reduce height */
+    border: none;
+    background-color: lightgray; /* For FireFox */
 }
 
-progress::-webkit-progress-bar {
+progress::-webkit-progress-bar { /* For Chrome & Safari */
     background-color: lightgray;
 }
 
-progress::-webkit-progress-value {
+progress::-webkit-progress-value { /* For Chrome & Safari */
     background-color: #EE7130;
 }
+
+progress::-moz-progress-bar { /* For FireFox */
+    background-color: #EE7130;
+}
+
 
 ::placeholder {
   color: #888;
