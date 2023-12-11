@@ -43,6 +43,11 @@ Text, Label, Button, TextField {
     -fx-text-fill: white;
 }
 
+/* Removing hyperlink default padding (ex: News title) */
+.hyperlink {
+    -fx-padding: 0;
+}
+
 .progress-bar {
     -fx-progress-color: red;
 }
