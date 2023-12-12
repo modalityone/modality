@@ -60,7 +60,7 @@ public final class FXOrganizationId {
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Session session = FXSession.getSession();
             Object primaryKey = session == null ? null : session.get(SESSION_ORGANIZATION_ID_KEY);
-            setOrganizationId(EntityId.create(Organization.class, primaryKey));
+            setOrganizationId(primaryKey == null ? null : EntityId.create(Organization.class, primaryKey));
         }, FXSession.sessionProperty());
     }
 
