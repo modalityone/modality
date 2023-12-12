@@ -94,6 +94,11 @@ progress::-moz-progress-bar { /* For FireFox */
     background-color: #EE7130;
 }
 
+.searchbar > fx-border {
+    border: 1px solid lightgray;
+    border-radius: 10px;
+}
+
 
 ::placeholder {
   color: #888;

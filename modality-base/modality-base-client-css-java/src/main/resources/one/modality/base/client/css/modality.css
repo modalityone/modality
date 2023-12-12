@@ -48,6 +48,23 @@ Text, Label, Button, TextField {
     -fx-padding: 0;
 }
 
+.searchbar {
+    -fx-border-color: lightgray;
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px;
+}
+
+.searchbar TextField {
+    -fx-border: none;
+    -fx-background: none;
+}
+
+.searchbar TextField:focused {
+    -fx-border: none;
+    -fx-background-color: transparent;
+    -fx-highlight-fill: transparent;
+}
+
 .progress-bar {
     -fx-progress-color: red;
 }
