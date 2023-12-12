@@ -38,6 +38,7 @@ import one.modality.base.frontoffice.utility.StyleUtility;
 import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Organization;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
+import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 
 import java.util.stream.Collectors;
 
@@ -68,7 +69,11 @@ public final class OrganizationSelectorView {
     }
 
     public Node getView() {
-        flipToFrontOrganization();
+        // If an organization has already been selected from previous visits, we display that organization
+        if (FXOrganizationId.getOrganizationId() != null)
+            flipToFrontOrganization();
+        else // otherwise we display the world map, so the user can select its organization
+            flipToBackWordMap();
         return flipPane;
     }
 
