@@ -65,4 +65,16 @@ public interface News extends EntityHasDate {
         return getStringFieldValue("linkUrl");
     }
 
+    default void setTopic(Object channel) {
+        setForeignField("topic", channel);
+    }
+
+    default EntityId getTopicId() {
+        return getForeignEntityId("topic");
+    }
+
+    default Topic getTopic() {
+        return getForeignEntity("topic");
+    }
+
 }
