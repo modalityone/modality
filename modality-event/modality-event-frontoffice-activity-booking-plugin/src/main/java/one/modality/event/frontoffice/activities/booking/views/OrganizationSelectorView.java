@@ -44,11 +44,11 @@ import java.util.stream.Collectors;
 
 public final class OrganizationSelectorView {
 
-    private final static String PLAY_SVG = "M 24.2625,45.374999 V 18.625 L 47,32 Z M 32,64 C 14.355,64 0,49.644751 0,32 0,14.355 14.355,0 32,0 49.644751,0 64,14.355 64,32 64,49.644751 49.644751,64 32,64 Z M 32,6.5 C 17.939251,6.5 6.5,17.939251 6.5,32 6.5,46.060751 17.939251,57.5 32,57.5 46.060751,57.5 57.5,46.060751 57.5,32 57.5,17.939251 46.060751,6.5 32,6.5 Z";
+    private final static String PLAY_VIDEO_TRIANGLE_SVG = "M 24.2625,45.374999 V 18.625 L 47,32 Z M 32,64 C 14.355,64 0,49.644751 0,32 0,14.355 14.355,0 32,0 49.644751,0 64,14.355 64,32 64,49.644751 49.644751,64 32,64 Z M 32,6.5 C 17.939251,6.5 6.5,17.939251 6.5,32 6.5,46.060751 17.939251,57.5 32,57.5 46.060751,57.5 57.5,46.060751 57.5,32 57.5,17.939251 46.060751,6.5 32,6.5 Z";
 
     private final ButtonFactoryMixin factoryMixin;
     private final ViewDomainActivityBase activityBase;
-    private final FlipPane flipPane = new FlipPane();
+    private final FlipPane flipPane = new FlipPane(true);
     private final MapView organizationMapView = new StaticMapView(10);
     private MapView worldMapView;
     private final RatioPane presentationPane = new RatioPane(16d/9);
@@ -166,7 +166,7 @@ public final class OrganizationSelectorView {
                             presentationPane.setContent(scalePane);
                             if (videoLink != null) {
                                 SVGPath playSvgPath = new SVGPath();
-                                playSvgPath.setContent(PLAY_SVG);
+                                playSvgPath.setContent(PLAY_VIDEO_TRIANGLE_SVG);
                                 playSvgPath.setFill(Color.WHITE);
                                 StackPane stackPane = new StackPane();
                                 stackPane.setCursor(Cursor.HAND);
