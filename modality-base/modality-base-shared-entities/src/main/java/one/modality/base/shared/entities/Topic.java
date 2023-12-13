@@ -9,4 +9,14 @@ import one.modality.base.shared.entities.markers.EntityHasName;
 public interface Topic extends
         EntityHasName,
         EntityHasLabel {
+
+    default void setChannelTopicId(String channelNewsId) {
+        setFieldValue("channelTopicId", channelNewsId);
+    }
+
+    default String getChannelTopicId() {
+        return getStringFieldValue("channelTopicId");
+    }
+
+
 }
