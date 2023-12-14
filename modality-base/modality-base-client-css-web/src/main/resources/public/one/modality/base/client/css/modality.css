@@ -96,7 +96,7 @@ progress::-moz-progress-bar { /* For FireFox */
 
 .searchbar > fx-border {
     border: 1px solid lightgray;
-    border-radius: 10px;
+    border-radius: 50px;
 }
 
 
