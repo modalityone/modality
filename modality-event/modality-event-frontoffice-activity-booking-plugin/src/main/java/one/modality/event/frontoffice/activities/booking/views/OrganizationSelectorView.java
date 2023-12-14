@@ -15,8 +15,11 @@ import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivi
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.stack.ui.dialog.DialogCallback;
+import dev.webfx.stack.ui.dialog.DialogUtil;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
@@ -25,10 +28,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.web.WebView;
@@ -198,7 +200,7 @@ public final class OrganizationSelectorView {
                         String domainName = organization.getStringFieldValue("domainName");
                         websiteLink.setVisible(domainName != null);
                         FXProperties.setEvenIfBound(websiteLink.textProperty(), domainName);
-                        websiteLink.setOnAction(e2 -> BrowserUtil.openBrowser("https://" + domainName));
+                        websiteLink.setOnAction(e2 -> chooseHowToOpenUrl("https://" + domainName));
                         FXProperties.setEvenIfBound(addressLink.textProperty(), (String) organization.evaluate("street + ' - ' + cityName + ' ' + postCode + ' - ' + country.name "));
                         Float latitude = organization.getLatitude();
                         Float longitude = organization.getLongitude();
@@ -208,7 +210,7 @@ public final class OrganizationSelectorView {
                             organizationMapView.getMarkers().clear();
                             organizationMapView.getMapNode().setVisible(false);
                         } else {
-                            addressLink.setOnAction(e2 -> BrowserUtil.openBrowser("https://google.com/maps/search/kadampa/@" + latitude + "," + longitude + ",12z"));
+                            addressLink.setOnAction(e2 -> BrowserUtil.openExternalBrowser("https://google.com/maps/search/kadampa/@" + latitude + "," + longitude + ",12z"));
                             organizationMapView.setMapCenter(latitude, longitude);
                             organizationMapView.getMarkers().setAll(new MapMarker(organization));
                             organizationMapView.getMapNode().setVisible(true);
@@ -216,14 +218,42 @@ public final class OrganizationSelectorView {
                         String phone = organization.getStringFieldValue("phone");
                         phoneLink.setVisible(phone != null);
                         FXProperties.setEvenIfBound(phoneLink.textProperty(), phone);
-                        phoneLink.setOnAction(e2 -> BrowserUtil.openBrowser("tel:" + phone));
+                        phoneLink.setOnAction(e2 -> BrowserUtil.openExternalBrowser("tel:" + phone));
                         String email = organization.getStringFieldValue("email");
                         emailLink.setVisible(email != null);
                         FXProperties.setEvenIfBound(emailLink.textProperty(), email);
-                        emailLink.setOnAction(e2 -> BrowserUtil.openBrowser("mailto:" + email));
+                        emailLink.setOnAction(e2 -> BrowserUtil.openExternalBrowser("mailto:" + email));
                         FXCountry.setCountry(organization.getCountry());
                     }));
         }
+    }
+
+    private void chooseHowToOpenUrl(String url) {
+        Hyperlink insideAppLink = GeneralUtility.createHyperlink("openInsideApp", Color.WHITE, 21);
+        Hyperlink outsideAppLink = GeneralUtility.createHyperlink("openOutsideApp", Color.WHITE, 21);
+        Hyperlink copyLink = GeneralUtility.createHyperlink("copyLink", Color.WHITE, 21);
+        VBox vBox = new VBox(30, insideAppLink, outsideAppLink, copyLink);
+        vBox.setBorder(Border.stroke(Color.WHITE));
+        vBox.setBackground(Background.fill(Color.web(StyleUtility.MAIN_BLUE)));
+        vBox.setAlignment(Pos.CENTER);
+        DialogCallback dialogCallback = DialogUtil.showModalNodeInGoldLayout(vBox, FXMainFrameDialogArea.getDialogArea());
+        vBox.setPadding(new Insets(50));
+        insideAppLink.setOnAction(e -> {
+            dialogCallback.closeDialog();
+            BrowserUtil.openInternalBrowser(url, activityBase.getUiRouter());
+        });
+        outsideAppLink.setOnAction(e -> {
+            dialogCallback.closeDialog();
+            BrowserUtil.openExternalBrowser(url);
+        });
+        copyLink.setOnAction(e -> {
+            dialogCallback.closeDialog();
+            ClipboardContent content = new ClipboardContent();
+            content.putString(url);
+            Clipboard.getSystemClipboard().setContent(content);
+        });
+        vBox.requestLayout();
+        SceneUtil.runOnceFocusIsOutside(vBox, true, dialogCallback::closeDialog);
     }
 
     private Node getChangeLocationView() {
