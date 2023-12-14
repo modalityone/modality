@@ -15,11 +15,8 @@ import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivi
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
-import dev.webfx.stack.ui.dialog.DialogCallback;
-import dev.webfx.stack.ui.dialog.DialogUtil;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
@@ -28,8 +25,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
@@ -132,6 +127,7 @@ public final class OrganizationSelectorView {
     }
 
     public void onResume() {
+        BrowserUtil.setUiRouter(activityBase.getUiRouter());
         if (UserAgent.isBrowser()) {
             // The issue with the browser is that it completely reloads the iFrame (= HTML mapping for WebView) when
             // reintroduced to the DOM, so the thumb video is appearing with the YouTube play button when the user
@@ -200,7 +196,7 @@ public final class OrganizationSelectorView {
                         String domainName = organization.getStringFieldValue("domainName");
                         websiteLink.setVisible(domainName != null);
                         FXProperties.setEvenIfBound(websiteLink.textProperty(), domainName);
-                        websiteLink.setOnAction(e2 -> chooseHowToOpenUrl("https://" + domainName));
+                        websiteLink.setOnAction(e2 -> BrowserUtil.chooseHowToOpenWebsite("https://" + domainName));
                         FXProperties.setEvenIfBound(addressLink.textProperty(), (String) organization.evaluate("street + ' - ' + cityName + ' ' + postCode + ' - ' + country.name "));
                         Float latitude = organization.getLatitude();
                         Float longitude = organization.getLongitude();
@@ -226,34 +222,6 @@ public final class OrganizationSelectorView {
                         FXCountry.setCountry(organization.getCountry());
                     }));
         }
-    }
-
-    private void chooseHowToOpenUrl(String url) {
-        Hyperlink insideAppLink = GeneralUtility.createHyperlink("openInsideApp", Color.WHITE, 21);
-        Hyperlink outsideAppLink = GeneralUtility.createHyperlink("openOutsideApp", Color.WHITE, 21);
-        Hyperlink copyLink = GeneralUtility.createHyperlink("copyLink", Color.WHITE, 21);
-        VBox vBox = new VBox(30, insideAppLink, outsideAppLink, copyLink);
-        vBox.setBorder(Border.stroke(Color.WHITE));
-        vBox.setBackground(Background.fill(Color.web(StyleUtility.MAIN_BLUE)));
-        vBox.setAlignment(Pos.CENTER);
-        DialogCallback dialogCallback = DialogUtil.showModalNodeInGoldLayout(vBox, FXMainFrameDialogArea.getDialogArea());
-        vBox.setPadding(new Insets(50));
-        insideAppLink.setOnAction(e -> {
-            dialogCallback.closeDialog();
-            BrowserUtil.openInternalBrowser(url, activityBase.getUiRouter());
-        });
-        outsideAppLink.setOnAction(e -> {
-            dialogCallback.closeDialog();
-            BrowserUtil.openExternalBrowser(url);
-        });
-        copyLink.setOnAction(e -> {
-            dialogCallback.closeDialog();
-            ClipboardContent content = new ClipboardContent();
-            content.putString(url);
-            Clipboard.getSystemClipboard().setContent(content);
-        });
-        vBox.requestLayout();
-        SceneUtil.runOnceFocusIsOutside(vBox, true, dialogCallback::closeDialog);
     }
 
     private Node getChangeLocationView() {
