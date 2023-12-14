@@ -73,7 +73,7 @@ public final class EventView {
         bookButton.setOnAction(e -> {
             String bookingFormUrl = (String) event.evaluate("bookingFormUrl");
             bookingFormUrl = bookingFormUrl.replace("{host}", "kadampabookings.org");
-            BrowserUtil.openBrowser(bookingFormUrl);
+            BrowserUtil.openExternalBrowser(bookingFormUrl);
         });
         bookButton.setCursor(Cursor.HAND);
         container.setPadding(new Insets(40));
