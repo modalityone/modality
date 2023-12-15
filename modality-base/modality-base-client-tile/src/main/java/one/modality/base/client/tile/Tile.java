@@ -15,6 +15,7 @@ import javafx.beans.property.Property;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -40,7 +41,7 @@ public class Tile extends MonoPane {
     private final Pane clippedTextGraphicPane = new ClipPane() {
 
         {
-            setContentValignment(VPos.BOTTOM); // for a possible folding animation from bottom to top
+            setAlignment(Pos.BOTTOM_CENTER); // for a possible folding animation from bottom to top
             setMinWidth(USE_PREF_SIZE);
         }
 
