@@ -77,6 +77,13 @@ public interface Podcast extends EntityHasDate {
         return getStringFieldValue("audioUrl");
     }
 
+    default void setWistiaVideoId(String wistiaVideoId) {
+        setFieldValue("wistiaVideoId", wistiaVideoId);
+    }
+
+    default String getWistiaVideoId() {
+        return getStringFieldValue("wistiaVideoId");
+    }
 
     default void setDurationMillis(Long durationMillis) {
         setFieldValue("durationMillis", durationMillis);
