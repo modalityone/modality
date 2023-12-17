@@ -151,7 +151,7 @@ public final class OrganizationSelectorView {
                                         : null;
                         String videoLink = // Temporarily hardcoded
                                 // Manjushri KMC
-                                organizationId == 151 ? "https://fast.wistia.net/embed/iframe/z3pqhk7lhs" // "https://www.youtube.com/embed/jwptdnO_f-I?rel=0"
+                                organizationId == 151 ? "https://fast.wistia.net/embed/iframe/z3pqhk7lhs?playerColor=EE7130" // "https://www.youtube.com/embed/jwptdnO_f-I?rel=0"
                                         // KMC France
                                         : organizationId == 2 ? "https://www.youtube.com/embed/alIoC9_oD5w?rel=0"
                                         : null;
