@@ -9,8 +9,8 @@ async function initMap() {
     const { Map } = await google.maps.importLibrary('maps');
     const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary('marker');
     googleMap = new Map(document.body, {
-        center: { lat: -34.397, lng: 150.644 },
-        zoom: 8,
+        center: { lat: 35, lng: -30 },
+        zoom: 2,
         mapTypeControl: false,
         navigationControlOptions: {style: google.maps.NavigationControlStyle.SMALL},
         mapTypeId: google.maps.MapTypeId.ROADMAP,
