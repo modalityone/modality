@@ -17,12 +17,12 @@ public interface News extends EntityHasDate {
         return getForeignEntity("channel");
     }
 
-    default void setChannelNewsId(String channelNewsId) {
+    default void setChannelNewsId(Integer channelNewsId) {
         setFieldValue("channelNewsId", channelNewsId);
     }
 
-    default String getChannelNewsId() {
-        return getStringFieldValue("channelNewsId");
+    default Integer getChannelNewsId() {
+        return getIntegerFieldValue("channelNewsId");
     }
 
     default void setTitle(String title) {

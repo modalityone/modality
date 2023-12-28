@@ -29,12 +29,12 @@ public interface Podcast extends EntityHasDate {
         return getForeignEntity("teacher");
     }
 
-    default void setChannelPodcastId(String channelPodcastId) {
+    default void setChannelPodcastId(Integer channelPodcastId) {
         setFieldValue("channelPodcastId", channelPodcastId);
     }
 
-    default String getChannelPodcastId() {
-        return getStringFieldValue("channelPodcastId");
+    default Integer getChannelPodcastId() {
+        return getIntegerFieldValue("channelPodcastId");
     }
 
     default void setTitle(String title) {
