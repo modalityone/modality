@@ -15,7 +15,7 @@ import one.modality.base.client.gantt.fx.today.FXToday;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.ResourceConfiguration;
-import one.modality.base.shared.entities.markers.EntityHasDate;
+import one.modality.base.shared.entities.markers.EntityHasLocalDate;
 import one.modality.base.shared.entities.markers.EntityHasDocumentLine;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
 import one.modality.hotel.backoffice.accommodation.AttendanceBlock;
@@ -173,7 +173,7 @@ final class HouseholdView {
         if (checkInDate == null) {
             checkInDate = attendances.stream()
                     .filter(a -> a.getScheduledResource().getResourceConfiguration() == rc && a.getDocumentLine() == dl)
-                    .map(EntityHasDate::getDate)
+                    .map(EntityHasLocalDate::getDate)
                     .min(LocalDate::compareTo)
                     .orElse(null);
             dl.setFieldValue("checkInDate", checkInDate);
@@ -189,7 +189,7 @@ final class HouseholdView {
             System.out.println("Computing checkout date for " + dl.getDocument().getFullName());
             checkOutDate = attendances.stream()
                     .filter(a -> a.getScheduledResource().getResourceConfiguration() == rc && a.getDocumentLine() == dl)
-                    .map(EntityHasDate::getDate)
+                    .map(EntityHasLocalDate::getDate)
                     .max(LocalDate::compareTo)
                     .orElse(null);
             dl.setFieldValue("checkOutDate", checkOutDate);

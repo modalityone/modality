@@ -1,7 +1,7 @@
 package one.modality.base.shared.entities;
 
 import dev.webfx.stack.orm.entity.Entity;
-import one.modality.base.shared.entities.markers.EntityHasDate;
+import one.modality.base.shared.entities.markers.EntityHasLocalDate;
 import one.modality.base.shared.entities.markers.EntityHasEvent;
 import one.modality.base.shared.entities.markers.EntityHasSiteAndItem;
 
@@ -10,7 +10,7 @@ import one.modality.base.shared.entities.markers.EntityHasSiteAndItem;
  */
 public interface ScheduledItem extends Entity,
         EntityHasEvent,
-        EntityHasDate,
+        EntityHasLocalDate,
         EntityHasSiteAndItem {
 
 }
