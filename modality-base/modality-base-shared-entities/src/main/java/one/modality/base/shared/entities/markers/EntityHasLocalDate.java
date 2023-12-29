@@ -7,7 +7,7 @@ import java.time.LocalDate;
 /**
  * @author Bruno Salmon
  */
-public interface EntityHasDate extends Entity, HasDate {
+public interface EntityHasLocalDate extends Entity, HasLocalDate {
 
     @Override
     default void setDate(LocalDate date) {

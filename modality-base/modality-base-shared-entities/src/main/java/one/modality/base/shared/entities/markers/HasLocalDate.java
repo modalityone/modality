@@ -5,7 +5,7 @@ import java.time.LocalDate;
 /**
  * @author Bruno Salmon
  */
-public interface HasDate {
+public interface HasLocalDate {
 
     void setDate(LocalDate date);
 

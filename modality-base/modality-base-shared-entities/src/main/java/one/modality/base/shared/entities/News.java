@@ -1,9 +1,9 @@
 package one.modality.base.shared.entities;
 
 import dev.webfx.stack.orm.entity.EntityId;
-import one.modality.base.shared.entities.markers.EntityHasDate;
+import one.modality.base.shared.entities.markers.EntityHasLocalDateTime;
 
-public interface News extends EntityHasDate {
+public interface News extends EntityHasLocalDateTime {
 
     default void setChannel(Object channel) {
         setForeignField("channel", channel);

@@ -39,7 +39,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.shared.entities.*;
-import one.modality.base.shared.entities.markers.EntityHasDate;
+import one.modality.base.shared.entities.markers.EntityHasLocalDate;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
 import one.modality.hotel.backoffice.accommodation.AttendeeCategory;
@@ -637,7 +637,7 @@ public class AlterRoomPane extends VBox {
                 })
                 .onSuccess(attendances -> {
                     List<LocalDate> populatedDates = attendances.stream()
-                            .map(EntityHasDate::getDate)
+                            .map(EntityHasLocalDate::getDate)
                             .collect(Collectors.toList());
 
                     scheduledItemsForRoom = attendances;
@@ -715,7 +715,7 @@ public class AlterRoomPane extends VBox {
                         // Check that a ScheduledResource exists for each day between the start date and end date
                         List<LocalDate> datesWithMatchingConfig = scheduledResources.stream()
                                 .filter(sr -> matchesIgnoringDates(sr.getResourceConfiguration(), selectedRc))
-                                .map(EntityHasDate::getDate)
+                                .map(EntityHasLocalDate::getDate)
                                 .collect(Collectors.toList());
 
                         for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
