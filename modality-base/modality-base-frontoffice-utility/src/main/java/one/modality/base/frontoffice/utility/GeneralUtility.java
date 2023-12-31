@@ -2,7 +2,9 @@ package one.modality.base.frontoffice.utility;
 
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.Unregisterable;
+import dev.webfx.platform.async.Handler;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.util.Arrays;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
@@ -11,10 +13,12 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -381,4 +385,15 @@ public class GeneralUtility {
         }, imageView.imageProperty());
     }
 
+    public static void onNodeClickedWithoutScroll(Handler<MouseEvent> clickHandler, Node... nodes) {
+        double[] screenPressedY = {0};
+        Arrays.forEach(nodes, node -> {
+            node.setCursor(Cursor.HAND);
+            node.setOnMousePressed(e -> screenPressedY[0] = e.getScreenY());
+            node.setOnMouseReleased(e -> {
+                if (Math.abs(e.getScreenY() - screenPressedY[0]) < 10) // This is to skip the click when the user is actually scrolling on a touch screen such as mobiles
+                    clickHandler.handle(e);
+            });
+        });
+    }
 }
