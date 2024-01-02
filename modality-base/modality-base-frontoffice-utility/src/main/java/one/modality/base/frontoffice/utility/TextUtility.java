@@ -13,8 +13,11 @@ import java.util.function.Function;
 public class TextUtility {
 
     public static Text getText(String content, double size, String color) {
-        Text text = new Text(content);
-        text.setFill(Color.web(color));
+        return getText(content, size, Color.web(color));
+    }
+
+    public static Text getText(String content, double size, Color color) {
+        Text text = createText(content, color);
 
         FXProperties.runNowAndOnPropertiesChange(() -> {
             setTextFont(text, StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), size * FXApp.fontRatio.get());
@@ -23,11 +26,21 @@ public class TextUtility {
         return text;
     }
 
-    public static void setFontFamily(Text text, String family, double size) {
+    public static Text createText(Color color) {
+        return createText(null, color);
+    }
+
+    public static Text createText(String content, Color color) {
+        Text text = new Text(content);
+        text.setFill(color);
+        return text;
+    }
+
+    /*public static void setFontFamily(Text text, String family, double size) {
         FXProperties.runNowAndOnPropertiesChange(() -> {
             setTextFont(text, family, FontWeight.NORMAL, size * FXApp.fontRatio.get());
         }, FXApp.fontRatio);
-    }
+    }*/
 
     public static void setTextFont(Text text, String fontFamily, FontWeight fontWeight, double fontSize) {
         text.setFont(Font.font(fontFamily, fontWeight, fontSize));
@@ -44,9 +57,9 @@ public class TextUtility {
         return getText(content, StyleUtility.MAIN_TEXT_SIZE, color);
     }
 
-    public static Text getSubText(String content, String color) {
+    /*public static Text getSubText(String content, String color) {
         return getText(content, StyleUtility.SUB_TEXT_SIZE, color);
-    }
+    }*/
 
     public static Text getAccountHeaderText(String content) {
         return weight(getText(content, 20, StyleUtility.BLACK), FontWeight.findByWeight(600));

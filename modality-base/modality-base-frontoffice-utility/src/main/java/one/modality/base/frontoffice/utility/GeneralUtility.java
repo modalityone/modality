@@ -1,9 +1,7 @@
 package one.modality.base.frontoffice.utility;
 
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.kit.util.properties.Unregisterable;
 import dev.webfx.platform.async.Handler;
-import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
@@ -16,8 +14,6 @@ import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -109,23 +105,22 @@ public class GeneralUtility {
         b.setArcWidth(4);
         b.setStroke(Color.BLACK);
         b.setStrokeWidth(0.5);
-
         return b;
     }
 
-    public static boolean screenChangeListened(double w) {
-        double xRatio = FXApp.fontRatio.get();
+    public static void onPageWidthChanged(double pageWidth) {
+        FXApp.fontRatio.set(computeFontRatio(pageWidth));
+    }
 
-        if (w < 300) { FXApp.fontRatio.set(1.0); FXApp.widthStage.set(300); }
-        else if (w > 2000) { FXApp.fontRatio.set(2.0); FXApp.widthStage.set(2000); }
-        else if (300 <= w && w < 600) { FXApp.fontRatio.set(1.2); FXApp.widthStage.set(300); }
-        else if (600 <= w && w < 900) { FXApp.fontRatio.set(1.4); FXApp.widthStage.set(600); }
-        else if (900 <= w && w < 1200) { FXApp.fontRatio.set(1.6); FXApp.widthStage.set(900); }
-        else if (1200 <= w && w < 1500) { FXApp.fontRatio.set(1.8); FXApp.widthStage.set(1200); }
-        else if (1500 <= w && w < 1800) { FXApp.fontRatio.set(1.9); FXApp.widthStage.set(1500); }
-        else if (1800 <= w && w < 2000) { FXApp.fontRatio.set(2.0); FXApp.widthStage.set(2000); }
-
-        return xRatio != FXApp.fontRatio.get();
+    public static double computeFontRatio(double pageWidth) {
+        if (pageWidth < 300) return 1.0;
+        if (pageWidth > 2000) return 2.0;
+        if (300 <= pageWidth && pageWidth < 600) return 1.2;
+        if (600 <= pageWidth && pageWidth < 900) return 1.4;
+        if (900 <= pageWidth && pageWidth < 1200) return 1.6;
+        if (1200 <= pageWidth && pageWidth < 1500) return 1.8;
+        if (1500 <= pageWidth && pageWidth < 1800) return 1.9;
+        return 2.0;
     }
 
     public static Node createCheckBoxDirect(BooleanProperty property, boolean isRadio, boolean isReverse, String label, boolean isDisabled) {
@@ -169,10 +164,7 @@ public class GeneralUtility {
         col2.setPercentWidth(100 - ratio);
         col2.setHalignment(HPos.RIGHT);
 
-        container.getColumnConstraints().addAll(
-                col1, col2
-        );
-
+        container.getColumnConstraints().setAll(col1, col2);
         container.setHgap(padding);
         container.setMinWidth(0);
 
@@ -180,35 +172,22 @@ public class GeneralUtility {
     }
 
     public static HBox createHList(int space, int padding, Node... nodes) {
-        HBox container = new HBox();
-
-        container.getChildren().addAll(nodes);
-
+        HBox container = new HBox(nodes);
         container.setPadding(new Insets(padding));
         container.setSpacing(space);
-
         return container;
     }
 
     public static VBox createVList(int space, int padding, Node... nodes) {
-        VBox container = new VBox();
-
-        container.getChildren().addAll(nodes);
-
+        VBox container = new VBox(nodes);
         container.setPadding(new Insets(padding));
         container.setSpacing(space);
-
         return container;
     }
 
     public static Node createField(String labelKey, Node node) {
-        VBox field = new VBox();
-
+        VBox field = new VBox(TextUtility.getSubText(labelKey), node);
         field.setSpacing(5);
-        field.getChildren().addAll(
-                TextUtility.getSubText(labelKey), node
-        );
-
         return field;
     }
 
@@ -218,17 +197,15 @@ public class GeneralUtility {
         b.setBackground(new Background(new BackgroundFill(color, new CornerRadii(radius*FXApp.fontRatio.get()), null)));
 
         FXProperties.runNowAndOnPropertiesChange(() -> {
-            double size = fontSize * FXApp.fontRatio.get();
-            b.setFont(Font.font(StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), size));
-            b.setStyle("-fx-font-family: " + StyleUtility.TEXT_FAMILY + "; -fx-font-size: " + size);
+            setLabeledFont(b, StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), fontSize * FXApp.fontRatio.get());
         }, FXApp.fontRatio);
 
         return b;
     }
 
-    public static Label getMainLabel(String content, String color) {
+    /*public static Label getMainLabel(String content, String color) {
         return createLabel(content, Color.web(color), FontWeight.SEMI_BOLD, StyleUtility.MAIN_TEXT_SIZE);
-    }
+    }*/
 
     public static Label getMainHeaderLabel(String content) {
         return createLabel(content, StyleUtility.MAIN_ORANGE_COLOR, true, 21);
@@ -255,19 +232,34 @@ public class GeneralUtility {
     }
 
     public static <T extends Labeled> T setupLabeled(T labeled, String text, Color color, FontWeight fontWeight, double fontSize) {
-        if (text != null)
-            I18nControls.bindI18nProperties(labeled, text);
-        labeled.setTextFill(color);
         FXProperties.runNowAndOnPropertiesChange(() -> {
             setLabeledFont(labeled, StyleUtility.TEXT_FAMILY, fontWeight, fontSize * FXApp.fontRatio.get());
         }, FXApp.fontRatio);
+        return setupLabeled(labeled, text, color);
+    }
 
+    public static <T extends Labeled> T setupLabeled(T labeled, String i18nKey, Color color) {
+        if (i18nKey != null)
+            I18nControls.bindI18nProperties(labeled, i18nKey);
+        labeled.setTextFill(color);
         labeled.setWrapText(true);
         labeled.setLineSpacing(6);
         return labeled;
     }
 
-    private static <T extends Labeled> void setLabeledFont(T labeled, String fontFamily, FontWeight fontWeight, double fontSize) {
+    public static Label createLabel(Color color) {
+        return createLabel(null, color);
+    }
+
+    public static Label createLabel(String i18nKey, Color color) {
+        return setupLabeled(new Label(), i18nKey, color);
+    }
+
+    public static Hyperlink createHyperlink(String i18nKey, Color color) {
+        return setupLabeled(new Hyperlink(), i18nKey, color);
+    }
+
+    public static <T extends Labeled> void setLabeledFont(T labeled, String fontFamily, FontWeight fontWeight, double fontSize) {
         labeled.setFont(Font.font(fontFamily, fontWeight, fontSize));
         setNodeFontStyle(labeled, fontFamily, fontWeight, fontSize);
     }
@@ -328,7 +320,7 @@ public class GeneralUtility {
         return layers;
     }
 
-    public static void roundClipImageView(ImageView imageView) {
+    /*public static void roundClipImageView(ImageView imageView) {
         // We will apply a round clip to the imageView
         Rectangle roundClip = new Rectangle();
         imageView.setClip(roundClip);
@@ -376,7 +368,7 @@ public class GeneralUtility {
                 }
             }, image.widthProperty(), image.heightProperty(), imageView.fitWidthProperty(), imageView.fitHeightProperty());
         }, imageView.imageProperty());
-    }
+    }*/
 
     public static void onNodeClickedWithoutScroll(Handler<MouseEvent> clickHandler, Node... nodes) {
         double[] screenPressedY = {0};
