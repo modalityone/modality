@@ -56,8 +56,8 @@ public class SearchBarView {
 
         if (locationString.trim().equals(",")) locationString = "Please select a location";
 
-        Text location = TextUtility.getText(locationString, 8, StyleUtility.ELEMENT_GRAY);
-        Text clear = TextUtility.getText("Clear filters", 8, StyleUtility.ELEMENT_GRAY);
+        Text location = TextUtility.getText(locationString, 8, StyleUtility.ELEMENT_GRAY_COLOR);
+        Text clear = TextUtility.getText("Clear filters", 8, StyleUtility.ELEMENT_GRAY_COLOR);
 
 
         clear.setOnMouseClicked(e -> {

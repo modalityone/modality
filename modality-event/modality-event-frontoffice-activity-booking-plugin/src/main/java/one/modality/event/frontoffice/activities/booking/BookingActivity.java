@@ -92,7 +92,7 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
         container.setMaxWidth(1200);
 
         FXProperties.runOnPropertiesChange(() -> {
-            GeneralUtility.screenChangeListened(container.getWidth());
+            GeneralUtility.onPageWidthChanged(container.getWidth());
         }, container.widthProperty());
 
         localEvents.addListener((InvalidationListener) observable -> {

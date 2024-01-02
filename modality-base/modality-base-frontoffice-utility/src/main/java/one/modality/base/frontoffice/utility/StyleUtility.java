@@ -20,9 +20,9 @@ public class StyleUtility {
     public static Color BACKGROUND_GRAY_COLOR = Color.web(BACKGROUND_GRAY);
     public static String BLACK = "#000000";
     public static String WHITE = "#FFFFFF";
-    public static int MAIN_TEXT_SIZE = 12;
-    public static int SUB_TEXT_SIZE = 9;
-    public static int MEDIUM_TEXT_SIZE = 10;
+    public static double MAIN_TEXT_SIZE = 12;
+    public static double SUB_TEXT_SIZE = 9;
+    public static double MEDIUM_TEXT_SIZE = 10;
     public static String TEXT_FAMILY = "Montserrat";
     public static String CLOCK_FAMILY = "Courier";
 }
