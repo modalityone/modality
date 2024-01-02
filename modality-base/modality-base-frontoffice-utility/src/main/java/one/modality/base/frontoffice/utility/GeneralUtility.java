@@ -42,7 +42,6 @@ public class GeneralUtility {
     public static Node createSVGIcon(String svgPath) {
         SVGPath icon = new SVGPath();
         icon.setContent(svgPath);
-
         return icon;
     }
 
@@ -50,10 +49,12 @@ public class GeneralUtility {
         if (lat1 == null || lat2 == null || lon1 == null || lon2 == null)
             return null;
 
-        double theta = lon1 - lon2;
-        double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+        double lat1Rad = Math.toRadians(lat1);
+        double lat2Rad = Math.toRadians(lat2);
+        double thetaRad = Math.toRadians(lon1 - lon2);
+        double dist = Math.sin(lat1Rad) * Math.sin(lat2Rad) + Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.cos(thetaRad);
         dist = Math.acos(dist);
-        dist = rad2deg(dist);
+        dist = Math.toDegrees(dist);
         dist = dist * 60 * 1.1515;
         if (unit == 'K') {
             dist = dist * 1.609344;
@@ -62,20 +63,6 @@ public class GeneralUtility {
         }
 
         return (dist);
-    }
-
-    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-    /*::  This function converts decimal degrees to radians             :*/
-    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-    private static double deg2rad(double deg) {
-        return (deg * Math.PI / 180.0);
-    }
-
-    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-    /*::  This function converts radians to decimal degrees             :*/
-    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-    private static double rad2deg(double rad) {
-        return (rad * 180.0 / Math.PI);
     }
 
     public static Node createSpace(int height) {
@@ -282,14 +269,17 @@ public class GeneralUtility {
 
     private static <T extends Labeled> void setLabeledFont(T labeled, String fontFamily, FontWeight fontWeight, double fontSize) {
         labeled.setFont(Font.font(fontFamily, fontWeight, fontSize));
-        labeled.setStyle("-fx-font-family: " + StyleUtility.TEXT_FAMILY + "; -fx-font-weight: " + fontWeight.getWeight() + "; -fx-font-size: " + fontSize);
+        setNodeFontStyle(labeled, fontFamily, fontWeight, fontSize);
+    }
+
+    public static void setNodeFontStyle(Node labeled, String fontFamily, FontWeight fontWeight, double fontSize) {
+        labeled.setStyle("-fx-font-family: " + fontFamily + "; -fx-font-weight: " + fontWeight.getWeight() + "; -fx-font-size: " + fontSize);
     }
 
     public static SVGPath createSvgPath(String content, String color) {
         SVGPath p = new SVGPath();
         p.setContent(content);
         p.setFill(Color.web(color));
-
         return p;
     }
 

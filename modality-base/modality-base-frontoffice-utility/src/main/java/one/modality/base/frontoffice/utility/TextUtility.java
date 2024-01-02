@@ -13,30 +13,31 @@ import java.util.function.Function;
 public class TextUtility {
 
     public static Text getText(String content, double size, String color) {
-        Text t = new Text(content);
-        t.setFill(Color.web(color));
+        Text text = new Text(content);
+        text.setFill(Color.web(color));
 
         FXProperties.runNowAndOnPropertiesChange(() -> {
-            double fontSize = size * FXApp.fontRatio.get();
-            t.setFont(Font.font(StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), fontSize));
-            t.setStyle("-fx-font-family: " + StyleUtility.TEXT_FAMILY + "; -fx-font-size: " + fontSize);
+            setTextFont(text, StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), size * FXApp.fontRatio.get());
         }, FXApp.fontRatio);
 
-        return t;
+        return text;
     }
 
-    public static void setFontFamily(Text t, String family, int size) {
+    public static void setFontFamily(Text text, String family, double size) {
         FXProperties.runNowAndOnPropertiesChange(() -> {
-            double fontSize = size * FXApp.fontRatio.get();
-            t.setFont(Font.font(family));
-            t.setStyle("-fx-font-family: " + family + "; -fx-font-size: " + fontSize);
+            setTextFont(text, family, FontWeight.NORMAL, size * FXApp.fontRatio.get());
         }, FXApp.fontRatio);
+    }
+
+    public static void setTextFont(Text text, String fontFamily, FontWeight fontWeight, double fontSize) {
+        text.setFont(Font.font(fontFamily, fontWeight, fontSize));
+        GeneralUtility.setNodeFontStyle(text, fontFamily, fontWeight, fontSize);
     }
 
     public static Text getBindedText(StringProperty property, Function<String, Text> textFunction) {
-        Text t = textFunction.apply("");
-        t.textProperty().bind(property);
-        return t;
+        Text text = textFunction.apply("");
+        text.textProperty().bind(property);
+        return text;
     }
 
     public static Text getMainText(String content, String color) {
@@ -59,9 +60,9 @@ public class TextUtility {
         return getText(content, 30, StyleUtility.BLACK);
     }
 
-    public static Text weight(Text t, FontWeight weight) {
-        t.setFont(Font.font(StyleUtility.TEXT_FAMILY, weight, t.getFont().getSize()));
-        return t;
+    public static Text weight(Text text, FontWeight weight) {
+        setTextFont(text, StyleUtility.TEXT_FAMILY, weight, text.getFont().getSize());
+        return text;
     }
 
     public static Text getSettingSectionText(String content) {
