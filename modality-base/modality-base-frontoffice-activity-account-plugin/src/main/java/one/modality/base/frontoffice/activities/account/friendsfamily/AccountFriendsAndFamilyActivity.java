@@ -33,14 +33,14 @@ public class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase impl
             BorderPane bpR = new BorderPane();
             Separator s = new Separator();
 
-            s.setBorder(new Border(new BorderStroke(Color.web(StyleUtility.SEPARATOR_GRAY), BorderStrokeStyle.NONE, null, BorderStroke.THIN)));
+            s.setBorder(new Border(new BorderStroke(StyleUtility.SEPARATOR_GRAY_COLOR, BorderStrokeStyle.NONE, null, BorderStroke.THIN)));
 
             bpL.setLeft(GeneralUtility.createRadioCheckBoxBySelection(FXAccount.toBeDeletedPerson, personPM.NAME_FULL.get()));
             bpL.setCenter(bpR);
 
             bpR.setRight(new Button(">"));
             bpR.setCenter(
-                    GeneralUtility.createSplitRow(TextUtility.getBindedText(personPM.NAME_FULL, name -> TextUtility.getMainText(name, StyleUtility.VICTOR_BATTLE_BLACK)), TextUtility.getSubText("Kinship"), 75, 0)
+                    GeneralUtility.createSplitRow(TextUtility.getBindedText(personPM.NAME_FULL, name -> TextUtility.getMainText(name, StyleUtility.BLACK)), TextUtility.getSubText("Kinship"), 75, 0)
             );
             bpR.setBottom(s);
 
@@ -63,8 +63,8 @@ public class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase impl
 
         rebuildMembersList(FXAccount.getMembersPM(), membersList);
 
-        Button addMember = GeneralUtility.createButton(Color.web(StyleUtility.ELEMENT_GRAY), 4, "Add Member", 9);
-        deleteMember = GeneralUtility.createButton(Color.web(StyleUtility.IMPORTANT_RED), 4, "Delete", 9);
+        Button addMember = GeneralUtility.createButton(StyleUtility.ELEMENT_GRAY_COLOR, 4, "Add Member", 9);
+        deleteMember = GeneralUtility.createButton(StyleUtility.IMPORTANT_RED_COLOR, 4, "Delete", 9);
 
         HBox buttonRow = new HBox();
         buttonRow.setAlignment(Pos.CENTER);

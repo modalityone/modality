@@ -87,7 +87,7 @@ public class GeneralUtility {
     public static TextField createBindedTextField(StringProperty stringProperty, double limitedWidth) {
         TextField tf = new TextField();
 
-        tf.setBorder(new Border(new BorderStroke(Color.web(StyleUtility.ELEMENT_GRAY), BorderStrokeStyle.SOLID, new CornerRadii(5), new BorderWidths(0.3))));
+        tf.setBorder(new Border(new BorderStroke(StyleUtility.ELEMENT_GRAY_COLOR, BorderStrokeStyle.SOLID, new CornerRadii(5), new BorderWidths(0.3))));
         tf.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
         tf.setPadding(new Insets(5, 15, 5, 15));
         tf.setFont(Font.font(StyleUtility.MAIN_TEXT_SIZE));
@@ -109,7 +109,7 @@ public class GeneralUtility {
 
     public static void styleSelectButton(EntityButtonSelector buttonSelector) {
         Button b = buttonSelector.getButton();
-        b.setBorder(new Border(new BorderStroke(Color.web(StyleUtility.ELEMENT_GRAY), BorderStrokeStyle.SOLID, new CornerRadii(5), new BorderWidths(0.3))));
+        b.setBorder(new Border(new BorderStroke(StyleUtility.ELEMENT_GRAY_COLOR, BorderStrokeStyle.SOLID, new CornerRadii(5), new BorderWidths(0.3))));
         b.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
         b.setPadding(new Insets(5, 15, 5, 15));
     }
@@ -144,24 +144,24 @@ public class GeneralUtility {
     public static Node createCheckBoxDirect(BooleanProperty property, boolean isRadio, boolean isReverse, String label, boolean isDisabled) {
         Rectangle b = createCheckBoxRaw();
 
-        b.setFill((isReverse != property.get()) ? Color.web(StyleUtility.MAIN_OLD_BLUE_NOW_ORANGE) : Color.WHITE);
+        b.setFill((isReverse != property.get()) ? StyleUtility.MAIN_ORANGE_COLOR : Color.WHITE);
 
         property.addListener((observableValue, aBoolean, t1) -> {
-            b.setFill((isReverse != property.get()) ? Color.web(StyleUtility.MAIN_OLD_BLUE_NOW_ORANGE) : Color.WHITE);
+            b.setFill((isReverse != property.get()) ? StyleUtility.MAIN_ORANGE_COLOR : Color.WHITE);
         });
 
         if (!isDisabled) b.setOnMouseClicked(e -> property.set(isRadio ? !isReverse : !property.get()));
 
-        return createHList(5,0, b, TextUtility.getMainText(label, StyleUtility.VICTOR_BATTLE_BLACK));
+        return createHList(5,0, b, TextUtility.getMainText(label, StyleUtility.BLACK));
     }
 
     public static Node createRadioCheckBoxBySelection(StringProperty selectedProperty, String label) {
         Rectangle b = createCheckBoxRaw();
 
-        b.setFill(selectedProperty.get().equals(label) ? Color.web(StyleUtility.MAIN_OLD_BLUE_NOW_ORANGE) : Color.WHITE);
+        b.setFill(selectedProperty.get().equals(label) ? StyleUtility.MAIN_ORANGE_COLOR : Color.WHITE);
 
         selectedProperty.addListener((observableValue, aBoolean, t1) -> {
-            b.setFill(selectedProperty.get().equals(label) ? Color.web(StyleUtility.MAIN_OLD_BLUE_NOW_ORANGE) : Color.WHITE);
+            b.setFill(selectedProperty.get().equals(label) ? StyleUtility.MAIN_ORANGE_COLOR : Color.WHITE);
         });
 
         b.setOnMouseClicked(e -> { selectedProperty.set(selectedProperty.get().equals(label) ? "" : label); });
@@ -244,7 +244,7 @@ public class GeneralUtility {
     }
 
     public static Label getMainHeaderLabel(String content) {
-        return createLabel(content, Color.web(StyleUtility.MAIN_ORANGE), true, 21);
+        return createLabel(content, StyleUtility.MAIN_ORANGE_COLOR, true, 21);
     }
 
     public static Label getMediumLabel(String content, String color) {
@@ -272,14 +272,17 @@ public class GeneralUtility {
             I18nControls.bindI18nProperties(labeled, text);
         labeled.setTextFill(color);
         FXProperties.runNowAndOnPropertiesChange(() -> {
-            double size = fontSize * FXApp.fontRatio.get();
-            labeled.setFont(Font.font(StyleUtility.TEXT_FAMILY, fontWeight, size));
-            labeled.setStyle("-fx-font-family: " + StyleUtility.TEXT_FAMILY + "; -fx-font-weight: " + fontWeight.getWeight() + "; -fx-font-size: " + size);
+            setLabeledFont(labeled, StyleUtility.TEXT_FAMILY, fontWeight, fontSize * FXApp.fontRatio.get());
         }, FXApp.fontRatio);
 
         labeled.setWrapText(true);
         labeled.setLineSpacing(6);
         return labeled;
+    }
+
+    private static <T extends Labeled> void setLabeledFont(T labeled, String fontFamily, FontWeight fontWeight, double fontSize) {
+        labeled.setFont(Font.font(fontFamily, fontWeight, fontSize));
+        labeled.setStyle("-fx-font-family: " + StyleUtility.TEXT_FAMILY + "; -fx-font-weight: " + fontWeight.getWeight() + "; -fx-font-size: " + fontSize);
     }
 
     public static SVGPath createSvgPath(String content, String color) {

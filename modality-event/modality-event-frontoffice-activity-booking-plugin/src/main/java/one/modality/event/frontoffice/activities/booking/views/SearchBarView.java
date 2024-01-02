@@ -26,7 +26,7 @@ public class SearchBarView {
 
         BorderPane searchContainer = new BorderPane();
         Label searchOpener = new Label();
-        searchOpener.graphicProperty().set(GeneralUtility.createSvgPath(SvgUtility.SEARCH_ICON, StyleUtility.VICTOR_BATTLE_BLACK));
+        searchOpener.graphicProperty().set(GeneralUtility.createSvgPath(SvgUtility.SEARCH_ICON, StyleUtility.BLACK));
         searchContainer.setRight(searchOpener);
 
         searchOpener.setOnMouseClicked(e -> FXBooking.searchDisplayProperty.set(!FXBooking.searchDisplayProperty.get()));

@@ -48,7 +48,7 @@ public class TextUtility {
     }
 
     public static Text getAccountHeaderText(String content) {
-        return weight(getText(content, 20, StyleUtility.VICTOR_BATTLE_BLACK), FontWeight.findByWeight(600));
+        return weight(getText(content, 20, StyleUtility.BLACK), FontWeight.findByWeight(600));
     }
 
     public static Text getSubText(String content) {
@@ -56,7 +56,7 @@ public class TextUtility {
     }
 
     public static Text getNameText(String content) {
-        return getText(content, 30, StyleUtility.VICTOR_BATTLE_BLACK);
+        return getText(content, 30, StyleUtility.BLACK);
     }
 
     public static Text weight(Text t, FontWeight weight) {
@@ -65,6 +65,6 @@ public class TextUtility {
     }
 
     public static Text getSettingSectionText(String content) {
-        return weight(getText(content, StyleUtility.MAIN_TEXT_SIZE, StyleUtility.VICTOR_BATTLE_BLACK), FontWeight.BOLD);
+        return weight(getText(content, StyleUtility.MAIN_TEXT_SIZE, StyleUtility.BLACK), FontWeight.BOLD);
     }
 }

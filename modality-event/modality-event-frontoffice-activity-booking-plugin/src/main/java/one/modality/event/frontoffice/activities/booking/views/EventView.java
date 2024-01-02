@@ -31,9 +31,9 @@ public final class EventView {
 
     private final ImageView eventImageView = new ImageView();
     private final ScalePane eventImageScalePane = new ScalePane(eventImageView);
-    private final Label eventNameLabel = GeneralUtility.getMediumLabel(null, StyleUtility.MAIN_OLD_BLUE_NOW_ORANGE);
-    private final Label eventDescriptionLabel = GeneralUtility.createLabel(null, Color.web(StyleUtility.VICTOR_BATTLE_BLACK), false, 10);
-    private final Text eventDateText = TextUtility.getText(null, 10, StyleUtility.VICTOR_BATTLE_BLACK);
+    private final Label eventNameLabel = GeneralUtility.getMediumLabel(null, StyleUtility.MAIN_ORANGE);
+    private final Label eventDescriptionLabel = GeneralUtility.createLabel(null, Color.BLACK, false, 10);
+    private final Text eventDateText = TextUtility.getText(null, 10, StyleUtility.BLACK);
     private final Text eventCentreLocationText =
             TextUtility.weight(TextUtility.getText(null, 8, StyleUtility.ELEMENT_GRAY), FontWeight.THIN);
     private final Text eventCountryLocationText =
@@ -45,14 +45,14 @@ public final class EventView {
     );
 
     private final Button comingSoonButton = I18nControls.bindI18nProperties(
-            GeneralUtility.createButton(Color.web(StyleUtility.IMPORTANT_RED), 4, null, 11),
+            GeneralUtility.createButton(StyleUtility.IMPORTANT_RED_COLOR, 4, null, 11),
             "comingSoon");
 
     private final Button bookButton = I18nControls.bindI18nProperties(
-            GeneralUtility.createButton(Color.web(StyleUtility.MAIN_BLUE), 4, null, 11),
+            GeneralUtility.createButton(StyleUtility.MAIN_BLUE_COLOR, 4, null, 11),
             "bookNow");
     private final Button closedButton = I18nControls.bindI18nProperties(
-            GeneralUtility.createButton(Color.web(StyleUtility.IMPORTANT_RED), 4, null, 11),
+            GeneralUtility.createButton(StyleUtility.IMPORTANT_RED_COLOR, 4, null, 11),
             "closed");
 
     private final BorderPane buttonContainer = new BorderPane();
@@ -77,7 +77,7 @@ public final class EventView {
         });
         bookButton.setCursor(Cursor.HAND);
         container.setPadding(new Insets(40));
-        container.setBackground(Background.fill(Color.web(StyleUtility.BACKGROUND_GRAY)));
+        container.setBackground(Background.fill(StyleUtility.BACKGROUND_GRAY_COLOR));
         FXProperties.runNowAndOnPropertiesChange(() ->
                         eventDescriptionLabel.setManaged(Strings.isNotEmpty(eventDescriptionLabel.getText()))
                 , eventDescriptionLabel.textProperty());
