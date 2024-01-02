@@ -68,7 +68,7 @@ final class BrowserUtil {
         Hyperlink copyLink = GeneralUtility.createHyperlink("copyLink", Color.WHITE, 21);
         VBox vBox = new VBox(30, insideAppLink, outsideAppLink, copyLink);
         vBox.setBorder(Border.stroke(Color.WHITE));
-        vBox.setBackground(Background.fill(Color.web(StyleUtility.MAIN_BLUE)));
+        vBox.setBackground(Background.fill(StyleUtility.MAIN_BLUE_COLOR));
         vBox.setAlignment(Pos.CENTER);
         DialogCallback dialogCallback = DialogUtil.showModalNodeInGoldLayout(vBox, FXMainFrameDialogArea.getDialogArea());
         vBox.setPadding(new Insets(50));

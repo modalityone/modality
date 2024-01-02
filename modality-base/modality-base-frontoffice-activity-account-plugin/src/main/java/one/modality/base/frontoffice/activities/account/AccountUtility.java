@@ -13,7 +13,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import one.modality.base.frontoffice.fx.FXAccount;
@@ -104,7 +103,7 @@ public final class AccountUtility {
                 GeneralUtility.createSplitRow(language, practitioner, 50, 10),
                 GeneralUtility.createSplitRow(idType, idNumber, 50, 10),
                 GeneralUtility.createSpace(20),
-                GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.VICTOR_BATTLE_BLACK), "Address"),
+                GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.BLACK), "Address"),
                 GeneralUtility.createSplitRow(addressCountry, addressZip, 50, 10),
                 GeneralUtility.createSplitRow(addressState, addressCity, 50, 10),
                 GeneralUtility.createSplitRow(addressStreet, addressNumber, 75, 10),
@@ -112,15 +111,15 @@ public final class AccountUtility {
                 GeneralUtility.createSpace(10),
                 GeneralUtility.createSplitRow(
 
-                        GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.VICTOR_BATTLE_BLACK), "Billing Address"),
+                        GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.BLACK), "Billing Address"),
                         GeneralUtility.createCheckBoxDirect(personPM.ADDRESS_BILLING_SAME, false, false, "Same as the billing address", false),
                         30, 10
                 ),
                 GeneralUtility.createSpace(20),
-                GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.VICTOR_BATTLE_BLACK), "Diet"),
+                GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.BLACK), "Diet"),
                 diet,
                 GeneralUtility.createSpace(20),
-                GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.VICTOR_BATTLE_BLACK), "Special needs"),
+                GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.BLACK), "Special needs"),
                 GeneralUtility.createSplitRow(needsWheelchair, needsHearing, 50, 0),
                 GeneralUtility.createSplitRow(needsSight, needsMobility, 50, 0)
         );
@@ -144,7 +143,7 @@ public final class AccountUtility {
         container.setPadding(new Insets(20));
         container.setSpacing(10);
 
-        Button b = GeneralUtility.createButton(Color.web(StyleUtility.POSITIVE_GREEN), 4, "Update", 9);
+        Button b = GeneralUtility.createButton(StyleUtility.POSITIVE_GREEN_COLOR, 4, "Update", 9);
         HBox cb = new HBox();
         cb.setAlignment(Pos.CENTER);
         cb.getChildren().add(b);

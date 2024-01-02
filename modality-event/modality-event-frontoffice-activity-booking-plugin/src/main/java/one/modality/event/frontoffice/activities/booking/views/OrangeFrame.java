@@ -8,7 +8,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import one.modality.base.frontoffice.utility.StyleUtility;
 import one.modality.base.frontoffice.utility.TextUtility;
@@ -21,12 +20,12 @@ final class OrangeFrame {
     public static VBox createOrangeFrame(String headerI18nKey, Node center, Node bottom) {
         RatioPane ratioPane = new RatioPane(16d / 9, center);
         VBox blueFrame = new VBox(20,
-                I18n.bindI18nProperties(TextUtility.getMainText(null, StyleUtility.RUPAVAJRA_WHITE), headerI18nKey),
+                I18n.bindI18nProperties(TextUtility.getMainText(null, StyleUtility.WHITE), headerI18nKey),
                 ratioPane,
                 bottom
         );
 
-        blueFrame.setBackground(Background.fill(Color.web(StyleUtility.MAIN_ORANGE)));
+        blueFrame.setBackground(Background.fill(StyleUtility.MAIN_ORANGE_COLOR));
         blueFrame.setAlignment(Pos.CENTER);
 
         FXProperties.runOnPropertiesChange(() -> {
