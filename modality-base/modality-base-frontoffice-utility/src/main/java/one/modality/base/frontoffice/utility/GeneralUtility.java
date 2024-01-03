@@ -109,18 +109,16 @@ public class GeneralUtility {
     }
 
     public static void onPageWidthChanged(double pageWidth) {
-        FXApp.fontRatio.set(computeFontRatio(pageWidth));
+        FXApp.fontRatio.set(computeFontFactor(pageWidth));
     }
 
-    public static double computeFontRatio(double pageWidth) {
-        if (pageWidth < 300) return 1.0;
-        if (pageWidth > 2000) return 2.0;
-        if (300 <= pageWidth && pageWidth < 600) return 1.2;
-        if (600 <= pageWidth && pageWidth < 900) return 1.4;
-        if (900 <= pageWidth && pageWidth < 1200) return 1.6;
-        if (1200 <= pageWidth && pageWidth < 1500) return 1.8;
-        if (1500 <= pageWidth && pageWidth < 1800) return 1.9;
-        return 2.0;
+    public static double computeFontFactor(double pageWidth) {
+        double fontFactor = 1;
+        if (pageWidth > 300) {
+            fontFactor += (pageWidth - 300) / 900 * 0.8;
+            fontFactor = Math.min(fontFactor, 2);
+        }
+        return fontFactor;
     }
 
     public static Node createCheckBoxDirect(BooleanProperty property, boolean isRadio, boolean isReverse, String label, boolean isDisabled) {
@@ -194,9 +192,9 @@ public class GeneralUtility {
     public static Button createButton(Color color, int radius, String label, double fontSize) {
         Button b = new Button(label);
         b.setTextFill(Color.WHITE);
-        b.setBackground(new Background(new BackgroundFill(color, new CornerRadii(radius*FXApp.fontRatio.get()), null)));
 
         FXProperties.runNowAndOnPropertiesChange(() -> {
+            b.setBackground(new Background(new BackgroundFill(color, new CornerRadii(radius*FXApp.fontRatio.get()), null)));
             setLabeledFont(b, StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), fontSize * FXApp.fontRatio.get());
         }, FXApp.fontRatio);
 
@@ -219,9 +217,9 @@ public class GeneralUtility {
         return setupLabeled(new Label(), text, color, bold, fontSize);
     }
 
-    public static Label createLabel(String text, Color color, FontWeight fontWeight, double fontSize) {
+    /*public static Label createLabel(String text, Color color, FontWeight fontWeight, double fontSize) {
         return setupLabeled(new Label(), text, color, fontWeight, fontSize);
-    }
+    }*/
 
     public static Hyperlink createHyperlink(String text, Color color, double fontSize) {
         return setupLabeled(new Hyperlink(), text, color, false, fontSize);
@@ -253,6 +251,10 @@ public class GeneralUtility {
 
     public static Label createLabel(String i18nKey, Color color) {
         return setupLabeled(new Label(), i18nKey, color);
+    }
+
+    public static Hyperlink createHyperlink(Color color) {
+        return createHyperlink(null, color);
     }
 
     public static Hyperlink createHyperlink(String i18nKey, Color color) {
