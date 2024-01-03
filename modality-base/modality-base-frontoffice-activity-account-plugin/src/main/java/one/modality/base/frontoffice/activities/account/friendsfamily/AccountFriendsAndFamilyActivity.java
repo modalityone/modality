@@ -63,8 +63,8 @@ public class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase impl
 
         rebuildMembersList(FXAccount.getMembersPM(), membersList);
 
-        Button addMember = GeneralUtility.createButton(StyleUtility.ELEMENT_GRAY_COLOR, 4, "Add Member", 9);
-        deleteMember = GeneralUtility.createButton(StyleUtility.IMPORTANT_RED_COLOR, 4, "Delete", 9);
+        Button addMember = GeneralUtility.getButton(StyleUtility.ELEMENT_GRAY_COLOR, 4, "Add Member", 9);
+        deleteMember = GeneralUtility.getButton(StyleUtility.IMPORTANT_RED_COLOR, 4, "Delete", 9);
 
         HBox buttonRow = new HBox();
         buttonRow.setAlignment(Pos.CENTER);

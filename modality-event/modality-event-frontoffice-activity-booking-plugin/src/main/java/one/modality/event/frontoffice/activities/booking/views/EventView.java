@@ -8,15 +8,12 @@ import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -31,30 +28,18 @@ public final class EventView {
 
     private final ImageView eventImageView = new ImageView();
     private final ScalePane eventImageScalePane = new ScalePane(eventImageView);
-    private final Label eventNameLabel = GeneralUtility.getMediumLabel(null, StyleUtility.MAIN_ORANGE);
-    private final Label eventDescriptionLabel = GeneralUtility.createLabel(null, Color.BLACK, false, 10);
-    private final Text eventDateText = TextUtility.getText(null, Color.BLACK, 10);
-    private final Text eventCentreLocationText =
-            TextUtility.weight(TextUtility.getText(null, StyleUtility.ELEMENT_GRAY_COLOR, 8), FontWeight.THIN);
-    private final Text eventCountryLocationText =
-            TextUtility.weight(TextUtility.getText(null, StyleUtility.ELEMENT_GRAY_COLOR, 8), FontWeight.MEDIUM);
+    private final Label eventNameLabel = GeneralUtility.createLabel(StyleUtility.MAIN_ORANGE_COLOR);
+    private final Label eventDescriptionLabel = GeneralUtility.createLabel(Color.BLACK);
+    private final Text eventDateText = TextUtility.createText(Color.BLACK);
+    private final Text eventCentreLocationText = TextUtility.createText(StyleUtility.ELEMENT_GRAY_COLOR);
+    private final Text eventCountryLocationText = TextUtility.createText(StyleUtility.ELEMENT_GRAY_COLOR);
     private final Node eventLocation = GeneralUtility.createVList(0, 0,
             eventCentreLocationText,
             eventCountryLocationText
-            //distance < 0 ? new VBox() : TextUtility.getText(distance.toString(), 8, StyleUtility.ELEMENT_GRAY)
     );
-
-    private final Button comingSoonButton = I18nControls.bindI18nProperties(
-            GeneralUtility.createButton(StyleUtility.IMPORTANT_RED_COLOR, 4, null, 11),
-            "comingSoon");
-
-    private final Button bookButton = I18nControls.bindI18nProperties(
-            GeneralUtility.createButton(StyleUtility.MAIN_BLUE_COLOR, 4, null, 11),
-            "bookNow");
-    private final Button closedButton = I18nControls.bindI18nProperties(
-            GeneralUtility.createButton(StyleUtility.IMPORTANT_RED_COLOR, 4, null, 11),
-            "closed");
-
+    private final Button comingSoonButton = GeneralUtility.createButton("comingSoon");
+    private final Button bookButton = GeneralUtility.createButton("bookNow");
+    private final Button closedButton = GeneralUtility.createButton("closed");
     private final BorderPane buttonContainer = new BorderPane();
 
     private final VBox container = new VBox(10,
@@ -70,17 +55,35 @@ public final class EventView {
     );
 
     {
-        bookButton.setOnAction(e -> {
+        GeneralUtility.onNodeClickedWithoutScroll(e -> {
             String bookingFormUrl = (String) event.evaluate("bookingFormUrl");
             bookingFormUrl = bookingFormUrl.replace("{host}", "kadampabookings.org");
             BrowserUtil.chooseHowToOpenWebsite(bookingFormUrl);
-        });
-        bookButton.setCursor(Cursor.HAND);
+        }, bookButton);
         container.setPadding(new Insets(40));
         container.setBackground(Background.fill(StyleUtility.BACKGROUND_GRAY_COLOR));
+
         FXProperties.runNowAndOnPropertiesChange(() ->
                         eventDescriptionLabel.setManaged(Strings.isNotEmpty(eventDescriptionLabel.getText()))
                 , eventDescriptionLabel.textProperty());
+
+        FXProperties.runOnPropertiesChange(() -> {
+            double fontFactor = GeneralUtility.computeFontFactor(container.getWidth());
+            GeneralUtility.setLabeledFont(eventNameLabel,        StyleUtility.TEXT_FAMILY, FontWeight.SEMI_BOLD,   fontFactor * StyleUtility.MEDIUM_TEXT_SIZE);
+            GeneralUtility.setLabeledFont(eventDescriptionLabel, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 10);
+            GeneralUtility.setLabeledFont(comingSoonButton,      StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 11);
+            GeneralUtility.setLabeledFont(bookButton,            StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 11);
+            GeneralUtility.setLabeledFont(closedButton,          StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 11);
+            TextUtility.setTextFont(eventDateText,               StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 10);
+            TextUtility.setTextFont(eventCentreLocationText,     StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 8);
+            TextUtility.setTextFont(eventCountryLocationText,    StyleUtility.TEXT_FAMILY, FontWeight.MEDIUM, fontFactor * 8);
+            CornerRadii radii = new CornerRadii(4 * fontFactor);
+            Background redBackground = new Background(new BackgroundFill(StyleUtility.IMPORTANT_RED_COLOR, radii, null));
+            Background blueBackground = new Background(new BackgroundFill(StyleUtility.MAIN_BLUE_COLOR, radii, null));
+            comingSoonButton.setBackground(redBackground);
+            closedButton.setBackground(redBackground);
+            bookButton.setBackground(blueBackground);
+        }, container.widthProperty());
     }
 
     private static VBox centeredVBox(double spacing, Node... children) {
