@@ -393,7 +393,7 @@ public class GeneralUtility {
             node.setCursor(Cursor.HAND);
             node.setOnMousePressed(e -> screenPressedY[0] = e.getScreenY());
             node.setOnMouseReleased(e -> {
-                if (Math.abs(e.getScreenY() - screenPressedY[0]) < 10) // This is to skip the click when the user is actually scrolling on a touch screen such as mobiles
+                if (clickHandler != null && Math.abs(e.getScreenY() - screenPressedY[0]) < 10) // This is to skip the click when the user is actually scrolling on a touch screen such as mobiles
                     clickHandler.handle(e);
             });
         });

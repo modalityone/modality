@@ -99,7 +99,7 @@ public final class OrganizationSelectorView {
         );
 
         Hyperlink changeLocation = GeneralUtility.createHyperlink("Change your location", Color.WHITE);
-        changeLocation.setOnMouseClicked(event -> flipToBackWordMap());
+        GeneralUtility.onNodeClickedWithoutScroll(event -> flipToBackWordMap(), changeLocation);
 
         Node organizationMapNode = organizationMapView.getMapNode();
         return OrangeFrame.createOrangeFrame(
@@ -192,10 +192,10 @@ public final class OrganizationSelectorView {
                                     });
                                 } else { // ex: mobile app
                                     stackPane.getChildren().setAll(scalePane, playSvgPath);
-                                    stackPane.setOnMouseClicked(e -> {
+                                    GeneralUtility.onNodeClickedWithoutScroll(e -> {
                                         presentationVideoView.getEngine().load(videoLink);
                                         presentationPane.setContent(presentationVideoView);
-                                    });
+                                    }, stackPane);
                                 }
                             }
                         } else if (videoLink != null) {
@@ -205,17 +205,20 @@ public final class OrganizationSelectorView {
                         String domainName = organization.getStringFieldValue("domainName");
                         websiteLink.setVisible(domainName != null);
                         FXProperties.setEvenIfBound(websiteLink.textProperty(), domainName);
-                        websiteLink.setOnAction(e2 -> BrowserUtil.chooseHowToOpenWebsite("https://" + domainName));
+                        GeneralUtility.onNodeClickedWithoutScroll(e2 ->
+                                BrowserUtil.chooseHowToOpenWebsite("https://" + domainName), websiteLink);
                         FXProperties.setEvenIfBound(addressLink.textProperty(), (String) organization.evaluate("street + ' - ' + cityName + ' ' + postCode + ' - ' + country.name "));
                         Float latitude = organization.getLatitude();
                         Float longitude = organization.getLongitude();
                         if (latitude == null || longitude == null) {
-                            addressLink.setOnAction(null);
+                            GeneralUtility.onNodeClickedWithoutScroll(null, addressLink);
                             organizationMapView.setMapCenter(null);
                             organizationMapView.getMarkers().clear();
                             organizationMapView.getMapNode().setVisible(false);
                         } else {
-                            addressLink.setOnAction(e2 -> BrowserUtil.openExternalBrowser("https://google.com/maps/search/kadampa/@" + latitude + "," + longitude + ",12z"));
+                            GeneralUtility.onNodeClickedWithoutScroll(e2 ->
+                                    BrowserUtil.openExternalBrowser("https://google.com/maps/search/kadampa/@" + latitude + "," + longitude + ",12z")
+                                    , addressLink);
                             organizationMapView.setMapCenter(latitude, longitude);
                             organizationMapView.getMarkers().setAll(new MapMarker(organization));
                             organizationMapView.getMapNode().setVisible(true);
@@ -223,11 +226,13 @@ public final class OrganizationSelectorView {
                         String phone = organization.getStringFieldValue("phone");
                         phoneLink.setVisible(phone != null);
                         FXProperties.setEvenIfBound(phoneLink.textProperty(), phone);
-                        phoneLink.setOnAction(e2 -> BrowserUtil.openExternalBrowser("tel:" + phone));
+                        GeneralUtility.onNodeClickedWithoutScroll(e2 ->
+                                BrowserUtil.openExternalBrowser("tel:" + phone), phoneLink);
                         String email = organization.getStringFieldValue("email");
                         emailLink.setVisible(email != null);
                         FXProperties.setEvenIfBound(emailLink.textProperty(), email);
-                        emailLink.setOnAction(e2 -> BrowserUtil.openExternalBrowser("mailto:" + email));
+                        GeneralUtility.onNodeClickedWithoutScroll(e2 ->
+                                BrowserUtil.openExternalBrowser("mailto:" + email), emailLink);
                         FXCountry.setCountry(organization.getCountry());
                     }));
         }
@@ -238,7 +243,7 @@ public final class OrganizationSelectorView {
         worldMapView.placeEntityProperty().bind(FXCountry.countryProperty());
 
         Hyperlink backLink = GeneralUtility.createHyperlink("Back", Color.WHITE);
-        backLink.setOnAction(e -> flipToFrontOrganization());
+        GeneralUtility.onNodeClickedWithoutScroll(event -> flipToFrontOrganization(), backLink);
 
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Country country = FXCountry.getCountry();
