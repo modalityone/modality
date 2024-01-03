@@ -1,6 +1,7 @@
 package one.modality.base.frontoffice.utility;
 
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.stack.i18n.I18n;
 import javafx.beans.property.StringProperty;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -12,11 +13,11 @@ import java.util.function.Function;
 
 public class TextUtility {
 
-    public static Text getText(String content, double size, String color) {
-        return getText(content, size, Color.web(color));
+    public static Text getText(String content, String color, double size) {
+        return getText(content, Color.web(color), size);
     }
 
-    public static Text getText(String content, double size, Color color) {
+    public static Text getText(String content, Color color, double size) {
         Text text = createText(content, color);
 
         FXProperties.runNowAndOnPropertiesChange(() -> {
@@ -30,9 +31,17 @@ public class TextUtility {
         return createText(null, color);
     }
 
-    public static Text createText(String content, Color color) {
-        Text text = new Text(content);
+    public static Text createText(String i18nKey, Color color) {
+        Text text = new Text();
+        if (i18nKey != null)
+            I18n.bindI18nProperties(text, i18nKey);
         text.setFill(color);
+        return text;
+    }
+
+    public static Text createText(String i18nKey, Color color, double size) {
+        Text text = createText(i18nKey, color);
+        setTextFont(text, StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), size);
         return text;
     }
 
@@ -54,7 +63,7 @@ public class TextUtility {
     }
 
     public static Text getMainText(String content, String color) {
-        return getText(content, StyleUtility.MAIN_TEXT_SIZE, color);
+        return getText(content, color, StyleUtility.MAIN_TEXT_SIZE);
     }
 
     /*public static Text getSubText(String content, String color) {
@@ -62,15 +71,15 @@ public class TextUtility {
     }*/
 
     public static Text getAccountHeaderText(String content) {
-        return weight(getText(content, 20, StyleUtility.BLACK), FontWeight.findByWeight(600));
+        return weight(getText(content, StyleUtility.BLACK, 20), FontWeight.findByWeight(600));
     }
 
     public static Text getSubText(String content) {
-        return getText(content, 9, StyleUtility.ELEMENT_GRAY);
+        return getText(content, StyleUtility.ELEMENT_GRAY, 9);
     }
 
     public static Text getNameText(String content) {
-        return getText(content, 30, StyleUtility.BLACK);
+        return getText(content, StyleUtility.BLACK, 30);
     }
 
     public static Text weight(Text text, FontWeight weight) {
@@ -79,6 +88,6 @@ public class TextUtility {
     }
 
     public static Text getSettingSectionText(String content) {
-        return weight(getText(content, StyleUtility.MAIN_TEXT_SIZE, StyleUtility.BLACK), FontWeight.BOLD);
+        return weight(getText(content, StyleUtility.BLACK, StyleUtility.MAIN_TEXT_SIZE), FontWeight.BOLD);
     }
 }

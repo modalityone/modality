@@ -33,11 +33,11 @@ public final class EventView {
     private final ScalePane eventImageScalePane = new ScalePane(eventImageView);
     private final Label eventNameLabel = GeneralUtility.getMediumLabel(null, StyleUtility.MAIN_ORANGE);
     private final Label eventDescriptionLabel = GeneralUtility.createLabel(null, Color.BLACK, false, 10);
-    private final Text eventDateText = TextUtility.getText(null, 10, Color.BLACK);
+    private final Text eventDateText = TextUtility.getText(null, Color.BLACK, 10);
     private final Text eventCentreLocationText =
-            TextUtility.weight(TextUtility.getText(null, 8, StyleUtility.ELEMENT_GRAY_COLOR), FontWeight.THIN);
+            TextUtility.weight(TextUtility.getText(null, StyleUtility.ELEMENT_GRAY_COLOR, 8), FontWeight.THIN);
     private final Text eventCountryLocationText =
-            TextUtility.weight(TextUtility.getText(null, 8, StyleUtility.ELEMENT_GRAY_COLOR), FontWeight.MEDIUM);
+            TextUtility.weight(TextUtility.getText(null, StyleUtility.ELEMENT_GRAY_COLOR, 8), FontWeight.MEDIUM);
     private final Node eventLocation = GeneralUtility.createVList(0, 0,
             eventCentreLocationText,
             eventCountryLocationText
