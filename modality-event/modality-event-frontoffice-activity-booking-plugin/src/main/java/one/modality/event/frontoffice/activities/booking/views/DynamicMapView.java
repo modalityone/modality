@@ -58,8 +58,12 @@ public class DynamicMapView extends MapViewBase {
                 }
             }
         }, webEngine.getLoadWorker().stateProperty());
-        if (UserAgent.isBrowser())
+        if (UserAgent.isBrowser()) {
             webViewContainer.setContent(webView);
+            // Also, consuming touch events on the web view to prevent the page scrolling while the user actually just
+            // wants to interact with the map (ex: move the map using 1 finger, or scroll the map using 2 fingers).
+            webViewContainer.setOnTouchMoved(Event::consume);
+        }
         return webViewContainer;
     }
 
