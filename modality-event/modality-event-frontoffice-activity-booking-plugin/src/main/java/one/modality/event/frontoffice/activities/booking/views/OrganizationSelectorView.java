@@ -25,9 +25,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.text.FontWeight;
 import javafx.scene.web.WebView;
 import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
 import one.modality.base.frontoffice.utility.GeneralUtility;
@@ -50,10 +54,10 @@ public final class OrganizationSelectorView {
     private MapView worldMapView;
     private final RatioPane presentationPane = new RatioPane(16d/9);
     private final WebView presentationVideoView = new WebView();
-    private final Hyperlink websiteLink = GeneralUtility.createHyperlink("localCentreWebsite", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
-    private final Hyperlink addressLink = GeneralUtility.createHyperlink("localCentreAddress", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
-    private final Hyperlink phoneLink   = GeneralUtility.createHyperlink("localCentrePhone",   Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
-    private final Hyperlink emailLink   = GeneralUtility.createHyperlink("localCentreEmail",   Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
+    private final Hyperlink websiteLink = GeneralUtility.createHyperlink("localCentreWebsite", Color.WHITE);
+    private final Hyperlink addressLink = GeneralUtility.createHyperlink("localCentreAddress", Color.WHITE);
+    private final Hyperlink phoneLink   = GeneralUtility.createHyperlink("localCentrePhone",   Color.WHITE);
+    private final Hyperlink emailLink   = GeneralUtility.createHyperlink("localCentreEmail",   Color.WHITE);
 
     public OrganizationSelectorView(ButtonFactoryMixin factoryMixin, ViewDomainActivityBase activityBase) {
         this.factoryMixin = factoryMixin;
@@ -94,7 +98,7 @@ public final class OrganizationSelectorView {
                 emailLink
         );
 
-        Hyperlink changeLocation = GeneralUtility.createHyperlink("Change your location", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
+        Hyperlink changeLocation = GeneralUtility.createHyperlink("Change your location", Color.WHITE);
         changeLocation.setOnMouseClicked(event -> flipToBackWordMap());
 
         Node organizationMapNode = organizationMapView.getMapNode();
@@ -113,6 +117,11 @@ public final class OrganizationSelectorView {
                             x = w + space;
                             w = width - x;
                             contactBox.setAlignment(Pos.CENTER_LEFT);
+                            double fontFactor = GeneralUtility.computeFontFactor(w);
+                            GeneralUtility.setLabeledFont(websiteLink, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
+                            GeneralUtility.setLabeledFont(addressLink, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
+                            GeneralUtility.setLabeledFont(phoneLink, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
+                            GeneralUtility.setLabeledFont(emailLink, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
                         } else
                             contactBox.setAlignment(Pos.CENTER);
                         if (presentationPane.isVisible()) {
@@ -227,6 +236,10 @@ public final class OrganizationSelectorView {
     private Node getChangeLocationView() {
         worldMapView = new DynamicMapView();
         worldMapView.placeEntityProperty().bind(FXCountry.countryProperty());
+
+        Hyperlink backLink = GeneralUtility.createHyperlink("Back", Color.WHITE);
+        backLink.setOnAction(e -> flipToFrontOrganization());
+
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Country country = FXCountry.getCountry();
             if (country != null) {
@@ -235,16 +248,11 @@ public final class OrganizationSelectorView {
                 if (latitude != null && longitude != null)
                     worldMapView.setMapCenter(latitude, longitude);
             }
+            recreateOrganizationMarkers(worldMapView);
         }, FXCountry.countryProperty());
 
-        Hyperlink backLink = GeneralUtility.createHyperlink("Back", Color.WHITE, StyleUtility.MAIN_TEXT_SIZE);
-        backLink.setOnAction(e -> flipToFrontOrganization());
-
-        FXProperties.runNowAndOnPropertiesChange(() ->
-                recreateOrganizationMarkers(worldMapView), FXCountry.countryProperty());
-
-        ObservableLists.runNowAndOnListChange(x ->
-                recreateOrganizationMarkers(worldMapView), FXOrganizations.organizations());
+        ObservableLists.runNowAndOnListChange(x -> recreateOrganizationMarkers(worldMapView)
+                , FXOrganizations.organizations());
 
         return OrangeFrame.createOrangeFrame(
                 "findYourLocalCentre",

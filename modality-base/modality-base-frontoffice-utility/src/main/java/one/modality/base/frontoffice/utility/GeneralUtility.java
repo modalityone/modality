@@ -189,7 +189,7 @@ public class GeneralUtility {
         return field;
     }
 
-    public static Button createButton(Color color, int radius, String label, double fontSize) {
+    public static Button getButton(Color color, int radius, String label, double fontSize) {
         Button b = new Button(label);
         b.setTextFill(Color.WHITE);
 
@@ -201,21 +201,36 @@ public class GeneralUtility {
         return b;
     }
 
+    /*public static Button createButton(Color color, int radius, String label, double fontSize) {
+        Button b = createButton(label);
+        b.setBackground(new Background(new BackgroundFill(color, new CornerRadii(radius), null)));
+        setLabeledFont(b, StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), fontSize);
+        return b;
+    }*/
+
+    public static Button createButton(String i18nKey) {
+        Button b = new Button();
+        b.setTextFill(Color.WHITE);
+        if (i18nKey != null)
+            I18nControls.bindI18nProperties(b, i18nKey);
+        return b;
+    }
+
     /*public static Label getMainLabel(String content, String color) {
         return createLabel(content, Color.web(color), FontWeight.SEMI_BOLD, StyleUtility.MAIN_TEXT_SIZE);
     }*/
 
-    public static Label getMainHeaderLabel(String content) {
+    /*public static Label getMainHeaderLabel(String content) {
         return createLabel(content, StyleUtility.MAIN_ORANGE_COLOR, true, 21);
-    }
+    }*/
 
-    public static Label getMediumLabel(String content, String color) {
+    /*public static Label getMediumLabel(String content, String color) {
         return createLabel(content, Color.web(color), false, StyleUtility.MEDIUM_TEXT_SIZE);
-    }
+    }*/
 
-    public static Label createLabel(String text, Color color, boolean bold, double fontSize) {
+    /*public static Label createLabel(String text, Color color, boolean bold, double fontSize) {
         return setupLabeled(new Label(), text, color, bold, fontSize);
-    }
+    }*/
 
     /*public static Label createLabel(String text, Color color, FontWeight fontWeight, double fontSize) {
         return setupLabeled(new Label(), text, color, fontWeight, fontSize);

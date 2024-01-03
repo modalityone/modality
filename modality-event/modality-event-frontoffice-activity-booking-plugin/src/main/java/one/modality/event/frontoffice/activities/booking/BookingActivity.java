@@ -29,10 +29,12 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.tile.Tab;
 import one.modality.base.client.tile.TabsBar;
 import one.modality.base.frontoffice.utility.GeneralUtility;
+import one.modality.base.frontoffice.utility.StyleUtility;
 import one.modality.base.shared.entities.Event;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.event.frontoffice.activities.booking.views.EventView;
@@ -57,7 +59,7 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
 
     @Override
     public Node buildUi() {
-        Label headerLabel = GeneralUtility.getMainHeaderLabel("eventsHeader");
+        Label headerLabel = GeneralUtility.createLabel("eventsHeader", StyleUtility.MAIN_ORANGE_COLOR);
         headerLabel.setTextAlignment(TextAlignment.CENTER);
 
         String headerImageUrl = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.event.frontoffice.activity.booking").getString("headerImageUrl");
@@ -65,11 +67,11 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
         ScalePane headerImageScalePane = new ScalePane(headerImageView);
         headerImageScalePane.setMaxHeight(300);
 
-        Label internationalEventsLabel = GeneralUtility.createLabel("internationalEvents", Color.BLACK, true, 16);
+        Label internationalEventsLabel = GeneralUtility.createLabel("internationalEvents", Color.BLACK);
 
         Node localCenterDisplay = organizationSelectorView.getView();
 
-        Label localEventsLabel = GeneralUtility.createLabel("localEvents", Color.BLACK, true, 16);
+        Label localEventsLabel = GeneralUtility.createLabel("localEvents", Color.BLACK);
 
         double mobileStatusBarHeight = OperatingSystem.isMobile() && UserAgent.isNative() ? 15 : 0;
         VBox.setMargin(headerLabel, new Insets(5 + mobileStatusBarHeight, 0, 5, 0));
@@ -92,7 +94,11 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
         container.setMaxWidth(1200);
 
         FXProperties.runOnPropertiesChange(() -> {
-            GeneralUtility.onPageWidthChanged(container.getWidth());
+            double width = container.getWidth();
+            double fontFactor = GeneralUtility.computeFontFactor(width);
+            GeneralUtility.setLabeledFont(headerLabel,              StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 21);
+            GeneralUtility.setLabeledFont(internationalEventsLabel, StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
+            GeneralUtility.setLabeledFont(localEventsLabel,         StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
         }, container.widthProperty());
 
         localEvents.addListener((InvalidationListener) observable -> {
