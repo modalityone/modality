@@ -35,6 +35,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires webfx.platform.useragent;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
+    requires webfx.stack.cache.client;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.datasourcemodel.service;
