@@ -670,6 +670,10 @@
     <source path="dev/webfx/stack/authz/client/spi/impl"/>
     <source path="dev/webfx/stack/authz/client/spi/impl/inmemory"/>
     <source path="dev/webfx/stack/authz/client/spi/impl/inmemory/parser"/>
+    <!--===============================< webfx-stack-cache >================================-->
+    <source path="dev/webfx/stack/cache"/>
+    <!--============================< webfx-stack-cache-client >============================-->
+    <source path="dev/webfx/stack/cache/client"/>
     <!--==============================< webfx-stack-com-bus >===============================-->
     <source path="dev/webfx/stack/com/bus"/>
     <source path="dev/webfx/stack/com/bus/spi"/>
