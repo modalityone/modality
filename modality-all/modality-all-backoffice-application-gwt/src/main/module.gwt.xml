@@ -70,8 +70,6 @@
     <source path="javafx/stage"/>
     <!--============================< webfx-kit-javafxweb-emul >============================-->
     <source path="javafx/scene/web"/>
-    <!--======================< webfx-kit-javafxweb-enginepeer-emul >=======================-->
-    <source path="dev/webfx/kit/mapper/peers/javafxweb/engine"/>
     <!--=====================================< charba >=====================================-->
     <inherits name="org.pepstock.charba.Charba"/>
     <source path="org/pepstock/charba/client"/>
@@ -495,6 +493,8 @@
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics/gwt/util"/>
     <!--=====================< webfx-kit-javafxgraphics-registry-gwt >======================-->
     <source path="dev/webfx/kit/registry/javafxgraphics"/>
+    <!--=========================< webfx-kit-javafxweb-enginepeer >=========================-->
+    <source path="dev/webfx/kit/mapper/peers/javafxweb/engine"/>
     <!--=========================< webfx-kit-javafxweb-peers-base >=========================-->
     <source path="dev/webfx/kit/mapper/peers/javafxweb/base"/>
     <!--=========================< webfx-kit-javafxweb-peers-gwt >==========================-->
