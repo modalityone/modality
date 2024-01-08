@@ -6,6 +6,7 @@
 module modality.all.backoffice.application.gluon {
 
     // Direct dependencies modules
+    requires javafx.web;
     requires modality.all.backoffice.application;
     requires modality.base.client.css;
     requires modality.ecommerce.payment.custom.buscall;

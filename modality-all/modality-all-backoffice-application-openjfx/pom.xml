@@ -18,6 +18,11 @@
     <dependencies>
 
         <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-web</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>one.modality</groupId>
             <artifactId>modality-all-backoffice-application</artifactId>
             <version>1.0.0-SNAPSHOT</version>

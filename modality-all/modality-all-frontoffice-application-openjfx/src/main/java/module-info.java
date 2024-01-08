@@ -6,6 +6,7 @@
 module modality.all.frontoffice.application.openjfx {
 
     // Direct dependencies modules
+    requires javafx.web;
     requires modality.all.frontoffice.application;
     requires modality.base.client.css;
     requires webfx.extras.visual.grid.peers.openjfx;
