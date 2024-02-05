@@ -75,7 +75,7 @@
     <!--=================================< elemental2-dom >=================================-->
     <inherits name="elemental2.dom.Dom"/>
     <!--===============================< elemental2-promise >===============================-->
-    <source path="elemental2/promise"/>
+    <inherits name="elemental2.promise.Promise"/>
     <!--=================================< elemental2-svg >=================================-->
     <inherits name="elemental2.svg.Svg"/>
     <!--====================================< gwt-user >====================================-->
@@ -211,7 +211,6 @@
     <!--===============< modality-event-frontoffice-activity-booking-plugin >===============-->
     <source path="one/modality/event/frontoffice/activities/booking"/>
     <source path="one/modality/event/frontoffice/activities/booking/routing"/>
-    <source path="one/modality/event/frontoffice/activities/booking/steps"/>
     <source path="one/modality/event/frontoffice/activities/booking/views"/>
     <source path="one/modality/event/frontoffice/operations/routes/booking"/>
     <resource path="one/modality/event/frontoffice/activities/booking/views"/>
