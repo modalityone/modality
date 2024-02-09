@@ -50,5 +50,13 @@ public interface Event extends Entity,
         return getForeignEntity("feesBottomLabel");
     }
 
+    default void setKbs3(Boolean kbs3) {
+        setFieldValue("kbs3", kbs3);
+    }
+
+    default Boolean isKbs3() {
+        return getBooleanFieldValue("kbs3");
+    }
+
 
 }
