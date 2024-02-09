@@ -11,7 +11,7 @@ import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.platform.os.OperatingSystem;
 import dev.webfx.platform.useragent.UserAgent;
 import dev.webfx.platform.util.collection.Collections;
-import dev.webfx.stack.cache.client.SessionClientCache;
+import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.reactive.entities.entities_to_objects.IndividualEntityToObjectMapper;
@@ -140,20 +140,22 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
     }
 
     protected void startLogic() {
+        String commonDqlStart = "{class: 'Event', alias: 'e', fields:'name, label.<loadAll>, kbs3, live, openingDate, startDate, endDate, organization, organization.country, venue.(name, label.<loadAll>, country), host, frontend, image.url, shortDescriptionLabel.<loadAll>";
+
         // Loading international Festivals
         ReactiveObjectsMapper.<Event, Node>createPushReactiveChain(this)
-                .always("{class: 'Event', alias: 'e', fields:'name, label.<loadAll>, live, openingDate, startDate, endDate, organization, organization.country, venue.(name, label.<loadAll>, country), host, frontend, image.url, shortDescriptionLabel.<loadAll>', where: 'organization.type.code = `CORP` and endDate > now()', orderBy: 'startDate, id', limit: 3}")
+                .always(commonDqlStart + "', where: 'organization.type.code = `CORP` and endDate > now() and !bookingClosed and name not like `%Online%`', orderBy: 'startDate, id', limit: 3}")
                 .setIndividualEntityToObjectMapperFactory(IndividualEntityToObjectMapper.createFactory(EventView::new, EventView::setEvent, EventView::getView))
                 .storeMappedObjectsInto(internationalEventsContainer.getChildren())
-                .setResultCacheEntry(SessionClientCache.get().getCacheEntry("internationalEventsCache"))
+                .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-booking-internationalEvents"))
                 .start();
 
         // Loading local events
         ReactiveObjectsMapper.<Event, Node>createPushReactiveChain(this)
-                .always("{class: 'Event', fields:'name, label.<loadAll>, live, openingDate, startDate, endDate, organization, organization.country, venue.(name, label.<loadAll>, country), host, frontend, image.url, shortDescriptionLabel.<loadAll>, type.(name,label.<loadAll>,ord)', where: 'endDate > now() and type.name != `Not event`', orderBy: 'startDate'}")
+                .always(commonDqlStart + ", type.(name,label.<loadAll>,ord)', where: 'endDate > now() and !bookingClosed and type.name != `Not event`', orderBy: 'startDate'}")
                 .ifNotNullOtherwiseEmpty(FXOrganizationId.organizationIdProperty(), orgId -> where("organization=?", orgId))
                 .storeEntitiesInto(localEvents)
-                .setResultCacheEntry(SessionClientCache.get().getCacheEntry("localEventsCache"))
+                .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-booking-localEvents"))
                 .start();
     }
 }
