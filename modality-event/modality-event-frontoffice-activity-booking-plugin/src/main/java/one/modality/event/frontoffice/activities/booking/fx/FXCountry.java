@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.activities.booking.views;
+package one.modality.event.frontoffice.activities.booking.fx;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -9,7 +9,7 @@ import java.util.Objects;
 /**
  * @author Bruno Salmon
  */
-final class FXCountry {
+public final class FXCountry {
 
     private final static ObjectProperty<Country> countryProperty = new SimpleObjectProperty<>();
 

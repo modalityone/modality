@@ -21,6 +21,7 @@ import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.base.frontoffice.utility.StyleUtility;
 import one.modality.base.frontoffice.utility.TextUtility;
 import one.modality.base.shared.entities.Event;
+import one.modality.event.frontoffice.activities.booking.process.BookingStarter;
 
 public final class EventView {
 
@@ -49,17 +50,13 @@ public final class EventView {
                             eventNameLabel,
                             eventDescriptionLabel,
                             eventLocation),
-                    centeredVBox(10,
+                    centeredVBox(
                             eventDateText,
                             buttonContainer), 80, 0)
     );
 
-    {
-        GeneralUtility.onNodeClickedWithoutScroll(e -> {
-            String bookingFormUrl = (String) event.evaluate("bookingFormUrl");
-            bookingFormUrl = bookingFormUrl.replace("{host}", "kadampabookings.org");
-            BrowserUtil.chooseHowToOpenWebsite(bookingFormUrl);
-        }, bookButton);
+    public EventView() {
+        GeneralUtility.onNodeClickedWithoutScroll(e -> BookingStarter.startEventBooking(event), bookButton);
         container.setPadding(new Insets(40));
         container.setBackground(Background.fill(StyleUtility.BACKGROUND_GRAY_COLOR));
 
@@ -86,8 +83,8 @@ public final class EventView {
         }, container.widthProperty());
     }
 
-    private static VBox centeredVBox(double spacing, Node... children) {
-        VBox vBox = new VBox(spacing, children);
+    private static VBox centeredVBox(Node... children) {
+        VBox vBox = new VBox(10, children);
         vBox.setAlignment(Pos.CENTER);
         return vBox;
     }
@@ -105,7 +102,7 @@ public final class EventView {
         I18nControls.bindI18nProperties(eventDescriptionLabel, new I18nSubKey("expression: i18n(shortDescriptionLabel)", event));
         I18n.bindI18nProperties(eventCentreLocationText, new I18nSubKey("expression: '[At] ' + coalesce(i18n(venue), i18n(organization))", event));
         I18n.bindI18nProperties(eventCountryLocationText, new I18nSubKey("expression: coalesce(i18n(venue.country), i18n(organization.country))", event));
-        eventDateText.setText(event.getStartDate().toString());
+        eventDateText.setText(Strings.toString(event.getStartDate()));
         buttonContainer.setCenter(event.isLive() ? bookButton : comingSoonButton);
     }
 

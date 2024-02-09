@@ -40,6 +40,13 @@ import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Organization;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
+import one.modality.event.frontoffice.activities.booking.browser.BrowserUtil;
+import one.modality.event.frontoffice.activities.booking.fx.FXCountry;
+import one.modality.event.frontoffice.activities.booking.fx.FXOrganizations;
+import one.modality.event.frontoffice.activities.booking.map.DynamicMapView;
+import one.modality.event.frontoffice.activities.booking.map.MapMarker;
+import one.modality.event.frontoffice.activities.booking.map.MapView;
+import one.modality.event.frontoffice.activities.booking.map.StaticMapView;
 
 import java.util.stream.Collectors;
 

@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.activities.booking.views;
+package one.modality.event.frontoffice.activities.booking.map;
 
 import dev.webfx.stack.orm.entity.Entity;
 import javafx.beans.InvalidationListener;

@@ -5,7 +5,7 @@ import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
 import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
 import one.modality.event.frontoffice.operations.routes.booking.RouteToBookingRequest;
 
-public class RouteToBookingRequestEmitter implements RouteRequestEmitter {
+public final class RouteToBookingRequestEmitter implements RouteRequestEmitter {
 
     @Override
     public RouteRequest instantiateRouteRequest(UiRouteActivityContext context) {
