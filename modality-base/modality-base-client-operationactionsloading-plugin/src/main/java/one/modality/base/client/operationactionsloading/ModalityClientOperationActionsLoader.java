@@ -6,7 +6,7 @@ import dev.webfx.platform.conf.ConfigLoader;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.stack.authz.client.factory.AuthorizationFactory;
-import dev.webfx.stack.cache.client.SessionClientCache;
+import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.Entity;
@@ -49,7 +49,8 @@ public class ModalityClientOperationActionsLoader implements ApplicationModuleBo
         hideUnauthorizedOtherOperationActions = config.getBoolean("hideUnauthorizedOtherOperationActions", true);
 
         EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
-                .executeCachedQuery(SessionClientCache.get().getCacheEntry("clientOperationsCache"), this::registerOperations,
+                .executeCachedQuery(
+                        LocalStorageCache.get().getCacheEntry("cache-clientOperations"), this::registerOperations,
                         "select code,i18nCode,public from Operation where " + (ModalityClientConfig.isBackOffice() ? "backoffice" : "frontoffice"))
                 .onSuccess(this::registerOperations)
                 .onFailure(cause -> {
