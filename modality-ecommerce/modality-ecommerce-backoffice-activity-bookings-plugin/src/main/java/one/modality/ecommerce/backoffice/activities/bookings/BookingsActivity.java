@@ -4,6 +4,7 @@ import dev.webfx.extras.time.TimeUtil;
 import dev.webfx.extras.time.YearWeek;
 import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
@@ -137,6 +138,7 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
                 .ifInstanceOf(pm.ganttSelectedObjectProperty(), YearMonth.class, month -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfMonth(month), TimeUtil.getLastDayOfMonth(month)))
                 .ifInstanceOf(pm.ganttSelectedObjectProperty(), Year.class,      year  -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfYear(year),   TimeUtil.getLastDayOfYear(year)))
                 .ifInstanceOf(pm.ganttSelectedObjectProperty(), Event.class,     event -> where("event=?", event))
+                .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-bookings-group"))
                 .start();
 
         // Setting up the master mapper that build the content displayed in the master view
@@ -159,6 +161,7 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
                         Character.isDigit(s.charAt(0)) ? where("ref = ?", Integer.parseInt(s))
                                 : s.contains("@") ? where("lower(person_email) like ?", "%" + s.toLowerCase() + "%")
                                 : where("person_abcNames like ?", AbcNames.evaluate(s, true)))
+                .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-bookings-master"))
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .start();

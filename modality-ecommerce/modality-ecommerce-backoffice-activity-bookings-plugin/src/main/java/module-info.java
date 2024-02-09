@@ -25,6 +25,7 @@ module modality.ecommerce.backoffice.activity.bookings.plugin {
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
     requires webfx.platform.windowhistory;
+    requires webfx.stack.cache.client;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.expression;
