@@ -702,6 +702,7 @@
     <source path="dev/webfx/stack/com/serial"/>
     <source path="dev/webfx/stack/com/serial/spi"/>
     <source path="dev/webfx/stack/com/serial/spi/impl"/>
+    <source path="dev/webfx/stack/com/serial/spi/impl/time"/>
     <!--===========================< webfx-stack-com-websocket >============================-->
     <source path="dev/webfx/stack/com/websocket"/>
     <source path="dev/webfx/stack/com/websocket/spi"/>

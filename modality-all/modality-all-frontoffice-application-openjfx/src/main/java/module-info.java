@@ -15,10 +15,8 @@ module modality.all.frontoffice.application.openjfx {
     requires webfx.kit.platform.browser.openjfx;
     requires webfx.kit.platform.visibility.openjfx;
     requires webfx.platform.ast.factory.generic;
-    requires webfx.platform.blob.java;
     requires webfx.platform.boot.java;
     requires webfx.platform.console.java;
-    requires webfx.platform.fetch.java;
     requires webfx.platform.os.java;
     requires webfx.platform.resource.java;
     requires webfx.platform.scheduler.java;

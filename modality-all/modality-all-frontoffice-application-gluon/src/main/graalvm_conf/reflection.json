@@ -1,13 +1,13 @@
 [
 
 {
-  "name" : "one.modality.event.frontoffice.activities.booking.views.DynamicMapView",
+  "name" : "one.modality.event.frontoffice.activities.booking.map.DynamicMapView",
   "methods" : [
     { "name" : "consoleLog", "parameterTypes" : ["java.lang.String"] },
     { "name" : "consoleWarn", "parameterTypes" : ["java.lang.String"] },
     { "name" : "consoleError", "parameterTypes" : ["java.lang.String"] },
     { "name" : "onGoogleMapLoaded", "parameterTypes" : [] },
-    { "name" : "onMarkerClicked", "parameterTypes" : ["one.modality.event.frontoffice.activities.booking.views.MapMarker"] }
+    { "name" : "onMarkerClicked", "parameterTypes" : ["one.modality.event.frontoffice.activities.booking.map.MapMarker"] }
   ]
 }
 ,

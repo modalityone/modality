@@ -96,6 +96,10 @@
     <public includes="one/modality/base/client/images/" path=""/>
     <!--===========================< modality-base-client-conf >============================-->
     <source path="one/modality/base/client/conf"/>
+    <!--=========================< modality-base-client-entities >==========================-->
+    <source path="one/modality/base/client/entities/util"/>
+    <source path="one/modality/base/client/entities/util/filters"/>
+    <source path="one/modality/base/client/entities/util/functions"/>
     <!--===========================< modality-base-client-i18n >============================-->
     <source path="one/modality/base/client/operations/i18n"/>
     <source path="one/modality/base/client/services/i18n"/>
@@ -152,6 +156,10 @@
     <source path="one/modality/base/client/profile/fx"/>
     <!--===========================< modality-base-client-tile >============================-->
     <source path="one/modality/base/client/tile"/>
+    <!--===========================< modality-base-client-util >============================-->
+    <source path="one/modality/base/client/util/functions"/>
+    <source path="one/modality/base/client/util/log"/>
+    <source path="one/modality/base/client/util/routing"/>
     <!--========================< modality-base-client-validation >=========================-->
     <source path="one/modality/base/client/validation"/>
     <!--===============< modality-base-frontoffice-activity-account-plugin >================-->
@@ -210,11 +218,16 @@
     <source path="one/modality/crm/shared/services/authn/serial"/>
     <!--===============< modality-event-frontoffice-activity-booking-plugin >===============-->
     <source path="one/modality/event/frontoffice/activities/booking"/>
+    <source path="one/modality/event/frontoffice/activities/booking/browser"/>
+    <source path="one/modality/event/frontoffice/activities/booking/fx"/>
+    <source path="one/modality/event/frontoffice/activities/booking/map"/>
+    <source path="one/modality/event/frontoffice/activities/booking/process"/>
+    <source path="one/modality/event/frontoffice/activities/booking/process/recurring"/>
     <source path="one/modality/event/frontoffice/activities/booking/routing"/>
     <source path="one/modality/event/frontoffice/activities/booking/views"/>
     <source path="one/modality/event/frontoffice/operations/routes/booking"/>
-    <resource path="one/modality/event/frontoffice/activities/booking/views"/>
-    <public includes="one/modality/event/frontoffice/activities/booking/views/" path=""/>
+    <resource path="one/modality/event/frontoffice/activities/booking/map"/>
+    <public includes="one/modality/event/frontoffice/activities/booking/map/" path=""/>
     <!--===============================< webfx-extras-cell >================================-->
     <source path="dev/webfx/extras/cell/collator"/>
     <source path="dev/webfx/extras/cell/renderer"/>
@@ -337,11 +350,6 @@
     <!--==============================< webfx-platform-async >==============================-->
     <source path="dev/webfx/platform/async"/>
     <source path="dev/webfx/platform/async/impl"/>
-    <!--==============================< webfx-platform-blob >===============================-->
-    <source path="dev/webfx/platform/blob"/>
-    <source path="dev/webfx/platform/blob/spi"/>
-    <!--============================< webfx-platform-blob-gwt >=============================-->
-    <source path="dev/webfx/platform/blob/spi/impl/gwt"/>
     <!--==============================< webfx-platform-boot >===============================-->
     <source path="dev/webfx/platform/boot"/>
     <source path="dev/webfx/platform/boot/spi"/>
@@ -362,15 +370,6 @@
     <source path="dev/webfx/platform/console/spi"/>
     <!--===========================< webfx-platform-console-gwt >===========================-->
     <source path="dev/webfx/platform/console/spi/impl/gwt"/>
-    <!--==============================< webfx-platform-fetch >==============================-->
-    <source path="dev/webfx/platform/fetch"/>
-    <source path="dev/webfx/platform/fetch/spi"/>
-    <source path="dev/webfx/platform/streams"/>
-    <!--=========================< webfx-platform-fetch-ast-json >==========================-->
-    <source path="dev/webfx/platform/fetch/json"/>
-    <!--============================< webfx-platform-fetch-gwt >============================-->
-    <source path="dev/webfx/platform/fetch/spi/impl/gwt"/>
-    <source path="dev/webfx/platform/streams/spi/impl/gwt"/>
     <!--========================< webfx-platform-javabase-emul-gwt >========================-->
     <super-source includes="java/io/" path=""/>
     <super-source includes="java/lang/ref/" path=""/>
@@ -526,6 +525,7 @@
     <source path="dev/webfx/stack/com/serial"/>
     <source path="dev/webfx/stack/com/serial/spi"/>
     <source path="dev/webfx/stack/com/serial/spi/impl"/>
+    <source path="dev/webfx/stack/com/serial/spi/impl/time"/>
     <!--===========================< webfx-stack-com-websocket >============================-->
     <source path="dev/webfx/stack/com/websocket"/>
     <source path="dev/webfx/stack/com/websocket/spi"/>
