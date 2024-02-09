@@ -6,6 +6,7 @@
 module modality.crm.client.authz.required.plugin {
 
     // Direct dependencies modules
+    requires java.base;
     requires modality.base.client.conf;
     requires webfx.platform.boot;
     requires webfx.platform.console;
