@@ -11,6 +11,8 @@ module modality.crm.client.authz.required.plugin {
     requires webfx.platform.console;
     requires webfx.platform.util;
     requires webfx.stack.authz.client;
+    requires webfx.stack.cache;
+    requires webfx.stack.cache.client;
     requires webfx.stack.com.bus.call;
     requires webfx.stack.db.query;
     requires webfx.stack.orm.datasourcemodel.service;

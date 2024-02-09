@@ -4,6 +4,9 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.authz.client.operation.OperationAuthorizationRuleParser;
 import dev.webfx.stack.authz.client.spi.impl.inmemory.InMemoryUserAuthorizationChecker;
+import dev.webfx.stack.cache.CacheEntry;
+import dev.webfx.stack.cache.client.LocalStorageCache;
+import dev.webfx.stack.cache.client.SessionClientCache;
 import dev.webfx.stack.db.query.QueryResult;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
@@ -16,6 +19,8 @@ import dev.webfx.stack.routing.router.auth.authz.RoutingAuthorizationRuleParser;
 import dev.webfx.stack.session.state.client.fx.FXAuthorizationsChanged;
 import one.modality.base.client.conf.ModalityClientConfig;
 
+import java.util.List;
+
 /**
  * @author Bruno Salmon
  */
@@ -25,12 +30,26 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
     private final static String AUTHZ_QUERY_BASE = "select rule.rule,activityState.route,operation.(code, grantRoute) from AuthorizationAssignment";
 
     private final DataSourceModel dataSourceModel;
+    private final CacheEntry<Object> authorizationPushCashEntry = SessionClientCache.get().getCacheEntry("cache-authz-push");
 
     ModalityInMemoryUserAuthorizationChecker(DataSourceModel dataSourceModel) {
         this.dataSourceModel = dataSourceModel;
         // Registering the authorization (requests and rules) parsers
         ruleRegistry.addAuthorizationRuleParser(new RoutingAuthorizationRuleParser());
         ruleRegistry.addAuthorizationRuleParser(new OperationAuthorizationRuleParser());
+        // Getting initial authorizations from cache if present
+        Object cachedValue = authorizationPushCashEntry.getValue();
+        if (cachedValue != null)
+            onAuthorizationPush(cachedValue);
+        // Note: the pushObject sent by the server contained all permissions specifically assigned to the user.
+        // In addition, we may have public operations. Since they are public, they don't need authorizations, however
+        // some may have a route associated, and we need therefore to authorize those public routes.
+        EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
+                .executeCachedQuery(
+                        LocalStorageCache.get().getCacheEntry("cache-authz-operations"), this::registerOperationRoutes,
+                        "select grantRoute from Operation where public and grantRoute!=null and " + (ModalityClientConfig.isBackOffice() ? "backoffice" : "frontoffice"))
+                .onFailure(Console::log)
+                .onSuccess(this::registerOperationRoutes);
     }
 
     void onAuthorizationPush(Object pushObject) {
@@ -68,21 +87,18 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
             }
         }
 
-        // Note: the pushObject sent by the server contained all permissions specifically assigned to the user.
-        // In addition, we may have public operations. Since they are public, they don't need authorizations, however
-        // some may have a route associated, and we need therefore to authorize those public routes.
-        EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
-                .executeQuery("select grantRoute from Operation where public and grantRoute!=null and " + (ModalityClientConfig.isBackOffice() ? "backoffice" : "frontoffice"))
-                        .onFailure(Console::log)
-                        .onSuccess(operations -> {
-                            operations.forEach(op -> {
-                                String route = op.getStringFieldValue("grantRoute");
-                                if (!Strings.isEmpty(route)) {
-                                    ruleRegistry.registerAuthorizationRule("grant route:" + route);
-                                }
-                            });
-                        });
-
         FXAuthorizationsChanged.fireAuthorizationsChanged();
+
+        // Caching latest authorizations
+        authorizationPushCashEntry.putValue(pushObject);
+    }
+
+    private void registerOperationRoutes(List<Entity> operations) {
+        operations.forEach(op -> {
+            String route = op.getStringFieldValue("grantRoute");
+            if (!Strings.isEmpty(route)) {
+                ruleRegistry.registerAuthorizationRule("grant route:" + route);
+            }
+        });
     }
 }
