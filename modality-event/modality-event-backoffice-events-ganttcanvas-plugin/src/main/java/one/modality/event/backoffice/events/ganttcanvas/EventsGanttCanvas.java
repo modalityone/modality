@@ -6,6 +6,7 @@ import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.ThemeRegistry;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
+import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
@@ -13,10 +14,10 @@ import javafx.beans.property.ObjectProperty;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.FontWeight;
+import one.modality.base.backoffice.ganttcanvas.DatedGanttCanvas;
 import one.modality.base.client.gantt.fx.timewindow.FXGanttTimeWindow;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
-import one.modality.base.backoffice.ganttcanvas.DatedGanttCanvas;
 import one.modality.base.shared.entities.Event;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.event.backoffice.event.fx.FXEvent;
@@ -123,6 +124,7 @@ public final class EventsGanttCanvas {
                 .always(pm.timeWindowStartProperty(), startDate -> DqlStatement.orderBy("greatest(e.startDate, ?),id", startDate))
                 // Storing the result directly in the events layer
                 .storeEntitiesInto(eventsLayer.getChildren())
+                .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-eventsGanttCanvas"))
                 // We are now ready to start
                 .start();
     }
