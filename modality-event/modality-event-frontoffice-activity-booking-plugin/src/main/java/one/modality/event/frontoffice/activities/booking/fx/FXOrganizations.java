@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.activities.booking.views;
+package one.modality.event.frontoffice.activities.booking.fx;
 
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
@@ -11,7 +11,7 @@ import one.modality.base.shared.entities.Organization;
 /**
  * @author Bruno Salmon
  */
-final class FXOrganizations {
+public final class FXOrganizations {
 
     private final static ObservableList<Organization> organizations = FXCollections.observableArrayList();
 

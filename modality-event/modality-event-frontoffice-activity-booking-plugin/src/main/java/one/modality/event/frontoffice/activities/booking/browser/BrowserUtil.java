@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.activities.booking.views;
+package one.modality.event.frontoffice.activities.booking.browser;
 
 import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.platform.browser.Browser;
@@ -27,13 +27,13 @@ import one.modality.base.frontoffice.utility.StyleUtility;
 /**
  * @author Bruno Salmon
  */
-final class BrowserUtil {
+public final class BrowserUtil {
 
     private static final String INTERNAL_BROWSER_ROUTE = "/website";
     private static UiRouter uiRouter;
     private static final WebView internalBrowser = new WebView();
 
-    static void openExternalBrowser(String url) {
+    public static void openExternalBrowser(String url) {
         // Following code is commented because HostServices is not working on Gluon mobiles.
         //WebFxKitLauncher.getApplication().getHostServices().showDocument(url);
         // So we use the Browser service API instead (which as a Gluon implementation)
@@ -44,7 +44,7 @@ final class BrowserUtil {
         }
     }
 
-    static void setUiRouter(UiRouter uiRouter) {
+    public static void setUiRouter(UiRouter uiRouter) {
         BrowserUtil.uiRouter = uiRouter;
         // Registering the website route in the ui router
         uiRouter.route(INTERNAL_BROWSER_ROUTE, () -> new ViewActivityBase<ViewActivityContextFinal>() {
@@ -55,14 +55,14 @@ final class BrowserUtil {
         }, ViewActivityContext::create);
     }
 
-    static void openInternalBrowser(String url) {
+    public static void openInternalBrowser(String url) {
         // Loading the url in the internal browser
         internalBrowser.getEngine().load(url);
         // Going to the route to display that browser
         uiRouter.getHistory().push(INTERNAL_BROWSER_ROUTE);
     }
 
-    static void chooseHowToOpenWebsite(String url) {
+    public static void chooseHowToOpenWebsite(String url) {
         Hyperlink insideAppLink = GeneralUtility.createHyperlink("openInsideApp", Color.WHITE, 21);
         Hyperlink outsideAppLink = GeneralUtility.createHyperlink("openOutsideApp", Color.WHITE, 21);
         Hyperlink copyLink = GeneralUtility.createHyperlink("copyLink", Color.WHITE, 21);

@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.activities.booking.views;
+package one.modality.event.frontoffice.activities.booking.map;
 
 import dev.webfx.extras.panes.ClipPane;
 import dev.webfx.extras.panes.MonoPane;
@@ -25,7 +25,7 @@ import javafx.scene.shape.StrokeLineCap;
 /**
  * @author Bruno Salmon
  */
-final class StaticMapView extends MapViewBase {
+public final class StaticMapView extends MapViewBase {
 
     private static final String ZOOM_PLUS_SVG_PATH = "M 13,8 H 3 M 8,13 V 3";
     private static final String ZOOM_MINUS_SVG_PATH = "M 13,8 H 3";

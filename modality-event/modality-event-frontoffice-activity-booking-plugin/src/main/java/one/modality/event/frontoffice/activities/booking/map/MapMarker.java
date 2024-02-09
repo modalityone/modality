@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.activities.booking.views;
+package one.modality.event.frontoffice.activities.booking.map;
 
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
