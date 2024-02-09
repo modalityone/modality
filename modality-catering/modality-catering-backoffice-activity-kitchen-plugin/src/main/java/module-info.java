@@ -25,8 +25,8 @@ module modality.catering.backoffice.activity.kitchen.plugin {
     requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.uischeduler;
-    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
+    requires webfx.stack.cache.client;
     requires webfx.stack.db.query;
     requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel.activity;

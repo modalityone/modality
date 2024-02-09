@@ -12,7 +12,7 @@ import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
-import dev.webfx.platform.util.Dates;
+import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.db.query.QueryArgument;
 import dev.webfx.stack.db.query.QueryArgumentBuilder;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
@@ -67,12 +67,6 @@ public class KitchenActivity extends ViewDomainActivityBase
 
     @Override
     public Node buildUi() {
-/*
-        // Building the box (HBox) that will show the months to select (horizontally).
-        HBox monthsBox = new HBox(2, TimeUtil.generateYearMonthsRelativeToThisMonth(-3, 12).stream().map(this::createYearMonthNode).toArray(Node[]::new));
-        monthsBox.setPrefHeight(40);
-*/
-
         // Building the box (TimePane with just 1 row) that will show the days of the week (horizontally)
         CalendarLayout<DayOfWeek, DayOfWeek> daysOfWeekLayout = new CalendarLayout<>();
         daysOfWeekLayout.getChildren().setAll(TimeUtil.generateDaysOfWeek());
@@ -106,7 +100,7 @@ public class KitchenActivity extends ViewDomainActivityBase
         // Updating the query each time the selected month or organization change (this will make the reactive call sending the query to the server)
         FXProperties.runOnPropertiesChange(this::updateQueryArgument, selectedYearMonthProperty, FXOrganizationId.organizationIdProperty());
         FXProperties.runNowAndOnPropertiesChange(() -> mealsSelectionPane.setOrganization(FXOrganization.getOrganization()), FXOrganization.organizationProperty());
-        mealsSelectionPane.selectedItemsProperty().addListener((ListChangeListener<Item>) c -> rebuildDayPanels());
+        mealsSelectionPane.selectedItemsObservableList().addListener((ListChangeListener<Item>) c -> rebuildDayPanels());
 
         // Setting the initial selection = this month
         FXProperties.runNowAndOnPropertiesChange(() -> {
@@ -130,15 +124,6 @@ public class KitchenActivity extends ViewDomainActivityBase
         );
     }
 
-/*
-    private Node createYearMonthNode(YearMonth yearMonth) {
-        return TimeFacet.createYearMonthFacet(yearMonth)
-                .setSelectedProperty(FXProperties.compute(selectedYearMonthProperty, yearMonth::equals))
-                .setOnMouseClicked(e -> setSelectedYearMonth(yearMonth))
-                .getContainerNode();
-    }
-*/
-
     private Node createDateNode(LocalDate date) {
         AttendanceDayPanel attendanceDayPanel = attendanceDayPanels.get(date);
         if (attendanceDayPanel != null)
@@ -155,13 +140,7 @@ public class KitchenActivity extends ViewDomainActivityBase
             return;
 
         AbbreviationGenerator abbreviationGenerator = mealsSelectionPane.getAbbreviationGenerator();
-        List<Item> displayedMeals = mealsSelectionPane.selectedItemsProperty();
-            /*List<Item> displayedMeals = displayedMealNames.stream().map(name -> {
-                ItemImpl item = new ItemImpl(null, null);
-                item.setName(name);
-                item.setFieldValue("ord", 1);
-                return item;
-            }).collect(Collectors.toList());*/
+        List<Item> displayedMeals = mealsSelectionPane.selectedItemsObservableList();
         attendanceDayPanels.clear();
         for (LocalDate date : attendanceCounts.getDates()) {
             AttendanceDayPanel dayPanel = new AttendanceDayPanel(attendanceCounts, date, displayedMeals, abbreviationGenerator);
@@ -173,10 +152,7 @@ public class KitchenActivity extends ViewDomainActivityBase
 
         Platform.runLater(() -> {
             if (dietaryOptionSvgs.isEmpty()) {
-                //String monthString = MonthSelectionPanel.buildMonthDisplayText(selectedMonth);
-                //String msg = "No meal data for " + monthString + " for " + organization.getName();
-                String msg = "No meal data";
-                Label noDataLabel = new Label(msg);
+                Label noDataLabel = new Label("No meal data");
                 TextTheme.createPrimaryTextFacet(noDataLabel).requestedFont(NO_DATA_MSG_FONT).style();
                 noDataLabel.setWrapText(true);
                 keyPane.getChildren().setAll(noDataLabel);
@@ -202,7 +178,7 @@ public class KitchenActivity extends ViewDomainActivityBase
 
     // LOGIC
 
-    private static final String MEAL_COUNT_SQL = "select si.date, i.name, di.code, di.name, count(*), di.ord, di.graphic\n" +
+    private static final String MEALS_COUNT_SQL = "select si.date, i.name, di.code, di.name, count(*), di.ord, di.graphic\n" +
             "from attendance a\n" +
             "  join scheduled_item si on si.id = a.scheduled_item_id\n" +
             "  join document_line dl on dl.id=a.document_line_id\n" +
@@ -232,7 +208,8 @@ public class KitchenActivity extends ViewDomainActivityBase
         if (selectedYearMonth == null || organizationId == null)
             return;
 
-        QueryArgument queryArgument = new QueryArgumentBuilder().setStatement(MEAL_COUNT_SQL)
+        QueryArgument queryArgument = new QueryArgumentBuilder()
+                .setStatement(MEALS_COUNT_SQL)
                 .setDataSourceId(getDataSourceModel().getDataSourceId())
                 .setParameters(
                         organizationId.getPrimaryKey(),        // $1
@@ -255,8 +232,7 @@ public class KitchenActivity extends ViewDomainActivityBase
             displayedMealNames = new HashSet<>();
             dietaryOptionSvgs = new HashMap<>();
             for (int row = 0; row < result.getRowCount(); row++) {
-                String dateString = result.getValue(row, 0);
-                LocalDate date = Dates.toLocalDate(dateString);
+                LocalDate date = result.getValue(row, 0);
                 String meal = result.getValue(row, 1);
                 displayedMealNames.add(meal);
                 String dietaryOptionCode = result.getValue(row, 2);
@@ -276,6 +252,7 @@ public class KitchenActivity extends ViewDomainActivityBase
 
             rebuildDayPanels();
         });
+        reactiveQueryCall.setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-kitchen-mealsCount"));
         reactiveQueryCall.start();
     }
 
