@@ -6,7 +6,6 @@
 module modality.crm.server.authn.gateway.usernamepassword.plugin {
 
     // Direct dependencies modules
-    requires java.base;
     requires modality.crm.shared.authn;
     requires webfx.platform.async;
     requires webfx.platform.console;

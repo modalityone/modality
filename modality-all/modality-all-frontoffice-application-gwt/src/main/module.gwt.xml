@@ -78,6 +78,8 @@
     <inherits name="elemental2.promise.Promise"/>
     <!--=================================< elemental2-svg >=================================-->
     <inherits name="elemental2.svg.Svg"/>
+    <!--=============================< elemental2-webstorage >==============================-->
+    <inherits name="elemental2.webstorage.WebStorage"/>
     <!--====================================< gwt-user >====================================-->
     <inherits name="com.google.gwt.user.User"/>
     <!--=================================< java-nio-emul >==================================-->
@@ -222,7 +224,7 @@
     <source path="one/modality/event/frontoffice/activities/booking/fx"/>
     <source path="one/modality/event/frontoffice/activities/booking/map"/>
     <source path="one/modality/event/frontoffice/activities/booking/process"/>
-    <source path="one/modality/event/frontoffice/activities/booking/process/recurring"/>
+    <source path="one/modality/event/frontoffice/activities/booking/process/event"/>
     <source path="one/modality/event/frontoffice/activities/booking/routing"/>
     <source path="one/modality/event/frontoffice/activities/booking/views"/>
     <source path="one/modality/event/frontoffice/operations/routes/booking"/>
@@ -273,12 +275,10 @@
     <source path="dev/webfx/extras/visual/controls"/>
     <!--============================< webfx-extras-visual-grid >============================-->
     <source path="dev/webfx/extras/visual/controls/grid"/>
-    <!--=======================< webfx-extras-visual-grid-peers-gwt >=======================-->
-    <source path="dev/webfx/extras/cell/collator/grid"/>
+    <!--====================< webfx-extras-visual-grid-peers-gwt-j2cl >=====================-->
     <source path="dev/webfx/extras/visual/controls/grid/peers/gwt/html"/>
     <source path="dev/webfx/extras/visual/controls/grid/registry"/>
     <!--======================< webfx-extras-visual-grid-peers-base >=======================-->
-    <source path="dev/webfx/extras/cell/collator/grid"/>
     <source path="dev/webfx/extras/visual/controls/grid/peers/base"/>
     <!--=========================< webfx-extras-visual-peers-base >=========================-->
     <source path="dev/webfx/extras/visual/controls/peers/base"/>
@@ -286,40 +286,40 @@
     <source path="dev/webfx/extras/webtext"/>
     <!--========================< webfx-extras-webtext-peers-base >=========================-->
     <source path="dev/webfx/extras/webtext/peers/base"/>
-    <!--=========================< webfx-extras-webtext-peers-gwt >=========================-->
+    <!--======================< webfx-extras-webtext-peers-gwt-j2cl >=======================-->
     <source path="dev/webfx/extras/webtext/peers/gwt/html"/>
     <source path="dev/webfx/extras/webtext/registry"/>
     <!--===========================< webfx-extras-webtext-util >============================-->
     <source path="dev/webfx/extras/webtext/util"/>
-    <!--=================================< webfx-kit-gwt >==================================-->
-    <source path="dev/webfx/kit/launcher/spi/impl/gwt"/>
-    <source path="dev/webfx/kit/mapper/spi/impl/gwt"/>
     <!--======================< webfx-kit-javafxcontrols-peers-base >=======================-->
     <source path="dev/webfx/kit/mapper/peers/javafxcontrols/base"/>
-    <!--=======================< webfx-kit-javafxcontrols-peers-gwt >=======================-->
-    <source path="dev/webfx/kit/mapper/peers/javafxcontrols/gwt/html"/>
-    <!--=====================< webfx-kit-javafxcontrols-registry-gwt >======================-->
+    <!--====================< webfx-kit-javafxcontrols-peers-gwt-j2cl >=====================-->
+    <source path="dev/webfx/kit/mapper/peers/javafxcontrols/gwtj2cl/html"/>
+    <!--===================< webfx-kit-javafxcontrols-registry-gwt-j2cl >===================-->
     <source path="dev/webfx/kit/registry/javafxcontrols"/>
+    <!--=======================< webfx-kit-javafxgraphics-gwt-j2cl >========================-->
+    <source path="dev/webfx/kit/launcher/spi/impl/gwtj2cl"/>
+    <source path="dev/webfx/kit/mapper/spi/impl/gwtj2cl"/>
     <!--=========================< webfx-kit-javafxgraphics-peers >=========================-->
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics"/>
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics/markers"/>
     <!--======================< webfx-kit-javafxgraphics-peers-base >=======================-->
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics/base"/>
-    <!--=======================< webfx-kit-javafxgraphics-peers-gwt >=======================-->
-    <source path="dev/webfx/kit/mapper/peers/javafxgraphics/gwt/html"/>
-    <source path="dev/webfx/kit/mapper/peers/javafxgraphics/gwt/html/layoutmeasurable"/>
-    <source path="dev/webfx/kit/mapper/peers/javafxgraphics/gwt/shared"/>
-    <source path="dev/webfx/kit/mapper/peers/javafxgraphics/gwt/svg"/>
-    <source path="dev/webfx/kit/mapper/peers/javafxgraphics/gwt/util"/>
-    <!--=====================< webfx-kit-javafxgraphics-registry-gwt >======================-->
+    <!--====================< webfx-kit-javafxgraphics-peers-gwt-j2cl >=====================-->
+    <source path="dev/webfx/kit/mapper/peers/javafxgraphics/gwtj2cl/html"/>
+    <source path="dev/webfx/kit/mapper/peers/javafxgraphics/gwtj2cl/html/layoutmeasurable"/>
+    <source path="dev/webfx/kit/mapper/peers/javafxgraphics/gwtj2cl/shared"/>
+    <source path="dev/webfx/kit/mapper/peers/javafxgraphics/gwtj2cl/svg"/>
+    <source path="dev/webfx/kit/mapper/peers/javafxgraphics/gwtj2cl/util"/>
+    <!--===================< webfx-kit-javafxgraphics-registry-gwt-j2cl >===================-->
     <source path="dev/webfx/kit/registry/javafxgraphics"/>
     <!--=========================< webfx-kit-javafxweb-enginepeer >=========================-->
     <source path="dev/webfx/kit/mapper/peers/javafxweb/engine"/>
     <!--=========================< webfx-kit-javafxweb-peers-base >=========================-->
     <source path="dev/webfx/kit/mapper/peers/javafxweb/base"/>
-    <!--=========================< webfx-kit-javafxweb-peers-gwt >==========================-->
+    <!--=======================< webfx-kit-javafxweb-peers-gwt-j2cl >=======================-->
     <source path="dev/webfx/kit/mapper/peers/javafxweb/spi/gwt"/>
-    <!--========================< webfx-kit-javafxweb-registry-gwt >========================-->
+    <!--=====================< webfx-kit-javafxweb-registry-gwt-j2cl >======================-->
     <source path="dev/webfx/kit/registry/javafxweb"/>
     <!--===============================< webfx-kit-launcher >===============================-->
     <source path="dev/webfx/kit/launcher"/>
@@ -359,8 +359,8 @@
     <!--=============================< webfx-platform-browser >=============================-->
     <source path="dev/webfx/platform/browser"/>
     <source path="dev/webfx/platform/browser/spi"/>
-    <!--===========================< webfx-platform-browser-gwt >===========================-->
-    <source path="dev/webfx/platform/browser/spi/impl/gwt"/>
+    <!--========================< webfx-platform-browser-gwt-j2cl >=========================-->
+    <source path="dev/webfx/platform/browser/spi/impl/gwtj2cl"/>
     <!--==============================< webfx-platform-conf >===============================-->
     <source path="dev/webfx/platform/conf"/>
     <source path="dev/webfx/platform/conf/impl"/>
@@ -368,8 +368,8 @@
     <!--=============================< webfx-platform-console >=============================-->
     <source path="dev/webfx/platform/console"/>
     <source path="dev/webfx/platform/console/spi"/>
-    <!--===========================< webfx-platform-console-gwt >===========================-->
-    <source path="dev/webfx/platform/console/spi/impl/gwt"/>
+    <!--========================< webfx-platform-console-gwt-j2cl >=========================-->
+    <source path="dev/webfx/platform/console/spi/impl/gwtj2cl"/>
     <!--========================< webfx-platform-javabase-emul-gwt >========================-->
     <super-source includes="java/io/" path=""/>
     <super-source includes="java/lang/ref/" path=""/>
@@ -378,14 +378,63 @@
     <super-source includes="java/util/function/" path=""/>
     <super-source includes="java/util/regex/" path=""/>
     <super-source includes="netscape/javascript/" path=""/>
+    <!--=======================< webfx-platform-javabase-emul-j2cl >========================-->
+    <source path="dev/webfx/platform/j2cl"/>
+    <source path="dev/webfx/platform/javabase/emul/j2cl"/>
+    <!--=======================< webfx-platform-javatime-emul-j2cl >========================-->
+    <source path="javaemul/internal/annotations"/>
+    <source path="org/threeten/bp"/>
+    <source path="org/threeten/bp/chrono"/>
+    <source path="org/threeten/bp/format"/>
+    <source path="org/threeten/bp/jdk8"/>
+    <source path="org/threeten/bp/temporal"/>
+    <source path="org/threeten/bp/zone"/>
+    <source path="walkingkooka"/>
+    <source path="walkingkooka/build"/>
+    <source path="walkingkooka/collect"/>
+    <source path="walkingkooka/collect/iterable"/>
+    <source path="walkingkooka/collect/iterator"/>
+    <source path="walkingkooka/collect/list"/>
+    <source path="walkingkooka/collect/list/j2cl/java/util/concurrent"/>
+    <source path="walkingkooka/collect/map"/>
+    <source path="walkingkooka/collect/set"/>
+    <source path="walkingkooka/collect/stack"/>
+    <source path="walkingkooka/compare"/>
+    <source path="walkingkooka/io"/>
+    <source path="walkingkooka/j2cl/java/io"/>
+    <source path="walkingkooka/j2cl/java/io/string"/>
+    <source path="walkingkooka/j2cl/java/text"/>
+    <source path="walkingkooka/j2cl/java/time"/>
+    <source path="walkingkooka/j2cl/java/util/calendar"/>
+    <source path="walkingkooka/j2cl/java/util/currency"/>
+    <source path="walkingkooka/j2cl/java/util/locale/support"/>
+    <source path="walkingkooka/j2cl/java/util/timezone"/>
+    <source path="walkingkooka/j2cl/java/util/timezone/support"/>
+    <source path="walkingkooka/j2cl/java/util/timezone/zonerulesreader"/>
+    <source path="walkingkooka/j2cl/locale"/>
+    <source path="walkingkooka/locale"/>
+    <source path="walkingkooka/naming"/>
+    <source path="walkingkooka/predicate"/>
+    <source path="walkingkooka/predicate/character"/>
+    <source path="walkingkooka/reflect"/>
+    <source path="walkingkooka/stream"/>
+    <source path="walkingkooka/stream/push"/>
+    <source path="walkingkooka/test"/>
+    <source path="walkingkooka/text"/>
+    <source path="walkingkooka/text/cursor"/>
+    <source path="walkingkooka/text/printer"/>
+    <source path="walkingkooka/util"/>
+    <source path="walkingkooka/visit"/>
     <!--==============================< webfx-platform-meta >===============================-->
     <source path="dev/webfx/platform/meta"/>
     <!--===============================< webfx-platform-os >================================-->
     <source path="dev/webfx/platform/os"/>
     <source path="dev/webfx/platform/os/spi"/>
     <source path="dev/webfx/platform/os/spi/impl"/>
-    <!--=============================< webfx-platform-os-gwt >==============================-->
-    <source path="dev/webfx/platform/os/spi/impl/gwt"/>
+    <!--===========================< webfx-platform-os-gwt-j2cl >===========================-->
+    <source path="dev/webfx/platform/os/spi/impl/gwtj2cl"/>
+    <!--=============================< webfx-platform-reflect >=============================-->
+    <source path="dev/webfx/platform/reflect"/>
     <!--============================< webfx-platform-resource >=============================-->
     <source path="dev/webfx/platform/resource"/>
     <source path="dev/webfx/platform/resource/spi"/>
@@ -398,13 +447,13 @@
     <source path="dev/webfx/platform/shutdown"/>
     <source path="dev/webfx/platform/shutdown/spi"/>
     <source path="dev/webfx/platform/shutdown/spi/impl"/>
-    <!--==========================< webfx-platform-shutdown-gwt >===========================-->
-    <source path="dev/webfx/platform/shutdown/spi/impl/gwt"/>
+    <!--========================< webfx-platform-shutdown-gwt-j2cl >========================-->
+    <source path="dev/webfx/platform/shutdown/spi/impl/gwtj2cl"/>
     <!--=============================< webfx-platform-storage >=============================-->
     <source path="dev/webfx/platform/storage"/>
     <source path="dev/webfx/platform/storage/spi"/>
-    <!--===========================< webfx-platform-storage-gwt >===========================-->
-    <source path="dev/webfx/platform/storage/spi/impl/gwt"/>
+    <!--========================< webfx-platform-storage-gwt-j2cl >=========================-->
+    <source path="dev/webfx/platform/storage/spi/impl/gwtj2cl"/>
     <!--==========================< webfx-platform-substitution >===========================-->
     <source path="dev/webfx/platform/substitution"/>
     <source path="dev/webfx/platform/substitution/spi"/>
@@ -420,14 +469,14 @@
     <source path="dev/webfx/platform/uischeduler"/>
     <source path="dev/webfx/platform/uischeduler/spi"/>
     <source path="dev/webfx/platform/uischeduler/spi/impl"/>
-    <!--=========================< webfx-platform-uischeduler-gwt >=========================-->
-    <source path="dev/webfx/platform/uischeduler/spi/impl/gwt"/>
+    <!--======================< webfx-platform-uischeduler-gwt-j2cl >=======================-->
+    <source path="dev/webfx/platform/uischeduler/spi/impl/gwtj2cl"/>
     <!--============================< webfx-platform-useragent >============================-->
     <source path="dev/webfx/platform/useragent"/>
     <source path="dev/webfx/platform/useragent/spi"/>
     <source path="dev/webfx/platform/useragent/spi/impl"/>
-    <!--==========================< webfx-platform-useragent-gwt >==========================-->
-    <source path="dev/webfx/platform/useragent/spi/impl/gwt"/>
+    <!--=======================< webfx-platform-useragent-gwt-j2cl >========================-->
+    <source path="dev/webfx/platform/useragent/spi/impl/gwtj2cl"/>
     <!--==============================< webfx-platform-util >===============================-->
     <source path="dev/webfx/platform/util"/>
     <source path="dev/webfx/platform/util/collection"/>
@@ -435,22 +484,22 @@
     <source path="dev/webfx/platform/util/serviceloader"/>
     <source path="dev/webfx/platform/util/tuples"/>
     <source path="dev/webfx/platform/util/uuid"/>
+    <!--============================< webfx-platform-util-time >============================-->
+    <source path="dev/webfx/platform/util/time"/>
     <!--==========================< webfx-platform-windowhistory >==========================-->
     <source path="dev/webfx/platform/windowhistory"/>
     <source path="dev/webfx/platform/windowhistory/spi"/>
     <source path="dev/webfx/platform/windowhistory/spi/impl"/>
-    <!--========================< webfx-platform-windowhistory-gwt >========================-->
-    <source path="dev/webfx/platform/windowhistory/spi/impl/gwt"/>
-    <source path="dev/webfx/platform/windowhistory/spi/impl/gwt/jsinterop"/>
+    <!--=====================< webfx-platform-windowhistory-gwt-j2cl >======================-->
+    <source path="dev/webfx/platform/windowhistory/spi/impl/gwtj2cl"/>
     <!--========================< webfx-platform-windowhistory-web >========================-->
     <source path="dev/webfx/platform/windowhistory/spi/impl/web"/>
     <!--=========================< webfx-platform-windowlocation >==========================-->
     <source path="dev/webfx/platform/windowlocation"/>
     <source path="dev/webfx/platform/windowlocation/spi"/>
     <source path="dev/webfx/platform/windowlocation/spi/impl"/>
-    <!--=======================< webfx-platform-windowlocation-gwt >========================-->
-    <source path="dev/webfx/platform/windowlocation/spi/impl/gwt"/>
-    <source path="dev/webfx/platform/windowlocation/spi/impl/gwt/jsinterop"/>
+    <!--=====================< webfx-platform-windowlocation-gwt-j2cl >=====================-->
+    <source path="dev/webfx/platform/windowlocation/spi/impl/gwtj2cl"/>
     <!--===============================< webfx-stack-authn >================================-->
     <source path="dev/webfx/stack/authn"/>
     <source path="dev/webfx/stack/authn/serial"/>
@@ -529,8 +578,8 @@
     <!--===========================< webfx-stack-com-websocket >============================-->
     <source path="dev/webfx/stack/com/websocket"/>
     <source path="dev/webfx/stack/com/websocket/spi"/>
-    <!--=========================< webfx-stack-com-websocket-gwt >==========================-->
-    <source path="dev/webfx/stack/com/websocket/spi/impl/gwt"/>
+    <!--=======================< webfx-stack-com-websocket-gwt-j2cl >=======================-->
+    <source path="dev/webfx/stack/com/websocket/spi/impl/gwtj2cl"/>
     <!--============================< webfx-stack-db-datascope >============================-->
     <source path="dev/webfx/stack/db/datascope"/>
     <source path="dev/webfx/stack/db/datascope/aggregate"/>

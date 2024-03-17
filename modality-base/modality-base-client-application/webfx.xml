@@ -18,6 +18,7 @@
             <module transitive="true">webfx-stack-routing-activity</module> <!-- for Activity in constructor -->
             <module transitive="true">webfx-platform-util</module> <!-- for Factory in constructor -->
             <undetected-module>javafx-controls</undetected-module>
+            <undetected-package>java.time</undetected-package>
         </used-by-source-modules>
 
         <resource-module>modality-base-client-css</resource-module>

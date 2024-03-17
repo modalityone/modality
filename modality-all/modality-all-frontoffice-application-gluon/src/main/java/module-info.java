@@ -11,7 +11,7 @@ module modality.all.frontoffice.application.gluon {
     requires modality.base.client.css;
     requires webfx.extras.visual.grid.peers.openjfx;
     requires webfx.extras.webtext.peers.openjfx;
-    requires webfx.kit.openjfx;
+    requires webfx.kit.javafxgraphics.openjfx;
     requires webfx.platform.ast.factory.generic;
     requires webfx.platform.boot.java;
     requires webfx.platform.browser.gluon;

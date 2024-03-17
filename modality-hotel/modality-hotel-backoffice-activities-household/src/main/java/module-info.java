@@ -6,8 +6,8 @@
 module modality.hotel.backoffice.activities.household {
 
     // Direct dependencies modules
-    requires java.base;
     requires javafx.base;
+    requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.activity.organizationdependent;
     requires modality.base.client.gantt.fx;

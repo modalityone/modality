@@ -6,7 +6,6 @@
 module modality.ecommerce.payment.delegated.server {
 
     // Direct dependencies modules
-    requires java.base;
     requires modality.ecommerce.payment.delegated;
     requires modality.ecommerce.payment.gateway.delegated;
     requires webfx.platform.async;

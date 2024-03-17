@@ -6,8 +6,8 @@
 module modality.base.backoffice.activity.home.plugin {
 
     // Direct dependencies modules
-    requires java.base;
     requires javafx.base;
+    requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.activity;
     requires modality.base.client.application;

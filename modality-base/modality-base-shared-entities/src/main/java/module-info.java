@@ -6,7 +6,6 @@
 module modality.base.shared.entities {
 
     // Direct dependencies modules
-    requires java.base;
     requires modality.base.shared.domainmodel;
     requires webfx.platform.util;
     requires webfx.stack.orm.dql;

@@ -2,7 +2,7 @@ package one.modality.base.shared.domainmodel.formatters;
 
 import dev.webfx.extras.type.PrimType;
 import dev.webfx.extras.type.Type;
-import dev.webfx.platform.util.Dates;
+import dev.webfx.platform.util.time.Times;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.orm.domainmodel.formatter.ValueFormatter;
 import dev.webfx.stack.orm.domainmodel.formatter.ValueParser;
@@ -28,7 +28,7 @@ public final class DateFormatter implements ValueFormatter, ValueParser {
 
     @Override
     public Object formatValue(Object value) {
-        return Dates.format(value, "dd/MM/yyyy");
+        return Times.format(value, "dd/MM/yyyy");
     }
 
     @Override

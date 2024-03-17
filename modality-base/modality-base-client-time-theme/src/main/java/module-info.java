@@ -6,7 +6,6 @@
 module modality.base.client.time.theme {
 
     // Direct dependencies modules
-    requires java.base;
     requires javafx.graphics;
     requires webfx.extras.theme;
     requires webfx.extras.util.color;

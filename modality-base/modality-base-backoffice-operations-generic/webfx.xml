@@ -8,7 +8,10 @@
     </exported-packages>
 
     <dependencies>
-        <used-by-source-modules/>
+        <used-by-source-modules>
+            <undetected-module>javafx-controls</undetected-module>
+            <undetected-package>java.time</undetected-package>
+        </used-by-source-modules>
     </dependencies>
 
 </project>

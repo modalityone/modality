@@ -18,10 +18,6 @@ import one.modality.base.shared.entities.Organization;
  */
 public class RestMapModuleBooter implements ApplicationModuleBooter {
 
-    private final static String organizationStaticMapUrlTemplate = SourcesConfig.getSourcesRootConfig()
-            .childConfigAt("modality.base.server.rest.organizationmap")
-            .getString("organizationStaticMapUrl");
-
     private WebClient webClient;
 
     @Override
@@ -80,6 +76,9 @@ public class RestMapModuleBooter implements ApplicationModuleBooter {
             ctx.response().setStatusCode(406).send(); // Not acceptable
             return;
         }
+        String organizationStaticMapUrlTemplate = SourcesConfig.getSourcesRootConfig()
+                .childConfigAt("modality.base.server.rest.organizationmap")
+                .getString("organizationStaticMapUrl");
         String url = organizationStaticMapUrlTemplate
                 .replace("{latitude}",  Float.toString(latitude))
                 .replace("{longitude}", Float.toString(longitude))
