@@ -6,7 +6,7 @@
 module modality.ecommerce.backoffice.operations.moneyflow {
 
     // Direct dependencies modules
-    requires java.base;
+    requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.shared.entities;
     requires webfx.platform.async;

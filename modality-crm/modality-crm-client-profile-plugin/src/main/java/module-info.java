@@ -3,7 +3,6 @@
 module modality.crm.client.profile.plugin {
 
     // Direct dependencies modules
-    requires java.base;
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.activity;

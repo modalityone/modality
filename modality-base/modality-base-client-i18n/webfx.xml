@@ -17,6 +17,7 @@
     <dependencies>
         <used-by-source-modules>
             <undetected-module>javafx-base</undetected-module>
+            <undetected-package>java.time</undetected-package>
         </used-by-source-modules>
         <plugin-module>modality-base-client-icons</plugin-module>
     </dependencies>

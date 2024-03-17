@@ -11,7 +11,7 @@ module modality.all.frontoffice.application.openjfx {
     requires modality.base.client.css;
     requires webfx.extras.visual.grid.peers.openjfx;
     requires webfx.extras.webtext.peers.openjfx;
-    requires webfx.kit.openjfx;
+    requires webfx.kit.javafxgraphics.openjfx;
     requires webfx.kit.platform.browser.openjfx;
     requires webfx.kit.platform.visibility.openjfx;
     requires webfx.platform.ast.factory.generic;

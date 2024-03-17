@@ -7,7 +7,6 @@ module modality.ecommerce.payment.gateway.direct.authorizedotnet.plugin {
 
     // Direct dependencies modules
     requires anet.java.sdk;
-    requires java.base;
     requires modality.ecommerce.payment.direct;
     requires modality.ecommerce.payment.gateway.direct;
     requires webfx.platform.async;

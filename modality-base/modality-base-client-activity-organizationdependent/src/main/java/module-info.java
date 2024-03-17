@@ -7,6 +7,7 @@ module modality.base.client.activity.organizationdependent {
 
     // Direct dependencies modules
     requires javafx.base;
+    requires javafx.controls;
     requires modality.base.client.activity;
     requires modality.base.client.presentationmodel;
     requires modality.crm.backoffice.organization.fx;

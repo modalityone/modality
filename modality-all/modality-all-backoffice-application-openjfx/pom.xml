@@ -109,13 +109,13 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-kit-launcher</artifactId>
+            <artifactId>webfx-kit-javafxgraphics-openjfx</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-kit-openjfx</artifactId>
+            <artifactId>webfx-kit-launcher</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

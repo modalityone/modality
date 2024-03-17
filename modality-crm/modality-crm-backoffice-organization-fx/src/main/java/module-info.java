@@ -6,7 +6,6 @@
 module modality.crm.backoffice.organization.fx {
 
     // Direct dependencies modules
-    requires java.base;
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;

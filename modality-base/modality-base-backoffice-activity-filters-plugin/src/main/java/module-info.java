@@ -6,7 +6,6 @@
 module modality.base.backoffice.activity.filters.plugin {
 
     // Direct dependencies modules
-    requires java.base;
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;

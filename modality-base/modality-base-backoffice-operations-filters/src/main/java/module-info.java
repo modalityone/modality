@@ -6,6 +6,7 @@
 module modality.base.backoffice.operations.filters {
 
     // Direct dependencies modules
+    requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.shared.entities;
     requires webfx.platform.async;

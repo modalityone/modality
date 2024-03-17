@@ -3,7 +3,6 @@
 module modality.base.backoffice.mainframe.headertabs.fx {
 
     // Direct dependencies modules
-    requires java.base;
     requires javafx.base;
     requires modality.base.client.tile;
 

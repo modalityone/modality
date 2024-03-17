@@ -6,7 +6,6 @@
 module modality.base.backoffice.gantt.canvas {
 
     // Direct dependencies modules
-    requires java.base;
     requires javafx.base;
     requires javafx.graphics;
     requires modality.base.client.gantt.fx;

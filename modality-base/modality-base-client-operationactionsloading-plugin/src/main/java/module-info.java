@@ -6,7 +6,6 @@
 module modality.base.client.operationactionsloading.plugin {
 
     // Direct dependencies modules
-    requires java.base;
     requires javafx.base;
     requires modality.base.client.conf;
     requires webfx.platform.boot;
