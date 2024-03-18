@@ -28,7 +28,11 @@ public interface Item extends
         return getForeignEntity("family");
     }
 
-    default int getOrd() {
+    default void setOrd(Integer ord) {
+        setFieldValue("ord", ord);
+    }
+
+    default Integer getOrd() {
         return getIntegerFieldValue("ord");
     }
 
