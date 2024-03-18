@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.activities.booking.process.recurring;
+package one.modality.event.frontoffice.activities.booking.process.event;
 
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.routing.uirouter.UiRoute;
@@ -7,16 +7,16 @@ import dev.webfx.stack.routing.uirouter.impl.UiRouteImpl;
 /**
  * @author Bruno Salmon
  */
-public final class RecurringEventUiRoute extends UiRouteImpl {
+public final class BookEventUiRoute extends UiRouteImpl {
 
-    public RecurringEventUiRoute() {
+    public BookEventUiRoute() {
         super(uiRoute());
     }
 
     public static UiRoute<?> uiRoute() {
-        return UiRoute.create(RecurringEventRouting.getPath()
+        return UiRoute.create(BookEventRouting.getPath()
                 , false
-                , RecurringEventActivity::new
+                , BookEventActivity::new
                 , ViewDomainActivityContextFinal::new
         );
     }

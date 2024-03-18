@@ -7,7 +7,7 @@ import one.modality.base.shared.entities.Event;
 import one.modality.event.frontoffice.activities.booking.browser.BrowserUtil;
 import one.modality.event.frontoffice.activities.booking.fx.FXEvent;
 import one.modality.event.frontoffice.activities.booking.fx.FXEventAggregate;
-import one.modality.event.frontoffice.activities.booking.process.recurring.RecurringEventRouting;
+import one.modality.event.frontoffice.activities.booking.process.event.BookEventRouting;
 
 /**
  * @author Bruno Salmon
@@ -34,7 +34,7 @@ public final class BookingStarter {
     private static void startKbs3EventBooking(Event event) {
         FXEvent.setEvent(event);
         FXEventAggregate.setEventAggregate(new EventAggregate(event));
-        WindowHistory.getProvider().push(RecurringEventRouting.getRecurringEventPath(event));
+        WindowHistory.getProvider().push(BookEventRouting.getBookEventPath(event));
     }
 
 }
