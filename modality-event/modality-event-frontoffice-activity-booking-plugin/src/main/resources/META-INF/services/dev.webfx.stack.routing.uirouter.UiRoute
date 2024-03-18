@@ -1,2 +1,2 @@
 one.modality.event.frontoffice.activities.booking.BookingUiRoute
-one.modality.event.frontoffice.activities.booking.process.recurring.RecurringEventUiRoute
+one.modality.event.frontoffice.activities.booking.process.event.BookEventUiRoute
