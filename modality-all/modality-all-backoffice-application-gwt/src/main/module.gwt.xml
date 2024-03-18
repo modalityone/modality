@@ -344,6 +344,10 @@
     <source path="one/modality/ecommerce/payment/custom/buscall/serial"/>
     <!--====================< modality-ecommerce-payment-custom-remote >====================-->
     <source path="one/modality/ecommerce/payment/custom/spi/impl/remote"/>
+    <!--===========< modality-event-backoffice-activity-recurringevents-plugin >============-->
+    <source path="one/modality/event/backoffice/activities/recurringevents"/>
+    <source path="one/modality/event/backoffice/activities/recurringevents/routing"/>
+    <source path="one/modality/event/backoffice/operations/routes/recurringevents"/>
     <!--=======================< modality-event-backoffice-event-fx >=======================-->
     <source path="one/modality/event/backoffice/event/fx"/>
     <source path="one/modality/event/backoffice/event/fx/impl"/>
