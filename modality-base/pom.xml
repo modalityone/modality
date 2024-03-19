@@ -18,38 +18,56 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>modality-base-backoffice-activities-all</module>
-        <module>modality-base-backoffice-activities-filters</module>
-        <module>modality-base-backoffice-activities-home</module>
-        <module>modality-base-backoffice-activities-operations</module>
+        <module>modality-base-backoffice-activity-filters-plugin</module>
+        <module>modality-base-backoffice-activity-home-plugin</module>
+        <module>modality-base-backoffice-activity-operations-plugin</module>
+        <module>modality-base-backoffice-application</module>
+        <module>modality-base-backoffice-gantt-canvas</module>
+        <module>modality-base-backoffice-gantt-canvas-basic-plugin</module>
+        <module>modality-base-backoffice-mainframe-activity</module>
+        <module>modality-base-backoffice-mainframe-headernode</module>
+        <module>modality-base-backoffice-mainframe-headertabs-fx</module>
         <module>modality-base-backoffice-masterslave</module>
+        <module>modality-base-backoffice-max-plugin</module>
+        <module>modality-base-backoffice-min-plugin</module>
         <module>modality-base-backoffice-operations-filters</module>
         <module>modality-base-backoffice-operations-generic</module>
         <module>modality-base-backoffice-operations-snapshot</module>
         <module>modality-base-client-activity</module>
         <module>modality-base-client-activity-organizationdependent</module>
         <module>modality-base-client-application</module>
-        <module>modality-base-client-busconfig</module>
+        <module>modality-base-client-conf</module>
         <module>modality-base-client-css</module>
         <module>modality-base-client-css-java</module>
         <module>modality-base-client-css-web</module>
         <module>modality-base-client-entities</module>
-        <module>modality-base-client-gantt-canvas</module>
         <module>modality-base-client-gantt-fx</module>
         <module>modality-base-client-i18n</module>
         <module>modality-base-client-icons</module>
-        <module>modality-base-client-navigationarrows-java</module>
-        <module>modality-base-client-operationactionsloading</module>
+        <module>modality-base-client-mainframe-dialogarea-fx</module>
+        <module>modality-base-client-max-plugin</module>
+        <module>modality-base-client-min-plugin</module>
+        <module>modality-base-client-navigationarrows-java-plugin</module>
+        <module>modality-base-client-operationactionsloading-plugin</module>
         <module>modality-base-client-presentationmodel</module>
+        <module>modality-base-client-profile-fx</module>
+        <module>modality-base-client-tile</module>
         <module>modality-base-client-time-theme</module>
         <module>modality-base-client-util</module>
         <module>modality-base-client-validation</module>
-        <module>modality-base-frontoffice-activities-account</module>
-        <module>modality-base-frontoffice-activities-alerts</module>
+        <module>modality-base-frontoffice-activity-account-plugin</module>
+        <module>modality-base-frontoffice-activity-alerts-plugin</module>
+        <module>modality-base-frontoffice-application</module>
+        <module>modality-base-frontoffice-mainframe-activity</module>
+        <module>modality-base-frontoffice-mainframe-backgroundnode-fx</module>
+        <module>modality-base-frontoffice-max-plugin</module>
+        <module>modality-base-frontoffice-min-plugin</module>
         <module>modality-base-frontoffice-utility</module>
-        <module>modality-base-server-application-all</module>
-        <module>modality-base-server-application-min</module>
-        <module>modality-base-server-datasource</module>
+        <module>modality-base-server-datasource-plugin</module>
+        <module>modality-base-server-geoimport-plugin</module>
+        <module>modality-base-server-max-plugin</module>
+        <module>modality-base-server-min-plugin</module>
+        <module>modality-base-server-rest-map-vertx-plugin</module>
         <module>modality-base-shared-domainmodel</module>
         <module>modality-base-shared-entities</module>
     </modules>

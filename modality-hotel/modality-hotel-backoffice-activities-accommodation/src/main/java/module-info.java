@@ -6,12 +6,14 @@
 module modality.hotel.backoffice.activities.accommodation {
 
     // Direct dependencies modules
-    requires java.base;
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.backoffice.mainframe.headertabs.fx;
     requires modality.base.client.activity.organizationdependent;
     requires modality.base.client.gantt.fx;
+    requires modality.base.client.mainframe.dialogarea.fx;
+    requires modality.base.client.tile;
     requires modality.base.shared.domainmodel;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
@@ -21,11 +23,15 @@ module modality.hotel.backoffice.activities.accommodation {
     requires webfx.extras.theme;
     requires webfx.extras.time.layout;
     requires webfx.extras.type;
-    requires webfx.extras.util.layout;
+    requires webfx.extras.util.control;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
     requires webfx.kit.util;
+    requires webfx.platform.console;
+    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
+    requires webfx.stack.orm.datasourcemodel.service;
+    requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
@@ -37,6 +43,7 @@ module modality.hotel.backoffice.activities.accommodation {
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.controls;
+    requires webfx.stack.ui.dialog;
     requires webfx.stack.ui.operation;
     requires webfx.stack.ui.operation.action;
 

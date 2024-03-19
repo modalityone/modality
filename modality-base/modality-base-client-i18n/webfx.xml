@@ -17,13 +17,9 @@
     <dependencies>
         <used-by-source-modules>
             <undetected-module>javafx-base</undetected-module>
+            <undetected-package>java.time</undetected-package>
         </used-by-source-modules>
         <plugin-module>modality-base-client-icons</plugin-module>
     </dependencies>
-
-    <embed-resources>
-        <resource>one/modality/base/client/services/i18n/dictionaries/en.json</resource>
-        <resource>one/modality/base/client/services/i18n/dictionaries/fr.json</resource>
-    </embed-resources>
 
 </project>

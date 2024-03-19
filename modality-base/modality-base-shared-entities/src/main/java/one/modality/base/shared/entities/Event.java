@@ -26,6 +26,10 @@ public interface Event extends Entity,
         return getLocalDateFieldValue("endDate");
     }
 
+    default LocalDate getOpeningDate() {
+        return getLocalDateFieldValue("openingDate");
+    }
+
     default void setLive(Boolean live) {
         setFieldValue("live", live);
     }
@@ -44,6 +48,14 @@ public interface Event extends Entity,
 
     default Label getFeesBottomLabel() {
         return getForeignEntity("feesBottomLabel");
+    }
+
+    default void setKbs3(Boolean kbs3) {
+        setFieldValue("kbs3", kbs3);
+    }
+
+    default Boolean isKbs3() {
+        return getBooleanFieldValue("kbs3");
     }
 
 

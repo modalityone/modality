@@ -6,13 +6,14 @@
 module modality.base.shared.domainmodel {
 
     // Direct dependencies modules
-    requires java.base;
     requires javafx.base;
     requires webfx.extras.type;
+    requires webfx.platform.ast;
+    requires webfx.platform.ast.json.plugin;
     requires webfx.platform.async;
-    requires webfx.platform.json;
     requires webfx.platform.resource;
     requires webfx.platform.util;
+    requires webfx.platform.util.time;
     requires webfx.stack.com.serial;
     requires webfx.stack.db.query;
     requires webfx.stack.orm.datasourcemodel.service;

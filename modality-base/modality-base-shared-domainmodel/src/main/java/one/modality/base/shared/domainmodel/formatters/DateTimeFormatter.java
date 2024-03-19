@@ -4,7 +4,7 @@ import dev.webfx.stack.orm.domainmodel.formatter.ValueFormatter;
 import dev.webfx.stack.orm.domainmodel.formatter.ValueParser;
 import dev.webfx.extras.type.PrimType;
 import dev.webfx.extras.type.Type;
-import dev.webfx.platform.util.Dates;
+import dev.webfx.platform.util.time.Times;
 
 import java.time.LocalDateTime;
 
@@ -26,7 +26,7 @@ public final class DateTimeFormatter implements ValueFormatter, ValueParser {
 
     @Override
     public Object formatValue(Object value) {
-        return Dates.format(value, "dd/MM/yyyy HH:mm:ss");
+        return Times.format(value, "dd/MM/yyyy HH:mm:ss");
     }
 
     @Override

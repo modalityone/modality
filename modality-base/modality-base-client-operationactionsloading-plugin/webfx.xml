@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <description>Module responsible for loading all information about operations from the database on client start.</description>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <providers>
+        <provider interface="dev.webfx.platform.boot.spi.ApplicationModuleBooter">one.modality.base.client.operationactionsloading.ModalityClientOperationActionsLoader</provider>
+    </providers>
+
+    <dependencies>
+        <used-by-source-modules>
+            <undetected-module>javafx-base</undetected-module>
+            <undetected-package>java.time</undetected-package>
+        </used-by-source-modules>
+    </dependencies>
+
+</project>

@@ -7,17 +7,20 @@
         <source-packages/>
     </exported-packages>
 
-    <providers>
-        <provider interface="javafx.application.Application">one.modality.all.frontoffice.application.ModalityFrontOfficeApplication</provider>
-    </providers>
-
     <dependencies>
         <used-by-source-modules/>
 
+        <!-- Allow configuration variables from environment in Java executables (OpenJFX or Gluon) -->
+        <plugin-module executable-target="java">webfx-platform-substitution-var-env-plugin</plugin-module>
+        <!-- Allow configuration variables from local storage in GWT executables -->
+        <plugin-module executable-target="gwt">webfx-platform-substitution-var-localstorage-plugin</plugin-module>
+        <plugin-module executable-target="gwt">webfx-platform-substitution-var-windowlocation-plugin</plugin-module>
+
+        <!-- Base activities -->
+        <plugin-module>modality-base-frontoffice-max-plugin</plugin-module>
+
         <!-- Event activities -->
-        <plugin-module>modality-event-frontoffice-activities-booking</plugin-module>
-        <plugin-module>modality-base-frontoffice-activities-alerts</plugin-module>
-        <plugin-module>modality-base-frontoffice-activities-account</plugin-module>
+        <plugin-module>modality-event-frontoffice-max-plugin</plugin-module>
 
 
     </dependencies>

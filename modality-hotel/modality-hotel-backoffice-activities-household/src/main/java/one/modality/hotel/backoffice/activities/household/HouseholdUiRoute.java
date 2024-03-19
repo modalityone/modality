@@ -17,7 +17,7 @@ public final class HouseholdUiRoute extends UiRouteImpl {
 
     public static UiRoute<?> uiRoute() {
         return UiRoute.createRegex(PathBuilder.toRegexPath(HouseholdRouting.getAnyPath())
-                , false
+                , true
                 , HouseholdActivity::new
                 , ViewDomainActivityContextFinal::new
         );

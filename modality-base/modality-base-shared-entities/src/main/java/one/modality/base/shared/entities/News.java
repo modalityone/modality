@@ -1,9 +1,9 @@
 package one.modality.base.shared.entities;
 
 import dev.webfx.stack.orm.entity.EntityId;
-import one.modality.base.shared.entities.markers.EntityHasDate;
+import one.modality.base.shared.entities.markers.EntityHasLocalDateTime;
 
-public interface News extends EntityHasDate {
+public interface News extends EntityHasLocalDateTime {
 
     default void setChannel(Object channel) {
         setForeignField("channel", channel);
@@ -17,12 +17,12 @@ public interface News extends EntityHasDate {
         return getForeignEntity("channel");
     }
 
-    default void setChannelNewsId(String channelNewsId) {
+    default void setChannelNewsId(Integer channelNewsId) {
         setFieldValue("channelNewsId", channelNewsId);
     }
 
-    default String getChannelNewsId() {
-        return getStringFieldValue("channelNewsId");
+    default Integer getChannelNewsId() {
+        return getIntegerFieldValue("channelNewsId");
     }
 
     default void setTitle(String title) {
@@ -41,12 +41,12 @@ public interface News extends EntityHasDate {
         return getStringFieldValue("excerpt");
     }
 
-    default void setContent(String content) {
-        setFieldValue("content", content);
+    default void setLang(String lang) {
+        setFieldValue("lang", lang);
     }
 
-    default String getContent() {
-        return getStringFieldValue("content");
+    default String getLang() {
+        return getStringFieldValue("lang");
     }
 
     default void setImageUrl(String imageUrl) {
@@ -63,6 +63,18 @@ public interface News extends EntityHasDate {
 
     default String getLinkUrl() {
         return getStringFieldValue("linkUrl");
+    }
+
+    default void setTopic(Object channel) {
+        setForeignField("topic", channel);
+    }
+
+    default EntityId getTopicId() {
+        return getForeignEntityId("topic");
+    }
+
+    default Topic getTopic() {
+        return getForeignEntity("topic");
     }
 
 }

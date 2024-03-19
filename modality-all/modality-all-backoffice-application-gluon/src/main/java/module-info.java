@@ -6,6 +6,7 @@
 module modality.all.backoffice.application.gluon {
 
     // Direct dependencies modules
+    requires javafx.web;
     requires modality.all.backoffice.application;
     requires modality.base.client.css;
     requires modality.ecommerce.payment.custom.buscall;
@@ -13,10 +14,10 @@ module modality.all.backoffice.application.gluon {
     requires webfx.extras.visual.charts.peers.openjfx;
     requires webfx.extras.visual.grid.peers.openjfx;
     requires webfx.extras.webtext.peers.openjfx;
-    requires webfx.kit.openjfx;
+    requires webfx.kit.javafxgraphics.openjfx;
+    requires webfx.platform.ast.factory.generic;
     requires webfx.platform.boot.java;
     requires webfx.platform.console.java;
-    requires webfx.platform.json.java;
     requires webfx.platform.os.gluon;
     requires webfx.platform.resource.gluon;
     requires webfx.platform.scheduler.java;
@@ -35,17 +36,16 @@ module modality.all.backoffice.application.gluon {
     requires webfx.stack.com.bus.json.client;
     requires webfx.stack.com.bus.json.client.websocket.java;
     requires webfx.stack.com.websocket.java;
-    requires webfx.stack.conf.format.json;
     requires webfx.stack.db.query.buscall;
+    requires webfx.stack.db.querypush.buscall;
+    requires webfx.stack.db.querypush.client.simple;
     requires webfx.stack.db.querysubmit.java.jdbc;
     requires webfx.stack.db.submit.buscall;
     requires webfx.stack.orm.dql.query.interceptor;
     requires webfx.stack.orm.dql.querypush.interceptor;
     requires webfx.stack.orm.dql.submit.interceptor;
+    requires webfx.stack.push.client.simple;
     requires webfx.stack.session.client;
     requires webfx.stack.ui.fxraiser.json;
-
-    // Resources packages
-    opens dev.webfx.platform.meta.exe;
 
 }

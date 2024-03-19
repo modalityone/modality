@@ -7,6 +7,7 @@ module modality.event.client.activity.eventdependent {
 
     // Direct dependencies modules
     requires javafx.base;
+    requires javafx.controls;
     requires modality.base.client.activity;
     requires modality.base.client.activity.organizationdependent;
     requires modality.base.client.presentationmodel;

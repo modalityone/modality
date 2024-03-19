@@ -1,7 +1,7 @@
 package one.modality.ecommerce.payment.custom.buscall.serial;
 
-import dev.webfx.platform.json.JsonObject;
-import dev.webfx.platform.json.ReadOnlyJsonObject;
+import dev.webfx.platform.ast.AstObject;
+import dev.webfx.platform.ast.ReadOnlyAstObject;
 import dev.webfx.stack.com.serial.spi.impl.SerialCodecBase;
 import one.modality.ecommerce.payment.custom.InitiateCustomPaymentArgument;
 
@@ -21,7 +21,7 @@ public final class InitiateCustomPaymentArgumentSerialCodec extends SerialCodecB
     }
 
     @Override
-    public void encodeToJson(InitiateCustomPaymentArgument arg, JsonObject json) {
+    public void encodeToJson(InitiateCustomPaymentArgument arg, AstObject json) {
         json.set(AMOUNT_KEY, arg.getAmount());
         json.set(CURRENCY_KEY, arg.getCurrency());
         json.set(PRODUCT_NAME_KEY, arg.getProductName());
@@ -32,7 +32,7 @@ public final class InitiateCustomPaymentArgumentSerialCodec extends SerialCodecB
     }
 
     @Override
-    public InitiateCustomPaymentArgument decodeFromJson(ReadOnlyJsonObject json) {
+    public InitiateCustomPaymentArgument decodeFromJson(ReadOnlyAstObject json) {
         return new InitiateCustomPaymentArgument(
                 json.getLong(AMOUNT_KEY),
                 json.getString(CURRENCY_KEY),

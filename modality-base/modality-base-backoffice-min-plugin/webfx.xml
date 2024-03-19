@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <description>Convenient module that embeds the minimal back-office modules for the Base layer.</description>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+
+        <plugin-module>modality-base-backoffice-application</plugin-module>
+
+        <plugin-module>modality-base-client-min-plugin</plugin-module>
+
+        <plugin-module>modality-base-backoffice-activity-home-plugin</plugin-module>
+        <plugin-module>modality-base-backoffice-activity-filters-plugin</plugin-module>
+        <plugin-module>modality-base-backoffice-activity-operations-plugin</plugin-module>
+
+    </dependencies>
+
+</project>

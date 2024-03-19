@@ -3,31 +3,6 @@ VisualGrid, VisualLineChart, VisualPieChart, VisualBarChart, VisualAreaChart, Gr
 }
 
 @font-face {
-    font-family: 'Roboto';
-    font-style: normal;
-    src: url('../fonts/Roboto-Regular.ttf');
-}
-
-@font-face {
-    font-family: 'Roboto';
-    font-weight: bold;
-    src: url('../fonts/Roboto-Bold.ttf');
-}
-
-@font-face {
-    font-family: 'Roboto';
-    font-style: italic;
-    src: url('../fonts/Roboto-Italic.ttf');
-}
-
-@font-face {
-    font-family: 'Roboto';
-    font-weight: bold;
-    font-style: italic;
-    src: url('../fonts/Roboto-BoldItalic.ttf');
-}
-
-@font-face {
     font-family: 'Montserrat';
     font-style: normal;
     src: url('../fonts/Montserrat-Regular.ttf');
@@ -55,6 +30,58 @@ VisualGrid, VisualLineChart, VisualPieChart, VisualBarChart, VisualAreaChart, Gr
 Text, Label, Button, TextField {
     -fx-font-family: 'Montserrat';
 }
+
+
+.login {
+    -fx-font-size: 18px;
+}
+
+
+.login Button {
+    -fx-background-color: #0096D6FF;
+    -fx-background-radius: 10px;
+    -fx-text-fill: white;
+}
+
+/* Removing hyperlink default padding (ex: News title) */
+.hyperlink {
+    -fx-padding: 0;
+}
+
+.searchbar {
+    -fx-border-color: lightgray;
+    -fx-border-width: 1px;
+    -fx-border-radius: 50px;
+}
+
+.searchbar TextField {
+    -fx-border: none;
+    -fx-background: none;
+}
+
+.searchbar TextField:focused {
+    -fx-border: none;
+    -fx-background-color: transparent;
+    -fx-highlight-fill: transparent;
+}
+
+.progress-bar {
+    -fx-progress-color: red;
+}
+
+
+.progress-bar .track {
+    -fx-background-color: lightgray;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.progress-bar .bar {
+    -fx-background-color: #EE7130;
+    -fx-background-insets: 0;
+    -fx-padding: 5px;
+}
+
 
 .scroll-pane > .viewport {
    -fx-background-color: transparent;
@@ -107,12 +134,12 @@ Text, Label, Button, TextField {
 }
 
 .grid-head, .grid-row {
-    -fx-border-color: #bbbbbb;
+    -fx-border-color: #D3D3D3;
     -fx-border-width: 0 0 1px 0;
 }
 
 .grid-col {
-    -fx-border-color: #bbbbbb;
+    -fx-border-color: #D3D3D3;
     -fx-border-width: 0 1px 0 0;
 }
 

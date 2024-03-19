@@ -1,13 +1,12 @@
 package one.modality.base.shared.entities.markers;
 
-import one.modality.base.shared.entities.Country;
-import one.modality.base.shared.entities.Organization;
 import dev.webfx.stack.orm.entity.EntityId;
+import one.modality.base.shared.entities.Organization;
 
 /**
  * @author Bruno Salmon
  */
-public interface HasPersonalDetails {
+public interface HasPersonalDetails extends HasCountry {
 
     void setFirstName(String firstName);
 
@@ -76,12 +75,6 @@ public interface HasPersonalDetails {
     void setCountryName(String countryName);
 
     String getCountryName();
-
-    void setCountry(Object country);
-
-    Country getCountry();
-
-    EntityId getCountryId();
 
     void setOrganization(Object organization);
 

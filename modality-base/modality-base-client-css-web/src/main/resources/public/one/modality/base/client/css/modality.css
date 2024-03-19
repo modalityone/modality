@@ -4,42 +4,118 @@
 
 @font-face {
     font-family: "Montserrat";
-    src: url("Montserrat-VF.woff2") format(woff2) tech(variations);
+    src: url("./Montserrat-VF.woff2") format("woff2");
     font-weight: 100 900;
 }
 
- input[type="text"], input[type="password"] {
-    line-height: 100%;
+@font-face {
+    font-family: "Password";
+    src: url("./password.woff") format("woff");
+    font-weight: 100 900;
+}
+
+/* Applying Montserrat as default font for Modality */
+body * {
+    font-family: Montserrat;
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
+}
+
+iframe {
+    border: none;
+}
+
+/* TODO: move this rule to WebFX */
+fx-hyperlink fx-text:hover {
+    text-decoration: underline;
+}
+
+fx-button > fx-background {
+    background: linear-gradient(180deg, white, #e0e0e0);
+    border-color: #c0c0c0;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    box-sizing : border-box;
+}
+
+.button-bar fx-button > fx-background {
+    border-style: none;
+}
+
+.login * {
+    font-size: 18px; /* doesn't work yet (because of hardcoded style in app code) */
+}
+
+.login fx-button { /* doesn't work yet (because of hardcoded style in app code) */
+    background: #0096D6FF;
+    border: none;
+    border-radius: 10px;
+}
+
+.login fx-button .text {
+    color: white; /* doesn't work yet (because of hardcoded style in app code) */
+    /*padding: 15px; JavaFX padding already applied in app code for now */
+}
+
+
+/* Removing borders, outlines & background for input elements (otherwise they interfere with WebFX MaterialDesign) */
+input[type="text"], input[type="password"] {
     border: none;
     outline: none;
     background-color: transparent;
- }
-
- button:focus {
-    outline: 0;
- }
-
-.section-panel {
-    overflow: hidden;
 }
+
+/* Montserrat password dots are tiny! So we increase the font-size, but we don't want that big size for the placeholder!
+   So we increase the font size only once the user started typing the password. This is done using :not([value=""]) CSS
+   selector. Normally "value" refers to the initial value of the input only. However HtmlTextInputControlPeer keeps
+   updating "value" to "" or "not-empty" whether the user has typed something, so this CSS rule finally works: */
+input[type="password"]:not([value=""]) {
+    font-family: "Password";
+    letter-spacing: 0.15em;
+}
+
+/* Customizing the progress bar (used for podcasts) */
+
+progress {
+    border: none;
+    background-color: lightgray; /* For FireFox */
+}
+
+progress::-webkit-progress-bar { /* For Chrome & Safari */
+    background-color: lightgray;
+}
+
+progress::-webkit-progress-value { /* For Chrome & Safari */
+    background-color: #EE7130;
+}
+
+progress::-moz-progress-bar { /* For FireFox */
+    background-color: #EE7130;
+}
+
+.searchbar > fx-border {
+    border: 1px solid lightgray;
+    border-radius: 50px;
+}
+
+
+::placeholder {
+  color: #888;
+}
+
+fx-homepane fx-tile * {
+    font-size: 18px;
+}
+
+/* .section-panel {
+    overflow: hidden;
+}*/
 
 /***** Declaring some variables used in several selectors *****/
 :root {
-    --grid-border-color: #bbbbbb;
+    --grid-border-color: #D3D3D3;
     --grid-row-height: 28px;
-}
-
-body, input, textarea, keygen, select, button {
-    font-family: 'Montserrat';
-    -webkit-font-smoothing: antialiased;
-    font-size: 12px;
-    font-weight: 500;
-    line-height: 24px;
-    color: rgba(0, 0, 0, 0.87);
-}
-
-button:disabled span {
-    color: gray;
 }
 
 table, th, td {

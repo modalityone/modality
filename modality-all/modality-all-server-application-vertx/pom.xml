@@ -36,7 +36,7 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-crm-server-authz</artifactId>
+            <artifactId>modality-crm-server-authz-required-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
@@ -60,6 +60,18 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-ast-factory-vertx</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-blob-java</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-boot-vertx</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
@@ -73,18 +85,6 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-fetch-vertx</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-file-java</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-json-vertx</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -132,12 +132,6 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-conf-format-json</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-db-querypush-server</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
@@ -162,7 +156,7 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-http-server-vertx</artifactId>
+            <artifactId>webfx-stack-http-server-vertx-plugin</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

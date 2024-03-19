@@ -11,4 +11,8 @@
         <used-by-source-modules/>
     </dependencies>
 
+    <providers>
+        <provider interface="one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider">one.modality.event.backoffice.event.fx.impl.MainFrameHeaderEventSelectorProvider</provider>
+    </providers>
+
 </project>

@@ -6,7 +6,6 @@
 module modality.base.client.validation {
 
     // Direct dependencies modules
-    requires java.base;
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;

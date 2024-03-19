@@ -1,10 +1,10 @@
 package one.modality.base.client.activity;
 
 import dev.webfx.platform.console.Console;
-import dev.webfx.platform.json.JsonObject;
+import dev.webfx.platform.ast.AstObject;
 import dev.webfx.stack.orm.domainmodel.activity.domainpresentationlogic.impl.DomainPresentationLogicActivityImpl;
-import dev.webfx.platform.json.Json;
-import dev.webfx.platform.json.ReadOnlyJsonObject;
+import dev.webfx.platform.ast.AST;
+import dev.webfx.platform.ast.ReadOnlyAstObject;
 import dev.webfx.stack.db.query.QueryArgument;
 import dev.webfx.stack.db.query.QueryService;
 import dev.webfx.platform.util.function.Factory;
@@ -38,10 +38,10 @@ public abstract class ModalityDomainPresentationLogicActivityBase<PM>
                 .onFailure(Console::log)
                 .onSuccess(queryResult -> {
                     // Parsing the read parameters (json string expected) into a Json object
-                    ReadOnlyJsonObject stateParameters = Json.parseObject(queryResult.getValue(0, 1));
+                    ReadOnlyAstObject stateParameters = AST.parseObject(queryResult.getValue(0, 1), "json");
                     // Merging these parameters into the context
-                    JsonObject contextParams = (JsonObject) getParams(); // not beautiful...
-                    Json.mergeInto(stateParameters, contextParams);
+                    AstObject contextParams = (AstObject) getParams(); // not beautiful...
+                    AST.mergeInto(stateParameters, contextParams);
                     // Updating the presentation model from the new context parameters
                     updatePresentationModelFromContextParameters(getPresentationModel());
                 });

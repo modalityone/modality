@@ -18,10 +18,11 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>modality-ecommerce-backoffice-activities-all</module>
-        <module>modality-ecommerce-backoffice-activities-bookings</module>
-        <module>modality-ecommerce-backoffice-activities-moneyflows</module>
-        <module>modality-ecommerce-backoffice-activities-statistics</module>
+        <module>modality-ecommerce-backoffice-activity-bookings-plugin</module>
+        <module>modality-ecommerce-backoffice-activity-moneyflows-plugin</module>
+        <module>modality-ecommerce-backoffice-activity-statistics-plugin</module>
+        <module>modality-ecommerce-backoffice-max-plugin</module>
+        <module>modality-ecommerce-backoffice-min-plugin</module>
         <module>modality-ecommerce-backoffice-operations-document</module>
         <module>modality-ecommerce-backoffice-operations-documentline</module>
         <module>modality-ecommerce-backoffice-operations-moneyflow</module>
@@ -42,13 +43,13 @@
         <module>modality-ecommerce-payment-direct-server</module>
         <module>modality-ecommerce-payment-direct-ui</module>
         <module>modality-ecommerce-payment-gateway-custom</module>
-        <module>modality-ecommerce-payment-gateway-custom-stripe</module>
+        <module>modality-ecommerce-payment-gateway-custom-stripe-plugin</module>
         <module>modality-ecommerce-payment-gateway-delegated</module>
-        <module>modality-ecommerce-payment-gateway-delegated-stripe</module>
+        <module>modality-ecommerce-payment-gateway-delegated-stripe-plugin</module>
         <module>modality-ecommerce-payment-gateway-direct</module>
-        <module>modality-ecommerce-payment-gateway-direct-authorizedotnet</module>
-        <module>modality-ecommerce-server-application-all</module>
-        <module>modality-ecommerce-server-application-min</module>
+        <module>modality-ecommerce-payment-gateway-direct-authorizedotnet-plugin</module>
+        <module>modality-ecommerce-server-max-plugin</module>
+        <module>modality-ecommerce-server-min-plugin</module>
     </modules>
 
 </project>

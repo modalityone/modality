@@ -2,22 +2,27 @@ package one.modality.hotel.backoffice.activities.accommodation;
 
 import dev.webfx.extras.type.PrimType;
 import dev.webfx.extras.visual.VisualColumn;
+import dev.webfx.extras.visual.VisualResult;
 import dev.webfx.extras.visual.VisualResultBuilder;
 import dev.webfx.extras.visual.VisualSelection;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.extras.visual.impl.VisualResultImpl;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.console.Console;
+import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
+import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.dql.DqlStatement;
-import dev.webfx.stack.orm.entity.Entities;
-import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.*;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
-import dev.webfx.stack.ui.controls.dialog.DialogCallback;
+import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
-import dev.webfx.stack.ui.controls.dialog.DialogUtil;
+import dev.webfx.stack.ui.dialog.DialogCallback;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
@@ -33,9 +38,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import one.modality.base.shared.entities.Item;
-import one.modality.base.shared.entities.Resource;
-import one.modality.base.shared.entities.ResourceConfiguration;
+import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.markers.EntityHasLocalDate;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
 import one.modality.hotel.backoffice.accommodation.AttendeeCategory;
@@ -43,11 +47,8 @@ import one.modality.hotel.backoffice.accommodation.AttendeeCategory;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.time.temporal.ChronoUnit;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.orderBy;
@@ -60,13 +61,14 @@ public class AlterRoomPane extends VBox {
     private final AccommodationPresentationModel pm;
     private final ObjectProperty<ResourceConfiguration> resourceConfigurationProperty = new SimpleObjectProperty<>();
     public ObjectProperty<ResourceConfiguration> resourceConfigurationProperty() { return resourceConfigurationProperty; }
-    private final ObjectProperty<ResourceConfiguration>  selectedResourceConfigurationProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<ResourceConfiguration> selectedResourceConfigurationProperty = new SimpleObjectProperty<>();
     private final ObservableList<ResourceConfiguration> resourceConfigurations = FXCollections.observableArrayList();
 
-    private ButtonFactoryMixin mixin;
+    private final ButtonFactoryMixin mixin;
     private ObservableValue<Boolean> activeProperty;
     private ReactiveVisualMapper<ResourceConfiguration> rvm;
     private UpdateStore updateStore;
+    private List<ScheduledItem> scheduledItemsForRoom = Collections.emptyList();
 
     private GridPane detailsGridPane;
     private EntityButtonSelector<Item> roomTypeSelector;
@@ -94,7 +96,7 @@ public class AlterRoomPane extends VBox {
         resourceConfigurations.addListener((ListChangeListener<ResourceConfiguration>) change -> {
             // Select the configuration applicable today
             displayStatus(null);
-            LocalDate tomorrow = LocalDate.now().plus(1, ChronoUnit.DAYS);
+            LocalDate tomorrow = LocalDate.now().plusDays(1);
             ResourceConfiguration todayResourceConfiguration = findLatestResourceConfigurationBeforeDate(tomorrow);
             int rowIndex = resourceConfigurations.indexOf(todayResourceConfiguration);
             table.setVisualSelection(VisualSelection.createBuilder().addSelectedRow(rowIndex).build());
@@ -112,7 +114,7 @@ public class AlterRoomPane extends VBox {
         deleteButton.setOnAction(e -> confirmDelete());
         deleteRoomButton = new Button("Delete room");
         saveButton = new Button("Save");
-        saveButton.setOnAction(e -> save());
+        saveButton.setOnAction(e -> confirmSave());
         saveButton.setVisible(false);
         cancelButton = new Button("Cancel");
         cancelButton.setOnAction(e -> cancel());
@@ -279,6 +281,7 @@ public class AlterRoomPane extends VBox {
         allowsMaleCheckBox.setSelected(rc.allowsMale());
 
         fromDateField.setText(rc.getStartDate() != null ? DATE_FORMATTER.format(rc.getStartDate()) : null);
+        toDateField.setText(rc.getEndDate() != null ? DATE_FORMATTER.format(rc.getEndDate()) : null);
     }
 
     private void createProductComboBox() {
@@ -303,10 +306,21 @@ public class AlterRoomPane extends VBox {
 
     private void create() {
         ResourceConfiguration previousRc = selectedResourceConfigurationProperty.get();
-        Resource resource = previousRc.getResource();
-
         updateStore = UpdateStore.create(previousRc.getStore().getDataSourceModel());
         ResourceConfiguration newRc = updateStore.insertEntity(ResourceConfiguration.class);
+        cloneSelectedResourceConfiguration(newRc);
+        newRc.setStartDate(previousRc.getEndDate() != null ? previousRc.getEndDate().plusDays(1) : LocalDate.now());
+        selectedResourceConfigurationProperty.set(newRc);
+
+        setDetailsPaneDisabled(false);
+        table.setDisable(true);
+        saveButton.setVisible(true);
+        cancelButton.setVisible(true);
+    }
+
+    private void cloneSelectedResourceConfiguration(ResourceConfiguration newRc) {
+        ResourceConfiguration previousRc = selectedResourceConfigurationProperty.get();
+        Resource resource = previousRc.getResource();
         newRc.setResource(resource);
         newRc.setItem(previousRc.getItem());
         newRc.setName(previousRc.getName());
@@ -318,15 +332,19 @@ public class AlterRoomPane extends VBox {
         newRc.setAllowsVolunteer(previousRc.allowsVolunteer());
         newRc.setAllowsFemale(previousRc.allowsFemale());
         newRc.setAllowsMale(previousRc.allowsMale());
-        newRc.setStartDate(previousRc.getEndDate() != null ? previousRc.getEndDate().plus(1, ChronoUnit.DAYS) : LocalDate.now());
+
         selectedResourceConfigurationProperty.set(newRc);
-        setDetailsPaneDisabled(false);
-        table.setDisable(true);
-        saveButton.setVisible(true);
-        cancelButton.setVisible(true);
     }
 
     private void update() {
+        ResourceConfiguration updateRc = selectedResourceConfigurationProperty.get();
+        updateStore = UpdateStore.createAbove(updateRc.getStore());
+        ResourceConfiguration newRc = updateStore.updateEntity(updateRc);
+        cloneSelectedResourceConfiguration(newRc);
+        newRc.setStartDate(updateRc.getStartDate());
+        newRc.setEndDate(updateRc.getEndDate());
+        selectedResourceConfigurationProperty.set(newRc);
+
         setDetailsPaneDisabled(false);
         table.setDisable(true);
         saveButton.setVisible(true);
@@ -338,13 +356,13 @@ public class AlterRoomPane extends VBox {
             String msg = "This is the only configuration for this resource. It cannot be deleted.";
             DialogContent dialogContent = new DialogContent().setContentText(msg);
             dialogContent.getCancelButton().setVisible(false);
-            DialogUtil.showModalNodeInGoldLayout(dialogContent, this);
-            DialogUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
+            DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, this);
+            DialogBuilderUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
         } else {
             String msg = "Are you sure you wish to delete the selected resource configuration?";
             DialogContent dialogContent = new DialogContent().setContentText(msg).setYesNo();
-            DialogUtil.showModalNodeInGoldLayout(dialogContent, this);
-            DialogUtil.armDialogContentButtons(dialogContent,dialogCallback -> {
+            DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, this);
+            DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
                 delete();
                 dialogCallback.closeDialog();
             });
@@ -391,6 +409,159 @@ public class AlterRoomPane extends VBox {
                 .onSuccess(b -> displayStatus("Saved."));
     }
 
+    private void confirmSave() {
+        new ValidationQueue(this::save)
+                // Perform blocking validations first
+                .addValidation(this::validateNotOverlapping)
+                .addValidation(this::validateAgainstExistingBookings)
+                // Perform non-blocking validations second
+                .addValidation(this::validateResourceConfigurationDatesContiguous)
+                .run();
+    }
+
+    private void validateNotOverlapping(BooleanProperty success) {
+        ResourceConfiguration overlappingRc = findFirstOverlappingResourceConfiguration();
+        if (overlappingRc != null) {
+            showOverlappingConfigurationPopup(overlappingRc);
+            success.set(false);
+        } else {
+            success.set(true);
+        }
+    }
+
+    private ResourceConfiguration findFirstOverlappingResourceConfiguration() {
+        ResourceConfiguration selectedRc = selectedResourceConfigurationProperty.get();
+        for (ResourceConfiguration rc : resourceConfigurations) {
+            if (rc.equals(selectedRc)) {
+                continue;
+            }
+            if (selectedRc.getEndDate() != null && rc.getStartDate() != null && !rc.getStartDate().isBefore(selectedRc.getEndDate())) {
+                continue;
+            }
+            if (selectedRc.getStartDate() != null && rc.getEndDate() != null && !rc.getEndDate().isAfter(selectedRc.getStartDate())) {
+                continue;
+            }
+            return rc;
+        }
+        return null;
+    }
+
+    private void showOverlappingConfigurationPopup(ResourceConfiguration overlappingRc) {
+        Label msgLabel = new Label("Your configuration is overlapping the following existing configuration:");
+        int rowIndex = resourceConfigurations.indexOf(overlappingRc);
+        int columnCount = table.getVisualResult().getColumnCount();
+        Object[] values = new Object[columnCount];
+        for (int i = 0; i < columnCount; i++) {
+            values[i] = table.getVisualResult().getValue(rowIndex, i);
+        }
+        VisualResult visualResult = new VisualResultImpl(1, values, table.getVisualResult().getColumns());
+        VisualGrid table = new VisualGrid(visualResult);
+        VBox overlappingMsgPane = new VBox(msgLabel, table);
+        DialogContent dialogContent = new DialogContent().setContent(overlappingMsgPane);
+        dialogContent.getOkButton().setVisible(false);
+        DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, this);
+        DialogBuilderUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
+    }
+
+    private void showContinueWithSavePopup(String msg, BooleanProperty success) {
+        DialogContent dialogContent = new DialogContent().setContentText(msg).setYesNo();
+        Platform.runLater(() -> {
+            DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, this);
+            DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
+                success.set(true);
+                dialogCallback.closeDialog();
+            });
+            dialogContent.getCancelButton().setOnAction(event -> {
+                success.set(false);
+                dialogContent.getDialogCallback().closeDialog();
+            });
+        });
+    }
+
+    private void validateResourceConfigurationDatesContiguous(BooleanProperty success) {
+        for (ResourceConfiguration rc : resourceConfigurations) {
+            if (rc.getStartDate() != null) {
+                LocalDate dayBefore = rc.getStartDate().minusDays(1);
+                if (dayBefore.equals(selectedResourceConfigurationProperty.get().getEndDate())) {
+                    continue;
+                }
+                if (resourceConfigurations.stream().anyMatch(rc2 -> dayBefore.equals(rc2.getEndDate())
+                        && !rc2.equals(selectedResourceConfigurationProperty.get()) )) {
+                    continue;
+                }
+                showContinueWithSavePopup("Configuration dates do not all join. Continue with save?", success);
+                return;
+            }
+
+            if (rc.getEndDate() != null) {
+                LocalDate dayAfter = rc.getEndDate().plusDays(1);
+                if (dayAfter.equals(selectedResourceConfigurationProperty.get().getStartDate())) {
+                    continue;
+                }
+                if (resourceConfigurations.stream().anyMatch(rc2 -> dayAfter.equals(rc2.getStartDate())
+                        && !rc2.equals(selectedResourceConfigurationProperty.get()))) {
+                    continue;
+                }
+                showContinueWithSavePopup("Configuration dates do not all join. Continue with save?", success);
+                return;
+            }
+        }
+        success.set(true);
+    }
+
+    private void validateAgainstExistingBookings(BooleanProperty success) {
+        DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
+        ResourceConfiguration selectedRc = selectedResourceConfigurationProperty.get();
+        EntityId resourceId = selectedRc.getResourceId();
+        EntityId organizationId = (EntityId) pm.organizationIdProperty().get();
+        LocalDate startDate = getSelectedResourceConfigurationStartDate();
+        LocalDate endDate = getSelectedResourceConfigurationEndDate();
+        EntityStore.create(dataSourceModel).<Attendance>executeQuery("select date,documentLine.document.(person_guest,person_male,person_resident) from Attendance a where a.documentLine.document.event.organization=? and a.scheduledResource.configuration.resource.id=? and a.scheduledResource.date>=? and a.scheduledResource.date<=?", organizationId.getPrimaryKey(), resourceId.getPrimaryKey(), startDate, endDate)
+                .onFailure(error -> {
+                    Console.log("Error while reading attendances", error);
+                    success.set(false);
+                })
+                .onSuccess(attendances -> {
+                    if (!selectedRc.allowsMale()) {
+                        boolean maleAttendees = attendances.stream()
+                                .anyMatch(attendance -> attendance.getDocumentLine().getDocument().isMale());
+                        if (maleAttendees) {
+                            displayStatus("Unable to save. Male attendees already booked during this period.");
+                            success.set(false);
+                            return;
+                        }
+                    }
+                    if (!selectedRc.allowsFemale()) {
+                        boolean femaleAttendees = attendances.stream()
+                                .anyMatch(attendance -> !attendance.getDocumentLine().getDocument().isMale());
+                        if (femaleAttendees) {
+                            displayStatus("Unable to save. Female attendees already booked during this period.");
+                            success.set(false);
+                            return;
+                        }
+                    }
+                    if (!selectedRc.allowsGuest()) {
+                        boolean guestAttendees = attendances.stream()
+                                .anyMatch(attendance -> attendance.getDocumentLine().getDocument().isGuest());
+                        if (guestAttendees) {
+                            displayStatus("Unable to save. Guest attendees already booked during this period.");
+                            success.set(false);
+                            return;
+                        }
+                    }
+                    if (!selectedRc.allowsResident()) {
+                        boolean residentAttendees = attendances.stream()
+                                .anyMatch(attendance -> attendance.getDocumentLine().getDocument().isResident());
+                        if (residentAttendees) {
+                            displayStatus("Unable to save. Resident attendees already booked during this period.");
+                            success.set(false);
+                            return;
+                        }
+                    }
+                    success.set(true);
+                });
+    }
+
     private void save() {
         boolean isNewRecord = ((Integer) selectedResourceConfigurationProperty.get().getPrimaryKey()) < 0;
         if (isNewRecord) {
@@ -424,7 +595,7 @@ public class AlterRoomPane extends VBox {
         if (latestEndDate == null || latestEndDate.isAfter(fromDate)) {
             // Ensure the resource configuration immediately before the new one ends the day before the new one begins
             ResourceConfiguration updatedLatestResourceConfiguration = otherUpdateStore.updateEntity(latestResourceConfigurationBeforeNewOne);
-            updatedLatestResourceConfiguration.setEndDate(fromDate.minus(1, ChronoUnit.DAYS));
+            updatedLatestResourceConfiguration.setEndDate(fromDate.minusDays(1));
         }
 
         Optional<ResourceConfiguration> resourceConfigurationImmediatelyAfterNewOne = resourceConfigurations.stream()
@@ -433,17 +604,214 @@ public class AlterRoomPane extends VBox {
         if (resourceConfigurationImmediatelyAfterNewOne.isPresent()) {
             // If there is a resource configuration with a start date later than the one entered then set the end date of this one
             // to the day before it starts
-            LocalDate endDate = resourceConfigurationImmediatelyAfterNewOne.get().getStartDate().minus(1, ChronoUnit.DAYS);
+            LocalDate endDate = resourceConfigurationImmediatelyAfterNewOne.get().getStartDate().minusDays(1);
             newRc.setEndDate(endDate);
         }
 
-        // Submit changes
-        otherUpdateStore.submitChanges()
-                .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
-                .onSuccess(b -> {
-                    updateStore.submitChanges()
+        new ValidationQueue(() -> {
+            // Submit changes
+            otherUpdateStore.submitChanges()
+                    .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
+                    .onSuccess(b -> updateStore.submitChanges()
                             .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
-                            .onSuccess(b2 -> displayStatus("Saved."));
+                            .onSuccess(b2 -> displayStatus("Saved.")));})
+                .addValidation(this::ensureScheduledItemForEachDay)
+                .addValidation(this::ensureScheduledResourceForEachDay)
+                .run();
+    }
+
+    private void ensureScheduledItemForEachDay(BooleanProperty success) {
+        ResourceConfiguration selectedRc = selectedResourceConfigurationProperty.get();
+
+        // TODO if start date or end date is null then use site item family start or end date
+        LocalDate startDate = getSelectedResourceConfigurationStartDate();
+        LocalDate endDate = getSelectedResourceConfigurationEndDate();
+
+        // Find ScheduledItems with this item type
+        DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
+        Object itemId = selectedRc.getItem().getPrimaryKey();
+        EntityStore.create(dataSourceModel).<ScheduledItem>executeQuery("select id,timeline,site,item,date,startTime,endTime,available,online,resource from ScheduledItem si where si.item.id=? and si.date>=? and si.date<=?", itemId, startDate, endDate)
+                .onFailure(error -> {
+                    Console.log("Error while reading scheduled items.", error);
+                    success.set(false);
+                })
+                .onSuccess(attendances -> {
+                    List<LocalDate> populatedDates = attendances.stream()
+                            .map(EntityHasLocalDate::getDate)
+                            .collect(Collectors.toList());
+
+                    scheduledItemsForRoom = attendances;
+
+                    Site site = selectedRc.getResource().getSite();
+                    // Check that a ScheduledItem exists for each day between the start date and end date
+                    for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+                        if (!populatedDates.contains(date)) {
+                            // If no existing ScheduledItem exists for this item for this date then create one
+                            ScheduledItem newScheduledItem = updateStore.insertEntity(ScheduledItem.class);
+                            newScheduledItem.setDate(date);
+                            newScheduledItem.setItem(selectedRc.getItem());
+                            newScheduledItem.setSite(site);
+                            scheduledItemsForRoom.add(newScheduledItem);
+                        }
+                    }
+                    success.set(true);
+                });
+    }
+
+    private LocalDate getSelectedResourceConfigurationStartDate() {
+        ResourceConfiguration selectedRc = selectedResourceConfigurationProperty.get();
+        if (selectedRc.getStartDate() != null) {
+            return selectedRc.getStartDate();
+        } else {
+            // TODO if start date is null then use site item family start date
+            return LocalDate.of(2022, 9, 1);
+        }
+    }
+
+    private LocalDate getSelectedResourceConfigurationEndDate() {
+        ResourceConfiguration selectedRc = selectedResourceConfigurationProperty.get();
+        if (selectedRc.getEndDate() != null) {
+            return selectedRc.getEndDate();
+        } else {
+            // TODO if end date is null then use site item family end date
+            return LocalDate.of(2023, 8, 31);
+        }
+    }
+
+    private void ensureScheduledResourceForEachDay(BooleanProperty success) {
+        LocalDate startDate = getSelectedResourceConfigurationStartDate();
+        LocalDate endDate = getSelectedResourceConfigurationEndDate();
+
+        DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
+        ResourceConfiguration selectedRc = selectedResourceConfigurationProperty.get();
+        Object itemId = selectedRc.getItem().getPrimaryKey();
+
+        EntityStore.create(dataSourceModel).<ScheduledResource>executeQuery("select date,sr.configuration.(name,item.name,max,allowsGuest,allowsResident,allowsResidentFamily,allowsSpecialGuest,allowsVolunteer,allowsFemale,allowsMale,startDate,endDate,resource.site) from ScheduledResource sr where sr.scheduledItem.item.id=? and sr.date>=? and sr.date<=?", itemId, startDate, endDate)
+                .onFailure(error -> {
+                    Console.log("Error while reading scheduled resources.", error);
+                    success.set(false);
+                })
+                .onSuccess(scheduledResources -> {
+                    if (hasConfigurationChanged()) {
+                        ResourceConfiguration previousResourceConfiguration = getSelectedResourceConfigurationBeforeChanges();
+                        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+                            final LocalDate finalDate = date;
+                            Optional<ScheduledResource> matchingPreviousConfig = scheduledResources.stream()
+                                    .filter(sr -> sr.getDate().equals(finalDate) && sr.getResourceConfiguration().equals(previousResourceConfiguration))
+                                    .findAny();
+                            if (matchingPreviousConfig.isEmpty()) {
+                                // If there is no existing ScheduledResource for this date then create it...
+                                newScheduledResource(selectedRc, date);
+                            } else {
+                                // ...else update the existing ScheduledResource for this date to point to the new configuration and Scheduled Item
+                                ScheduledResource scheduledResource = matchingPreviousConfig.get();
+                                ScheduledResource updatedScheduledResource = updateStore.updateEntity(scheduledResource);
+                                updatedScheduledResource.setResourceConfiguration(selectedRc);
+                                Entity scheduledItem = scheduledItemForDate(date);
+                                updatedScheduledResource.setForeignField("scheduledItem", scheduledItem);
+                            }
+                        }
+                    } else {
+                        // Check that a ScheduledResource exists for each day between the start date and end date
+                        List<LocalDate> datesWithMatchingConfig = scheduledResources.stream()
+                                .filter(sr -> matchesIgnoringDates(sr.getResourceConfiguration(), selectedRc))
+                                .map(EntityHasLocalDate::getDate)
+                                .collect(Collectors.toList());
+
+                        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+                            if (!datesWithMatchingConfig.contains(date)) {
+                                newScheduledResource(selectedRc, date);
+                            }
+                        }
+                    }
+                    success.set(true);
+                });
+    }
+
+    private void newScheduledResource(ResourceConfiguration sourceResourceConfiguration, LocalDate date) {
+        ScheduledResource newScheduledResource = updateStore.insertEntity(ScheduledResource.class);
+        newScheduledResource.setDate(date);
+        newScheduledResource.setAvailable(true);
+        newScheduledResource.setResourceConfiguration(sourceResourceConfiguration);
+        newScheduledResource.setMax(sourceResourceConfiguration.getMax());
+        newScheduledResource.setOnline(false);
+        Entity scheduledItem = scheduledItemForDate(date);
+        newScheduledResource.setForeignField("scheduledItem", scheduledItem);
+    }
+
+    private ScheduledItem scheduledItemForDate(LocalDate date) {
+        return scheduledItemsForRoom.stream()
+                .filter(si -> si.getDate().equals(date))
+                .findAny()
+                .get();
+    }
+
+    private boolean hasConfigurationChanged() {
+        ResourceConfiguration before = getSelectedResourceConfigurationBeforeChanges();
+        ResourceConfiguration after = selectedResourceConfigurationProperty.get();
+        return !matchesIgnoringDates(before, after);
+    }
+
+    private boolean matchesIgnoringDates(ResourceConfiguration rc1, ResourceConfiguration rc2) {
+        return Objects.equals(rc1.getMax(), rc2.getMax()) &&
+                Objects.equals(rc1.allowsGuest(), rc2.allowsGuest()) &&
+                Objects.equals(rc1.allowsResident(), rc2.allowsResident()) &&
+                Objects.equals(rc1.allowsResidentFamily(), rc2.allowsResidentFamily()) &&
+                Objects.equals(rc1.allowsSpecialGuest(), rc2.allowsSpecialGuest()) &&
+                Objects.equals(rc1.allowsVolunteer(), rc2.allowsVolunteer()) &&
+                Objects.equals(rc1.allowsFemale(), rc2.allowsFemale()) &&
+                Objects.equals(rc1.allowsMale(), rc2.allowsMale()) &&
+                Objects.equals(rc1.getItem(), rc2.getItem()) &&
+                Objects.equals(rc1.getName(), rc2.getName());
+    }
+
+    /**
+     * Deletes ScheduledResource entities with dates in gaps created by the user bringing the "from" date
+     * forward or putting the "to" date back.
+     * @param success set to indicate whether transaction succeeds
+     */
+    private void removeScheduledResourceFromGaps(BooleanProperty success) {
+        ResourceConfiguration before = getSelectedResourceConfigurationBeforeChanges();
+        ResourceConfiguration after = selectedResourceConfigurationProperty.get();
+
+        // Determine min and max dates for the gap
+        LocalDate min = null, max = null;
+        if (before.getStartDate().isBefore(after.getStartDate())) {
+            min = before.getStartDate();
+            max = after.getStartDate();
+        }
+        if (before.getEndDate().isAfter(after.getEndDate())) {
+            if (min == null) {
+                min = after.getEndDate();
+            }
+            max = before.getEndDate();
+        }
+        if (min == null) {
+            // If no time gap has been introduced by changing the "from" and "to" dates the no deletion is necessary
+            success.set(true);
+            return;
+        }
+
+        // Select all ScheduledResources for the item within the time window
+        DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
+        Object itemId = selectedResourceConfigurationProperty.get().getItem().getPrimaryKey();
+        EntityStore.create(dataSourceModel).<ScheduledResource>executeQuery("select date from ScheduledResource sr where sr.scheduledItem.item.id=? and sr.date>=? and sr.date<=?", itemId, min, max)
+                .onFailure(error -> {
+                    Console.log("Error while reading scheduled resources.", error);
+                    success.set(false);
+                })
+                .onSuccess(scheduledResources -> {
+                    // Delete ScheduledResources in the time gap
+                    UpdateStore deleteUpdateStore = UpdateStore.createAbove(scheduledResources.iterator().next().getStore());
+                    for (ScheduledResource scheduledResource : scheduledResources) {
+                        boolean inGap = scheduledResource.getDate().isBefore(after.getStartDate()) || scheduledResource.getDate().isAfter(after.getEndDate());
+                        if (inGap) {
+                            deleteUpdateStore.deleteEntity(scheduledResource);
+                        }
+                    }
+                    deleteUpdateStore.submitChanges()
+                            .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
+                            .onSuccess(b -> success.set(true));
                 });
     }
 
@@ -468,7 +836,17 @@ public class AlterRoomPane extends VBox {
     }
 
     private void saveUpdate() {
-        // TODO
+        new ValidationQueue(() -> {
+        updateStore.submitChanges()
+                .onFailure(e -> displayStatus("Not saved. " + e.getMessage()))
+                .onSuccess(result -> {
+                    displayStatus("Saved.");
+                    cancel();
+                });})
+                .addValidation(this::removeScheduledResourceFromGaps)
+                .addValidation(this::ensureScheduledItemForEachDay)
+                .addValidation(this::ensureScheduledResourceForEachDay)
+                .run();
     }
 
     private void cancel() {
@@ -476,9 +854,15 @@ public class AlterRoomPane extends VBox {
         cancelButton.setVisible(false);
         setDetailsPaneDisabled(true);
         table.setDisable(false);
-        int selectedRow = table.getVisualSelection().getSelectedRow();
-        ResourceConfiguration selectedResourceConfiguration = resourceConfigurations.get(selectedRow);
+        ResourceConfiguration selectedResourceConfiguration = getSelectedResourceConfigurationBeforeChanges();
         selectedResourceConfigurationProperty.set(selectedResourceConfiguration);
+        displayStatus(null);
+        displayDetails(selectedResourceConfiguration);
+    }
+
+    private ResourceConfiguration getSelectedResourceConfigurationBeforeChanges() {
+        int selectedRow = table.getVisualSelection().getSelectedRow();
+        return resourceConfigurations.get(selectedRow);
     }
 
     private void setDetailsPaneDisabled(boolean disabled) {
@@ -505,8 +889,8 @@ public class AlterRoomPane extends VBox {
         }
         if (rvm == null) { // first call
             rvm = ReactiveVisualMapper.<ResourceConfiguration>createPushReactiveChain(mixin)
-                    .always("{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,item.name,max,allowsGuest,allowsResident,allowsResidentFamily,allowsSpecialGuest,allowsVolunteer,allowsFemale,allowsMale,startDate,endDate'}")
-                    .always(orderBy("item.ord,name"))
+                    .always("{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,item.name,max,allowsGuest,allowsResident,allowsResidentFamily,allowsSpecialGuest,allowsVolunteer,allowsFemale,allowsMale,startDate,endDate,resource.site'}")
+                    .always(orderBy("endDate desc"))
                     .setEntityColumns("[" +
                             "{label: 'Name', expression: 'name'}," +
                             "{label: 'Product', expression: 'item.name'}," +

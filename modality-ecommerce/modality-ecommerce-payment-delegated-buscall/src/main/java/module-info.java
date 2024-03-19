@@ -7,7 +7,7 @@ module modality.ecommerce.payment.delegated.buscall {
 
     // Direct dependencies modules
     requires modality.ecommerce.payment.delegated;
-    requires webfx.platform.json;
+    requires webfx.platform.ast;
     requires webfx.stack.com.bus.call;
     requires webfx.stack.com.serial;
 

@@ -39,7 +39,7 @@ public final class RoutingActions {
 
     public static Action routeOperationCodeToAction(String operationCode, UiRouteActivityContext context, OperationActionFactoryMixin mixin) {
         Optional<RouteRequestEmitter> routeRequestEmitter = providedEmitters.stream()
-                .filter(instantiator -> hasRequestOperationCode(instantiator.instantiateRouteRequest(context), operationCode))
+                .filter(emitter -> hasRequestOperationCode(emitter.instantiateRouteRequest(context), operationCode))
                 .findFirst();
         return routeRequestEmitter.isEmpty() ? invisibleVoidAction : mixin.newOperationAction(() -> routeRequestEmitter.get().instantiateRouteRequest(context));
     }
@@ -55,7 +55,7 @@ public final class RoutingActions {
 
     public static RouteRequestEmitter findRouteRequestEmitter(String operationCode, UiRouteActivityContext context) {
         return RouteRequestEmitter.getProvidedEmitters().stream()
-                .filter(instantiator -> hasRequestOperationCode(instantiator.instantiateRouteRequest(context), operationCode))
+                .filter(emitter -> hasRequestOperationCode(emitter.instantiateRouteRequest(context), operationCode))
                 .findFirst().orElse(null);
     }
 

@@ -10,8 +10,8 @@ import dev.webfx.stack.orm.expression.terms.function.Function;
 import dev.webfx.stack.orm.expression.terms.function.InlineFunction;
 import dev.webfx.stack.orm.domainmodel.service.spi.DomainModelLoader;
 import dev.webfx.platform.async.Batch;
-import dev.webfx.platform.json.Json;
-import dev.webfx.platform.json.ReadOnlyJsonElement;
+import dev.webfx.platform.ast.json.Json;
+import dev.webfx.platform.ast.ReadOnlyAstObject;
 import dev.webfx.stack.db.query.QueryResult;
 import dev.webfx.platform.resource.Resource;
 import dev.webfx.stack.com.serial.SerialCodecManager;
@@ -44,7 +44,7 @@ final class DomainModelSnapshotLoader {
             EntityFactoryRegistry.registerProvidedEntityFactories();
             // Loading the model from the resource snapshot
             String jsonString = Resource.getText("one/modality/base/shared/domainmodel/DomainModelSnapshot.json");
-            ReadOnlyJsonElement json = Json.parseObject(jsonString);
+            ReadOnlyAstObject json = Json.parseObject(jsonString);
             Batch<QueryResult> snapshotBatch = SerialCodecManager.decodeFromJson(json);
             DomainModel domainModel = new DomainModelLoader(1).generateDomainModel(snapshotBatch);
             // Registering aggregates TODO: Move this into the framework model (aggregate boolean field of domain class)
@@ -56,7 +56,7 @@ final class DomainModelSnapshotLoader {
             new Function("interpret_brackets", PrimType.STRING).register();
             new Function("compute_dates").register();
             new InlineFunction("searchMatchesDocument", "d", new Type[]{new DomainClassType("Document")}, "d..ref=?searchInteger or d..person_abcNames like ?abcSearchLike or d..person_email like ?searchEmailLike", domainModel.getClass("Document"), domainModel.getParserDomainModelReader()).register();
-            new InlineFunction("searchMatchesPerson", "p", new Type[]{new DomainClassType("Person")}, "abcNames(p..firstName + ' ' + p..lastName) like ?abcSearchLike or p..email like ?searchEmailLike", "Person", domainModel.getParserDomainModelReader()).register();
+            new InlineFunction("searchMatchesPerson", "p", new Type[]{new DomainClassType("Person")}, "abcNames(p..fullName) like ?abcSearchLike or p..email like ?searchEmailLike", "Person", domainModel.getParserDomainModelReader()).register();
             return domainModel;
         } catch (Exception e) {
             e.printStackTrace();

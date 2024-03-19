@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <description>Convenient module that embeds all back-office activities modules of the Event layer.</description>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+
+        <plugin-module>modality-event-backoffice-min-plugin</plugin-module>
+
+        <plugin-module>modality-event-backoffice-activity-recurringevents-plugin</plugin-module>
+    </dependencies>
+
+</project>

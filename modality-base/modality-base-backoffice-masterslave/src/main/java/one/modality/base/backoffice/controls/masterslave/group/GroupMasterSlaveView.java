@@ -5,7 +5,6 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
-import javafx.scene.layout.Pane;
 import one.modality.base.backoffice.controls.masterslave.MasterSlaveView;
 import one.modality.base.backoffice.controls.masterslave.MasterTableView;
 import one.modality.base.backoffice.controls.masterslave.SlaveTableView;
@@ -20,7 +19,6 @@ import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.kit.util.properties.FXProperties;
 
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class GroupMasterSlaveView extends MasterSlaveView {
 
@@ -119,15 +117,15 @@ public class GroupMasterSlaveView extends MasterSlaveView {
     ==================================================================================================================*/
 
     public static <E extends Entity, PM extends HasGroupVisualResultProperty & HasMasterVisualResultProperty & HasSelectedMasterProperty<E>>
-    GroupMasterSlaveView createAndBind(PM pm, ControlFactoryMixin mixin, Supplier<Pane> containerGetter) {
-        UiBuilder slaveView = MasterSlaveView.createAndBindSlaveViewIfApplicable(pm, mixin, containerGetter);
+    GroupMasterSlaveView createAndBind(PM pm, ControlFactoryMixin mixin) {
+        UiBuilder slaveView = MasterSlaveView.createAndBindSlaveViewIfApplicable(pm, mixin);
         if (slaveView == null && pm instanceof HasSlaveVisualResultProperty)
             slaveView = SlaveTableView.createAndBind((HasSlaveVisualResultProperty) pm);
         return createAndBind(slaveView, pm, mixin);
     }
 
     public static <E extends Entity, PM extends HasGroupVisualResultProperty & HasMasterVisualResultProperty & HasSlaveVisualResultProperty & HasSelectedMasterProperty<E>>
-    GroupMasterSlaveView createAndBind(PM pm, ControlFactoryMixin mixin) {
+    GroupMasterSlaveView createAndBindVisualResult(PM pm, ControlFactoryMixin mixin) {
         return createAndBind(SlaveTableView.createAndBind(pm), pm, mixin);
     }
 

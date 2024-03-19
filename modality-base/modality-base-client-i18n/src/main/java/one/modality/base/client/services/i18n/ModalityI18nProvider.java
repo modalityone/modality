@@ -3,18 +3,14 @@ package one.modality.base.client.services.i18n;
 import dev.webfx.stack.i18n.Dictionary;
 import dev.webfx.stack.i18n.TokenKey;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
-import dev.webfx.stack.i18n.spi.impl.json.JsonI18nProvider;
+import dev.webfx.stack.i18n.spi.impl.ast.AstI18nProvider;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.HasEntity;
 
 /**
  * @author Bruno Salmon
  */
-public final class ModalityI18nProvider extends JsonI18nProvider {
-
-    public ModalityI18nProvider() {
-        super("one/modality/base/client/services/i18n/dictionaries/{lang}.json");
-    }
+public final class ModalityI18nProvider extends AstI18nProvider {
 
     @Override
     protected <TK extends Enum<?> & TokenKey> Object getDictionaryTokenValueImpl(Object i18nKey, TK tokenKey, Dictionary dictionary, boolean skipDefaultDictionary, boolean skipMessageKeyInterpretation, boolean skipMessageLoading) {
@@ -24,7 +20,8 @@ public final class ModalityI18nProvider extends JsonI18nProvider {
             if (s.startsWith("expression:")) {
                 Entity entity = findEntity(i18nKey);
                 if (entity != null) {
-                    Object tokenValue = entity.evaluate(s.substring(11));
+                    String expression = s.substring(11);
+                    Object tokenValue = entity.evaluate(expression);
                     if (tokenValue instanceof String)
                         i18nKey = new I18nSubKey(tokenValue, i18nKey);
                     else
@@ -36,6 +33,8 @@ public final class ModalityI18nProvider extends JsonI18nProvider {
     }
 
     private Entity findEntity(Object i18nKey) {
+        if (i18nKey instanceof Entity)
+            return (Entity) i18nKey;
         if (i18nKey instanceof HasEntity)
             return ((HasEntity) i18nKey).getEntity();
         if (i18nKey instanceof I18nSubKey)

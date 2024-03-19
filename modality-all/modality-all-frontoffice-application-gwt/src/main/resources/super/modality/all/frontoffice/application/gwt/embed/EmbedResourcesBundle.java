@@ -9,30 +9,34 @@ import dev.webfx.platform.resource.spi.impl.gwt.GwtResourceBundleBase;
 public interface EmbedResourcesBundle extends ClientBundle {
 
     EmbedResourcesBundle R = GWT.create(EmbedResourcesBundle.class);
-    @Source("dev/webfx/platform/meta/exe/exe.properties")
+    @Source("dev/webfx/platform/conf/src-root.properties")
     TextResource r1();
 
-    @Source("one/modality/base/client/busconfig/ClientBusOptions.default.json")
+    @Source("dev/webfx/platform/meta/exe/exe.properties")
     TextResource r2();
 
-    @Source("one/modality/base/client/services/i18n/dictionaries/en.json")
+    @Source("dev/webfx/stack/i18n/en.properties")
     TextResource r3();
 
-    @Source("one/modality/base/client/services/i18n/dictionaries/fr.json")
+    @Source("dev/webfx/stack/i18n/fr.properties")
     TextResource r4();
 
     @Source("one/modality/base/shared/domainmodel/DomainModelSnapshot.json")
     TextResource r5();
 
+    @Source("one/modality/event/frontoffice/activities/booking/map/DynamicMapView.js")
+    TextResource r6();
+
 
 
     final class ProvidedGwtResourceBundle extends GwtResourceBundleBase {
         public ProvidedGwtResourceBundle() {
-            registerResource("dev/webfx/platform/meta/exe/exe.properties", R.r1());
-            registerResource("one/modality/base/client/busconfig/ClientBusOptions.default.json", R.r2());
-            registerResource("one/modality/base/client/services/i18n/dictionaries/en.json", R.r3());
-            registerResource("one/modality/base/client/services/i18n/dictionaries/fr.json", R.r4());
+            registerResource("dev/webfx/platform/conf/src-root.properties", R.r1());
+            registerResource("dev/webfx/platform/meta/exe/exe.properties", R.r2());
+            registerResource("dev/webfx/stack/i18n/en.properties", R.r3());
+            registerResource("dev/webfx/stack/i18n/fr.properties", R.r4());
             registerResource("one/modality/base/shared/domainmodel/DomainModelSnapshot.json", R.r5());
+            registerResource("one/modality/event/frontoffice/activities/booking/map/DynamicMapView.js", R.r6());
 
         }
     }

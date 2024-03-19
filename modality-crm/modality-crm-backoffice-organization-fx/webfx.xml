@@ -8,7 +8,13 @@
     </exported-packages>
 
     <dependencies>
-        <used-by-source-modules/>
+        <used-by-source-modules>
+            <undetected-package>java.time</undetected-package>
+        </used-by-source-modules>
     </dependencies>
+
+    <providers>
+        <provider interface="one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider">one.modality.crm.backoffice.organization.fx.impl.MainFrameHeaderOrganizationSelectorProvider</provider>
+    </providers>
 
 </project>

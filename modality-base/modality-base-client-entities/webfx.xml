@@ -7,8 +7,14 @@
         <source-packages/>
     </exported-packages>
 
+    <providers>
+        <provider interface="dev.webfx.platform.boot.spi.ApplicationJob">one.modality.base.client.entities.util.functions.ClientFunctionsRegisteringApplicationJob</provider>
+    </providers>
+
     <dependencies>
-        <used-by-source-modules/>
+        <used-by-source-modules>
+            <undetected-package>java.time</undetected-package>
+        </used-by-source-modules>
     </dependencies>
 
 </project>

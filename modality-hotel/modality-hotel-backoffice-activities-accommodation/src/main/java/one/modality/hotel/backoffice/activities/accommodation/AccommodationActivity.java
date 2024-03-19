@@ -3,17 +3,15 @@ package one.modality.hotel.backoffice.activities.accommodation;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
+import one.modality.base.client.tile.TabsBar;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
+import one.modality.base.backoffice.mainframe.headertabs.fx.FXMainFrameHeaderTabs;
 import one.modality.hotel.backoffice.accommodation.AccommodationBorderPane;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
 import one.modality.hotel.backoffice.accommodation.TodayAccommodationStatus;
-
-import java.util.function.Supplier;
 
 final class AccommodationActivity extends OrganizationDependentViewDomainActivity implements
         OperationActionFactoryMixin {
@@ -24,29 +22,23 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
 
     private final RoomsAlterationView roomsAlterationView = new RoomsAlterationView(pm, this);
     private final TodayAccommodationStatus todayAccommodationStatus = new TodayAccommodationStatus(pm);
-
     final BorderPane container = new BorderPane();
+    private final TabsBar<Node> headerTabsBar = new TabsBar<>(this, container::setCenter);
+
     public AccommodationActivity() {
         pm.doFXBindings();
     }
 
     @Override
     public Node buildUi() {
-        TabPane tabPane = new TabPane();
-        tabPane.getTabs().setAll(
-                createTab("Rooms", this::buildRoomView),
-                createTab("Guests", this::buildGuestView),
-                createTab("Rooms alteration", this::buildRoomsAlterationView)
+        // Creating the tabs buttons that will appear in the main frame header tabs bar (see onResume())
+        headerTabsBar.setTabs(
+                headerTabsBar.createTab("Rooms", this::buildRoomView),
+                headerTabsBar.createTab("Guests", this::buildGuestView),
+                headerTabsBar.createTab("Rooms alteration", this::buildRoomsAlterationView)
         );
-        container.setCenter(tabPane);
+        // returning the container
         return container;
-    }
-
-    private Tab createTab(String text, Supplier<Node> nodeSupplier) {
-        Tab tab = new Tab(text);
-        tab.setContent(nodeSupplier.get());
-        tab.setClosable(false);
-        return tab;
     }
 
     private Node buildRoomView() {
@@ -68,11 +60,13 @@ final class AccommodationActivity extends OrganizationDependentViewDomainActivit
     @Override
     public void onResume() {
         super.onResume();
+        FXMainFrameHeaderTabs.setHeaderTabs(headerTabsBar.getTabs());
         FXGanttVisibility.setGanttVisibility(GanttVisibility.EVENTS);
     }
 
     @Override
     public void onPause() {
+        FXMainFrameHeaderTabs.clearHeaderTabs();
         FXGanttVisibility.setGanttVisibility(GanttVisibility.HIDDEN);
         super.onPause();
     }

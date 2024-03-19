@@ -1,6 +1,7 @@
 package one.modality.base.frontoffice.utility;
 
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.stack.i18n.I18n;
 import javafx.beans.property.StringProperty;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -12,67 +13,81 @@ import java.util.function.Function;
 
 public class TextUtility {
 
-    public static Text getText(String content, double size, String color) {
-        Text t = new Text(content);
-        t.setFill(Color.web(color));
-
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            double fontSize = size * FXApp.fontRatio.get();
-            t.setFont(Font.font(StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), fontSize));
-            t.setStyle("-fx-font-family: " + StyleUtility.TEXT_FAMILY + "; -fx-font-size: " + fontSize);
-        }, FXApp.fontRatio);
-
-        return t;
+    public static Text getText(String content, String color, double size) {
+        return getText(content, Color.web(color), size);
     }
 
-    public static void setFontFamily(Text t, String family, int size) {
+    public static Text getText(String content, Color color, double size) {
+        Text text = createText(content, color);
+
         FXProperties.runNowAndOnPropertiesChange(() -> {
-            double fontSize = size * FXApp.fontRatio.get();
-            t.setFont(Font.font(family));
-            t.setStyle("-fx-font-family: " + family);
+            setTextFont(text, StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), size * FXApp.fontRatio.get());
         }, FXApp.fontRatio);
+
+        return text;
+    }
+
+    public static Text createText(Color color) {
+        return createText(null, color);
+    }
+
+    public static Text createText(String i18nKey, Color color) {
+        Text text = new Text();
+        if (i18nKey != null)
+            I18n.bindI18nProperties(text, i18nKey);
+        text.setFill(color);
+        return text;
+    }
+
+    public static Text createText(String i18nKey, Color color, double size) {
+        Text text = createText(i18nKey, color);
+        setTextFont(text, StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), size);
+        return text;
+    }
+
+    /*public static void setFontFamily(Text text, String family, double size) {
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            setTextFont(text, family, FontWeight.NORMAL, size * FXApp.fontRatio.get());
+        }, FXApp.fontRatio);
+    }*/
+
+    public static void setTextFont(Text text, String fontFamily, FontWeight fontWeight, double fontSize) {
+        text.setFont(Font.font(fontFamily, fontWeight, fontSize));
+        GeneralUtility.setNodeFontStyle(text, fontFamily, fontWeight, fontSize);
     }
 
     public static Text getBindedText(StringProperty property, Function<String, Text> textFunction) {
-        Text t = textFunction.apply("");
-        t.textProperty().bind(property);
-        return t;
+        Text text = textFunction.apply("");
+        text.textProperty().bind(property);
+        return text;
     }
 
     public static Text getMainText(String content, String color) {
-        return getText(content, StyleUtility.MAIN_TEXT_SIZE, color);
+        return getText(content, color, StyleUtility.MAIN_TEXT_SIZE);
     }
 
-    public static Text getMediumText(String content, String color) {
-        return getText(content, StyleUtility.MEDIUM_TEXT_SIZE, color);
-    }
-
-    public static Text getSubText(String content, String color) {
+    /*public static Text getSubText(String content, String color) {
         return getText(content, StyleUtility.SUB_TEXT_SIZE, color);
-    }
+    }*/
 
     public static Text getAccountHeaderText(String content) {
-        return weight(getText(content, 20, StyleUtility.VICTOR_BATTLE_BLACK), FontWeight.findByWeight(600));
-    }
-
-    public static Text getMainHeaderText(String content) {
-        return weight(getText(content, 21, StyleUtility.MAIN_BLUE), FontWeight.findByWeight(600));
+        return weight(getText(content, StyleUtility.BLACK, 20), FontWeight.findByWeight(600));
     }
 
     public static Text getSubText(String content) {
-        return getText(content, 9, StyleUtility.ELEMENT_GRAY);
+        return getText(content, StyleUtility.ELEMENT_GRAY, 9);
     }
 
     public static Text getNameText(String content) {
-        return getText(content, 30, StyleUtility.VICTOR_BATTLE_BLACK);
+        return getText(content, StyleUtility.BLACK, 30);
     }
 
-    public static Text weight(Text t, FontWeight weight) {
-        t.setFont(Font.font(StyleUtility.TEXT_FAMILY, weight, t.getFont().getSize()));
-        return t;
+    public static Text weight(Text text, FontWeight weight) {
+        setTextFont(text, StyleUtility.TEXT_FAMILY, weight, text.getFont().getSize());
+        return text;
     }
 
     public static Text getSettingSectionText(String content) {
-        return weight(getText(content, StyleUtility.MAIN_TEXT_SIZE, StyleUtility.VICTOR_BATTLE_BLACK), FontWeight.BOLD);
+        return weight(getText(content, StyleUtility.BLACK, StyleUtility.MAIN_TEXT_SIZE), FontWeight.BOLD);
     }
 }

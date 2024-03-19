@@ -20,6 +20,11 @@
     <dependencies>
 
         <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-web</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>one.modality</groupId>
             <artifactId>modality-all-backoffice-application</artifactId>
             <version>1.0.0-SNAPSHOT</version>
@@ -33,20 +38,26 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-client-navigationarrows-java</artifactId>
+            <artifactId>modality-base-client-entities</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-navigationarrows-java-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-client-operationactionsloading</artifactId>
+            <artifactId>modality-base-client-operationactionsloading-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-crm-client-authz</artifactId>
+            <artifactId>modality-crm-client-authz-required-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
@@ -100,13 +111,19 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-javafxgraphics-openjfx</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-kit-launcher</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-kit-openjfx</artifactId>
+            <artifactId>webfx-platform-ast-factory-generic</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -124,13 +141,13 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-console-java</artifactId>
+            <artifactId>webfx-platform-conf-zero</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-json-java</artifactId>
+            <artifactId>webfx-platform-console-java</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -168,6 +185,13 @@
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-storagelocation-gluon</artifactId>
             <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-substitution-var-env-plugin</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
@@ -256,19 +280,13 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-conf</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-conf-format-json</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-db-query-buscall</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-db-querypush-buscall</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -310,6 +328,12 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-push-client-simple</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-session-client</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
@@ -334,9 +358,11 @@
                         <list>util</list>
                     </attachList>
                     <resourcesList>
+                        <list>dev/webfx/platform/conf/[^/]+$</list>
                         <list>dev/webfx/platform/meta/exe/[^/]+$</list>
                         <list>dev/webfx/stack/authn/login/ui/spi/impl/gateway/facebook/[^/]+$</list>
                         <list>dev/webfx/stack/authn/login/ui/spi/impl/gateway/google/[^/]+$</list>
+                        <list>dev/webfx/stack/i18n/[^/]+$</list>
                         <list>dev/webfx/stack/ui/validation/controlsfx/images/[^/]+$</list>
                         <list>images/buddhas/[^/]+$</list>
                         <list>images/s16/[^/]+$</list>
@@ -345,6 +371,7 @@
                         <list>images/s16/continents/org/[^/]+$</list>
                         <list>images/s16/controls/[^/]+$</list>
                         <list>images/s16/countries/[^/]+$</list>
+                        <list>images/s16/countries/svg/[^/]+$</list>
                         <list>images/s16/currencies/[^/]+$</list>
                         <list>images/s16/event/[^/]+$</list>
                         <list>images/s16/itemFamilies/[^/]+$</list>
@@ -353,6 +380,7 @@
                         <list>images/s16/moneyAccountTypes/[^/]+$</list>
                         <list>images/s16/multipleBookings/[^/]+$</list>
                         <list>images/s16/organizations/[^/]+$</list>
+                        <list>images/s16/organizations/svg/[^/]+$</list>
                         <list>images/s16/security/[^/]+$</list>
                         <list>images/s16/system/[^/]+$</list>
                         <list>images/s16/validation/[^/]+$</list>
@@ -360,12 +388,11 @@
                         <list>images/svg/color/[^/]+$</list>
                         <list>images/svg/mono/[^/]+$</list>
                         <list>javafx/scene/control/skin/checkbox/[^/]+$</list>
-                        <list>one/modality/base/client/busconfig/[^/]+$</list>
+                        <list>one/modality/base/backoffice/activities/mainframe/[^/]+$</list>
+                        <list>one/modality/base/backoffice/ganttcanvas/images/s32/[^/]+$</list>
                         <list>one/modality/base/client/css/[^/]+$</list>
                         <list>one/modality/base/client/fonts/[^/]+$</list>
-                        <list>one/modality/base/client/ganttcanvas/images/s32/[^/]+$</list>
                         <list>one/modality/base/client/images/[^/]+$</list>
-                        <list>one/modality/base/client/services/i18n/dictionaries/[^/]+$</list>
                         <list>one/modality/base/shared/domainmodel/[^/]+$</list>
                     </resourcesList>
                     <appIdentifier>one.modality.backoffice</appIdentifier>

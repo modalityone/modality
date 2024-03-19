@@ -20,7 +20,7 @@ public abstract class ModalityClientStarterActivity
     private ViewDomainActivityContext context;
 
     public ModalityClientStarterActivity(String defaultInitialHistoryPath) {
-        this(defaultInitialHistoryPath, ModalityClientFrameContainerActivity::new);
+        this(defaultInitialHistoryPath, ModalityClientMainFrameActivity::new);
     }
 
     public ModalityClientStarterActivity(String defaultInitialHistoryPath, Factory<Activity<ViewDomainActivityContextFinal>> containerActivityFactory) {

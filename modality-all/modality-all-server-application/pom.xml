@@ -19,21 +19,21 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-server-application-all</artifactId>
+            <artifactId>modality-base-server-max-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-crm-server-application-all</artifactId>
+            <artifactId>modality-crm-server-max-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-server-application-all</artifactId>
+            <artifactId>modality-ecommerce-server-max-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>

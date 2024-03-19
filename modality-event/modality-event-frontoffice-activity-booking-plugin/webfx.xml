@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <description>The front-office booking activity.</description>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-packages/>
+    </exported-packages>
+
+    <embed-resources>
+        <resource>one/modality/event/frontoffice/activities/booking/map/DynamicMapView.js</resource>
+    </embed-resources>
+
+    <dependencies>
+        <used-by-source-modules/>
+    </dependencies>
+
+    <providers>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.event.frontoffice.activities.booking.BookingUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.event.frontoffice.activities.booking.process.event.BookEventUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.event.frontoffice.activities.booking.RouteToBookingRequestEmitter</provider>
+    </providers>
+
+    <java-callbacks> <!-- not yet considered by WebFX CLI but will be in the future to automatically generate WebToJavaCallbacks super source in final executable GWT module -->
+        <callback-class name="one.modality.event.frontoffice.activities.booking.map.DynamicMapView">
+            <callback-method name="consoleLog">
+                <callback-argument class="java.lang.String"/>
+            </callback-method>
+            <callback-method name="consoleWarn">
+                <callback-argument class="java.lang.String"/>
+            </callback-method>
+            <callback-method name="consoleError">
+                <callback-argument class="java.lang.String"/>
+            </callback-method>
+            <callback-method name="onGoogleMapLoaded"/>
+            <callback-method name="onMarkerClicked">
+                <callback-argument class="one.modality.event.frontoffice.activities.booking.map.MapMarker"/>
+            </callback-method>
+        </callback-class>
+    </java-callbacks>
+
+    <graalvm-reflection-json> <!-- Should be generated from callbacks declaration instead -->
+        <![CDATA[
+[
+  {
+    "name" : "one.modality.event.frontoffice.activities.booking.map.DynamicMapView",
+    "methods" : [
+      { "name" : "consoleLog", "parameterTypes" : ["java.lang.String"] },
+      { "name" : "consoleWarn", "parameterTypes" : ["java.lang.String"] },
+      { "name" : "consoleError", "parameterTypes" : ["java.lang.String"] },
+      { "name" : "onGoogleMapLoaded", "parameterTypes" : [] },
+      { "name" : "onMarkerClicked", "parameterTypes" : ["one.modality.event.frontoffice.activities.booking.map.MapMarker"] }
+    ]
+  }
+]
+        ]]>
+    </graalvm-reflection-json>
+
+</project>

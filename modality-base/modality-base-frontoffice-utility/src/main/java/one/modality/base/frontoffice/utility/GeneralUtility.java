@@ -1,21 +1,20 @@
 package one.modality.base.frontoffice.utility;
 
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.kit.util.properties.Unregisterable;
-import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.async.Handler;
+import dev.webfx.platform.util.Arrays;
 import dev.webfx.stack.i18n.I18n;
+import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -39,7 +38,6 @@ public class GeneralUtility {
     public static Node createSVGIcon(String svgPath) {
         SVGPath icon = new SVGPath();
         icon.setContent(svgPath);
-
         return icon;
     }
 
@@ -47,10 +45,12 @@ public class GeneralUtility {
         if (lat1 == null || lat2 == null || lon1 == null || lon2 == null)
             return null;
 
-        Double theta = lon1 - lon2;
-        Double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+        double lat1Rad = Math.toRadians(lat1);
+        double lat2Rad = Math.toRadians(lat2);
+        double thetaRad = Math.toRadians(lon1 - lon2);
+        double dist = Math.sin(lat1Rad) * Math.sin(lat2Rad) + Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.cos(thetaRad);
         dist = Math.acos(dist);
-        dist = rad2deg(dist);
+        dist = Math.toDegrees(dist);
         dist = dist * 60 * 1.1515;
         if (unit == 'K') {
             dist = dist * 1.609344;
@@ -59,20 +59,6 @@ public class GeneralUtility {
         }
 
         return (dist);
-    }
-
-    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-    /*::  This function converts decimal degrees to radians             :*/
-    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-    private static double deg2rad(double deg) {
-        return (deg * Math.PI / 180.0);
-    }
-
-    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-    /*::  This function converts radians to decimal degrees             :*/
-    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-    private static double rad2deg(double rad) {
-        return (rad * 180.0 / Math.PI);
     }
 
     public static Node createSpace(int height) {
@@ -84,7 +70,7 @@ public class GeneralUtility {
     public static TextField createBindedTextField(StringProperty stringProperty, double limitedWidth) {
         TextField tf = new TextField();
 
-        tf.setBorder(new Border(new BorderStroke(Color.web(StyleUtility.ELEMENT_GRAY), BorderStrokeStyle.SOLID, new CornerRadii(5), new BorderWidths(0.3))));
+        tf.setBorder(new Border(new BorderStroke(StyleUtility.ELEMENT_GRAY_COLOR, BorderStrokeStyle.SOLID, new CornerRadii(5), new BorderWidths(0.3))));
         tf.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
         tf.setPadding(new Insets(5, 15, 5, 15));
         tf.setFont(Font.font(StyleUtility.MAIN_TEXT_SIZE));
@@ -106,7 +92,7 @@ public class GeneralUtility {
 
     public static void styleSelectButton(EntityButtonSelector buttonSelector) {
         Button b = buttonSelector.getButton();
-        b.setBorder(new Border(new BorderStroke(Color.web(StyleUtility.ELEMENT_GRAY), BorderStrokeStyle.SOLID, new CornerRadii(5), new BorderWidths(0.3))));
+        b.setBorder(new Border(new BorderStroke(StyleUtility.ELEMENT_GRAY_COLOR, BorderStrokeStyle.SOLID, new CornerRadii(5), new BorderWidths(0.3))));
         b.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
         b.setPadding(new Insets(5, 15, 5, 15));
     }
@@ -119,46 +105,43 @@ public class GeneralUtility {
         b.setArcWidth(4);
         b.setStroke(Color.BLACK);
         b.setStrokeWidth(0.5);
-
         return b;
     }
 
-    public static boolean screenChangeListened(double w) {
-        double xRatio = FXApp.fontRatio.get();
+    public static void onPageWidthChanged(double pageWidth) {
+        FXApp.fontRatio.set(computeFontFactor(pageWidth));
+    }
 
-        if (w < 300) { FXApp.fontRatio.set(1.0); FXApp.widthStage.set(300); }
-        else if (w > 2000) { FXApp.fontRatio.set(2.0); FXApp.widthStage.set(2000); }
-        else if (300 <= w && w < 600) { FXApp.fontRatio.set(1.2); FXApp.widthStage.set(300); }
-        else if (600 <= w && w < 900) { FXApp.fontRatio.set(1.4); FXApp.widthStage.set(600); }
-        else if (900 <= w && w < 1200) { FXApp.fontRatio.set(1.6); FXApp.widthStage.set(900); }
-        else if (1200 <= w && w < 1500) { FXApp.fontRatio.set(1.8); FXApp.widthStage.set(1200); }
-        else if (1500 <= w && w < 1800) { FXApp.fontRatio.set(1.9); FXApp.widthStage.set(1500); }
-        else if (1800 <= w && w < 2000) { FXApp.fontRatio.set(2.0); FXApp.widthStage.set(2000); }
-
-        return xRatio != FXApp.fontRatio.get();
+    public static double computeFontFactor(double pageWidth) {
+        double fontFactor = 1;
+        if (pageWidth > 300) {
+            fontFactor += (pageWidth - 300) / 900 * 0.8;
+            fontFactor = Math.min(fontFactor, 2);
+        }
+        return fontFactor;
     }
 
     public static Node createCheckBoxDirect(BooleanProperty property, boolean isRadio, boolean isReverse, String label, boolean isDisabled) {
         Rectangle b = createCheckBoxRaw();
 
-        b.setFill((isReverse != property.get()) ? Color.web(StyleUtility.MAIN_BLUE) : Color.WHITE);
+        b.setFill((isReverse != property.get()) ? StyleUtility.MAIN_ORANGE_COLOR : Color.WHITE);
 
         property.addListener((observableValue, aBoolean, t1) -> {
-            b.setFill((isReverse != property.get()) ? Color.web(StyleUtility.MAIN_BLUE) : Color.WHITE);
+            b.setFill((isReverse != property.get()) ? StyleUtility.MAIN_ORANGE_COLOR : Color.WHITE);
         });
 
         if (!isDisabled) b.setOnMouseClicked(e -> property.set(isRadio ? !isReverse : !property.get()));
 
-        return createHList(5,0, b, TextUtility.getMainText(label, StyleUtility.VICTOR_BATTLE_BLACK));
+        return createHList(5,0, b, TextUtility.getMainText(label, StyleUtility.BLACK));
     }
 
     public static Node createRadioCheckBoxBySelection(StringProperty selectedProperty, String label) {
         Rectangle b = createCheckBoxRaw();
 
-        b.setFill(selectedProperty.get().equals(label) ? Color.web(StyleUtility.MAIN_BLUE) : Color.WHITE);
+        b.setFill(selectedProperty.get().equals(label) ? StyleUtility.MAIN_ORANGE_COLOR : Color.WHITE);
 
         selectedProperty.addListener((observableValue, aBoolean, t1) -> {
-            b.setFill(selectedProperty.get().equals(label) ? Color.web(StyleUtility.MAIN_BLUE) : Color.WHITE);
+            b.setFill(selectedProperty.get().equals(label) ? StyleUtility.MAIN_ORANGE_COLOR : Color.WHITE);
         });
 
         b.setOnMouseClicked(e -> { selectedProperty.set(selectedProperty.get().equals(label) ? "" : label); });
@@ -179,10 +162,7 @@ public class GeneralUtility {
         col2.setPercentWidth(100 - ratio);
         col2.setHalignment(HPos.RIGHT);
 
-        container.getColumnConstraints().addAll(
-                col1, col2
-        );
-
+        container.getColumnConstraints().setAll(col1, col2);
         container.setHgap(padding);
         container.setMinWidth(0);
 
@@ -190,94 +170,125 @@ public class GeneralUtility {
     }
 
     public static HBox createHList(int space, int padding, Node... nodes) {
-        HBox container = new HBox();
-
-        container.getChildren().addAll(nodes);
-
+        HBox container = new HBox(nodes);
         container.setPadding(new Insets(padding));
         container.setSpacing(space);
-
         return container;
     }
 
     public static VBox createVList(int space, int padding, Node... nodes) {
-        VBox container = new VBox();
-
-        container.getChildren().addAll(nodes);
-
+        VBox container = new VBox(nodes);
         container.setPadding(new Insets(padding));
         container.setSpacing(space);
-
         return container;
     }
 
     public static Node createField(String labelKey, Node node) {
-        VBox field = new VBox();
-
+        VBox field = new VBox(TextUtility.getSubText(labelKey), node);
         field.setSpacing(5);
-        field.getChildren().addAll(
-                TextUtility.getSubText(labelKey), node
-        );
-
         return field;
     }
 
-    public static Button createButton(Color color, int radius, String label, double fontSize) {
+    public static Button getButton(Color color, int radius, String label, double fontSize) {
         Button b = new Button(label);
         b.setTextFill(Color.WHITE);
-        b.setBackground(new Background(new BackgroundFill(color, new CornerRadii(radius*FXApp.fontRatio.get()), null)));
 
         FXProperties.runNowAndOnPropertiesChange(() -> {
-            double size = fontSize * FXApp.fontRatio.get();
-            b.setFont(Font.font(StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), size));
-            b.setStyle("-fx-font-family: " + StyleUtility.TEXT_FAMILY + "; -fx-font-size: " + size);
+            b.setBackground(new Background(new BackgroundFill(color, new CornerRadii(radius*FXApp.fontRatio.get()), null)));
+            setLabeledFont(b, StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), fontSize * FXApp.fontRatio.get());
         }, FXApp.fontRatio);
 
         return b;
     }
 
-    public static Label getMainLabel(String content, String color) {
-        return createLabel(content, Color.web(color), StyleUtility.MAIN_TEXT_SIZE);
+    /*public static Button createButton(Color color, int radius, String label, double fontSize) {
+        Button b = createButton(label);
+        b.setBackground(new Background(new BackgroundFill(color, new CornerRadii(radius), null)));
+        setLabeledFont(b, StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), fontSize);
+        return b;
+    }*/
+
+    public static Button createButton(String i18nKey) {
+        Button b = new Button();
+        b.setTextFill(Color.WHITE);
+        if (i18nKey != null)
+            I18nControls.bindI18nProperties(b, i18nKey);
+        return b;
     }
 
-    public static Label getMainHeaderLabel(String content) {
-        return weight(createLabel(content, Color.web(StyleUtility.MAIN_BLUE), 21), FontWeight.findByWeight(600));
+    /*public static Label getMainLabel(String content, String color) {
+        return createLabel(content, Color.web(color), FontWeight.SEMI_BOLD, StyleUtility.MAIN_TEXT_SIZE);
+    }*/
+
+    /*public static Label getMainHeaderLabel(String content) {
+        return createLabel(content, StyleUtility.MAIN_ORANGE_COLOR, true, 21);
+    }*/
+
+    /*public static Label getMediumLabel(String content, String color) {
+        return createLabel(content, Color.web(color), false, StyleUtility.MEDIUM_TEXT_SIZE);
+    }*/
+
+    /*public static Label createLabel(String text, Color color, boolean bold, double fontSize) {
+        return setupLabeled(new Label(), text, color, bold, fontSize);
+    }*/
+
+    /*public static Label createLabel(String text, Color color, FontWeight fontWeight, double fontSize) {
+        return setupLabeled(new Label(), text, color, fontWeight, fontSize);
+    }*/
+
+    public static Hyperlink createHyperlink(String text, Color color, double fontSize) {
+        return setupLabeled(new Hyperlink(), text, color, false, fontSize);
     }
 
-    public static Label getMediumLabel(String content, String color) {
-        return createLabel(content, Color.web(color), StyleUtility.MEDIUM_TEXT_SIZE);
+    public static <T extends Labeled> T setupLabeled(T labeled, String text, Color color, boolean bold, double fontSize) {
+        return setupLabeled(labeled, text, color, bold ? FontWeight.BOLD : FontWeight.NORMAL, fontSize);
     }
 
-    public static Label getSubLabel(String content, String color) {
-        return createLabel(content, Color.web(color), StyleUtility.SUB_TEXT_SIZE);
-    }
-
-
-    public static Label createLabel(String text, Color color, double fontSize) {
-        Label label = new Label(text);
-        label.setTextFill(color);
+    public static <T extends Labeled> T setupLabeled(T labeled, String text, Color color, FontWeight fontWeight, double fontSize) {
         FXProperties.runNowAndOnPropertiesChange(() -> {
-            double size = fontSize * FXApp.fontRatio.get();
-            label.setFont(Font.font(StyleUtility.TEXT_FAMILY, FontWeight.findByWeight(500), size));
-            label.setStyle("-fx-font-family: " + StyleUtility.TEXT_FAMILY + "; -fx-font-size: " + size);
+            setLabeledFont(labeled, StyleUtility.TEXT_FAMILY, fontWeight, fontSize * FXApp.fontRatio.get());
         }, FXApp.fontRatio);
-
-        label.setWrapText(true);
-
-        return label;
+        return setupLabeled(labeled, text, color);
     }
 
-    public static Label weight(Label t, FontWeight weight) {
-        t.setFont(Font.font(StyleUtility.TEXT_FAMILY, weight, t.getFont().getSize()));
-        return t;
+    public static <T extends Labeled> T setupLabeled(T labeled, String i18nKey, Color color) {
+        if (i18nKey != null)
+            I18nControls.bindI18nProperties(labeled, i18nKey);
+        labeled.setTextFill(color);
+        labeled.setWrapText(true);
+        labeled.setLineSpacing(6);
+        return labeled;
     }
 
+    public static Label createLabel(Color color) {
+        return createLabel(null, color);
+    }
+
+    public static Label createLabel(String i18nKey, Color color) {
+        return setupLabeled(new Label(), i18nKey, color);
+    }
+
+    public static Hyperlink createHyperlink(Color color) {
+        return createHyperlink(null, color);
+    }
+
+    public static Hyperlink createHyperlink(String i18nKey, Color color) {
+        return setupLabeled(new Hyperlink(), i18nKey, color);
+    }
+
+    public static <T extends Labeled> void setLabeledFont(T labeled, String fontFamily, FontWeight fontWeight, double fontSize) {
+        labeled.setFont(Font.font(fontFamily, fontWeight, fontSize));
+        setNodeFontStyle(labeled, fontFamily, fontWeight, fontSize);
+    }
+
+    public static void setNodeFontStyle(Node labeled, String fontFamily, FontWeight fontWeight, double fontSize) {
+        labeled.setStyle("-fx-font-family: " + fontFamily + "; -fx-font-weight: " + fontWeight.getWeight() + "; -fx-font-size: " + fontSize);
+    }
 
     public static SVGPath createSvgPath(String content, String color) {
         SVGPath p = new SVGPath();
         p.setContent(content);
         p.setFill(Color.web(color));
-
         return p;
     }
 
@@ -326,7 +337,7 @@ public class GeneralUtility {
         return layers;
     }
 
-    public static void roundClipImageView(ImageView imageView) {
+    /*public static void roundClipImageView(ImageView imageView) {
         // We will apply a round clip to the imageView
         Rectangle roundClip = new Rectangle();
         imageView.setClip(roundClip);
@@ -374,6 +385,17 @@ public class GeneralUtility {
                 }
             }, image.widthProperty(), image.heightProperty(), imageView.fitWidthProperty(), imageView.fitHeightProperty());
         }, imageView.imageProperty());
-    }
+    }*/
 
+    public static void onNodeClickedWithoutScroll(Handler<MouseEvent> clickHandler, Node... nodes) {
+        double[] screenPressedY = {0};
+        Arrays.forEach(nodes, node -> {
+            node.setCursor(Cursor.HAND);
+            node.setOnMousePressed(e -> screenPressedY[0] = e.getScreenY());
+            node.setOnMouseReleased(e -> {
+                if (clickHandler != null && Math.abs(e.getScreenY() - screenPressedY[0]) < 10) // This is to skip the click when the user is actually scrolling on a touch screen such as mobiles
+                    clickHandler.handle(e);
+            });
+        });
+    }
 }

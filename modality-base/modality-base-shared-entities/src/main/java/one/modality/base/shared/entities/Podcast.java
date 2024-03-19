@@ -1,9 +1,9 @@
 package one.modality.base.shared.entities;
 
 import dev.webfx.stack.orm.entity.EntityId;
-import one.modality.base.shared.entities.markers.EntityHasDate;
+import one.modality.base.shared.entities.markers.EntityHasLocalDateTime;
 
-public interface Podcast extends EntityHasDate {
+public interface Podcast extends EntityHasLocalDateTime {
 
     default void setChannel(Object channel) {
         setForeignField("channel", channel);
@@ -17,12 +17,24 @@ public interface Podcast extends EntityHasDate {
         return getForeignEntity("channel");
     }
 
-    default void setChannelPodcastId(String channelPodcastId) {
+    default void setTeacher(Object teacher) {
+        setForeignField("teacher", teacher);
+    }
+
+    default EntityId getTeacherId() {
+        return getForeignEntityId("teacher");
+    }
+
+    default Teacher getTeacher() {
+        return getForeignEntity("teacher");
+    }
+
+    default void setChannelPodcastId(Integer channelPodcastId) {
         setFieldValue("channelPodcastId", channelPodcastId);
     }
 
-    default String getChannelPodcastId() {
-        return getStringFieldValue("channelPodcastId");
+    default Integer getChannelPodcastId() {
+        return getIntegerFieldValue("channelPodcastId");
     }
 
     default void setTitle(String title) {
@@ -65,12 +77,19 @@ public interface Podcast extends EntityHasDate {
         return getStringFieldValue("audioUrl");
     }
 
+    default void setWistiaVideoId(String wistiaVideoId) {
+        setFieldValue("wistiaVideoId", wistiaVideoId);
+    }
+
+    default String getWistiaVideoId() {
+        return getStringFieldValue("wistiaVideoId");
+    }
 
     default void setDurationMillis(Long durationMillis) {
         setFieldValue("durationMillis", durationMillis);
     }
 
-    default long getDurationMillis() {
+    default Long getDurationMillis() {
         return getLongFieldValue("durationMillis");
     }
 

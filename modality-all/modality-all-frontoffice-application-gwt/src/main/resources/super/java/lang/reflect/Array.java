@@ -2,6 +2,7 @@
 package java.lang.reflect;
 
 import dev.webfx.platform.console.Console;
+import jsinterop.base.Js;
 
 public final class Array {
 
@@ -18,15 +19,7 @@ public final class Array {
     }
 
     public static int getLength(Object array) {
-        return asArray(array).length;
+        return Js.asArray(array).length;
     }
-
-    // From com.google.gwt.lang.Array (gwt-dev:2.9.0)
-    /**
-     * Use JSNI to effect a castless type change.
-     */
-    private static native <T> T[] asArray(Object array) /*-{
-        return array;
-    }-*/;
 
 }

@@ -3,6 +3,7 @@ package one.modality.base.client.entities.util;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Labeled;
+import one.modality.base.client.entities.util.functions.I18nFunction;
 import one.modality.base.shared.entities.Label;
 import one.modality.base.shared.entities.impl.LabelImpl;
 import one.modality.base.shared.entities.markers.HasItem;
@@ -15,6 +16,11 @@ import dev.webfx.platform.util.Objects;
  * @author Bruno Salmon
  */
 public final class Labels {
+
+    static {
+        // Not sure if it's the best place to register this function, but ok for now.
+        new I18nFunction().register();
+    }
 
     public static Label bestLabel(Object o) {
         Label label = null;

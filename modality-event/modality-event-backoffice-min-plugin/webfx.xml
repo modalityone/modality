@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <description>Convenient module that embeds the minimal back-office modules for the Event layer.</description>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+
+        <!-- This will register the Events Gantt Canvas as the main frame Gantt Canvas -->
+        <plugin-module>modality-event-backoffice-events-ganttcanvas-plugin</plugin-module>
+    </dependencies>
+
+</project>
