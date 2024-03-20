@@ -1,4 +1,3 @@
-[![Build for Multiple OS](https://github.com/modalityone/modality/actions/workflows/build-for-multiple-os.yml/badge.svg)](https://github.com/modalityone/modality/actions/workflows/build-for-multiple-os.yml)
 [![Deploy to Sonatype](https://github.com/modalityone/modality/actions/workflows/deploy-to-sonatype.yml/badge.svg)](https://github.com/modalityone/modality/actions/workflows/deploy-to-sonatype.yml)
 [![Scc Code Count Badge](https://sloc.xyz/github/modalityone/modality/?category=code)](https://github.com/modalityone/modality/)
 [![Scc Blanks Count Badge](https://sloc.xyz/github/modalityone/modality/?category=blanks)](https://github.com/modalityone/modality/)
