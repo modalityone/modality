@@ -9,7 +9,6 @@
     <dependencies>
         <used-by-source-modules>
             <undetected-module>webfx-stack-ui-operation-action</undetected-module>
-            <undetected-package>java.time</undetected-package>
         </used-by-source-modules>
     </dependencies>
 

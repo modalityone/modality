@@ -12,9 +12,7 @@
     </providers>
 
     <dependencies>
-        <used-by-source-modules>
-            <undetected-package>java.time</undetected-package>
-        </used-by-source-modules>
+        <used-by-source-modules/>
     </dependencies>
 
 </project>

@@ -10,7 +10,6 @@
     <dependencies>
         <used-by-source-modules>
             <module transitive="true">modality-crm-shared-authn</module>
-            <undetected-package>java.time</undetected-package>
         </used-by-source-modules>
     </dependencies>
 
