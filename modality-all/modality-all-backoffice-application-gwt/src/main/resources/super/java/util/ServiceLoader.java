@@ -60,7 +60,6 @@ public class ServiceLoader<S> implements Iterable<S> {
             case "one.modality.base.backoffice.ganttcanvas.spi.MainFrameGanttCanvasProvider": return new ServiceLoader<S>(one.modality.event.backoffice.events.ganttcanvas.spi.impl.event.MainFrameEventsGanttCanvasProvider::new);
             case "one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider": return new ServiceLoader<S>(one.modality.crm.backoffice.organization.fx.impl.MainFrameHeaderOrganizationSelectorProvider::new, one.modality.event.backoffice.event.fx.impl.MainFrameHeaderEventSelectorProvider::new);
             case "one.modality.ecommerce.payment.custom.spi.CustomPaymentProvider": return new ServiceLoader<S>(one.modality.ecommerce.payment.custom.spi.impl.remote.RemoteCustomPaymentProvider::new);
-            case "org.threeten.bp.zone.ZoneRulesProvider": return new ServiceLoader<S>();
 
             // UNKNOWN SPI
             default:

@@ -59,7 +59,6 @@ public class ServiceLoader<S> implements Iterable<S> {
             case "dev.webfx.stack.session.spi.SessionServiceProvider": return new ServiceLoader<S>(dev.webfx.stack.session.spi.impl.client.ClientSessionServiceProvider::new);
             case "javafx.application.Application": return new ServiceLoader<S>(one.modality.base.frontoffice.application.ModalityFrontOfficeApplication::new);
             case "one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider": return new ServiceLoader<S>();
-            case "org.threeten.bp.zone.ZoneRulesProvider": return new ServiceLoader<S>();
 
             // UNKNOWN SPI
             default:
