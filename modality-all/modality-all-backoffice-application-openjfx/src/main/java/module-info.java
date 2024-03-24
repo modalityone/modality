@@ -11,14 +11,17 @@ module modality.all.backoffice.application.openjfx {
     requires modality.base.client.css;
     requires modality.ecommerce.payment.custom.buscall;
     requires modality.ecommerce.payment.custom.remote;
+    requires webfx.extras.filepicker.openjfx;
     requires webfx.extras.visual.charts.peers.openjfx;
     requires webfx.extras.visual.grid.peers.openjfx;
     requires webfx.extras.webtext.peers.openjfx;
     requires webfx.kit.javafxgraphics.openjfx;
     requires webfx.kit.platform.visibility.openjfx;
     requires webfx.platform.ast.factory.generic;
+    requires webfx.platform.blob.java;
     requires webfx.platform.boot.java;
     requires webfx.platform.console.java;
+    requires webfx.platform.file.java;
     requires webfx.platform.os.java;
     requires webfx.platform.resource.java;
     requires webfx.platform.scheduler.java;

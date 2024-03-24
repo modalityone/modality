@@ -9,16 +9,19 @@ public class ServiceLoader<S> implements Iterable<S> {
 
     public static <S> ServiceLoader<S> load(Class<S> serviceClass) {
         switch (serviceClass.getName()) {
+            case "dev.webfx.extras.filepicker.spi.FilePickerProvider": return new ServiceLoader<S>(dev.webfx.extras.filepicker.spi.impl.gwt.GwtFilePickerProvider::new);
             case "dev.webfx.kit.launcher.spi.WebFxKitLauncherProvider": return new ServiceLoader<S>(dev.webfx.kit.launcher.spi.impl.gwtj2cl.GwtJ2clWebFxKitLauncherProvider::new);
             case "dev.webfx.kit.mapper.spi.WebFxKitMapperProvider": return new ServiceLoader<S>(dev.webfx.kit.mapper.spi.impl.gwtj2cl.GwtJ2clWebFxKitHtmlMapperProvider::new);
             case "dev.webfx.platform.ast.spi.factory.AstFactoryProvider": return new ServiceLoader<S>(dev.webfx.platform.ast.spi.factory.impl.gwt.GwtAstFactoryProvider::new);
             case "dev.webfx.platform.ast.spi.formatter.AstFormatterProvider": return new ServiceLoader<S>(dev.webfx.platform.ast.json.formatter.JsonFormatterProvider::new);
             case "dev.webfx.platform.ast.spi.parser.AstParserProvider": return new ServiceLoader<S>(dev.webfx.platform.ast.json.parser.JsonParserProvider::new);
+            case "dev.webfx.platform.blob.spi.BlobProvider": return new ServiceLoader<S>(dev.webfx.platform.blob.spi.impl.gwtj2cl.GwtJ2clBlobProvider::new);
             case "dev.webfx.platform.boot.spi.ApplicationBooterProvider": return new ServiceLoader<S>(dev.webfx.platform.boot.spi.impl.gwt.GwtApplicationBooterProvider::new);
             case "dev.webfx.platform.boot.spi.ApplicationJob": return new ServiceLoader<S>(one.modality.base.client.entities.util.functions.ClientFunctionsRegisteringApplicationJob::new, one.modality.crm.backoffice.controls.bookingdetailspanel.BookingDetailsPanelApplicationJob::new);
             case "dev.webfx.platform.boot.spi.ApplicationModuleBooter": return new ServiceLoader<S>(dev.webfx.kit.launcher.WebFxKitLauncherModuleBooter::new, dev.webfx.platform.boot.spi.impl.ApplicationJobsBooter::new, dev.webfx.platform.resource.spi.impl.gwt.GwtResourceModuleBooter::new, dev.webfx.stack.com.bus.call.BusCallModuleBooter::new, dev.webfx.stack.com.bus.spi.impl.json.client.JsonClientBusModuleBooter::new, dev.webfx.stack.com.serial.SerialCodecModuleBooter::new, dev.webfx.stack.db.querypush.client.simple.SimpleQueryPushClientJob::new, dev.webfx.stack.orm.dql.query.interceptor.DqlQueryInterceptorModuleBooter::new, dev.webfx.stack.orm.dql.querypush.interceptor.DqlQueryPushInterceptorModuleBooter::new, dev.webfx.stack.orm.dql.submit.interceptor.DqlSubmitInterceptorModuleBooter::new, dev.webfx.stack.ui.fxraiser.json.JsonFXRaiserModuleBooter::new, one.modality.base.client.operationactionsloading.ModalityClientOperationActionsLoader::new, one.modality.crm.client.services.authz.ModalityAuthorizationClientModuleBooter::new);
             case "dev.webfx.platform.conf.spi.ConfigLoaderProvider": return new ServiceLoader<S>();
             case "dev.webfx.platform.console.spi.ConsoleProvider": return new ServiceLoader<S>(dev.webfx.platform.console.spi.impl.gwtj2cl.GwtJ2clConsoleProvider::new);
+            case "dev.webfx.platform.file.spi.FileProvider": return new ServiceLoader<S>(dev.webfx.platform.file.spi.impl.gwtj2cl.GwtJ2clFileProvider::new);
             case "dev.webfx.platform.os.spi.OperatingSystemProvider": return new ServiceLoader<S>(dev.webfx.platform.os.spi.impl.gwtj2cl.GwtJ2clOperatingSystemProvider::new);
             case "dev.webfx.platform.resource.spi.ResourceProvider": return new ServiceLoader<S>(dev.webfx.platform.resource.spi.impl.gwt.GwtResourceProvider::new);
             case "dev.webfx.platform.resource.spi.impl.gwt.GwtResourceBundle": return new ServiceLoader<S>(modality.all.backoffice.application.gwt.embed.EmbedResourcesBundle.ProvidedGwtResourceBundle::new);

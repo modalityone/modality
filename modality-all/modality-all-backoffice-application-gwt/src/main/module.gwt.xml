@@ -388,6 +388,12 @@
     <source path="dev/webfx/extras/cell/collator"/>
     <source path="dev/webfx/extras/cell/renderer"/>
     <source path="dev/webfx/extras/cell/rowstyle"/>
+    <!--============================< webfx-extras-filepicker >=============================-->
+    <source path="dev/webfx/extras/filepicker"/>
+    <source path="dev/webfx/extras/filepicker/spi"/>
+    <source path="dev/webfx/extras/filepicker/spi/impl"/>
+    <!--========================< webfx-extras-filepicker-gwt-j2cl >========================-->
+    <source path="dev/webfx/extras/filepicker/spi/impl/gwt"/>
     <!--=============================< webfx-extras-geometry >==============================-->
     <source path="dev/webfx/extras/geometry"/>
     <!--============================< webfx-extras-imagestore >=============================-->
@@ -536,6 +542,11 @@
     <!--==============================< webfx-platform-async >==============================-->
     <source path="dev/webfx/platform/async"/>
     <source path="dev/webfx/platform/async/impl"/>
+    <!--==============================< webfx-platform-blob >===============================-->
+    <source path="dev/webfx/platform/blob"/>
+    <source path="dev/webfx/platform/blob/spi"/>
+    <!--==========================< webfx-platform-blob-gwt-j2cl >==========================-->
+    <source path="dev/webfx/platform/blob/spi/impl/gwtj2cl"/>
     <!--==============================< webfx-platform-boot >===============================-->
     <source path="dev/webfx/platform/boot"/>
     <source path="dev/webfx/platform/boot/spi"/>
@@ -551,6 +562,11 @@
     <source path="dev/webfx/platform/console/spi"/>
     <!--========================< webfx-platform-console-gwt-j2cl >=========================-->
     <source path="dev/webfx/platform/console/spi/impl/gwtj2cl"/>
+    <!--==============================< webfx-platform-file >===============================-->
+    <source path="dev/webfx/platform/file"/>
+    <source path="dev/webfx/platform/file/spi"/>
+    <!--==========================< webfx-platform-file-gwt-j2cl >==========================-->
+    <source path="dev/webfx/platform/file/spi/impl/gwtj2cl"/>
     <!--========================< webfx-platform-javabase-emul-gwt >========================-->
     <super-source includes="java/io/" path=""/>
     <super-source includes="java/lang/ref/" path=""/>

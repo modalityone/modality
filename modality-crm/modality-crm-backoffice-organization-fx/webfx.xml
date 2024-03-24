@@ -8,7 +8,9 @@
     </exported-packages>
 
     <dependencies>
-        <used-by-source-modules/>
+        <used-by-source-modules>
+            <module transitive="true">modality-base-shared-entities</module>
+        </used-by-source-modules>
     </dependencies>
 
     <providers>
