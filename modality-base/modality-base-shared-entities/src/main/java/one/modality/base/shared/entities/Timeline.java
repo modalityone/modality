@@ -6,10 +6,10 @@ import one.modality.base.shared.entities.markers.*;
 /**
  * @author Bruno Salmon
  */
-public interface ScheduledItem extends Entity,
-        EntityHasEvent,
-        EntityHasLocalDate,
+public interface Timeline extends Entity,
         EntityHasSiteAndItem,
+        EntityHasItemFamily,
+        EntityHasEvent,
         EntityHasStartAndEndTime {
 
 }

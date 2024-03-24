@@ -461,6 +461,9 @@
     <source path="dev/webfx/extras/visual/controls"/>
     <!--============================< webfx-extras-visual-grid >============================-->
     <source path="dev/webfx/extras/visual/controls/grid"/>
+    <!--====================< webfx-extras-visual-grid-peers-gwt-j2cl >=====================-->
+    <source path="dev/webfx/extras/visual/controls/grid/peers/gwt/html"/>
+    <source path="dev/webfx/extras/visual/controls/grid/registry"/>
     <!--======================< webfx-extras-visual-grid-peers-base >=======================-->
     <source path="dev/webfx/extras/visual/controls/grid/peers/base"/>
     <!--=========================< webfx-extras-visual-peers-base >=========================-->
@@ -469,6 +472,9 @@
     <source path="dev/webfx/extras/webtext"/>
     <!--========================< webfx-extras-webtext-peers-base >=========================-->
     <source path="dev/webfx/extras/webtext/peers/base"/>
+    <!--======================< webfx-extras-webtext-peers-gwt-j2cl >=======================-->
+    <source path="dev/webfx/extras/webtext/peers/gwt/html"/>
+    <source path="dev/webfx/extras/webtext/registry"/>
     <!--===========================< webfx-extras-webtext-util >============================-->
     <source path="dev/webfx/extras/webtext/util"/>
     <!--======================< webfx-kit-javafxcontrols-peers-base >=======================-->
