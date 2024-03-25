@@ -16,7 +16,7 @@
 
 /* Applying Montserrat as default font for Modality */
 body * {
-    font-family: Montserrat;
+    font-family: Montserrat, serif;
     font-size: 13px;
     -webkit-font-smoothing: antialiased;
 }
@@ -32,15 +32,30 @@ fx-hyperlink fx-text:hover {
 
 fx-button > fx-background {
     background: linear-gradient(180deg, white, #e0e0e0);
+    border-radius: 5px;
+}
+
+fx-button > fx-border {
     border-color: #c0c0c0;
     border-style: solid;
     border-width: 1px;
     border-radius: 5px;
-    box-sizing : border-box;
 }
 
-.button-bar fx-button > fx-background {
-    border-style: none;
+/* We dont want background & border for the FilePicker button */
+
+.file-picker fx-button > fx-background {
+    background: none;
+}
+
+.file-picker fx-button > fx-border {
+    border: none;
+}
+
+/* We dont want border for the buttons in the front-office button bar */
+
+.button-bar fx-button > fx-border {
+    border: none;
 }
 
 .login * {
@@ -71,7 +86,7 @@ input[type="text"], input[type="password"] {
    selector. Normally "value" refers to the initial value of the input only. However HtmlTextInputControlPeer keeps
    updating "value" to "" or "not-empty" whether the user has typed something, so this CSS rule finally works: */
 input[type="password"]:not([value=""]) {
-    font-family: "Password";
+    font-family: "Password", serif;
     letter-spacing: 0.15em;
 }
 
