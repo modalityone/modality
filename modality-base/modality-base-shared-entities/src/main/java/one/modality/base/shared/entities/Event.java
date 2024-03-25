@@ -18,12 +18,24 @@ public interface Event extends Entity,
         EntityHasIcon,
         EntityHasOrganization {
 
+    default void setStartDate(LocalDate startDate) {
+        setFieldValue("startDate", startDate);
+    }
+
     default LocalDate getStartDate() {
         return getLocalDateFieldValue("startDate");
     }
 
+    default void setEndDate(LocalDate endDate) {
+        setFieldValue("endDate", endDate);
+    }
+
     default LocalDate getEndDate() {
         return getLocalDateFieldValue("endDate");
+    }
+
+    default void setOpeningDate(LocalDate openingDate) {
+        setFieldValue("openingDate", openingDate);
     }
 
     default LocalDate getOpeningDate() {
