@@ -8,6 +8,7 @@ import one.modality.base.shared.entities.markers.EntityHasName;
 import one.modality.base.shared.entities.markers.EntityHasOrganization;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * @author Bruno Salmon
@@ -34,12 +35,12 @@ public interface Event extends Entity,
         return getLocalDateFieldValue("endDate");
     }
 
-    default void setOpeningDate(LocalDate openingDate) {
+    default void setOpeningDate(LocalDateTime openingDate) {
         setFieldValue("openingDate", openingDate);
     }
 
-    default LocalDate getOpeningDate() {
-        return getLocalDateFieldValue("openingDate");
+    default LocalDateTime getOpeningDate() {
+        return getLocalDateTimeFieldValue("openingDate");
     }
 
     default void setLive(Boolean live) {
