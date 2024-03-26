@@ -19,6 +19,19 @@ public interface Event extends Entity,
         EntityHasIcon,
         EntityHasOrganization {
 
+    default void setType(Object type) {
+        setForeignField("type", type);
+    }
+
+    default EntityId getTypeId() {
+        return getForeignEntityId("type");
+    }
+
+    default EventType getType() {
+        return getForeignEntity("type");
+    }
+
+
     default void setStartDate(LocalDate startDate) {
         setFieldValue("startDate", startDate);
     }
