@@ -1,6 +1,7 @@
 package one.modality.base.shared.entities;
 
 import dev.webfx.stack.orm.entity.Entity;
+import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.markers.EntityHasLabel;
 import one.modality.base.shared.entities.markers.EntityHasName;
 import one.modality.base.shared.entities.markers.EntityHasOrganization;
@@ -13,13 +14,18 @@ public interface EventType extends Entity,
         EntityHasLabel,
         EntityHasOrganization {
 
-    default void setRecurring(Boolean live) {
-        setFieldValue("recurring", live);
+    default void setRecurringItem(Object recurringItem) {
+        setForeignField("recurringItem", recurringItem);
     }
 
-    default Boolean isRecurring() {
-        return getBooleanFieldValue("recurring");
+    default EntityId getRecurringItemId() {
+        return getForeignEntityId("recurringItem");
     }
+
+    default Item getRecurringItem() {
+        return getForeignEntity("recurringItem");
+    }
+
 
     default void setOrd(Integer ord) {
         setFieldValue("ord", ord);
