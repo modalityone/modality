@@ -84,5 +84,12 @@ public interface Event extends Entity,
         return getBooleanFieldValue("kbs3");
     }
 
+    default void setDescription(String description) {
+        setFieldValue("description", description);
+    }
+
+    default String getDescription() {
+        return getStringFieldValue("description");
+    }
 
 }
