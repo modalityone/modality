@@ -6,16 +6,13 @@ import dev.webfx.extras.time.TimeUtil;
 import dev.webfx.extras.time.layout.calendar.CalendarLayout;
 import dev.webfx.extras.time.layout.node.TimeGridPane;
 import dev.webfx.extras.time.layout.node.TimePane;
-import dev.webfx.platform.async.impl.Listener;
 import dev.webfx.stack.i18n.I18n;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableListBase;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -25,7 +22,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.FontWeight;
-import one.modality.base.shared.entities.ScheduledItem;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -39,7 +35,7 @@ public class DatesPicker
         @Override
         protected void invalidated() {
             super.invalidated();
-            refreshForMonth(getMonth());
+            focusOnMonth(getMonth());
         }
     };
     private final String ARROW_PREVIOUS_MONTH_SVGPATH = "M14.2187 28C10.6383 28 7.20455 26.525 4.67281 23.8995C2.14107 21.274 0.718751 17.713 0.718751 14C0.718751 10.287 2.14107 6.72601 4.67281 4.1005C7.20455 1.475 10.6383 -7.46609e-07 14.2188 -5.90104e-07C17.7992 -4.33598e-07 21.233 1.475 23.7647 4.10051C26.2964 6.72602 27.7187 10.287 27.7187 14C27.7187 17.713 26.2964 21.274 23.7647 23.8995C21.2329 26.525 17.7992 28 14.2187 28ZM20.125 14.875C20.3488 14.875 20.5634 14.7828 20.7216 14.6187C20.8799 14.4546 20.9687 14.2321 20.9687 14C20.9687 13.7679 20.8799 13.5454 20.7216 13.3813C20.5634 13.2172 20.3488 13.125 20.125 13.125L10.3493 13.125L13.9724 9.3695C14.1308 9.2052 14.2198 8.98236 14.2198 8.75C14.2198 8.51764 14.1308 8.2948 13.9724 8.1305C13.8139 7.9662 13.5991 7.87389 13.375 7.87389C13.1509 7.87389 12.9361 7.9662 12.7776 8.1305L7.71513 13.3805C7.63655 13.4618 7.57421 13.5583 7.53167 13.6646C7.48914 13.7709 7.46724 13.8849 7.46724 14C7.46724 14.1151 7.48914 14.2291 7.53167 14.3354C7.57421 14.4417 7.63655 14.5382 7.71513 14.6195L12.7776 19.8695C12.9361 20.0338 13.1509 20.1261 13.375 20.1261C13.5991 20.1261 13.8139 20.0338 13.9724 19.8695C14.1308 19.7052 14.2198 19.4824 14.2198 19.25C14.2198 19.0176 14.1308 18.7948 13.9724 18.6305L10.3493 14.875L20.125 14.875Z";
@@ -60,7 +56,6 @@ public class DatesPicker
     {
         setMonth(currentMonth);
         generateCalendarPane(currentMonth);
-
         //When we changed the selected dates, we reinitialize the display of the calendar
         selectedDates.addListener(new InvalidationListener() {
             @Override
@@ -87,7 +82,7 @@ public class DatesPicker
         this.generateCalendarPane(newMonth);
     }
 
-    public void refreshForMonth(YearMonth newMonth)
+    public void focusOnMonth(YearMonth newMonth)
     {
         //If a property is at null, it means, it's the first call and the object haven't been initialized because the function calling here
         //happens before the initialisation of the objects, so we need to test first if the objects are initialized
@@ -204,6 +199,7 @@ public class DatesPicker
             currentDayLabel.setBackground(backgroundWhenSelected);
         }
     }
+
 
     public void initializeDaysSelected()
     {

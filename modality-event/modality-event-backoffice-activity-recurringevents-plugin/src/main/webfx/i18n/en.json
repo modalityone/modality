@@ -58,5 +58,13 @@
   },
   "NoPictureSelected": {
     "text": "No picture Selected"
+  },
+  "BookingAvailableAt": {
+    "text": "Booking available at",
+    "prompt": "ex : 25/03/2024"
+  },
+  "BookingOpeningTime": {
+    "text": "",
+    "prompt": "ex : 14:30"
   }
 }
