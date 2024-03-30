@@ -441,6 +441,7 @@ public final class ManageRecurringEventView {
         rightPaneVBox.getChildren().setAll(line1,datesOfTheEventLabel,calendarPane,line3,line4);
         eventDetailsPane.getChildren().setAll(leftGridPane,rightPaneVBox);
         VBox eventDetailVBox = new VBox(currentEventLabel,eventTable,titleEventDetails,eventDetailsPane);
+        eventTable.setFullHeight(true);
         mainFrame.setCenter(eventDetailVBox);
 
         initFormValidation();

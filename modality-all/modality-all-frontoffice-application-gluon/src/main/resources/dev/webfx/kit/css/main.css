@@ -1,0 +1,126 @@
+/* @font-face rules listed first, otherwise they are ignored (OpenJFX bug) */
+
+@font-face {
+    font-family: 'Montserrat';
+    font-style: normal;
+    src: url('css:fonts/montserrat/Montserrat-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    font-weight: bold;
+    src: url('css:fonts/montserrat/Montserrat-Italic.ttf');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    font-style: italic;
+    src: url('css:fonts/montserrat/Montserrat-Italic.ttf');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    font-weight: bold;
+    font-style: italic;
+    src: url('css:fonts/montserrat/Montserrat-BoldItalic.ttf');
+}
+
+
+/*===== webtext-javafx@main.css from webfx-extras-webtext-peers-openjfx =====*/
+
+HtmlText, HtmlTextEditor {
+    -fx-skin: "dev.webfx.kit.mapper.peers.javafxcontrols.openjfx.skin.FxControlPeerSkin";
+}
+
+/*===== visual-grid-javafx@main.css from webfx-extras-visual-grid-peers-openjfx =====*/
+
+VisualGrid {
+    -fx-skin: "dev.webfx.kit.mapper.peers.javafxcontrols.openjfx.skin.FxControlPeerSkin";
+}
+
+.table-view {
+    -fx-table-cell-border-color: #bbbbbb; /* same color as java 7 caspian, java 8 one is too light on colored rows */
+    -fx-cursor: hand;
+}
+
+.table-view.noHeader .column-header-background {
+    -fx-max-height: 0;
+    -fx-pref-height: 0;
+    -fx-min-height: 0;
+}
+
+.table-view.fullHeight *.scroll-bar:vertical {
+    -fx-max-width: 0;
+    -fx-pref-width: 0;
+    -fx-min-width: 0;
+}
+
+.table-row-cell:empty {
+    -fx-opacity: 0.0;
+}
+
+.table-row-cell .table-cell {
+    -fx-padding: 1.4mm 1.4mm 0.6mm 1.4mm;
+}
+
+.table-row-cell .text, .column-header .text, .grid .text, .grid Text { /* texts displayed in tables */
+   -fx-font-family: "Roboto"; /* embedded font to be sure it can correctly render bold and italic on all systems */
+   -fx-font-size: 13.5px;
+   -fx-font-smoothing-type: gray;
+   -fx-fill: rgba(0, 0, 0, 0.7);
+}
+
+.grid .scroll-pane {
+    -fx-padding: 0;
+}
+
+.grid-head, .grid-row {
+    -fx-border-color: #D3D3D3;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.grid-col {
+    -fx-border-color: #D3D3D3;
+    -fx-border-width: 0 1px 0 0;
+}
+
+.table-row-cell:selected .table-cell {
+   -fx-text-fill: -fx-text-inner-color;
+}
+
+/*===== modality-javafx@main.css from modality-base-client-application =====*/
+
+Text, Label, Button, TextField {
+    -fx-font-family: 'Montserrat';
+}
+
+.scroll-pane {
+   -fx-background-color: transparent;
+   -fx-padding: 0;
+}
+
+.scroll-pane > .viewport {
+   -fx-background-color: transparent;
+}
+
+/*===== material-javafx@main.css from webfx-extras-materialdesign =====*/
+
+
+.material {
+     -fx-background-color: white , white , white;
+     -fx-background-insets: 0, 0, 0;
+}
+
+/*===== modality-login-javafx@main.css from modality-crm-client-activity-login-plugin =====*/
+
+
+
+.login {
+    -fx-font-size: 18px;
+}
+
+.login Button {
+    -fx-background-color: #0096D6FF;
+    -fx-background-radius: 10px;
+    -fx-text-fill: white;
+}

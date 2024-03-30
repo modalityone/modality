@@ -1,0 +1,5 @@
+/* We dont want border for the buttons in the front-office button bar */
+
+.button-bar fx-button > fx-border {
+    border: none;
+}
