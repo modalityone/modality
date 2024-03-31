@@ -53,9 +53,6 @@ input[type="text"], input[type="password"] {
     background-color: transparent;
 }
 
-.disabled fx-text {
-    color: gray;
-}
 /*===== visual-grid-web@main.css from webfx-extras-visual-grid-peers-gwt-j2cl =====*/
 
 :root {
@@ -147,6 +144,11 @@ tbody {
     border: none;
 }
 
+/*===== javafx-graphics-web@main.css from webfx-kit-javafxgraphics-peers-gwt-j2cl =====*/
+
+.disabled -fx-text {
+    color: gray;
+}
 /*===== bookings-web@main.css from modality-ecommerce-backoffice-activity-bookings-plugin =====*/
 
 /***** Declaring table row color variables with default values *****/
@@ -319,10 +321,4 @@ fx-textfield.material > fx-background {
 
 fx-homepane fx-tile * {
     font-size: 18px;
-}
-
-/*===== javafx-graphics-web@main.css from webfx-kit-javafxgraphics-emul =====*/
-
-.disabled -fx-text {
-    color: gray;
 }

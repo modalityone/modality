@@ -1,6 +1,6 @@
 package one.modality.base.backoffice.ganttcanvas;
 
-import dev.webfx.platform.util.serviceloader.SingleServiceProvider;
+import dev.webfx.platform.service.SingleServiceProvider;
 import javafx.scene.layout.Region;
 import one.modality.base.backoffice.ganttcanvas.spi.MainFrameGanttCanvasProvider;
 

@@ -9,7 +9,7 @@ module modality.ecommerce.payment.direct.server {
     requires modality.ecommerce.payment.direct;
     requires modality.ecommerce.payment.gateway.direct;
     requires webfx.platform.async;
-    requires webfx.platform.util;
+    requires webfx.platform.service;
 
     // Exported packages
     exports one.modality.ecommerce.payment.direct.spi.impl.server;

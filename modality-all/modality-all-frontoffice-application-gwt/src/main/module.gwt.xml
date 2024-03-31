@@ -398,6 +398,8 @@
     <!--============================< webfx-platform-scheduler >============================-->
     <source path="dev/webfx/platform/scheduler"/>
     <source path="dev/webfx/platform/scheduler/spi"/>
+    <!--=============================< webfx-platform-service >=============================-->
+    <source path="dev/webfx/platform/service"/>
     <!--========================< webfx-platform-service-gwt-j2cl >=========================-->
     <source path="dev/webfx/platform/service/gwtj2cl"/>
     <!--============================< webfx-platform-shutdown >=============================-->
@@ -438,7 +440,6 @@
     <source path="dev/webfx/platform/util"/>
     <source path="dev/webfx/platform/util/collection"/>
     <source path="dev/webfx/platform/util/function"/>
-    <source path="dev/webfx/platform/util/serviceloader"/>
     <source path="dev/webfx/platform/util/tuples"/>
     <source path="dev/webfx/platform/util/uuid"/>
     <!--============================< webfx-platform-util-time >============================-->

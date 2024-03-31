@@ -1,6 +1,6 @@
 package one.modality.base.backoffice.mainframe.headernode;
 
-import dev.webfx.platform.util.serviceloader.MultipleServiceProviders;
+import dev.webfx.platform.service.MultipleServiceProviders;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.scene.Node;
