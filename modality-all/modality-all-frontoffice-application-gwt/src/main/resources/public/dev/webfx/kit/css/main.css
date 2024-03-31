@@ -134,7 +134,7 @@ tbody {
 }
 /*===== javafx-graphics-web@main.css from webfx-kit-javafxgraphics-peers-gwt-j2cl =====*/
 
-.disabled -fx-text {
+.disabled fx-text {
     color: gray;
 }
 /*===== frontoffice-mainframe-web@main.css from modality-base-frontoffice-mainframe-activity =====*/
