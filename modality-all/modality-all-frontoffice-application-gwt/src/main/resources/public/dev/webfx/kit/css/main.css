@@ -53,6 +53,9 @@ input[type="text"], input[type="password"] {
     background-color: transparent;
 }
 
+.disabled fx-text {
+    color: gray;
+}
 /*===== visual-grid-web@main.css from webfx-extras-visual-grid-peers-gwt-j2cl =====*/
 
 :root {
@@ -195,4 +198,10 @@ input[type="password"]:not([value=""]) {
     font-family: "Password";
     src: url("./fonts/password/password.woff") format("woff");
     font-weight: 100 900;
+}
+
+/*===== javafx-graphics-web@main.css from webfx-kit-javafxgraphics-emul =====*/
+
+.disabled -fx-text {
+    color: gray;
 }

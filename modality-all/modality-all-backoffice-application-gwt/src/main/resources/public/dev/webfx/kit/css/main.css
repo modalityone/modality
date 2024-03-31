@@ -53,6 +53,9 @@ input[type="text"], input[type="password"] {
     background-color: transparent;
 }
 
+.disabled fx-text {
+    color: gray;
+}
 /*===== visual-grid-web@main.css from webfx-extras-visual-grid-peers-gwt-j2cl =====*/
 
 :root {
@@ -316,4 +319,10 @@ fx-textfield.material > fx-background {
 
 fx-homepane fx-tile * {
     font-size: 18px;
+}
+
+/*===== javafx-graphics-web@main.css from webfx-kit-javafxgraphics-emul =====*/
+
+.disabled -fx-text {
+    color: gray;
 }

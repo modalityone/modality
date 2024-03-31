@@ -4,6 +4,7 @@ import dev.webfx.extras.filepicker.FilePicker;
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.extras.webtext.HtmlTextEditor;
@@ -22,6 +23,7 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
+import javafx.beans.binding.BooleanBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -64,7 +66,7 @@ public final class ManageRecurringEventView {
     protected Label title;
     final private GridPane eventDetailsPane = new GridPane();
     final private TextField nameOfEventTextField = new TextField();
-    HtmlTextEditor descriptionHtmlEditor = new HtmlTextEditor();
+    HtmlTextEditor descriptionHtmlEditor = new HtmlTextEditor(); { descriptionHtmlEditor.setMode(HtmlTextEditor.Mode.BASIC); }
     final private TextField timeOfTheEventTextField = new TextField();
     private final DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
     private final EntityStore entityStore = EntityStore.create(dataSourceModel);
@@ -441,6 +443,7 @@ public final class ManageRecurringEventView {
         rightPaneVBox.getChildren().setAll(line1,datesOfTheEventLabel,calendarPane,line3,line4);
         eventDetailsPane.getChildren().setAll(leftGridPane,rightPaneVBox);
         VBox eventDetailVBox = new VBox(currentEventLabel,eventTable,titleEventDetails,eventDetailsPane);
+        eventTable.setHeaderVisible(false);
         eventTable.setFullHeight(true);
         mainFrame.setCenter(eventDetailVBox);
 
@@ -448,6 +451,11 @@ public final class ManageRecurringEventView {
         ScrollPane scrollPane = new ScrollPane(mainFrame);
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
+
+        BooleanBinding not = updateStore.hasChangesProperty().not();
+        uploadButton.getProperties().put("not", not);
+        updateButton.disableProperty().bind(not);
+
         return scrollPane;
     }
 
