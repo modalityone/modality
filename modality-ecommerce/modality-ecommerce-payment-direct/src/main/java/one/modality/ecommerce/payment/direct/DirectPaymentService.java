@@ -1,7 +1,7 @@
 package one.modality.ecommerce.payment.direct;
 
 import dev.webfx.platform.async.Future;
-import dev.webfx.platform.util.serviceloader.SingleServiceProvider;
+import dev.webfx.platform.service.SingleServiceProvider;
 import one.modality.ecommerce.payment.direct.spi.DirectPaymentProvider;
 
 import java.util.ServiceLoader;

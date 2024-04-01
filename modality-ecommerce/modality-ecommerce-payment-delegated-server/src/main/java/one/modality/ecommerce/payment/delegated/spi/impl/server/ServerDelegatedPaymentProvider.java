@@ -1,14 +1,13 @@
 package one.modality.ecommerce.payment.delegated.spi.impl.server;
 
 import dev.webfx.platform.async.Future;
-import dev.webfx.platform.util.serviceloader.MultipleServiceProviders;
+import dev.webfx.platform.service.MultipleServiceProviders;
 import one.modality.ecommerce.payment.delegated.InitiateDelegatedPaymentArgument;
 import one.modality.ecommerce.payment.delegated.InitiateDelegatedPaymentResult;
 import one.modality.ecommerce.payment.delegated.spi.DelegatedPaymentProvider;
 import one.modality.ecommerce.payment.gateway.delegated.spi.DelegatedPaymentGatewayProvider;
 import one.modality.ecommerce.payment.gateway.delegated.spi.InitiateDelegatedPaymentGatewayArgument;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceLoader;
 

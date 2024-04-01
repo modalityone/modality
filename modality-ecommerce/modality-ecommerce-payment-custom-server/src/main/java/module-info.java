@@ -9,7 +9,7 @@ module modality.ecommerce.payment.custom.server {
     requires modality.ecommerce.payment.custom;
     requires modality.ecommerce.payment.gateway.custom;
     requires webfx.platform.async;
-    requires webfx.platform.util;
+    requires webfx.platform.service;
 
     // Exported packages
     exports one.modality.ecommerce.payment.custom.spi.impl.server;

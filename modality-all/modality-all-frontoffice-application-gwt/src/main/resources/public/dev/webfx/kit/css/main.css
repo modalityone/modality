@@ -132,6 +132,11 @@ tbody {
 .grid-col {
     border-right: 1px solid var(--grid-border-color);
 }
+/*===== javafx-graphics-web@main.css from webfx-kit-javafxgraphics-peers-gwt-j2cl =====*/
+
+.disabled fx-text {
+    color: gray;
+}
 /*===== frontoffice-mainframe-web@main.css from modality-base-frontoffice-mainframe-activity =====*/
 
 /* We dont want border for the buttons in the front-office button bar */
