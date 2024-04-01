@@ -19,6 +19,18 @@ public interface Event extends Entity,
         EntityHasIcon,
         EntityHasOrganization {
 
+    default void setCorporation(Object corporation) {
+        setForeignField("corporation", corporation);
+    }
+
+    default EntityId getCorporationId() {
+        return getForeignEntityId("corporation");
+    }
+
+    default Organization getCorporation() {
+        return getForeignEntity("corporation");
+    }
+
     default void setType(Object type) {
         setForeignField("type", type);
     }
