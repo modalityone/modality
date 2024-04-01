@@ -9,7 +9,7 @@ import one.modality.base.client.tile.TabsBar;
 
 public final class RecurringEventsActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
 
-    private final ManageRecurringEventView manageRecurringEventView = new ManageRecurringEventView();
+    private final ManageRecurringEventView manageRecurringEventView = new ManageRecurringEventView(this);
     private final RecurringEventAttendanceView recurringEventAttendanceView = new RecurringEventAttendanceView();
 
     final BorderPane container = new BorderPane();
@@ -36,7 +36,7 @@ public final class RecurringEventsActivity extends ViewDomainActivityBase implem
     }
 
     private Node buildManageRecurringEventView() {
-        BorderPane borderPane = new BorderPane(manageRecurringEventView.buildContainer(this));
+        BorderPane borderPane = new BorderPane(manageRecurringEventView.buildContainer());
         return borderPane;
     }
 
@@ -47,7 +47,7 @@ public final class RecurringEventsActivity extends ViewDomainActivityBase implem
 
 
     protected void startLogic() {
-        manageRecurringEventView.startLogic(this);
+        manageRecurringEventView.startLogic();
         recurringEventAttendanceView.startLogic(this);
 
     }
