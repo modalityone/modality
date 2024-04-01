@@ -2,10 +2,7 @@ package one.modality.base.shared.entities;
 
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
-import one.modality.base.shared.entities.markers.EntityHasIcon;
-import one.modality.base.shared.entities.markers.EntityHasLabel;
-import one.modality.base.shared.entities.markers.EntityHasName;
-import one.modality.base.shared.entities.markers.EntityHasOrganization;
+import one.modality.base.shared.entities.markers.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,19 +14,9 @@ public interface Event extends Entity,
         EntityHasName,
         EntityHasLabel,
         EntityHasIcon,
-        EntityHasOrganization {
+        EntityHasOrganization,
+        EntityHasCorporation {
 
-    default void setCorporation(Object corporation) {
-        setForeignField("corporation", corporation);
-    }
-
-    default EntityId getCorporationId() {
-        return getForeignEntityId("corporation");
-    }
-
-    default Organization getCorporation() {
-        return getForeignEntity("corporation");
-    }
 
     default void setType(Object type) {
         setForeignField("type", type);
