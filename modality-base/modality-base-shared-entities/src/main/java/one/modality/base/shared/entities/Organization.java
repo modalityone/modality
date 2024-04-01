@@ -1,10 +1,7 @@
 package one.modality.base.shared.entities;
 
 import dev.webfx.stack.orm.entity.EntityId;
-import one.modality.base.shared.entities.markers.EntityHasCountry;
-import one.modality.base.shared.entities.markers.EntityHasIcon;
-import one.modality.base.shared.entities.markers.EntityHasLabel;
-import one.modality.base.shared.entities.markers.EntityHasName;
+import one.modality.base.shared.entities.markers.*;
 
 /**
  * @author Bruno Salmon
@@ -13,7 +10,8 @@ public interface Organization extends
         EntityHasName,
         EntityHasLabel,
         EntityHasIcon,
-        EntityHasCountry {
+        EntityHasCountry,
+        EntityHasCorporation {
 
     default void setClosed(boolean closed) { setFieldValue("closed", closed); }
 
