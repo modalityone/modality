@@ -19,9 +19,16 @@ import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -61,6 +68,7 @@ import static dev.webfx.extras.webtext.HtmlTextEditor.Mode.STANDARD;
 
 public final class ManageRecurringEventView {
     private final VisualGrid eventTable = new VisualGrid();
+    private final VisualGrid siteTable = new VisualGrid();
     protected BorderPane mainFrame;
     protected Label title;
     private final GridPane eventDetailsPane = new GridPane();
@@ -74,18 +82,27 @@ public final class ManageRecurringEventView {
     private final TextField durationTextField = new TextField();
     private final TextField bookingOpeningDateTextField = new TextField();
     private final TextField bookingOpeningTimeTextField = new TextField();
+    private Label datesOfTheEventLabel;
+    private Label titleEventDetailsLabel;
+    private Label siteLabel;
     private  Button submitButton;
     private Button addButton;
+    private VBox leftPaneVBox;
+    private HBox locationHBox;
     //private Entity timeLine;
     private DatesPicker datesPicker;
     private  ListChangeListener onChangeDateListener;
     private EventCalendarPane calendarPane;
-    private static final String OPERATION_COLUMNS = "[" +
+    private static final String OPERATION_COLUMNS_EVENT = "[" +
             "{expression: 'name', label: 'Name'}," +
             "{expression: 'startDate', label: 'Start Date'}," +
             "{expression: 'endDate', label: 'End Date'}," +
             "{expression: 'organization', label: 'Organisation'}," +
             "{expression: 'feesBottomLabel', label:'Note'}" +
+            "]";
+
+    private static final String OPERATION_COLUMNS_SITE = "[" +
+            "{expression: 'name', label: 'Name'}" +
             "]";
 
     private Timeline eventTimeline;
@@ -99,7 +116,16 @@ public final class ManageRecurringEventView {
     protected final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
     private boolean validationSupportInitialised = false;
     private boolean areDataInitialised = false;
+    private BooleanProperty isWorkingScheduledItemEmpty = new SimpleBooleanProperty(true);
+    private static final int EDITMODE = 1;
+    private static final int ADDMODE = -1;
+    private IntegerProperty currentMode = new SimpleIntegerProperty();
+    private EntityButtonSelector<Site> siteSelector;
+    private final ButtonFactoryMixin mixin;
 
+    public ManageRecurringEventView(ButtonFactoryMixin mixin) {
+        this.mixin = mixin;
+    }
 
     /**
      * This method is used to initialise the parameters for the form validation
@@ -109,24 +135,24 @@ public final class ManageRecurringEventView {
             validationSupport.addRequiredInput(nameOfEventTextField);
             validationSupport.addValidationRule(FXProperties.compute(timeOfTheEventTextField.textProperty(), s1 -> {
                 return isLocalTimeTextValid(timeOfTheEventTextField.getText());
-            }), timeOfTheEventTextField, "The format of Time of event is incorrect (should be 19:30 for example)");
+            }), timeOfTheEventTextField, I18n.getI18nText("ValidationTimeFormatIncorrect"));
             validationSupport.addValidationRule(FXProperties.compute(durationTextField.textProperty(), s -> {
-                return isIntegerValid(durationTextField.getText());}), durationTextField, "Duration should be a number of minutes (ex : 90 for a duration of 1h30)");
+                return isIntegerValid(durationTextField.getText());}), durationTextField, I18n.getI18nText("ValidationDurationIncorrect"));
+            validationSupport.addValidationRule(isWorkingScheduledItemEmpty.not(),datesOfTheEventLabel,I18n.getI18nText("ValidationSelectOneDate"));
             validationSupportInitialised = true;
         }
     }
 
     /**
      * This method is used to initialise the Logic
-     * @param mixin
      */
-    public void startLogic(Object mixin)
+    public void startLogic()
     {
         ReactiveVisualMapper.<Event>createPushReactiveChain(mixin)
-                .always("{class: 'Event', alias: 'e', fields: 'openingDate, description, type.recurringItem'}")
+                .always("{class: 'Event', alias: 'e', fields: 'name, openingDate, description, type.recurringItem'}")
                 .always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o))
                 .always(DqlStatement.where("type.recurringItem!=null and kbs3"))
-                .setEntityColumns(OPERATION_COLUMNS)
+                .setEntityColumns(OPERATION_COLUMNS_EVENT)
                 .setVisualSelectionProperty(eventTable.visualSelectionProperty())
                 .setSelectedEntityHandler(this::displayEventDetails)
                 .visualizeResultInto(eventTable.visualResultProperty())
@@ -141,11 +167,13 @@ public final class ManageRecurringEventView {
     private void displayEventDetails(Event e)
     {
         selectedEvent = e;
+        currentMode.set(EDITMODE);
         //First we remove the listener on the List of selected date, because we'll initialise the dates here.
         //We'll add the listener after the initialisation
         calendarPane.getDatesPicker().getSelectedDates().removeListener(onChangeDateListener);
         //We unbind the submit button with the updateStore before loading the date
         submitButton.disableProperty().unbind();
+//
         resetUpdateStoreAndOtherComponents();
         //We execute the query in batch, otherwise we can have synchronisation problem between the differents threads
         entityStore.executeQueryBatch(
@@ -183,6 +211,7 @@ public final class ManageRecurringEventView {
                                     String duration = String.valueOf(startTime.until(endTime, ChronoUnit.MINUTES));
                                     durationTextField.setText(duration);
                                     timeOfTheEventTextField.setText(eventTimeline.getStartTime().toString());
+                                    titleEventDetailsLabel.setText(I18n.getI18nText("EditEventInformation",e.getName()));
                                     //We read and format the opening date value
                                     if (e.getOpeningDate() != null) {
                                         LocalDateTime openingDate = e.getOpeningDate();
@@ -205,7 +234,7 @@ public final class ManageRecurringEventView {
                         }
 
    /**
-    * This method is used to reset the differents componants in this class
+    * This method is used to reset the different components in this class
     */
     private void resetUpdateStoreAndOtherComponents()
     {
@@ -214,6 +243,12 @@ public final class ManageRecurringEventView {
         calendarPane.getDatesPicker().getSelectedDates().clear();
         workingScheduledItems.clear();
         updateStore.cancelChanges();
+    }
+    /**
+     * This method is used to reset the text fields
+     */
+    private void resetTextFields()
+    {
         nameOfEventTextField.setText("");
         durationTextField.setText("");
         timeOfTheEventTextField.setText("");
@@ -250,12 +285,15 @@ public final class ManageRecurringEventView {
         return validationSupport.isValid();
     }
 
+    public BooleanProperty isWorkingScheduledItemEmptyProperty() {
+        return isWorkingScheduledItemEmpty;
+    }
     /**
      * The entry point of the class
-     * @param mixin
+     *
      * @return A scrollablePane that is the UI for this class
      */
-    public Node buildContainer(Object mixin)
+    public Node buildContainer()
     {
         mainFrame = new BorderPane();
         //Displaying The title of the frame
@@ -276,14 +314,14 @@ public final class ManageRecurringEventView {
         eventTable.setMinHeight(100);
         //   eventTable.setFullHeight(true);
 
-        Label titleEventDetails = new Label();
-        titleEventDetails.setPadding(new Insets(30,0,20,0));
-        TextTheme.createSecondaryTextFacet(titleEventDetails).style();
-        I18nControls.bindI18nProperties(titleEventDetails,"EventDetailsTitle");
+        titleEventDetailsLabel = new Label();
+        titleEventDetailsLabel.setPadding(new Insets(30,0,20,0));
+        TextTheme.createSecondaryTextFacet(titleEventDetailsLabel).style();
+        titleEventDetailsLabel.setText(I18n.getI18nText("EventDetailsTitle"));
 
         //-----------------------------------------------------
         // ----FlowPane---------------------------------------|
-        //|--GridPane----------------||---------Vbox---------||
+        //|--VBox--------------------||---------Vbox---------||
         //|                          ||                      ||
         //| Name of event ...        ||  Time of event ...   ||
         //| Description   ...        ||  Date ...            ||
@@ -293,15 +331,17 @@ public final class ManageRecurringEventView {
         FlowPane eventDetailsPane = new FlowPane();
         eventDetailsPane.setVgap(20);
         eventDetailsPane.setHgap(50);
-        GridPane leftGridPane = new GridPane();
+        leftPaneVBox = new VBox();
         VBox rightPaneVBox = new VBox();
+        //TODO move the button
         addButton = new Button("New event");
         addButton.setOnAction((event -> {
             resetUpdateStoreAndOtherComponents();
+            resetTextFields();
             currentEvent = updateStore.insertEntity(Event.class);
             entityStore.executeQuery("select recurringItem, organization from EventType where recurringItem!=null and organization=?", FXOrganization.getOrganization())
                     .onFailure(Console::log)
-                    .onSuccess(e->{
+                    .onSuccess(e->Platform.runLater(()->{
                         EventType eventType = (EventType) e.get(0);
                         recurringItem = eventType.getRecurringItem();
                         eventTimeline = updateStore.insertEntity(Timeline.class);
@@ -310,34 +350,59 @@ public final class ManageRecurringEventView {
                         currentEvent.setOrganization(eventType.getOrganization());
                         currentEvent.setType(eventType);
                         currentEvent.setKbs3(true);
-                        //TODO temporary : we hardcode the site while the functionnality is not available
-                        currentEvent.setStartDate(LocalDate.now());
-                        currentEvent.setEndDate(LocalDate.now().plusDays(5));
                         eventTimeline.setSite(1671);
                         eventSite= updateStore.createEntity(Site.class,1671);//eventTimeline.getSite();
-                        currentEvent.setFieldValue("corporation",1);
-                    });
-            //We initialize the recurringItem, that will be needed as a parameter when creating new ScheduledItem
+                        currentEvent.setCorporation(FXOrganization.getOrganization().getCorporation());
+                        currentMode.set(ADDMODE);
+                        titleEventDetailsLabel.setText(I18n.getI18nText("AddEventInformation"));
+                        siteSelector = new EntityButtonSelector<Site>(
+                                "{class: 'Site', alias: 's', where: 'event=null'}",
+                                mixin, eventDetailsPane, dataSourceModel
+                        ).always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o)).autoSelectFirstEntity();
+                        // Doing a bidirectional binding with FXOrganization
+                        locationHBox.getChildren().setAll(siteLabel,siteSelector.getButton());
+                    }));
         }));
 
+        int LABEL_WIDTH = 150;
+        HBox line1InLeftPanel = new HBox();
         Label nameOfEventLabel = new Label();
+        nameOfEventLabel.setMinWidth(LABEL_WIDTH);
         I18nControls.bindI18nProperties(nameOfEventLabel,"NameOfTheEvent");
         I18nControls.bindI18nProperties(nameOfEventTextField,"NameOfTheEvent");
         nameOfEventTextField.textProperty().addListener((InvalidationListener) obs -> {
-            currentEvent.setName(nameOfEventTextField.getText());
-        });
+            if(currentEvent!=null) {
+                currentEvent.setName(nameOfEventTextField.getText());
+            }});
+        line1InLeftPanel.getChildren().setAll(nameOfEventLabel,nameOfEventTextField);
+
+        locationHBox = new HBox();
+        siteLabel = new Label();
+        siteLabel.setText("Location");
+        siteLabel.setMinWidth(LABEL_WIDTH);
+        locationHBox.getChildren().setAll(siteLabel);
+        locationHBox.visibleProperty().bind(Bindings.equal(currentMode,ADDMODE));
+        locationHBox.managedProperty().bind(Bindings.equal(currentMode,ADDMODE));
+        locationHBox.setPadding(new Insets(20,0,0,0));
+
+
+        HBox line3InLeftPanel = new HBox();
         Label descriptionLabel = new Label();
+        descriptionLabel.setMinWidth(LABEL_WIDTH);
         I18nControls.bindI18nProperties(descriptionLabel,"Description");
-        GridPane.setValignment(descriptionLabel,VPos.TOP);
         descriptionHtmlEditor.setMode(STANDARD);
         descriptionHtmlEditor.setMinHeight(500);
         descriptionHtmlEditor.setMinWidth(500);
         descriptionHtmlEditor.setPrefHeight(120);
         descriptionHtmlEditor.setPrefWidth(300);
         descriptionHtmlEditor.textProperty().addListener((InvalidationListener) obs -> {
-            currentEvent.setDescription(descriptionHtmlEditor.getText());
-        });
+            if(currentEvent!=null) {
+            currentEvent.setDescription(descriptionLabel.getText());
+        }});
+        line3InLeftPanel.setPadding(new Insets(20,0,0,0));
+        line3InLeftPanel.getChildren().setAll(descriptionLabel,descriptionHtmlEditor);
 
+        HBox line4InLeftPanel = new HBox();
         HBox uploadImageBox = new HBox();
         Button uploadButton = new Button();
         SVGPath uploadSVGPath = new SVGPath();
@@ -381,18 +446,11 @@ public final class ManageRecurringEventView {
         imageStackPane.getChildren().setAll(emptyPicture,trash);
         StackPane.setAlignment(emptyPicture, Pos.CENTER);
         StackPane.setAlignment(trash, Pos.BOTTOM_RIGHT);
-
+        line4InLeftPanel.getChildren().setAll(imageStackPane,uploadImageBox);
+        uploadImageBox.setPadding(new Insets(0, 0,0,60));
+        line4InLeftPanel.setPadding(new Insets(20, 0,0,0));
         filePicker.setGraphic(uploadButton);
-        leftGridPane.setAlignment(Pos.TOP_LEFT);
-        leftGridPane.setHgap(50);
-        leftGridPane.setVgap(20);
-        leftGridPane.add(nameOfEventLabel, 0, 0);
-        leftGridPane.add(nameOfEventTextField, 1, 0);
-        leftGridPane.add(descriptionLabel, 0, 1);
-        leftGridPane.add(descriptionHtmlEditor, 1, 1);
-        leftGridPane.add(imageStackPane, 0, 2);
-        GridPane.setHalignment(imageStackPane, HPos.CENTER);
-        leftGridPane.add(uploadImageBox, 1, 2);
+        leftPaneVBox.getChildren().setAll(line1InLeftPanel,locationHBox,line3InLeftPanel,line4InLeftPanel);
 
         //The right pane (VBox)
         Label timeOfEventLabel = new Label();
@@ -430,7 +488,7 @@ public final class ManageRecurringEventView {
         line1.setAlignment(Pos.CENTER_LEFT);
         line1.getChildren().addAll(timeOfEventLabel,timeOfTheEventTextField,durationLabel,durationTextField);
         line1.setPadding(new Insets(0,0,20,0));
-        Label datesOfTheEventLabel = new Label();
+        datesOfTheEventLabel = new Label();
         I18nControls.bindI18nProperties(datesOfTheEventLabel,"Dates");
         datesOfTheEventLabel.setPadding(new Insets(0,0,5,0));
         calendarPane = new EventCalendarPane();
@@ -468,9 +526,9 @@ public final class ManageRecurringEventView {
         HBox line4 = new HBox();
         line4.setPadding(new Insets(50,0,0,0));
         line4.setAlignment(Pos.CENTER);
-        Button discardButton = new Button("Discard");
-        Button saveDraftButton = new Button("Save Draft");
-        submitButton = new Button("Update Event");
+        Button discardButton = new Button(I18n.getI18nText("Discard"));
+        Button saveDraftButton = new Button(I18n.getI18nText("SaveDraft"));
+        submitButton = new Button(I18n.getI18nText("UpdateEvent"));
         submitButton.setOnAction(event -> {
             if(validateForm())
             {
@@ -483,11 +541,11 @@ public final class ManageRecurringEventView {
             }
         });
         line4.setSpacing(60);
-        line4.getChildren().addAll(discardButton,saveDraftButton,submitButton);
+        line4.getChildren().addAll(discardButton,saveDraftButton,submitButton,addButton);
 
         rightPaneVBox.getChildren().setAll(line1,datesOfTheEventLabel,calendarPane,line3,line4);
-        eventDetailsPane.getChildren().setAll(addButton,leftGridPane,rightPaneVBox);
-        VBox eventDetailVBox = new VBox(currentEventLabel,eventTable,titleEventDetails,eventDetailsPane);
+        eventDetailsPane.getChildren().setAll(leftPaneVBox,rightPaneVBox);
+        VBox eventDetailVBox = new VBox(currentEventLabel,eventTable, titleEventDetailsLabel,eventDetailsPane);
         eventTable.setFullHeight(true);
         mainFrame.setCenter(eventDetailVBox);
 
@@ -539,7 +597,14 @@ public final class ManageRecurringEventView {
             TextTheme.createSecondaryTextFacet(daySelected).style();
             workingScheduledItems.addListener(new ListChangeListener<ScheduledItem>() {
                 @Override
-                public void onChanged(Change<? extends ScheduledItem> change) {updateDaysSelected(change);
+                public void onChanged(Change<? extends ScheduledItem> change) {
+                    recurringEventsVBox.getChildren().clear();
+                    isWorkingScheduledItemEmpty.set(workingScheduledItems.isEmpty());
+                    List<LocalDate> dates = workingScheduledItems.stream().map(scheduledItem -> scheduledItem.getDate()).collect(Collectors.toList());
+                    if(isWorkingScheduledItemEmpty.not().getValue()) {
+                        currentEvent.setStartDate(Collections.min(dates));
+                        currentEvent.setEndDate(Collections.max(dates));
+                    }
                 }
             });
 
@@ -651,14 +716,6 @@ public final class ManageRecurringEventView {
                 return currentLineBorderPane;
             }
 
-        /**
-         * The function that is called when we click on a specific date
-         * @param change
-         */
-        public void updateDaysSelected(ListChangeListener.Change<? extends ScheduledItem> change)
-        {
-            recurringEventsVBox.getChildren().clear();
-        }
 
         public DatesPicker getDatesPicker() {
             return datesPicker;

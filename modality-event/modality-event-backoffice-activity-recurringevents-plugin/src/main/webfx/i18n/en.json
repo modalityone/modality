@@ -66,5 +66,37 @@
   "BookingOpeningTime": {
     "text": "",
     "prompt": "ex : 14:30"
+  },
+  "ValidationTimeFormatIncorrect":
+  {
+    "text":"The format of Time of event is incorrect (should be 19:30 for example)"
+  },
+  "ValidationDurationIncorrect":
+  {
+    "text":"Duration should be a number of minutes (ex : 90 for a duration of 1h30)"
+  },
+  "ValidationSelectOneDate":
+  {
+    "text":"Please specify at list one date for this event"
+  },
+  "Discard":
+  {
+    "text":"Discard"
+  },
+  "SaveDraft":
+  {
+    "text":"Save draft"
+  },
+  "UpdateEvent":
+  {
+    "text":"Update Event"
+  },
+  "EditEventInformation":
+  {
+    "text":"Edit event information: {0}"
+  },
+  "AddEventInformation":
+  {
+    "text":"Add a new event"
   }
 }

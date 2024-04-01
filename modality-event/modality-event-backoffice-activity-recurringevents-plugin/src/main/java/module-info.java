@@ -34,6 +34,7 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.operation;
+    requires webfx.stack.orm.entity.controls;
 
     // Exported packages
     exports one.modality.event.backoffice.activities.recurringevents;
