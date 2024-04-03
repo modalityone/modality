@@ -709,6 +709,13 @@
     <source path="dev/webfx/stack/cache"/>
     <!--============================< webfx-stack-cache-client >============================-->
     <source path="dev/webfx/stack/cache/client"/>
+    <!--==========================< webfx-stack-cloud-cloudinary >==========================-->
+    <source path="dev/webfx/stack/cloud/cloudinary"/>
+    <source path="dev/webfx/stack/cloud/cloudinary/api"/>
+    <source path="dev/webfx/stack/cloud/cloudinary/spi"/>
+    <!--=====================< webfx-stack-cloud-cloudinary-gwt-j2cl >======================-->
+    <source path="dev/webfx/stack/cloud/cloudinary/spi/impl/gwtj2cl"/>
+    <source path="dev/webfx/stack/cloud/cloudinary/spi/impl/gwtj2cl/jsinterop"/>
     <!--==============================< webfx-stack-com-bus >===============================-->
     <source path="dev/webfx/stack/com/bus"/>
     <source path="dev/webfx/stack/com/bus/spi"/>

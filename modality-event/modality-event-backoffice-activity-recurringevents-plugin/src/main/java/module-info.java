@@ -19,9 +19,13 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires webfx.extras.visual.grid;
     requires webfx.extras.webtext;
     requires webfx.kit.util;
+    requires webfx.platform.async;
+    requires webfx.platform.conf;
     requires webfx.platform.console;
     requires webfx.platform.file;
+    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
+    requires webfx.stack.cloud.cloudinary;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.datasourcemodel.service;
@@ -29,12 +33,12 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
+    requires webfx.stack.orm.entity.controls;
     requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.operation;
-    requires webfx.stack.orm.entity.controls;
 
     // Exported packages
     exports one.modality.event.backoffice.activities.recurringevents;

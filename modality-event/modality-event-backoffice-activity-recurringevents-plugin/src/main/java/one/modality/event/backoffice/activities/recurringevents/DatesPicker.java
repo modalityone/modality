@@ -131,11 +131,10 @@ public class DatesPicker
         monthYearLabel = new Label();
         TextTheme.createPrimaryTextFacet(monthYearLabel).setRequestedFont(FontDef.font(FontWeight.SEMI_BOLD, 14)).style();
         monthYearLabel.setText(I18n.getI18nText(month.getMonth().name().toUpperCase(Locale.ROOT) + " " + month.getYear()));
-        monthYearLabel.setPadding(new Insets(0, 10, 0, 10));
+        monthYearLabel.setPadding(new Insets(0, 0, 0, 0));
         yearMonthSelectionHBox.setLeft(arrowPreviousMonthPath);
         yearMonthSelectionHBox.setCenter(monthYearLabel);
         yearMonthSelectionHBox.setRight(arrowNextMonthPath);
-        
         daysOfWeekLayout = new CalendarLayout<>();
 
         daysOfWeekLayout.getChildren().setAll(TimeUtil.generateDaysOfWeek());

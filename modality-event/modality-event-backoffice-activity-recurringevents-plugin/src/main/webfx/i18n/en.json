@@ -67,6 +67,11 @@
     "text": "",
     "prompt": "ex : 14:30"
   },
+  "ExternalLink" :
+  {
+    "text": "External link",
+    "prompt": "Enter the web page url for registration if not managed by KBS"
+  },
   "ValidationTimeFormatIncorrect":
   {
     "text":"The format of Time of event is incorrect (should be 19:30 for example)"
@@ -79,6 +84,10 @@
   {
     "text":"Please specify at list one date for this event"
   },
+  "ValidationUrlIncorrect":
+  {
+    "text":"The URL entered is malformed"
+  },
   "Discard":
   {
     "text":"Discard"
@@ -87,16 +96,33 @@
   {
     "text":"Save draft"
   },
-  "UpdateEvent":
-  {
-    "text":"Update Event"
-  },
   "EditEventInformation":
   {
     "text":"Edit event information: {0}"
   },
-  "AddEventInformation":
+  "AddEventInformationButton":
   {
-    "text":"Add a new event"
+    "text":"Add a new event",
+    "graphic": {
+      "fill": "#FFFFFF",
+      "svgPath": "M1 5L9 5 M5 1L5 9"
+    }
+  },
+  "DiscardButton": {
+    "text": "Discard"
+  },
+  "SaveDraftButton": {
+    "text": "Save Draft",
+    "graphic": {
+      "fill": "#FFFFFF",
+      "svgPath": "M14.81776 0C15.04896 0 15.27064 0.092714 15.43408 0.257746C15.59752 0.422778 15.6866 0.639927 15.6866 0.868V4.18616L7.84556 12.10616L7.84032 15.8356L11.54128 15.8392L15.6866 11.65296V16.72C15.6866 17.0826 15.59752 17.40524 15.43408 17.63624C15.27064 17.86724 15.04896 17.96 14.81776 17.96H0.871632C0.640432 17.96 0.418736 17.86724 0.255296 17.63624C0.091856 17.40524 0.00278388 17.0826 0.00278388 16.72V0.868C0.00278388 0.639927 0.091856 0.422778 0.255296 0.257746C0.418736 0.092714 0.640432 0 0.871632 0H14.81776ZM16.36752 5.99024L17.6 7.23536L10.82044 14.08L9.5862 14.07824L9.58796 12.83568L16.36752 5.99024ZM7.84468 8.8H3.486528V10.56H7.84468V8.8ZM10.4596 5.28H3.486528V7.04H10.4596V5.28Z"
+    }
+  },
+  "UpdateEventButton": {
+    "text": "Update Event",
+    "graphic": {
+      "fill": "#FFFFFF",
+      "svgPath": "M0 8.6352L6.155 14.8L7.7075 13.2339L1.5635 7.0802M24.0365 0L12.3871 11.679L7.8066 7.0802L6.2321 8.6352L12.3871 14.8L25.6 1.56602M19.3679 1.56602L17.8354 0L10.8236 6.993L12.3871 8.5579L19.3679 1.56602Z"
+    }
   }
 }
