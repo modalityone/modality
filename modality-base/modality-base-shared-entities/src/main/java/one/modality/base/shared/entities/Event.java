@@ -91,4 +91,12 @@ public interface Event extends Entity,
         return getStringFieldValue("description");
     }
 
+    default void setExternalLink(String externalLink) {
+        setFieldValue("externalLink", externalLink);
+    }
+
+    default String getExternalLink() {
+        return getStringFieldValue("externalLink");
+    }
+
 }
