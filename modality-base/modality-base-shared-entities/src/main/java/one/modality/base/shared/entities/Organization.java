@@ -10,8 +10,7 @@ public interface Organization extends
         EntityHasName,
         EntityHasLabel,
         EntityHasIcon,
-        EntityHasCountry,
-        EntityHasCorporation {
+        EntityHasCountry {
 
     default void setClosed(boolean closed) { setFieldValue("closed", closed); }
 
