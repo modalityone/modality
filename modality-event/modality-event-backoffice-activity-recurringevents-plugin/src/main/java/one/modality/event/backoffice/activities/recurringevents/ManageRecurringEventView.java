@@ -1,9 +1,9 @@
 package one.modality.event.backoffice.activities.recurringevents;
 
 import dev.webfx.extras.filepicker.FilePicker;
-import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.extras.visual.VisualSelection;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.extras.webtext.HtmlTextEditor;
@@ -13,7 +13,6 @@ import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.file.File;
-import dev.webfx.platform.util.Numbers;
 import dev.webfx.stack.cloud.cloudinary.Cloudinary;
 import dev.webfx.stack.cloud.cloudinary.CloudinaryService;
 import dev.webfx.stack.i18n.I18n;
@@ -32,6 +31,7 @@ import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -97,21 +97,23 @@ public final class ManageRecurringEventView {
     private Label siteLabel;
     private  Button submitButton;
     private Button addButton;
+    private Button saveDraftButton;
     private VBox leftPaneVBox;
     private VBox eventDetailsVBox;
     private HBox locationHBox;
     private ImageView imageView;
+    private StackPane imageStackPane;
     //private Entity timeLine;
     private DatesPicker datesPicker;
+    private SVGPath trashImage;
     private  ListChangeListener onChangeDateListener;
     private EventCalendarPane calendarPane;
     private static final String OPERATION_COLUMNS_EVENT = "[" +
             "{expression: 'name', label: 'Name'}," +
-            "{expression: 'startDate', label: 'Start Date'}," +
-            "{expression: 'endDate', label: 'End Date'}," +
-            "{expression: 'organization', label: 'Organisation'}," +
-            "{expression: 'feesBottomLabel', label:'Note'}" +
-            "]";
+            "{expression: 'type', label: 'TypeOfEvent'}," +
+            "{expression: 'dateIntervalFormat(startDate, endDate)', label: 'Dates'}," +
+            "{expression: 'organization', label: 'Organisation'},"+
+            "{expression: 'organization', label: 'TotalAttendees'}]";
 
     private static final String OPERATION_COLUMNS_SITE = "[" +
             "{expression: 'name', label: 'Name'}" +
@@ -129,6 +131,8 @@ public final class ManageRecurringEventView {
     private boolean validationSupportInitialised = false;
     private boolean areDataInitialised = false;
     private BooleanProperty isWorkingScheduledItemEmpty = new SimpleBooleanProperty(true);
+    private BooleanProperty isPictureDisplayed = new SimpleBooleanProperty(false);
+
     private static final int EDITMODE = 1;
     private static final int ADDMODE = -1;
     private IntegerProperty currentMode = new SimpleIntegerProperty();
@@ -136,6 +140,12 @@ public final class ManageRecurringEventView {
     private final ButtonFactoryMixin mixin;
     private Cloudinary cloudinary;
     private Font fontUsed;
+    private File pictureToUpload;
+    private BooleanProperty isPictureToBeDeleted = new SimpleBooleanProperty(false);
+    private BooleanProperty isPictureToBeUploaded = new SimpleBooleanProperty(false);;
+    private BooleanBinding updateStoreOrPictureHasChanged;
+    private BooleanBinding updateTrashButtonOnPictureDisplayed;
+
 
     public ManageRecurringEventView(ButtonFactoryMixin mixin) {
         this.mixin = mixin;
@@ -178,6 +188,33 @@ public final class ManageRecurringEventView {
         dev.webfx.platform.conf.ConfigLoader.onConfigLoaded("modality.cloudinary", config ->
             cloudinary = CloudinaryService.createCloudinary(config.getString("cloudName"), config.getString("apiKey"), config.getString("apiSecret"))
         );
+        /*
+        We create a booleanBinding that will be used by the submit and draft button if either the updateStoreChanged, or the pictures needs to be uploaded
+        or deleted
+         */
+        updateStoreOrPictureHasChanged = new BooleanBinding() {
+        {
+            super.bind(updateStore.hasChangesProperty(),isPictureToBeUploaded,isPictureToBeDeleted);
+        }
+        @Override
+        protected boolean computeValue() {
+            return updateStore.hasChangesProperty().getValue() || isPictureToBeUploaded.getValue() || isPictureToBeDeleted.getValue();
+        }
+    };
+         /*
+        We create a booleanBinding that will be used by the trash button. We display it only if a picture is displayed if either the updateStoreChanged, or the pictures needs to be uploaded
+        or deleted
+         */
+        updateTrashButtonOnPictureDisplayed = new BooleanBinding() {
+            {
+                super.bind(isPictureDisplayed);
+            }
+            @Override
+            protected boolean computeValue() {
+                return isPictureDisplayed.getValue();
+            }
+        };
+
     }
 
     /**
@@ -188,6 +225,7 @@ public final class ManageRecurringEventView {
     private void displayEventDetails(Event e)
     {
         eventDetailsVBox.setVisible(true);
+        eventTable.setVisualSelection(null);
         selectedEvent = e;
         currentMode.set(EDITMODE);
         //First we remove the listener on the List of selected date, because we'll initialise the dates here.
@@ -258,30 +296,40 @@ public final class ManageRecurringEventView {
                                                 imageView.setImage(null);
                                             })
                                             .onSuccess(exists -> Platform.runLater(() -> {
-                                                if (!exists)
+                                                if (!exists) {
                                                     imageView.setImage(null);
+                                                    isPictureDisplayed.setValue(false);
+                                                }
                                                 else {
-                                                    String url = cloudinary.url().widthTransformation(150).generate(String.valueOf(imageTag));
+                                                    String url = cloudinary.url().widthTransformation(200).generate(String.valueOf(imageTag));
                                                     Image imageToDisplay = new Image(url, true);
                                                     imageView.setImage(imageToDisplay);
+                                                    isPictureDisplayed.setValue(true);
                                                 }
                                             }));
                                 }
-                    submitButton.disableProperty().bind(updateStore.hasChangesProperty().not());
+                    submitButton.disableProperty().bind(updateStoreOrPictureHasChanged.not());
+                    saveDraftButton.disableProperty().bind(updateStoreOrPictureHasChanged.not());
+                    trashImage.visibleProperty().bind(updateTrashButtonOnPictureDisplayed);
                 }));
         }
+
 
    /**
     * This method is used to reset the different components in this class
     */
     private void resetUpdateStoreAndOtherComponents()
     {
+        isPictureToBeDeleted.setValue(false);
+        isPictureToBeUploaded.setValue(false);
+        pictureToUpload = null;
         areDataInitialised = false;
         validationSupportInitialised = false;
         calendarPane.getDatesPicker().getSelectedDates().clear();
         workingScheduledItems.clear();
         updateStore.cancelChanges();
         imageView.setImage(null);
+        isPictureDisplayed.setValue(false);
     }
     /**
      * This method is used to reset the text fields
@@ -324,13 +372,27 @@ public final class ManageRecurringEventView {
         return validationSupport.isValid();
     }
 
-    public void deletePictureForEvent(int eventId)
+    public void uploadPictureIfNecessary(int eventId)
     {
-        //We delete the pictures, and all the cached picture in cloudinary that can have been transformed, related
-        //to this assets
-        cloudinary.uploader().destroy(String.valueOf(eventId),  true)
-                        .onFailure(Console::log);
-        imageView.setImage(null);
+        if(isPictureToBeUploaded.getValue())
+        {
+            cloudinary.uploader().destroy(String.valueOf(eventId), true)
+                    .onFailure(Console::log);
+            cloudinary.uploader().upload(pictureToUpload,
+                            String.valueOf(eventId),true)
+                    .onFailure(Console::log)
+                    .onSuccess(uploadResult -> {
+                    });
+        }
+    }
+    public void deletePictureIfNecessary(int eventId)
+    {
+        if(isPictureToBeDeleted.getValue()) {
+            //We delete the pictures, and all the cached picture in cloudinary that can have been transformed, related
+            //to this assets
+            cloudinary.uploader().destroy(String.valueOf(eventId), true)
+                    .onFailure(Console::log);
+        }
     }
 
     private Future<Boolean> isPictureForEventExistingOnMediaProvider(int eventId) {
@@ -359,7 +421,10 @@ public final class ManageRecurringEventView {
         title = new Label();
         title.setPadding(new Insets(30));
         title.setGraphicTextGap(30);
-        TextTheme.createPrimaryTextFacet(title).setRequestedFont(FontDef.font(32)).style();
+        TextTheme.createPrimaryTextFacet(title).style();
+        title.getStyleClass().add("font-size-35px");
+
+
         fontUsed = title.getFont();
         I18nControls.bindI18nProperties(title,"EventTitle");
         BorderPane.setAlignment(title, Pos.CENTER);
@@ -370,9 +435,11 @@ public final class ManageRecurringEventView {
         Label currentEventLabel = new Label();
         I18nControls.bindI18nProperties(currentEventLabel,"ListEvents");
         currentEventLabel.setPadding(new Insets(0,0,20,0));
-        TextTheme.createSecondaryTextFacet(currentEventLabel).setRequestedFont(FontDef.font(16)).style();
+        TextTheme.createSecondaryTextFacet(currentEventLabel).style();
+        currentEventLabel.getStyleClass().add("font-size-16px");
+
         //While waiting the fix on the visual grid for autoexpend
-        eventTable.setMinHeight(200);
+        eventTable.setMinHeight(150);
 
 
         addButton = new Button();
@@ -384,6 +451,7 @@ public final class ManageRecurringEventView {
 
         addButton.setOnAction((event -> {
             eventDetailsVBox.setVisible(true);
+            eventTable.setVisualSelection(VisualSelection.createRowsSelection(new int[0]));
             resetUpdateStoreAndOtherComponents();
             resetTextFields();
             currentEvent = updateStore.insertEntity(Event.class);
@@ -408,8 +476,7 @@ public final class ManageRecurringEventView {
                         ).always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o)).autoSelectFirstEntity();
                         siteSelector.selectedItemProperty().addListener(new InvalidationListener() {
                             public void invalidated(Observable observable) {
-                                //TODO pb de l'autoSelectFirstEntity qui ne renvoie rien à l'initialisation
-                                eventSite = siteSelector.getSelectedEntity();
+                                eventSite = siteSelector.getSelectedItem();
                                 //We update the timeline and working scheduled item
                                 eventTimeline.setSite(eventSite);
                                 for(ScheduledItem si:workingScheduledItems)
@@ -418,7 +485,6 @@ public final class ManageRecurringEventView {
                                 }
                             }
                         });
-
                         // Doing a bidirectional binding with FXOrganization
                         locationHBox.getChildren().setAll(siteLabel,siteSelector.getButton());
                     }));
@@ -485,51 +551,23 @@ public final class ManageRecurringEventView {
         descriptionHtmlEditor.setPrefWidth(300);
         descriptionHtmlEditor.textProperty().addListener((InvalidationListener) obs -> {
             if(currentEvent!=null) {
-            currentEvent.setDescription(descriptionLabel.getText());
+            currentEvent.setDescription(descriptionHtmlEditor.getText());
         }});
         line3InLeftPanel.setPadding(new Insets(20,0,0,0));
         line3InLeftPanel.getChildren().setAll(descriptionLabel,descriptionHtmlEditor);
 
         HBox line4InLeftPanel = new HBox();
-        HBox uploadImageBox = new HBox();
-
-        StackPane imageStackPane = new StackPane();
-        imageView = new ImageView();
-        imageView.setPreserveRatio(true);
-        imageView.setFitWidth(150);
-
-        imageStackPane.setBackground(Background.fill(Color.LIGHTGRAY));
-        imageStackPane.setMaxSize(100,100);
-        Label emptyPicture = new Label();
-        I18nControls.bindI18nProperties(emptyPicture,"NoPictureSelected");
-        TextTheme.createSecondaryTextFacet(emptyPicture).style();
-        emptyPicture.setFont(new Font(9));
-        SVGPath trash = new SVGPath();
-        trash.setContent(TRASH_SVG_PATH);
-        trash.setStrokeWidth(1);
-        trash.setScaleX(0.7);
-        trash.setScaleY(0.7);
-        trash.setOnMouseClicked(event ->  {
-            deletePictureForEvent(Numbers.toInteger(currentEvent.getId().getPrimaryKey()));
-
-        });
-        ShapeTheme.createSecondaryShapeFacet(trash).style();
-        imageStackPane.getChildren().setAll(imageView,emptyPicture,trash);
-        StackPane.setAlignment(emptyPicture, Pos.CENTER);
-        StackPane.setAlignment(trash, Pos.BOTTOM_RIGHT);
-        line4InLeftPanel.getChildren().setAll(imageStackPane,uploadImageBox);
-        uploadImageBox.setPadding(new Insets(0, 0,0,60));
-        line4InLeftPanel.setPadding(new Insets(20, 0,0,0));
+        line4InLeftPanel.setAlignment(Pos.CENTER_LEFT);
+        Label uploadPictureLabel = new Label();
+        uploadPictureLabel.setMinWidth(LABEL_WIDTH);
+        I18nControls.bindI18nProperties(uploadPictureLabel,"UploadFileDescription");
 
         HtmlText uploadText = new HtmlText();
-        uploadText.setPadding(new Insets(0,10,0,0));
         uploadText.setText(I18n.getI18nText("UploadFileDescription"));
-        Label uploadButtonDescription = new Label();
-        I18nControls.bindI18nProperties(uploadButtonDescription,"SelectYourFile");
-        uploadButtonDescription.setFont(new Font(10));
-        TextTheme.createPrimaryTextFacet(uploadButtonDescription).style();
-        uploadImageBox.setAlignment(Pos.CENTER);
-        uploadImageBox.setMinHeight(100);
+        VBox uploadTextVBox = new VBox();
+        uploadTextVBox.getChildren().setAll(uploadText);
+        uploadTextVBox.setAlignment(Pos.CENTER_LEFT);
+        uploadTextVBox.setPadding(new Insets(0,50,0,0));
 
         Button uploadButton = new Button();
         SVGPath uploadSVGPath = new SVGPath();
@@ -542,23 +580,62 @@ public final class ManageRecurringEventView {
         uploadButton.setGraphic(uploadSVGPath);
         FilePicker filePicker = FilePicker.create();
         filePicker.setGraphic(uploadButton);
-
-        uploadImageBox.getChildren().setAll(uploadText,filePicker.getView(),uploadButtonDescription);
-
         filePicker.getSelectedFiles().addListener((InvalidationListener) obs -> {
             ObservableList<File> fileList = filePicker.getSelectedFiles();
-            File currentFile = fileList.get(0);
-            cloudinary.uploader().upload(currentFile,
-                    currentEvent.getId().getPrimaryKey().toString(),true)
-                    .onFailure(Console::log)
-                    .onSuccess(uploadResult -> {
-                        Image imageToDisplay = new Image(uploadResult.get("url").toString());
-                        imageView.setImage(imageToDisplay);
-                    });
+            pictureToUpload = fileList.get(0);
+            Image imageToDisplay = new Image(pictureToUpload.getObjectURL().toString());
+            isPictureToBeUploaded.setValue(true);
+            imageView.setImage(imageToDisplay);
+            imageToDisplay.getHeight();
+            isPictureDisplayed.setValue(true);
         });
 
+        Label uploadButtonDescription = new Label();
+        I18nControls.bindI18nProperties(uploadButtonDescription,"SelectYourFile");
+        uploadButtonDescription.getStyleClass().add("font-size-9px");
 
+        TextTheme.createPrimaryTextFacet(uploadButtonDescription).style();
 
+        VBox uploadButtonVBox = new VBox(filePicker.getView(),uploadButtonDescription);
+        uploadButtonVBox.setAlignment(Pos.CENTER);
+        uploadButtonVBox.setPadding(new Insets(0,30,0,0));
+
+        VBox imageAndTrashVBox = new VBox();
+        imageAndTrashVBox.setSpacing(2);
+        imageStackPane = new StackPane();
+        imageView = new ImageView();
+        imageView.setPreserveRatio(true);
+        imageView.setFitWidth(200);
+        imageStackPane.setMaxSize(200,200);
+        imageStackPane.setMinHeight(100);
+      //  imageStackPane.setPrefSize(200,210);
+        imageStackPane.setAlignment(Pos.CENTER);
+        Label emptyPictureLabel = new Label();
+        I18nControls.bindI18nProperties(emptyPictureLabel,"NoPictureSelected");
+        TextTheme.createSecondaryTextFacet(emptyPictureLabel).style();
+        emptyPictureLabel.getStyleClass().add("font-size-9px");
+
+        trashImage = new SVGPath();
+        trashImage.setContent(TRASH_SVG_PATH);
+        trashImage.setStrokeWidth(1);
+        trashImage.setScaleX(0.7);
+        trashImage.setScaleY(0.7);
+        trashImage.setOnMouseClicked(event ->  {
+            isPictureToBeDeleted.setValue(true);
+            isPictureToBeUploaded.setValue(false);
+            imageView.setImage(null);
+            isPictureDisplayed.setValue(false);
+        });
+        ShapeTheme.createSecondaryShapeFacet(trashImage).style();
+        imageStackPane.getChildren().setAll(imageView,emptyPictureLabel);
+        StackPane.setAlignment(emptyPictureLabel, Pos.CENTER);
+        StackPane.setAlignment(trashImage, Pos.BOTTOM_RIGHT);
+        imageView.toFront();
+        emptyPictureLabel.toBack();
+        imageAndTrashVBox.getChildren().setAll(imageStackPane,trashImage);
+        imageAndTrashVBox.setAlignment(Pos.TOP_RIGHT);
+        line4InLeftPanel.getChildren().setAll(uploadTextVBox,uploadButtonVBox,imageAndTrashVBox);
+        line4InLeftPanel.setPadding(new Insets(20, 0,0,0));
 
 
         leftPaneVBox.getChildren().setAll(line1InLeftPanel,locationHBox,line3InLeftPanel,line4InLeftPanel);
@@ -579,10 +656,10 @@ public final class ManageRecurringEventView {
 
         Label durationLabel = new Label();
         I18nControls.bindI18nProperties(durationLabel,"Duration");
-        durationTextField.setMaxWidth(80);
+        durationTextField.setMaxWidth(40);
         durationLabel.setPadding(new Insets(0,50,0,50));
         I18nControls.bindI18nProperties(durationTextField,"Duration");
-        durationTextField.getProperties().addListener((InvalidationListener) obs -> {
+        durationTextField.textProperty().addListener((InvalidationListener) obs -> {
                     //Here, when we change the duration, we have to update all the workingScheduledItem list
                     // and the timeline (we need to calculate the endTime and update it)
                     if (isIntegerValid(durationTextField.getText())) {
@@ -605,34 +682,34 @@ public final class ManageRecurringEventView {
         calendarPane = new EventCalendarPane();
         calendarPane.getDatesPicker().getSelectedDates().addListener(onChangeDateListener);
 
-        HBox line3 = new HBox();
-        line3.setPadding(new Insets(20,0,0,0));
-        line3.setAlignment(Pos.CENTER_LEFT);
-        Label bookingTimeLabel = new Label();
-        bookingTimeLabel.setPadding(new Insets(0,160,0,0));
-        I18nControls.bindI18nProperties(bookingTimeLabel,"BookingAvailableAt");
-        I18nControls.bindI18nProperties(bookingOpeningDateTextField,"BookingAvailableAt");
-        bookingOpeningDateTextField.setMaxWidth(110);
-        bookingOpeningDateTextField.textProperty().addListener((InvalidationListener) obs -> {
-            try {
-                //TODO add the hour and minutes.
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-                String dateString = bookingOpeningDateTextField.getText();
-                LocalDateTime openingDate = LocalDateTime.parse(dateString,formatter);
-                currentEvent.setOpeningDate(openingDate);
-            }
-            catch (DateTimeParseException e)
-            {
-                //If we can't parse the date time, we do nothing
-                System.out.println("Error while parsing" + e.toString());
-            }
-        });
-
-        bookingOpeningTimeTextField.setMaxWidth(80);
-        I18nControls.bindI18nProperties(bookingOpeningTimeTextField,"BookingOpeningTime");
-        line3.setSpacing(20);
-
-        line3.getChildren().addAll(bookingTimeLabel,bookingOpeningDateTextField,bookingOpeningTimeTextField);
+//        HBox line3 = new HBox();
+//        line3.setPadding(new Insets(20,0,0,0));
+//        line3.setAlignment(Pos.CENTER_LEFT);
+//        Label bookingTimeLabel = new Label();
+//        bookingTimeLabel.setPadding(new Insets(0,140,0,0));
+//        I18nControls.bindI18nProperties(bookingTimeLabel,"BookingAvailableAt");
+//        I18nControls.bindI18nProperties(bookingOpeningDateTextField,"BookingAvailableAt");
+//        bookingOpeningDateTextField.setMaxWidth(110);
+//        bookingOpeningDateTextField.textProperty().addListener((InvalidationListener) obs -> {
+//            try {
+//                //TODO add the hour and minutes.
+//                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+//                String dateString = bookingOpeningDateTextField.getText();
+//                LocalDateTime openingDate = LocalDateTime.parse(dateString,formatter);
+//                currentEvent.setOpeningDate(openingDate);
+//            }
+//            catch (DateTimeParseException e)
+//            {
+//                //If we can't parse the date time, we do nothing
+//                System.out.println("Error while parsing" + e.toString());
+//            }
+//        });
+//
+//        bookingOpeningTimeTextField.setMaxWidth(80);
+//        I18nControls.bindI18nProperties(bookingOpeningTimeTextField,"BookingOpeningTime");
+//        line3.setSpacing(20);
+//
+//        line3.getChildren().addAll(bookingTimeLabel,bookingOpeningDateTextField,bookingOpeningTimeTextField);
 
         HBox line4 = new HBox();
         line4.setPadding(new Insets(20,0,0,0));
@@ -641,7 +718,7 @@ public final class ManageRecurringEventView {
         externalLinkLabel.setPadding(new Insets(0,20,0,0));
         I18nControls.bindI18nProperties(externalLinkLabel,"ExternalLink");
         I18nControls.bindI18nProperties(externalLinkTextFied,"ExternalLink");
-        externalLinkTextFied.setPrefWidth(420);
+        externalLinkTextFied.setPrefWidth(400);
         externalLinkTextFied.textProperty().addListener((InvalidationListener) obs -> {
                 currentEvent.setExternalLink(externalLinkTextFied.getText());
         });
@@ -657,9 +734,9 @@ public final class ManageRecurringEventView {
 
         discardButton.setOnAction(event -> {
           eventDetailsVBox.setVisible(false);
-          //TODO : delete the pciture on cloudinary if we have uploaded one
+            eventTable.setVisualSelection(VisualSelection.createRowsSelection(new int[0]));
         });
-        Button saveDraftButton = new Button();
+        saveDraftButton = new Button();
         I18nControls.bindI18nProperties(saveDraftButton,"SaveDraftButton");
         saveDraftButton.setId("saveDraft");
         saveDraftButton.setGraphicTextGap(10);
@@ -676,19 +753,22 @@ public final class ManageRecurringEventView {
                 calendarPane.getDatesPicker().getSelectedDates().removeListener(onChangeDateListener);
                 updateStore.submitChanges()
                                 .onFailure(Console::log)
-                                        .onSuccess(x -> Platform.runLater(()->
-                                            displayEventDetails(currentEvent)
-                                        ));
+                                        .onSuccess(x -> Platform.runLater(()->{
+                                            deletePictureIfNecessary((short) currentEvent.getId().getPrimaryKey());
+                                            uploadPictureIfNecessary((short) currentEvent.getId().getPrimaryKey());
+                                            eventDetailsVBox.setVisible(false);
+            }));
             }
         });
         line5.setSpacing(30);
         line5.getChildren().addAll(discardButton,saveDraftButton,submitButton);
-
-        rightPaneVBox.getChildren().setAll(line1,datesOfTheEventLabel,calendarPane,line3,line4,line5);
+        rightPaneVBox.getChildren().setAll(line1,datesOfTheEventLabel,calendarPane,line4InLeftPanel,line4,line5);
         eventDetailsPane.getChildren().setAll(leftPaneVBox,rightPaneVBox);
         HBox labelLine = new HBox();
-        labelLine.setSpacing(100);
-        labelLine.getChildren().setAll(currentEventLabel,addButton);
+        labelLine.setAlignment(Pos.TOP_LEFT);
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.SOMETIMES);
+        labelLine.getChildren().setAll(currentEventLabel,spacer, addButton);
         eventDetailsVBox = new VBox(titleEventDetailsLabel,eventDetailsPane);
         //When we launch the window, we don't disply this VBox wich contains an event details
         eventDetailsVBox.setVisible(false);
@@ -700,8 +780,11 @@ public final class ManageRecurringEventView {
         ScrollPane scrollPane = new ScrollPane(mainFrame);
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
+        scrollPane.setPadding(new Insets(10));
         return scrollPane;
     }
+
+
 
 
     public List<ScheduledItem> getScheduledItemsReadFromDatabase() {
@@ -782,6 +865,7 @@ public final class ManageRecurringEventView {
                             scheduledItem.setEvent(currentEvent);
                             scheduledItem.setTimeLine(eventTimeline);
                             scheduledItem.setItem(recurringItem);
+                            //scheduledItem.setSite(eventTimeline.getSite());
                             workingScheduledItems.add(scheduledItem);
                             sortWorkingScheduledItemsByDate();
                         }
@@ -814,16 +898,16 @@ public final class ManageRecurringEventView {
             private BorderPane drawScheduledItem(ScheduledItem scheduledItem)
             {
                 LocalDate currentDate = scheduledItem.getDate();
-                SVGPath trash = new SVGPath();
-                trash.setContent(TRASH_SVG_PATH);
-                trash.setStrokeWidth(1);
-                trash.setScaleX(0.7);
-                trash.setScaleY(0.7);
-                trash.setTranslateY(2);
-                trash.setOnMouseClicked(event ->  {
+                SVGPath trashDate = new SVGPath();
+                trashDate.setContent(TRASH_SVG_PATH);
+                trashDate.setStrokeWidth(1);
+                trashDate.setScaleX(0.7);
+                trashDate.setScaleY(0.7);
+                trashDate.setTranslateY(2);
+                trashDate.setOnMouseClicked(event ->  {
                     datesPicker.getSelectedDates().remove(currentDate);
                 });
-                ShapeTheme.createSecondaryShapeFacet(trash).style();
+                ShapeTheme.createSecondaryShapeFacet(trashDate).style();
                 Text currentDateValue = new Text(currentDate.format(DateTimeFormatter.ofPattern("MMM dd")));
                 TextField currentEventStartTime = new TextField();
                 timeOfTheEventTextField.textProperty().addListener((InvalidationListener) obs -> {
@@ -855,7 +939,7 @@ public final class ManageRecurringEventView {
                 if(time!=null) currentEventStartTime.setText(time.format(DateTimeFormatter.ofPattern("HH:mm")));
                 BorderPane currentLineBorderPane = new BorderPane();
                 BorderPane.setMargin(currentDateValue, new Insets(0,20,0,10));
-                currentLineBorderPane.setLeft(trash);
+                currentLineBorderPane.setLeft(trashDate);
                 currentLineBorderPane.setCenter(currentDateValue);
                 currentLineBorderPane.setRight(currentEventStartTime);
                 currentLineBorderPane.setPadding(new Insets(0,0,3,0));

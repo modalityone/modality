@@ -108,6 +108,21 @@ VisualLineChart, VisualPieChart, VisualBarChart, VisualAreaChart {
     -fx-pref-width: 150px;
     -fx-font-weight: bolder;
 }
+
+.font-size-35px
+{
+  -fx-font-size: 35px;
+}
+.font-size-16px
+{
+  -fx-font-size: 16px;
+}
+.font-size-9px
+{
+  -fx-font-size: 9px;
+}
+
+
 #newEvent {
     -fx-background-color: #41BA4D;
     -fx-text-fill: white;

@@ -16,6 +16,7 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires webfx.extras.time;
     requires webfx.extras.time.layout;
     requires webfx.extras.time.layout.calendar;
+    requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
     requires webfx.extras.webtext;
     requires webfx.kit.util;
@@ -39,7 +40,6 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.operation;
-    requires webfx.stack.orm.entity.controls;
 
     // Exported packages
     exports one.modality.event.backoffice.activities.recurringevents;
