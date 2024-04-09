@@ -20,6 +20,7 @@ module modality.all.backoffice.application.openjfx {
     requires webfx.platform.blob.java;
     requires webfx.platform.boot.java;
     requires webfx.platform.console.java;
+    requires webfx.platform.fetch.java;
     requires webfx.platform.file.java;
     requires webfx.platform.os.java;
     requires webfx.platform.resource.java;

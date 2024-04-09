@@ -98,6 +98,51 @@ VisualLineChart, VisualPieChart, VisualBarChart, VisualAreaChart {
     -fx-stroke-width: 1.5px;
 }
 
+/*===== javafx@main.css from modality-event-backoffice-activity-recurringevents-plugin =====*/
+
+.recurringEventButton
+{
+    -fx-background-radius: 2;
+    -fx-pref-height:30px;
+    -fx-max-height:30px;
+    -fx-pref-width: 150px;
+    -fx-font-weight: bolder;
+}
+
+.font-size-35px
+{
+  -fx-font-size: 35px;
+}
+.font-size-16px
+{
+  -fx-font-size: 16px;
+}
+.font-size-9px
+{
+  -fx-font-size: 9px;
+}
+
+
+#newEvent {
+    -fx-background-color: #41BA4D;
+    -fx-text-fill: white;
+
+}
+
+#discard {
+    -fx-background-color: #838788;
+     -fx-text-fill: white;
+}
+
+#saveDraft {
+    -fx-background-color: #0096D6;
+    -fx-text-fill: white;
+}
+
+#updateEvent {
+    -fx-background-color: #41BA4D;
+    -fx-text-fill: white;
+}
 /*===== bookings-javafx@main.css from modality-ecommerce-backoffice-activity-bookings-plugin =====*/
 
 /* Declaring color variables with default values */
