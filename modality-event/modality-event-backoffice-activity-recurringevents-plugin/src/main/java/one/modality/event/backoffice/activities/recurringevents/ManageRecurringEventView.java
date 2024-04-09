@@ -10,11 +10,11 @@ import dev.webfx.extras.webtext.HtmlTextEditor;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.async.Future;
-import dev.webfx.platform.async.Promise;
+import dev.webfx.platform.conf.ConfigLoader;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.file.File;
-import dev.webfx.stack.cloud.cloudinary.Cloudinary;
-import dev.webfx.stack.cloud.cloudinary.CloudinaryService;
+import dev.webfx.stack.cloud.image.CloudImageService;
+import dev.webfx.stack.cloud.image.impl.cloudinary.Cloudinary;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
@@ -30,7 +30,6 @@ import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -44,8 +43,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.*;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -135,10 +136,17 @@ public final class ManageRecurringEventView {
 
     private static final int EDITMODE = 1;
     private static final int ADDMODE = -1;
-    private IntegerProperty currentMode = new SimpleIntegerProperty();
+    private IntegerProperty currentMode = new SimpleIntegerProperty() {
+        @Override
+        protected void invalidated() {
+            boolean isShowing = get() == ADDMODE;
+            locationHBox.setVisible(isShowing);
+            locationHBox.setManaged(isShowing);
+        }
+    };
     private EntityButtonSelector<Site> siteSelector;
     private final ButtonFactoryMixin mixin;
-    private Cloudinary cloudinary;
+    private CloudImageService cloudinary;
     private Font fontUsed;
     private File pictureToUpload;
     private BooleanProperty isPictureToBeDeleted = new SimpleBooleanProperty(false);
@@ -185,8 +193,8 @@ public final class ManageRecurringEventView {
                 .visualizeResultInto(eventTable.visualResultProperty())
                 .start();
 
-        dev.webfx.platform.conf.ConfigLoader.onConfigLoaded("modality.cloudinary", config ->
-            cloudinary = CloudinaryService.createCloudinary(config.getString("cloudName"), config.getString("apiKey"), config.getString("apiSecret"))
+        ConfigLoader.onConfigLoaded("modality.cloudinary", config ->
+            cloudinary = new Cloudinary(config.getString("cloudName"), config.getString("apiKey"), config.getString("apiSecret"))
         );
         /*
         We create a booleanBinding that will be used by the submit and draft button if either the updateStoreChanged, or the pictures needs to be uploaded
@@ -301,7 +309,7 @@ public final class ManageRecurringEventView {
                                                     isPictureDisplayed.setValue(false);
                                                 }
                                                 else {
-                                                    String url = cloudinary.url().widthTransformation(200).generate(String.valueOf(imageTag));
+                                                    String url = cloudinary.url(String.valueOf(imageTag), 200, -1);
                                                     Image imageToDisplay = new Image(url, true);
                                                     imageView.setImage(imageToDisplay);
                                                     isPictureDisplayed.setValue(true);
@@ -376,9 +384,9 @@ public final class ManageRecurringEventView {
     {
         if(isPictureToBeUploaded.getValue())
         {
-            cloudinary.uploader().destroy(String.valueOf(eventId), true)
+            cloudinary.destroy(String.valueOf(eventId), true)
                     .onFailure(Console::log);
-            cloudinary.uploader().upload(pictureToUpload,
+            cloudinary.upload(pictureToUpload,
                             String.valueOf(eventId),true)
                     .onFailure(Console::log)
                     .onSuccess(uploadResult -> {
@@ -390,20 +398,13 @@ public final class ManageRecurringEventView {
         if(isPictureToBeDeleted.getValue()) {
             //We delete the pictures, and all the cached picture in cloudinary that can have been transformed, related
             //to this assets
-            cloudinary.uploader().destroy(String.valueOf(eventId), true)
+            cloudinary.destroy(String.valueOf(eventId), true)
                     .onFailure(Console::log);
         }
     }
 
     private Future<Boolean> isPictureForEventExistingOnMediaProvider(int eventId) {
-        Promise<Boolean> promise = Promise.promise();
-        cloudinary.search().expression("public_id="+ eventId).execute()
-                .onFailure(promise::fail)
-                .onSuccess(apiResponse -> {
-                    ArrayList<Object> resources = (ArrayList<Object>) apiResponse.get("resources");
-                    promise.complete(resources.size()>0);
-                });
-        return promise.future();
+        return cloudinary.exists("" + eventId);
     }
 
     public BooleanProperty isWorkingScheduledItemEmptyProperty() {
@@ -518,11 +519,12 @@ public final class ManageRecurringEventView {
         nameOfEventLabel.setMinWidth(LABEL_WIDTH);
         I18nControls.bindI18nProperties(nameOfEventLabel,"NameOfTheEvent");
         I18nControls.bindI18nProperties(nameOfEventTextField,"NameOfTheEvent");
+        /* Temporarily commented as not yet supported by WebFX
         nameOfEventTextField.setTextFormatter(new TextFormatter<>(change -> {
             if (change.isContentChange() && change.getControlNewText().length() > 128) {
                 return null;
             }
-            return change;}));
+            return change;}));*/
         nameOfEventTextField.setMinWidth(500);
         nameOfEventTextField.textProperty().addListener((InvalidationListener) obs -> {
             if(currentEvent!=null) {
@@ -535,8 +537,6 @@ public final class ManageRecurringEventView {
         siteLabel.setText("Location");
         siteLabel.setMinWidth(LABEL_WIDTH);
         locationHBox.getChildren().setAll(siteLabel);
-        locationHBox.visibleProperty().bind(Bindings.equal(currentMode,ADDMODE));
-        locationHBox.managedProperty().bind(Bindings.equal(currentMode,ADDMODE));
         locationHBox.setPadding(new Insets(20,0,0,0));
 
 

@@ -24,9 +24,9 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires webfx.platform.conf;
     requires webfx.platform.console;
     requires webfx.platform.file;
-    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
-    requires webfx.stack.cloud.cloudinary;
+    requires webfx.stack.cloud.image;
+    requires webfx.stack.cloud.image.cloudinary;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.datasourcemodel.service;

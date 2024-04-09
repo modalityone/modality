@@ -564,6 +564,15 @@
     <source path="dev/webfx/platform/console/spi"/>
     <!--========================< webfx-platform-console-gwt-j2cl >=========================-->
     <source path="dev/webfx/platform/console/spi/impl/gwtj2cl"/>
+    <!--==============================< webfx-platform-fetch >==============================-->
+    <source path="dev/webfx/platform/fetch"/>
+    <source path="dev/webfx/platform/fetch/spi"/>
+    <source path="dev/webfx/platform/streams"/>
+    <!--=========================< webfx-platform-fetch-ast-json >==========================-->
+    <source path="dev/webfx/platform/fetch/json"/>
+    <!--=========================< webfx-platform-fetch-gwt-j2cl >==========================-->
+    <source path="dev/webfx/platform/fetch/spi/impl/gwtj2cl"/>
+    <source path="dev/webfx/platform/streams/spi/impl/gwtj2cl"/>
     <!--==============================< webfx-platform-file >===============================-->
     <source path="dev/webfx/platform/file"/>
     <source path="dev/webfx/platform/file/spi"/>
@@ -709,13 +718,11 @@
     <source path="dev/webfx/stack/cache"/>
     <!--============================< webfx-stack-cache-client >============================-->
     <source path="dev/webfx/stack/cache/client"/>
-    <!--==========================< webfx-stack-cloud-cloudinary >==========================-->
-    <source path="dev/webfx/stack/cloud/cloudinary"/>
-    <source path="dev/webfx/stack/cloud/cloudinary/api"/>
-    <source path="dev/webfx/stack/cloud/cloudinary/spi"/>
-    <!--=====================< webfx-stack-cloud-cloudinary-gwt-j2cl >======================-->
-    <source path="dev/webfx/stack/cloud/cloudinary/spi/impl/gwtj2cl"/>
-    <source path="dev/webfx/stack/cloud/cloudinary/spi/impl/gwtj2cl/jsinterop"/>
+    <!--============================< webfx-stack-cloud-image >=============================-->
+    <source path="dev/webfx/stack/cloud/image"/>
+    <source path="dev/webfx/stack/cloud/image/impl/fetchbased"/>
+    <!--=======================< webfx-stack-cloud-image-cloudinary >=======================-->
+    <source path="dev/webfx/stack/cloud/image/impl/cloudinary"/>
     <!--==============================< webfx-stack-com-bus >===============================-->
     <source path="dev/webfx/stack/com/bus"/>
     <source path="dev/webfx/stack/com/bus/spi"/>
@@ -786,6 +793,8 @@
     <source path="dev/webfx/stack/db/submit/buscall/serial"/>
     <!--==========================< webfx-stack-db-submit-remote >==========================-->
     <source path="dev/webfx/stack/db/submit/spi/impl/remote"/>
+    <!--=============================< webfx-stack-hash-sha1 >==============================-->
+    <source path="dev/webfx/stack/hash/sha1"/>
     <!--================================< webfx-stack-i18n >================================-->
     <source path="dev/webfx/stack/i18n"/>
     <source path="dev/webfx/stack/i18n/operations"/>

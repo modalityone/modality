@@ -20,6 +20,7 @@ module modality.all.backoffice.application.openjfx {
     requires webfx.platform.blob.java;
     requires webfx.platform.boot.java;
     requires webfx.platform.console.java;
+    requires webfx.platform.fetch.java;
     requires webfx.platform.file.java;
     requires webfx.platform.os.java;
     requires webfx.platform.resource.java;
@@ -35,7 +36,6 @@ module modality.all.backoffice.application.openjfx {
     requires webfx.stack.authn.login.ui.gateway.webviewbased.openjfx;
     requires webfx.stack.authn.login.ui.portal;
     requires webfx.stack.authn.remote;
-    requires webfx.stack.cloud.cloudinary.java;
     requires webfx.stack.com.bus.json.client;
     requires webfx.stack.com.bus.json.client.websocket.java;
     requires webfx.stack.com.websocket.java;
