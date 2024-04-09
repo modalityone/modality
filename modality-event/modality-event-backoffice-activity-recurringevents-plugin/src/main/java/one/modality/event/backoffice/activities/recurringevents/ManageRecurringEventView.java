@@ -297,7 +297,7 @@ public final class ManageRecurringEventView {
                                     nameOfEventTextField.setText(currentEvent.getName());
                                     descriptionHtmlEditor.setText(currentEvent.getDescription());
                                     //We try to load the image from cloudinary if it exists
-                                    int imageTag = (short) currentEvent.getId().getPrimaryKey();
+                                    String imageTag = String.valueOf(currentEvent.getId().getPrimaryKey());
                                     isPictureForEventExistingOnMediaProvider(imageTag)
                                             .onFailure(ex -> {
                                                 Console.log(ex);
@@ -403,8 +403,8 @@ public final class ManageRecurringEventView {
         }
     }
 
-    private Future<Boolean> isPictureForEventExistingOnMediaProvider(int eventId) {
-        return cloudinary.exists("" + eventId);
+    private Future<Boolean> isPictureForEventExistingOnMediaProvider(String publicId) {
+        return cloudinary.exists(publicId);
     }
 
     public BooleanProperty isWorkingScheduledItemEmptyProperty() {
