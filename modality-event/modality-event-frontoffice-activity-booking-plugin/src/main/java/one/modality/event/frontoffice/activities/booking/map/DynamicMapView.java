@@ -68,9 +68,9 @@ public class DynamicMapView extends MapViewBase {
     }
 
     private String getLoadScript() {
-        String GOOGLE_MAP_JS_API_KEY = SourcesConfig.getSourcesRootConfig().getString("GOOGLE_MAP_JS_API_KEY");
+        String googleMapJsApiKey = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.event.frontoffice.activity.booking").getString("googleMapJsApiKey");
         String script = Resource.getText(Resource.toUrl("DynamicMapView.js", getClass()))
-                .replace("YOUR_API_KEY", GOOGLE_MAP_JS_API_KEY);
+                .replace("YOUR_API_KEY", googleMapJsApiKey);
         if (IS_BROWSER) { // In the browser, Google Maps can integrate seamlessly without an iFrame
             // Note: this is not only lighter but also necessary for FireFox, because Google Maps JS API bugs when
             // inside a FireFox iFrame (map images are not loaded & displayed).
