@@ -2,7 +2,7 @@ package one.modality.ecommerce.payment.delegated;
 
 import one.modality.ecommerce.payment.delegated.spi.DelegatedPaymentProvider;
 import dev.webfx.platform.async.Future;
-import dev.webfx.platform.util.serviceloader.SingleServiceProvider;
+import dev.webfx.platform.service.SingleServiceProvider;
 
 import java.util.ServiceLoader;
 

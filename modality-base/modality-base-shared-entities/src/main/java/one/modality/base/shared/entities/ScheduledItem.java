@@ -1,9 +1,8 @@
 package one.modality.base.shared.entities;
 
 import dev.webfx.stack.orm.entity.Entity;
-import one.modality.base.shared.entities.markers.EntityHasLocalDate;
-import one.modality.base.shared.entities.markers.EntityHasEvent;
-import one.modality.base.shared.entities.markers.EntityHasSiteAndItem;
+import dev.webfx.stack.orm.entity.EntityId;
+import one.modality.base.shared.entities.markers.*;
 
 /**
  * @author Bruno Salmon
@@ -11,6 +10,20 @@ import one.modality.base.shared.entities.markers.EntityHasSiteAndItem;
 public interface ScheduledItem extends Entity,
         EntityHasEvent,
         EntityHasLocalDate,
-        EntityHasSiteAndItem {
+        EntityHasSiteAndItem,
+        EntityHasStartAndEndTime {
+
+    default void setTimeLine(Object timeline) {
+        setForeignField("timeline", timeline);
+    }
+
+    default EntityId getTimelineId() {
+        return getForeignEntityId("timeline");
+    }
+
+    default Timeline getTimeline() {
+        return getForeignEntity("timeline");
+    }
+
 
 }

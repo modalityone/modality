@@ -97,7 +97,7 @@ public final class ModalityValidationSupport {
         return value != null && (!(value instanceof String) || !((String) value).trim().isEmpty());
     }
 
-    public void addValidationRule(ObservableValue<Boolean> validProperty, Node node, String errorMessage) {
+    public ObservableBooleanValue addValidationRule(ObservableValue<Boolean> validProperty, Node node, String errorMessage) {
         ObservableRuleBasedValidator validator = new ObservableRuleBasedValidator();
         ObservableBooleanValue rule =
                 Bindings.createBooleanBinding(() ->
@@ -154,6 +154,7 @@ public final class ModalityValidationSupport {
             validationVisualizer.initVisualization(validator.getValidationStatus(), control, true);
             node.getProperties().put("validationVisualizer", validationVisualizer);
         }
+        return rule;
     }
 
     private void showValidatorErrorPopOver(Validator validator) {

@@ -1,7 +1,7 @@
 package one.modality.ecommerce.payment.custom.spi.impl.server;
 
 import dev.webfx.platform.async.Future;
-import dev.webfx.platform.util.serviceloader.MultipleServiceProviders;
+import dev.webfx.platform.service.MultipleServiceProviders;
 import one.modality.ecommerce.payment.custom.InitiateCustomPaymentArgument;
 import one.modality.ecommerce.payment.custom.InitiateCustomPaymentResult;
 import one.modality.ecommerce.payment.custom.spi.CustomPaymentProvider;

@@ -22,6 +22,7 @@ module modality.base.backoffice.gantt.canvas {
     requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.resource;
+    requires webfx.platform.service;
     requires webfx.platform.util;
     requires webfx.stack.i18n;
 

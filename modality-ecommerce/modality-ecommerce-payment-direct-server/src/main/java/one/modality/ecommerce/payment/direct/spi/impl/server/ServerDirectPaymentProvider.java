@@ -1,7 +1,7 @@
 package one.modality.ecommerce.payment.direct.spi.impl.server;
 
 import dev.webfx.platform.async.Future;
-import dev.webfx.platform.util.serviceloader.MultipleServiceProviders;
+import dev.webfx.platform.service.MultipleServiceProviders;
 import one.modality.ecommerce.payment.direct.GetDirectPaymentGatewayInfosArgument;
 import one.modality.ecommerce.payment.direct.GetDirectPaymentGatewayInfosResult;
 import one.modality.ecommerce.payment.direct.MakeDirectPaymentArgument;

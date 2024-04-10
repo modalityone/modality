@@ -1,8 +1,10 @@
 package one.modality.base.client.application;
 
 import dev.webfx.extras.util.scene.SceneUtil;
+import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.scene.DeviceSceneUtil;
+import dev.webfx.platform.resource.Resource;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.ViewDomainActivityContext;
 import dev.webfx.stack.routing.activity.ActivityManager;
@@ -39,7 +41,6 @@ public class ModalityClientApplication extends Application {
         double width = screenVisualBounds.getWidth() * 0.8;
         double height = screenVisualBounds.getHeight() * 0.9;
         Scene scene = DeviceSceneUtil.newScene(root, width, height);
-        scene.getStylesheets().addAll("one/modality/base/client/css/modality.css");
         scene.rootProperty().bind(FXProperties.compute(modalityClientStarterActivity.nodeProperty(), n -> (Parent) n));
         // Activating focus owner auto scroll
         SceneUtil.installSceneFocusOwnerAutoScroll(scene);

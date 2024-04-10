@@ -7,7 +7,7 @@ module modality.ecommerce.payment.direct {
 
     // Direct dependencies modules
     requires transitive webfx.platform.async;
-    requires webfx.platform.util;
+    requires webfx.platform.service;
 
     // Exported packages
     exports one.modality.ecommerce.payment.direct;

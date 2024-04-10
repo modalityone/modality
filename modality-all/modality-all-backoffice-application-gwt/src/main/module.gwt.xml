@@ -193,6 +193,8 @@
     <source path="one/modality/base/client/activity/organizationdependent"/>
     <!--========================< modality-base-client-application >========================-->
     <source path="one/modality/base/client/application"/>
+    <resource path="dev/webfx/kit/css/fonts/montserrat"/>
+    <public includes="dev/webfx/kit/css/fonts/montserrat/" path=""/>
     <resource path="images/buddhas"/>
     <public includes="images/buddhas/" path=""/>
     <resource path="one/modality/base/client/images"/>
@@ -300,6 +302,8 @@
     <source path="one/modality/crm/backoffice/organization/fx/impl"/>
     <!--===================< modality-crm-client-activity-login-plugin >====================-->
     <source path="one/modality/crm/client/activities/login"/>
+    <resource path="dev/webfx/kit/css/fonts/password"/>
+    <public includes="dev/webfx/kit/css/fonts/password/" path=""/>
     <!--================< modality-crm-client-activity-unauthorized-plugin >================-->
     <source path="one/modality/crm/client/activities/unauthorized"/>
     <!--==========================< modality-crm-client-authn-fx >==========================-->
@@ -388,6 +392,12 @@
     <source path="dev/webfx/extras/cell/collator"/>
     <source path="dev/webfx/extras/cell/renderer"/>
     <source path="dev/webfx/extras/cell/rowstyle"/>
+    <!--============================< webfx-extras-filepicker >=============================-->
+    <source path="dev/webfx/extras/filepicker"/>
+    <source path="dev/webfx/extras/filepicker/spi"/>
+    <source path="dev/webfx/extras/filepicker/spi/impl"/>
+    <!--========================< webfx-extras-filepicker-gwt-j2cl >========================-->
+    <source path="dev/webfx/extras/filepicker/spi/impl/gwt"/>
     <!--=============================< webfx-extras-geometry >==============================-->
     <source path="dev/webfx/extras/geometry"/>
     <!--============================< webfx-extras-imagestore >=============================-->
@@ -461,6 +471,9 @@
     <source path="dev/webfx/extras/visual/controls"/>
     <!--============================< webfx-extras-visual-grid >============================-->
     <source path="dev/webfx/extras/visual/controls/grid"/>
+    <!--====================< webfx-extras-visual-grid-peers-gwt-j2cl >=====================-->
+    <source path="dev/webfx/extras/visual/controls/grid/peers/gwt/html"/>
+    <source path="dev/webfx/extras/visual/controls/grid/registry"/>
     <!--======================< webfx-extras-visual-grid-peers-base >=======================-->
     <source path="dev/webfx/extras/visual/controls/grid/peers/base"/>
     <!--=========================< webfx-extras-visual-peers-base >=========================-->
@@ -469,6 +482,9 @@
     <source path="dev/webfx/extras/webtext"/>
     <!--========================< webfx-extras-webtext-peers-base >=========================-->
     <source path="dev/webfx/extras/webtext/peers/base"/>
+    <!--======================< webfx-extras-webtext-peers-gwt-j2cl >=======================-->
+    <source path="dev/webfx/extras/webtext/peers/gwt/html"/>
+    <source path="dev/webfx/extras/webtext/registry"/>
     <!--===========================< webfx-extras-webtext-util >============================-->
     <source path="dev/webfx/extras/webtext/util"/>
     <!--======================< webfx-kit-javafxcontrols-peers-base >=======================-->
@@ -530,12 +546,15 @@
     <!--==============================< webfx-platform-async >==============================-->
     <source path="dev/webfx/platform/async"/>
     <source path="dev/webfx/platform/async/impl"/>
+    <!--==============================< webfx-platform-blob >===============================-->
+    <source path="dev/webfx/platform/blob"/>
+    <source path="dev/webfx/platform/blob/spi"/>
+    <!--==========================< webfx-platform-blob-gwt-j2cl >==========================-->
+    <source path="dev/webfx/platform/blob/spi/impl/gwtj2cl"/>
     <!--==============================< webfx-platform-boot >===============================-->
     <source path="dev/webfx/platform/boot"/>
     <source path="dev/webfx/platform/boot/spi"/>
     <source path="dev/webfx/platform/boot/spi/impl"/>
-    <!--============================< webfx-platform-boot-gwt >=============================-->
-    <source path="dev/webfx/platform/boot/spi/impl/gwt"/>
     <!--==============================< webfx-platform-conf >===============================-->
     <source path="dev/webfx/platform/conf"/>
     <source path="dev/webfx/platform/conf/impl"/>
@@ -545,6 +564,20 @@
     <source path="dev/webfx/platform/console/spi"/>
     <!--========================< webfx-platform-console-gwt-j2cl >=========================-->
     <source path="dev/webfx/platform/console/spi/impl/gwtj2cl"/>
+    <!--==============================< webfx-platform-fetch >==============================-->
+    <source path="dev/webfx/platform/fetch"/>
+    <source path="dev/webfx/platform/fetch/spi"/>
+    <source path="dev/webfx/platform/streams"/>
+    <!--=========================< webfx-platform-fetch-ast-json >==========================-->
+    <source path="dev/webfx/platform/fetch/json"/>
+    <!--=========================< webfx-platform-fetch-gwt-j2cl >==========================-->
+    <source path="dev/webfx/platform/fetch/spi/impl/gwtj2cl"/>
+    <source path="dev/webfx/platform/streams/spi/impl/gwtj2cl"/>
+    <!--==============================< webfx-platform-file >===============================-->
+    <source path="dev/webfx/platform/file"/>
+    <source path="dev/webfx/platform/file/spi"/>
+    <!--==========================< webfx-platform-file-gwt-j2cl >==========================-->
+    <source path="dev/webfx/platform/file/spi/impl/gwtj2cl"/>
     <!--========================< webfx-platform-javabase-emul-gwt >========================-->
     <super-source includes="java/io/" path=""/>
     <super-source includes="java/lang/ref/" path=""/>
@@ -571,6 +604,10 @@
     <!--============================< webfx-platform-scheduler >============================-->
     <source path="dev/webfx/platform/scheduler"/>
     <source path="dev/webfx/platform/scheduler/spi"/>
+    <!--=============================< webfx-platform-service >=============================-->
+    <source path="dev/webfx/platform/service"/>
+    <!--========================< webfx-platform-service-gwt-j2cl >=========================-->
+    <source path="dev/webfx/platform/service/gwtj2cl"/>
     <!--============================< webfx-platform-shutdown >=============================-->
     <source path="dev/webfx/platform/shutdown"/>
     <source path="dev/webfx/platform/shutdown/spi"/>
@@ -609,7 +646,6 @@
     <source path="dev/webfx/platform/util"/>
     <source path="dev/webfx/platform/util/collection"/>
     <source path="dev/webfx/platform/util/function"/>
-    <source path="dev/webfx/platform/util/serviceloader"/>
     <source path="dev/webfx/platform/util/tuples"/>
     <source path="dev/webfx/platform/util/uuid"/>
     <!--============================< webfx-platform-util-time >============================-->
@@ -682,6 +718,11 @@
     <source path="dev/webfx/stack/cache"/>
     <!--============================< webfx-stack-cache-client >============================-->
     <source path="dev/webfx/stack/cache/client"/>
+    <!--============================< webfx-stack-cloud-image >=============================-->
+    <source path="dev/webfx/stack/cloud/image"/>
+    <source path="dev/webfx/stack/cloud/image/impl/fetchbased"/>
+    <!--=======================< webfx-stack-cloud-image-cloudinary >=======================-->
+    <source path="dev/webfx/stack/cloud/image/impl/cloudinary"/>
     <!--==============================< webfx-stack-com-bus >===============================-->
     <source path="dev/webfx/stack/com/bus"/>
     <source path="dev/webfx/stack/com/bus/spi"/>
@@ -752,6 +793,8 @@
     <source path="dev/webfx/stack/db/submit/buscall/serial"/>
     <!--==========================< webfx-stack-db-submit-remote >==========================-->
     <source path="dev/webfx/stack/db/submit/spi/impl/remote"/>
+    <!--=============================< webfx-stack-hash-sha1 >==============================-->
+    <source path="dev/webfx/stack/hash/sha1"/>
     <!--================================< webfx-stack-i18n >================================-->
     <source path="dev/webfx/stack/i18n"/>
     <source path="dev/webfx/stack/i18n/operations"/>
@@ -923,12 +966,15 @@
     <set-property name="jre.checks.checkLevel" value="MINIMAL"/> <!-- to speed up execution time -->
 
     <!-- Specifying the app entry point class. -->
-    <entry-point class="dev.webfx.platform.boot.spi.impl.gwt.GwtApplicationBooterProvider"/>
+    <entry-point class="dev.webfx.platform.boot.gwt.GwtEntryPoint"/>
 
     <!-- Including super sources possibly generated by the WebFX CLI -->
     <super-source path="super"/>
 
     <!-- Including the public folder that contains source web files such as index.html -->
     <public path="public"/>
+
+    <!-- Including the possible resources related to CSS (fonts, images, etc...) -->
+    <resource path="dev/webfx/kit/css"/>
 
 </module>

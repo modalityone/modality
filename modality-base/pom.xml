@@ -37,9 +37,6 @@
         <module>modality-base-client-activity-organizationdependent</module>
         <module>modality-base-client-application</module>
         <module>modality-base-client-conf</module>
-        <module>modality-base-client-css</module>
-        <module>modality-base-client-css-java</module>
-        <module>modality-base-client-css-web</module>
         <module>modality-base-client-entities</module>
         <module>modality-base-client-gantt-fx</module>
         <module>modality-base-client-i18n</module>

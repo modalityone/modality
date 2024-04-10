@@ -20,7 +20,6 @@
             <undetected-module>javafx-controls</undetected-module>
         </used-by-source-modules>
 
-        <resource-module>modality-base-client-css</resource-module>
         <resource-module>modality-base-client-icons</resource-module>
 
     </dependencies>

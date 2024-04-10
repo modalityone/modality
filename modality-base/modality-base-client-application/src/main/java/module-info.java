@@ -10,14 +10,15 @@ module modality.base.client.application {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.activity;
-    requires modality.base.client.css;
     requires modality.base.client.icons;
     requires modality.base.client.profile.fx;
     requires webfx.extras.theme;
     requires webfx.extras.util.layout;
     requires webfx.extras.util.scene;
+    requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.kit.util.scene;
+    requires webfx.platform.resource;
     requires transitive webfx.platform.util;
     requires webfx.stack.authn.logout.client;
     requires webfx.stack.orm.datasourcemodel.service;
@@ -34,6 +35,7 @@ module modality.base.client.application {
     exports one.modality.base.client.application;
 
     // Resources packages
+    opens dev.webfx.kit.css.fonts.montserrat;
     opens images.buddhas;
     opens one.modality.base.client.images;
 
