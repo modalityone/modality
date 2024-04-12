@@ -18,6 +18,15 @@ public interface Event extends Entity,
         EntityHasCorporation {
 
 
+    default void setState(Object state) {
+        setForeignField("state", state);
+    }
+
+    default EventState getState() {
+        return EventState.of(getStringFieldValue("state"));
+    }
+
+
     default void setType(Object type) {
         setForeignField("type", type);
     }
