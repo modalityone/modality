@@ -1,5 +1,6 @@
 package one.modality.base.shared.entities;
 
+import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.markers.*;
@@ -19,7 +20,7 @@ public interface Event extends Entity,
 
 
     default void setState(Object state) {
-        setForeignField("state", state);
+        setFieldValue("state", Strings.stringValue(state));
     }
 
     default EventState getState() {

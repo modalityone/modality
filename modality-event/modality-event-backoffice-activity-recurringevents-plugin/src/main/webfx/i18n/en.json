@@ -32,7 +32,7 @@
   },
   "TimeOfTheEvent": {
     "text": "Time of the event",
-    "prompt": "Hh-Mm"
+    "prompt": "Hh:Mm"
   },
   "Duration": {
     "text": "Duration (in minutes)",
@@ -46,6 +46,22 @@
   },
   "Date": {
     "text": "Dates"
+  },
+  "Location": {
+    "text": "Location"
+  },
+  "AddNewLocation": {
+    "text": "Add this new location"
+  },
+  "BookingConfirmed": {
+    "text": "Confirmed"
+  },
+  "BookingUnconfirmed": {
+    "text": "Unconfirmed"
+  },
+  "Total":
+  {
+    "text": "Total:"
   },
   "SelectTheDays": {
     "text": "Select the day for this recurrence"
@@ -142,5 +158,26 @@
   "TotalAttendees":
   {
     "text": "Attendees in total"
+  },
+  "DeleteEvent":
+  {
+    "text": "Delete the event"
+  },
+  "DRAFT":
+  {
+    "text": "Draft"
+  },
+
+  "ON_HOLD":
+  {
+    "text": "On Hold"
+  },
+  "OPEN":
+  {
+    "text": "Open"
+  },
+  "NOT_DEFINED":
+  {
+    "text": "Not defined"
   }
 }

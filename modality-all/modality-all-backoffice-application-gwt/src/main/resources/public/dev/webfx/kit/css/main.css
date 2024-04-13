@@ -149,6 +149,92 @@ tbody {
 .disabled fx-text {
     color: gray;
 }
+/*===== web@main.css from modality-event-backoffice-activity-recurringevents-plugin =====*/
+
+.recurringEventButton {
+    border-radius: 2px;
+    height: 30px;
+    max-height: 30px;
+    width: 150px;
+    font-weight: bold;
+}
+
+.font-size-35px {
+    font-size: 35px;
+}
+
+.font-size-16px {
+    font-size: 16px;
+}
+
+.font-size-9px {
+    font-size: 9px;
+}
+
+.font-white {
+    color: white;
+}
+
+.font-green {
+    color: #41BA4D;
+}
+
+.font-blue {
+    color: #0096D6;
+}
+
+.font-orange {
+    color: orange;
+}
+
+.font-red {
+    color: red;
+}
+
+.font-grey {
+    color: grey;
+}
+
+.bookingName {
+    color: #838788;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.bookingStatusConfirmed {
+    color: #41BA4D;
+}
+
+.bookingStatusUnconfirmed {
+    color: #eb8634;
+}
+
+.bookingTotalCount {
+    color: #FF0404;
+}
+
+.background-green > fx-background {
+    background: #41BA4D;
+}
+
+.background-blue > fx-background {
+    background: #0096D6;
+}
+
+.background-darkGrey > fx-background {
+    background: #838788;
+}
+
+
+.disabled {
+    opacity: 0.3;
+}
+
+.disabled fx-text {
+    color: white;
+}
 /*===== bookings-web@main.css from modality-ecommerce-backoffice-activity-bookings-plugin =====*/
 
 /***** Declaring table row color variables with default values *****/
@@ -299,7 +385,7 @@ input[type="password"]:not([value=""]) {
 }
 
 /* Applying Montserrat as default font for Modality */
-body * {
+body {
     font-family: Montserrat, serif;
     font-size: 13px;
     -webkit-font-smoothing: antialiased;

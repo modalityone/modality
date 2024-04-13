@@ -20,24 +20,75 @@
   -fx-font-size: 9px;
 }
 
-
-#newEvent {
-    -fx-background-color: #41BA4D;
+.font-white
+{
     -fx-text-fill: white;
-
+    -fx-fill: white;
 }
 
-#discard {
-    -fx-background-color: #838788;
-     -fx-text-fill: white;
+.font-green
+{
+    -fx-text-fill: #41BA4D;
+    -fx-fill: #41BA4D;
 }
 
-#saveDraft {
+.font-blue
+{
+    -fx-text-fill: #0096D6;
+    -fx-fill: #0096D6;
+}
+
+.font-orange
+{
+    -fx-text-fill: orange;
+    -fx-fill: orange;
+}
+.font-red
+{
+    -fx-text-fill: red;
+     -fx-fill: red;
+}
+.font-grey
+{
+    -fx-text-fill: grey;
+    -fx-fill: grey;
+}
+
+.bookingName
+{
+    -fx-text-fill: #838788;
+}
+.bold
+{
+   -fx-font-weight: bold;
+}
+
+.bookingStatusConfirmed
+{
+     -fx-text-fill: #41BA4D;
+}
+
+.bookingStatusUnconfirmed
+{
+     -fx-text-fill: #eb8634;
+}
+.bookingTotalCount
+{
+-fx-text-fill: #FF0404;
+}
+
+.background-green {
+    -fx-background-color: #41BA4D;
+}
+
+.background-blue {
     -fx-background-color: #0096D6;
-    -fx-text-fill: white;
 }
 
-#updateEvent {
-    -fx-background-color: #41BA4D;
-    -fx-text-fill: white;
+.background-red {
+    -fx-background-color: red;
+}
+
+.background-darkGrey {
+    -fx-background-color: #838788;
 }

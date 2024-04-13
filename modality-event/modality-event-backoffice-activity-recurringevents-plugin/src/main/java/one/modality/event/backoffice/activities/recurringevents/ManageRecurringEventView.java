@@ -15,7 +15,6 @@ import dev.webfx.platform.async.Future;
 import dev.webfx.platform.conf.ConfigLoader;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.file.File;
-import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.cloud.image.CloudImageService;
 import dev.webfx.stack.cloud.image.impl.cloudinary.Cloudinary;
 import dev.webfx.stack.i18n.I18n;
@@ -110,6 +109,7 @@ public final class ManageRecurringEventView {
     private StackPane imageStackPane;
     //private Entity timeLine;
     private SVGPath trashImage;
+    static final String TRASH_SVG_PATH = "M8 3.58537H12C12 3.042 11.7893 2.52088 11.4142 2.13666C11.0391 1.75244 10.5304 1.53659 10 1.53659C9.46957 1.53659 8.96086 1.75244 8.58579 2.13666C8.21071 2.52088 8 3.042 8 3.58537ZM6.5 3.58537C6.5 3.11453 6.59053 2.6483 6.76642 2.21331C6.94231 1.77831 7.20012 1.38306 7.52513 1.05013C7.85013 0.717197 8.23597 0.453101 8.66061 0.27292C9.08525 0.0927383 9.54037 0 10 0C10.4596 0 10.9148 0.0927383 11.3394 0.27292C11.764 0.453101 12.1499 0.717197 12.4749 1.05013C12.7999 1.38306 13.0577 1.77831 13.2336 2.21331C13.4095 2.6483 13.5 3.11453 13.5 3.58537H19.25C19.4489 3.58537 19.6397 3.66631 19.7803 3.81039C19.921 3.95448 20 4.14989 20 4.35366C20 4.55742 19.921 4.75284 19.7803 4.89692C19.6397 5.04101 19.4489 5.12195 19.25 5.12195H17.93L16.76 17.5283C16.6702 18.479 16.238 19.3612 15.5477 20.0031C14.8573 20.645 13.9583 21.0004 13.026 21H6.974C6.04186 21.0001 5.1431 20.6446 4.45295 20.0027C3.7628 19.3609 3.33073 18.4788 3.241 17.5283L2.07 5.12195H0.75C0.551088 5.12195 0.360322 5.04101 0.21967 4.89692C0.0790175 4.75284 0 4.55742 0 4.35366C0 4.14989 0.0790175 3.95448 0.21967 3.81039C0.360322 3.66631 0.551088 3.58537 0.75 3.58537H6.5ZM8.5 8.45122C8.5 8.24746 8.42098 8.05204 8.28033 7.90795C8.13968 7.76387 7.94891 7.68293 7.75 7.68293C7.55109 7.68293 7.36032 7.76387 7.21967 7.90795C7.07902 8.05204 7 8.24746 7 8.45122V16.1341C7 16.3379 7.07902 16.5333 7.21967 16.6774C7.36032 16.8215 7.55109 16.9024 7.75 16.9024C7.94891 16.9024 8.13968 16.8215 8.28033 16.6774C8.42098 16.5333 8.5 16.3379 8.5 16.1341V8.45122ZM12.25 7.68293C12.0511 7.68293 11.8603 7.76387 11.7197 7.90795C11.579 8.05204 11.5 8.24746 11.5 8.45122V16.1341C11.5 16.3379 11.579 16.5333 11.7197 16.6774C11.8603 16.8215 12.0511 16.9024 12.25 16.9024C12.4489 16.9024 12.6397 16.8215 12.7803 16.6774C12.921 16.5333 13 16.3379 13 16.1341V8.45122C13 8.24746 12.921 8.05204 12.7803 7.90795C12.6397 7.76387 12.4489 7.68293 12.25 7.68293Z";
     private  ListChangeListener onChangeDateListener;
     private EventCalendarPane calendarPane;
     private static final String EVENT_COLUMNS = "[" +
@@ -117,23 +117,12 @@ public final class ManageRecurringEventView {
             "{expression: 'name', label: 'Name'}," +
             "{expression: 'type', label: 'TypeOfEvent'}," +
             "{expression: 'location', label: 'Location'}," +
-            "{expression: 'dateIntervalFormat(startDate, endDate)', label: 'Dates'}," +
-            "{expression: 'organization', label: 'Organisation'}," +
-            "{expression: 'this', label: 'Action', renderer: 'editEventRenderer'}" +
+            "{expression: 'dateIntervalFormat(startDate, endDate)', label: 'Dates'}" +
+            //",{expression: 'organization', label: 'Organisation'}" +
+            //",{expression: 'this', label: 'Action', renderer: 'editEventRenderer'}" +
             "]";
 
-    static {
-        ValueRendererRegistry.registerValueRenderer("eventStateRenderer", (value, context) -> {
-            EventState state = EventState.of((String) value);
-            return new Text(Strings.toString(state));
-        });
-        ValueRendererRegistry.registerValueRenderer("editEventRenderer", (value, context) -> {
-            Event event = (Event) value;
-            Hyperlink hyperlink = new Hyperlink("Edit");
-            hyperlink.setOnAction(e -> System.out.println(event));
-            return hyperlink;
-        });
-    }
+
 
     private Timeline eventTimeline;
     private Event currentEvent;
@@ -142,7 +131,6 @@ public final class ManageRecurringEventView {
     //The Item recurring item is  needed when we create a ScheduledItem as one of his parameter
     private Item recurringItem;
     private UpdateStore updateStore = UpdateStore.createAbove(entityStore);
-    final String TRASH_SVG_PATH = "M8 3.58537H12C12 3.042 11.7893 2.52088 11.4142 2.13666C11.0391 1.75244 10.5304 1.53659 10 1.53659C9.46957 1.53659 8.96086 1.75244 8.58579 2.13666C8.21071 2.52088 8 3.042 8 3.58537ZM6.5 3.58537C6.5 3.11453 6.59053 2.6483 6.76642 2.21331C6.94231 1.77831 7.20012 1.38306 7.52513 1.05013C7.85013 0.717197 8.23597 0.453101 8.66061 0.27292C9.08525 0.0927383 9.54037 0 10 0C10.4596 0 10.9148 0.0927383 11.3394 0.27292C11.764 0.453101 12.1499 0.717197 12.4749 1.05013C12.7999 1.38306 13.0577 1.77831 13.2336 2.21331C13.4095 2.6483 13.5 3.11453 13.5 3.58537H19.25C19.4489 3.58537 19.6397 3.66631 19.7803 3.81039C19.921 3.95448 20 4.14989 20 4.35366C20 4.55742 19.921 4.75284 19.7803 4.89692C19.6397 5.04101 19.4489 5.12195 19.25 5.12195H17.93L16.76 17.5283C16.6702 18.479 16.238 19.3612 15.5477 20.0031C14.8573 20.645 13.9583 21.0004 13.026 21H6.974C6.04186 21.0001 5.1431 20.6446 4.45295 20.0027C3.7628 19.3609 3.33073 18.4788 3.241 17.5283L2.07 5.12195H0.75C0.551088 5.12195 0.360322 5.04101 0.21967 4.89692C0.0790175 4.75284 0 4.55742 0 4.35366C0 4.14989 0.0790175 3.95448 0.21967 3.81039C0.360322 3.66631 0.551088 3.58537 0.75 3.58537H6.5ZM8.5 8.45122C8.5 8.24746 8.42098 8.05204 8.28033 7.90795C8.13968 7.76387 7.94891 7.68293 7.75 7.68293C7.55109 7.68293 7.36032 7.76387 7.21967 7.90795C7.07902 8.05204 7 8.24746 7 8.45122V16.1341C7 16.3379 7.07902 16.5333 7.21967 16.6774C7.36032 16.8215 7.55109 16.9024 7.75 16.9024C7.94891 16.9024 8.13968 16.8215 8.28033 16.6774C8.42098 16.5333 8.5 16.3379 8.5 16.1341V8.45122ZM12.25 7.68293C12.0511 7.68293 11.8603 7.76387 11.7197 7.90795C11.579 8.05204 11.5 8.24746 11.5 8.45122V16.1341C11.5 16.3379 11.579 16.5333 11.7197 16.6774C11.8603 16.8215 12.0511 16.9024 12.25 16.9024C12.4489 16.9024 12.6397 16.8215 12.7803 16.6774C12.921 16.5333 13 16.3379 13 16.1341V8.45122C13 8.24746 12.921 8.05204 12.7803 7.90795C12.6397 7.76387 12.4489 7.68293 12.25 7.68293Z";
     protected final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
     private boolean validationSupportInitialised = false;
     private boolean areDataInitialised = false;
@@ -170,6 +158,7 @@ public final class ManageRecurringEventView {
     private BooleanProperty isPictureToBeUploaded = new SimpleBooleanProperty(false);;
     private BooleanBinding updateStoreOrPictureHasChanged;
     private BooleanBinding updateTrashButtonOnPictureDisplayed;
+    private ReactiveVisualMapper eventVisualMapper;
 
 
     public ManageRecurringEventView(ButtonFactoryMixin mixin) {
@@ -200,7 +189,60 @@ public final class ManageRecurringEventView {
      */
     public void startLogic()
     {
-        ReactiveVisualMapper.<Event>createPushReactiveChain(mixin)
+        ValueRendererRegistry.registerValueRenderer("eventStateRenderer", (value, context) -> {
+            EventState state = EventState.of((String) value);
+            Text toReturn = new Text(I18n.getI18nText("NOT_DEFINED"));
+            if(state==null) {
+                toReturn.getStyleClass().add("font-grey");
+                return toReturn;
+            }
+            toReturn = new Text(I18n.getI18nText(state.toString()));
+            switch (state) {
+                case DRAFT:
+                case OPENABLE:
+                    toReturn.getStyleClass().add("font-blue");
+                    break;
+                case OPEN:
+                    toReturn.getStyleClass().add("font-green");
+                    break;
+                case CLOSED:
+                case ARCHIVED:
+                case RECONCILIED:
+                case RESTRICTED:
+                case FINALISED:
+                    toReturn.getStyleClass().add("font-grey");
+                    break;
+                case ON_HOLD:
+                    toReturn.getStyleClass().add("font-blue");
+                    break;
+                default:
+                    toReturn.getStyleClass().add("font-orange");
+
+            }
+            return toReturn;
+        });
+
+        ValueRendererRegistry.registerValueRenderer("editEventRenderer", (value, context) -> {
+            Event event = (Event) value;
+            Hyperlink editHyperLink = new Hyperlink("Edit");
+            editHyperLink.setOnAction(e -> {
+             //   displayEventDetails(event);
+            });
+            SVGPath trashSVGPath = new SVGPath();
+            trashSVGPath.setContent(TRASH_SVG_PATH);
+            trashSVGPath.setStrokeWidth(1);
+            trashSVGPath.setScaleX(0.7);
+            trashSVGPath.setScaleY(0.7);
+            trashSVGPath.getStyleClass().add("font-red");
+            trashSVGPath.setOnMouseClicked(e ->  {
+                System.out.println(e.toString());
+            });
+            HBox line = new HBox(editHyperLink);
+            return line;
+        });
+
+
+        eventVisualMapper = ReactiveVisualMapper.<Event>createPushReactiveChain(mixin)
                 .always("{class: 'Event', alias: 'e', fields: 'name, openingDate, description, type.recurringItem,(select site.name from Timeline where event=e limit 1) as location'}")
                 .always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o))
                 .always(DqlStatement.where("type.recurringItem!=null and kbs3"))
@@ -251,7 +293,7 @@ public final class ManageRecurringEventView {
     {
         eventDetailsVBox.setVisible(true);
         eventDetailsVBox.setManaged(true);
-        eventTable.setVisualSelection(null);
+        //eventTable.setVisualSelection(null);
         selectedEvent = e;
         previousEventState = e.getState();
         currentMode.set(EDITMODE);
@@ -458,15 +500,12 @@ public final class ManageRecurringEventView {
         TextTheme.createSecondaryTextFacet(currentEventLabel).style();
         currentEventLabel.getStyleClass().add("font-size-16px");
 
-        //While waiting the fix on the visual grid for autoexpend
-        eventTable.setMaxHeight(200);
-
-
         addButton = new Button();
         I18nControls.bindI18nProperties(addButton,"AddEventInformationButton");
         //We manage the property of the button in css
-        addButton.setId("newEvent");
         addButton.getStyleClass().add("recurringEventButton");
+        addButton.getStyleClass().add("background-green");
+        addButton.getStyleClass().add("font-white");
 
         addButton.setOnAction((event -> {
             eventDetailsVBox.setVisible(true);
@@ -580,6 +619,7 @@ public final class ManageRecurringEventView {
         titleEventDetailsLabel.setPadding(new Insets(30,0,20,0));
         TextTheme.createSecondaryTextFacet(titleEventDetailsLabel).style();
         titleEventDetailsLabel.setText(I18n.getI18nText("EventDetailsTitle"));
+
 
         //-----------------------------------------------------
         // ----FlowPane---------------------------------------|
@@ -812,7 +852,7 @@ public final class ManageRecurringEventView {
         line5.setAlignment(Pos.CENTER);
         Button discardButton = new Button();
         discardButton.getStyleClass().add("recurringEventButton");
-        discardButton.getStyleClass().add("darkGreyButton");
+        discardButton.getStyleClass().add("background-darkGrey");
         discardButton.getStyleClass().add("font-white");
         I18nControls.bindI18nProperties(discardButton,"DiscardButton");
 
@@ -825,7 +865,7 @@ public final class ManageRecurringEventView {
         I18nControls.bindI18nProperties(saveDraftButton,"SaveDraftButton");
         saveDraftButton.setGraphicTextGap(10);
         saveDraftButton.getStyleClass().add("recurringEventButton");
-        saveDraftButton.getStyleClass().add("blueButton");
+        saveDraftButton.getStyleClass().add("background-blue");
         saveDraftButton.getStyleClass().add("font-white");
         saveDraftButton.setOnAction(event -> {
             if(validateForm())
@@ -849,7 +889,7 @@ public final class ManageRecurringEventView {
         I18nControls.bindI18nProperties(submitButton,"UpdateEventButton");
         submitButton.setGraphicTextGap(10);
         submitButton.getStyleClass().add("recurringEventButton");
-        submitButton.getStyleClass().add("greenButton");
+        submitButton.getStyleClass().add("background-green");
         submitButton.getStyleClass().add("font-white");
 
         submitButton.setOnAction(event -> {
@@ -871,35 +911,27 @@ public final class ManageRecurringEventView {
         line5.setSpacing(30);
         line5.getChildren().addAll(discardButton,saveDraftButton,submitButton);
 
-        HBox line6 = new HBox();
-        line6.setPadding(new Insets(10,0,0,0));
         Button deleteButton = new Button();
-        I18nControls.bindI18nProperties(deleteButton,"Delete");
-        deleteButton.setId("Delete");
+        I18nControls.bindI18nProperties(deleteButton,"DeleteEvent");
+        deleteButton.setId("DeleteEvent");
         deleteButton.setGraphicTextGap(10);
         deleteButton.getStyleClass().add("recurringEventButton");
+        //We manage the property of the button in css
+        deleteButton.getStyleClass().add("background-red");
+        deleteButton.getStyleClass().add("font-white");
         deleteButton.setOnAction(event -> {
-                updateStore.cancelChanges();
-                scheduledItemsReadFromDatabase.forEach(element -> updateStore.deleteEntity(element));
-                updateStore.deleteEntity(currentEvent);
-                updateStore.submitChanges();
-                });
-
-        Button advertiseButton = new Button();
-        I18nControls.bindI18nProperties(advertiseButton,"Advertise");
-        advertiseButton.setId("Advertise");
-        advertiseButton.setGraphicTextGap(10);
-        advertiseButton.getStyleClass().add("greenButton");
-        advertiseButton.setOnAction(event -> {
             updateStore.cancelChanges();
-            updateStore.updateEntity(currentEvent);
-            currentEvent.setFieldValue("active",true);
-            updateStore.submitChanges();
+            scheduledItemsReadFromDatabase.forEach(element -> updateStore.deleteEntity(element));
+            updateStore.deleteEntity(eventTimeline);
+            updateStore.deleteEntity(currentEvent);
+            updateStore.submitChanges().onSuccess(x -> Platform.runLater(()->{
+                eventDetailsVBox.setVisible(false);
+                eventDetailsVBox.setManaged(false);
+            }));
         });
-
-
-        line6.setSpacing(30);
-        line6.getChildren().addAll(deleteButton,advertiseButton);
+        HBox line6 = new HBox(deleteButton);
+        line6.setPadding(new Insets(10,0,0,0));
+        line6.setAlignment(Pos.CENTER);
         rightPaneVBox.getChildren().setAll(line1,datesOfTheEventLabel,calendarPane,line4InLeftPanel,line4,line5,line6);
         eventDetailsPane.getChildren().setAll(leftPaneVBox,rightPaneVBox);
         HBox labelLine = new HBox();
@@ -907,6 +939,7 @@ public final class ManageRecurringEventView {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.SOMETIMES);
         labelLine.getChildren().setAll(currentEventLabel,spacer, addButton);
+
         eventDetailsVBox = new VBox(titleEventDetailsLabel,eventDetailsPane);
         //When we launch the window, we don't disply this VBox wich contains an event details
         eventDetailsVBox.setVisible(false);

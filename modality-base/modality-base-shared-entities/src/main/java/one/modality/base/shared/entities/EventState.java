@@ -17,7 +17,7 @@ public enum EventState {
     FINALISED,
     ARCHIVED;
 
-    static EventState of(String state) {
+    public static EventState of(String state) {
         return state == null ? null : valueOf(state);
     }
 }

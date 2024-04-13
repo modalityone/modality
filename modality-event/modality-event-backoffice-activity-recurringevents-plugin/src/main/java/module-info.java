@@ -11,11 +11,14 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires modality.base.client.validation;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
+    requires webfx.extras.cell;
     requires webfx.extras.filepicker;
+    requires webfx.extras.panes;
     requires webfx.extras.theme;
     requires webfx.extras.time;
     requires webfx.extras.time.layout;
     requires webfx.extras.time.layout.calendar;
+    requires webfx.extras.util.layout;
     requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
     requires webfx.extras.webtext;
@@ -35,6 +38,7 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
+    requires webfx.stack.orm.reactive.entities;
     requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
