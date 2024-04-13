@@ -1,6 +1,8 @@
 package one.modality.event.backoffice.activities.recurringevents;
 
+import dev.webfx.extras.cell.renderer.ValueRendererRegistry;
 import dev.webfx.extras.filepicker.FilePicker;
+import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.visual.VisualSelection;
@@ -13,6 +15,7 @@ import dev.webfx.platform.async.Future;
 import dev.webfx.platform.conf.ConfigLoader;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.file.File;
+import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.cloud.image.CloudImageService;
 import dev.webfx.stack.cloud.image.impl.cloudinary.Cloudinary;
 import dev.webfx.stack.i18n.I18n;
@@ -35,6 +38,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -42,11 +47,10 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
+import javafx.scene.control.*;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -105,20 +109,31 @@ public final class ManageRecurringEventView {
     private ImageView imageView;
     private StackPane imageStackPane;
     //private Entity timeLine;
-    private DatesPicker datesPicker;
     private SVGPath trashImage;
     private  ListChangeListener onChangeDateListener;
     private EventCalendarPane calendarPane;
-    private static final String OPERATION_COLUMNS_EVENT = "[" +
+    private static final String EVENT_COLUMNS = "[" +
+            "{expression: 'state', label: 'Status', renderer: 'eventStateRenderer'}," +
             "{expression: 'name', label: 'Name'}," +
             "{expression: 'type', label: 'TypeOfEvent'}," +
+            "{expression: 'location', label: 'Location'}," +
             "{expression: 'dateIntervalFormat(startDate, endDate)', label: 'Dates'}," +
-            "{expression: 'organization', label: 'Organisation'},"+
-            "{expression: 'organization', label: 'TotalAttendees'}]";
-
-    private static final String OPERATION_COLUMNS_SITE = "[" +
-            "{expression: 'name', label: 'Name'}" +
+            "{expression: 'organization', label: 'Organisation'}," +
+            "{expression: 'this', label: 'Action', renderer: 'editEventRenderer'}" +
             "]";
+
+    static {
+        ValueRendererRegistry.registerValueRenderer("eventStateRenderer", (value, context) -> {
+            EventState state = EventState.of((String) value);
+            return new Text(Strings.toString(state));
+        });
+        ValueRendererRegistry.registerValueRenderer("editEventRenderer", (value, context) -> {
+            Event event = (Event) value;
+            Hyperlink hyperlink = new Hyperlink("Edit");
+            hyperlink.setOnAction(e -> System.out.println(event));
+            return hyperlink;
+        });
+    }
 
     private Timeline eventTimeline;
     private Event currentEvent;
@@ -133,6 +148,8 @@ public final class ManageRecurringEventView {
     private boolean areDataInitialised = false;
     private BooleanProperty isWorkingScheduledItemEmpty = new SimpleBooleanProperty(true);
     private BooleanProperty isPictureDisplayed = new SimpleBooleanProperty(false);
+
+    private EventState previousEventState;
 
     private static final int EDITMODE = 1;
     private static final int ADDMODE = -1;
@@ -184,10 +201,10 @@ public final class ManageRecurringEventView {
     public void startLogic()
     {
         ReactiveVisualMapper.<Event>createPushReactiveChain(mixin)
-                .always("{class: 'Event', alias: 'e', fields: 'name, openingDate, description, type.recurringItem'}")
+                .always("{class: 'Event', alias: 'e', fields: 'name, openingDate, description, type.recurringItem,(select site.name from Timeline where event=e limit 1) as location'}")
                 .always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o))
                 .always(DqlStatement.where("type.recurringItem!=null and kbs3"))
-                .setEntityColumns(OPERATION_COLUMNS_EVENT)
+                .setEntityColumns(EVENT_COLUMNS)
                 .setVisualSelectionProperty(eventTable.visualSelectionProperty())
                 .setSelectedEntityHandler(this::displayEventDetails)
                 .visualizeResultInto(eventTable.visualResultProperty())
@@ -233,8 +250,10 @@ public final class ManageRecurringEventView {
     private void displayEventDetails(Event e)
     {
         eventDetailsVBox.setVisible(true);
+        eventDetailsVBox.setManaged(true);
         eventTable.setVisualSelection(null);
         selectedEvent = e;
+        previousEventState = e.getState();
         currentMode.set(EDITMODE);
         //First we remove the listener on the List of selected date, because we'll initialise the dates here.
         //We'll add the listener after the initialisation
@@ -440,7 +459,7 @@ public final class ManageRecurringEventView {
         currentEventLabel.getStyleClass().add("font-size-16px");
 
         //While waiting the fix on the visual grid for autoexpend
-        eventTable.setMinHeight(150);
+        eventTable.setMaxHeight(200);
 
 
         addButton = new Button();
@@ -449,9 +468,9 @@ public final class ManageRecurringEventView {
         addButton.setId("newEvent");
         addButton.getStyleClass().add("recurringEventButton");
 
-
         addButton.setOnAction((event -> {
             eventDetailsVBox.setVisible(true);
+            eventDetailsVBox.setManaged(true);
             eventTable.setVisualSelection(VisualSelection.createRowsSelection(new int[0]));
             resetUpdateStoreAndOtherComponents();
             resetTextFields();
@@ -472,9 +491,72 @@ public final class ManageRecurringEventView {
                         currentMode.set(ADDMODE);
                         titleEventDetailsLabel.setText(I18n.getI18nText("AddEventInformation"));
                         siteSelector = new EntityButtonSelector<Site>(
-                                "{class: 'Site', alias: 's', where: 'event=null'}",
+                                "{class: 'Site', alias: 's', where: 'event=null', orderBy :'name'}",
                                 mixin, eventDetailsVBox, dataSourceModel
-                        ).always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o)).autoSelectFirstEntity();
+                        ) { // Overriding the button content to add the possibility of Adding a new siteprefix text
+                            private final BorderPane bp = new BorderPane();
+                            TextField searchTextField = super.getSearchTextField();
+                            private UpdateStore updateStoreForSite = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
+
+                            Text addSiteText = new Text(I18n.getI18nText("AddNewLocation"));
+                            MonoPane addSitePane = new MonoPane(addSiteText);
+                            {
+                                addSiteText.setFill(Color.BLUE);
+                                addSitePane.setMaxWidth(Double.MAX_VALUE);
+                                addSitePane.setMinHeight(20);
+                                addSitePane.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+                                addSitePane.setCursor(Cursor.HAND);
+                                addSitePane.setOnMousePressed(event -> {
+                                    Site site = updateStoreForSite.insertEntity(Site.class);
+                                    site.setName(searchTextField.getText());
+                                    site.setForeignField("organization",FXOrganization.getOrganization());
+                                    site.setFieldValue("asksForPassport",false);
+                                    site.setFieldValue("online",false);
+                                    site.setFieldValue("hideDates",true);
+                                    site.setFieldValue("forceSoldout",false);
+                                    site.setFieldValue("main",true);
+                                    //TODO to change the hardCodedValue (3 is for teachings)
+                                    site.setFieldValue("itemFamily",3);
+                                    //We had in the database the site now (otherwise too complicated to manage with the actual components)
+                                    updateStoreForSite.submitChanges().onSuccess((batch -> Platform.runLater(()-> {
+                                                Object newSiteId = batch.getArray()[0].getGeneratedKeys()[0];
+                                                Site newSite = updateStoreForSite.createEntity(Site.class, newSiteId);
+                                                //The createEntity doesn't load the name, so we need to set it up manually
+                                                newSite.setName(site.getName());
+                                                setSelectedItem(newSite);
+                                            }
+                                    )));
+                                });
+                            }
+                            protected Region getOrCreateDialogContent() {
+                                bp.setBottom(super.getOrCreateDialogContent());
+                                bp.setCenter(addSitePane);
+                                return bp;
+                            }
+                            @Override
+                            //We had a listener on the search textfield to purpose to add the input as a new site if not existing
+                            protected Node getOrCreateButtonContentFromSelectedItem() {
+                                ObservableList<Site> siteList = siteSelector.getObservableEntities();
+                                searchTextField.textProperty().addListener(new ChangeListener<String>() {
+                                    @Override
+                                    public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+                                        List<String> siteNames = siteList.stream()
+                                                .map(Site::getName) // Utilisez la méthode getter pour 'name'
+                                                .collect(Collectors.toList());
+                                        if(searchTextField.getText()!=null && searchTextField.getText().length()>2 && !siteNames.contains(searchTextField.getText())) {
+                                            System.out.println("We add : " + searchTextField.getText());
+                                            addSitePane.setVisible(true);
+                                            addSitePane.setManaged(true);
+                                        }
+                                        else {
+                                            addSitePane.setVisible(false);
+                                            addSitePane.setManaged(false);
+                                        }
+                                    }
+                                });
+                                return super.getOrCreateButtonContentFromSelectedItem();
+                            }
+                        }.always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o)).autoSelectFirstEntity();
                         siteSelector.selectedItemProperty().addListener(new InvalidationListener() {
                             public void invalidated(Observable observable) {
                                 eventSite = siteSelector.getSelectedItem();
@@ -486,6 +568,7 @@ public final class ManageRecurringEventView {
                                 }
                             }
                         });
+
                         // Doing a bidirectional binding with FXOrganization
                         locationHBox.getChildren().setAll(siteLabel,siteSelector.getButton());
                     }));
@@ -534,7 +617,7 @@ public final class ManageRecurringEventView {
 
         locationHBox = new HBox();
         siteLabel = new Label();
-        siteLabel.setText("Location");
+        siteLabel.setText(I18n.getI18nText("Location"));
         siteLabel.setMinWidth(LABEL_WIDTH);
         locationHBox.getChildren().setAll(siteLabel);
         locationHBox.setPadding(new Insets(20,0,0,0));
@@ -728,41 +811,96 @@ public final class ManageRecurringEventView {
         line5.setPadding(new Insets(50,0,0,0));
         line5.setAlignment(Pos.CENTER);
         Button discardButton = new Button();
-        discardButton.setId("discard");
         discardButton.getStyleClass().add("recurringEventButton");
+        discardButton.getStyleClass().add("darkGreyButton");
+        discardButton.getStyleClass().add("font-white");
         I18nControls.bindI18nProperties(discardButton,"DiscardButton");
 
         discardButton.setOnAction(event -> {
           eventDetailsVBox.setVisible(false);
+          eventDetailsVBox.setManaged(false);
             eventTable.setVisualSelection(VisualSelection.createRowsSelection(new int[0]));
         });
         saveDraftButton = new Button();
         I18nControls.bindI18nProperties(saveDraftButton,"SaveDraftButton");
-        saveDraftButton.setId("saveDraft");
         saveDraftButton.setGraphicTextGap(10);
         saveDraftButton.getStyleClass().add("recurringEventButton");
+        saveDraftButton.getStyleClass().add("blueButton");
+        saveDraftButton.getStyleClass().add("font-white");
+        saveDraftButton.setOnAction(event -> {
+            if(validateForm())
+            {
+                calendarPane.getDatesPicker().getSelectedDates().removeListener(onChangeDateListener);
+
+                if(previousEventState==null) currentEvent.setState(EventState.DRAFT);
+                if(previousEventState==EventState.OPEN) currentEvent.setState(EventState.ON_HOLD);
+                updateStore.submitChanges()
+                        .onFailure(Console::log)
+                        .onSuccess(x -> Platform.runLater(()->{
+                            deletePictureIfNecessary((short) currentEvent.getId().getPrimaryKey());
+                            uploadPictureIfNecessary((short) currentEvent.getId().getPrimaryKey());
+                            eventDetailsVBox.setVisible(false);
+                            eventDetailsVBox.setManaged(false);
+                        }));
+            }
+        });
 
         submitButton = new Button();
         I18nControls.bindI18nProperties(submitButton,"UpdateEventButton");
-        submitButton.setId("updateEvent");
         submitButton.setGraphicTextGap(10);
         submitButton.getStyleClass().add("recurringEventButton");
+        submitButton.getStyleClass().add("greenButton");
+        submitButton.getStyleClass().add("font-white");
+
         submitButton.setOnAction(event -> {
             if(validateForm())
             {
                 calendarPane.getDatesPicker().getSelectedDates().removeListener(onChangeDateListener);
+                currentEvent.setState(EventState.OPEN);
                 updateStore.submitChanges()
                                 .onFailure(Console::log)
                                         .onSuccess(x -> Platform.runLater(()->{
                                             deletePictureIfNecessary((short) currentEvent.getId().getPrimaryKey());
                                             uploadPictureIfNecessary((short) currentEvent.getId().getPrimaryKey());
                                             eventDetailsVBox.setVisible(false);
+                                            eventDetailsVBox.setManaged(false);
             }));
             }
         });
+
         line5.setSpacing(30);
         line5.getChildren().addAll(discardButton,saveDraftButton,submitButton);
-        rightPaneVBox.getChildren().setAll(line1,datesOfTheEventLabel,calendarPane,line4InLeftPanel,line4,line5);
+
+        HBox line6 = new HBox();
+        line6.setPadding(new Insets(10,0,0,0));
+        Button deleteButton = new Button();
+        I18nControls.bindI18nProperties(deleteButton,"Delete");
+        deleteButton.setId("Delete");
+        deleteButton.setGraphicTextGap(10);
+        deleteButton.getStyleClass().add("recurringEventButton");
+        deleteButton.setOnAction(event -> {
+                updateStore.cancelChanges();
+                scheduledItemsReadFromDatabase.forEach(element -> updateStore.deleteEntity(element));
+                updateStore.deleteEntity(currentEvent);
+                updateStore.submitChanges();
+                });
+
+        Button advertiseButton = new Button();
+        I18nControls.bindI18nProperties(advertiseButton,"Advertise");
+        advertiseButton.setId("Advertise");
+        advertiseButton.setGraphicTextGap(10);
+        advertiseButton.getStyleClass().add("greenButton");
+        advertiseButton.setOnAction(event -> {
+            updateStore.cancelChanges();
+            updateStore.updateEntity(currentEvent);
+            currentEvent.setFieldValue("active",true);
+            updateStore.submitChanges();
+        });
+
+
+        line6.setSpacing(30);
+        line6.getChildren().addAll(deleteButton,advertiseButton);
+        rightPaneVBox.getChildren().setAll(line1,datesOfTheEventLabel,calendarPane,line4InLeftPanel,line4,line5,line6);
         eventDetailsPane.getChildren().setAll(leftPaneVBox,rightPaneVBox);
         HBox labelLine = new HBox();
         labelLine.setAlignment(Pos.TOP_LEFT);
@@ -772,6 +910,7 @@ public final class ManageRecurringEventView {
         eventDetailsVBox = new VBox(titleEventDetailsLabel,eventDetailsPane);
         //When we launch the window, we don't disply this VBox wich contains an event details
         eventDetailsVBox.setVisible(false);
+        eventDetailsVBox.setManaged(false);
         VBox mainVBox = new VBox(labelLine,eventTable, eventDetailsVBox);
         eventTable.setFullHeight(true);
         mainFrame.setCenter(mainVBox);
