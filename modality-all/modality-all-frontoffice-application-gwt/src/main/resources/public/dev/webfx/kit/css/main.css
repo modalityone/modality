@@ -58,31 +58,37 @@ input[type="text"], input[type="password"] {
 :root {
     --grid-border-color: #D3D3D3;
     --grid-row-height: 28px;
+    --grid-selection-color: #AED6F1;
 }
 
-table, th, td {
+th, td {
     border: 1px solid var(--grid-border-color);
+    border-top-width: 0;
 }
 
 table {
+    width: 100%;
+    border: none;
     border-collapse: collapse;
     cursor: pointer;
 }
 
 thead {
-    border-top-style: solid;
-    border-top-color: var(--grid-border-color);
-    border-top-width: thin;
+    border: none;
     height: var(--grid-row-height);
+    position: sticky;
+    top: 1px;
+    z-index: 2; /* header must be above body when scrolling */
 }
 
-thead td {
+thead th {
     border-right-width: thin;
     border-right-style: solid;
     border-right-color: var(--grid-border-color);
     height: var(--grid-row-height);
     font-weight: bold;
     text-align: center;
+    overflow: hidden;
 }
 
 tbody td {
@@ -93,11 +99,21 @@ tbody tr {
     height: var(--grid-row-height);
 }
 
-thead td, tbody td {
+thead th, tbody td {
     padding: 0 5px 0 5px;
-    overflow: hidden;
     max-width: 0;
+    overflow: hidden;
 }
+
+th:before { /* this rule is to prevent body appearing in 1px line above header when scrolling */
+    content: '';
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: -1px;
+    border-top: 1px solid var(--grid-border-color);
+}
+
 
 /***********************************
  *** Table header and row colors ***
@@ -109,15 +125,7 @@ thead tr {
     background: linear-gradient( 180deg, white, lightgray 100%);
 }
 
-th {
-    background: transparent;
-}
-
-td {
-    background: transparent;
-}
-
-tbody {
+th, tbody, td {
     background-color: transparent;
 }
 
@@ -132,6 +140,11 @@ tbody {
 .grid-col {
     border-right: 1px solid var(--grid-border-color);
 }
+
+tr.selected, .grid-row.selected {
+    background: var(--grid-selection-color)
+}
+
 /*===== javafx-graphics-web@main.css from webfx-kit-javafxgraphics-peers-gwt-j2cl =====*/
 
 .disabled fx-text {
