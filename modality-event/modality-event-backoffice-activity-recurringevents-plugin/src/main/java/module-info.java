@@ -19,17 +19,15 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires webfx.extras.time.layout;
     requires webfx.extras.time.layout.calendar;
     requires webfx.extras.util.layout;
-    requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
     requires webfx.extras.webtext;
     requires webfx.kit.util;
     requires webfx.platform.async;
-    requires webfx.platform.conf;
     requires webfx.platform.console;
     requires webfx.platform.file;
     requires webfx.platform.windowhistory;
     requires webfx.stack.cloud.image;
-    requires webfx.stack.cloud.image.cloudinary;
+    requires webfx.stack.cloud.image.client;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.datasourcemodel.service;

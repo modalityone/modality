@@ -96,44 +96,13 @@ public class RecurringEventAttendanceView {
     }
 
     private void displayEventDetails(Event e) {
-        eventTable.setVisualSelection(null);
         selectedEvent = e;
         selectedEventProperty.set(e);
     }
+
     public void startLogic(Object mixin)
     {
-        ValueRendererRegistry.registerValueRenderer("eventStateRenderer", (value, context) -> {
-            EventState state = EventState.of((String) value);
-            Text toReturn = new Text(I18n.getI18nText("NOT_DEFINED"));
-            if(state==null) {
-                toReturn.getStyleClass().add("font-grey");
-                return toReturn;
-            }
-            toReturn = new Text(I18n.getI18nText(state.toString()));
-            switch (state) {
-                case DRAFT:
-                case OPENABLE:
-                    toReturn.getStyleClass().add("font-blue");
-                    break;
-                case OPEN:
-                    toReturn.getStyleClass().add("font-green");
-                    break;
-                case CLOSED:
-                case ARCHIVED:
-                case RECONCILIED:
-                case RESTRICTED:
-                case FINALISED:
-                    toReturn.getStyleClass().add("font-grey");
-                    break;
-                case ON_HOLD:
-                    toReturn.getStyleClass().add("font-blue");
-                    break;
-                default:
-                    toReturn.getStyleClass().add("font-orange");
-
-            }
-            return toReturn;
-        });
+        EventRenderers.registerRenderers();
 
         ReactiveVisualMapper.<Event>createPushReactiveChain(mixin)
                 .always("{class: 'Event', alias: 'e', fields: 'name, openingDate, description, type.recurringItem,(select site.name from Timeline where event=e limit 1) as location'}")
