@@ -397,7 +397,7 @@
     <source path="dev/webfx/extras/filepicker/spi"/>
     <source path="dev/webfx/extras/filepicker/spi/impl"/>
     <!--========================< webfx-extras-filepicker-gwt-j2cl >========================-->
-    <source path="dev/webfx/extras/filepicker/spi/impl/gwt"/>
+    <source path="dev/webfx/extras/filepicker/spi/impl/gwtj2cl"/>
     <!--=============================< webfx-extras-geometry >==============================-->
     <source path="dev/webfx/extras/geometry"/>
     <!--============================< webfx-extras-imagestore >=============================-->
@@ -648,6 +648,8 @@
     <source path="dev/webfx/platform/util/function"/>
     <source path="dev/webfx/platform/util/tuples"/>
     <source path="dev/webfx/platform/util/uuid"/>
+    <!--============================< webfx-platform-util-http >============================-->
+    <source path="dev/webfx/platform/util/http"/>
     <!--============================< webfx-platform-util-time >============================-->
     <source path="dev/webfx/platform/util/time"/>
     <!--==========================< webfx-platform-windowhistory >==========================-->
@@ -721,8 +723,8 @@
     <!--============================< webfx-stack-cloud-image >=============================-->
     <source path="dev/webfx/stack/cloud/image"/>
     <source path="dev/webfx/stack/cloud/image/impl/fetchbased"/>
-    <!--=======================< webfx-stack-cloud-image-cloudinary >=======================-->
-    <source path="dev/webfx/stack/cloud/image/impl/cloudinary"/>
+    <!--=========================< webfx-stack-cloud-image-client >=========================-->
+    <source path="dev/webfx/stack/cloud/image/impl/client"/>
     <!--==============================< webfx-stack-com-bus >===============================-->
     <source path="dev/webfx/stack/com/bus"/>
     <source path="dev/webfx/stack/com/bus/spi"/>
@@ -793,8 +795,6 @@
     <source path="dev/webfx/stack/db/submit/buscall/serial"/>
     <!--==========================< webfx-stack-db-submit-remote >==========================-->
     <source path="dev/webfx/stack/db/submit/spi/impl/remote"/>
-    <!--=============================< webfx-stack-hash-sha1 >==============================-->
-    <source path="dev/webfx/stack/hash/sha1"/>
     <!--================================< webfx-stack-i18n >================================-->
     <source path="dev/webfx/stack/i18n"/>
     <source path="dev/webfx/stack/i18n/operations"/>

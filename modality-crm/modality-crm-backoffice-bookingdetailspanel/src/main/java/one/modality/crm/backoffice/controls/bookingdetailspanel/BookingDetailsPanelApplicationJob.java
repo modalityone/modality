@@ -9,7 +9,8 @@ import one.modality.base.backoffice.controls.masterslave.MasterSlaveView;
 public final class BookingDetailsPanelApplicationJob implements ApplicationJob {
 
     @Override
-    public void onStart() {
+    public void onInit() { // Must be done before starting UI routing during application launch
         MasterSlaveView.registerSlaveViewBuilder(BookingDetailsPanel::createAndBindIfApplicable);
     }
+
 }

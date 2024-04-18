@@ -58,31 +58,37 @@ input[type="text"], input[type="password"] {
 :root {
     --grid-border-color: #D3D3D3;
     --grid-row-height: 28px;
+    --grid-selection-color: #AED6F1;
 }
 
-table, th, td {
+th, td {
     border: 1px solid var(--grid-border-color);
+    border-top-width: 0;
 }
 
 table {
+    width: 100%;
+    border: none;
     border-collapse: collapse;
     cursor: pointer;
 }
 
 thead {
-    border-top-style: solid;
-    border-top-color: var(--grid-border-color);
-    border-top-width: thin;
+    border: none;
     height: var(--grid-row-height);
+    position: sticky;
+    top: 1px;
+    z-index: 2; /* header must be above body when scrolling */
 }
 
-thead td {
+thead th {
     border-right-width: thin;
     border-right-style: solid;
     border-right-color: var(--grid-border-color);
     height: var(--grid-row-height);
     font-weight: bold;
     text-align: center;
+    overflow: hidden;
 }
 
 tbody td {
@@ -93,11 +99,21 @@ tbody tr {
     height: var(--grid-row-height);
 }
 
-thead td, tbody td {
+thead th, tbody td {
     padding: 0 5px 0 5px;
-    overflow: hidden;
     max-width: 0;
+    overflow: hidden;
 }
+
+th:before { /* this rule is to prevent body appearing in 1px line above header when scrolling */
+    content: '';
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: -1px;
+    border-top: 1px solid var(--grid-border-color);
+}
+
 
 /***********************************
  *** Table header and row colors ***
@@ -109,15 +125,7 @@ thead tr {
     background: linear-gradient( 180deg, white, lightgray 100%);
 }
 
-th {
-    background: transparent;
-}
-
-td {
-    background: transparent;
-}
-
-tbody {
+th, tbody, td {
     background-color: transparent;
 }
 
@@ -132,6 +140,11 @@ tbody {
 .grid-col {
     border-right: 1px solid var(--grid-border-color);
 }
+
+tr.selected, .grid-row.selected {
+    background: var(--grid-selection-color)
+}
+
 /*===== filepicker-web@main.css from webfx-extras-filepicker-gwt-j2cl =====*/
 
 /* We dont want any background or border for the FilePicker button */
@@ -148,6 +161,92 @@ tbody {
 
 .disabled fx-text {
     color: gray;
+}
+/*===== web@main.css from modality-event-backoffice-activity-recurringevents-plugin =====*/
+
+.recurringEventButton {
+    border-radius: 2px;
+    height: 30px;
+    max-height: 30px;
+    width: 150px;
+    font-weight: bold;
+}
+
+.font-size-35px {
+    font-size: 35px;
+}
+
+.font-size-16px {
+    font-size: 16px;
+}
+
+.font-size-9px {
+    font-size: 9px;
+}
+
+.font-white {
+    color: white;
+}
+
+.font-green {
+    color: #41BA4D;
+}
+
+.font-blue {
+    color: #0096D6;
+}
+
+.font-orange {
+    color: orange;
+}
+
+.font-red {
+    color: red;
+}
+
+.font-grey {
+    color: grey;
+}
+
+.bookingName {
+    color: #838788;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.bookingStatusConfirmed {
+    color: #41BA4D;
+}
+
+.bookingStatusUnconfirmed {
+    color: #eb8634;
+}
+
+.bookingTotalCount {
+    color: #FF0404;
+}
+
+.background-green > fx-background {
+    background: #41BA4D;
+}
+
+.background-blue > fx-background {
+    background: #0096D6;
+}
+
+.background-darkGrey > fx-background {
+    background: #838788;
+}
+
+
+.disabled {
+    opacity: 0.3;
+}
+
+.disabled fx-text {
+    color: white;
 }
 /*===== bookings-web@main.css from modality-ecommerce-backoffice-activity-bookings-plugin =====*/
 
@@ -253,11 +352,13 @@ tr, .grid-row {
     linear-gradient( 180deg, var(--color-light), var(--color-dark) 100%);
 }
 
+/*
 tr.selected, .grid-row.selected {
     background: repeating-linear-gradient(155deg, var(--selection-color), transparent 5px, transparent 10px, var(--selection-color) 15px, var(--selection-color) 20px),
     linear-gradient(  90deg, var(--stay-color) 0%, var(--stay-color) 40%, transparent 50%, transparent 100%),
     linear-gradient( 180deg, var(--color-light), var(--color-dark) 100%);
-}
+}*/
+
 /*===== modality-login-web@main.css from modality-crm-client-activity-login-plugin =====*/
 
 .login * {
@@ -299,7 +400,7 @@ input[type="password"]:not([value=""]) {
 }
 
 /* Applying Montserrat as default font for Modality */
-body * {
+body {
     font-family: Montserrat, serif;
     font-size: 13px;
     -webkit-font-smoothing: antialiased;

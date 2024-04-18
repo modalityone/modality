@@ -1,6 +1,6 @@
 package one.modality.base.server.services.datasource;
 
-import dev.webfx.platform.boot.spi.ApplicationModuleBooter;
+import dev.webfx.platform.boot.spi.ApplicationJob;
 import dev.webfx.platform.conf.ConfigLoader;
 import dev.webfx.stack.db.datasource.ConnectionDetails;
 import dev.webfx.stack.db.datasource.DBMS;
@@ -14,21 +14,12 @@ import static one.modality.base.server.services.datasource.ModalityLocalDataSour
 /**
  * @author Bruno Salmon
  */
-public class ModalityLocalDataSourceModuleBooter implements ApplicationModuleBooter {
+public class ModalityLocalDataSourceInitializer implements ApplicationJob {
 
     private final static String CONFIG_PATH = "modality.base.server.datasource";
-    @Override
-    public String getModuleName() {
-        return "modality-base-server-datasource";
-    }
 
     @Override
-    public int getBootLevel() {
-        return APPLICATION_BOOT_LEVEL;
-    }
-
-    @Override
-    public void bootModule() {
+    public void onInit() {
         // 1) Configuring the database connection
         ConfigLoader.onConfigLoaded(CONFIG_PATH, config -> {
 
