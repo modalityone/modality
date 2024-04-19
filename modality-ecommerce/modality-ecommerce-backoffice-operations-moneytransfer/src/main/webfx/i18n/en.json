@@ -1,4 +1,0 @@
-{
-  "AddPayment": {"text": "Add a payment", "graphic": "images/s16/actions/add.png"},
-  "AddTransfer": {"text": "Add a transfer", "graphic": "images/s16/methods/contra.png"}
-}
