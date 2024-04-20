@@ -275,7 +275,7 @@ VisualLineChart, VisualPieChart, VisualBarChart, VisualAreaChart {
     -fx-font-weight: normal;
 }
 
-.table-row-cell:selected, .grid-row.selected {
+#bookings .table-row-cell:selected, #bookings .grid-row.selected {
     -fx-background-color:
         -fx-focus-color,
         -fx-cell-focus-inner-border,

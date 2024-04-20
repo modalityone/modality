@@ -94,6 +94,9 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
 
         pm.ganttSelectedObjectProperty().bind(FXGanttSelection.ganttSelectedObjectProperty());
 
+        // for CSS styling
+        container.setId("bookings");
+
         return container;
     }
 
