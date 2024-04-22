@@ -378,7 +378,6 @@
                         <!-- Android -->
                         <appLabel>Modality BackOffice</appLabel>
                     </releaseConfiguration>
-
                 </configuration>
             </plugin>
         </plugins>
