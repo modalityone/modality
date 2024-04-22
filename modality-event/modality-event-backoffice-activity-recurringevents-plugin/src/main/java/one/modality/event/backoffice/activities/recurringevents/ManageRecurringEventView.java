@@ -45,8 +45,10 @@ import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.*;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -55,6 +57,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import one.modality.base.client.validation.ModalityValidationSupport;
 import one.modality.base.shared.entities.*;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
@@ -76,8 +79,8 @@ import static dev.webfx.extras.webtext.HtmlTextEditor.Mode.STANDARD;
 public final class ManageRecurringEventView {
     private final VisualGrid eventTable = new VisualGrid();
     private final VisualGrid siteTable = new VisualGrid();
-    protected BorderPane mainFrame;
-    protected Label title;
+    private BorderPane mainFrame;
+    private Label title;
     private final GridPane eventDetailsPane = new GridPane();
     private final TextField nameOfEventTextField = I18nControls.bindI18nProperties( new TextField(),"NameOfTheEvent");
     private final HtmlTextEditor descriptionHtmlEditor = new HtmlTextEditor();
@@ -85,7 +88,7 @@ public final class ManageRecurringEventView {
     private final DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
     private final EntityStore entityStore = EntityStore.create(dataSourceModel);
     private List<ScheduledItem> scheduledItemsReadFromDatabase = new ArrayList<>();
-    private ObservableList<ScheduledItem> workingScheduledItems = FXCollections.observableArrayList();
+    private final ObservableList<ScheduledItem> workingScheduledItems = FXCollections.observableArrayList();
     private final TextField durationTextField = I18nControls.bindI18nProperties(new TextField(),"Duration");
     private final TextField bookingOpeningDateTextField = new TextField();
     private final TextField bookingOpeningTimeTextField = new TextField();
@@ -93,7 +96,7 @@ public final class ManageRecurringEventView {
     private Label datesOfTheEventLabel;
     private Label titleEventDetailsLabel;
     private Label siteLabel;
-    private  Button submitButton;
+    private Button submitButton;
     private Button addButton;
     private Button saveDraftButton;
     private VBox leftPaneVBox;
@@ -103,7 +106,7 @@ public final class ManageRecurringEventView {
     private StackPane imageStackPane;
     //private Entity timeLine;
     private SVGPath trashImage;
-    private  ListChangeListener onChangeDateListener;
+    private ListChangeListener onChangeDateListener;
     private EventCalendarPane calendarPane;
     private static final String EVENT_COLUMNS = "[" +
             "{expression: 'state', label: 'Status', renderer: 'eventStateRenderer'}," +
@@ -124,7 +127,7 @@ public final class ManageRecurringEventView {
     //The Item recurring item is needed when we create a ScheduledItem as one of his parameter
     private Item recurringItem;
     private UpdateStore updateStore = UpdateStore.createAbove(entityStore);
-    protected final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
+    private final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
     private boolean validationSupportInitialised = false;
     private boolean areDataInitialised = false;
     private BooleanProperty isWorkingScheduledItemEmpty = new SimpleBooleanProperty(true);
@@ -162,7 +165,7 @@ public final class ManageRecurringEventView {
     /**
      * This method is used to initialise the parameters for the form validation
      */
-    protected void initFormValidation() {
+    private void initFormValidation() {
         if(!validationSupportInitialised) {
             validationSupport.addRequiredInput(nameOfEventTextField);
             validationSupport.addValidationRule(FXProperties.compute(timeOfTheEventTextField.textProperty(), s1 -> {
@@ -280,8 +283,8 @@ public final class ManageRecurringEventView {
                         timeOfTheEventTextField.setText(eventTimeline.getStartTime().toString());
                         I18nControls.bindI18nTextProperty(titleEventDetailsLabel, "EditEventInformation", e.getName());
                         //We read and format the opening date value
-                        if (e.getOpeningDate() != null) {
-                            LocalDateTime openingDate = e.getOpeningDate();
+                        LocalDateTime openingDate = e.getOpeningDate();
+                        if (openingDate != null) {
                             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
                             DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
                             bookingOpeningDateTextField.setText(openingDate.format(dateFormatter));
@@ -343,7 +346,7 @@ public final class ManageRecurringEventView {
                     imageView.setImage(null);
                 })
                 .onSuccess(exists -> Platform.runLater(() -> {
-                    Console.log("exists: " + exists);
+                    //Console.log("exists: " + exists);
                     if (!exists) {
                         imageView.setImage(null);
                         isPictureDisplayed.setValue(false);
