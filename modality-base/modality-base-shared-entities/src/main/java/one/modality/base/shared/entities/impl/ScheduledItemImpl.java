@@ -1,5 +1,6 @@
 package one.modality.base.shared.entities.impl;
 
+import dev.webfx.platform.util.Objects;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.impl.DynamicEntity;
@@ -18,6 +19,8 @@ public final class ScheduledItemImpl extends DynamicEntity implements ScheduledI
     public static final class ProvidedFactory extends EntityFactoryProviderImpl<ScheduledItem> {
         public ProvidedFactory() {
             super(ScheduledItem.class, ScheduledItemImpl::new);
+            // To make ReactiveDqlStatementAPI.ifInstanceOf() work with ScheduledItem.class (see BookingsActivity)
+            Objects.registerInstanceOf(ScheduledItem.class, o -> o instanceof ScheduledItem);
         }
     }
 }

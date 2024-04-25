@@ -418,7 +418,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
         String dayOfMonth = (day.getDayOfMonth() < 10 ? "0" : "") + day.getDayOfMonth();
 
         dayBarDrawer
-                .setBackgroundFill(highlighted ? Color.web("#B2FFFF") : TimeTheme.getDayOfWeekBackgroundColor(day, selected))
+                .setBackgroundFill(TimeTheme.getDayOfWeekBackgroundColor(day, selected, highlighted))
                 .setIcon(today ? TODAY_IMAGE : null, Pos.TOP_RIGHT, HPos.CENTER, VPos.CENTER)
                 .setTopText(dayOfWeek)
                 .setBottomText(dayOfMonth)
