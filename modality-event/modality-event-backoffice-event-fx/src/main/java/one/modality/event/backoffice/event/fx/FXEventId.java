@@ -57,11 +57,11 @@ public final class FXEventId {
     };
 
     static {
-        // Initializing the organizationId from the last value stored in the session
+        // Initializing the eventId from the last value stored in the session
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Session session = FXSession.getSession();
             Object primaryKey = session == null ? null : session.get(SESSION_FX_EVENT_ID_KEY);
-            setEventId(EntityId.create(Event.class, primaryKey));
+            setEventId(primaryKey == null ? null : EntityId.create(Event.class, primaryKey));
         }, FXSession.sessionProperty());
     }
 
