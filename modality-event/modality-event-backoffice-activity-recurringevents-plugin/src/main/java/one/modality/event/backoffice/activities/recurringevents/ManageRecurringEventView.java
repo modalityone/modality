@@ -26,6 +26,8 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.stack.ui.dialog.DialogCallback;
+import dev.webfx.stack.ui.dialog.DialogUtil;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
@@ -61,6 +63,7 @@ import javafx.stage.Screen;
 import one.modality.base.client.validation.ModalityValidationSupport;
 import one.modality.base.shared.entities.*;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
+import one.modality.event.backoffice.event.fx.FXEvent;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -72,6 +75,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static dev.webfx.extras.webtext.HtmlTextEditor.Mode.STANDARD;
@@ -96,9 +100,10 @@ public final class ManageRecurringEventView {
     private Label datesOfTheEventLabel;
     private Label titleEventDetailsLabel;
     private Label siteLabel;
-    private Button submitButton;
+    private Button publishButton;
+    private Button saveButton;
     private Button addButton;
-    private Button saveDraftButton;
+    private Button cancelButton;
     private VBox leftPaneVBox;
     private VBox eventDetailsVBox;
     private HBox locationHBox;
@@ -132,7 +137,6 @@ public final class ManageRecurringEventView {
     private boolean areDataInitialised = false;
     private BooleanProperty isWorkingScheduledItemEmpty = new SimpleBooleanProperty(true);
     private BooleanProperty isPictureDisplayed = new SimpleBooleanProperty(false);
-
     private EventState previousEventState;
 
     private static final int EDITMODE = 1;
@@ -156,6 +160,7 @@ public final class ManageRecurringEventView {
     private BooleanBinding updateStoreOrPictureHasChanged;
     private BooleanBinding updateTrashButtonOnPictureDisplayed;
     private ReactiveVisualMapper eventVisualMapper;
+    private Boolean changeVisualSelectedEventWithoutAnyOtherAction = false;
 
 
     public ManageRecurringEventView(ButtonFactoryMixin mixin) {
@@ -187,7 +192,12 @@ public final class ManageRecurringEventView {
     public void startLogic()
     {
         EventRenderers.registerRenderers();
-
+        FXEvent.eventProperty().addListener(new InvalidationListener() {
+            @Override
+            public void invalidated(Observable observable) {
+                eventVisualMapper.setSelectedEntity(FXEvent.getEvent());
+            }
+        });
         eventVisualMapper = ReactiveVisualMapper.<Event>createPushReactiveChain(mixin)
                 .always("{class: 'Event', alias: 'e', fields: 'name, openingDate, description, type.recurringItem, (select site.name from Timeline where event=e limit 1) as location'}")
                 .always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o))
@@ -195,7 +205,7 @@ public final class ManageRecurringEventView {
                 .setEntityColumns(EVENT_COLUMNS)
                 .setStore(entityStore)
                 .setVisualSelectionProperty(eventTable.visualSelectionProperty())
-                .setSelectedEntityHandler(this::displayEventDetails)
+                .setSelectedEntityHandler(this::eventSelectionHasChanged)
                 .visualizeResultInto(eventTable.visualResultProperty())
                 .start();
 
@@ -207,6 +217,8 @@ public final class ManageRecurringEventView {
         {
             super.bind(updateStore.hasChangesProperty(), isCloudPictureToBeUploaded, isCloudPictureToBeDeleted);
         }
+
+
         @Override
         protected boolean computeValue() {
             return updateStore.hasChanges() || isCloudPictureToBeUploaded.getValue() || isCloudPictureToBeDeleted.getValue();
@@ -226,7 +238,80 @@ public final class ManageRecurringEventView {
             }
         };
 
+        updateStore.hasChangesProperty().addListener(new InvalidationListener() {
+            @Override
+            public void invalidated(Observable observable) {
+                updateStore.hasChangesProperty().getValue();
+            }
+        });
     }
+
+    private void eventSelectionHasChanged(Event e)
+    {
+        //This boolean is used in the case we change of event in the visualMapper, and the user decide to cancel and stay on the event.
+        //It allows us to tell the visual mapper to select the previous selected event before the click, without doing any other action than move the selection
+        if(changeVisualSelectedEventWithoutAnyOtherAction) {
+            return;
+        }
+        if(currentMode.get()==ADDMODE) {
+            //If we arrive here, we're adding a new event. The first time we arrive here, it's when After the insert, we go throw the edit mode
+            currentMode.set(EDITMODE);
+        }
+
+        //If the event is null, it means the selection has been removed from the visual mapper from the visual mapper.
+        if((e==null || !e.equals(currentEvent)) && updateStoreOrPictureHasChanged.get()) {
+            //We open a dialog box asking if we want to cancel the changes that can has been made
+            Text titleConfirmationText = new Text(I18n.getI18nText("AreYouSure"));
+            titleConfirmationText.getStyleClass().add("font-green");
+            titleConfirmationText.getStyleClass().add("font-size-22px");
+            titleConfirmationText.getStyleClass().add("bold");
+            BorderPane dialog = new BorderPane();
+            dialog.setTop(titleConfirmationText);
+            BorderPane.setAlignment(titleConfirmationText,Pos.CENTER);
+            Text confirmationText = new Text(I18n.getI18nText("CancelChangesConfirmation"));
+            dialog.setCenter(confirmationText);
+            BorderPane.setAlignment(confirmationText,Pos.CENTER);
+            BorderPane.setMargin(confirmationText,new Insets(30,0,30,0));
+            Button okButton = new Button(I18n.getI18nText("Confirm"));
+            okButton.getStyleClass().addAll("recurringEventButton", "background-red", "font-white");
+
+            Button cancelActionButton = new Button(I18n.getI18nText("Cancel"));
+            cancelActionButton.getStyleClass().addAll("recurringEventButton", "background-darkGrey", "font-white");
+            HBox buttonsHBox = new HBox(cancelActionButton,okButton);
+            buttonsHBox.setAlignment(Pos.CENTER);
+            buttonsHBox.setSpacing(30);
+            dialog.setBottom(buttonsHBox);
+            BorderPane.setAlignment(buttonsHBox,Pos.CENTER);
+            DialogCallback dialogCallback = DialogUtil.showModalNodeInGoldLayout(dialog, mainFrame);
+
+            okButton.setOnAction(l -> {
+                        updateStore.cancelChanges();
+                        dialogCallback.closeDialog();
+                        if(e==null) {
+                            eventDetailsVBox.setVisible(false);
+                            eventDetailsVBox.setManaged(false);
+                        }
+                        else displayEventDetails(e);
+                    });
+            cancelActionButton.setOnAction(l -> {
+                dialogCallback.closeDialog();
+                //This boolean is used in the case we change of event in the visualMapper, and the user decide de cancel and change.
+                //It allows us to tell the visual mapper to select the previous selected event before the click, without doing any other action than move the selection
+                changeVisualSelectedEventWithoutAnyOtherAction = true;
+                eventVisualMapper.setSelectedEntity(selectedEvent);
+                changeVisualSelectedEventWithoutAnyOtherAction = false;
+            });
+        }
+        else {
+            if(e==null) {
+                eventDetailsVBox.setVisible(false);
+                eventDetailsVBox.setManaged(false);
+            }
+            else displayEventDetails(e);
+        }
+    }
+
+
 
     /**
      * This method is called when we select an event, it takes the info in the database
@@ -239,6 +324,23 @@ public final class ManageRecurringEventView {
         eventDetailsVBox.setManaged(true);
         selectedEvent = e;
         previousEventState = e.getState();
+        switch (previousEventState) {
+            case DRAFT:
+            case ON_HOLD:
+            case TESTING:
+               // publishButton.setText(I18n.getI18nText("PublishButton"));
+                I18nControls.bindI18nProperties(publishButton,"PublishButton");
+                publishButton.getStyleClass().setAll("recurringEventButton", "background-green", "font-white");
+                break;
+            case OPEN:
+                I18nControls.bindI18nProperties(publishButton,"UnpublishedButton");
+                publishButton.getStyleClass().setAll("recurringEventButton", "background-orange", "font-white");
+                break;
+            default:
+                publishButton.setText(previousEventState.toString());
+                break;
+        }
+
         currentMode.set(EDITMODE);
         //First we remove the listener on the List of selected date, because we'll initialise the dates here.
         //We'll add the listener after the initialisation
@@ -247,7 +349,7 @@ public final class ManageRecurringEventView {
         resetUpdateStoreAndOtherComponents();
         //We execute the query in batch, otherwise we can have synchronisation problem between the different threads
         entityStore.executeQueryBatch(
-                        new EntityStoreQuery("select item,date,startTime, site, endTime from ScheduledItem where event=?", new Object[] { e.getId() } ),
+                        new EntityStoreQuery ("select item,date,startTime, site, endTime, (select id from Attendance where scheduledItem=si limit 1) as attendance from ScheduledItem si where event=?", new Object[] { e}),
                         new EntityStoreQuery("select startTime, endTime, site, event.(openingDate, type.recurringItem, externalLink) from Timeline where event=?", new Object[] { e.getId() })
                         )
                 .onFailure(Console::log)
@@ -261,11 +363,35 @@ public final class ManageRecurringEventView {
                         //they appear selected in the calendar
                         scheduledItemsReadFromDatabase = scheduledItemList;
                         List<LocalDate> list = scheduledItemsReadFromDatabase.stream().map(scheduledItem -> scheduledItem.getDate()).collect(Collectors.toList());
-                        calendarPane.getDatesPicker().getSelectedDates().setAll(list);
-                        //We add the listener only when the date have been initialised
-                        calendarPane.getDatesPicker().getSelectedDates().addListener(onChangeDateListener);
 
+                        calendarPane.getDatesPicker().setDateColorGetter(new Function<LocalDate, Color>() {
+                            @Override
+                            public Color apply(LocalDate localDate) {
+                                ScheduledItem scheduledItem = scheduledItemList.stream().filter(si->localDate.equals(si.getDate())).findFirst().orElse(null);
+                                if(scheduledItem!=null && scheduledItem.getFieldValue("attendance")!=null) {
+                                    return Color.LIGHTGRAY;
+                                }
+                                else {
+                                    return calendarPane.getDatesPicker().getSelectedDateColor();
+                                }
+                            }
+                        });
+                        calendarPane.getDatesPicker().getSelectedDates().setAll(list);
+                        calendarPane.getDatesPicker().setOnDateClicked(localDate -> {
+                            ScheduledItem scheduledItem = scheduledItemList.stream().filter(si->localDate.equals(si.getDate())).findFirst().orElse(null);
+                            if(scheduledItem!=null && scheduledItem.getFieldValue("attendance")!=null) {
+                                int i =1;
+                            }
+                            else {
+                                calendarPane.getDatesPicker().processDateSelected(localDate);
+                            }
+                        });
+
+
+                                //We add the listener only when the date have been initialised
+                                calendarPane.getDatesPicker().getSelectedDates().addListener(onChangeDateListener);
                         //We display on the calendar the month containing the first date of the recurring event
+
                         if (list.size() > 0) {
                             LocalDate oldestDate = Collections.min(list);
                             calendarPane.getDatesPicker().focusOnMonth(YearMonth.of(oldestDate.getYear(), oldestDate.getMonthValue()));
@@ -301,9 +427,13 @@ public final class ManageRecurringEventView {
                         externalLinkTextFied.setText(currentEvent.getExternalLink());
                         //We try to load the image from cloudinary if it exists
                         loadEventImageIfExists();
+                        changeVisualSelectedEventWithoutAnyOtherAction = true;
+                        FXEvent.setEvent(e);
+                        changeVisualSelectedEventWithoutAnyOtherAction = false;
+
                     }
-                    submitButton.disableProperty().bind(updateStoreOrPictureHasChanged.not());
-                    saveDraftButton.disableProperty().bind(updateStoreOrPictureHasChanged.not());
+                    saveButton.disableProperty().bind(updateStoreOrPictureHasChanged.not());
+                    cancelButton.disableProperty().bind(updateStoreOrPictureHasChanged.not());
                     trashImage.visibleProperty().bind(updateTrashButtonOnPictureDisplayed);
                 }));
         }
@@ -319,8 +449,16 @@ public final class ManageRecurringEventView {
         cloudPictureFileToUpload = null;
         areDataInitialised = false;
         validationSupportInitialised = false;
-        calendarPane.getDatesPicker().getSelectedDates().clear();
         workingScheduledItems.clear();
+        calendarPane.getDatesPicker().getSelectedDates().clear();
+        //We put the default behaviour on the datePicker, otherwise it won't reset the behaviour define in the previous event selected
+        calendarPane.getDatesPicker().setOnDateClicked(localDate -> calendarPane.getDatesPicker().processDateSelected(localDate));
+        calendarPane.getDatesPicker().setDateColorGetter(new Function<LocalDate, Color>() {
+            public Color apply(LocalDate localDate) {
+                return calendarPane.getDatesPicker().getSelectedDateColor();
+            }
+        });
+        calendarPane.getDatesPicker().initializeDaysSelected();
         updateStore.cancelChanges();
         imageView.setImage(null);
         isPictureDisplayed.setValue(false);
@@ -344,6 +482,7 @@ public final class ManageRecurringEventView {
                 .onFailure(ex -> {
                     Console.log(ex);
                     imageView.setImage(null);
+                    isPictureDisplayed.setValue(false);
                 })
                 .onSuccess(exists -> Platform.runLater(() -> {
                     //Console.log("exists: " + exists);
@@ -352,7 +491,9 @@ public final class ManageRecurringEventView {
                         isPictureDisplayed.setValue(false);
                     }
                     else {
-                        String url = cloudImageService.url(String.valueOf(imageTag), 200, -1);
+                        //First, we need to get the zoom factor of the screen
+                        double zoomFactor = Screen.getPrimary().getOutputScaleX();
+                        String url = cloudImageService.url(String.valueOf(imageTag), (int) (imageView.getFitWidth()*zoomFactor), -1);
                         Image imageToDisplay = new Image(url, true);
                         imageView.setImage(imageToDisplay);
                         isPictureDisplayed.setValue(true);
@@ -429,6 +570,9 @@ public final class ManageRecurringEventView {
     public BooleanProperty isWorkingScheduledItemEmptyProperty() {
         return isWorkingScheduledItemEmpty;
     }
+
+
+
     /**
      * The entry point of the class
      *
@@ -447,7 +591,7 @@ public final class ManageRecurringEventView {
         fontUsed = title.getFont();
         BorderPane.setAlignment(title, Pos.CENTER);
         mainFrame.setPadding(new Insets(0,0,30,0));
-        mainFrame.setTop(title);
+        //mainFrame.setTop( title);
 
         //Displaying the list of events
         Label currentEventLabel = I18nControls.bindI18nProperties(new Label(),"ListEvents");
@@ -460,10 +604,11 @@ public final class ManageRecurringEventView {
         addButton.getStyleClass().addAll("recurringEventButton", "background-green", "font-white");
 
         addButton.setOnAction((event -> {
+            eventTable.setVisualSelection(null);
             eventDetailsVBox.setVisible(true);
             eventDetailsVBox.setManaged(true);
-            eventTable.setVisualSelection(null);
             resetUpdateStoreAndOtherComponents();
+            calendarPane.getDatesPicker().focusOnMonth(YearMonth.now());
             resetTextFields();
             currentEvent = updateStore.insertEntity(Event.class);
             entityStore.executeQuery("select recurringItem, organization from EventType where recurringItem!=null and organization=?", FXOrganization.getOrganization())
@@ -479,6 +624,7 @@ public final class ManageRecurringEventView {
                         currentEvent.setType(eventType);
                         currentEvent.setKbs3(true);
                         eventTimeline.setSite(eventSite);
+                        currentEvent.setState(EventState.DRAFT);
                         currentMode.set(ADDMODE);
                         I18nControls.bindI18nTextProperty(titleEventDetailsLabel, "AddEventInformation");
                         siteSelector = new EntityButtonSelector<Site>(
@@ -666,12 +812,13 @@ public final class ManageRecurringEventView {
         uploadButtonVBox.setAlignment(Pos.CENTER);
         uploadButtonVBox.setPadding(new Insets(0,30,0,0));
 
-        VBox imageAndTrashVBox = new VBox();
+        HBox imageAndTrashVBox = new HBox();
         imageAndTrashVBox.setSpacing(2);
         imageStackPane = new StackPane();
         imageView = new ImageView();
         imageView.setPreserveRatio(true);
         imageView.setFitWidth(200);
+        imageView.setFitHeight(200);
         imageStackPane.setMaxSize(200,200);
         imageStackPane.setMinHeight(100);
       //  imageStackPane.setPrefSize(200,210);
@@ -690,11 +837,10 @@ public final class ManageRecurringEventView {
         ShapeTheme.createSecondaryShapeFacet(trashImage).style();
         imageStackPane.getChildren().setAll(imageView,emptyPictureLabel);
         StackPane.setAlignment(emptyPictureLabel, Pos.CENTER);
-        StackPane.setAlignment(trashImage, Pos.BOTTOM_RIGHT);
         imageView.toFront();
         emptyPictureLabel.toBack();
         imageAndTrashVBox.getChildren().setAll(imageStackPane,trashImage);
-        imageAndTrashVBox.setAlignment(Pos.TOP_RIGHT);
+        imageAndTrashVBox.setAlignment(Pos.BOTTOM_CENTER);
         line4InLeftPanel.getChildren().setAll(uploadTextVBox,uploadButtonVBox,imageAndTrashVBox);
         line4InLeftPanel.setPadding(new Insets(20, 0,0,0));
 
@@ -778,44 +924,54 @@ public final class ManageRecurringEventView {
         });
         line4.getChildren().addAll(externalLinkLabel, externalLinkTextFied);
 
-        HBox line5 = new HBox();
-        line5.setPadding(new Insets(50,0,0,0));
-        line5.setAlignment(Pos.CENTER);
-        Button discardButton = I18nControls.bindI18nProperties(new Button(),"DiscardButton");
-        discardButton.getStyleClass().addAll("recurringEventButton", "background-darkGrey", "font-white");
+        HBox buttonsLine = new HBox();
+        buttonsLine.setPadding(new Insets(50,0,0,0));
+        buttonsLine.setAlignment(Pos.CENTER);
+        cancelButton = I18nControls.bindI18nProperties(new Button(),"CancelButton");
+        cancelButton.getStyleClass().addAll("recurringEventButton", "background-darkGrey", "font-white");
 
-        discardButton.setOnAction(e -> {
+        cancelButton.setOnAction(e -> {
             displayEventDetails(currentEvent);
         });
-        saveDraftButton = I18nControls.bindI18nProperties(new Button(),"SaveDraftButton");
-        saveDraftButton.setGraphicTextGap(10);
-        saveDraftButton.getStyleClass().addAll("recurringEventButton", "background-blue", "font-white");
-        saveDraftButton.setOnAction(event -> {
+        cancelButton.disableProperty().bind(currentMode.isEqualTo(ADDMODE));
+
+        saveButton = I18nControls.bindI18nProperties(new Button(),"SaveButton");
+        saveButton.setGraphicTextGap(10);
+        saveButton.getStyleClass().addAll("recurringEventButton", "background-blue", "font-white");
+        saveButton.setOnAction(event -> {
             if(validateForm())
             {
-                calendarPane.getDatesPicker().getSelectedDates().removeListener(onChangeDateListener);
-
-                if(previousEventState==null) currentEvent.setState(EventState.DRAFT);
-                if(previousEventState==EventState.OPEN) currentEvent.setState(EventState.ON_HOLD);
-                submitUpdateStoreChanges();
-            }
-        });
-
-        submitButton = I18nControls.bindI18nProperties(new Button(),"UpdateEventButton");
-        submitButton.setGraphicTextGap(10);
-        submitButton.getStyleClass().addAll("recurringEventButton", "background-green", "font-white");
-
-        submitButton.setOnAction(event -> {
-            if(validateForm())
-            {
+                if(previousEventState==null) {
+                    currentEvent.setState(EventState.DRAFT);
+                }
                 calendarPane.getDatesPicker().getSelectedDates().removeListener(onChangeDateListener);
                 currentEvent.setState(EventState.OPEN);
                 submitUpdateStoreChanges();
+                eventVisualMapper.setSelectedEntity(FXEvent.getEvent());
             }
         });
 
-        line5.setSpacing(30);
-        line5.getChildren().addAll(discardButton, saveDraftButton, submitButton);
+        publishButton = new Button();
+        publishButton.setGraphicTextGap(10);
+        publishButton.setOnAction(event -> {
+            if(validateForm())
+            {
+                calendarPane.getDatesPicker().getSelectedDates().removeListener(onChangeDateListener);
+                switch (previousEventState) {
+                    case DRAFT:
+                    case ON_HOLD:
+                    case TESTING:
+                        currentEvent.setState(EventState.OPEN);
+                        break;
+                    case OPEN:
+                        currentEvent.setState(EventState.ON_HOLD);
+                        break;
+                    default:
+                        break;
+                }
+                submitUpdateStoreChanges();
+            }
+        });
 
         Button deleteButton = I18nControls.bindI18nProperties(new Button(),"DeleteEvent");
         deleteButton.setGraphicTextGap(10);
@@ -823,16 +979,88 @@ public final class ManageRecurringEventView {
         deleteButton.setId("DeleteEvent");
         deleteButton.getStyleClass().addAll("recurringEventButton", "background-red", "font-white");
         deleteButton.setOnAction(event -> {
-            updateStore.cancelChanges();
-            scheduledItemsReadFromDatabase.forEach(element -> updateStore.deleteEntity(element));
-            updateStore.deleteEntity(eventTimeline);
-            updateStore.deleteEntity(currentEvent);
-            submitUpdateStoreChanges();
-        });
-        HBox line6 = new HBox(deleteButton);
-        line6.setPadding(new Insets(10,0,0,0));
-        line6.setAlignment(Pos.CENTER);
-        rightPaneVBox.getChildren().setAll(line1,datesOfTheEventLabel,calendarPane,line4InLeftPanel,line4,line5,line6);
+            //If the event is null, it means the selection has been removed from the visual mapper from the visual mapper.
+            if(event!=null) {
+                //We open a dialog box asking if we want to delete the event
+                Text titleConfirmationText = new Text(I18n.getI18nText("AreYouSure"));
+                titleConfirmationText.getStyleClass().add("font-green");
+                titleConfirmationText.getStyleClass().add("font-size-22px");
+                titleConfirmationText.getStyleClass().add("bold");
+                BorderPane dialog = new BorderPane();
+                dialog.setTop(titleConfirmationText);
+                BorderPane.setAlignment(titleConfirmationText,Pos.CENTER);
+                Text confirmationText = new Text(I18n.getI18nText("DeleteConfirmation"));
+                dialog.setCenter(confirmationText);
+                BorderPane.setAlignment(confirmationText,Pos.CENTER);
+                BorderPane.setMargin(confirmationText,new Insets(30,0,30,0));
+                Button okDeleteButton = new Button(I18n.getI18nText("Confirm"));
+                okDeleteButton.getStyleClass().addAll("recurringEventButton", "background-red", "font-white");
+
+                Button cancelActionButton = new Button(I18n.getI18nText("Cancel"));
+                cancelActionButton.getStyleClass().addAll("recurringEventButton", "background-darkGrey", "font-white");
+                HBox buttonsHBox = new HBox(cancelActionButton,okDeleteButton);
+                buttonsHBox.setAlignment(Pos.CENTER);
+                buttonsHBox.setSpacing(30);
+                dialog.setBottom(buttonsHBox);
+                BorderPane.setAlignment(buttonsHBox,Pos.CENTER);
+                DialogCallback dialogCallback = DialogUtil.showModalNodeInGoldLayout(dialog, mainFrame);
+                okDeleteButton.setOnAction(l -> {
+                    try {
+                        updateStore.cancelChanges();
+                        scheduledItemsReadFromDatabase.forEach(element -> updateStore.deleteEntity(element));
+                        updateStore.deleteEntity(eventTimeline);
+                        updateStore.deleteEntity(currentEvent);
+                        updateStore.submitChanges()
+                                .onFailure(x->Platform.runLater(() -> {
+                                    Text infoText = new Text(I18n.getI18nText("Error"));
+                                    infoText.getStyleClass().add("font-green");
+                                    infoText.getStyleClass().add("font-size-22px");
+                                    infoText.getStyleClass().add("bold");
+                                    BorderPane errorDialog = new BorderPane();
+                                    errorDialog.setTop(infoText);
+                                    BorderPane.setAlignment(titleConfirmationText,Pos.CENTER);
+                                    Text deleteErrorTest = new Text(I18n.getI18nText("ErrorWhileDeletingEvent"));
+                                    errorDialog.setCenter(deleteErrorTest);
+                                    BorderPane.setAlignment(deleteErrorTest,Pos.CENTER);
+                                    BorderPane.setMargin(deleteErrorTest,new Insets(30,0,30,0));
+                                    Button okErrorButton = new Button(I18n.getI18nText("Ok"));
+                                    okErrorButton.getStyleClass().addAll("recurringEventButton", "background-red", "font-white");
+                                    DialogCallback errorMessageCallback = DialogUtil.showModalNodeInGoldLayout(errorDialog, mainFrame);
+                                    okErrorButton.setOnAction(m-> errorMessageCallback.closeDialog());
+                                    errorDialog.setBottom(okErrorButton);
+                                    BorderPane.setAlignment(okErrorButton,Pos.CENTER);
+                        }))
+                                .onSuccess(x -> Platform.runLater(() -> {
+                                    Object imageTag = currentEvent.getId().getPrimaryKey();
+                                    deleteCloudPictureIfNecessary(imageTag);
+                                    uploadCloudPictureIfNecessary(imageTag);
+                                    resetUpdateStoreAndOtherComponents();
+                                }));
+                        dialogCallback.closeDialog();
+                    }
+                    //TODO recupérer l'exception généré par le serveur en raison de forein key constraint
+                    catch (Exception e)
+                    {
+                        int i=1;
+                    }
+                });
+                cancelActionButton.setOnAction(l -> {
+                    dialogCallback.closeDialog();
+                    //This boolean is used in the case we change of event in the visualMapper, and the user decide de cancel and change.
+                    //It allows us to tell the visual mapper to select the previous selected event before the click, without doing any other action than move the selection
+                    changeVisualSelectedEventWithoutAnyOtherAction = true;
+                    eventVisualMapper.setSelectedEntity(selectedEvent);
+                    changeVisualSelectedEventWithoutAnyOtherAction = false;
+                });
+
+
+
+        }});
+        buttonsLine.setSpacing(30);
+        buttonsLine.getChildren().addAll(cancelButton, saveButton, publishButton,deleteButton);
+        buttonsLine.setAlignment(Pos.CENTER);
+
+        rightPaneVBox.getChildren().setAll(line1,datesOfTheEventLabel,calendarPane,line4InLeftPanel,line4);
         eventDetailsPane.getChildren().setAll(leftPaneVBox,rightPaneVBox);
         HBox labelLine = new HBox();
         labelLine.setAlignment(Pos.TOP_LEFT);
@@ -844,7 +1072,7 @@ public final class ManageRecurringEventView {
         //When we launch the window, we don't disply this VBox wich contains an event details
         eventDetailsVBox.setVisible(false);
         eventDetailsVBox.setManaged(false);
-        VBox mainVBox = new VBox(labelLine,eventTable, eventDetailsVBox);
+        VBox mainVBox = new VBox(labelLine,eventTable, eventDetailsVBox,buttonsLine);
         eventTable.setFullHeight(true);
         mainFrame.setCenter(mainVBox);
 
@@ -863,11 +1091,12 @@ public final class ManageRecurringEventView {
                     Object imageTag = currentEvent.getId().getPrimaryKey();
                     deleteCloudPictureIfNecessary(imageTag);
                     uploadCloudPictureIfNecessary(imageTag);
-                    //resetUpdateStoreAndOtherComponents();
+                    isCloudPictureToBeDeleted.setValue(false);
+                    isCloudPictureToBeUploaded.setValue(false);
+                    cloudPictureFileToUpload = null;
+                   // resetUpdateStoreAndOtherComponents();
                 }));
     }
-
-
 
     public List<ScheduledItem> getScheduledItemsReadFromDatabase() {
         return scheduledItemsReadFromDatabase;
@@ -877,6 +1106,7 @@ public final class ManageRecurringEventView {
     }
 
     /**
+     * This method is used to sort the list workingScheduledItems by Date
      * This method is used to sort the list workingScheduledItems by Date
      */
     private void sortWorkingScheduledItemsByDate()
@@ -959,6 +1189,12 @@ public final class ManageRecurringEventView {
                                 }
                             }
                         }
+
+                        List<LocalDate> localDatesSorted = calendarPane.getDatesPicker().getSelectedDates().stream().sorted().collect(Collectors.toList());
+                        if(localDatesSorted.size()>0) {
+                            currentEvent.setStartDate(localDatesSorted.get(0));
+                            currentEvent.setEndDate(localDatesSorted.get(localDatesSorted.size() - 1));
+                        }
                     }
 
                 }
@@ -979,10 +1215,9 @@ public final class ManageRecurringEventView {
                 LocalDate currentDate = scheduledItem.getDate();
                 SVGPath trashDate = SvgIcons.createTrashSVGPath();
                 trashDate.setTranslateY(2);
-                trashDate.setOnMouseClicked(event ->  {
-                    datesPicker.getSelectedDates().remove(currentDate);
-                });
-                ShapeTheme.createSecondaryShapeFacet(trashDate).style();
+
+
+
                 Text currentDateValue = new Text(currentDate.format(DateTimeFormatter.ofPattern("MMM dd")));
                 TextField currentEventStartTime = new TextField();
                 timeOfTheEventTextField.textProperty().addListener((InvalidationListener) obs -> {
@@ -996,6 +1231,18 @@ public final class ManageRecurringEventView {
                     }
                 });
 
+                if(scheduledItem.getFieldValue("attendance")==null) {
+                    trashDate.setOnMouseClicked(event -> {
+                        datesPicker.getSelectedDates().remove(currentDate);
+                    });
+                    ShapeTheme.createSecondaryShapeFacet(trashDate).style();
+                }
+                else
+                {
+                    trashDate.setFill(Color.LIGHTGRAY);
+                 //   currentEventStartTime.setBackground(new Background(new BackgroundFill(Color.GHOSTWHITE,null,null)));
+                    currentEventStartTime.setDisable(true);
+                }
                 if(!timeOfTheEventTextField.getText().equals(""))
                     currentEventStartTime.setPromptText(timeOfTheEventTextField.getText());
                 else currentEventStartTime.setPromptText(timeOfTheEventTextField.getPromptText());

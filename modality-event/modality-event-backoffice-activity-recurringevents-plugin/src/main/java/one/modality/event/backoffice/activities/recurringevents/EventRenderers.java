@@ -27,7 +27,7 @@ final class EventRenderers {
             switch (state) {
                 case DRAFT:
                 case OPENABLE:
-                    toReturn.getStyleClass().add("font-blue");
+                    toReturn.getStyleClass().add("font-orange");
                     break;
                 case OPEN:
                     toReturn.getStyleClass().add("font-green");
@@ -40,7 +40,7 @@ final class EventRenderers {
                     toReturn.getStyleClass().add("font-grey");
                     break;
                 case ON_HOLD:
-                    toReturn.getStyleClass().add("font-blue");
+                    toReturn.getStyleClass().add("font-orange");
                     break;
                 default:
                     toReturn.getStyleClass().add("font-orange");

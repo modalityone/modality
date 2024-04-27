@@ -7,10 +7,12 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.backoffice.mainframe.headertabs.fx;
+    requires modality.base.client.gantt.fx;
     requires modality.base.client.tile;
     requires modality.base.client.validation;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
+    requires modality.event.backoffice.event.fx;
     requires webfx.extras.cell;
     requires webfx.extras.filepicker;
     requires webfx.extras.panes;
@@ -25,6 +27,7 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires webfx.platform.async;
     requires webfx.platform.console;
     requires webfx.platform.file;
+    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.cloud.image;
     requires webfx.stack.cloud.image.client;
@@ -41,6 +44,7 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.controls;
+    requires webfx.stack.ui.dialog;
     requires webfx.stack.ui.operation;
 
     // Exported packages
