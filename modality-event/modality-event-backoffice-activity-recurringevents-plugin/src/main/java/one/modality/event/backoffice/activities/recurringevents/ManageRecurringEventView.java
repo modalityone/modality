@@ -251,6 +251,7 @@ public final class ManageRecurringEventView {
         //This boolean is used in the case we change of event in the visualMapper, and the user decide to cancel and stay on the event.
         //It allows us to tell the visual mapper to select the previous selected event before the click, without doing any other action than move the selection
         if(changeVisualSelectedEventWithoutAnyOtherAction) {
+            displayEventDetails(e);
             return;
         }
         if(currentMode.get()==ADDMODE) {
@@ -258,49 +259,53 @@ public final class ManageRecurringEventView {
             currentMode.set(EDITMODE);
         }
 
-        //If the event is null, it means the selection has been removed from the visual mapper from the visual mapper.
-        if((e==null || !e.equals(currentEvent)) && updateStoreOrPictureHasChanged.get()) {
-            //We open a dialog box asking if we want to cancel the changes that can has been made
-            Text titleConfirmationText = new Text(I18n.getI18nText("AreYouSure"));
-            titleConfirmationText.getStyleClass().add("font-green");
-            titleConfirmationText.getStyleClass().add("font-size-22px");
-            titleConfirmationText.getStyleClass().add("bold");
-            BorderPane dialog = new BorderPane();
-            dialog.setTop(titleConfirmationText);
-            BorderPane.setAlignment(titleConfirmationText,Pos.CENTER);
-            Text confirmationText = new Text(I18n.getI18nText("CancelChangesConfirmation"));
-            dialog.setCenter(confirmationText);
-            BorderPane.setAlignment(confirmationText,Pos.CENTER);
-            BorderPane.setMargin(confirmationText,new Insets(30,0,30,0));
-            Button okButton = new Button(I18n.getI18nText("Confirm"));
-            okButton.getStyleClass().addAll("recurringEventButton", "background-red", "font-white");
+        if(updateStore.hasChanges() || updateStoreOrPictureHasChanged.get()) {
+            if((e == null && updateStore.hasChanges()) || (e != null && !e.equals(currentEvent))) {
+                //We open a dialog box asking if we want to cancel the changes that can has been made
+                Text titleConfirmationText = new Text(I18n.getI18nText("AreYouSure"));
+                titleConfirmationText.getStyleClass().add("font-green");
+                titleConfirmationText.getStyleClass().add("font-size-22px");
+                titleConfirmationText.getStyleClass().add("bold");
+                BorderPane dialog = new BorderPane();
+                dialog.setTop(titleConfirmationText);
+                BorderPane.setAlignment(titleConfirmationText, Pos.CENTER);
+                Text confirmationText = new Text(I18n.getI18nText("CancelChangesConfirmation"));
+                dialog.setCenter(confirmationText);
+                BorderPane.setAlignment(confirmationText, Pos.CENTER);
+                BorderPane.setMargin(confirmationText, new Insets(30, 0, 30, 0));
+                Button okButton = new Button(I18n.getI18nText("Confirm"));
+                okButton.getStyleClass().addAll("recurringEventButton", "background-red", "font-white");
 
-            Button cancelActionButton = new Button(I18n.getI18nText("Cancel"));
-            cancelActionButton.getStyleClass().addAll("recurringEventButton", "background-darkGrey", "font-white");
-            HBox buttonsHBox = new HBox(cancelActionButton,okButton);
-            buttonsHBox.setAlignment(Pos.CENTER);
-            buttonsHBox.setSpacing(30);
-            dialog.setBottom(buttonsHBox);
-            BorderPane.setAlignment(buttonsHBox,Pos.CENTER);
-            DialogCallback dialogCallback = DialogUtil.showModalNodeInGoldLayout(dialog, mainFrame);
+                Button cancelActionButton = new Button(I18n.getI18nText("Cancel"));
+                cancelActionButton.getStyleClass().addAll("recurringEventButton", "background-darkGrey", "font-white");
+                HBox buttonsHBox = new HBox(cancelActionButton, okButton);
+                buttonsHBox.setAlignment(Pos.CENTER);
+                buttonsHBox.setSpacing(30);
+                dialog.setBottom(buttonsHBox);
+                BorderPane.setAlignment(buttonsHBox, Pos.CENTER);
+                DialogCallback dialogCallback = DialogUtil.showModalNodeInGoldLayout(dialog, mainFrame);
 
-            okButton.setOnAction(l -> {
-                        updateStore.cancelChanges();
-                        dialogCallback.closeDialog();
-                        if(e==null) {
-                            eventDetailsVBox.setVisible(false);
-                            eventDetailsVBox.setManaged(false);
-                        }
-                        else displayEventDetails(e);
-                    });
-            cancelActionButton.setOnAction(l -> {
-                dialogCallback.closeDialog();
-                //This boolean is used in the case we change of event in the visualMapper, and the user decide de cancel and change.
-                //It allows us to tell the visual mapper to select the previous selected event before the click, without doing any other action than move the selection
-                changeVisualSelectedEventWithoutAnyOtherAction = true;
-                eventVisualMapper.setSelectedEntity(selectedEvent);
-                changeVisualSelectedEventWithoutAnyOtherAction = false;
-            });
+                okButton.setOnAction(l -> {
+                    updateStore.cancelChanges();
+                    dialogCallback.closeDialog();
+                    if (e == null) {
+                        eventDetailsVBox.setVisible(false);
+                        eventDetailsVBox.setManaged(false);
+                    } else displayEventDetails(e);
+                });
+                cancelActionButton.setOnAction(l -> {
+                    dialogCallback.closeDialog();
+                    //This boolean is used in the case we change of event in the visualMapper, and the user decide de cancel and change.
+                    //It allows us to tell the visual mapper to select the previous selected event before the click, without doing any other action than move the selection
+                    changeVisualSelectedEventWithoutAnyOtherAction = true;
+                    eventVisualMapper.setSelectedEntity(selectedEvent);
+                    changeVisualSelectedEventWithoutAnyOtherAction = false;
+                });
+            }
+            else
+            {
+                displayEventDetails(currentEvent);
+            }
         }
         else {
             if(e==null) {
@@ -947,7 +952,7 @@ public final class ManageRecurringEventView {
                 calendarPane.getDatesPicker().getSelectedDates().removeListener(onChangeDateListener);
                 currentEvent.setState(EventState.OPEN);
                 submitUpdateStoreChanges();
-                eventVisualMapper.setSelectedEntity(FXEvent.getEvent());
+        //        eventVisualMapper.setSelectedEntity(FXEvent.getEvent());
             }
         });
 
@@ -1068,11 +1073,11 @@ public final class ManageRecurringEventView {
         HBox.setHgrow(spacer, Priority.SOMETIMES);
         labelLine.getChildren().setAll(currentEventLabel,spacer, addButton);
 
-        eventDetailsVBox = new VBox(titleEventDetailsLabel,eventDetailsPane);
+        eventDetailsVBox = new VBox(titleEventDetailsLabel,eventDetailsPane,buttonsLine);
         //When we launch the window, we don't disply this VBox wich contains an event details
         eventDetailsVBox.setVisible(false);
         eventDetailsVBox.setManaged(false);
-        VBox mainVBox = new VBox(labelLine,eventTable, eventDetailsVBox,buttonsLine);
+        VBox mainVBox = new VBox(labelLine,eventTable, eventDetailsVBox);
         eventTable.setFullHeight(true);
         mainFrame.setCenter(mainVBox);
 
@@ -1094,8 +1099,9 @@ public final class ManageRecurringEventView {
                     isCloudPictureToBeDeleted.setValue(false);
                     isCloudPictureToBeUploaded.setValue(false);
                     cloudPictureFileToUpload = null;
-                   // resetUpdateStoreAndOtherComponents();
+                    eventVisualMapper.setSelectedEntity(currentEvent);
                 }));
+
     }
 
     public List<ScheduledItem> getScheduledItemsReadFromDatabase() {
