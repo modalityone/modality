@@ -251,7 +251,6 @@ public final class ManageRecurringEventView {
         //This boolean is used in the case we change of event in the visualMapper, and the user decide to cancel and stay on the event.
         //It allows us to tell the visual mapper to select the previous selected event before the click, without doing any other action than move the selection
         if(changeVisualSelectedEventWithoutAnyOtherAction) {
-            displayEventDetails(e);
             return;
         }
         if(currentMode.get()==ADDMODE) {
@@ -316,6 +315,10 @@ public final class ManageRecurringEventView {
         }
     }
 
+    private void loadEventDetails(Event e)
+    {
+
+    }
 
 
     /**
@@ -347,10 +350,6 @@ public final class ManageRecurringEventView {
         }
 
         currentMode.set(EDITMODE);
-        //First we remove the listener on the List of selected date, because we'll initialise the dates here.
-        //We'll add the listener after the initialisation
-        calendarPane.getDatesPicker().getSelectedDates().removeListener(onChangeDateListener);
-
         resetUpdateStoreAndOtherComponents();
         //We execute the query in batch, otherwise we can have synchronisation problem between the different threads
         entityStore.executeQueryBatch(
@@ -359,6 +358,9 @@ public final class ManageRecurringEventView {
                         )
                 .onFailure(Console::log)
                 .onSuccess(queryLists -> Platform.runLater(() -> {
+                    //First we remove the listener on the List of selected date, because we'll initialise the dates here.
+                    //We'll add the listener after the initialisation
+                    calendarPane.getDatesPicker().getSelectedDates().removeListener(onChangeDateListener);
                     EntityList<ScheduledItem> scheduledItemList = queryLists[0];
                     EntityList<Timeline> timelineList = queryLists[1];
                     //we test if the selectedEvent==e, because, if a user click very fast from en event to another, there
@@ -390,11 +392,11 @@ public final class ManageRecurringEventView {
                             else {
                                 calendarPane.getDatesPicker().processDateSelected(localDate);
                             }
+                            calendarPane.getDatesPicker().getSelectedDates().addListener(onChangeDateListener);
                         });
 
 
-                                //We add the listener only when the date have been initialised
-                                calendarPane.getDatesPicker().getSelectedDates().addListener(onChangeDateListener);
+                        //We add the listener only when the date have been initialised
                         //We display on the calendar the month containing the first date of the recurring event
 
                         if (list.size() > 0) {
@@ -425,7 +427,14 @@ public final class ManageRecurringEventView {
                         //We add the event and timeline to the updateStore, so they will be modified when changed
                         currentEvent = updateStore.updateEntity(e);
                         eventTimeline = updateStore.updateEntity(timelineList.get(0));
-                        initialiseDataFromDatabase();
+                        if(!areDataInitialised) {
+                            workingScheduledItems.setAll(scheduledItemsReadFromDatabase.stream().map(updateStore::updateEntity).collect(Collectors.toList()));
+                            sortWorkingScheduledItemsByDate();
+                            ScheduledItem si = null;
+                            if(workingScheduledItems.size()>0) si = workingScheduledItems.get(0);
+                            if(si!=null) eventSite = si.getSite();
+                            areDataInitialised = true;
+                        }
                         //and finally, we fill the UI with the values from the database
                         nameOfEventTextField.setText(currentEvent.getName());
                         descriptionHtmlEditor.setText(currentEvent.getDescription());
@@ -455,7 +464,9 @@ public final class ManageRecurringEventView {
         areDataInitialised = false;
         validationSupportInitialised = false;
         workingScheduledItems.clear();
+        calendarPane.getDatesPicker().getSelectedDates().removeListener(onChangeDateListener);
         calendarPane.getDatesPicker().getSelectedDates().clear();
+        calendarPane.getDatesPicker().getSelectedDates().addListener(onChangeDateListener);
         //We put the default behaviour on the datePicker, otherwise it won't reset the behaviour define in the previous event selected
         calendarPane.getDatesPicker().setOnDateClicked(localDate -> calendarPane.getDatesPicker().processDateSelected(localDate));
         calendarPane.getDatesPicker().setDateColorGetter(new Function<LocalDate, Color>() {
@@ -506,21 +517,6 @@ public final class ManageRecurringEventView {
                 }));
     }
 
-    /**
-     * This method is used to initialise the data from the database,
-     * in particular we initialise the workingScheduledItems list, and the event site.
-     */
-    public void initialiseDataFromDatabase()
-    {
-        if(!areDataInitialised) {
-            workingScheduledItems.setAll(scheduledItemsReadFromDatabase.stream().map(updateStore::updateEntity).collect(Collectors.toList()));
-            sortWorkingScheduledItemsByDate();
-            ScheduledItem si = null;
-            if(workingScheduledItems.size()>0) si = workingScheduledItems.get(0);
-            if(si!=null) eventSite = si.getSite();
-            areDataInitialised = true;
-        }
-    }
 
     /**
      * We validate the form
@@ -950,9 +946,7 @@ public final class ManageRecurringEventView {
                     currentEvent.setState(EventState.DRAFT);
                 }
                 calendarPane.getDatesPicker().getSelectedDates().removeListener(onChangeDateListener);
-                currentEvent.setState(EventState.OPEN);
                 submitUpdateStoreChanges();
-        //        eventVisualMapper.setSelectedEntity(FXEvent.getEvent());
             }
         });
 
@@ -1099,7 +1093,7 @@ public final class ManageRecurringEventView {
                     isCloudPictureToBeDeleted.setValue(false);
                     isCloudPictureToBeUploaded.setValue(false);
                     cloudPictureFileToUpload = null;
-                    eventVisualMapper.setSelectedEntity(currentEvent);
+                    displayEventDetails(currentEvent);
                 }));
 
     }
@@ -1322,7 +1316,8 @@ public final class ManageRecurringEventView {
      * @return true if the url is valid, false otherwise
      */
     public static boolean isValidUrl(String url) {
-        if(url=="") return true;
+        if(url=="")
+            return true;
         try {
             new URL(url);
             return true;
