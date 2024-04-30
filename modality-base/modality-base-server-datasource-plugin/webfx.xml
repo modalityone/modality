@@ -9,11 +9,8 @@
     </exported-packages>
 
     <providers>
-<!--
-        <provider interface="dev.webfx.stack.conf.spi.ConfigurationConsumer">one.modality.base.server.services.datasource.ModalityLocalDataSourceConfigurationConsumer</provider>
--->
         <provider interface="dev.webfx.stack.db.datasource.spi.LocalDataSourceProvider">one.modality.base.server.services.datasource.ModalityLocalDataSourceProvider</provider>
-        <provider interface="dev.webfx.platform.boot.spi.ApplicationModuleBooter">one.modality.base.server.services.datasource.ModalityLocalDataSourceModuleBooter</provider>
+        <provider interface="dev.webfx.platform.boot.spi.ApplicationJob">one.modality.base.server.services.datasource.ModalityLocalDataSourceInitializer</provider>
     </providers>
 
     <dependencies>

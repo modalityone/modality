@@ -397,7 +397,7 @@
     <source path="dev/webfx/extras/filepicker/spi"/>
     <source path="dev/webfx/extras/filepicker/spi/impl"/>
     <!--========================< webfx-extras-filepicker-gwt-j2cl >========================-->
-    <source path="dev/webfx/extras/filepicker/spi/impl/gwt"/>
+    <source path="dev/webfx/extras/filepicker/spi/impl/gwtj2cl"/>
     <!--=============================< webfx-extras-geometry >==============================-->
     <source path="dev/webfx/extras/geometry"/>
     <!--============================< webfx-extras-imagestore >=============================-->
@@ -564,6 +564,15 @@
     <source path="dev/webfx/platform/console/spi"/>
     <!--========================< webfx-platform-console-gwt-j2cl >=========================-->
     <source path="dev/webfx/platform/console/spi/impl/gwtj2cl"/>
+    <!--==============================< webfx-platform-fetch >==============================-->
+    <source path="dev/webfx/platform/fetch"/>
+    <source path="dev/webfx/platform/fetch/spi"/>
+    <source path="dev/webfx/platform/streams"/>
+    <!--=========================< webfx-platform-fetch-ast-json >==========================-->
+    <source path="dev/webfx/platform/fetch/json"/>
+    <!--=========================< webfx-platform-fetch-gwt-j2cl >==========================-->
+    <source path="dev/webfx/platform/fetch/spi/impl/gwtj2cl"/>
+    <source path="dev/webfx/platform/streams/spi/impl/gwtj2cl"/>
     <!--==============================< webfx-platform-file >===============================-->
     <source path="dev/webfx/platform/file"/>
     <source path="dev/webfx/platform/file/spi"/>
@@ -639,6 +648,8 @@
     <source path="dev/webfx/platform/util/function"/>
     <source path="dev/webfx/platform/util/tuples"/>
     <source path="dev/webfx/platform/util/uuid"/>
+    <!--============================< webfx-platform-util-http >============================-->
+    <source path="dev/webfx/platform/util/http"/>
     <!--============================< webfx-platform-util-time >============================-->
     <source path="dev/webfx/platform/util/time"/>
     <!--==========================< webfx-platform-windowhistory >==========================-->
@@ -709,6 +720,11 @@
     <source path="dev/webfx/stack/cache"/>
     <!--============================< webfx-stack-cache-client >============================-->
     <source path="dev/webfx/stack/cache/client"/>
+    <!--============================< webfx-stack-cloud-image >=============================-->
+    <source path="dev/webfx/stack/cloud/image"/>
+    <source path="dev/webfx/stack/cloud/image/impl/fetchbased"/>
+    <!--=========================< webfx-stack-cloud-image-client >=========================-->
+    <source path="dev/webfx/stack/cloud/image/impl/client"/>
     <!--==============================< webfx-stack-com-bus >===============================-->
     <source path="dev/webfx/stack/com/bus"/>
     <source path="dev/webfx/stack/com/bus/spi"/>

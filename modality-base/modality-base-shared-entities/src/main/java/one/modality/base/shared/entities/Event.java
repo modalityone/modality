@@ -1,5 +1,6 @@
 package one.modality.base.shared.entities;
 
+import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.markers.*;
@@ -16,6 +17,15 @@ public interface Event extends Entity,
         EntityHasIcon,
         EntityHasOrganization,
         EntityHasCorporation {
+
+
+    default void setState(Object state) {
+        setFieldValue("state", Strings.stringValue(state));
+    }
+
+    default EventState getState() {
+        return EventState.of(getStringFieldValue("state"));
+    }
 
 
     default void setType(Object type) {

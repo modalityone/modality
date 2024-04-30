@@ -90,7 +90,7 @@ public final class ModalityValidationSupport {
     }
 
     public void addRequiredInput(ObservableValue valueProperty, Node inputNode, String errorMessage) {
-        addValidationRule(Bindings.createBooleanBinding(() -> testNotEmpty(valueProperty.getValue()), valueProperty), inputNode, errorMessage);
+        addValidationRule(Bindings.createBooleanBinding(() -> testNotEmpty(valueProperty.getValue()), valueProperty), inputNode, errorMessage, true);
     }
 
     private static boolean testNotEmpty(Object value) {
@@ -98,6 +98,10 @@ public final class ModalityValidationSupport {
     }
 
     public ObservableBooleanValue addValidationRule(ObservableValue<Boolean> validProperty, Node node, String errorMessage) {
+        return addValidationRule(validProperty, node, errorMessage, false);
+    }
+
+    public ObservableBooleanValue addValidationRule(ObservableValue<Boolean> validProperty, Node node, String errorMessage, boolean required) {
         ObservableRuleBasedValidator validator = new ObservableRuleBasedValidator();
         ObservableBooleanValue rule =
                 Bindings.createBooleanBinding(() ->
@@ -151,7 +155,7 @@ public final class ModalityValidationSupport {
                                     0));
                 }
             });
-            validationVisualizer.initVisualization(validator.getValidationStatus(), control, true);
+            validationVisualizer.initVisualization(validator.getValidationStatus(), control, required);
             node.getProperties().put("validationVisualizer", validationVisualizer);
         }
         return rule;

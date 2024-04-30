@@ -20,6 +20,11 @@
     <required-libraries>
         <webfx-library artifact="dev.webfx:webfx-extras:0.1.0-SNAPSHOT"/>
         <webfx-library artifact="dev.webfx:webfx-stack:0.1.0-SNAPSHOT"/>
+        <library>
+            <groupId>com.cloudinary</groupId>
+            <artifactId>cloudinary-http45</artifactId>
+            <version>1.38.0</version>
+        </library>
 
         <!-- For unit testing -->
 <!-- Not used at the moment (and time-consuming for the WebFX CLI)

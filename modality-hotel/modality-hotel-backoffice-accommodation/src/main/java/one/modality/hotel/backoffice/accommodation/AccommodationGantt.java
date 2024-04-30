@@ -9,6 +9,7 @@ import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.time.layout.bar.LocalDateBar;
 import dev.webfx.extras.time.layout.bar.TimeBarUtil;
 import dev.webfx.extras.time.layout.canvas.LocalDateCanvasDrawer;
+import dev.webfx.extras.time.layout.canvas.TimeCanvasInteractionHandler;
 import dev.webfx.extras.time.layout.canvas.TimeCanvasUtil;
 import dev.webfx.extras.time.layout.gantt.HeaderPosition;
 import dev.webfx.extras.time.layout.gantt.HeaderRotation;
@@ -138,6 +139,10 @@ public abstract class AccommodationGantt<B extends AccommodationBlock> {
 
         // Redrawing the canvas when Gantt selected object changes because the guest color may depend on selected event
         FXProperties.runOnPropertiesChange(barsDrawer::markDrawAreaAsDirty, FXGanttSelection.ganttSelectedObjectProperty());
+
+        // We disable the time window horizontal scroll on mouse wheel over this canvas, because we want the mouse wheel
+        // to control the vertical scroll (via ScrollPane) instead.
+        TimeCanvasInteractionHandler.disableScrollTimeWindowOnCanvas(barsDrawer.getCanvas());
     }
 
     public BooleanProperty parentsProvidedProperty() {

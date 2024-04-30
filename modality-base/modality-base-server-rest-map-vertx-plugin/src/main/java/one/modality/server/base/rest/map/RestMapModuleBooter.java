@@ -2,16 +2,17 @@ package one.modality.server.base.rest.map;
 
 import dev.webfx.platform.boot.spi.ApplicationModuleBooter;
 import dev.webfx.platform.conf.SourcesConfig;
+import dev.webfx.platform.util.http.HttpHeaders;
 import dev.webfx.platform.vertx.common.VertxInstance;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.EntityStore;
 import io.vertx.core.http.HttpMethod;
-import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.client.WebClient;
 import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Organization;
+import static dev.webfx.platform.util.http.HttpResponseStatus.*;
 
 /**
  * @author Bruno Salmon
@@ -40,7 +41,7 @@ public class RestMapModuleBooter implements ApplicationModuleBooter {
                     String zoom = ctx.queryParams().contains("zoom") ? ctx.queryParams().get("zoom") : "12";
                     EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
                             .<Organization>executeQuery("select latitude,longitude from Organization where id=?", organizationId)
-                            .onFailure(err -> ctx.response().setStatusCode(500).send()) // Internal server error
+                            .onFailure(err -> ctx.response().setStatusCode(INTERNAL_SERVER_ERROR_500).send())
                             .onSuccess(list -> { // on successfully receiving the list (should be a singleton list)
                                 Float latitude = null, longitude = null;
                                 if (!list.isEmpty()) {
@@ -58,7 +59,7 @@ public class RestMapModuleBooter implements ApplicationModuleBooter {
                     String zoom = ctx.queryParams().contains("zoom") ? ctx.queryParams().get("zoom") : "5";
                     EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
                             .<Country>executeQuery("select latitude,longitude from Country where id=?", countryId)
-                            .onFailure(err -> ctx.response().setStatusCode(500).send()) // Internal server error
+                            .onFailure(err -> ctx.response().setStatusCode(INTERNAL_SERVER_ERROR_500).send())
                             .onSuccess(list -> { // on successfully receiving the list (should be a singleton list)
                                 Float latitude = null, longitude = null;
                                 if (!list.isEmpty()) {
@@ -73,7 +74,7 @@ public class RestMapModuleBooter implements ApplicationModuleBooter {
 
     private void forwardToGoogleMap(Float latitude, Float longitude, String zoom, RoutingContext ctx) {
         if (latitude == null || longitude == null) {
-            ctx.response().setStatusCode(406).send(); // Not acceptable
+            ctx.response().setStatusCode(BAD_REQUEST_400).send();
             return;
         }
         String organizationStaticMapUrlTemplate = SourcesConfig.getSourcesRootConfig()
@@ -86,13 +87,13 @@ public class RestMapModuleBooter implements ApplicationModuleBooter {
                 ;
         webClient.getAbs(url)
                 .send()
-                .onFailure(err -> ctx.response().setStatusCode(503).send()) // Service unavailable
+                .onFailure(err -> ctx.response().setStatusCode(SERVICE_UNAVAILABLE_503).send())
                 .onSuccess(proxyRes -> {
-                    HttpServerResponse res = ctx.response();
-                    res.setStatusCode(proxyRes.statusCode());
-                    res.headers().addAll(proxyRes.headers());
-                    res.putHeader("cache-control", "public, max-age=86400");
-                    res.send(proxyRes.body());
+                    ctx.response()
+                            .setStatusCode(proxyRes.statusCode())
+                            .putHeader(HttpHeaders.CACHE_CONTROL, "public, max-age=86400")
+                            .headers().addAll(proxyRes.headers());
+                    ctx.response().send(proxyRes.body());
                 });
     }
 }

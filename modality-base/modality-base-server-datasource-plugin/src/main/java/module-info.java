@@ -16,7 +16,7 @@ module modality.base.server.datasource.plugin {
     exports one.modality.base.server.services.datasource;
 
     // Provided services
-    provides dev.webfx.platform.boot.spi.ApplicationModuleBooter with one.modality.base.server.services.datasource.ModalityLocalDataSourceModuleBooter;
+    provides dev.webfx.platform.boot.spi.ApplicationJob with one.modality.base.server.services.datasource.ModalityLocalDataSourceInitializer;
     provides dev.webfx.stack.db.datasource.spi.LocalDataSourceProvider with one.modality.base.server.services.datasource.ModalityLocalDataSourceProvider;
 
 }

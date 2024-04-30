@@ -36,6 +36,8 @@ public class TimeTheme implements Theme {
     private static final Color ESSENTIAL_DATE_PANEL_BACKGROUND_COLOR = Color.rgb( 243, 243, 243); // light gray
     private static final Color ESSENTIAL_DATE_PANEL_BACKGROUND_COLOR_TODAY = Color.rgb( 208, 248, 208); // light green
 
+    private static final Color HIGHTLIGHTED_DAY_OF_WEEK_COLOR = Color.rgb(178, 255, 255);
+
     // Varied palette mode
     private final static Color[] VARIED_MONTH_BACKGROUND_COLORS_SELECTED;
     private final static Color[] VARIED_LIGHT_MONTH_BACKGROUND_COLORS_UNSELECTED;
@@ -268,8 +270,8 @@ public class TimeTheme implements Theme {
         return StyleCapture.captureStyle(TIME_THEME, DayOfWeek.MONDAY, selected, DAY_OF_WEEK_FACET).getTextFill();
     }
 
-    public static Paint getDayOfWeekBackgroundColor(LocalDate date, boolean selected) {
-        return getDayOfWeekBackgroundColor(date.getDayOfWeek(), selected);
+    public static Paint getDayOfWeekBackgroundColor(LocalDate date, boolean selected, boolean highlighted) {
+        return highlighted ? HIGHTLIGHTED_DAY_OF_WEEK_COLOR : getDayOfWeekBackgroundColor(date.getDayOfWeek(), selected);
     }
 
     public static Paint getDayOfWeekBackgroundColor(DayOfWeek dayOfWeek, boolean selected) {

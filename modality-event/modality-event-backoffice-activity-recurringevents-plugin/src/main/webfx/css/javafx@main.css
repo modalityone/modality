@@ -1,0 +1,94 @@
+.recurringEventButton
+{
+    -fx-background-radius: 2;
+    -fx-pref-height:30px;
+    -fx-max-height:30px;
+    -fx-pref-width: 150px;
+    -fx-font-weight: bolder;
+}
+
+.font-size-35px
+{
+  -fx-font-size: 35px;
+}
+.font-size-16px
+{
+  -fx-font-size: 16px;
+}
+.font-size-9px
+{
+  -fx-font-size: 9px;
+}
+
+.font-white
+{
+    -fx-text-fill: white;
+    -fx-fill: white;
+}
+
+.font-green
+{
+    -fx-text-fill: #41BA4D;
+    -fx-fill: #41BA4D;
+}
+
+.font-blue
+{
+    -fx-text-fill: #0096D6;
+    -fx-fill: #0096D6;
+}
+
+.font-orange
+{
+    -fx-text-fill: orange;
+    -fx-fill: orange;
+}
+.font-red
+{
+    -fx-text-fill: red;
+     -fx-fill: red;
+}
+.font-grey
+{
+    -fx-text-fill: grey;
+    -fx-fill: grey;
+}
+
+.bookingName
+{
+    -fx-text-fill: #838788;
+}
+.bold
+{
+   -fx-font-weight: bold;
+}
+
+.bookingStatusConfirmed
+{
+     -fx-text-fill: #41BA4D;
+}
+
+.bookingStatusUnconfirmed
+{
+     -fx-text-fill: #eb8634;
+}
+.bookingTotalCount
+{
+-fx-text-fill: #FF0404;
+}
+
+.background-green {
+    -fx-background-color: #41BA4D;
+}
+
+.background-blue {
+    -fx-background-color: #0096D6;
+}
+
+.background-red {
+    -fx-background-color: red;
+}
+
+.background-darkGrey {
+    -fx-background-color: #838788;
+}

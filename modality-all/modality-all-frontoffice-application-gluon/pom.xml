@@ -343,7 +343,6 @@
                         <!-- Android -->
                         <appLabel>Modality FrontOffice</appLabel>
                     </releaseConfiguration>
-
                 </configuration>
             </plugin>
         </plugins>

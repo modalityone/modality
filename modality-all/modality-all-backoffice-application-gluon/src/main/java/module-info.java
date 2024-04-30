@@ -19,6 +19,7 @@ module modality.all.backoffice.application.gluon {
     requires webfx.platform.blob.java;
     requires webfx.platform.boot.java;
     requires webfx.platform.console.java;
+    requires webfx.platform.fetch.java;
     requires webfx.platform.file.java;
     requires webfx.platform.os.gluon;
     requires webfx.platform.resource.gluon;
