@@ -23,6 +23,8 @@ import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.controls.entity.masterslave.MasterSlaveEntityController;
+import dev.webfx.stack.orm.entity.controls.entity.masterslave.SlaveEntityEditor;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
@@ -126,8 +128,9 @@ public final class ManageRecurringEventView {
 
 
     private Timeline eventTimeline;
-    private Event currentEvent;
-    private Event selectedEvent;
+    private Event currentEditedEvent;
+    private Event currentSelectedEvent;
+    private Event currentObservedEvent;
     private Site eventSite;
     //The Item recurring item is needed when we create a ScheduledItem as one of his parameter
     private Item recurringItem;
@@ -147,6 +150,7 @@ public final class ManageRecurringEventView {
             boolean isShowing = get() == ADDMODE;
             locationHBox.setVisible(isShowing);
             locationHBox.setManaged(isShowing);
+            cancelButton.setVisible(false);
         }
     };
     private EntityButtonSelector<Site> siteSelector;
@@ -160,9 +164,69 @@ public final class ManageRecurringEventView {
     private BooleanBinding updateStoreOrPictureHasChanged;
     private BooleanBinding updateTrashButtonOnPictureDisplayed;
     private ReactiveVisualMapper eventVisualMapper;
-    private Boolean changeVisualSelectedEventWithoutAnyOtherAction = false;
+   //TODO, temporary, we will remove when the behaviours of the binding with the EventSlave has improved and is not called when building the UI
+    private Boolean firstCall = true;
+
+    final private MasterSlaveEntityController<Event> masterSlaveEventController = new MasterSlaveEntityController<>(new SlaveEntityEditor<Event>() {
+        @Override
+        public void showEntityChangeApprovalDialog(Runnable onApprovalCallback) {
+            displayChangeConfirmationDialog(onApprovalCallback);
+        }
+
+        /**
+         * This method is called by the master controller when we change the event we're editating
+         * @param approvedEntity
+         */
+        @Override
+        public void setEditingEntity(Event approvedEntity) {
+            displayEventDetails(approvedEntity);
+        }
+
+        @Override
+        public Event getEditingEntity() {
+            return currentEditedEvent;
+        }
+
+        @Override
+        public boolean hasChanges() {
+            return updateStore.hasChanges() || updateStoreOrPictureHasChanged.get();
+        }
+    });
 
 
+
+    private void displayChangeConfirmationDialog(Runnable onApprovalCallback) {
+        Text titleConfirmationText = new Text(I18n.getI18nText("AreYouSure"));
+        titleConfirmationText.getStyleClass().add("font-green");
+        titleConfirmationText.getStyleClass().add("font-size-22px");
+        titleConfirmationText.getStyleClass().add("bold");
+        BorderPane dialog = new BorderPane();
+        dialog.setTop(titleConfirmationText);
+        BorderPane.setAlignment(titleConfirmationText, Pos.CENTER);
+        Text confirmationText = new Text(I18n.getI18nText("CancelChangesConfirmation"));
+        dialog.setCenter(confirmationText);
+        BorderPane.setAlignment(confirmationText, Pos.CENTER);
+        BorderPane.setMargin(confirmationText, new Insets(30, 0, 30, 0));
+        Button okButton = new Button(I18n.getI18nText("Confirm"));
+        okButton.getStyleClass().addAll("recurringEventButton", "background-red", "font-white");
+
+        Button cancelActionButton = new Button(I18n.getI18nText("Cancel"));
+        cancelActionButton.getStyleClass().addAll("recurringEventButton", "background-darkGrey", "font-white");
+        HBox buttonsHBox = new HBox(cancelActionButton, okButton);
+        buttonsHBox.setAlignment(Pos.CENTER);
+        buttonsHBox.setSpacing(30);
+        dialog.setBottom(buttonsHBox);
+        BorderPane.setAlignment(buttonsHBox, Pos.CENTER);
+        DialogCallback dialogCallback = DialogUtil.showModalNodeInGoldLayout(dialog, mainFrame);
+        okButton.setOnAction(l -> {
+            dialogCallback.closeDialog();
+            onApprovalCallback.run();
+        });
+        cancelActionButton.setOnAction(l -> {
+            dialogCallback.closeDialog();
+            eventVisualMapper.setSelectedEntity(currentSelectedEvent);
+        });
+    }
     public ManageRecurringEventView(ButtonFactoryMixin mixin) {
         this.mixin = mixin;
     }
@@ -205,7 +269,7 @@ public final class ManageRecurringEventView {
                 .setEntityColumns(EVENT_COLUMNS)
                 .setStore(entityStore)
                 .setVisualSelectionProperty(eventTable.visualSelectionProperty())
-                .setSelectedEntityHandler(this::eventSelectionHasChanged)
+                .setSelectedEntityHandler(FXEvent::setEvent)
                 .visualizeResultInto(eventTable.visualResultProperty())
                 .start();
 
@@ -224,10 +288,8 @@ public final class ManageRecurringEventView {
             return updateStore.hasChanges() || isCloudPictureToBeUploaded.getValue() || isCloudPictureToBeDeleted.getValue();
         }
     };
-         /*
-        We create a booleanBinding that will be used by the trash button. We display it only if a picture is displayed if either the updateStoreChanged, or the pictures needs to be uploaded
-        or deleted
-         */
+         /* We create a booleanBinding that will be used by the trash button. We display it only if a picture is displayed if either the updateStoreChanged, or the pictures needs to be uploaded
+        or deleted */
         updateTrashButtonOnPictureDisplayed = new BooleanBinding() {
             {
                 super.bind(isPictureDisplayed);
@@ -244,81 +306,11 @@ public final class ManageRecurringEventView {
                 updateStore.hasChangesProperty().getValue();
             }
         });
+
+        //Now we can bind the masterSlave with the FXEvent
+        masterSlaveEventController.masterEntityProperty().bindBidirectional(FXEvent.eventProperty());
     }
 
-    private void eventSelectionHasChanged(Event e)
-    {
-        //This boolean is used in the case we change of event in the visualMapper, and the user decide to cancel and stay on the event.
-        //It allows us to tell the visual mapper to select the previous selected event before the click, without doing any other action than move the selection
-        if(changeVisualSelectedEventWithoutAnyOtherAction) {
-            return;
-        }
-        if(currentMode.get()==ADDMODE) {
-            //If we arrive here, we're adding a new event. The first time we arrive here, it's when After the insert, we go throw the edit mode
-            currentMode.set(EDITMODE);
-        }
-
-        if(updateStore.hasChanges() || updateStoreOrPictureHasChanged.get()) {
-            if((e == null && updateStore.hasChanges()) || (e != null && !e.equals(currentEvent))) {
-                //We open a dialog box asking if we want to cancel the changes that can has been made
-                Text titleConfirmationText = new Text(I18n.getI18nText("AreYouSure"));
-                titleConfirmationText.getStyleClass().add("font-green");
-                titleConfirmationText.getStyleClass().add("font-size-22px");
-                titleConfirmationText.getStyleClass().add("bold");
-                BorderPane dialog = new BorderPane();
-                dialog.setTop(titleConfirmationText);
-                BorderPane.setAlignment(titleConfirmationText, Pos.CENTER);
-                Text confirmationText = new Text(I18n.getI18nText("CancelChangesConfirmation"));
-                dialog.setCenter(confirmationText);
-                BorderPane.setAlignment(confirmationText, Pos.CENTER);
-                BorderPane.setMargin(confirmationText, new Insets(30, 0, 30, 0));
-                Button okButton = new Button(I18n.getI18nText("Confirm"));
-                okButton.getStyleClass().addAll("recurringEventButton", "background-red", "font-white");
-
-                Button cancelActionButton = new Button(I18n.getI18nText("Cancel"));
-                cancelActionButton.getStyleClass().addAll("recurringEventButton", "background-darkGrey", "font-white");
-                HBox buttonsHBox = new HBox(cancelActionButton, okButton);
-                buttonsHBox.setAlignment(Pos.CENTER);
-                buttonsHBox.setSpacing(30);
-                dialog.setBottom(buttonsHBox);
-                BorderPane.setAlignment(buttonsHBox, Pos.CENTER);
-                DialogCallback dialogCallback = DialogUtil.showModalNodeInGoldLayout(dialog, mainFrame);
-
-                okButton.setOnAction(l -> {
-                    updateStore.cancelChanges();
-                    dialogCallback.closeDialog();
-                    if (e == null) {
-                        eventDetailsVBox.setVisible(false);
-                        eventDetailsVBox.setManaged(false);
-                    } else displayEventDetails(e);
-                });
-                cancelActionButton.setOnAction(l -> {
-                    dialogCallback.closeDialog();
-                    //This boolean is used in the case we change of event in the visualMapper, and the user decide de cancel and change.
-                    //It allows us to tell the visual mapper to select the previous selected event before the click, without doing any other action than move the selection
-                    changeVisualSelectedEventWithoutAnyOtherAction = true;
-                    eventVisualMapper.setSelectedEntity(selectedEvent);
-                    changeVisualSelectedEventWithoutAnyOtherAction = false;
-                });
-            }
-            else
-            {
-                displayEventDetails(currentEvent);
-            }
-        }
-        else {
-            if(e==null) {
-                eventDetailsVBox.setVisible(false);
-                eventDetailsVBox.setManaged(false);
-            }
-            else displayEventDetails(e);
-        }
-    }
-
-    private void loadEventDetails(Event e)
-    {
-
-    }
 
 
     /**
@@ -328,9 +320,18 @@ public final class ManageRecurringEventView {
      */
     private void displayEventDetails(Event e)
     {
+        //E can be null if for example we select on the gantt graph an event that is not a recuring event
+        if(e==null)
+        {
+            eventDetailsVBox.setVisible(false);
+            eventDetailsVBox.setManaged(false);
+        }
+        if(e.getState()==null) return;
+        //First we reset everything
+        resetUpdateStoreAndOtherComponents();
         eventDetailsVBox.setVisible(true);
         eventDetailsVBox.setManaged(true);
-        selectedEvent = e;
+        currentSelectedEvent = e;
         previousEventState = e.getState();
         switch (previousEventState) {
             case DRAFT:
@@ -350,7 +351,6 @@ public final class ManageRecurringEventView {
         }
 
         currentMode.set(EDITMODE);
-        resetUpdateStoreAndOtherComponents();
         //We execute the query in batch, otherwise we can have synchronisation problem between the different threads
         entityStore.executeQueryBatch(
                         new EntityStoreQuery ("select item,date,startTime, site, endTime, (select id from Attendance where scheduledItem=si limit 1) as attendance from ScheduledItem si where event=?", new Object[] { e}),
@@ -358,14 +358,13 @@ public final class ManageRecurringEventView {
                         )
                 .onFailure(Console::log)
                 .onSuccess(queryLists -> Platform.runLater(() -> {
-                    //First we remove the listener on the List of selected date, because we'll initialise the dates here.
+                    //First we remove the listener on the List of selected date, because we'll initialise the dates here. (the listener has been removed before, but because it's async,
                     //We'll add the listener after the initialisation
-                    calendarPane.getDatesPicker().getSelectedDates().removeListener(onChangeDateListener);
                     EntityList<ScheduledItem> scheduledItemList = queryLists[0];
                     EntityList<Timeline> timelineList = queryLists[1];
                     //we test if the selectedEvent==e, because, if a user click very fast from en event to another, there
                     //can be a sync pb between the result of the request from the databse and the code executed
-                    if (selectedEvent == e) {
+                    if (currentSelectedEvent == e) {
                         //We take the selected date from the database, and transform the result in a list of LocalDate, that we pass to the datePicker so
                         //they appear selected in the calendar
                         scheduledItemsReadFromDatabase = scheduledItemList;
@@ -392,18 +391,13 @@ public final class ManageRecurringEventView {
                             else {
                                 calendarPane.getDatesPicker().processDateSelected(localDate);
                             }
-                            calendarPane.getDatesPicker().getSelectedDates().addListener(onChangeDateListener);
                         });
 
-
-                        //We add the listener only when the date have been initialised
                         //We display on the calendar the month containing the first date of the recurring event
-
                         if (list.size() > 0) {
                             LocalDate oldestDate = Collections.min(list);
                             calendarPane.getDatesPicker().focusOnMonth(YearMonth.of(oldestDate.getYear(), oldestDate.getMonthValue()));
                         }
-
                         //Then we get the timeline and event, there should be just one timeline per recurring event
                         eventTimeline = timelineList.get(0);
                         eventSite = eventTimeline.getSite();
@@ -425,30 +419,26 @@ public final class ManageRecurringEventView {
                         }
 
                         //We add the event and timeline to the updateStore, so they will be modified when changed
-                        currentEvent = updateStore.updateEntity(e);
+                        currentEditedEvent = updateStore.updateEntity(e);
                         eventTimeline = updateStore.updateEntity(timelineList.get(0));
-                        if(!areDataInitialised) {
-                            workingScheduledItems.setAll(scheduledItemsReadFromDatabase.stream().map(updateStore::updateEntity).collect(Collectors.toList()));
-                            sortWorkingScheduledItemsByDate();
-                            ScheduledItem si = null;
-                            if(workingScheduledItems.size()>0) si = workingScheduledItems.get(0);
-                            if(si!=null) eventSite = si.getSite();
-                            areDataInitialised = true;
-                        }
+
+                        workingScheduledItems.setAll(scheduledItemsReadFromDatabase.stream().map(updateStore::updateEntity).collect(Collectors.toList()));
+                        sortWorkingScheduledItemsByDate();
+                        ScheduledItem si = null;
+                        if(workingScheduledItems.size()>0) si = workingScheduledItems.get(0);
+                        if(si!=null) eventSite = si.getSite();
+
                         //and finally, we fill the UI with the values from the database
-                        nameOfEventTextField.setText(currentEvent.getName());
-                        descriptionHtmlEditor.setText(currentEvent.getDescription());
-                        externalLinkTextFied.setText(currentEvent.getExternalLink());
+                        nameOfEventTextField.setText(currentEditedEvent.getName());
+                        descriptionHtmlEditor.setText(currentEditedEvent.getDescription());
+                        externalLinkTextFied.setText(currentEditedEvent.getExternalLink());
                         //We try to load the image from cloudinary if it exists
                         loadEventImageIfExists();
-                        changeVisualSelectedEventWithoutAnyOtherAction = true;
-                        FXEvent.setEvent(e);
-                        changeVisualSelectedEventWithoutAnyOtherAction = false;
-
                     }
                     saveButton.disableProperty().bind(updateStoreOrPictureHasChanged.not());
                     cancelButton.disableProperty().bind(updateStoreOrPictureHasChanged.not());
                     trashImage.visibleProperty().bind(updateTrashButtonOnPictureDisplayed);
+                    currentObservedEvent=currentEditedEvent;
                 }));
         }
 
@@ -458,15 +448,15 @@ public final class ManageRecurringEventView {
     */
     private void resetUpdateStoreAndOtherComponents()
     {
+        currentObservedEvent = null;
         isCloudPictureToBeDeleted.setValue(false);
         isCloudPictureToBeUploaded.setValue(false);
         cloudPictureFileToUpload = null;
         areDataInitialised = false;
         validationSupportInitialised = false;
         workingScheduledItems.clear();
-        calendarPane.getDatesPicker().getSelectedDates().removeListener(onChangeDateListener);
         calendarPane.getDatesPicker().getSelectedDates().clear();
-        calendarPane.getDatesPicker().getSelectedDates().addListener(onChangeDateListener);
+        calendarPane.getDatesPicker().setMonth(YearMonth.now());
         //We put the default behaviour on the datePicker, otherwise it won't reset the behaviour define in the previous event selected
         calendarPane.getDatesPicker().setOnDateClicked(localDate -> calendarPane.getDatesPicker().processDateSelected(localDate));
         calendarPane.getDatesPicker().setDateColorGetter(new Function<LocalDate, Color>() {
@@ -478,6 +468,7 @@ public final class ManageRecurringEventView {
         updateStore.cancelChanges();
         imageView.setImage(null);
         isPictureDisplayed.setValue(false);
+        cancelButton.setVisible(true);
     }
     /**
      * This method is used to reset the text fields
@@ -493,7 +484,7 @@ public final class ManageRecurringEventView {
     }
 
     private void loadEventImageIfExists() {
-        Object imageTag = currentEvent.getId().getPrimaryKey();
+        Object imageTag = currentEditedEvent.getId().getPrimaryKey();
         doesCloudPictureExist(imageTag)
                 .onFailure(ex -> {
                     Console.log(ex);
@@ -596,7 +587,7 @@ public final class ManageRecurringEventView {
 
         //Displaying the list of events
         Label currentEventLabel = I18nControls.bindI18nProperties(new Label(),"ListEvents");
-        currentEventLabel.setPadding(new Insets(0,0,20,0));
+        currentEventLabel.setPadding(new Insets(15,0,20,0));
         TextTheme.createSecondaryTextFacet(currentEventLabel).style();
         currentEventLabel.getStyleClass().add("font-size-16px");
 
@@ -605,113 +596,113 @@ public final class ManageRecurringEventView {
         addButton.getStyleClass().addAll("recurringEventButton", "background-green", "font-white");
 
         addButton.setOnAction((event -> {
-            eventTable.setVisualSelection(null);
-            eventDetailsVBox.setVisible(true);
-            eventDetailsVBox.setManaged(true);
-            resetUpdateStoreAndOtherComponents();
-            calendarPane.getDatesPicker().focusOnMonth(YearMonth.now());
-            resetTextFields();
-            currentEvent = updateStore.insertEntity(Event.class);
-            entityStore.executeQuery("select recurringItem, organization from EventType where recurringItem!=null and organization=?", FXOrganization.getOrganization())
-                    .onFailure(Console::log)
-                    .onSuccess(e->Platform.runLater(()->{
-                        EventType eventType = (EventType) e.get(0);
-                        recurringItem = eventType.getRecurringItem();
-                        eventTimeline = updateStore.insertEntity(Timeline.class);
-                        eventTimeline.setEvent(currentEvent);
-                        eventTimeline.setItem(recurringItem);
-                        currentEvent.setOrganization(eventType.getOrganization());
-                        currentEvent.setCorporation(1);
-                        currentEvent.setType(eventType);
-                        currentEvent.setKbs3(true);
-                        eventTimeline.setSite(eventSite);
-                        currentEvent.setState(EventState.DRAFT);
-                        currentMode.set(ADDMODE);
-                        I18nControls.bindI18nTextProperty(titleEventDetailsLabel, "AddEventInformation");
-                        siteSelector = new EntityButtonSelector<Site>(
-                                "{class: 'Site', alias: 's', where: 'event=null', orderBy :'name'}",
-                                mixin, eventDetailsVBox, dataSourceModel
-                        ) { // Overriding the button content to add the possibility of Adding a new siteprefix text
-                            private final BorderPane bp = new BorderPane();
-                            TextField searchTextField = super.getSearchTextField();
-                            private UpdateStore updateStoreForSite = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
+            masterSlaveEventController.checkSlaveEntityChangeApproval(true, () -> {
+                resetTextFields();
+                resetUpdateStoreAndOtherComponents();
+                eventDetailsVBox.setVisible(true);
+                eventDetailsVBox.setManaged(true);
+                I18nControls.bindI18nProperties(publishButton,"PublishButton");
+                publishButton.getStyleClass().setAll("recurringEventButton", "background-green", "font-white");
+                currentEditedEvent = updateStore.insertEntity(Event.class);
+                currentObservedEvent = currentEditedEvent;
+                entityStore.executeQuery("select recurringItem, organization from EventType where recurringItem!=null and organization=?", FXOrganization.getOrganization())
+                        .onFailure(Console::log)
+                        .onSuccess(e->Platform.runLater(()->{
+                            EventType eventType = (EventType) e.get(0);
+                            recurringItem = eventType.getRecurringItem();
+                            eventTimeline = updateStore.insertEntity(Timeline.class);
+                            eventTimeline.setEvent(currentEditedEvent);
+                            eventTimeline.setItem(recurringItem);
+                            currentEditedEvent.setOrganization(eventType.getOrganization());
+                            currentEditedEvent.setCorporation(1);
+                            currentEditedEvent.setType(eventType);
+                            currentEditedEvent.setKbs3(true);
+                            eventTimeline.setSite(eventSite);
+                            currentEditedEvent.setState(EventState.DRAFT);
+                            currentMode.set(ADDMODE);
+                            I18nControls.bindI18nTextProperty(titleEventDetailsLabel, "AddEventInformation");
+                            siteSelector = new EntityButtonSelector<Site>(
+                                    "{class: 'Site', alias: 's', where: 'event=null', orderBy :'name'}",
+                                    mixin, eventDetailsVBox, dataSourceModel
+                            ) { // Overriding the button content to add the possibility of Adding a new siteprefix text
+                                private final BorderPane bp = new BorderPane();
+                                TextField searchTextField = super.getSearchTextField();
+                                private UpdateStore updateStoreForSite = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
 
-                            Text addSiteText = I18n.bindI18nProperties(new Text(), "AddNewLocation");
-                            MonoPane addSitePane = new MonoPane(addSiteText);
-                            {
-                                addSiteText.setFill(Color.BLUE);
-                                addSitePane.setMaxWidth(Double.MAX_VALUE);
-                                addSitePane.setMinHeight(20);
-                                addSitePane.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
-                                addSitePane.setCursor(Cursor.HAND);
-                                addSitePane.setOnMousePressed(event -> {
-                                    Site site = updateStoreForSite.insertEntity(Site.class);
-                                    site.setName(searchTextField.getText());
-                                    site.setForeignField("organization",FXOrganization.getOrganization());
-                                    site.setFieldValue("asksForPassport",false);
-                                    site.setFieldValue("online",false);
-                                    site.setFieldValue("hideDates",true);
-                                    site.setFieldValue("forceSoldout",false);
-                                    site.setFieldValue("main",true);
-                                    //TODO to change the hardCodedValue (3 is for teachings)
-                                    site.setFieldValue("itemFamily",3);
-                                    //We had in the database the site now (otherwise too complicated to manage with the actual components)
-                                    updateStoreForSite.submitChanges().onSuccess((batch -> Platform.runLater(()-> {
-                                                Object newSiteId = batch.getArray()[0].getGeneratedKeys()[0];
-                                                Site newSite = updateStoreForSite.createEntity(Site.class, newSiteId);
-                                                //The createEntity doesn't load the name, so we need to set it up manually
-                                                newSite.setName(site.getName());
-                                                setSelectedItem(newSite);
-                                            }
-                                    )));
-                                });
-                            }
-                            protected Region getOrCreateDialogContent() {
-                                bp.setBottom(super.getOrCreateDialogContent());
-                                bp.setCenter(addSitePane);
-                                return bp;
-                            }
-                            @Override
-                            //We had a listener on the search textfield to purpose to add the input as a new site if not existing
-                            protected Node getOrCreateButtonContentFromSelectedItem() {
-                                ObservableList<Site> siteList = siteSelector.getObservableEntities();
-                                searchTextField.textProperty().addListener(new ChangeListener<String>() {
-                                    @Override
-                                    public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                                        List<String> siteNames = siteList.stream()
-                                                .map(Site::getName) // Utilisez la méthode getter pour 'name'
-                                                .collect(Collectors.toList());
-                                        if(searchTextField.getText()!=null && searchTextField.getText().length()>2 && !siteNames.contains(searchTextField.getText())) {
-                                            System.out.println("We add : " + searchTextField.getText());
-                                            addSitePane.setVisible(true);
-                                            addSitePane.setManaged(true);
-                                        }
-                                        else {
-                                            addSitePane.setVisible(false);
-                                            addSitePane.setManaged(false);
-                                        }
-                                    }
-                                });
-                                return super.getOrCreateButtonContentFromSelectedItem();
-                            }
-                        }.always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o)).autoSelectFirstEntity();
-                        siteSelector.selectedItemProperty().addListener(new InvalidationListener() {
-                            public void invalidated(Observable observable) {
-                                eventSite = siteSelector.getSelectedItem();
-                                //We update the timeline and working scheduled item
-                                eventTimeline.setSite(eventSite);
-                                for(ScheduledItem si:workingScheduledItems)
+                                Text addSiteText = I18n.bindI18nProperties(new Text(), "AddNewLocation");
+                                MonoPane addSitePane = new MonoPane(addSiteText);
                                 {
-                                    si.setSite(eventSite);
+                                    addSiteText.setFill(Color.BLUE);
+                                    addSitePane.setMaxWidth(Double.MAX_VALUE);
+                                    addSitePane.setMinHeight(20);
+                                    addSitePane.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+                                    addSitePane.setCursor(Cursor.HAND);
+                                    addSitePane.setOnMousePressed(event -> {
+                                        Site site = updateStoreForSite.insertEntity(Site.class);
+                                        site.setName(searchTextField.getText());
+                                        site.setForeignField("organization",FXOrganization.getOrganization());
+                                        site.setFieldValue("asksForPassport",false);
+                                        site.setFieldValue("online",false);
+                                        site.setFieldValue("hideDates",true);
+                                        site.setFieldValue("forceSoldout",false);
+                                        site.setFieldValue("main",true);
+                                        //TODO to change the hardCodedValue (3 is for teachings)
+                                        site.setFieldValue("itemFamily",3);
+                                        //We had in the database the site now (otherwise too complicated to manage with the actual components)
+                                        updateStoreForSite.submitChanges().onSuccess((batch -> Platform.runLater(()-> {
+                                                    Object newSiteId = batch.getArray()[0].getGeneratedKeys()[0];
+                                                    Site newSite = updateStoreForSite.createEntity(Site.class, newSiteId);
+                                                    //The createEntity doesn't load the name, so we need to set it up manually
+                                                    newSite.setName(site.getName());
+                                                    setSelectedItem(newSite);
+                                                }
+                                        )));
+                                    });
                                 }
-                            }
-                        });
-
-                        locationHBox.getChildren().setAll(siteLabel,siteSelector.getButton());
-                    }));
+                                protected Region getOrCreateDialogContent() {
+                                    bp.setBottom(super.getOrCreateDialogContent());
+                                    bp.setCenter(addSitePane);
+                                    return bp;
+                                }
+                                @Override
+                                //We had a listener on the search textfield to purpose to add the input as a new site if not existing
+                                protected Node getOrCreateButtonContentFromSelectedItem() {
+                                    ObservableList<Site> siteList = siteSelector.getObservableEntities();
+                                    searchTextField.textProperty().addListener(new ChangeListener<String>() {
+                                        @Override
+                                        public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+                                            List<String> siteNames = siteList.stream()
+                                                    .map(Site::getName) // Utilisez la méthode getter pour 'name'
+                                                    .collect(Collectors.toList());
+                                            if(searchTextField.getText()!=null && searchTextField.getText().length()>2 && !siteNames.contains(searchTextField.getText())) {
+                                                System.out.println("We add : " + searchTextField.getText());
+                                                addSitePane.setVisible(true);
+                                                addSitePane.setManaged(true);
+                                            }
+                                            else {
+                                                addSitePane.setVisible(false);
+                                                addSitePane.setManaged(false);
+                                            }
+                                        }
+                                    });
+                                    return super.getOrCreateButtonContentFromSelectedItem();
+                                }
+                            }.always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o)).autoSelectFirstEntity();
+                            siteSelector.selectedItemProperty().addListener(new InvalidationListener() {
+                                public void invalidated(Observable observable) {
+                                    eventSite = siteSelector.getSelectedItem();
+                                    //We update the timeline and working scheduled item
+                                    eventTimeline.setSite(eventSite);
+                                    for(ScheduledItem si:workingScheduledItems)
+                                    {
+                                        si.setSite(eventSite);
+                                    }
+                                }
+                            });
+                            locationHBox.getChildren().setAll(siteLabel,siteSelector.getButton());
+                        }));
+            });
         }));
-
-
 
         titleEventDetailsLabel = I18nControls.bindI18nProperties(new Label(), "EventDetailsTitle");
         titleEventDetailsLabel.setPadding(new Insets(30,0,20,0));
@@ -745,8 +736,8 @@ public final class ManageRecurringEventView {
             return change;}));*/
         nameOfEventTextField.setMinWidth(500);
         nameOfEventTextField.textProperty().addListener((InvalidationListener) obs -> {
-            if(currentEvent!=null) {
-                currentEvent.setName(nameOfEventTextField.getText());
+            if(currentEditedEvent!=null) {
+                currentEditedEvent.setName(nameOfEventTextField.getText());
             }});
         line1InLeftPanel.getChildren().setAll(nameOfEventLabel,nameOfEventTextField);
 
@@ -765,8 +756,8 @@ public final class ManageRecurringEventView {
         descriptionHtmlEditor.setPrefHeight(120);
         descriptionHtmlEditor.setPrefWidth(300);
         descriptionHtmlEditor.textProperty().addListener((InvalidationListener) obs -> {
-            if(currentEvent!=null) {
-                currentEvent.setDescription(descriptionHtmlEditor.getText());
+            if(currentEditedEvent!=null) {
+                currentEditedEvent.setDescription(descriptionHtmlEditor.getText());
             }});
         line3InLeftPanel.setPadding(new Insets(20,0,0,0));
         line3InLeftPanel.getChildren().setAll(descriptionLabel,descriptionHtmlEditor);
@@ -921,7 +912,7 @@ public final class ManageRecurringEventView {
         externalLinkLabel.setPadding(new Insets(0,20,0,0));
         externalLinkTextFied.setPrefWidth(400);
         externalLinkTextFied.textProperty().addListener((InvalidationListener) obs -> {
-                currentEvent.setExternalLink(externalLinkTextFied.getText());
+                currentEditedEvent.setExternalLink(externalLinkTextFied.getText());
         });
         line4.getChildren().addAll(externalLinkLabel, externalLinkTextFied);
 
@@ -932,7 +923,7 @@ public final class ManageRecurringEventView {
         cancelButton.getStyleClass().addAll("recurringEventButton", "background-darkGrey", "font-white");
 
         cancelButton.setOnAction(e -> {
-            displayEventDetails(currentEvent);
+            displayEventDetails(currentEditedEvent);
         });
         cancelButton.disableProperty().bind(currentMode.isEqualTo(ADDMODE));
 
@@ -943,10 +934,11 @@ public final class ManageRecurringEventView {
             if(validateForm())
             {
                 if(previousEventState==null) {
-                    currentEvent.setState(EventState.DRAFT);
+                    currentEditedEvent.setState(EventState.DRAFT);
                 }
-                calendarPane.getDatesPicker().getSelectedDates().removeListener(onChangeDateListener);
                 submitUpdateStoreChanges();
+                //If we add a new Event, put the selection on this event.
+                if(currentMode.get()==ADDMODE) eventVisualMapper.setSelectedEntity(currentEditedEvent);
             }
         });
 
@@ -955,15 +947,14 @@ public final class ManageRecurringEventView {
         publishButton.setOnAction(event -> {
             if(validateForm())
             {
-                calendarPane.getDatesPicker().getSelectedDates().removeListener(onChangeDateListener);
                 switch (previousEventState) {
                     case DRAFT:
                     case ON_HOLD:
                     case TESTING:
-                        currentEvent.setState(EventState.OPEN);
+                        currentEditedEvent.setState(EventState.OPEN);
                         break;
                     case OPEN:
-                        currentEvent.setState(EventState.ON_HOLD);
+                        currentEditedEvent.setState(EventState.ON_HOLD);
                         break;
                     default:
                         break;
@@ -1008,7 +999,7 @@ public final class ManageRecurringEventView {
                         updateStore.cancelChanges();
                         scheduledItemsReadFromDatabase.forEach(element -> updateStore.deleteEntity(element));
                         updateStore.deleteEntity(eventTimeline);
-                        updateStore.deleteEntity(currentEvent);
+                        updateStore.deleteEntity(currentEditedEvent);
                         updateStore.submitChanges()
                                 .onFailure(x->Platform.runLater(() -> {
                                     Text infoText = new Text(I18n.getI18nText("Error"));
@@ -1030,10 +1021,9 @@ public final class ManageRecurringEventView {
                                     BorderPane.setAlignment(okErrorButton,Pos.CENTER);
                         }))
                                 .onSuccess(x -> Platform.runLater(() -> {
-                                    Object imageTag = currentEvent.getId().getPrimaryKey();
+                                    Object imageTag = currentEditedEvent.getId().getPrimaryKey();
                                     deleteCloudPictureIfNecessary(imageTag);
                                     uploadCloudPictureIfNecessary(imageTag);
-                                    resetUpdateStoreAndOtherComponents();
                                 }));
                         dialogCallback.closeDialog();
                     }
@@ -1047,9 +1037,9 @@ public final class ManageRecurringEventView {
                     dialogCallback.closeDialog();
                     //This boolean is used in the case we change of event in the visualMapper, and the user decide de cancel and change.
                     //It allows us to tell the visual mapper to select the previous selected event before the click, without doing any other action than move the selection
-                    changeVisualSelectedEventWithoutAnyOtherAction = true;
-                    eventVisualMapper.setSelectedEntity(selectedEvent);
-                    changeVisualSelectedEventWithoutAnyOtherAction = false;
+                   // changeVisualSelectedEventWithoutAnyOtherAction = true;
+                    eventVisualMapper.setSelectedEntity(currentSelectedEvent);
+                   // changeVisualSelectedEventWithoutAnyOtherAction = false;
                 });
 
 
@@ -1062,7 +1052,7 @@ public final class ManageRecurringEventView {
         rightPaneVBox.getChildren().setAll(line1,datesOfTheEventLabel,calendarPane,line4InLeftPanel,line4);
         eventDetailsPane.getChildren().setAll(leftPaneVBox,rightPaneVBox);
         HBox labelLine = new HBox();
-        labelLine.setAlignment(Pos.TOP_LEFT);
+        labelLine.setAlignment(Pos.BASELINE_LEFT);
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.SOMETIMES);
         labelLine.getChildren().setAll(currentEventLabel,spacer, addButton);
@@ -1080,6 +1070,8 @@ public final class ManageRecurringEventView {
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
         scrollPane.setPadding(new Insets(10));
+
+
         return scrollPane;
     }
 
@@ -1087,13 +1079,13 @@ public final class ManageRecurringEventView {
         updateStore.submitChanges()
                 .onFailure(Console::log)
                 .onSuccess(x -> Platform.runLater(() -> {
-                    Object imageTag = currentEvent.getId().getPrimaryKey();
+                    Object imageTag = currentEditedEvent.getId().getPrimaryKey();
                     deleteCloudPictureIfNecessary(imageTag);
                     uploadCloudPictureIfNecessary(imageTag);
                     isCloudPictureToBeDeleted.setValue(false);
                     isCloudPictureToBeUploaded.setValue(false);
                     cloudPictureFileToUpload = null;
-                    displayEventDetails(currentEvent);
+                    displayEventDetails(currentEditedEvent);
                 }));
 
     }
@@ -1137,12 +1129,18 @@ public final class ManageRecurringEventView {
             workingScheduledItems.addListener(new ListChangeListener<ScheduledItem>() {
                 @Override
                 public void onChanged(Change<? extends ScheduledItem> change) {
-                    recurringEventsVBox.getChildren().clear();
-                    isWorkingScheduledItemEmpty.set(workingScheduledItems.isEmpty());
-                    List<LocalDate> dates = workingScheduledItems.stream().map(scheduledItem -> scheduledItem.getDate()).collect(Collectors.toList());
-                    if(isWorkingScheduledItemEmpty.not().getValue()) {
-                        currentEvent.setStartDate(Collections.min(dates));
-                        currentEvent.setEndDate(Collections.max(dates));
+                    //We call the listener only when the object has been loaded and not during the construction
+                    //ie when currentEditedEvent=currentSelectedEvent
+                    if(currentEditedEvent!= null && (currentEditedEvent==currentObservedEvent)) {
+                        recurringEventsVBox.getChildren().clear();
+                        isWorkingScheduledItemEmpty.set(workingScheduledItems.isEmpty());
+                        List<LocalDate> dates = workingScheduledItems.stream().map(scheduledItem -> scheduledItem.getDate()).collect(Collectors.toList());
+                        if (isWorkingScheduledItemEmpty.not().getValue()) {
+                            if(!Collections.min(dates).equals(currentEditedEvent.getStartDate()))
+                                currentEditedEvent.setStartDate(Collections.min(dates));
+                            if(!Collections.max(dates).equals(currentEditedEvent.getEndDate()))
+                                currentEditedEvent.setEndDate(Collections.max(dates));
+                        }
                     }
                 }
             });
@@ -1164,39 +1162,40 @@ public final class ManageRecurringEventView {
             onChangeDateListener = new ListChangeListener<LocalDate>() {
                 @Override
                 public void onChanged(Change<? extends LocalDate> change) {
-                    while(change.next()) {
-                        if (change.wasAdded()) {
-                            LocalDate date = change.getAddedSubList().get(0);
-                            //Here we haven't found it in the scheduledItemsReadFromDatabase, so we create it.
-                            ScheduledItem scheduledItem = updateStore.insertEntity(ScheduledItem.class);
-                            scheduledItem.setDate(date);
-                            scheduledItem.setSite(eventSite);
-                            scheduledItem.setEvent(currentEvent);
-                            scheduledItem.setTimeLine(eventTimeline);
-                            scheduledItem.setItem(recurringItem);
-                            //scheduledItem.setSite(eventTimeline.getSite());
-                            workingScheduledItems.add(scheduledItem);
-                            sortWorkingScheduledItemsByDate();
-                        }
-                        if (change.wasRemoved()) {
-                            //We remove from the updateStore and the ScheduledItem
-                            LocalDate date = change.getRemoved().get(0);
-                            for (ScheduledItem currentScheduledItem : workingScheduledItems) {
-                                if (currentScheduledItem.getDate().equals(date)) {
-                                    updateStore.deleteEntity(currentScheduledItem);
-                                    workingScheduledItems.remove(currentScheduledItem);
-                                    break;
+                    if(currentEditedEvent!= null && currentEditedEvent==currentObservedEvent) {
+                        while (change.next()) {
+                            if (change.wasAdded()) {
+                                LocalDate date = change.getAddedSubList().get(0);
+                                //Here we haven't found it in the scheduledItemsReadFromDatabase, so we create it.
+                                ScheduledItem scheduledItem = updateStore.insertEntity(ScheduledItem.class);
+                                scheduledItem.setDate(date);
+                                scheduledItem.setSite(eventSite);
+                                scheduledItem.setEvent(currentEditedEvent);
+                                scheduledItem.setTimeLine(eventTimeline);
+                                scheduledItem.setItem(recurringItem);
+                                //scheduledItem.setSite(eventTimeline.getSite());
+                                workingScheduledItems.add(scheduledItem);
+                                sortWorkingScheduledItemsByDate();
+                            }
+                            if (change.wasRemoved()) {
+                                //We remove from the updateStore and the ScheduledItem
+                                LocalDate date = change.getRemoved().get(0);
+                                for (ScheduledItem currentScheduledItem : workingScheduledItems) {
+                                    if (currentScheduledItem.getDate().equals(date)) {
+                                        updateStore.deleteEntity(currentScheduledItem);
+                                        workingScheduledItems.remove(currentScheduledItem);
+                                        break;
+                                    }
                                 }
                             }
-                        }
 
-                        List<LocalDate> localDatesSorted = calendarPane.getDatesPicker().getSelectedDates().stream().sorted().collect(Collectors.toList());
-                        if(localDatesSorted.size()>0) {
-                            currentEvent.setStartDate(localDatesSorted.get(0));
-                            currentEvent.setEndDate(localDatesSorted.get(localDatesSorted.size() - 1));
+                            List<LocalDate> localDatesSorted = calendarPane.getDatesPicker().getSelectedDates().stream().sorted().collect(Collectors.toList());
+                            if (localDatesSorted.size() > 0) {
+                                currentEditedEvent.setStartDate(localDatesSorted.get(0));
+                                currentEditedEvent.setEndDate(localDatesSorted.get(localDatesSorted.size() - 1));
+                            }
                         }
                     }
-
                 }
             };
             //We bind the workingScheduledItems and children of the recurringEventsVBox
@@ -1316,7 +1315,7 @@ public final class ManageRecurringEventView {
      * @return true if the url is valid, false otherwise
      */
     public static boolean isValidUrl(String url) {
-        if(url=="")
+        if(Objects.equals(url, ""))
             return true;
         try {
             new URL(url);

@@ -633,6 +633,7 @@
     <source path="dev/webfx/stack/orm/entity/result"/>
     <source path="dev/webfx/stack/orm/entity/result/impl"/>
     <!--========================< webfx-stack-orm-entity-controls >=========================-->
+    <source path="dev/webfx/stack/orm/entity/controls/entity/masterslave"/>
     <source path="dev/webfx/stack/orm/entity/controls/entity/selector"/>
     <source path="dev/webfx/stack/orm/entity/controls/entity/sheet"/>
     <!--===========================< webfx-stack-orm-expression >===========================-->
