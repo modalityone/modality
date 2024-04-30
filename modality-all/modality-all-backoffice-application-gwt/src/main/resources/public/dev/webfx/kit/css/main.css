@@ -172,8 +172,16 @@ tr.selected, .grid-row.selected {
     font-weight: bold;
 }
 
+.bold
+{
+    font-weight: bold;
+}
 .font-size-35px {
     font-size: 35px;
+}
+
+.font-size-22px {
+    font-size: 22px;
 }
 
 .font-size-16px {

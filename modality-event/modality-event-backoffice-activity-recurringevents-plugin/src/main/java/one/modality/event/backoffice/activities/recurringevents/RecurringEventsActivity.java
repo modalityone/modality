@@ -5,6 +5,8 @@ import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import one.modality.base.backoffice.mainframe.headertabs.fx.FXMainFrameHeaderTabs;
+import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
+import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.client.tile.TabsBar;
 
 public final class RecurringEventsActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
@@ -26,11 +28,14 @@ public final class RecurringEventsActivity extends ViewDomainActivityBase implem
     public void onResume() {
         super.onResume();
         FXMainFrameHeaderTabs.setHeaderTabs(headerTabsBar.getTabs());
+        FXGanttVisibility.setGanttVisibility(GanttVisibility.EVENTS);
+
     }
 
     @Override
     public void onPause() {
         FXMainFrameHeaderTabs.clearHeaderTabs();
+        FXGanttVisibility.setGanttVisibility(GanttVisibility.HIDDEN);
         super.onPause();
     }
 

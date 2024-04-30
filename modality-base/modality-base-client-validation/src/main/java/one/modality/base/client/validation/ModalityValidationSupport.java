@@ -68,6 +68,11 @@ public final class ModalityValidationSupport {
         return firstInvalidValidator == null;
     }
 
+    public void reset() {
+        // This will hide the possible validation error popup and other warning icons
+        validatingProperty.setValue(false);
+    }
+
     private Validator firstInvalidValidator() {
         return Collections.findFirst(validators, validator -> !validator.getValidationStatus().isValid());
     }

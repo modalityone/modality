@@ -107,11 +107,22 @@ VisualLineChart, VisualPieChart, VisualBarChart, VisualAreaChart {
     -fx-max-height:30px;
     -fx-pref-width: 150px;
     -fx-font-weight: bolder;
+    -fx-alignment: center;
 }
+
+.bold
+{
+-fx-font-weight: bolder;
+}
+
 
 .font-size-35px
 {
   -fx-font-size: 35px;
+}
+.font-size-22px
+{
+  -fx-font-size: 22px;
 }
 .font-size-16px
 {
@@ -139,6 +150,16 @@ VisualLineChart, VisualPieChart, VisualBarChart, VisualAreaChart {
     -fx-text-fill: #0096D6;
     -fx-fill: #0096D6;
 }
+
+.table-row-cell:selected .font-blue
+{
+
+}
+
+.table-row-cell:selected {
+  -fx-background: #BBBBBB;
+}
+
 
 .font-orange
 {
@@ -181,6 +202,10 @@ VisualLineChart, VisualPieChart, VisualBarChart, VisualAreaChart {
 
 .background-green {
     -fx-background-color: #41BA4D;
+}
+
+.background-orange {
+    -fx-background-color: orange;
 }
 
 .background-blue {
