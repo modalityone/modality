@@ -122,6 +122,7 @@ public final class ManageRecurringEventView {
     private boolean validationSupportInitialised = false;
     private final BooleanProperty isWorkingScheduledItemEmpty = new SimpleBooleanProperty(true);
     private final BooleanProperty isPictureDisplayed = new SimpleBooleanProperty(false);
+    private final BooleanProperty isEventDeletable = new SimpleBooleanProperty(true);
     private EventState previousEventState;
     private static final int EDIT_MODE = 1;
     private static final int ADD_MODE = -1;
@@ -129,10 +130,10 @@ public final class ManageRecurringEventView {
         @Override
         protected void invalidated() {
             boolean isShowing = get() == ADD_MODE;
+            isEventDeletable.setValue(!isShowing);
             locationHBox.setVisible(isShowing);
             locationHBox.setManaged(isShowing);
             cancelButton.setVisible(!isShowing);
-            deleteButton.setVisible(!isShowing);
         }
     };
     private EntityButtonSelector<Site> siteSelector;
@@ -262,6 +263,8 @@ public final class ManageRecurringEventView {
             }
         };
 
+
+
         updateStore.hasChangesProperty().addListener(observable -> updateStore.hasChangesProperty().getValue());
 
         //Now we bind the different element (FXEvent, Visual Mapper, and MasterSlaveController)
@@ -330,6 +333,7 @@ public final class ManageRecurringEventView {
                         calendarPane.getDatesPicker().setDateColorGetter(localDate -> {
                             ScheduledItem scheduledItem = scheduledItemList.stream().filter(si->localDate.equals(si.getDate())).findFirst().orElse(null);
                             if(scheduledItem!=null && scheduledItem.getFieldValue("attendance")!=null) {
+                                isEventDeletable.setValue(false);
                                 return Color.LIGHTGRAY;
                             }
                             else {
@@ -389,16 +393,17 @@ public final class ManageRecurringEventView {
                     saveButton.disableProperty().bind(updateStoreOrPictureHasChanged.not());
                     cancelButton.disableProperty().bind(updateStoreOrPictureHasChanged.not());
                     trashImage.visibleProperty().bind(updateTrashButtonOnPictureDisplayed);
+                    deleteButton.disableProperty().bind(isEventDeletable.not());
                     currentObservedEvent=currentEditedEvent;
                 }));
         }
 
-
    /**
     * This method is used to reset the different components in this class
     */
-    private void resetUpdateStoreAndOtherComponents()
-    {
+    private void resetUpdateStoreAndOtherComponents() {
+        validationSupport.reset();
+        isEventDeletable.setValue(true);
         currentObservedEvent = null;
         isCloudPictureToBeDeleted.setValue(false);
         isCloudPictureToBeUploaded.setValue(false);
@@ -419,8 +424,7 @@ public final class ManageRecurringEventView {
     /**
      * This method is used to reset the text fields
      */
-    private void resetTextFields()
-    {
+    private void resetTextFields() {
         nameOfEventTextField.setText("");
         durationTextField.setText("");
         timeOfTheEventTextField.setText("");
@@ -467,8 +471,7 @@ public final class ManageRecurringEventView {
         return validationSupport.isValid();
     }
 
-    public void uploadCloudPictureIfNecessary(Object eventId)
-    {
+    public void uploadCloudPictureIfNecessary(Object eventId) {
         if(isCloudPictureToBeUploaded.getValue())
         {
             String pictureId = String.valueOf(eventId);
@@ -482,8 +485,7 @@ public final class ManageRecurringEventView {
         }
     }
 
-    public void deleteCloudPictureIfNecessary(Object eventId)
-    {
+    public void deleteCloudPictureIfNecessary(Object eventId) {
         if(isCloudPictureToBeDeleted.getValue()) {
             //We delete the pictures, and all the cached picture in cloudinary that can have been transformed, related
             //to this assets
@@ -511,8 +513,7 @@ public final class ManageRecurringEventView {
      *
      * @return A scrollablePane that is the UI for this class
      */
-    public Node buildContainer()
-    {
+    public Node buildContainer() {
         BorderPane mainFrame = new BorderPane();
         //Displaying The title of the frame
         Label title = I18nControls.bindI18nProperties(new Label(), "EventTitle");
@@ -820,7 +821,7 @@ public final class ManageRecurringEventView {
         cancelButton.getStyleClass().addAll("recurringEventButton", "background-darkGrey", "font-white");
 
         cancelButton.setOnAction(e -> displayEventDetails(currentEditedEvent));
-        cancelButton.disableProperty().bind(currentMode.isEqualTo(ADD_MODE));
+        cancelButton.disableProperty().bind(FXProperties.compute(currentMode, mode -> mode.intValue() == ADD_MODE));
 
         saveButton = I18nControls.bindI18nProperties(new Button(),"SaveButton");
         saveButton.setGraphicTextGap(10);
@@ -991,16 +992,14 @@ public final class ManageRecurringEventView {
      * This method is used to sort the list workingScheduledItems by Date
      * This method is used to sort the list workingScheduledItems by Date
      */
-    private void sortWorkingScheduledItemsByDate()
-    {
+    private void sortWorkingScheduledItemsByDate() {
         workingScheduledItems.sort(Comparator.comparing(EntityHasLocalDate::getDate));
     }
     /**
      * This private class is used to display the calendar
      * containing the datePicker, the separator vertical line, and the list of start time
      */
-    private class EventCalendarPane extends Pane
-    {
+    private class EventCalendarPane extends Pane {
         Label daySelected = I18nControls.bindI18nProperties(new Label(),"DaysSelected");
         Label selectEachDayLabel = I18nControls.bindI18nProperties(new Label(),"SelectTheDays");
         Line verticalLine;
@@ -1086,8 +1085,7 @@ public final class ManageRecurringEventView {
              * UI elements of the scheduledItem, the Date is read Only,
              * the startTime is editable.
              */
-            private BorderPane drawScheduledItem(ScheduledItem scheduledItem)
-            {
+            private BorderPane drawScheduledItem(ScheduledItem scheduledItem) {
                 LocalDate currentDate = scheduledItem.getDate();
                 SVGPath trashDate = SvgIcons.createTrashSVGPath();
                 trashDate.setTranslateY(2);
@@ -1169,8 +1167,7 @@ public final class ManageRecurringEventView {
      * @param text the string to be tested
      * @return true, is the string parameter can be converted in LocalTime, false otherwise
      */
-    private static boolean isLocalTimeTextValid(String text)
-    {
+    private static boolean isLocalTimeTextValid(String text) {
         try {
             return LocalTime.parse(text)!=null;
         } catch (DateTimeParseException e) {
