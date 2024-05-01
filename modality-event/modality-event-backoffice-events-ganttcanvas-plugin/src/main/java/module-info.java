@@ -24,6 +24,7 @@ module modality.event.backoffice.events.ganttcanvas.plugin {
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.reactive.entities;
+    requires webfx.extras.time.window;
 
     // Exported packages
     exports one.modality.event.backoffice.events.ganttcanvas;

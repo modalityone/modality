@@ -7,6 +7,7 @@ import dev.webfx.extras.theme.ThemeRegistry;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
 import dev.webfx.extras.time.layout.impl.ChildBounds;
+import dev.webfx.extras.time.window.TimeWindowUtil;
 import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.Entities;
@@ -104,6 +105,22 @@ public final class EventsGanttCanvas {
             }
         });
 
+        // We ensure that the selected event is always visible in the gantt canvas. This eventually requires shifting
+        // the time window to make this happen.
+        selectedEventProperty().addListener(new InvalidationListener() {
+            @Override
+            public void invalidated(Observable observable) {
+                Event event = selectedEventProperty().get();
+                if (event != null) {
+                    LocalDate startDate = event.getStartDate();
+                    LocalDate endDate = event.getEndDate();
+                    if (startDate != null && endDate != null) {
+                        TimeWindowUtil.ensureTimeRangeVisible(FXGanttTimeWindow.ganttTimeWindow(), startDate, endDate, datedGanttCanvas.getTimeProjector().getTemporalUnit());
+                    }
+                }
+            }
+        });
+
         // The following properties depend on the theme mode (light/dark mode, etc...):
         ThemeRegistry.runNowAndOnModeChange(() -> eventBarDrawer
                 .setTextFont(TextTheme.getFont(FontDef.font(FontWeight.BOLD, 10)))
@@ -172,8 +189,8 @@ public final class EventsGanttCanvas {
     }
 
     private void bindFXEventToSelection() {
-        selectedEventProperty().set(FXEvent.getEvent());
-        FXEvent.eventProperty().bindBidirectional(selectedEventProperty());
+        // Bidirectional binding between selectEventProperty and FXEvent.eventProperty() <- taking this inital value
+        selectedEventProperty().bindBidirectional(FXEvent.eventProperty());
     }
 
     private void startLogic(Object mixin) {
