@@ -18,7 +18,6 @@ PassUpdated:
   graphic: "images/s16/actions/passUpdated.png"
 Cancel:
   text: "Cancel"
-  graphic: "images/s16/actions/cancel.png"
 Uncancel:
   text: "Uncancel"
   graphic: "images/s16/actions/cancel.png"
@@ -27,7 +26,6 @@ ToggleCancel:
   graphic: "[Cancel]"
 Confirm:
   text: "Confirm"
-  graphic: "images/s16/actions/confirm.png"
 Flag:
   text: "Flag"
   graphic: "images/s16/actions/flag.png"

@@ -6,7 +6,6 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
-import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.EventState;
 
 /**
@@ -44,24 +43,20 @@ final class EventRenderers {
                     break;
                 default:
                     toReturn.getStyleClass().add("font-orange");
-
+                    break;
             }
             return toReturn;
         });
 
         ValueRendererRegistry.registerValueRenderer("editEventRenderer", (value, context) -> {
-            Event event = (Event) value;
             Hyperlink editHyperLink = new Hyperlink("Edit");
             editHyperLink.setOnAction(e -> {
                 //   displayEventDetails(event);
             });
             SVGPath trashSVGPath = SvgIcons.createTrashSVGPath();
             trashSVGPath.getStyleClass().add("font-red");
-            trashSVGPath.setOnMouseClicked(e ->  {
-                System.out.println(e.toString());
-            });
-            HBox line = new HBox(editHyperLink);
-            return line;
+            trashSVGPath.setOnMouseClicked(e -> System.out.println(e.toString()));
+            return new HBox(editHyperLink);
         });
 
     }
