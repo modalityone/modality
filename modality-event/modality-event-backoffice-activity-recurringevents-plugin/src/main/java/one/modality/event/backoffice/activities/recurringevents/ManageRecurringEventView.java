@@ -23,8 +23,8 @@ import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
-import dev.webfx.stack.orm.entity.controls.entity.masterslave.MasterSlaveEntityController;
-import dev.webfx.stack.orm.entity.controls.entity.masterslave.SlaveEntityEditor;
+import dev.webfx.stack.orm.entity.controls.entity.masterslave.MasterSlaveLinker;
+import dev.webfx.stack.orm.entity.controls.entity.masterslave.SlaveEditor;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
@@ -33,6 +33,7 @@ import dev.webfx.stack.ui.dialog.DialogUtil;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -64,6 +65,7 @@ import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.markers.EntityHasLocalDate;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.event.backoffice.event.fx.FXEvent;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -75,8 +77,12 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
+
 import static dev.webfx.extras.webtext.HtmlTextEditor.Mode.STANDARD;
 
+/**
+ *
+ */
 public final class ManageRecurringEventView {
     private final VisualGrid eventTable = new VisualGrid();
     private final TextField nameOfEventTextField = I18nControls.bindI18nProperties( new TextField(),"NameOfTheEvent");
@@ -120,7 +126,7 @@ public final class ManageRecurringEventView {
     private final UpdateStore updateStore = UpdateStore.createAbove(entityStore);
     private final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
     private boolean validationSupportInitialised = false;
-    private final BooleanProperty isWorkingScheduledItemEmpty = new SimpleBooleanProperty(true);
+    private final BooleanExpression isWorkingScheduledItemEmpty = ObservableLists.isEmpty(workingScheduledItems);
     private final BooleanProperty isPictureDisplayed = new SimpleBooleanProperty(false);
     private final BooleanProperty isEventDeletable = new SimpleBooleanProperty(true);
     private EventState previousEventState;
@@ -148,24 +154,23 @@ public final class ManageRecurringEventView {
     private ReactiveVisualMapper<Event> eventVisualMapper;
     private boolean areWeDeleting = false;
 
-    //This parameter will allow us to manage the interaction and behaviour of the Panel that display the details of an event and the event selected
-    final private MasterSlaveEntityController<Event> masterSlaveEventController = new MasterSlaveEntityController<>(new SlaveEntityEditor<>() {
+    private final SlaveEditor<Event> eventDetailsSlaveEditor = new SlaveEditor<>() {
         @Override
-        public void showEntityChangeApprovalDialog(Runnable onApprovalCallback) {
-            Text titleConfirmationText = new Text(I18n.getI18nText("AreYouSure"));
+        public void showChangeApprovalDialog(Runnable onApprovalCallback) {
+            Text titleConfirmationText = I18n.bindI18nProperties(new Text(),"AreYouSure");
             titleConfirmationText.getStyleClass().add("font-green");
             titleConfirmationText.getStyleClass().add("font-size-22px");
             titleConfirmationText.getStyleClass().add("bold");
             BorderPane dialog = new BorderPane();
             dialog.setTop(titleConfirmationText);
             BorderPane.setAlignment(titleConfirmationText, Pos.CENTER);
-            Text confirmationText = new Text(I18n.getI18nText("CancelChangesConfirmation"));
+            Text confirmationText = I18n.bindI18nProperties(new Text(),"CancelChangesConfirmation");
             dialog.setCenter(confirmationText);
             BorderPane.setAlignment(confirmationText, Pos.CENTER);
             BorderPane.setMargin(confirmationText, new Insets(30, 0, 30, 0));
-            Button okButton = new Button(I18n.getI18nText("Confirm"));
+            Button okButton = I18nControls.bindI18nProperties(new Button(),"Confirm");
             okButton.getStyleClass().addAll("recurringEventButton", "background-red", "font-white");
-            Button cancelActionButton = new Button(I18n.getI18nText("Cancel"));
+            Button cancelActionButton = I18nControls.bindI18nProperties(new Button(),"Cancel");
             cancelActionButton.getStyleClass().addAll("recurringEventButton", "background-darkGrey", "font-white");
             HBox buttonsHBox = new HBox(cancelActionButton, okButton);
             buttonsHBox.setAlignment(Pos.CENTER);
@@ -186,22 +191,24 @@ public final class ManageRecurringEventView {
          * @param approvedEntity the approved Entity
          */
         @Override
-        public void setEditingEntity(Event approvedEntity) {
+        public void setSlave(Event approvedEntity) {
             displayEventDetails(approvedEntity);
             currentEditedEvent = approvedEntity;
         }
 
         @Override
-        public Event getEditingEntity() {
+        public Event getSlave() {
             return currentEditedEvent;
         }
 
         @Override
         public boolean hasChanges() {
-            if(areWeDeleting) return false;
+            if (areWeDeleting) return false;
             return updateStore.hasChanges() || updateStoreOrPictureHasChanged.get();
         }
-    });
+    };
+    //This parameter will allow us to manage the interaction and behaviour of the Panel that display the details of an event and the event selected
+    final private MasterSlaveLinker<Event> masterSlaveEventLinker = new MasterSlaveLinker<>(eventDetailsSlaveEditor);
 
     public ManageRecurringEventView(ButtonFactoryMixin mixin) {
         this.mixin = mixin;
@@ -262,16 +269,11 @@ public final class ManageRecurringEventView {
                 return isPictureDisplayed.getValue();
             }
         };
-
-
-
         updateStore.hasChangesProperty().addListener(observable -> updateStore.hasChangesProperty().getValue());
-
         //Now we bind the different element (FXEvent, Visual Mapper, and MasterSlaveController)
         eventVisualMapper.requestedSelectedEntityProperty().bindBidirectional(FXEvent.eventProperty());
-        masterSlaveEventController.masterEntityProperty().bindBidirectional(eventVisualMapper.selectedEntityProperty());
+        masterSlaveEventLinker.masterEntityProperty().bindBidirectional(eventVisualMapper.selectedEntityProperty());
     }
-
     /**
      * This method is called when we select an event, it takes the info in the database
      * and initialise the class variable.
@@ -292,12 +294,11 @@ public final class ManageRecurringEventView {
         eventDetailsVBox.setVisible(true);
         eventDetailsVBox.setManaged(true);
         previousEventState = e.getState();
-
+        if(previousEventState==null) previousEventState = EventState.DRAFT;
         switch (previousEventState) {
             case DRAFT:
             case ON_HOLD:
             case TESTING:
-               // publishButton.setText(I18n.getI18nText("PublishButton"));
                 I18nControls.bindI18nProperties(publishButton,"PublishButton");
                 publishButton.getStyleClass().setAll("recurringEventButton", "background-green", "font-white");
                 break;
@@ -536,7 +537,7 @@ public final class ManageRecurringEventView {
         //We manage the property of the button in css
         addButton.getStyleClass().addAll("recurringEventButton", "background-green", "font-white");
 
-        addButton.setOnAction((event -> masterSlaveEventController.checkSlaveEntityChangeApproval(true, () -> {
+        addButton.setOnAction((event -> masterSlaveEventLinker.checkSlaveEntityChangeApproval(true, () -> {
             resetTextFields();
             resetUpdateStoreAndOtherComponents();
             eventDetailsVBox.setVisible(true);
@@ -835,7 +836,7 @@ public final class ManageRecurringEventView {
                 }
                 submitUpdateStoreChanges();
                 //If we add a new Event, put the selection on this event.
-                if(currentMode.get()== ADD_MODE) eventVisualMapper.setSelectedEntity(currentEditedEvent);
+               // if(currentMode.get()== ADD_MODE) eventVisualMapper.setSelectedEntity(currentEditedEvent);
             }
         });
 
@@ -872,21 +873,21 @@ public final class ManageRecurringEventView {
             //If the event is null, it means the selection has been removed from the visual mapper from the visual mapper.
             if(event!=null) {
                 //We open a dialog box asking if we want to delete the event
-                Text titleConfirmationText = new Text(I18n.getI18nText("AreYouSure"));
+                Text titleConfirmationText = I18n.bindI18nProperties(new Text(),"AreYouSure");
                 titleConfirmationText.getStyleClass().add("font-green");
                 titleConfirmationText.getStyleClass().add("font-size-22px");
                 titleConfirmationText.getStyleClass().add("bold");
                 BorderPane dialog = new BorderPane();
                 dialog.setTop(titleConfirmationText);
                 BorderPane.setAlignment(titleConfirmationText,Pos.CENTER);
-                Text confirmationText = new Text(I18n.getI18nText("DeleteConfirmation"));
+                Text confirmationText = I18n.bindI18nProperties(new Text(),"DeleteConfirmation");
                 dialog.setCenter(confirmationText);
                 BorderPane.setAlignment(confirmationText,Pos.CENTER);
                 BorderPane.setMargin(confirmationText,new Insets(30,0,30,0));
-                Button okDeleteButton = new Button(I18n.getI18nText("Confirm"));
+                Button okDeleteButton = I18nControls.bindI18nProperties(new Button(),"Confirm");
                 okDeleteButton.getStyleClass().addAll("recurringEventButton", "background-red", "font-white");
 
-                Button cancelActionButton = new Button(I18n.getI18nText("Cancel"));
+                Button cancelActionButton = I18nControls.bindI18nProperties(new Button(),"Cancel");
                 cancelActionButton.getStyleClass().addAll("recurringEventButton", "background-darkGrey", "font-white");
                 HBox buttonsHBox = new HBox(cancelActionButton,okDeleteButton);
                 buttonsHBox.setAlignment(Pos.CENTER);
@@ -904,18 +905,18 @@ public final class ManageRecurringEventView {
                         updateStore.submitChanges()
                                 .onFailure(x->Platform.runLater(() -> {
                                     areWeDeleting = false;
-                                    Text infoText = new Text(I18n.getI18nText("Error"));
+                                    Text infoText = I18n.bindI18nProperties(new Text(),"Error");
                                     infoText.getStyleClass().add("font-green");
                                     infoText.getStyleClass().add("font-size-22px");
                                     infoText.getStyleClass().add("bold");
                                     BorderPane errorDialog = new BorderPane();
                                     errorDialog.setTop(infoText);
                                     BorderPane.setAlignment(titleConfirmationText,Pos.CENTER);
-                                    Text deleteErrorTest = new Text(I18n.getI18nText("ErrorWhileDeletingEvent"));
+                                    Text deleteErrorTest = I18n.bindI18nProperties(new Text(),"ErrorWhileDeletingEvent");
                                     errorDialog.setCenter(deleteErrorTest);
                                     BorderPane.setAlignment(deleteErrorTest,Pos.CENTER);
                                     BorderPane.setMargin(deleteErrorTest,new Insets(30,0,30,0));
-                                    Button okErrorButton = new Button(I18n.getI18nText("Ok"));
+                                    Button okErrorButton = I18nControls.bindI18nProperties(new Button(),"Ok");
                                     okErrorButton.getStyleClass().addAll("recurringEventButton", "background-red", "font-white");
                                     DialogCallback errorMessageCallback = DialogUtil.showModalNodeInGoldLayout(errorDialog, FXMainFrameDialogArea.getDialogArea());
                                     okErrorButton.setOnAction(m-> errorMessageCallback.closeDialog());
@@ -983,6 +984,7 @@ public final class ManageRecurringEventView {
                     isCloudPictureToBeDeleted.setValue(false);
                     isCloudPictureToBeUploaded.setValue(false);
                     cloudPictureFileToUpload = null;
+                    if(currentMode.get()==ADD_MODE) eventVisualMapper.requestSelectedEntity(currentEditedEvent);
                     displayEventDetails(currentEditedEvent);
                 }));
 
@@ -1013,9 +1015,9 @@ public final class ManageRecurringEventView {
             workingScheduledItems.addListener((ListChangeListener<ScheduledItem>) change -> {
                 //We call the listener only when the object has been loaded and not during the construction
                 //ie when currentEditedEvent=currentSelectedEvent
+              //  isWorkingScheduledItemEmpty.set(workingScheduledItems.isEmpty());
                 if(currentEditedEvent!= null && (currentEditedEvent==currentObservedEvent)) {
                     recurringEventsVBox.getChildren().clear();
-                    isWorkingScheduledItemEmpty.set(workingScheduledItems.isEmpty());
                     List<LocalDate> dates = workingScheduledItems.stream().map(EntityHasLocalDate::getDate).collect(Collectors.toList());
                     if (isWorkingScheduledItemEmpty.not().getValue()) {
                         if(!Collections.min(dates).equals(currentEditedEvent.getStartDate()))
@@ -1181,7 +1183,7 @@ public final class ManageRecurringEventView {
      * @return true if the url is valid, false otherwise
      */
     public static boolean isValidUrl(String url) {
-        if(Objects.equals(url, ""))
+        if(Objects.equals(url, "") || url==null)
             return true;
         try {
             new URL(url);

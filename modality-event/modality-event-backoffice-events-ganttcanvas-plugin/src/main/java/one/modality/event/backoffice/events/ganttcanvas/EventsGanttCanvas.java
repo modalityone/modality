@@ -196,7 +196,7 @@ public final class EventsGanttCanvas {
     private void startLogic(Object mixin) {
         // Loading events to be displayed in the gantt canvas
         ReactiveEntitiesMapper<Event> eventReactiveEntitiesMapper = ReactiveEntitiesMapper.<Event>createPushReactiveChain(mixin)
-                .always("{class: 'Event', alias: 'e', fields: 'name,startDate,endDate,type.recurringItem', where: 'active'}")
+                .always("{class: 'Event', alias: 'e', fields: 'name,startDate,endDate,type.recurringItem'}")
                 // Stopping querying the server when then gantt visibility is not set to EVENTS
                 .ifNotEquals(FXGanttVisibility.ganttVisibilityProperty(), GanttVisibility.EVENTS, null)
                 // Returning events for the selected organization only (or returning an empty set if no organization is selected)
