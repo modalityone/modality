@@ -27,6 +27,14 @@ public interface Event extends Entity,
         return EventState.of(getStringFieldValue("state"));
     }
 
+    default void setAdvertised(Boolean advertised) {
+        setFieldValue("advertised", advertised);
+    }
+
+    default Boolean isAdvertised() {
+        return getBooleanFieldValue("advertised");
+    }
+
 
     default void setType(Object type) {
         setForeignField("type", type);
