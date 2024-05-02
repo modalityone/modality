@@ -16,14 +16,19 @@ import dev.webfx.extras.time.layout.canvas.MultiLayerLocalDateCanvasDrawer;
 import dev.webfx.extras.time.layout.canvas.TimeCanvasUtil;
 import dev.webfx.extras.time.layout.gantt.GanttLayout;
 import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
+import dev.webfx.extras.time.projector.AnimatedTimeProjector;
 import dev.webfx.extras.time.projector.TimeProjector;
 import dev.webfx.extras.time.window.TimeWindow;
+import dev.webfx.extras.util.animation.Animations;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.resource.Resource;
 import dev.webfx.platform.util.Objects;
 import dev.webfx.stack.i18n.I18n;
 import javafx.animation.Interpolator;
+import javafx.animation.Timeline;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
@@ -73,8 +78,14 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
     // Strip properties:
     private GanttLayout<?, LocalDate> stripLayer; // depending on zoom level, strips may be days, months, weeks or years
     private Paint stripStroke;
+    private Timeline animationTimeline; // used for horizontal animation on time window change
 
     public DatedGanttCanvas() {
+        // Setting an animatedTimeProjector on the global layout to allow possible horizontal animation
+        TimeProjector<LocalDate> untranslatedTimeProjector = daysLayer.getTimeProjector();
+        AnimatedTimeProjector<LocalDate> animatedTimeProjector = new AnimatedTimeProjector<>(untranslatedTimeProjector);
+        globalLayout.setTimeProjector(animatedTimeProjector);
+
         // Adding the layers in the gantt canvas.
         addLayer(daysLayer, this::drawDay);
         addLayer(weeksLayer, this::drawWeek);
@@ -105,6 +116,49 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
         FXProperties.runNowAndOnPropertiesChange(this::updateI18nTexts, I18n.dictionaryProperty());
 
         FXGanttHighlight.addDayHighlight(daysLayer, globalCanvasDrawer);
+
+        // Animation management on time window change (starting animation timeline)
+        timeWindowEndProperty().addListener(new InvalidationListener() { // end changes after start (so both are updated at this point)
+            private LocalDate lastTimeWindowStart;
+            @Override
+            public void invalidated(Observable observable) {
+                LocalDate newTimeWindowStart = getTimeWindowStart();
+                if (lastTimeWindowStart != null) { // ignoring first call
+                    // We compute the horizontal shift
+                    double xStartBeforeChange = getTimeProjector().timeToX(lastTimeWindowStart, true, false);
+                    double xStartAfterChange = untranslatedTimeProjector.timeToX(newTimeWindowStart, true, false);
+                    double deltaX = xStartAfterChange - xStartBeforeChange;
+                    // We translate the animated time projector to the opposite amount so the time window looks unchanged to the user for now
+                    animatedTimeProjector.setTranslateX(-deltaX);
+                    // Stopping a possible previous animation
+                    if (animationTimeline != null)
+                        animationTimeline.stop();
+                    // Animating the horizontal translation to go back to 0 (where the time window was asked to start).
+                    animationTimeline = Animations.animateProperty(animatedTimeProjector.translateXProperty(), 0);
+                }
+                lastTimeWindowStart = newTimeWindowStart;
+            }
+        });
+
+        // Animation management on time window change (during animation timeline)
+        animatedTimeProjector.translateXProperty().addListener(observable -> {
+            // Getting the start and end of the appearing time window to the user at this time of the animation timeline
+            LocalDate start = animatedTimeProjector.xToTime(0);
+            LocalDate end = animatedTimeProjector.xToTime(canvasPane.getWidth());
+            // Populating the days, weeks, months & years over that appearing time window
+            LocalDateGanttLayout.populateDayLocalDateGanttLayout(daysLayer, start, end); // 0
+            LocalDateGanttLayout.populateYearWeekLocalDateGanttLayout(weeksLayer, start, end); // 1
+            LocalDateGanttLayout.populateYearMonthLocalDateGanttLayout(monthsLayer, start, end); //2
+            LocalDateGanttLayout.populateYearLocalDateGanttLayout(yearsLayer, start, end); // 3
+            // For the following layers (such as events), we don't repopulate, but just invalidate objects so their
+            // layout position is recomputed with the updated animated time projector.
+            for (int i = 4, n = globalLayout.getLayers().size(); i < n; i++) {
+                TimeLayout<?, LocalDate> layer = globalLayout.getLayers().get(i);
+                for (int j = 0, m = layer.getChildren().size(); j < m; j++) {
+                    layer.getChildBounds(j).invalidateObject();
+                }
+            }
+        });
     }
 
     public Canvas getCanvas() {
@@ -116,7 +170,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
     }
 
     public TimeProjector<LocalDate> getTimeProjector() {
-        return daysLayer.getTimeProjector();
+        return globalLayout.getTimeProjector();
     }
 
     @Override

@@ -25,6 +25,7 @@ module modality.base.backoffice.gantt.canvas {
     requires webfx.platform.service;
     requires webfx.platform.util;
     requires webfx.stack.i18n;
+    requires webfx.extras.util.animation;
 
     // Exported packages
     exports one.modality.base.backoffice.ganttcanvas;
