@@ -20,12 +20,12 @@ module modality.event.backoffice.events.ganttcanvas.plugin {
     requires webfx.extras.theme;
     requires webfx.extras.time.layout;
     requires webfx.extras.time.layout.gantt;
+    requires webfx.extras.time.window;
+    requires webfx.kit.util;
     requires webfx.stack.cache.client;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.reactive.entities;
-    requires webfx.extras.time.window;
-    requires webfx.kit.util;
 
     // Exported packages
     exports one.modality.event.backoffice.events.ganttcanvas;
