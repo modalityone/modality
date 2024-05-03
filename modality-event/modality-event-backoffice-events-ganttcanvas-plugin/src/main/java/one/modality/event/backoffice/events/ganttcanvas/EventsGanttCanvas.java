@@ -8,13 +8,15 @@ import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
 import dev.webfx.extras.time.layout.impl.ChildBounds;
 import dev.webfx.extras.time.window.TimeWindowUtil;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.FontWeight;
@@ -77,6 +79,34 @@ public final class EventsGanttCanvas {
             // Setting up recurringEventDateBarDrawer global properties (properties specific to events are set in drawRecurringEventDate())
             .setRadius(BAR_RADIUS);
 
+    private boolean syncingSelectionFromGantt;
+
+    private final ObjectProperty<Event> selectedEventProperty = new SimpleObjectProperty<>() {
+        @Override
+        protected void invalidated() {
+            // Preventing reentrant calls from internal synchronization
+            if (syncingSelectionFromGantt)
+                return;
+
+            // At this point, the event change comes from another component than this event gantt canvas
+
+            // 1) Reflecting the new event selection in the gantt canvas
+            Event event = get();
+            eventsLayer.setSelectedChild(event);
+
+            // 2) Animating the time window if the new event is not visible in the current one
+            // We ensure that the selected event is always visible in the gantt canvas. This eventually requires shifting
+            // the time window to make this happen.
+            if (event != null) {
+                LocalDate startDate = event.getStartDate();
+                LocalDate endDate = event.getEndDate();
+                if (startDate != null && endDate != null) {
+                    TimeWindowUtil.ensureTimeRangeVisible(FXGanttTimeWindow.ganttTimeWindow(), startDate, endDate, datedGanttCanvas.getTimeProjector().getTemporalUnit());
+                }
+            }
+        }
+    };
+
     public EventsGanttCanvas() {
         // datedGanttCanvas is registered as the referent in FXGanttTimeWindow for pairing other gantt canvas, so their
         // horizontal time axis stay aligned with this datedGanttCanvas time axis even if their horizontal origin differs
@@ -98,33 +128,32 @@ public final class EventsGanttCanvas {
         // works only if the recurring event has been loaded and positioned in the gantt canvas before (otherwise we
         // can't tell yet the date Y position, and we hide it by setting it a negative Y). So we intercept the arrival
         // of events from the server, and invalidate at this point the vertical layout of all recurring dates.
-        eventsLayer.getChildren().addListener(new InvalidationListener() { // means we receive events from the server
-            @Override
-            public void invalidated(Observable observable) {
-                recurringEventDatesLayer.invalidateVerticalLayout(); // will force a new computation of recurring dates Y
-            }
-        });
-
-        // We ensure that the selected event is always visible in the gantt canvas. This eventually requires shifting
-        // the time window to make this happen.
-        selectedEventProperty().addListener(new InvalidationListener() {
-            @Override
-            public void invalidated(Observable observable) {
-                Event event = selectedEventProperty().get();
-                if (event != null) {
-                    LocalDate startDate = event.getStartDate();
-                    LocalDate endDate = event.getEndDate();
-                    if (startDate != null && endDate != null) {
-                        TimeWindowUtil.ensureTimeRangeVisible(FXGanttTimeWindow.ganttTimeWindow(), startDate, endDate, datedGanttCanvas.getTimeProjector().getTemporalUnit());
-                    }
-                }
-            }
+        // means we receive events from the server
+        eventsLayer.getChildren().addListener((InvalidationListener) observable -> {
+            recurringEventDatesLayer.invalidateVerticalLayout(); // will force a new computation of recurring dates Y
         });
 
         // The following properties depend on the theme mode (light/dark mode, etc...):
         ThemeRegistry.runNowAndOnModeChange(() -> eventBarDrawer
                 .setTextFont(TextTheme.getFont(FontDef.font(FontWeight.BOLD, 10)))
                 .setTextFill(EventTheme.getEventTextColor()));
+
+        // Synchronizing the gantt selection back to selectedEventProperty when it makes sense
+        FXProperties.runNowAndOnPropertiesChange(() -> Platform.runLater(() -> {
+            // First we check if the object selected in the gantt is an event
+            Event event = eventsLayer.getSelectedChild();
+            if (event == null) { // If not, another object that makes sense is a date in a recurring event
+                ScheduledItem scheduledItem = recurringEventDatesLayer.getSelectedChild();
+                // In that case, it makes sense to say that the event is selected
+                if (scheduledItem != null) {
+                    event = scheduledItem.getEvent();
+                }
+            }
+            // We apply the event into selectedEventProperty
+            syncingSelectionFromGantt = true; // internal synchronization (no need to update the gantt selection)
+            selectedEventProperty.set(event);
+            syncingSelectionFromGantt = false;
+        }), eventsLayer.selectedChildProperty(), recurringEventDatesLayer.selectedChildProperty());
     }
 
     private void drawEvent(Event event, Bounds b, GraphicsContext gc) {
@@ -175,7 +204,7 @@ public final class EventsGanttCanvas {
     }
 
     public ObjectProperty<Event> selectedEventProperty() {
-        return eventsLayer.selectedChildProperty();
+        return selectedEventProperty;
     }
 
     public void setupFXBindingsAndStartLogic(Object mixin) {
@@ -189,7 +218,7 @@ public final class EventsGanttCanvas {
     }
 
     private void bindFXEventToSelection() {
-        // Bidirectional binding between selectEventProperty and FXEvent.eventProperty() <- taking this inital value
+        // Bidirectional binding between selectEventProperty and FXEvent.eventProperty() <- taking this initial value
         selectedEventProperty().bindBidirectional(FXEvent.eventProperty());
     }
 
