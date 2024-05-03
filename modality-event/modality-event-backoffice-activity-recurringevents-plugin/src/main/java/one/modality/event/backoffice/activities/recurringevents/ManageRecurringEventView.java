@@ -1,7 +1,9 @@
 package one.modality.event.backoffice.activities.recurringevents;
 
 import dev.webfx.extras.filepicker.FilePicker;
+import dev.webfx.extras.panes.FlexPane;
 import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
@@ -98,8 +100,9 @@ public final class ManageRecurringEventView {
     private final TextField externalLinkTextField = I18nControls.bindI18nProperties(new TextField(),"ExternalLink");
     private Label datesOfTheEventLabel;
     private Label titleEventDetailsLabel;
+    private Switch advertisedSwitch;
+    private Switch registrationOpenSwitch;
     private Label siteLabel;
-    private Button publishButton;
     private Button saveButton;
     private Button cancelButton;
     private Button deleteButton;
@@ -111,6 +114,7 @@ public final class ManageRecurringEventView {
     private EventCalendarPane calendarPane;
     private static final String EVENT_COLUMNS = "[" +
             "{expression: 'state', label: 'Status', renderer: 'eventStateRenderer'}," +
+            "{expression: 'advertised', label: 'Advertised'},"+
             "{expression: 'name', label: 'Name'}," +
             "{expression: 'type', label: 'TypeOfEvent'}," +
             "{expression: 'location', label: 'Location'}," +
@@ -291,25 +295,9 @@ public final class ManageRecurringEventView {
         }
         //First we reset everything
         resetUpdateStoreAndOtherComponents();
+        previousEventState = e.getState();
         eventDetailsVBox.setVisible(true);
         eventDetailsVBox.setManaged(true);
-        previousEventState = e.getState();
-        if(previousEventState==null) previousEventState = EventState.DRAFT;
-        switch (previousEventState) {
-            case DRAFT:
-            case ON_HOLD:
-            case TESTING:
-                I18nControls.bindI18nProperties(publishButton,"PublishButton");
-                publishButton.getStyleClass().setAll("recurringEventButton", "background-green", "font-white");
-                break;
-            case OPEN:
-                I18nControls.bindI18nProperties(publishButton,"UnpublishedButton");
-                publishButton.getStyleClass().setAll("recurringEventButton", "background-orange", "font-white");
-                break;
-            default:
-                publishButton.setText(previousEventState.toString());
-                break;
-        }
 
         currentMode.set(EDIT_MODE);
         //We execute the query in batch, otherwise we can have synchronisation problem between the different threads
@@ -388,6 +376,11 @@ public final class ManageRecurringEventView {
                         nameOfEventTextField.setText(currentEditedEvent.getName());
                         descriptionHtmlEditor.setText(currentEditedEvent.getDescription());
                         externalLinkTextField.setText(currentEditedEvent.getExternalLink());
+                        boolean isAdvertised;
+                        if(currentEditedEvent.isAdvertised()==null) isAdvertised = false;
+                        else isAdvertised = currentEditedEvent.isAdvertised();
+                        advertisedSwitch.setSelected(isAdvertised);
+                        registrationOpenSwitch.setSelected(currentEditedEvent.getState()==EventState.OPEN);
                         //We try to load the image from cloudinary if it exists
                         loadEventImageIfExists();
                     }
@@ -542,8 +535,6 @@ public final class ManageRecurringEventView {
             resetUpdateStoreAndOtherComponents();
             eventDetailsVBox.setVisible(true);
             eventDetailsVBox.setManaged(true);
-            I18nControls.bindI18nProperties(publishButton,"PublishButton");
-            publishButton.getStyleClass().setAll("recurringEventButton", "background-green", "font-white");
             currentEditedEvent = updateStore.insertEntity(Event.class);
             currentObservedEvent = currentEditedEvent;
             entityStore.executeQuery("select recurringItem, organization from EventType where recurringItem!=null and organization=?", FXOrganization.getOrganization())
@@ -560,6 +551,7 @@ public final class ManageRecurringEventView {
                         currentEditedEvent.setKbs3(true);
                         eventTimeline.setSite(eventSite);
                         currentEditedEvent.setState(EventState.DRAFT);
+                        currentEditedEvent.setAdvertised(false);
                         currentMode.set(ADD_MODE);
                         I18nControls.bindI18nTextProperty(titleEventDetailsLabel, "AddEventInformation");
                         siteSelector = new EntityButtonSelector<Site>(
@@ -644,18 +636,24 @@ public final class ManageRecurringEventView {
         TextTheme.createSecondaryTextFacet(titleEventDetailsLabel).style();
 
 
-        // ----FlowPane---------------------------------------|
+        // ----FlexPane---------------------------------------|
         //|--VBox--------------------||---------Vbox---------||
         //|                          ||                      ||
         //| Name of event ...        ||  Time of event ...   ||
         //| Description   ...        ||  Date ...            ||
         //| Picture ...              ||                      ||
         //|--------------------------||----------------------||
-        FlowPane eventDetailsPane = getFlowPane();
+        FlexPane eventDetailsPane = new FlexPane();
+        eventDetailsPane.setHorizontalSpace(50);
+        eventDetailsPane.setVerticalSpace(20);
+        eventDetailsPane.setFlexLastRow(true);
         VBox leftPaneVBox = new VBox();
+        leftPaneVBox.setPadding(new Insets(0,10,0,0));
         VBox rightPaneVBox = new VBox();
 
-        int LABEL_WIDTH = 150;
+        leftPaneVBox.setMaxWidth(Double.MAX_VALUE);
+
+        final int LABEL_WIDTH = 150;
         HBox line1InLeftPanel = new HBox();
         Label nameOfEventLabel = I18nControls.bindI18nProperties(new Label(),"NameOfTheEvent");
         nameOfEventLabel.setMinWidth(LABEL_WIDTH);
@@ -666,6 +664,8 @@ public final class ManageRecurringEventView {
             }
             return change;}));*/
         nameOfEventTextField.setMinWidth(500);
+        HBox.setHgrow(nameOfEventTextField,Priority.ALWAYS);
+
         nameOfEventTextField.textProperty().addListener(obs -> {
             if(currentEditedEvent!=null) {
                 currentEditedEvent.setName(nameOfEventTextField.getText());
@@ -682,10 +682,7 @@ public final class ManageRecurringEventView {
         Label descriptionLabel = I18nControls.bindI18nProperties(new Label(),"Description");
         descriptionLabel.setMinWidth(LABEL_WIDTH);
         descriptionHtmlEditor.setMode(STANDARD);
-        descriptionHtmlEditor.setMinHeight(500);
-        descriptionHtmlEditor.setMinWidth(500);
-        descriptionHtmlEditor.setPrefHeight(120);
-        descriptionHtmlEditor.setPrefWidth(300);
+
         descriptionHtmlEditor.textProperty().addListener(obs -> {
             if(currentEditedEvent!=null) {
                 currentEditedEvent.setDescription(descriptionHtmlEditor.getText());
@@ -806,14 +803,48 @@ public final class ManageRecurringEventView {
         calendarPane = new EventCalendarPane();
         calendarPane.getDatesPicker().getSelectedDates().addListener(onChangeDateListener);
 
+        final int labelWidht = 200;
         HBox line4 = new HBox();
         line4.setPadding(new Insets(20,0,0,0));
         line4.setAlignment(Pos.CENTER_LEFT);
         Label externalLinkLabel = I18nControls.bindI18nProperties(new Label(),"ExternalLink");
         externalLinkLabel.setPadding(new Insets(0,20,0,0));
+        externalLinkLabel.setPrefWidth(labelWidht);
         externalLinkTextField.setPrefWidth(400);
         externalLinkTextField.textProperty().addListener(obs -> currentEditedEvent.setExternalLink(externalLinkTextField.getText()));
         line4.getChildren().addAll(externalLinkLabel, externalLinkTextField);
+
+        HBox line5 = new HBox();
+        line5.setPadding(new Insets(20,0,0,0));
+        line5.setAlignment(Pos.CENTER_LEFT);
+        Label advertisedLabel = I18nControls.bindI18nProperties(new Label(),"Advertised");
+        advertisedLabel.setPadding(new Insets(0,20,0,0));
+        advertisedLabel.setPrefWidth(labelWidht);
+        advertisedSwitch = new Switch();
+        advertisedSwitch.selectedProperty().addListener(obs ->currentEditedEvent.setAdvertised(advertisedSwitch.selectedProperty().get()));
+        line5.getChildren().addAll(advertisedLabel, advertisedSwitch);
+
+        HBox line6 = new HBox();
+        line6.setPadding(new Insets(20,0,0,0));
+        line6.setAlignment(Pos.CENTER_LEFT);
+        Label publishLabel = I18nControls.bindI18nProperties(new Label(),"Published");
+        publishLabel.setPadding(new Insets(0,20,0,0));
+        publishLabel.setPrefWidth(labelWidht);
+        registrationOpenSwitch = new Switch();
+        registrationOpenSwitch.selectedProperty().addListener(obs -> {
+            if (registrationOpenSwitch.selectedProperty().get()) {
+                currentEditedEvent.setState(EventState.OPEN);
+            } else {
+                if (previousEventState == EventState.DRAFT) {
+                    currentEditedEvent.setState(EventState.DRAFT);
+                } else {
+                    currentEditedEvent.setState(EventState.ON_HOLD);
+                }
+            }
+        });
+        line6.getChildren().addAll(publishLabel, registrationOpenSwitch);
+
+
 
         HBox buttonsLine = new HBox();
         buttonsLine.setPadding(new Insets(50,0,0,0));
@@ -837,30 +868,6 @@ public final class ManageRecurringEventView {
                 submitUpdateStoreChanges();
                 //If we add a new Event, put the selection on this event.
                // if(currentMode.get()== ADD_MODE) eventVisualMapper.setSelectedEntity(currentEditedEvent);
-            }
-        });
-
-        publishButton = new Button();
-        publishButton.setGraphicTextGap(10);
-        publishButton.setOnAction(event -> {
-            if(validateForm())
-            {
-                if(previousEventState==null) {
-                    previousEventState = EventState.DRAFT;
-                }
-                switch (previousEventState) {
-                    case DRAFT:
-                    case ON_HOLD:
-                    case TESTING:
-                        currentEditedEvent.setState(EventState.OPEN);
-                        break;
-                    case OPEN:
-                        currentEditedEvent.setState(EventState.ON_HOLD);
-                        break;
-                    default:
-                        break;
-                }
-                submitUpdateStoreChanges();
             }
         });
 
@@ -938,10 +945,10 @@ public final class ManageRecurringEventView {
                 cancelActionButton.setOnAction(l -> dialogCallback.closeDialog());
         }});
         buttonsLine.setSpacing(30);
-        buttonsLine.getChildren().addAll(cancelButton, saveButton, publishButton,deleteButton);
+        buttonsLine.getChildren().addAll(cancelButton, saveButton,deleteButton);
         buttonsLine.setAlignment(Pos.CENTER);
 
-        rightPaneVBox.getChildren().setAll(line1,datesOfTheEventLabel,calendarPane,line4InLeftPanel,line4);
+        rightPaneVBox.getChildren().setAll(line1,datesOfTheEventLabel,calendarPane,line4InLeftPanel,line4,line5,line6);
         eventDetailsPane.getChildren().setAll(leftPaneVBox,rightPaneVBox);
         HBox labelLine = new HBox();
         labelLine.setAlignment(Pos.BASELINE_LEFT);
@@ -967,16 +974,10 @@ public final class ManageRecurringEventView {
         return scrollPane;
     }
 
-    private static FlowPane getFlowPane() {
-        FlowPane eventDetailsPane = new FlowPane();
-        eventDetailsPane.setVgap(20);
-        eventDetailsPane.setHgap(50);
-        return eventDetailsPane;
-    }
-
     private void submitUpdateStoreChanges() {
         updateStore.submitChanges()
                 .onFailure(Console::log)
+
                 .onSuccess(x -> Platform.runLater(() -> {
                     Object imageTag = currentEditedEvent.getId().getPrimaryKey();
                     deleteCloudPictureIfNecessary(imageTag);
@@ -984,10 +985,9 @@ public final class ManageRecurringEventView {
                     isCloudPictureToBeDeleted.setValue(false);
                     isCloudPictureToBeUploaded.setValue(false);
                     cloudPictureFileToUpload = null;
-                    if(currentMode.get()==ADD_MODE) eventVisualMapper.requestSelectedEntity(currentEditedEvent);
+                    eventVisualMapper.requestSelectedEntity(currentEditedEvent);
                     displayEventDetails(currentEditedEvent);
                 }));
-
     }
 
     /**
@@ -1012,6 +1012,7 @@ public final class ManageRecurringEventView {
         public EventCalendarPane() {
             TextTheme.createSecondaryTextFacet(selectEachDayLabel).style();
             TextTheme.createSecondaryTextFacet(daySelected).style();
+            setMaxWidth(500);
             workingScheduledItems.addListener((ListChangeListener<ScheduledItem>) change -> {
                 //We call the listener only when the object has been loaded and not during the construction
                 //ie when currentEditedEvent=currentSelectedEvent
@@ -1031,7 +1032,6 @@ public final class ManageRecurringEventView {
             verticalLine = new Line();
             verticalLine.setStartY(0);
             verticalLine.setEndY(180);
-            //ShapeTheme.createSecondaryShapeFacet(verticalLine).setFillProperty(verticalLine.strokeProperty()).style();
             verticalLine.setStroke(Color.LIGHTGRAY);
             this.setBorder(new Border(new BorderStroke(Color.LIGHTGRAY,
                     BorderStrokeStyle.SOLID, new CornerRadii(10), BorderWidths.DEFAULT)));

@@ -56,7 +56,7 @@ ValidationSelectOneDate: "Please specify at list one date for this event"
 ValidationUrlIncorrect: "The URL entered is malformed"
 Discard: "Discard"
 PublishButton:
-  text: "Publish"
+  text: "Published"
   graphic:
     fill: "#FFFFFF"
     svgPath: "M0 8.6352L6.155 14.8L7.7075 13.2339L1.5635 7.0802M24.0365 0L12.3871 11.679L7.8066 7.0802L6.2321 8.6352L12.3871 14.8L25.6 1.56602M19.3679 1.56602L17.8354 0L10.8236 6.993L12.3871 8.5579L19.3679 1.56602Z"
@@ -89,7 +89,7 @@ UpdateEventButton:
     svgPath: "M0 8.6352L6.155 14.8L7.7075 13.2339L1.5635 7.0802M24.0365 0L12.3871 11.679L7.8066 7.0802L6.2321 8.6352L12.3871 14.8L25.6 1.56602M19.3679 1.56602L17.8354 0L10.8236 6.993L12.3871 8.5579L19.3679 1.56602Z"
 TypeOfEvent: "Type of event"
 TotalAttendees: "Attendees in total"
-DeleteEvent: "Delete the event"
+DeleteEvent: "Delete"
 DRAFT: "Draft"
 ON_HOLD: "On Hold"
 OPEN: "Open"
@@ -99,6 +99,5 @@ CancelChangesConfirmation: "Are you sure you don't want to save the event before
 DeleteConfirmation: "Are you sure you want to delete this event?"
 Error: "Error while deleting event"
 ErrorWhileDeletingEvent: "The event can't be deleted because objects exist in the database that depend on this event (letters, registrations, etc.)"
-
-
-
+Published: "Registration opened"
+Advertised: "Advertised"
