@@ -1,6 +1,5 @@
 package one.modality.event.backoffice.activities.recurringevents;
 
-import dev.webfx.extras.cell.renderer.ValueRendererRegistry;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
@@ -13,9 +12,7 @@ import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMap
 import dev.webfx.stack.orm.reactive.entities.entities_to_objects.IndividualEntityToObjectMapper;
 import dev.webfx.stack.orm.reactive.entities.entities_to_objects.ReactiveObjectsMapper;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
@@ -27,12 +24,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.EventState;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
+import one.modality.event.backoffice.event.fx.FXEvent;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -48,34 +44,18 @@ public class RecurringEventAttendanceView {
             "{expression: 'location', label: 'Location'}," +
             "{expression: 'dateIntervalFormat(startDate, endDate)', label: 'Dates'}" +
             "]";
-    private ReactiveObjectsMapper<ScheduledItem, Node> scheduledItemToPaneMapper;
 
     private static final Background WHITE_BACKGROUND = new Background(new BackgroundFill(Color.WHITE, null, null));
     private final DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
-    private final ButtonFactoryMixin mixin;
-    private FlowPane attendanceFlowPane = new FlowPane();
-    private Event selectedEvent;
+    private final FlowPane attendanceFlowPane = new FlowPane();
     private final ObjectProperty<Event> selectedEventProperty = new SimpleObjectProperty<>();
 
-    public RecurringEventAttendanceView(ButtonFactoryMixin mixin) {
-        this.mixin = mixin;
+    public RecurringEventAttendanceView() {
     }
 
     public Node buildContainer() {
         BorderPane mainFrame = new BorderPane();
-        //Displaying The title of the frame
-        Label title = new Label();
-        title.setPadding(new Insets(30));
-        title.setGraphicTextGap(30);
-        TextTheme.createPrimaryTextFacet(title).style();
-        title.getStyleClass().add("font-size-35px");
 
-        I18nControls.bindI18nProperties(title,"GPClasses");
-        BorderPane.setAlignment(title, Pos.CENTER);
-        mainFrame.setPadding(new Insets(0,0,30,0));
-        mainFrame.setTop(title);
-
-        //Displaying the list of events
         Label currentEventLabel = new Label();
         I18nControls.bindI18nProperties(currentEventLabel,"CurrentClasses");
         currentEventLabel.setPadding(new Insets(0,0,20,0));
@@ -95,44 +75,37 @@ public class RecurringEventAttendanceView {
         return scrollPane;
     }
 
-    private void displayEventDetails(Event e) {
-        selectedEvent = e;
-        selectedEventProperty.set(e);
-    }
-
     public void startLogic(Object mixin)
     {
         EventRenderers.registerRenderers();
 
-        ReactiveVisualMapper.<Event>createPushReactiveChain(mixin)
+        ReactiveVisualMapper<Event> eventVisualMapper = ReactiveVisualMapper.<Event>createPushReactiveChain(mixin)
                 .always("{class: 'Event', alias: 'e', fields: 'name, openingDate, description, type.recurringItem,(select site.name from Timeline where event=e limit 1) as location'}")
                 .always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o))
                 .always(DqlStatement.where("type.recurringItem!=null and kbs3"))
                 .setEntityColumns(EVENT_COLUMNS)
                 .setVisualSelectionProperty(eventTable.visualSelectionProperty())
-                .setSelectedEntityHandler(this::displayEventDetails)
                 .visualizeResultInto(eventTable.visualResultProperty())
                 .start();
 
-        scheduledItemToPaneMapper = ReactiveObjectsMapper.<ScheduledItem, Node>createPushReactiveChain(this)
+        ReactiveObjectsMapper.<ScheduledItem, Node>createPushReactiveChain(this)
                 .always("{class: 'ScheduledItem', alias: 's', fields: 'date,startTime,endTime', where: 'event.type.recurringItem!=null and event.kbs3=true', orderBy: 'date'}")
                 .ifNotNullOtherwiseEmpty(selectedEventProperty, eventId -> where("event=?", eventId))
                 .setIndividualEntityToObjectMapperFactory(IndividualScheduledItemToBoxMapper::new)
                 .storeMappedObjectsInto(attendanceFlowPane.getChildren())
                 .setDataSourceModel(dataSourceModel)
                 .start();
+
+        eventVisualMapper.requestedSelectedEntityProperty().bindBidirectional(FXEvent.eventProperty());
+        FXEvent.eventProperty().bindBidirectional(selectedEventProperty);
     }
 
     class IndividualScheduledItemToBoxMapper implements IndividualEntityToObjectMapper<ScheduledItem, Node> {
         private final ObjectProperty<ScheduledItem> scheduledItemObjectProperty = new SimpleObjectProperty<>();
         private final Label label = new Label();
-        private int totalCount = 0;
-        private GridPane peopleGrid = new GridPane();
+        private final GridPane peopleGrid = new GridPane();
         Label totalCountLabel = new Label();
-
-        private final VBox box = new VBox(LayoutUtil.setMaxWidthToInfinite(label), peopleGrid,totalCountLabel);
-        private final ReactiveEntitiesMapper<DocumentLine> peopleMapper;
-        private ObservableList<DocumentLine> observableDocumentList;
+        private final ObservableList<DocumentLine> observableDocumentList;
 
         final BorderPane boxesContainer = new BorderPane();
 
@@ -149,6 +122,7 @@ public class RecurringEventAttendanceView {
             VBox.setMargin(label, new Insets(2));
             VBox.setMargin(peopleGrid, new Insets(0, 5, 5, 5));
             VBox.setVgrow(peopleGrid, Priority.ALWAYS);
+            VBox box = new VBox(LayoutUtil.setMaxWidthToInfinite(label), peopleGrid, totalCountLabel);
             box.setMinWidth(150);
             //box.setEffect(BOX_SHADOW_EFFECT);
             boxesContainer.setTop(label);
@@ -169,42 +143,39 @@ public class RecurringEventAttendanceView {
             // Visualizing people booked for that site item resource configuration into a visual grid (inside the box)
             // Each person (row in the grid) is represented by a DocumentLine allocated to that site item resource configuration
 
-            peopleMapper = ReactiveEntitiesMapper.<DocumentLine>createPushReactiveChain(this)
+            ReactiveEntitiesMapper<DocumentLine> peopleMapper = ReactiveEntitiesMapper.<DocumentLine>createPushReactiveChain(this)
                     .always("{class: 'DocumentLine', alias: 'dl', fields: 'document.(person_name, confirmed,ref)',orderBy: 'document.person_lastName'}")
                     .ifNotNullOtherwiseEmpty(scheduledItemObjectProperty, si -> where("exists(select Attendance a where a.documentLine=dl and a.date=? and a.scheduledItem=?)", si.getDate(), si))
                     .setDataSourceModel(dataSourceModel)
                     .start();
             observableDocumentList = peopleMapper.getObservableEntities();
-            observableDocumentList.addListener(new InvalidationListener() {
-                @Override
-                public void invalidated(Observable observable) {
-                    peopleGrid.getChildren().clear();
-                    observableDocumentList.forEach(dl->
-                    {
-                        Label name = new Label("#"+dl.getDocument().getRef() + " " + dl.getDocument().getFullName());
-                        name.setPadding(new Insets(5,0,5,5));
-                        name.getStyleClass().add("bookingName");
-                        String text = "";
-                        Label state = new Label();
-                        state.getStyleClass().add("font-size-9px");
-                        if(dl.getDocument().isConfirmed()) {
-                            text = I18n.getI18nText("BookingConfirmed");
-                            state.getStyleClass().add("bookingStatusConfirmed");
-                        }
-                        else {
-                            text = I18n.getI18nText("BookingUnconfirmed");
-                            state.getStyleClass().add("bookingStatusUnconfirmed");
-                        }
-                        state.setText(text);
-                        TextTheme.createSecondaryTextFacet(name);
-                        state.setPadding(new Insets(5,0,5,0));
-                        int row = peopleGrid.getRowCount();
-                        peopleGrid.add(name, 0, row);
-                        peopleGrid.add(state, 1, row);
-                        GridPane.setHalignment(state, HPos.CENTER);
-                    });
-                    totalCountLabel.setText(I18n.getI18nText("Total")+" " + observableDocumentList.size());
-                }
+            observableDocumentList.addListener((InvalidationListener) observable -> {
+                peopleGrid.getChildren().clear();
+                observableDocumentList.forEach(dl->
+                {
+                    Label name = new Label("#"+dl.getDocument().getRef() + " " + dl.getDocument().getFullName());
+                    name.setPadding(new Insets(5,0,5,5));
+                    name.getStyleClass().add("bookingName");
+                    String text;
+                    Label state = new Label();
+                    state.getStyleClass().add("font-size-9px");
+                    if(dl.getDocument().isConfirmed()) {
+                        text = I18n.getI18nText("BookingConfirmed");
+                        state.getStyleClass().add("bookingStatusConfirmed");
+                    }
+                    else {
+                        text = I18n.getI18nText("BookingUnconfirmed");
+                        state.getStyleClass().add("bookingStatusUnconfirmed");
+                    }
+                    state.setText(text);
+                    TextTheme.createSecondaryTextFacet(name);
+                    state.setPadding(new Insets(5,0,5,0));
+                    int row = peopleGrid.getRowCount();
+                    peopleGrid.add(name, 0, row);
+                    peopleGrid.add(state, 1, row);
+                    GridPane.setHalignment(state, HPos.CENTER);
+                });
+                totalCountLabel.setText(I18n.getI18nText("Total")+" " + observableDocumentList.size());
             });
         }
 

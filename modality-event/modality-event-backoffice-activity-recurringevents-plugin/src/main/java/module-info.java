@@ -8,6 +8,7 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires javafx.graphics;
     requires modality.base.backoffice.mainframe.headertabs.fx;
     requires modality.base.client.gantt.fx;
+    requires modality.base.client.mainframe.dialogarea.fx;
     requires modality.base.client.tile;
     requires modality.base.client.validation;
     requires modality.base.shared.entities;
@@ -16,6 +17,7 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires webfx.extras.cell;
     requires webfx.extras.filepicker;
     requires webfx.extras.panes;
+    requires webfx.extras.switches;
     requires webfx.extras.theme;
     requires webfx.extras.time;
     requires webfx.extras.time.layout;

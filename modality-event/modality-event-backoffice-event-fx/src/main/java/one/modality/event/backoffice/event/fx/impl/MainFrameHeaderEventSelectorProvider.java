@@ -42,8 +42,8 @@ public class MainFrameHeaderEventSelectorProvider implements MainFrameHeaderNode
             Event nullEvent = store.createEntity(Event.class);
             nullEvent.setName("<No event selected>");
             eventSelector.setVisualNullEntity(nullEvent);
-            // Doing a bidirectional binding with FXOrganization
-            FXEvent.eventProperty().bindBidirectional(eventSelector.selectedItemProperty());
+            // Doing a bidirectional binding with FXEvent (taking the initial value from FXEvent)
+            eventSelector.selectedItemProperty().bindBidirectional(FXEvent.eventProperty()); // <= FXEvent value applied first
             Button eventButton = eventSelector.getButton();
             eventButton.visibleProperty().bind(FXProperties.compute(FXGanttVisibility.ganttVisibilityProperty(), value -> value == GanttVisibility.EVENTS));
             eventButton.managedProperty().bind(eventButton.visibleProperty());

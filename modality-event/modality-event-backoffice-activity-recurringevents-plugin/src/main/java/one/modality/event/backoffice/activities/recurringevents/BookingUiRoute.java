@@ -13,7 +13,7 @@ public final class BookingUiRoute extends UiRouteImpl {
 
     public static UiRoute<?> uiRoute() {
         return UiRoute.create(RecurringEventsRouting.getPath()
-                , false
+                , true
                 , RecurringEventsActivity::new
                 , ViewDomainActivityContextFinal::new
         );

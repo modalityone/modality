@@ -70,12 +70,21 @@
     color: #FF0404;
 }
 
+
+.background-orange > fx-background {
+    background: orange;
+}
+
 .background-green > fx-background {
     background: #41BA4D;
 }
 
 .background-blue > fx-background {
     background: #0096D6;
+}
+
+.background-red > fx-background {
+    background: red;
 }
 
 .background-darkGrey > fx-background {
