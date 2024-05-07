@@ -19,7 +19,7 @@
 
     <modules>
         <module>modality-event-backoffice-activity-recurringevents-plugin</module>
-        <module>modality-event-backoffice-event-fx</module>
+        <module>modality-event-backoffice-events-buttonselector-plugin</module>
         <module>modality-event-backoffice-events-ganttcanvas-plugin</module>
         <module>modality-event-backoffice-events-pm</module>
         <module>modality-event-backoffice-max-plugin</module>

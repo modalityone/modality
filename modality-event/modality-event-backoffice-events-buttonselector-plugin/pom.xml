@@ -11,7 +11,7 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>modality-event-backoffice-event-fx</artifactId>
+    <artifactId>modality-event-backoffice-events-buttonselector-plugin</artifactId>
 
     <description>A JavaFX property holder of the current Event viewed by the user in the back-office.</description>
 

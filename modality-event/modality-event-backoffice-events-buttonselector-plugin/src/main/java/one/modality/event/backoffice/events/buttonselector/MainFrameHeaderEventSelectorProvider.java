@@ -1,4 +1,4 @@
-package one.modality.event.backoffice.event.fx.impl;
+package one.modality.event.backoffice.events.buttonselector;
 
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
