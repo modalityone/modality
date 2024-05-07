@@ -14,7 +14,7 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires modality.base.client.validation;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
-    requires modality.event.backoffice.event.fx;
+    requires modality.event.client.event.fx;
     requires webfx.extras.cell;
     requires webfx.extras.filepicker;
     requires webfx.extras.panes;

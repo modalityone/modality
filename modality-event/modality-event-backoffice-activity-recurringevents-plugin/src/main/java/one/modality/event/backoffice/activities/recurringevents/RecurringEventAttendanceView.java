@@ -28,7 +28,7 @@ import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
-import one.modality.event.backoffice.event.fx.FXEvent;
+import one.modality.event.client.event.fx.FXEvent;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

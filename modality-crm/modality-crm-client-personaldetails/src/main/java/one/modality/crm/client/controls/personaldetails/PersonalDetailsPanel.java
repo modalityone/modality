@@ -22,6 +22,7 @@ import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParamet
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.ui.dialog.DialogCallback;
 import dev.webfx.stack.ui.dialog.DialogUtil;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
@@ -157,7 +158,7 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
             EntityStore store = entity.getStore();
             countrySelector.setLoadingStore(store);
             organizationSelector.setLoadingStore(store);
-            UiScheduler.runInUiThread(() -> {
+            Platform.runLater(() -> {
                 syncUiFromModel();
                 updateUiEditable();
             });

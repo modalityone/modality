@@ -1,4 +1,4 @@
-package one.modality.event.backoffice.event.fx.impl;
+package one.modality.event.backoffice.events.buttonselector;
 
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
@@ -13,7 +13,7 @@ import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.shared.entities.Event;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
-import one.modality.event.backoffice.event.fx.FXEvent;
+import one.modality.event.client.event.fx.FXEvent;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
