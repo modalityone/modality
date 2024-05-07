@@ -15,4 +15,14 @@
 
     <description>A resource module containing most icons used in Modality.</description>
 
+    <dependencies>
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
+
 </project>

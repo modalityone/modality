@@ -216,6 +216,7 @@
     <source path="one/modality/base/client/operations/i18n"/>
     <source path="one/modality/base/client/services/i18n"/>
     <!--===========================< modality-base-client-icons >===========================-->
+    <source path="one/modality/base/client/icons"/>
     <resource path="images/s16"/>
     <public includes="images/s16/" path=""/>
     <resource path="images/s16/actions"/>
@@ -412,6 +413,8 @@
     <source path="dev/webfx/extras/materialdesign/util"/>
     <!--===============================< webfx-extras-panes >===============================-->
     <source path="dev/webfx/extras/panes"/>
+    <!--=============================< webfx-extras-switches >==============================-->
+    <source path="dev/webfx/extras/switches"/>
     <!--===============================< webfx-extras-theme >===============================-->
     <source path="dev/webfx/extras/theme"/>
     <source path="dev/webfx/extras/theme/layout"/>

@@ -6,6 +6,7 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
+import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.EventState;
 
 /**

@@ -21,6 +21,7 @@ import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.base.frontoffice.utility.StyleUtility;
 import one.modality.base.frontoffice.utility.TextUtility;
 import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.EventState;
 import one.modality.event.frontoffice.activities.booking.process.BookingStarter;
 
 public final class EventView {
@@ -103,7 +104,7 @@ public final class EventView {
         I18n.bindI18nProperties(eventCentreLocationText, new I18nSubKey("expression: '[At] ' + coalesce(i18n(venue), i18n(organization))", event));
         I18n.bindI18nProperties(eventCountryLocationText, new I18nSubKey("expression: coalesce(i18n(venue.country), i18n(organization.country))", event));
         eventDateText.setText(Strings.toString(event.getStartDate()));
-        buttonContainer.setCenter(event.isLive() ? bookButton : comingSoonButton);
+        buttonContainer.setCenter((event.isLive() ||event.getState()== EventState.OPEN) ? bookButton : comingSoonButton);
     }
 
     public Node getView() {

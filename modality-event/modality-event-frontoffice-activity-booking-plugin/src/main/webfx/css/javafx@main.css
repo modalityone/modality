@@ -1,0 +1,60 @@
+.title-blue-bold {
+    -fx-font-weight: bolder;
+    -fx-text-fill: #0096D6;
+    -fx-fill:#0096D6;
+    -fx-font-size: 16px;
+}
+
+.description-text {
+    -fx-text-alignment: justify;
+}
+
+.description-text TextFlow {
+    -fx-line-spacing: 8px;
+}
+
+.eventTime {
+    -fx-font-size: 10px;
+}
+
+.subtitle-grey {
+   -fx-text-fill: grey;
+   -fx-fill: grey;
+   -fx-font-size: 14px;
+}
+
+.subtitle-blue {
+   -fx-font-weight: bolder;
+   -fx-text-fill: #0096D6;
+   -fx-fill: #0096D6;
+   -fx-font-weight: bolder;
+   -fx-font-size: 14px;
+}
+
+.date-selected {
+     -fx-background-color: #0096D6;
+}
+
+.date-selected Text {
+    -fx-fill: white;
+}
+
+.date-unselected {
+     -fx-background-color: none;
+}
+
+.date-unselected Text {
+    -fx-fill: black;
+}
+
+.green-button
+{
+    -fx-background-radius: 2;
+    -fx-pref-height:30px;
+    -fx-max-height:30px;
+    -fx-pref-width: 150px;
+    -fx-font-weight: bolder;
+    -fx-alignment: center;
+     -fx-background-color: #41BA4D;
+     -fx-text-fill: #FFFFFF;
+}

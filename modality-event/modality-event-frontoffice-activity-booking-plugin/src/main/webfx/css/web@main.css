@@ -1,0 +1,64 @@
+/* .title-blue-bold */
+.title-blue-bold {
+    font-weight: bolder;
+    color: #0096D6;
+    fill: #0096D6;
+    font-size: 16px;
+}
+
+/* .text-justified */
+.description-text {
+    text-align: justify;
+    line-height: 1.5em;
+}
+
+/* .eventTime */
+.eventTime {
+    font-size: 10px;
+}
+
+/* .subtitle-grey */
+.subtitle-grey {
+    color: grey;
+    font-size: 14px;
+}
+
+/* .subtitle-blue */
+.subtitle-blue {
+    font-weight: bolder;
+    color: #0096D6;
+    font-size: 14px;
+}
+
+/* .date-selected */
+.date-selected {
+    background-color: #0096D6;
+}
+
+.date-selected  {
+    color: white;
+}
+
+/* .date-unselected */
+.date-unselected {
+    background-color: none;
+}
+
+.date-unselected {
+    color: black;
+}
+
+/* .green-button */
+.green-button {
+    border-radius: 2px;
+    height: 30px;
+    max-height: 30px;
+    width: 150px;
+    font-weight: bolder;
+    text-align: center;
+    color: #FFFFFF;
+}
+
+.green-button > fx-background {
+    background: #41BA4D;
+}

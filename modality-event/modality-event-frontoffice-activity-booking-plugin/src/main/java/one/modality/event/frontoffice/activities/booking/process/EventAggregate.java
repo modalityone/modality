@@ -25,7 +25,7 @@ public final class EventAggregate {
             return Future.succeededFuture();
         Promise<Void> promise = Promise.promise();
         event.getStore()
-                .<ScheduledItem>executeListQuery("scheduledItems", "select site, item, date, startTime, available from ScheduledItem where event=? and online order by date", event)
+                .<ScheduledItem>executeListQuery("scheduledItems", "select site, item, date, startTime, available, timeline.startTime from ScheduledItem where event=? and online order by date", event)
                 .onFailure(promise::fail)
                 .onSuccess(items -> {
                     scheduledItems = items;

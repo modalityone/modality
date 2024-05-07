@@ -19,13 +19,13 @@ module modality.base.backoffice.gantt.canvas {
     requires webfx.extras.time.layout;
     requires webfx.extras.time.layout.gantt;
     requires webfx.extras.time.window;
+    requires webfx.extras.util.animation;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.resource;
     requires webfx.platform.service;
     requires webfx.platform.util;
     requires webfx.stack.i18n;
-    requires webfx.extras.util.animation;
 
     // Exported packages
     exports one.modality.base.backoffice.ganttcanvas;

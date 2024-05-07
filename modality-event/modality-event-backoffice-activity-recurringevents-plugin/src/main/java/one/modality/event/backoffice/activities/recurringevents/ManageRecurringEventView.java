@@ -61,6 +61,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
+import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
 import one.modality.base.client.validation.ModalityValidationSupport;
 import one.modality.base.shared.entities.*;
@@ -154,7 +155,6 @@ public final class ManageRecurringEventView {
     private final BooleanProperty isCloudPictureToBeUploaded = new SimpleBooleanProperty(false);
     private Object recentlyUploadedCloudPictureId;
     private BooleanBinding updateStoreOrPictureHasChanged;
-    private BooleanBinding updateTrashButtonOnPictureDisplayed;
     private ReactiveVisualMapper<Event> eventVisualMapper;
     private boolean areWeDeleting = false;
 
@@ -262,17 +262,7 @@ public final class ManageRecurringEventView {
             return updateStore.hasChanges() || isCloudPictureToBeUploaded.getValue() || isCloudPictureToBeDeleted.getValue();
         }
     };
-         /* We create a booleanBinding that will be used by the trash button. We display it only if a picture is displayed if either the updateStoreChanged, or the pictures needs to be uploaded
-        or deleted */
-        updateTrashButtonOnPictureDisplayed = new BooleanBinding() {
-            {
-                super.bind(isPictureDisplayed);
-            }
-            @Override
-            protected boolean computeValue() {
-                return isPictureDisplayed.getValue();
-            }
-        };
+
         updateStore.hasChangesProperty().addListener(observable -> updateStore.hasChangesProperty().getValue());
         //Now we bind the different element (FXEvent, Visual Mapper, and MasterSlaveController)
         eventVisualMapper.requestedSelectedEntityProperty().bindBidirectional(FXEvent.eventProperty());
@@ -386,7 +376,7 @@ public final class ManageRecurringEventView {
                     }
                     saveButton.disableProperty().bind(updateStoreOrPictureHasChanged.not());
                     cancelButton.disableProperty().bind(updateStoreOrPictureHasChanged.not());
-                    trashImage.visibleProperty().bind(updateTrashButtonOnPictureDisplayed);
+                    trashImage.visibleProperty().bind(isPictureDisplayed);
                     deleteButton.disableProperty().bind(isEventDeletable.not());
                     currentObservedEvent=currentEditedEvent;
                 }));
@@ -1091,9 +1081,6 @@ public final class ManageRecurringEventView {
                 LocalDate currentDate = scheduledItem.getDate();
                 SVGPath trashDate = SvgIcons.createTrashSVGPath();
                 trashDate.setTranslateY(2);
-
-
-
                 Text currentDateValue = new Text(currentDate.format(DateTimeFormatter.ofPattern("MMM dd")));
                 TextField currentEventStartTime = new TextField();
                 timeOfTheEventTextField.textProperty().addListener(obs -> {

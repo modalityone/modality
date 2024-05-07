@@ -17,11 +17,13 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
+    requires modality.event.backoffice.activity.recurringevents.plugin;
     requires webfx.extras.imagestore;
     requires webfx.extras.panes;
     requires webfx.extras.util.control;
     requires webfx.extras.util.layout;
     requires webfx.extras.util.scene;
+    requires webfx.extras.webtext;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.async;
@@ -35,6 +37,8 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.cache.client;
+    requires webfx.stack.cloud.image;
+    requires webfx.stack.cloud.image.client;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.datasourcemodel.service;
@@ -48,6 +52,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.dialog;
     requires webfx.stack.ui.operation;
+    requires modality.base.client.icons;
 
     // Exported packages
     exports one.modality.event.frontoffice.activities.booking;

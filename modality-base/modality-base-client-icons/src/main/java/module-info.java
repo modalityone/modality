@@ -5,6 +5,12 @@
  */
 module modality.base.client.icons {
 
+    // Direct dependencies modules
+    requires javafx.graphics;
+
+    // Exported packages
+    exports one.modality.base.client.icons;
+
     // Resources packages
     opens images.s16;
     opens images.s16.actions;
