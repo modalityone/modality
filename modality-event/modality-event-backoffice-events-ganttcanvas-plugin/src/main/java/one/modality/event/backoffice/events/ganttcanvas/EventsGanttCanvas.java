@@ -27,7 +27,7 @@ import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
-import one.modality.event.backoffice.event.fx.FXEvent;
+import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.backoffice.events.pm.EventsPresentationModel;
 import one.modality.event.client.theme.EventTheme;
 

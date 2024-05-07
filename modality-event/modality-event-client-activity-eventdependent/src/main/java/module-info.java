@@ -11,7 +11,7 @@ module modality.event.client.activity.eventdependent {
     requires modality.base.client.activity;
     requires modality.base.client.activity.organizationdependent;
     requires modality.base.client.presentationmodel;
-    requires modality.event.backoffice.event.fx;
+    requires modality.event.client.event.fx;
     requires webfx.platform.util;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.routing.uirouter;

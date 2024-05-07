@@ -3,7 +3,7 @@ package one.modality.event.client.activity.eventdependent;
 import dev.webfx.stack.orm.domainmodel.activity.domain.DomainActivityContext;
 import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentActivityMixin;
-import one.modality.event.backoffice.event.fx.FXEventId;
+import one.modality.event.client.event.fx.FXEventId;
 
 /**
  * @author Bruno Salmon

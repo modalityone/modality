@@ -1,4 +1,4 @@
-package one.modality.event.backoffice.event.fx;
+package one.modality.event.client.event.fx;
 
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.Entities;

@@ -1,4 +1,4 @@
-package one.modality.event.backoffice.event.fx;
+package one.modality.event.client.event.fx;
 
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;

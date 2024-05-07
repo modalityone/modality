@@ -25,6 +25,7 @@
         <module>modality-event-backoffice-max-plugin</module>
         <module>modality-event-backoffice-min-plugin</module>
         <module>modality-event-client-activity-eventdependent</module>
+        <module>modality-event-client-event-fx</module>
         <module>modality-event-client-theme</module>
         <module>modality-event-frontoffice-activity-booking-plugin</module>
         <module>modality-event-frontoffice-max-plugin</module>

@@ -66,7 +66,7 @@ import one.modality.base.client.validation.ModalityValidationSupport;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.markers.EntityHasLocalDate;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
-import one.modality.event.backoffice.event.fx.FXEvent;
+import one.modality.event.client.event.fx.FXEvent;
 
 import java.net.MalformedURLException;
 import java.net.URL;
