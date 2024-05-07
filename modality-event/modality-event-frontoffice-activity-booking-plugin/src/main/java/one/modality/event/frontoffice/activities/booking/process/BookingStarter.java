@@ -4,9 +4,8 @@ import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.windowhistory.WindowHistory;
 import one.modality.base.shared.entities.Event;
+import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.frontoffice.activities.booking.browser.BrowserUtil;
-import one.modality.event.frontoffice.activities.booking.fx.FXEvent;
-import one.modality.event.frontoffice.activities.booking.fx.FXEventAggregate;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventRouting;
 
 /**
@@ -33,7 +32,6 @@ public final class BookingStarter {
 
     private static void startKbs3EventBooking(Event event) {
         FXEvent.setEvent(event);
-        FXEventAggregate.setEventAggregate(new EventAggregate(event));
         WindowHistory.getProvider().push(BookEventRouting.getBookEventPath(event));
     }
 
