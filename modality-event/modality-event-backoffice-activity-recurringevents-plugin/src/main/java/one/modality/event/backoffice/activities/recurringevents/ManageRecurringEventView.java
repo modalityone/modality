@@ -25,8 +25,8 @@ import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
-import dev.webfx.stack.orm.entity.controls.entity.masterslave.MasterSlaveLinker;
-import dev.webfx.stack.orm.entity.controls.entity.masterslave.SlaveEditor;
+import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
+import dev.webfx.extras.util.masterslave.SlaveEditor;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
@@ -78,6 +78,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static dev.webfx.extras.webtext.HtmlTextEditor.Mode.STANDARD;
@@ -160,7 +161,7 @@ public final class ManageRecurringEventView {
 
     private final SlaveEditor<Event> eventDetailsSlaveEditor = new SlaveEditor<>() {
         @Override
-        public void showChangeApprovalDialog(Runnable onApprovalCallback) {
+        public void showSlaveSwitchApprovalDialog(Consumer<Boolean> approvalCallback) {
             Text titleConfirmationText = I18n.bindI18nProperties(new Text(),"AreYouSure");
             titleConfirmationText.getStyleClass().add("font-green");
             titleConfirmationText.getStyleClass().add("font-size-22px");
@@ -184,9 +185,12 @@ public final class ManageRecurringEventView {
             DialogCallback dialogCallback = DialogUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
             okButton.setOnAction(l -> {
                 dialogCallback.closeDialog();
-                onApprovalCallback.run();
+                approvalCallback.accept(true);
             });
-            cancelActionButton.setOnAction(l -> dialogCallback.closeDialog());
+            cancelActionButton.setOnAction(l -> {
+                dialogCallback.closeDialog();
+                approvalCallback.accept(false);
+            });
         }
 
         /**
@@ -276,7 +280,7 @@ public final class ManageRecurringEventView {
         updateStore.hasChangesProperty().addListener(observable -> updateStore.hasChangesProperty().getValue());
         //Now we bind the different element (FXEvent, Visual Mapper, and MasterSlaveController)
         eventVisualMapper.requestedSelectedEntityProperty().bindBidirectional(FXEvent.eventProperty());
-        masterSlaveEventLinker.masterEntityProperty().bindBidirectional(eventVisualMapper.selectedEntityProperty());
+        masterSlaveEventLinker.masterProperty().bindBidirectional(eventVisualMapper.selectedEntityProperty());
     }
     /**
      * This method is called when we select an event, it takes the info in the database
@@ -530,7 +534,7 @@ public final class ManageRecurringEventView {
         //We manage the property of the button in css
         addButton.getStyleClass().addAll("recurringEventButton", "background-green", "font-white");
 
-        addButton.setOnAction((event -> masterSlaveEventLinker.checkSlaveEntityChangeApproval(true, () -> {
+        addButton.setOnAction((event -> masterSlaveEventLinker.checkSlaveSwitchApproval(true, () -> {
             resetTextFields();
             resetUpdateStoreAndOtherComponents();
             eventDetailsVBox.setVisible(true);
