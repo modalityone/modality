@@ -227,11 +227,16 @@ public final class ManageRecurringEventView {
      */
     private void initFormValidation() {
         if(!validationSupportInitialised) {
-            validationSupport.addRequiredInput(nameOfEventTextField);
-            validationSupport.addValidationRule(FXProperties.compute(timeOfTheEventTextField.textProperty(), s1 -> isLocalTimeTextValid(timeOfTheEventTextField.getText())), timeOfTheEventTextField, I18n.getI18nText("ValidationTimeFormatIncorrect"));
-            validationSupport.addValidationRule(FXProperties.compute(durationTextField.textProperty(), s -> isIntegerValid(durationTextField.getText())), durationTextField, I18n.getI18nText("ValidationDurationIncorrect"));
-            validationSupport.addValidationRule(isWorkingScheduledItemEmpty.not(),datesOfTheEventLabel, I18n.getI18nText("ValidationSelectOneDate"));
-            validationSupport.addValidationRule(FXProperties.compute(externalLinkTextField.textProperty(), s1 -> isValidUrl(externalLinkTextField.getText())), externalLinkTextField, I18n.getI18nText("ValidationUrlIncorrect"));
+            FXProperties.runNowAndOnPropertiesChange(() -> {
+                if (I18n.getDictionary() != null) {
+                    validationSupport.reset();
+                    validationSupport.addRequiredInput(nameOfEventTextField);
+                    validationSupport.addValidationRule(FXProperties.compute(timeOfTheEventTextField.textProperty(), s1 -> isLocalTimeTextValid(timeOfTheEventTextField.getText())), timeOfTheEventTextField, I18n.getI18nText("ValidationTimeFormatIncorrect"));
+                    validationSupport.addValidationRule(FXProperties.compute(durationTextField.textProperty(), s -> isIntegerValid(durationTextField.getText())), durationTextField, I18n.getI18nText("ValidationDurationIncorrect"));
+                    validationSupport.addValidationRule(isWorkingScheduledItemEmpty.not(),datesOfTheEventLabel, I18n.getI18nText("ValidationSelectOneDate"));
+                    validationSupport.addValidationRule(FXProperties.compute(externalLinkTextField.textProperty(), s1 -> isValidUrl(externalLinkTextField.getText())), externalLinkTextField, I18n.getI18nText("ValidationUrlIncorrect"));
+                }
+            }, I18n.dictionaryProperty());
             validationSupportInitialised = true;
         }
     }
