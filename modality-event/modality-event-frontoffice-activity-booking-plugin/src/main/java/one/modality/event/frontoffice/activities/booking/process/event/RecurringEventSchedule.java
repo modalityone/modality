@@ -54,7 +54,7 @@ public class RecurringEventSchedule {
         scheduledItemsList.addListener((InvalidationListener) observable -> {
             Platform.runLater(() -> {
                 ecompassingFlexPane.getChildren().clear();
-                scheduledItemsList.forEach(scheduledItem -> {
+                dev.webfx.platform.util.collection.Collections.forEach(scheduledItemsList, scheduledItem -> {
                     ScheduledItemToPane currentPane = new ScheduledItemToPane(scheduledItem);
                     ecompassingFlexPane.getChildren().add(currentPane.getContainerVBox());
                 });

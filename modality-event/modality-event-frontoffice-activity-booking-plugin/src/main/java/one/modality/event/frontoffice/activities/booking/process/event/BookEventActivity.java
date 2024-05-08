@@ -57,7 +57,7 @@ public final class BookEventActivity extends ViewDomainActivityBase {
 
     private Event currentEvent = FXEvent.getEvent();
     private Text eventTitle = new Text();
-    private String venueAddress = "";
+    private Label venueAddress = new Label();
     private HtmlText eventDescription = new HtmlText();
     private Button checkoutButton;
     private DoubleProperty totalPriceProperty = new SimpleDoubleProperty(0);
@@ -104,14 +104,13 @@ public final class BookEventActivity extends ViewDomainActivityBase {
 
         SVGPath locationIcon = SvgIcons.createPinpointSVGPath();
         locationIcon.setFill(Color.web("#BBBBBB"));
-        Label eventCentreText = new Label(currentEvent.getVenue().getStringFieldValue("address"));
-        eventCentreText.getStyleClass().add("checkout-address");
-        eventCentreText.setGraphicTextGap(5);
-        eventCentreText.setGraphic(locationIcon);
+        venueAddress.getStyleClass().add("checkout-address");
+        venueAddress.setGraphicTextGap(5);
+        venueAddress.setGraphic(locationIcon);
         BorderPane addressBorderPane = new BorderPane();
-        addressBorderPane.setCenter(eventCentreText);
-        eventCentreText.setAlignment(Pos.CENTER_LEFT);
-        eventCentreText.setPrefWidth(maxWidth-50);
+        addressBorderPane.setCenter(venueAddress);
+        venueAddress.setAlignment(Pos.CENTER_LEFT);
+        venueAddress.setPrefWidth(maxWidth-50);
         addressBorderPane.setPadding(new Insets(0,0,30,0));
         checkoutVBox.getChildren().addAll(addressBorderPane);
 
@@ -196,7 +195,7 @@ public final class BookEventActivity extends ViewDomainActivityBase {
                 .onSuccess(x -> Platform.runLater(()-> {
                     eventTitle.setText(e.getName());
                     eventDescription.setText(e.getDescription());
-                    venueAddress = e.getVenue().getStringFieldValue("address");
+                    venueAddress.setText(e.getVenue().getStringFieldValue("address"));
                 }));
     }
 
