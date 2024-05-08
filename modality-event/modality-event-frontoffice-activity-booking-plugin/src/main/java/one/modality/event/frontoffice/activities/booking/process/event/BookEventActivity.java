@@ -2,25 +2,36 @@ package one.modality.event.frontoffice.activities.booking.process.event;
 
 import dev.webfx.extras.panes.FlexPane;
 import dev.webfx.extras.webtext.HtmlText;
+import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.util.Numbers;
 import dev.webfx.stack.cloud.image.CloudImageService;
 import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
+import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.stack.orm.entity.EntityId;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
@@ -28,13 +39,14 @@ import javafx.stage.Screen;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.event.client.event.fx.FXEvent;
+import one.modality.event.client.event.fx.FXEventId;
 import one.modality.event.frontoffice.activities.booking.WorkingBooking;
-import one.modality.event.frontoffice.activities.booking.fx.FXEvent;
 import one.modality.event.frontoffice.activities.booking.fx.FXEventAggregate;
+import one.modality.event.frontoffice.activities.booking.process.EventAggregate;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 
 /**
@@ -46,13 +58,19 @@ public final class BookEventActivity extends ViewDomainActivityBase {
     private Text eventTitle = new Text();
     private HtmlText eventDescription = new HtmlText();
     private Button checkoutButton;
+    private DoubleProperty totalPriceProperty = new SimpleDoubleProperty(0);
+    private final Label totalPriceLabel = new Label();
     private final CloudImageService cloudImageService = new ClientImageService();
     private RecurringEventSchedule recurringEventSchedule = new RecurringEventSchedule();
     private VBox eventDetailVBox = new VBox();
     private VBox checkoutVBox = new VBox();
     private BorderPane containerBorderPane = new BorderPane();
+    private final VBox scheduledItemVBox = new VBox();
     private BooleanProperty isOptionsSelectedEmptyProperty = new SimpleBooleanProperty();
     private WorkingBooking currentBooking = new WorkingBooking();
+    private ImageView imageView = new ImageView();
+
+    final int maxWidth = 500;
 
 
     @Override
@@ -78,67 +96,63 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         bookedEventTitleText.getStyleClass().add("title-blue-bold");
         HBox line1 = new HBox(bookedEventTitleText);
         line1.setAlignment(Pos.BASELINE_CENTER);
-        line1.setPadding(new Insets(5,0,15,0));
+        line1.setPadding(new Insets(5,0,30,0));
 
         checkoutVBox.getChildren().add(line1);
 
-        List<LocalDate> selectedDates = recurringEventSchedule.getSelectedDates();
-        List<ScheduledItem> allScheduledItems = FXEventAggregate.getEventAggregate().getScheduledItems();
+        SVGPath locationIcon = SvgIcons.createPinpointSVGPath(Color.GRAY);
+        Text eventCentreLocationText = new Text();
+        I18n.bindI18nProperties(eventCentreLocationText, new I18nSubKey("expression: '[At] ' + coalesce(i18n(venue), i18n(organization))", currentEvent));
+        HBox addressLine = new HBox(locationIcon,eventCentreLocationText);
+        addressLine.setAlignment(Pos.CENTER);
+        addressLine.setSpacing(5);
+        addressLine.setPadding(new Insets(0,0,30,0));
+        checkoutVBox.getChildren().add(addressLine);
 
-        // We fliter the scheduledItems to have only the one which date in the selectedDates list
-        List<ScheduledItem> selectedScheduledItems = allScheduledItems.stream()
-                .filter(item -> selectedDates.contains(item.getDate()))
-                .collect(Collectors.toList());
+        // We filter the scheduledItems to have only the one which date in the selectedDates list
+        currentBooking.setScheduledItems(recurringEventSchedule.getSelectedScheduledItem());
 
-        currentBooking.setScheduledItems(selectedScheduledItems);
-        GridPane detailsGridPane = new GridPane();
-        ColumnConstraints col1Constraints = new ColumnConstraints();
-        col1Constraints.setMinWidth(300);
-        col1Constraints.setMaxWidth(400);
-        col1Constraints.setPrefWidth(300);
+        BorderPane header = new BorderPane();
+        Label summmaryLabel = I18nControls.bindI18nProperties(new Label(),"Summary");
+        summmaryLabel.setPrefWidth(290);
+        Label priceLabel = I18nControls.bindI18nProperties(new Label(),"Price");
+        priceLabel.setPrefWidth(70);
+        //The actionLabel is used only because we need to put a graphic element in the right part of the borderpane
+        //so it's balanced with the content that is shown bellow
+        Label actionLabel = new Label();
+        actionLabel.setPrefWidth(40);
+        header.setLeft(summmaryLabel);
+        header.setCenter(priceLabel);
+        header.setRight(actionLabel);
+        header.setMaxWidth(400);
+        header.setPadding(new Insets(0,0,5,0));
 
-        ColumnConstraints col2Constraints = new ColumnConstraints();
-        col2Constraints.setMinWidth(30);
-        col2Constraints.setMaxWidth(50);
-        col2Constraints.setPrefWidth(30);
+        scheduledItemVBox.setAlignment(Pos.CENTER);
+        scheduledItemVBox.setPadding(new Insets(0,0,40,0));
+        //The scheduledItemPane containing the details of the checkout will be populated by the function drawScheduledItemInCheckoutView
+        //which is called throw the binding
+        checkoutVBox.getChildren().addAll(header, scheduledItemVBox);
 
-        ColumnConstraints col3Constraints = new ColumnConstraints();
-        col3Constraints.setMinWidth(10);
-        col3Constraints.setMaxWidth(10);
-        col3Constraints.setPrefWidth(10);
+        HBox totalHBox = new HBox();
+        totalHBox.getStyleClass().add("line-total");
+        totalHBox.setMaxWidth(maxWidth);
+        Label totalLabel = I18nControls.bindI18nProperties(new Label(),"Total");
+        totalLabel.setPadding(new Insets(5,0,5,50));
+        totalLabel.setPrefWidth(350);
+        totalPriceLabel.setPadding(new Insets(5,0,5,0));
+        totalHBox.getChildren().addAll(totalLabel,totalPriceLabel);
+        checkoutVBox.getChildren().add(totalHBox);
 
-        detailsGridPane.getColumnConstraints().addAll(col1Constraints, col2Constraints,col3Constraints);
+        HBox separatorHBox = new HBox();
+        separatorHBox.setPadding(new Insets(0,0,50,0));
+        checkoutVBox.getChildren().add(separatorHBox);
 
-        detailsGridPane.add(I18n.bindI18nProperties( new Text(),"Summary"),0,0);
-        detailsGridPane.add(I18n.bindI18nProperties( new Text(),"Price"),1,0);
-        detailsGridPane.setAlignment(Pos.CENTER);
-
-        for (int i = 0; i < currentBooking.getScheduledItems().size(); i++) {
-            ScheduledItem currentScheduledItem = currentBooking.getScheduledItems().get(i);
-            String dateFormatted = I18n.getI18nText("DateFormatted",I18n.getI18nText(currentScheduledItem.getDate().getMonth().name()),currentScheduledItem.getDate().getDayOfMonth());
-            Text name = new Text(currentScheduledItem.getItem().getName() + " - "+ dateFormatted);
-            Text price = new Text("7£");
-            name.getStyleClass().add("subtitle-grey");
-            price.getStyleClass().add("subtitle-grey");
-            SVGPath trashOption = SvgIcons.createTrashSVGPath();
-            trashOption.setFill(Color.RED);
-            trashOption.setOnMouseClicked(event ->  {
-                currentBooking.getScheduledItems().remove(currentScheduledItem);
-                recurringEventSchedule.getSelectedDates().remove(currentScheduledItem.getDate());
-            });
-            detailsGridPane.add(name,0,i+1);
-            detailsGridPane.add(price,1,i+1);
-            detailsGridPane.add(trashOption,2,i+1);
-        }
-
-        detailsGridPane.setPadding(new Insets(0,0,40,0));
-        checkoutVBox.getChildren().add(detailsGridPane);
         Button backButton = I18nControls.bindI18nProperties(new Button(), "Pay");
         //We manage the property of the button in css
+        backButton.setGraphicTextGap(30);
         backButton.getStyleClass().addAll("green-button");
         backButton.setMaxWidth(150);
         backButton.setOnAction((event -> {
-
         }));
 
         checkoutVBox.getChildren().add(backButton);
@@ -154,24 +168,14 @@ public final class BookEventActivity extends ViewDomainActivityBase {
 
     }
 
-    private void buildEventDetailVBox() {
-
-        Text title = I18n.bindI18nProperties( new Text(),"GPEvent");
-        title.getStyleClass().add("title-blue-bold");
-        HBox line1 = new HBox(title);
-        line1.setPadding(new Insets(0,0,5,0));
-        line1.setAlignment(Pos.BASELINE_CENTER);
-
-        eventTitle.getStyleClass().add("subtitle-grey");
-        HBox line2 = new HBox(eventTitle);
-        line2.setAlignment(Pos.BASELINE_CENTER);
-        line2.setPadding(new Insets(5,0,15,0));
-
-        final int maxWidth = 500;
-        ImageView imageView = new ImageView();
-        imageView.setPreserveRatio(true);
-        imageView.setFitWidth(maxWidth);
-        Object imageTag = currentEvent.getId().getPrimaryKey();
+    /**
+     * In this method, we update the UI according to the event
+     * @param e the event that has been selected
+     */
+    private void loadEventDetails(Event e)
+    {
+        recurringEventSchedule.getSelectedDates().clear();
+        Object imageTag = e.getId().getPrimaryKey();
         String pictureId = String.valueOf(imageTag);
         cloudImageService.exists(pictureId)
                 .onFailure(ex -> {
@@ -190,33 +194,67 @@ public final class BookEventActivity extends ViewDomainActivityBase {
                     }
                 }));
 
-        eventDescription.setPadding(new Insets(20,0,0,0));
 
-        eventDescription.getStyleClass().add("description-text");
-        currentEvent.onExpressionLoaded("name, description").onFailure(Console::log)
+        e.onExpressionLoaded("name, description").onFailure(Console::log)
                 .onSuccess(x -> Platform.runLater(()-> {
-                    eventTitle.setText(currentEvent.getName());
-                    eventDescription.setText(currentEvent.getDescription());
+                    eventTitle.setText(e.getName());
+                    eventDescription.setText(e.getDescription());
                 }));
+    }
+
+    private void buildEventDetailVBox() {
+
+        Text title = I18n.bindI18nProperties( new Text(),"GPEvent");
+        title.getStyleClass().add("title-blue-bold");
+        HBox line1 = new HBox(title);
+        line1.setPadding(new Insets(0,0,5,0));
+        line1.setAlignment(Pos.BASELINE_CENTER);
+
+        eventDetailVBox.getChildren().add(line1);
+
+        Text eventCentreLocationText = new Text();
+        I18n.bindI18nProperties(eventCentreLocationText, new I18nSubKey("expression: '[At] ' + coalesce(i18n(venue), i18n(organization))", currentEvent));
+
+        eventDetailVBox.getChildren().add(eventCentreLocationText);
+
+        eventTitle.getStyleClass().add("subtitle-grey");
+        HBox line2 = new HBox(eventTitle);
+        line2.setAlignment(Pos.BASELINE_CENTER);
+        line2.setPadding(new Insets(5,0,15,0));
+
+        eventDetailVBox.getChildren().add(line2);
+
+        imageView.setPreserveRatio(true);
+        imageView.setFitWidth(maxWidth);
+
+        eventDetailVBox.getChildren().add(imageView);
+
+        eventDescription.setPadding(new Insets(20,0,0,0));
+        eventDescription.getStyleClass().add("description-text");
+        eventDetailVBox.getChildren().add(eventDescription);
 
         Text scheduleText = I18n.bindI18nProperties( new Text(),"Schedule");
         scheduleText.getStyleClass().add("title-blue-bold");
         HBox line4 = new HBox(scheduleText);
         line4.setPadding(new Insets(20,0,10,0));
         line4.setAlignment(Pos.BASELINE_CENTER);
+        eventDetailVBox.getChildren().add(line4);
 
         Text selectTheCourseText = I18n.bindI18nProperties( new Text(),"SelectTheEvent");
         HBox line5 = new HBox(selectTheCourseText);
         line5.setPadding(new Insets(0,0,5,0));
         line5.setAlignment(Pos.BASELINE_CENTER);
+        eventDetailVBox.getChildren().add(line5);
 
         FlexPane dateFlexPane = recurringEventSchedule.buildUi();
         dateFlexPane.setPadding(new Insets(20,0,5,0));
+        eventDetailVBox.getChildren().add(dateFlexPane);
 
         Hyperlink selectAllClassesHyperlink = I18nControls.bindI18nTextProperty(new Hyperlink(),"SelectAllClasses");
         selectAllClassesHyperlink.setAlignment(Pos.BASELINE_CENTER);
         selectAllClassesHyperlink.getStyleClass().add("subtitle-blue");
         selectAllClassesHyperlink.setOnAction((event ->recurringEventSchedule.selectAllDates()));
+        eventDetailVBox.getChildren().add(selectAllClassesHyperlink);
 
         //TODO: retrieve the price, for now we harcode it
         Text priceText = new Text(I18n.getI18nText( "PricePerClass",7,"£"));
@@ -224,6 +262,8 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         priceText.getStyleClass().add("subtitle-grey");
         line6.setPadding(new Insets(20,0,5,0));
         line6.setAlignment(Pos.BASELINE_CENTER);
+        eventDetailVBox.getChildren().add(line6);
+
 
         //TODO: retrieve the discount, for now we harcode it
         Text priceForAllClassesText = new Text(I18n.getI18nText( "DiscountForAllSeries",15));
@@ -232,6 +272,8 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         line7.setAlignment(Pos.BASELINE_CENTER);
 
         line7.setPadding(new Insets(0,0,20,0));
+        eventDetailVBox.getChildren().add(line7);
+
         checkoutButton = I18nControls.bindI18nProperties(new Button(), "ProceedCheckout");
         //We manage the property of the button in css
         checkoutButton.getStyleClass().addAll("green-button");
@@ -239,15 +281,60 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         checkoutButton.setOnAction((event -> {
             computeCheckoutVBox();
         }));
-        eventDetailVBox.getChildren().setAll(line1, line2,imageView,eventDescription,line4,line5,recurringEventSchedule.buildUi(),selectAllClassesHyperlink,line6,line7,checkoutButton);
+
+        eventDetailVBox.getChildren().add(checkoutButton);
+
         eventDetailVBox.setPadding(new Insets(30,50,20,50));
         eventDetailVBox.setMaxWidth(maxWidth);
         eventDetailVBox.setAlignment(Pos.TOP_CENTER);
 
         checkoutButton.disableProperty().bind(isOptionsSelectedEmptyProperty);
-
+        ObservableLists.bindConverted(scheduledItemVBox.getChildren(),recurringEventSchedule.getSelectedDates(),this::drawScheduledItemInCheckoutView);
+        totalPriceLabel.textProperty().bind(Bindings.format("%.2f£", totalPriceProperty));
     }
 
+
+    private BorderPane drawScheduledItemInCheckoutView(LocalDate date) {
+        Optional<ScheduledItem> result = FXEventAggregate.getEventAggregate().getScheduledItems().stream()
+                .filter(item -> item.getDate().equals(date))
+                .findFirst();
+
+        ScheduledItem currentScheduledItem;
+        // Check if an element was found
+        if (result.isPresent()) {
+            currentScheduledItem = result.get();
+        } else {
+            currentScheduledItem = null;
+            // Handle the case where no element with the target date was found
+            Console.log("Scheduled Item not found in the list");
+            return null;
+        }
+
+        BorderPane currentScheduledItemBorderPane = new BorderPane();
+        currentScheduledItemBorderPane.setMaxWidth(400); //300+55+45
+        String dateFormatted = I18n.getI18nText("DateFormatted",I18n.getI18nText(currentScheduledItem.getDate().getMonth().name()),currentScheduledItem.getDate().getDayOfMonth());
+        Label name = new Label(currentScheduledItem.getItem().getName() + " - "+ dateFormatted);
+        Label price = new Label("7£");
+        name.getStyleClass().add("subtitle-grey");
+        price.getStyleClass().add("subtitle-grey");
+
+        Hyperlink trashOption = new Hyperlink();
+        SVGPath svgTrash = SvgIcons.createTrashSVGPath();
+        svgTrash.setFill(Color.INDIANRED);
+        trashOption.setGraphic(svgTrash);
+        name.setPrefWidth(300);
+        price.setPrefWidth(55);
+        trashOption.setPrefWidth(45);
+        trashOption.setOnAction(event ->  recurringEventSchedule.getSelectedDates().remove(currentScheduledItem.getDate()));
+        currentScheduledItemBorderPane.setLeft(name);
+        currentScheduledItemBorderPane.setCenter(price);
+        currentScheduledItemBorderPane.setRight(trashOption);
+        scheduledItemVBox.getChildren().add(currentScheduledItemBorderPane);
+
+        //Now we calculate the price and update the graphic related to the price
+        totalPriceProperty.setValue(recurringEventSchedule.getSelectedDates().size()*7);
+        return currentScheduledItemBorderPane;
+    }
 
     @Override
     protected void updateContextParametersFromRoute() {
@@ -256,23 +343,28 @@ public final class BookEventActivity extends ViewDomainActivityBase {
 
     @Override
     protected void updateModelFromContextParameters() {
-        super.updateModelFromContextParameters();
+        Object eventId = Numbers.toShortestNumber((Object) getParameter("eventId"));
+        FXEventId.setEventId(EntityId.create(Event.class, eventId));
     }
 
     @Override
     protected void startLogic() {
-        FXEventAggregate.getEventAggregate().load()
-                .onFailure(Console::log)
-                .onSuccess(ignored -> {
-                    recurringEventSchedule.setScheduledItems(FXEventAggregate.getEventAggregate().getScheduledItems());
-                    //We add a listener on the date to update the BooleanProperty binded with the disable property of the checkout button
-                    recurringEventSchedule.getSelectedDates().addListener((ListChangeListener<LocalDate>) change -> {
-                        isOptionsSelectedEmptyProperty.set(recurringEventSchedule.getSelectedDates().isEmpty());
-                    });
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            EventAggregate eventAggregate = FXEventAggregate.getEventAggregate();
+            if (eventAggregate != null) {
+                eventAggregate.load()
+                        .onFailure(Console::log)
+                        .onSuccess(ignored -> {
+                            loadEventDetails(FXEvent.getEvent());
+                            recurringEventSchedule.setScheduledItems(FXEventAggregate.getEventAggregate().getScheduledItems());
+                            //We add a listener on the date to update the BooleanProperty binded with the disable property of the checkout button
+                            recurringEventSchedule.getSelectedDates().addListener((ListChangeListener<LocalDate>) change -> {
+                                isOptionsSelectedEmptyProperty.set(recurringEventSchedule.getSelectedDates().isEmpty());
+                            });
 
-                    isOptionsSelectedEmptyProperty.set(recurringEventSchedule.getSelectedDates().isEmpty());
-
-
-                });
+                            isOptionsSelectedEmptyProperty.set(recurringEventSchedule.getSelectedDates().isEmpty());
+                        });
+            }
+        }, FXEventAggregate.eventAggregateProperty());
     }
 }

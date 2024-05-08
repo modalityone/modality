@@ -58,3 +58,11 @@
      -fx-background-color: #41BA4D;
      -fx-text-fill: #FFFFFF;
 }
+
+.line-total {
+    -fx-background-color: #CCCCCC;
+}
+
+.line-total Text {
+    -fx-font-weight: bolder;
+}

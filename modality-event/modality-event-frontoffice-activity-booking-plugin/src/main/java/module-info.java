@@ -11,13 +11,14 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires javafx.graphics;
     requires javafx.web;
     requires jdk.jsobject;
+    requires modality.base.client.icons;
     requires modality.base.client.mainframe.dialogarea.fx;
     requires modality.base.client.tile;
     requires modality.base.client.util;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
-    requires modality.event.backoffice.activity.recurringevents.plugin;
+    requires modality.event.client.event.fx;
     requires webfx.extras.imagestore;
     requires webfx.extras.panes;
     requires webfx.extras.util.control;
@@ -52,7 +53,6 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.dialog;
     requires webfx.stack.ui.operation;
-    requires modality.base.client.icons;
 
     // Exported packages
     exports one.modality.event.frontoffice.activities.booking;

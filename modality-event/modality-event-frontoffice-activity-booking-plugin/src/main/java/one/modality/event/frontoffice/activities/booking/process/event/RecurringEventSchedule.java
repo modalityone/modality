@@ -9,6 +9,7 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class RecurringEventSchedule {
     private FlexPane ecompassingFlexPane = new FlexPane();
@@ -41,6 +43,8 @@ public class RecurringEventSchedule {
     //We define the property on the css and the default value
     private final ObjectProperty<String> selectedDateCssClassProperty = new SimpleObjectProperty<>( "date-selected");
     private final ObjectProperty<String> unselectedDateCssClassProperty = new SimpleObjectProperty<>( "date-unselected");
+    private ListChangeListener<LocalDate> onChangeDateListener;
+
 
 
     public RecurringEventSchedule() {
@@ -49,19 +53,34 @@ public class RecurringEventSchedule {
 
         scheduledItemsList.addListener((InvalidationListener) observable -> {
             Platform.runLater(() -> {
-            ecompassingFlexPane.getChildren().clear();
-            scheduledItemsList.forEach(scheduledItem -> {
-                ScheduledItemToPane currentPane = new ScheduledItemToPane(scheduledItem);
-                ecompassingFlexPane.getChildren().add(currentPane.getContainerVBox());
-            });});
+                ecompassingFlexPane.getChildren().clear();
+                scheduledItemsList.forEach(scheduledItem -> {
+                    ScheduledItemToPane currentPane = new ScheduledItemToPane(scheduledItem);
+                    ecompassingFlexPane.getChildren().add(currentPane.getContainerVBox());
+                });
+            });
         });
 
+        onChangeDateListener = change -> {LocalDate date = null;
+            while (change.next()) {
+                if (change.wasAdded()) {
+                    date = change.getAddedSubList().get(0);
+                    //Here we haven't found it in the scheduledItemsReadFromDatabase, so we create it.
+
+                }
+                if (change.wasRemoved()) {
+                    //We remove from the updateStore and the ScheduledItem
+                    date = change.getRemoved().get(0);
+                }
+            }
+            changeCssPropertyForSelectedDate(date);
+        };
+        selectedDates.addListener( onChangeDateListener);
     }
     public void setScheduledItems(List<ScheduledItem> siList) {
         scheduledItemsList.clear();
         siList.forEach(currentSi->scheduledItemsList.add(currentSi));
     }
-
 
     public FlexPane buildUi() {
         return ecompassingFlexPane;
@@ -74,6 +93,17 @@ public class RecurringEventSchedule {
     protected void setOnDateClicked(Consumer<LocalDate> consumer)
     {
         dateConsumer = consumer;
+    }
+
+
+    public void changeCssPropertyForSelectedDate(LocalDate date) {
+        if(date!=null) {
+            if (this.selectedDates.contains(date)) {
+                changeBackgroundWhenSelected(date, true);
+            } else {
+                changeBackgroundWhenSelected(date, false);
+            }
+        }
     }
 
     public void processDateSelected(LocalDate date)
@@ -91,7 +121,7 @@ public class RecurringEventSchedule {
     protected void addSelectedDate(LocalDate date)
     {
         this.selectedDates.add(date);
-        changeBackgroundWhenSelected(date,true);
+//        changeBackgroundWhenSelected(date,true);
     }
 
     public void selectAllDates() {
@@ -99,7 +129,7 @@ public class RecurringEventSchedule {
         scheduledItemsList.forEach(si->
         {
             selectedDates.add(si.getDate());
-            changeBackgroundWhenSelected(si.getDate(),true);
+          //  changeBackgroundWhenSelected(si.getDate(),true);
         });
     }
     public ObservableList<LocalDate> getSelectedDates() {
@@ -117,15 +147,21 @@ public class RecurringEventSchedule {
         String cssClassWhenUnSelected = objectColor.get2().get2();
 
         if(isSelected) {
-            pane.getContainerVBox().getStyleClass().remove(cssClassWhenUnSelected);
+            pane.getContainerVBox().getStyleClass().removeAll(cssClassWhenUnSelected);
             pane.getContainerVBox().getStyleClass().add(cssClassWhenSelected);
         }
         else {
-            pane.getContainerVBox().getStyleClass().remove(cssClassWhenSelected);
+            pane.getContainerVBox().getStyleClass().removeAll(cssClassWhenSelected);
             pane.getContainerVBox().getStyleClass().add(cssClassWhenUnSelected);
         }
     }
 
+    public ObservableList<ScheduledItem> getSelectedScheduledItem()
+    {
+        return FXCollections.observableList(scheduledItemsList.stream()
+                .filter(item -> selectedDates.contains(item.getDate()))
+                .collect(Collectors.toList()));
+    }
     public String getSelectedDateCssClass() {
         return selectedDateCssClassProperty.get();
     }
