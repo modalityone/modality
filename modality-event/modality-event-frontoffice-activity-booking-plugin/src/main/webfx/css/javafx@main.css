@@ -59,6 +59,10 @@
      -fx-text-fill: #FFFFFF;
 }
 
+.checkout-address {
+    -fx-text-fill: #BBBBBB;
+}
+
 .line-total {
     -fx-background-color: #CCCCCC;
 }

@@ -56,6 +56,7 @@ public final class BookEventActivity extends ViewDomainActivityBase {
 
     private Event currentEvent = FXEvent.getEvent();
     private Text eventTitle = new Text();
+    private String venueAddress = "";
     private HtmlText eventDescription = new HtmlText();
     private Button checkoutButton;
     private DoubleProperty totalPriceProperty = new SimpleDoubleProperty(0);
@@ -87,27 +88,28 @@ public final class BookEventActivity extends ViewDomainActivityBase {
     private void computeCheckoutVBox() {
         switchToCheckoutView();
         checkoutVBox.getChildren().clear();
-        checkoutVBox.setAlignment(Pos.CENTER);
-        Hyperlink backLink = new Hyperlink("<-");
-        backLink.setOnAction(event->switchToDisplayEventDetails());
-        backLink.setAlignment(Pos.CENTER_LEFT);
-        checkoutVBox.getChildren().add(backLink);
-        Text bookedEventTitleText = new Text(FXEvent.getEvent().getName());
-        bookedEventTitleText.getStyleClass().add("title-blue-bold");
-        HBox line1 = new HBox(bookedEventTitleText);
-        line1.setAlignment(Pos.BASELINE_CENTER);
-        line1.setPadding(new Insets(5,0,30,0));
+        checkoutVBox.setAlignment(Pos.TOP_CENTER);
 
+        Label bookedEventTitleText = new Label(FXEvent.getEvent().getName());
+        bookedEventTitleText.getStyleClass().add("title-blue-bold");
+        BorderPane line1 = new BorderPane(bookedEventTitleText);
+        line1.setCenter(bookedEventTitleText);
+        bookedEventTitleText.setAlignment(Pos.CENTER_LEFT);
+        bookedEventTitleText.setPrefWidth(maxWidth-50);
+        line1.setPadding(new Insets(0,0,30,0));
         checkoutVBox.getChildren().add(line1);
 
-        SVGPath locationIcon = SvgIcons.createPinpointSVGPath(Color.GRAY);
-        Text eventCentreLocationText = new Text();
-        I18n.bindI18nProperties(eventCentreLocationText, new I18nSubKey("expression: '[At] ' + coalesce(i18n(venue), i18n(organization))", currentEvent));
-        HBox addressLine = new HBox(locationIcon,eventCentreLocationText);
-        addressLine.setAlignment(Pos.CENTER);
-        addressLine.setSpacing(5);
-        addressLine.setPadding(new Insets(0,0,30,0));
-        checkoutVBox.getChildren().add(addressLine);
+        SVGPath locationIcon = SvgIcons.createPinpointSVGPath(Color.web("#BBBBBB"));
+        Label eventCentreText = new Label(currentEvent.getVenue().getStringFieldValue("address"));
+        eventCentreText.getStyleClass().add("checkout-address");
+        eventCentreText.setGraphicTextGap(5);
+        eventCentreText.setGraphic(locationIcon);
+        BorderPane addressBorderPane = new BorderPane();
+        addressBorderPane.setCenter(eventCentreText);
+        eventCentreText.setAlignment(Pos.CENTER_LEFT);
+        eventCentreText.setPrefWidth(maxWidth-50);
+        addressBorderPane.setPadding(new Insets(0,0,30,0));
+        checkoutVBox.getChildren().addAll(addressBorderPane);
 
         // We filter the scheduledItems to have only the one which date in the selectedDates list
         currentBooking.setScheduledItems(recurringEventSchedule.getSelectedScheduledItem());
@@ -195,10 +197,11 @@ public final class BookEventActivity extends ViewDomainActivityBase {
                 }));
 
 
-        e.onExpressionLoaded("name, description").onFailure(Console::log)
+        e.onExpressionLoaded("name, description, venue.address").onFailure(Console::log)
                 .onSuccess(x -> Platform.runLater(()-> {
                     eventTitle.setText(e.getName());
                     eventDescription.setText(e.getDescription());
+                    venueAddress = e.getVenue().getStringFieldValue("address");
                 }));
     }
 

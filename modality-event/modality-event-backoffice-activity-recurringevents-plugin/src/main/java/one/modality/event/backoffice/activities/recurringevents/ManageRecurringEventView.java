@@ -6,6 +6,8 @@ import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
+import dev.webfx.extras.util.masterslave.SlaveEditor;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.extras.webtext.HtmlTextEditor;
@@ -25,8 +27,6 @@ import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
-import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
-import dev.webfx.extras.util.masterslave.SlaveEditor;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
@@ -34,12 +34,14 @@ import dev.webfx.stack.ui.dialog.DialogCallback;
 import dev.webfx.stack.ui.dialog.DialogUtil;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
+import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -244,9 +246,10 @@ public final class ManageRecurringEventView {
     /**
      * This method is used to initialise the Logic
      */
-    public void startLogic()
+    public void startLogic(RecurringEventsActivity activity)
     {
         EventRenderers.registerRenderers();
+
 
         eventVisualMapper = ReactiveVisualMapper.<Event>createPushReactiveChain(mixin)
                 .always("{class: 'Event', alias: 'e', fields: 'name, openingDate, description, type.recurringItem, (select site.name from Timeline where event=e limit 1) as location'}")
@@ -256,6 +259,7 @@ public final class ManageRecurringEventView {
                 .setStore(entityStore)
                 .setVisualSelectionProperty(eventTable.visualSelectionProperty())
                 .visualizeResultInto(eventTable.visualResultProperty())
+                .bindActivePropertyTo(Bindings.and((ObservableBooleanValue) activity.activeProperty(), activity.editTabSelectedProperty().not()))
                 .start();
 
         /*
@@ -548,6 +552,7 @@ public final class ManageRecurringEventView {
                         currentEditedEvent.setCorporation(1);
                         currentEditedEvent.setType(eventType);
                         currentEditedEvent.setKbs3(true);
+                        currentEditedEvent.setVenue(eventSite);
                         eventTimeline.setSite(eventSite);
                         currentEditedEvent.setState(EventState.DRAFT);
                         currentEditedEvent.setAdvertised(false);
@@ -621,6 +626,7 @@ public final class ManageRecurringEventView {
                             eventSite = siteSelector.getSelectedItem();
                             //We update the timeline and working scheduled item
                             eventTimeline.setSite(eventSite);
+                            currentEditedEvent.setVenue(eventSite);
                             for(ScheduledItem si:workingScheduledItems)
                             {
                                 si.setSite(eventSite);
