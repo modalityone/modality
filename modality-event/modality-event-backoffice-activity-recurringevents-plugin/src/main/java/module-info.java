@@ -24,6 +24,7 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires webfx.extras.time.layout;
     requires webfx.extras.time.layout.calendar;
     requires webfx.extras.util.layout;
+    requires webfx.extras.util.masterslave;
     requires webfx.extras.visual.grid;
     requires webfx.extras.webtext;
     requires webfx.kit.util;

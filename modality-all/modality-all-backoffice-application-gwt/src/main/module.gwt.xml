@@ -457,6 +457,8 @@
     <source path="dev/webfx/extras/util/control"/>
     <!--============================< webfx-extras-util-layout >============================-->
     <source path="dev/webfx/extras/util/layout"/>
+    <!--=========================< webfx-extras-util-masterslave >==========================-->
+    <source path="dev/webfx/extras/util/masterslave"/>
     <!--============================< webfx-extras-util-paint >=============================-->
     <source path="dev/webfx/extras/util/paint"/>
     <!--============================< webfx-extras-util-scene >=============================-->
@@ -850,7 +852,6 @@
     <source path="dev/webfx/stack/orm/entity/result"/>
     <source path="dev/webfx/stack/orm/entity/result/impl"/>
     <!--========================< webfx-stack-orm-entity-controls >=========================-->
-    <source path="dev/webfx/stack/orm/entity/controls/entity/masterslave"/>
     <source path="dev/webfx/stack/orm/entity/controls/entity/selector"/>
     <source path="dev/webfx/stack/orm/entity/controls/entity/sheet"/>
     <!--===========================< webfx-stack-orm-expression >===========================-->

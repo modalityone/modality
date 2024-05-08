@@ -117,4 +117,17 @@ public interface Event extends Entity,
         return getStringFieldValue("externalLink");
     }
 
+    default void setVenue(Object venue) {
+        setForeignField("venue", venue);
+    }
+
+    default EntityId getVenueId() {
+        return getForeignEntityId("venue");
+    }
+
+    default Site getVenue() {
+        return getForeignEntity("venue");
+    }
+
+
 }
