@@ -1,5 +1,6 @@
 package one.modality.event.frontoffice.activities.booking.process.event;
 
+import dev.webfx.extras.panes.Carrousel;
 import dev.webfx.extras.panes.FlexPane;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -72,21 +73,23 @@ public final class BookEventActivity extends ViewDomainActivityBase {
     private ImageView imageView = new ImageView();
 
     final int maxWidth = 500;
-
+    private HBox header = new HBox();
+    private VBox container = new VBox();
+    private Carrousel carrousel = new Carrousel();
 
     @Override
     public Node buildUi() {
-        switchToDisplayEventDetails();
+        carrousel.setSlides(eventDetailVBox,checkoutVBox);
         buildEventDetailVBox();
-        ScrollPane scrollPane = new ScrollPane(containerBorderPane);
+        buildCheckoutVBox();
+        ScrollPane scrollPane = new ScrollPane((carrousel.getContainer()));
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
         scrollPane.setPadding(new Insets(10));
         return scrollPane;
     }
 
-    private void computeCheckoutVBox() {
-        switchToCheckoutView();
+    private void buildCheckoutVBox() {
         checkoutVBox.getChildren().clear();
         checkoutVBox.setAlignment(Pos.TOP_CENTER);
 
@@ -99,7 +102,8 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         line1.setPadding(new Insets(0,0,30,0));
         checkoutVBox.getChildren().add(line1);
 
-        SVGPath locationIcon = SvgIcons.createPinpointSVGPath(Color.web("#BBBBBB"));
+        SVGPath locationIcon = SvgIcons.createPinpointSVGPath();
+        locationIcon.setFill(Color.web("#BBBBBB"));
         Label eventCentreText = new Label(currentEvent.getVenue().getStringFieldValue("address"));
         eventCentreText.getStyleClass().add("checkout-address");
         eventCentreText.setGraphicTextGap(5);
@@ -158,17 +162,8 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         }));
 
         checkoutVBox.getChildren().add(backButton);
-
     }
 
-    private void switchToDisplayEventDetails() {
-        containerBorderPane.setCenter(eventDetailVBox);
-    }
-
-    private void switchToCheckoutView() {
-        containerBorderPane.setCenter(checkoutVBox);
-
-    }
 
     /**
      * In this method, we update the UI according to the event
@@ -282,7 +277,7 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         checkoutButton.getStyleClass().addAll("green-button");
         checkoutButton.setMaxWidth(300);
         checkoutButton.setOnAction((event -> {
-            computeCheckoutVBox();
+            carrousel.moveForward();
         }));
 
         eventDetailVBox.getChildren().add(checkoutButton);
@@ -323,7 +318,7 @@ public final class BookEventActivity extends ViewDomainActivityBase {
 
         Hyperlink trashOption = new Hyperlink();
         SVGPath svgTrash = SvgIcons.createTrashSVGPath();
-        svgTrash.setFill(Color.INDIANRED);
+        svgTrash.setFill(Color.RED);
         trashOption.setGraphic(svgTrash);
         name.setPrefWidth(300);
         price.setPrefWidth(55);
