@@ -29,14 +29,14 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class RecurringEventSchedule {
-    private FlexPane ecompassingFlexPane = new FlexPane();
-    private ObservableList<ScheduledItem> scheduledItemsList = FXCollections.observableArrayList();
+    private final FlexPane ecompassingFlexPane = new FlexPane();
+    private final ObservableList<ScheduledItem> scheduledItemsList = FXCollections.observableArrayList();
     protected ObservableList<LocalDate> selectedDates = FXCollections.observableArrayList();
     Map<LocalDate, Pair<ScheduledItemToPane, Pair<String,String>>> paneAndCssClassMap = new HashMap<>();
 
-    private Function<LocalDate, String> computeCssClassForSelectedDateFunction = localDate -> getSelectedDateCssClass();
+    private final Function<LocalDate, String> computeCssClassForSelectedDateFunction = localDate -> getSelectedDateCssClass();
 
-    private Function<LocalDate, String> computeCssClassForUnselectedDateFunction = localDate -> getUnselectedDateCssClass();
+    private final Function<LocalDate, String> computeCssClassForUnselectedDateFunction = localDate -> getUnselectedDateCssClass();
 
     protected Consumer<LocalDate> dateConsumer = null;
 
@@ -50,6 +50,7 @@ public class RecurringEventSchedule {
     public RecurringEventSchedule() {
         ecompassingFlexPane.setVerticalSpace(30);
         ecompassingFlexPane.setHorizontalSpace(30);
+        ecompassingFlexPane.setFlexLastRow(false);
 
         scheduledItemsList.addListener((InvalidationListener) observable -> {
             Platform.runLater(() -> {
@@ -78,8 +79,7 @@ public class RecurringEventSchedule {
         selectedDates.addListener( onChangeDateListener);
     }
     public void setScheduledItems(List<ScheduledItem> siList) {
-        scheduledItemsList.clear();
-        siList.forEach(currentSi->scheduledItemsList.add(currentSi));
+        scheduledItemsList.setAll(siList);
     }
 
     public FlexPane buildUi() {
@@ -147,11 +147,11 @@ public class RecurringEventSchedule {
         String cssClassWhenUnSelected = objectColor.get2().get2();
 
         if(isSelected) {
-            pane.getContainerVBox().getStyleClass().removeAll(cssClassWhenUnSelected);
+            pane.getContainerVBox().getStyleClass().remove(cssClassWhenUnSelected);
             pane.getContainerVBox().getStyleClass().add(cssClassWhenSelected);
         }
         else {
-            pane.getContainerVBox().getStyleClass().removeAll(cssClassWhenSelected);
+            pane.getContainerVBox().getStyleClass().remove(cssClassWhenSelected);
             pane.getContainerVBox().getStyleClass().add(cssClassWhenUnSelected);
         }
     }
@@ -188,7 +188,7 @@ public class RecurringEventSchedule {
             scheduledItem.onExpressionLoaded("date, startTime").onFailure(Console::log)
                     .onSuccess(x -> Platform.runLater(()-> {
                         LocalDate date = scheduledItem.getDate();
-                        String dateFormatted = I18n.getI18nText("DateFormatted",I18n.getI18nText(date.getMonth().name()),date.getDayOfMonth());
+                        String dateFormatted = I18n.getI18nText("DateFormatted", I18n.getI18nText(date.getMonth().name()), date.getDayOfMonth());
                         dayText.setText(dateFormatted);
                         //We test if the StartTime of the scheduledItem is defined. If it's null, we need to look at the info in the timeline associated to the event
                         LocalTime startTime = scheduledItem.getStartTime();

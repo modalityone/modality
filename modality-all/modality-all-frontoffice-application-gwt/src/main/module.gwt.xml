@@ -86,8 +86,6 @@
     <inherits name="org.gwtproject.nio.GwtNioSupport"/>
     <!--=================< modality-base-backoffice-mainframe-headernode >==================-->
     <source path="one/modality/base/backoffice/mainframe/headernode"/>
-    <!--================< modality-base-backoffice-mainframe-headertabs-fx >================-->
-    <source path="one/modality/base/backoffice/mainframe/headertabs/fx"/>
     <!--=========================< modality-base-client-activity >==========================-->
     <source path="one/modality/base/client/activity"/>
     <source path="one/modality/base/client/activity/table"/>
@@ -106,13 +104,6 @@
     <source path="one/modality/base/client/entities/util"/>
     <source path="one/modality/base/client/entities/util/filters"/>
     <source path="one/modality/base/client/entities/util/functions"/>
-    <!--=========================< modality-base-client-gantt-fx >==========================-->
-    <source path="one/modality/base/client/gantt/fx/highlight"/>
-    <source path="one/modality/base/client/gantt/fx/interstice"/>
-    <source path="one/modality/base/client/gantt/fx/selection"/>
-    <source path="one/modality/base/client/gantt/fx/timewindow"/>
-    <source path="one/modality/base/client/gantt/fx/today"/>
-    <source path="one/modality/base/client/gantt/fx/visibility"/>
     <!--===========================< modality-base-client-i18n >============================-->
     <source path="one/modality/base/client/operations/i18n"/>
     <source path="one/modality/base/client/services/i18n"/>
@@ -232,13 +223,8 @@
     <!--===========================< modality-crm-shared-authn >============================-->
     <source path="one/modality/crm/shared/services/authn"/>
     <source path="one/modality/crm/shared/services/authn/serial"/>
-    <!--===========< modality-event-backoffice-activity-recurringevents-plugin >============-->
-    <source path="one/modality/event/backoffice/activities/recurringevents"/>
-    <source path="one/modality/event/backoffice/activities/recurringevents/routing"/>
-    <source path="one/modality/event/backoffice/operations/routes/recurringevents"/>
-    <!--=======================< modality-event-backoffice-event-fx >=======================-->
-    <source path="one/modality/event/backoffice/event/fx"/>
-    <source path="one/modality/event/backoffice/event/fx/impl"/>
+    <!--=========================< modality-event-client-event-fx >=========================-->
+    <source path="one/modality/event/client/event/fx"/>
     <!--===============< modality-event-frontoffice-activity-booking-plugin >===============-->
     <source path="one/modality/event/frontoffice/activities/booking"/>
     <source path="one/modality/event/frontoffice/activities/booking/browser"/>
@@ -251,40 +237,21 @@
     <source path="one/modality/event/frontoffice/operations/routes/booking"/>
     <resource path="one/modality/event/frontoffice/activities/booking/map"/>
     <public includes="one/modality/event/frontoffice/activities/booking/map/" path=""/>
-    <!--==============================< webfx-extras-canvas >===============================-->
-    <source path="dev/webfx/extras/canvas"/>
-    <source path="dev/webfx/extras/canvas/impl"/>
-    <!--===========================< webfx-extras-canvas-layer >============================-->
-    <source path="dev/webfx/extras/canvas/layer"/>
-    <source path="dev/webfx/extras/canvas/layer/interact"/>
-    <!--============================< webfx-extras-canvas-pane >============================-->
-    <source path="dev/webfx/extras/canvas/pane"/>
+    <!--=============================< webfx-extras-carrousel >=============================-->
+    <source path="dev/webfx/extras/carrousel"/>
     <!--===============================< webfx-extras-cell >================================-->
     <source path="dev/webfx/extras/cell/collator"/>
     <source path="dev/webfx/extras/cell/renderer"/>
     <source path="dev/webfx/extras/cell/rowstyle"/>
-    <!--============================< webfx-extras-filepicker >=============================-->
-    <source path="dev/webfx/extras/filepicker"/>
-    <source path="dev/webfx/extras/filepicker/spi"/>
-    <source path="dev/webfx/extras/filepicker/spi/impl"/>
-    <!--========================< webfx-extras-filepicker-gwt-j2cl >========================-->
-    <source path="dev/webfx/extras/filepicker/spi/impl/gwtj2cl"/>
-    <!--=============================< webfx-extras-geometry >==============================-->
-    <source path="dev/webfx/extras/geometry"/>
     <!--============================< webfx-extras-imagestore >=============================-->
     <source path="dev/webfx/extras/imagestore"/>
     <!--===============================< webfx-extras-label >===============================-->
     <source path="dev/webfx/extras/label"/>
-    <!--===============================< webfx-extras-layer >===============================-->
-    <source path="dev/webfx/extras/layer"/>
-    <source path="dev/webfx/extras/layer/interact"/>
     <!--==========================< webfx-extras-materialdesign >===========================-->
     <source path="dev/webfx/extras/materialdesign/textfield"/>
     <source path="dev/webfx/extras/materialdesign/util"/>
     <!--===============================< webfx-extras-panes >===============================-->
     <source path="dev/webfx/extras/panes"/>
-    <!--=============================< webfx-extras-switches >==============================-->
-    <source path="dev/webfx/extras/switches"/>
     <!--===============================< webfx-extras-theme >===============================-->
     <source path="dev/webfx/extras/theme"/>
     <source path="dev/webfx/extras/theme/layout"/>
@@ -292,24 +259,8 @@
     <source path="dev/webfx/extras/theme/palette"/>
     <source path="dev/webfx/extras/theme/shape"/>
     <source path="dev/webfx/extras/theme/text"/>
-    <!--===============================< webfx-extras-time >================================-->
-    <source path="dev/webfx/extras/time"/>
-    <!--============================< webfx-extras-time-layout >============================-->
-    <source path="dev/webfx/extras/time/layout"/>
-    <source path="dev/webfx/extras/time/layout/bar"/>
-    <source path="dev/webfx/extras/time/layout/canvas"/>
-    <source path="dev/webfx/extras/time/layout/impl"/>
-    <source path="dev/webfx/extras/time/layout/node"/>
-    <!--=======================< webfx-extras-time-layout-calendar >========================-->
-    <source path="dev/webfx/extras/time/layout/calendar"/>
-    <!--============================< webfx-extras-time-window >============================-->
-    <source path="dev/webfx/extras/time/projector"/>
-    <source path="dev/webfx/extras/time/window"/>
-    <source path="dev/webfx/extras/time/window/impl"/>
     <!--===============================< webfx-extras-type >================================-->
     <source path="dev/webfx/extras/type"/>
-    <!--===============================< webfx-extras-util >================================-->
-    <source path="dev/webfx/extras/util"/>
     <!--==========================< webfx-extras-util-animation >===========================-->
     <source path="dev/webfx/extras/util/animation"/>
     <!--==========================< webfx-extras-util-background >==========================-->

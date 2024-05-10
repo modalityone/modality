@@ -1,7 +1,10 @@
 package one.modality.event.frontoffice.activities.booking.process.event;
 
-import dev.webfx.extras.panes.Carrousel;
+import dev.webfx.extras.carrousel.Carrousel;
 import dev.webfx.extras.panes.FlexPane;
+import dev.webfx.extras.panes.ScaleMode;
+import dev.webfx.extras.panes.ScalePane;
+import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
@@ -15,7 +18,6 @@ import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.EntityId;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -32,6 +34,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
@@ -47,7 +50,6 @@ import one.modality.event.frontoffice.activities.booking.fx.FXEventAggregate;
 import one.modality.event.frontoffice.activities.booking.process.EventAggregate;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 
 /**
@@ -55,36 +57,33 @@ import java.util.Optional;
  */
 public final class BookEventActivity extends ViewDomainActivityBase {
 
-    private Event currentEvent = FXEvent.getEvent();
-    private Text eventTitle = new Text();
-    private Label venueAddress = new Label();
-    private HtmlText eventDescription = new HtmlText();
-    private Button checkoutButton;
-    private DoubleProperty totalPriceProperty = new SimpleDoubleProperty(0);
+    private static final int MAX_WIDTH = 600;
+
+    private final Event currentEvent = FXEvent.getEvent();
+    private final Text eventTitle = new Text();
+    private final Label venueAddress = new Label();
+    private final HtmlText eventDescription = new HtmlText();
+    private final DoubleProperty totalPriceProperty = new SimpleDoubleProperty(0);
     private final Label totalPriceLabel = new Label();
     private final CloudImageService cloudImageService = new ClientImageService();
-    private RecurringEventSchedule recurringEventSchedule = new RecurringEventSchedule();
-    private VBox eventDetailVBox = new VBox();
-    private VBox checkoutVBox = new VBox();
-    private BorderPane containerBorderPane = new BorderPane();
+    private final RecurringEventSchedule recurringEventSchedule = new RecurringEventSchedule();
+    private final VBox eventDetailVBox = new VBox();
+    private final VBox checkoutVBox = new VBox();
     private final VBox scheduledItemVBox = new VBox();
-    private BooleanProperty isOptionsSelectedEmptyProperty = new SimpleBooleanProperty();
-    private WorkingBooking currentBooking = new WorkingBooking();
-    private ImageView imageView = new ImageView();
-
-    final int maxWidth = 500;
-    private HBox header = new HBox();
-    private VBox container = new VBox();
-    private Carrousel carrousel = new Carrousel();
+    private final BooleanProperty isOptionsSelectedEmptyProperty = new SimpleBooleanProperty();
+    private final WorkingBooking currentBooking = new WorkingBooking();
+    private final ImageView imageView = new ImageView();
+    private final Carrousel carrousel = new Carrousel();
 
     @Override
     public Node buildUi() {
-        carrousel.setSlides(eventDetailVBox,checkoutVBox);
         buildEventDetailVBox();
         buildCheckoutVBox();
-        ScrollPane scrollPane = new ScrollPane((carrousel.getContainer()));
-        scrollPane.setFitToHeight(true);
-        scrollPane.setFitToWidth(true);
+        carrousel.setSlides(eventDetailVBox, checkoutVBox);
+        carrousel.setLoop(false);
+        Region carrouselContainer = carrousel.getContainer();
+        carrouselContainer.setMaxWidth(MAX_WIDTH);
+        ScrollPane scrollPane = ControlUtil.createVerticalScrollPane(new BorderPane(carrouselContainer));
         scrollPane.setPadding(new Insets(10));
         return scrollPane;
     }
@@ -98,7 +97,7 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         BorderPane line1 = new BorderPane(bookedEventTitleText);
         line1.setCenter(bookedEventTitleText);
         bookedEventTitleText.setAlignment(Pos.CENTER_LEFT);
-        bookedEventTitleText.setPrefWidth(maxWidth-50);
+        //bookedEventTitleText.setPrefWidth(MAX_WIDTH - 50);
         line1.setPadding(new Insets(0,0,30,0));
         checkoutVBox.getChildren().add(line1);
 
@@ -110,7 +109,7 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         BorderPane addressBorderPane = new BorderPane();
         addressBorderPane.setCenter(venueAddress);
         venueAddress.setAlignment(Pos.CENTER_LEFT);
-        venueAddress.setPrefWidth(maxWidth-50);
+        //venueAddress.setPrefWidth(MAX_WIDTH - 50);
         addressBorderPane.setPadding(new Insets(0,0,30,0));
         checkoutVBox.getChildren().addAll(addressBorderPane);
 
@@ -140,7 +139,7 @@ public final class BookEventActivity extends ViewDomainActivityBase {
 
         HBox totalHBox = new HBox();
         totalHBox.getStyleClass().add("line-total");
-        totalHBox.setMaxWidth(maxWidth);
+        //totalHBox.setMaxWidth(MAX_WIDTH);
         Label totalLabel = I18nControls.bindI18nProperties(new Label(),"Total");
         totalLabel.setPadding(new Insets(5,0,5,50));
         totalLabel.setPrefWidth(350);
@@ -174,14 +173,10 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         Object imageTag = e.getId().getPrimaryKey();
         String pictureId = String.valueOf(imageTag);
         cloudImageService.exists(pictureId)
-                .onFailure(ex -> {
-                    Console.log(ex);
-                })
+                .onFailure(Console::log)
                 .onSuccess(exists -> Platform.runLater(() -> {
                     Console.log("exists: " + exists);
-                    if (!exists) {
-                    }
-                    else {
+                    if (exists) {
                         //First, we need to get the zoom factor of the screen
                         double zoomFactor = Screen.getPrimary().getOutputScaleX();
                         String url = cloudImageService.url(String.valueOf(imageTag), (int) (imageView.getFitWidth()*zoomFactor), -1);
@@ -221,10 +216,11 @@ public final class BookEventActivity extends ViewDomainActivityBase {
 
         eventDetailVBox.getChildren().add(line2);
 
-        imageView.setPreserveRatio(true);
-        imageView.setFitWidth(maxWidth);
+        //imageView.setPreserveRatio(true);
+        ScalePane scalePane = new ScalePane(ScaleMode.FIT_WIDTH, imageView);
+        scalePane.setCanGrow(false);
 
-        eventDetailVBox.getChildren().add(imageView);
+        eventDetailVBox.getChildren().add(scalePane);
 
         eventDescription.setPadding(new Insets(20,0,0,0));
         eventDescription.getStyleClass().add("description-text");
@@ -253,7 +249,7 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         selectAllClassesHyperlink.setOnAction((event ->recurringEventSchedule.selectAllDates()));
         eventDetailVBox.getChildren().add(selectAllClassesHyperlink);
 
-        //TODO: retrieve the price, for now we harcode it
+        //TODO: retrieve the price, for now we hardcode it
         Text priceText = new Text(I18n.getI18nText( "PricePerClass",7,"£"));
         HBox line6 = new HBox(priceText);
         priceText.getStyleClass().add("subtitle-grey");
@@ -262,7 +258,7 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         eventDetailVBox.getChildren().add(line6);
 
 
-        //TODO: retrieve the discount, for now we harcode it
+        //TODO: retrieve the discount, for now we hardcode it
         Text priceForAllClassesText = new Text(I18n.getI18nText( "DiscountForAllSeries",15));
         HBox line7 = new HBox(priceForAllClassesText);
         priceForAllClassesText.getStyleClass().add("subtitle-grey");
@@ -271,7 +267,7 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         line7.setPadding(new Insets(0,0,20,0));
         eventDetailVBox.getChildren().add(line7);
 
-        checkoutButton = I18nControls.bindI18nProperties(new Button(), "ProceedCheckout");
+        Button checkoutButton = I18nControls.bindI18nProperties(new Button(), "ProceedCheckout");
         //We manage the property of the button in css
         checkoutButton.getStyleClass().addAll("green-button");
         checkoutButton.setMaxWidth(300);
@@ -282,26 +278,21 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         eventDetailVBox.getChildren().add(checkoutButton);
 
         eventDetailVBox.setPadding(new Insets(30,50,20,50));
-        eventDetailVBox.setMaxWidth(maxWidth);
+        //eventDetailVBox.setMaxWidth(MAX_WIDTH);
         eventDetailVBox.setAlignment(Pos.TOP_CENTER);
 
         checkoutButton.disableProperty().bind(isOptionsSelectedEmptyProperty);
         ObservableLists.bindConverted(scheduledItemVBox.getChildren(),recurringEventSchedule.getSelectedDates(),this::drawScheduledItemInCheckoutView);
-        totalPriceLabel.textProperty().bind(Bindings.format("%.2f£", totalPriceProperty));
+        //totalPriceLabel.textProperty().bind(Bindings.format("%.2f£", totalPriceProperty));
     }
 
 
     private BorderPane drawScheduledItemInCheckoutView(LocalDate date) {
-        Optional<ScheduledItem> result = FXEventAggregate.getEventAggregate().getScheduledItems().stream()
+        ScheduledItem currentScheduledItem = FXEventAggregate.getEventAggregate().getScheduledItems().stream()
                 .filter(item -> item.getDate().equals(date))
-                .findFirst();
+                .findFirst().orElse(null);
 
-        ScheduledItem currentScheduledItem;
-        // Check if an element was found
-        if (result.isPresent()) {
-            currentScheduledItem = result.get();
-        } else {
-            currentScheduledItem = null;
+        if (currentScheduledItem == null) {
             // Handle the case where no element with the target date was found
             Console.log("Scheduled Item not found in the list");
             return null;

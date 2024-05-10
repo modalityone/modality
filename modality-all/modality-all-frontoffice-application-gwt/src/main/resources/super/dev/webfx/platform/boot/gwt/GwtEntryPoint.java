@@ -22,7 +22,6 @@ public final class GwtEntryPoint implements ApplicationBooterProvider, EntryPoin
     }
 
     public static void registerServiceProviders() {
-        register(dev.webfx.extras.filepicker.spi.FilePickerProvider.class, dev.webfx.extras.filepicker.spi.impl.gwtj2cl.GwtJ2clFilePickerProvider::new);
         register(dev.webfx.kit.launcher.spi.WebFxKitLauncherProvider.class, dev.webfx.kit.launcher.spi.impl.gwtj2cl.GwtJ2clWebFxKitLauncherProvider::new);
         register(dev.webfx.kit.mapper.spi.WebFxKitMapperProvider.class, dev.webfx.kit.mapper.spi.impl.gwtj2cl.GwtJ2clWebFxKitHtmlMapperProvider::new);
         register(dev.webfx.platform.ast.spi.factory.AstFactoryProvider.class, dev.webfx.platform.ast.spi.factory.impl.gwt.GwtAstFactoryProvider::new);

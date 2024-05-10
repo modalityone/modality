@@ -151,128 +151,17 @@ VisualGrid {
      -fx-text-fill: #FFFFFF;
 }
 
-/*===== javafx@main.css from modality-event-backoffice-activity-recurringevents-plugin =====*/
+.checkout-address {
+    -fx-text-fill: #BBBBBB;
+}
 
-.recurringEventButton
-{
-    -fx-background-radius: 2;
-    -fx-pref-height:30px;
-    -fx-max-height:30px;
-    -fx-pref-width: 150px;
+.line-total {
+    -fx-background-color: #CCCCCC;
+}
+
+.line-total Text {
     -fx-font-weight: bolder;
-    -fx-alignment: center;
 }
-
-.bold
-{
--fx-font-weight: bolder;
-}
-
-
-.font-size-35px
-{
-  -fx-font-size: 35px;
-}
-.font-size-22px
-{
-  -fx-font-size: 22px;
-}
-.font-size-16px
-{
-  -fx-font-size: 16px;
-}
-.font-size-9px
-{
-  -fx-font-size: 9px;
-}
-
-.font-white
-{
-    -fx-text-fill: white;
-    -fx-fill: white;
-}
-
-.font-green
-{
-    -fx-text-fill: #41BA4D;
-    -fx-fill: #41BA4D;
-}
-
-.font-blue
-{
-    -fx-text-fill: #0096D6;
-    -fx-fill: #0096D6;
-}
-
-.table-row-cell:selected .font-blue
-{
-
-}
-
-.table-row-cell:selected {
-  -fx-background: #BBBBBB;
-}
-
-
-.font-orange
-{
-    -fx-text-fill: orange;
-    -fx-fill: orange;
-}
-.font-red
-{
-    -fx-text-fill: red;
-     -fx-fill: red;
-}
-.font-grey
-{
-    -fx-text-fill: grey;
-    -fx-fill: grey;
-}
-
-.bookingName
-{
-    -fx-text-fill: #838788;
-}
-.bold
-{
-   -fx-font-weight: bold;
-}
-
-.bookingStatusConfirmed
-{
-     -fx-text-fill: #41BA4D;
-}
-
-.bookingStatusUnconfirmed
-{
-     -fx-text-fill: #eb8634;
-}
-.bookingTotalCount
-{
--fx-text-fill: #FF0404;
-}
-
-.background-green {
-    -fx-background-color: #41BA4D;
-}
-
-.background-orange {
-    -fx-background-color: orange;
-}
-
-.background-blue {
-    -fx-background-color: #0096D6;
-}
-
-.background-red {
-    -fx-background-color: red;
-}
-
-.background-darkGrey {
-    -fx-background-color: #838788;
-}
-
 /*===== modality-javafx@main.css from modality-base-client-application =====*/
 
 Text, Label, Button, TextField {

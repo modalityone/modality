@@ -145,18 +145,6 @@ tr.selected, .grid-row.selected {
     background: var(--grid-selection-color)
 }
 
-/*===== filepicker-web@main.css from webfx-extras-filepicker-gwt-j2cl =====*/
-
-/* We dont want any background or border for the FilePicker button */
-
-.file-picker fx-button > fx-background {
-    background: none;
-}
-
-.file-picker fx-button > fx-border {
-    border: none;
-}
-
 /*===== javafx-graphics-web@main.css from webfx-kit-javafxgraphics-peers-gwt-j2cl =====*/
 
 .disabled fx-text {
@@ -229,109 +217,6 @@ tr.selected, .grid-row.selected {
     background: #41BA4D;
 }
 
-/*===== web@main.css from modality-event-backoffice-activity-recurringevents-plugin =====*/
-
-.recurringEventButton {
-    border-radius: 2px;
-    height: 30px;
-    max-height: 30px;
-    width: 150px;
-    font-weight: bold;
-}
-
-.bold
-{
-    font-weight: bold;
-}
-.font-size-35px {
-    font-size: 35px;
-}
-
-.font-size-22px {
-    font-size: 22px;
-}
-
-.font-size-16px {
-    font-size: 16px;
-}
-
-.font-size-9px {
-    font-size: 9px;
-}
-
-.font-white {
-    color: white;
-}
-
-.font-green {
-    color: #41BA4D;
-}
-
-.font-blue {
-    color: #0096D6;
-}
-
-.font-orange {
-    color: orange;
-}
-
-.font-red {
-    color: red;
-}
-
-.font-grey {
-    color: grey;
-}
-
-.bookingName {
-    color: #838788;
-}
-
-.bold {
-    font-weight: bold;
-}
-
-.bookingStatusConfirmed {
-    color: #41BA4D;
-}
-
-.bookingStatusUnconfirmed {
-    color: #eb8634;
-}
-
-.bookingTotalCount {
-    color: #FF0404;
-}
-
-
-.background-orange > fx-background {
-    background: orange;
-}
-
-.background-green > fx-background {
-    background: #41BA4D;
-}
-
-.background-blue > fx-background {
-    background: #0096D6;
-}
-
-.background-red > fx-background {
-    background: red;
-}
-
-.background-darkGrey > fx-background {
-    background: #838788;
-}
-
-
-.disabled {
-    opacity: 0.3;
-}
-
-.disabled fx-text {
-    color: white;
-}
 /*===== frontoffice-mainframe-web@main.css from modality-base-frontoffice-mainframe-activity =====*/
 
 /* We dont want border for the buttons in the front-office button bar */
