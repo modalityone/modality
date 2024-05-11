@@ -6,6 +6,7 @@ import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
 import dev.webfx.extras.util.masterslave.SlaveEditor;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
@@ -250,7 +251,6 @@ public final class ManageRecurringEventView {
     {
         EventRenderers.registerRenderers();
 
-
         eventVisualMapper = ReactiveVisualMapper.<Event>createPushReactiveChain(mixin)
                 .always("{class: 'Event', alias: 'e', fields: 'name, openingDate, description, type.recurringItem, (select site.name from Timeline where event=e limit 1) as location'}")
                 .always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o))
@@ -281,6 +281,7 @@ public final class ManageRecurringEventView {
         eventVisualMapper.requestedSelectedEntityProperty().bindBidirectional(FXEvent.eventProperty());
         masterSlaveEventLinker.masterProperty().bindBidirectional(eventVisualMapper.selectedEntityProperty());
     }
+
     /**
      * This method is called when we select an event, it takes the info in the database
      * and initialise the class variable.
@@ -627,36 +628,15 @@ public final class ManageRecurringEventView {
                             //We update the timeline and working scheduled item
                             eventTimeline.setSite(eventSite);
                             currentEditedEvent.setVenue(eventSite);
-                            for(ScheduledItem si:workingScheduledItems)
-                            {
-                                si.setSite(eventSite);
-                            }
+                            workingScheduledItems.forEach(si -> si.setSite(eventSite));
                         });
-                        locationHBox.getChildren().setAll(siteLabel,siteSelector.getButton());
+                        locationHBox.getChildren().setAll(siteLabel, siteSelector.getButton());
                     }));
         })));
 
         titleEventDetailsLabel = I18nControls.bindI18nProperties(new Label(), "EventDetailsTitle");
         titleEventDetailsLabel.setPadding(new Insets(30,0,20,0));
         TextTheme.createSecondaryTextFacet(titleEventDetailsLabel).style();
-
-
-        // ----FlexPane---------------------------------------|
-        //|--VBox--------------------||---------Vbox---------||
-        //|                          ||                      ||
-        //| Name of event ...        ||  Time of event ...   ||
-        //| Description   ...        ||  Date ...            ||
-        //| Picture ...              ||                      ||
-        //|--------------------------||----------------------||
-        FlexPane eventDetailsPane = new FlexPane();
-        eventDetailsPane.setHorizontalSpace(50);
-        eventDetailsPane.setVerticalSpace(20);
-        eventDetailsPane.setFlexLastRow(true);
-        VBox leftPaneVBox = new VBox();
-        leftPaneVBox.setPadding(new Insets(0,10,0,0));
-        VBox rightPaneVBox = new VBox();
-
-        leftPaneVBox.setMaxWidth(Double.MAX_VALUE);
 
         final int LABEL_WIDTH = 150;
         HBox line1InLeftPanel = new HBox();
@@ -669,7 +649,7 @@ public final class ManageRecurringEventView {
             }
             return change;}));*/
         nameOfEventTextField.setMinWidth(500);
-        HBox.setHgrow(nameOfEventTextField,Priority.ALWAYS);
+        HBox.setHgrow(nameOfEventTextField, Priority.ALWAYS);
 
         nameOfEventTextField.textProperty().addListener(obs -> {
             if(currentEditedEvent!=null) {
@@ -680,10 +660,8 @@ public final class ManageRecurringEventView {
         siteLabel = I18nControls.bindI18nProperties(new Label(), "Location");
         siteLabel.setMinWidth(LABEL_WIDTH);
         locationHBox = new HBox(siteLabel);
-        locationHBox.setPadding(new Insets(20,0,0,0));
+        locationHBox.setPadding(new Insets(20, 0, 0, 0));
 
-
-        HBox line3InLeftPanel = new HBox();
         Label descriptionLabel = I18nControls.bindI18nProperties(new Label(),"Description");
         descriptionLabel.setMinWidth(LABEL_WIDTH);
         descriptionHtmlEditor.setMode(STANDARD);
@@ -692,8 +670,8 @@ public final class ManageRecurringEventView {
             if(currentEditedEvent!=null) {
                 currentEditedEvent.setDescription(descriptionHtmlEditor.getText());
             }});
-        line3InLeftPanel.setPadding(new Insets(20,0,0,0));
-        line3InLeftPanel.getChildren().setAll(descriptionLabel,descriptionHtmlEditor);
+        HBox line3InLeftPanel = new HBox(descriptionLabel, descriptionHtmlEditor);
+        line3InLeftPanel.setPadding(new Insets(20, 0, 0, 0));
 
         HBox line4InLeftPanel = new HBox();
         line4InLeftPanel.setAlignment(Pos.CENTER_LEFT);
@@ -702,10 +680,9 @@ public final class ManageRecurringEventView {
 
         HtmlText uploadText = new HtmlText();
         I18n.bindI18nTextProperty(uploadText.textProperty(), "UploadFileDescription");
-        VBox uploadTextVBox = new VBox();
-        uploadTextVBox.getChildren().setAll(uploadText);
+        VBox uploadTextVBox = new VBox(uploadText);
         uploadTextVBox.setAlignment(Pos.CENTER_LEFT);
-        uploadTextVBox.setPadding(new Insets(0,50,0,0));
+        uploadTextVBox.setPadding(new Insets(0, 50, 0, 0));
 
         Button uploadButton = new Button();
         SVGPath uploadSVGPath = new SVGPath();
@@ -766,14 +743,18 @@ public final class ManageRecurringEventView {
         imageAndTrashVBox.getChildren().setAll(imageStackPane,trashImage);
         imageAndTrashVBox.setAlignment(Pos.BOTTOM_CENTER);
         line4InLeftPanel.getChildren().setAll(uploadTextVBox,uploadButtonVBox,imageAndTrashVBox);
-        line4InLeftPanel.setPadding(new Insets(20, 0,0,0));
+        line4InLeftPanel.setPadding(new Insets(20, 0, 0, 0));
 
-
-        leftPaneVBox.getChildren().setAll(line1InLeftPanel,locationHBox,line3InLeftPanel,line4InLeftPanel);
+        VBox leftPaneVBox = new VBox(line1InLeftPanel, locationHBox, line3InLeftPanel, line4InLeftPanel);
+        leftPaneVBox.setPadding(new Insets(0, 10, 0, 0));
+        leftPaneVBox.setMaxWidth(Double.MAX_VALUE);
+        // Ensuring the description html editor will grow horizontally and vertically
+        HBox.setHgrow(descriptionHtmlEditor, Priority.ALWAYS); // horizontally
+        VBox.setVgrow(line3InLeftPanel, Priority.ALWAYS); // vertically (via line3InLeftPanel)
 
         //The right pane (VBox)
         Label timeOfEventLabel = I18nControls.bindI18nProperties(new Label(),"TimeOfTheEvent");
-        timeOfEventLabel.setPadding(new Insets(0,50,0,0));
+        timeOfEventLabel.setPadding(new Insets(0, 50, 0, 0));
         timeOfTheEventTextField.setMaxWidth(60);
         //We initialise the listener
         timeOfTheEventTextField.textProperty().addListener(obs -> {
@@ -784,7 +765,7 @@ public final class ManageRecurringEventView {
         });
 
         Label durationLabel = I18nControls.bindI18nProperties(new Label(),"Duration");
-        durationLabel.setPadding(new Insets(0,50,0,50));
+        durationLabel.setPadding(new Insets(0, 50, 0, 50));
         durationTextField.setMaxWidth(40);
         durationTextField.textProperty().addListener(obs -> {
                     //Here, when we change the duration, we have to update all the workingScheduledItem list
@@ -799,42 +780,36 @@ public final class ManageRecurringEventView {
                 }
         );
 
-        HBox line1 = new HBox();
+        HBox line1 = new HBox(timeOfEventLabel, timeOfTheEventTextField, durationLabel, durationTextField);
         line1.setAlignment(Pos.CENTER_LEFT);
-        line1.getChildren().addAll(timeOfEventLabel,timeOfTheEventTextField,durationLabel,durationTextField);
         line1.setPadding(new Insets(0,0,20,0));
         datesOfTheEventLabel = I18nControls.bindI18nProperties(new Label(),"Dates");
-        datesOfTheEventLabel.setPadding(new Insets(0,0,5,0));
+        datesOfTheEventLabel.setPadding(new Insets(0, 0, 5, 0));
         calendarPane = new EventCalendarPane();
         calendarPane.getDatesPicker().getSelectedDates().addListener(onChangeDateListener);
 
-        final int labelWidht = 200;
-        HBox line4 = new HBox();
-        line4.setPadding(new Insets(20,0,0,0));
-        line4.setAlignment(Pos.CENTER_LEFT);
-        Label externalLinkLabel = I18nControls.bindI18nProperties(new Label(),"ExternalLink");
-        externalLinkLabel.setPadding(new Insets(0,20,0,0));
-        externalLinkLabel.setPrefWidth(labelWidht);
+        final int labelWidth = 200;
+        Label externalLinkLabel = I18nControls.bindI18nProperties(new Label(), "ExternalLink");
+        externalLinkLabel.setPadding(new Insets(0, 20, 0, 0));
+        externalLinkLabel.setPrefWidth(labelWidth);
         externalLinkTextField.setPrefWidth(400);
         externalLinkTextField.textProperty().addListener(obs -> currentEditedEvent.setExternalLink(externalLinkTextField.getText()));
-        line4.getChildren().addAll(externalLinkLabel, externalLinkTextField);
+        HBox line4 = new HBox(externalLinkLabel, externalLinkTextField);
+        line4.setPadding(new Insets(20, 0, 0, 0));
+        line4.setAlignment(Pos.CENTER_LEFT);
 
-        HBox line5 = new HBox();
-        line5.setPadding(new Insets(20,0,0,0));
-        line5.setAlignment(Pos.CENTER_LEFT);
         Label advertisedLabel = I18nControls.bindI18nProperties(new Label(),"Advertised");
-        advertisedLabel.setPadding(new Insets(0,20,0,0));
-        advertisedLabel.setPrefWidth(labelWidht);
+        advertisedLabel.setPadding(new Insets(0, 20, 0, 0));
+        advertisedLabel.setPrefWidth(labelWidth);
         advertisedSwitch = new Switch();
         advertisedSwitch.selectedProperty().addListener(obs ->currentEditedEvent.setAdvertised(advertisedSwitch.selectedProperty().get()));
-        line5.getChildren().addAll(advertisedLabel, advertisedSwitch);
+        HBox line5 = new HBox(advertisedLabel, advertisedSwitch);
+        line5.setPadding(new Insets(20, 0, 0, 0));
+        line5.setAlignment(Pos.CENTER_LEFT);
 
-        HBox line6 = new HBox();
-        line6.setPadding(new Insets(20,0,0,0));
-        line6.setAlignment(Pos.CENTER_LEFT);
         Label publishLabel = I18nControls.bindI18nProperties(new Label(),"Published");
-        publishLabel.setPadding(new Insets(0,20,0,0));
-        publishLabel.setPrefWidth(labelWidht);
+        publishLabel.setPadding(new Insets(0, 20, 0, 0));
+        publishLabel.setPrefWidth(labelWidth);
         registrationOpenSwitch = new Switch();
         registrationOpenSwitch.selectedProperty().addListener(obs -> {
             if (registrationOpenSwitch.selectedProperty().get()) {
@@ -847,13 +822,10 @@ public final class ManageRecurringEventView {
                 }
             }
         });
-        line6.getChildren().addAll(publishLabel, registrationOpenSwitch);
+        HBox line6 = new HBox(publishLabel, registrationOpenSwitch);
+        line6.setPadding(new Insets(20, 0, 0, 0));
+        line6.setAlignment(Pos.CENTER_LEFT);
 
-
-
-        HBox buttonsLine = new HBox();
-        buttonsLine.setPadding(new Insets(50,0,0,0));
-        buttonsLine.setAlignment(Pos.CENTER);
         cancelButton = I18nControls.bindI18nProperties(new Button(),"CancelButton");
         cancelButton.getStyleClass().addAll("recurringEventButton", "background-darkGrey", "font-white");
 
@@ -949,40 +921,47 @@ public final class ManageRecurringEventView {
                 });
                 cancelActionButton.setOnAction(l -> dialogCallback.closeDialog());
         }});
+        HBox buttonsLine = new HBox(cancelButton, saveButton,deleteButton);
+        buttonsLine.setPadding(new Insets(50, 0, 0, 0));
+        buttonsLine.setAlignment(Pos.CENTER);
         buttonsLine.setSpacing(30);
-        buttonsLine.getChildren().addAll(cancelButton, saveButton,deleteButton);
         buttonsLine.setAlignment(Pos.CENTER);
 
-        rightPaneVBox.getChildren().setAll(line1,datesOfTheEventLabel,calendarPane,line4InLeftPanel,line4,line5,line6);
-        eventDetailsPane.getChildren().setAll(leftPaneVBox,rightPaneVBox);
+        VBox rightPaneVBox = new VBox(line1, datesOfTheEventLabel, calendarPane, line4InLeftPanel, line4, line5, line6);
+
+        // ----FlexPane---------------------------------------|
+        //|--VBox--------------------||---------Vbox---------||
+        //|                          ||                      ||
+        //| Name of event ...        ||  Time of event ...   ||
+        //| Description   ...        ||  Date ...            ||
+        //| Picture ...              ||                      ||
+        //|--------------------------||----------------------||
+        FlexPane eventDetailsPane = new FlexPane(leftPaneVBox, rightPaneVBox);
+        eventDetailsPane.setHorizontalSpace(50);
+        eventDetailsPane.setVerticalSpace(20);
+
         HBox labelLine = new HBox();
         labelLine.setAlignment(Pos.BASELINE_LEFT);
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.SOMETIMES);
         labelLine.getChildren().setAll(currentEventLabel,spacer, addButton);
 
-        eventDetailsVBox = new VBox(titleEventDetailsLabel,eventDetailsPane,buttonsLine);
+        eventDetailsVBox = new VBox(titleEventDetailsLabel, eventDetailsPane, buttonsLine);
         //When we launch the window, we don't display this VBox which contains an event details
         eventDetailsVBox.setVisible(false);
         eventDetailsVBox.setManaged(false);
-        VBox mainVBox = new VBox(labelLine,eventTable, eventDetailsVBox);
+        VBox mainVBox = new VBox(labelLine, eventTable, eventDetailsVBox);
         eventTable.setFullHeight(true);
         mainFrame.setCenter(mainVBox);
 
         initFormValidation();
-        ScrollPane scrollPane = new ScrollPane(mainFrame);
-        scrollPane.setFitToHeight(true);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setPadding(new Insets(10));
 
-
-        return scrollPane;
+        return ControlUtil.createVerticalScrollPaneWithPadding(10, mainFrame);
     }
 
     private void submitUpdateStoreChanges() {
         updateStore.submitChanges()
                 .onFailure(Console::log)
-
                 .onSuccess(x -> Platform.runLater(() -> {
                     Object imageTag = currentEditedEvent.getId().getPrimaryKey();
                     deleteCloudPictureIfNecessary(imageTag);
