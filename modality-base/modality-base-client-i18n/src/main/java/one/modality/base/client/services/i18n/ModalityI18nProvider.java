@@ -6,6 +6,7 @@ import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import dev.webfx.stack.i18n.spi.impl.ast.AstI18nProvider;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.HasEntity;
+import javafx.beans.value.ObservableValue;
 
 /**
  * @author Bruno Salmon
@@ -33,6 +34,8 @@ public final class ModalityI18nProvider extends AstI18nProvider {
     }
 
     private Entity findEntity(Object i18nKey) {
+        if (i18nKey instanceof ObservableValue)
+            i18nKey = ((ObservableValue<?>) i18nKey).getValue();
         if (i18nKey instanceof Entity)
             return (Entity) i18nKey;
         if (i18nKey instanceof HasEntity)
