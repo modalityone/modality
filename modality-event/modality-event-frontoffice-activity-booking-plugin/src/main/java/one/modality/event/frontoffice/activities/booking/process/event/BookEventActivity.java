@@ -77,9 +77,7 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         carrousel.setLoop(false);
         Region carrouselContainer = carrousel.getContainer();
         carrouselContainer.setMaxWidth(MAX_WIDTH);
-        ScrollPane scrollPane = ControlUtil.createVerticalScrollPane(new BorderPane(carrouselContainer));
-        scrollPane.setPadding(new Insets(10));
-        return scrollPane;
+        return ControlUtil.createVerticalScrollPaneWithPadding(10, new BorderPane(carrouselContainer));
     }
 
     private void buildCheckoutVBox() {
