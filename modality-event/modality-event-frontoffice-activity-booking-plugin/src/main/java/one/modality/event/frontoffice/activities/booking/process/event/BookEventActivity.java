@@ -18,18 +18,12 @@ import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.EntityId;
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.*;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -59,10 +53,10 @@ public final class BookEventActivity extends ViewDomainActivityBase {
 
     private static final int MAX_WIDTH = 600;
 
-    private final Event currentEvent = FXEvent.getEvent();
-    private final Text eventTitle = new Text();
-    private final Label venueAddress = new Label();
-    private final HtmlText eventDescription = new HtmlText();
+    private final BooleanProperty eventLoadedProperty = new SimpleBooleanProperty();
+    private final Text eventTitle = bindI18nEventExpression(new Text(), "i18n(this)");
+    private final Label venueAddress = bindI18nEventExpression(new Label(), "venue.address");
+    private final HtmlText eventDescription = bindI18nEventExpression(new HtmlText(), "description");
     private final DoubleProperty totalPriceProperty = new SimpleDoubleProperty(0);
     private final Label totalPriceLabel = new Label();
     private final CloudImageService cloudImageService = new ClientImageService();
@@ -92,7 +86,7 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         checkoutVBox.getChildren().clear();
         checkoutVBox.setAlignment(Pos.TOP_CENTER);
 
-        Label bookedEventTitleText = new Label(FXEvent.getEvent().getName());
+        Label bookedEventTitleText = bindI18nEventExpression(new Label(), "i18n(this)");
         bookedEventTitleText.getStyleClass().add("title-blue-bold");
         BorderPane line1 = new BorderPane(bookedEventTitleText);
         line1.setCenter(bookedEventTitleText);
@@ -117,15 +111,15 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         currentBooking.setScheduledItems(recurringEventSchedule.getSelectedScheduledItem());
 
         BorderPane header = new BorderPane();
-        Label summmaryLabel = I18nControls.bindI18nProperties(new Label(),"Summary");
-        summmaryLabel.setPrefWidth(290);
+        Label summaryLabel = I18nControls.bindI18nProperties(new Label(),"Summary");
+        summaryLabel.setPrefWidth(290);
         Label priceLabel = I18nControls.bindI18nProperties(new Label(),"Price");
         priceLabel.setPrefWidth(70);
         //The actionLabel is used only because we need to put a graphic element in the right part of the borderpane
         //so it's balanced with the content that is shown bellow
         Label actionLabel = new Label();
         actionLabel.setPrefWidth(40);
-        header.setLeft(summmaryLabel);
+        header.setLeft(summaryLabel);
         header.setCenter(priceLabel);
         header.setRight(actionLabel);
         header.setMaxWidth(400);
@@ -179,24 +173,22 @@ public final class BookEventActivity extends ViewDomainActivityBase {
                     if (exists) {
                         //First, we need to get the zoom factor of the screen
                         double zoomFactor = Screen.getPrimary().getOutputScaleX();
-                        String url = cloudImageService.url(String.valueOf(imageTag), (int) (imageView.getFitWidth()*zoomFactor), -1);
+                        String url = cloudImageService.url(String.valueOf(imageTag), (int) (imageView.getFitWidth() * zoomFactor), -1);
                         Image imageToDisplay = new Image(url, true);
                         imageView.setImage(imageToDisplay);
                     }
                 }));
 
 
-        e.onExpressionLoaded("name, description, venue.address").onFailure(Console::log)
-                .onSuccess(x -> Platform.runLater(()-> {
-                    eventTitle.setText(e.getName());
-                    eventDescription.setText(e.getDescription());
-                    venueAddress.setText(e.getVenue().getStringFieldValue("address"));
-                }));
+        eventLoadedProperty.set(false);
+        e.onExpressionLoaded("name, description, venue.(name, label, address)")
+                .onFailure(Console::log)
+                .onSuccess(x -> eventLoadedProperty.set(true));
     }
 
     private void buildEventDetailVBox() {
 
-        Text title = I18n.bindI18nProperties( new Text(),"GPEvent");
+        Text title = I18n.bindI18nProperties(new Text(),"GPEvent");
         title.getStyleClass().add("title-blue-bold");
         HBox line1 = new HBox(title);
         line1.setPadding(new Insets(0,0,5,0));
@@ -204,8 +196,8 @@ public final class BookEventActivity extends ViewDomainActivityBase {
 
         eventDetailVBox.getChildren().add(line1);
 
-        Text eventCentreLocationText = new Text();
-        I18n.bindI18nProperties(eventCentreLocationText, new I18nSubKey("expression: '[At] ' + coalesce(i18n(venue), i18n(organization))", currentEvent));
+        Text eventCentreLocationText = bindI18nEventExpression(new Text(),
+                "'[At] ' + coalesce(i18n(venue), i18n(organization))");
 
         eventDetailVBox.getChildren().add(eventCentreLocationText);
 
@@ -235,12 +227,12 @@ public final class BookEventActivity extends ViewDomainActivityBase {
 
         Text selectTheCourseText = I18n.bindI18nProperties( new Text(),"SelectTheEvent");
         HBox line5 = new HBox(selectTheCourseText);
-        line5.setPadding(new Insets(0,0,5,0));
+        line5.setPadding(new Insets(0, 0, 5, 0));
         line5.setAlignment(Pos.BASELINE_CENTER);
         eventDetailVBox.getChildren().add(line5);
 
         FlexPane dateFlexPane = recurringEventSchedule.buildUi();
-        dateFlexPane.setPadding(new Insets(20,0,5,0));
+        dateFlexPane.setPadding(new Insets(20, 0, 20, 0));
         eventDetailVBox.getChildren().add(dateFlexPane);
 
         Hyperlink selectAllClassesHyperlink = I18nControls.bindI18nTextProperty(new Hyperlink(),"SelectAllClasses");
@@ -250,21 +242,21 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         eventDetailVBox.getChildren().add(selectAllClassesHyperlink);
 
         //TODO: retrieve the price, for now we hardcode it
-        Text priceText = new Text(I18n.getI18nText( "PricePerClass",7,"£"));
+        Text priceText = new Text(I18n.getI18nText( "PricePerClass", 7, "£"));
         HBox line6 = new HBox(priceText);
         priceText.getStyleClass().add("subtitle-grey");
-        line6.setPadding(new Insets(20,0,5,0));
+        line6.setPadding(new Insets(20, 0, 5, 0));
         line6.setAlignment(Pos.BASELINE_CENTER);
         eventDetailVBox.getChildren().add(line6);
 
 
         //TODO: retrieve the discount, for now we hardcode it
-        Text priceForAllClassesText = new Text(I18n.getI18nText( "DiscountForAllSeries",15));
+        Text priceForAllClassesText = new Text(I18n.getI18nText( "DiscountForAllSeries", 15));
         HBox line7 = new HBox(priceForAllClassesText);
         priceForAllClassesText.getStyleClass().add("subtitle-grey");
         line7.setAlignment(Pos.BASELINE_CENTER);
 
-        line7.setPadding(new Insets(0,0,20,0));
+        line7.setPadding(new Insets(0, 0, 20, 0));
         eventDetailVBox.getChildren().add(line7);
 
         Button checkoutButton = I18nControls.bindI18nProperties(new Button(), "ProceedCheckout");
@@ -277,13 +269,13 @@ public final class BookEventActivity extends ViewDomainActivityBase {
 
         eventDetailVBox.getChildren().add(checkoutButton);
 
-        eventDetailVBox.setPadding(new Insets(30,50,20,50));
+        eventDetailVBox.setPadding(new Insets(30, 50, 20, 50));
         //eventDetailVBox.setMaxWidth(MAX_WIDTH);
         eventDetailVBox.setAlignment(Pos.TOP_CENTER);
 
         checkoutButton.disableProperty().bind(isOptionsSelectedEmptyProperty);
-        ObservableLists.bindConverted(scheduledItemVBox.getChildren(),recurringEventSchedule.getSelectedDates(),this::drawScheduledItemInCheckoutView);
-        //totalPriceLabel.textProperty().bind(Bindings.format("%.2f£", totalPriceProperty));
+        ObservableLists.bindConverted(scheduledItemVBox.getChildren(), recurringEventSchedule.getSelectedDates(), this::drawScheduledItemInCheckoutView);
+        //totalPriceLabel.textProperty().bind(Bindings.format("%.2f£", totalPriceProperty)); // Not supported by WebFX
     }
 
 
@@ -300,8 +292,8 @@ public final class BookEventActivity extends ViewDomainActivityBase {
 
         BorderPane currentScheduledItemBorderPane = new BorderPane();
         currentScheduledItemBorderPane.setMaxWidth(400); //300+55+45
-        String dateFormatted = I18n.getI18nText("DateFormatted",I18n.getI18nText(currentScheduledItem.getDate().getMonth().name()),currentScheduledItem.getDate().getDayOfMonth());
-        Label name = new Label(currentScheduledItem.getItem().getName() + " - "+ dateFormatted);
+        String dateFormatted = I18n.getI18nText("DateFormatted", I18n.getI18nText(currentScheduledItem.getDate().getMonth().name()),currentScheduledItem.getDate().getDayOfMonth());
+        Label name = new Label(currentScheduledItem.getItem().getName() + " - " + dateFormatted);
         Label price = new Label("7£");
         name.getStyleClass().add("subtitle-grey");
         price.getStyleClass().add("subtitle-grey");
@@ -320,7 +312,7 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         scheduledItemVBox.getChildren().add(currentScheduledItemBorderPane);
 
         //Now we calculate the price and update the graphic related to the price
-        totalPriceProperty.setValue(recurringEventSchedule.getSelectedDates().size()*7);
+        totalPriceProperty.setValue(recurringEventSchedule.getSelectedDates().size() * 7);
         return currentScheduledItemBorderPane;
     }
 
@@ -345,7 +337,7 @@ public final class BookEventActivity extends ViewDomainActivityBase {
                         .onSuccess(ignored -> {
                             loadEventDetails(FXEvent.getEvent());
                             recurringEventSchedule.setScheduledItems(FXEventAggregate.getEventAggregate().getScheduledItems());
-                            //We add a listener on the date to update the BooleanProperty binded with the disable property of the checkout button
+                            // We add a listener on the date to update the BooleanProperty bound to the disable property of the checkout button
                             recurringEventSchedule.getSelectedDates().addListener((ListChangeListener<LocalDate>) change -> {
                                 isOptionsSelectedEmptyProperty.set(recurringEventSchedule.getSelectedDates().isEmpty());
                             });
@@ -355,4 +347,26 @@ public final class BookEventActivity extends ViewDomainActivityBase {
             }
         }, FXEventAggregate.eventAggregateProperty());
     }
+
+    // I18n utility methods
+
+    private void bindI18nEventExpression(Property<String> textProperty, String eventExpression) {
+        I18n.bindI18nTextProperty(textProperty, new I18nSubKey("expression: " + eventExpression, FXEvent.eventProperty()), eventLoadedProperty);
+    }
+
+    private <T extends Text> T bindI18nEventExpression(T text, String eventExpression) {
+        bindI18nEventExpression(text.textProperty(), eventExpression);
+        return text;
+    }
+
+    private <L extends Labeled> L bindI18nEventExpression(L text, String eventExpression) {
+        bindI18nEventExpression(text.textProperty(), eventExpression);
+        return text;
+    }
+
+    private HtmlText bindI18nEventExpression(HtmlText text, String eventExpression) {
+        bindI18nEventExpression(text.textProperty(), eventExpression);
+        return text;
+    }
+
 }
