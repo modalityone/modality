@@ -14,13 +14,13 @@ public class FiltersPresentationModel extends OrganizationDependentGenericTableP
     private final ObjectProperty<VisualResult> filtersVisualResultProperty = new SimpleObjectProperty<>();
     public ObjectProperty<VisualResult> filtersVisualResultProperty() { return filtersVisualResultProperty; }
 
-    private final ObjectProperty<VisualSelection> filtersVisualSelectionProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<VisualSelection> filtersVisualSelectionProperty = VisualSelection.createVisualSelectionProperty();
     public ObjectProperty<VisualSelection> filtersVisualSelectionProperty() { return filtersVisualSelectionProperty; }
 
     private final ObjectProperty<VisualResult> fieldsVisualResultProperty = new SimpleObjectProperty<>();
     public ObjectProperty<VisualResult> fieldsVisualResultProperty() { return fieldsVisualResultProperty; }
 
-    private final ObjectProperty<VisualSelection> fieldsVisualSelectionProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<VisualSelection> fieldsVisualSelectionProperty = VisualSelection.createVisualSelectionProperty();
     public ObjectProperty<VisualSelection> fieldsVisualSelectionProperty() { return fieldsVisualSelectionProperty; }
 
     private final ObjectProperty<VisualResult> filterFieldsVisualResultProperty = new SimpleObjectProperty<>();

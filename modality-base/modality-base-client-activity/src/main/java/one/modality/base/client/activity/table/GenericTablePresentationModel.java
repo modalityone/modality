@@ -25,7 +25,7 @@ public class GenericTablePresentationModel implements
     private final IntegerProperty limitProperty = new SimpleIntegerProperty(0);
     @Override public IntegerProperty limitProperty() { return limitProperty; }
 
-    private final ObjectProperty<VisualSelection> genericVisualSelectionProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<VisualSelection> genericVisualSelectionProperty = VisualSelection.createVisualSelectionProperty();
     @Override public ObjectProperty<VisualSelection> genericVisualSelectionProperty() { return genericVisualSelectionProperty; }
 
     // Display output
