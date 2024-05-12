@@ -1,4 +1,9 @@
 
+/*===== javafx-graphics-web@main.css from webfx-kit-javafxgraphics-peers-gwt-j2cl =====*/
+
+.disabled fx-text {
+    color: gray;
+}
 /*===== javafx-controls-web@main.css from webfx-kit-javafxcontrols-peers-gwt-j2cl =====*/
 
 /***** Global variables *****/
@@ -51,6 +56,50 @@ input[type="text"], input[type="password"] {
     border: none;
     outline: none;
     background-color: transparent;
+}
+
+/*===== material-web@main.css from webfx-extras-materialdesign =====*/
+
+
+fx-textfield.material > fx-border {
+    border: none;
+}
+
+fx-textfield.material > fx-background {
+    background: none;
+}
+/*===== web@main.css from webfx-extras-switches =====*/
+
+:root {
+    --webfx-switch-unselected-background-color: lightgray;
+    --webfx-switch-selected-background-color: #23EA00;
+    --webfx-switch-knob-background-color: white;
+}
+
+fx-switch.webfx-switch > fx-background {
+    background-color: var(--webfx-switch-unselected-background-color);
+    border-radius: 10px;
+    transition-duration: 200ms;
+}
+
+fx-switch.webfx-switch.selected > fx-background {
+    background-color: var(--webfx-switch-selected-background-color);
+    transition-duration: 200ms;
+}
+
+fx-switch.webfx-switch fx-circle.knob {
+    background-color: var(--webfx-switch-knob-background-color);
+}
+/*===== filepicker-web@main.css from webfx-extras-filepicker-gwt-j2cl =====*/
+
+/* We dont want any background or border for the FilePicker button */
+
+.file-picker fx-button > fx-background {
+    background: none;
+}
+
+.file-picker fx-button > fx-border {
+    border: none;
 }
 
 /*===== visual-grid-web@main.css from webfx-extras-visual-grid-peers-gwt-j2cl =====*/
@@ -145,126 +194,61 @@ tr.selected, .grid-row.selected {
     background: var(--grid-selection-color)
 }
 
-/*===== filepicker-web@main.css from webfx-extras-filepicker-gwt-j2cl =====*/
+/*===== backoffice-home-web@main.css from modality-base-backoffice-activity-home-plugin =====*/
 
-/* We dont want any background or border for the FilePicker button */
 
-.file-picker fx-button > fx-background {
-    background: none;
+fx-homepane fx-tile * {
+    font-size: 18px;
 }
 
-.file-picker fx-button > fx-border {
+/*===== modality-web@main.css from modality-base-client-application =====*/
+
+@font-face {
+    font-family: "Montserrat";
+    src: url("./fonts/montserrat/Montserrat-VF.woff2") format("woff2");
+    font-weight: 100 900;
+}
+
+/* Applying Montserrat as default font for Modality */
+body {
+    font-family: Montserrat, serif;
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
+}
+
+
+/*===== modality-login-web@main.css from modality-crm-client-activity-login-plugin =====*/
+
+.login * {
+    font-size: 18px; /* doesn't work yet (because of hardcoded style in app code) */
+}
+
+.login fx-button { /* doesn't work yet (because of hardcoded style in app code) */
+    background: #0096D6FF;
     border: none;
+    border-radius: 10px;
 }
 
-/*===== javafx-graphics-web@main.css from webfx-kit-javafxgraphics-peers-gwt-j2cl =====*/
-
-.disabled fx-text {
-    color: gray;
-}
-/*===== web@main.css from modality-event-backoffice-activity-recurringevents-plugin =====*/
-
-.recurringEventButton {
-    border-radius: 2px;
-    height: 30px;
-    max-height: 30px;
-    width: 150px;
-    font-weight: bold;
+.login fx-button .text {
+    color: white; /* doesn't work yet (because of hardcoded style in app code) */
+    /*padding: 15px; JavaFX padding already applied in app code for now */
 }
 
-.bold
-{
-    font-weight: bold;
-}
-.font-size-35px {
-    font-size: 35px;
-}
-
-.font-size-22px {
-    font-size: 22px;
+/* Montserrat password dots are tiny! So we use another font for passwords, but we don't want that font for the placeholder!
+   So we apply that font only once the user started typing the password. This is done using :not([value=""]) CSS
+   selector. Normally "value" refers to the initial value of the input only. However HtmlTextInputControlPeer keeps
+   updating "value" to "" or "not-empty" whether the user has typed something, so this CSS rule finally works: */
+input[type="password"]:not([value=""]) {
+    font-family: "Password", serif;
+    letter-spacing: 0.15em;
 }
 
-.font-size-16px {
-    font-size: 16px;
+@font-face {
+    font-family: "Password";
+    src: url("./fonts/password/password.woff") format("woff");
+    font-weight: 100 900;
 }
 
-.font-size-9px {
-    font-size: 9px;
-}
-
-.font-white {
-    color: white;
-}
-
-.font-green {
-    color: #41BA4D;
-}
-
-.font-blue {
-    color: #0096D6;
-}
-
-.font-orange {
-    color: orange;
-}
-
-.font-red {
-    color: red;
-}
-
-.font-grey {
-    color: grey;
-}
-
-.bookingName {
-    color: #838788;
-}
-
-.bold {
-    font-weight: bold;
-}
-
-.bookingStatusConfirmed {
-    color: #41BA4D;
-}
-
-.bookingStatusUnconfirmed {
-    color: #eb8634;
-}
-
-.bookingTotalCount {
-    color: #FF0404;
-}
-
-
-.background-orange > fx-background {
-    background: orange;
-}
-
-.background-green > fx-background {
-    background: #41BA4D;
-}
-
-.background-blue > fx-background {
-    background: #0096D6;
-}
-
-.background-red > fx-background {
-    background: red;
-}
-
-.background-darkGrey > fx-background {
-    background: #838788;
-}
-
-
-.disabled {
-    opacity: 0.3;
-}
-
-.disabled fx-text {
-    color: white;
-}
 /*===== bookings-web@main.css from modality-ecommerce-backoffice-activity-bookings-plugin =====*/
 
 /***** Declaring table row color variables with default values *****/
@@ -374,67 +358,106 @@ tr.branch, .grid-row.branch {
     linear-gradient(  90deg, var(--stay-color) 0%, var(--stay-color) 40%, transparent 50%, transparent 100%),
     linear-gradient( 180deg, var(--color-light), var(--color-dark) 100%);
 }
-/*===== modality-login-web@main.css from modality-crm-client-activity-login-plugin =====*/
+/*===== web@main.css from modality-event-backoffice-activity-recurringevents-plugin =====*/
 
-.login * {
-    font-size: 18px; /* doesn't work yet (because of hardcoded style in app code) */
+.recurringEventButton {
+    border-radius: 2px;
+    height: 30px;
+    max-height: 30px;
+    width: 150px;
+    font-weight: bold;
 }
 
-.login fx-button { /* doesn't work yet (because of hardcoded style in app code) */
-    background: #0096D6FF;
-    border: none;
-    border-radius: 10px;
+.bold
+{
+    font-weight: bold;
+}
+.font-size-35px {
+    font-size: 35px;
 }
 
-.login fx-button .text {
-    color: white; /* doesn't work yet (because of hardcoded style in app code) */
-    /*padding: 15px; JavaFX padding already applied in app code for now */
+.font-size-22px {
+    font-size: 22px;
 }
 
-/* Montserrat password dots are tiny! So we use another font for passwords, but we don't want that font for the placeholder!
-   So we apply that font only once the user started typing the password. This is done using :not([value=""]) CSS
-   selector. Normally "value" refers to the initial value of the input only. However HtmlTextInputControlPeer keeps
-   updating "value" to "" or "not-empty" whether the user has typed something, so this CSS rule finally works: */
-input[type="password"]:not([value=""]) {
-    font-family: "Password", serif;
-    letter-spacing: 0.15em;
+.font-size-16px {
+    font-size: 16px;
 }
 
-@font-face {
-    font-family: "Password";
-    src: url("./fonts/password/password.woff") format("woff");
-    font-weight: 100 900;
+.font-size-9px {
+    font-size: 9px;
 }
 
-/*===== modality-web@main.css from modality-base-client-application =====*/
-
-@font-face {
-    font-family: "Montserrat";
-    src: url("./fonts/montserrat/Montserrat-VF.woff2") format("woff2");
-    font-weight: 100 900;
+.font-white {
+    color: white;
 }
 
-/* Applying Montserrat as default font for Modality */
-body {
-    font-family: Montserrat, serif;
-    font-size: 13px;
-    -webkit-font-smoothing: antialiased;
+.font-green {
+    color: #41BA4D;
+}
+
+.font-blue {
+    color: #0096D6;
+}
+
+.font-orange {
+    color: orange;
+}
+
+.font-red {
+    color: red;
+}
+
+.font-grey {
+    color: grey;
+}
+
+.bookingName {
+    color: #838788;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.bookingStatusConfirmed {
+    color: #41BA4D;
+}
+
+.bookingStatusUnconfirmed {
+    color: #eb8634;
+}
+
+.bookingTotalCount {
+    color: #FF0404;
 }
 
 
-/*===== material-web@main.css from webfx-extras-materialdesign =====*/
-
-
-fx-textfield.material > fx-border {
-    border: none;
+.background-orange > fx-background {
+    background: orange;
 }
 
-fx-textfield.material > fx-background {
-    background: none;
+.background-green > fx-background {
+    background: #41BA4D;
 }
-/*===== backoffice-home-web@main.css from modality-base-backoffice-activity-home-plugin =====*/
+
+.background-blue > fx-background {
+    background: #0096D6;
+}
+
+.background-red > fx-background {
+    background: red;
+}
+
+.background-darkGrey > fx-background {
+    background: #838788;
+}
 
 
-fx-homepane fx-tile * {
-    font-size: 18px;
+.disabled {
+    opacity: 0.3;
+}
+
+.disabled fx-text {
+    color: white;
 }
