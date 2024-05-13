@@ -109,6 +109,14 @@ public interface Event extends Entity,
         return getStringFieldValue("description");
     }
 
+    default void setShortDescription(String shortDescription) {
+        setFieldValue("shortDescription", shortDescription);
+    }
+
+    default String getShortDescription() {
+        return getStringFieldValue("shortDescription");
+    }
+
     default void setExternalLink(String externalLink) {
         setFieldValue("externalLink", externalLink);
     }
