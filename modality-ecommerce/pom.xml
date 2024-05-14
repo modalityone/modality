@@ -27,6 +27,10 @@
         <module>modality-ecommerce-backoffice-operations-documentline</module>
         <module>modality-ecommerce-backoffice-operations-moneyflow</module>
         <module>modality-ecommerce-backoffice-operations-moneytransfer</module>
+        <module>modality-ecommerce-document-service</module>
+        <module>modality-ecommerce-document-service-buscall</module>
+        <module>modality-ecommerce-document-service-remote</module>
+        <module>modality-ecommerce-document-service-server</module>
         <module>modality-ecommerce-payment-custom</module>
         <module>modality-ecommerce-payment-custom-buscall</module>
         <module>modality-ecommerce-payment-custom-remote</module>

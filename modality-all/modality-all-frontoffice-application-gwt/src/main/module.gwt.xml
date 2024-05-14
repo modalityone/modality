@@ -223,6 +223,15 @@
     <!--===========================< modality-crm-shared-authn >============================-->
     <source path="one/modality/crm/shared/services/authn"/>
     <source path="one/modality/crm/shared/services/authn/serial"/>
+    <!--======================< modality-ecommerce-document-service >=======================-->
+    <source path="one/modality/ecommerce/document/service"/>
+    <source path="one/modality/ecommerce/document/service/events"/>
+    <source path="one/modality/ecommerce/document/service/spi"/>
+    <!--==================< modality-ecommerce-document-service-buscall >===================-->
+    <source path="one/modality/ecommerce/document/service/buscall"/>
+    <source path="one/modality/ecommerce/document/service/buscall/serial"/>
+    <!--===================< modality-ecommerce-document-service-remote >===================-->
+    <source path="one/modality/ecommerce/document/service/spi/impl/remote"/>
     <!--=========================< modality-event-client-event-fx >=========================-->
     <source path="one/modality/event/client/event/fx"/>
     <!--===============< modality-event-frontoffice-activity-booking-plugin >===============-->

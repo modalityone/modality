@@ -8,6 +8,8 @@ module modality.all.frontoffice.application.gluon {
     // Direct dependencies modules
     requires javafx.web;
     requires modality.all.frontoffice.application;
+    requires modality.ecommerce.document.service.buscall;
+    requires modality.ecommerce.document.service.remote;
     requires webfx.extras.visual.grid.peers.openjfx;
     requires webfx.extras.webtext.peers.openjfx;
     requires webfx.kit.javafxgraphics.openjfx;
