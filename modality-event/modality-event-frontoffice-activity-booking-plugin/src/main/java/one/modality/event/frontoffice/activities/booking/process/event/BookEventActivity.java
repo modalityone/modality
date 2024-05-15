@@ -7,7 +7,6 @@ import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Numbers;
 import dev.webfx.stack.cloud.image.CloudImageService;
@@ -23,7 +22,10 @@ import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -36,12 +38,15 @@ import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.formatters.EventPriceFormatter;
+import one.modality.ecommerce.document.service.DocumentAggregate;
+import one.modality.ecommerce.document.service.DocumentService;
+import one.modality.ecommerce.document.service.LoadPolicyArgument;
+import one.modality.ecommerce.document.service.PolicyAggregate;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.client.event.fx.FXEventId;
+import one.modality.event.frontoffice.activities.booking.PriceCalculator;
 import one.modality.event.frontoffice.activities.booking.WorkingBooking;
-import one.modality.event.frontoffice.activities.booking.fx.FXEventAggregate;
-import one.modality.event.frontoffice.activities.booking.process.EventAggregate;
 
 import java.time.LocalDate;
 
@@ -58,8 +63,9 @@ public final class BookEventActivity extends ViewDomainActivityBase {
     private final HtmlText eventShortDescription = bindI18nEventExpression(new HtmlText(), "shortDescription");
     private final Label venueAddress = bindI18nEventExpression(new Label(), "venue.address");
     private final HtmlText eventDescription = bindI18nEventExpression(new HtmlText(), "description");
-    private final DoubleProperty totalPriceProperty = new SimpleDoubleProperty(0);
     private final Label totalPriceLabel = new Label();
+    private final StringProperty totalPriceProperty = new SimpleStringProperty("");
+
     private final CloudImageService cloudImageService = new ClientImageService();
     private final RecurringEventSchedule recurringEventSchedule = new RecurringEventSchedule();
     private final VBox eventDetailVBox = new VBox();
@@ -68,13 +74,16 @@ public final class BookEventActivity extends ViewDomainActivityBase {
     private final VBox errorVBox = new VBox();
     private final VBox scheduledItemVBox = new VBox();
     private final BooleanProperty isOptionsSelectedEmptyProperty = new SimpleBooleanProperty();
-    private final WorkingBooking currentBooking = new WorkingBooking();
+    private WorkingBooking currentBooking;
     private final ImageView imageView = new ImageView();
     private final Carrousel carrousel = new Carrousel();
+    private PolicyAggregate policyAggregate;
+    private DocumentAggregate documentAggregate;
+
+    private PriceCalculator priceCalculator;
 
     @Override
     public Node buildUi() {
-
         Label waitLabel = new Label("Please wait...");
         //Image loadingImage = new Image("path/to/your/loading_image.png");
         //ImageView imageView = new ImageView(loadingImage);
@@ -88,7 +97,6 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         errorVBox.getChildren().addAll(errorLabel);//,imageView);
 
         buildEventDetailVBox();
-        buildCheckoutVBox();
         carrousel.setSlides(loadingVBox,eventDetailVBox, checkoutVBox,errorVBox);
         carrousel.setLoop(false);
         Region carrouselContainer = carrousel.getContainer();
@@ -99,7 +107,6 @@ public final class BookEventActivity extends ViewDomainActivityBase {
     private void buildCheckoutVBox() {
         checkoutVBox.getChildren().clear();
         checkoutVBox.setAlignment(Pos.TOP_CENTER);
-
         Label bookedEventTitleText = bindI18nEventExpression(new Label(), "i18n(this)");
         bookedEventTitleText.getStyleClass().add("title-blue-bold");
         BorderPane line1 = new BorderPane(bookedEventTitleText);
@@ -121,9 +128,6 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         addressBorderPane.setPadding(new Insets(0,0,30,0));
         checkoutVBox.getChildren().addAll(addressBorderPane);
 
-        // We filter the scheduledItems to have only the one which date in the selectedDates list
-        currentBooking.setScheduledItems(recurringEventSchedule.getSelectedScheduledItem());
-
         BorderPane header = new BorderPane();
         Label summaryLabel = I18nControls.bindI18nProperties(new Label(),"Summary");
         summaryLabel.setPrefWidth(290);
@@ -143,7 +147,39 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         scheduledItemVBox.setPadding(new Insets(0,0,40,0));
         //The scheduledItemPane containing the details of the checkout will be populated by the function drawScheduledItemInCheckoutView
         //which is called throw the binding
+        documentAggregate = currentBooking.getLastestDocumentAggregate();
+
+        documentAggregate.getAttendances().forEach(a-> {
+            BorderPane currentScheduledItemBorderPane = new BorderPane();
+            currentScheduledItemBorderPane.setMaxWidth(400); //300+55+45
+            String dateFormatted = I18n.getI18nText("DateFormatted", I18n.getI18nText(a.getScheduledItem().getDate().getMonth().name()),a.getScheduledItem().getDate().getDayOfMonth());
+            Label name = new Label(a.getScheduledItem().getItem().getName() + " - " + dateFormatted);
+            Label price = new Label(EventPriceFormatter.formatWithCurrency(policyAggregate.getRates().get(0).getPrice(),FXEvent.getEvent()));
+            name.getStyleClass().add("subtitle-grey");
+            price.getStyleClass().add("subtitle-grey");
+
+            Hyperlink trashOption = new Hyperlink();
+            SVGPath svgTrash = SvgIcons.createTrashSVGPath();
+            svgTrash.setFill(Color.RED);
+            trashOption.setGraphic(svgTrash);
+            name.setPrefWidth(300);
+            price.setPrefWidth(55);
+            trashOption.setPrefWidth(45);
+            trashOption.setOnAction(event -> {
+                currentBooking.removeAttendance(a);
+                recurringEventSchedule.getSelectedDates().remove(a.getScheduledItem().getDate());
+                scheduledItemVBox.getChildren().remove(currentScheduledItemBorderPane);
+                totalPriceLabel.setText(EventPriceFormatter.formatWithCurrency(priceCalculator.calculateTotalPrice(currentBooking.getLastestDocumentAggregate()),FXEvent.getEvent()));
+                    });
+            currentScheduledItemBorderPane.setLeft(name);
+            currentScheduledItemBorderPane.setCenter(price);
+            currentScheduledItemBorderPane.setRight(trashOption);
+            scheduledItemVBox.getChildren().add(currentScheduledItemBorderPane);
+            //Now we calculate the price and update the graphic related to the price
+            //totalPriceProperty.setValue(String.valueOf(priceCalculator.calculateTotalPrice(documentAggregate)));
+        });
         checkoutVBox.getChildren().addAll(header, scheduledItemVBox);
+
 
         HBox totalHBox = new HBox();
         totalHBox.getStyleClass().add("line-total");
@@ -152,6 +188,8 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         totalLabel.setPadding(new Insets(5,0,5,50));
         totalLabel.setPrefWidth(350);
         totalPriceLabel.setPadding(new Insets(5,0,5,0));
+        totalPriceLabel.setText(EventPriceFormatter.formatWithCurrency(priceCalculator.calculateTotalPrice(currentBooking.getLastestDocumentAggregate()),FXEvent.getEvent()));
+
         totalHBox.getChildren().addAll(totalLabel,totalPriceLabel);
         checkoutVBox.getChildren().add(totalHBox);
 
@@ -265,7 +303,6 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         line6.setAlignment(Pos.BASELINE_CENTER);
         eventDetailVBox.getChildren().add(line6);
 
-
         //TODO: retrieve the discount, for now we hardcode it
         Text priceForAllClassesText = new Text(I18n.getI18nText( "DiscountForAllSeries", 15));
         HBox line7 = new HBox(priceForAllClassesText);
@@ -280,6 +317,9 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         checkoutButton.getStyleClass().addAll("green-button");
         checkoutButton.setMaxWidth(300);
         checkoutButton.setOnAction((event -> {
+            currentBooking.cancelChanges();
+            currentBooking.bookScheduledItems(recurringEventSchedule.getSelectedScheduledItem());
+            buildCheckoutVBox();
             carrousel.moveForward();
         }));
 
@@ -290,47 +330,10 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         eventDetailVBox.setAlignment(Pos.TOP_CENTER);
 
         checkoutButton.disableProperty().bind(isOptionsSelectedEmptyProperty);
-        ObservableLists.bindConverted(scheduledItemVBox.getChildren(), recurringEventSchedule.getSelectedDates(), this::drawScheduledItemInCheckoutView);
+
         //totalPriceLabel.textProperty().bind(Bindings.format("%.2f£", totalPriceProperty)); // Not supported by WebFX
     }
 
-
-    private BorderPane drawScheduledItemInCheckoutView(LocalDate date) {
-        ScheduledItem currentScheduledItem = FXEventAggregate.getEventAggregate().getScheduledItems().stream()
-                .filter(item -> item.getDate().equals(date))
-                .findFirst().orElse(null);
-
-        if (currentScheduledItem == null) {
-            // Handle the case where no element with the target date was found
-            Console.log("Scheduled Item not found in the list");
-            return null;
-        }
-
-        BorderPane currentScheduledItemBorderPane = new BorderPane();
-        currentScheduledItemBorderPane.setMaxWidth(400); //300+55+45
-        String dateFormatted = I18n.getI18nText("DateFormatted", I18n.getI18nText(currentScheduledItem.getDate().getMonth().name()),currentScheduledItem.getDate().getDayOfMonth());
-        Label name = new Label(currentScheduledItem.getItem().getName() + " - " + dateFormatted);
-        Label price = new Label("7£");
-        name.getStyleClass().add("subtitle-grey");
-        price.getStyleClass().add("subtitle-grey");
-
-        Hyperlink trashOption = new Hyperlink();
-        SVGPath svgTrash = SvgIcons.createTrashSVGPath();
-        svgTrash.setFill(Color.RED);
-        trashOption.setGraphic(svgTrash);
-        name.setPrefWidth(300);
-        price.setPrefWidth(55);
-        trashOption.setPrefWidth(45);
-        trashOption.setOnAction(event ->  recurringEventSchedule.getSelectedDates().remove(currentScheduledItem.getDate()));
-        currentScheduledItemBorderPane.setLeft(name);
-        currentScheduledItemBorderPane.setCenter(price);
-        currentScheduledItemBorderPane.setRight(trashOption);
-        scheduledItemVBox.getChildren().add(currentScheduledItemBorderPane);
-
-        //Now we calculate the price and update the graphic related to the price
-        totalPriceProperty.setValue(recurringEventSchedule.getSelectedDates().size() * 7);
-        return currentScheduledItemBorderPane;
-    }
 
     @Override
     protected void updateContextParametersFromRoute() {
@@ -345,23 +348,38 @@ public final class BookEventActivity extends ViewDomainActivityBase {
 
     @Override
     protected void startLogic() {
+        eventLoadedProperty.addListener((observable, oldValue, newValue) -> {
+            //Here the data are not loaded
+            if(!newValue){
+                Platform.runLater(() -> {
+                    carrousel.displaySlide(0);
+                });
+            }
+            //When the data are loaded, we go to the slide showing the data
+            if(newValue) {
+                Platform.runLater(() -> {
+                   carrousel.displaySlide(1);
+                });
+            }
+        });
+
         FXProperties.runNowAndOnPropertiesChange(() -> {
-            EventAggregate eventAggregate = FXEventAggregate.getEventAggregate();
-            if (eventAggregate != null) {
-                eventAggregate.load()
-                        .onFailure(Console::log)
-                        .onSuccess(ignored -> {
+            eventLoadedProperty.setValue(false);
+            DocumentService.loadPolicy(new LoadPolicyArgument(FXEventId.getEventId().getPrimaryKey())).onFailure(Console::log)
+                        .onSuccess(pa -> {
+                            policyAggregate = pa;
+                            priceCalculator = new PriceCalculator(policyAggregate);
+                            currentBooking = new WorkingBooking(policyAggregate);
                             loadEventDetails(FXEvent.getEvent());
-                            recurringEventSchedule.setScheduledItems(FXEventAggregate.getEventAggregate().getScheduledItems());
+                            documentAggregate = currentBooking.getInitialDocumentAggregate();
+                            recurringEventSchedule.setScheduledItems(policyAggregate.getScheduledItems());
                             // We add a listener on the date to update the BooleanProperty bound to the disable property of the checkout button
                             recurringEventSchedule.getSelectedDates().addListener((ListChangeListener<LocalDate>) change -> {
                                 isOptionsSelectedEmptyProperty.set(recurringEventSchedule.getSelectedDates().isEmpty());
                             });
-
                             isOptionsSelectedEmptyProperty.set(recurringEventSchedule.getSelectedDates().isEmpty());
                         });
-            }
-        }, FXEventAggregate.eventAggregateProperty());
+        }, FXEventId.eventIdProperty());
     }
 
     // I18n utility methods

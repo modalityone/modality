@@ -66,8 +66,6 @@ public class RecurringEventSchedule {
             while (change.next()) {
                 if (change.wasAdded()) {
                     date = change.getAddedSubList().get(0);
-                    //Here we haven't found it in the scheduledItemsReadFromDatabase, so we create it.
-
                 }
                 if (change.wasRemoved()) {
                     //We remove from the updateStore and the ScheduledItem
@@ -82,6 +80,26 @@ public class RecurringEventSchedule {
         scheduledItemsList.setAll(siList);
     }
 
+    public ScheduledItem getScheduledItem(LocalDate date) {
+        return scheduledItemsList.stream()
+                .filter(item -> item.getDate().equals(date))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public void addScheduledItemToSelectedList(ScheduledItem s) {
+        getSelectedScheduledItem().add(s);
+    }
+
+    public void removeScheduledItemFromSelectedList(ScheduledItem s) {
+        getSelectedScheduledItem().remove(s);
+    }
+
+
+    public List<ScheduledItem> getScheduledItems()
+    {
+        return scheduledItemsList;
+    }
     public FlexPane buildUi() {
         return ecompassingFlexPane;
     }
