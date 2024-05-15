@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+    </dependencies>
+
+    <providers>
+        <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.document.service.buscall.LoadPolicyMethodEndpoint</provider>
+        <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.document.service.buscall.LoadDocumentMethodEndpoint</provider>
+        <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.document.service.buscall.SubmitDocumentMethodEndpoint</provider>
+        <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.document.service.buscall.serial.LoadPolicyArgumentSerialCodec</provider>
+        <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.document.service.buscall.serial.LoadDocumentArgumentSerialCodec</provider>
+        <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.document.service.buscall.serial.SubmitDocumentArgumentSerialCodec</provider>
+        <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.document.service.buscall.serial.PolicyAggregateSerialCodec</provider>
+        <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.document.service.buscall.serial.DocumentAggregateSerialCodec</provider>
+    </providers>
+
+</project>

@@ -1,0 +1,5 @@
+one.modality.ecommerce.document.service.buscall.serial.LoadPolicyArgumentSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.LoadDocumentArgumentSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.SubmitDocumentArgumentSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.PolicyAggregateSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.DocumentAggregateSerialCodec
