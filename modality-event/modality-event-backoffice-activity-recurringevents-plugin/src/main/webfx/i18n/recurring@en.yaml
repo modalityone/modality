@@ -17,6 +17,9 @@ NameOfTheEvent:
 Description:
   text: "Description"
   prompt: "Write the description here"
+ShortDescription:
+    text: "Short Description"
+    prompt: "Write the short description here"
 TimeOfTheEvent:
   text: "Time of the event"
   prompt: "Hh:Mm"
@@ -73,9 +76,6 @@ SaveButton:
 EditEventInformation: "Edit event information: {0}"
 AddEventInformationButton:
   text: "Add a new event"
-  graphic:
-    fill: "#FFFFFF"
-    svgPath: "M1 5L9 5 M5 1L5 9"
 CancelButton: "Cancel"
 SaveDraftButton:
   text: "Save Draft"
@@ -89,7 +89,7 @@ UpdateEventButton:
     svgPath: "M0 8.6352L6.155 14.8L7.7075 13.2339L1.5635 7.0802M24.0365 0L12.3871 11.679L7.8066 7.0802L6.2321 8.6352L12.3871 14.8L25.6 1.56602M19.3679 1.56602L17.8354 0L10.8236 6.993L12.3871 8.5579L19.3679 1.56602Z"
 TypeOfEvent: "Type of event"
 TotalAttendees: "Attendees in total"
-DeleteEvent: "Delete"
+DeleteEvent: "Delete event"
 DRAFT: "Draft"
 ON_HOLD: "On Hold"
 OPEN: "Open"

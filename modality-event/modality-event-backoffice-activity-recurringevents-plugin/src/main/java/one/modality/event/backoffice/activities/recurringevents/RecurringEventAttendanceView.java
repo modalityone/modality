@@ -24,6 +24,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
@@ -60,7 +62,7 @@ public class RecurringEventAttendanceView {
         I18nControls.bindI18nProperties(currentEventLabel,"CurrentClasses");
         currentEventLabel.setPadding(new Insets(0,0,20,0));
         TextTheme.createSecondaryTextFacet(currentEventLabel).style();
-        currentEventLabel.getStyleClass().add("font-size-16px");
+        currentEventLabel.getStyleClass().add("title3");
 
         attendanceFlowPane.setPadding(new Insets(60,0,0,0));
         attendanceFlowPane.setId("attendanceFlowPane");
@@ -118,7 +120,7 @@ public class RecurringEventAttendanceView {
             label.setTextFill(Color.WHITE);
             label.setBackground(new Background(new BackgroundFill(Color.rgb(0, 150, 214), null, null)));
             label.setAlignment(Pos.CENTER);
-            label.getStyleClass().add("bold");
+            label.setFont(Font.font(label.getFont().getName(), FontWeight.BOLD, label.getFont().getSize()));
             VBox.setMargin(label, new Insets(2));
             VBox.setMargin(peopleGrid, new Insets(0, 5, 5, 5));
             VBox.setVgrow(peopleGrid, Priority.ALWAYS);
@@ -135,8 +137,7 @@ public class RecurringEventAttendanceView {
                     javafx.scene.layout.BorderStrokeStyle.SOLID, javafx.scene.layout.CornerRadii.EMPTY, javafx.scene.layout.BorderWidths.DEFAULT)));
             attendanceFlowPane.getChildren().add(boxesContainer);
             totalCountLabel.setPadding(new Insets(5,0,0,0));
-            totalCountLabel.getStyleClass().add(".font-size-9px");
-            totalCountLabel.getStyleClass().add("bookingTotalCount");
+            totalCountLabel.getStyleClass().add("booking-total-count");
             boxesContainer.setBottom(totalCountLabel);
 
             onEntityChangedOrReplaced(scheduledItem);
@@ -155,17 +156,16 @@ public class RecurringEventAttendanceView {
                 {
                     Label name = new Label("#"+dl.getDocument().getRef() + " " + dl.getDocument().getFullName());
                     name.setPadding(new Insets(5,0,5,5));
-                    name.getStyleClass().add("bookingName");
+                    name.getStyleClass().add("booking-name");
                     String text;
                     Label state = new Label();
-                    state.getStyleClass().add("font-size-9px");
                     if(dl.getDocument().isConfirmed()) {
                         text = I18n.getI18nText("BookingConfirmed");
-                        state.getStyleClass().add("bookingStatusConfirmed");
+                        state.getStyleClass().add("booking-status-confirmed");
                     }
                     else {
                         text = I18n.getI18nText("BookingUnconfirmed");
-                        state.getStyleClass().add("bookingStatusUnconfirmed");
+                        state.getStyleClass().add("booking-status-unconfirmed");
                     }
                     state.setText(text);
                     TextTheme.createSecondaryTextFacet(name);

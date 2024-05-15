@@ -20,30 +20,30 @@ final class EventRenderers {
             Text toReturn = new Text();
             if(state==null) {
                 I18n.bindI18nProperties(toReturn, "NOT_DEFINED");
-                toReturn.getStyleClass().add("font-grey");
+                toReturn.getStyleClass().add("secondary-text");
                 return toReturn;
             }
             I18n.bindI18nProperties(toReturn, state.toString());
             switch (state) {
                 case DRAFT:
                 case OPENABLE:
-                    toReturn.getStyleClass().add("font-orange");
+                    toReturn.getStyleClass().add("warning-text");
                     break;
                 case OPEN:
-                    toReturn.getStyleClass().add("font-green");
+                    toReturn.getStyleClass().add("success-text");
                     break;
                 case CLOSED:
                 case ARCHIVED:
                 case RECONCILIED:
                 case RESTRICTED:
                 case FINALISED:
-                    toReturn.getStyleClass().add("font-grey");
+                    toReturn.getStyleClass().add("secondary-text");
                     break;
                 case ON_HOLD:
-                    toReturn.getStyleClass().add("font-orange");
+                    toReturn.getStyleClass().add("warning-text");
                     break;
                 default:
-                    toReturn.getStyleClass().add("font-orange");
+                    toReturn.getStyleClass().add("warning-text");
                     break;
             }
             return toReturn;
@@ -55,7 +55,7 @@ final class EventRenderers {
                 //   displayEventDetails(event);
             });
             SVGPath trashSVGPath = SvgIcons.createTrashSVGPath();
-            trashSVGPath.getStyleClass().add("font-red");
+            trashSVGPath.getStyleClass().add("danger-text");
             trashSVGPath.setOnMouseClicked(e -> System.out.println(e.toString()));
             return new HBox(editHyperLink);
         });
