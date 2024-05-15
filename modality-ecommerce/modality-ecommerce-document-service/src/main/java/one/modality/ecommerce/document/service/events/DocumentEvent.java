@@ -16,8 +16,9 @@ public abstract class DocumentEvent extends SourceEvent {
     }
 
     public DocumentEvent(Document document) {
+        // Document shouldn't be null, but ok to be null for now
         this.document = document;
-        this.documentPrimaryKey = document.getPrimaryKey();
+        this.documentPrimaryKey = document == null ? null : document.getPrimaryKey();
     }
 
     public Document getDocument() {

@@ -6,6 +6,7 @@ import one.modality.base.shared.entities.DocumentLine;
 import one.modality.ecommerce.document.service.events.AddAttendancesEvent;
 import one.modality.ecommerce.document.service.events.AddDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.DocumentEvent;
+import one.modality.ecommerce.document.service.events.RemoveAttendancesEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +43,8 @@ public final class DocumentAggregate {
                 documentLines.add(((AddDocumentLineEvent) documentEvent).getDocumentLine());
             } else if (documentEvent instanceof AddAttendancesEvent) {
                 attendances.addAll(Arrays.asList(((AddAttendancesEvent) documentEvent).getAttendances()));
+            } else if (documentEvent instanceof RemoveAttendancesEvent) {
+                attendances.removeAll(Arrays.asList(((AddAttendancesEvent) documentEvent).getAttendances()));
             }
         });
     }

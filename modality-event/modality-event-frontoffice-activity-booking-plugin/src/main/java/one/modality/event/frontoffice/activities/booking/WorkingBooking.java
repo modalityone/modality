@@ -13,8 +13,10 @@ import one.modality.ecommerce.document.service.SubmitDocumentChangesArgument;
 import one.modality.ecommerce.document.service.events.AddAttendancesEvent;
 import one.modality.ecommerce.document.service.events.AddDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.DocumentEvent;
+import one.modality.ecommerce.document.service.events.RemoveAttendancesEvent;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -68,6 +70,14 @@ public class WorkingBooking {
             return attendance;
         }).toArray(Attendance[]::new);
         documentChanges.add(new AddAttendancesEvent(attendances));
+    }
+
+    public void removeAttendance(Attendance attendance) {
+        removeAttendances(Collections.singletonList(attendance));
+    }
+
+    public void removeAttendances(List<Attendance> attendance) {
+        documentChanges.add(new RemoveAttendancesEvent(attendance.toArray(Attendance[]::new)));
     }
 
     public void cancelChanges() {
