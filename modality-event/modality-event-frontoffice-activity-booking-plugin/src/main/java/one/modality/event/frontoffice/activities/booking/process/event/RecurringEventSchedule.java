@@ -121,7 +121,6 @@ public class RecurringEventSchedule {
     protected void addSelectedDate(LocalDate date)
     {
         this.selectedDates.add(date);
-//        changeBackgroundWhenSelected(date,true);
     }
 
     public void selectAllDates() {
@@ -129,7 +128,6 @@ public class RecurringEventSchedule {
         scheduledItemsList.forEach(si->
         {
             selectedDates.add(si.getDate());
-          //  changeBackgroundWhenSelected(si.getDate(),true);
         });
     }
     public ObservableList<LocalDate> getSelectedDates() {
@@ -138,7 +136,6 @@ public class RecurringEventSchedule {
 
     protected void removeSelectedDate(LocalDate date) {
         this.selectedDates.remove(date);
-        changeBackgroundWhenSelected(date,false);
     }
     protected void changeBackgroundWhenSelected(LocalDate currentDate,boolean isSelected) {
         Pair<ScheduledItemToPane, Pair<String,String>> objectColor = paneAndCssClassMap.get(currentDate);

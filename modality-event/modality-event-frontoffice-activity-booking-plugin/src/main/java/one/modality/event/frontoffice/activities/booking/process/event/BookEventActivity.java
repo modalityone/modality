@@ -55,6 +55,7 @@ public final class BookEventActivity extends ViewDomainActivityBase {
 
     private final BooleanProperty eventLoadedProperty = new SimpleBooleanProperty();
     private final Text eventTitle = bindI18nEventExpression(new Text(), "i18n(this)");
+    private final HtmlText eventShortDescription = bindI18nEventExpression(new HtmlText(), "shortDescription");
     private final Label venueAddress = bindI18nEventExpression(new Label(), "venue.address");
     private final HtmlText eventDescription = bindI18nEventExpression(new HtmlText(), "description");
     private final DoubleProperty totalPriceProperty = new SimpleDoubleProperty(0);
@@ -63,6 +64,8 @@ public final class BookEventActivity extends ViewDomainActivityBase {
     private final RecurringEventSchedule recurringEventSchedule = new RecurringEventSchedule();
     private final VBox eventDetailVBox = new VBox();
     private final VBox checkoutVBox = new VBox();
+    private final VBox loadingVBox = new VBox();
+    private final VBox errorVBox = new VBox();
     private final VBox scheduledItemVBox = new VBox();
     private final BooleanProperty isOptionsSelectedEmptyProperty = new SimpleBooleanProperty();
     private final WorkingBooking currentBooking = new WorkingBooking();
@@ -71,9 +74,22 @@ public final class BookEventActivity extends ViewDomainActivityBase {
 
     @Override
     public Node buildUi() {
+
+        Label waitLabel = new Label("Please wait...");
+        //Image loadingImage = new Image("path/to/your/loading_image.png");
+        //ImageView imageView = new ImageView(loadingImage);
+        loadingVBox.setSpacing(10);
+        loadingVBox.setAlignment(Pos.CENTER);
+        loadingVBox.getChildren().addAll(waitLabel);//,imageView);
+
+        Label errorLabel = new Label("Error while loading data");
+        errorVBox.setSpacing(10);
+        errorVBox.setAlignment(Pos.CENTER);
+        errorVBox.getChildren().addAll(errorLabel);//,imageView);
+
         buildEventDetailVBox();
         buildCheckoutVBox();
-        carrousel.setSlides(eventDetailVBox, checkoutVBox);
+        carrousel.setSlides(loadingVBox,eventDetailVBox, checkoutVBox,errorVBox);
         carrousel.setLoop(false);
         Region carrouselContainer = carrousel.getContainer();
         carrouselContainer.setMaxWidth(MAX_WIDTH);
@@ -149,6 +165,7 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         backButton.getStyleClass().addAll("green-button");
         backButton.setMaxWidth(150);
         backButton.setOnAction((event -> {
+            
         }));
 
         checkoutVBox.getChildren().add(backButton);
@@ -179,7 +196,7 @@ public final class BookEventActivity extends ViewDomainActivityBase {
 
 
         eventLoadedProperty.set(false);
-        e.onExpressionLoaded("name, description, venue.(name, label, address)")
+        e.onExpressionLoaded("name, shortDescription, description, venue.(name, label, address)")
                 .onFailure(Console::log)
                 .onSuccess(x -> eventLoadedProperty.set(true));
     }
@@ -199,8 +216,9 @@ public final class BookEventActivity extends ViewDomainActivityBase {
 
         eventDetailVBox.getChildren().add(eventCentreLocationText);
 
-        eventTitle.getStyleClass().add("subtitle-grey");
-        HBox line2 = new HBox(eventTitle);
+        eventShortDescription.getStyleClass().add("subtitle-grey");
+      //  eventTitle.getStyleClass().add("subtitle-grey");
+        HBox line2 = new HBox(eventShortDescription);
         line2.setAlignment(Pos.BASELINE_CENTER);
         line2.setPadding(new Insets(5,0,15,0));
 
