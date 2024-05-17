@@ -15,14 +15,14 @@ public final class InitiateDelegatedPaymentResultSerialCodec extends SerialCodec
     }
 
     @Override
-    public void encodeToJson(InitiateDelegatedPaymentResult arg, AstObject json) {
-        json.set(DELEGATED_PAYMENT_URL_KEY, arg.getDelegatedPaymentUrl());
+    public void encode(InitiateDelegatedPaymentResult arg, AstObject serial) {
+        encodeString(serial, DELEGATED_PAYMENT_URL_KEY, arg.getDelegatedPaymentUrl(), NullEncoding.NULL_VALUE_NOT_ALLOWED);
     }
 
     @Override
-    public InitiateDelegatedPaymentResult decodeFromJson(ReadOnlyAstObject json) {
+    public InitiateDelegatedPaymentResult decode(ReadOnlyAstObject serial) {
         return new InitiateDelegatedPaymentResult(
-                json.getString(DELEGATED_PAYMENT_URL_KEY)
+                decodeString(serial, DELEGATED_PAYMENT_URL_KEY, NullEncoding.NULL_VALUE_NOT_ALLOWED)
         );
     }
 }

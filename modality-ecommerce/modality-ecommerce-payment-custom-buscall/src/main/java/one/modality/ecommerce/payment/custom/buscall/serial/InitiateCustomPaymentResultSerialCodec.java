@@ -15,14 +15,14 @@ public final class InitiateCustomPaymentResultSerialCodec extends SerialCodecBas
     }
 
     @Override
-    public void encodeToJson(InitiateCustomPaymentResult arg, AstObject json) {
-        json.set(HTML_CONTENT_KEY, arg.getHtmlContent());
+    public void encode(InitiateCustomPaymentResult arg, AstObject serial) {
+        encodeString(serial, HTML_CONTENT_KEY, arg.getHtmlContent(), NullEncoding.NULL_VALUE_NOT_ALLOWED);
     }
 
     @Override
-    public InitiateCustomPaymentResult decodeFromJson(ReadOnlyAstObject json) {
+    public InitiateCustomPaymentResult decode(ReadOnlyAstObject serial) {
         return new InitiateCustomPaymentResult(
-                json.getString(HTML_CONTENT_KEY)
+                decodeString(serial, HTML_CONTENT_KEY, NullEncoding.NULL_VALUE_NOT_ALLOWED)
         );
     }
 }

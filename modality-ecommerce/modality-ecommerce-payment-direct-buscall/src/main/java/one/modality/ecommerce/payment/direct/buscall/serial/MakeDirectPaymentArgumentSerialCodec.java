@@ -22,20 +22,20 @@ public final class MakeDirectPaymentArgumentSerialCodec extends SerialCodecBase<
     }
 
     @Override
-    public void encodeToJson(MakeDirectPaymentArgument arg, AstObject json) {
-        json.set(AMOUNT_KEY, arg.getAmount());
-        json.set(CURRENCY_KEY, arg.getCurrency());
-        json.set(CC_NUMBER_KEY, arg.getCcNumber());
-        json.set(CC_EXPIRY_KEY, arg.getCcExpiry());
+    public void encode(MakeDirectPaymentArgument arg, AstObject serial) {
+        encodeInteger(serial, AMOUNT_KEY,    arg.getAmount());
+        encodeString( serial, CURRENCY_KEY,  arg.getCurrency());
+        encodeString( serial, CC_NUMBER_KEY, arg.getCcNumber());
+        encodeString( serial, CC_EXPIRY_KEY, arg.getCcExpiry());
     }
 
     @Override
-    public MakeDirectPaymentArgument decodeFromJson(ReadOnlyAstObject json) {
+    public MakeDirectPaymentArgument decode(ReadOnlyAstObject serial) {
         return new MakeDirectPaymentArgument(
-                json.get(AMOUNT_KEY),
-                json.getString(CURRENCY_KEY),
-                json.getString(CC_NUMBER_KEY),
-                json.getString(CC_EXPIRY_KEY)
+                decodeInteger(serial, AMOUNT_KEY),
+                decodeString( serial, CURRENCY_KEY),
+                decodeString( serial, CC_NUMBER_KEY),
+                decodeString( serial, CC_EXPIRY_KEY)
         );
     }
 }

@@ -21,26 +21,26 @@ public final class InitiateCustomPaymentArgumentSerialCodec extends SerialCodecB
     }
 
     @Override
-    public void encodeToJson(InitiateCustomPaymentArgument arg, AstObject json) {
-        json.set(AMOUNT_KEY, arg.getAmount());
-        json.set(CURRENCY_KEY, arg.getCurrency());
-        json.set(PRODUCT_NAME_KEY, arg.getProductName());
-        json.set(QUANTITY_KEY, arg.getQuantity());
-        json.set(CUSTOMER_ID_KEY, arg.getCustomerId());
-        json.set(SUCCESS_URL_KEY, arg.getSuccessUrl());
-        json.set(FAIL_URL_KEY, arg.getFailUrl());
+    public void encode(InitiateCustomPaymentArgument arg, AstObject serial) {
+        encodeLong(  serial, AMOUNT_KEY,       arg.getAmount());
+        encodeString(serial, CURRENCY_KEY,     arg.getCurrency());
+        encodeString(serial, PRODUCT_NAME_KEY, arg.getProductName());
+        encodeLong(  serial, QUANTITY_KEY,     arg.getQuantity());
+        encodeString(serial, CUSTOMER_ID_KEY,  arg.getCustomerId());
+        encodeString(serial, SUCCESS_URL_KEY,  arg.getSuccessUrl());
+        encodeString(serial, FAIL_URL_KEY,     arg.getFailUrl());
     }
 
     @Override
-    public InitiateCustomPaymentArgument decodeFromJson(ReadOnlyAstObject json) {
+    public InitiateCustomPaymentArgument decode(ReadOnlyAstObject serial) {
         return new InitiateCustomPaymentArgument(
-                json.getLong(AMOUNT_KEY),
-                json.getString(CURRENCY_KEY),
-                json.getString(PRODUCT_NAME_KEY),
-                json.getLong(QUANTITY_KEY),
-                json.getString(CUSTOMER_ID_KEY),
-                json.getString(SUCCESS_URL_KEY),
-                json.getString(FAIL_URL_KEY)
+                decodeLong(  serial, AMOUNT_KEY),
+                decodeString(serial, CURRENCY_KEY),
+                decodeString(serial, PRODUCT_NAME_KEY),
+                decodeLong(  serial, QUANTITY_KEY),
+                decodeString(serial, CUSTOMER_ID_KEY),
+                decodeString(serial, SUCCESS_URL_KEY),
+                decodeString(serial, FAIL_URL_KEY)
         );
     }
 }

@@ -17,18 +17,18 @@ public final class InitiateDelegatedPaymentArgumentSerialCodec extends SerialCod
     }
 
     @Override
-    public void encodeToJson(InitiateDelegatedPaymentArgument arg, AstObject json) {
-        json.set(DESCRIPTION_KEY, arg.getDescription());
-        json.set(AMOUNT_KEY, arg.getAmount());
-        json.set(CURRENCY_KEY, arg.getCurrency());
+    public void encode(InitiateDelegatedPaymentArgument arg, AstObject serial) {
+        encodeString( serial, DESCRIPTION_KEY, arg.getDescription());
+        encodeInteger(serial, AMOUNT_KEY,      arg.getAmount());
+        encodeString( serial, CURRENCY_KEY,    arg.getCurrency());
     }
 
     @Override
-    public InitiateDelegatedPaymentArgument decodeFromJson(ReadOnlyAstObject json) {
+    public InitiateDelegatedPaymentArgument decode(ReadOnlyAstObject serial) {
         return new InitiateDelegatedPaymentArgument(
-                json.getString(DESCRIPTION_KEY),
-                json.get(AMOUNT_KEY),
-                json.getString(CURRENCY_KEY)
+                decodeString( serial, DESCRIPTION_KEY),
+                decodeInteger(serial, AMOUNT_KEY),
+                decodeString( serial, CURRENCY_KEY)
         );
     }
 }

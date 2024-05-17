@@ -19,14 +19,14 @@ public final class MakeDirectPaymentResultSerialCodec extends SerialCodecBase<Ma
     }
 
     @Override
-    public void encodeToJson(MakeDirectPaymentResult arg, AstObject json) {
-        json.set(SUCCESS_KEY, arg.isSuccess());
+    public void encode(MakeDirectPaymentResult arg, AstObject serial) {
+        encodeBoolean(serial, SUCCESS_KEY, arg.isSuccess());
     }
 
     @Override
-    public MakeDirectPaymentResult decodeFromJson(ReadOnlyAstObject json) {
+    public MakeDirectPaymentResult decode(ReadOnlyAstObject serial) {
         return new MakeDirectPaymentResult(
-                json.getBoolean(SUCCESS_KEY)
+                decodeBoolean(serial, SUCCESS_KEY)
         );
     }
 }
