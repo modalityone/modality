@@ -360,104 +360,158 @@ tr.branch, .grid-row.branch {
 }
 /*===== web@main.css from modality-event-backoffice-activity-recurringevents-plugin =====*/
 
-.recurringEventButton {
-    border-radius: 2px;
-    height: 30px;
-    max-height: 30px;
-    width: 150px;
-    font-weight: bold;
+:root {
+    --webfx-switch-selected-background-color: #0096D6;
+    --green-color: #41BA4D;
+    --green-color-hover: #38a143;
+    --blue-color: #0096D6;
+    --blue-color-hover: #0082ba;
+    --grey-color: #838788;
+    --grey-color-hover: #717475;
+    --red-color: red;
+    --red-color-hover: #de0000;
+    --orange-color: #EE7130;
 }
 
-.bold
-{
-    font-weight: bold;
+.event-button {
+    border-radius: 4px;
+    height: 35px;
+    max-height: 35px;
+    text-align: center;
+    font-weight: normal;
 }
-.font-size-35px {
+
+.event-button > fx-border {
+    border: none;
+}
+
+.primary-button {
+    color: white;
+}
+.primary-button > fx-background {
+    background: var(--blue-color);
+}
+
+.primary-button.disabled > fx-background, .primary-button.disabled:hover > fx-background {
+    background: var(--blue-color);
+}
+
+.primary-button:hover > fx-background {
+    background: var(--blue-color-hover);
+}
+
+.danger-button {
+  color: white;
+}
+
+.danger-button > fx-background {
+    background: var(--red-color);
+}
+.danger-button:hover > fx-background {
+    background: var(--red-color-hover);
+}
+
+.success-button {
+    color: white;
+}
+.success-button > fx-background {
+    background: var(--green-color);
+}
+.success-button:hover > fx-background   {
+    background: var(--green-color-hover);
+}
+
+.secondary-button {
+    color: white;
+}
+.secondary-button > fx-background {
+    background: var(--grey-color);
+}
+.secondary-button:hover > fx-background {
+    background: var(--grey-color-hover);
+}
+
+.secondary-text {
+    color: var(--grey-color);
+}
+
+.warning-text {
+    color: var(--orange-color);
+}
+
+.danger-text {
+    color: var(--red-color);
+}
+
+.success-text {
+    color: var(--green-color);
+}
+
+.title {
     font-size: 35px;
 }
 
-.font-size-22px {
+.subtitle {
     font-size: 22px;
 }
 
-.font-size-16px {
+.title3 {
     font-size: 16px;
 }
 
-.font-size-9px {
-    font-size: 9px;
-}
-
-.font-white {
-    color: white;
-}
-
-.font-green {
-    color: #41BA4D;
-}
-
-.font-blue {
-    color: #0096D6;
-}
-
-.font-orange {
-    color: orange;
-}
-
-.font-red {
-    color: red;
-}
-
-.font-grey {
-    color: grey;
-}
-
-.bookingName {
-    color: #838788;
-}
-
-.bold {
+.confirmation-title {
+    font-size: 22px;
+    color: var(--green-color);
     font-weight: bold;
 }
 
-.bookingStatusConfirmed {
+.small-text {
+    font-size: 9px;
+}
+
+.table-row-cell:selected .font-blue {
+
+}
+
+.table-row-cell:selected > fx-background {
+    background: #BBBBBB;
+}
+
+.booking-name {
+    color: #838788;
+}
+
+.booking-status-confirmed {
     color: #41BA4D;
+    font-size: 9px;
 }
 
-.bookingStatusUnconfirmed {
+.booking-status-unconfirmed {
     color: #eb8634;
+    font-size: 9px;
 }
 
-.bookingTotalCount {
+.booking-total-count {
     color: #FF0404;
+    font-size: 9px;
 }
 
-
-.background-orange > fx-background {
-    background: orange;
+.webfx-dates-picker-selected > fx-background {
+    background-color: #afe7ff;
+    border-radius: 10px;
 }
 
-.background-green > fx-background {
-    background: #41BA4D;
+.webfx-dates-picker-secondary > fx-background {
+    background-color: #cccccc;
+    border-radius: 10px;
 }
 
-.background-blue > fx-background {
-    background: #0096D6;
+.webfx-dates-picker-arrow {
+    fill: var(--blue-color);
+    border-radius: 10px;
 }
 
-.background-red > fx-background {
-    background: red;
-}
-
-.background-darkGrey > fx-background {
-    background: #838788;
-}
-
-
-.disabled {
-    opacity: 0.3;
-}
-
-.disabled fx-text {
-    color: white;
+.webfx-dates-picker-month {
+    color: var(--blue-color);
+    font-size: 14px;
 }

@@ -260,55 +260,109 @@ Text, Label, Button, TextField {
 
 /*===== javafx@main.css from modality-event-backoffice-activity-recurringevents-plugin =====*/
 
-.recurringEventButton
+* {
+    -webfx-switch-selected-background-color: #0096D6;
+    -green-color: #41BA4D;
+    -green-color-hover: #38a143;
+    -blue-color: #0096D6;
+    -blue-color-hover: #0082ba;
+    -grey-color: #838788;
+    -grey-color-hover: #717475;
+    -red-color: red;
+    -red-color-hover: #de0000;
+    -orange-color: #EE7130;
+}
+
+.event-button
 {
-    -fx-background-radius: 2;
-    -fx-pref-height:30px;
-    -fx-max-height:30px;
-    -fx-pref-width: 150px;
-    -fx-font-weight: bolder;
+    -fx-background-radius: 4;
+    -fx-pref-height:35px;
+    -fx-max-height:35px;
     -fx-alignment: center;
+ /*  -fx-font-family: "Google Sans", Roboto, Arial;*/
+    -fx-font-weight: bolder;
 }
 
-.bold
-{
--fx-font-weight: bolder;
+.primary-button {
+    -fx-background-color: -blue-color;
+    -fx-text-fill: white;
+}
+.primary-button:hover {
+    -fx-background-color: -blue-color-hover;
+}
+
+.danger-button {
+    -fx-background-color: -red-color;
+    -fx-text-fill: white;
+}
+.danger-button:hover {
+    -fx-background-color: -red-color-hover;
+}
+
+.success-button {
+    -fx-background-color: -green-color;
+    -fx-text-fill: white;
+}
+
+.success-button:hover {
+  -fx-background-color: -green-color-hover;
+}
+
+.secondary-button {
+    -fx-background-color: -grey-color;
+    -fx-text-fill: white;
+}
+
+.secondary-button:hover {
+    -fx-background-color: -grey-color-hover;
+}
+
+.secondary-text {
+    -fx-text-fill: -grey-color;
+    -fx-fill: -grey-color;
+}
+
+.warning-text {
+    -fx-text-fill: -orange-color;
+    -fx-fill: -orange-color;
+}
+
+.danger-text {
+    -fx-text-fill: -red-color;
+    -fx-fill: -red-color;
+}
+
+.success-text {
+    -fx-text-fill: -green-color;
+     -fx-fill: -green-color;
 }
 
 
-.font-size-35px
+.title
 {
   -fx-font-size: 35px;
 }
-.font-size-22px
+.subtitle
 {
   -fx-font-size: 22px;
 }
-.font-size-16px
+
+.title3
 {
   -fx-font-size: 16px;
 }
-.font-size-9px
+
+.confirmation-title {
+   -fx-font-size: 22px;
+   -fx-text-fill: -green-color;
+   -fx-fill: -green-color;
+   -fx-font-weight: bolder;
+}
+
+
+.small-text
 {
   -fx-font-size: 9px;
-}
-
-.font-white
-{
-    -fx-text-fill: white;
-    -fx-fill: white;
-}
-
-.font-green
-{
-    -fx-text-fill: #41BA4D;
-    -fx-fill: #41BA4D;
-}
-
-.font-blue
-{
-    -fx-text-fill: #0096D6;
-    -fx-fill: #0096D6;
 }
 
 .table-row-cell:selected .font-blue
@@ -321,61 +375,46 @@ Text, Label, Button, TextField {
 }
 
 
-.font-orange
-{
-    -fx-text-fill: orange;
-    -fx-fill: orange;
-}
-.font-red
-{
-    -fx-text-fill: red;
-     -fx-fill: red;
-}
-.font-grey
-{
-    -fx-text-fill: grey;
-    -fx-fill: grey;
-}
-
-.bookingName
+.booking-name
 {
     -fx-text-fill: #838788;
 }
-.bold
-{
-   -fx-font-weight: bold;
-}
 
-.bookingStatusConfirmed
+.booking-status-confirmed
 {
      -fx-text-fill: #41BA4D;
+     -fx-font-size: 9px;
+
 }
 
-.bookingStatusUnconfirmed
+.booking-status-unconfirmed
 {
-     -fx-text-fill: #eb8634;
+    -fx-text-fill: #eb8634;
+    -fx-font-size: 9px;
 }
-.bookingTotalCount
+.booking-total-count
 {
--fx-text-fill: #FF0404;
+    -fx-text-fill: #FF0404;
+    -fx-font-size: 9px;
 }
 
-.background-green {
-    -fx-background-color: #41BA4D;
+
+.webfx-dates-picker-selected {
+    -fx-background-color: #afe7ff;
+    -fx-background-radius: 10px;
 }
 
-.background-orange {
-    -fx-background-color: orange;
+.webfx-dates-picker-secondary {
+    -fx-background-color: #cccccc;
+    -fx-background-radius: 10px;
 }
 
-.background-blue {
-    -fx-background-color: #0096D6;
+.webfx-dates-picker-arrow {
+    -fx-fill: -blue-color;
+    -fx-background-radius: 10px;
 }
 
-.background-red {
-    -fx-background-color: red;
-}
-
-.background-darkGrey {
-    -fx-background-color: #838788;
+.webfx-dates-picker-month {
+    -fx-text-fill: -blue-color;
+    -fx-font-size: 14px;
 }
