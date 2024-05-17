@@ -15,6 +15,7 @@ import one.modality.base.shared.entities.Site;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Bruno Salmon
@@ -55,16 +56,27 @@ public final class PolicyAggregate {
         return rates;
     }
 
+    public Stream<Rate> getRatesStream() {
+        return getRates().stream();
+    }
+
+    public Stream<Rate> getSiteItemRatesStream(Site site, Item item) {
+        return getRatesStream()
+                .filter(r -> Entities.sameId(r.getSite(), site) && Entities.sameId(r.getItem(), item));
+    }
+
     public List<Rate> getSiteItemRates(Site site, Item item) {
-        ensureStoreCreated();
-        return rates.stream()
-                .filter(r -> Entities.sameId(r.getSite(), site) && Entities.sameId(r.getItem(), item))
+        return getSiteItemRatesStream(site, item)
                 .collect(Collectors.toList());
     }
 
     public List<ScheduledItem> getScheduledItems() {
         ensureStoreCreated();
         return scheduledItems;
+    }
+
+    public Stream<ScheduledItem> getScheduledItemsStream() {
+        return getScheduledItems().stream();
     }
 
     public String getRatesQueryBase() {

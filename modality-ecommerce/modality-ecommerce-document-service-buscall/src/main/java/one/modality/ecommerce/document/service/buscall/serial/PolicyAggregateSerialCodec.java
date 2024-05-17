@@ -2,15 +2,13 @@ package one.modality.ecommerce.document.service.buscall.serial;
 
 import dev.webfx.platform.ast.AstObject;
 import dev.webfx.platform.ast.ReadOnlyAstObject;
-import dev.webfx.stack.com.serial.SerialCodecManager;
 import dev.webfx.stack.com.serial.spi.impl.SerialCodecBase;
-import dev.webfx.stack.db.query.QueryResult;
 import one.modality.ecommerce.document.service.PolicyAggregate;
 
 /**
  * @author Bruno Salmon
  */
-public class PolicyAggregateSerialCodec extends SerialCodecBase<PolicyAggregate> {
+public final class PolicyAggregateSerialCodec extends SerialCodecBase<PolicyAggregate> {
 
     private static final String CODEC_ID = "PolicyAggregate";
     private static final String SCHEDULED_ITEMS_QUERY_BASE_KEY = "siqb";
@@ -24,21 +22,19 @@ public class PolicyAggregateSerialCodec extends SerialCodecBase<PolicyAggregate>
     }
 
     @Override
-    public PolicyAggregate decodeFromJson(ReadOnlyAstObject json) {
-        QueryResult scheduledItemsQueryResult = SerialCodecManager.decodeFromJson(json.getObject(SCHEDULED_ITEMS_QUERY_RESULT_KEY));
-        QueryResult ratesQueryResult = SerialCodecManager.decodeFromJson(json.getObject(RATES_QUERY_RESULT_KEY));
-        return new PolicyAggregate(
-                json.getString(SCHEDULED_ITEMS_QUERY_BASE_KEY),
-                scheduledItemsQueryResult,
-                json.getString(RATES_QUERY_BASE_KEY),
-                ratesQueryResult);
+    public void encode(PolicyAggregate pa, AstObject serial) {
+        encodeString(serial, SCHEDULED_ITEMS_QUERY_BASE_KEY,   pa.getScheduledItemsQueryBase());
+        encodeObject(serial, SCHEDULED_ITEMS_QUERY_RESULT_KEY, pa.getScheduledItemsQueryResult());
+        encodeString(serial, RATES_QUERY_BASE_KEY,             pa.getRatesQueryBase());
+        encodeObject(serial, RATES_QUERY_RESULT_KEY,           pa.getRatesQueryResult());
     }
 
     @Override
-    public void encodeToJson(PolicyAggregate pa, AstObject json) {
-        encodeKey(SCHEDULED_ITEMS_QUERY_BASE_KEY, pa.getScheduledItemsQueryBase(), json);
-        encodeKey(SCHEDULED_ITEMS_QUERY_RESULT_KEY, pa.getScheduledItemsQueryResult(), json);
-        encodeKey(RATES_QUERY_BASE_KEY, pa.getRatesQueryBase(), json);
-        encodeKey(RATES_QUERY_RESULT_KEY, pa.getRatesQueryResult(), json);
+    public PolicyAggregate decode(ReadOnlyAstObject serial) {
+        return new PolicyAggregate(
+                decodeString(serial, SCHEDULED_ITEMS_QUERY_BASE_KEY),
+                decodeObject(serial, SCHEDULED_ITEMS_QUERY_RESULT_KEY),
+                decodeString(serial, RATES_QUERY_BASE_KEY),
+                decodeObject(serial, RATES_QUERY_RESULT_KEY));
     }
 }

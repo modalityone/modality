@@ -19,6 +19,9 @@
         <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.document.service.buscall.serial.SubmitDocumentArgumentSerialCodec</provider>
         <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.document.service.buscall.serial.PolicyAggregateSerialCodec</provider>
         <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.document.service.buscall.serial.DocumentAggregateSerialCodec</provider>
+        <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.document.service.buscall.serial.AddDocumentLineEventSerialCodec</provider>
+        <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.document.service.buscall.serial.AddAttendancesEventSerialCodec</provider>
+        <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.document.service.buscall.serial.RemoveAttendancesEventSerialCodec</provider>
     </providers>
 
 </project>

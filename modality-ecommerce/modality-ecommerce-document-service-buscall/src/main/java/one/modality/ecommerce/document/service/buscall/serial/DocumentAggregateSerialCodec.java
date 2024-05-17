@@ -8,7 +8,7 @@ import one.modality.ecommerce.document.service.DocumentAggregate;
 /**
  * @author Bruno Salmon
  */
-public class DocumentAggregateSerialCodec extends SerialCodecBase<DocumentAggregate> {
+public final class DocumentAggregateSerialCodec extends SerialCodecBase<DocumentAggregate> {
 
     private static final String CODEC_ID = "DocumentAggregate";
 
@@ -17,12 +17,12 @@ public class DocumentAggregateSerialCodec extends SerialCodecBase<DocumentAggreg
     }
 
     @Override
-    public DocumentAggregate decodeFromJson(ReadOnlyAstObject json) {
+    public DocumentAggregate decode(ReadOnlyAstObject serial) {
         return new DocumentAggregate(null, null, null); // TODO
     }
 
     @Override
-    public void encodeToJson(DocumentAggregate javaObject, AstObject json) {
+    public void encode(DocumentAggregate javaObject, AstObject serial) {
         // TODO
     }
 }

@@ -5,7 +5,7 @@ import one.modality.base.shared.entities.DocumentLine;
 /**
  * @author Bruno Salmon
  */
-public class RemoveDocumentLineEvent extends DocumentLineEvent {
+public final class RemoveDocumentLineEvent extends AbstractDocumentLineEvent {
 
     public RemoveDocumentLineEvent(DocumentLine documentLine) {
         super(documentLine);

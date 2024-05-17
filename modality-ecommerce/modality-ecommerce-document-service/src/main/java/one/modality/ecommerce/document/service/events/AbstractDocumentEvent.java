@@ -5,17 +5,17 @@ import one.modality.base.shared.entities.Document;
 /**
  * @author Bruno Salmon
  */
-public abstract class DocumentEvent extends SourceEvent {
+public abstract class AbstractDocumentEvent extends AbstractSourceEvent {
 
     private final Document document;
     private final Object documentPrimaryKey;
 
-    public DocumentEvent(Object documentPrimaryKey) {
+    public AbstractDocumentEvent(Object documentPrimaryKey) {
         this.document = null;
         this.documentPrimaryKey = documentPrimaryKey;
     }
 
-    public DocumentEvent(Document document) {
+    public AbstractDocumentEvent(Document document) {
         // Document shouldn't be null, but ok to be null for now
         this.document = document;
         this.documentPrimaryKey = document == null ? null : document.getPrimaryKey();

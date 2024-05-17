@@ -8,7 +8,8 @@
 
     <dependencies>
         <used-by-source-modules>
-            <module transitive="true">webfx-platform-async</module>
+            <module transitive="true">webfx-platform-async</module> <!-- Future -->
+            <module transitive="true">webfx-stack-db-query</module> <!-- QueryResult -->
         </used-by-source-modules>
     </dependencies>
 

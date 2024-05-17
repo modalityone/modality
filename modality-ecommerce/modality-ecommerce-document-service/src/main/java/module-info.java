@@ -6,7 +6,7 @@ module modality.ecommerce.document.service {
     requires modality.base.shared.entities;
     requires transitive webfx.platform.async;
     requires webfx.platform.service;
-    requires webfx.stack.db.query;
+    requires transitive webfx.stack.db.query;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.dql;

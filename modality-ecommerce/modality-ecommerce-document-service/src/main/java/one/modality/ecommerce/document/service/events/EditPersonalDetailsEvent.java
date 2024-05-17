@@ -5,7 +5,7 @@ import one.modality.base.shared.entities.Document;
 /**
  * @author Bruno Salmon
  */
-public final class EditPersonalDetailsEvent extends DocumentEvent {
+public final class EditPersonalDetailsEvent extends AbstractDocumentEvent {
 
     public EditPersonalDetailsEvent(Document document) {
         super(document);

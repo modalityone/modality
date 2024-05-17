@@ -2,14 +2,13 @@ package one.modality.ecommerce.document.service.buscall.serial;
 
 import dev.webfx.platform.ast.AstObject;
 import dev.webfx.platform.ast.ReadOnlyAstObject;
-import dev.webfx.stack.com.serial.SerialCodecManager;
 import dev.webfx.stack.com.serial.spi.impl.SerialCodecBase;
 import one.modality.ecommerce.document.service.LoadPolicyArgument;
 
 /**
  * @author Bruno Salmon
  */
-public class LoadPolicyArgumentSerialCodec extends SerialCodecBase<LoadPolicyArgument> {
+public final class LoadPolicyArgumentSerialCodec extends SerialCodecBase<LoadPolicyArgument> {
 
     private static final String CODEC_ID = "LoadPolicyArgument";
     private static final String ORGANIZATION_PK_KEY = "organizationPk";
@@ -22,20 +21,21 @@ public class LoadPolicyArgumentSerialCodec extends SerialCodecBase<LoadPolicyArg
     }
 
     @Override
-    public LoadPolicyArgument decodeFromJson(ReadOnlyAstObject json) {
-        return new LoadPolicyArgument(
-                json.get(ORGANIZATION_PK_KEY),
-                json.get(EVENT_PK_KEY),
-                SerialCodecManager.decodeLocalDate(json.get(START_DATE_KEY)),
-                SerialCodecManager.decodeLocalDate(json.get(END_DATE_KEY))
-        );
+    public void encode(LoadPolicyArgument o, AstObject serial) {
+        encodeObject(serial, ORGANIZATION_PK_KEY, o.getOrganizationPk());
+        encodeObject(serial, EVENT_PK_KEY, o.getEventPk());
+        encodeLocalDate(serial, START_DATE_KEY, o.getStartDate());
+        encodeLocalDate(serial, END_DATE_KEY, o.getEndDate());
     }
 
     @Override
-    public void encodeToJson(LoadPolicyArgument o, AstObject json) {
-        json    .set(ORGANIZATION_PK_KEY, o.getOrganizationPk())
-                .set(EVENT_PK_KEY, o.getEventPk())
-                .set(START_DATE_KEY, SerialCodecManager.encodeLocalDate(o.getStartDate()))
-                .set(END_DATE_KEY, SerialCodecManager.encodeLocalDate(o.getEndDate()));
+    public LoadPolicyArgument decode(ReadOnlyAstObject serial) {
+        return new LoadPolicyArgument(
+                decodeObject(serial, ORGANIZATION_PK_KEY),
+                decodeObject(serial, EVENT_PK_KEY),
+                decodeLocalDate(serial, START_DATE_KEY),
+                decodeLocalDate(serial, END_DATE_KEY)
+        );
     }
+
 }

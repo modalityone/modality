@@ -5,17 +5,21 @@ import java.time.LocalDateTime;
 /**
  * @author Bruno Salmon
  */
-public abstract class SourceEvent {
+public abstract class AbstractSourceEvent {
 
-    private final LocalDateTime dateTime;
+    private LocalDateTime dateTime;
 
     private String comment;
 
-    public SourceEvent() {
+    public AbstractSourceEvent() {
         this(LocalDateTime.now());
     }
 
-    public SourceEvent(LocalDateTime dateTime) {
+    public AbstractSourceEvent(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
     }
 
