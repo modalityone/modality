@@ -101,9 +101,12 @@ public class WorkingBooking {
         lastestDocumentAggregate = null;
     }
 
-    public Future<Object> submitChanges() {
+    public Future<Object> submitChanges(String historyComment) {
         return DocumentService.submitDocumentChanges(
-                new SubmitDocumentChangesArgument(documentChanges.toArray(new AbstractDocumentEvent[0])));
+                new SubmitDocumentChangesArgument(
+                        documentChanges.toArray(new AbstractDocumentEvent[0]),
+                        historyComment
+                ));
     }
 
     private EntityStore getEntityStore() {
