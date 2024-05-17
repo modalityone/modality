@@ -4,8 +4,6 @@ import one.modality.base.shared.entities.*;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.PolicyAggregate;
 
-import java.util.List;
-
 /**
  * First draft version.
  *
@@ -20,19 +18,25 @@ public class PriceCalculator {
     }
 
     public int calculateTotalPrice(DocumentAggregate documentAggregate) {
-        return documentAggregate.getDocumentLines().stream().mapToInt(line -> calculateLinePrice(documentAggregate, line)).sum();
+        return documentAggregate.getDocumentLinesStream()
+                .mapToInt(line -> calculateLinePrice(documentAggregate, line))
+                .sum();
     }
 
     public int calculateLinePrice(DocumentAggregate documentAggregate, DocumentLine line) {
-        return documentAggregate.getLineAttendances(line).stream().mapToInt(a -> calculateAttendancePrice(documentAggregate, a)).sum();
+        return documentAggregate.getLineAttendancesStream(line)
+                .mapToInt(a -> calculateAttendancePrice(documentAggregate, a))
+                .sum();
     }
 
     public int calculateAttendancePrice(DocumentAggregate documentAggregate, Attendance attendance) {
         DocumentLine documentLine = attendance.getDocumentLine();
         Site site = documentLine.getSite();
         Item item = documentLine.getItem();
-        List<Rate> rates = policyAggregate.getSiteItemRates(site, item);
-        return rates.stream().mapToInt(Rate::getPrice).min().orElse(0);
+        return policyAggregate.getSiteItemRatesStream(site, item)
+                .mapToInt(Rate::getPrice)
+                .min()
+                .orElse(0);
     }
 
 }

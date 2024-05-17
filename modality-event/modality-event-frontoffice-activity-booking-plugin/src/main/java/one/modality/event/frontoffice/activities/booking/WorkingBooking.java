@@ -3,21 +3,20 @@ package one.modality.event.frontoffice.activities.booking;
 import dev.webfx.platform.async.Future;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.EntityStore;
-import one.modality.base.shared.entities.Attendance;
-import one.modality.base.shared.entities.DocumentLine;
-import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.*;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.PolicyAggregate;
 import one.modality.ecommerce.document.service.SubmitDocumentChangesArgument;
 import one.modality.ecommerce.document.service.events.AddAttendancesEvent;
 import one.modality.ecommerce.document.service.events.AddDocumentLineEvent;
-import one.modality.ecommerce.document.service.events.DocumentEvent;
+import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 import one.modality.ecommerce.document.service.events.RemoveAttendancesEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Bruno Salmon
@@ -26,7 +25,7 @@ public class WorkingBooking {
 
     private final PolicyAggregate policyAggregate;
     private final DocumentAggregate initialDocumentAggregate; // null for new bookings
-    private final List<DocumentEvent> documentChanges = new ArrayList<>();
+    private final List<AbstractDocumentEvent> documentChanges = new ArrayList<>();
     private DocumentAggregate lastestDocumentAggregate;
     private EntityStore entityStore;
 
@@ -57,19 +56,34 @@ public class WorkingBooking {
         if (scheduledItems.isEmpty())
             return;
         // first draft version assuming it's a new booking and new line
-        lastestDocumentAggregate = null;
-        DocumentLine documentLine = getEntityStore().createEntity(DocumentLine.class);
-        documentLine.setSite(scheduledItems.get(0).getSite());
-        documentLine.setItem(scheduledItems.get(0).getItem());
-        documentChanges.add(new AddDocumentLineEvent(documentLine));
+        ScheduledItem scheduledItemSample = scheduledItems.get(0);
+        Site site = scheduledItemSample.getSite();
+        Item item = scheduledItemSample.getItem();
+        DocumentLine existingDocumentLine = getLastestDocumentAggregate().getFirstSiteItemDocumentLine(site, item);
+        DocumentLine documentLine;
+        List<Attendance> existingAttendances;
+        if (existingDocumentLine != null) {
+            documentLine = existingDocumentLine;
+            existingAttendances = getLastestDocumentAggregate().getLineAttendances(existingDocumentLine);
+        } else {
+            documentLine = getEntityStore().createEntity(DocumentLine.class);
+            documentLine.setSite(site);
+            documentLine.setItem(item);
+            documentChanges.add(new AddDocumentLineEvent(documentLine));
+            existingAttendances = null;
+        }
         Attendance[] attendances = scheduledItems.stream().map(scheduledItem -> {
+            if (dev.webfx.platform.util.collection.Collections.findFirst(existingAttendances, a -> Objects.equals(a.getDate(), scheduledItem.getDate())) != null)
+                return null;
             Attendance attendance = getEntityStore().createEntity(Attendance.class);
             attendance.setDocumentLine(documentLine);
             attendance.setDate(scheduledItem.getDate());
             attendance.setScheduledItem(scheduledItem);
             return attendance;
-        }).toArray(Attendance[]::new);
-        documentChanges.add(new AddAttendancesEvent(attendances));
+        }).filter(Objects::nonNull).toArray(Attendance[]::new);
+        if (attendances.length > 0)
+            documentChanges.add(new AddAttendancesEvent(attendances));
+        lastestDocumentAggregate = null;
     }
 
     public void removeAttendance(Attendance attendance) {
@@ -77,7 +91,8 @@ public class WorkingBooking {
     }
 
     public void removeAttendances(List<Attendance> attendance) {
-        documentChanges.add(new RemoveAttendancesEvent(attendance.toArray(Attendance[]::new)));
+        documentChanges.add(new RemoveAttendancesEvent(attendance.toArray(new Attendance[0])));
+        lastestDocumentAggregate = null;
     }
 
     public void cancelChanges() {
@@ -87,7 +102,8 @@ public class WorkingBooking {
     }
 
     public Future<Object> submitChanges() {
-        return DocumentService.submitDocumentChanges(new SubmitDocumentChangesArgument(documentChanges.toArray(new DocumentEvent[0])));
+        return DocumentService.submitDocumentChanges(
+                new SubmitDocumentChangesArgument(documentChanges.toArray(new AbstractDocumentEvent[0])));
     }
 
     private EntityStore getEntityStore() {
@@ -96,52 +112,4 @@ public class WorkingBooking {
         return entityStore;
     }
 
-    /* Previous code
-
-    private List<ScheduledItem> scheduledItems;
-    private List<DocumentLine> unscheduledLines;
-    public List<ScheduledItem> getScheduledItems() {
-        return scheduledItems;
-    }
-
-    public void setScheduledItems(List<ScheduledItem> scheduledItems) {
-        this.scheduledItems = scheduledItems;
-    }
-
-    public List<DocumentLine> getUnscheduledLines() {
-        return unscheduledLines;
-    }
-
-    public void setUnscheduledLines(List<DocumentLine> unscheduledLines) {
-        this.unscheduledLines = unscheduledLines;
-    }
-
-    public LocalDateTime getArrivalDate() {
-        if (scheduledItems== null || scheduledItems.isEmpty()) {
-            return null;
-        }
-        LocalDateTime minDateTime = LocalDateTime.of(scheduledItems.get(0).getDate(), scheduledItems.get(0).getStartTime());
-        for (ScheduledItem si : scheduledItems) {
-            LocalDateTime currentDateTime = LocalDateTime.of(si.getDate(), si.getStartTime());
-            if (currentDateTime.isBefore(minDateTime)) {
-                minDateTime = currentDateTime;
-            }
-        }
-        return minDateTime;
-    }
-
-    public LocalDateTime getDepartureDate() {
-        if (scheduledItems== null || scheduledItems.isEmpty()) {
-            return null;
-        }
-        LocalDateTime maxDateTime = LocalDateTime.of(scheduledItems.get(0).getDate(), scheduledItems.get(0).getEndTime());
-        for (ScheduledItem si : scheduledItems) {
-            LocalDateTime currentDateTime = LocalDateTime.of(si.getDate(), si.getEndTime());
-            if (currentDateTime.isAfter(maxDateTime)) {
-                maxDateTime = currentDateTime;
-            }
-        }
-        return maxDateTime;
-    }
-*/
 }
