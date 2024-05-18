@@ -20,10 +20,7 @@ import one.modality.base.shared.entities.ScheduledItem;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -34,9 +31,9 @@ public class RecurringEventSchedule {
     protected ObservableList<LocalDate> selectedDates = FXCollections.observableArrayList();
     Map<LocalDate, Pair<ScheduledItemToPane, Pair<String,String>>> paneAndCssClassMap = new HashMap<>();
 
-    private final Function<LocalDate, String> computeCssClassForSelectedDateFunction = localDate -> getSelectedDateCssClass();
+    private Function<LocalDate, String> computeCssClassForSelectedDateFunction = localDate -> getSelectedDateCssClass();
 
-    private final Function<LocalDate, String> computeCssClassForUnselectedDateFunction = localDate -> getUnselectedDateCssClass();
+    private Function<LocalDate, String> computeCssClassForUnselectedDateFunction = localDate -> getUnselectedDateCssClass();
 
     protected Consumer<LocalDate> dateConsumer = null;
 
@@ -77,6 +74,7 @@ public class RecurringEventSchedule {
         selectedDates.addListener( onChangeDateListener);
     }
     public void setScheduledItems(List<ScheduledItem> siList) {
+        Collections.sort(siList, Comparator.comparing(ScheduledItem::getDate));
         scheduledItemsList.setAll(siList);
     }
 
@@ -103,7 +101,6 @@ public class RecurringEventSchedule {
     public FlexPane buildUi() {
         return ecompassingFlexPane;
     }
-
     /**
      * This method can be used if we want to customize the behaviour when clicking on a date
      * @param consumer the consumer
@@ -112,7 +109,10 @@ public class RecurringEventSchedule {
     {
         dateConsumer = consumer;
     }
-
+    public void setUnselectedDateCssGetter(Function<LocalDate,String> function)
+    {
+        computeCssClassForUnselectedDateFunction = function;
+    }
 
     public void changeCssPropertyForSelectedDate(LocalDate date) {
         if(date!=null) {
@@ -219,6 +219,7 @@ public class RecurringEventSchedule {
                                 dateConsumer.accept(date);
                             }
                         });
+                        changeCssPropertyForSelectedDate(date);
                     }));
         }
 

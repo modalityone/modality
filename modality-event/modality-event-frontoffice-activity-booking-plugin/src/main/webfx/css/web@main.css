@@ -1,11 +1,3 @@
-/* .title-blue-bold */
-.title-blue-bold {
-    font-weight: bolder;
-    color: #0096D6;
-    fill: #0096D6;
-    font-size: 16px;
-}
-
 /* .text-justified */
 .description-text {
     text-align: justify;
@@ -23,20 +15,23 @@
     font-size: 14px;
 }
 
-/* .subtitle-blue */
-.subtitle-blue {
+.book-event-primary-title {
     font-weight: bolder;
-    color: #0096D6;
+    color: var(--blue-color, #0096D6); /* Use CSS variable with fallback */
     font-size: 14px;
 }
 
 /* .date-selected */
-.date-selected {
-    background-color: #0096D6;
+.date-selected > fx-background {
+    background-color: var(--blue-color, #0096D6);
 }
 
 .date-selected  {
     color: white;
+}
+
+.date-past-not-selected > fx-background {
+     background-color: grey;
 }
 
 /* .date-unselected */
@@ -48,17 +43,14 @@
     color: black;
 }
 
-/* .green-button */
-.green-button {
-    border-radius: 2px;
-    height: 30px;
-    max-height: 30px;
-    width: 150px;
-    font-weight: bolder;
-    text-align: center;
-    color: #FFFFFF;
+.checkout-address, .checkout-address svg {
+    color: #BBBBBB;
 }
 
-.green-button > fx-background {
-    background: #41BA4D;
+.line-total > fx-background {
+    background-color: #CCCCCC;
+}
+
+.line-total span {
+    font-weight: bolder;
 }
