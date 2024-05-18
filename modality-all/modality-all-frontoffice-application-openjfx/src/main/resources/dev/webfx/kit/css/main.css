@@ -96,6 +96,156 @@ HtmlText, HtmlTextEditor {
     -fx-skin: "dev.webfx.kit.mapper.peers.javafxcontrols.openjfx.skin.FxControlPeerSkin";
 }
 
+/*===== javafx@main.css from modality-base-client-css =====*/
+
+* {
+    -webfx-switch-selected-background-color: #0096D6;
+    -green-color: #41BA4D;
+    -green-color-hover: #38a143;
+    -blue-color: #0096D6;
+    -blue-color-hover: #0082ba;
+    -grey-color: #838788;
+    -grey-color-hover: #717475;
+    -red-color: red;
+    -red-color-hover: #de0000;
+    -orange-color: #EE7130;
+}
+
+.event-button
+{
+    -fx-background-radius: 4;
+    -fx-pref-height:35px;
+    -fx-max-height:35px;
+    -fx-alignment: center;
+ /*  -fx-font-family: "Google Sans", Roboto, Arial;*/
+    -fx-font-weight: bolder;
+}
+
+.primary-button {
+    -fx-background-color: -blue-color;
+    -fx-text-fill: white;
+}
+.primary-button:hover {
+    -fx-background-color: -blue-color-hover;
+}
+
+.danger-button {
+    -fx-background-color: -red-color;
+    -fx-text-fill: white;
+}
+.danger-button:hover {
+    -fx-background-color: -red-color-hover;
+}
+
+.success-button {
+    -fx-background-color: -green-color;
+    -fx-text-fill: white;
+}
+
+.success-button:hover {
+  -fx-background-color: -green-color-hover;
+}
+
+.secondary-button {
+    -fx-background-color: -grey-color;
+    -fx-text-fill: white;
+}
+
+.secondary-button:hover {
+    -fx-background-color: -grey-color-hover;
+}
+
+.primary-text, .primary-text SVGPath{
+    -fx-text-fill: -blue-color;
+    -fx-fill: -blue-color;
+}
+
+.secondary-text, .secondary-text SVGPath {
+    -fx-text-fill: -grey-color;
+    -fx-fill: -grey-color;
+}
+
+.warning-text, .warning-text SVGPath {
+    -fx-text-fill: -orange-color;
+    -fx-fill: -orange-color;
+}
+
+.danger-text, .danger-text SVGPath {
+    -fx-text-fill: -red-color;
+    -fx-fill: -red-color;
+}
+
+.success-text, .success-text SVGPath {
+    -fx-text-fill: -green-color;
+    -fx-fill: -green-color;
+}
+
+.emphasize {
+    -fx-font-weight: bolder;
+}
+
+.title
+{
+  -fx-font-size: 35px;
+}
+.subtitle
+{
+  -fx-font-size: 22px;
+}
+
+.title3
+{
+  -fx-font-size: 16px;
+}
+
+.title4
+{
+  -fx-font-size: 14px;
+}
+
+.confirmation-title {
+   -fx-font-size: 22px;
+   -fx-text-fill: -green-color;
+   -fx-fill: -green-color;
+   -fx-font-weight: bolder;
+}
+
+
+.small-text
+{
+  -fx-font-size: 9px;
+}
+
+.table-row-cell:selected .font-blue
+{
+
+}
+
+.table-row-cell:selected {
+  -fx-background: #BBBBBB;
+}
+
+
+.webfx-dates-picker-selected {
+    -fx-background-color: #afe7ff;
+    -fx-background-radius: 10px;
+}
+
+.webfx-dates-picker-secondary {
+    -fx-background-color: #cccccc;
+    -fx-background-radius: 10px;
+}
+
+.webfx-dates-picker-arrow {
+    -fx-fill: -blue-color;
+    -fx-background-radius: 10px;
+}
+
+.webfx-dates-picker-month {
+    -fx-text-fill: -blue-color;
+    -fx-font-size: 14px;
+}
+
 /*===== modality-login-javafx@main.css from modality-crm-client-activity-login-plugin =====*/
 
 
@@ -127,13 +277,6 @@ Text, Label, Button, TextField {
 
 /*===== javafx@main.css from modality-event-frontoffice-activity-booking-plugin =====*/
 
-.title-blue-bold {
-    -fx-font-weight: bolder;
-    -fx-text-fill: #0096D6;
-    -fx-fill:#0096D6;
-    -fx-font-size: 16px;
-}
-
 .description-text {
     -fx-text-alignment: justify;
 }
@@ -152,9 +295,9 @@ Text, Label, Button, TextField {
    -fx-font-size: 14px;
 }
 
-.subtitle-blue {
+.book-event-primary-title {
    -fx-font-weight: bolder;
-   -fx-text-fill: #0096D6;
+   -fx-text-fill: -blue-color; /* blue-color is defined in modality-base-client-css*/
    -fx-fill: #0096D6;
    -fx-font-weight: bolder;
    -fx-font-size: 14px;
@@ -162,6 +305,13 @@ Text, Label, Button, TextField {
 
 .date-selected {
      -fx-background-color: #0096D6;
+}
+
+.date-already-booked {
+     -fx-background-color: green;
+}
+.date-past-not-selected {
+     -fx-background-color: #CCCCCC;
 }
 
 .date-selected Text {
@@ -176,20 +326,10 @@ Text, Label, Button, TextField {
     -fx-fill: black;
 }
 
-.green-button
-{
-    -fx-background-radius: 2;
-    -fx-pref-height:30px;
-    -fx-max-height:30px;
-    -fx-pref-width: 150px;
-    -fx-font-weight: bolder;
-    -fx-alignment: center;
-     -fx-background-color: #41BA4D;
-     -fx-text-fill: #FFFFFF;
-}
 
-.checkout-address {
+.checkout-address, .checkout-address SVGPath  {
     -fx-text-fill: #BBBBBB;
+    -fx-fill: #BBBBBB;
 }
 
 .line-total {
