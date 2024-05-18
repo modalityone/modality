@@ -340,7 +340,7 @@ public final class ManageRecurringEventView {
         currentMode.set(EDIT_MODE);
         //We execute the query in batch, otherwise we can have synchronisation problem between the different threads
         entityStore.executeQuery(
-                        new EntityStoreQuery ("select item,date,startTime, site, endTime, event.(openingDate, shortDescription, description, state, advertised, kbs3, type.recurringItem, externalLink, venue.name), (select id from Attendance where scheduledItem=si limit 1) as attendance from ScheduledItem si where event=?", new Object[] { e})                        )
+                        new EntityStoreQuery ("select item,date,startTime, site, endTime, event.(openingDate, shortDescription, description, state, advertised, kbs3, type.recurringItem, externalLink, venue.name), (select id from Attendance where scheduledItem=si limit 1) as attendance from ScheduledItem si where event=?", new Object[] { e}))
                 .onFailure(Console::log)
                 .onSuccess(query -> Platform.runLater(() -> {
                     EntityList<ScheduledItem> scheduledItemList = query.getStore().getEntityList(query.getListId());
