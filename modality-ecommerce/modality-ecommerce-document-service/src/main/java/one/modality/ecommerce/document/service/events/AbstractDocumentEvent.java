@@ -1,5 +1,6 @@
 package one.modality.ecommerce.document.service.events;
 
+import dev.webfx.stack.orm.entity.Entities;
 import one.modality.base.shared.entities.Document;
 
 /**
@@ -16,9 +17,8 @@ public abstract class AbstractDocumentEvent extends AbstractSourceEvent {
     }
 
     public AbstractDocumentEvent(Document document) {
-        // Document shouldn't be null, but ok to be null for now
         this.document = document;
-        this.documentPrimaryKey = document == null ? null : document.getPrimaryKey();
+        this.documentPrimaryKey = Entities.getPrimaryKey(document);
     }
 
     public Document getDocument() {

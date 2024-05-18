@@ -23,7 +23,7 @@ public final class DocumentService {
         return getProvider().loadDocument(argument);
     }
 
-    public static Future<Object> submitDocumentChanges(SubmitDocumentChangesArgument argument) {
+    public static Future<SubmitDocumentChangesResult> submitDocumentChanges(SubmitDocumentChangesArgument argument) {
         return getProvider().submitDocumentChanges(argument);
     }
 

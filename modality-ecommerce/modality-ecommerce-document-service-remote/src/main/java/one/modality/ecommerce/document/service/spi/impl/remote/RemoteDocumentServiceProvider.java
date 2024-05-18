@@ -22,7 +22,7 @@ public class RemoteDocumentServiceProvider implements DocumentServiceProvider {
     }
 
     @Override
-    public Future<Object> submitDocumentChanges(SubmitDocumentChangesArgument argument) {
+    public Future<SubmitDocumentChangesResult> submitDocumentChanges(SubmitDocumentChangesArgument argument) {
         return BusCallService.call(DocumentServiceBusAddress.SUBMIT_DOCUMENT_CHANGES_METHOD_ADDRESS, argument);
     }
 }

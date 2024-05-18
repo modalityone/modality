@@ -4,14 +4,10 @@ import dev.webfx.platform.async.Future;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.EntityStore;
 import one.modality.base.shared.entities.*;
-import one.modality.ecommerce.document.service.DocumentAggregate;
-import one.modality.ecommerce.document.service.DocumentService;
-import one.modality.ecommerce.document.service.PolicyAggregate;
-import one.modality.ecommerce.document.service.SubmitDocumentChangesArgument;
-import one.modality.ecommerce.document.service.events.AddAttendancesEvent;
-import one.modality.ecommerce.document.service.events.AddDocumentLineEvent;
-import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
-import one.modality.ecommerce.document.service.events.RemoveAttendancesEvent;
+import one.modality.crm.shared.services.authn.fx.FXUserPerson;
+import one.modality.ecommerce.document.service.*;
+import one.modality.ecommerce.document.service.events.*;
+import one.modality.event.client.event.fx.FXEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +22,7 @@ public class WorkingBooking {
     private final PolicyAggregate policyAggregate;
     private final DocumentAggregate initialDocumentAggregate; // null for new bookings
     private final List<AbstractDocumentEvent> documentChanges = new ArrayList<>();
+    private Document document;
     private DocumentAggregate lastestDocumentAggregate;
     private EntityStore entityStore;
 
@@ -67,6 +64,7 @@ public class WorkingBooking {
             existingAttendances = getLastestDocumentAggregate().getLineAttendances(existingDocumentLine);
         } else {
             documentLine = getEntityStore().createEntity(DocumentLine.class);
+            documentLine.setDocument(document);
             documentLine.setSite(site);
             documentLine.setItem(item);
             documentChanges.add(new AddDocumentLineEvent(documentLine));
@@ -99,9 +97,17 @@ public class WorkingBooking {
         documentChanges.clear();
         entityStore = null;
         lastestDocumentAggregate = null;
+        if (initialDocumentAggregate != null)
+            document = initialDocumentAggregate.getDocument();
+        else {
+            document = getEntityStore().createEntity(Document.class);
+            document.setEvent(FXEvent.getEvent());
+            document.setPerson(FXUserPerson.getUserPerson());
+            documentChanges.add(new AddDocumentEvent(document));
+        }
     }
 
-    public Future<Object> submitChanges(String historyComment) {
+    public Future<SubmitDocumentChangesResult> submitChanges(String historyComment) {
         return DocumentService.submitDocumentChanges(
                 new SubmitDocumentChangesArgument(
                         documentChanges.toArray(new AbstractDocumentEvent[0]),
