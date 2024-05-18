@@ -162,6 +162,11 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
     private Button createRouteButton(Action routeAction) {
         Button button = new Button();
         ActionBinder.bindButtonToAction(button, routeAction);
+        // Route buttons should never be disabled, because even if the route is not authorized, users should be able to
+        // press the route button, they will either get the "Unauthorized message" from the UI router if they are logged
+        // in, or - most importantly - the login window if they are not logged in (ex: Account button).
+        button.disableProperty().unbind();
+        button.setDisable(false);
         button.setCursor(Cursor.HAND);
         button.setContentDisplay(ContentDisplay.TOP);
         button.setGraphicTextGap(0);
