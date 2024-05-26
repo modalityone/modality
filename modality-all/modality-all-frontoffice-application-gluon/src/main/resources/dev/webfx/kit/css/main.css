@@ -26,7 +26,7 @@
 }
 
 
-/*===== material-javafx@main.css from webfx-extras-materialdesign =====*/
+/*===== webfx-extras-material-javafx@main.css from webfx-extras-materialdesign =====*/
 
 
 .material {
@@ -34,7 +34,7 @@
      -fx-background-insets: 0, 0, 0;
 }
 
-/*===== visual-grid-javafx@main.css from webfx-extras-visual-grid-peers-openjfx =====*/
+/*===== webfx-extras-visual-grid-javafx@main.css from webfx-extras-visual-grid-peers-openjfx =====*/
 
 VisualGrid {
     -fx-skin: "dev.webfx.kit.mapper.peers.javafxcontrols.openjfx.skin.FxControlPeerSkin";
@@ -90,7 +90,7 @@ VisualGrid {
    -fx-text-fill: -fx-text-inner-color;
 }
 
-/*===== webtext-javafx@main.css from webfx-extras-webtext-peers-openjfx =====*/
+/*===== webfx-extras-webtext-javafx@main.css from webfx-extras-webtext-peers-openjfx =====*/
 
 HtmlText, HtmlTextEditor {
     -fx-skin: "dev.webfx.kit.mapper.peers.javafxcontrols.openjfx.skin.FxControlPeerSkin";
@@ -246,7 +246,7 @@ HtmlText, HtmlTextEditor {
     -fx-font-size: 14px;
 }
 
-/*===== modality-login-javafx@main.css from modality-crm-client-activity-login-plugin =====*/
+/*===== modality-client-login-javafx@main.css from modality-crm-client-activity-login-plugin =====*/
 
 
 
@@ -260,7 +260,7 @@ HtmlText, HtmlTextEditor {
     -fx-text-fill: white;
 }
 
-/*===== modality-javafx@main.css from modality-base-client-application =====*/
+/*===== modality-client-javafx@main.css from modality-base-client-application =====*/
 
 Text, Label, Button, TextField {
     -fx-font-family: 'Montserrat';
@@ -275,7 +275,7 @@ Text, Label, Button, TextField {
    -fx-background-color: transparent;
 }
 
-/*===== javafx@main.css from modality-event-frontoffice-activity-booking-plugin =====*/
+/*===== modality-frontoffice-booking-javafx@main.css from modality-event-frontoffice-activity-booking-plugin =====*/
 
 .description-text {
     -fx-text-alignment: justify;

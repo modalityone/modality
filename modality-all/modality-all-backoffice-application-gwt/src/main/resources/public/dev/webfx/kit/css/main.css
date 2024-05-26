@@ -1,10 +1,18 @@
 
-/*===== javafx-graphics-web@main.css from webfx-kit-javafxgraphics-peers-gwt-j2cl =====*/
+/*===== webfx-kit-javafxgraphics-web@main.css from webfx-kit-javafxgraphics-peers-gwt-j2cl =====*/
 
-.disabled fx-text {
-    color: gray;
+/* Making disabled nodes semi-transparent */
+.disabled {
+    opacity: 50%;
 }
-/*===== javafx-controls-web@main.css from webfx-kit-javafxcontrols-peers-gwt-j2cl =====*/
+
+/* When fill and stroke are not set by application code, we make them transparent by default like in JavaFX (otherwise
+ the browser will make them black). */
+fx-svgpath svg {
+    fill: none;
+    stroke: none;
+}
+/*===== webfx-kit-javafxcontrols-web@main.css from webfx-kit-javafxcontrols-peers-gwt-j2cl =====*/
 
 /***** Global variables *****/
 :root {
@@ -64,7 +72,7 @@ iframe {
     border: none;
 }
 
-/*===== material-web@main.css from webfx-extras-materialdesign =====*/
+/*===== webfx-extras-material-web@main.css from webfx-extras-materialdesign =====*/
 
 
 fx-textfield.material > fx-border {
@@ -74,7 +82,7 @@ fx-textfield.material > fx-border {
 fx-textfield.material > fx-background {
     background: none;
 }
-/*===== web@main.css from webfx-extras-switches =====*/
+/*===== webfx-extras-switches-web@main.css from webfx-extras-switches =====*/
 
 :root {
     --webfx-switch-unselected-background-color: lightgray;
@@ -96,7 +104,7 @@ fx-switch.webfx-switch.selected > fx-background {
 fx-switch.webfx-switch fx-circle.knob {
     background-color: var(--webfx-switch-knob-background-color);
 }
-/*===== filepicker-web@main.css from webfx-extras-filepicker-gwt-j2cl =====*/
+/*===== webfx-extras-filepicker-web@main.css from webfx-extras-filepicker-gwt-j2cl =====*/
 
 /* We dont want any background or border for the FilePicker button */
 
@@ -108,7 +116,7 @@ fx-switch.webfx-switch fx-circle.knob {
     border: none;
 }
 
-/*===== visual-grid-web@main.css from webfx-extras-visual-grid-peers-gwt-j2cl =====*/
+/*===== webfx-extras-visual-grid-web@main.css from webfx-extras-visual-grid-peers-gwt-j2cl =====*/
 
 :root {
     --grid-border-color: #D3D3D3;
@@ -200,14 +208,14 @@ tr.selected, .grid-row.selected {
     background: var(--grid-selection-color)
 }
 
-/*===== backoffice-home-web@main.css from modality-base-backoffice-activity-home-plugin =====*/
+/*===== modality-backoffice-home-web@main.css from modality-base-backoffice-activity-home-plugin =====*/
 
 
 fx-homepane fx-tile * {
     font-size: 18px;
 }
 
-/*===== modality-web@main.css from modality-base-client-application =====*/
+/*===== modality-client-web@main.css from modality-base-client-application =====*/
 
 @font-face {
     font-family: "Montserrat";
@@ -361,7 +369,7 @@ body {
     color: var(--blue-color);
     font-size: 14px;
 }
-/*===== modality-login-web@main.css from modality-crm-client-activity-login-plugin =====*/
+/*===== modality-client-login-web@main.css from modality-crm-client-activity-login-plugin =====*/
 
 .login * {
     font-size: 18px; /* doesn't work yet (because of hardcoded style in app code) */
@@ -393,7 +401,7 @@ input[type="password"]:not([value=""]) {
     font-weight: 100 900;
 }
 
-/*===== bookings-web@main.css from modality-ecommerce-backoffice-activity-bookings-plugin =====*/
+/*===== modality-backoffice-bookings-web@main.css from modality-ecommerce-backoffice-activity-bookings-plugin =====*/
 
 /***** Declaring table row color variables with default values *****/
 :root {
@@ -502,7 +510,7 @@ tr.branch, .grid-row.branch {
     linear-gradient(  90deg, var(--stay-color) 0%, var(--stay-color) 40%, transparent 50%, transparent 100%),
     linear-gradient( 180deg, var(--color-light), var(--color-dark) 100%);
 }
-/*===== web@main.css from modality-event-backoffice-activity-recurringevents-plugin =====*/
+/*===== modality-backoffice-recurringevents-web@main.css from modality-event-backoffice-activity-recurringevents-plugin =====*/
 
 
 .booking-name {
