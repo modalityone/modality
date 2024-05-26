@@ -58,6 +58,12 @@ input[type="text"], input[type="password"] {
     background-color: transparent;
 }
 
+/*===== javafx-web-web@main.css from webfx-kit-javafxweb-peers-gwt-j2cl =====*/
+
+iframe {
+    border: none;
+}
+
 /*===== material-web@main.css from webfx-extras-materialdesign =====*/
 
 
