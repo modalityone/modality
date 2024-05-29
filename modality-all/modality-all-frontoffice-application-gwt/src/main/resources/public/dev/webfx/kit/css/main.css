@@ -1,6 +1,18 @@
 
 /*===== webfx-kit-javafxgraphics-web@main.css from webfx-kit-javafxgraphics-peers-gwt-j2cl =====*/
 
+/* Mocking some basic JavaFX behaviours */
+body {
+    overflow: hidden; /* Disabling browser horizontal and vertical scroll bars */
+    margin: 0; /* Removing the default margin around the body */
+    /* Disabling user selection by default */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 /* Making disabled nodes semi-transparent */
 .disabled {
     opacity: 50%;
@@ -66,7 +78,7 @@ input[type="text"], input[type="password"] {
     background-color: transparent;
 }
 
-/*===== javafx-web-web@main.css from webfx-kit-javafxweb-peers-gwt-j2cl =====*/
+/*===== webfx-kit-javafxweb-web@main.css from webfx-kit-javafxweb-peers-gwt-j2cl =====*/
 
 iframe {
     border: none;
