@@ -12,7 +12,7 @@
 
         <plugin-module>modality-ecommerce-server-min-plugin</plugin-module>
 
-        <plugin-module>modality-ecommerce-payment-gateway-direct-authorizedotnet-plugin</plugin-module>
+        <plugin-module>modality-ecommerce-payment-gateway-api-authorizedotnet-plugin</plugin-module>
         <plugin-module>modality-ecommerce-payment-gateway-redirect-stripe-plugin</plugin-module>
         <plugin-module>modality-ecommerce-payment-gateway-embedded-stripe-plugin</plugin-module>
 

@@ -12,7 +12,7 @@
 
         <plugin-module>modality-ecommerce-document-service-buscall</plugin-module>
 
-        <plugin-module>modality-ecommerce-payment-direct-buscall</plugin-module>
+        <plugin-module>modality-ecommerce-payment-api-buscall</plugin-module>
         <plugin-module>modality-ecommerce-payment-redirect-buscall</plugin-module>
         <plugin-module>modality-ecommerce-payment-embedded-buscall</plugin-module>
 

@@ -42,7 +42,7 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-payment-direct-server</artifactId>
+            <artifactId>modality-ecommerce-payment-api-server</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 

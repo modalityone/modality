@@ -31,18 +31,18 @@
         <module>modality-ecommerce-document-service-buscall</module>
         <module>modality-ecommerce-document-service-remote</module>
         <module>modality-ecommerce-document-service-server</module>
-        <module>modality-ecommerce-payment-direct</module>
-        <module>modality-ecommerce-payment-direct-buscall</module>
-        <module>modality-ecommerce-payment-direct-remote</module>
-        <module>modality-ecommerce-payment-direct-server</module>
-        <module>modality-ecommerce-payment-direct-ui</module>
+        <module>modality-ecommerce-payment-api</module>
+        <module>modality-ecommerce-payment-api-buscall</module>
+        <module>modality-ecommerce-payment-api-remote</module>
+        <module>modality-ecommerce-payment-api-server</module>
+        <module>modality-ecommerce-payment-api-ui</module>
         <module>modality-ecommerce-payment-embedded</module>
         <module>modality-ecommerce-payment-embedded-buscall</module>
         <module>modality-ecommerce-payment-embedded-remote</module>
         <module>modality-ecommerce-payment-embedded-server</module>
         <module>modality-ecommerce-payment-embedded-ui</module>
-        <module>modality-ecommerce-payment-gateway-direct</module>
-        <module>modality-ecommerce-payment-gateway-direct-authorizedotnet-plugin</module>
+        <module>modality-ecommerce-payment-gateway-api</module>
+        <module>modality-ecommerce-payment-gateway-api-authorizedotnet-plugin</module>
         <module>modality-ecommerce-payment-gateway-embedded</module>
         <module>modality-ecommerce-payment-gateway-embedded-stripe-plugin</module>
         <module>modality-ecommerce-payment-gateway-redirect</module>
