@@ -1,7 +1,7 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
 /**
- * The generic Server Provider Interface for custom payments to call a payment gateway.
+ * The generic Server Provider Interface for embedded payments to call a payment gateway.
  */
 module modality.ecommerce.payment.gateway.direct {
 

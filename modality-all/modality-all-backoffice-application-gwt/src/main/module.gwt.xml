@@ -341,14 +341,14 @@
     <source path="one/modality/ecommerce/backoffice/operations/entities/moneyflow"/>
     <!--=============< modality-ecommerce-backoffice-operations-moneytransfer >=============-->
     <source path="one/modality/ecommerce/backoffice/operations/entities/moneytransfer"/>
-    <!--=======================< modality-ecommerce-payment-custom >========================-->
-    <source path="one/modality/ecommerce/payment/custom"/>
-    <source path="one/modality/ecommerce/payment/custom/spi"/>
-    <!--===================< modality-ecommerce-payment-custom-buscall >====================-->
-    <source path="one/modality/ecommerce/payment/custom/buscall"/>
-    <source path="one/modality/ecommerce/payment/custom/buscall/serial"/>
-    <!--====================< modality-ecommerce-payment-custom-remote >====================-->
-    <source path="one/modality/ecommerce/payment/custom/spi/impl/remote"/>
+    <!--======================< modality-ecommerce-payment-embedded >=======================-->
+    <source path="one/modality/ecommerce/payment/embedded"/>
+    <source path="one/modality/ecommerce/payment/embedded/spi"/>
+    <!--==================< modality-ecommerce-payment-embedded-buscall >===================-->
+    <source path="one/modality/ecommerce/payment/embedded/buscall"/>
+    <source path="one/modality/ecommerce/payment/embedded/buscall/serial"/>
+    <!--===================< modality-ecommerce-payment-embedded-remote >===================-->
+    <source path="one/modality/ecommerce/payment/embedded/spi/impl/remote"/>
     <!--===========< modality-event-backoffice-activity-recurringevents-plugin >============-->
     <source path="one/modality/event/backoffice/activities/recurringevents"/>
     <source path="one/modality/event/backoffice/activities/recurringevents/routing"/>

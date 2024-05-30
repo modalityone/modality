@@ -10,7 +10,7 @@ module modality.ecommerce.backoffice.operations.moneytransfer {
     requires javafx.graphics;
     requires javafx.web;
     requires modality.base.shared.entities;
-    requires modality.ecommerce.payment.custom;
+    requires modality.ecommerce.payment.embedded;
     requires webfx.extras.util.layout;
     requires webfx.platform.async;
     requires webfx.stack.orm.entity;

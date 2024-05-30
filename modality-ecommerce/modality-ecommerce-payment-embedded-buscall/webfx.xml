@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <description>Declares the embedded payment endpoint address, and implements the data serialisation.</description>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+    </dependencies>
+
+    <providers>
+        <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.payment.embedded.buscall.InitiateEmbeddedPaymentMethodEndpoint</provider>
+        <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.payment.embedded.buscall.serial.InitiateEmbeddedPaymentArgumentSerialCodec</provider>
+        <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.payment.embedded.buscall.serial.InitiateEmbeddedPaymentResultSerialCodec</provider>
+    </providers>
+
+</project>

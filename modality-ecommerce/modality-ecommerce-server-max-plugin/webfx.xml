@@ -14,7 +14,7 @@
 
         <plugin-module>modality-ecommerce-payment-gateway-direct-authorizedotnet-plugin</plugin-module>
         <plugin-module>modality-ecommerce-payment-gateway-redirect-stripe-plugin</plugin-module>
-        <plugin-module>modality-ecommerce-payment-gateway-custom-stripe-plugin</plugin-module>
+        <plugin-module>modality-ecommerce-payment-gateway-embedded-stripe-plugin</plugin-module>
 
     </dependencies>
 

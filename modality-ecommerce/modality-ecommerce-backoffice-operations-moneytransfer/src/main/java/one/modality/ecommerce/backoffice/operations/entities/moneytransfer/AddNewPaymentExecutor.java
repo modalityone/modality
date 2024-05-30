@@ -12,8 +12,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebView;
 import one.modality.base.shared.entities.Document;
-import one.modality.ecommerce.payment.custom.CustomPaymentService;
-import one.modality.ecommerce.payment.custom.InitiateCustomPaymentArgument;
+import one.modality.ecommerce.payment.embedded.EmbeddedPaymentService;
+import one.modality.ecommerce.payment.embedded.InitiateEmbeddedPaymentArgument;
 
 final class AddNewPaymentExecutor {
 
@@ -42,7 +42,7 @@ final class AddNewPaymentExecutor {
                         webView.getEngine().load(paymentUrl);
                     }));
         else*/
-            CustomPaymentService.initiateCustomPayment(new InitiateCustomPaymentArgument(amount, currency, description, 1, null, null, null))
+            EmbeddedPaymentService.initiateEmbeddedPayment(new InitiateEmbeddedPaymentArgument(amount, currency, description, 1, null, null, null))
                     .onFailure(e -> Platform.runLater(() -> borderPane.setCenter(new Label(e.getMessage()))))
                     .onSuccess(r -> Platform.runLater(() -> {
                         String htmlContent = r.getHtmlContent();
