@@ -8,16 +8,17 @@ module modality.all.server.application.vertx {
     // Direct dependencies modules
     requires javafx.base;
     requires modality.all.server.application;
-    requires modality.base.shared.domainmodel;
     requires modality.crm.server.authz.required.plugin;
-    requires modality.ecommerce.payment.custom.server;
-    requires modality.ecommerce.payment.delegated.server;
-    requires modality.ecommerce.payment.direct.server;
+    requires modality.ecommerce.document.service.server;
+    requires modality.ecommerce.payment.api.server;
+    requires modality.ecommerce.payment.embedded.server;
+    requires modality.ecommerce.payment.redirect.server;
     requires webfx.platform.ast.factory.vertx;
     requires webfx.platform.blob.java;
     requires webfx.platform.boot.vertx;
     requires webfx.platform.console.java;
     requires webfx.platform.fetch.vertx;
+    requires webfx.platform.file.java;
     requires webfx.platform.resource.java;
     requires webfx.platform.scheduler.vertx;
     requires webfx.platform.shutdown.java;

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules>
+            <module transitive="true">webfx-platform-async</module> <!-- Future -->
+            <module transitive="true">webfx-stack-db-query</module> <!-- QueryResult -->
+        </used-by-source-modules>
+    </dependencies>
+
+</project>

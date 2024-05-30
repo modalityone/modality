@@ -1,5 +1,6 @@
 package one.modality.base.shared.entities;
 
+import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.markers.*;
@@ -16,6 +17,23 @@ public interface Event extends Entity,
         EntityHasIcon,
         EntityHasOrganization,
         EntityHasCorporation {
+
+
+    default void setState(Object state) {
+        setFieldValue("state", Strings.stringValue(state));
+    }
+
+    default EventState getState() {
+        return EventState.of(getStringFieldValue("state"));
+    }
+
+    default void setAdvertised(Boolean advertised) {
+        setFieldValue("advertised", advertised);
+    }
+
+    default Boolean isAdvertised() {
+        return getBooleanFieldValue("advertised");
+    }
 
 
     default void setType(Object type) {
@@ -91,6 +109,14 @@ public interface Event extends Entity,
         return getStringFieldValue("description");
     }
 
+    default void setShortDescription(String shortDescription) {
+        setFieldValue("shortDescription", shortDescription);
+    }
+
+    default String getShortDescription() {
+        return getStringFieldValue("shortDescription");
+    }
+
     default void setExternalLink(String externalLink) {
         setFieldValue("externalLink", externalLink);
     }
@@ -98,5 +124,18 @@ public interface Event extends Entity,
     default String getExternalLink() {
         return getStringFieldValue("externalLink");
     }
+
+    default void setVenue(Object venue) {
+        setForeignField("venue", venue);
+    }
+
+    default EntityId getVenueId() {
+        return getForeignEntityId("venue");
+    }
+
+    default Site getVenue() {
+        return getForeignEntity("venue");
+    }
+
 
 }

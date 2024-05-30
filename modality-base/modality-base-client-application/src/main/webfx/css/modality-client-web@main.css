@@ -1,0 +1,13 @@
+@font-face {
+    font-family: "Montserrat";
+    src: url("./fonts/montserrat/Montserrat-VF.woff2") format("woff2");
+    font-weight: 100 900;
+}
+
+/* Applying Montserrat as default font for Modality */
+body {
+    font-family: Montserrat, serif;
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
+}
+

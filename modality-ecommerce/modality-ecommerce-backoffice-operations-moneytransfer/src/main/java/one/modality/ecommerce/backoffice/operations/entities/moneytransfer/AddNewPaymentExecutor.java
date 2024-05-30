@@ -12,12 +12,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebView;
 import one.modality.base.shared.entities.Document;
-import one.modality.ecommerce.payment.custom.CustomPaymentService;
-import one.modality.ecommerce.payment.custom.InitiateCustomPaymentArgument;
+import one.modality.ecommerce.payment.embedded.EmbeddedPaymentService;
+import one.modality.ecommerce.payment.embedded.InitiateEmbeddedPaymentArgument;
 
 final class AddNewPaymentExecutor {
 
-    //private static final boolean DELEGATED = false;
+    //private static final boolean REDIRECT = false;
 
     static Future<Void> executeRequest(AddNewPaymentRequest rq) {
         return execute(rq.getDocument(), rq.getParentContainer());
@@ -34,15 +34,15 @@ final class AddNewPaymentExecutor {
         String description = document.getEvent().getName() + " - Ref " + document.getRef();
         int amount = document.getPriceNet() - document.getPriceDeposit();
         String currency = "GBP"; // hardcoded for now...
-        /*if (DELEGATED) // Doesn't work in the browser iFrame
-            DelegatedPaymentService.initiateDelegatedPayment(new InitiateDelegatedPaymentArgument(description, amount, currency))
+        /*if (REDIRECT) // Doesn't work in the browser iFrame
+            RedirectPaymentService.initiateRedirectPayment(new InitiateRedirectPaymentArgument(description, amount, currency))
                     .onFailure(e -> Platform.runLater(() -> borderPane.setCenter(new Label(e.getMessage()))))
                     .onSuccess(r -> Platform.runLater(() -> {
-                        String paymentUrl = r.getDelegatedPaymentUrl();
+                        String paymentUrl = r.getRedirectPaymentUrl();
                         webView.getEngine().load(paymentUrl);
                     }));
         else*/
-            CustomPaymentService.initiateCustomPayment(new InitiateCustomPaymentArgument(amount, currency, description, 1, null, null, null))
+            EmbeddedPaymentService.initiateEmbeddedPayment(new InitiateEmbeddedPaymentArgument(amount, currency, description, 1, null, null, null))
                     .onFailure(e -> Platform.runLater(() -> borderPane.setCenter(new Label(e.getMessage()))))
                     .onSuccess(r -> Platform.runLater(() -> {
                         String htmlContent = r.getHtmlContent();

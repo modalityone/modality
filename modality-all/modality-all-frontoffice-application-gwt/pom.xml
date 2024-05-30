@@ -95,6 +95,13 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-css</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-base-client-entities</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
@@ -298,6 +305,34 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-ecommerce-document-service</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-ecommerce-document-service-buscall</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-ecommerce-document-service-remote</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-event-client-event-fx</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-event-frontoffice-activity-booking-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
@@ -320,6 +355,13 @@
         <dependency>
             <groupId>org.jresearch.gwt.time</groupId>
             <artifactId>org.jresearch.gwt.time</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-carrousel</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
         </dependency>
 
         <dependency>
@@ -639,6 +681,20 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-blob</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-blob-gwt-j2cl</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-boot</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
@@ -675,6 +731,41 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-console-gwt-j2cl</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-fetch</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-fetch-ast-json</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-fetch-gwt-j2cl</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-file</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-file-gwt-j2cl</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
@@ -836,6 +927,13 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-util</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-util-http</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
@@ -1011,6 +1109,20 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-cache-client</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-cloud-image</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-cloud-image-client</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>

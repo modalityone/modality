@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <description>The client-side implementation of the embedded payment API (just forwards the request to the server).</description>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+    </dependencies>
+
+    <providers>
+        <provider interface="one.modality.ecommerce.payment.embedded.spi.EmbeddedPaymentProvider">one.modality.ecommerce.payment.embedded.spi.impl.remote.RemoteEmbeddedPaymentProvider</provider>
+    </providers>
+
+</project>

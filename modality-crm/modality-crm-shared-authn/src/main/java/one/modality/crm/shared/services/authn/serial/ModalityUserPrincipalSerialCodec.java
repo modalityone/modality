@@ -19,16 +19,16 @@ public final class ModalityUserPrincipalSerialCodec extends SerialCodecBase<Moda
     }
 
     @Override
-    public void encodeToJson(ModalityUserPrincipal arg, AstObject json) {
-        json.set(USER_PERSON_ID_KEY, arg.getUserPersonId());
-        json.set(USER_ACCOUNT_ID_KEY, arg.getUserAccountId());
+    public void encode(ModalityUserPrincipal arg, AstObject serial) {
+        encodeObject(serial, USER_PERSON_ID_KEY,  arg.getUserPersonId());
+        encodeObject(serial, USER_ACCOUNT_ID_KEY, arg.getUserAccountId());
     }
 
     @Override
-    public ModalityUserPrincipal decodeFromJson(ReadOnlyAstObject json) {
+    public ModalityUserPrincipal decode(ReadOnlyAstObject serial) {
         return new ModalityUserPrincipal(
-                json.get(USER_PERSON_ID_KEY),
-                json.get(USER_ACCOUNT_ID_KEY)
+                decodeObject(serial, USER_PERSON_ID_KEY),
+                decodeObject(serial, USER_ACCOUNT_ID_KEY)
         );
     }
 }

@@ -9,7 +9,7 @@
 @font-face {
     font-family: 'Montserrat';
     font-weight: bold;
-    src: url('css:fonts/montserrat/Montserrat-Italic.ttf');
+    src: url('css:fonts/montserrat/Montserrat-Bold.ttf');
 }
 
 @font-face {
@@ -26,13 +26,15 @@
 }
 
 
-/*===== webtext-javafx@main.css from webfx-extras-webtext-peers-openjfx =====*/
+/*===== webfx-extras-material-javafx@main.css from webfx-extras-materialdesign =====*/
 
-HtmlText, HtmlTextEditor {
-    -fx-skin: "dev.webfx.kit.mapper.peers.javafxcontrols.openjfx.skin.FxControlPeerSkin";
+
+.material {
+     -fx-background-color: white , white , white;
+     -fx-background-insets: 0, 0, 0;
 }
 
-/*===== visual-grid-javafx@main.css from webfx-extras-visual-grid-peers-openjfx =====*/
+/*===== webfx-extras-visual-grid-javafx@main.css from webfx-extras-visual-grid-peers-openjfx =====*/
 
 VisualGrid {
     -fx-skin: "dev.webfx.kit.mapper.peers.javafxcontrols.openjfx.skin.FxControlPeerSkin";
@@ -88,7 +90,177 @@ VisualGrid {
    -fx-text-fill: -fx-text-inner-color;
 }
 
-/*===== modality-javafx@main.css from modality-base-client-application =====*/
+/*===== webfx-extras-webtext-javafx@main.css from webfx-extras-webtext-peers-openjfx =====*/
+
+HtmlText, HtmlTextEditor {
+    -fx-skin: "dev.webfx.kit.mapper.peers.javafxcontrols.openjfx.skin.FxControlPeerSkin";
+}
+
+/*===== javafx@main.css from modality-base-client-css =====*/
+
+* {
+    -webfx-switch-selected-background-color: #0096D6;
+    -green-color: #41BA4D;
+    -green-color-hover: #38a143;
+    -blue-color: #0096D6;
+    -blue-color-hover: #0082ba;
+    -grey-color: #838788;
+    -grey-color-hover: #717475;
+    -red-color: red;
+    -red-color-hover: #de0000;
+    -orange-color: #EE7130;
+}
+
+.event-button
+{
+    -fx-background-radius: 4;
+    -fx-pref-height:35px;
+    -fx-max-height:35px;
+    -fx-alignment: center;
+ /*  -fx-font-family: "Google Sans", Roboto, Arial;*/
+    -fx-font-weight: bolder;
+}
+
+.primary-button {
+    -fx-background-color: -blue-color;
+    -fx-text-fill: white;
+}
+.primary-button:hover {
+    -fx-background-color: -blue-color-hover;
+}
+
+.danger-button {
+    -fx-background-color: -red-color;
+    -fx-text-fill: white;
+}
+.danger-button:hover {
+    -fx-background-color: -red-color-hover;
+}
+
+.success-button {
+    -fx-background-color: -green-color;
+    -fx-text-fill: white;
+}
+
+.success-button:hover {
+  -fx-background-color: -green-color-hover;
+}
+
+.secondary-button {
+    -fx-background-color: -grey-color;
+    -fx-text-fill: white;
+}
+
+.secondary-button:hover {
+    -fx-background-color: -grey-color-hover;
+}
+
+.primary-text, .primary-text SVGPath{
+    -fx-text-fill: -blue-color;
+    -fx-fill: -blue-color;
+}
+
+.secondary-text, .secondary-text SVGPath {
+    -fx-text-fill: -grey-color;
+    -fx-fill: -grey-color;
+}
+
+.warning-text, .warning-text SVGPath {
+    -fx-text-fill: -orange-color;
+    -fx-fill: -orange-color;
+}
+
+.danger-text, .danger-text SVGPath {
+    -fx-text-fill: -red-color;
+    -fx-fill: -red-color;
+}
+
+.success-text, .success-text SVGPath {
+    -fx-text-fill: -green-color;
+    -fx-fill: -green-color;
+}
+
+.emphasize {
+    -fx-font-weight: bolder;
+}
+
+.title
+{
+  -fx-font-size: 35px;
+}
+.subtitle
+{
+  -fx-font-size: 22px;
+}
+
+.title3
+{
+  -fx-font-size: 16px;
+}
+
+.title4
+{
+  -fx-font-size: 14px;
+}
+
+.confirmation-title {
+   -fx-font-size: 22px;
+   -fx-text-fill: -green-color;
+   -fx-fill: -green-color;
+   -fx-font-weight: bolder;
+}
+
+
+.small-text
+{
+  -fx-font-size: 9px;
+}
+
+.table-row-cell:selected .font-blue
+{
+
+}
+
+.table-row-cell:selected {
+  -fx-background: #BBBBBB;
+}
+
+
+.webfx-dates-picker-selected {
+    -fx-background-color: #afe7ff;
+    -fx-background-radius: 10px;
+}
+
+.webfx-dates-picker-secondary {
+    -fx-background-color: #cccccc;
+    -fx-background-radius: 10px;
+}
+
+.webfx-dates-picker-arrow {
+    -fx-fill: -blue-color;
+    -fx-background-radius: 10px;
+}
+
+.webfx-dates-picker-month {
+    -fx-text-fill: -blue-color;
+    -fx-font-size: 14px;
+}
+
+/*===== modality-client-login-javafx@main.css from modality-crm-client-activity-login-plugin =====*/
+
+
+
+.login {
+    -fx-font-size: 18px;
+}
+
+.login Button {
+    -fx-background-color: #0096D6FF;
+    -fx-background-radius: 10px;
+    -fx-text-fill: white;
+}
+
+/*===== modality-client-javafx@main.css from modality-base-client-application =====*/
 
 Text, Label, Button, TextField {
     -fx-font-family: 'Montserrat';
@@ -103,24 +275,67 @@ Text, Label, Button, TextField {
    -fx-background-color: transparent;
 }
 
-/*===== material-javafx@main.css from webfx-extras-materialdesign =====*/
+/*===== modality-frontoffice-booking-javafx@main.css from modality-event-frontoffice-activity-booking-plugin =====*/
 
-
-.material {
-     -fx-background-color: white , white , white;
-     -fx-background-insets: 0, 0, 0;
+.description-text {
+    -fx-text-alignment: justify;
 }
 
-/*===== modality-login-javafx@main.css from modality-crm-client-activity-login-plugin =====*/
-
-
-
-.login {
-    -fx-font-size: 18px;
+.description-text TextFlow {
+    -fx-line-spacing: 8px;
 }
 
-.login Button {
-    -fx-background-color: #0096D6FF;
-    -fx-background-radius: 10px;
-    -fx-text-fill: white;
+.eventTime {
+    -fx-font-size: 10px;
+}
+
+.subtitle-grey {
+   -fx-text-fill: grey;
+   -fx-fill: grey;
+   -fx-font-size: 14px;
+}
+
+.book-event-primary-title {
+   -fx-font-weight: bolder;
+   -fx-text-fill: -blue-color; /* blue-color is defined in modality-base-client-css*/
+   -fx-fill: #0096D6;
+   -fx-font-weight: bolder;
+   -fx-font-size: 14px;
+}
+
+.date-selected {
+     -fx-background-color: #0096D6;
+}
+
+.date-already-booked {
+     -fx-background-color: green;
+}
+.date-past-not-selected {
+     -fx-background-color: #CCCCCC;
+}
+
+.date-selected Text {
+    -fx-fill: white;
+}
+
+.date-unselected {
+     -fx-background-color: none;
+}
+
+.date-unselected Text {
+    -fx-fill: black;
+}
+
+
+.checkout-address, .checkout-address SVGPath  {
+    -fx-text-fill: #BBBBBB;
+    -fx-fill: #BBBBBB;
+}
+
+.line-total {
+    -fx-background-color: #CCCCCC;
+}
+
+.line-total Text {
+    -fx-font-weight: bolder;
 }

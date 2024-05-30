@@ -12,13 +12,16 @@ module modality.event.backoffice.events.ganttcanvas.plugin {
     requires modality.base.client.gantt.fx;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
-    requires modality.event.backoffice.event.fx;
     requires modality.event.backoffice.events.pm;
+    requires modality.event.client.event.fx;
     requires modality.event.client.theme;
     requires webfx.extras.canvas.bar;
     requires webfx.extras.geometry;
     requires webfx.extras.theme;
+    requires webfx.extras.time.layout;
     requires webfx.extras.time.layout.gantt;
+    requires webfx.extras.time.window;
+    requires webfx.kit.util;
     requires webfx.stack.cache.client;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;

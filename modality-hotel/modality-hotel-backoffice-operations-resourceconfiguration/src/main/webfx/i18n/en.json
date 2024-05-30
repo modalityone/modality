@@ -1,6 +1,0 @@
-{
-  "ChangeRoomType": "Change room type",
-  "DeleteRoom": {"text": "Delete room", "graphic": "images/s16/actions/delete.png"},
-  "EditRoomProperties": {"text": "Edit room properties", "graphic": "images/s16/actions/edit.png"},
-  "ToggleOnlineOffline": "Toggle online/offline"
-}

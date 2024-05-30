@@ -41,6 +41,24 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-gantt-fx</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-icons</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-mainframe-dialogarea-fx</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-base-client-tile</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
@@ -64,8 +82,32 @@
         </dependency>
 
         <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-event-client-event-fx</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-cell</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-filepicker</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-panes</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-switches</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -95,7 +137,19 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-extras-visual</artifactId>
+            <artifactId>webfx-extras-util-control</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-util-layout</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-util-masterslave</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -125,12 +179,6 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-conf</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-console</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
@@ -151,6 +199,12 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-util</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-windowhistory</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
@@ -163,7 +217,7 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-cloud-image-cloudinary</artifactId>
+            <artifactId>webfx-stack-cloud-image-client</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -217,6 +271,12 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-orm-reactive-entities</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-orm-reactive-visual</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
@@ -236,6 +296,12 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-ui-controls</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-ui-dialog</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

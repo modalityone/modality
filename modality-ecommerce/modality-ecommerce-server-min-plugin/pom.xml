@@ -19,21 +19,28 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-payment-custom-buscall</artifactId>
+            <artifactId>modality-ecommerce-document-service-buscall</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-payment-delegated-buscall</artifactId>
+            <artifactId>modality-ecommerce-payment-api-buscall</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-payment-direct-buscall</artifactId>
+            <artifactId>modality-ecommerce-payment-embedded-buscall</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-ecommerce-payment-redirect-buscall</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>

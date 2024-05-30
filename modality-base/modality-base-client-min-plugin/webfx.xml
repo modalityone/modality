@@ -12,6 +12,7 @@
         <plugin-module executable-target="java">modality-base-client-navigationarrows-java-plugin</plugin-module>
 
         <plugin-module>modality-base-client-i18n</plugin-module>
+        <plugin-module>modality-base-client-css</plugin-module>
         <plugin-module>modality-base-client-operationactionsloading-plugin</plugin-module>
         <plugin-module>modality-crm-client-authz-required-plugin</plugin-module>
         <plugin-module>modality-crm-client-activity-login-plugin</plugin-module>

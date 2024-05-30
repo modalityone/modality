@@ -1,0 +1,60 @@
+/* .text-justified */
+.description-text {
+    text-align: justify;
+    line-height: 1.5em;
+}
+
+/* .eventTime */
+.eventTime {
+    font-size: 10px;
+}
+
+/* .subtitle-grey */
+.subtitle-grey {
+    color: grey;
+    font-size: 14px;
+}
+
+.book-event-primary-title {
+    font-weight: bolder;
+    color: var(--blue-color, #0096D6); /* Use CSS variable with fallback */
+    font-size: 14px;
+}
+
+/* .date-selected */
+.date-selected > fx-background {
+    background-color: var(--blue-color, #0096D6);
+}
+
+.date-selected  {
+    color: white;
+}
+
+.date-past-not-selected > fx-background {
+     background-color: grey;
+}
+
+/* .date-unselected */
+.date-unselected {
+    background-color: none;
+}
+
+.date-unselected {
+    color: black;
+}
+
+.checkout-address {
+    color: #BBBBBB;
+}
+
+.checkout-address svg {
+    fill: #BBBBBB;
+}
+
+.line-total > fx-background {
+    background-color: #CCCCCC;
+}
+
+.line-total span {
+    font-weight: bolder;
+}

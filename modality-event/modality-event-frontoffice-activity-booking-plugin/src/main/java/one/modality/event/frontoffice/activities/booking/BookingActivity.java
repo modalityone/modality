@@ -144,7 +144,7 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
 
         // Loading international Festivals
         ReactiveObjectsMapper.<Event, Node>createPushReactiveChain(this)
-                .always(commonDqlStart + "', where: 'organization.type.code = `CORP` and endDate > now() and !bookingClosed and name not like `%Online%`', orderBy: 'startDate, id', limit: 3}")
+                .always(commonDqlStart + "', where: 'organization.type.code = `CORP` and endDate > now() and !bookingClosed and name not like `%Online%`', orderBy: 'startDate, id'}")
                 .setIndividualEntityToObjectMapperFactory(IndividualEntityToObjectMapper.createFactory(EventView::new, EventView::setEvent, EventView::getView))
                 .storeMappedObjectsInto(internationalEventsContainer.getChildren())
                 .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-booking-internationalEvents"))
@@ -152,7 +152,7 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
 
         // Loading local events
         ReactiveObjectsMapper.<Event, Node>createPushReactiveChain(this)
-                .always(commonDqlStart + ", type.(name,label.<loadAll>,ord)', where: 'endDate > now() and !bookingClosed and type.name != `Not event`', orderBy: 'startDate'}")
+                .always(commonDqlStart + ", type.(name,label.<loadAll>,ord), state', where: 'endDate > now() and !bookingClosed and type.name != `Not event`', orderBy: 'startDate'}")
                 .ifNotNullOtherwiseEmpty(FXOrganizationId.organizationIdProperty(), orgId -> where("organization=?", orgId))
                 .storeEntitiesInto(localEvents)
                 .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-booking-localEvents"))

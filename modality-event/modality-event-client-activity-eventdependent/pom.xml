@@ -49,7 +49,7 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-event-backoffice-event-fx</artifactId>
+            <artifactId>modality-event-client-event-fx</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 

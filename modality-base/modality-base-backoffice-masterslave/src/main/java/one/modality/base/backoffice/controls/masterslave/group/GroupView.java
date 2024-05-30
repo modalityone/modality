@@ -49,10 +49,10 @@ public final class GroupView<E extends Entity> implements UiBuilder,
     private final ObjectProperty<VisualResult> groupVisualResultProperty = new SimpleObjectProperty<>();
     @Override public ObjectProperty<VisualResult> groupVisualResultProperty() { return groupVisualResultProperty; }
 
-    private final ObjectProperty<VisualSelection> groupVisualSelectionProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<VisualSelection> groupVisualSelectionProperty = VisualSelection.createVisualSelectionProperty();
     @Override public ObjectProperty<VisualSelection> groupVisualSelectionProperty() { return groupVisualSelectionProperty; }
 
-    private final ObjectProperty<E> selectedGroupProperty = new SimpleObjectProperty<E/*GWT*/>() {
+    private final ObjectProperty<E> selectedGroupProperty = new SimpleObjectProperty<>() {
         @Override
         protected void invalidated() {
             updateSelectedGroupCondition();
@@ -115,7 +115,7 @@ public final class GroupView<E extends Entity> implements UiBuilder,
 
     public void bindWithTargetGroupVisualSelectionProperty(Property<VisualSelection> targetGroupVisualSelectionProperty) {
         if (targetGroupVisualSelectionProperty != null)
-            targetGroupVisualSelectionProperty.bind(groupVisualSelectionProperty);
+            targetGroupVisualSelectionProperty.bindBidirectional(groupVisualSelectionProperty);
     }
 
     public void bindWithSourceGroupDqlStatementProperty(Property<DqlStatement> sourceGroupDqlStatementProperty) {
@@ -155,7 +155,7 @@ public final class GroupView<E extends Entity> implements UiBuilder,
     private <C extends SelectableVisualResultControl> C bindControl(C control) {
         if (control instanceof VisualGrid) {
             control.visualResultProperty().bind(groupVisualResultProperty());
-            groupVisualSelectionProperty().bind(control.visualSelectionProperty());
+            groupVisualSelectionProperty().bindBidirectional(control.visualSelectionProperty());
         } else if (control != null)
             groupVisualResultProperty().addListener((observable, oldValue, rs) ->
                     control.setVisualResult(toSingleSeriesChartVisualResult(rs, control instanceof VisualPieChart))

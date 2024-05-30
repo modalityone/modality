@@ -1,0 +1,19 @@
+
+.booking-name {
+    color: #838788;
+}
+
+.booking-status-confirmed {
+    color: #41BA4D;
+    font-size: 9px;
+}
+
+.booking-status-unconfirmed {
+    color: #eb8634;
+    font-size: 9px;
+}
+
+.booking-total-count {
+    color: #FF0404;
+    font-size: 9px;
+}

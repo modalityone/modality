@@ -9,7 +9,7 @@
 @font-face {
     font-family: 'Montserrat';
     font-weight: bold;
-    src: url('css:fonts/montserrat/Montserrat-Italic.ttf');
+    src: url('css:fonts/montserrat/Montserrat-Bold.ttf');
 }
 
 @font-face {
@@ -26,13 +26,45 @@
 }
 
 
-/*===== webtext-javafx@main.css from webfx-extras-webtext-peers-openjfx =====*/
+/*===== webfx-extras-material-javafx@main.css from webfx-extras-materialdesign =====*/
 
-HtmlText, HtmlTextEditor {
+
+.material {
+     -fx-background-color: white , white , white;
+     -fx-background-insets: 0, 0, 0;
+}
+
+/*===== webfx-extras-switches-javafx@main.css from webfx-extras-switches =====*/
+
+* {
+    -webfx-switch-unselected-background-color: lightgray;
+    -webfx-switch-selected-background-color: #23EA00;
+    -webfx-switch-knob-background-color: white;
+}
+
+Switch.webfx-switch {
+    -fx-background-color: -webfx-switch-unselected-background-color;
+    -fx-background-radius: 10px;
+}
+
+Switch.webfx-switch.selected {
+    -fx-background-color: -webfx-switch-selected-background-color;
+}
+
+Switch.webfx-switch Circle.knob {
+    -fx-fill: -webfx-switch-knob-background-color;
+}
+/*===== webfx-extras-visual-charts-javafx@main.css from webfx-extras-visual-charts-peers-openjfx =====*/
+
+VisualLineChart, VisualPieChart, VisualBarChart, VisualAreaChart {
     -fx-skin: "dev.webfx.kit.mapper.peers.javafxcontrols.openjfx.skin.FxControlPeerSkin";
 }
 
-/*===== visual-grid-javafx@main.css from webfx-extras-visual-grid-peers-openjfx =====*/
+.chart-series-line {
+    -fx-stroke-width: 1.5px;
+}
+
+/*===== webfx-extras-visual-grid-javafx@main.css from webfx-extras-visual-grid-peers-openjfx =====*/
 
 VisualGrid {
     -fx-skin: "dev.webfx.kit.mapper.peers.javafxcontrols.openjfx.skin.FxControlPeerSkin";
@@ -88,62 +120,192 @@ VisualGrid {
    -fx-text-fill: -fx-text-inner-color;
 }
 
-/*===== visual-charts-javafx@main.css from webfx-extras-visual-charts-peers-openjfx =====*/
+/*===== webfx-extras-webtext-javafx@main.css from webfx-extras-webtext-peers-openjfx =====*/
 
-VisualLineChart, VisualPieChart, VisualBarChart, VisualAreaChart {
+HtmlText, HtmlTextEditor {
     -fx-skin: "dev.webfx.kit.mapper.peers.javafxcontrols.openjfx.skin.FxControlPeerSkin";
 }
 
-.chart-series-line {
-    -fx-stroke-width: 1.5px;
+/*===== modality-client-javafx@main.css from modality-base-client-application =====*/
+
+Text, Label, Button, TextField {
+    -fx-font-family: 'Montserrat';
 }
 
-/*===== javafx@main.css from modality-event-backoffice-activity-recurringevents-plugin =====*/
+.scroll-pane {
+   -fx-background-color: transparent;
+   -fx-padding: 0;
+}
 
-.recurringEventButton
+.scroll-pane > .viewport {
+   -fx-background-color: transparent;
+}
+
+/*===== javafx@main.css from modality-base-client-css =====*/
+
+* {
+    -webfx-switch-selected-background-color: #0096D6;
+    -green-color: #41BA4D;
+    -green-color-hover: #38a143;
+    -blue-color: #0096D6;
+    -blue-color-hover: #0082ba;
+    -grey-color: #838788;
+    -grey-color-hover: #717475;
+    -red-color: red;
+    -red-color-hover: #de0000;
+    -orange-color: #EE7130;
+}
+
+.event-button
 {
-    -fx-background-radius: 2;
-    -fx-pref-height:30px;
-    -fx-max-height:30px;
-    -fx-pref-width: 150px;
+    -fx-background-radius: 4;
+    -fx-pref-height:35px;
+    -fx-max-height:35px;
+    -fx-alignment: center;
+ /*  -fx-font-family: "Google Sans", Roboto, Arial;*/
     -fx-font-weight: bolder;
 }
 
-.font-size-35px
+.primary-button {
+    -fx-background-color: -blue-color;
+    -fx-text-fill: white;
+}
+.primary-button:hover {
+    -fx-background-color: -blue-color-hover;
+}
+
+.danger-button {
+    -fx-background-color: -red-color;
+    -fx-text-fill: white;
+}
+.danger-button:hover {
+    -fx-background-color: -red-color-hover;
+}
+
+.success-button {
+    -fx-background-color: -green-color;
+    -fx-text-fill: white;
+}
+
+.success-button:hover {
+  -fx-background-color: -green-color-hover;
+}
+
+.secondary-button {
+    -fx-background-color: -grey-color;
+    -fx-text-fill: white;
+}
+
+.secondary-button:hover {
+    -fx-background-color: -grey-color-hover;
+}
+
+.primary-text, .primary-text SVGPath{
+    -fx-text-fill: -blue-color;
+    -fx-fill: -blue-color;
+}
+
+.secondary-text, .secondary-text SVGPath {
+    -fx-text-fill: -grey-color;
+    -fx-fill: -grey-color;
+}
+
+.warning-text, .warning-text SVGPath {
+    -fx-text-fill: -orange-color;
+    -fx-fill: -orange-color;
+}
+
+.danger-text, .danger-text SVGPath {
+    -fx-text-fill: -red-color;
+    -fx-fill: -red-color;
+}
+
+.success-text, .success-text SVGPath {
+    -fx-text-fill: -green-color;
+    -fx-fill: -green-color;
+}
+
+.emphasize {
+    -fx-font-weight: bolder;
+}
+
+.title
 {
   -fx-font-size: 35px;
 }
-.font-size-16px
+.subtitle
+{
+  -fx-font-size: 22px;
+}
+
+.title3
 {
   -fx-font-size: 16px;
 }
-.font-size-9px
+
+.title4
+{
+  -fx-font-size: 14px;
+}
+
+.confirmation-title {
+   -fx-font-size: 22px;
+   -fx-text-fill: -green-color;
+   -fx-fill: -green-color;
+   -fx-font-weight: bolder;
+}
+
+
+.small-text
 {
   -fx-font-size: 9px;
 }
 
+.table-row-cell:selected .font-blue
+{
 
-#newEvent {
-    -fx-background-color: #41BA4D;
+}
+
+.table-row-cell:selected {
+  -fx-background: #BBBBBB;
+}
+
+
+.webfx-dates-picker-selected {
+    -fx-background-color: #afe7ff;
+    -fx-background-radius: 10px;
+}
+
+.webfx-dates-picker-secondary {
+    -fx-background-color: #cccccc;
+    -fx-background-radius: 10px;
+}
+
+.webfx-dates-picker-arrow {
+    -fx-fill: -blue-color;
+    -fx-background-radius: 10px;
+}
+
+.webfx-dates-picker-month {
+    -fx-text-fill: -blue-color;
+    -fx-font-size: 14px;
+}
+
+/*===== modality-client-login-javafx@main.css from modality-crm-client-activity-login-plugin =====*/
+
+
+
+.login {
+    -fx-font-size: 18px;
+}
+
+.login Button {
+    -fx-background-color: #0096D6FF;
+    -fx-background-radius: 10px;
     -fx-text-fill: white;
-
 }
 
-#discard {
-    -fx-background-color: #838788;
-     -fx-text-fill: white;
-}
-
-#saveDraft {
-    -fx-background-color: #0096D6;
-    -fx-text-fill: white;
-}
-
-#updateEvent {
-    -fx-background-color: #41BA4D;
-    -fx-text-fill: white;
-}
-/*===== bookings-javafx@main.css from modality-ecommerce-backoffice-activity-bookings-plugin =====*/
+/*===== modality-backoffice-bookings-javafx@main.css from modality-ecommerce-backoffice-activity-bookings-plugin =====*/
 
 /* Declaring color variables with default values */
 * {
@@ -223,7 +385,7 @@ VisualLineChart, VisualPieChart, VisualBarChart, VisualAreaChart {
     -fx-font-weight: normal;
 }
 
-.table-row-cell:selected, .grid-row.selected {
+#bookings .table-row-cell:selected, #bookings .grid-row.selected {
     -fx-background-color:
         -fx-focus-color,
         -fx-cell-focus-inner-border,
@@ -246,39 +408,28 @@ VisualLineChart, VisualPieChart, VisualBarChart, VisualAreaChart {
     -fx-font-style: italic;
 }
 
-/*===== modality-login-javafx@main.css from modality-crm-client-activity-login-plugin =====*/
+/*===== modality-backoffice-recurringevents-javafx@main.css from modality-event-backoffice-activity-recurringevents-plugin =====*/
 
-
-
-.login {
-    -fx-font-size: 18px;
+.booking-name
+{
+    -fx-text-fill: #838788;
 }
 
-.login Button {
-    -fx-background-color: #0096D6FF;
-    -fx-background-radius: 10px;
-    -fx-text-fill: white;
+.booking-status-confirmed
+{
+     -fx-text-fill: #41BA4D;
+     -fx-font-size: 9px;
+
 }
 
-/*===== modality-javafx@main.css from modality-base-client-application =====*/
-
-Text, Label, Button, TextField {
-    -fx-font-family: 'Montserrat';
+.booking-status-unconfirmed
+{
+    -fx-text-fill: #eb8634;
+    -fx-font-size: 9px;
+}
+.booking-total-count
+{
+    -fx-text-fill: #FF0404;
+    -fx-font-size: 9px;
 }
 
-.scroll-pane {
-   -fx-background-color: transparent;
-   -fx-padding: 0;
-}
-
-.scroll-pane > .viewport {
-   -fx-background-color: transparent;
-}
-
-/*===== material-javafx@main.css from webfx-extras-materialdesign =====*/
-
-
-.material {
-     -fx-background-color: white , white , white;
-     -fx-background-insets: 0, 0, 0;
-}

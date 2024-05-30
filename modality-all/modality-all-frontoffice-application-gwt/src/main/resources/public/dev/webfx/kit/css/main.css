@@ -1,5 +1,30 @@
 
-/*===== javafx-controls-web@main.css from webfx-kit-javafxcontrols-peers-gwt-j2cl =====*/
+/*===== webfx-kit-javafxgraphics-web@main.css from webfx-kit-javafxgraphics-peers-gwt-j2cl =====*/
+
+/* Mocking some basic JavaFX behaviours */
+body {
+    overflow: hidden; /* Disabling browser horizontal and vertical scroll bars */
+    margin: 0; /* Removing the default margin around the body */
+    /* Disabling user selection by default */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Making disabled nodes semi-transparent */
+.disabled {
+    opacity: 50%;
+}
+
+/* When fill and stroke are not set by application code, we make them transparent by default like in JavaFX (otherwise
+ the browser will make them black). */
+fx-svgpath svg {
+    fill: none;
+    stroke: none;
+}
+/*===== webfx-kit-javafxcontrols-web@main.css from webfx-kit-javafxcontrols-peers-gwt-j2cl =====*/
 
 /***** Global variables *****/
 :root {
@@ -53,36 +78,58 @@ input[type="text"], input[type="password"] {
     background-color: transparent;
 }
 
-/*===== visual-grid-web@main.css from webfx-extras-visual-grid-peers-gwt-j2cl =====*/
+/*===== webfx-kit-javafxweb-web@main.css from webfx-kit-javafxweb-peers-gwt-j2cl =====*/
+
+iframe {
+    border: none;
+}
+
+/*===== webfx-extras-material-web@main.css from webfx-extras-materialdesign =====*/
+
+
+fx-textfield.material > fx-border {
+    border: none;
+}
+
+fx-textfield.material > fx-background {
+    background: none;
+}
+/*===== webfx-extras-visual-grid-web@main.css from webfx-extras-visual-grid-peers-gwt-j2cl =====*/
 
 :root {
     --grid-border-color: #D3D3D3;
     --grid-row-height: 28px;
+    --grid-selection-color: #AED6F1;
 }
 
-table, th, td {
+th, td {
     border: 1px solid var(--grid-border-color);
+    border-top-width: 0;
 }
 
 table {
+    width: 100%;
+    border: none;
     border-collapse: collapse;
     cursor: pointer;
 }
 
 thead {
-    border-top-style: solid;
-    border-top-color: var(--grid-border-color);
-    border-top-width: thin;
+    border: none;
     height: var(--grid-row-height);
+    position: sticky;
+    top: 1px;
+    z-index: 2; /* header must be above body when scrolling */
 }
 
-thead td {
+thead th {
     border-right-width: thin;
     border-right-style: solid;
     border-right-color: var(--grid-border-color);
     height: var(--grid-row-height);
     font-weight: bold;
     text-align: center;
+    overflow: hidden;
 }
 
 tbody td {
@@ -93,11 +140,21 @@ tbody tr {
     height: var(--grid-row-height);
 }
 
-thead td, tbody td {
+thead th, tbody td {
     padding: 0 5px 0 5px;
-    overflow: hidden;
     max-width: 0;
+    overflow: hidden;
 }
+
+th:before { /* this rule is to prevent body appearing in 1px line above header when scrolling */
+    content: '';
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: -1px;
+    border-top: 1px solid var(--grid-border-color);
+}
+
 
 /***********************************
  *** Table header and row colors ***
@@ -109,15 +166,7 @@ thead tr {
     background: linear-gradient( 180deg, white, lightgray 100%);
 }
 
-th {
-    background: transparent;
-}
-
-td {
-    background: transparent;
-}
-
-tbody {
+th, tbody, td {
     background-color: transparent;
 }
 
@@ -132,45 +181,150 @@ tbody {
 .grid-col {
     border-right: 1px solid var(--grid-border-color);
 }
-/*===== javafx-graphics-web@main.css from webfx-kit-javafxgraphics-peers-gwt-j2cl =====*/
 
-.disabled fx-text {
-    color: gray;
-}
-/*===== frontoffice-mainframe-web@main.css from modality-base-frontoffice-mainframe-activity =====*/
-
-/* We dont want border for the buttons in the front-office button bar */
-
-.button-bar fx-button > fx-border {
-    border: none;
-}
-/*===== modality-web@main.css from modality-base-client-application =====*/
-
-@font-face {
-    font-family: "Montserrat";
-    src: url("./fonts/montserrat/Montserrat-VF.woff2") format("woff2");
-    font-weight: 100 900;
+tr.selected, .grid-row.selected {
+    background: var(--grid-selection-color)
 }
 
-/* Applying Montserrat as default font for Modality */
-body * {
-    font-family: Montserrat, serif;
-    font-size: 13px;
-    -webkit-font-smoothing: antialiased;
+/*===== web@main.css from modality-base-client-css =====*/
+
+:root {
+    --webfx-switch-selected-background-color: #0096D6;
+    --green-color: #41BA4D;
+    --green-color-hover: #38a143;
+    --blue-color: #0096D6;
+    --blue-color-hover: #0082ba;
+    --grey-color: #838788;
+    --grey-color-hover: #717475;
+    --red-color: red;
+    --red-color-hover: #de0000;
+    --orange-color: #EE7130;
 }
 
+.event-button {
+    border-radius: 4px;
+    height: 35px;
+    max-height: 35px;
+    text-align: center;
+    font-weight: normal;
+}
 
-/*===== material-web@main.css from webfx-extras-materialdesign =====*/
-
-
-fx-textfield.material > fx-border {
+.event-button > fx-border {
     border: none;
 }
 
-fx-textfield.material > fx-background {
-    background: none;
+.primary-button {
+    color: white;
 }
-/*===== modality-login-web@main.css from modality-crm-client-activity-login-plugin =====*/
+.primary-button > fx-background {
+    background: var(--blue-color);
+}
+
+.primary-button.disabled > fx-background, .primary-button.disabled:hover > fx-background {
+    background: var(--blue-color);
+}
+
+.primary-button:hover > fx-background {
+    background: var(--blue-color-hover);
+}
+
+.danger-button {
+  color: white;
+}
+
+.danger-button > fx-background {
+    background: var(--red-color);
+}
+.danger-button:hover > fx-background {
+    background: var(--red-color-hover);
+}
+
+.success-button {
+    color: white;
+}
+.success-button > fx-background {
+    background: var(--green-color);
+}
+.success-button:hover > fx-background   {
+    background: var(--green-color-hover);
+}
+
+.secondary-button {
+    color: white;
+}
+.secondary-button > fx-background {
+    background: var(--grey-color);
+}
+.secondary-button:hover > fx-background {
+    background: var(--grey-color-hover);
+}
+
+.secondary-text {
+    color: var(--grey-color);
+}
+
+.warning-text {
+    color: var(--orange-color);
+}
+
+.danger-text {
+    color: var(--red-color);
+}
+
+.success-text {
+    color: var(--green-color);
+}
+
+.title {
+    font-size: 35px;
+}
+
+.subtitle {
+    font-size: 22px;
+}
+
+.title3 {
+    font-size: 16px;
+}
+
+.confirmation-title {
+    font-size: 22px;
+    color: var(--green-color);
+    font-weight: bold;
+}
+
+.small-text {
+    font-size: 9px;
+}
+
+.table-row-cell:selected .font-blue {
+
+}
+
+.table-row-cell:selected > fx-background {
+    background: #BBBBBB;
+}
+
+.webfx-dates-picker-selected > fx-background {
+    background-color: #afe7ff;
+    border-radius: 10px;
+}
+
+.webfx-dates-picker-secondary > fx-background {
+    background-color: #cccccc;
+    border-radius: 10px;
+}
+
+.webfx-dates-picker-arrow {
+    fill: var(--blue-color);
+    border-radius: 10px;
+}
+
+.webfx-dates-picker-month {
+    color: var(--blue-color);
+    font-size: 14px;
+}
+/*===== modality-client-login-web@main.css from modality-crm-client-activity-login-plugin =====*/
 
 .login * {
     font-size: 18px; /* doesn't work yet (because of hardcoded style in app code) */
@@ -200,4 +354,90 @@ input[type="password"]:not([value=""]) {
     font-family: "Password";
     src: url("./fonts/password/password.woff") format("woff");
     font-weight: 100 900;
+}
+
+/*===== modality-client-web@main.css from modality-base-client-application =====*/
+
+@font-face {
+    font-family: "Montserrat";
+    src: url("./fonts/montserrat/Montserrat-VF.woff2") format("woff2");
+    font-weight: 100 900;
+}
+
+/* Applying Montserrat as default font for Modality */
+body {
+    font-family: Montserrat, serif;
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
+}
+
+
+/*===== modality-frontoffice-mainframe-web@main.css from modality-base-frontoffice-mainframe-activity =====*/
+
+/* We dont want border for the buttons in the front-office button bar */
+
+.button-bar fx-button > fx-border {
+    border: none;
+}
+/*===== modality-frontoffice-booking-web@main.css from modality-event-frontoffice-activity-booking-plugin =====*/
+
+/* .text-justified */
+.description-text {
+    text-align: justify;
+    line-height: 1.5em;
+}
+
+/* .eventTime */
+.eventTime {
+    font-size: 10px;
+}
+
+/* .subtitle-grey */
+.subtitle-grey {
+    color: grey;
+    font-size: 14px;
+}
+
+.book-event-primary-title {
+    font-weight: bolder;
+    color: var(--blue-color, #0096D6); /* Use CSS variable with fallback */
+    font-size: 14px;
+}
+
+/* .date-selected */
+.date-selected > fx-background {
+    background-color: var(--blue-color, #0096D6);
+}
+
+.date-selected  {
+    color: white;
+}
+
+.date-past-not-selected > fx-background {
+     background-color: grey;
+}
+
+/* .date-unselected */
+.date-unselected {
+    background-color: none;
+}
+
+.date-unselected {
+    color: black;
+}
+
+.checkout-address {
+    color: #BBBBBB;
+}
+
+.checkout-address svg {
+    fill: #BBBBBB;
+}
+
+.line-total > fx-background {
+    background-color: #CCCCCC;
+}
+
+.line-total span {
+    font-weight: bolder;
 }

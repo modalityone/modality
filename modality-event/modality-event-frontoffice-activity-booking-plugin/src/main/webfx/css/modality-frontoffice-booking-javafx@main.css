@@ -1,0 +1,62 @@
+.description-text {
+    -fx-text-alignment: justify;
+}
+
+.description-text TextFlow {
+    -fx-line-spacing: 8px;
+}
+
+.eventTime {
+    -fx-font-size: 10px;
+}
+
+.subtitle-grey {
+   -fx-text-fill: grey;
+   -fx-fill: grey;
+   -fx-font-size: 14px;
+}
+
+.book-event-primary-title {
+   -fx-font-weight: bolder;
+   -fx-text-fill: -blue-color; /* blue-color is defined in modality-base-client-css*/
+   -fx-fill: #0096D6;
+   -fx-font-weight: bolder;
+   -fx-font-size: 14px;
+}
+
+.date-selected {
+     -fx-background-color: #0096D6;
+}
+
+.date-already-booked {
+     -fx-background-color: green;
+}
+.date-past-not-selected {
+     -fx-background-color: #CCCCCC;
+}
+
+.date-selected Text {
+    -fx-fill: white;
+}
+
+.date-unselected {
+     -fx-background-color: none;
+}
+
+.date-unselected Text {
+    -fx-fill: black;
+}
+
+
+.checkout-address, .checkout-address SVGPath  {
+    -fx-text-fill: #BBBBBB;
+    -fx-fill: #BBBBBB;
+}
+
+.line-total {
+    -fx-background-color: #CCCCCC;
+}
+
+.line-total Text {
+    -fx-font-weight: bolder;
+}

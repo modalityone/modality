@@ -1,0 +1,10 @@
+one.modality.ecommerce.document.service.buscall.serial.LoadPolicyArgumentSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.LoadDocumentArgumentSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.SubmitDocumentChangesArgumentSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.SubmitDocumentChangesResultSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.PolicyAggregateSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.DocumentAggregateSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.AddDocumentEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.AddDocumentLineEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.AddAttendancesEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.RemoveAttendancesEventSerialCodec

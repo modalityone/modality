@@ -91,7 +91,7 @@ jobs:
       web-push-username: ${{ github.actor }}
       web-push-email: ${{ secrets.API_GITHUB_EMAIL }}
       jdk-version: '19'
-      xcode-version: '14.2.0'
+      xcode-version: '15.4.0'
       API_GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GLUON_LICENSE: ${{ secrets.GLUON_LICENSE }}
@@ -121,14 +121,14 @@ jobs:
 
       # Set up the JDK (WebFX requires JDK13+ due to javac bugs in prior versions - otherwise JDK11+ should be enough in theory)
       - name: Set up JDK ${{ env.jdk-version }}
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: ${{ env.jdk-version }}
 
       # Checkout this repository
       - name: Checkout this repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: ${{ env.app-repo-dir }}
 
@@ -497,7 +497,7 @@ jobs:
       # Note: each asset will be a folder containing the artifacts
       - if: env.API_GITHUB_TOKEN != ''
         name: Download artifacts into staging directory
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           path: download
 
@@ -520,7 +520,7 @@ jobs:
       # Upload all artifacts into the SNAPSHOT release assets
       - if: env.API_GITHUB_TOKEN != ''
         name: Upload artifacts to the SNAPSHOT release assets
-        uses: AButler/upload-release-assets@v2.0
+        uses: AButler/upload-release-assets@v3.0
         with:
           release-tag: SNAPSHOT
           files: upload/*

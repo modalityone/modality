@@ -193,6 +193,13 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-css</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-base-client-entities</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
@@ -452,21 +459,21 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-payment-custom</artifactId>
+            <artifactId>modality-ecommerce-payment-embedded</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-payment-custom-buscall</artifactId>
+            <artifactId>modality-ecommerce-payment-embedded-buscall</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-payment-custom-remote</artifactId>
+            <artifactId>modality-ecommerce-payment-embedded-remote</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
@@ -480,7 +487,7 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-event-backoffice-event-fx</artifactId>
+            <artifactId>modality-event-backoffice-events-buttonselector-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
@@ -516,6 +523,13 @@
         <dependency>
             <groupId>one.modality</groupId>
             <artifactId>modality-event-client-activity-eventdependent</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-event-client-event-fx</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
@@ -672,6 +686,13 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-switches</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-theme</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
@@ -764,6 +785,13 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-util-layout</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-util-masterslave</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
@@ -1253,6 +1281,13 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-util-http</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <classifier>sources</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-util-time</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
@@ -1435,7 +1470,7 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-cloud-image-cloudinary</artifactId>
+            <artifactId>webfx-stack-cloud-image-client</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>
@@ -1597,13 +1632,6 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-db-submit-remote</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-            <classifier>sources</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-hash-sha1</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>

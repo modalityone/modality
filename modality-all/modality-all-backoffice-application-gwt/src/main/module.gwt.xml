@@ -216,6 +216,7 @@
     <source path="one/modality/base/client/operations/i18n"/>
     <source path="one/modality/base/client/services/i18n"/>
     <!--===========================< modality-base-client-icons >===========================-->
+    <source path="one/modality/base/client/icons"/>
     <resource path="images/s16"/>
     <public includes="images/s16/" path=""/>
     <resource path="images/s16/actions"/>
@@ -340,21 +341,20 @@
     <source path="one/modality/ecommerce/backoffice/operations/entities/moneyflow"/>
     <!--=============< modality-ecommerce-backoffice-operations-moneytransfer >=============-->
     <source path="one/modality/ecommerce/backoffice/operations/entities/moneytransfer"/>
-    <!--=======================< modality-ecommerce-payment-custom >========================-->
-    <source path="one/modality/ecommerce/payment/custom"/>
-    <source path="one/modality/ecommerce/payment/custom/spi"/>
-    <!--===================< modality-ecommerce-payment-custom-buscall >====================-->
-    <source path="one/modality/ecommerce/payment/custom/buscall"/>
-    <source path="one/modality/ecommerce/payment/custom/buscall/serial"/>
-    <!--====================< modality-ecommerce-payment-custom-remote >====================-->
-    <source path="one/modality/ecommerce/payment/custom/spi/impl/remote"/>
+    <!--======================< modality-ecommerce-payment-embedded >=======================-->
+    <source path="one/modality/ecommerce/payment/embedded"/>
+    <source path="one/modality/ecommerce/payment/embedded/spi"/>
+    <!--==================< modality-ecommerce-payment-embedded-buscall >===================-->
+    <source path="one/modality/ecommerce/payment/embedded/buscall"/>
+    <source path="one/modality/ecommerce/payment/embedded/buscall/serial"/>
+    <!--===================< modality-ecommerce-payment-embedded-remote >===================-->
+    <source path="one/modality/ecommerce/payment/embedded/spi/impl/remote"/>
     <!--===========< modality-event-backoffice-activity-recurringevents-plugin >============-->
     <source path="one/modality/event/backoffice/activities/recurringevents"/>
     <source path="one/modality/event/backoffice/activities/recurringevents/routing"/>
     <source path="one/modality/event/backoffice/operations/routes/recurringevents"/>
-    <!--=======================< modality-event-backoffice-event-fx >=======================-->
-    <source path="one/modality/event/backoffice/event/fx"/>
-    <source path="one/modality/event/backoffice/event/fx/impl"/>
+    <!--=============< modality-event-backoffice-events-buttonselector-plugin >=============-->
+    <source path="one/modality/event/backoffice/events/buttonselector"/>
     <!--==============< modality-event-backoffice-events-ganttcanvas-plugin >===============-->
     <source path="one/modality/event/backoffice/events/ganttcanvas"/>
     <source path="one/modality/event/backoffice/events/ganttcanvas/spi/impl/event"/>
@@ -362,6 +362,8 @@
     <source path="one/modality/event/backoffice/events/pm"/>
     <!--=================< modality-event-client-activity-eventdependent >==================-->
     <source path="one/modality/event/client/activity/eventdependent"/>
+    <!--=========================< modality-event-client-event-fx >=========================-->
+    <source path="one/modality/event/client/event/fx"/>
     <!--==========================< modality-event-client-theme >===========================-->
     <source path="one/modality/event/client/theme"/>
     <!--====================< modality-hotel-backoffice-accommodation >=====================-->
@@ -397,7 +399,7 @@
     <source path="dev/webfx/extras/filepicker/spi"/>
     <source path="dev/webfx/extras/filepicker/spi/impl"/>
     <!--========================< webfx-extras-filepicker-gwt-j2cl >========================-->
-    <source path="dev/webfx/extras/filepicker/spi/impl/gwt"/>
+    <source path="dev/webfx/extras/filepicker/spi/impl/gwtj2cl"/>
     <!--=============================< webfx-extras-geometry >==============================-->
     <source path="dev/webfx/extras/geometry"/>
     <!--============================< webfx-extras-imagestore >=============================-->
@@ -412,6 +414,8 @@
     <source path="dev/webfx/extras/materialdesign/util"/>
     <!--===============================< webfx-extras-panes >===============================-->
     <source path="dev/webfx/extras/panes"/>
+    <!--=============================< webfx-extras-switches >==============================-->
+    <source path="dev/webfx/extras/switches"/>
     <!--===============================< webfx-extras-theme >===============================-->
     <source path="dev/webfx/extras/theme"/>
     <source path="dev/webfx/extras/theme/layout"/>
@@ -453,6 +457,8 @@
     <source path="dev/webfx/extras/util/control"/>
     <!--============================< webfx-extras-util-layout >============================-->
     <source path="dev/webfx/extras/util/layout"/>
+    <!--=========================< webfx-extras-util-masterslave >==========================-->
+    <source path="dev/webfx/extras/util/masterslave"/>
     <!--============================< webfx-extras-util-paint >=============================-->
     <source path="dev/webfx/extras/util/paint"/>
     <!--============================< webfx-extras-util-scene >=============================-->
@@ -648,6 +654,8 @@
     <source path="dev/webfx/platform/util/function"/>
     <source path="dev/webfx/platform/util/tuples"/>
     <source path="dev/webfx/platform/util/uuid"/>
+    <!--============================< webfx-platform-util-http >============================-->
+    <source path="dev/webfx/platform/util/http"/>
     <!--============================< webfx-platform-util-time >============================-->
     <source path="dev/webfx/platform/util/time"/>
     <!--==========================< webfx-platform-windowhistory >==========================-->
@@ -721,8 +729,8 @@
     <!--============================< webfx-stack-cloud-image >=============================-->
     <source path="dev/webfx/stack/cloud/image"/>
     <source path="dev/webfx/stack/cloud/image/impl/fetchbased"/>
-    <!--=======================< webfx-stack-cloud-image-cloudinary >=======================-->
-    <source path="dev/webfx/stack/cloud/image/impl/cloudinary"/>
+    <!--=========================< webfx-stack-cloud-image-client >=========================-->
+    <source path="dev/webfx/stack/cloud/image/impl/client"/>
     <!--==============================< webfx-stack-com-bus >===============================-->
     <source path="dev/webfx/stack/com/bus"/>
     <source path="dev/webfx/stack/com/bus/spi"/>
@@ -793,8 +801,6 @@
     <source path="dev/webfx/stack/db/submit/buscall/serial"/>
     <!--==========================< webfx-stack-db-submit-remote >==========================-->
     <source path="dev/webfx/stack/db/submit/spi/impl/remote"/>
-    <!--=============================< webfx-stack-hash-sha1 >==============================-->
-    <source path="dev/webfx/stack/hash/sha1"/>
     <!--================================< webfx-stack-i18n >================================-->
     <source path="dev/webfx/stack/i18n"/>
     <source path="dev/webfx/stack/i18n/operations"/>
