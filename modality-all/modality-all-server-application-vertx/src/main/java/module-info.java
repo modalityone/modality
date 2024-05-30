@@ -11,8 +11,8 @@ module modality.all.server.application.vertx {
     requires modality.crm.server.authz.required.plugin;
     requires modality.ecommerce.document.service.server;
     requires modality.ecommerce.payment.custom.server;
-    requires modality.ecommerce.payment.delegated.server;
     requires modality.ecommerce.payment.direct.server;
+    requires modality.ecommerce.payment.redirect.server;
     requires webfx.platform.ast.factory.vertx;
     requires webfx.platform.blob.java;
     requires webfx.platform.boot.vertx;

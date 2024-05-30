@@ -26,14 +26,14 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-payment-gateway-delegated-stripe-plugin</artifactId>
+            <artifactId>modality-ecommerce-payment-gateway-direct-authorizedotnet-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-payment-gateway-direct-authorizedotnet-plugin</artifactId>
+            <artifactId>modality-ecommerce-payment-gateway-redirect-stripe-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>

@@ -13,7 +13,7 @@
         <plugin-module>modality-ecommerce-server-min-plugin</plugin-module>
 
         <plugin-module>modality-ecommerce-payment-gateway-direct-authorizedotnet-plugin</plugin-module>
-        <plugin-module>modality-ecommerce-payment-gateway-delegated-stripe-plugin</plugin-module>
+        <plugin-module>modality-ecommerce-payment-gateway-redirect-stripe-plugin</plugin-module>
         <plugin-module>modality-ecommerce-payment-gateway-custom-stripe-plugin</plugin-module>
 
     </dependencies>

@@ -23,7 +23,7 @@ public class ServerCustomPaymentProvider implements CustomPaymentProvider {
     public Future<InitiateCustomPaymentResult> initiateCustomPayment(InitiateCustomPaymentArgument argument) {
         List<CustomPaymentGatewayProvider> providers = getProviders();
         if (providers.isEmpty())
-            return Future.failedFuture(new IllegalStateException("No delegated payment gateway found!"));
+            return Future.failedFuture(new IllegalStateException("No custom payment gateway found!"));
         return providers.get(0) // Temporary
                 .initiateCustomPayment(argument);
     }
