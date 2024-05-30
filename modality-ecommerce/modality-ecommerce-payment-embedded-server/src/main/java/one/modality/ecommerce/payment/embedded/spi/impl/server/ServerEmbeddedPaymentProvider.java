@@ -5,7 +5,7 @@ import dev.webfx.platform.service.MultipleServiceProviders;
 import one.modality.ecommerce.payment.embedded.InitiateEmbeddedPaymentArgument;
 import one.modality.ecommerce.payment.embedded.InitiateEmbeddedPaymentResult;
 import one.modality.ecommerce.payment.embedded.spi.EmbeddedPaymentProvider;
-import one.modality.ecommerce.payment.gateway.embedded.spi.EmbeddedPaymentGatewayProvider;
+import one.modality.ecommerce.payment.embedded.gateway.spi.EmbeddedPaymentGatewayProvider;
 
 import java.util.List;
 import java.util.ServiceLoader;

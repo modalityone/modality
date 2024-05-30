@@ -7,7 +7,7 @@ import one.modality.ecommerce.payment.api.GetApiPaymentGatewayInfosResult;
 import one.modality.ecommerce.payment.api.MakeApiPaymentArgument;
 import one.modality.ecommerce.payment.api.MakeApiPaymentResult;
 import one.modality.ecommerce.payment.api.spi.ApiPaymentProvider;
-import one.modality.ecommerce.payment.gateway.api.spi.ApiPaymentGatewayProvider;
+import one.modality.ecommerce.payment.api.gateway.spi.ApiPaymentGatewayProvider;
 
 import java.util.List;
 import java.util.ServiceLoader;

@@ -7,7 +7,7 @@ module modality.ecommerce.payment.api.server {
 
     // Direct dependencies modules
     requires modality.ecommerce.payment.api;
-    requires modality.ecommerce.payment.gateway.api;
+    requires modality.ecommerce.payment.api.gateway;
     requires webfx.platform.async;
     requires webfx.platform.service;
 
@@ -15,7 +15,7 @@ module modality.ecommerce.payment.api.server {
     exports one.modality.ecommerce.payment.api.spi.impl.server;
 
     // Used services
-    uses one.modality.ecommerce.payment.gateway.api.spi.ApiPaymentGatewayProvider;
+    uses one.modality.ecommerce.payment.api.gateway.spi.ApiPaymentGatewayProvider;
 
     // Provided services
     provides one.modality.ecommerce.payment.api.spi.ApiPaymentProvider with one.modality.ecommerce.payment.api.spi.impl.server.ServerApiPaymentProvider;

@@ -6,8 +6,8 @@
 module modality.ecommerce.payment.redirect.server {
 
     // Direct dependencies modules
-    requires modality.ecommerce.payment.gateway.redirect;
     requires modality.ecommerce.payment.redirect;
+    requires modality.ecommerce.payment.redirect.gateway;
     requires webfx.platform.async;
     requires webfx.platform.service;
 
@@ -15,7 +15,7 @@ module modality.ecommerce.payment.redirect.server {
     exports one.modality.ecommerce.payment.redirect.spi.impl.server;
 
     // Used services
-    uses one.modality.ecommerce.payment.gateway.redirect.spi.RedirectPaymentGatewayProvider;
+    uses one.modality.ecommerce.payment.redirect.gateway.spi.RedirectPaymentGatewayProvider;
 
     // Provided services
     provides one.modality.ecommerce.payment.redirect.spi.RedirectPaymentProvider with one.modality.ecommerce.payment.redirect.spi.impl.server.ServerRedirectPaymentProvider;

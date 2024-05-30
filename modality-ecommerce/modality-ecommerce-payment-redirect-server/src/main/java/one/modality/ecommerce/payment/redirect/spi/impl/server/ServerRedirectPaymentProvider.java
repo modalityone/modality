@@ -5,8 +5,8 @@ import dev.webfx.platform.service.MultipleServiceProviders;
 import one.modality.ecommerce.payment.redirect.InitiateRedirectPaymentArgument;
 import one.modality.ecommerce.payment.redirect.InitiateRedirectPaymentResult;
 import one.modality.ecommerce.payment.redirect.spi.RedirectPaymentProvider;
-import one.modality.ecommerce.payment.gateway.redirect.spi.RedirectPaymentGatewayProvider;
-import one.modality.ecommerce.payment.gateway.redirect.spi.InitiateRedirectPaymentGatewayArgument;
+import one.modality.ecommerce.payment.redirect.gateway.spi.RedirectPaymentGatewayProvider;
+import one.modality.ecommerce.payment.redirect.gateway.spi.InitiateRedirectPaymentGatewayArgument;
 
 import java.util.List;
 import java.util.ServiceLoader;
