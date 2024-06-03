@@ -99,25 +99,28 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                         .build()
         ).compose(batch -> {
             Object documentPk = finalDocumentPrimaryKey;
+            Object documentRef = null;
             Object cartPk = null;
             String cartUuid = null;
             Document document = (Document) entities.get(documentPk);
             if (document != null) {
                 documentPk = document.getPrimaryKey();
+                documentRef = document.getRef();
                 Cart cart = document.getCart();
                 if (cart != null) {
                     cartPk = cart.getPrimaryKey();
                     cartUuid = cart.getUuid();
                 }
-                if (cartUuid == null) {
-                    return document.onExpressionLoaded("cart.uuid")
+                if (cartUuid == null || documentRef == null) {
+                    return document.onExpressionLoaded("ref,cart.uuid")
                             .map(x -> new SubmitDocumentChangesResult(
                                     document.getPrimaryKey(),
+                                    document.getRef(),
                                     document.getCart().getPrimaryKey(),
                                     document.getCart().getUuid()));
                 }
             }
-            return Future.succeededFuture(new SubmitDocumentChangesResult(documentPk, cartPk, cartUuid));
+            return Future.succeededFuture(new SubmitDocumentChangesResult(documentPk, documentRef, cartPk, cartUuid));
         });
     }
 
