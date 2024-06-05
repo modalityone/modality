@@ -41,7 +41,7 @@ public interface MoneyTransfer extends
         return getForeignEntityId("parent");
     }
 
-    default Method getParent() {
+    default MoneyTransfer getParent() {
         return getForeignEntity("parent");
     }
 
@@ -75,6 +75,30 @@ public interface MoneyTransfer extends
 
     default Boolean isSuccessful() {
         return getBooleanFieldValue("successful");
+    }
+
+    default void setFromMoneyAccount(Object parent) {
+        setForeignField("fromMoneyAccount", parent);
+    }
+
+    default EntityId getFromMoneyAccountId() {
+        return getForeignEntityId("fromMoneyAccount");
+    }
+
+    default MoneyAccount getFromMoneyAccount() {
+        return getForeignEntity("fromMoneyAccount");
+    }
+
+    default void setToMoneyAccount(Object parent) {
+        setForeignField("toMoneyAccount", parent);
+    }
+
+    default EntityId getToMoneyAccountId() {
+        return getForeignEntityId("toMoneyAccount");
+    }
+
+    default MoneyAccount getToMoneyAccount() {
+        return getForeignEntity("toMoneyAccount");
     }
 
 }

@@ -19,21 +19,21 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-payment-api-gateway-authorizedotnet-plugin</artifactId>
+            <artifactId>modality-ecommerce-payment-gateway-authorizedotnet-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-payment-embedded-gateway-stripe-plugin</artifactId>
+            <artifactId>modality-ecommerce-payment-gateway-square-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-payment-redirect-gateway-stripe-plugin</artifactId>
+            <artifactId>modality-ecommerce-payment-gateway-stripe-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>

@@ -44,4 +44,16 @@ public interface MoneyAccount extends
         return getBooleanFieldValue("closed");
     }
 
+    default void setGatewayCompany(Object parent) {
+        setForeignField("gatewayCompany", parent);
+    }
+
+    default EntityId getGatewayCompanyId() {
+        return getForeignEntityId("gatewayCompany");
+    }
+
+    default GatewayCompany getGatewayCompany() {
+        return getForeignEntity("gatewayCompany");
+    }
+
 }

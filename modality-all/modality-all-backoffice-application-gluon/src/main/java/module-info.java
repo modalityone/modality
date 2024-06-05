@@ -8,8 +8,8 @@ module modality.all.backoffice.application.gluon {
     // Direct dependencies modules
     requires javafx.web;
     requires modality.all.backoffice.application;
-    requires modality.ecommerce.payment.embedded.buscall;
-    requires modality.ecommerce.payment.embedded.remote;
+    requires modality.ecommerce.payment.buscall;
+    requires modality.ecommerce.payment.remote;
     requires webfx.extras.filepicker.openjfx;
     requires webfx.extras.visual.charts.peers.openjfx;
     requires webfx.extras.visual.grid.peers.openjfx;
