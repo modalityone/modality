@@ -148,6 +148,14 @@ public class RecurringEventSchedule {
             selectedDates.add(si.getDate());
         });
     }
+    public void selectDates(List <LocalDate> list) {
+        selectedDates.clear();
+        scheduledItemsList.forEach(si-> {
+            if(list.contains(si.getDate())) {
+                selectedDates.add(si.getDate());
+            }
+        });
+    }
     public ObservableList<LocalDate> getSelectedDates() {
         return selectedDates;
     }

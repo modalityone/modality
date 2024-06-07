@@ -25,5 +25,11 @@ public final class SvgIcons {
         return trashSVGPath;
     }
 
+    public static SVGPath createCreditCardPath() {
+        SVGPath trashSVGPath = new SVGPath();
+        trashSVGPath.setContent("M1.9 12C1.3775 12 0.930367 11.8533 0.5586 11.5597C0.1862 11.2657 0 10.9125 0 10.5V1.5C0 1.0875 0.1862 0.7345 0.5586 0.441C0.930367 0.147 1.3775 0 1.9 0H17.1C17.6225 0 18.07 0.147 18.4424 0.441C18.8141 0.7345 19 1.0875 19 1.5V10.5C19 10.9125 18.8141 11.2657 18.4424 11.5597C18.07 11.8533 17.6225 12 17.1 12H1.9ZM1.9 6H17.1V3H1.9V6Z");
+        trashSVGPath.setStrokeWidth(1);
+        return trashSVGPath;
+    }
 
     }

@@ -353,17 +353,19 @@ public final class ManageRecurringEventView {
                         List<LocalDate> list = scheduledItemsReadFromDatabase.stream().map(EntityHasLocalDate::getDate).collect(Collectors.toList());
 
                         calendarPane.getDatesPicker().setDateCssGetter((localDate -> {
-                            ScheduledItem scheduledItem = scheduledItemList.stream().filter(si->localDate.equals(si.getDate())).findFirst().orElse(null);
-                            if(scheduledItem!=null && scheduledItem.getFieldValue("attendance")!=null) {
+                            ScheduledItem scheduledItem = scheduledItemList.stream().filter(si -> localDate.equals(si.getDate())).findFirst().orElse(null);
+                            if (scheduledItem != null && scheduledItem.getFieldValue("attendance") != null) {
                                 isEventDeletable.setValue(false);
                                 return "webfx-dates-picker-secondary";
-                            }
-                            else {
+                            } else {
+                                //TODO: finish here, the code bellow doesn't work to change the color text of the passed date
+                                if (localDate.isBefore(LocalDate.now())) return "webfx-dates-picker-date-passed";
                                 return calendarPane.getDatesPicker().getSelectedDateCss();
                             }
                         }));
                         calendarPane.getDatesPicker().getSelectedDates().setAll(list);
                         calendarPane.getDatesPicker().setOnDateClicked(localDate -> {
+                            if(localDate.isBefore(LocalDate.now())) return; //If the date is before the current date, we do nothing
                             ScheduledItem scheduledItem = scheduledItemList.stream().filter(si->localDate.equals(si.getDate())).findFirst().orElse(null);
                             if(!(scheduledItem!=null && scheduledItem.getFieldValue("attendance")!=null)) {
                                 calendarPane.getDatesPicker().processDateSelected(localDate);
