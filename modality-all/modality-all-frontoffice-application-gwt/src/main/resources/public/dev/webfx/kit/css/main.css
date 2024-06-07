@@ -408,6 +408,9 @@ body {
 .date-selected > fx-background {
     background-color: var(--blue-color, #0096D6);
 }
+.date-non-selectable > fx-background {
+    background-color: var(--blue-color, #AAAAAA);
+}
 
 .date-selected  {
     color: white;

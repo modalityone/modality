@@ -306,10 +306,10 @@ Text, Label, Button, TextField {
 .date-selected {
      -fx-background-color: #0096D6;
 }
-
-.date-already-booked {
-     -fx-background-color: green;
+.date-non-selectable {
+    -fx-background-color: #AAAAAA;
 }
+
 .date-past-not-selected {
      -fx-background-color: #CCCCCC;
 }
