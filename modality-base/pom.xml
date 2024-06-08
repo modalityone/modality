@@ -34,6 +34,7 @@
         <module>modality-base-backoffice-operations-generic</module>
         <module>modality-base-backoffice-operations-snapshot</module>
         <module>modality-base-client-activity</module>
+        <module>modality-base-client-activity-console-plugin</module>
         <module>modality-base-client-activity-organizationdependent</module>
         <module>modality-base-client-application</module>
         <module>modality-base-client-conf</module>
