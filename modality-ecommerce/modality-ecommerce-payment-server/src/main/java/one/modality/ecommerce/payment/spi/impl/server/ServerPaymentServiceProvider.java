@@ -3,7 +3,9 @@ package one.modality.ecommerce.payment.spi.impl.server;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.service.MultipleServiceProviders;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
+import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
+import one.modality.base.shared.entities.GatewayParameter;
 import one.modality.base.shared.entities.MoneyTransfer;
 import one.modality.ecommerce.payment.InitiatePaymentArgument;
 import one.modality.ecommerce.payment.InitiatePaymentResult;
@@ -14,7 +16,9 @@ import one.modality.ecommerce.payment.gateway.GatewayMakeApiPaymentArgument;
 import one.modality.ecommerce.payment.gateway.PaymentGateway;
 import one.modality.ecommerce.payment.spi.PaymentServiceProvider;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ServiceLoader;
 
 /**
@@ -36,15 +40,34 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
 
     @Override
     public Future<InitiatePaymentResult> initiatePayment(InitiatePaymentArgument argument) {
+        // Step 1: Adding a payment to the document in the database
         return addDocumentPayment(argument.getDocumentPrimaryKey(), argument.getAmount())
                 .compose(moneyTransfer -> {
+                    // Step 2: Finding a Gateway provider registered in the software that matches the money account of the payment
                     PaymentGateway paymentGateway = findMatchingPaymentGatewayProvider(moneyTransfer);
                     if (paymentGateway == null)
                         return Future.failedFuture(new IllegalStateException("No payment gateway found!"));
-                    String currencyCode = moneyTransfer.getToMoneyAccount().getCurrency().getCode();
-                    return paymentGateway.initiatePayment(new GatewayInitiatePaymentArgument(
-                                argument.getAmount(), currencyCode, null, null, null
-                        )).map(res -> new InitiatePaymentResult(moneyTransfer.getPrimaryKey(), res.getHtmlContent(), res.getUrl(), res.isRedirect()));
+                    // Step 3: Loading the relevant payment gateway parameters
+                    boolean live = false; //moneyTransfer.getDocument().getEvent().isLive();
+                    return EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
+                            .<GatewayParameter>executeQuery("select name,value from GatewayParameter where (account=? or account==null and lower(company.name)=lower(?)) and (? ? live : test) order by account nulls first", moneyTransfer.getToMoneyAccount(), moneyTransfer.getToMoneyAccount().getGatewayCompany().getName(), live)
+                            .compose(gpList -> {
+                                Map<String, String> parameters = new HashMap<>();
+                                gpList.forEach(gp -> parameters.put(gp.getName(), gp.getValue()));
+                                // Step 4: Calling the payment gateway with all the data collected
+                                String currencyCode = moneyTransfer.getToMoneyAccount().getCurrency().getCode();
+                                return paymentGateway.initiatePayment(new GatewayInitiatePaymentArgument(
+                                        argument.getAmount(),
+                                        currencyCode,
+                                        null,
+                                        parameters
+                                )).map(res -> // Step 5: Returning a InitiatePaymentResult
+                                        new InitiatePaymentResult(
+                                        moneyTransfer.getPrimaryKey(),
+                                        res.getHtmlContent(),
+                                        res.getUrl(),
+                                        res.isRedirect()));
+                            });
                 });
     }
 
@@ -57,8 +80,13 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                         return Future.failedFuture(new IllegalStateException("No payment gateway found!"));
                     String currencyCode = moneyTransfer.getToMoneyAccount().getCurrency().getCode();
                     return paymentGateway.makeApiPayment(new GatewayMakeApiPaymentArgument(
-                            argument.getAmount(), currencyCode, argument.getCcNumber(), argument.getCcExpiry()
-                    )).map(res -> new MakeApiPaymentResult(res.isSuccess()) );
+                            argument.getAmount(),
+                            currencyCode,
+                            argument.getCcNumber(),
+                            argument.getCcExpiry()
+                    )).map(result -> new MakeApiPaymentResult(
+                            result.isSuccess()
+                    ));
                });
     }
 
@@ -73,7 +101,8 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
         moneyTransfer.setMethod(5); // Online (temporarily hardcoded for now)
         return updateStore.submitChanges()
                 // On success, we load the necessary data associated with this moneyTransfer for the payment gateway
-                .compose(batch -> moneyTransfer.onExpressionLoaded("toMoneyAccount.(currency.code, gatewayCompany.name)")
+                .compose(batch ->
+                        moneyTransfer.onExpressionLoaded("toMoneyAccount.(currency.code, gatewayCompany.name), document.event.live")
                         .map(ignored -> moneyTransfer));
     }
 }

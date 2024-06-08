@@ -1,5 +1,7 @@
 package one.modality.ecommerce.payment.gateway;
 
+import java.util.Map;
+
 /**
  * @author Bruno Salmon
  */
@@ -8,15 +10,13 @@ public final class GatewayInitiatePaymentArgument {
     private final long amount;
     private final String currency;
     private final String productName;
-    private final String successUrl;
-    private final String failUrl;
+    private final Map<String, String> accountParameters;
 
-    public GatewayInitiatePaymentArgument(long amount, String currency, String productName, String successUrl, String failUrl) {
+    public GatewayInitiatePaymentArgument(long amount, String currency, String productName, Map<String, String> accountParameters) {
         this.amount = amount;
         this.currency = currency;
         this.productName = productName;
-        this.successUrl = successUrl;
-        this.failUrl = failUrl;
+        this.accountParameters = accountParameters;
     }
 
     public long getAmount() {
@@ -31,12 +31,11 @@ public final class GatewayInitiatePaymentArgument {
         return productName;
     }
 
-    public String getSuccessUrl() {
-        return successUrl;
+    public Map<String, String> getAccountParameters() {
+        return accountParameters;
     }
 
-    public String getFailUrl() {
-        return failUrl;
+    public String getAccountParameter(String key) {
+        return accountParameters.get(key);
     }
-
 }

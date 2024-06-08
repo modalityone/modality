@@ -7,8 +7,8 @@
             src="https://sandbox.web.squarecdn.com/v1/square.js"
     ></script>
     <script>
-        const appId = 'appID';
-        const locationId = 'locationId';
+        const appId = '${appId}';
+        const locationId = '${locationId}';
 
         async function initializeCard(payments) {
             const card = await payments.card();

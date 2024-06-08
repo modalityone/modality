@@ -2,27 +2,17 @@ package one.modality.ecommerce.payment.gateway.impl.square;
 
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.resource.Resource;
-import dev.webfx.platform.vertx.common.VertxInstance;
-import io.vertx.ext.web.Router;
+import dev.webfx.platform.util.uuid.Uuid;
 import one.modality.ecommerce.payment.gateway.*;
 
 /**
  * @author Bruno Salmon
  */
-public class SquarePaymentGateway implements PaymentGateway {
+public final class SquarePaymentGateway implements PaymentGateway {
 
     private static final String GATEWAY_NAME = "Square";
-    private static final String SQUARE_EMBEDDED_PAYMENT_URL = "/payment/square/embedded-payment";
 
-    public SquarePaymentGateway() {
-        Router router = VertxInstance.getHttpRouter();
-        router.route(SQUARE_EMBEDDED_PAYMENT_URL)
-                .handler(ctx -> {
-                    String html = Resource.getText(Resource.toUrl("square-checkout.html", getClass()));
-                    ctx.response().headers().set("Content-Type", "text/html; charset=utf-8");
-                    ctx.response().setStatusCode(200).end(html);
-                });
-    }
+    private static final String HTML_TEMPLATE = Resource.getText(Resource.toUrl("square-checkout.html", SquarePaymentGateway.class));
 
     @Override
     public String getName() {
@@ -31,7 +21,13 @@ public class SquarePaymentGateway implements PaymentGateway {
 
     @Override
     public Future<GatewayInitiatePaymentResult> initiatePayment(GatewayInitiatePaymentArgument argument) {
-        return Future.succeededFuture(new GatewayInitiatePaymentResult(SQUARE_EMBEDDED_PAYMENT_URL, false));
+        String appId = argument.getAccountParameter("app_id");
+        String locationId = argument.getAccountParameter("order.order.location_id");
+        String html = HTML_TEMPLATE.replace("${appId}", appId).replace("${locationId}", locationId);
+        String responseCacheKey = Uuid.randomUuid();
+        SquareRestApiOneTimeHtmlResponsesCache.registerOneTimeHtmlResponse(responseCacheKey, html);
+        String url = SquareRestApiStarterJob.SQUARE_EMBEDDED_PAYMENT_URL.replace(":responseCacheKey", responseCacheKey);
+        return Future.succeededFuture(new GatewayInitiatePaymentResult(url, false));
     }
 
     @Override

@@ -73,8 +73,8 @@ public class StripePaymentGateway implements PaymentGateway {
         SessionCreateParams params =
                 SessionCreateParams.builder()
                         .setMode(SessionCreateParams.Mode.PAYMENT)
-                        .setSuccessUrl(argument.getSuccessUrl())
-                        .setCancelUrl(argument.getFailUrl())
+                        .setSuccessUrl(null/*argument.getSuccessUrl()*/)
+                        .setCancelUrl(null/*argument.getFailUrl()*/)
                         .addLineItem(lineItem)
                         .build();
 
