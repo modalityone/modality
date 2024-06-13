@@ -24,15 +24,6 @@
 
     <java-callbacks> <!-- not yet considered by WebFX CLI but will be in the future to automatically generate WebToJavaCallbacks super source in final executable GWT module -->
         <callback-class name="one.modality.event.frontoffice.activities.booking.map.DynamicMapView">
-            <callback-method name="consoleLog">
-                <callback-argument class="java.lang.String"/>
-            </callback-method>
-            <callback-method name="consoleWarn">
-                <callback-argument class="java.lang.String"/>
-            </callback-method>
-            <callback-method name="consoleError">
-                <callback-argument class="java.lang.String"/>
-            </callback-method>
             <callback-method name="onGoogleMapLoaded"/>
             <callback-method name="onMarkerClicked">
                 <callback-argument class="one.modality.event.frontoffice.activities.booking.map.MapMarker"/>
@@ -46,12 +37,8 @@
   {
     "name" : "one.modality.event.frontoffice.activities.booking.map.DynamicMapView",
     "methods" : [
-      { "name" : "consoleLog", "parameterTypes" : ["java.lang.String"] },
-      { "name" : "consoleWarn", "parameterTypes" : ["java.lang.String"] },
-      { "name" : "consoleError", "parameterTypes" : ["java.lang.String"] },
       { "name" : "onGoogleMapLoaded", "parameterTypes" : [] },
-      { "name" : "onMarkerClicked", "parameterTypes" : ["one.modality.event.frontoffice.activities.booking.map.MapMarker"] }
-    ]
+      { "name" : "onMarkerClicked", "parameterTypes" : ["one.modality.event.frontoffice.activities.booking.map.MapMarker"] }   ]
   }
 ]
         ]]>

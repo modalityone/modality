@@ -28,6 +28,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires webfx.extras.util.layout;
     requires webfx.extras.util.scene;
     requires webfx.extras.webtext;
+    requires webfx.extras.webview.pane;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.async;
