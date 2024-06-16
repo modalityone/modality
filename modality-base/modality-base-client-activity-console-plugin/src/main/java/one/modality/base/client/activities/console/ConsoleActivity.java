@@ -25,8 +25,10 @@ public final class ConsoleActivity extends ViewActivityBase<ViewActivityContextF
         textArea.setWrapText(true);
         BufferedConsoleProvider.setListener(() -> {
             if (textAreaUpdateScheduled == null || textAreaUpdateScheduled.isFinished()) {
-                textAreaUpdateScheduled = UiScheduler.scheduleDeferred(() ->
-                        textArea.setText(BufferedConsoleProvider.getBufferContent())
+                textAreaUpdateScheduled = UiScheduler.scheduleDeferred(() -> {
+                            textArea.setText(BufferedConsoleProvider.getBufferContent());
+                            textArea.setScrollTop(Double.MAX_VALUE);
+                        }
                 );
             }
         });
