@@ -27,7 +27,7 @@ public final class SquarePaymentGateway implements PaymentGateway {
         String responseCacheKey = Uuid.randomUuid();
         SquareRestApiOneTimeHtmlResponsesCache.registerOneTimeHtmlResponse(responseCacheKey, html);
         String url = SquareRestApiStarterJob.SQUARE_EMBEDDED_PAYMENT_URL.replace(":responseCacheKey", responseCacheKey);
-        return Future.succeededFuture(new GatewayInitiatePaymentResult(url, false));
+        return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedUrlInitiatePaymentResult(url));
     }
 
     @Override

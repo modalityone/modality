@@ -19,9 +19,9 @@ public final class InitiatePaymentResultSerialCodec extends SerialCodecBase<Init
 
     @Override
     public void encode(InitiatePaymentResult arg, AstObject serial) {
-        encodeObject(serial,  PAYMENT_PRIMARY_KEY_KEY, arg.getPaymentPrimaryKey());
-        encodeString(serial,  HTML_CONTENT_KEY,        arg.getHtmlContent());
-        encodeString(serial,  URL_KEY,                 arg.getUrl());
+        encodeObject( serial, PAYMENT_PRIMARY_KEY_KEY, arg.getPaymentPrimaryKey());
+        encodeString( serial, HTML_CONTENT_KEY,        arg.getHtmlContent());
+        encodeString( serial, URL_KEY,                 arg.getUrl());
         encodeBoolean(serial, REDIRECT_KEY,            arg.isRedirect());
     }
 

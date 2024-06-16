@@ -61,12 +61,12 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                                         currencyCode,
                                         null,
                                         parameters
-                                )).map(res -> // Step 5: Returning a InitiatePaymentResult
-                                        new InitiatePaymentResult(
+                                )).map(res -> new InitiatePaymentResult( // Step 5: Returning a InitiatePaymentResult
                                         moneyTransfer.getPrimaryKey(),
                                         res.getHtmlContent(),
                                         res.getUrl(),
-                                        res.isRedirect()));
+                                        res.isRedirect()
+                                ));
                             });
                 });
     }

@@ -39,7 +39,7 @@ public class StripePaymentGateway implements PaymentGateway {
                     .replace("{{API_KEY}}", API_PUBLIC_KEY)
                     .replace("{{CLIENT_SECRET}}", clientSecret)
                     .replace("{{RETURN_URL}}", "http://127.0.0.1:8080/checkout/success/");
-            return Future.succeededFuture(new GatewayInitiatePaymentResult(html));
+            return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedContentInitiatePaymentResult(html));
         } catch (Exception e) {
             return Future.failedFuture(e);
         }
@@ -80,7 +80,7 @@ public class StripePaymentGateway implements PaymentGateway {
 
         try {
             Session session = Session.create(params);
-            return Future.succeededFuture(new InitiatePaymentResult(null, session.getUrl(), true));
+            return Future.succeededFuture(InitiatePaymentResult.createRedirectInitiatePaymentResult(null, session.getUrl()));
         } catch (Exception e) {
             return Future.failedFuture(e);
         }

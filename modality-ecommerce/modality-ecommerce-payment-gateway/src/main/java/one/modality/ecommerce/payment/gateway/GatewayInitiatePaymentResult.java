@@ -9,14 +9,6 @@ public final class GatewayInitiatePaymentResult {
     private final String url; // URL of the page that can handle the payment (redirect will tell what to do with it)
     private final boolean redirect; // true => URL needs to be opened in a separate browser window, false => URL can be opened in an embedded WebView (ex: Square)
 
-    public GatewayInitiatePaymentResult(String htmlContent) {
-        this(htmlContent, null, false);
-    }
-
-    public GatewayInitiatePaymentResult(String url, boolean redirect) {
-        this(null, url, redirect);
-    }
-
     public GatewayInitiatePaymentResult(String htmlContent, String url, boolean redirect) {
         this.htmlContent = htmlContent;
         this.url = url;
@@ -33,6 +25,18 @@ public final class GatewayInitiatePaymentResult {
 
     public boolean isRedirect() {
         return redirect;
+    }
+
+    public static GatewayInitiatePaymentResult createRedirectInitiatePaymentResult(String url) {
+        return new GatewayInitiatePaymentResult(null, url, true);
+    }
+
+    public static GatewayInitiatePaymentResult createEmbeddedContentInitiatePaymentResult(String htmlContent) {
+        return new GatewayInitiatePaymentResult(htmlContent, null, false);
+    }
+
+    public static GatewayInitiatePaymentResult createEmbeddedUrlInitiatePaymentResult(String url) {
+        return new GatewayInitiatePaymentResult(null, url, false);
     }
 
 }
