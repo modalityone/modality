@@ -309,6 +309,10 @@
     <source path="dev/webfx/extras/webtext/registry"/>
     <!--===========================< webfx-extras-webtext-util >============================-->
     <source path="dev/webfx/extras/webtext/util"/>
+    <!--===========================< webfx-extras-webview-pane >============================-->
+    <source path="dev/webfx/extras/webview/pane"/>
+    <resource path="dev/webfx/extras/webview/pane"/>
+    <public includes="dev/webfx/extras/webview/pane/" path=""/>
     <!--======================< webfx-kit-javafxcontrols-peers-base >=======================-->
     <source path="dev/webfx/kit/mapper/peers/javafxcontrols/base"/>
     <!--====================< webfx-kit-javafxcontrols-peers-gwt-j2cl >=====================-->

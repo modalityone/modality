@@ -3,26 +3,26 @@
 @font-face {
     font-family: 'Montserrat';
     font-style: normal;
-    src: url('css:fonts/montserrat/Montserrat-Regular.ttf');
+    src: url('webfx-css:fonts/montserrat/Montserrat-Regular.ttf');
 }
 
 @font-face {
     font-family: 'Montserrat';
     font-weight: bold;
-    src: url('css:fonts/montserrat/Montserrat-Bold.ttf');
+    src: url('webfx-css:fonts/montserrat/Montserrat-Bold.ttf');
 }
 
 @font-face {
     font-family: 'Montserrat';
     font-style: italic;
-    src: url('css:fonts/montserrat/Montserrat-Italic.ttf');
+    src: url('webfx-css:fonts/montserrat/Montserrat-Italic.ttf');
 }
 
 @font-face {
     font-family: 'Montserrat';
     font-weight: bold;
     font-style: italic;
-    src: url('css:fonts/montserrat/Montserrat-BoldItalic.ttf');
+    src: url('webfx-css:fonts/montserrat/Montserrat-BoldItalic.ttf');
 }
 
 

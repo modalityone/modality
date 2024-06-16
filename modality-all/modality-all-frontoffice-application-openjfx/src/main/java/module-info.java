@@ -8,6 +8,7 @@ module modality.all.frontoffice.application.openjfx {
     // Direct dependencies modules
     requires javafx.web;
     requires modality.all.frontoffice.application;
+    requires modality.base.client.activity.console.plugin;
     requires modality.ecommerce.document.service.buscall;
     requires modality.ecommerce.document.service.remote;
     requires webfx.extras.visual.grid.peers.openjfx;
@@ -18,7 +19,6 @@ module modality.all.frontoffice.application.openjfx {
     requires webfx.platform.ast.factory.generic;
     requires webfx.platform.blob.java;
     requires webfx.platform.boot.java;
-    requires webfx.platform.console.java;
     requires webfx.platform.fetch.java;
     requires webfx.platform.file.java;
     requires webfx.platform.os.java;
