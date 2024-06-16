@@ -1,7 +1,9 @@
 <!doctype html>
 <html>
 <head>
+<!--
     <link href="/app.css" rel="stylesheet" />
+-->
     <script
             type="text/javascript"
             src="https://sandbox.web.squarecdn.com/v1/square.js"
@@ -9,6 +11,10 @@
     <script>
         const appId = '${appId}';
         const locationId = '${locationId}';
+
+        let card;
+        let payments;
+        let webfxJavaPaymentCallback;
 
         async function initializeCard(payments) {
             const card = await payments.card();
@@ -98,13 +104,13 @@
             statusContainer.style.visibility = 'visible';
         }
 
+
         document.addEventListener('DOMContentLoaded', async function () {
             console.log("Square DOMContentLoaded");
             if (!window.Square) {
                 throw new Error('Square.js failed to load properly');
             }
 
-            let payments;
             try {
                 console.log("Calling payments");
                 payments = window.Square.payments(appId, locationId);
@@ -118,48 +124,64 @@
                 return;
             }
 
-            let card;
             try {
                 console.log("Calling initializeCard");
                 card = await initializeCard(payments);
             } catch (e) {
                 console.error('Initializing Card failed', e);
-                return;
             }
 
-            async function handlePaymentMethodSubmission(event, card) {
-                event.preventDefault();
-
-                try {
-                    // disable the submit button as we await tokenization and make a payment request.
-                    cardButton.disabled = true;
-                    const token = await tokenize(card);
-                    const verificationToken = await verifyBuyer(payments, token);
-                    const paymentResults = await createPayment(
-                        token,
-                        verificationToken,
-                    );
-                    displayPaymentResults('SUCCESS');
-
-                    console.debug('Payment Success', paymentResults);
-                } catch (e) {
-                    cardButton.disabled = false;
-                    displayPaymentResults('FAILURE');
-                    console.error(e.message);
-                }
-            }
-
-            const cardButton = document.getElementById('card-button');
-            cardButton.addEventListener('click', async function (event) {
-                await handlePaymentMethodSubmission(event, card);
-            });
+            if (webfxJavaPaymentCallback)
+                console.log("javaPayment is NOT set");
+            else
+                console.log("javaPayment is set");
         });
+
+        async function handlePaymentMethodSubmission() {
+            try {
+                // disable the submit button as we await tokenization and make a payment request.
+                const token = await tokenize(card);
+                const verificationToken = await verifyBuyer(payments, token);
+                const paymentResults = await createPayment(
+                    token,
+                    verificationToken,
+                );
+                displayPaymentResults('SUCCESS');
+
+                console.debug('Payment Success', paymentResults);
+                webfxNotifyGatewaySuccess();
+            } catch (e) {
+                displayPaymentResults('FAILURE');
+                console.error(e.message);
+                webfxNotifyGatewayFailure(e.message);
+            }
+        }
+
+        function webfxSubmitGatewayPayment() {
+            console.log("webfxSubmitGatewayPayment() called");
+            handlePaymentMethodSubmission();
+        }
+
+        function webfxInjectJavaPaymentCallback(jp) {
+            console.log("webfxInjectJavaPaymentCallback() called");
+            webfxJavaPaymentCallback = jp;
+        }
+
+        function webfxNotifyGatewaySuccess() {
+            if (webfxJavaPaymentCallback)
+                webfxJavaPaymentCallback.onGatewaySuccess();
+        }
+
+        function webfxNotifyGatewayFailure(error) {
+            if (webfxJavaPaymentCallback)
+                webfxJavaPaymentCallback.onGatewayFailure(error);
+        }
+
     </script>
 </head>
 <body>
 <form id="payment-form">
     <div id="card-container"></div>
-    <button id="card-button" type="button">Pay</button>
 </form>
 <div id="payment-status-container"></div>
 </body>

@@ -11,4 +11,26 @@
         <used-by-source-modules/>
     </dependencies>
 
+    <java-callbacks> <!-- not yet considered by WebFX CLI but will be in the future to automatically generate WebToJavaCallbacks super source in final executable GWT module -->
+        <callback-class name="one.modality.ecommerce.payment.ui.PaymentUI">
+            <callback-method name="onGatewaySuccess"/>
+            <callback-method name="onGatewayFailure">
+                <callback-argument class="java.lang.String"/>
+            </callback-method>
+        </callback-class>
+    </java-callbacks>
+
+    <graalvm-reflection-json> <!-- Should be generated from callbacks declaration instead -->
+        <![CDATA[
+[
+  {
+    "name" : "one.modality.ecommerce.payment.ui.PaymentUI",
+    "methods" : [
+      { "name" : "onGatewaySuccess", "parameterTypes" : [] },
+      { "name" : "onGatewayFailure", "parameterTypes" : ["java.lang.String"] }   ]
+  }
+]
+        ]]>
+    </graalvm-reflection-json>
+
 </project>

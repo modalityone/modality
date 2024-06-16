@@ -6,14 +6,13 @@
 module modality.ecommerce.payment.ui {
 
     // Direct dependencies modules
-    requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
-    requires javafx.web;
     requires modality.ecommerce.payment;
     requires webfx.extras.panes;
-    requires webfx.extras.player.video;
+    requires webfx.extras.webview.pane;
     requires webfx.platform.browser;
+    requires webfx.platform.conf;
     requires webfx.platform.console;
 
     // Exported packages

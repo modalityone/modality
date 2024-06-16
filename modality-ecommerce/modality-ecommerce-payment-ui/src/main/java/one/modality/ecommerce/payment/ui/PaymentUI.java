@@ -1,17 +1,17 @@
 package one.modality.ecommerce.payment.ui;
 
-import dev.webfx.extras.panes.MonoPane;
-import dev.webfx.extras.player.video.impl.ResizableRectangle;
+import dev.webfx.extras.panes.ColumnsPane;
+import dev.webfx.extras.webview.pane.LoadOptions;
+import dev.webfx.extras.webview.pane.WebViewPane;
 import dev.webfx.platform.browser.Browser;
+import dev.webfx.platform.conf.ConfigLoader;
 import dev.webfx.platform.console.Console;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
-import javafx.scene.layout.Background;
+import javafx.scene.control.Button;
 import javafx.scene.layout.Region;
-import javafx.scene.paint.Color;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
+import javafx.scene.layout.VBox;
 import one.modality.ecommerce.payment.InitiatePaymentResult;
+
+import java.util.function.Consumer;
 
 /**
  * @author Bruno Salmon
@@ -19,32 +19,32 @@ import one.modality.ecommerce.payment.InitiatePaymentResult;
 public class PaymentUI {
 
     private final InitiatePaymentResult result;
+    private final WebViewPane webViewPane = new WebViewPane();
+    private Runnable onCancel;
+    private Runnable onSuccess;
+    private Consumer<String> onFailure;
+    private final Button payButton = new Button("Pay");
 
     public PaymentUI(InitiatePaymentResult result) {
         this.result = result;
     }
 
-    public Region buildUI() {
-        MonoPane container = new MonoPane();
-        container.setBackground(Background.fill(Color.PURPLE));
-        container.setMinSize(600, 400);
-        // We set its content to a resizable rectangle, so it will be resized
-        container.setContent(new ResizableRectangle());
-        container.widthProperty().addListener(new InvalidationListener() {
-            @Override
-            public void invalidated(Observable observable) {
-                // One-time listener => we remove it
-                container.widthProperty().removeListener(this);
-                // Now that the container has a stabilized size (which will be the size of the video player),
-                // we can set its content to the web view
-                container.setContent(buildWebView());
-            }
-        });
-
-        return container;
+    public PaymentUI setOnCancel(Runnable onCancel) {
+        this.onCancel = onCancel;
+        return this;
     }
 
-    private WebView buildWebView() {
+    public PaymentUI setOnSuccess(Runnable onSuccess) {
+        this.onSuccess = onSuccess;
+        return this;
+    }
+
+    public PaymentUI setOnFailure(Consumer<String> onFailure) {
+        this.onFailure = onFailure;
+        return this;
+    }
+
+    public Region buildUI() {
         String url = result.getUrl();
         if (result.isRedirect()) {
             try {
@@ -54,32 +54,76 @@ public class PaymentUI {
             }
             return null;
         }
-        WebView webView = new WebView();
-        webView.setMinSize(550, 350);
+        webViewPane.setMaxSize(600, 130);
+        //webViewPane.setRedirectConsole(true); // causes stack overflow
+        payButton.setDisable(true);
+        LoadOptions loadOptions = new LoadOptions()
+                .setOnLoadSuccess(() -> {
+                    payButton.setDisable(false);
+                    try {
+                        webViewPane.setWindowMember("webfxJavaPaymentCallback", PaymentUI.this);
+                        webViewPane.callWindow("webfxInjectJavaPaymentCallback", PaymentUI.this);
+                    } catch (Exception ex) {
+                        onGatewayFailure(ex.getMessage());
+                    }
+                });
         String htmlContent = result.getHtmlContent();
-        WebEngine engine = webView.getEngine();
         if (htmlContent != null) {
-            engine.loadContent(htmlContent);
+            webViewPane.loadFromHtml(htmlContent, loadOptions, false);
         } else {
-            if (url.startsWith("/"))
-                //url = WindowLocation.getOrigin() + url; // TODO make this work
-                url = "https://10.101.1.34" + url;
-            Console.log("Loading " + url);
-            engine.load(url);
-            webView.setPageFill(Color.PINK);
-        }
-        engine.getLoadWorker().stateProperty().addListener(
-                (obs, oldState, newState) -> {
-                    Console.log("PaymentUI state changed from " + oldState + " to " + newState);
-                }
-        );
-        /* Not yet supported by WebFX
-        engine.getLoadWorker().exceptionProperty().addListener((obs, oldExc, newExc) -> {
-            if (newExc != null) {
-                Console.log("PaymentUI WebView exception:", newExc);
+            if (url.startsWith("/")) {
+                url = getHttpServerOrigin() + url;
             }
-        });*/
-        engine.setOnError(e -> Console.log("PaymentUI WebView error: " + e.getMessage(), e.getException()));
-        return webView;
+            webViewPane.loadFromUrl(url, loadOptions, false);
+        }
+        payButton.setMaxWidth(Double.MAX_VALUE);
+        payButton.setOnMouseClicked(e -> {
+            payButton.setDisable(true);
+            try {
+                Console.log("Calling webfxSubmitGatewayPayment() in payment form");
+                webViewPane.callWindow("webfxSubmitGatewayPayment");
+            } catch (Exception ex) {
+                onGatewayFailure(ex.getMessage());
+            }
+        });
+        Button cancelButton = new Button("Cancel");
+        cancelButton.setMaxWidth(Double.MAX_VALUE);
+        cancelButton.setOnMouseClicked(e -> {
+            if (onCancel != null) {
+                onCancel.run();
+            }
+        });
+        return new VBox(webViewPane, new ColumnsPane(payButton, cancelButton));
     }
+
+    // Callback methods (called back by the payment gateway script)
+
+    public void onGatewaySuccess() {
+        payButton.setDisable(false);
+        if (onSuccess != null)
+            onSuccess.run();
+    }
+
+    public void onGatewayFailure(String error) {
+        payButton.setDisable(false);
+        Console.log(error);
+        if (onFailure != null)
+            onFailure.accept(error);
+    }
+
+    private static String getHttpServerOrigin() {
+        // return WindowLocation.getOrigin(); // TODO make this work
+        String origin = evaluateOrNull("${{ HTTP_SERVER_ORIGIN }}");
+        if (origin == null)
+            origin = "https://" + evaluateOrNull("${{ HTTP_SERVER_HOST | BUS_SERVER_HOST | SERVER_HOST }}");
+        return origin;
+    }
+
+    private static String evaluateOrNull(String expression) {
+        String value = ConfigLoader.getRootConfig().get(expression);
+        if (value == expression)
+            value = null;
+        return value;
+    }
+
 }
