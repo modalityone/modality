@@ -127,8 +127,8 @@ public final class OrganizationSelectorView {
                             double fontFactor = GeneralUtility.computeFontFactor(w);
                             GeneralUtility.setLabeledFont(websiteLink, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
                             GeneralUtility.setLabeledFont(addressLink, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
-                            GeneralUtility.setLabeledFont(phoneLink, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
-                            GeneralUtility.setLabeledFont(emailLink, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
+                            GeneralUtility.setLabeledFont(phoneLink,   StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
+                            GeneralUtility.setLabeledFont(emailLink,   StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
                         } else
                             contactBox.setAlignment(Pos.CENTER);
                         if (presentationPane.isVisible()) {
