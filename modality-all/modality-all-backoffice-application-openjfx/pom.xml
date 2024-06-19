@@ -371,11 +371,4 @@
 
     </profiles>
 
-
-    <!--
-        <properties>
-            <plugin.javapackager.name>ModalityBackOffice</plugin.javapackager.name>
-            <plugin.javapackager.displayName>Modality Back-Office</plugin.javapackager.displayName>
-        </properties>
-        -->
 </project>
