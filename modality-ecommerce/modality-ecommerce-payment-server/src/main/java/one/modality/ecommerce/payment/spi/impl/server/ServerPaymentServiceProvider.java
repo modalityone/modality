@@ -8,9 +8,9 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import one.modality.base.shared.entities.GatewayParameter;
 import one.modality.base.shared.entities.MoneyTransfer;
 import one.modality.ecommerce.payment.*;
-import one.modality.ecommerce.payment.gateway.GatewayInitiatePaymentArgument;
-import one.modality.ecommerce.payment.gateway.GatewayMakeApiPaymentArgument;
-import one.modality.ecommerce.payment.gateway.PaymentGateway;
+import one.modality.ecommerce.payment.server.gateway.GatewayInitiatePaymentArgument;
+import one.modality.ecommerce.payment.server.gateway.GatewayMakeApiPaymentArgument;
+import one.modality.ecommerce.payment.server.gateway.PaymentGateway;
 import one.modality.ecommerce.payment.spi.PaymentServiceProvider;
 
 import java.util.HashMap;

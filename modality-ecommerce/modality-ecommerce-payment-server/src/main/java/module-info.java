@@ -8,7 +8,7 @@ module modality.ecommerce.payment.server {
     // Direct dependencies modules
     requires modality.base.shared.entities;
     requires modality.ecommerce.payment;
-    requires modality.ecommerce.payment.gateway;
+    requires modality.ecommerce.payment.server.gateway;
     requires webfx.platform.async;
     requires webfx.platform.service;
     requires webfx.stack.orm.datasourcemodel.service;
@@ -18,7 +18,7 @@ module modality.ecommerce.payment.server {
     exports one.modality.ecommerce.payment.spi.impl.server;
 
     // Used services
-    uses one.modality.ecommerce.payment.gateway.PaymentGateway;
+    uses one.modality.ecommerce.payment.server.gateway.PaymentGateway;
 
     // Provided services
     provides one.modality.ecommerce.payment.spi.PaymentServiceProvider with one.modality.ecommerce.payment.spi.impl.server.ServerPaymentServiceProvider;
