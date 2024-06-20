@@ -9,6 +9,7 @@ import dev.webfx.platform.console.Console;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import one.modality.base.shared.entities.markers.HasPersonalDetails;
 import one.modality.ecommerce.payment.InitiatePaymentResult;
 
 import java.util.function.Consumer;
@@ -19,14 +20,20 @@ import java.util.function.Consumer;
 public class PaymentUI {
 
     private final InitiatePaymentResult result;
+    private final int amount;
+    private final String currencyCode;
+    private final HasPersonalDetails hasPersonalDetails;
     private final WebViewPane webViewPane = new WebViewPane();
     private Runnable onCancel;
     private Runnable onSuccess;
     private Consumer<String> onFailure;
     private final Button payButton = new Button("Pay");
 
-    public PaymentUI(InitiatePaymentResult result) {
+    public PaymentUI(InitiatePaymentResult result, int amount, String currencyCode, HasPersonalDetails hasPersonalDetails) {
         this.result = result;
+        this.amount = amount;
+        this.currencyCode = currencyCode;
+        this.hasPersonalDetails = hasPersonalDetails;
     }
 
     public PaymentUI setOnCancel(Runnable onCancel) {
@@ -54,15 +61,16 @@ public class PaymentUI {
             }
             return null;
         }
-        webViewPane.setMaxSize(600, 130);
+        webViewPane.setMaxWidth(600);
+        //webViewPane.setFitHeight(true);
         //webViewPane.setRedirectConsole(true); // causes stack overflow
         payButton.setDisable(true);
         LoadOptions loadOptions = new LoadOptions()
                 .setOnLoadSuccess(() -> {
                     payButton.setDisable(false);
                     try {
-                        webViewPane.setWindowMember("webfxJavaPaymentCallback", PaymentUI.this);
-                        webViewPane.callWindow("webfxInjectJavaPaymentCallback", PaymentUI.this);
+                        webViewPane.setWindowMember("modality_javaPaymentCallback", PaymentUI.this);
+                        webViewPane.callWindow("modality_injectJavaPaymentCallback", PaymentUI.this);
                     } catch (Exception ex) {
                         onGatewayFailure(ex.getMessage());
                     }
@@ -80,8 +88,19 @@ public class PaymentUI {
         payButton.setOnMouseClicked(e -> {
             payButton.setDisable(true);
             try {
-                Console.log("Calling webfxSubmitGatewayPayment() in payment form");
-                webViewPane.callWindow("webfxSubmitGatewayPayment");
+                Console.log("Calling modality_submitGatewayPayment() in payment form");
+                webViewPane.callWindow("modality_submitGatewayPayment",
+                        amount,
+                        currencyCode,
+                        hasPersonalDetails.getFirstName(),
+                        hasPersonalDetails.getLastName(),
+                        hasPersonalDetails.getEmail(),
+                        hasPersonalDetails.getPhone(),
+                        hasPersonalDetails.getStreet(),
+                        hasPersonalDetails.getCityName(),
+                        hasPersonalDetails.getAdmin1Name(),
+                        hasPersonalDetails.getCountry().getIsoAlpha2()
+                        );
             } catch (Exception ex) {
                 onGatewayFailure(ex.getMessage());
             }

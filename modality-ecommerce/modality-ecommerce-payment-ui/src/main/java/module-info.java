@@ -8,6 +8,7 @@ module modality.ecommerce.payment.ui {
     // Direct dependencies modules
     requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.shared.entities;
     requires modality.ecommerce.payment;
     requires webfx.extras.panes;
     requires webfx.extras.webview.pane;

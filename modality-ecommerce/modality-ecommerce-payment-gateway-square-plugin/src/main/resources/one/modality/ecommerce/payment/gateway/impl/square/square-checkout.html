@@ -6,15 +6,18 @@
 -->
     <script
             type="text/javascript"
-            src="https://sandbox.web.squarecdn.com/v1/square.js"
+            src="${squareJsLibraryUrl}"
     ></script>
     <script>
         const appId = '${appId}';
         const locationId = '${locationId}';
+        const modality_paymentId = '${paymentId}';
+        const modality_amount = ${amount};
+        const modality_currency = "${currency}";
 
         let card;
         let payments;
-        let webfxJavaPaymentCallback;
+        let modality_javaPaymentForm;
 
         async function initializeCard(payments) {
             const card = await payments.card();
@@ -25,13 +28,17 @@
 
         async function createPayment(token, verificationToken) {
             const body = JSON.stringify({
+                paymentId: modality_paymentId,
+                amount: modality_amount,
+                currency: modality_currency,
                 locationId,
                 sourceId: token,
                 verificationToken,
                 idempotencyKey: window.crypto.randomUUID(),
             });
 
-            const paymentResponse = await fetch('/payment', {
+            // Calling the Modality server to complete the payment (will call Square to make the actual final payment)
+            const paymentResponse = await fetch("${completePaymentRoute}", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -39,12 +46,9 @@
                 body,
             });
 
-            if (paymentResponse.ok) {
-                return paymentResponse.json();
-            }
-
-            const errorBody = await paymentResponse.text();
-            throw new Error(errorBody);
+            const text = await paymentResponse.text();
+            if (!paymentResponse.ok || text !== "OK")
+                throw new Error(text);
         }
 
         async function tokenize(paymentMethod) {
@@ -64,20 +68,24 @@
         }
 
         // Required in SCA Mandated Regions: Learn more at https://developer.squareup.com/docs/sca-overview
-        async function verifyBuyer(payments, token) {
+        async function verifyBuyer(payments, token, amount, currencyCode, firstName, lastName, email, phone, address, city, state, countryCode) {
+            if (email)
+                email = email.toLowerCase();
+            if (countryCode)
+                countryCode = countryCode.toUpperCase(); // Square rejects lower case country codes
             const verificationDetails = {
-                amount: '1.00',
+                amount: (Number(amount) / 100).toFixed(2),
                 billingContact: {
-                    givenName: 'John',
-                    familyName: 'Doe',
-                    email: 'john.doe@square.example',
-                    phone: '3214563987',
-                    addressLines: ['123 Main Street', 'Apartment 1'],
-                    city: 'London',
-                    state: 'LND',
-                    countryCode: 'GB',
+                    givenName: firstName,
+                    familyName: lastName,
+                    email: email,
+                    phone: phone,
+                    addressLines: [address],
+                    city: city,
+                    state: state,
+                    countryCode: countryCode,
                 },
-                currencyCode: 'GBP',
+                currencyCode: currencyCode,
                 intent: 'CHARGE',
             };
 
@@ -131,17 +139,16 @@
                 console.error('Initializing Card failed', e);
             }
 
-            if (webfxJavaPaymentCallback)
-                console.log("javaPayment is NOT set");
+            if (modality_javaPaymentForm)
+                console.log("modality_javaPaymentForm is NOT set");
             else
-                console.log("javaPayment is set");
+                console.log("modality_javaPaymentForm is set");
         });
 
-        async function handlePaymentMethodSubmission() {
+        async function handlePaymentMethodSubmission(amount, currencyCode, firstName, lastName, email, phone, address, city, state, countryCode) {
             try {
-                // disable the submit button as we await tokenization and make a payment request.
                 const token = await tokenize(card);
-                const verificationToken = await verifyBuyer(payments, token);
+                const verificationToken = await verifyBuyer(payments, token, amount, currencyCode, firstName, lastName, email, phone, address, city, state, countryCode);
                 const paymentResults = await createPayment(
                     token,
                     verificationToken,
@@ -149,32 +156,34 @@
                 displayPaymentResults('SUCCESS');
 
                 console.debug('Payment Success', paymentResults);
-                webfxNotifyGatewaySuccess();
+                modality_notifyGatewaySuccess();
             } catch (e) {
                 displayPaymentResults('FAILURE');
                 console.error(e.message);
-                webfxNotifyGatewayFailure(e.message);
+                modality_notifyGatewayFailure(e.message);
             }
         }
 
-        function webfxSubmitGatewayPayment() {
-            console.log("webfxSubmitGatewayPayment() called");
-            handlePaymentMethodSubmission();
+        // Called by PaymentUI java class
+        function modality_submitGatewayPayment(amount, currencyCode, firstName, lastName, email, phone, address, city, state, countryCode) {
+            console.log("modality_submitGatewayPayment() called");
+            handlePaymentMethodSubmission(amount, currencyCode, firstName, lastName, email, phone, address, city, state, countryCode);
         }
 
-        function webfxInjectJavaPaymentCallback(jp) {
-            console.log("webfxInjectJavaPaymentCallback() called");
-            webfxJavaPaymentCallback = jp;
+        // Called by PaymentUI java class
+        function modality_injectJavaPaymentForm(jp) {
+            console.log("modality_injectJavaPaymentForm() called");
+            modality_javaPaymentForm = jp;
         }
 
-        function webfxNotifyGatewaySuccess() {
-            if (webfxJavaPaymentCallback)
-                webfxJavaPaymentCallback.onGatewaySuccess();
+        function modality_notifyGatewaySuccess() {
+            if (modality_javaPaymentForm)
+                modality_javaPaymentForm.onGatewaySuccess();
         }
 
-        function webfxNotifyGatewayFailure(error) {
-            if (webfxJavaPaymentCallback)
-                webfxJavaPaymentCallback.onGatewayFailure(error);
+        function modality_notifyGatewayFailure(error) {
+            if (modality_javaPaymentForm)
+                modality_javaPaymentForm.onGatewayFailure(error);
         }
 
     </script>

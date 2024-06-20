@@ -7,10 +7,7 @@ import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import one.modality.base.shared.entities.GatewayParameter;
 import one.modality.base.shared.entities.MoneyTransfer;
-import one.modality.ecommerce.payment.InitiatePaymentArgument;
-import one.modality.ecommerce.payment.InitiatePaymentResult;
-import one.modality.ecommerce.payment.MakeApiPaymentArgument;
-import one.modality.ecommerce.payment.MakeApiPaymentResult;
+import one.modality.ecommerce.payment.*;
 import one.modality.ecommerce.payment.gateway.GatewayInitiatePaymentArgument;
 import one.modality.ecommerce.payment.gateway.GatewayMakeApiPaymentArgument;
 import one.modality.ecommerce.payment.gateway.PaymentGateway;
@@ -49,16 +46,15 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                         return Future.failedFuture(new IllegalStateException("No payment gateway found!"));
                     // Step 3: Loading the relevant payment gateway parameters
                     boolean live = false; //moneyTransfer.getDocument().getEvent().isLive();
-                    return EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
-                            .<GatewayParameter>executeQuery("select name,value from GatewayParameter where (account=? or account==null and lower(company.name)=lower(?)) and (? ? live : test) order by account nulls first", moneyTransfer.getToMoneyAccount(), moneyTransfer.getToMoneyAccount().getGatewayCompany().getName(), live)
-                            .compose(gpList -> {
-                                Map<String, String> parameters = new HashMap<>();
-                                gpList.forEach(gp -> parameters.put(gp.getName(), gp.getValue()));
+                    return loadPaymentGatewayParameters(moneyTransfer, live)
+                            .compose(parameters -> {
                                 // Step 4: Calling the payment gateway with all the data collected
                                 String currencyCode = moneyTransfer.getToMoneyAccount().getCurrency().getCode();
                                 return paymentGateway.initiatePayment(new GatewayInitiatePaymentArgument(
+                                        "" + moneyTransfer.getPrimaryKey(),
                                         argument.getAmount(),
                                         currencyCode,
+                                        live,
                                         null,
                                         parameters
                                 )).map(res -> new InitiatePaymentResult( // Step 5: Returning a InitiatePaymentResult
@@ -105,4 +101,39 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                         moneyTransfer.onExpressionLoaded("toMoneyAccount.(currency.code, gatewayCompany.name), document.event.live")
                         .map(ignored -> moneyTransfer));
     }
+
+    // Internal server-side method only (no serialisation support)
+
+    public Future<Map<String, String>> loadPaymentGatewayParameters(Object paymentId, boolean live) {
+        if (paymentId instanceof String)
+            paymentId = Integer.parseInt((String) paymentId);
+        return EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
+                .<GatewayParameter>executeQuery("select name,value from GatewayParameter where (account=(select toMoneyAccount from MoneyTransfer where id=?) or account==null and lower(company.name)=lower((select lower(toMoneyAccount.gatewayCompany.name) from MoneyTransfer where id=?))) and (? ? live : test) order by account nulls first", paymentId, paymentId, live)
+                .map(gpList -> {
+                    Map<String, String> parameters = new HashMap<>();
+                    gpList.forEach(gp -> parameters.put(gp.getName(), gp.getValue()));
+                    return parameters;
+                });
+    }
+
+    @Override
+    public Future<Void> updatePaymentStatus(UpdatePaymentStatusArgument argument) {
+        UpdateStore updateStore = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
+        MoneyTransfer moneyTransfer = updateStore.updateEntity(updateStore.createEntity(MoneyTransfer.class, Integer.parseInt(argument.getPaymentId())));
+        moneyTransfer.setSuccessful(argument.isSuccessStatus());
+        moneyTransfer.setPending(false);
+        moneyTransfer.setFieldValue("transactionRef", argument.getTransactionRef());
+        moneyTransfer.setFieldValue("status", argument.getStatus());
+        moneyTransfer.setFieldValue("gatewayResponse", argument.getWholeResponse());
+        if (argument.getWholeResponse() == null)
+            moneyTransfer.setFieldValue("gatewayResponse", argument.getError());
+        return updateStore.submitChanges().compose(submitResultBatch -> {
+            int rowCount = submitResultBatch.get(0).getRowCount();
+            if (rowCount == 0)
+                return Future.failedFuture("Unknown payment");
+            return Future.succeededFuture();
+        });
+    }
+
+
 }

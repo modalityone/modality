@@ -17,4 +17,19 @@
         <provider interface="dev.webfx.platform.boot.spi.ApplicationJob">one.modality.ecommerce.payment.gateway.impl.square.SquareRestApiStarterJob</provider>
     </providers>
 
+    <required-libraries>
+        <library>
+            <groupId>com.squareup</groupId>
+            <artifactId>square</artifactId>
+            <version>40.1.0.20240604</version>
+            <exported-packages>
+                <package>com.squareup.square</package>
+                <package>com.squareup.square.api</package>
+                <package>com.squareup.square.authentication</package>
+                <package>com.squareup.square.exceptions</package>
+                <package>com.squareup.square.models</package>
+            </exported-packages>
+        </library>
+    </required-libraries>
+
 </project>

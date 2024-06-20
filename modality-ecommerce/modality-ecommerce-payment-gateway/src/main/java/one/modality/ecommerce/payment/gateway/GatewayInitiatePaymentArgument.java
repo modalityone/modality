@@ -7,16 +7,24 @@ import java.util.Map;
  */
 public final class GatewayInitiatePaymentArgument {
 
+    private final String paymentId; // pass as a String to make it easier to manage for the gateway
     private final long amount;
     private final String currency;
+    private final boolean live;
     private final String productName;
     private final Map<String, String> accountParameters;
 
-    public GatewayInitiatePaymentArgument(long amount, String currency, String productName, Map<String, String> accountParameters) {
+    public GatewayInitiatePaymentArgument(String paymentId, long amount, String currency, boolean live, String productName, Map<String, String> accountParameters) {
+        this.paymentId = paymentId;
         this.amount = amount;
         this.currency = currency;
+        this.live = live;
         this.productName = productName;
         this.accountParameters = accountParameters;
+    }
+
+    public String getPaymentId() {
+        return paymentId;
     }
 
     public long getAmount() {
@@ -25,6 +33,10 @@ public final class GatewayInitiatePaymentArgument {
 
     public String getCurrency() {
         return currency;
+    }
+
+    public boolean isLive() {
+        return live;
     }
 
     public String getProductName() {
