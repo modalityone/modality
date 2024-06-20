@@ -1,4 +1,4 @@
-package one.modality.ecommerce.payment.ui;
+package one.modality.ecommerce.payment.client;
 
 import dev.webfx.platform.console.Console;
 import javafx.application.Platform;
@@ -15,7 +15,7 @@ import one.modality.ecommerce.payment.MakeApiPaymentArgument;
 /**
  * @author Bruno Salmon
  */
-public class ApiPaymentUI {
+public class ApiPaymentForm {
 
     private final static int CC_NUMBER_LENGTH = 16;
     private final static int CC_EXPIRY_LENGTH = 4;

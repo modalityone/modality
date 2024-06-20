@@ -12,7 +12,7 @@
     </dependencies>
 
     <java-callbacks>
-        <callback-class name="one.modality.ecommerce.payment.ui.PaymentUI">
+        <callback-class name="one.modality.ecommerce.payment.client.WebPaymentForm">
             <callback-method name="onGatewaySuccess"/>
             <callback-method name="onGatewayFailure">
                 <callback-argument class="java.lang.String"/>

@@ -1,4 +1,4 @@
-package one.modality.ecommerce.payment.ui;
+package one.modality.ecommerce.payment.client;
 
 import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.webview.pane.LoadOptions;
@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 /**
  * @author Bruno Salmon
  */
-public class PaymentUI {
+public class WebPaymentForm {
 
     private final InitiatePaymentResult result;
     private final int amount;
@@ -29,29 +29,29 @@ public class PaymentUI {
     private Consumer<String> onFailure;
     private final Button payButton = new Button("Pay");
 
-    public PaymentUI(InitiatePaymentResult result, int amount, String currencyCode, HasPersonalDetails hasPersonalDetails) {
+    public WebPaymentForm(InitiatePaymentResult result, int amount, String currencyCode, HasPersonalDetails hasPersonalDetails) {
         this.result = result;
         this.amount = amount;
         this.currencyCode = currencyCode;
         this.hasPersonalDetails = hasPersonalDetails;
     }
 
-    public PaymentUI setOnCancel(Runnable onCancel) {
+    public WebPaymentForm setOnCancel(Runnable onCancel) {
         this.onCancel = onCancel;
         return this;
     }
 
-    public PaymentUI setOnSuccess(Runnable onSuccess) {
+    public WebPaymentForm setOnSuccess(Runnable onSuccess) {
         this.onSuccess = onSuccess;
         return this;
     }
 
-    public PaymentUI setOnFailure(Consumer<String> onFailure) {
+    public WebPaymentForm setOnFailure(Consumer<String> onFailure) {
         this.onFailure = onFailure;
         return this;
     }
 
-    public Region buildUI() {
+    public Region buildPaymentForm() {
         String url = result.getUrl();
         if (result.isRedirect()) {
             try {
@@ -62,6 +62,7 @@ public class PaymentUI {
             return null;
         }
         webViewPane.setMaxWidth(600);
+        webViewPane.setMaxHeight(150);
         //webViewPane.setFitHeight(true);
         //webViewPane.setRedirectConsole(true); // causes stack overflow
         payButton.setDisable(true);
@@ -69,8 +70,8 @@ public class PaymentUI {
                 .setOnLoadSuccess(() -> {
                     payButton.setDisable(false);
                     try {
-                        webViewPane.setWindowMember("modality_javaPaymentCallback", PaymentUI.this);
-                        webViewPane.callWindow("modality_injectJavaPaymentCallback", PaymentUI.this);
+                        webViewPane.setWindowMember("modality_javaPaymentForm", WebPaymentForm.this);
+                        webViewPane.callWindow("modality_injectJavaPaymentForm", WebPaymentForm.this);
                     } catch (Exception ex) {
                         onGatewayFailure(ex.getMessage());
                     }

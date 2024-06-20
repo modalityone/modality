@@ -11,7 +11,7 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>modality-ecommerce-payment-ui</artifactId>
+    <artifactId>modality-ecommerce-payment-client</artifactId>
 
     <description>The UI displayed to the user for initiating a embedded payment before calling the embedded payment API.</description>
 

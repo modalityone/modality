@@ -3,7 +3,7 @@
 /**
  * The UI displayed to the user for initiating a embedded payment before calling the embedded payment API.
  */
-module modality.ecommerce.payment.ui {
+module modality.ecommerce.payment.client {
 
     // Direct dependencies modules
     requires javafx.controls;
@@ -17,6 +17,6 @@ module modality.ecommerce.payment.ui {
     requires webfx.platform.console;
 
     // Exported packages
-    exports one.modality.ecommerce.payment.ui;
+    exports one.modality.ecommerce.payment.client;
 
 }

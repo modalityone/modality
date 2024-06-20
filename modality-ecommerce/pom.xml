@@ -33,13 +33,13 @@
         <module>modality-ecommerce-document-service-server</module>
         <module>modality-ecommerce-payment</module>
         <module>modality-ecommerce-payment-buscall</module>
+        <module>modality-ecommerce-payment-client</module>
         <module>modality-ecommerce-payment-remote</module>
         <module>modality-ecommerce-payment-server</module>
         <module>modality-ecommerce-payment-server-gateway</module>
         <module>modality-ecommerce-payment-server-gateway-authorizedotnet-plugin</module>
         <module>modality-ecommerce-payment-server-gateway-square-plugin</module>
         <module>modality-ecommerce-payment-server-gateway-stripe-plugin</module>
-        <module>modality-ecommerce-payment-ui</module>
         <module>modality-ecommerce-server-max-plugin</module>
         <module>modality-ecommerce-server-min-plugin</module>
     </modules>
