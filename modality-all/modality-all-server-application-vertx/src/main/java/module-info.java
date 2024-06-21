@@ -8,7 +8,6 @@ module modality.all.server.application.vertx {
     // Direct dependencies modules
     requires javafx.base;
     requires modality.all.server.application;
-    requires modality.crm.server.authz.required.plugin;
     requires modality.ecommerce.document.service.server;
     requires modality.ecommerce.payment.server;
     requires webfx.platform.ast.factory.vertx;

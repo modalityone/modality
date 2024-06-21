@@ -1,0 +1,197 @@
+<!doctype html>
+<html>
+<head>
+<!--
+    <link href="/app.css" rel="stylesheet" />
+-->
+    <script
+            type="text/javascript"
+            src="${squareJsLibraryUrl}"
+    ></script>
+    <script>
+        const appId = '${appId}';
+        const locationId = '${locationId}';
+        const modality_paymentId = '${paymentId}';
+        const modality_amount = ${amount};
+        const modality_currency = "${currency}";
+
+        let card;
+        let payments;
+        let modality_javaPaymentForm;
+
+        async function initializeCard(payments) {
+            const card = await payments.card();
+            await card.attach('#card-container');
+
+            return card;
+        }
+
+        async function createPayment(token, verificationToken) {
+            const body = JSON.stringify({
+                paymentId: modality_paymentId,
+                amount: modality_amount,
+                currency: modality_currency,
+                locationId,
+                sourceId: token,
+                verificationToken,
+                idempotencyKey: window.crypto.randomUUID(),
+            });
+
+            // Calling the Modality server to complete the payment (will call Square to make the actual final payment)
+            const paymentResponse = await fetch("${completePaymentRoute}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body,
+            });
+
+            const text = await paymentResponse.text();
+            if (!paymentResponse.ok || text !== "OK")
+                throw new Error(text);
+        }
+
+        async function tokenize(paymentMethod) {
+            const tokenResult = await paymentMethod.tokenize();
+            if (tokenResult.status === 'OK') {
+                return tokenResult.token;
+            } else {
+                let errorMessage = `Tokenization failed with status: ${tokenResult.status}`;
+                if (tokenResult.errors) {
+                    errorMessage += ` and errors: ${JSON.stringify(
+                        tokenResult.errors,
+                    )}`;
+                }
+
+                throw new Error(errorMessage);
+            }
+        }
+
+        // Required in SCA Mandated Regions: Learn more at https://developer.squareup.com/docs/sca-overview
+        async function verifyBuyer(payments, token, amount, currencyCode, firstName, lastName, email, phone, address, city, state, countryCode) {
+            if (email)
+                email = email.toLowerCase();
+            if (countryCode)
+                countryCode = countryCode.toUpperCase(); // Square rejects lower case country codes
+            const verificationDetails = {
+                amount: (Number(amount) / 100).toFixed(2),
+                billingContact: {
+                    givenName: firstName,
+                    familyName: lastName,
+                    email: email,
+                    phone: phone,
+                    addressLines: [address],
+                    city: city,
+                    state: state,
+                    countryCode: countryCode,
+                },
+                currencyCode: currencyCode,
+                intent: 'CHARGE',
+            };
+
+            const verificationResults = await payments.verifyBuyer(
+                token,
+                verificationDetails,
+            );
+            return verificationResults.token;
+        }
+
+        // status is either SUCCESS or FAILURE;
+        function displayPaymentResults(status) {
+            const statusContainer = document.getElementById(
+                'payment-status-container',
+            );
+            if (status === 'SUCCESS') {
+                statusContainer.classList.remove('is-failure');
+                statusContainer.classList.add('is-success');
+            } else {
+                statusContainer.classList.remove('is-success');
+                statusContainer.classList.add('is-failure');
+            }
+
+            statusContainer.style.visibility = 'visible';
+        }
+
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            console.log("Square DOMContentLoaded");
+            if (!window.Square) {
+                throw new Error('Square.js failed to load properly');
+            }
+
+            try {
+                console.log("Calling payments");
+                payments = window.Square.payments(appId, locationId);
+            } catch (e) {
+                console.error('Payments failed', e);
+                const statusContainer = document.getElementById(
+                    'payment-status-container',
+                );
+                statusContainer.className = 'missing-credentials';
+                statusContainer.style.visibility = 'visible';
+                return;
+            }
+
+            try {
+                console.log("Calling initializeCard");
+                card = await initializeCard(payments);
+            } catch (e) {
+                console.error('Initializing Card failed', e);
+            }
+
+            if (modality_javaPaymentForm)
+                console.log("modality_javaPaymentForm is NOT set");
+            else
+                console.log("modality_javaPaymentForm is set");
+        });
+
+        async function handlePaymentMethodSubmission(amount, currencyCode, firstName, lastName, email, phone, address, city, state, countryCode) {
+            try {
+                const token = await tokenize(card);
+                const verificationToken = await verifyBuyer(payments, token, amount, currencyCode, firstName, lastName, email, phone, address, city, state, countryCode);
+                const paymentResults = await createPayment(
+                    token,
+                    verificationToken,
+                );
+                displayPaymentResults('SUCCESS');
+
+                console.debug('Payment Success', paymentResults);
+                modality_notifyGatewaySuccess();
+            } catch (e) {
+                displayPaymentResults('FAILURE');
+                console.error(e.message);
+                modality_notifyGatewayFailure(e.message);
+            }
+        }
+
+        // Called by PaymentUI java class
+        function modality_submitGatewayPayment(amount, currencyCode, firstName, lastName, email, phone, address, city, state, countryCode) {
+            console.log("modality_submitGatewayPayment() called");
+            handlePaymentMethodSubmission(amount, currencyCode, firstName, lastName, email, phone, address, city, state, countryCode);
+        }
+
+        // Called by PaymentUI java class
+        function modality_injectJavaPaymentForm(jp) {
+            console.log("modality_injectJavaPaymentForm() called");
+            modality_javaPaymentForm = jp;
+        }
+
+        function modality_notifyGatewaySuccess() {
+            if (modality_javaPaymentForm)
+                modality_javaPaymentForm.onGatewaySuccess();
+        }
+
+        function modality_notifyGatewayFailure(error) {
+            if (modality_javaPaymentForm)
+                modality_javaPaymentForm.onGatewayFailure(error);
+        }
+
+    </script>
+</head>
+<body>
+<form id="payment-form">
+    <div id="card-container"></div>
+</form>
+<div id="payment-status-container"></div>
+</body>
+</html>

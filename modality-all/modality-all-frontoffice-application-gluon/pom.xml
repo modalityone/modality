@@ -329,6 +329,7 @@
                         <list>util</list>
                     </attachList>
                     <resourcesList>
+                        <list>dev/webfx/extras/webview/pane/[^/]+$</list>
                         <list>dev/webfx/kit/css/fonts/montserrat/[^/]+$</list>
                         <list>dev/webfx/kit/css/fonts/password/[^/]+$</list>
                         <list>dev/webfx/platform/conf/[^/]+$</list>

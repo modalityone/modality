@@ -38,7 +38,7 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-ecommerce-payment-gateway</artifactId>
+            <artifactId>modality-ecommerce-payment-server-gateway</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 

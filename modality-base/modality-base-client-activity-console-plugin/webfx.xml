@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+    </dependencies>
+
+    <providers>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.client.activities.console.ConsoleUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.client.activities.console.RouteToConsoleRequestEmitter</provider>
+        <provider interface="dev.webfx.platform.console.spi.ConsoleProvider">one.modality.base.client.activities.console.BufferedConsoleProvider</provider>
+    </providers>
+
+</project>

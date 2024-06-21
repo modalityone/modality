@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <description>The UI displayed to the user for initiating a embedded payment before calling the embedded payment API.</description>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+    </dependencies>
+
+    <java-callbacks>
+        <callback-class name="one.modality.ecommerce.payment.client.WebPaymentForm">
+            <callback-method name="onGatewaySuccess"/>
+            <callback-method name="onGatewayFailure">
+                <callback-argument class="java.lang.String"/>
+            </callback-method>
+        </callback-class>
+    </java-callbacks>
+
+</project>
