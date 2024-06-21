@@ -22,6 +22,17 @@
             <groupId>com.squareup</groupId>
             <artifactId>square</artifactId>
             <version>40.1.0.20240604</version>
+            <!-- This library clashes with some underlying Vert.x modules, so we solve this issue by excluding them -->
+            <exclusions>
+                <exclusion>
+                    <groupId>com.sun.activation</groupId>
+                    <artifactId>javax.activation</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jakarta.activation</groupId>
+                    <artifactId>jakarta.activation-api</artifactId>
+                </exclusion>
+            </exclusions>
             <exported-packages>
                 <package>com.squareup.square</package>
                 <package>com.squareup.square.api</package>
