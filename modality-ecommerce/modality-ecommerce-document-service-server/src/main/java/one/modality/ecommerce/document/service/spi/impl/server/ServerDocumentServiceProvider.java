@@ -29,7 +29,7 @@ import java.util.Map;
  */
 public class ServerDocumentServiceProvider implements DocumentServiceProvider {
 
-    public final static String POLICY_SCHEDULED_ITEMS_QUERY_BASE = "select site.name,item.(name,code,family.code),date from ScheduledItem";
+    public final static String POLICY_SCHEDULED_ITEMS_QUERY_BASE = "select site.name,item.(name,code,family.code),date,startTime from ScheduledItem";
     public final static String POLICY_RATES_QUERY_BASE = "select site,item,price,perDay,perPerson from Rate";
 
 
