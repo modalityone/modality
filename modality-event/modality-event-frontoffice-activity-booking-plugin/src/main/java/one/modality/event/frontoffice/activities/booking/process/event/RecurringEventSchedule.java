@@ -1,7 +1,6 @@
 package one.modality.event.frontoffice.activities.booking.process.event;
 
 import dev.webfx.extras.panes.FlexPane;
-import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.tuples.Pair;
 import dev.webfx.stack.i18n.I18n;
 import javafx.application.Platform;
@@ -208,27 +207,24 @@ public class RecurringEventSchedule {
             containerVBox.setPadding(new Insets(5, 0, 5, 0)); // 5px en haut et en bas
             hourText.getStyleClass().add("eventTime");
             containerVBox.setAlignment(Pos.CENTER);
-            scheduledItem.onExpressionLoaded("date, startTime").onFailure(Console::log)
-                    .onSuccess(x -> Platform.runLater(()-> {
-                        LocalDate date = scheduledItem.getDate();
-                        String dateFormatted = I18n.getI18nText("DateFormatted", I18n.getI18nText(date.getMonth().name()), date.getDayOfMonth());
-                        dayText.setText(dateFormatted);
-                        //We test if the StartTime of the scheduledItem is defined. If it's null, we need to look at the info in the timeline associated to the event
-                        LocalTime startTime = scheduledItem.getStartTime();
-                        if(startTime==null) {
-                            startTime = scheduledItem.getTimeline().getStartTime();
-                            }
-                        hourText.setText(I18n.getI18nText("AtTime",startTime.toString()));
-                        paneAndCssClassMap.put(date,new Pair<>(this, new Pair<>(computeCssClassForSelectedDateFunction.apply(date),computeCssClassForUnselectedDateFunction.apply(date))));
-                        containerVBox.setOnMouseClicked(event -> {
-                            if (dateConsumer == null) {
-                                processDateSelected(date);
-                            } else {
-                                dateConsumer.accept(date);
-                            }
-                        });
-                        changeCssPropertyForSelectedDate(date);
-                    }));
+            LocalDate date = scheduledItem.getDate();
+            String dateFormatted = I18n.getI18nText("DateFormatted", I18n.getI18nText(date.getMonth().name()), date.getDayOfMonth());
+            dayText.setText(dateFormatted);
+            //We test if the StartTime of the scheduledItem is defined. If it's null, we need to look at the info in the timeline associated to the event
+            LocalTime startTime = scheduledItem.getStartTime();
+            if (startTime == null) {
+                startTime = scheduledItem.getTimeline().getStartTime();
+            }
+            hourText.setText(I18n.getI18nText("AtTime", startTime.toString()));
+            paneAndCssClassMap.put(date, new Pair<>(this, new Pair<>(computeCssClassForSelectedDateFunction.apply(date), computeCssClassForUnselectedDateFunction.apply(date))));
+            containerVBox.setOnMouseClicked(event -> {
+                if (dateConsumer == null) {
+                    processDateSelected(date);
+                } else {
+                    dateConsumer.accept(date);
+                }
+            });
+            changeCssPropertyForSelectedDate(date);
         }
 
 

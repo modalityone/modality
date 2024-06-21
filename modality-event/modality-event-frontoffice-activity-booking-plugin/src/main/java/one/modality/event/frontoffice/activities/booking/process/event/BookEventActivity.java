@@ -83,7 +83,6 @@ public final class BookEventActivity extends ViewDomainActivityBase {
             step5ErrorSlide.reset();});
 
         step2EventDetailsSlide.loadData(e);
-
     }
 
     @Override
@@ -123,8 +122,5 @@ public final class BookEventActivity extends ViewDomainActivityBase {
             });
         }, FXEventId.eventIdProperty());
     }
-
     // I18n utility methods
-
-
 }
