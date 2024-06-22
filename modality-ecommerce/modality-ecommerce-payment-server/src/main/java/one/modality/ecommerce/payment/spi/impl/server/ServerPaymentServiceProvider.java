@@ -119,7 +119,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
     @Override
     public Future<Void> updatePaymentStatus(UpdatePaymentStatusArgument argument) {
         UpdateStore updateStore = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
-        MoneyTransfer moneyTransfer = updateStore.updateEntity(updateStore.createEntity(MoneyTransfer.class, Integer.parseInt(argument.getPaymentId())));
+        MoneyTransfer moneyTransfer = updateStore.updateEntity(MoneyTransfer.class, Integer.parseInt(argument.getPaymentId()));
         moneyTransfer.setSuccessful(argument.isSuccessStatus());
         moneyTransfer.setPending(false);
         moneyTransfer.setFieldValue("transactionRef", argument.getTransactionRef());

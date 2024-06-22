@@ -15,10 +15,7 @@ import one.modality.base.shared.entities.Cart;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.ecommerce.document.service.*;
-import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
-import one.modality.ecommerce.document.service.events.AddAttendancesEvent;
-import one.modality.ecommerce.document.service.events.AddDocumentEvent;
-import one.modality.ecommerce.document.service.events.AddDocumentLineEvent;
+import one.modality.ecommerce.document.service.events.*;
 import one.modality.ecommerce.document.service.spi.DocumentServiceProvider;
 
 import java.util.HashMap;
@@ -89,6 +86,11 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                     attendance.setDocumentLine(entities.get(aae.getDocumentLinePrimaryKey()));
                     attendance.setScheduledItem(sipk);
                 }
+            } else if (e instanceof CancelDocumentEvent) {
+                documentPrimaryKey = e.getDocumentPrimaryKey();
+                Document document = updateStore.updateEntity(Document.class, documentPrimaryKey);
+                document.setCancelled(true);
+                entities.put(documentPrimaryKey = e.getDocumentPrimaryKey(), document);
             }
         }
         Object finalDocumentPrimaryKey = documentPrimaryKey;
