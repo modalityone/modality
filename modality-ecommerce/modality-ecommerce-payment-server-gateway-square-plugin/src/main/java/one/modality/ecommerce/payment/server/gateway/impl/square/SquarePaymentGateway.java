@@ -17,8 +17,8 @@ import static one.modality.ecommerce.payment.server.gateway.impl.square.SquareRe
 public final class SquarePaymentGateway implements PaymentGateway {
 
     private static final String GATEWAY_NAME = "Square";
-    private static final String SQUARE_LIVE_JS_LIBRARY_URL = "https://web.squarecdn.com/v1/square.js";
-    private static final String SQUARE_SANDBOX_JS_LIBRARY_URL = "https://sandbox.web.squarecdn.com/v1/square.js";
+    private static final String SQUARE_LIVE_WEB_PAYMENTS_SDK_URL = "https://web.squarecdn.com/v1/square.js";
+    private static final String SQUARE_SANDBOX_WEB_PAYMENTS_SDK_URL = "https://sandbox.web.squarecdn.com/v1/square.js";
 
     private static final String HTML_TEMPLATE = Resource.getText(Resource.toUrl("square-checkout.html", SquarePaymentGateway.class));
 
@@ -33,13 +33,13 @@ public final class SquarePaymentGateway implements PaymentGateway {
         String locationId = argument.getAccountParameter("order.order.location_id");
         boolean live = argument.isLive();
         String html = HTML_TEMPLATE
-                .replace("${squareJsLibraryUrl}", live ? SQUARE_LIVE_JS_LIBRARY_URL : SQUARE_SANDBOX_JS_LIBRARY_URL)
-                .replace("${paymentId}", argument.getPaymentId())
-                .replace("${amount}", Long.toString(argument.getAmount()))
-                .replace("${currency}", argument.getCurrency())
-                .replace("${appId}", appId)
-                .replace("${locationId}", locationId)
-                .replace("${completePaymentRoute}", live ? SQUARE_LIVE_COMPLETE_PAYMENT_ROUTE : SQUARE_SANDBOX_COMPLETE_PAYMENT_ROUTE)
+                .replace("${square_webPaymentsSDKUrl}", live ? SQUARE_LIVE_WEB_PAYMENTS_SDK_URL : SQUARE_SANDBOX_WEB_PAYMENTS_SDK_URL)
+                .replace("${square_appId}", appId)
+                .replace("${square_locationId}", locationId)
+                .replace("${modality_paymentId}", argument.getPaymentId())
+                .replace("${modality_amount}", Long.toString(argument.getAmount()))
+                .replace("${modality_currencyCode}", argument.getCurrencyCode())
+                .replace("${modality_completePaymentRoute}", live ? SQUARE_LIVE_COMPLETE_PAYMENT_ROUTE : SQUARE_SANDBOX_COMPLETE_PAYMENT_ROUTE)
                 ;
         String responseCacheKey = Uuid.randomUuid();
         SquareRestApiOneTimeHtmlResponsesCache.registerOneTimeHtmlResponse(responseCacheKey, html);
