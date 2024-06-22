@@ -9,15 +9,15 @@ public final class GatewayInitiatePaymentArgument {
 
     private final String paymentId; // pass as a String to make it easier to manage for the gateway
     private final long amount;
-    private final String currency;
+    private final String currencyCode;
     private final boolean live;
     private final String productName;
     private final Map<String, String> accountParameters;
 
-    public GatewayInitiatePaymentArgument(String paymentId, long amount, String currency, boolean live, String productName, Map<String, String> accountParameters) {
+    public GatewayInitiatePaymentArgument(String paymentId, long amount, String currencyCode, boolean live, String productName, Map<String, String> accountParameters) {
         this.paymentId = paymentId;
         this.amount = amount;
-        this.currency = currency;
+        this.currencyCode = currencyCode;
         this.live = live;
         this.productName = productName;
         this.accountParameters = accountParameters;
@@ -31,8 +31,8 @@ public final class GatewayInitiatePaymentArgument {
         return amount;
     }
 
-    public String getCurrency() {
-        return currency;
+    public String getCurrencyCode() {
+        return currencyCode;
     }
 
     public boolean isLive() {

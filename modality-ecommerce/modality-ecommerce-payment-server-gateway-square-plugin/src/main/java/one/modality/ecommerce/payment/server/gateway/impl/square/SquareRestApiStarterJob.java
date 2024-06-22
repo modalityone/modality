@@ -11,6 +11,7 @@ import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.BodyHandler;
 import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.UpdatePaymentStatusArgument;
 
@@ -28,6 +29,7 @@ public final class SquareRestApiStarterJob implements ApplicationJob {
         Router router = VertxInstance.getHttpRouter();
 
         router.route(SQUARE_PAYMENT_FORM_ROUTE)
+                .handler(BodyHandler.create())
                 .handler(ctx -> {
                     String cacheKey = ctx.pathParam("htmlCacheKey");
                     String html = SquareRestApiOneTimeHtmlResponsesCache.getOneTimeHtmlResponse(cacheKey);
@@ -37,21 +39,23 @@ public final class SquareRestApiStarterJob implements ApplicationJob {
                 });
 
         router.route(SQUARE_SANDBOX_COMPLETE_PAYMENT_ROUTE)
+                .handler(BodyHandler.create())
                 .handler(ctx -> handleCompletePayment(ctx, false));
 
         router.route(SQUARE_LIVE_COMPLETE_PAYMENT_ROUTE)
+                .handler(BodyHandler.create())
                 .handler(ctx -> handleCompletePayment(ctx, true));
     }
 
     private void handleCompletePayment(RoutingContext ctx, boolean live) {
         JsonObject payload = ctx.body().asJsonObject();
-        String paymentId = payload.getString("paymentId");
-        Long amount = payload.getLong("amount");
-        String currency = payload.getString("currency");
-        String locationId = payload.getString("locationId");
-        String idempotencyKey = payload.getString("idempotencyKey");
-        String sourceId = payload.getString("sourceId");
-        String verificationToken = payload.getString("verificationToken");
+        String paymentId = payload.getString("modality_paymentId");
+        Long amount = payload.getLong("modality_amount");
+        String currencyCode = payload.getString("modality_currencyCode");
+        String locationId = payload.getString("square_locationId");
+        String idempotencyKey = payload.getString("square_idempotencyKey");
+        String sourceId = payload.getString("square_sourceId");
+        String verificationToken = payload.getString("square_verificationToken");
         // TODO check all the above values are set, otherwise return an error
 
         PaymentService.loadPaymentGatewayParameters(paymentId, live)
@@ -67,7 +71,7 @@ public final class SquareRestApiStarterJob implements ApplicationJob {
                     paymentsApi.createPaymentAsync(new CreatePaymentRequest.Builder(sourceId, idempotencyKey)
                             .locationId(locationId)
                             .verificationToken(verificationToken)
-                            .amountMoney(new Money(amount, currency))
+                            .amountMoney(new Money(amount, currencyCode))
                             .build()
                     ).thenAccept(result -> {
                         Payment payment = result.getPayment();
@@ -91,7 +95,7 @@ public final class SquareRestApiStarterJob implements ApplicationJob {
                         String transactionRef = payment.getId();
                         boolean successful = "completed".equalsIgnoreCase(status);
                         PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createSuccessStatusArgument(paymentId, wholeResponse, transactionRef, status, successful))
-                                .onSuccess(v -> ctx.end("OK"))
+                                .onSuccess(v -> ctx.end(status.toUpperCase()))
                                 .onFailure(e -> ctx.end(e.getMessage()))
                         ;
                     }).exceptionally(ex -> {

@@ -33,7 +33,7 @@ public class StripePaymentGateway implements PaymentGateway {
             Stripe.apiKey = API_SECRET_KEY;
             PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
                     .setAmount(argument.getAmount())
-                    .setCurrency(argument.getCurrency())
+                    .setCurrency(argument.getCurrencyCode())
                     .setAutomaticPaymentMethods(
                             PaymentIntentCreateParams.AutomaticPaymentMethods.builder().setEnabled(true).build()
                     )
@@ -61,7 +61,7 @@ public class StripePaymentGateway implements PaymentGateway {
         // Create the price data and add the product data to this
         SessionCreateParams.LineItem.PriceData priceData =
                 SessionCreateParams.LineItem.PriceData.builder()
-                        .setCurrency(argument.getCurrency())
+                        .setCurrency(argument.getCurrencyCode())
                         .setUnitAmount(argument.getAmount())
                         .setProductData(productData)
                         .build();
