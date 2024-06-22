@@ -2,6 +2,8 @@ package one.modality.event.frontoffice.activities.booking.process.event;
 
 import dev.webfx.extras.carrousel.Carrousel;
 import dev.webfx.extras.webtext.HtmlText;
+import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.kit.util.properties.Unregisterable;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import javafx.application.Platform;
@@ -16,7 +18,8 @@ public class SlideController {
     private Step1LoadingSlide step1LoadingSlide;
     private Step2EventDetailsSlide step2EventDetailsSlide;
     private Step3CheckoutSlide step3CheckoutSlide;
-    private Step4ThankYouSlide step4ThankYouSlide;
+    private Step4PaymentSlide step4PaymentSlide;
+    private Step6ThankYouSlide step6ThankYouSlide;
     private Step5ErrorSlide step5ErrorSlide;
     private Carrousel carrousel;
     private BooleanProperty eventDataLoaded = new SimpleBooleanProperty();
@@ -27,37 +30,25 @@ public class SlideController {
     }
 
     public void initialise() {
-        eventDataLoaded.addListener((observable, oldValue, newValue) -> {
-            if(newValue&&registrationDataLoaded.getValue()) {
+        Unregisterable[] listeners = { null };
+        listeners[0] = FXProperties.runOnPropertiesChange(() -> {
+            if (eventDataLoaded.get() && registrationDataLoaded.get()) {
                 Platform.runLater(() -> {
                     step2EventDetailsSlide.buildUi();
                     step3CheckoutSlide.buildUi();
-                    step4ThankYouSlide.buildUi();
+                    step4PaymentSlide.buildUi();
+                    step5ErrorSlide.buildUi();
+                    step6ThankYouSlide.buildUi();
                     carrousel.displaySlide(1,false);
                 });
+             //   listeners[0].unregister();
             }
-            else{ //Here the data are not loaded
-                Platform.runLater(() -> {
-                    carrousel.displaySlide(0,false);
-                });
-            }
-        });
-        registrationDataLoaded.addListener((observable, oldValue, newValue) -> {
-            if(newValue&&eventDataLoaded.getValue()) {
-                Platform.runLater(() -> {
-                    step2EventDetailsSlide.buildUi();
-                    step3CheckoutSlide.buildUi();
-                    step4ThankYouSlide.buildUi();
-                    carrousel.displaySlide(1,false);
-                });
-            }
-            else{ //Here the data are not loaded
-
-                Platform.runLater(() -> {
-                    carrousel.displaySlide(0,false);
-                });
-            }
-        });
+            else {//Here the data are not loaded
+                    Platform.runLater(() -> {
+                        carrousel.displaySlide(0,false);
+                    });
+                }
+        }, eventDataLoaded, registrationDataLoaded);
     }
 
     public Step1LoadingSlide getStep1LoadingSlide() {
@@ -83,12 +74,12 @@ public class SlideController {
         this.step3CheckoutSlide = step3CheckoutSlide;
     }
 
-    public Step4ThankYouSlide getStep4ThankYouSlide() {
-        return step4ThankYouSlide;
+    public Step6ThankYouSlide getStep6ThankYouSlide() {
+        return step6ThankYouSlide;
     }
 
-    public void setStep4ThankYouSlide(Step4ThankYouSlide step4ThankYouSlide) {
-        this.step4ThankYouSlide = step4ThankYouSlide;
+    public void setStep6ThankYouSlide(Step6ThankYouSlide step4ThankYouSlide) {
+        this.step6ThankYouSlide = step4ThankYouSlide;
     }
 
     public Step5ErrorSlide getStep5ErrorSlide() {
@@ -99,10 +90,17 @@ public class SlideController {
         this.step5ErrorSlide = step5ErrorSlide;
     }
 
+    public Step4PaymentSlide getStep4PaymentSlide() {
+        return this.step4PaymentSlide;
+    }
+    public void setStep4PaymentSlide(Step4PaymentSlide step4PaymentSlide) {
+        this.step4PaymentSlide = step4PaymentSlide;
+    }
+
     public void displayErrorMessage(String message) {
-        step5ErrorSlide.setErrorMessage(message);
+        step5ErrorSlide.setErrorMessage(message,true);
         Platform.runLater(() -> {
-            carrousel.displaySlide(4);
+            carrousel.displaySlide(5);
         });
     }
 
@@ -156,4 +154,6 @@ public class SlideController {
         bindI18nEventExpression(text.textProperty(), eventExpression);
         return text;
     }
+
+
 }

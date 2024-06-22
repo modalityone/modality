@@ -13,11 +13,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.TextAlignment;
 
-public class Step4ThankYouSlide extends StepSlide{
+public class Step6ThankYouSlide extends StepSlide{
 
-    public Step4ThankYouSlide(SlideController control, BookEventData bed) {
+    public Step6ThankYouSlide(SlideController control, BookEventData bed) {
         super(control, bed);
-        controller.setStep4ThankYouSlide(this);
+        controller.setStep6ThankYouSlide(this);
 
     }
 

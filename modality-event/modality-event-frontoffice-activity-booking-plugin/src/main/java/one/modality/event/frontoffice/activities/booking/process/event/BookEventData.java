@@ -18,6 +18,8 @@ public class BookEventData {
     private WorkingBooking currentBooking = null;
     private IntegerProperty bookingNumber = new SimpleIntegerProperty(0);
     private PolicyAggregate policyAggrate = null;
+    private Object documentPrimaryKey = null;
+    private int totalPrice = 0;
 
     public BookEventData() {
         priceCalculator = null;
@@ -89,4 +91,19 @@ public class BookEventData {
         this.scheduledItemsOnEvent = scheduledItemsOnEvent;
     }
 
+    public Object getDocumentPrimaryKey() {
+        return documentPrimaryKey;
+    }
+
+    public void setDocumentPrimaryKey(Object documentPrimaryKey) {
+        this.documentPrimaryKey = documentPrimaryKey;
+    }
+
+    public int getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(int totalPrice) {
+        this.totalPrice = totalPrice;
+    }
 }

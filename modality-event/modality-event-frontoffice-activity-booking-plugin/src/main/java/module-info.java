@@ -21,7 +21,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires modality.crm.client.authn.fx;
     requires modality.ecommerce.document.service;
     requires modality.ecommerce.payment;
-    requires modality.ecommerce.payment.ui;
+    requires modality.ecommerce.payment.client;
     requires modality.event.client.event.fx;
     requires webfx.extras.carrousel;
     requires webfx.extras.imagestore;

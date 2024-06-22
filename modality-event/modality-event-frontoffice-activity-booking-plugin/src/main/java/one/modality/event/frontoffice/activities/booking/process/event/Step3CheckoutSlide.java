@@ -4,7 +4,6 @@ import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.ui.dialog.DialogUtil;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,11 +18,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.icons.SvgIcons;
-import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
+import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.payment.InitiatePaymentArgument;
 import one.modality.ecommerce.payment.PaymentService;
-import one.modality.ecommerce.payment.ui.PaymentUI;
+import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
 
 public class Step3CheckoutSlide extends StepSlide {
@@ -128,7 +127,7 @@ public class Step3CheckoutSlide extends StepSlide {
         HBox.setHgrow(spacerTotal, Priority.ALWAYS);
         totalPriceLabel.setPadding(new Insets(5, 75, 5, 0));
         int totalPrice = bookEventData.getPriceCalculator().calculateTotalPrice(bookEventData.getCurrentBooking().getLastestDocumentAggregate());
-        totalPriceLabel.setText(EventPriceFormatter.formatWithCurrency(String.valueOf(totalPrice), FXEvent.getEvent()));
+        totalPriceLabel.setText(EventPriceFormatter.formatWithCurrency(totalPrice, FXEvent.getEvent()));
         totalHBox.getChildren().addAll(totalLabel, spacerTotal, totalPriceLabel);
 
         HBox sepHBox = new HBox();
@@ -156,14 +155,27 @@ public class Step3CheckoutSlide extends StepSlide {
             payButton.graphicProperty().unbind();
             payButton.setGraphic(progressIndicator);
             bookEventData.getCurrentBooking().submitChanges("Booked Online")
-                    .onFailure(Console::log)
+                    .onFailure(result -> Platform.runLater(() -> {
+                            controller.displayErrorMessage("ErrorWhileInsertingBooking");
+                            Console.log(result);
+                    }))
                     .onSuccess(result -> Platform.runLater(() -> {
                         I18nControls.bindI18nProperties(payButton, "Pay");
                         bookEventData.setBookingNumber(Integer.parseInt(result.getDocumentRef().toString()));
-                        PaymentService.initiatePayment(new InitiatePaymentArgument(totalPrice, result.getDocumentPrimaryKey()))
-                                .onFailure(Console::log)
-                                .onSuccess(res -> Platform.runLater(() -> {
-                                    DialogUtil.showModalNodeInGoldLayout(new PaymentUI(res).buildUI(), FXMainFrameDialogArea.getDialogArea());
+                        Object documentPrimaryKey = result.getDocumentPrimaryKey();
+                        bookEventData.setDocumentPrimaryKey(documentPrimaryKey);
+                        bookEventData.setTotalPrice(totalPrice);
+                        PaymentService.initiatePayment(
+                                        new InitiatePaymentArgument(totalPrice, documentPrimaryKey)
+                                )
+                                .onFailure(paymentResult -> Platform.runLater(() -> {
+                                    controller.displayErrorMessage("ErrorWhileInitiatingPayment");
+                                    Console.log(result);
+                                }))
+                                .onSuccess(paymentResult -> Platform.runLater(() -> {
+                                    WebPaymentForm webPaymentForm = new WebPaymentForm(paymentResult, FXUserPerson.getUserPerson());
+                                    controller.getStep4PaymentSlide().setWebPaymentForm(webPaymentForm);
+                                    controller.displayNextSlide();
                                 }));
                     }));
         });
