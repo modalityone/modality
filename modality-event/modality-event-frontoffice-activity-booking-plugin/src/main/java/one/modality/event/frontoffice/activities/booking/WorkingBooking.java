@@ -93,6 +93,15 @@ public class WorkingBooking {
         lastestDocumentAggregate = null;
     }
 
+    public void cancelBooking() {
+        if (document == null || document.isNew()) {
+            cancelChanges();
+        } else {
+            documentChanges.add(new CancelDocumentEvent(document));
+            lastestDocumentAggregate = null;
+        }
+    }
+
     public void cancelChanges() {
         documentChanges.clear();
         entityStore = null;
