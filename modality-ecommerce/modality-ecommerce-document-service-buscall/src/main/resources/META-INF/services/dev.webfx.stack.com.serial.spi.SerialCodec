@@ -8,3 +8,4 @@ one.modality.ecommerce.document.service.buscall.serial.AddDocumentEventSerialCod
 one.modality.ecommerce.document.service.buscall.serial.AddDocumentLineEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.AddAttendancesEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.RemoveAttendancesEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.CancelDocumentEventSerialCodec
