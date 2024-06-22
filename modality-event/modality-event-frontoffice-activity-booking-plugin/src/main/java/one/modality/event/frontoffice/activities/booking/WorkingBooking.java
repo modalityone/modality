@@ -22,6 +22,7 @@ public class WorkingBooking {
     private final PolicyAggregate policyAggregate;
     private final DocumentAggregate initialDocumentAggregate; // null for new bookings
     private final List<AbstractDocumentEvent> documentChanges = new ArrayList<>();
+    private Object documentPrimaryKey; // null for new booking
     private Document document;
     private DocumentAggregate lastestDocumentAggregate;
     private EntityStore entityStore;
@@ -109,7 +110,10 @@ public class WorkingBooking {
         if (initialDocumentAggregate != null)
             document = initialDocumentAggregate.getDocument();
         else {
-            document = getEntityStore().createEntity(Document.class);
+            if (documentPrimaryKey == null)
+                document = getEntityStore().createEntity(Document.class);
+            else
+                document = getEntityStore().createEntity(Document.class, documentPrimaryKey);
             document.setEvent(FXEvent.getEvent());
             document.setPerson(FXUserPerson.getUserPerson());
             documentChanges.add(new AddDocumentEvent(document));
@@ -121,7 +125,11 @@ public class WorkingBooking {
                 new SubmitDocumentChangesArgument(
                         documentChanges.toArray(new AbstractDocumentEvent[0]),
                         historyComment
-                ));
+                )).map(result -> {
+                    documentPrimaryKey = result.getDocumentPrimaryKey();
+                    cancelChanges(); // Because successfully submitted
+                    return result;
+        });
     }
 
     private EntityStore getEntityStore() {
