@@ -9,7 +9,7 @@ import one.modality.ecommerce.document.service.events.CancelDocumentEvent;
  */
 public final class CancelDocumentEventSerialCodec extends AbstractDocumentEventSerialCodec<CancelDocumentEvent> {
 
-    private static final String CODEC_ID = "AddDocumentEvent";
+    private static final String CODEC_ID = "CancelDocumentEvent";
 
     public CancelDocumentEventSerialCodec() {
         super(CancelDocumentEvent.class, CODEC_ID);
