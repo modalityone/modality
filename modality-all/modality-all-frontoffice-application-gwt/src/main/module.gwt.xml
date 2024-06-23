@@ -232,6 +232,16 @@
     <source path="one/modality/ecommerce/document/service/buscall/serial"/>
     <!--===================< modality-ecommerce-document-service-remote >===================-->
     <source path="one/modality/ecommerce/document/service/spi/impl/remote"/>
+    <!--===========================< modality-ecommerce-payment >===========================-->
+    <source path="one/modality/ecommerce/payment"/>
+    <source path="one/modality/ecommerce/payment/spi"/>
+    <!--=======================< modality-ecommerce-payment-buscall >=======================-->
+    <source path="one/modality/ecommerce/payment/buscall"/>
+    <source path="one/modality/ecommerce/payment/buscall/serial"/>
+    <!--=======================< modality-ecommerce-payment-client >========================-->
+    <source path="one/modality/ecommerce/payment/client"/>
+    <!--=======================< modality-ecommerce-payment-remote >========================-->
+    <source path="one/modality/ecommerce/payment/spi/impl/remote"/>
     <!--=========================< modality-event-client-event-fx >=========================-->
     <source path="one/modality/event/client/event/fx"/>
     <!--===============< modality-event-frontoffice-activity-booking-plugin >===============-->
