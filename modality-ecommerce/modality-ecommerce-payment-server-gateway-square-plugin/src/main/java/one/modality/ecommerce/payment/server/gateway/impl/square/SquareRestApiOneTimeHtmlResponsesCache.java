@@ -13,13 +13,13 @@ final class SquareRestApiOneTimeHtmlResponsesCache {
     private final static Map<String, String> ONE_TIME_HTML_RESPONSES = new HashMap<>();
 
     static void registerOneTimeHtmlResponse(String key, String value) {
-        Console.log("Caching one time html response for key=" + key + ": " + value);
+        Console.log("Caching one time html response for key=" + key + ", value=" + value.substring(0, 10) + "..., Map instance="  + " in Map instance " + ONE_TIME_HTML_RESPONSES);
         ONE_TIME_HTML_RESPONSES.put(key, value);
     }
 
     static String getOneTimeHtmlResponse(String key) {
         String value = ONE_TIME_HTML_RESPONSES.remove(key);
-        Console.log("Retrieving one time html response for key=" + key + ": " + value);
+        Console.log("Retrieving one time html response from key=" + key + ", Map instance=" + ONE_TIME_HTML_RESPONSES +", value=" + value);
         return value;
     }
 }
