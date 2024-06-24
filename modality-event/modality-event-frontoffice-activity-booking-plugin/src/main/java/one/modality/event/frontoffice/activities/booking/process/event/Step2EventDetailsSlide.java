@@ -47,7 +47,6 @@ import java.util.stream.Collectors;
     }
 
     public void buildUi() {
-        reset();
         Text title = I18n.bindI18nProperties(new Text(),"GPEvent");
         title.getStyleClass().addAll("book-event-primary-title");
         HBox line1 = new HBox(title);
@@ -148,8 +147,8 @@ import java.util.stream.Collectors;
         selectAllClassesHyperlink.setOnAction((event -> recurringEventSchedule.selectDates(selectableDates)));
         mainVbox.getChildren().add(selectAllClassesHyperlink);
 
-        //TODO: retrieve the price, for now we hardcode it
-        Text priceText = new Text(I18n.getI18nText("PricePerClass", 7, "£"));
+        int price = bookEventData.getCurrentBooking().getPolicyAggregate().getRates().get(0).getPrice()/100;
+        Text priceText = new Text(I18n.getI18nText("PricePerClass", price, "£"));
         HBox line6 = new HBox(priceText);
         priceText.getStyleClass().add("subtitle-grey");
         line6.setPadding(new Insets(20, 0, 5, 0));
@@ -200,6 +199,7 @@ import java.util.stream.Collectors;
                         imageView.setImage(imageToDisplay);
                     }
                 }));
+
         controller.setEventDataLoaded(false);
         controller.setRegistrationDataLoaded(false);
         e.onExpressionLoaded("name, shortDescription, description, venue.(name, label, address)")
