@@ -9,6 +9,7 @@
             src="${square_webPaymentsSDKUrl}" />
     ></script>
     <script>
+        console.log("Starting Square script");
         // Parameters injected by SquarePaymentGateway java class on server-side
         const square_appId = '${square_appId}';
         const square_locationId = '${square_locationId}';
@@ -129,13 +130,12 @@
             statusContainer.style.visibility = 'visible';
         }
 
-
-        document.addEventListener('DOMContentLoaded', async function () {
+        async function onLoaded() {
             console.log("Square DOMContentLoaded");
             if (modality_javaPaymentForm) {
-                console.log("modality_javaPaymentForm is NOT set");
-            } else {
                 console.log("modality_javaPaymentForm is set");
+            } else {
+                console.log("modality_javaPaymentForm is NOT set");
             }
 
             if (!window.Square) {
@@ -167,7 +167,7 @@
             }
 
             modality_notifyInitSuccess();
-        });
+        }
 
         async function handlePaymentMethodSubmission(firstName, lastName, email, phone, address, city, state, countryCode) {
             // Firstly: Square client process
@@ -198,6 +198,14 @@
                 console.error(e.message);
                 modality_notifyModalityFailure(e.message);
             }
+        }
+
+        if (document.readyState === "complete" || document.readyState === "interactive") {
+            // Document is already ready, so just call the function directly
+            onLoaded();
+        } else {
+            // Document is not ready yet, so add an event listener for DOMContentLoaded
+            document.addEventListener('DOMContentLoaded', onLoaded);
         }
 
         // Methods called by WebPaymentForm java class on client-side
