@@ -10,6 +10,8 @@ module modality.all.frontoffice.application.openjfx {
     requires modality.all.frontoffice.application;
     requires modality.ecommerce.document.service.buscall;
     requires modality.ecommerce.document.service.remote;
+    requires modality.ecommerce.payment.buscall;
+    requires modality.ecommerce.payment.remote;
     requires webfx.extras.visual.grid.peers.openjfx;
     requires webfx.extras.webtext.peers.openjfx;
     requires webfx.kit.javafxgraphics.openjfx;

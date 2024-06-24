@@ -41,9 +41,9 @@ public final class SquarePaymentGateway implements PaymentGateway {
                 .replace("${modality_currencyCode}", argument.getCurrencyCode())
                 .replace("${modality_completePaymentRoute}", live ? SQUARE_LIVE_COMPLETE_PAYMENT_ROUTE : SQUARE_SANDBOX_COMPLETE_PAYMENT_ROUTE)
                 ;
-        String responseCacheKey = Uuid.randomUuid();
-        SquareRestApiOneTimeHtmlResponsesCache.registerOneTimeHtmlResponse(responseCacheKey, html);
-        String url = SQUARE_PAYMENT_FORM_ROUTE.replace(":htmlCacheKey", responseCacheKey);
+        String htmlCacheKey = Uuid.randomUuid();
+        SquareRestApiOneTimeHtmlResponsesCache.registerOneTimeHtmlResponse(htmlCacheKey, html);
+        String url = SQUARE_PAYMENT_FORM_ROUTE.replace(":htmlCacheKey", htmlCacheKey);
         return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedUrlInitiatePaymentResult(url));
     }
 
