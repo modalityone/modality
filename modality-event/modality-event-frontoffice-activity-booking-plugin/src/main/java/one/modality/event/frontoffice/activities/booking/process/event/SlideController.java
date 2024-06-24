@@ -3,7 +3,6 @@ package one.modality.event.frontoffice.activities.booking.process.event;
 import dev.webfx.extras.carrousel.Carrousel;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.kit.util.properties.Unregisterable;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import javafx.application.Platform;
@@ -30,8 +29,14 @@ public class SlideController {
     }
 
     public void initialise() {
-        Unregisterable[] listeners = { null };
-        listeners[0] = FXProperties.runOnPropertiesChange(() -> {
+        eventDataLoaded.setValue(false);
+        registrationDataLoaded.setValue(false);
+        step2EventDetailsSlide.reset();
+        step3CheckoutSlide.reset();
+        step4PaymentSlide.reset();
+        step5ErrorSlide.reset();
+        step6ThankYouSlide.reset();
+        FXProperties.runOnPropertiesChange(() -> {
             if (eventDataLoaded.get() && registrationDataLoaded.get()) {
                 Platform.runLater(() -> {
                     step2EventDetailsSlide.buildUi();
@@ -41,7 +46,6 @@ public class SlideController {
                     step6ThankYouSlide.buildUi();
                     carrousel.displaySlide(1,false);
                 });
-             //   listeners[0].unregister();
             }
             else {//Here the data are not loaded
                     Platform.runLater(() -> {
