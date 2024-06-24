@@ -18,7 +18,7 @@ final class SquareRestApiOneTimeHtmlResponsesCache {
     }
 
     static String getOneTimeHtmlResponse(String key) {
-        String value = ONE_TIME_HTML_RESPONSES.remove(key);
+        String value = ONE_TIME_HTML_RESPONSES.get(key); // Not remove() because AWS is asking several times for some reason
         Console.log("Retrieving one time html response from key=" + key + ", Map instance=HashMap@" + System.identityHashCode(ONE_TIME_HTML_RESPONSES) +", value=" + value);
         return value;
     }
