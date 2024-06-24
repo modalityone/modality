@@ -18,6 +18,7 @@ import javafx.scene.text.Text;
 import one.modality.base.shared.entities.ScheduledItem;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -209,12 +210,11 @@ public class RecurringEventSchedule {
             LocalDate date = scheduledItem.getDate();
             String dateFormatted = I18n.getI18nText("DateFormatted", I18n.getI18nText(date.getMonth().name()), date.getDayOfMonth());
             dayText.setText(dateFormatted);
-            //We test if the StartTime of the scheduledItem is defined. If it's null, we need to look at the info in the timeline associated to the event
-           /* LocalTime startTime = scheduledItem.getStartTime();
+            LocalTime startTime = scheduledItem.getStartTime();
             if (startTime == null) {
                 startTime = scheduledItem.getTimeline().getStartTime();
             }
-            hourText.setText(I18n.getI18nText("AtTime", startTime.toString()));*/
+            hourText.setText(I18n.getI18nText("AtTime", startTime.toString()));
             paneAndCssClassMap.put(date, new Pair<>(this, new Pair<>(computeCssClassForSelectedDateFunction.apply(date), computeCssClassForUnselectedDateFunction.apply(date))));
             containerVBox.setOnMouseClicked(event -> {
                 if (dateConsumer == null) {

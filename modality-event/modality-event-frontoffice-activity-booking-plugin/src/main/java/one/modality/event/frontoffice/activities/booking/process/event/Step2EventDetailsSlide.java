@@ -46,8 +46,8 @@ import java.util.stream.Collectors;
         controller.setStep2EventDetailsSlide(this);
     }
 
-
     public void buildUi() {
+        reset();
         Text title = I18n.bindI18nProperties(new Text(),"GPEvent");
         title.getStyleClass().addAll("book-event-primary-title");
         HBox line1 = new HBox(title);
