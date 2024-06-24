@@ -110,13 +110,14 @@ public class WorkingBooking {
         if (initialDocumentAggregate != null)
             document = initialDocumentAggregate.getDocument();
         else {
-            if (documentPrimaryKey == null)
+            if (documentPrimaryKey == null) { // Case of new booking
                 document = getEntityStore().createEntity(Document.class);
-            else
+                document.setEvent(FXEvent.getEvent());
+                document.setPerson(FXUserPerson.getUserPerson());
+                documentChanges.add(new AddDocumentEvent(document));
+            } else { // Case of existing booking
                 document = getEntityStore().createEntity(Document.class, documentPrimaryKey);
-            document.setEvent(FXEvent.getEvent());
-            document.setPerson(FXUserPerson.getUserPerson());
-            documentChanges.add(new AddDocumentEvent(document));
+            }
         }
     }
 
