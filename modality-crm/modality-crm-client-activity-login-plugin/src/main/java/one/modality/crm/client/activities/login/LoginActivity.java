@@ -13,7 +13,7 @@ final class LoginActivity extends ViewDomainActivityBase {
 
     @Override
     public Node buildUi() {
-        FXAuthorizationsWaiting.isAuthorizationsWaiting();
+        FXAuthorizationsWaiting.init();
         return LoginUiService.createLoginUI();
     }
 
