@@ -8,6 +8,7 @@ one.modality.base.shared.entities.impl.DocumentLineImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.EventImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.EventTypeImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.FilterImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.FrontendAccountImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.GatewayCompanyImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.GatewayParameterImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.HistoryImpl$ProvidedFactory
