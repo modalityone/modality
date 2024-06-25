@@ -154,13 +154,13 @@ public class Step3CheckoutSlide extends StepSlide {
         payButton.setOnAction(event -> {
             payButton.graphicProperty().unbind();
             payButton.setGraphic(progressIndicator);
+            payButton.setDisable(true);
             bookEventData.getCurrentBooking().submitChanges("Booked Online")
                     .onFailure(result -> Platform.runLater(() -> {
                             controller.displayErrorMessage("ErrorWhileInsertingBooking");
                             Console.log(result);
                     }))
                     .onSuccess(result -> Platform.runLater(() -> {
-                        I18nControls.bindI18nProperties(payButton, "Pay");
                         bookEventData.setBookingNumber(Integer.parseInt(result.getDocumentRef().toString()));
                         Object documentPrimaryKey = result.getDocumentPrimaryKey();
                         bookEventData.setDocumentPrimaryKey(documentPrimaryKey);
@@ -173,13 +173,15 @@ public class Step3CheckoutSlide extends StepSlide {
                                     Console.log(result);
                                 }))
                                 .onSuccess(paymentResult -> Platform.runLater(() -> {
+                                    I18nControls.bindI18nProperties(payButton, "Pay");
+                                    payButton.setDisable(false);
                                     WebPaymentForm webPaymentForm = new WebPaymentForm(paymentResult, FXUserPerson.getUserPerson());
                                     controller.getStep4PaymentSlide().setWebPaymentForm(webPaymentForm);
                                     controller.displayNextSlide();
                                 }));
                     }));
         });
-            // controller.displayNextSlide();}));
-            mainVbox.getChildren().add(payButton);
+        // controller.displayNextSlide();}));
+        mainVbox.getChildren().add(payButton);
     }
 }
