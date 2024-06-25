@@ -17,6 +17,9 @@
             <callback-method name="onInitFailure">
                 <callback-argument class="java.lang.String"/>
             </callback-method>
+            <callback-method name="onGatewayRecoveredFailure">
+                <callback-argument class="java.lang.String"/>
+            </callback-method>
             <callback-method name="onGatewayFailure">
                 <callback-argument class="java.lang.String"/>
             </callback-method>

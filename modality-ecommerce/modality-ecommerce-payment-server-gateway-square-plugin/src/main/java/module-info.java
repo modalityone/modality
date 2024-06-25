@@ -13,10 +13,10 @@ module modality.ecommerce.payment.server.gateway.square.plugin {
     requires square;
     requires webfx.platform.async;
     requires webfx.platform.boot;
+    requires webfx.platform.console;
     requires webfx.platform.resource;
     requires webfx.platform.util;
     requires webfx.platform.vertx.common;
-    requires webfx.platform.console;
 
     // Exported packages
     exports one.modality.ecommerce.payment.server.gateway.impl.square;

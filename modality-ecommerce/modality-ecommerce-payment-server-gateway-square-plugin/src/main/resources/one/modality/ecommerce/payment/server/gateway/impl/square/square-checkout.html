@@ -170,11 +170,20 @@
         }
 
         async function handlePaymentMethodSubmission(firstName, lastName, email, phone, address, city, state, countryCode) {
-            // Firstly: Square client process
+            // Firstly: Card number verification
             let token;
-            let verificationToken;
             try {
                 token = await tokenize(card);
+            } catch (e) {
+                displayPaymentResults('FAILURE');
+                console.error(e.message);
+                modality_notifyGatewayRecoveredFailure(e.message);
+                return;
+            }
+
+            // Secondly: Buyer verification
+            let verificationToken;
+            try {
                 verificationToken = await verifyBuyer(token, firstName, lastName, email, phone, address, city, state, countryCode);
             } catch (e) {
                 displayPaymentResults('FAILURE');
@@ -183,7 +192,7 @@
                 return;
             }
 
-            // Secondly: Modality server process (includes Square payment completion + Modality payment database update)
+            // Thirdly: Modality server process (includes Square payment completion + Modality payment database update)
             try {
                 const paymentStatus = await createPayment(
                     token,
@@ -242,6 +251,11 @@
                 modality_javaPaymentForm.onInitFailure(error);
                 initNotificationCalled = true;
             }
+        }
+
+        function modality_notifyGatewayRecoveredFailure(error) {
+            if (modality_javaPaymentForm)
+                modality_javaPaymentForm.onGatewayRecoveredFailure(error);
         }
 
         function modality_notifyGatewayFailure(error) {

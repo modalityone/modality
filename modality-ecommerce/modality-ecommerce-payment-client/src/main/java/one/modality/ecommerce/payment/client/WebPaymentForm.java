@@ -167,6 +167,11 @@ public class WebPaymentForm {
         callConsumerOnUiThreadIfSet(onInitFailure, error);
     }
 
+    public void onGatewayRecoveredFailure(String error) {
+        logDebug("onGatewayRecoveredFailure called (error = " + error + ")");
+        payButton.setDisable(false);
+    }
+
     public void onGatewayFailure(String error) {
         logDebug("onGatewayFailure called (error = " + error + ")");
         payButton.setDisable(false);
