@@ -48,7 +48,7 @@ public class Step3CheckoutSlide extends StepSlide {
         line1.setPadding(new Insets(20, 0, 0, 50));
         mainVbox.getChildren().add(line1);
         eventShortDescriptionInCheckoutSlide.getStyleClass().add("subtitle-grey");
-        eventShortDescriptionInCheckoutSlide.setMaxWidth(300);
+        eventShortDescriptionInCheckoutSlide.setMaxWidth(350); // The idea is to balance the description over 2 lines of the same length TODO: see if this can be made generic whatever the description
         HBox line2 = new HBox(eventShortDescriptionInCheckoutSlide);
         line2.setAlignment(Pos.BASELINE_LEFT);
         line2.setPadding(new Insets(10, 0, 0, 50));

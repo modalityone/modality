@@ -107,7 +107,7 @@ public class Step4PaymentSlide extends StepSlide {
         paymentInformationInPaymentSlide.setPadding(new Insets(50,0,20,0));
         HBox line2 = new HBox(paymentInformationInPaymentSlide);
         line2.setAlignment(Pos.BASELINE_LEFT);
-        line2.setPadding(new Insets(10, 0, 0, 50));
+        line2.setPadding(new Insets(10, 0, 20, 50));
         mainVbox.getChildren().add(line2);
     }
 }

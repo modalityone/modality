@@ -5,7 +5,7 @@ import javafx.scene.layout.VBox;
 
 import java.util.function.Supplier;
 
-public abstract class StepSlide implements Supplier {
+public abstract class StepSlide implements Supplier<Node> {
     protected VBox mainVbox;
     protected SlideController controller;
     protected BookEventData bookEventData;
