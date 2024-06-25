@@ -10,7 +10,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
 
 public class Step5ErrorSlide extends StepSlide{
 
@@ -34,13 +33,9 @@ public class Step5ErrorSlide extends StepSlide{
         //We manage the property of the button in css
         cancelRegistrationButton.getStyleClass().addAll("event-button", "danger-button");
         cancelRegistrationButton.setMaxWidth(250);
-        ProgressIndicator progressIndicator = new ProgressIndicator();
-        progressIndicator.setMaxSize(20, 20);
-        progressIndicator.setStyle("-fx-progress-color: white;");
         errorMessage.setPadding(new Insets(0,0,20,0));
         cancelRegistrationButton.setOnAction(event -> {
-            cancelRegistrationButton.graphicProperty().unbind();
-            cancelRegistrationButton.setGraphic(progressIndicator);
+            turnOnButtonWaitMode(cancelRegistrationButton);
             bookEventData.getCurrentBooking().cancelBooking();
             bookEventData.getCurrentBooking().submitChanges("Online User Cancellation")
                     .onFailure(result -> Platform.runLater(() -> {
@@ -48,7 +43,7 @@ public class Step5ErrorSlide extends StepSlide{
                         Console.log(result);
                     }))
                     .onSuccess(result -> Platform.runLater(() -> {
-                        I18nControls.bindI18nProperties(cancelRegistrationButton, "CancelRegistration");
+                        turnOffButtonWaitMode(cancelRegistrationButton, "CancelRegistration");
                         setErrorMessage("RegistrationCanceled",false);
                     }));
         });

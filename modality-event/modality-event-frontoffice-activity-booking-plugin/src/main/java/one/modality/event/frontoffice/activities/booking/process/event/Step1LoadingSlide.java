@@ -14,7 +14,7 @@ public class Step1LoadingSlide extends StepSlide{
 
     public Node buildUi() {
         ProgressIndicator progressIndicator = new ProgressIndicator();
-        progressIndicator.setMaxSize(100, 100);
+        progressIndicator.setPrefSize(100, 100);
         mainVbox.setSpacing(10);
         mainVbox.setAlignment(Pos.CENTER);
         mainVbox.getChildren().add(progressIndicator);

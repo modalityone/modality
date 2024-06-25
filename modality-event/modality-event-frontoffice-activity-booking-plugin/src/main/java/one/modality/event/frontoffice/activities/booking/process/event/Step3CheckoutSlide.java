@@ -10,7 +10,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -61,7 +60,6 @@ public class Step3CheckoutSlide extends StepSlide {
         HBox addressBorderHBox = new HBox();
         addressBorderHBox.getChildren().add(venueAddress);
         addressBorderHBox.setAlignment(Pos.CENTER_LEFT);
-        //venueAddress.setPrefWidth(MAX_WIDTH - 50);
         venueAddress.setPadding(new Insets(0, 0, 30, 50));
         mainVbox.getChildren().addAll(addressBorderHBox);
 
@@ -147,14 +145,8 @@ public class Step3CheckoutSlide extends StepSlide {
         payButton.getStyleClass().addAll("event-button", "success-button");
         payButton.setMaxWidth(150);
 
-        ProgressIndicator progressIndicator = new ProgressIndicator();
-        progressIndicator.setPrefSize(20, 20); // setMaxSize() has no effect on WebFX
-        progressIndicator.setStyle("-fx-progress-color: white;");
-
         payButton.setOnAction(event -> {
-            payButton.graphicProperty().unbind();
-            payButton.setGraphic(progressIndicator);
-            payButton.setDisable(true);
+            turnOnButtonWaitMode(payButton);
             bookEventData.getCurrentBooking().submitChanges("Booked Online")
                     .onFailure(result -> Platform.runLater(() -> {
                             controller.displayErrorMessage("ErrorWhileInsertingBooking");
@@ -173,8 +165,7 @@ public class Step3CheckoutSlide extends StepSlide {
                                     Console.log(result);
                                 }))
                                 .onSuccess(paymentResult -> Platform.runLater(() -> {
-                                    I18nControls.bindI18nProperties(payButton, "Pay");
-                                    payButton.setDisable(false);
+                                    turnOffButtonWaitMode(payButton, "Pay");
                                     WebPaymentForm webPaymentForm = new WebPaymentForm(paymentResult, FXUserPerson.getUserPerson());
                                     controller.getStep4PaymentSlide().setWebPaymentForm(webPaymentForm);
                                     controller.displayNextSlide();

@@ -3,6 +3,7 @@ package one.modality.event.frontoffice.activities.booking.process.event;
 import dev.webfx.extras.carrousel.Carrousel;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import javafx.application.Platform;
@@ -14,15 +15,16 @@ import javafx.scene.text.Text;
 import one.modality.event.client.event.fx.FXEvent;
 
 public class SlideController {
+
     private Step1LoadingSlide step1LoadingSlide;
     private Step2EventDetailsSlide step2EventDetailsSlide;
     private Step3CheckoutSlide step3CheckoutSlide;
     private Step4PaymentSlide step4PaymentSlide;
     private Step6ThankYouSlide step6ThankYouSlide;
     private Step5ErrorSlide step5ErrorSlide;
-    private Carrousel carrousel;
-    private BooleanProperty eventDataLoaded = new SimpleBooleanProperty();
-    private BooleanProperty registrationDataLoaded = new SimpleBooleanProperty();
+    private final Carrousel carrousel;
+    private final BooleanProperty eventDataLoaded = new SimpleBooleanProperty();
+    private final BooleanProperty registrationDataLoaded = new SimpleBooleanProperty();
 
     public SlideController(Carrousel car) {
         carrousel = car;
@@ -38,20 +40,17 @@ public class SlideController {
         step6ThankYouSlide.reset();
         FXProperties.runOnPropertiesChange(() -> {
             if (eventDataLoaded.get() && registrationDataLoaded.get()) {
-                Platform.runLater(() -> {
+                UiScheduler.runInUiThread(() -> {
                     step2EventDetailsSlide.buildUi();
                     step3CheckoutSlide.buildUi();
                     step4PaymentSlide.buildUi();
                     step5ErrorSlide.buildUi();
                     step6ThankYouSlide.buildUi();
-                    carrousel.displaySlide(1,false);
+                    carrousel.displaySlide(1, false);
                 });
+            } else { // Here the data are not loaded
+                UiScheduler.runInUiThread(() -> carrousel.displaySlide(0, false));
             }
-            else {//Here the data are not loaded
-                    Platform.runLater(() -> {
-                        carrousel.displaySlide(0,false);
-                    });
-                }
         }, eventDataLoaded, registrationDataLoaded);
     }
 
@@ -158,6 +157,5 @@ public class SlideController {
         bindI18nEventExpression(text.textProperty(), eventExpression);
         return text;
     }
-
 
 }

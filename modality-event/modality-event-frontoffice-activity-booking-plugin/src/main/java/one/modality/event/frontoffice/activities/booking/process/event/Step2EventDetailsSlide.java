@@ -53,43 +53,30 @@ import java.util.stream.Collectors;
         line1.setPadding(new Insets(0,0,5,0));
         line1.setAlignment(Pos.BASELINE_CENTER);
 
-        mainVbox.getChildren().add(line1);
-
         Text eventCentreLocationText = controller.bindI18nEventExpression(new Text(),
                 "'[At] ' + coalesce(i18n(venue), i18n(organization))");
 
-        mainVbox.getChildren().add(eventCentreLocationText);
-
-        eventShortDescriptionInEventSlide.getStyleClass().add("subtitle-grey");
-        //  eventTitle.getStyleClass().add("subtitle-grey");
+        eventShortDescriptionInEventSlide.getStyleClass().setAll("subtitle-grey");
         HBox line2 = new HBox(eventShortDescriptionInEventSlide);
         line2.setAlignment(Pos.BASELINE_CENTER);
         line2.setPadding(new Insets(5,0,15,0));
 
-        mainVbox.getChildren().add(line2);
-
-        //imageView.setPreserveRatio(true);
-        ScalePane scalePane = new ScalePane(ScaleMode.FIT_WIDTH, imageView);
-        scalePane.setCanGrow(false);
-
-        mainVbox.getChildren().add(scalePane);
+        ScalePane imageScalePane = new ScalePane(ScaleMode.FIT_WIDTH, imageView);
+        imageScalePane.setCanGrow(false);
 
         eventDescription.setPadding(new Insets(20,0,0,0));
         eventDescription.getStyleClass().add("description-text");
-        mainVbox.getChildren().add(eventDescription);
 
         Text scheduleText = I18n.bindI18nProperties( new Text(),"Schedule");
         scheduleText.getStyleClass().addAll("book-event-primary-title");
         HBox line4 = new HBox(scheduleText);
         line4.setPadding(new Insets(20,0,10,0));
         line4.setAlignment(Pos.BASELINE_CENTER);
-        mainVbox.getChildren().add(line4);
 
         Text selectTheCourseText = I18n.bindI18nProperties( new Text(),"SelectTheEvent");
         HBox line5 = new HBox(selectTheCourseText);
         line5.setPadding(new Insets(0, 0, 5, 0));
         line5.setAlignment(Pos.BASELINE_CENTER);
-        mainVbox.getChildren().add(line5);
 
         recurringEventSchedule.setScheduledItems(bookEventData.getScheduledItemsOnEvent());
         // We add a listener on the date to update the BooleanProperty bound to the disable property of the checkout button
@@ -135,7 +122,6 @@ import java.util.stream.Collectors;
 
         FlexPane dateFlexPane = recurringEventSchedule.buildUi();
         dateFlexPane.setPadding(new Insets(20, 0, 20, 0));
-        mainVbox.getChildren().add(dateFlexPane);
 
         //We create a list of local date, that will contain all the selectable date, ie the one that are not in the past, and not already booked
         List<LocalDate> selectableDates = bookEventData.getScheduledItemsOnEvent().stream().map(ScheduledItem::getDate).collect(Collectors.toList());
@@ -145,7 +131,6 @@ import java.util.stream.Collectors;
         selectAllClassesHyperlink.setAlignment(Pos.BASELINE_CENTER);
         selectAllClassesHyperlink.getStyleClass().addAll("primary-text", "title4");
         selectAllClassesHyperlink.setOnAction((event -> recurringEventSchedule.selectDates(selectableDates)));
-        mainVbox.getChildren().add(selectAllClassesHyperlink);
 
         int price = bookEventData.getCurrentBooking().getPolicyAggregate().getRates().get(0).getPrice()/100;
         Text priceText = new Text(I18n.getI18nText("PricePerClass", price, "£"));
@@ -153,7 +138,6 @@ import java.util.stream.Collectors;
         priceText.getStyleClass().add("subtitle-grey");
         line6.setPadding(new Insets(20, 0, 5, 0));
         line6.setAlignment(Pos.BASELINE_CENTER);
-        mainVbox.getChildren().add(line6);
 
         //TODO: retrieve the discount, for now we hardcode it
         Text priceForAllClassesText = new Text(I18n.getI18nText("DiscountForAllSeries", 15));
@@ -162,7 +146,6 @@ import java.util.stream.Collectors;
         line7.setAlignment(Pos.BASELINE_CENTER);
 
         line7.setPadding(new Insets(0, 0, 20, 0));
-        mainVbox.getChildren().add(line7);
 
         Button checkoutButton = I18nControls.bindI18nProperties(new Button(), "ProceedCheckout");
         //We manage the property of the button in css
@@ -175,14 +158,26 @@ import java.util.stream.Collectors;
             controller.displayNextSlide();
         }));
 
-        mainVbox.getChildren().add(checkoutButton);
+        checkoutButton.disableProperty().bind(isOptionsSelectedEmptyProperty);
 
         mainVbox.setPadding(new Insets(30, 50, 20, 50));
-        //eventDetailVBox.setMaxWidth(MAX_WIDTH);
         mainVbox.setAlignment(Pos.TOP_CENTER);
-        checkoutButton.disableProperty().bind(isOptionsSelectedEmptyProperty);
-        //totalPriceLabel.textProperty().bind(Bindings.format("%.2f£", totalPriceProperty)); // Not supported by WebFX
-            }
+        mainVbox.getChildren().setAll(
+                line1,
+                eventCentreLocationText,
+                line2,
+                imageScalePane,
+                eventDescription,
+                line4,
+                line5,
+                dateFlexPane,
+                selectAllClassesHyperlink,
+                line6,
+                line7,
+                checkoutButton
+        );
+
+    }
 
     public void loadData(Event e) {
         Object imageTag = e.getId().getPrimaryKey();
@@ -203,7 +198,7 @@ import java.util.stream.Collectors;
         controller.setEventDataLoaded(false);
         controller.setRegistrationDataLoaded(false);
         e.onExpressionLoaded("name, shortDescription, description, venue.(name, label, address)")
-                .onFailure(x -> controller.displayErrorMessage(x.toString()))
+                .onFailure(ex -> controller.displayErrorMessage(ex.getMessage()))
                 .onSuccess(x -> controller.setEventDataLoaded(true));
         //Here, we check if there is already some booking from the same person for this scheduled item.
         e.getStore().executeQuery(

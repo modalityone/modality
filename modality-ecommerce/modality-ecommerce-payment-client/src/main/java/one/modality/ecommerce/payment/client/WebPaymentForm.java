@@ -1,6 +1,5 @@
 package one.modality.ecommerce.payment.client;
 
-import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.webview.pane.LoadOptions;
 import dev.webfx.extras.webview.pane.WebViewPane;
 import dev.webfx.platform.browser.Browser;
@@ -9,9 +8,10 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.scheduler.Scheduler;
 import javafx.application.Platform;
-import javafx.scene.control.Button;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
 import one.modality.ecommerce.payment.InitiatePaymentResult;
 
@@ -27,16 +27,14 @@ public class WebPaymentForm {
     private final InitiatePaymentResult result;
     private final HasPersonalDetails buyerPersonalDetails;
     private final WebViewPane webViewPane = new WebViewPane();
+    private final BooleanProperty userInteractionAllowedProperty = new SimpleBooleanProperty(false);
+    private Scheduled initFailureChecker;
     private boolean inited;
     private Consumer<String> onLoadFailure; // Called when the webview failed to load
     private Consumer<String> onInitFailure; // Called when the payment page failed to initialised (otherwise the card details should appear)
     private Consumer<String> onGatewayFailure; // Called when the gateway failed to create the payment (just after the buyer pressed Pay)
     private Consumer<String> onModalityFailure; // Called when Modality couldn't handle the payment ()
     private Consumer<PaymentStatus> onFinalStatus;
-    private Runnable onBuyerCancel;
-    private final Button payButton = new Button("Pay");
-    private final Button cancelButton = new Button("Cancel");
-    private Scheduled initFailureChecker;
 
     public WebPaymentForm(InitiatePaymentResult result, HasPersonalDetails buyerPersonalDetails) {
         this.result = result;
@@ -63,22 +61,9 @@ public class WebPaymentForm {
         return this;
     }
 
-    public WebPaymentForm setOnBuyerCancel(Runnable onBuyerCancel) {
-        this.onBuyerCancel = onBuyerCancel;
-        return this;
-    }
-
     public WebPaymentForm setOnFinalStatus(Consumer<PaymentStatus> onFinalStatus) {
         this.onFinalStatus = onFinalStatus;
         return this;
-    }
-
-    public Button getPayButton() {
-        return payButton;
-    }
-
-    public Button getCancelButton() {
-        return cancelButton;
     }
 
     public Region buildPaymentForm() {
@@ -95,11 +80,10 @@ public class WebPaymentForm {
         webViewPane.setMaxHeight(150);
         //webViewPane.setFitHeight(true); // doesn't work well
         //webViewPane.setRedirectConsole(true); // causes stack overflow
-        payButton.setDisable(true);
+        setUserInteractionAllowed(false);
         LoadOptions loadOptions = new LoadOptions()
                 .setOnLoadFailure(this::onLoadFailure)
                 .setOnLoadSuccess(() -> { // Note: can be called several times in case of an iFrame reload
-                    payButton.setDisable(false);
                     try {
                         if (initFailureChecker != null)  // can happen on iFrame reload
                             initFailureChecker.cancel(); // we cancel the previous checker to prevent outdated init failure
@@ -123,28 +107,41 @@ public class WebPaymentForm {
             }
             webViewPane.loadFromUrl(url, loadOptions, false);
         }
-        payButton.setMaxWidth(Double.MAX_VALUE);
-        payButton.setOnMouseClicked(e -> {
-            payButton.setDisable(true);
-            try {
-                Console.log("Calling modality_submitGatewayPayment() in payment form");
-                webViewPane.callWindow("modality_submitGatewayPayment",
-                        buyerPersonalDetails.getFirstName(),
-                        buyerPersonalDetails.getLastName(),
-                        buyerPersonalDetails.getEmail(),
-                        buyerPersonalDetails.getPhone(),
-                        buyerPersonalDetails.getStreet(),
-                        buyerPersonalDetails.getCityName(),
-                        buyerPersonalDetails.getAdmin1Name(),
-                        buyerPersonalDetails.getCountry().getIsoAlpha2()
-                        );
-            } catch (Exception ex) {
-                onGatewayFailure(ex.getMessage());
-            }
-        });
-        cancelButton.setMaxWidth(Double.MAX_VALUE);
-        cancelButton.setOnMouseClicked(e -> callRunnableOnUiThreadIfSet(onBuyerCancel));
-        return new VBox(webViewPane, new ColumnsPane(payButton, cancelButton));
+        webViewPane.getStyleClass().add("payment-form");
+        return webViewPane;
+    }
+
+    public void pay() {
+        if (!inited || !userInteractionAllowedProperty.get())
+            throw new IllegalStateException("pay() must be called after the payment form has been initialized and when the user is allowed to interact");
+        setUserInteractionAllowed(false);
+        try {
+            Console.log("Calling modality_submitGatewayPayment() in payment form");
+            webViewPane.callWindow("modality_submitGatewayPayment",
+                    buyerPersonalDetails.getFirstName(),
+                    buyerPersonalDetails.getLastName(),
+                    buyerPersonalDetails.getEmail(),
+                    buyerPersonalDetails.getPhone(),
+                    buyerPersonalDetails.getStreet(),
+                    buyerPersonalDetails.getCityName(),
+                    buyerPersonalDetails.getAdmin1Name(),
+                    buyerPersonalDetails.getCountry().getIsoAlpha2()
+            );
+        } catch (Exception ex) {
+            onGatewayFailure(ex.getMessage());
+        }
+    }
+
+    public ReadOnlyBooleanProperty userInteractionAllowedProperty() {
+        return userInteractionAllowedProperty;
+    }
+
+    public boolean isUserInteractionAllowed() {
+        return userInteractionAllowedProperty.get();
+    }
+
+    private void setUserInteractionAllowed(boolean allowed) {
+        userInteractionAllowedProperty.set(allowed);
     }
 
     private void onLoadFailure(String error) {
@@ -159,35 +156,37 @@ public class WebPaymentForm {
     public void onInitSuccess() {
         logDebug("onInitSuccess called");
         inited = true;
+        setUserInteractionAllowed(true);
     }
 
     public void onInitFailure(String error) {
         logDebug("onInitFailure called (error = " + error + ")");
         inited = true;
+        //setUserInteractionAllowed(true);
         callConsumerOnUiThreadIfSet(onInitFailure, error);
     }
 
     public void onGatewayRecoveredFailure(String error) {
         logDebug("onGatewayRecoveredFailure called (error = " + error + ")");
-        payButton.setDisable(false);
+        setUserInteractionAllowed(true);
     }
 
     public void onGatewayFailure(String error) {
         logDebug("onGatewayFailure called (error = " + error + ")");
-        payButton.setDisable(false);
+        setUserInteractionAllowed(true);
         Console.log(error);
         callConsumerOnUiThreadIfSet(onGatewayFailure, error);
     }
 
     public void onModalityFailure(String error) {
         logDebug("onModalityFailure called (error = " + error + ")");
-        payButton.setDisable(false);
+        setUserInteractionAllowed(true);
         callConsumerOnUiThreadIfSet(onModalityFailure, error);
     }
 
     public void onFinalStatus(String status) {
         logDebug("onFinalStatus called (status = " + status + ")");
-        payButton.setDisable(false);
+        //setUserInteractionAllowed(true);
         callConsumerOnUiThreadIfSet(onFinalStatus, PaymentStatus.valueOf(status));
     }
 
@@ -204,12 +203,6 @@ public class WebPaymentForm {
         if (value == expression)
             value = null;
         return value;
-    }
-
-    private void callRunnableOnUiThreadIfSet(Runnable runnable) {
-        if (runnable != null) {
-            Platform.runLater(runnable);
-        }
     }
 
     private <T> void callConsumerOnUiThreadIfSet(Consumer<T> consumer, T argument) {
