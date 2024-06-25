@@ -148,7 +148,7 @@ public class Step3CheckoutSlide extends StepSlide {
         payButton.setMaxWidth(150);
 
         ProgressIndicator progressIndicator = new ProgressIndicator();
-        progressIndicator.setMaxSize(20, 20);
+        progressIndicator.setPrefSize(20, 20); // setMaxSize() has no effect on WebFX
         progressIndicator.setStyle("-fx-progress-color: white;");
 
         payButton.setOnAction(event -> {
