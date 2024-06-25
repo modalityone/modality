@@ -6,6 +6,7 @@ import dev.webfx.extras.webview.pane.WebViewPane;
 import dev.webfx.platform.browser.Browser;
 import dev.webfx.platform.conf.ConfigLoader;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.scheduler.Scheduler;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
@@ -27,7 +28,6 @@ public class WebPaymentForm {
     private final HasPersonalDetails buyerPersonalDetails;
     private final WebViewPane webViewPane = new WebViewPane();
     private boolean inited;
-    private String initError;
     private Consumer<String> onLoadFailure; // Called when the webview failed to load
     private Consumer<String> onInitFailure; // Called when the payment page failed to initialised (otherwise the card details should appear)
     private Consumer<String> onGatewayFailure; // Called when the gateway failed to create the payment (just after the buyer pressed Pay)
@@ -36,6 +36,7 @@ public class WebPaymentForm {
     private Runnable onBuyerCancel;
     private final Button payButton = new Button("Pay");
     private final Button cancelButton = new Button("Cancel");
+    private Scheduled initFailureChecker;
 
     public WebPaymentForm(InitiatePaymentResult result, HasPersonalDetails buyerPersonalDetails) {
         this.result = result;
@@ -92,17 +93,19 @@ public class WebPaymentForm {
         }
         webViewPane.setMaxWidth(600);
         webViewPane.setMaxHeight(150);
-        //webViewPane.setFitHeight(true);
+        //webViewPane.setFitHeight(true); // doesn't work well
         //webViewPane.setRedirectConsole(true); // causes stack overflow
         payButton.setDisable(true);
         LoadOptions loadOptions = new LoadOptions()
                 .setOnLoadFailure(this::onLoadFailure)
-                .setOnLoadSuccess(() -> {
+                .setOnLoadSuccess(() -> { // Note: can be called several times in case of an iFrame reload
                     payButton.setDisable(false);
                     try {
+                        if (initFailureChecker != null)  // can happen on iFrame reload
+                            initFailureChecker.cancel(); // we cancel the previous checker to prevent outdated init failure
                         webViewPane.setWindowMember("modality_javaPaymentForm", WebPaymentForm.this);
                         webViewPane.callWindow("modality_injectJavaPaymentForm", WebPaymentForm.this);
-                        Scheduler.scheduleDelay(5000, () -> {
+                        initFailureChecker = Scheduler.scheduleDelay(5000, () -> {
                             if (!inited) {
                                 onInitFailure("The payment page didn't respond as expected");
                             }
@@ -156,13 +159,11 @@ public class WebPaymentForm {
     public void onInitSuccess() {
         logDebug("onInitSuccess called");
         inited = true;
-        initError = null;
     }
 
     public void onInitFailure(String error) {
         logDebug("onInitFailure called (error = " + error + ")");
         inited = true;
-        initError = error;
         callConsumerOnUiThreadIfSet(onInitFailure, error);
     }
 
