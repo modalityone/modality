@@ -94,6 +94,10 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
     }
 
     private void registerOperationRoutes(List<Entity> operations) {
+        // When this method is called, this overrides all previous rules. For example, if the first rules come from the
+        // cache, and subsequently the server pushes the most recent authorization rules, this second call overrides all
+        // previous rules initially coming from the cache.
+        ruleRegistry.clearAllAuthorizationRules();
         operations.forEach(op -> {
             String route = op.getStringFieldValue("grantRoute");
             if (!Strings.isEmpty(route)) {
