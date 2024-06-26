@@ -81,6 +81,7 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
         VBox.setMargin(localEventsLabel, new Insets(25));
 
         GrowingPane growingPane = new GrowingPane(localEventsContainer);
+
         VBox container = new VBox(
                 headerLabel,
                 headerImageScalePane,
@@ -93,6 +94,7 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
         container.setAlignment(Pos.CENTER);
         container.setBackground(Background.fill(Color.WHITE));
         container.setMaxWidth(1200);
+        container.setPadding(new Insets(0, 0, 200, 0)); // Footer margin (white)
 
         FXProperties.runOnPropertiesChange(() -> {
             double width = container.getWidth();
