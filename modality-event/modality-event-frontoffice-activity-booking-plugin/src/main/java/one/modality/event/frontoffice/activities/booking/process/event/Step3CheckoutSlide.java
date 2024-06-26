@@ -2,6 +2,7 @@ package one.modality.event.frontoffice.activities.booking.process.event;
 
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.windowhistory.WindowHistory;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import javafx.application.Platform;
@@ -17,12 +18,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.icons.SvgIcons;
+import one.modality.base.shared.entities.Person;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.payment.InitiatePaymentArgument;
 import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
+import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountRouting;
 
 public class Step3CheckoutSlide extends StepSlide {
     private final HtmlText eventShortDescriptionInCheckoutSlide = controller.bindI18nEventExpression(new HtmlText(), "shortDescription");
@@ -146,6 +149,11 @@ public class Step3CheckoutSlide extends StepSlide {
         payButton.setMaxWidth(150);
 
         payButton.setOnAction(event -> {
+            Person userPerson = FXUserPerson.getUserPerson();
+            if (userPerson == null) { // Means that the user is not logged in, or logged in via SSO but without an account in Modality
+                WindowHistory.getProvider().push(CheckoutAccountRouting.getPath());
+                return;
+            }
             turnOnButtonWaitMode(payButton);
             bookEventData.getCurrentBooking().submitChanges("Booked Online")
                     .onFailure(result -> Platform.runLater(() -> {
@@ -166,7 +174,7 @@ public class Step3CheckoutSlide extends StepSlide {
                                 }))
                                 .onSuccess(paymentResult -> Platform.runLater(() -> {
                                     turnOffButtonWaitMode(payButton, "Pay");
-                                    WebPaymentForm webPaymentForm = new WebPaymentForm(paymentResult, FXUserPerson.getUserPerson());
+                                    WebPaymentForm webPaymentForm = new WebPaymentForm(paymentResult, userPerson);
                                     controller.getStep4PaymentSlide().setWebPaymentForm(webPaymentForm);
                                     controller.displayNextSlide();
                                 }));

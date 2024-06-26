@@ -250,6 +250,7 @@
     <source path="one/modality/event/frontoffice/activities/booking/fx"/>
     <source path="one/modality/event/frontoffice/activities/booking/map"/>
     <source path="one/modality/event/frontoffice/activities/booking/process"/>
+    <source path="one/modality/event/frontoffice/activities/booking/process/account"/>
     <source path="one/modality/event/frontoffice/activities/booking/process/event"/>
     <source path="one/modality/event/frontoffice/activities/booking/routing"/>
     <source path="one/modality/event/frontoffice/activities/booking/views"/>
