@@ -14,7 +14,7 @@ public class CheckoutAccountUiRoute extends UiRouteImpl {
     }
 
     public static UiRoute<?> uiRoute() {
-        return UiRoute.create(CheckoutAccountRouting.getPath()
+        return UiRoute.create("/" // only path in the sub-router (under /booking/account)
                 , true
                 , CheckoutAccountActivity::new
                 , ViewDomainActivityContextFinal::new

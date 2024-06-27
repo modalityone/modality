@@ -37,8 +37,4 @@ public class CheckoutAccountActivity extends ViewDomainActivityBase {
         lastUserPerson = userPerson;
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
 }

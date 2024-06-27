@@ -1,20 +1,21 @@
 package one.modality.event.frontoffice.activities.booking.process.event;
 
+import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.windowhistory.WindowHistory;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.icons.SvgIcons;
@@ -32,11 +33,18 @@ public class Step3CheckoutSlide extends StepSlide {
     private final Label venueAddress = controller.bindI18nEventExpression(new Label(), "venue.address");
     private final VBox scheduledItemVBox = new VBox();
     private final Label totalPriceLabel = new Label();
+    // Node property that will be managed by the sub-router to mount the CheckoutAccountActivity (when routed)
+    private final ObjectProperty<Node> checkoutAccountMountNodeProperty = new SimpleObjectProperty<>();
 
     public Step3CheckoutSlide(SlideController control, BookEventData bed) {
         super(control, bed);
         controller.setStep3CheckoutSlide(this);
 
+    }
+
+    // Exposing accountMountNodeProperty for the sub-routing binding (done in BookEventActivity)
+    public ObjectProperty<Node> accountMountNodeProperty() {
+        return checkoutAccountMountNodeProperty;
     }
 
     public void buildUi() {
@@ -180,7 +188,12 @@ public class Step3CheckoutSlide extends StepSlide {
                                 }));
                     }));
         });
-        // controller.displayNextSlide();}));
         mainVbox.getChildren().add(payButton);
+
+        // Adding the container that will display the CheckoutAccountActivity (and eventually the login page before)
+        MonoPane accountActivityContainer = new MonoPane();
+        accountActivityContainer.contentProperty().bind(checkoutAccountMountNodeProperty); // managed by sub-router
+        VBox.setMargin(accountActivityContainer, new Insets(50, 0, 50, 0)); // Some good margins before and after
+        mainVbox.getChildren().add(accountActivityContainer);
     }
 }

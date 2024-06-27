@@ -40,7 +40,7 @@ public abstract class ModalityClientStarterActivity
     }
 
     protected UiRouter setupContainedRouter(UiRouter containedRouter) {
-        return containedRouter.registerProvidedUiRoutes();
+        return containedRouter.registerProvidedUiRoutes(true, false);
     }
 
     @Override

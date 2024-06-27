@@ -8,7 +8,9 @@ import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Numbers;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.orm.entity.EntityId;
+import dev.webfx.stack.routing.uirouter.UiRouter;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
@@ -21,6 +23,8 @@ import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.client.event.fx.FXEventId;
 import one.modality.event.frontoffice.activities.booking.PriceCalculator;
 import one.modality.event.frontoffice.activities.booking.WorkingBooking;
+import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountRouting;
+import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountUiRoute;
 
 
 /**
@@ -76,8 +80,10 @@ public final class BookEventActivity extends ViewDomainActivityBase {
 
     @Override
     protected void updateModelFromContextParameters() {
-        Object eventId = Numbers.toShortestNumber((Object) getParameter("eventId"));
-        FXEventId.setEventId(EntityId.create(Event.class, eventId));
+        Object eventId = getParameter("eventId");
+        if (eventId != null) { // This happens when sub-routing /booking/account (instead of /booking/event/:eventId)
+            FXEventId.setEventId(EntityId.create(Event.class, Numbers.toShortestNumber(eventId)));
+        }
     }
 
     @Override
@@ -91,6 +97,9 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         step6ThankYouSlide = new Step6ThankYouSlide(slideController,bookEventData);
         step5ErrorSlide = new Step5ErrorSlide(slideController,bookEventData);
         slideController.initialise();
+
+        // Sub-routing node binding (displaying the possible sub-routing account node in the appropriate place in step3)
+        step3CheckoutSlide.accountMountNodeProperty().bind(mountNodeProperty());
 
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Event event = FXEvent.getEvent();
@@ -110,5 +119,20 @@ public final class BookEventActivity extends ViewDomainActivityBase {
             }));
         }, FXEvent.eventProperty());
     }
-    // I18n utility methods
+
+    @Override
+    public void onCreate(ViewDomainActivityContextFinal context) {
+        super.onCreate(context);
+        // Hot declaration of the sub-routing to the checkout account activity
+        UiRouter subRouter = UiRouter.createSubRouter(context);
+        // Registering the redirect auth routes in the sub-router (to possibly have the login page within the mount node)
+        subRouter.registerProvidedUiRoutes(false, true);
+        // Registering the route to CheckoutAccountActivity
+        subRouter.route(new CheckoutAccountUiRoute()); // sub-route = / and activity = CheckoutAccountActivity
+        // Linking this sub-router to the current router (of BookEventActivity)
+        getUiRouter().routeAndMount(
+                CheckoutAccountRouting.getPath(), // /booking/account
+                () -> this, // the parent activity factory (actually this activity)
+                subRouter); // the sub-router that will mount the
+    }
 }
