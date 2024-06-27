@@ -43,23 +43,18 @@ public final class BookEventActivity extends ViewDomainActivityBase {
 
     @Override
     public Node buildUi() {
-        carrousel.setSlideSuppliers(step1LoadingSlide,step2EventDetailsSlide,step3CheckoutSlide, step4PaymentSlide, step6ThankYouSlide,step5ErrorSlide);
+        carrousel.setSlideSuppliers(step1LoadingSlide, step2EventDetailsSlide, step3CheckoutSlide, step4PaymentSlide, step6ThankYouSlide, step5ErrorSlide);
         carrousel.setLoop(false);
         Region carrouselContainer = carrousel.getContainer();
         carrouselContainer.setMaxWidth(MAX_WIDTH);
         ScrollPane mainScrollPane = ControlUtil.createVerticalScrollPaneWithPadding(10, new BorderPane(carrouselContainer));
+        carrouselContainer.minHeightProperty().bind(mainScrollPane.heightProperty());
 
         step1LoadingSlide.buildUi();
         //the step2, 3 and 7 slide needs the data to be loaded from the database before we're able to build the UI, so the call is made elsewhere
         //the step3 slide needs the data to be loaded from the database before we're able to build the UI, so the call is made elsewhere
         step4PaymentSlide.buildUi();
         step5ErrorSlide.buildUi();
-
-        step1LoadingSlide.getMainVBox().prefHeightProperty().bind(mainScrollPane.heightProperty());
-        step3CheckoutSlide.getMainVBox().prefHeightProperty().bind(mainScrollPane.heightProperty());
-        step4PaymentSlide.getMainVBox().prefHeightProperty().bind(mainScrollPane.heightProperty());
-        step6ThankYouSlide.getMainVBox().prefHeightProperty().bind(mainScrollPane.heightProperty());
-        step5ErrorSlide.getMainVBox().prefHeightProperty().bind(mainScrollPane.heightProperty());
 
         return mainScrollPane;
     }
