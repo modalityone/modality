@@ -103,6 +103,8 @@ public final class BookEventActivity extends ViewDomainActivityBase {
 
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Event event = FXEvent.getEvent();
+            if (event == null) // May happen main on first call (ex: on page reload)
+                return;
             Future<PolicyAggregate> policyAggregateFuture = DocumentService.loadPolicy(new LoadPolicyArgument(event.getPrimaryKey()));
             policyAggregateFuture.onFailure(Console::log);
             policyAggregateFuture.onSuccess(pa -> UiScheduler.runInUiThread(() -> {
