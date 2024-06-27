@@ -38,20 +38,20 @@ public class SlideController {
         step4PaymentSlide.reset();
         step5ErrorSlide.reset();
         step6ThankYouSlide.reset();
-        FXProperties.runOnPropertiesChange(() -> {
+
+        // Rebuilding the UI and showing the loading slide while the event & registration data is loading
+        FXProperties.runNowAndOnPropertiesChange(() -> UiScheduler.runInUiThread(() -> {
             if (eventDataLoaded.get() && registrationDataLoaded.get()) {
-                UiScheduler.runInUiThread(() -> {
-                    step2EventDetailsSlide.buildUi();
-                    step3CheckoutSlide.buildUi();
-                    step4PaymentSlide.buildUi();
-                    step5ErrorSlide.buildUi();
-                    step6ThankYouSlide.buildUi();
-                    carrousel.displaySlide(1, false);
-                });
+                step2EventDetailsSlide.buildUi();
+                step3CheckoutSlide.buildUi();
+                step4PaymentSlide.buildUi();
+                step5ErrorSlide.buildUi();
+                step6ThankYouSlide.buildUi();
+                carrousel.displaySlide(1, false);
             } else { // Here the data are not loaded
-                UiScheduler.runInUiThread(() -> carrousel.displaySlide(0, false));
+                carrousel.displaySlide(0, false);
             }
-        }, eventDataLoaded, registrationDataLoaded);
+        }), eventDataLoaded, registrationDataLoaded);
     }
 
     public Step1LoadingSlide getStep1LoadingSlide() {

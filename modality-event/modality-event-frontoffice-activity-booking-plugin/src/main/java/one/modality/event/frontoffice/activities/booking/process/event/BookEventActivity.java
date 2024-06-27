@@ -5,10 +5,10 @@ import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Numbers;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.EntityId;
-import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
@@ -28,7 +28,8 @@ import one.modality.event.frontoffice.activities.booking.WorkingBooking;
  */
 public final class BookEventActivity extends ViewDomainActivityBase {
 
-    private static final int MAX_WIDTH = 600;
+    private static final double MAX_WIDTH = 600;
+
     private WorkingBooking currentBooking;
     private final Carrousel carrousel = new Carrousel();
     private PolicyAggregate policyAggregate;
@@ -64,29 +65,13 @@ public final class BookEventActivity extends ViewDomainActivityBase {
      * @param e the event that has been selected
      */
     private void loadEventDetails(Event e) {
-      /*  bookEventData = new BookEventData();
-        SlideController slideController = new SlideController(carrousel);
-        step1LoadingSlide = new Step1LoadingSlide(slideController,bookEventData);
-        step2EventDetailsSlide = new Step2EventDetailsSlide(slideController,bookEventData);
-        step3CheckoutSlide = new Step3CheckoutSlide(slideController,bookEventData);
-        step4ThankYouSlide = new Step4ThankYouSlide(slideController,bookEventData);
-        step5ErrorSlide = new Step5ErrorSlide(slideController,bookEventData);
-        slideController.initialise();
-        step2EventDetailsSlide.loadData(e);
-        */
-        Platform.runLater(()->{
-            step2EventDetailsSlide.reset();
-            step3CheckoutSlide.reset();
-            step4PaymentSlide.reset();
-            step6ThankYouSlide.reset();
-            step5ErrorSlide.reset();});
+        step2EventDetailsSlide.reset();
+        step3CheckoutSlide.reset();
+        step4PaymentSlide.reset();
+        step6ThankYouSlide.reset();
+        step5ErrorSlide.reset();
 
         step2EventDetailsSlide.loadData(e);
-    }
-
-    @Override
-    protected void updateContextParametersFromRoute() {
-        super.updateContextParametersFromRoute();
     }
 
     @Override
@@ -108,19 +93,22 @@ public final class BookEventActivity extends ViewDomainActivityBase {
         slideController.initialise();
 
         FXProperties.runNowAndOnPropertiesChange(() -> {
-            Future<PolicyAggregate> policyAggregateFuture = DocumentService.loadPolicy(new LoadPolicyArgument(FXEventId.getEventId().getPrimaryKey()));
+            Event event = FXEvent.getEvent();
+            Future<PolicyAggregate> policyAggregateFuture = DocumentService.loadPolicy(new LoadPolicyArgument(event.getPrimaryKey()));
             policyAggregateFuture.onFailure(Console::log);
-            policyAggregateFuture.onSuccess(pa -> {
-                loadEventDetails(FXEvent.getEvent());
-                policyAggregate = pa;
-                bookEventData.setPriceCalculator(new PriceCalculator(policyAggregate));
-                currentBooking = new WorkingBooking(policyAggregate);
-                bookEventData.setCurrentBooking(currentBooking);
-                bookEventData.setDocumentAggregate(currentBooking.getLastestDocumentAggregate());
-                bookEventData.setPolicyAggregate(policyAggregate);
-                bookEventData.setScheduledItemsOnEvent(policyAggregate.getScheduledItems());
-            });
-        }, FXEventId.eventIdProperty());
+            policyAggregateFuture.onSuccess(pa -> UiScheduler.runInUiThread(() -> {
+                if (event == FXEvent.getEvent()) { // Double-checking that no other changes occurred in the meantime
+                    loadEventDetails(event);
+                    policyAggregate = pa;
+                    bookEventData.setPriceCalculator(new PriceCalculator(policyAggregate));
+                    currentBooking = new WorkingBooking(policyAggregate);
+                    bookEventData.setCurrentBooking(currentBooking);
+                    bookEventData.setDocumentAggregate(currentBooking.getLastestDocumentAggregate());
+                    bookEventData.setPolicyAggregate(policyAggregate);
+                    bookEventData.setScheduledItemsOnEvent(policyAggregate.getScheduledItems());
+                }
+            }));
+        }, FXEvent.eventProperty());
     }
     // I18n utility methods
 }
