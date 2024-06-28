@@ -1,6 +1,7 @@
 package one.modality.event.frontoffice.activities.booking.process.event;
 
 import dev.webfx.extras.panes.FlexPane;
+import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.ScaleMode;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.webtext.HtmlText;
@@ -20,7 +21,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import one.modality.base.shared.entities.Event;
@@ -49,34 +50,28 @@ import java.util.stream.Collectors;
     public void buildUi() {
         Text title = I18n.bindI18nProperties(new Text(),"GPEvent");
         title.getStyleClass().addAll("book-event-primary-title");
-        HBox line1 = new HBox(title);
-        line1.setPadding(new Insets(0,0,5,0));
-        line1.setAlignment(Pos.BASELINE_CENTER);
+        VBox.setMargin(title, new Insets(0,0,5,0));
 
         Text eventCentreLocationText = controller.bindI18nEventExpression(new Text(),
                 "'[At] ' + coalesce(i18n(venue), i18n(organization))");
 
         eventShortDescriptionInEventSlide.getStyleClass().setAll("subtitle-grey");
-        HBox line2 = new HBox(eventShortDescriptionInEventSlide);
-        line2.setAlignment(Pos.BASELINE_CENTER);
-        line2.setPadding(new Insets(5,0,15,0));
+        MonoPane shortDescriptionPane = new MonoPane(eventShortDescriptionInEventSlide);
+        shortDescriptionPane.setAlignment(Pos.TOP_LEFT);
+        VBox.setMargin(shortDescriptionPane, new Insets(5,0,15,0));
 
         ScalePane imageScalePane = new ScalePane(ScaleMode.FIT_WIDTH, imageView);
         imageScalePane.setCanGrow(false);
 
-        eventDescription.setPadding(new Insets(20,0,0,0));
+        VBox.setMargin(eventDescription, new Insets(20,0,0,0));
         eventDescription.getStyleClass().add("description-text");
 
-        Text scheduleText = I18n.bindI18nProperties( new Text(),"Schedule");
+        Text scheduleText = I18n.bindI18nProperties(new Text(),"Schedule");
         scheduleText.getStyleClass().addAll("book-event-primary-title");
-        HBox line4 = new HBox(scheduleText);
-        line4.setPadding(new Insets(20,0,10,0));
-        line4.setAlignment(Pos.BASELINE_CENTER);
+        VBox.setMargin(scheduleText, new Insets(20,0,10,0));
 
-        Text selectTheCourseText = I18n.bindI18nProperties( new Text(),"SelectTheEvent");
-        HBox line5 = new HBox(selectTheCourseText);
-        line5.setPadding(new Insets(0, 0, 5, 0));
-        line5.setAlignment(Pos.BASELINE_CENTER);
+        Text selectTheCourseText = I18n.bindI18nProperties(new Text(),"SelectTheEvent");
+        VBox.setMargin(selectTheCourseText, new Insets(0, 0, 5, 0));
 
         recurringEventSchedule.setScheduledItems(bookEventData.getScheduledItemsOnEvent());
         // We add a listener on the date to update the BooleanProperty bound to the disable property of the checkout button
@@ -128,24 +123,19 @@ import java.util.stream.Collectors;
         selectableDates.removeAll(unselectableDate);
 
         Hyperlink selectAllClassesHyperlink = I18nControls.bindI18nTextProperty(new Hyperlink(), "SelectAllClasses");
-        selectAllClassesHyperlink.setAlignment(Pos.BASELINE_CENTER);
+        selectAllClassesHyperlink.setAlignment(Pos.CENTER);
         selectAllClassesHyperlink.getStyleClass().addAll("primary-text", "title4");
         selectAllClassesHyperlink.setOnAction((event -> recurringEventSchedule.selectDates(selectableDates)));
 
         int price = bookEventData.getCurrentBooking().getPolicyAggregate().getRates().get(0).getPrice()/100;
         Text priceText = new Text(I18n.getI18nText("PricePerClass", price, "£"));
-        HBox line6 = new HBox(priceText);
         priceText.getStyleClass().add("subtitle-grey");
-        line6.setPadding(new Insets(20, 0, 5, 0));
-        line6.setAlignment(Pos.BASELINE_CENTER);
+        VBox.setMargin(priceText, new Insets(20, 0, 5, 0));
 
         //TODO: retrieve the discount, for now we hardcode it
         Text priceForAllClassesText = new Text(I18n.getI18nText("DiscountForAllSeries", 15));
-        HBox line7 = new HBox(priceForAllClassesText);
         priceForAllClassesText.getStyleClass().add("subtitle-grey");
-        line7.setAlignment(Pos.BASELINE_CENTER);
-
-        line7.setPadding(new Insets(0, 0, 20, 0));
+        VBox.setMargin(priceForAllClassesText, new Insets(0, 0, 20, 0));
 
         Button checkoutButton = I18nControls.bindI18nProperties(new Button(), "ProceedCheckout");
         //We manage the property of the button in css
@@ -163,17 +153,17 @@ import java.util.stream.Collectors;
         mainVbox.setPadding(new Insets(30, 50, 20, 50));
         mainVbox.setAlignment(Pos.TOP_CENTER);
         mainVbox.getChildren().setAll(
-                line1,
+                title,
                 eventCentreLocationText,
-                line2,
+                shortDescriptionPane,
                 imageScalePane,
                 eventDescription,
-                line4,
-                line5,
+                scheduleText,
+                selectTheCourseText,
                 dateFlexPane,
                 selectAllClassesHyperlink,
-                line6,
-                line7,
+                priceText,
+                priceForAllClassesText,
                 checkoutButton
         );
 
