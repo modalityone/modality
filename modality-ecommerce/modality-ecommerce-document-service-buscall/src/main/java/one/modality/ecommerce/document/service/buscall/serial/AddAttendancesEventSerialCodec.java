@@ -19,7 +19,8 @@ public final class AddAttendancesEventSerialCodec extends AbstractAttendancesEve
         return postDecode(new AddAttendancesEvent(
                 decodeDocumentPrimaryKey(serial),
                 decodeDocumentLinePrimaryKey(serial),
-                decodeAttendancePrimaryKeys(serial)
+                decodeAttendancesPrimaryKeys(serial),
+                decodeScheduledItemsPrimaryKeys(serial)
         ), serial);
     }
 }

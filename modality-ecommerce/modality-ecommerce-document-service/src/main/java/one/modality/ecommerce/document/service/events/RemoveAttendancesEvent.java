@@ -12,6 +12,6 @@ public final class RemoveAttendancesEvent extends AbstractAttendancesEvent {
     }
 
     public RemoveAttendancesEvent(Object documentPrimaryKey, Object documentLinePrimaryKey, Object[] attendancePrimaryKeys) {
-        super(documentPrimaryKey, documentLinePrimaryKey, attendancePrimaryKeys);
+        super(documentPrimaryKey, documentLinePrimaryKey, attendancePrimaryKeys, null);
     }
 }

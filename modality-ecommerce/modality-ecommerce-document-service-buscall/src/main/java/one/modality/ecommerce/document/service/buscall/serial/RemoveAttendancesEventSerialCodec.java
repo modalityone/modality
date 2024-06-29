@@ -19,7 +19,7 @@ public final class RemoveAttendancesEventSerialCodec extends AbstractAttendances
         return postDecode(new RemoveAttendancesEvent(
                 decodeDocumentPrimaryKey(serial),
                 decodeDocumentLinePrimaryKey(serial),
-                decodeAttendancePrimaryKeys(serial)
+                decodeAttendancesPrimaryKeys(serial)
         ), serial);
     }
 }
