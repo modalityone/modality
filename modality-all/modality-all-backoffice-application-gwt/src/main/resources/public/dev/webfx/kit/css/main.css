@@ -517,12 +517,12 @@ tr.branch, .grid-row.branch {
 
 /**** Applying styles to data table and grid ****/
 
-#bookings tr, #bookings .grid-row {
+#bookings tbody tr, #bookings .grid-row {
     background: linear-gradient(  90deg, var(--stay-color) 0%, var(--stay-color) 40%, transparent 50%, transparent 100%),
     linear-gradient( 180deg, var(--color-light), var(--color-dark) 100%);
 }
 
-#bookings tr.selected, #bookings .grid-row.selected {
+#bookings tbody tr.selected, #bookings .grid-row.selected {
     background: repeating-linear-gradient(155deg, var(--selection-color), transparent 5px, transparent 10px, var(--selection-color) 15px, var(--selection-color) 20px),
     linear-gradient(  90deg, var(--stay-color) 0%, var(--stay-color) 40%, transparent 50%, transparent 100%),
     linear-gradient( 180deg, var(--color-light), var(--color-dark) 100%);
