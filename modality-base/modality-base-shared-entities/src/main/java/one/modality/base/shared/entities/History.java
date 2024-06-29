@@ -1,8 +1,8 @@
 package one.modality.base.shared.entities;
 
-import one.modality.base.shared.entities.markers.EntityHasDocument;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
+import one.modality.base.shared.entities.markers.EntityHasDocument;
 
 /**
  * @author Bruno Salmon
@@ -25,6 +25,13 @@ public interface History extends Entity, EntityHasDocument {
         return getStringFieldValue("comment");
     }
 
+    default void setChanges(String changes) {
+        setFieldValue("changes", changes);
+    }
+
+    default String getChanges() {
+        return getStringFieldValue("changes");
+    }
 
     default void setMail(Object mail) {
         setForeignField("mail", mail);
