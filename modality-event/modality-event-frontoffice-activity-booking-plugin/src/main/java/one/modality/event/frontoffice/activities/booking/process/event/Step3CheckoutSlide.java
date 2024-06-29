@@ -19,7 +19,10 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.icons.SvgIcons;
+import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.Person;
+import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.Site;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.payment.InitiatePaymentArgument;
@@ -27,6 +30,8 @@ import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountRouting;
+
+import java.time.LocalDate;
 
 public class Step3CheckoutSlide extends StepSlide {
     private final HtmlText eventShortDescriptionInCheckoutSlide = controller.bindI18nEventExpression(new HtmlText(), "shortDescription");
@@ -99,12 +104,16 @@ public class Step3CheckoutSlide extends StepSlide {
         bookEventData.getDocumentAggregate().getAttendances().forEach(a -> {
             HBox currentScheduledItemHBox = new HBox();
             //currentScheduledItemHBox.setMaxWidth(500); //300+55+45
-            String dateFormatted = I18n.getI18nText("DateFormatted", I18n.getI18nText(a.getScheduledItem().getDate().getMonth().name()), a.getScheduledItem().getDate().getDayOfMonth());
-            Label name = new Label(a.getScheduledItem().getItem().getName() + " - " + dateFormatted);
+            ScheduledItem scheduledItem = a.getScheduledItem();
+            LocalDate date = scheduledItem.getDate();
+            Item item = scheduledItem.getItem();
+            Site site = scheduledItem.getSite();
+            String dateFormatted = I18n.getI18nText("DateFormatted", I18n.getI18nText(date.getMonth().name()), date.getDayOfMonth());
+            Label name = new Label(item.getName() + " - " + dateFormatted);
             Region spacer1 = new Region();
             Region spacer2 = new Region();
             spacer1.setPrefWidth(80);
-            Label price = new Label(EventPriceFormatter.formatWithCurrency(bookEventData.getCurrentBooking().getPolicyAggregate().getRates().get(0).getPrice(), FXEvent.getEvent()));
+            Label price = new Label(EventPriceFormatter.formatWithCurrency(bookEventData.getPolicyAggregate().getSiteItemRates(site, item).get(0).getPrice(), FXEvent.getEvent()));
             name.getStyleClass().add("subtitle-grey");
             price.getStyleClass().add("subtitle-grey");
 
@@ -117,7 +126,7 @@ public class Step3CheckoutSlide extends StepSlide {
             trashOption.setPrefWidth(45);
             trashOption.setOnAction(event -> {
                 bookEventData.getCurrentBooking().removeAttendance(a);
-                controller.getRecurringEventSchedule().getSelectedDates().remove(a.getScheduledItem().getDate());
+                controller.getRecurringEventSchedule().getSelectedDates().remove(date);
                 scheduledItemVBox.getChildren().remove(currentScheduledItemHBox);
                 totalPriceLabel.setText(EventPriceFormatter.formatWithCurrency(bookEventData.getPriceCalculator().calculateTotalPrice(bookEventData.getCurrentBooking().getLastestDocumentAggregate()), FXEvent.getEvent()));
             });

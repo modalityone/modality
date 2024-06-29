@@ -16,9 +16,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import one.modality.base.shared.entities.Event;
-import one.modality.ecommerce.document.service.DocumentService;
-import one.modality.ecommerce.document.service.LoadPolicyArgument;
-import one.modality.ecommerce.document.service.PolicyAggregate;
+import one.modality.crm.shared.services.authn.fx.FXUserPerson;
+import one.modality.ecommerce.document.service.*;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.client.event.fx.FXEventId;
 import one.modality.event.frontoffice.activities.booking.PriceCalculator;
@@ -105,19 +104,26 @@ public final class BookEventActivity extends ViewDomainActivityBase {
             Event event = FXEvent.getEvent();
             if (event == null) // May happen main on first call (ex: on page reload)
                 return;
-            Future<PolicyAggregate> policyAggregateFuture = DocumentService.loadPolicy(new LoadPolicyArgument(event.getPrimaryKey()));
-            policyAggregateFuture.onFailure(Console::log);
-            policyAggregateFuture.onSuccess(pa -> UiScheduler.runInUiThread(() -> {
-                if (event == FXEvent.getEvent()) { // Double-checking that no other changes occurred in the meantime
-                    loadEventDetails(event);
-                    policyAggregate = pa;
-                    bookEventData.setPriceCalculator(new PriceCalculator(policyAggregate));
-                    currentBooking = new WorkingBooking(policyAggregate);
-                    bookEventData.setCurrentBooking(currentBooking);
-                    bookEventData.setDocumentAggregate(currentBooking.getLastestDocumentAggregate());
-                    bookEventData.setPolicyAggregate(policyAggregate);
-                    bookEventData.setScheduledItemsOnEvent(policyAggregate.getScheduledItems());
-                }
+            Future.all(
+                    DocumentService.loadPolicy(new LoadPolicyArgument(event.getPrimaryKey())),
+                    DocumentService.loadDocument(new LoadDocumentArgument(FXUserPerson.getUserPerson().getPrimaryKey(), event.getPrimaryKey()))
+                    )
+                .onFailure(Console::log)
+                .onSuccess(compositeFuture -> UiScheduler.runInUiThread(() -> {
+                    if (event == FXEvent.getEvent()) { // Double-checking that no other changes occurred in the meantime
+                        policyAggregate = compositeFuture.resultAt(0);
+                        policyAggregate.rebuildEntities(event);
+                        DocumentAggregate documentAggregate = compositeFuture.resultAt(1);
+                        if (documentAggregate != null)
+                            documentAggregate.rebuildDocument(policyAggregate);
+                        loadEventDetails(event);
+                        bookEventData.setPriceCalculator(new PriceCalculator(policyAggregate));
+                        currentBooking = new WorkingBooking(policyAggregate, documentAggregate);
+                        bookEventData.setCurrentBooking(currentBooking);
+                        bookEventData.setDocumentAggregate(currentBooking.getLastestDocumentAggregate());
+                        bookEventData.setPolicyAggregate(policyAggregate);
+                        bookEventData.setScheduledItemsOnEvent(policyAggregate.getScheduledItems());
+                    }
             }));
         }, FXEvent.eventProperty());
     }

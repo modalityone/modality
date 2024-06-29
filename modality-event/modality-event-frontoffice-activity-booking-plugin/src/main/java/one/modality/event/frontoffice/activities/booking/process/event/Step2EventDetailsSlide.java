@@ -25,6 +25,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 
@@ -81,9 +82,9 @@ import java.util.stream.Collectors;
         List<LocalDate> unselectableDate = new ArrayList<>();
         bookEventData.getScheduledItemsOnEvent().forEach(si-> {
             LocalDate localDate = si.getDate();
-            if(bookEventData.getCurrentBooking().getLastestDocumentAggregate().getAttendances().stream()
-                    .map(one.modality.base.shared.entities.Attendance::getScheduledItem)
-                    .map(one.modality.base.shared.entities.ScheduledItem::getDate)
+            if(bookEventData.getCurrentBooking().getLastestDocumentAggregate().getAttendancesStream()
+                    .map(Attendance::getScheduledItem)
+                    .map(ScheduledItem::getDate)
                     .anyMatch(date -> date.equals(localDate))) {
                 //Here there is already a date booked in this booking
                 unselectableDate.add(localDate);

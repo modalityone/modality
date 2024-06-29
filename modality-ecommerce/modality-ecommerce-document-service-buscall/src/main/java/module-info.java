@@ -6,6 +6,7 @@ module modality.ecommerce.document.service.buscall {
     requires modality.ecommerce.document.service;
     requires webfx.platform.ast;
     requires webfx.platform.reflect;
+    requires webfx.platform.util;
     requires webfx.stack.com.bus.call;
     requires webfx.stack.com.serial;
 

@@ -11,25 +11,16 @@ import one.modality.event.frontoffice.activities.booking.WorkingBooking;
 import java.util.List;
 
 public class BookEventData {
-    private PriceCalculator priceCalculator = null;
-    private DocumentAggregate documentAggregate = null;
-    private List<ScheduledItem> scheduledItemsAlreadyBooked = null;
-    private List<ScheduledItem> scheduledItemsOnEvent = null;
-    private WorkingBooking currentBooking = null;
-    private IntegerProperty bookingNumber = new SimpleIntegerProperty(0);
-    private PolicyAggregate policyAggrate = null;
-    private Object documentPrimaryKey = null;
-    private int totalPrice = 0;
 
-    public BookEventData() {
-        priceCalculator = null;
-        documentAggregate = null;
-        scheduledItemsAlreadyBooked = null;
-        scheduledItemsOnEvent = null;
-        currentBooking = null;
-        bookingNumber = new SimpleIntegerProperty(0);
-        policyAggrate = null;
-    }
+    private PriceCalculator priceCalculator;
+    private DocumentAggregate documentAggregate;
+    private List<ScheduledItem> scheduledItemsAlreadyBooked;
+    private List<ScheduledItem> scheduledItemsOnEvent;
+    private WorkingBooking currentBooking;
+    private final IntegerProperty bookingNumber = new SimpleIntegerProperty(0);
+    private PolicyAggregate policyAggregate;
+    private Object documentPrimaryKey;
+    private int totalPrice;
 
     public List<ScheduledItem> getScheduledItemsAlreadyBooked() {
         return scheduledItemsAlreadyBooked;
@@ -76,11 +67,11 @@ public class BookEventData {
     }
 
     public void setPolicyAggregate(PolicyAggregate pa) {
-        policyAggrate = pa;
+        policyAggregate = pa;
     }
 
-    public PolicyAggregate getPolicyAggrate() {
-        return policyAggrate;
+    public PolicyAggregate getPolicyAggregate() {
+        return policyAggregate;
     }
 
     public List<ScheduledItem> getScheduledItemsOnEvent() {

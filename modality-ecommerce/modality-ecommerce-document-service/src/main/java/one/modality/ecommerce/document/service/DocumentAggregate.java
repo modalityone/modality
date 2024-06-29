@@ -1,10 +1,8 @@
 package one.modality.ecommerce.document.service;
 
+import dev.webfx.stack.orm.entity.EntityStore;
 import one.modality.base.shared.entities.*;
-import one.modality.ecommerce.document.service.events.AddAttendancesEvent;
-import one.modality.ecommerce.document.service.events.AddDocumentLineEvent;
-import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
-import one.modality.ecommerce.document.service.events.RemoveAttendancesEvent;
+import one.modality.ecommerce.document.service.events.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,35 +16,56 @@ import java.util.stream.Stream;
  */
 public final class DocumentAggregate {
 
-    private final Document document;
-    private final List<DocumentLine> documentLines;
-    private final List<Attendance> attendances;
+    private final DocumentAggregate previousVersion;
+    private final List<AbstractDocumentEvent> documentEvents;
 
-    public DocumentAggregate(Document document, List<DocumentLine> documentLines, List<Attendance> attendances) {
-        this.document = document;
-        this.documentLines = documentLines;
-        this.attendances = attendances;
-    }
+    private Document document;
+    private List<DocumentLine> documentLines;
+    private List<Attendance> attendances;
 
     public DocumentAggregate(DocumentAggregate previousVersion, List<AbstractDocumentEvent> documentEvents) {
+        this.previousVersion = previousVersion;
+        this.documentEvents = documentEvents;
+    }
+
+    public void rebuildDocument(PolicyAggregate policyAggregate) {
+        // Rebuilding the document in memory by replaying the sequence of events
         documentLines = new ArrayList<>();
         attendances = new ArrayList<>();
+        EntityStore entityStore;
         if (previousVersion != null) {
+            previousVersion.rebuildDocument(policyAggregate);
             document = previousVersion.getDocument();
             documentLines.addAll(previousVersion.getDocumentLines());
             attendances.addAll(previousVersion.getAttendances());
+            entityStore = EntityStore.createAbove(document.getStore());
         } else {
-            document = null;
+            entityStore = EntityStore.createAbove(policyAggregate.getEntityStore());
         }
-        documentEvents.forEach(documentEvent -> {
-            if (documentEvent instanceof AddDocumentLineEvent) {
-                documentLines.add(((AddDocumentLineEvent) documentEvent).getDocumentLine());
-            } else if (documentEvent instanceof AddAttendancesEvent) {
-                attendances.addAll(Arrays.asList(((AddAttendancesEvent) documentEvent).getAttendances()));
-            } else if (documentEvent instanceof RemoveAttendancesEvent) {
-                attendances.removeAll(Arrays.asList(((RemoveAttendancesEvent) documentEvent).getAttendances()));
+        documentEvents.forEach(e -> {
+            e.setEntityStore(entityStore);
+            if (e instanceof AddDocumentEvent) {
+                AddDocumentEvent ade = (AddDocumentEvent) e;
+                if (documentLines.isEmpty() && attendances.isEmpty()) {
+                    document = ade.getDocument();
+                } else
+                    throw new IllegalArgumentException("There should be only one AddDocumentEvent");
+            } else if (e instanceof AddDocumentLineEvent) {
+                documentLines.add(((AddDocumentLineEvent) e).getDocumentLine());
+            } else if (e instanceof AddAttendancesEvent) {
+                attendances.addAll(Arrays.asList(((AddAttendancesEvent) e).getAttendances()));
+            } else if (e instanceof RemoveAttendancesEvent) {
+                attendances.removeAll(Arrays.asList(((RemoveAttendancesEvent) e).getAttendances()));
             }
         });
+    }
+
+    public DocumentAggregate getPreviousVersion() {
+        return previousVersion;
+    }
+
+    public List<AbstractDocumentEvent> getDocumentEvents() {
+        return documentEvents;
     }
 
     public Document getDocument() {

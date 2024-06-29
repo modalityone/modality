@@ -2,6 +2,8 @@ package one.modality.ecommerce.document.service.events;
 
 import dev.webfx.stack.orm.entity.Entities;
 import one.modality.base.shared.entities.Attendance;
+import one.modality.base.shared.entities.DocumentLine;
+import one.modality.base.shared.entities.ScheduledItem;
 
 import java.util.Arrays;
 
@@ -10,7 +12,7 @@ import java.util.Arrays;
  */
 public abstract class AbstractAttendancesEvent extends AbstractDocumentLineEvent {
 
-    private final Attendance[] attendances;            // Working entities on client-side only (not serialised)
+    protected Attendance[] attendances;                // Working entities on client-side only (not serialised)
     private final Object[] attendancesPrimaryKeys;     // Their primary keys (serialised)
     private final Object[] scheduledItemsPrimaryKeys;  // Their associated scheduledItems primary keys (serialised)
 
@@ -23,12 +25,21 @@ public abstract class AbstractAttendancesEvent extends AbstractDocumentLineEvent
 
     public AbstractAttendancesEvent(Object documentPrimaryKey, Object documentLinePrimaryKey, Object[] attendancesPrimaryKeys, Object[] scheduledItemsPrimaryKeys) {
         super(documentPrimaryKey, documentLinePrimaryKey);
-        attendances = null;
         this.attendancesPrimaryKeys = attendancesPrimaryKeys;
         this.scheduledItemsPrimaryKeys = scheduledItemsPrimaryKeys;
     }
 
     public Attendance[] getAttendances() {
+        if (attendances == null && entityStore != null) {
+            attendances = new Attendance[attendancesPrimaryKeys.length];
+            DocumentLine documentLine = getDocumentLine();
+            for (int i = 0; i < attendancesPrimaryKeys.length; i++) {
+                Attendance attendance = entityStore.getOrCreateEntity(Attendance.class, attendancesPrimaryKeys[i]);
+                attendance.setDocumentLine(documentLine);
+                attendance.setScheduledItem(entityStore.getEntity(ScheduledItem.class, scheduledItemsPrimaryKeys[i]));
+                attendances[i] = attendance;
+            }
+        }
         return attendances;
     }
 

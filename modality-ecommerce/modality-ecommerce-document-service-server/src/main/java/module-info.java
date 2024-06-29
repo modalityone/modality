@@ -8,12 +8,12 @@ module modality.ecommerce.document.service.server {
     requires modality.ecommerce.document.service;
     requires webfx.platform.ast;
     requires webfx.platform.async;
+    requires webfx.platform.util;
     requires webfx.stack.authn;
     requires webfx.stack.com.serial;
     requires webfx.stack.db.query;
     requires webfx.stack.db.submit;
     requires webfx.stack.orm.datasourcemodel.service;
-    requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.entity;
     requires webfx.stack.session.state;
 

@@ -1,7 +1,6 @@
 package one.modality.event.frontoffice.activities.booking;
 
 import dev.webfx.platform.async.Future;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.EntityStore;
 import one.modality.base.shared.entities.*;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
@@ -25,6 +24,9 @@ public class WorkingBooking {
     private Object documentPrimaryKey; // null for new booking
     private Document document;
     private DocumentAggregate lastestDocumentAggregate;
+    // EntityStore used to hold the entities associated to this working booking (ex: Document, DocumentLine, etc...).
+    // Note that it's not an update store, because the booking submit uses DocumentService instead, which keeps a record
+    // of all individual changes made over the time. This entity store reflects only the latest version of the booking.
     private EntityStore entityStore;
 
     public WorkingBooking(PolicyAggregate policyAggregate) {
@@ -45,8 +47,10 @@ public class WorkingBooking {
     }
 
     public DocumentAggregate getLastestDocumentAggregate() {
-        if (lastestDocumentAggregate == null)
+        if (lastestDocumentAggregate == null) {
             lastestDocumentAggregate = new DocumentAggregate(initialDocumentAggregate, documentChanges);
+            lastestDocumentAggregate.rebuildDocument(policyAggregate);
+        }
         return lastestDocumentAggregate;
     }
 
@@ -107,9 +111,10 @@ public class WorkingBooking {
         documentChanges.clear();
         entityStore = null;
         lastestDocumentAggregate = null;
-        if (initialDocumentAggregate != null)
+        if (initialDocumentAggregate != null) {
             document = initialDocumentAggregate.getDocument();
-        else {
+            documentPrimaryKey = document.getPrimaryKey();
+        } else {
             if (documentPrimaryKey == null) { // Case of new booking
                 document = getEntityStore().createEntity(Document.class);
                 document.setEvent(FXEvent.getEvent());
@@ -123,7 +128,7 @@ public class WorkingBooking {
 
     public Future<SubmitDocumentChangesResult> submitChanges(String historyComment) {
         // In case the booking is not linked to the booker account (because the user was not logged-in at the start of
-        // the booking process), we set it now.
+        // the booking process), we set it now (the front-office probably forced the user to login before submit).
         Person userPerson = FXUserPerson.getUserPerson();
         if (document.getPerson() == null && userPerson != null) {
             document.setPerson(userPerson);
@@ -149,7 +154,7 @@ public class WorkingBooking {
 
     private EntityStore getEntityStore() {
         if (entityStore == null)
-            entityStore = EntityStore.create(DataSourceModelService.getDefaultDataSourceModel());
+            entityStore = EntityStore.createAbove(policyAggregate.getEntityStore());
         return entityStore;
     }
 

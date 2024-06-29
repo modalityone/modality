@@ -8,11 +8,10 @@ import one.modality.base.shared.entities.Document;
  */
 public abstract class AbstractDocumentEvent extends AbstractSourceEvent {
 
-    private final Document document;   // Working entity on client-side only (not serialised)
+    protected Document document;       // Working entity on client-side only (not serialised)
     private Object documentPrimaryKey; // Its primary key (serialised)
 
     public AbstractDocumentEvent(Object documentPrimaryKey) {
-        this.document = null;
         this.documentPrimaryKey = documentPrimaryKey;
     }
 
@@ -22,6 +21,9 @@ public abstract class AbstractDocumentEvent extends AbstractSourceEvent {
     }
 
     public Document getDocument() {
+        if (document == null && entityStore != null) {
+            document = entityStore.getEntity(Document.class, documentPrimaryKey);
+        }
         return document;
     }
 

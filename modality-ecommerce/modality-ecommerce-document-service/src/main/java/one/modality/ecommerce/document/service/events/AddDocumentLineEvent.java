@@ -2,6 +2,8 @@ package one.modality.ecommerce.document.service.events;
 
 import dev.webfx.stack.orm.entity.Entities;
 import one.modality.base.shared.entities.DocumentLine;
+import one.modality.base.shared.entities.Item;
+import one.modality.base.shared.entities.Site;
 
 /**
  * @author Bruno Salmon
@@ -29,5 +31,17 @@ public final class AddDocumentLineEvent extends AbstractDocumentLineEvent {
 
     public Object getSitePrimaryKey() {
         return sitePrimaryKey;
+    }
+
+    @Override
+    public DocumentLine getDocumentLine() {
+        if (documentLine == null && entityStore != null) {
+            documentLine = entityStore.createEntity(DocumentLine.class, getDocumentLinePrimaryKey());
+            documentLine.setDocument(getDocument());
+            documentLine.setSite(entityStore.getEntity(Site.class, sitePrimaryKey));
+            documentLine.setItem(entityStore.getEntity(Item.class, itemPrimaryKey));
+            return documentLine;
+        }
+        return super.getDocumentLine();
     }
 }
