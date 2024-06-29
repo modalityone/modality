@@ -122,6 +122,20 @@ public class WorkingBooking {
     }
 
     public Future<SubmitDocumentChangesResult> submitChanges(String historyComment) {
+        // In case the booking is not linked to the booker account (because the user was not logged-in at the start of
+        // the booking process), we set it now.
+        Person userPerson = FXUserPerson.getUserPerson();
+        if (document.getPerson() == null && userPerson != null) {
+            document.setPerson(userPerson);
+            documentChanges.forEach(e -> {
+                if (e instanceof AddDocumentEvent) {
+                    AddDocumentEvent ade = (AddDocumentEvent) e;
+                    if (ade.getPersonPrimaryKey() == null)
+                        ade.setPersonPrimaryKey(userPerson.getPrimaryKey());
+                }
+            });
+        }
+
         return DocumentService.submitDocumentChanges(
                 new SubmitDocumentChangesArgument(
                         documentChanges.toArray(new AbstractDocumentEvent[0]),

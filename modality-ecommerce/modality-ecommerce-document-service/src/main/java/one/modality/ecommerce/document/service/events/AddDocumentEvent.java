@@ -9,7 +9,7 @@ import one.modality.base.shared.entities.Document;
 public final class AddDocumentEvent extends AbstractDocumentEvent {
 
     private final Object eventPrimaryKey;
-    private final Object personPrimaryKey;
+    private Object personPrimaryKey;
 
     public AddDocumentEvent(Document document) {
         super(document);
@@ -29,5 +29,9 @@ public final class AddDocumentEvent extends AbstractDocumentEvent {
 
     public Object getPersonPrimaryKey() {
         return personPrimaryKey;
+    }
+
+    public void setPersonPrimaryKey(Object personPrimaryKey) {
+        this.personPrimaryKey = personPrimaryKey;
     }
 }
