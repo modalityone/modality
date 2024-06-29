@@ -3,11 +3,12 @@ package one.modality.base.shared.entities;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.markers.EntityHasDocument;
+import one.modality.base.shared.entities.markers.EntityHasUserPerson;
 
 /**
  * @author Bruno Salmon
  */
-public interface History extends Entity, EntityHasDocument {
+public interface History extends Entity, EntityHasDocument, EntityHasUserPerson {
 
     default void setUsername(String username) {
         setFieldValue("username", username);
