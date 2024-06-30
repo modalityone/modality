@@ -7,7 +7,7 @@ import one.modality.base.shared.entities.MoneyTransfer;
  */
 public class AbstractMoneyTransferEvent extends AbstractDocumentEvent {
 
-    private MoneyTransfer moneyTransfer;
+    protected MoneyTransfer moneyTransfer;
     private Object moneyTransferPrimaryKey;
     private final int amount;
     private final boolean pending;
@@ -31,6 +31,13 @@ public class AbstractMoneyTransferEvent extends AbstractDocumentEvent {
     }
 
     public MoneyTransfer getMoneyTransfer() {
+        if (moneyTransfer == null && entityStore != null) {
+            moneyTransfer = entityStore.getOrCreateEntity(MoneyTransfer.class, getMoneyTransferPrimaryKey());
+            moneyTransfer.setDocument(getDocument());
+            moneyTransfer.setAmount(getAmount());
+            moneyTransfer.setPending(isPending());
+            moneyTransfer.setSuccessful(isSuccessful());
+        }
         return moneyTransfer;
     }
 

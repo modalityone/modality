@@ -10,6 +10,7 @@ module modality.ecommerce.document.service {
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
+    requires webfx.platform.console;
 
     // Exported packages
     exports one.modality.ecommerce.document.service;

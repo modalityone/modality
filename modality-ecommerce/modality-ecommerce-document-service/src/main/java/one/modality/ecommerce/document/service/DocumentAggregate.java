@@ -1,5 +1,7 @@
 package one.modality.ecommerce.document.service;
 
+import dev.webfx.platform.console.Console;
+import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.entity.EntityStore;
 import one.modality.base.shared.entities.*;
 import one.modality.ecommerce.document.service.events.*;
@@ -22,6 +24,7 @@ public final class DocumentAggregate {
     private Document document;
     private List<DocumentLine> documentLines;
     private List<Attendance> attendances;
+    private List<MoneyTransfer> moneyTransfers;
 
     public DocumentAggregate(DocumentAggregate previousVersion, List<AbstractDocumentEvent> documentEvents) {
         this.previousVersion = previousVersion;
@@ -32,6 +35,7 @@ public final class DocumentAggregate {
         // Rebuilding the document in memory by replaying the sequence of events
         documentLines = new ArrayList<>();
         attendances = new ArrayList<>();
+        moneyTransfers = new ArrayList<>();
         EntityStore entityStore;
         if (previousVersion != null) {
             previousVersion.rebuildDocument(policyAggregate);
@@ -56,6 +60,12 @@ public final class DocumentAggregate {
                 attendances.addAll(Arrays.asList(((AddAttendancesEvent) e).getAttendances()));
             } else if (e instanceof RemoveAttendancesEvent) {
                 attendances.removeAll(Arrays.asList(((RemoveAttendancesEvent) e).getAttendances()));
+            } else if (e instanceof AddMoneyTransferEvent) {
+                moneyTransfers.add(((AddMoneyTransferEvent) e).getMoneyTransfer());
+            } else if (e instanceof UpdateMoneyTransferEvent) {
+                ((UpdateMoneyTransferEvent) e).getMoneyTransfer(); // This should be enough to update the money transfer
+            } else {
+                Console.log("⚠️ DocumentAggregate doesn't recognize this event: " + e.getClass());
             }
         });
     }
@@ -110,6 +120,40 @@ public final class DocumentAggregate {
 
     public DocumentLine getFirstSiteItemDocumentLine(Site site, Item item) {
         return getSiteItemDocumentLinesStream(site, item).findFirst().orElse(null);
+    }
+
+    public List<MoneyTransfer> getMoneyTransfers() {
+        return moneyTransfers;
+    }
+
+    public MoneyTransfer getLastMoneyTransfer() {
+        return Collections.last(moneyTransfers);
+    }
+
+    public Stream<MoneyTransfer> getMoneyTransfersStream() {
+        return moneyTransfers.stream();
+    }
+
+    public Stream<MoneyTransfer> getPendingMoneyTransfersStream() {
+        return moneyTransfers.stream()
+                .filter(MoneyTransfer::isPending);
+    }
+
+    public boolean hasPendingMoneyTransfers() {
+        return getPendingMoneyTransfersStream().findAny().isPresent();
+    }
+
+    public Stream<MoneyTransfer> getSuccessfulMoneyTransfersStream() {
+        return moneyTransfers.stream()
+                .filter(MoneyTransfer::isSuccessful);
+    }
+
+    public int getDeposit() {
+        return getSuccessfulMoneyTransfersStream().mapToInt(MoneyTransfer::getAmount).sum();
+    }
+
+    public int getPendingDeposit() {
+        return getPendingMoneyTransfersStream().mapToInt(MoneyTransfer::getAmount).sum();
     }
 
 }
