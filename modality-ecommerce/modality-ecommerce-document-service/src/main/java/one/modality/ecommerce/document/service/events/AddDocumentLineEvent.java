@@ -38,8 +38,8 @@ public final class AddDocumentLineEvent extends AbstractDocumentLineEvent {
         if (documentLine == null && entityStore != null) {
             documentLine = entityStore.createEntity(DocumentLine.class, getDocumentLinePrimaryKey());
             documentLine.setDocument(getDocument());
-            documentLine.setSite(entityStore.getEntity(Site.class, sitePrimaryKey));
-            documentLine.setItem(entityStore.getEntity(Item.class, itemPrimaryKey));
+            documentLine.setSite(entityStore.getEntity(Site.class, sitePrimaryKey)); // Should be found from PolicyAggregate
+            documentLine.setItem(entityStore.getEntity(Item.class, itemPrimaryKey)); // Should be found from PolicyAggregate
             return documentLine;
         }
         return super.getDocumentLine();
