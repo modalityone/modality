@@ -7,6 +7,8 @@ import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import one.modality.base.shared.entities.GatewayParameter;
 import one.modality.base.shared.entities.MoneyTransfer;
+import one.modality.ecommerce.document.service.events.AddMoneyTransferEvent;
+import one.modality.ecommerce.history.server.HistoryRecorder;
 import one.modality.ecommerce.payment.*;
 import one.modality.ecommerce.payment.server.gateway.GatewayInitiatePaymentArgument;
 import one.modality.ecommerce.payment.server.gateway.GatewayMakeApiPaymentArgument;
@@ -87,7 +89,6 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
     }
 
     private Future<MoneyTransfer> addDocumentPayment(Object documentPrimaryKey, int amount) {
-        // TODO: See if we should use the DocumentService instead to create the money transfer (with event sourcing)
         UpdateStore updateStore = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
         MoneyTransfer moneyTransfer = updateStore.insertEntity(MoneyTransfer.class);
         moneyTransfer.setDocument(documentPrimaryKey);
@@ -95,11 +96,17 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
         moneyTransfer.setPending(true);
         moneyTransfer.setSuccessful(false);
         moneyTransfer.setMethod(5); // Online (temporarily hardcoded for now)
-        return updateStore.submitChanges()
-                // On success, we load the necessary data associated with this moneyTransfer for the payment gateway
-                .compose(batch ->
-                        moneyTransfer.onExpressionLoaded("toMoneyAccount.(currency.code, gatewayCompany.name), document.event.live")
-                        .map(ignored -> moneyTransfer));
+
+        return HistoryRecorder.preparePaymentHistoryBeforeSubmit("Initiated payment", moneyTransfer)
+                .compose(history ->
+                        updateStore.submitChanges()
+                        // On success, we load the necessary data associated with this moneyTransfer for the payment gateway
+                        .compose(batch ->
+                                moneyTransfer.<MoneyTransfer>onExpressionLoaded("toMoneyAccount.(currency.code, gatewayCompany.name), document.event.live")
+                                .onSuccess(ignored -> // Completing the history recording (changes column with resolved primary keys)
+                                        HistoryRecorder.completeDocumentHistoryAfterSubmit(history, new AddMoneyTransferEvent(moneyTransfer))
+                                )
+                        ));
     }
 
     // Internal server-side method only (no serialisation support)
@@ -134,6 +141,5 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
             return Future.succeededFuture();
         });
     }
-
 
 }

@@ -7,6 +7,8 @@ module modality.ecommerce.payment.server {
 
     // Direct dependencies modules
     requires modality.base.shared.entities;
+    requires modality.ecommerce.document.service;
+    requires modality.ecommerce.history.server;
     requires modality.ecommerce.payment;
     requires modality.ecommerce.payment.server.gateway;
     requires webfx.platform.async;
