@@ -25,7 +25,8 @@ public final class HistoryRecorder {
     }
 
     public static Future<History> prepareDocumentHistoryBeforeSubmit(String comment, Document document, DocumentLine documentLine, Object userId) {
-        if (document == null) {
+        // We must know the document for the history
+        if (document == null) { // may happen, but in that case documentLine is not null, and we can read the document from the database
             return documentLine.onExpressionLoaded("document")
                     .compose(v -> {
                         if (documentLine.getDocument() == null)
@@ -34,11 +35,13 @@ public final class HistoryRecorder {
                     });
         }
 
+        // Now we are set to insert the History entity
         UpdateStore updateStore = (UpdateStore) document.getStore();
         History history = updateStore.insertEntity(History.class);
         history.setDocument(document);
         history.setComment(comment);
 
+        // Final step in the history creation is to set the user
         return setHistoryUser(history, userId);
     }
 
@@ -104,17 +107,32 @@ public final class HistoryRecorder {
 
     public static Future<History> preparePaymentHistoryBeforeSubmit(String comment, MoneyTransfer payment, Object userId) {
         UpdateStore updateStore = (UpdateStore) payment.getStore();
-        History history = updateStore.insertEntity(History.class);
-        history.setForeignField("moneyTransfer", payment);
+        // We need to know the document associated to the payment
         Document document = payment.getDocument();
+        // If not found, we may still know its id (this happens when ServerPaymentServiceProvider adds a payment)
         if (document == null) {
             EntityId documentId = payment.getDocumentId();
-            if (documentId != null) {
+            if (documentId != null) { // If we know its id, that's enough, and we just create the document in the store
                 document = updateStore.createEntity(documentId);
             }
         }
+        // If still not found, we need to load it from the database (this happens when ServerPaymentServiceProvider updates a payment)
+        if (document == null) {
+            return payment.onExpressionLoaded("document,amount") // we also read the amount (necessary for UpdateMoneyTransferEvent serialization)
+                    .compose(v -> {
+                        if (payment.getDocument() == null)
+                            return Future.failedFuture("Payment document not found in database");
+                        return preparePaymentHistoryBeforeSubmit(comment, payment, userId);
+                    });
+        }
+
+        // Now we are set to insert the History entity
+        History history = updateStore.insertEntity(History.class);
+        history.setForeignField("moneyTransfer", payment);
         history.setDocument(document);
         history.setComment(comment);
+
+        // Final step in the history creation is to set the user
         return setHistoryUser(history, userId);
     }
 
