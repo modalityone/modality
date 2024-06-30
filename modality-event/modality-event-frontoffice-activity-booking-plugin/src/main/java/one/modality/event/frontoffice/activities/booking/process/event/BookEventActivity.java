@@ -16,6 +16,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.Person;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.document.service.*;
 import one.modality.event.client.event.fx.FXEvent;
@@ -104,16 +105,20 @@ public final class BookEventActivity extends ViewDomainActivityBase {
             Event event = FXEvent.getEvent();
             if (event == null) // May happen main on first call (ex: on page reload)
                 return;
+            Person userPerson = FXUserPerson.getUserPerson();
             Future.all(
+                    // 0) We load the policy aggregate for this event
                     DocumentService.loadPolicy(new LoadPolicyArgument(event.getPrimaryKey())),
-                    DocumentService.loadDocument(new LoadDocumentArgument(FXUserPerson.getUserPerson().getPrimaryKey(), event.getPrimaryKey()))
+                    // 1) And eventually the document aggregate if the user (i.e. his last booking for this event)
+                    userPerson == null ? Future.succeededFuture(null) : // unless the user is not logged in yet
+                            DocumentService.loadDocument(new LoadDocumentArgument(userPerson.getPrimaryKey(), event.getPrimaryKey()))
                     )
                 .onFailure(Console::log)
                 .onSuccess(compositeFuture -> UiScheduler.runInUiThread(() -> {
                     if (event == FXEvent.getEvent()) { // Double-checking that no other changes occurred in the meantime
-                        policyAggregate = compositeFuture.resultAt(0);
+                        policyAggregate = compositeFuture.resultAt(0); // 0 = policy aggregate (never null)
                         policyAggregate.rebuildEntities(event);
-                        DocumentAggregate documentAggregate = compositeFuture.resultAt(1);
+                        DocumentAggregate documentAggregate = compositeFuture.resultAt(1); // 1 = document aggregate (may be null)
                         if (documentAggregate != null)
                             documentAggregate.rebuildDocument(policyAggregate);
                         loadEventDetails(event);
