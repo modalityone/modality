@@ -2,23 +2,21 @@ package one.modality.ecommerce.document.service.events;
 
 import dev.webfx.stack.orm.entity.EntityStore;
 
-import java.time.LocalDateTime;
-
 /**
  * @author Bruno Salmon
  */
 public abstract class AbstractSourceEvent {
 
-    private LocalDateTime dateTime;
-    private String comment;
+    //private LocalDateTime dateTime;
+    //private String comment;
 
     protected EntityStore entityStore;
 
     public AbstractSourceEvent() {
-        this(LocalDateTime.now());
+        //this(LocalDateTime.now());
     }
 
-    public AbstractSourceEvent(LocalDateTime dateTime) {
+    /*public AbstractSourceEvent(LocalDateTime dateTime) {
         this.dateTime = dateTime;
     }
 
@@ -36,7 +34,7 @@ public abstract class AbstractSourceEvent {
 
     public void setComment(String comment) {
         this.comment = comment;
-    }
+    }*/
 
     public void setEntityStore(EntityStore entityStore) {
         this.entityStore = entityStore;
