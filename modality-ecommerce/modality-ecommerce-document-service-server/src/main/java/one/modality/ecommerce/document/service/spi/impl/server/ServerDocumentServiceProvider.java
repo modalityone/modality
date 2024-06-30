@@ -18,6 +18,7 @@ import one.modality.base.shared.entities.*;
 import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.document.service.events.*;
 import one.modality.ecommerce.document.service.spi.DocumentServiceProvider;
+import one.modality.ecommerce.history.server.HistoryRecorder;
 
 import java.util.ArrayList;
 import java.util.List;
