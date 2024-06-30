@@ -83,9 +83,9 @@ public final class HistoryRecorder {
                         resolvePrimaryKeyField(Attendance.class, () -> attendancesPrimaryKeys[fi], pk -> attendancesPrimaryKeys[fi] = pk, updateStore);
                     }
                 }
-            } else if (e instanceof AddMoneyTransferEvent) {
-                AddMoneyTransferEvent ate = (AddMoneyTransferEvent) e;
-                resolvePrimaryKeyField(MoneyTransfer.class, ate::getMoneyTransferPrimaryKey, ate::setMoneyTransferPrimaryKey, updateStore);
+            } else if (e instanceof AbstractMoneyTransferEvent) {
+                AbstractMoneyTransferEvent amte = (AbstractMoneyTransferEvent) e;
+                resolvePrimaryKeyField(MoneyTransfer.class, amte::getMoneyTransferPrimaryKey, amte::setMoneyTransferPrimaryKey, updateStore);
             }
         }
     }
