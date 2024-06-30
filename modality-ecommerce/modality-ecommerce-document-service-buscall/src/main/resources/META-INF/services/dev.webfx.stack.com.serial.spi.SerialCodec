@@ -10,3 +10,4 @@ one.modality.ecommerce.document.service.buscall.serial.PolicyAggregateSerialCode
 one.modality.ecommerce.document.service.buscall.serial.RemoveAttendancesEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.SubmitDocumentChangesArgumentSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.SubmitDocumentChangesResultSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.UpdateMoneyTransferEventSerialCodec
