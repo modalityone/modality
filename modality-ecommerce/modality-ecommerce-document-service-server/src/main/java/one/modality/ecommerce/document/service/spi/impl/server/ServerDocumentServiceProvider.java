@@ -5,28 +5,22 @@ import dev.webfx.platform.ast.ReadOnlyAstArray;
 import dev.webfx.platform.async.Batch;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.util.Arrays;
-import dev.webfx.stack.authn.AuthenticationService;
 import dev.webfx.stack.com.serial.SerialCodecManager;
 import dev.webfx.stack.db.query.QueryArgument;
 import dev.webfx.stack.db.query.QueryArgumentBuilder;
 import dev.webfx.stack.db.query.QueryService;
 import dev.webfx.stack.db.submit.SubmitArgument;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
-import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
-import dev.webfx.stack.session.state.ThreadLocalStateHolder;
 import one.modality.base.shared.entities.*;
-import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.document.service.events.*;
 import one.modality.ecommerce.document.service.spi.DocumentServiceProvider;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * @author Bruno Salmon
@@ -117,49 +111,18 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                 document.setCancelled(true);
             }
         }
-        return prepareHistoryAndSubmitUpdateStore(argument, document, documentLine, updateStore, ThreadLocalStateHolder.getUserId());
+
+        // Note: At this point, document may be null, but in that case we at least have documentLine not null
+        return HistoryRecorder.prepareDocumentHistoryBeforeSubmit(argument.getHistoryComment(), document, documentLine)
+                .compose(history -> // At this point, history.getDocument() is never null (it has eventually been
+                        submitChangesAndPrepareResult(updateStore, history.getDocument()) // resolved through DB reading)
+                        .onSuccess(ignored -> // Completing the history recording (changes column with resolved primary keys)
+                            HistoryRecorder.completeDocumentHistoryAfterSubmit(history, argument.getDocumentEvents())
+                        )
+                );
     }
 
-    private Future<SubmitDocumentChangesResult> prepareHistoryAndSubmitUpdateStore(SubmitDocumentChangesArgument argument, Document document, DocumentLine documentLine, UpdateStore updateStore, Object userId) {
-        if (document == null) {
-            return documentLine.onExpressionLoaded("document")
-                    .compose(v -> {
-                        if (documentLine.getDocument() == null)
-                            return Future.failedFuture("Document not found in database");
-                        return prepareHistoryAndSubmitUpdateStore(argument, documentLine.getDocument(), documentLine, updateStore, userId);
-                    });
-        }
-
-        // History recording
-        History history = updateStore.insertEntity(History.class);
-        history.setDocument(document);
-        history.setComment(argument.getHistoryComment());
-        // To record who made the changes, we can 1) set userPerson if available, or 2) set username otherwise
-        Future<Void> settingUserHistoryFuture; // using a Future because 2) requires an async call to getUserClaims()
-        if (userId instanceof ModalityUserPrincipal) { // Should be most cases
-            ModalityUserPrincipal mup = (ModalityUserPrincipal) userId;
-            history.setUserPerson(mup.getUserPersonId());
-            settingUserHistoryFuture = Future.succeededFuture();
-        } else { // User not logged in or just through SSO
-            settingUserHistoryFuture = AuthenticationService.getUserClaims()
-                    .compose(userClaims -> {
-                        history.setUsername(userClaims.getUsername());
-                        return Future.succeededFuture();
-                    } , ex -> {
-                        history.setUsername("Online user");
-                        return Future.succeededFuture();
-                    });
-        }
-
-        return settingUserHistoryFuture.compose(ignored ->
-                submitUpdateStore(updateStore, document)
-                        .onSuccess(result -> {
-                            // Completing the history recording by saving the changes (new primary keys can now be resolved)
-                            completeHistoryRecording(history, argument.getDocumentEvents(), updateStore);
-                        }));
-    }
-
-    private Future<SubmitDocumentChangesResult> submitUpdateStore(UpdateStore updateStore, Document document) {
+    private Future<SubmitDocumentChangesResult> submitChangesAndPrepareResult(UpdateStore updateStore, Document document) {
         return updateStore.submitChanges(
                 SubmitArgument.builder()
                         .setStatement("select set_transaction_parameters(false)")
@@ -185,40 +148,6 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
             }
             return Future.succeededFuture(new SubmitDocumentChangesResult(documentPk, documentRef, cartPk, cartUuid));
         });
-    }
-
-    private void completeHistoryRecording(History history, AbstractDocumentEvent[] documentEvents, UpdateStore updateStore) {
-        // Completing the history recording by saving the changes (new primary keys can now be resolved)
-        History h = updateStore.updateEntity(history); // weird API?
-        resolveDocumentEventsPrimaryKeys(documentEvents, updateStore);
-        h.setChanges(AST.formatArray(SerialCodecManager.encodeJavaArrayToAstArray(documentEvents), "json"));
-        updateStore.submitChanges();
-    }
-
-    private void resolveDocumentEventsPrimaryKeys(AbstractDocumentEvent[] documentEvents, UpdateStore updateStore) {
-        for (AbstractDocumentEvent e : documentEvents) {
-            resolvePrimaryKeyField(Document.class, e::getDocumentPrimaryKey, e::setDocumentPrimaryKey, updateStore);
-            if (e instanceof AbstractDocumentLineEvent) {
-                AbstractDocumentLineEvent adle = (AbstractDocumentLineEvent) e;
-                resolvePrimaryKeyField(DocumentLine.class, adle::getDocumentLinePrimaryKey, adle::setDocumentLinePrimaryKey, updateStore);
-                if (e instanceof AbstractAttendancesEvent) {
-                    AbstractAttendancesEvent aae = (AbstractAttendancesEvent) e;
-                    Object[] attendancesPrimaryKeys = aae.getAttendancesPrimaryKeys();
-                    for (int i = 0; i < attendancesPrimaryKeys.length; i++) {
-                        final int fi = i;
-                        resolvePrimaryKeyField(Attendance.class, () -> attendancesPrimaryKeys[fi], pk -> attendancesPrimaryKeys[fi] = pk, updateStore);
-                    }
-                }
-            }
-        }
-    }
-
-    private void resolvePrimaryKeyField(Class<? extends Entity> entityClass, Supplier<Object> getter, Consumer<Object> setter, UpdateStore updateStore) {
-        Object primaryKey = getter.get();
-        Entity entity = updateStore.getEntity(entityClass, primaryKey);
-        if (entity != null) {
-            setter.accept(entity.getPrimaryKey());
-        }
     }
 
 }
