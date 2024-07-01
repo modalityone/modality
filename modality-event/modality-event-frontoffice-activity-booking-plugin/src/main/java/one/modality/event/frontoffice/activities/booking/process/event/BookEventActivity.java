@@ -109,27 +109,22 @@ public final class BookEventActivity extends ViewDomainActivityBase {
             // the user was already logged-in (memorised in session), while FXUserPerson requires a DB reading, which
             // may not be finished yet at this time.
             Object userPersonPrimaryKey = FXUserPersonId.getUserPersonPrimaryKey();
-            Console.log("********** userPerson: " + userPersonPrimaryKey);
             Future.all(
                     // 0) We load the policy aggregate for this event
                     DocumentService.loadPolicy(new LoadPolicyArgument(event.getPrimaryKey())),
-                    // 1) And eventually the document aggregate if the user (i.e. his last booking for this event)
-                            userPersonPrimaryKey == null ? Future.succeededFuture(null) : // unless the user is not logged in yet
-                            DocumentService.loadDocument(new LoadDocumentArgument(userPersonPrimaryKey, event.getPrimaryKey()))
-                    )
+                    // 1) And eventually the already existing booking of the user (i.e. his last booking for this event)
+                    userPersonPrimaryKey == null ? Future.succeededFuture(null) : // unless the user is not logged in yet
+                    DocumentService.loadDocument(new LoadDocumentArgument(userPersonPrimaryKey, event.getPrimaryKey()))
+                )
                 .onFailure(Console::log)
                 .onSuccess(compositeFuture -> UiScheduler.runInUiThread(() -> {
                     if (event == FXEvent.getEvent()) { // Double-checking that no other changes occurred in the meantime
                         policyAggregate = compositeFuture.resultAt(0); // 0 = policy aggregate (never null)
                         policyAggregate.rebuildEntities(event);
-                        DocumentAggregate documentAggregate = compositeFuture.resultAt(1); // 1 = document aggregate (may be null)
-                        if (documentAggregate != null) {
-                            documentAggregate.rebuildDocument(policyAggregate);
-                            Console.log("********** existing booking: " + documentAggregate.getDocument().getPrimaryKey());
-                        }
+                        DocumentAggregate existingBooking = compositeFuture.resultAt(1); // 1 = document aggregate (may be null)
                         loadEventDetails(event);
                         bookEventData.setPriceCalculator(new PriceCalculator(policyAggregate));
-                        currentBooking = new WorkingBooking(policyAggregate, documentAggregate);
+                        currentBooking = new WorkingBooking(policyAggregate, existingBooking);
                         bookEventData.setCurrentBooking(currentBooking);
                         bookEventData.setDocumentAggregate(currentBooking.getLastestDocumentAggregate());
                         bookEventData.setPolicyAggregate(policyAggregate);
