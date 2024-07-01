@@ -18,12 +18,14 @@ module modality.base.frontoffice.activity.account.plugin {
     requires webfx.extras.util.layout;
     requires webfx.platform.resource;
     requires webfx.platform.windowhistory;
+    requires webfx.stack.authn.logout.client;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.entity.controls;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
+    requires webfx.stack.ui.action;
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.operation;
     requires webfx.stack.ui.operation.action;
