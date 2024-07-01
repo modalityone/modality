@@ -14,7 +14,7 @@ public final class DocumentAggregateSerialCodec extends SerialCodecBase<Document
 
     private static final String CODEC_ID = "DocumentAggregate";
     private static final String PREVIOUS_VERSION_KEY = "previousVersion";
-    private static final String DOCUMENT_EVENTS_KEY = "documentEvents";
+    private static final String NEW_DOCUMENT_EVENTS_KEY = "newDocumentEvents";
 
     public DocumentAggregateSerialCodec() {
         super(DocumentAggregate.class, CODEC_ID);
@@ -22,15 +22,15 @@ public final class DocumentAggregateSerialCodec extends SerialCodecBase<Document
 
     @Override
     public void encode(DocumentAggregate o, AstObject serial) {
-        encodeObject(serial, PREVIOUS_VERSION_KEY, o.getPreviousVersion());
-        encodeArray( serial, DOCUMENT_EVENTS_KEY,  o.getDocumentEvents().toArray());
+        encodeObject(serial, PREVIOUS_VERSION_KEY,     o.getPreviousVersion());
+        encodeArray( serial, NEW_DOCUMENT_EVENTS_KEY,  o.getNewDocumentEvents().toArray());
     }
 
     @Override
     public DocumentAggregate decode(ReadOnlyAstObject serial) {
         return new DocumentAggregate(
                 decodeObject(serial, PREVIOUS_VERSION_KEY),
-                Arrays.asList(decodeArray(serial, DOCUMENT_EVENTS_KEY, AbstractDocumentEvent.class))
+                Arrays.asList(decodeArray(serial, NEW_DOCUMENT_EVENTS_KEY, AbstractDocumentEvent.class))
         );
     }
 

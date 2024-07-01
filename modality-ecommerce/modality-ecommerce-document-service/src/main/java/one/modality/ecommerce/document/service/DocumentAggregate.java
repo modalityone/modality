@@ -19,34 +19,64 @@ import java.util.stream.Stream;
 public final class DocumentAggregate {
 
     private final DocumentAggregate previousVersion;
-    private final List<AbstractDocumentEvent> documentEvents;
+    private final List<AbstractDocumentEvent> newDocumentEvents;
+
+    private PolicyAggregate policyAggregate;
 
     private Document document;
     private List<DocumentLine> documentLines;
     private List<Attendance> attendances;
     private List<MoneyTransfer> moneyTransfers;
+    private int lastPreviousDocumentLineIndex;
+    private int lastPreviousAttendanceIndex;
+    private int lastPreviousMoneyTransferIndex;
 
-    public DocumentAggregate(DocumentAggregate previousVersion, List<AbstractDocumentEvent> documentEvents) {
-        this.previousVersion = previousVersion;
-        this.documentEvents = documentEvents;
+    // Constructor for new bookings built from scratch
+    public DocumentAggregate(PolicyAggregate policyAggregate) {
+        this(null, null);
+        setPolicyAggregate(policyAggregate);
     }
 
-    public void rebuildDocument(PolicyAggregate policyAggregate) {
+    // Constructor for new working bookings built on top of an existing booking
+    public DocumentAggregate(DocumentAggregate previousVersion) {
+        this(previousVersion, null);
+    }
+
+    // Constructor for existing bookings
+    public DocumentAggregate(List<AbstractDocumentEvent> newDocumentEvents) {
+        this(null, newDocumentEvents);
+    }
+
+    // Constructor for serialization
+    public DocumentAggregate(DocumentAggregate previousVersion, List<AbstractDocumentEvent> newDocumentEvents) {
+        this.previousVersion = previousVersion;
+        this.newDocumentEvents = newDocumentEvents;
+        if (previousVersion != null) {
+            setPolicyAggregate(previousVersion.getPolicyAggregate());
+        }
+    }
+
+    public void setPolicyAggregate(PolicyAggregate policyAggregate) {
+        this.policyAggregate = policyAggregate;
         // Rebuilding the document in memory by replaying the sequence of events
         documentLines = new ArrayList<>();
         attendances = new ArrayList<>();
         moneyTransfers = new ArrayList<>();
         EntityStore entityStore;
         if (previousVersion != null) {
-            previousVersion.rebuildDocument(policyAggregate);
+            previousVersion.setPolicyAggregate(policyAggregate);
             document = previousVersion.getDocument();
             documentLines.addAll(previousVersion.getDocumentLines());
             attendances.addAll(previousVersion.getAttendances());
+            moneyTransfers.addAll(previousVersion.getMoneyTransfers());
             entityStore = EntityStore.createAbove(document.getStore());
         } else {
             entityStore = EntityStore.createAbove(policyAggregate.getEntityStore());
         }
-        documentEvents.forEach(e -> {
+        lastPreviousDocumentLineIndex = documentLines.size() - 1;
+        lastPreviousAttendanceIndex = attendances.size() - 1;
+        lastPreviousMoneyTransferIndex = moneyTransfers.size() - 1;
+        newDocumentEvents.forEach(e -> {
             e.setEntityStore(entityStore);
             if (e instanceof AddDocumentEvent) {
                 AddDocumentEvent ade = (AddDocumentEvent) e;
@@ -74,13 +104,21 @@ public final class DocumentAggregate {
         return previousVersion;
     }
 
-    public List<AbstractDocumentEvent> getDocumentEvents() {
-        return documentEvents;
+    public List<AbstractDocumentEvent> getNewDocumentEvents() {
+        return newDocumentEvents;
     }
+
+    public PolicyAggregate getPolicyAggregate() {
+        return policyAggregate;
+    }
+
+    // Accessing document
 
     public Document getDocument() {
         return document;
     }
+
+    // Accessing document lines
 
     public List<DocumentLine> getDocumentLines() {
         return documentLines;
@@ -89,6 +127,22 @@ public final class DocumentAggregate {
     public Stream<DocumentLine> getDocumentLinesStream() {
         return documentLines.stream();
     }
+
+    public Stream<DocumentLine> getSiteItemDocumentLinesStream(Site site, Item item) {
+        return getDocumentLinesStream()
+                .filter(line -> Objects.equals(line.getSite(), site) && Objects.equals(line.getItem(), item));
+    }
+
+    public List<DocumentLine> getSiteItemDocumentLines(Site site, Item item) {
+        return getSiteItemDocumentLinesStream(site, item)
+                .collect(Collectors.toList());
+    }
+
+    public DocumentLine getFirstSiteItemDocumentLine(Site site, Item item) {
+        return getSiteItemDocumentLinesStream(site, item).findFirst().orElse(null);
+    }
+
+    // Accessing attendances
 
     public List<Attendance> getAttendances() {
         return attendances;
@@ -108,19 +162,7 @@ public final class DocumentAggregate {
                 .collect(Collectors.toList());
     }
 
-    public Stream<DocumentLine> getSiteItemDocumentLinesStream(Site site, Item item) {
-        return getDocumentLinesStream()
-                .filter(line -> Objects.equals(line.getSite(), site) && Objects.equals(line.getItem(), item));
-    }
-
-    public List<DocumentLine> getSiteItemDocumentLines(Site site, Item item) {
-        return getSiteItemDocumentLinesStream(site, item)
-                .collect(Collectors.toList());
-    }
-
-    public DocumentLine getFirstSiteItemDocumentLine(Site site, Item item) {
-        return getSiteItemDocumentLinesStream(site, item).findFirst().orElse(null);
-    }
+    // Accessing money transfers
 
     public List<MoneyTransfer> getMoneyTransfers() {
         return moneyTransfers;

@@ -74,7 +74,7 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                         AbstractDocumentEvent[] events = SerialCodecManager.decodeAstArrayToJavaArray(astArray, AbstractDocumentEvent.class);
                         documentEvents.addAll(Arrays.asList(events));
                     });
-                    return new DocumentAggregate(null, documentEvents);
+                    return new DocumentAggregate(documentEvents);
                 });
     }
 
