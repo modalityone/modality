@@ -106,6 +106,7 @@ public final class BookEventActivity extends ViewDomainActivityBase {
             if (event == null) // May happen main on first call (ex: on page reload)
                 return;
             Person userPerson = FXUserPerson.getUserPerson();
+            Console.log("********** userPerson: " + userPerson);
             Future.all(
                     // 0) We load the policy aggregate for this event
                     DocumentService.loadPolicy(new LoadPolicyArgument(event.getPrimaryKey())),
@@ -119,8 +120,10 @@ public final class BookEventActivity extends ViewDomainActivityBase {
                         policyAggregate = compositeFuture.resultAt(0); // 0 = policy aggregate (never null)
                         policyAggregate.rebuildEntities(event);
                         DocumentAggregate documentAggregate = compositeFuture.resultAt(1); // 1 = document aggregate (may be null)
-                        if (documentAggregate != null)
+                        if (documentAggregate != null) {
                             documentAggregate.rebuildDocument(policyAggregate);
+                            Console.log("********** existing booking: " + documentAggregate.getDocument().getPrimaryKey());
+                        }
                         loadEventDetails(event);
                         bookEventData.setPriceCalculator(new PriceCalculator(policyAggregate));
                         currentBooking = new WorkingBooking(policyAggregate, documentAggregate);
