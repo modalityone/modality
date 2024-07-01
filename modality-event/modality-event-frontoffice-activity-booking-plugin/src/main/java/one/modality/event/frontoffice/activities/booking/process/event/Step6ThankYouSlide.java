@@ -53,7 +53,7 @@ public class Step6ThankYouSlide extends StepSlide{
 
         HBox bookingNumberHBox = new HBox();
         bookingNumberHBox.setAlignment(Pos.CENTER);
-        Label bookingNumber = I18nControls.bindI18nProperties(new Label(), "BookingNumber",bookEventData.bookingNumberProperty());
+        Label bookingNumber = I18nControls.bindI18nProperties(new Label(), "BookingNumber",bookEventData.bookingReferenceProperty());
         bookingNumber.setWrapText(true);
         bookingNumber.setTextAlignment(TextAlignment.CENTER);
       //  bookingNumber.setMaxWidth(MAX_WIDTH*0.8);

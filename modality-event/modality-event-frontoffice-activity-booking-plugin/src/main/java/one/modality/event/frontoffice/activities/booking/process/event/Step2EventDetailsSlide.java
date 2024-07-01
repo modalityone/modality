@@ -10,7 +10,6 @@ import dev.webfx.stack.cloud.image.CloudImageService;
 import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -24,10 +23,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
-import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Attendance;
+import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
-import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -187,18 +185,9 @@ import java.util.stream.Collectors;
                 }));
 
         controller.setEventDataLoaded(false);
-        controller.setRegistrationDataLoaded(false);
         e.onExpressionLoaded("name, shortDescription, description, venue.(name, label, address)")
                 .onFailure(ex -> controller.displayErrorMessage(ex.getMessage()))
                 .onSuccess(x -> controller.setEventDataLoaded(true));
-        //Here, we check if there is already some booking from the same person for this scheduled item.
-        e.getStore().executeQuery(
-                        new EntityStoreQuery("select date from ScheduledItem si where exists(select Attendance where scheduledItem=si and documentLine.document.person=? and documentLine.document.event=?)", new Object[]{FXUserPerson.getUserPerson(),e}))
-                .onFailure(Console::log)
-                .onSuccess(query->  {
-                    bookEventData.setScheduledItemsAlreadyBooked(query.getStore().getEntityList(query.getListId()));
-                    controller.setRegistrationDataLoaded(true);
-                });
     }
 
     public void reset() {

@@ -99,7 +99,7 @@ public class Step3CheckoutSlide extends StepSlide {
         scheduledItemVBox.setPadding(new Insets(0, 0, 40, 0));
         //The scheduledItemPane containing the details of the checkout will be populated by the function drawScheduledItemInCheckoutView
         //which is called throw the binding
-        bookEventData.setDocumentAggregate(bookEventData.getCurrentBooking().getLastestDocumentAggregate());
+        //bookEventData.setDocumentAggregate(bookEventData.getCurrentBooking().getLastestDocumentAggregate());
         scheduledItemVBox.getChildren().clear();
         bookEventData.getDocumentAggregate().getAttendances().forEach(a -> {
             HBox currentScheduledItemHBox = new HBox();
@@ -128,7 +128,8 @@ public class Step3CheckoutSlide extends StepSlide {
                 bookEventData.getCurrentBooking().removeAttendance(a);
                 controller.getRecurringEventSchedule().getSelectedDates().remove(date);
                 scheduledItemVBox.getChildren().remove(currentScheduledItemHBox);
-                totalPriceLabel.setText(EventPriceFormatter.formatWithCurrency(bookEventData.getPriceCalculator().calculateTotalPrice(bookEventData.getCurrentBooking().getLastestDocumentAggregate()), FXEvent.getEvent()));
+                int newTotalPrice = bookEventData.getPriceCalculator().calculateTotalPrice();
+                totalPriceLabel.setText(EventPriceFormatter.formatWithCurrency(newTotalPrice, FXEvent.getEvent()));
             });
             currentScheduledItemHBox.getChildren().addAll(spacer1, name, spacer2, price, trashOption);
             scheduledItemVBox.getChildren().add(currentScheduledItemHBox);
@@ -144,7 +145,7 @@ public class Step3CheckoutSlide extends StepSlide {
         totalLabel.setPadding(new Insets(5, 0, 5, 50));
         HBox.setHgrow(spacerTotal, Priority.ALWAYS);
         totalPriceLabel.setPadding(new Insets(5, 75, 5, 0));
-        int totalPrice = bookEventData.getPriceCalculator().calculateTotalPrice(bookEventData.getCurrentBooking().getLastestDocumentAggregate());
+        int totalPrice = bookEventData.getPriceCalculator().calculateTotalPrice();
         totalPriceLabel.setText(EventPriceFormatter.formatWithCurrency(totalPrice, FXEvent.getEvent()));
         totalHBox.getChildren().addAll(totalLabel, spacerTotal, totalPriceLabel);
 
@@ -178,12 +179,11 @@ public class Step3CheckoutSlide extends StepSlide {
                             Console.log(result);
                     }))
                     .onSuccess(result -> Platform.runLater(() -> {
-                        bookEventData.setBookingNumber(Integer.parseInt(result.getDocumentRef().toString()));
+                        bookEventData.setBookingReference(result.getDocumentRef());
                         Object documentPrimaryKey = result.getDocumentPrimaryKey();
-                        bookEventData.setDocumentPrimaryKey(documentPrimaryKey);
-                        bookEventData.setTotalPrice(totalPrice);
+                        int priceToPay = bookEventData.getPriceCalculator().calculateTotalPrice();
                         PaymentService.initiatePayment(
-                                        new InitiatePaymentArgument(totalPrice, documentPrimaryKey)
+                                        new InitiatePaymentArgument(priceToPay, documentPrimaryKey)
                                 )
                                 .onFailure(paymentResult -> Platform.runLater(() -> {
                                     controller.displayErrorMessage("ErrorWhileInitiatingPayment");

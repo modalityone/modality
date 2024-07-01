@@ -29,13 +29,13 @@ public class WorkingBooking {
     // of all individual changes made over the time. This entity store reflects only the latest version of the booking.
     private EntityStore entityStore;
 
-    public WorkingBooking(PolicyAggregate policyAggregate) {
-        this(policyAggregate, null);
-    }
-
     public WorkingBooking(PolicyAggregate policyAggregate, DocumentAggregate initialDocumentAggregate) {
         this.policyAggregate = policyAggregate;
         this.initialDocumentAggregate = initialDocumentAggregate;
+        if (initialDocumentAggregate != null) {
+            initialDocumentAggregate.setPolicyAggregate(policyAggregate);
+            documentPrimaryKey = initialDocumentAggregate.getDocument().getPrimaryKey();
+        }
     }
 
     public PolicyAggregate getPolicyAggregate() {
@@ -49,9 +49,13 @@ public class WorkingBooking {
     public DocumentAggregate getLastestDocumentAggregate() {
         if (lastestDocumentAggregate == null) {
             lastestDocumentAggregate = new DocumentAggregate(initialDocumentAggregate, documentChanges);
-            lastestDocumentAggregate.rebuildDocument(policyAggregate);
+            lastestDocumentAggregate.setPolicyAggregate(policyAggregate);
         }
         return lastestDocumentAggregate;
+    }
+
+    public Object getDocumentPrimaryKey() {
+        return documentPrimaryKey;
     }
 
     public void bookScheduledItems(List<ScheduledItem> scheduledItems) {
@@ -115,12 +119,12 @@ public class WorkingBooking {
             document = initialDocumentAggregate.getDocument();
             documentPrimaryKey = document.getPrimaryKey();
         } else {
-            if (documentPrimaryKey == null) { // Case of new booking
+            if (documentPrimaryKey == null) { // Case of new booking not yet submitted
                 document = getEntityStore().createEntity(Document.class);
                 document.setEvent(FXEvent.getEvent());
                 document.setPerson(FXUserPerson.getUserPerson());
                 documentChanges.add(new AddDocumentEvent(document));
-            } else { // Case of existing booking
+            } else { // Case of new booking once submitted
                 document = getEntityStore().createEntity(Document.class, documentPrimaryKey);
             }
         }

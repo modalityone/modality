@@ -20,7 +20,6 @@ import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.ecommerce.document.service.*;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.client.event.fx.FXEventId;
-import one.modality.event.frontoffice.activities.booking.PriceCalculator;
 import one.modality.event.frontoffice.activities.booking.WorkingBooking;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountRouting;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountUiRoute;
@@ -122,13 +121,9 @@ public final class BookEventActivity extends ViewDomainActivityBase {
                         policyAggregate = compositeFuture.resultAt(0); // 0 = policy aggregate (never null)
                         policyAggregate.rebuildEntities(event);
                         DocumentAggregate existingBooking = compositeFuture.resultAt(1); // 1 = document aggregate (may be null)
-                        loadEventDetails(event);
-                        bookEventData.setPriceCalculator(new PriceCalculator(policyAggregate));
                         currentBooking = new WorkingBooking(policyAggregate, existingBooking);
                         bookEventData.setCurrentBooking(currentBooking);
-                        bookEventData.setDocumentAggregate(currentBooking.getLastestDocumentAggregate());
-                        bookEventData.setPolicyAggregate(policyAggregate);
-                        bookEventData.setScheduledItemsOnEvent(policyAggregate.getScheduledItems());
+                        loadEventDetails(event);
                     }
             }));
         }, FXEvent.eventProperty());

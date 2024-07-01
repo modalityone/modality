@@ -1,8 +1,6 @@
 package one.modality.event.frontoffice.activities.booking;
 
 import one.modality.base.shared.entities.*;
-import one.modality.ecommerce.document.service.DocumentAggregate;
-import one.modality.ecommerce.document.service.PolicyAggregate;
 
 /**
  * First draft version.
@@ -11,29 +9,29 @@ import one.modality.ecommerce.document.service.PolicyAggregate;
  */
 public class PriceCalculator {
 
-    private final PolicyAggregate policyAggregate;
+    private final WorkingBooking workingBooking;
 
-    public PriceCalculator(PolicyAggregate policyAggregate) {
-        this.policyAggregate = policyAggregate;
+    public PriceCalculator(WorkingBooking workingBooking) {
+        this.workingBooking = workingBooking;
     }
 
-    public int calculateTotalPrice(DocumentAggregate documentAggregate) {
-        return documentAggregate.getDocumentLinesStream()
-                .mapToInt(line -> calculateLinePrice(documentAggregate, line))
+    public int calculateTotalPrice() {
+        return workingBooking.getLastestDocumentAggregate().getDocumentLinesStream()
+                .mapToInt(this::calculateLinePrice)
                 .sum();
     }
 
-    public int calculateLinePrice(DocumentAggregate documentAggregate, DocumentLine line) {
-        return documentAggregate.getLineAttendancesStream(line)
-                .mapToInt(a -> calculateAttendancePrice(documentAggregate, a))
+    public int calculateLinePrice(DocumentLine line) {
+        return workingBooking.getLastestDocumentAggregate().getLineAttendancesStream(line)
+                .mapToInt(this::calculateAttendancePrice)
                 .sum();
     }
 
-    public int calculateAttendancePrice(DocumentAggregate documentAggregate, Attendance attendance) {
+    public int calculateAttendancePrice(Attendance attendance) {
         DocumentLine documentLine = attendance.getDocumentLine();
         Site site = documentLine.getSite();
         Item item = documentLine.getItem();
-        return policyAggregate.getSiteItemRatesStream(site, item)
+        return workingBooking.getLastestDocumentAggregate().getPolicyAggregate().getSiteItemRatesStream(site, item)
                 .mapToInt(Rate::getPrice)
                 .min()
                 .orElse(0);
