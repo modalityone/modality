@@ -16,8 +16,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.Person;
-import one.modality.crm.shared.services.authn.fx.FXUserPerson;
+import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.ecommerce.document.service.*;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.client.event.fx.FXEventId;
@@ -105,14 +104,18 @@ public final class BookEventActivity extends ViewDomainActivityBase {
             Event event = FXEvent.getEvent();
             if (event == null) // May happen main on first call (ex: on page reload)
                 return;
-            Person userPerson = FXUserPerson.getUserPerson();
-            Console.log("********** userPerson: " + userPerson);
+            // Note: It's better to use FXUserPersonId rather than FXUserPerson in case of a page reload in the browser
+            // (or redirection to this page from a website) because the retrieval of FXUserPersonId is immediate in case
+            // the user was already logged-in (memorised in session), while FXUserPerson requires a DB reading, which
+            // may not be finished yet at this time.
+            Object userPersonPrimaryKey = FXUserPersonId.getUserPersonPrimaryKey();
+            Console.log("********** userPerson: " + userPersonPrimaryKey);
             Future.all(
                     // 0) We load the policy aggregate for this event
                     DocumentService.loadPolicy(new LoadPolicyArgument(event.getPrimaryKey())),
                     // 1) And eventually the document aggregate if the user (i.e. his last booking for this event)
-                    userPerson == null ? Future.succeededFuture(null) : // unless the user is not logged in yet
-                            DocumentService.loadDocument(new LoadDocumentArgument(userPerson.getPrimaryKey(), event.getPrimaryKey()))
+                            userPersonPrimaryKey == null ? Future.succeededFuture(null) : // unless the user is not logged in yet
+                            DocumentService.loadDocument(new LoadDocumentArgument(userPersonPrimaryKey, event.getPrimaryKey()))
                     )
                 .onFailure(Console::log)
                 .onSuccess(compositeFuture -> UiScheduler.runInUiThread(() -> {
