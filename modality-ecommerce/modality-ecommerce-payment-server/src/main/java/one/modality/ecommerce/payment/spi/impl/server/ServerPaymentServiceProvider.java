@@ -62,6 +62,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                                         parameters
                                 )).map(res -> new InitiatePaymentResult( // Step 5: Returning a InitiatePaymentResult
                                         moneyTransfer.getPrimaryKey(),
+                                        res.isLive(),
                                         res.getHtmlContent(),
                                         res.getUrl(),
                                         res.isRedirect()
