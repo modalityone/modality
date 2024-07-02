@@ -1,7 +1,5 @@
 package one.modality.ecommerce.payment;
 
-import dev.webfx.platform.useragent.UserAgent;
-
 /**
  * @author Bruno Salmon
  */
@@ -10,16 +8,12 @@ public final class InitiatePaymentArgument {
     private final int amount;
     private final Object documentPrimaryKey;
     // TODO: spread payment over several bookings
-    private final boolean seamlessAllowed;
+    private final boolean seamlessIfSupported;
 
-    public InitiatePaymentArgument(int amount, Object documentPrimaryKey) {
-        this(amount, documentPrimaryKey, UserAgent.isBrowser());
-    }
-
-    public InitiatePaymentArgument(int amount, Object documentPrimaryKey, boolean seamlessAllowed) {
+    public InitiatePaymentArgument(int amount, Object documentPrimaryKey, boolean seamlessIfSupported) {
         this.amount = amount;
         this.documentPrimaryKey = documentPrimaryKey;
-        this.seamlessAllowed = seamlessAllowed;
+        this.seamlessIfSupported = seamlessIfSupported;
     }
 
     public int getAmount() {
@@ -30,7 +24,7 @@ public final class InitiatePaymentArgument {
         return documentPrimaryKey;
     }
 
-    public boolean isSeamlessAllowed() {
-        return seamlessAllowed;
+    public boolean isSeamlessIfSupported() {
+        return seamlessIfSupported;
     }
 }

@@ -58,7 +58,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                                         argument.getAmount(),
                                         currencyCode,
                                         live,
-                                        argument.isSeamlessAllowed(),
+                                        argument.isSeamlessIfSupported(),
                                         null,
                                         parameters
                                 )).map(gatewayResult -> new InitiatePaymentResult( // Step 5: Returning a InitiatePaymentResult

@@ -11,16 +11,16 @@ public final class GatewayInitiatePaymentArgument {
     private final long amount;
     private final String currencyCode;
     private final boolean live;
-    private final boolean seamlessAllowed;
+    private final boolean seamlessIfSupported;
     private final String productName;
     private final Map<String, String> accountParameters;
 
-    public GatewayInitiatePaymentArgument(String paymentId, long amount, String currencyCode, boolean live, boolean seamlessAllowed, String productName, Map<String, String> accountParameters) {
+    public GatewayInitiatePaymentArgument(String paymentId, long amount, String currencyCode, boolean live, boolean seamlessIfSupported, String productName, Map<String, String> accountParameters) {
         this.paymentId = paymentId;
         this.amount = amount;
         this.currencyCode = currencyCode;
         this.live = live;
-        this.seamlessAllowed = seamlessAllowed;
+        this.seamlessIfSupported = seamlessIfSupported;
         this.productName = productName;
         this.accountParameters = accountParameters;
     }
@@ -41,8 +41,8 @@ public final class GatewayInitiatePaymentArgument {
         return live;
     }
 
-    public boolean isSeamlessAllowed() {
-        return seamlessAllowed;
+    public boolean isSeamlessIfSupported() {
+        return seamlessIfSupported;
     }
 
     public String getProductName() {

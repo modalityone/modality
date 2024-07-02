@@ -96,12 +96,6 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-platform-useragent-java-server</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-authn-login-server-portal</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>

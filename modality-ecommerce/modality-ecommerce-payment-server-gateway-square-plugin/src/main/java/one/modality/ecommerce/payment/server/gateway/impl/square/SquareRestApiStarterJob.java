@@ -6,6 +6,7 @@ import com.squareup.square.api.PaymentsApi;
 import com.squareup.square.authentication.BearerAuthModel;
 import com.squareup.square.models.*;
 import dev.webfx.platform.boot.spi.ApplicationJob;
+import dev.webfx.platform.console.Console;
 import dev.webfx.platform.vertx.common.VertxInstance;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.json.JsonObject;
@@ -20,6 +21,8 @@ import one.modality.ecommerce.payment.UpdatePaymentStatusArgument;
  */
 public final class SquareRestApiStarterJob implements ApplicationJob {
 
+    private final static boolean DEBUG = false;
+
     static final String SQUARE_PAYMENT_FORM_ROUTE             = "/payment/square/paymentForm/:htmlCacheKey";
     static final String SQUARE_SANDBOX_COMPLETE_PAYMENT_ROUTE = "/payment/square/sandbox/completePayment";
     static final String SQUARE_LIVE_COMPLETE_PAYMENT_ROUTE    = "/payment/square/live/completePayment";
@@ -29,7 +32,6 @@ public final class SquareRestApiStarterJob implements ApplicationJob {
         Router router = VertxInstance.getHttpRouter();
 
         router.route(SQUARE_PAYMENT_FORM_ROUTE)
-                .handler(BodyHandler.create())
                 .handler(ctx -> {
                     String cacheKey = ctx.pathParam("htmlCacheKey");
                     String html = SquareRestApiOneTimeHtmlResponsesCache.getOneTimeHtmlResponse(cacheKey);
@@ -39,15 +41,18 @@ public final class SquareRestApiStarterJob implements ApplicationJob {
                 });
 
         router.route(SQUARE_SANDBOX_COMPLETE_PAYMENT_ROUTE)
-                .handler(BodyHandler.create())
+                .handler(BodyHandler.create()) // To ensure the whole payload is loaded before calling the next handler
                 .handler(ctx -> handleCompletePayment(ctx, false));
 
         router.route(SQUARE_LIVE_COMPLETE_PAYMENT_ROUTE)
-                .handler(BodyHandler.create())
+                .handler(BodyHandler.create()) // To ensure the whole payload is loaded before calling the next handler
                 .handler(ctx -> handleCompletePayment(ctx, true));
     }
 
     private void handleCompletePayment(RoutingContext ctx, boolean live) {
+        if (DEBUG) {
+            Console.log("Square - completePayment - step 0");
+        }
         JsonObject payload = ctx.body().asJsonObject();
         String paymentId = payload.getString("modality_paymentId");
         Long amount = payload.getLong("modality_amount");
@@ -61,12 +66,18 @@ public final class SquareRestApiStarterJob implements ApplicationJob {
         PaymentService.loadPaymentGatewayParameters(paymentId, live)
                 .onFailure(e -> ctx.end(e.getMessage()))
                 .onSuccess(parameters -> {
+                    if (DEBUG) {
+                        Console.log("Square - completePayment - step 1");
+                    }
                     String accessToken = parameters.get("access_token");
                     // TODO check accessToke is set, otherwise return an error
                     SquareClient client = new SquareClient.Builder()
                             .environment(live ? Environment.PRODUCTION : Environment.SANDBOX)
                             .bearerAuthCredentials(new BearerAuthModel.Builder(accessToken).build())
                             .build();
+                    if (DEBUG) {
+                        Console.log("Square - completePayment - step 2");
+                    }
                     PaymentsApi paymentsApi = client.getPaymentsApi();
                     paymentsApi.createPaymentAsync(new CreatePaymentRequest.Builder(sourceId, idempotencyKey)
                             .locationId(locationId)
@@ -74,6 +85,9 @@ public final class SquareRestApiStarterJob implements ApplicationJob {
                             .amountMoney(new Money(amount, currencyCode))
                             .build()
                     ).thenAccept(result -> {
+                        if (DEBUG) {
+                            Console.log("Square - completePayment - step 3");
+                        }
                         Payment payment = result.getPayment();
                         JsonObject wholeResponseJson = new JsonObject();
                         wholeResponseJson.put("id", payment.getId());
@@ -94,11 +108,17 @@ public final class SquareRestApiStarterJob implements ApplicationJob {
                         String status = payment.getStatus();
                         String transactionRef = payment.getId();
                         boolean successful = "completed".equalsIgnoreCase(status);
+                        if (DEBUG) {
+                            Console.log("Square - completePayment - step 4");
+                        }
                         PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createSuccessStatusArgument(paymentId, wholeResponse, transactionRef, status, successful))
                                 .onSuccess(v -> ctx.end(status.toUpperCase()))
                                 .onFailure(e -> ctx.end(e.getMessage()))
                         ;
                     }).exceptionally(ex -> {
+                        if (DEBUG) {
+                            Console.log("Square - completePayment - Failure");
+                        }
                         PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createErrorStatusArgument(paymentId, null, ex.getMessage()))
                                 .onSuccess(v -> ctx.end(ex.getMessage()))
                                 .onFailure(e -> ctx.end(e.getMessage()));

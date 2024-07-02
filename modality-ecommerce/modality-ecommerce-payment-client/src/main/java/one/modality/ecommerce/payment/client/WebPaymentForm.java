@@ -13,6 +13,7 @@ import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.layout.Region;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
+import one.modality.ecommerce.payment.InitiatePaymentArgument;
 import one.modality.ecommerce.payment.InitiatePaymentResult;
 
 import java.util.function.Consumer;
@@ -76,9 +77,8 @@ public class WebPaymentForm {
             }
             return null;
         }
-        webViewPane.setMaxWidth(600);
-        webViewPane.setMaxHeight(150);
-        //webViewPane.setFitHeight(true); // doesn't work well
+        webViewPane.setFitHeight(true);
+        webViewPane.setFitHeightExtra(result.isSeamless() ? 5 : 10);
         //webViewPane.setRedirectConsole(true); // causes stack overflow
         setUserInteractionAllowed(false);
         LoadOptions loadOptions = new LoadOptions()
@@ -100,7 +100,14 @@ public class WebPaymentForm {
                 });
         String htmlContent = result.getHtmlContent();
         if (htmlContent != null) {
-            webViewPane.loadFromHtml(htmlContent, loadOptions, false);
+            if (result.isSeamless()) {
+                loadOptions
+                        .setSeamlessInBrowser(true)
+                        .setSeamlessContainerId("modality-payment-form-container");
+                webViewPane.loadFromScript(htmlContent, loadOptions, false);
+            } else {
+                webViewPane.loadFromHtml(htmlContent, loadOptions, false);
+            }
         } else {
             if (url.startsWith("/")) {
                 url = getHttpServerOrigin() + url;
@@ -215,6 +222,10 @@ public class WebPaymentForm {
         if (DEBUG) {
             Console.log(">>>>>>>>>>>>>> " + message);
         }
+    }
+
+    public static InitiatePaymentArgument createInitiatePaymentArgument(int amount, Object documentPrimaryKey) {
+        return new InitiatePaymentArgument(amount, documentPrimaryKey, WebViewPane.isBrowser());
     }
 
 }
