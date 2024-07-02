@@ -1,5 +1,15 @@
 package one.modality.base.client.validation;
 
+import dev.webfx.extras.imagestore.ImageStore;
+import dev.webfx.extras.util.background.BackgroundFactory;
+import dev.webfx.extras.util.border.BorderFactory;
+import dev.webfx.extras.util.scene.SceneUtil;
+import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.util.collection.Collections;
+import dev.webfx.stack.ui.validation.controlsfx.control.decoration.Decoration;
+import dev.webfx.stack.ui.validation.controlsfx.control.decoration.GraphicDecoration;
+import dev.webfx.stack.ui.validation.controlsfx.validation.decoration.GraphicValidationDecoration;
 import dev.webfx.stack.ui.validation.mvvmfx.ObservableRuleBasedValidator;
 import dev.webfx.stack.ui.validation.mvvmfx.ValidationMessage;
 import dev.webfx.stack.ui.validation.mvvmfx.Validator;
@@ -17,10 +27,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Control;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextInputControl;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -28,20 +35,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
-import dev.webfx.stack.ui.validation.controlsfx.control.decoration.Decoration;
-import dev.webfx.stack.ui.validation.controlsfx.control.decoration.GraphicDecoration;
-import dev.webfx.stack.ui.validation.controlsfx.validation.decoration.GraphicValidationDecoration;
-import dev.webfx.extras.util.background.BackgroundFactory;
-import dev.webfx.extras.util.border.BorderFactory;
-import dev.webfx.extras.util.scene.SceneUtil;
-import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.extras.imagestore.ImageStore;
-import dev.webfx.platform.uischeduler.UiScheduler;
-import dev.webfx.platform.util.collection.Collections;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * @author Bruno Salmon
@@ -224,6 +225,67 @@ public final class ModalityValidationSupport {
         }
     }
 
+    public void addEmailValidation(TextField emailInput, Node where,String errorMessage) {
+        // Define the email pattern
+        String emailPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
+        Pattern pattern = Pattern.compile(emailPattern);
+        // Create the validation rule
+        addValidationRule(
+                Bindings.createBooleanBinding(
+                        () -> pattern.matcher(emailInput.getText()).matches(),
+                        emailInput.textProperty()
+                ),
+                where,
+                errorMessage
+        );
+    }
+
+    public void addNonEmptyValidation(TextField textField, Node where,String errorMessage) {
+        // Create the validation rule
+        addValidationRule(
+                Bindings.createBooleanBinding(
+                        () -> !textField.getText().trim().isEmpty(),
+                        textField.textProperty()
+                ),
+                where,
+                errorMessage);
+    }
+
+    public void addDateValidation(TextField textField,String dateFormat, Node where, String errorMessage) {
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(dateFormat);
+        // Create the validation rule
+        addValidationRule(
+                Bindings.createBooleanBinding(() -> {
+                    try {
+                        dateFormatter.parse(textField.getText().trim());
+                        return true;
+                    } catch (DateTimeParseException e) {
+                        return false;
+                    }}, textField.textProperty()),
+                where,
+                errorMessage
+        );
+    }
+
+    public void addLegalAgeValidation(TextField textField, String dateFormat, int legalAge, Node where, String errorMessage) {
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(dateFormat);
+        // Create the validation rule
+        addValidationRule(
+                Bindings.createBooleanBinding(() -> {
+                    try {
+                        LocalDate birthDate = LocalDate.parse(textField.getText().trim(), dateFormatter);
+                        LocalDate now = LocalDate.now();
+                        return birthDate.plusYears(legalAge).isBefore(now) || birthDate.plusYears(legalAge).isEqual(now);
+                    } catch (DateTimeParseException e) {
+                        return false;
+                    }
+                }, textField.textProperty()),
+                where,
+                errorMessage
+        );
+    }
+
+
 /*
     private PopOver popOver;
     private void showPopOverNow() {
@@ -280,4 +342,14 @@ public final class ModalityValidationSupport {
         return scene != null && scene.getRoot() == node;
     }
 
+    public void addPasswordValidation(TextField passwordInput, Label passwordLabel, String errorMessage) {
+        addValidationRule(
+                Bindings.createBooleanBinding(
+                        () -> passwordInput.getText().length() >= 8,
+                        passwordInput.textProperty()
+                ),
+                passwordLabel,
+                errorMessage
+        );
+    }
 }

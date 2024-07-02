@@ -47,6 +47,8 @@ public class Step4PaymentSlide extends StepSlide {
         payButton.setMaxWidth(Double.MAX_VALUE);
         cancelButton.setMaxWidth(Double.MAX_VALUE);
         payButton.setOnAction(e -> webPaymentForm.pay());
+        payButton.getStyleClass().addAll("event-button", "success-button");
+        cancelButton.getStyleClass().addAll("event-button", "secondary-button");
         cancelButton.setOnAction(e -> controller.displayErrorMessage("ErrorUserCanceledPayment"));
         FlexPane buttonBar = new FlexPane(payButton, cancelButton);
         buttonBar.setHorizontalSpace(10);
