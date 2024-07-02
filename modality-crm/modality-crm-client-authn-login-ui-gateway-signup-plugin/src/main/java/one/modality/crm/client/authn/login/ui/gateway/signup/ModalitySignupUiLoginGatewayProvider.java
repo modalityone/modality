@@ -3,7 +3,7 @@ package one.modality.crm.client.authn.login.ui.gateway.signup;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.authn.login.ui.spi.impl.gateway.UiLoginGatewayProviderBase;
 import dev.webfx.stack.authn.login.ui.spi.impl.gateway.UiLoginPortalCallback;
-import dev.webfx.stack.hash.md5.MD5;
+import dev.webfx.stack.hash.md5.Md5;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
@@ -117,7 +117,7 @@ public class ModalitySignupUiLoginGatewayProvider extends UiLoginGatewayProvider
                 String password = passwordInput.getText();
                 FrontendAccount frontendAccount = updateStore.insertEntity(FrontendAccount.class);
                 frontendAccount.setUsername(emailInput.getText());
-                frontendAccount.setPassword(MD5.hash(username +":" + MD5.hash(password)));
+                frontendAccount.setPassword(Md5.hash(username +":" + Md5.hash(password)));
                 frontendAccount.setFieldValue("corporation",1);
                 frontendAccount.setFieldValue("lang",I18n.getLanguage());
                 Person person = updateStore.insertEntity(Person.class);
