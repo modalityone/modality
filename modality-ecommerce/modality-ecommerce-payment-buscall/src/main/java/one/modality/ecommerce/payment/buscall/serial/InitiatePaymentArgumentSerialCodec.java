@@ -10,6 +10,7 @@ public final class InitiatePaymentArgumentSerialCodec extends SerialCodecBase<In
     private static final String CODEC_ID = "InitiatePaymentArgument";
     private static final String AMOUNT_KEY = "amount";
     private static final String DOCUMENT_PRIMARY_KEY_KEY = "document";
+    private static final String SEAMLESS_ALLOWED_KEY = "seamlessAllowed";
 
     public InitiatePaymentArgumentSerialCodec() {
         super(InitiatePaymentArgument.class, CODEC_ID);
@@ -19,13 +20,15 @@ public final class InitiatePaymentArgumentSerialCodec extends SerialCodecBase<In
     public void encode(InitiatePaymentArgument arg, AstObject serial) {
         encodeInteger(serial, AMOUNT_KEY,               arg.getAmount());
         encodeObject( serial, DOCUMENT_PRIMARY_KEY_KEY, arg.getDocumentPrimaryKey());
+        encodeBoolean(serial, SEAMLESS_ALLOWED_KEY,     arg.isSeamlessAllowed());
     }
 
     @Override
     public InitiatePaymentArgument decode(ReadOnlyAstObject serial) {
         return new InitiatePaymentArgument(
                 decodeInteger( serial, AMOUNT_KEY),
-                decodeObject(  serial, DOCUMENT_PRIMARY_KEY_KEY)
+                decodeObject(  serial, DOCUMENT_PRIMARY_KEY_KEY),
+                decodeBoolean( serial, SEAMLESS_ALLOWED_KEY)
         );
     }
 }

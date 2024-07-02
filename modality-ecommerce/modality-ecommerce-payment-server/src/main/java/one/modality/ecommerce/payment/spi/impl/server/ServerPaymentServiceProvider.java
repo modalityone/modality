@@ -58,14 +58,16 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                                         argument.getAmount(),
                                         currencyCode,
                                         live,
+                                        argument.isSeamlessAllowed(),
                                         null,
                                         parameters
-                                )).map(res -> new InitiatePaymentResult( // Step 5: Returning a InitiatePaymentResult
+                                )).map(gatewayResult -> new InitiatePaymentResult( // Step 5: Returning a InitiatePaymentResult
                                         moneyTransfer.getPrimaryKey(),
-                                        res.isLive(),
-                                        res.getHtmlContent(),
-                                        res.getUrl(),
-                                        res.isRedirect()
+                                        gatewayResult.isLive(),
+                                        gatewayResult.isSeamless(),
+                                        gatewayResult.getHtmlContent(),
+                                        gatewayResult.getUrl(),
+                                        gatewayResult.isRedirect()
                                 ));
                             });
                 });

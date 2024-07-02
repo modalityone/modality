@@ -19,6 +19,7 @@ module modality.all.server.application.vertx {
     requires webfx.platform.resource.java;
     requires webfx.platform.scheduler.vertx;
     requires webfx.platform.shutdown.java;
+    requires webfx.platform.useragent.java.server;
     requires webfx.stack.authn.login.server.portal;
     requires webfx.stack.authn.oauth2.vertx;
     requires webfx.stack.authn.server.portal;
