@@ -7,12 +7,11 @@ import one.modality.base.shared.entities.DocumentLine;
  */
 public abstract class AbstractDocumentLineEvent extends AbstractDocumentEvent {
 
-    private final DocumentLine documentLine;
-    private final Object documentLinePrimaryKey;
+    protected DocumentLine documentLine;   // Working entity on client-side only (not serialised)
+    private Object documentLinePrimaryKey; // Its primary key (serialised)
 
     public AbstractDocumentLineEvent(Object documentPrimaryKey, Object documentLinePrimaryKey) {
         super(documentPrimaryKey);
-        this.documentLine = null;
         this.documentLinePrimaryKey = documentLinePrimaryKey;
     }
 
@@ -23,10 +22,17 @@ public abstract class AbstractDocumentLineEvent extends AbstractDocumentEvent {
     }
 
     public DocumentLine getDocumentLine() {
+        if (documentLine == null && entityStore != null) {
+            documentLine = entityStore.getEntity(DocumentLine.class, documentLinePrimaryKey);
+        }
         return documentLine;
     }
 
     public Object getDocumentLinePrimaryKey() {
         return documentLinePrimaryKey;
+    }
+
+    public void setDocumentLinePrimaryKey(Object documentLinePrimaryKey) { // Used to refactor new primary keys once inserted on server
+        this.documentLinePrimaryKey = documentLinePrimaryKey;
     }
 }

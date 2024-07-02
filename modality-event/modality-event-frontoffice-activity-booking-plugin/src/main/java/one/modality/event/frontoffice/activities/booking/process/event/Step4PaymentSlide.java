@@ -55,7 +55,8 @@ public class Step4PaymentSlide extends StepSlide {
         VBox.setMargin(buttonBar, new Insets(10, 0, 10, 0));
         mainVbox.getChildren().add(buttonBar);
         //paymentRegion.
-        bookedEventTitleText.setText(FXEvent.getEvent().getName() +  " | Total booking price: " + bookEventData.getPriceCalculator().calculateTotalPrice(bookEventData.getCurrentBooking().getLastestDocumentAggregate())/100 + "£");
+        int totalPrice = bookEventData.getPriceCalculator().calculateTotalPrice();
+        bookedEventTitleText.setText(FXEvent.getEvent().getName() + " | Total booking price: " + totalPrice / 100 + "£");
         webPaymentForm
                 .setOnLoadFailure(errorMsg -> {
                     controller.displayErrorMessage("ErrorWhileLoadingPaymentForm");
@@ -91,7 +92,7 @@ public class Step4PaymentSlide extends StepSlide {
                         retryPayButton.setOnAction(event -> {
                             turnOnButtonWaitMode(retryPayButton);
                             PaymentService.initiatePayment(
-                                            new InitiatePaymentArgument(bookEventData.getTotalPrice(), bookEventData.getDocumentPrimaryKey())
+                                            new InitiatePaymentArgument(totalPrice, bookEventData.getDocumentPrimaryKey())
                                     )
                                     .onFailure(paymentResult -> Platform.runLater(() -> {
                                         controller.displayErrorMessage("ErrorWhileInitiatingPayment");

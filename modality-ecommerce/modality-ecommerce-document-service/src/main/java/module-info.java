@@ -5,9 +5,10 @@ module modality.ecommerce.document.service {
     // Direct dependencies modules
     requires modality.base.shared.entities;
     requires transitive webfx.platform.async;
+    requires webfx.platform.console;
     requires webfx.platform.service;
+    requires webfx.platform.util;
     requires transitive webfx.stack.db.query;
-    requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;

@@ -24,7 +24,6 @@ public class SlideController {
     private Step5ErrorSlide step5ErrorSlide;
     private final Carrousel carrousel;
     private final BooleanProperty eventDataLoaded = new SimpleBooleanProperty();
-    private final BooleanProperty registrationDataLoaded = new SimpleBooleanProperty();
 
     public SlideController(Carrousel car) {
         carrousel = car;
@@ -32,31 +31,31 @@ public class SlideController {
 
     public void initialise() {
         eventDataLoaded.setValue(false);
-        registrationDataLoaded.setValue(false);
         step2EventDetailsSlide.reset();
         step3CheckoutSlide.reset();
         step4PaymentSlide.reset();
         step5ErrorSlide.reset();
         step6ThankYouSlide.reset();
-        FXProperties.runOnPropertiesChange(() -> {
-            if (eventDataLoaded.get() && registrationDataLoaded.get()) {
-                UiScheduler.runInUiThread(() -> {
-                    step2EventDetailsSlide.buildUi();
-                    step3CheckoutSlide.buildUi();
-                    step4PaymentSlide.buildUi();
-                    step5ErrorSlide.buildUi();
-                    step6ThankYouSlide.buildUi();
-                    carrousel.displaySlide(1, false);
-                });
+
+        // Rebuilding the UI and showing the loading slide while the event is loading
+        FXProperties.runNowAndOnPropertiesChange(() -> UiScheduler.runInUiThread(() -> {
+            if (eventDataLoaded.get()) {
+                step2EventDetailsSlide.buildUi();
+                step3CheckoutSlide.buildUi();
+                step4PaymentSlide.buildUi();
+                step5ErrorSlide.buildUi();
+                step6ThankYouSlide.buildUi();
+                carrousel.displaySlide(1, false);
             } else { // Here the data are not loaded
-                UiScheduler.runInUiThread(() -> carrousel.displaySlide(0, false));
+                carrousel.displaySlide(0, false);
             }
-        }, eventDataLoaded, registrationDataLoaded);
+        }), eventDataLoaded);
     }
 
     public Step1LoadingSlide getStep1LoadingSlide() {
         return step1LoadingSlide;
     }
+
     public void setStep1LoadingSlide(Step1LoadingSlide step1LoadingSlide) {
         this.step1LoadingSlide = step1LoadingSlide;
     }
@@ -117,18 +116,6 @@ public class SlideController {
 
     public void setEventDataLoaded(boolean eventDataLoaded) {
         this.eventDataLoaded.set(eventDataLoaded);
-    }
-
-    public boolean isRegistrationDataLoaded() {
-        return registrationDataLoaded.get();
-    }
-
-    public BooleanProperty registrationDataLoadedProperty() {
-        return registrationDataLoaded;
-    }
-
-    public void setRegistrationDataLoaded(boolean registrationDataLoaded) {
-        this.registrationDataLoaded.set(registrationDataLoaded);
     }
 
     public void displayNextSlide() {

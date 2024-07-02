@@ -11,8 +11,8 @@ public final class AddAttendancesEvent extends AbstractAttendancesEvent {
         super(attendances);
     }
 
-    public AddAttendancesEvent(Object documentPrimaryKey, Object documentLinePrimaryKey, Object[] attendancePrimaryKeys) {
-        super(documentPrimaryKey, documentLinePrimaryKey, attendancePrimaryKeys);
+    public AddAttendancesEvent(Object documentPrimaryKey, Object documentLinePrimaryKey, Object[] attendancesPrimaryKeys, Object[] scheduledItemsPrimaryKeys) {
+        super(documentPrimaryKey, documentLinePrimaryKey, attendancesPrimaryKeys, scheduledItemsPrimaryKeys);
     }
 
 }

@@ -1,7 +1,6 @@
 package one.modality.event.frontoffice.activities.booking;
 
 import dev.webfx.platform.async.Future;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.EntityStore;
 import one.modality.base.shared.entities.*;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
@@ -25,15 +24,18 @@ public class WorkingBooking {
     private Object documentPrimaryKey; // null for new booking
     private Document document;
     private DocumentAggregate lastestDocumentAggregate;
+    // EntityStore used to hold the entities associated to this working booking (ex: Document, DocumentLine, etc...).
+    // Note that it's not an update store, because the booking submit uses DocumentService instead, which keeps a record
+    // of all individual changes made over the time. This entity store reflects only the latest version of the booking.
     private EntityStore entityStore;
-
-    public WorkingBooking(PolicyAggregate policyAggregate) {
-        this(policyAggregate, null);
-    }
 
     public WorkingBooking(PolicyAggregate policyAggregate, DocumentAggregate initialDocumentAggregate) {
         this.policyAggregate = policyAggregate;
         this.initialDocumentAggregate = initialDocumentAggregate;
+        if (initialDocumentAggregate != null) {
+            initialDocumentAggregate.setPolicyAggregate(policyAggregate);
+            documentPrimaryKey = initialDocumentAggregate.getDocument().getPrimaryKey();
+        }
     }
 
     public PolicyAggregate getPolicyAggregate() {
@@ -45,9 +47,15 @@ public class WorkingBooking {
     }
 
     public DocumentAggregate getLastestDocumentAggregate() {
-        if (lastestDocumentAggregate == null)
+        if (lastestDocumentAggregate == null) {
             lastestDocumentAggregate = new DocumentAggregate(initialDocumentAggregate, documentChanges);
+            lastestDocumentAggregate.setPolicyAggregate(policyAggregate);
+        }
         return lastestDocumentAggregate;
+    }
+
+    public Object getDocumentPrimaryKey() {
+        return documentPrimaryKey;
     }
 
     public void bookScheduledItems(List<ScheduledItem> scheduledItems) {
@@ -107,21 +115,36 @@ public class WorkingBooking {
         documentChanges.clear();
         entityStore = null;
         lastestDocumentAggregate = null;
-        if (initialDocumentAggregate != null)
+        if (initialDocumentAggregate != null) {
             document = initialDocumentAggregate.getDocument();
-        else {
-            if (documentPrimaryKey == null) { // Case of new booking
+            documentPrimaryKey = document.getPrimaryKey();
+        } else {
+            if (documentPrimaryKey == null) { // Case of new booking not yet submitted
                 document = getEntityStore().createEntity(Document.class);
                 document.setEvent(FXEvent.getEvent());
                 document.setPerson(FXUserPerson.getUserPerson());
                 documentChanges.add(new AddDocumentEvent(document));
-            } else { // Case of existing booking
+            } else { // Case of new booking once submitted
                 document = getEntityStore().createEntity(Document.class, documentPrimaryKey);
             }
         }
     }
 
     public Future<SubmitDocumentChangesResult> submitChanges(String historyComment) {
+        // In case the booking is not linked to the booker account (because the user was not logged-in at the start of
+        // the booking process), we set it now (the front-office probably forced the user to login before submit).
+        Person userPerson = FXUserPerson.getUserPerson();
+        if (document.getPerson() == null && userPerson != null) {
+            document.setPerson(userPerson);
+            documentChanges.forEach(e -> {
+                if (e instanceof AddDocumentEvent) {
+                    AddDocumentEvent ade = (AddDocumentEvent) e;
+                    if (ade.getPersonPrimaryKey() == null)
+                        ade.setPersonPrimaryKey(userPerson.getPrimaryKey());
+                }
+            });
+        }
+
         return DocumentService.submitDocumentChanges(
                 new SubmitDocumentChangesArgument(
                         documentChanges.toArray(new AbstractDocumentEvent[0]),
@@ -135,7 +158,7 @@ public class WorkingBooking {
 
     private EntityStore getEntityStore() {
         if (entityStore == null)
-            entityStore = EntityStore.create(DataSourceModelService.getDefaultDataSourceModel());
+            entityStore = EntityStore.createAbove(policyAggregate.getEntityStore());
         return entityStore;
     }
 

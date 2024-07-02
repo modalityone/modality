@@ -31,6 +31,7 @@
         <module>modality-ecommerce-document-service-buscall</module>
         <module>modality-ecommerce-document-service-remote</module>
         <module>modality-ecommerce-document-service-server</module>
+        <module>modality-ecommerce-history-server</module>
         <module>modality-ecommerce-payment</module>
         <module>modality-ecommerce-payment-buscall</module>
         <module>modality-ecommerce-payment-client</module>

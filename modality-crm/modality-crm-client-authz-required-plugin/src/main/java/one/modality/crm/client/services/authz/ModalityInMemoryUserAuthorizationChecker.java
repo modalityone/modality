@@ -18,6 +18,7 @@ import dev.webfx.stack.orm.entity.query_result_to_entities.QueryResultToEntities
 import dev.webfx.stack.routing.router.auth.authz.RoutingAuthorizationRuleParser;
 import dev.webfx.stack.session.state.client.fx.FXAuthorizationsChanged;
 import one.modality.base.client.conf.ModalityClientConfig;
+import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 
 import java.util.List;
 
@@ -37,10 +38,12 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
         // Registering the authorization (requests and rules) parsers
         ruleRegistry.addAuthorizationRuleParser(new RoutingAuthorizationRuleParser());
         ruleRegistry.addAuthorizationRuleParser(new OperationAuthorizationRuleParser());
-        // Getting initial authorizations from cache if present
-        Object cachedValue = authorizationPushCashEntry.getValue();
-        if (cachedValue != null)
-            onAuthorizationPush(cachedValue);
+        // Getting initial authorizations from cache if present (only if previous session was logged in as Modality user already)
+        if (FXModalityUserPrincipal.getModalityUserPrincipal() != null) {
+            Object cachedValue = authorizationPushCashEntry.getValue();
+            if (cachedValue != null)
+                onAuthorizationPush(cachedValue);
+        }
         // Note: the pushObject sent by the server contained all permissions specifically assigned to the user.
         // In addition, we may have public operations. Since they are public, they don't need authorizations, however
         // some may have a route associated, and we need therefore to authorize those public routes.
@@ -57,7 +60,7 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
         QueryRowToEntityMapping queryMapping = dataSourceModel.parseAndCompileSelect(AUTHZ_QUERY_BASE).getQueryMapping();
         EntityStore entityStore = EntityStore.create(dataSourceModel);
         EntityList<Entity> assignments = QueryResultToEntitiesMapper.mapQueryResultToEntities(queryResult, queryMapping, entityStore, "assignments");
-        ruleRegistry.clear();
+        ruleRegistry.clearAllAuthorizationRules();
         for (Entity assignment: assignments) {
             // Case of a rule (ex: "grant route:*" or "grant operation:*")
             Entity authorizationRule = assignment.getForeignEntity("rule");

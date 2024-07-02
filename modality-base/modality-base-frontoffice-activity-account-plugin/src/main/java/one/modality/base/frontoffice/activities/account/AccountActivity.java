@@ -2,11 +2,15 @@ package one.modality.base.frontoffice.activities.account;
 
 import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.stack.authn.logout.client.operation.LogoutRequest;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
+import dev.webfx.stack.ui.action.ActionBinder;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -26,6 +30,11 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
     @Override
     public Node buildUi() {
         Node avatar = AccountUtility.createAvatar();
+
+        Hyperlink logoutLink = ActionBinder.bindButtonToAction(new Hyperlink(), newOperationAction(LogoutRequest::new));
+        logoutLink.setGraphicTextGap(10);
+        VBox.setMargin(logoutLink, new Insets(10));
+
         VBox vBox = new VBox(
                 new HBox(LayoutUtil.createHGrowable(), avatar, LayoutUtil.createHGrowable()),
                 createRow("PersonalInformation",
@@ -62,8 +71,10 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
                         "PrivacyNotice",
                         SVGPaths.LEGAL_SVG_PATH,
                         () -> new RouteToAccountPersonalInformationRequest(getHistory())
-                )
+                ),
+                logoutLink
         );
+
         vBox.setMaxWidth(Region.USE_PREF_SIZE);
         return ControlUtil.createScalableVerticalScrollPane(vBox, false);
     }

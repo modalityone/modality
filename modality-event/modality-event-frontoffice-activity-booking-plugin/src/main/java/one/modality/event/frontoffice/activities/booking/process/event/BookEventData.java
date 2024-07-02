@@ -1,62 +1,54 @@
 package one.modality.event.frontoffice.activities.booking.process.event;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.PolicyAggregate;
 import one.modality.event.frontoffice.activities.booking.PriceCalculator;
 import one.modality.event.frontoffice.activities.booking.WorkingBooking;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BookEventData {
-    private PriceCalculator priceCalculator = null;
-    private DocumentAggregate documentAggregate = null;
-    private List<ScheduledItem> scheduledItemsAlreadyBooked = null;
-    private List<ScheduledItem> scheduledItemsOnEvent = null;
-    private WorkingBooking currentBooking = null;
-    private IntegerProperty bookingNumber = new SimpleIntegerProperty(0);
-    private PolicyAggregate policyAggrate = null;
-    private Object documentPrimaryKey = null;
-    private int totalPrice = 0;
 
-    public BookEventData() {
-        priceCalculator = null;
-        documentAggregate = null;
-        scheduledItemsAlreadyBooked = null;
-        scheduledItemsOnEvent = null;
-        currentBooking = null;
-        bookingNumber = new SimpleIntegerProperty(0);
-        policyAggrate = null;
-    }
+    private WorkingBooking currentBooking;
+    private PriceCalculator priceCalculator;
+    private final ObjectProperty<Object> bookingReferenceProperty = new SimpleObjectProperty<>();
 
-    public List<ScheduledItem> getScheduledItemsAlreadyBooked() {
-        return scheduledItemsAlreadyBooked;
-    }
-
-    public void setScheduledItemsAlreadyBooked(List<ScheduledItem> scheduledItemsAlreadyBook) {
-        scheduledItemsAlreadyBooked = scheduledItemsAlreadyBook;
+    public void setCurrentBooking(WorkingBooking currentBooking) {
+        this.currentBooking = currentBooking;
+        priceCalculator = new PriceCalculator(currentBooking::getLastestDocumentAggregate);
     }
 
     public WorkingBooking getCurrentBooking() {
         return currentBooking;
     }
 
-    public void setCurrentBooking(WorkingBooking currentBooking) {
-        this.currentBooking = currentBooking;
+
+    public List<ScheduledItem> getScheduledItemsAlreadyBooked() {
+        DocumentAggregate initialDocumentAggregate = currentBooking.getInitialDocumentAggregate();
+        if (initialDocumentAggregate == null) {
+            return Collections.emptyList();
+        }
+        return initialDocumentAggregate.getAttendancesStream()
+                .map(Attendance::getScheduledItem)
+                .collect(Collectors.toList());
     }
 
-    public int getBookingNumber() {
-        return bookingNumber.get();
+    public Object getBookingReference() {
+        return bookingReferenceProperty.get();
     }
 
-    public IntegerProperty bookingNumberProperty() {
-        return bookingNumber;
+    public ObjectProperty<Object> bookingReferenceProperty() {
+        return bookingReferenceProperty;
     }
 
-    public void setBookingNumber(int bookingNumb) {
-        bookingNumber.set(bookingNumb);
+    public void setBookingReference(Object bookingReference) {
+        bookingReferenceProperty.set(bookingReference);
     }
 
     public PriceCalculator getPriceCalculator() {
@@ -68,42 +60,19 @@ public class BookEventData {
     }
 
     public DocumentAggregate getDocumentAggregate() {
-        return documentAggregate;
+        return currentBooking.getLastestDocumentAggregate();
     }
 
-    public void setDocumentAggregate(DocumentAggregate documentAggregate) {
-        this.documentAggregate = documentAggregate;
-    }
-
-    public void setPolicyAggregate(PolicyAggregate pa) {
-        policyAggrate = pa;
-    }
-
-    public PolicyAggregate getPolicyAggrate() {
-        return policyAggrate;
+    public PolicyAggregate getPolicyAggregate() {
+        return currentBooking.getPolicyAggregate();
     }
 
     public List<ScheduledItem> getScheduledItemsOnEvent() {
-        return scheduledItemsOnEvent;
-    }
-
-    public void setScheduledItemsOnEvent(List<ScheduledItem> scheduledItemsOnEvent) {
-        this.scheduledItemsOnEvent = scheduledItemsOnEvent;
+        return getPolicyAggregate().getScheduledItems();
     }
 
     public Object getDocumentPrimaryKey() {
-        return documentPrimaryKey;
+        return currentBooking.getDocumentPrimaryKey();
     }
 
-    public void setDocumentPrimaryKey(Object documentPrimaryKey) {
-        this.documentPrimaryKey = documentPrimaryKey;
-    }
-
-    public int getTotalPrice() {
-        return totalPrice;
-    }
-
-    public void setTotalPrice(int totalPrice) {
-        this.totalPrice = totalPrice;
-    }
 }

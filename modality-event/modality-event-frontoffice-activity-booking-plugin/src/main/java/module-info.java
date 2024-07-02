@@ -66,6 +66,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     exports one.modality.event.frontoffice.activities.booking.fx;
     exports one.modality.event.frontoffice.activities.booking.map;
     exports one.modality.event.frontoffice.activities.booking.process;
+    exports one.modality.event.frontoffice.activities.booking.process.account;
     exports one.modality.event.frontoffice.activities.booking.process.event;
     exports one.modality.event.frontoffice.activities.booking.routing;
     exports one.modality.event.frontoffice.activities.booking.views;

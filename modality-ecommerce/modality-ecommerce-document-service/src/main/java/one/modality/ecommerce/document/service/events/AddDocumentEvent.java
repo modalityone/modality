@@ -2,6 +2,8 @@ package one.modality.ecommerce.document.service.events;
 
 import dev.webfx.stack.orm.entity.Entities;
 import one.modality.base.shared.entities.Document;
+import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.Person;
 
 /**
  * @author Bruno Salmon
@@ -9,7 +11,7 @@ import one.modality.base.shared.entities.Document;
 public final class AddDocumentEvent extends AbstractDocumentEvent {
 
     private final Object eventPrimaryKey;
-    private final Object personPrimaryKey;
+    private Object personPrimaryKey;
 
     public AddDocumentEvent(Document document) {
         super(document);
@@ -29,5 +31,21 @@ public final class AddDocumentEvent extends AbstractDocumentEvent {
 
     public Object getPersonPrimaryKey() {
         return personPrimaryKey;
+    }
+
+    public void setPersonPrimaryKey(Object personPrimaryKey) {
+        this.personPrimaryKey = personPrimaryKey;
+    }
+
+    @Override
+    public Document getDocument() {
+        if (document == null && entityStore != null) {
+            document = entityStore.createEntity(Document.class, getDocumentPrimaryKey());
+            document.setEvent(entityStore.getEntity(Event.class, eventPrimaryKey));
+            if (personPrimaryKey != null) {
+                document.setPerson(entityStore.getOrCreateEntity(Person.class, personPrimaryKey));
+            }
+        }
+        return super.getDocument();
     }
 }

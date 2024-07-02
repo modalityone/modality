@@ -1,39 +1,55 @@
 package one.modality.event.frontoffice.activities.booking.process.event;
 
+import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.windowhistory.WindowHistory;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.icons.SvgIcons;
+import one.modality.base.shared.entities.Item;
+import one.modality.base.shared.entities.Person;
+import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.Site;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.payment.InitiatePaymentArgument;
 import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
+import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountRouting;
+
+import java.time.LocalDate;
 
 public class Step3CheckoutSlide extends StepSlide {
     private final HtmlText eventShortDescriptionInCheckoutSlide = controller.bindI18nEventExpression(new HtmlText(), "shortDescription");
     private final Label venueAddress = controller.bindI18nEventExpression(new Label(), "venue.address");
     private final VBox scheduledItemVBox = new VBox();
     private final Label totalPriceLabel = new Label();
+    // Node property that will be managed by the sub-router to mount the CheckoutAccountActivity (when routed)
+    private final ObjectProperty<Node> checkoutAccountMountNodeProperty = new SimpleObjectProperty<>();
 
     public Step3CheckoutSlide(SlideController control, BookEventData bed) {
         super(control, bed);
         controller.setStep3CheckoutSlide(this);
 
+    }
+
+    // Exposing accountMountNodeProperty for the sub-routing binding (done in BookEventActivity)
+    public ObjectProperty<Node> accountMountNodeProperty() {
+        return checkoutAccountMountNodeProperty;
     }
 
     public void buildUi() {
@@ -83,17 +99,21 @@ public class Step3CheckoutSlide extends StepSlide {
         scheduledItemVBox.setPadding(new Insets(0, 0, 40, 0));
         //The scheduledItemPane containing the details of the checkout will be populated by the function drawScheduledItemInCheckoutView
         //which is called throw the binding
-        bookEventData.setDocumentAggregate(bookEventData.getCurrentBooking().getLastestDocumentAggregate());
+        //bookEventData.setDocumentAggregate(bookEventData.getCurrentBooking().getLastestDocumentAggregate());
         scheduledItemVBox.getChildren().clear();
         bookEventData.getDocumentAggregate().getAttendances().forEach(a -> {
             HBox currentScheduledItemHBox = new HBox();
             //currentScheduledItemHBox.setMaxWidth(500); //300+55+45
-            String dateFormatted = I18n.getI18nText("DateFormatted", I18n.getI18nText(a.getScheduledItem().getDate().getMonth().name()), a.getScheduledItem().getDate().getDayOfMonth());
-            Label name = new Label(a.getScheduledItem().getItem().getName() + " - " + dateFormatted);
+            ScheduledItem scheduledItem = a.getScheduledItem();
+            LocalDate date = scheduledItem.getDate();
+            Item item = scheduledItem.getItem();
+            Site site = scheduledItem.getSite();
+            String dateFormatted = I18n.getI18nText("DateFormatted", I18n.getI18nText(date.getMonth().name()), date.getDayOfMonth());
+            Label name = new Label(item.getName() + " - " + dateFormatted);
             Region spacer1 = new Region();
             Region spacer2 = new Region();
             spacer1.setPrefWidth(80);
-            Label price = new Label(EventPriceFormatter.formatWithCurrency(bookEventData.getCurrentBooking().getPolicyAggregate().getRates().get(0).getPrice(), FXEvent.getEvent()));
+            Label price = new Label(EventPriceFormatter.formatWithCurrency(bookEventData.getPolicyAggregate().getSiteItemRates(site, item).get(0).getPrice(), FXEvent.getEvent()));
             name.getStyleClass().add("subtitle-grey");
             price.getStyleClass().add("subtitle-grey");
 
@@ -106,9 +126,10 @@ public class Step3CheckoutSlide extends StepSlide {
             trashOption.setPrefWidth(45);
             trashOption.setOnAction(event -> {
                 bookEventData.getCurrentBooking().removeAttendance(a);
-                controller.getRecurringEventSchedule().getSelectedDates().remove(a.getScheduledItem().getDate());
+                controller.getRecurringEventSchedule().getSelectedDates().remove(date);
                 scheduledItemVBox.getChildren().remove(currentScheduledItemHBox);
-                totalPriceLabel.setText(EventPriceFormatter.formatWithCurrency(bookEventData.getPriceCalculator().calculateTotalPrice(bookEventData.getCurrentBooking().getLastestDocumentAggregate()), FXEvent.getEvent()));
+                int newTotalPrice = bookEventData.getPriceCalculator().calculateTotalPrice();
+                totalPriceLabel.setText(EventPriceFormatter.formatWithCurrency(newTotalPrice, FXEvent.getEvent()));
             });
             currentScheduledItemHBox.getChildren().addAll(spacer1, name, spacer2, price, trashOption);
             scheduledItemVBox.getChildren().add(currentScheduledItemHBox);
@@ -124,7 +145,7 @@ public class Step3CheckoutSlide extends StepSlide {
         totalLabel.setPadding(new Insets(5, 0, 5, 50));
         HBox.setHgrow(spacerTotal, Priority.ALWAYS);
         totalPriceLabel.setPadding(new Insets(5, 75, 5, 0));
-        int totalPrice = bookEventData.getPriceCalculator().calculateTotalPrice(bookEventData.getCurrentBooking().getLastestDocumentAggregate());
+        int totalPrice = bookEventData.getPriceCalculator().calculateTotalPrice();
         totalPriceLabel.setText(EventPriceFormatter.formatWithCurrency(totalPrice, FXEvent.getEvent()));
         totalHBox.getChildren().addAll(totalLabel, spacerTotal, totalPriceLabel);
 
@@ -146,6 +167,11 @@ public class Step3CheckoutSlide extends StepSlide {
         payButton.setMaxWidth(150);
 
         payButton.setOnAction(event -> {
+            Person userPerson = FXUserPerson.getUserPerson();
+            if (userPerson == null) { // Means that the user is not logged in, or logged in via SSO but without an account in Modality
+                WindowHistory.getProvider().push(CheckoutAccountRouting.getPath());
+                return;
+            }
             turnOnButtonWaitMode(payButton);
             bookEventData.getCurrentBooking().submitChanges("Booked Online")
                     .onFailure(result -> Platform.runLater(() -> {
@@ -153,12 +179,11 @@ public class Step3CheckoutSlide extends StepSlide {
                             Console.log(result);
                     }))
                     .onSuccess(result -> Platform.runLater(() -> {
-                        bookEventData.setBookingNumber(Integer.parseInt(result.getDocumentRef().toString()));
+                        bookEventData.setBookingReference(result.getDocumentRef());
                         Object documentPrimaryKey = result.getDocumentPrimaryKey();
-                        bookEventData.setDocumentPrimaryKey(documentPrimaryKey);
-                        bookEventData.setTotalPrice(totalPrice);
+                        int priceToPay = bookEventData.getPriceCalculator().calculateTotalPrice();
                         PaymentService.initiatePayment(
-                                        new InitiatePaymentArgument(totalPrice, documentPrimaryKey)
+                                        new InitiatePaymentArgument(priceToPay, documentPrimaryKey)
                                 )
                                 .onFailure(paymentResult -> Platform.runLater(() -> {
                                     controller.displayErrorMessage("ErrorWhileInitiatingPayment");
@@ -166,13 +191,18 @@ public class Step3CheckoutSlide extends StepSlide {
                                 }))
                                 .onSuccess(paymentResult -> Platform.runLater(() -> {
                                     turnOffButtonWaitMode(payButton, "Pay");
-                                    WebPaymentForm webPaymentForm = new WebPaymentForm(paymentResult, FXUserPerson.getUserPerson());
+                                    WebPaymentForm webPaymentForm = new WebPaymentForm(paymentResult, userPerson);
                                     controller.getStep4PaymentSlide().setWebPaymentForm(webPaymentForm);
                                     controller.displayNextSlide();
                                 }));
                     }));
         });
-        // controller.displayNextSlide();}));
         mainVbox.getChildren().add(payButton);
+
+        // Adding the container that will display the CheckoutAccountActivity (and eventually the login page before)
+        MonoPane accountActivityContainer = new MonoPane();
+        accountActivityContainer.contentProperty().bind(checkoutAccountMountNodeProperty); // managed by sub-router
+        VBox.setMargin(accountActivityContainer, new Insets(50, 0, 50, 0)); // Some good margins before and after
+        mainVbox.getChildren().add(accountActivityContainer);
     }
 }

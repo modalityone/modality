@@ -9,6 +9,7 @@ import one.modality.ecommerce.document.service.events.AbstractAttendancesEvent;
  */
 public abstract class AbstractAttendancesEventSerialCodec<T extends AbstractAttendancesEvent> extends AbstractDocumentLineEventSerialCodec<T> {
 
+    private static final String ATTENDANCES_PRIMARY_KEYS = "attendances";
     private static final String SCHEDULED_ITEMS_PRIMARY_KEYS = "scheduledItems";
 
     public AbstractAttendancesEventSerialCodec(Class<T> javaClass, String codecId) {
@@ -18,11 +19,17 @@ public abstract class AbstractAttendancesEventSerialCodec<T extends AbstractAtte
     @Override
     public void encode(T o, AstObject serial) {
         super.encode(o, serial);
+        encodeObjectArray(serial, ATTENDANCES_PRIMARY_KEYS,     o.getAttendancesPrimaryKeys());
         encodeObjectArray(serial, SCHEDULED_ITEMS_PRIMARY_KEYS, o.getScheduledItemsPrimaryKeys());
     }
 
-    protected Object[] decodeAttendancePrimaryKeys(ReadOnlyAstObject serial) {
+    protected Object[] decodeAttendancesPrimaryKeys(ReadOnlyAstObject serial) {
+        return decodeObjectArray(serial, ATTENDANCES_PRIMARY_KEYS);
+    }
+
+    protected Object[] decodeScheduledItemsPrimaryKeys(ReadOnlyAstObject serial) {
         return decodeObjectArray(serial, SCHEDULED_ITEMS_PRIMARY_KEYS);
     }
+
 
 }
