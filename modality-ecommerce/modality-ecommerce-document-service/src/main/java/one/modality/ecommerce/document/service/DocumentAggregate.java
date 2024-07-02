@@ -27,9 +27,9 @@ public final class DocumentAggregate {
     private List<DocumentLine> documentLines;
     private List<Attendance> attendances;
     private List<MoneyTransfer> moneyTransfers;
-    private int lastPreviousDocumentLineIndex;
-    private int lastPreviousAttendanceIndex;
-    private int lastPreviousMoneyTransferIndex;
+    private int existingDocumentLinesCount;
+    private int existingAttendancesCount;
+    private int existingMoneyTransfersCount;
 
     // Constructor for new bookings built from scratch
     public DocumentAggregate(PolicyAggregate policyAggregate) {
@@ -73,9 +73,9 @@ public final class DocumentAggregate {
         } else {
             entityStore = EntityStore.createAbove(policyAggregate.getEntityStore());
         }
-        lastPreviousDocumentLineIndex = documentLines.size() - 1;
-        lastPreviousAttendanceIndex = attendances.size() - 1;
-        lastPreviousMoneyTransferIndex = moneyTransfers.size() - 1;
+        existingDocumentLinesCount = documentLines.size();
+        existingAttendancesCount = attendances.size();
+        existingMoneyTransfersCount = moneyTransfers.size();
         newDocumentEvents.forEach(e -> {
             e.setEntityStore(entityStore);
             if (e instanceof AddDocumentEvent) {
@@ -142,6 +142,15 @@ public final class DocumentAggregate {
         return getSiteItemDocumentLinesStream(site, item).findFirst().orElse(null);
     }
 
+    public Stream<DocumentLine> getExistingDocumentLinesStream() {
+        return documentLines.stream().limit(existingDocumentLinesCount);
+    }
+
+    public Stream<DocumentLine> getNewDocumentLinesStream() {
+        return documentLines.stream().skip(existingDocumentLinesCount);
+    }
+
+
     // Accessing attendances
 
     public List<Attendance> getAttendances() {
@@ -160,6 +169,14 @@ public final class DocumentAggregate {
     public List<Attendance> getLineAttendances(DocumentLine line) {
         return getLineAttendancesStream(line)
                 .collect(Collectors.toList());
+    }
+
+    public Stream<Attendance> getExistingAttendancesStream() {
+        return attendances.stream().limit(existingAttendancesCount);
+    }
+
+    public Stream<Attendance> getNewAttendancesStream() {
+        return attendances.stream().skip(existingAttendancesCount);
     }
 
     // Accessing money transfers
@@ -188,6 +205,14 @@ public final class DocumentAggregate {
     public Stream<MoneyTransfer> getSuccessfulMoneyTransfersStream() {
         return moneyTransfers.stream()
                 .filter(MoneyTransfer::isSuccessful);
+    }
+
+    public Stream<MoneyTransfer> getExistingMoneyTransfersStream() {
+        return moneyTransfers.stream().limit(existingMoneyTransfersCount);
+    }
+
+    public Stream<MoneyTransfer> getNewMoneyTransfersStream() {
+        return moneyTransfers.stream().skip(existingMoneyTransfersCount);
     }
 
     public int getDeposit() {

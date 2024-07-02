@@ -21,7 +21,7 @@ public class BookEventData {
 
     public void setCurrentBooking(WorkingBooking currentBooking) {
         this.currentBooking = currentBooking;
-        priceCalculator = new PriceCalculator(currentBooking);
+        priceCalculator = new PriceCalculator(currentBooking::getLastestDocumentAggregate);
     }
 
     public WorkingBooking getCurrentBooking() {
