@@ -17,6 +17,6 @@ module modality.ecommerce.payment.buscall {
 
     // Provided services
     provides dev.webfx.stack.com.bus.call.spi.BusCallEndpoint with one.modality.ecommerce.payment.buscall.InitiatePaymentMethodEndpoint, one.modality.ecommerce.payment.buscall.MakeApiPaymentMethodEndpoint;
-    provides dev.webfx.stack.com.serial.spi.SerialCodec with one.modality.ecommerce.payment.buscall.serial.InitiatePaymentArgumentSerialCodec, one.modality.ecommerce.payment.buscall.serial.InitiatePaymentResultSerialCodec, one.modality.ecommerce.payment.buscall.serial.MakeApiPaymentArgumentSerialCodec, one.modality.ecommerce.payment.buscall.serial.MakeApiPaymentResultSerialCodec;
+    provides dev.webfx.stack.com.serial.spi.SerialCodec with one.modality.ecommerce.payment.buscall.serial.InitiatePaymentArgumentSerialCodec, one.modality.ecommerce.payment.buscall.serial.InitiatePaymentResultSerialCodec, one.modality.ecommerce.payment.buscall.serial.MakeApiPaymentArgumentSerialCodec, one.modality.ecommerce.payment.buscall.serial.MakeApiPaymentResultSerialCodec, one.modality.ecommerce.payment.buscall.serial.SandboxCardSerialCodec;
 
 }

@@ -4,6 +4,7 @@ import dev.webfx.platform.ast.AstObject;
 import dev.webfx.platform.ast.ReadOnlyAstObject;
 import dev.webfx.stack.com.serial.spi.impl.SerialCodecBase;
 import one.modality.ecommerce.payment.InitiatePaymentResult;
+import one.modality.ecommerce.payment.SandboxCard;
 
 public final class InitiatePaymentResultSerialCodec extends SerialCodecBase<InitiatePaymentResult> {
 
@@ -14,6 +15,7 @@ public final class InitiatePaymentResultSerialCodec extends SerialCodecBase<Init
     private static final String HTML_CONTENT_KEY = "htmlContent";
     private static final String URL_KEY = "url";
     private static final String REDIRECT_KEY = "redirect";
+    private static final String SANDBOX_CARDS_KEY = "sandboxCards";
 
     public InitiatePaymentResultSerialCodec() {
         super(InitiatePaymentResult.class, CODEC_ID);
@@ -27,6 +29,7 @@ public final class InitiatePaymentResultSerialCodec extends SerialCodecBase<Init
         encodeString( serial, HTML_CONTENT_KEY,        arg.getHtmlContent());
         encodeString( serial, URL_KEY,                 arg.getUrl());
         encodeBoolean(serial, REDIRECT_KEY,            arg.isRedirect());
+        encodeArray(  serial, SANDBOX_CARDS_KEY,       arg.getSandboxCards());
     }
 
     @Override
@@ -37,7 +40,8 @@ public final class InitiatePaymentResultSerialCodec extends SerialCodecBase<Init
                 decodeBoolean(serial, SEAMLESS_KEY),
                 decodeString( serial, HTML_CONTENT_KEY),
                 decodeString( serial, URL_KEY),
-                decodeBoolean(serial, REDIRECT_KEY)
+                decodeBoolean(serial, REDIRECT_KEY),
+                decodeArray(  serial, SANDBOX_CARDS_KEY, SandboxCard.class)
         );
     }
 }

@@ -3,6 +3,7 @@ package one.modality.ecommerce.payment.server.gateway.impl.square;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.resource.Resource;
 import dev.webfx.platform.util.uuid.Uuid;
+import one.modality.ecommerce.payment.SandboxCard;
 import one.modality.ecommerce.payment.server.gateway.*;
 
 import static one.modality.ecommerce.payment.server.gateway.impl.square.SquareRestApiStarterJob.*;
@@ -47,13 +48,36 @@ public final class SquarePaymentGateway implements PaymentGateway {
                 .replace("${modality_currencyCode}", argument.getCurrencyCode())
                 .replace("${modality_completePaymentRoute}", live ? SQUARE_LIVE_COMPLETE_PAYMENT_ROUTE : SQUARE_SANDBOX_COMPLETE_PAYMENT_ROUTE)
                 ;
+        SandboxCard[] sandboxCards = live ? null : new SandboxCard[] {
+                new SandboxCard("Visa - Success", "4111 1111 1111 1111", null, "111", "11111"),
+                new SandboxCard("Mastercard - Success", "5105 1051 0510 5100",  null,"111", "11111"),
+                new SandboxCard("Discover - Success", "6011 0000 0000 0004", null, "111", "11111"),
+                new SandboxCard("JCB - Success", "3569 9900 1009 5841", null, "111", null),
+                new SandboxCard("American Express - Success", "6011 0000 0000 0004", null, "1111", "11111"),
+                new SandboxCard("China Union Pay - Success", "6222 9888 1234 0000", null, "111", null),
+                new SandboxCard("Square Gift Card - Success", "6011 0000 0000 0004", null, "111", "11111"),
+                new SandboxCard("CVV incorrect", null, null, "911", null),
+                new SandboxCard("Postal code incorrect", null, null, null, "99999"),
+                new SandboxCard("Expiration date incorrect", null, "01/40", null, null),
+                new SandboxCard("Declined number", "4000000000000002", null, null, null),
+                new SandboxCard("On file auth declined", "4000000000000010", null, null, null),
+                new SandboxCard("Visa - No challenge", "4800 0000 0000 0004", null, "111", "11111"),
+                new SandboxCard("Mastercard - No challenge", "5222 2200 0000 0005",  null,"111", "11111"),
+                new SandboxCard("Discover EU - No challenge", "6011 0000 0020 1016", null, "111", "11111"),
+                new SandboxCard("JCB - Success", "3569 9900 1009 5841", null, "111", null),
+                new SandboxCard("Visa EU - Verification code: 123456", "4310 0000 0020 1019", null, "1111", "11111"),
+                new SandboxCard("Mastercard - Verification code: 123456", "5248 4800 0021 0026", null, "1111", "11111"),
+                new SandboxCard("Mastercard EU - Verification code: 123456", "5500 0000 0020 1016", null, "1111", "11111"),
+                new SandboxCard("American Express EU - Verification code: 123456", "3700 000002 01014", null, "1111", "11111"),
+                new SandboxCard("Visa - Failed verification", "4811 1100 0000 0008", null, "1111", "11111")
+        };
         if (seamless) {
-            return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedContentInitiatePaymentResult(live, true, template));
+            return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedContentInitiatePaymentResult(live, true, template, sandboxCards));
         } else { // In other cases, we embed the page in a WebView/iFrame that can be loaded through https (assuming this server is on https)
             String htmlCacheKey = Uuid.randomUuid();
             SquareRestApiOneTimeHtmlResponsesCache.registerOneTimeHtmlResponse(htmlCacheKey, template);
             String url = SQUARE_PAYMENT_FORM_ROUTE.replace(":htmlCacheKey", htmlCacheKey);
-            return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedUrlInitiatePaymentResult(live, false, url));
+            return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedUrlInitiatePaymentResult(live, false, url, sandboxCards));
         }
     }
 
