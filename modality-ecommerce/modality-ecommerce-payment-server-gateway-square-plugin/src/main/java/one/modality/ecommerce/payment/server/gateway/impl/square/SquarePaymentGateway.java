@@ -32,7 +32,10 @@ public final class SquarePaymentGateway implements PaymentGateway {
         String appId = argument.getAccountParameter("app_id");
         String locationId = argument.getAccountParameter("order.order.location_id");
         boolean live = argument.isLive();
-        boolean seamless = argument.isSeamlessIfSupported();
+        // Our Square gateway script implementation supports seamless integration.
+        boolean seamless = argument.isSeamlessIfSupported()
+            // && argument.isParentPageHttps() // Maybe would be better to not use seamless integration on http, but commented for now as iFrame integration is not working well in browser (ex: WebPaymentForm fitHeight not working well)
+        ;
         String template = seamless ? SCRIPT_TEMPLATE : HTML_TEMPLATE;
         template = template
                 .replace("${modality_seamless}", String.valueOf(seamless))
@@ -46,7 +49,7 @@ public final class SquarePaymentGateway implements PaymentGateway {
                 ;
         if (seamless) {
             return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedContentInitiatePaymentResult(live, true, template));
-        } else {
+        } else { // In other cases, we embed the page in a WebView/iFrame that can be loaded through https (assuming this server is on https)
             String htmlCacheKey = Uuid.randomUuid();
             SquareRestApiOneTimeHtmlResponsesCache.registerOneTimeHtmlResponse(htmlCacheKey, template);
             String url = SQUARE_PAYMENT_FORM_ROUTE.replace(":htmlCacheKey", htmlCacheKey);

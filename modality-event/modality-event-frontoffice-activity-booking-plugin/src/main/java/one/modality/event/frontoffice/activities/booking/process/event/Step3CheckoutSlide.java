@@ -29,6 +29,7 @@ import one.modality.base.shared.entities.Site;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.payment.PaymentService;
+import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountRouting;
@@ -185,7 +186,7 @@ public class Step3CheckoutSlide extends StepSlide {
                         Object documentPrimaryKey = result.getDocumentPrimaryKey();
                         int priceToPay = bookEventData.getPriceCalculator().calculateTotalPrice();
                         PaymentService.initiatePayment(
-                                        WebPaymentForm.createInitiatePaymentArgument(priceToPay, documentPrimaryKey)
+                                        ClientPaymentUtil.createInitiatePaymentArgument(priceToPay, documentPrimaryKey)
                                 )
                                 .onFailure(paymentResult -> Platform.runLater(() -> {
                                     controller.displayErrorMessage("ErrorWhileInitiatingPayment");

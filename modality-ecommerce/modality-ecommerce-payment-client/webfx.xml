@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
 
-    <description>The UI displayed to the user for initiating a embedded payment before calling the embedded payment API.</description>
+    <description>The UI displayed to the user for initiating an embedded payment before calling the embedded payment API.</description>
 
     <exported-packages>
         <source-packages/>

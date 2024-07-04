@@ -16,6 +16,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.payment.PaymentService;
+import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
 
@@ -89,7 +90,7 @@ public class Step4PaymentSlide extends StepSlide {
                         retryPayButton.setOnAction(event -> {
                             turnOnButtonWaitMode(retryPayButton);
                             PaymentService.initiatePayment(
-                                            WebPaymentForm.createInitiatePaymentArgument(totalPrice, bookEventData.getDocumentPrimaryKey())
+                                            ClientPaymentUtil.createInitiatePaymentArgument(totalPrice, bookEventData.getDocumentPrimaryKey())
                                     )
                                     .onFailure(paymentResult -> Platform.runLater(() -> {
                                         controller.displayErrorMessage("ErrorWhileInitiatingPayment");

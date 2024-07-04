@@ -13,7 +13,6 @@ import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.layout.Region;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
-import one.modality.ecommerce.payment.InitiatePaymentArgument;
 import one.modality.ecommerce.payment.InitiatePaymentResult;
 
 import java.util.function.Consumer;
@@ -77,7 +76,8 @@ public class WebPaymentForm {
             }
             return null;
         }
-        webViewPane.setFitHeight(true);
+        webViewPane.setFitHeight(true); // Note: works with browser seamless mode and OpenJFX WebView, but not well with browser iFrame (constantly increasing)
+        webViewPane.setMaxHeight(800); // Setting a maximum in case we are in browser iFrame (which we avoid for now)
         webViewPane.setFitHeightExtra(result.isSeamless() ? 5 : 10);
         //webViewPane.setRedirectConsole(true); // causes stack overflow
         setUserInteractionAllowed(false);
@@ -222,10 +222,6 @@ public class WebPaymentForm {
         if (DEBUG) {
             Console.log(">>>>>>>>>>>>>> " + message);
         }
-    }
-
-    public static InitiatePaymentArgument createInitiatePaymentArgument(int amount, Object documentPrimaryKey) {
-        return new InitiatePaymentArgument(amount, documentPrimaryKey, WebViewPane.isBrowser());
     }
 
 }

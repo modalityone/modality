@@ -1,7 +1,7 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
 
 /**
- * The UI displayed to the user for initiating a embedded payment before calling the embedded payment API.
+ * The UI displayed to the user for initiating an embedded payment before calling the embedded payment API.
  */
 module modality.ecommerce.payment.client {
 
@@ -16,6 +16,7 @@ module modality.ecommerce.payment.client {
     requires webfx.platform.conf;
     requires webfx.platform.console;
     requires webfx.platform.scheduler;
+    requires webfx.platform.windowlocation;
 
     // Exported packages
     exports one.modality.ecommerce.payment.client;
