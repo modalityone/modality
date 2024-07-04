@@ -17,6 +17,8 @@ module modality.ecommerce.payment.client {
     requires webfx.platform.console;
     requires webfx.platform.scheduler;
     requires webfx.platform.windowlocation;
+    requires webfx.extras.panes;
+    requires webfx.platform.util;
 
     // Exported packages
     exports one.modality.ecommerce.payment.client;

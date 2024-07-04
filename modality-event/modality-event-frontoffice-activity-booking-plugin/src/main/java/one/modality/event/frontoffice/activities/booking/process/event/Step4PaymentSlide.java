@@ -35,6 +35,9 @@ public class Step4PaymentSlide extends StepSlide {
     public void setWebPaymentForm(WebPaymentForm webPaymentForm) {
         Region paymentRegion = webPaymentForm.buildPaymentForm();
         mainVbox.getChildren().add(paymentRegion);
+        if (webPaymentForm.isSandbox()) {
+            mainVbox.getChildren().add(webPaymentForm.createSandboxBar());
+        }
         Button payButton = I18nControls.bindI18nProperties(new Button(), "Pay");
         FXProperties.runNowAndOnPropertiesChange(() -> {
             if (webPaymentForm.isUserInteractionAllowed()) {
