@@ -15,8 +15,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
-import one.modality.ecommerce.payment.InitiatePaymentArgument;
 import one.modality.ecommerce.payment.PaymentService;
+import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
 
@@ -35,6 +35,9 @@ public class Step4PaymentSlide extends StepSlide {
     public void setWebPaymentForm(WebPaymentForm webPaymentForm) {
         Region paymentRegion = webPaymentForm.buildPaymentForm();
         mainVbox.getChildren().add(paymentRegion);
+        if (webPaymentForm.isSandbox()) {
+            mainVbox.getChildren().add(webPaymentForm.createSandboxBar());
+        }
         Button payButton = I18nControls.bindI18nProperties(new Button(), "Pay");
         FXProperties.runNowAndOnPropertiesChange(() -> {
             if (webPaymentForm.isUserInteractionAllowed()) {
@@ -92,7 +95,7 @@ public class Step4PaymentSlide extends StepSlide {
                         retryPayButton.setOnAction(event -> {
                             turnOnButtonWaitMode(retryPayButton);
                             PaymentService.initiatePayment(
-                                            new InitiatePaymentArgument(totalPrice, bookEventData.getDocumentPrimaryKey())
+                                            ClientPaymentUtil.createInitiatePaymentArgument(totalPrice, bookEventData.getDocumentPrimaryKey())
                                     )
                                     .onFailure(paymentResult -> Platform.runLater(() -> {
                                         controller.displayErrorMessage("ErrorWhileInitiatingPayment");

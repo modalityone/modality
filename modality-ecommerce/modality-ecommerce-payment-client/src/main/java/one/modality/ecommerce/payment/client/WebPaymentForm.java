@@ -1,5 +1,6 @@
 package one.modality.ecommerce.payment.client;
 
+import dev.webfx.extras.panes.FlexPane;
 import dev.webfx.extras.webview.pane.LoadOptions;
 import dev.webfx.extras.webview.pane.WebViewPane;
 import dev.webfx.platform.browser.Browser;
@@ -7,15 +8,30 @@ import dev.webfx.platform.conf.ConfigLoader;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.scheduler.Scheduler;
+import dev.webfx.platform.util.Numbers;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
 import one.modality.ecommerce.payment.InitiatePaymentResult;
+import one.modality.ecommerce.payment.SandboxCard;
 
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * @author Bruno Salmon
@@ -76,9 +92,9 @@ public class WebPaymentForm {
             }
             return null;
         }
-        webViewPane.setMaxWidth(600);
-        webViewPane.setMaxHeight(150);
-        //webViewPane.setFitHeight(true); // doesn't work well
+        webViewPane.setFitHeight(true); // Note: works with browser seamless mode and OpenJFX WebView, but not well with browser iFrame (constantly increasing)
+        webViewPane.setMaxHeight(800); // Setting a maximum in case we are in browser iFrame (which we avoid for now)
+        webViewPane.setFitHeightExtra(result.isSeamless() ? 5 : 10);
         //webViewPane.setRedirectConsole(true); // causes stack overflow
         setUserInteractionAllowed(false);
         LoadOptions loadOptions = new LoadOptions()
@@ -100,7 +116,14 @@ public class WebPaymentForm {
                 });
         String htmlContent = result.getHtmlContent();
         if (htmlContent != null) {
-            webViewPane.loadFromHtml(htmlContent, loadOptions, false);
+            if (result.isSeamless()) {
+                loadOptions
+                        .setSeamlessInBrowser(true)
+                        .setSeamlessContainerId("modality-payment-form-container");
+                webViewPane.loadFromScript(htmlContent, loadOptions, false);
+            } else {
+                webViewPane.loadFromHtml(htmlContent, loadOptions, false);
+            }
         } else {
             if (url.startsWith("/")) {
                 url = getHttpServerOrigin() + url;
@@ -109,6 +132,64 @@ public class WebPaymentForm {
         }
         webViewPane.getStyleClass().add("payment-form");
         return webViewPane;
+    }
+
+    public boolean isLive() {
+        return result.isLive();
+    }
+
+    public boolean isSandbox() {
+        return !isLive();
+    }
+
+    public Node createSandboxBar() {
+        SandboxCard[] sandboxCards = result.getSandboxCards();
+        if (sandboxCards == null)
+            return new Text("No sandbox cards available");
+        Button numbersButton = copyButton("Numbers");
+        Button expirationDateButton = copyButton("Expiration Date");
+        Button cvvButton = copyButton("CVV");
+        Button zipButton = copyButton("ZIP");
+        Button cardButton = new Button("Select a sandbox card to copy");
+        ContextMenu contextMenu = new ContextMenu();
+        contextMenu.getItems().setAll(Arrays.stream(sandboxCards)
+                .map(card -> {
+                    MenuItem menuItem = new MenuItem();
+                    menuItem.setText(card.getName());
+                    menuItem.setOnAction(e -> {
+                        cardButton.setText(card.getName());
+                        numbersButton.setText(card.getNumbers());
+                        String expirationDate = card.getExpirationDate();
+                        if (expirationDate == null) {
+                            expirationDate = Numbers.twoDigits(LocalDate.now().getMonth().getValue()) + "/" + ((LocalDate.now().getYear() + 1) % 100);
+                        }
+                        expirationDateButton.setText(expirationDate);
+                        cvvButton.setText(card.getCvv());
+                        zipButton.setText(card.getZip());
+                    });
+                    return menuItem;
+                }).collect(Collectors.toList()));
+        cardButton.setOnAction(e -> {
+            contextMenu.setMinWidth(cardButton.getWidth());
+            contextMenu.setStyle("-fx-min-width: " + cardButton.getWidth() + "px");
+            Point2D buttonPosition = cardButton.localToScreen(0, 0);
+            contextMenu.show(cardButton, buttonPosition.getX(), buttonPosition.getY());
+        });
+        cardButton.setMaxWidth(Double.MAX_VALUE);
+        return new VBox(10, cardButton,
+                new FlexPane(10, 10, cardButton, numbersButton, expirationDateButton, cvvButton, zipButton));
+    }
+
+    private Button copyButton(String name) {
+        Button button = new Button();
+        button.setMaxWidth(Double.MAX_VALUE);
+        button.setText(name);
+        button.setOnAction(e -> {
+            ClipboardContent content = new ClipboardContent();
+            content.put(DataFormat.PLAIN_TEXT, button.getText());
+            Clipboard.getSystemClipboard().setContent(content);
+        });
+        return button;
     }
 
     public void pay() {

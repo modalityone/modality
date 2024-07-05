@@ -15,7 +15,10 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.icons.SvgIcons;
@@ -25,8 +28,8 @@ import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.Site;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
-import one.modality.ecommerce.payment.InitiatePaymentArgument;
 import one.modality.ecommerce.payment.PaymentService;
+import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountRouting;
@@ -252,7 +255,7 @@ public class Step3CheckoutSlide extends StepSlide {
                         Object documentPrimaryKey = result.getDocumentPrimaryKey();
                         int priceToPay = bookEventData.getPriceCalculatorForCurrentOption().calculateBalanceToPay();
                         PaymentService.initiatePayment(
-                                        new InitiatePaymentArgument(priceToPay, documentPrimaryKey)
+                                        ClientPaymentUtil.createInitiatePaymentArgument(priceToPay, documentPrimaryKey)
                                 )
                                 .onFailure(paymentResult -> Platform.runLater(() -> {
                                     controller.displayErrorMessage("ErrorWhileInitiatingPayment");

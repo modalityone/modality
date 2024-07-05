@@ -32,7 +32,7 @@ final class AddNewPaymentExecutor {
         LayoutUtil.setMaxSizeToInfinite(stackPane);
         BorderPane borderPane = new BorderPane(stackPane);
         int amount = document.getPriceNet() - document.getPriceDeposit();
-        PaymentService.initiatePayment(new InitiatePaymentArgument(amount, document.getPrimaryKey()))
+        PaymentService.initiatePayment(new InitiatePaymentArgument(amount, document.getPrimaryKey(), false, false))
                 .onFailure(e -> Platform.runLater(() -> borderPane.setCenter(new Label(e.getMessage()))))
                 .onSuccess(r -> Platform.runLater(() -> {
                     String htmlContent = r.getHtmlContent();

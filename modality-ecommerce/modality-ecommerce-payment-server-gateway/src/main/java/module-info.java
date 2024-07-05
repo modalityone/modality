@@ -6,6 +6,7 @@
 module modality.ecommerce.payment.server.gateway {
 
     // Direct dependencies modules
+    requires modality.ecommerce.payment;
     requires webfx.platform.async;
 
     // Exported packages
