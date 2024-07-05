@@ -8,6 +8,7 @@ import com.squareup.square.models.*;
 import dev.webfx.platform.boot.spi.ApplicationJob;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.vertx.common.VertxInstance;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
@@ -27,6 +28,8 @@ public final class SquareRestApiStarterJob implements ApplicationJob {
     static final String SQUARE_PAYMENT_FORM_ENDPOINT             = "/payment/square/paymentForm/:htmlCacheKey";
     static final String SQUARE_LIVE_COMPLETE_PAYMENT_ENDPOINT    = "/payment/square/live/completePayment";
     static final String SQUARE_SANDBOX_COMPLETE_PAYMENT_ENDPOINT = "/payment/square/sandbox/completePayment";
+    private static final String SQUARE_LIVE_WEBHOOK_ENDPOINT     = "/payment/square/live/webhook";
+    private static final String SQUARE_SANDBOX_WEBHOOK_ENDPOINT  = "/payment/square/sandbox/webhook";
 
     @Override
     public void onInit() {
@@ -57,6 +60,16 @@ public final class SquareRestApiStarterJob implements ApplicationJob {
         router.route(SQUARE_SANDBOX_COMPLETE_PAYMENT_ENDPOINT)
                 .handler(BodyHandler.create()) // To ensure the whole payload is loaded before calling the next handler
                 .handler(ctx -> handleCompletePayment(ctx, false));
+
+        // Endpoint for live payments Square web hook
+        router.route(SQUARE_LIVE_WEBHOOK_ENDPOINT)
+                .handler(BodyHandler.create()) // To ensure the whole payload is loaded before calling the next handler
+                .handler(ctx -> handleWebhook(ctx, true));
+
+        // Same endpoint but for sandbox payments
+        router.route(SQUARE_SANDBOX_WEBHOOK_ENDPOINT)
+                .handler(BodyHandler.create()) // To ensure the whole payload is loaded before calling the next handler
+                .handler(ctx -> handleWebhook(ctx, false));
     }
 
     private void handleCompletePayment(RoutingContext ctx, boolean live) {
@@ -138,6 +151,13 @@ public final class SquareRestApiStarterJob implements ApplicationJob {
                         return null;
                     });
                 });
+    }
+
+    private void handleWebhook(RoutingContext ctx, boolean live) {
+        JsonObject payload = ctx.body().asJsonObject();
+        Console.log("[Square] webhook called with live = " + live + ", payload = " + payload.encode());
+        // TODO
+        ctx.response().setStatusCode(HttpResponseStatus.OK.code()).end();
     }
 
 }
