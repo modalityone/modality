@@ -7,8 +7,8 @@ import com.squareup.square.authentication.BearerAuthModel;
 import com.squareup.square.models.*;
 import dev.webfx.platform.boot.spi.ApplicationJob;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.util.http.HttpResponseStatus;
 import dev.webfx.platform.vertx.common.VertxInstance;
-import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
@@ -157,7 +157,7 @@ public final class SquareRestApiStarterJob implements ApplicationJob {
         JsonObject payload = ctx.body().asJsonObject();
         Console.log("[Square] webhook called with live = " + live + ", payload = " + payload.encode());
         // TODO
-        ctx.response().setStatusCode(HttpResponseStatus.OK.code()).end();
+        ctx.response().setStatusCode(HttpResponseStatus.OK_200).end();
     }
 
 }
