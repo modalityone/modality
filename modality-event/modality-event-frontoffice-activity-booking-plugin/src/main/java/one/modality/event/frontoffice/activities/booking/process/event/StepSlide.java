@@ -41,7 +41,7 @@ public abstract class StepSlide implements Supplier<Node> {
     }
 
     protected static void turnOffButtonWaitMode(Button button, String i18nKey) {
-        I18nControls.bindI18nProperties(button, i18nKey);
+        I18nControls.bindI18nGraphicProperty(button, i18nKey);
         FXProperties.setIfNotBound(button.disableProperty(), false);
     }
 }
