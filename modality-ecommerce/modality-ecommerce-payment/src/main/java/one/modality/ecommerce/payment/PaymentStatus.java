@@ -1,4 +1,4 @@
-package one.modality.ecommerce.payment.client;
+package one.modality.ecommerce.payment;
 
 /**
  * @author Bruno Salmon
@@ -12,7 +12,7 @@ public enum PaymentStatus {
     FAILED;
 
     public boolean isPending() {
-        return this == PENDING;
+        return this == PENDING || this == APPROVED;
     }
 
     public boolean isSuccessful() {

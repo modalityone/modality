@@ -11,14 +11,14 @@ module modality.ecommerce.payment.client {
     requires javafx.graphics;
     requires modality.base.shared.entities;
     requires modality.ecommerce.payment;
+    requires webfx.extras.panes;
     requires webfx.extras.webview.pane;
     requires webfx.platform.browser;
     requires webfx.platform.conf;
     requires webfx.platform.console;
     requires webfx.platform.scheduler;
-    requires webfx.platform.windowlocation;
-    requires webfx.extras.panes;
     requires webfx.platform.util;
+    requires webfx.platform.windowlocation;
 
     // Exported packages
     exports one.modality.ecommerce.payment.client;

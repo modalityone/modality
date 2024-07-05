@@ -26,6 +26,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
 import one.modality.ecommerce.payment.InitiatePaymentResult;
+import one.modality.ecommerce.payment.PaymentStatus;
 import one.modality.ecommerce.payment.SandboxCard;
 
 import java.time.LocalDate;
