@@ -36,7 +36,9 @@ import java.time.LocalDate;
 public class Step3CheckoutSlide extends StepSlide {
     private final HtmlText eventShortDescriptionInCheckoutSlide = controller.bindI18nEventExpression(new HtmlText(), "shortDescription");
     private final Label venueAddress = controller.bindI18nEventExpression(new Label(), "venue.address");
+    private final VBox pastScheduledItemVBox = new VBox();
     private final VBox scheduledItemVBox = new VBox();
+    private final Label previousTotalPriceLabel = new Label();
     private final Label totalPriceLabel = new Label();
     // Node property that will be managed by the sub-router to mount the CheckoutAccountActivity (when routed)
     private final ObjectProperty<Node> checkoutAccountMountNodeProperty = new SimpleObjectProperty<>();
@@ -57,17 +59,18 @@ public class Step3CheckoutSlide extends StepSlide {
         mainVbox.setAlignment(Pos.TOP_CENTER);
         Label bookedEventTitleText = controller.bindI18nEventExpression(new Label(), "i18n(this)");
         bookedEventTitleText.getStyleClass().addAll("book-event-primary-title", "emphasize");
-        HBox line1 = new HBox(bookedEventTitleText);
-        line1.setAlignment(Pos.CENTER_LEFT);
-        //bookedEventTitleText.setPrefWidth(MAX_WIDTH - 50);
-        line1.setPadding(new Insets(20, 0, 0, 50));
-        mainVbox.getChildren().add(line1);
+
+        MonoPane topPane = new MonoPane(bookedEventTitleText);
+        topPane.setAlignment(Pos.CENTER_LEFT);
+        VBox.setMargin(topPane, new Insets(20,0,0,50));
+        mainVbox.getChildren().add(topPane);
+
         eventShortDescriptionInCheckoutSlide.getStyleClass().add("subtitle-grey");
         eventShortDescriptionInCheckoutSlide.setMaxWidth(350); // The idea is to balance the description over 2 lines of the same length TODO: see if this can be made generic whatever the description
-        HBox line2 = new HBox(eventShortDescriptionInCheckoutSlide);
-        line2.setAlignment(Pos.BASELINE_LEFT);
-        line2.setPadding(new Insets(10, 0, 0, 50));
-        mainVbox.getChildren().add(line2);
+        MonoPane shortDescriptionMonoPane = new MonoPane(eventShortDescriptionInCheckoutSlide);
+        topPane.setAlignment(Pos.BASELINE_LEFT);
+        VBox.setMargin(topPane, new Insets(10,0,0,50));
+        mainVbox.getChildren().add(shortDescriptionMonoPane);
 
         SVGPath locationIcon = SvgIcons.createPinpointSVGPath();
         venueAddress.getStyleClass().add("checkout-address");
@@ -79,29 +82,89 @@ public class Step3CheckoutSlide extends StepSlide {
         venueAddress.setPadding(new Insets(0, 0, 30, 50));
         mainVbox.getChildren().addAll(addressBorderHBox);
 
-        HBox headerHBox = new HBox();
-        Region spacerInHeader1 = new Region();
-        spacerInHeader1.setPrefWidth(80);
-        Label summaryLabel = I18nControls.bindI18nProperties(new Label(), "Summary");
-        Region spacerInHeader2 = new Region();
-        HBox.setHgrow(spacerInHeader2, Priority.ALWAYS);
-        Label priceLabel = I18nControls.bindI18nProperties(new Label(), "Price");
-        priceLabel.setPrefWidth(70);
+        //FIRST PART: WHAT HAS BEEN ALREADY BOOKED FOR THIS EVENT IN THE PAST
+        if(bookEventData.getDocumentAggregate().getExistingAttendancesStream().findFirst()!=null) {
+            HBox headerHBox = new HBox();
+            Region spacerInHeader1 = new Region();
+            spacerInHeader1.setPrefWidth(80);
+            Label summaryLabel = I18nControls.bindI18nProperties(new Label(), "Summary");
+            Region spacerInHeader2 = new Region();
+            HBox.setHgrow(spacerInHeader2, Priority.ALWAYS);
+            Label priceLabel = I18nControls.bindI18nProperties(new Label(), "Price");
+            priceLabel.setPrefWidth(70);
+            //The actionLabel is used only because we need to put a graphic element in the right part of the borderpane,
+            //so it's balanced with the content that is shown bellow
+            Label actionLabel = new Label();
+            actionLabel.setPrefWidth(40);
+            headerHBox.getChildren().addAll(spacerInHeader1, summaryLabel, spacerInHeader2, priceLabel, actionLabel);
+            // headerHBox.setMaxWidth(400);
+            headerHBox.setPadding(new Insets(0, 0, 5, 0));
+
+            pastScheduledItemVBox.setAlignment(Pos.CENTER);
+            pastScheduledItemVBox.setPadding(new Insets(0, 0, 40, 0));
+            pastScheduledItemVBox.getChildren().clear();
+            bookEventData.getDocumentAggregate().getExistingAttendancesStream().forEach(a -> {
+                HBox currentScheduledItemHBox = new HBox();
+                //currentScheduledItemHBox.setMaxWidth(500); //300+55+45
+                ScheduledItem scheduledItem = a.getScheduledItem();
+                LocalDate date = scheduledItem.getDate();
+                Item item = scheduledItem.getItem();
+                Site site = scheduledItem.getSite();
+                String dateFormatted = I18n.getI18nText("DateFormatted", I18n.getI18nText(date.getMonth().name()), date.getDayOfMonth());
+                Label name = new Label(item.getName() + " - " + dateFormatted + " (already booked)");
+                Region spacer1 = new Region();
+                Region spacer2 = new Region();
+                spacer1.setPrefWidth(80);
+                HBox.setHgrow(spacer2, Priority.ALWAYS);
+                Label price = new Label(EventPriceFormatter.formatWithCurrency(bookEventData.getPolicyAggregate().getSiteItemRates(site, item).get(0).getPrice(), FXEvent.getEvent()));
+                price.setPrefWidth(55);
+                name.getStyleClass().add("checkout-address");
+                price.getStyleClass().add("checkout-address");
+                currentScheduledItemHBox.getChildren().addAll(spacer1, name, spacer2, price);
+                pastScheduledItemVBox.getChildren().add(currentScheduledItemHBox);
+            });
+            HBox previousTotalHBox = new HBox();
+            previousTotalHBox.getStyleClass().add("line-total");
+            //totalHBox.setMaxWidth(MAX_WIDTH);
+            Label previousTotalLabel = I18nControls.bindI18nProperties(new Label(), "Total");
+            Region spacerPreviousTotal = new Region();
+            previousTotalLabel.setPadding(new Insets(5, 0, 5, 50));
+            HBox.setHgrow(spacerPreviousTotal, Priority.ALWAYS);
+            previousTotalLabel.setPadding(new Insets(5, 75, 5, 0));
+            int previousTotalPrice = bookEventData.getPriceCalculatorForPastOption().calculateTotalPrice();
+            previousTotalPriceLabel.setText("Total: " + EventPriceFormatter.formatWithCurrency(previousTotalPrice, FXEvent.getEvent()) + " - Already paid: " + EventPriceFormatter.formatWithCurrency(bookEventData.getDocumentAggregate().getDeposit(), FXEvent.getEvent()));
+            previousTotalHBox.getChildren().addAll(previousTotalLabel, spacerPreviousTotal, previousTotalPriceLabel);
+            HBox sepHBox = new HBox();
+            sepHBox.setPadding(new Insets(0, 0, 30, 0));
+            pastScheduledItemVBox.getChildren().add(previousTotalPriceLabel);
+            mainVbox.getChildren().addAll(headerHBox,pastScheduledItemVBox);
+        }
+        HBox sepHBox = new HBox();
+        sepHBox.setPadding(new Insets(0, 0, 30, 0));
+        scheduledItemVBox.getChildren().add(sepHBox);
+
+
+        //SECOND PART: WHAT WE BOOK AT THIS STEP
+        HBox header2HBox = new HBox();
+        Region spacer2InHeader1 = new Region();
+        spacer2InHeader1.setPrefWidth(80);
+        Label summary2Label = I18nControls.bindI18nProperties(new Label(), "Summary");
+        Region spacer2InHeader2 = new Region();
+        HBox.setHgrow(spacer2InHeader2, Priority.ALWAYS);
+        Label price2Label = I18nControls.bindI18nProperties(new Label(), "Price");
+        price2Label.setPrefWidth(70);
         //The actionLabel is used only because we need to put a graphic element in the right part of the borderpane,
         //so it's balanced with the content that is shown bellow
-        Label actionLabel = new Label();
-        actionLabel.setPrefWidth(40);
-        headerHBox.getChildren().addAll(spacerInHeader1, summaryLabel, spacerInHeader2, priceLabel, actionLabel);
+        Label action2Label = new Label();
+        action2Label.setPrefWidth(40);
+        header2HBox.getChildren().addAll(spacer2InHeader1, summary2Label, spacer2InHeader2, price2Label, action2Label);
         // headerHBox.setMaxWidth(400);
-        headerHBox.setPadding(new Insets(0, 0, 5, 0));
+        header2HBox.setPadding(new Insets(0, 0, 5, 0));
 
         scheduledItemVBox.setAlignment(Pos.CENTER);
         scheduledItemVBox.setPadding(new Insets(0, 0, 40, 0));
-        //The scheduledItemPane containing the details of the checkout will be populated by the function drawScheduledItemInCheckoutView
-        //which is called throw the binding
-        //bookEventData.setDocumentAggregate(bookEventData.getCurrentBooking().getLastestDocumentAggregate());
         scheduledItemVBox.getChildren().clear();
-        bookEventData.getDocumentAggregate().getAttendances().forEach(a -> {
+        bookEventData.getDocumentAggregate().getNewAttendancesStream().forEach(a -> {
             HBox currentScheduledItemHBox = new HBox();
             //currentScheduledItemHBox.setMaxWidth(500); //300+55+45
             ScheduledItem scheduledItem = a.getScheduledItem();
@@ -128,7 +191,7 @@ public class Step3CheckoutSlide extends StepSlide {
                 bookEventData.getCurrentBooking().removeAttendance(a);
                 controller.getRecurringEventSchedule().getSelectedDates().remove(date);
                 scheduledItemVBox.getChildren().remove(currentScheduledItemHBox);
-                int newTotalPrice = bookEventData.getPriceCalculator().calculateTotalPrice();
+                int newTotalPrice = bookEventData.getPriceCalculatorForCurrentOption().calculateTotalPrice()- bookEventData.getPriceCalculatorForPastOption().calculateTotalPrice();
                 totalPriceLabel.setText(EventPriceFormatter.formatWithCurrency(newTotalPrice, FXEvent.getEvent()));
             });
             currentScheduledItemHBox.getChildren().addAll(spacer1, name, spacer2, price, trashOption);
@@ -136,6 +199,12 @@ public class Step3CheckoutSlide extends StepSlide {
             //Now we calculate the price and update the graphic related to the price
             //totalPriceProperty.setValue(String.valueOf(priceCalculator.calculateTotalPrice(documentAggregate)));
         });
+        // TODO: We display
+        // - in the first past the total price for past option, the deposit and what's remain to be paid
+        // - in the second part, what's remain to be paid.
+        // - the pay button is the total of those twp
+        // + in the previous screen, if there are already booked option, we display a different message,
+        // and if the balance is not null, we allow to pay with no need to select another date.
 
         HBox totalHBox = new HBox();
         totalHBox.getStyleClass().add("line-total");
@@ -145,16 +214,16 @@ public class Step3CheckoutSlide extends StepSlide {
         totalLabel.setPadding(new Insets(5, 0, 5, 50));
         HBox.setHgrow(spacerTotal, Priority.ALWAYS);
         totalPriceLabel.setPadding(new Insets(5, 75, 5, 0));
-        int totalPrice = bookEventData.getPriceCalculator().calculateTotalPrice();
-        totalPriceLabel.setText(EventPriceFormatter.formatWithCurrency(totalPrice, FXEvent.getEvent()));
+        int totalPrice = bookEventData.getPriceCalculatorForCurrentOption().calculateTotalPrice() - bookEventData.getPriceCalculatorForPastOption().calculateTotalPrice();;
+        totalPriceLabel.setText(EventPriceFormatter.formatWithCurrency(totalPrice, FXEvent.getEvent()) + " | Deposit: " + bookEventData.getDocumentAggregate().getDeposit());
         totalHBox.getChildren().addAll(totalLabel, spacerTotal, totalPriceLabel);
 
-        HBox sepHBox = new HBox();
-        sepHBox.setPadding(new Insets(0, 0, 30, 0));
-        scheduledItemVBox.getChildren().add(sepHBox);
+        HBox sep2HBox = new HBox();
+        sep2HBox.setPadding(new Insets(0, 0, 30, 0));
+        scheduledItemVBox.getChildren().add(sep2HBox);
 
         scheduledItemVBox.getChildren().add(totalHBox);
-        mainVbox.getChildren().addAll(headerHBox, scheduledItemVBox);
+        mainVbox.getChildren().addAll(header2HBox, scheduledItemVBox);
 
         HBox separatorHBox = new HBox();
         separatorHBox.setPadding(new Insets(0, 0, 50, 0));
@@ -181,7 +250,7 @@ public class Step3CheckoutSlide extends StepSlide {
                     .onSuccess(result -> Platform.runLater(() -> {
                         bookEventData.setBookingReference(result.getDocumentRef());
                         Object documentPrimaryKey = result.getDocumentPrimaryKey();
-                        int priceToPay = bookEventData.getPriceCalculator().calculateTotalPrice();
+                        int priceToPay = bookEventData.getPriceCalculatorForCurrentOption().calculateBalanceToPay();
                         PaymentService.initiatePayment(
                                         new InitiatePaymentArgument(priceToPay, documentPrimaryKey)
                                 )

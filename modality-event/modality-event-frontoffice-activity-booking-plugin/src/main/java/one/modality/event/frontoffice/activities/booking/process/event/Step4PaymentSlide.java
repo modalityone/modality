@@ -1,6 +1,7 @@
 package one.modality.event.frontoffice.activities.booking.process.event;
 
 import dev.webfx.extras.panes.FlexPane;
+import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
@@ -11,7 +12,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
@@ -55,7 +55,7 @@ public class Step4PaymentSlide extends StepSlide {
         VBox.setMargin(buttonBar, new Insets(10, 0, 10, 0));
         mainVbox.getChildren().add(buttonBar);
         //paymentRegion.
-        int totalPrice = bookEventData.getPriceCalculator().calculateTotalPrice();
+        int totalPrice = bookEventData.getPriceCalculatorForCurrentOption().calculateTotalPrice();
         bookedEventTitleText.setText(FXEvent.getEvent().getName() + " | Total booking price: " + totalPrice / 100 + "£");
         webPaymentForm
                 .setOnLoadFailure(errorMsg -> {
@@ -117,17 +117,19 @@ public class Step4PaymentSlide extends StepSlide {
         mainVbox.setAlignment(Pos.TOP_CENTER);
         bookedEventTitleText = new Label();
         bookedEventTitleText.getStyleClass().addAll("book-event-primary-title", "emphasize");
-        HBox line1 = new HBox(bookedEventTitleText);
-        line1.setAlignment(Pos.CENTER_LEFT);
-        //bookedEventTitleText.setPrefWidth(MAX_WIDTH - 50);
-        line1.setPadding(new Insets(20, 0, 0, 50));
-        mainVbox.getChildren().add(line1);
+        MonoPane topPane = new MonoPane(bookedEventTitleText);
+        topPane.setAlignment(Pos.CENTER_LEFT);
+        VBox.setMargin(topPane, new Insets(20,0,0,50));
+        mainVbox.getChildren().add(topPane);
+
         paymentInformationInPaymentSlide.getStyleClass().add("subtitle-grey");
         paymentInformationInPaymentSlide.setMaxWidth(600);
         paymentInformationInPaymentSlide.setPadding(new Insets(50,0,20,0));
-        HBox line2 = new HBox(paymentInformationInPaymentSlide);
-        line2.setAlignment(Pos.BASELINE_LEFT);
-        line2.setPadding(new Insets(10, 0, 20, 50));
-        mainVbox.getChildren().add(line2);
+
+        MonoPane paymentPane = new MonoPane(paymentInformationInPaymentSlide);
+        topPane.setAlignment(Pos.BASELINE_LEFT);
+        VBox.setMargin(paymentPane, new Insets(10,0,20,50));
+        mainVbox.getChildren().add(paymentPane);
+
     }
 }

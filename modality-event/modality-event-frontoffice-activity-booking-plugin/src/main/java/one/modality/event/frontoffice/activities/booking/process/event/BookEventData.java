@@ -16,12 +16,14 @@ import java.util.stream.Collectors;
 public class BookEventData {
 
     private WorkingBooking currentBooking;
-    private PriceCalculator priceCalculator;
+    private PriceCalculator priceCalculatorPastOption;
+    private PriceCalculator priceCalculatorCurrentOption;
     private final ObjectProperty<Object> bookingReferenceProperty = new SimpleObjectProperty<>();
 
     public void setCurrentBooking(WorkingBooking currentBooking) {
         this.currentBooking = currentBooking;
-        priceCalculator = new PriceCalculator(currentBooking::getLastestDocumentAggregate);
+        priceCalculatorCurrentOption = new PriceCalculator(currentBooking::getLastestDocumentAggregate);
+        priceCalculatorPastOption = new PriceCalculator(currentBooking.getInitialDocumentAggregate());
     }
 
     public WorkingBooking getCurrentBooking() {
@@ -51,12 +53,16 @@ public class BookEventData {
         bookingReferenceProperty.set(bookingReference);
     }
 
-    public PriceCalculator getPriceCalculator() {
-        return priceCalculator;
+    public PriceCalculator getPriceCalculatorForPastOption() {
+        return priceCalculatorPastOption;
     }
 
-    public void setPriceCalculator(PriceCalculator priceCalculator) {
-        this.priceCalculator = priceCalculator;
+    public PriceCalculator getPriceCalculatorForCurrentOption() {
+        return priceCalculatorCurrentOption;
+    }
+
+    public void setPriceCalculatorForCurrentOption(PriceCalculator priceCalculator) {
+        this.priceCalculatorCurrentOption = priceCalculator;
     }
 
     public DocumentAggregate getDocumentAggregate() {
