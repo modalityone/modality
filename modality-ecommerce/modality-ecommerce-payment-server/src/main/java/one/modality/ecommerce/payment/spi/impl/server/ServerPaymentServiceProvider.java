@@ -133,16 +133,30 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
     public Future<Void> updatePaymentStatus(UpdatePaymentStatusArgument argument) {
         UpdateStore updateStore = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
         MoneyTransfer moneyTransfer = updateStore.updateEntity(MoneyTransfer.class, Integer.parseInt(argument.getPaymentId()));
-        boolean successful = argument.isSuccessStatus();
+        String gatewayResponse = argument.getGatewayResponse();
+        String gatewayTransactionRef = argument.getGatewayTransactionRef();
+        String gatewayStatus = argument.getGatewayStatus();
+        boolean pending = argument.isPendingStatus();
+        boolean successful = argument.isSuccessfulStatus();
+        String errorMessage = argument.getErrorMessage();
+        moneyTransfer.setPending(pending);
         moneyTransfer.setSuccessful(successful);
-        moneyTransfer.setPending(false);
-        moneyTransfer.setFieldValue("transactionRef", argument.getTransactionRef());
-        moneyTransfer.setFieldValue("status", argument.getStatus());
-        moneyTransfer.setFieldValue("gatewayResponse", argument.getWholeResponse());
-        if (argument.getWholeResponse() == null)
-            moneyTransfer.setFieldValue("gatewayResponse", argument.getError());
+        if (gatewayTransactionRef != null)
+            moneyTransfer.setFieldValue("transactionRef", gatewayTransactionRef);
+        if (gatewayStatus != null)
+            moneyTransfer.setFieldValue("status", gatewayStatus);
+        if (gatewayResponse != null)
+            moneyTransfer.setFieldValue("gatewayResponse", gatewayResponse);
+        if (errorMessage != null)
+            moneyTransfer.setFieldValue("comment", errorMessage);
 
-        return HistoryRecorder.preparePaymentHistoryBeforeSubmit(successful ? "Completed payment" : "Failed payment", moneyTransfer)
+        String historyComment =
+                !pending && successful  ?   "Payment is successful" :
+                !pending && !successful ?   "Payment is failed" :
+                pending && successful   ?   "Payment is authorised (not yet completed)" :
+                /*pending && !successful?*/ "Payment is pending";
+
+        return HistoryRecorder.preparePaymentHistoryBeforeSubmit(historyComment, moneyTransfer)
                 .compose(history ->
                     updateStore.submitChanges()
                         .compose(submitResultBatch -> { // Checking that something happened in the database

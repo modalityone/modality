@@ -6,51 +6,57 @@ package one.modality.ecommerce.payment;
 public final class UpdatePaymentStatusArgument {
 
     private final String paymentId;
-    private final String wholeResponse;
-    private final String transactionRef;
-    private final String status;
-    private final boolean successStatus;
-    private final String error;
+    private final String gatewayResponse;
+    private final String gatewayTransactionRef;
+    private final String gatewayStatus;
+    private final boolean pendingStatus;
+    private final boolean successfulStatus;
+    private final String errorMessage;
 
-    public UpdatePaymentStatusArgument(String paymentId, String wholeResponse, String transactionRef, String status, boolean successStatus, String error) {
+    public UpdatePaymentStatusArgument(String paymentId, String gatewayResponse, String gatewayTransactionRef, String gatewayStatus, boolean pendingStatus, boolean successfulStatus, String errorMessage) {
         this.paymentId = paymentId;
-        this.wholeResponse = wholeResponse;
-        this.transactionRef = transactionRef;
-        this.status = status;
-        this.successStatus = successStatus;
-        this.error = error;
+        this.gatewayResponse = gatewayResponse;
+        this.gatewayTransactionRef = gatewayTransactionRef;
+        this.gatewayStatus = gatewayStatus;
+        this.pendingStatus = pendingStatus;
+        this.successfulStatus = successfulStatus;
+        this.errorMessage = errorMessage;
     }
 
     public String getPaymentId() {
         return paymentId;
     }
 
-    public String getWholeResponse() {
-        return wholeResponse;
+    public String getGatewayResponse() {
+        return gatewayResponse;
     }
 
-    public String getTransactionRef() {
-        return transactionRef;
+    public String getGatewayTransactionRef() {
+        return gatewayTransactionRef;
     }
 
-    public String getStatus() {
-        return status;
+    public String getGatewayStatus() {
+        return gatewayStatus;
     }
 
-    public boolean isSuccessStatus() {
-        return successStatus;
+    public boolean isPendingStatus() {
+        return pendingStatus;
     }
 
-    public String getError() {
-        return error;
+    public boolean isSuccessfulStatus() {
+        return successfulStatus;
     }
 
-    public static UpdatePaymentStatusArgument createSuccessStatusArgument(String paymentId, String wholeResponse, String transactionRef, String status, boolean successStatus) {
-        return new UpdatePaymentStatusArgument(paymentId, wholeResponse, transactionRef, status,successStatus, null);
+    public String getErrorMessage() {
+        return errorMessage;
     }
 
-    public static UpdatePaymentStatusArgument createErrorStatusArgument(String paymentId, String wholeResponse, String error) {
-        return new UpdatePaymentStatusArgument(paymentId, wholeResponse, null, null, false, error);
+    public static UpdatePaymentStatusArgument createCapturedStatusArgument(String paymentId, String gatewayResponse, String gatewayTransactionRef, String gatewayStatus, boolean pendingStatus, boolean successStatus) {
+        return new UpdatePaymentStatusArgument(paymentId, gatewayResponse, gatewayTransactionRef, gatewayStatus, pendingStatus, successStatus, null);
+    }
+
+    public static UpdatePaymentStatusArgument createExceptionStatusArgument(String paymentId, String gatewayResponse, String errorMessage) {
+        return new UpdatePaymentStatusArgument(paymentId, gatewayResponse, null, null, true, false, errorMessage);
     }
 
 }
