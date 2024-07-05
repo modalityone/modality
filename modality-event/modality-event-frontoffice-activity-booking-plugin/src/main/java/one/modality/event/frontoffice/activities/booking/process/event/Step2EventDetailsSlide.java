@@ -18,6 +18,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
@@ -78,6 +79,8 @@ import java.util.stream.Collectors;
         setIsOptionsSelectedEmptyProperty(getRecurringEventSchedule().getSelectedDates().isEmpty());
 
         List<LocalDate> unselectableDate = new ArrayList<>();
+        List<LocalDate> alreadyBookedDate = new ArrayList<>();
+
         bookEventData.getScheduledItemsOnEvent().forEach(si-> {
             LocalDate localDate = si.getDate();
             if(bookEventData.getCurrentBooking().getLastestDocumentAggregate().getAttendancesStream()
@@ -86,11 +89,13 @@ import java.util.stream.Collectors;
                     .anyMatch(date -> date.equals(localDate))) {
                 //Here there is already a date booked in this booking
                 unselectableDate.add(localDate);
+                alreadyBookedDate.add(localDate);
             }
             else if(bookEventData.getScheduledItemsAlreadyBooked().stream().map(ScheduledItem::getDate).
                     anyMatch(date -> date.equals(localDate))) {
                 //Here there is already a date booked in this another booking
                 unselectableDate.add(localDate);
+                alreadyBookedDate.add(localDate);
             }
             else if(localDate.isBefore(LocalDate.now())) {
                 //here the date is past
@@ -114,6 +119,16 @@ import java.util.stream.Collectors;
             return recurringEventSchedule.getUnselectedDateCssClass();
         }));
 
+        recurringEventSchedule.setComputeNodeForExistingBookedDateFunction((localDate -> {
+            if(alreadyBookedDate.contains(localDate)) {
+                Label toReturn = new Label("*");
+                //TODO define the  colors according to the different case and add a legend and put in css file
+                toReturn.setStyle("-fx-text-fill: red;"); // Inline style to set the color
+                return toReturn;
+            }
+            return null;
+        }));
+
         FlexPane dateFlexPane = recurringEventSchedule.buildUi();
         dateFlexPane.setPadding(new Insets(20, 0, 20, 0));
 
@@ -130,11 +145,6 @@ import java.util.stream.Collectors;
         Text priceText = new Text(I18n.getI18nText("PricePerClass", price, "£"));
         priceText.getStyleClass().add("subtitle-grey");
         VBox.setMargin(priceText, new Insets(20, 0, 5, 0));
-
-        //TODO: retrieve the discount, for now we hardcode it
-        Text priceForAllClassesText = new Text(I18n.getI18nText("DiscountForAllSeries", 15));
-        priceForAllClassesText.getStyleClass().add("subtitle-grey");
-        VBox.setMargin(priceForAllClassesText, new Insets(0, 0, 20, 0));
 
         Button checkoutButton = I18nControls.bindI18nProperties(new Button(), "ProceedCheckout");
         //We manage the property of the button in css
@@ -162,7 +172,6 @@ import java.util.stream.Collectors;
                 dateFlexPane,
                 selectAllClassesHyperlink,
                 priceText,
-                priceForAllClassesText,
                 checkoutButton
         );
 
@@ -171,6 +180,7 @@ import java.util.stream.Collectors;
     public void loadData(Event e) {
         Object imageTag = e.getId().getPrimaryKey();
         String pictureId = String.valueOf(imageTag);
+        bookEventData.setBalanceProperty(0);
         cloudImageService.exists(pictureId)
                 .onFailure(Console::log)
                 .onSuccess(exists -> Platform.runLater(() -> {

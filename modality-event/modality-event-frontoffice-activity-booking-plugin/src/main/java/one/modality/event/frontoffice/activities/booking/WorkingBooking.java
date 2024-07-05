@@ -162,4 +162,8 @@ public class WorkingBooking {
         return entityStore;
     }
 
+    public boolean isNewBooking() {
+        return this.getInitialDocumentAggregate()==null;
+    }
+
 }

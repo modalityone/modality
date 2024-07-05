@@ -7,8 +7,7 @@ import dev.webfx.platform.windowhistory.WindowHistory;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import javafx.application.Platform;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -59,6 +58,7 @@ public class Step3CheckoutSlide extends StepSlide {
 
     public void buildUi() {
         mainVbox.getChildren().clear();
+        bookEventData.setBalanceProperty(0);
         mainVbox.setAlignment(Pos.TOP_CENTER);
         Label bookedEventTitleText = controller.bindI18nEventExpression(new Label(), "i18n(this)");
         bookedEventTitleText.getStyleClass().addAll("book-event-primary-title", "emphasize");
@@ -85,8 +85,10 @@ public class Step3CheckoutSlide extends StepSlide {
         venueAddress.setPadding(new Insets(0, 0, 30, 50));
         mainVbox.getChildren().addAll(addressBorderHBox);
 
+        int previousTotalPrice;
+        int balance;
         //FIRST PART: WHAT HAS BEEN ALREADY BOOKED FOR THIS EVENT IN THE PAST
-        if(bookEventData.getDocumentAggregate().getExistingAttendancesStream().findFirst()!=null) {
+        if(!bookEventData.getCurrentBooking().isNewBooking()) {
             HBox headerHBox = new HBox();
             Region spacerInHeader1 = new Region();
             spacerInHeader1.setPrefWidth(80);
@@ -134,13 +136,18 @@ public class Step3CheckoutSlide extends StepSlide {
             previousTotalLabel.setPadding(new Insets(5, 0, 5, 50));
             HBox.setHgrow(spacerPreviousTotal, Priority.ALWAYS);
             previousTotalLabel.setPadding(new Insets(5, 75, 5, 0));
-            int previousTotalPrice = bookEventData.getPriceCalculatorForPastOption().calculateTotalPrice();
-            previousTotalPriceLabel.setText("Total: " + EventPriceFormatter.formatWithCurrency(previousTotalPrice, FXEvent.getEvent()) + " - Already paid: " + EventPriceFormatter.formatWithCurrency(bookEventData.getDocumentAggregate().getDeposit(), FXEvent.getEvent()));
+            previousTotalPrice = bookEventData.getPriceCalculatorForPastOption().calculateTotalPrice();
+            int deposit = bookEventData.getDocumentAggregate().getDeposit();
+            balance = previousTotalPrice - deposit;
+            bookEventData.setBalanceProperty(balance);
+            previousTotalPriceLabel.setText("Total: " + EventPriceFormatter.formatWithCurrency(previousTotalPrice, FXEvent.getEvent()) + " - Already paid: " + EventPriceFormatter.formatWithCurrency(deposit, FXEvent.getEvent()) + " - Balance: " + EventPriceFormatter.formatWithCurrency(balance, FXEvent.getEvent()));
             previousTotalHBox.getChildren().addAll(previousTotalLabel, spacerPreviousTotal, previousTotalPriceLabel);
             HBox sepHBox = new HBox();
             sepHBox.setPadding(new Insets(0, 0, 30, 0));
             pastScheduledItemVBox.getChildren().add(previousTotalPriceLabel);
             mainVbox.getChildren().addAll(headerHBox,pastScheduledItemVBox);
+        } else {
+            previousTotalPrice = 0;
         }
         HBox sepHBox = new HBox();
         sepHBox.setPadding(new Insets(0, 0, 30, 0));
@@ -194,13 +201,14 @@ public class Step3CheckoutSlide extends StepSlide {
                 bookEventData.getCurrentBooking().removeAttendance(a);
                 controller.getRecurringEventSchedule().getSelectedDates().remove(date);
                 scheduledItemVBox.getChildren().remove(currentScheduledItemHBox);
-                int newTotalPrice = bookEventData.getPriceCalculatorForCurrentOption().calculateTotalPrice()- bookEventData.getPriceCalculatorForPastOption().calculateTotalPrice();
+                int newTotalPrice = bookEventData.getPriceCalculatorForCurrentOption().calculateTotalPrice();
+                int balanc = newTotalPrice - bookEventData.getDocumentAggregate().getDeposit();
+                bookEventData.setBalanceProperty(balanc);
                 totalPriceLabel.setText(EventPriceFormatter.formatWithCurrency(newTotalPrice, FXEvent.getEvent()));
             });
             currentScheduledItemHBox.getChildren().addAll(spacer1, name, spacer2, price, trashOption);
             scheduledItemVBox.getChildren().add(currentScheduledItemHBox);
             //Now we calculate the price and update the graphic related to the price
-            //totalPriceProperty.setValue(String.valueOf(priceCalculator.calculateTotalPrice(documentAggregate)));
         });
         // TODO: We display
         // - in the first past the total price for past option, the deposit and what's remain to be paid
@@ -217,8 +225,11 @@ public class Step3CheckoutSlide extends StepSlide {
         totalLabel.setPadding(new Insets(5, 0, 5, 50));
         HBox.setHgrow(spacerTotal, Priority.ALWAYS);
         totalPriceLabel.setPadding(new Insets(5, 75, 5, 0));
-        int totalPrice = bookEventData.getPriceCalculatorForCurrentOption().calculateTotalPrice() - bookEventData.getPriceCalculatorForPastOption().calculateTotalPrice();;
-        totalPriceLabel.setText(EventPriceFormatter.formatWithCurrency(totalPrice, FXEvent.getEvent()) + " | Deposit: " + bookEventData.getDocumentAggregate().getDeposit());
+        int totalPrice = bookEventData.getPriceCalculatorForCurrentOption().calculateTotalPrice() - previousTotalPrice;
+        int deposit = bookEventData.getDocumentAggregate().getDeposit();
+        balance = bookEventData.getBalance() + totalPrice-deposit;
+        bookEventData.setBalanceProperty(balance);
+        totalPriceLabel.setText(EventPriceFormatter.formatWithCurrency(totalPrice, FXEvent.getEvent())  + " | Total Balance (previous and current booking date) : " + EventPriceFormatter.formatWithCurrency(balance, FXEvent.getEvent()));
         totalHBox.getChildren().addAll(totalLabel, spacerTotal, totalPriceLabel);
 
         HBox sep2HBox = new HBox();
@@ -231,8 +242,7 @@ public class Step3CheckoutSlide extends StepSlide {
         HBox separatorHBox = new HBox();
         separatorHBox.setPadding(new Insets(0, 0, 50, 0));
         mainVbox.getChildren().add(separatorHBox);
-
-        Button payButton = I18nControls.bindI18nProperties(new Button(), "Pay");
+        Button payButton = I18nControls.bindI18nProperties(new Button(), "Pay",bookEventData.getFormattedBalanceProperty());
         //We manage the property of the button in css
         payButton.setGraphicTextGap(30);
         payButton.getStyleClass().addAll("event-button", "success-button");
@@ -255,7 +265,7 @@ public class Step3CheckoutSlide extends StepSlide {
                         Object documentPrimaryKey = result.getDocumentPrimaryKey();
                         int priceToPay = bookEventData.getPriceCalculatorForCurrentOption().calculateBalanceToPay();
                         PaymentService.initiatePayment(
-                                        ClientPaymentUtil.createInitiatePaymentArgument(priceToPay, documentPrimaryKey)
+                                        ClientPaymentUtil.createInitiatePaymentArgument(bookEventData.getBalance(), documentPrimaryKey)
                                 )
                                 .onFailure(paymentResult -> Platform.runLater(() -> {
                                     controller.displayErrorMessage("ErrorWhileInitiatingPayment");

@@ -38,7 +38,7 @@ public class Step4PaymentSlide extends StepSlide {
         if (webPaymentForm.isSandbox()) {
             mainVbox.getChildren().add(webPaymentForm.createSandboxBar());
         }
-        Button payButton = I18nControls.bindI18nProperties(new Button(), "Pay");
+        Button payButton = I18nControls.bindI18nProperties(new Button(), "Pay",bookEventData.getFormattedBalanceProperty());
         FXProperties.runNowAndOnPropertiesChange(() -> {
             if (webPaymentForm.isUserInteractionAllowed()) {
                 turnOffButtonWaitMode(payButton, "Pay");
@@ -59,7 +59,7 @@ public class Step4PaymentSlide extends StepSlide {
         mainVbox.getChildren().add(buttonBar);
         //paymentRegion.
         int totalPrice = bookEventData.getPriceCalculatorForCurrentOption().calculateTotalPrice();
-        bookedEventTitleText.setText(FXEvent.getEvent().getName() + " | Total booking price: " + totalPrice / 100 + "£");
+        bookedEventTitleText.setText(FXEvent.getEvent().getName() + " | Total booking price: " + bookEventData.getFormattedBalanceProperty().getValue());
         webPaymentForm
                 .setOnLoadFailure(errorMsg -> {
                     controller.displayErrorMessage("ErrorWhileLoadingPaymentForm");
