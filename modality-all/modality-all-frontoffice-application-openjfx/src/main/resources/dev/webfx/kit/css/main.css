@@ -111,17 +111,17 @@ HtmlText, HtmlTextEditor {
     -orange-color: #EE7130;
 }
 
-.event-button
+.event-button Button
 {
     -fx-background-radius: 4;
-    -fx-pref-height:35px;
-    -fx-max-height:35px;
+    -fx-pref-height:36px;
+    -fx-max-height:36px;
     -fx-alignment: center;
  /*  -fx-font-family: "Google Sans", Roboto, Arial;*/
     -fx-font-weight: bolder;
 }
 
-.primary-button {
+.primary-button Button {
     -fx-background-color: -blue-color;
     -fx-text-fill: white;
 }
