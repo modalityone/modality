@@ -17,6 +17,7 @@ module modality.ecommerce.document.service {
     exports one.modality.ecommerce.document.service;
     exports one.modality.ecommerce.document.service.events;
     exports one.modality.ecommerce.document.service.spi;
+    exports one.modality.ecommerce.document.service.util;
 
     // Used services
     uses one.modality.ecommerce.document.service.spi.DocumentServiceProvider;

@@ -1,15 +1,16 @@
 package one.modality.event.frontoffice.activities.booking;
 
 import dev.webfx.platform.async.Future;
+import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.entity.EntityStore;
 import one.modality.base.shared.entities.*;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.document.service.events.*;
+import one.modality.ecommerce.document.service.util.DocumentEvents;
 import one.modality.event.client.event.fx.FXEvent;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -76,11 +77,11 @@ public class WorkingBooking {
             documentLine.setDocument(document);
             documentLine.setSite(site);
             documentLine.setItem(item);
-            documentChanges.add(new AddDocumentLineEvent(documentLine));
+            integrateNewDocumentEvent(new AddDocumentLineEvent(documentLine));
             existingAttendances = null;
         }
         Attendance[] attendances = scheduledItems.stream().map(scheduledItem -> {
-            if (dev.webfx.platform.util.collection.Collections.findFirst(existingAttendances, a -> Objects.equals(a.getDate(), scheduledItem.getDate())) != null)
+            if (Collections.findFirst(existingAttendances, a -> Objects.equals(a.getDate(), scheduledItem.getDate())) != null)
                 return null;
             Attendance attendance = getEntityStore().createEntity(Attendance.class);
             attendance.setDocumentLine(documentLine);
@@ -89,16 +90,16 @@ public class WorkingBooking {
             return attendance;
         }).filter(Objects::nonNull).toArray(Attendance[]::new);
         if (attendances.length > 0)
-            documentChanges.add(new AddAttendancesEvent(attendances));
+            integrateNewDocumentEvent(new AddAttendancesEvent(attendances));
         lastestDocumentAggregate = null;
     }
 
     public void removeAttendance(Attendance attendance) {
-        removeAttendances(Collections.singletonList(attendance));
+        removeAttendances(java.util.Collections.singletonList(attendance));
     }
 
     public void removeAttendances(List<Attendance> attendance) {
-        documentChanges.add(new RemoveAttendancesEvent(attendance.toArray(new Attendance[0])));
+        integrateNewDocumentEvent(new RemoveAttendancesEvent(attendance.toArray(new Attendance[0])));
         lastestDocumentAggregate = null;
     }
 
@@ -106,9 +107,17 @@ public class WorkingBooking {
         if (document == null || document.isNew()) {
             cancelChanges();
         } else {
-            documentChanges.add(new CancelDocumentEvent(document));
+            integrateNewDocumentEvent(new CancelDocumentEvent(document));
             lastestDocumentAggregate = null;
         }
+    }
+
+    private void integrateNewDocumentEvent(AbstractDocumentEvent e) {
+        DocumentEvents.integrateNewDocumentEvent(e, documentChanges);
+    }
+
+    public boolean hasChanges() {
+        return !documentChanges.isEmpty();
     }
 
     public void cancelChanges() {
@@ -123,7 +132,7 @@ public class WorkingBooking {
                 document = getEntityStore().createEntity(Document.class);
                 document.setEvent(FXEvent.getEvent());
                 document.setPerson(FXUserPerson.getUserPerson());
-                documentChanges.add(new AddDocumentEvent(document));
+                integrateNewDocumentEvent(new AddDocumentEvent(document));
             } else { // Case of new booking once submitted
                 document = getEntityStore().createEntity(Document.class, documentPrimaryKey);
             }
