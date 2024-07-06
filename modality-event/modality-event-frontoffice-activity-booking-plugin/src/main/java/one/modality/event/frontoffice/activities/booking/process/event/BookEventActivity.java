@@ -87,7 +87,6 @@ public final class BookEventActivity extends ViewDomainActivityBase {
     @Override
     protected void startLogic() {
         bookEventData = new BookEventData();
-        bookEventData.setBalanceProperty(0);
         slideController = new SlideController(carrousel);
         step1LoadingSlide = new Step1LoadingSlide(slideController,bookEventData);
         step2EventDetailsSlide = new Step2EventDetailsSlide(slideController,bookEventData);

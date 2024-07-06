@@ -48,8 +48,4 @@ public class PriceCalculator {
                 .orElse(0);
     }
 
-    public int calculateBalanceToPay() {
-        return calculateTotalPrice() - getDocumentAggregate().getDeposit();
-    }
-
 }
