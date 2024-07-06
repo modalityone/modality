@@ -135,6 +135,10 @@ public class WebPaymentForm {
         return webViewPane;
     }
 
+    public String getGatewayName() {
+        return result.getGatewayName();
+    }
+
     public boolean isLive() {
         return result.isLive();
     }

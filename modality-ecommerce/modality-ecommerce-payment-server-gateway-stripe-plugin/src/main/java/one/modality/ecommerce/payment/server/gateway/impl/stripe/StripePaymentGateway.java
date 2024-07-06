@@ -84,7 +84,7 @@ public class StripePaymentGateway implements PaymentGateway {
 
         try {
             Session session = Session.create(params);
-            return Future.succeededFuture(InitiatePaymentResult.createRedirectInitiatePaymentResult(null, argument.isLive(), false, session.getUrl(), null));
+            return Future.succeededFuture(InitiatePaymentResult.createRedirectInitiatePaymentResult(null, argument.isLive(), false, session.getUrl(), "Stripe", null));
         } catch (Exception e) {
             return Future.failedFuture(e);
         }

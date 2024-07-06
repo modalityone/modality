@@ -69,6 +69,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                                         gatewayResult.getHtmlContent(),
                                         gatewayResult.getUrl(),
                                         gatewayResult.isRedirect(),
+                                        paymentGateway.getName(),
                                         gatewayResult.getSandboxCards()
                                 ));
                             });

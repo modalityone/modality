@@ -15,6 +15,7 @@ public final class InitiatePaymentResultSerialCodec extends SerialCodecBase<Init
     private static final String HTML_CONTENT_KEY = "htmlContent";
     private static final String URL_KEY = "url";
     private static final String REDIRECT_KEY = "redirect";
+    private static final String GATEWAY_NAME_KEY = "gateway";
     private static final String SANDBOX_CARDS_KEY = "sandboxCards";
 
     public InitiatePaymentResultSerialCodec() {
@@ -29,6 +30,7 @@ public final class InitiatePaymentResultSerialCodec extends SerialCodecBase<Init
         encodeString( serial, HTML_CONTENT_KEY,        arg.getHtmlContent());
         encodeString( serial, URL_KEY,                 arg.getUrl());
         encodeBoolean(serial, REDIRECT_KEY,            arg.isRedirect());
+        encodeString( serial, GATEWAY_NAME_KEY,        arg.getGatewayName());
         encodeArray(  serial, SANDBOX_CARDS_KEY,       arg.getSandboxCards());
     }
 
@@ -41,6 +43,7 @@ public final class InitiatePaymentResultSerialCodec extends SerialCodecBase<Init
                 decodeString( serial, HTML_CONTENT_KEY),
                 decodeString( serial, URL_KEY),
                 decodeBoolean(serial, REDIRECT_KEY),
+                decodeString( serial, GATEWAY_NAME_KEY),
                 decodeArray(  serial, SANDBOX_CARDS_KEY, SandboxCard.class)
         );
     }
