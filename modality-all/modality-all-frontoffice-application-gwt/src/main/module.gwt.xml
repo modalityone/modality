@@ -216,6 +216,8 @@
     <source path="one/modality/crm/client/activities/unauthorized"/>
     <!--==========================< modality-crm-client-authn-fx >==========================-->
     <source path="one/modality/crm/shared/services/authn/fx"/>
+    <!--============< modality-crm-client-authn-login-ui-gateway-signup-plugin >============-->
+    <source path="one/modality/crm/client/authn/login/ui/gateway/signup"/>
     <!--===================< modality-crm-client-authz-required-plugin >====================-->
     <source path="one/modality/crm/client/services/authz"/>
     <!--======================< modality-crm-client-personaldetails >=======================-->
@@ -227,6 +229,7 @@
     <source path="one/modality/ecommerce/document/service"/>
     <source path="one/modality/ecommerce/document/service/events"/>
     <source path="one/modality/ecommerce/document/service/spi"/>
+    <source path="one/modality/ecommerce/document/service/util"/>
     <!--==================< modality-ecommerce-document-service-buscall >===================-->
     <source path="one/modality/ecommerce/document/service/buscall"/>
     <source path="one/modality/ecommerce/document/service/buscall/serial"/>
@@ -637,6 +640,8 @@
     <source path="dev/webfx/stack/db/submit/buscall/serial"/>
     <!--==========================< webfx-stack-db-submit-remote >==========================-->
     <source path="dev/webfx/stack/db/submit/spi/impl/remote"/>
+    <!--==============================< webfx-stack-hash-md5 >==============================-->
+    <source path="dev/webfx/stack/hash/md5"/>
     <!--================================< webfx-stack-i18n >================================-->
     <source path="dev/webfx/stack/i18n"/>
     <source path="dev/webfx/stack/i18n/operations"/>

@@ -24,6 +24,7 @@
         <module>modality-crm-client-activity-login-plugin</module>
         <module>modality-crm-client-activity-unauthorized-plugin</module>
         <module>modality-crm-client-authn-fx</module>
+        <module>modality-crm-client-authn-login-ui-gateway-signup-plugin</module>
         <module>modality-crm-client-authz-required-plugin</module>
         <module>modality-crm-client-personaldetails</module>
         <module>modality-crm-client-profile-plugin</module>
