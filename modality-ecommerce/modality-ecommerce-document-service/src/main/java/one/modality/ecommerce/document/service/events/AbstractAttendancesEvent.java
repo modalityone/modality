@@ -36,7 +36,9 @@ public abstract class AbstractAttendancesEvent extends AbstractDocumentLineEvent
             for (int i = 0; i < attendancesPrimaryKeys.length; i++) {
                 Attendance attendance = entityStore.getOrCreateEntity(Attendance.class, attendancesPrimaryKeys[i]);
                 attendance.setDocumentLine(documentLine);
-                attendance.setScheduledItem(entityStore.getEntity(ScheduledItem.class, scheduledItemsPrimaryKeys[i]));
+                if (scheduledItemsPrimaryKeys != null) { // RemoveAttendancesEvent doesn't memorise scheduledItemsPrimaryKeys
+                    attendance.setScheduledItem(entityStore.getEntity(ScheduledItem.class, scheduledItemsPrimaryKeys[i]));
+                }
                 attendances[i] = attendance;
             }
         }
