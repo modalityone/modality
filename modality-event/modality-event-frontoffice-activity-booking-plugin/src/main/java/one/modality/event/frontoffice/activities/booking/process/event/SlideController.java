@@ -84,6 +84,10 @@ public class SlideController {
         this.step6ThankYouSlide = step4ThankYouSlide;
     }
 
+    public void goToThankYouSlide() {
+        carrousel.displaySlide(step6ThankYouSlide.get());
+    }
+
     public Step5ErrorSlide getStep5ErrorSlide() {
         return step5ErrorSlide;
     }

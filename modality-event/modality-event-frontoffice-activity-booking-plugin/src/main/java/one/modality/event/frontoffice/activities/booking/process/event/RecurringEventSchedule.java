@@ -137,18 +137,15 @@ public class RecurringEventSchedule {
 
     public void processDateSelected(LocalDate date)
     {
-        if(this.selectedDates.contains(date))
-        {
+        if(this.selectedDates.contains(date)) {
             removeSelectedDate(date);
         }
-        else
-        {
+        else {
             addSelectedDate(date);
         }
         Collections.sort(selectedDates);
     }
-    protected void addSelectedDate(LocalDate date)
-    {
+    protected void addSelectedDate(LocalDate date) {
         this.selectedDates.add(date);
     }
 

@@ -11,6 +11,7 @@ import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ListChangeListener;
@@ -27,6 +28,8 @@ import javafx.stage.Screen;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.formatters.EventPriceFormatter;
+import one.modality.event.client.event.fx.FXEvent;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -77,7 +80,7 @@ import java.util.stream.Collectors;
         // We add a listener on the date to update the BooleanProperty bound to the disable property of the checkout button
         recurringEventSchedule.getSelectedDates().addListener((ListChangeListener<LocalDate>) change -> setIsOptionsSelectedEmptyProperty(getRecurringEventSchedule().getSelectedDates().isEmpty()));
         setIsOptionsSelectedEmptyProperty(getRecurringEventSchedule().getSelectedDates().isEmpty());
-
+        setIsOptionsSelectedEmptyProperty(bookEventData.calculateBalance()==0);
         List<LocalDate> unselectableDate = new ArrayList<>();
         List<LocalDate> alreadyBookedDate = new ArrayList<>();
 
@@ -123,7 +126,10 @@ import java.util.stream.Collectors;
             if(alreadyBookedDate.contains(localDate)) {
                 Label toReturn = new Label("*");
                 //TODO define the  colors according to the different case and add a legend and put in css file
-                toReturn.setStyle("-fx-text-fill: red;"); // Inline style to set the color
+                if(bookEventData.isDepositOnPreviousBookingComplete())
+                    toReturn.setStyle("-fx-text-fill: green;");
+                else
+                    toReturn.setStyle("-fx-text-fill: red;");
                 return toReturn;
             }
             return null;
@@ -140,12 +146,9 @@ import java.util.stream.Collectors;
         selectAllClassesHyperlink.setAlignment(Pos.CENTER);
         selectAllClassesHyperlink.getStyleClass().addAll("primary-text", "title4");
         selectAllClassesHyperlink.setOnAction((event -> recurringEventSchedule.selectDates(selectableDates)));
-
-        int price = bookEventData.getCurrentBooking().getPolicyAggregate().getRates().get(0).getPrice()/100;
-        Text priceText = new Text(I18n.getI18nText("PricePerClass", price, "£"));
+        Text priceText = new Text(I18n.getI18nText("PricePerClass", EventPriceFormatter.formatWithCurrency(bookEventData.getRate(), FXEvent.getEvent())));
         priceText.getStyleClass().add("subtitle-grey");
         VBox.setMargin(priceText, new Insets(20, 0, 5, 0));
-
         Button checkoutButton = I18nControls.bindI18nProperties(new Button(), "ProceedCheckout");
         //We manage the property of the button in css
         checkoutButton.getStyleClass().addAll("event-button", "success-button");
@@ -157,7 +160,8 @@ import java.util.stream.Collectors;
             controller.displayNextSlide();
         }));
 
-        checkoutButton.disableProperty().bind(isOptionsSelectedEmptyProperty);
+        checkoutButton.disableProperty().bind(Bindings.createBooleanBinding(()->bookEventData.isDepositOnPreviousBookingComplete()).
+                                            and(isOptionsSelectedEmptyProperty));
 
         mainVbox.setPadding(new Insets(30, 50, 20, 50));
         mainVbox.setAlignment(Pos.TOP_CENTER);

@@ -21,12 +21,26 @@ public class BookEventData {
     private PriceCalculator priceCalculatorCurrentOption;
     private final ObjectProperty<Object> bookingReferenceProperty = new SimpleObjectProperty<>();
     private StringProperty formattedBalanceProperty = new SimpleStringProperty();
-    private IntegerProperty balanceProperty = new SimpleIntegerProperty(0) {
+    private StringProperty formattedTotalProperty = new SimpleStringProperty();
+    private StringProperty formattedBalanceOnPreviousBookingProperty = new SimpleStringProperty();
+    private StringProperty formattedTotalOnPreviousBookingProperty = new SimpleStringProperty();
+    private BooleanProperty isBalanceNull = new SimpleBooleanProperty();
+    private IntegerProperty balanceProperty = new SimpleIntegerProperty(-1)  {
         @Override
         protected void invalidated() {
             formattedBalanceProperty.setValue(EventPriceFormatter.formatWithCurrency(balanceProperty.getValue(), FXEvent.getEvent()));
+            formattedTotalProperty.setValue(EventPriceFormatter.formatWithCurrency(getTotalPrice(), FXEvent.getEvent()));
+            isBalanceNull.setValue(balanceProperty.getValue()==0);
         }
     };
+    private IntegerProperty balanceOnPreviousBookingProperty = new SimpleIntegerProperty(0) {
+        @Override
+        protected void invalidated() {
+            formattedBalanceOnPreviousBookingProperty.setValue(EventPriceFormatter.formatWithCurrency(balanceOnPreviousBookingProperty.getValue(), FXEvent.getEvent()));
+            formattedTotalOnPreviousBookingProperty.setValue(EventPriceFormatter.formatWithCurrency(balanceOnPreviousBookingProperty.getValue()+ getDocumentAggregate().getDeposit(),FXEvent.getEvent()));
+        }
+    };
+
 
     public void setCurrentBooking(WorkingBooking currentBooking) {
         this.currentBooking = currentBooking;
@@ -54,6 +68,17 @@ public class BookEventData {
         return currentBooking;
     }
 
+    public void updateGeneralBalance() {
+        balanceProperty.set(calculateBalance());
+    }
+
+    public int getTotalPrice() {
+        return getPriceCalculatorForCurrentOption().calculateTotalPrice();
+    }
+
+    public boolean isDepositOnPreviousBookingComplete() {
+        return (priceCalculatorPastOption.calculateTotalPrice()-getDocumentAggregate().getDeposit()==0);
+    }
 
     public List<ScheduledItem> getScheduledItemsAlreadyBooked() {
         DocumentAggregate initialDocumentAggregate = currentBooking.getInitialDocumentAggregate();
@@ -103,6 +128,50 @@ public class BookEventData {
 
     public Object getDocumentPrimaryKey() {
         return currentBooking.getDocumentPrimaryKey();
+    }
+
+    public BooleanProperty isBalanceNullProperty() {
+        return isBalanceNull;
+    }
+
+    public int calculateBalance() {
+        return getPriceCalculatorForCurrentOption().calculateTotalPrice() - getDocumentAggregate().getDeposit();
+    }
+
+    public int getBalanceOnPreviousBookingProperty() {
+        return balanceOnPreviousBookingProperty.get();
+    }
+
+    public IntegerProperty balanceOnPreviousBookingPropertyProperty() {
+        return balanceOnPreviousBookingProperty;
+    }
+
+    public void setBalanceOnPreviousBookingProperty(int balanceOnPreviousBookingProperty) {
+        this.balanceOnPreviousBookingProperty.set(balanceOnPreviousBookingProperty);
+    }
+
+    public int getRate() {
+        return getCurrentBooking().getPolicyAggregate().getRates().get(0).getPrice();
+    }
+
+    public String getFormattedBalanceOnPreviousBooking() {
+        return formattedBalanceOnPreviousBookingProperty.get();
+    }
+
+    public StringProperty getFormattedBalanceOnPreviousBookingProperty() {
+        return formattedBalanceOnPreviousBookingProperty;
+    }
+
+    public void setFormattedBalanceOnPreviousBookingProperty(String formattedBalanceOnPreviousBookingProperty) {
+        this.formattedBalanceOnPreviousBookingProperty.set(formattedBalanceOnPreviousBookingProperty);
+    }
+
+    public StringProperty getFormattedTotalOnPreviousBookingProperty() {
+        return formattedTotalOnPreviousBookingProperty;
+    }
+
+    public StringProperty getFormattedTotalProperty() {
+        return formattedTotalProperty;
     }
 
 }
