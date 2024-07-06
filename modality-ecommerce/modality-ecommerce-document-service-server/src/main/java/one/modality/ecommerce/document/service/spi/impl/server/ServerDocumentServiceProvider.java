@@ -107,6 +107,18 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                     attendance.setDocumentLine(documentLine);
                     attendance.setScheduledItem(scheduledItemsPrimaryKeys[i]);
                 }
+            } else if (e instanceof RemoveAttendancesEvent) {
+                RemoveAttendancesEvent rea = (RemoveAttendancesEvent) e;
+                Object[] attendancesPrimaryKeys = rea.getAttendancesPrimaryKeys();
+                for (Object attendancesPrimaryKey : attendancesPrimaryKeys) {
+                    updateStore.deleteEntity(Attendance.class, attendancesPrimaryKey);
+                }
+                if (document == null)
+                    document = updateStore.getOrCreateEntity(Document.class, rea.getDocumentPrimaryKey());
+                if (documentLine == null) {
+                    documentLine = updateStore.getOrCreateEntity(DocumentLine.class, rea.getDocumentLinePrimaryKey());
+                    documentLine.setDocument(document);
+                }
             } else if (e instanceof CancelDocumentEvent) {
                 document = updateStore.updateEntity(Document.class, e.getDocumentPrimaryKey());
                 document.setCancelled(true);
