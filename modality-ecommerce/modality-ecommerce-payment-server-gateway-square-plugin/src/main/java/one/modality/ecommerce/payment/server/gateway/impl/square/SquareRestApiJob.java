@@ -181,7 +181,7 @@ public final class SquareRestApiJob implements ApplicationJob {
                 boolean pending = paymentStatus.isPending();
                 boolean successful = paymentStatus.isSuccessful();
                 EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
-                    .executeQuery("select Payment where transactionRef=?", id)
+                    .executeQuery("select MoneyTransfer where transactionRef=?", id)
                         .onFailure(e -> Console.log(logPrefix + "⛔️️  An error occurred when reading the payment with transactionRef = " + id, e))
                         .onSuccess(payments -> {
                             if (payments.isEmpty()) {
