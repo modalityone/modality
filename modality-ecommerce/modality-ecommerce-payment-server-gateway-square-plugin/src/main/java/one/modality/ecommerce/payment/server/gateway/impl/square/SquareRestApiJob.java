@@ -14,6 +14,7 @@ import dev.webfx.platform.util.http.HttpResponseStatus;
 import dev.webfx.platform.vertx.common.VertxInstance;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.EntityStore;
+import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.session.state.StateAccessor;
 import dev.webfx.stack.session.state.ThreadLocalStateHolder;
 import io.vertx.core.http.HttpHeaders;
@@ -21,6 +22,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+import one.modality.base.shared.entities.MoneyTransfer;
 import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.PaymentStatus;
 import one.modality.ecommerce.payment.UpdatePaymentStatusArgument;
@@ -145,7 +147,7 @@ public final class SquareRestApiJob implements ApplicationJob {
                             Console.log("[Square] completePayment - step 4 - updating the payment status in the database");
                         }
                         // We finally update the payment status through the payment service (this will also create a history entry)
-                        ThreadLocalStateHolder.runWithState(StateAccessor.setUserId(null, "$SYSTEM_USER:Square"), () -> {
+                        ThreadLocalStateHolder.runWithState(StateAccessor.setUserId(null, "$SYSTEM_USER:Square pull"), () -> {
                             PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createCapturedStatusArgument(paymentId, gatewayResponse, gatewayTransactionRef, gatewayStatus, pending, successful))
                                     .onSuccess(v -> ctx.end(gatewayStatus.toUpperCase()))
                                     .onFailure(e -> ctx.end(e.getMessage()));
@@ -155,7 +157,7 @@ public final class SquareRestApiJob implements ApplicationJob {
                             Console.log("[Square] completePayment - Square raised exception " + ex.getMessage());
                         }
                         // We finally update the payment status through the payment service (this will also create a history entry)
-                        ThreadLocalStateHolder.runWithState(StateAccessor.setUserId(null, "$SYSTEM_USER:Square"), () -> {
+                        ThreadLocalStateHolder.runWithState(StateAccessor.setUserId(null, "$SYSTEM_USER:Square pull"), () -> {
                             PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createExceptionStatusArgument(paymentId, null, ex.getMessage()))
                                     .onSuccess(v -> ctx.end(ex.getMessage()))
                                     .onFailure(e -> ctx.end(e.getMessage()));
@@ -168,7 +170,8 @@ public final class SquareRestApiJob implements ApplicationJob {
     private void handleWebhook(RoutingContext ctx, boolean live) {
         JsonObject vertxPayload = ctx.body().asJsonObject();
         String logPrefix = "[Square] " + (live ? "Live" : "Sandbox") + " webhook - ";
-        Console.log(logPrefix + "Called with payload = " + vertxPayload.encode());
+        String textPayload = vertxPayload.encode();
+        Console.log(logPrefix + "Called with payload = " + textPayload);
 
         AstObject payload = AST.createObject(vertxPayload);
         String squareEventType = AST.lookupString(payload, "type");
@@ -186,20 +189,41 @@ public final class SquareRestApiJob implements ApplicationJob {
                 boolean pending = paymentStatus.isPending();
                 boolean successful = paymentStatus.isSuccessful();
                 EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
-                    .executeQuery("select MoneyTransfer where transactionRef=?", id)
+                    .<MoneyTransfer>executeQuery("select pending, successful, status, gatewayResponse from MoneyTransfer where transactionRef=?", id)
                         .onFailure(e -> Console.log(logPrefix + "⛔️️  An error occurred when reading the payment with transactionRef = " + id, e))
                         .onSuccess(payments -> {
                             if (payments.isEmpty()) {
                                 Console.log(logPrefix + "⛔️️  No payment was found in the database with transactionRef = " + id);
                             } else if (payments.size() != 1) {
                                 Console.log(logPrefix + "⛔️️  " + payments.size() + " payments were found in the database with transactionRef = " + id);
-                            } else {
-                                // We finally update the payment status through the payment service (this will also create a history entry)
-                                ThreadLocalStateHolder.runWithState(StateAccessor.setUserId(null, "$SYSTEM_USER:Square (webhook)"), () -> {
-                                    PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createCapturedStatusArgument(payments.get(0).getPrimaryKey().toString(), vertxPayload.encode(), id, status, pending, successful))
+                            } else { // We found one payment (no ambiguity)
+                                MoneyTransfer payment = payments.get(0);
+                                Object paymentPk = payment.getPrimaryKey();
+                                // Maybe this Square event doesn't really change the payment status (Square often sends
+                                // sometimes very similar events with the same status, only change is in the payload)
+                                if (payment.isPending() == pending && payment.isSuccessful() == successful && status.equals(payment.getStatus())) {
+                                    // In that case we only update the payload in the database (if the version is newer)
+                                    ReadOnlyAstObject dbPayload = AST.parseObject(payment.getGatewayResponse(), "json");
+                                    ReadOnlyAstObject dbPaymentObject = AST.lookupObject(dbPayload, "data.object.payment");
+                                    if (paymentObject.getInteger("version") <= dbPaymentObject.getInteger("version")) {
+                                        Console.log(logPrefix + "Skipping this event because it's not newer compared to the database");
+                                    } else {
+                                        // We do a simple update of the payment gateway response without creating a new history entry
+                                        UpdateStore updateStore = UpdateStore.createAbove(payment.getStore());
+                                        payment = updateStore.updateEntity(payment);
+                                        payment.setGatewayResponse(textPayload);
+                                        updateStore.submitChanges()
+                                            .onFailure(e -> Console.log(logPrefix + "⛔️️  Failed to update gatewayResponse for payment " + paymentPk, e))
+                                            .onSuccess(v -> Console.log(logPrefix + "✅  Successfully updated gatewayResponse for payment " + paymentPk));
+                                    }
+                                } else {
+                                    // We finally update the payment status through the payment service (this will also create a history entry)
+                                    ThreadLocalStateHolder.runWithState(StateAccessor.setUserId(null, "$SYSTEM_USER:Square push"), () -> {
+                                        PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createCapturedStatusArgument(paymentPk.toString(), textPayload, id, status, pending, successful))
                                             .onFailure(e -> Console.log(logPrefix + "⛔️️  Failed to update status " + status + " for transactionRef = " + id, e))
                                             .onSuccess(v -> Console.log(logPrefix + "✅  Successfully updated status " + status + " for transactionRef = " + id));
-                                });
+                                    });
+                                }
                             }
                         });
             }

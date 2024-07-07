@@ -6,6 +6,7 @@ import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import one.modality.base.shared.entities.GatewayParameter;
+import one.modality.base.shared.entities.Method;
 import one.modality.base.shared.entities.MoneyTransfer;
 import one.modality.ecommerce.document.service.events.AddMoneyTransferEvent;
 import one.modality.ecommerce.document.service.events.UpdateMoneyTransferEvent;
@@ -102,7 +103,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
         moneyTransfer.setAmount(amount);
         moneyTransfer.setPending(true);
         moneyTransfer.setSuccessful(false);
-        moneyTransfer.setMethod(5); // Online (temporarily hardcoded for now)
+        moneyTransfer.setMethod(Method.ONLINE_METHOD_ID);
 
         return HistoryRecorder.preparePaymentHistoryBeforeSubmit("Initiated payment", moneyTransfer)
                 .compose(history ->
@@ -143,13 +144,13 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
         moneyTransfer.setPending(pending);
         moneyTransfer.setSuccessful(successful);
         if (gatewayTransactionRef != null)
-            moneyTransfer.setFieldValue("transactionRef", gatewayTransactionRef);
+            moneyTransfer.setTransactionRef(gatewayTransactionRef);
         if (gatewayStatus != null)
-            moneyTransfer.setFieldValue("status", gatewayStatus);
+            moneyTransfer.setStatus(gatewayStatus);
         if (gatewayResponse != null)
-            moneyTransfer.setFieldValue("gatewayResponse", gatewayResponse);
+            moneyTransfer.setGatewayResponse(gatewayResponse);
         if (errorMessage != null)
-            moneyTransfer.setFieldValue("comment", errorMessage);
+            moneyTransfer.setComment(errorMessage);
 
         String historyComment =
                 !pending && successful  ?   "Payment is successful" :

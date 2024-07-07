@@ -101,4 +101,36 @@ public interface MoneyTransfer extends
         return getForeignEntity("toMoneyAccount");
     }
 
+    default void setTransactionRef(String transactionRef) {
+        setFieldValue("transactionRef", transactionRef);
+    }
+
+    default String getTransactionRef() {
+        return getStringFieldValue("transactionRef");
+    }
+
+    default void setStatus(String status) {
+        setFieldValue("status", status);
+    }
+
+    default String getStatus() {
+        return getStringFieldValue("status");
+    }
+
+    default void setGatewayResponse(String gatewayResponse) {
+        setFieldValue("gatewayResponse", gatewayResponse);
+    }
+
+    default String getGatewayResponse() {
+        return getStringFieldValue("gatewayResponse");
+    }
+
+    default void setComment(String comment) {
+        setFieldValue("comment", comment);
+    }
+
+    default String getComment() {
+        return getStringFieldValue("comment");
+    }
+
 }
