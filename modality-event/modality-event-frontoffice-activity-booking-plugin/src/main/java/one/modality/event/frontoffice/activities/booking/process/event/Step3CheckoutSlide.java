@@ -2,12 +2,12 @@ package one.modality.event.frontoffice.activities.booking.process.event;
 
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.webtext.HtmlText;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.windowhistory.WindowHistory;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
@@ -134,15 +134,15 @@ public class Step3CheckoutSlide extends StepSlide {
                 trashOption.setOnAction(event -> {
                     bookEventData.getCurrentBooking().removeAttendance(a);
                     pastScheduledItemVBox.getChildren().remove(currentScheduledItemHBox);
-                    bookEventData.setBalanceOnPreviousBookingProperty(bookEventData.getBalanceOnPreviousBookingProperty()-bookEventData.getRate());
+                    bookEventData.setBalanceOnPreviousBooking(bookEventData.getBalanceOnPreviousBooking() - bookEventData.getRate());
                     bookEventData.updateGeneralBalance();
                     // totalPriceLabel.setText(EventPriceFormatter.formatWithCurrency(newTotalPrice, FXEvent.getEvent()));
                 });
 
-                if(date.isBefore(LocalDate.now().plusDays(7))) {
-                    trashOption.setDisable(true);
-                }
-                trashOption.disableProperty().bind(bookEventData.balanceOnPreviousBookingPropertyProperty().lessThanOrEqualTo(0).or(Bindings.createBooleanBinding(()->date.isBefore(LocalDate.now()))));
+                FXProperties.runNowAndOnPropertiesChange(() ->
+                        trashOption.setDisable(bookEventData.getBalanceOnPreviousBooking() <= 0 || date.isBefore(LocalDate.now()))
+                , bookEventData.balanceOnPreviousBookingProperty());
+
                 currentScheduledItemHBox.getChildren().addAll(spacer1, name, spacer2, price, trashOption);
                 pastScheduledItemVBox.getChildren().add(currentScheduledItemHBox);
             });
@@ -157,7 +157,7 @@ public class Step3CheckoutSlide extends StepSlide {
             previousTotalPrice = bookEventData.getPriceCalculatorForPastOption().calculateTotalPrice();
             int deposit = bookEventData.getDocumentAggregate().getDeposit();
             balance = previousTotalPrice - deposit;
-            bookEventData.setBalanceOnPreviousBookingProperty(balance);
+            bookEventData.setBalanceOnPreviousBooking(balance);
             bookEventData.updateGeneralBalance();
             Label previousBalanceLabel = I18nControls.bindI18nProperties(new Label(), "BalanceOnPreviousBooking", bookEventData.getFormattedBalanceOnPreviousBookingProperty());
             Label previousTotalPriceLabel = I18nControls.bindI18nProperties(new Label(), "TotalOnPreviousBooking", bookEventData.getFormattedTotalOnPreviousBookingProperty());

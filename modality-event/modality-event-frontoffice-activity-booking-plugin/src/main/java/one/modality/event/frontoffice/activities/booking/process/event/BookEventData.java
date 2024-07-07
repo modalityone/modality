@@ -138,15 +138,15 @@ public class BookEventData {
         return getPriceCalculatorForCurrentOption().calculateTotalPrice() - getDocumentAggregate().getDeposit();
     }
 
-    public int getBalanceOnPreviousBookingProperty() {
+    public int getBalanceOnPreviousBooking() {
         return balanceOnPreviousBookingProperty.get();
     }
 
-    public IntegerProperty balanceOnPreviousBookingPropertyProperty() {
+    public IntegerProperty balanceOnPreviousBookingProperty() {
         return balanceOnPreviousBookingProperty;
     }
 
-    public void setBalanceOnPreviousBookingProperty(int balanceOnPreviousBookingProperty) {
+    public void setBalanceOnPreviousBooking(int balanceOnPreviousBookingProperty) {
         this.balanceOnPreviousBookingProperty.set(balanceOnPreviousBookingProperty);
     }
 
