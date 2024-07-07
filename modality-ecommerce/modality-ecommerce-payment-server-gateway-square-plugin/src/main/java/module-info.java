@@ -11,6 +11,7 @@ module modality.ecommerce.payment.server.gateway.square.plugin {
     requires modality.ecommerce.payment;
     requires modality.ecommerce.payment.server.gateway;
     requires square;
+    requires webfx.platform.ast;
     requires webfx.platform.async;
     requires webfx.platform.boot;
     requires webfx.platform.console;
@@ -18,6 +19,8 @@ module modality.ecommerce.payment.server.gateway.square.plugin {
     requires webfx.platform.util;
     requires webfx.platform.util.http;
     requires webfx.platform.vertx.common;
+    requires webfx.stack.orm.datasourcemodel.service;
+    requires webfx.stack.orm.entity;
 
     // Exported packages
     exports one.modality.ecommerce.payment.server.gateway.impl.square;
@@ -26,7 +29,7 @@ module modality.ecommerce.payment.server.gateway.square.plugin {
     opens one.modality.ecommerce.payment.server.gateway.impl.square;
 
     // Provided services
-    provides dev.webfx.platform.boot.spi.ApplicationJob with one.modality.ecommerce.payment.server.gateway.impl.square.SquareRestApiStarterJob;
+    provides dev.webfx.platform.boot.spi.ApplicationJob with one.modality.ecommerce.payment.server.gateway.impl.square.SquareRestApiJob;
     provides one.modality.ecommerce.payment.server.gateway.PaymentGateway with one.modality.ecommerce.payment.server.gateway.impl.square.SquarePaymentGateway;
 
 }

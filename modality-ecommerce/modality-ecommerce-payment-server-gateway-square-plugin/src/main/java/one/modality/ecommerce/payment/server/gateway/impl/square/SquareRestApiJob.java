@@ -5,10 +5,15 @@ import com.squareup.square.SquareClient;
 import com.squareup.square.api.PaymentsApi;
 import com.squareup.square.authentication.BearerAuthModel;
 import com.squareup.square.models.*;
+import dev.webfx.platform.ast.AST;
+import dev.webfx.platform.ast.AstObject;
+import dev.webfx.platform.ast.ReadOnlyAstObject;
 import dev.webfx.platform.boot.spi.ApplicationJob;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.http.HttpResponseStatus;
 import dev.webfx.platform.vertx.common.VertxInstance;
+import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
+import dev.webfx.stack.orm.entity.EntityStore;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
@@ -21,7 +26,7 @@ import one.modality.ecommerce.payment.UpdatePaymentStatusArgument;
 /**
  * @author Bruno Salmon
  */
-public final class SquareRestApiStarterJob implements ApplicationJob {
+public final class SquareRestApiJob implements ApplicationJob {
 
     private final static boolean DEBUG = true;
 
@@ -137,6 +142,7 @@ public final class SquareRestApiStarterJob implements ApplicationJob {
                         if (DEBUG) {
                             Console.log("[Square] completePayment - step 4 - updating the payment status in the database");
                         }
+                        // We finally update the payment status through the payment service (this will also create a history entry)
                         PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createCapturedStatusArgument(paymentId, gatewayResponse, gatewayTransactionRef, gatewayStatus, pending, successful))
                                 .onSuccess(v -> ctx.end(gatewayStatus.toUpperCase()))
                                 .onFailure(e -> ctx.end(e.getMessage()))
@@ -145,6 +151,7 @@ public final class SquareRestApiStarterJob implements ApplicationJob {
                         if (DEBUG) {
                             Console.log("[Square] completePayment - Square raised exception " + ex.getMessage());
                         }
+                        // We finally update the payment status through the payment service (this will also create a history entry)
                         PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createExceptionStatusArgument(paymentId, null, ex.getMessage()))
                                 .onSuccess(v -> ctx.end(ex.getMessage()))
                                 .onFailure(e -> ctx.end(e.getMessage()));
@@ -154,9 +161,42 @@ public final class SquareRestApiStarterJob implements ApplicationJob {
     }
 
     private void handleWebhook(RoutingContext ctx, boolean live) {
-        JsonObject payload = ctx.body().asJsonObject();
-        Console.log("[Square] webhook called with live = " + live + ", payload = " + payload.encode());
-        // TODO
+        JsonObject vertxPayload = ctx.body().asJsonObject();
+        String logPrefix = "[Square] " + (live ? "Live" : "Sandbox") + " webhook - ";
+        Console.log(logPrefix + "Called with payload = " + vertxPayload.encode());
+
+        AstObject payload = AST.createObject(vertxPayload);
+        String squareEventType = AST.lookupString(payload, "type");
+        if (!"payment.updated".equals(squareEventType)) {
+            Console.log(logPrefix + "⚠️  Received an event type that is not managed by this webhook: " + squareEventType);
+        } else {
+            ReadOnlyAstObject paymentObject = AST.lookupObject(payload, "data.payment.object");
+            if (paymentObject == null) {
+                Console.log(logPrefix + "⛔️  Couldn't find the payment json object in the payload!");
+            } else {
+                String id = paymentObject.getString("id"); // Corresponds to transactionRef in Modality
+                String status = paymentObject.getString("status");
+                SquarePaymentStatus squarePaymentStatus = SquarePaymentStatus.valueOf(status);
+                PaymentStatus paymentStatus = squarePaymentStatus.getGenericPaymentStatus();
+                boolean pending = paymentStatus.isPending();
+                boolean successful = paymentStatus.isSuccessful();
+                EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
+                    .executeQuery("select Payment where transactionRef=?", id)
+                        .onFailure(e -> Console.log(logPrefix + "⛔️️  An error occurred when reading the payment with transactionRef = " + id, e))
+                        .onSuccess(payments -> {
+                            if (payments.isEmpty()) {
+                                Console.log(logPrefix + "⛔️️  No payment was found in the database with transactionRef = " + id);
+                            } else if (payments.size() != 1) {
+                                Console.log(logPrefix + "⛔️️  " + payments.size() + " payments were found in the database with transactionRef = " + id);
+                            } else {
+                                // We finally update the payment status through the payment service (this will also create a history entry)
+                                PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createCapturedStatusArgument(payments.get(0).getPrimaryKey().toString(), vertxPayload.encode(), id, status, pending, successful))
+                                        .onFailure(e -> Console.log(logPrefix + "⛔️️  Failed to update status " + status + " for transactionRef = " + id, e))
+                                        .onSuccess(v -> Console.log(logPrefix + "✅  Successfully updated status " + status + " for transactionRef = " + id));
+                            }
+                        });
+            }
+        }
         ctx.response().setStatusCode(HttpResponseStatus.OK_200).end();
     }
 

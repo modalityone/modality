@@ -14,7 +14,7 @@
 
     <providers>
         <provider interface="one.modality.ecommerce.payment.server.gateway.PaymentGateway">one.modality.ecommerce.payment.server.gateway.impl.square.SquarePaymentGateway</provider>
-        <provider interface="dev.webfx.platform.boot.spi.ApplicationJob">one.modality.ecommerce.payment.server.gateway.impl.square.SquareRestApiStarterJob</provider>
+        <provider interface="dev.webfx.platform.boot.spi.ApplicationJob">one.modality.ecommerce.payment.server.gateway.impl.square.SquareRestApiJob</provider>
     </providers>
 
     <required-libraries>

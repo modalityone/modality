@@ -6,7 +6,7 @@ import dev.webfx.platform.util.uuid.Uuid;
 import one.modality.ecommerce.payment.SandboxCard;
 import one.modality.ecommerce.payment.server.gateway.*;
 
-import static one.modality.ecommerce.payment.server.gateway.impl.square.SquareRestApiStarterJob.*;
+import static one.modality.ecommerce.payment.server.gateway.impl.square.SquareRestApiJob.*;
 
 /**
  * @author Bruno Salmon
