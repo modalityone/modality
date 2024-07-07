@@ -2,6 +2,7 @@ package one.modality.ecommerce.payment.spi.impl.server;
 
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.service.MultipleServiceProviders;
+import dev.webfx.platform.util.Numbers;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
@@ -105,7 +106,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
         moneyTransfer.setSuccessful(false);
         moneyTransfer.setMethod(Method.ONLINE_METHOD_ID);
 
-        return HistoryRecorder.preparePaymentHistoryBeforeSubmit("Initiated payment " + (amount / 100) + "." + (amount % 100), moneyTransfer)
+        return HistoryRecorder.preparePaymentHistoryBeforeSubmit("Initiated payment " + (amount / 100) + "." + Numbers.twoDigits(amount % 100), moneyTransfer)
                 .compose(history ->
                     updateStore.submitChanges()
                     // On success, we load the necessary data associated with this moneyTransfer for the payment gateway
