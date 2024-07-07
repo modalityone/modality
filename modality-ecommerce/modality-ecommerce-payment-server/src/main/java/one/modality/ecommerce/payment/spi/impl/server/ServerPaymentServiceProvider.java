@@ -105,7 +105,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
         moneyTransfer.setSuccessful(false);
         moneyTransfer.setMethod(Method.ONLINE_METHOD_ID);
 
-        return HistoryRecorder.preparePaymentHistoryBeforeSubmit("Initiated payment", moneyTransfer)
+        return HistoryRecorder.preparePaymentHistoryBeforeSubmit("Initiated payment " + (amount / 100) + "." + (amount % 100), moneyTransfer)
                 .compose(history ->
                     updateStore.submitChanges()
                     // On success, we load the necessary data associated with this moneyTransfer for the payment gateway
@@ -153,10 +153,10 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
             moneyTransfer.setComment(errorMessage);
 
         String historyComment =
-                !pending && successful  ?   "Payment is successful" :
-                !pending && !successful ?   "Payment is failed" :
-                pending && successful   ?   "Payment is authorised (not yet completed)" :
-                /*pending && !successful?*/ "Payment is pending";
+                !pending && successful  ?   "Stated payment is successful" :
+                !pending && !successful ?   "Stated payment is failed" :
+                pending && successful   ?   "Stated payment is authorised (not yet completed)" :
+                /*pending && !successful?*/ "Stated payment is pending";
 
         return HistoryRecorder.preparePaymentHistoryBeforeSubmit(historyComment, moneyTransfer)
                 .compose(history ->
