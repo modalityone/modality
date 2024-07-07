@@ -15,8 +15,7 @@ import dev.webfx.platform.vertx.common.VertxInstance;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
-import dev.webfx.stack.session.state.StateAccessor;
-import dev.webfx.stack.session.state.ThreadLocalStateHolder;
+import dev.webfx.stack.session.state.SystemUserId;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
@@ -39,6 +38,8 @@ public final class SquareRestApiJob implements ApplicationJob {
     static final String SQUARE_SANDBOX_COMPLETE_PAYMENT_ENDPOINT = "/payment/square/sandbox/completePayment";
     private static final String SQUARE_LIVE_WEBHOOK_ENDPOINT     = "/payment/square/live/webhook";
     private static final String SQUARE_SANDBOX_WEBHOOK_ENDPOINT  = "/payment/square/sandbox/webhook";
+
+    private static final SystemUserId SQUARE_HISTORY_USER_ID     = new SystemUserId("Square");
 
     @Override
     public void onInit() {
@@ -147,21 +148,21 @@ public final class SquareRestApiJob implements ApplicationJob {
                             Console.log("[Square] completePayment - step 4 - updating the payment status in the database");
                         }
                         // We finally update the payment status through the payment service (this will also create a history entry)
-                        ThreadLocalStateHolder.runWithState(StateAccessor.setUserId(null, "$SYSTEM_USER:Square pull"), () -> {
+                        SQUARE_HISTORY_USER_ID.run(() ->
                             PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createCapturedStatusArgument(paymentId, gatewayResponse, gatewayTransactionRef, gatewayStatus, pending, successful))
                                     .onSuccess(v -> ctx.end(gatewayStatus.toUpperCase()))
-                                    .onFailure(e -> ctx.end(e.getMessage()));
-                        });
+                                    .onFailure(e -> ctx.end(e.getMessage()))
+                        );
                     }).exceptionally(ex -> {
                         if (DEBUG) {
                             Console.log("[Square] completePayment - Square raised exception " + ex.getMessage());
                         }
                         // We finally update the payment status through the payment service (this will also create a history entry)
-                        ThreadLocalStateHolder.runWithState(StateAccessor.setUserId(null, "$SYSTEM_USER:Square pull"), () -> {
+                        SQUARE_HISTORY_USER_ID.run(() ->
                             PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createExceptionStatusArgument(paymentId, null, ex.getMessage()))
                                     .onSuccess(v -> ctx.end(ex.getMessage()))
-                                    .onFailure(e -> ctx.end(e.getMessage()));
-                        });
+                                    .onFailure(e -> ctx.end(e.getMessage()))
+                        );
                         return null;
                     });
                 });
@@ -205,7 +206,7 @@ public final class SquareRestApiJob implements ApplicationJob {
                                     // In that case we only update the payload in the database (if the version is newer)
                                     ReadOnlyAstObject dbPayload = AST.parseObject(payment.getGatewayResponse(), "json");
                                     ReadOnlyAstObject dbPaymentObject = AST.lookupObject(dbPayload, "data.object.payment");
-                                    if (paymentObject.getInteger("version") <= dbPaymentObject.getInteger("version")) {
+                                    if (dbPaymentObject != null && dbPaymentObject.getInteger("version") >= paymentObject.getInteger("version")) {
                                         Console.log(logPrefix + "Skipping this event because it's not newer compared to the database");
                                     } else {
                                         // We do a simple update of the payment gateway response without creating a new history entry
@@ -218,11 +219,11 @@ public final class SquareRestApiJob implements ApplicationJob {
                                     }
                                 } else {
                                     // We finally update the payment status through the payment service (this will also create a history entry)
-                                    ThreadLocalStateHolder.runWithState(StateAccessor.setUserId(null, "$SYSTEM_USER:Square push"), () -> {
+                                    SQUARE_HISTORY_USER_ID.run(() ->
                                         PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createCapturedStatusArgument(paymentPk.toString(), textPayload, id, status, pending, successful))
                                             .onFailure(e -> Console.log(logPrefix + "⛔️️  Failed to update status " + status + " for transactionRef = " + id, e))
-                                            .onSuccess(v -> Console.log(logPrefix + "✅  Successfully updated status " + status + " for transactionRef = " + id));
-                                    });
+                                            .onSuccess(v -> Console.log(logPrefix + "✅  Successfully updated status " + status + " for transactionRef = " + id))
+                                    );
                                 }
                             }
                         });
