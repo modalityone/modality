@@ -21,6 +21,7 @@ module modality.ecommerce.payment.server.gateway.square.plugin {
     requires webfx.platform.vertx.common;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.entity;
+    requires webfx.stack.session.state;
 
     // Exported packages
     exports one.modality.ecommerce.payment.server.gateway.impl.square;

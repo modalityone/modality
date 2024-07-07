@@ -14,6 +14,8 @@ import dev.webfx.platform.util.http.HttpResponseStatus;
 import dev.webfx.platform.vertx.common.VertxInstance;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.EntityStore;
+import dev.webfx.stack.session.state.StateAccessor;
+import dev.webfx.stack.session.state.ThreadLocalStateHolder;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
@@ -143,18 +145,21 @@ public final class SquareRestApiJob implements ApplicationJob {
                             Console.log("[Square] completePayment - step 4 - updating the payment status in the database");
                         }
                         // We finally update the payment status through the payment service (this will also create a history entry)
-                        PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createCapturedStatusArgument(paymentId, gatewayResponse, gatewayTransactionRef, gatewayStatus, pending, successful))
-                                .onSuccess(v -> ctx.end(gatewayStatus.toUpperCase()))
-                                .onFailure(e -> ctx.end(e.getMessage()))
-                        ;
+                        ThreadLocalStateHolder.runWithState(StateAccessor.setUserId(null, "$SYSTEM_USER:Square"), () -> {
+                            PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createCapturedStatusArgument(paymentId, gatewayResponse, gatewayTransactionRef, gatewayStatus, pending, successful))
+                                    .onSuccess(v -> ctx.end(gatewayStatus.toUpperCase()))
+                                    .onFailure(e -> ctx.end(e.getMessage()));
+                        });
                     }).exceptionally(ex -> {
                         if (DEBUG) {
                             Console.log("[Square] completePayment - Square raised exception " + ex.getMessage());
                         }
                         // We finally update the payment status through the payment service (this will also create a history entry)
-                        PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createExceptionStatusArgument(paymentId, null, ex.getMessage()))
-                                .onSuccess(v -> ctx.end(ex.getMessage()))
-                                .onFailure(e -> ctx.end(e.getMessage()));
+                        ThreadLocalStateHolder.runWithState(StateAccessor.setUserId(null, "$SYSTEM_USER:Square"), () -> {
+                            PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createExceptionStatusArgument(paymentId, null, ex.getMessage()))
+                                    .onSuccess(v -> ctx.end(ex.getMessage()))
+                                    .onFailure(e -> ctx.end(e.getMessage()));
+                        });
                         return null;
                     });
                 });
@@ -190,9 +195,11 @@ public final class SquareRestApiJob implements ApplicationJob {
                                 Console.log(logPrefix + "⛔️️  " + payments.size() + " payments were found in the database with transactionRef = " + id);
                             } else {
                                 // We finally update the payment status through the payment service (this will also create a history entry)
-                                PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createCapturedStatusArgument(payments.get(0).getPrimaryKey().toString(), vertxPayload.encode(), id, status, pending, successful))
-                                        .onFailure(e -> Console.log(logPrefix + "⛔️️  Failed to update status " + status + " for transactionRef = " + id, e))
-                                        .onSuccess(v -> Console.log(logPrefix + "✅  Successfully updated status " + status + " for transactionRef = " + id));
+                                ThreadLocalStateHolder.runWithState(StateAccessor.setUserId(null, "$SYSTEM_USER:Square (webhook)"), () -> {
+                                    PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createCapturedStatusArgument(payments.get(0).getPrimaryKey().toString(), vertxPayload.encode(), id, status, pending, successful))
+                                            .onFailure(e -> Console.log(logPrefix + "⛔️️  Failed to update status " + status + " for transactionRef = " + id, e))
+                                            .onSuccess(v -> Console.log(logPrefix + "✅  Successfully updated status " + status + " for transactionRef = " + id));
+                                });
                             }
                         });
             }

@@ -20,6 +20,8 @@ import java.util.function.Supplier;
  */
 public final class HistoryRecorder {
 
+    private static final String SYSTEM_USER_PREFIX = "$SYSTEM_USER:";
+
     public static Future<History> prepareDocumentHistoryBeforeSubmit(String comment, Document document, DocumentLine documentLine) {
         return prepareDocumentHistoryBeforeSubmit(comment, document, documentLine, ThreadLocalStateHolder.getUserId());
     }
@@ -51,6 +53,13 @@ public final class HistoryRecorder {
             ModalityUserPrincipal mup = (ModalityUserPrincipal) userId;
             history.setUserPerson(mup.getUserPersonId());
             return Future.succeededFuture(history);
+        }
+        if (userId instanceof String) {
+            String userIdStr = (String) userId;
+            if (userIdStr.startsWith(SYSTEM_USER_PREFIX)) {
+                history.setUsername(userIdStr.substring(SYSTEM_USER_PREFIX.length()));
+                return Future.succeededFuture(history);
+            }
         }
         // Case 2) User not logged in or just through SSO
         return AuthenticationService.getUserClaims()
