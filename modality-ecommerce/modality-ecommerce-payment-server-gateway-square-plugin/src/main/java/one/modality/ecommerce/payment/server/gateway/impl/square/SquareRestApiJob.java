@@ -170,7 +170,7 @@ public final class SquareRestApiJob implements ApplicationJob {
         if (!"payment.updated".equals(squareEventType)) {
             Console.log(logPrefix + "⚠️  Received an event type that is not managed by this webhook: " + squareEventType);
         } else {
-            ReadOnlyAstObject paymentObject = AST.lookupObject(payload, "data.payment.object");
+            ReadOnlyAstObject paymentObject = AST.lookupObject(payload, "data.object.payment");
             if (paymentObject == null) {
                 Console.log(logPrefix + "⛔️  Couldn't find the payment json object in the payload!");
             } else {
