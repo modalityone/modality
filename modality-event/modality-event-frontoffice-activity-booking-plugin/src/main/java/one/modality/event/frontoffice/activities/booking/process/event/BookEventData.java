@@ -77,7 +77,7 @@ public class BookEventData {
     }
 
     public boolean isDepositOnPreviousBookingComplete() {
-        return (priceCalculatorPastOption.calculateTotalPrice()-getDocumentAggregate().getDeposit()==0);
+        return getDocumentAggregate().getDeposit() >= priceCalculatorPastOption.calculateTotalPrice();
     }
 
     public List<ScheduledItem> getScheduledItemsAlreadyBooked() {

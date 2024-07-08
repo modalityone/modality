@@ -27,22 +27,31 @@ public class PriceCalculator {
     }
 
     public int calculateTotalPrice() {
-        return getDocumentAggregate().getDocumentLinesStream()
+        DocumentAggregate documentAggregate = getDocumentAggregate();
+        if (documentAggregate == null)
+            return 0;
+        return documentAggregate.getDocumentLinesStream()
                 .mapToInt(this::calculateLinePrice)
                 .sum();
     }
 
     public int calculateLinePrice(DocumentLine line) {
-        return getDocumentAggregate().getLineAttendancesStream(line)
+        DocumentAggregate documentAggregate = getDocumentAggregate();
+        if (documentAggregate == null)
+            return 0;
+        return documentAggregate.getLineAttendancesStream(line)
                 .mapToInt(this::calculateAttendancePrice)
                 .sum();
     }
 
     public int calculateAttendancePrice(Attendance attendance) {
+        DocumentAggregate documentAggregate = getDocumentAggregate();
+        if (documentAggregate == null)
+            return 0;
         DocumentLine documentLine = attendance.getDocumentLine();
         Site site = documentLine.getSite();
         Item item = documentLine.getItem();
-        return getDocumentAggregate().getPolicyAggregate().getSiteItemRatesStream(site, item)
+        return documentAggregate.getPolicyAggregate().getSiteItemRatesStream(site, item)
                 .mapToInt(Rate::getPrice)
                 .min()
                 .orElse(0);
