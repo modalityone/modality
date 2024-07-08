@@ -20,12 +20,12 @@ public class BookEventData {
     private PriceCalculator priceCalculatorPastOption;
     private PriceCalculator priceCalculatorCurrentOption;
     private final ObjectProperty<Object> bookingReferenceProperty = new SimpleObjectProperty<>();
-    private StringProperty formattedBalanceProperty = new SimpleStringProperty();
-    private StringProperty formattedTotalProperty = new SimpleStringProperty();
-    private StringProperty formattedBalanceOnPreviousBookingProperty = new SimpleStringProperty();
-    private StringProperty formattedTotalOnPreviousBookingProperty = new SimpleStringProperty();
-    private BooleanProperty isBalanceNull = new SimpleBooleanProperty();
-    private IntegerProperty balanceProperty = new SimpleIntegerProperty(-1)  {
+    private final StringProperty formattedBalanceProperty = new SimpleStringProperty();
+    private final StringProperty formattedTotalProperty = new SimpleStringProperty();
+    private final StringProperty formattedBalanceOnPreviousBookingProperty = new SimpleStringProperty();
+    private final StringProperty formattedTotalOnPreviousBookingProperty = new SimpleStringProperty();
+    private final BooleanProperty isBalanceNull = new SimpleBooleanProperty();
+    private final IntegerProperty balanceProperty = new SimpleIntegerProperty(-1)  {
         @Override
         protected void invalidated() {
             formattedBalanceProperty.setValue(EventPriceFormatter.formatWithCurrency(balanceProperty.getValue(), FXEvent.getEvent()));
@@ -33,7 +33,7 @@ public class BookEventData {
             isBalanceNull.setValue(balanceProperty.getValue()==0);
         }
     };
-    private IntegerProperty balanceOnPreviousBookingProperty = new SimpleIntegerProperty(0) {
+    private final IntegerProperty balanceOnPreviousBookingProperty = new SimpleIntegerProperty(0) {
         @Override
         protected void invalidated() {
             formattedBalanceOnPreviousBookingProperty.setValue(EventPriceFormatter.formatWithCurrency(balanceOnPreviousBookingProperty.getValue(), FXEvent.getEvent()));
@@ -90,10 +90,6 @@ public class BookEventData {
                 .collect(Collectors.toList());
     }
 
-    public Object getBookingReference() {
-        return bookingReferenceProperty.get();
-    }
-
     public ObjectProperty<Object> bookingReferenceProperty() {
         return bookingReferenceProperty;
     }
@@ -110,10 +106,6 @@ public class BookEventData {
         return priceCalculatorCurrentOption;
     }
 
-    public void setPriceCalculatorForCurrentOption(PriceCalculator priceCalculator) {
-        this.priceCalculatorCurrentOption = priceCalculator;
-    }
-
     public DocumentAggregate getDocumentAggregate() {
         return currentBooking.getLastestDocumentAggregate();
     }
@@ -128,10 +120,6 @@ public class BookEventData {
 
     public Object getDocumentPrimaryKey() {
         return currentBooking.getDocumentPrimaryKey();
-    }
-
-    public BooleanProperty isBalanceNullProperty() {
-        return isBalanceNull;
     }
 
     public int calculateBalance() {
@@ -154,16 +142,8 @@ public class BookEventData {
         return getCurrentBooking().getPolicyAggregate().getRates().get(0).getPrice();
     }
 
-    public String getFormattedBalanceOnPreviousBooking() {
-        return formattedBalanceOnPreviousBookingProperty.get();
-    }
-
     public StringProperty getFormattedBalanceOnPreviousBookingProperty() {
         return formattedBalanceOnPreviousBookingProperty;
-    }
-
-    public void setFormattedBalanceOnPreviousBookingProperty(String formattedBalanceOnPreviousBookingProperty) {
-        this.formattedBalanceOnPreviousBookingProperty.set(formattedBalanceOnPreviousBookingProperty);
     }
 
     public StringProperty getFormattedTotalOnPreviousBookingProperty() {

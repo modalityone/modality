@@ -25,7 +25,7 @@ public final class BookingStarter {
     }
 
     private static void startKbs2EventBooking(Event event) {
-        String bookingFormUrl = (String) event.evaluate("bookingFormUrl");
+        String bookingFormUrl = event.evaluate("bookingFormUrl");
         bookingFormUrl = bookingFormUrl.replace("{host}", "kadampabookings.org");
         BrowserUtil.chooseHowToOpenWebsite(bookingFormUrl);
     }

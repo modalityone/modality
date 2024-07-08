@@ -14,7 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 
-public class Step6ThankYouSlide extends StepSlide{
+class Step6ThankYouSlide extends StepSlide{
 
     public Step6ThankYouSlide(SlideController control, BookEventData bed) {
         super(control, bed);

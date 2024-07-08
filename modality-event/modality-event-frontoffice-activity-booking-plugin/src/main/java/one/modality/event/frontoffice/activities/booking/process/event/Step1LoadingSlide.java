@@ -4,7 +4,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ProgressIndicator;
 
-public class Step1LoadingSlide extends StepSlide{
+class Step1LoadingSlide extends StepSlide{
 
 
     public Step1LoadingSlide(SlideController control, BookEventData bed) {

@@ -45,42 +45,30 @@ public class SlideController {
                 step4PaymentSlide.buildUi();
                 step5ErrorSlide.buildUi();
                 step6ThankYouSlide.buildUi();
-                carrousel.displaySlide(1, false);
+                carrousel.displaySlide(step2EventDetailsSlide.get());
             } else { // Here the data are not loaded
-                carrousel.displaySlide(0, false);
+                carrousel.displaySlide(step1LoadingSlide.get());
             }
         }), eventDataLoaded);
     }
 
-    public Step1LoadingSlide getStep1LoadingSlide() {
-        return step1LoadingSlide;
-    }
-
-    public void setStep1LoadingSlide(Step1LoadingSlide step1LoadingSlide) {
+    void setStep1LoadingSlide(Step1LoadingSlide step1LoadingSlide) {
         this.step1LoadingSlide = step1LoadingSlide;
     }
 
-    public Step2EventDetailsSlide getStep2EventDetailsSlide() {
-        return step2EventDetailsSlide;
-    }
-
-    public void setStep2EventDetailsSlide(Step2EventDetailsSlide step2EventDetailsSlide) {
+    void setStep2EventDetailsSlide(Step2EventDetailsSlide step2EventDetailsSlide) {
         this.step2EventDetailsSlide = step2EventDetailsSlide;
     }
 
-    public Step3CheckoutSlide getStep3CheckoutSlide() {
+    Step3CheckoutSlide getStep3CheckoutSlide() {
         return step3CheckoutSlide;
     }
 
-    public void setStep3CheckoutSlide(Step3CheckoutSlide step3CheckoutSlide) {
+    void setStep3CheckoutSlide(Step3CheckoutSlide step3CheckoutSlide) {
         this.step3CheckoutSlide = step3CheckoutSlide;
     }
 
-    public Step6ThankYouSlide getStep6ThankYouSlide() {
-        return step6ThankYouSlide;
-    }
-
-    public void setStep6ThankYouSlide(Step6ThankYouSlide step4ThankYouSlide) {
+    void setStep6ThankYouSlide(Step6ThankYouSlide step4ThankYouSlide) {
         this.step6ThankYouSlide = step4ThankYouSlide;
     }
 
@@ -88,30 +76,21 @@ public class SlideController {
         carrousel.displaySlide(step6ThankYouSlide.get());
     }
 
-    public Step5ErrorSlide getStep5ErrorSlide() {
-        return step5ErrorSlide;
-    }
-
-    public void setStep5ErrorSlide(Step5ErrorSlide step5ErrorSlide) {
+    void setStep5ErrorSlide(Step5ErrorSlide step5ErrorSlide) {
         this.step5ErrorSlide = step5ErrorSlide;
     }
 
-    public Step4PaymentSlide getStep4PaymentSlide() {
+    Step4PaymentSlide getStep4PaymentSlide() {
         return this.step4PaymentSlide;
     }
-    public void setStep4PaymentSlide(Step4PaymentSlide step4PaymentSlide) {
+
+    void setStep4PaymentSlide(Step4PaymentSlide step4PaymentSlide) {
         this.step4PaymentSlide = step4PaymentSlide;
     }
 
     public void displayErrorMessage(String message) {
-        step5ErrorSlide.setErrorMessage(message,true);
-        Platform.runLater(() -> {
-            carrousel.displaySlide(5);
-        });
-    }
-
-    public boolean isEventDataLoaded() {
-        return eventDataLoaded.get();
+        step5ErrorSlide.setErrorMessage(message);
+        Platform.runLater(() ->         carrousel.displaySlide(step5ErrorSlide.get()));
     }
 
     public BooleanProperty eventDataLoadedProperty() {

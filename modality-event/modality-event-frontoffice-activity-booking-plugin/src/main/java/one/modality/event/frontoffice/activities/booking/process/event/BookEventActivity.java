@@ -42,7 +42,6 @@ public final class BookEventActivity extends ViewDomainActivityBase {
     private Step6ThankYouSlide step6ThankYouSlide;
     private Step5ErrorSlide step5ErrorSlide;
     private BookEventData bookEventData;
-    private SlideController slideController;
 
     @Override
     public Node buildUi() {
@@ -87,7 +86,7 @@ public final class BookEventActivity extends ViewDomainActivityBase {
     @Override
     protected void startLogic() {
         bookEventData = new BookEventData();
-        slideController = new SlideController(carrousel);
+        SlideController slideController = new SlideController(carrousel);
         step1LoadingSlide = new Step1LoadingSlide(slideController,bookEventData);
         step2EventDetailsSlide = new Step2EventDetailsSlide(slideController,bookEventData);
         step3CheckoutSlide = new Step3CheckoutSlide(slideController,bookEventData);

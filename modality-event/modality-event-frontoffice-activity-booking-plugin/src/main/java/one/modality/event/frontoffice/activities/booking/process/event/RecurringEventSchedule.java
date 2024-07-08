@@ -32,7 +32,7 @@ public class RecurringEventSchedule {
     protected ObservableList<LocalDate> selectedDates = FXCollections.observableArrayList();
     Map<LocalDate, Pair<ScheduledItemToPane, Pair<String,String>>> paneAndCssClassMap = new HashMap<>();
 
-    private Function<LocalDate, String> computeCssClassForSelectedDateFunction = localDate -> getSelectedDateCssClass();
+    private final Function<LocalDate, String> computeCssClassForSelectedDateFunction = localDate -> getSelectedDateCssClass();
 
     private Function<LocalDate, String> computeCssClassForUnselectedDateFunction = localDate -> getUnselectedDateCssClass();
 
@@ -46,26 +46,23 @@ public class RecurringEventSchedule {
     private final ObjectProperty<String> unselectedDateCssClassProperty = new SimpleObjectProperty<>( "date-unselected");
     private final ObjectProperty<String> existingBookedDateNodeProperty = new SimpleObjectProperty<>( null);
 
-    private ListChangeListener<LocalDate> onChangeDateListener;
-
-
 
     public RecurringEventSchedule() {
         ecompassingFlexPane.setVerticalSpace(30);
         ecompassingFlexPane.setHorizontalSpace(30);
         ecompassingFlexPane.setFlexLastRow(false);
 
-        scheduledItemsList.addListener((InvalidationListener) observable -> {
-            Platform.runLater(() -> {
-                ecompassingFlexPane.getChildren().clear();
-                dev.webfx.platform.util.collection.Collections.forEach(scheduledItemsList, scheduledItem -> {
-                    ScheduledItemToPane currentPane = new ScheduledItemToPane(scheduledItem);
-                    ecompassingFlexPane.getChildren().add(currentPane.getContainerVBox());
-                });
+        scheduledItemsList.addListener((InvalidationListener) observable -> Platform.runLater(() -> {
+            ecompassingFlexPane.getChildren().clear();
+            dev.webfx.platform.util.collection.Collections.forEach(scheduledItemsList, scheduledItem -> {
+                ScheduledItemToPane currentPane = new ScheduledItemToPane(scheduledItem);
+                ecompassingFlexPane.getChildren().add(currentPane.getContainerVBox());
             });
-        });
+        }));
 
-        onChangeDateListener = change -> {LocalDate date = null;
+        //We remove from the updateStore and the ScheduledItem
+        ListChangeListener<LocalDate> onChangeDateListener = change -> {
+            LocalDate date = null;
             while (change.next()) {
                 if (change.wasAdded()) {
                     date = change.getAddedSubList().get(0);
@@ -77,33 +74,13 @@ public class RecurringEventSchedule {
             }
             changeCssPropertyForSelectedDate(date);
         };
-        selectedDates.addListener( onChangeDateListener);
+        selectedDates.addListener(onChangeDateListener);
     }
     public void setScheduledItems(List<ScheduledItem> siList) {
-        Collections.sort(siList, Comparator.comparing(ScheduledItem::getDate));
+        siList.sort(Comparator.comparing(ScheduledItem::getDate));
         scheduledItemsList.setAll(siList);
     }
 
-    public ScheduledItem getScheduledItem(LocalDate date) {
-        return scheduledItemsList.stream()
-                .filter(item -> item.getDate().equals(date))
-                .findFirst()
-                .orElse(null);
-    }
-
-    public void addScheduledItemToSelectedList(ScheduledItem s) {
-        getSelectedScheduledItem().add(s);
-    }
-
-    public void removeScheduledItemFromSelectedList(ScheduledItem s) {
-        getSelectedScheduledItem().remove(s);
-    }
-
-
-    public List<ScheduledItem> getScheduledItems()
-    {
-        return scheduledItemsList;
-    }
     public FlexPane buildUi() {
         return ecompassingFlexPane;
     }
@@ -126,13 +103,7 @@ public class RecurringEventSchedule {
     }
 
     public void changeCssPropertyForSelectedDate(LocalDate date) {
-        if(date!=null) {
-            if (this.selectedDates.contains(date)) {
-                changeBackgroundWhenSelected(date, true);
-            } else {
-                changeBackgroundWhenSelected(date, false);
-            }
-        }
+        if(date!=null) changeBackgroundWhenSelected(date, this.selectedDates.contains(date));
     }
 
     public void processDateSelected(LocalDate date)
@@ -149,13 +120,6 @@ public class RecurringEventSchedule {
         this.selectedDates.add(date);
     }
 
-    public void selectAllDates() {
-        selectedDates.clear();
-        scheduledItemsList.forEach(si->
-        {
-            selectedDates.add(si.getDate());
-        });
-    }
     public void selectDates(List <LocalDate> list) {
         selectedDates.clear();
         scheduledItemsList.forEach(si-> {
@@ -205,10 +169,6 @@ public class RecurringEventSchedule {
         return new Label(existingBookedDateNodeProperty.get());
     }
 
-    public Color getCommentColorForExistingBookedDate() {
-        return Color.RED;
-    }
-
     private class ScheduledItemToPane {
         Text dayText = new Text();
         HBox dayAndCommentHBox = new HBox(dayText);
@@ -253,13 +213,6 @@ public class RecurringEventSchedule {
 
         public Pane getContainerVBox(){
             return containerVBox;
-        }
-
-        public Text getDayText() {
-            return dayText;
-        }
-        public Text getHourText() {
-            return hourText;
         }
     }
 }

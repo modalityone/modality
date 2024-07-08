@@ -3,8 +3,10 @@ package one.modality.event.frontoffice.activities.booking.process.event;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.util.time.Times;
 import dev.webfx.platform.windowhistory.WindowHistory;
 import dev.webfx.stack.i18n.I18n;
+import javafx.scene.control.Label;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -15,7 +17,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -23,10 +24,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.icons.SvgIcons;
-import one.modality.base.shared.entities.Item;
-import one.modality.base.shared.entities.Person;
-import one.modality.base.shared.entities.ScheduledItem;
-import one.modality.base.shared.entities.Site;
+import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.payment.PaymentService;
@@ -37,7 +35,7 @@ import one.modality.event.frontoffice.activities.booking.process.account.Checkou
 
 import java.time.LocalDate;
 
-public class Step3CheckoutSlide extends StepSlide {
+class Step3CheckoutSlide extends StepSlide {
     private final HtmlText eventShortDescriptionInCheckoutSlide = controller.bindI18nEventExpression(new HtmlText(), "shortDescription");
     private final Label venueAddress = controller.bindI18nEventExpression(new Label(), "venue.address");
     private final VBox pastScheduledItemVBox = new VBox();
@@ -71,7 +69,7 @@ public class Step3CheckoutSlide extends StepSlide {
         mainVbox.getChildren().add(topPane);
 
         eventShortDescriptionInCheckoutSlide.getStyleClass().add("subtitle-grey");
-        eventShortDescriptionInCheckoutSlide.setMaxWidth(350); // The idea is to balance the description over 2 lines of the same length TODO: see if this can be made generic whatever the description
+        eventShortDescriptionInCheckoutSlide.setMaxWidth(350);
         MonoPane shortDescriptionMonoPane = new MonoPane(eventShortDescriptionInCheckoutSlide);
         topPane.setAlignment(Pos.BASELINE_LEFT);
         VBox.setMargin(topPane, new Insets(10,0,0,50));
@@ -165,9 +163,8 @@ public class Step3CheckoutSlide extends StepSlide {
             previousBalanceLabel.setPadding(new Insets(5,30,5,30));
 
             mainVbox.getChildren().add(pastScheduledItemVBox);
-        } else {
-            previousTotalPrice = 0;
         }
+
         HBox sepHBox = new HBox();
         sepHBox.setPadding(new Insets(0, 0, 20, 0));
         scheduledItemVBox.getChildren().add(sepHBox);
@@ -265,7 +262,24 @@ public class Step3CheckoutSlide extends StepSlide {
                     }
                         else {
                             // 2) the currentBooking has new option
-                            bookEventData.getCurrentBooking().submitChanges("Booked Online")
+                        //We look at the changes to fill the history
+                        StringBuilder history = new StringBuilder("Edit booking online: ");
+                        if(bookEventData.getCurrentBooking().isNewBooking()) history = new StringBuilder("New online booking: ");
+                        boolean isFirst = true;
+                        if(bookEventData.getCurrentBooking().getAttendanceAdded()!=null)
+                            for (Attendance attendance : bookEventData.getCurrentBooking().getAttendanceAdded()) {
+                                if(!isFirst) history.append(" | "); else isFirst = false;
+                                history.append("add ").append(Times.format(attendance.getScheduledItem().getDate(), "dd/MM"));
+                            }
+
+                        if(bookEventData.getCurrentBooking().getAttendanceRemoved()!=null)
+                            for (Attendance attendance : bookEventData.getCurrentBooking().getAttendanceRemoved()) {
+                                if(!isFirst) history.append(" | "); else isFirst = false;
+                            //We get the date throw the scheduledItem associated to the attendance, because the attendance date is not loaded from the database if it comes from a previous booking
+                                history.append("remove ").append(Times.format(attendance.getScheduledItem().getDate(), "dd/MM"));
+                            }
+
+                        bookEventData.getCurrentBooking().submitChanges(history.toString())
                                     .onFailure(result -> Platform.runLater(() -> {
                                         controller.displayErrorMessage("ErrorWhileInsertingBooking");
                                         Console.log(result);
@@ -273,7 +287,7 @@ public class Step3CheckoutSlide extends StepSlide {
                                     .onSuccess(result -> Platform.runLater(() -> {
                                         bookEventData.setBookingReference(result.getDocumentRef());
                                         Object documentPrimaryKey = result.getDocumentPrimaryKey();
-                                        //3) if there is something to pay, we initiate the paiement
+                                        //3) if there is something to pay, we initiate the payment
                                         if(bookEventData.getBalance()>0) {
                                         PaymentService.initiatePayment(
                                                         ClientPaymentUtil.createInitiatePaymentArgument(bookEventData.getBalance(), documentPrimaryKey)
