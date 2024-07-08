@@ -11,6 +11,7 @@ module modality.ecommerce.backoffice.activity.bookings.plugin {
     requires javafx.graphics;
     requires modality.base.backoffice.masterslave;
     requires modality.base.backoffice.operations.generic;
+    requires modality.base.client.entities;
     requires modality.base.client.gantt.fx;
     requires modality.base.client.presentationmodel;
     requires modality.base.client.util;

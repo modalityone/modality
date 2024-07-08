@@ -9,12 +9,14 @@ import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMap
 import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.scene.Node;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import one.modality.base.backoffice.controls.masterslave.ConventionalUiBuilder;
 import one.modality.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
+import one.modality.base.backoffice.controls.masterslave.group.GroupMasterSlaveView;
 import one.modality.base.backoffice.operations.entities.generic.AddNewSnapshotRequest;
 import one.modality.base.backoffice.operations.entities.generic.CopyAllRequest;
 import one.modality.base.backoffice.operations.entities.generic.CopySelectionRequest;
+import one.modality.base.client.entities.util.filters.FilterSearchBar;
 import one.modality.base.client.gantt.fx.interstice.FXGanttInterstice;
 import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
@@ -54,21 +56,30 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
         return pm; // eventId and organizationId will then be updated from route
     }
 
-    private ConventionalUiBuilder ui; // Keeping this reference for activity resume
+    private FilterSearchBar filterSearchBar;
 
     @Override
     public Node buildUi() {
-        ui = createAndBindGroupMasterSlaveViewWithFilterSearchBar(pm, "bookings", "Document");
+        // The container (shown under the events gantt canvas) is a border pane that will display the filter search bar
+        // on top, and the group/master/slave view in the center.
+        BorderPane container = new BorderPane();
+        // We create the filter search bar and put it on top of the container.
+        filterSearchBar = createFilterSearchBar("bookings", "Document", container, pm);
+        container.setTop(filterSearchBar.buildUi());
+        // We create the group/master/slave view and put it in the center of the container. The master view is the
+        // bookings table and the group view is initially hidden, but if the user selects a group in the filter search
+        // bar, this is the group view that is displayed and the master view is hidden at this point. However, if the
+        // user selects a specific group in the group view, then the master view appears again below the group view on
+        // top, and displays the bookings of that particular group. In all cases, the slave view is initially hidden but
+        // if the user selects 1 specific booking in the master view, the slave view appears at below the master view
+        // and display the details of that particular booking.
+        GroupMasterSlaveView groupMasterSlaveView = GroupMasterSlaveView.createAndBind(pm, this);
+        //BookingDetailsPanel bdp = groupMasterSlaveView.getSlaveView();
+        container.setCenter(groupMasterSlaveView.buildUi());
 
-        // Adding new booking button on left and clone event on right of the filter search bar
-        //Button newBookingButton = newButton(newOperationAction(() -> new RouteToNewBackOfficeBookingRequest(getEventId(), getHistory())));
-                //cloneEventButton = newButton(newOperationAction(() -> new RouteToCloneEventRequest(getEventId(), getHistory())));
-        //ui.setLeftTopNodes(setUnmanagedWhenInvisible(newBookingButton));
-        //ui.setRightTopNodes(setUnmanagedWhenInvisible(cloneEventButton));
-
-        Pane container = ui.buildUi();
-
-        setUpContextMenu(ControlUtil.lookupChild(ui.getGroupMasterSlaveView().getMasterView(), n -> n instanceof VisualGrid), () -> newActionGroup(
+        // We set up a context menu on the master view
+        Node masterView = groupMasterSlaveView.getMasterView();
+        setUpContextMenu(ControlUtil.lookupChild(masterView, n -> n instanceof VisualGrid), () -> newActionGroup(
                 newSnapshotActionGroup(container),
                 newOperationAction(() -> new SendLetterRequest(pm.getSelectedDocument(), container)),
                 newSeparatorActionGroup("Registration",
@@ -95,7 +106,7 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
 
         pm.ganttSelectedObjectProperty().bind(FXGanttSelection.ganttSelectedObjectProperty());
 
-        // for CSS styling
+        // Setting an Id for CSS styling
         container.setId("bookings");
 
         return container;
@@ -110,7 +121,7 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
     @Override
     public void onResume() {
         super.onResume();
-        ui.onResume(); // activate search text focus on activity resume
+        filterSearchBar.onResume(); // activate search text focus on activity resume
         FXGanttVisibility.setGanttVisibility(GanttVisibility.EVENTS);
         FXGanttInterstice.setGanttIntersticeRequired(true);
     }
