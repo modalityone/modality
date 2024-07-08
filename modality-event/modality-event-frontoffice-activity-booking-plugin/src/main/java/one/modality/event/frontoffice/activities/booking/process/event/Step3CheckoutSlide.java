@@ -259,25 +259,33 @@ class Step3CheckoutSlide extends StepSlide {
                                     controller.getStep4PaymentSlide().setWebPaymentForm(webPaymentForm);
                                     controller.displayNextSlide();
                                 }));
-                    }
-                        else {
-                            // 2) the currentBooking has new option
+                    } else {
+                        // 2) the currentBooking has new option
                         //We look at the changes to fill the history
-                        StringBuilder history = new StringBuilder("Edit booking online: ");
-                        if(bookEventData.getCurrentBooking().isNewBooking()) history = new StringBuilder("New online booking: ");
-                        boolean isFirst = true;
-                        if(bookEventData.getCurrentBooking().getAttendanceAdded()!=null)
+                        StringBuilder history = new StringBuilder();
+                        boolean first = true;
+                        if(bookEventData.getCurrentBooking().getAttendanceAdded()!=null) {
+                            history.append("Booked ");
                             for (Attendance attendance : bookEventData.getCurrentBooking().getAttendanceAdded()) {
-                                if(!isFirst) history.append(" | "); else isFirst = false;
-                                history.append("add ").append(Times.format(attendance.getScheduledItem().getDate(), "dd/MM"));
+                                if (!first)
+                                    history.append(", ");
+                                // We get the date throw the scheduledItem associated to the attendance, because the
+                                // attendance date is not loaded from the database if it comes from a previous booking
+                                history.append(Times.format(attendance.getScheduledItem().getDate(), "dd/MM"));
+                                first = false;
                             }
+                        }
 
-                        if(bookEventData.getCurrentBooking().getAttendanceRemoved()!=null)
+                        if(bookEventData.getCurrentBooking().getAttendanceRemoved()!=null) {
+                            history.append(first ? "Removed " : " & removed ");
+                            first = true;
                             for (Attendance attendance : bookEventData.getCurrentBooking().getAttendanceRemoved()) {
-                                if(!isFirst) history.append(" | "); else isFirst = false;
-                            //We get the date throw the scheduledItem associated to the attendance, because the attendance date is not loaded from the database if it comes from a previous booking
-                                history.append("remove ").append(Times.format(attendance.getScheduledItem().getDate(), "dd/MM"));
+                                if (!first)
+                                    history.append(", ");
+                                history.append(Times.format(attendance.getScheduledItem().getDate(), "dd/MM"));
+                                first = false;
                             }
+                        }
 
                         bookEventData.getCurrentBooking().submitChanges(history.toString())
                                     .onFailure(result -> Platform.runLater(() -> {
