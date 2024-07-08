@@ -20,7 +20,7 @@ import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
 
-public class Step4PaymentSlide extends StepSlide {
+class Step4PaymentSlide extends StepSlide {
 
     private final HtmlText paymentInformationInPaymentSlide = new HtmlText();
     private Label bookedEventTitleText;

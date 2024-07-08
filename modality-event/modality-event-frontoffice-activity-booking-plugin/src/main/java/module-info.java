@@ -59,6 +59,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.dialog;
     requires webfx.stack.ui.operation;
+    requires webfx.platform.util.time;
 
     // Exported packages
     exports one.modality.event.frontoffice.activities.booking;

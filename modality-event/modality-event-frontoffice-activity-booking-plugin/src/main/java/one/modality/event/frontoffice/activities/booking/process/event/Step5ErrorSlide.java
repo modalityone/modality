@@ -7,9 +7,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 
-public class Step5ErrorSlide extends StepSlide{
+class Step5ErrorSlide extends StepSlide{
 
-    private HtmlText errorMessage = new HtmlText();
+    private final HtmlText errorMessage = new HtmlText();
     public Step5ErrorSlide(SlideController control, BookEventData bed) {
         super(control, bed);
         controller.setStep5ErrorSlide(this);
@@ -34,7 +34,7 @@ public class Step5ErrorSlide extends StepSlide{
     }
 
 
-    public void setErrorMessage(String errorMessageDictionaryKey,boolean doWeDisplayTheButtonToCancelRegistration) {
+    public void setErrorMessage(String errorMessageDictionaryKey) {
         this.errorMessage.setText(I18n.getI18nText(errorMessageDictionaryKey));
     }
 }

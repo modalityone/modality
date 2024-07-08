@@ -175,4 +175,20 @@ public class WorkingBooking {
         return this.getInitialDocumentAggregate()==null;
     }
 
+    public List<AbstractDocumentEvent> getDocumentChanges() {
+        return documentChanges;
+    }
+
+    public Attendance[] getAttendanceAdded() {
+        for (AbstractDocumentEvent currentEvent : documentChanges) {
+            if(currentEvent instanceof AddAttendancesEvent) return ((AddAttendancesEvent) currentEvent).getAttendances();
+        }
+        return null;
+    }
+    public Attendance[] getAttendanceRemoved() {
+        for (AbstractDocumentEvent currentEvent : documentChanges) {
+            if(currentEvent instanceof RemoveAttendancesEvent) return ((RemoveAttendancesEvent) currentEvent).getAttendances();
+        }
+        return null;
+    }
 }

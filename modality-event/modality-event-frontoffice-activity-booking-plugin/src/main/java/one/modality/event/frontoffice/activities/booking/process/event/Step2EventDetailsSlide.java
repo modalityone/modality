@@ -125,11 +125,11 @@ import java.util.stream.Collectors;
         recurringEventSchedule.setComputeNodeForExistingBookedDateFunction((localDate -> {
             if(alreadyBookedDate.contains(localDate)) {
                 Label toReturn = new Label("*");
-                //TODO define the  colors according to the different case and add a legend and put in css file
+                //TODO add a legend and put in css file (waiting UX Designer)
                 if(bookEventData.isDepositOnPreviousBookingComplete())
-                    toReturn.setStyle("-fx-text-fill: green;");
+                    toReturn.getStyleClass().setAll("success-text");
                 else
-                    toReturn.setStyle("-fx-text-fill: red;");
+                    toReturn.getStyleClass().setAll("danger-text");
                 return toReturn;
             }
             return null;
@@ -149,6 +149,7 @@ import java.util.stream.Collectors;
         Text priceText = new Text(I18n.getI18nText("PricePerClass", EventPriceFormatter.formatWithCurrency(bookEventData.getRate(), FXEvent.getEvent())));
         priceText.getStyleClass().add("subtitle-grey");
         VBox.setMargin(priceText, new Insets(20, 0, 5, 0));
+
         Button checkoutButton = I18nControls.bindI18nProperties(new Button(), "ProceedCheckout");
         //We manage the property of the button in css
         checkoutButton.getStyleClass().addAll("event-button", "success-button");
@@ -178,7 +179,6 @@ import java.util.stream.Collectors;
                 priceText,
                 checkoutButton
         );
-
     }
 
     public void loadData(Event e) {
