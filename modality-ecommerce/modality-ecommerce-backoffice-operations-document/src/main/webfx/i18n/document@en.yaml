@@ -18,6 +18,7 @@ PassUpdated:
   graphic: "images/s16/actions/passUpdated.png"
 Cancel:
   text: "Cancel"
+  graphic: "images/s16/actions/cancel.png"
 Uncancel:
   text: "Uncancel"
   graphic: "images/s16/actions/cancel.png"
@@ -32,12 +33,27 @@ Flag:
 MarkAsArrived:
   text: "Mark as arrived"
   graphic: "images/s16/actions/markAsArrived.png"
+UnmarkAsArrived:
+  text: "Unmark as arrived"
+ToggleMarkAsArrived:
+  text: "[expression: arrived ? '[UnmarkAsArrived]' : '[MarkAsArrived]' ]"
+  graphic: "[MarkAsArrived]"
 MarkAsRead:
   text: "Mark as read"
   graphic: "images/s16/actions/markAsRead.png"
+UnmarkAsRead:
+  text: "Unmark as read"
+ToggleMarkAsRead:
+  text: "[expression: read ? '[UnmarkAsRead]' : '[MarkAsRead]' ]"
+  graphic: "[MarkAsRead]"
 WillPay:
   text: "Will pay"
   graphic: "images/s16/actions/willPay.png"
+WontPay:
+  text: "Won't pay"
+ToggleWillPay:
+  text: "[expression: willPay ? '[WontPay]' : '[WillPay]' ]"
+  graphic: "[WillPay]"
 PassReady:
   text: "Pass ready"
   graphic: "images/s16/actions/passReady.png"

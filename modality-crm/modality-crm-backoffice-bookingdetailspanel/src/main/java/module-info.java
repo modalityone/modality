@@ -20,6 +20,7 @@ module modality.crm.backoffice.bookingdetailspanel {
     requires modality.ecommerce.backoffice.operations.documentline;
     requires modality.ecommerce.backoffice.operations.moneytransfer;
     requires webfx.extras.panes;
+    requires webfx.extras.visual;
     requires webfx.extras.visual.grid;
     requires webfx.kit.util;
     requires webfx.platform.boot;

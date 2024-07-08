@@ -1,6 +1,8 @@
 package one.modality.crm.backoffice.controls.bookingdetailspanel;
 
+import dev.webfx.extras.panes.FlexPane;
 import dev.webfx.extras.panes.ScalePane;
+import dev.webfx.extras.visual.VisualResult;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.Strings;
@@ -10,7 +12,9 @@ import dev.webfx.stack.orm.domainmodel.HasDataSourceModel;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
 import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
+import dev.webfx.stack.ui.action.ActionBinder;
 import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
@@ -21,15 +25,10 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TitledPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 import one.modality.base.backoffice.controls.masterslave.UiBuilder;
 import one.modality.base.backoffice.operations.entities.generic.CopyAllRequest;
 import one.modality.base.backoffice.operations.entities.generic.CopySelectionRequest;
@@ -44,6 +43,10 @@ import one.modality.ecommerce.backoffice.operations.entities.document.multiplebo
 import one.modality.ecommerce.backoffice.operations.entities.document.multiplebookings.GetBackCancelledMultipleBookingsDepositRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.multiplebookings.MergeMultipleBookingsOptionsRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.multiplebookings.ToggleMarkMultipleBookingRequest;
+import one.modality.ecommerce.backoffice.operations.entities.document.registration.ToggleCancelDocumentRequest;
+import one.modality.ecommerce.backoffice.operations.entities.document.registration.ToggleMarkDocumentAsArrivedRequest;
+import one.modality.ecommerce.backoffice.operations.entities.document.registration.ToggleMarkDocumentAsReadRequest;
+import one.modality.ecommerce.backoffice.operations.entities.document.registration.ToggleMarkDocumentAsWillPayRequest;
 import one.modality.ecommerce.backoffice.operations.entities.documentline.AddNewDocumentLineRequest;
 import one.modality.ecommerce.backoffice.operations.entities.documentline.DeleteDocumentLineRequest;
 import one.modality.ecommerce.backoffice.operations.entities.documentline.EditDocumentLineRequest;
@@ -70,6 +73,10 @@ public final class BookingDetailsPanel implements
         }
     };
     private final BooleanProperty activeProperty = new SimpleBooleanProperty(true);
+    // We don't need access to the data inside that visual result of all bookings, but the purpose of this property is to
+    // detect the changes such as server push notifications after pressing the toggle buttons (ex: mark/unmark as arrived)
+    // because we need at this point to refresh these buttons through i18n (ex: Mark as arrived => Unmark as arrived)
+    private final ObjectProperty<VisualResult> bookingsVisualResultProperty = new SimpleObjectProperty<>();
 
     private final ButtonFactoryMixin mixin;
     private final DataSourceModel dataSourceModel;
@@ -78,7 +85,8 @@ public final class BookingDetailsPanel implements
     public BookingDetailsPanel(ButtonFactoryMixin mixin, DataSourceModel dataSourceModel) {
         this.mixin = mixin;
         this.dataSourceModel = dataSourceModel;
-        detailsPanel = new BookingPersonalDetailsPanel(dataSourceModel, new ButtonSelectorParameters().setButtonFactory(mixin).setDialogParentGetter(FXMainFrameDialogArea::getDialogArea));    }
+        detailsPanel = new BookingPersonalDetailsPanel(dataSourceModel, new ButtonSelectorParameters().setButtonFactory(mixin).setDialogParentGetter(FXMainFrameDialogArea::getDialogArea));
+    }
 
     @Override
     public BooleanProperty activeProperty() {
@@ -97,9 +105,20 @@ public final class BookingDetailsPanel implements
         selectedDocumentProperty.set(document);
     }
 
+    public ObjectProperty<VisualResult> bookingsVisualResultProperty() {
+        return bookingsVisualResultProperty;
+    }
+
     @Override
     public Node buildUi() {
-        TabPane tabPane = new TabPane(
+        BorderPane container = new BorderPane();
+        container.setTop(new FlexPane(10, 2,
+                ActionBinder.bindButtonToAction(createFlexButton(), newOperationAction(() -> new ToggleMarkDocumentAsReadRequest(getSelectedDocument(), FXMainFrameDialogArea.getDialogArea()), selectedDocumentProperty, bookingsVisualResultProperty)),
+                ActionBinder.bindButtonToAction(createFlexButton(), newOperationAction(() -> new ToggleMarkDocumentAsWillPayRequest(getSelectedDocument(), FXMainFrameDialogArea.getDialogArea()), selectedDocumentProperty, bookingsVisualResultProperty)),
+                ActionBinder.bindButtonToAction(createFlexButton(), newOperationAction(() -> new ToggleCancelDocumentRequest(getSelectedDocument(), FXMainFrameDialogArea.getDialogArea()), selectedDocumentProperty, bookingsVisualResultProperty)),
+                ActionBinder.bindButtonToAction(createFlexButton(), newOperationAction(() -> new ToggleMarkDocumentAsArrivedRequest(getSelectedDocument(), FXMainFrameDialogArea.getDialogArea()), selectedDocumentProperty, bookingsVisualResultProperty))
+        ));
+        container.setCenter(new TabPane(
                 createTab("PersonalDetails", buildPersonalDetailsView()),
                 createFilterTab("Options", "{class: 'DocumentLine', columns: `site,item,dates,lockAllocation,resourceConfiguration,comment,price_isCustom,price_net,price_nonRefundable,price_minDeposit,price_deposit`, where: 'document=${selectedDocument}', orderBy: 'item.family.ord,site..ord,item.ord'}"),
                 createFilterTab("Payments", "{class: 'MoneyTransfer', columns: `date,method,transactionRef,comment,amount,verified`, where: 'document=${selectedDocument}', orderBy: 'date,id'}"),
@@ -109,8 +128,16 @@ public final class BookingDetailsPanel implements
                 createFilterTab("Family", "{class: 'Document', columns:`ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_deposit,plainOptions`, where: 'person_carer1Document=${selectedDocument} or person_carer2Document=${selectedDocument} or id=(select person_carer1Document from Document where id=${selectedDocument}) or id=(select person_carer2Document from Document where id=${selectedDocument})', orderBy: 'ref'}"),
                 createFilterTab("Mails", "{class: 'Mail', columns: 'date,subject,transmitted,error', where: 'document=${selectedDocument}', orderBy: 'date desc'}"),
                 createFilterTab("History", "{class: 'History', columns: 'date,userDisplay,comment,request', where: 'document=${selectedDocument}', orderBy: 'date desc'}")
-        );
-        return tabPane;
+        ));
+        return container;
+    }
+
+    private static Button createFlexButton() {
+        Button button = new Button();
+        button.setMinWidth(Region.USE_PREF_SIZE);
+        button.setMaxWidth(Double.MAX_VALUE);
+        button.setCursor(Cursor.HAND);
+        return button;
     }
 
     private static Tab createTab(String i18nKey, Node node) {
@@ -285,6 +312,8 @@ public final class BookingDetailsPanel implements
         bookingDetailsPanel.selectedDocumentProperty().bind(pm.selectedDocumentProperty());
         if (mixin instanceof HasActiveProperty)
             bookingDetailsPanel.activeProperty().bind(((HasActiveProperty) mixin).activeProperty());
+        if (pm instanceof HasMasterVisualResultProperty)
+            bookingDetailsPanel.bookingsVisualResultProperty().bind(((HasMasterVisualResultProperty) pm).masterVisualResultProperty());
         return bookingDetailsPanel;
     }
 
