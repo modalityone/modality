@@ -264,7 +264,7 @@ class Step3CheckoutSlide extends StepSlide {
                         //We look at the changes to fill the history
                         StringBuilder history = new StringBuilder();
                         boolean first = true;
-                        if(bookEventData.getCurrentBooking().getAttendanceAdded()!=null) {
+                        if(bookEventData.getCurrentBooking().getAttendanceAdded().length!=0) {
                             history.append("Booked ");
                             for (Attendance attendance : bookEventData.getCurrentBooking().getAttendanceAdded()) {
                                 if (!first)
@@ -276,7 +276,7 @@ class Step3CheckoutSlide extends StepSlide {
                             }
                         }
 
-                        if(bookEventData.getCurrentBooking().getAttendanceRemoved()!=null) {
+                        if(bookEventData.getCurrentBooking().getAttendanceRemoved().length!=0) {
                             history.append(first ? "Removed " : " & removed ");
                             first = true;
                             for (Attendance attendance : bookEventData.getCurrentBooking().getAttendanceRemoved()) {
