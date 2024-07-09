@@ -17,6 +17,7 @@ import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActive
 import dev.webfx.stack.ui.action.ActionBinder;
 import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.stack.ui.operation.action.OperationAction;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -35,6 +36,9 @@ import one.modality.base.backoffice.operations.entities.generic.CopySelectionReq
 import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
 import one.modality.base.client.presentationmodel.HasSelectedDocumentProperty;
 import one.modality.base.shared.entities.Document;
+import one.modality.base.shared.entities.DocumentLine;
+import one.modality.base.shared.entities.Mail;
+import one.modality.base.shared.entities.MoneyTransfer;
 import one.modality.crm.backoffice.operations.entities.mail.ComposeNewMailRequest;
 import one.modality.crm.backoffice.operations.entities.mail.OpenMailRequest;
 import one.modality.crm.client.controls.personaldetails.BookingPersonalDetailsPanel;
@@ -56,6 +60,7 @@ import one.modality.ecommerce.backoffice.operations.entities.moneytransfer.AddNe
 import one.modality.ecommerce.backoffice.operations.entities.moneytransfer.DeletePaymentRequest;
 import one.modality.ecommerce.backoffice.operations.entities.moneytransfer.EditPaymentRequest;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public final class BookingDetailsPanel implements
@@ -113,10 +118,10 @@ public final class BookingDetailsPanel implements
     public Node buildUi() {
         BorderPane container = new BorderPane();
         container.setTop(new FlexPane(10, 2,
-                ActionBinder.bindButtonToAction(createFlexButton(), newOperationAction(() -> new ToggleMarkDocumentAsReadRequest(getSelectedDocument()), selectedDocumentProperty, bookingsVisualResultProperty)),
-                ActionBinder.bindButtonToAction(createFlexButton(), newOperationAction(() -> new ToggleMarkDocumentAsWillPayRequest(getSelectedDocument()), selectedDocumentProperty, bookingsVisualResultProperty)),
-                ActionBinder.bindButtonToAction(createFlexButton(), newOperationAction(() -> new ToggleCancelDocumentRequest(getSelectedDocument()), selectedDocumentProperty, bookingsVisualResultProperty)),
-                ActionBinder.bindButtonToAction(createFlexButton(), newOperationAction(() -> new ToggleMarkDocumentAsArrivedRequest(getSelectedDocument()), selectedDocumentProperty, bookingsVisualResultProperty))
+                ActionBinder.bindButtonToAction(createFlexButton(), newSelectedDocumentOperationAction(ToggleMarkDocumentAsReadRequest::new)),
+                ActionBinder.bindButtonToAction(createFlexButton(), newSelectedDocumentOperationAction(ToggleMarkDocumentAsWillPayRequest::new)),
+                ActionBinder.bindButtonToAction(createFlexButton(), newSelectedDocumentOperationAction(ToggleCancelDocumentRequest::new)),
+                ActionBinder.bindButtonToAction(createFlexButton(), newSelectedDocumentOperationAction(ToggleMarkDocumentAsArrivedRequest::new))
         ));
         container.setCenter(new TabPane(
                 createTab("PersonalDetails", buildPersonalDetailsView()),
@@ -159,6 +164,7 @@ public final class BookingDetailsPanel implements
         // Setting up the reactive visual mapper
         String classOnly = dqlStatementString.substring(0, dqlStatementString.indexOf(',')) + "}";
         ObjectProperty<Entity> selectedEntityProperty = new SimpleObjectProperty<>();
+        tab.getProperties().put("selectedEntityProperty", selectedEntityProperty); // used by getTabSelectedEntityProperty()
         ReactiveVisualMapper<Entity> visualMapper = ReactiveVisualMapper.createPushReactiveChain()
                 .always(classOnly)
                 .ifNotNullOtherwiseEmptyString(selectedDocumentProperty, document -> Strings.replaceAll(dqlStatementString, "${selectedDocument}", document.getPrimaryKey()))
@@ -173,69 +179,53 @@ public final class BookingDetailsPanel implements
         switch (i18nKey) {
             case "Options":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new AddNewDocumentLineRequest(getSelectedDocument())),
+                        newSelectedDocumentOperationAction(AddNewDocumentLineRequest::new),
                         newSeparatorActionGroup(
-                                newOperationAction(() -> new EditDocumentLineRequest(get(selectedEntityProperty))),
-                                newOperationAction(() -> new ToggleCancelDocumentLineRequest(get(selectedEntityProperty)), selectedEntityProperty),
-                                newOperationAction(() -> new DeleteDocumentLineRequest(get(selectedEntityProperty)))
+                                newTabSelectedDocumentLineOperationAction(EditDocumentLineRequest::new, tab),
+                                newTabSelectedDocumentLineOperationAction(ToggleCancelDocumentLineRequest::new, tab),
+                                newTabSelectedDocumentLineOperationAction(DeleteDocumentLineRequest::new, tab)
                         ),
-                        newSeparatorActionGroup(
-                                newOperationAction(() -> new CopySelectionRequest(visualMapper.getSelectedEntities(), visualMapper.getEntityColumns())),
-                                newOperationAction(() -> new CopyAllRequest(visualMapper.getCurrentEntities(), visualMapper.getEntityColumns()))
-                        )
+                        newTabCopyActionGroup(true, visualMapper)
                 );
                 break;
             case "Payments":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new AddNewPaymentRequest(getSelectedDocument())),
-                        newOperationAction(() -> new AddNewTransferRequest(getSelectedDocument())),
+                        newSelectedDocumentOperationAction(AddNewPaymentRequest::new),
+                        newSelectedDocumentOperationAction(AddNewTransferRequest::new),
                         newSeparatorActionGroup(
-                                newOperationAction(() -> new EditPaymentRequest(get(selectedEntityProperty))),
-                                newOperationAction(() -> new DeletePaymentRequest(get(selectedEntityProperty)))
+                                newTabSelectedMoneyTransferOperationAction(EditPaymentRequest::new, tab),
+                                newTabSelectedMoneyTransferOperationAction(DeletePaymentRequest::new, tab)
                         ),
-                        newSeparatorActionGroup(
-                                newOperationAction(() -> new CopySelectionRequest(visualMapper.getSelectedEntities(), visualMapper.getEntityColumns())),
-                                newOperationAction(() -> new CopyAllRequest(visualMapper.getCurrentEntities(), visualMapper.getEntityColumns()))
-                        )
+                        newTabCopyActionGroup(true, visualMapper)
                 );
                 break;
             case "MultipleBookings":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new MergeMultipleBookingsOptionsRequest(get(selectedEntityProperty))),
-                        newOperationAction(() -> new CancelOtherMultipleBookingsRequest(get(selectedEntityProperty))),
-                        newOperationAction(() -> new GetBackCancelledMultipleBookingsDepositRequest(get(selectedEntityProperty))),
-                        newOperationAction(() -> new ToggleMarkMultipleBookingRequest(get(selectedEntityProperty)))
+                        newTabSelectedDocumentOperationAction(MergeMultipleBookingsOptionsRequest::new, tab),
+                        newTabSelectedDocumentOperationAction(CancelOtherMultipleBookingsRequest::new, tab),
+                        newTabSelectedDocumentOperationAction(GetBackCancelledMultipleBookingsDepositRequest::new, tab),
+                        newTabSelectedDocumentOperationAction(ToggleMarkMultipleBookingRequest::new, tab)
                 );
                 break;
             case "Cart":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new OpenBookingCartRequest(get(selectedEntityProperty)))
+                        newTabSelectedDocumentOperationAction(OpenBookingCartRequest::new, tab)
                 );
                 break;
             case "Mails":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new OpenMailRequest(get(selectedEntityProperty))),
-                        newOperationAction(() -> new ComposeNewMailRequest(getSelectedDocument())),
-                        newSeparatorActionGroup(
-                                newOperationAction(() -> new CopySelectionRequest(visualMapper.getSelectedEntities(), visualMapper.getEntityColumns())),
-                                newOperationAction(() -> new CopyAllRequest(visualMapper.getCurrentEntities(), visualMapper.getEntityColumns()))
-                        )
+                        newTabSelectedMailOperationAction(OpenMailRequest::new, tab),
+                        newSelectedDocumentOperationAction(ComposeNewMailRequest::new),
+                        newTabCopyActionGroup(true, visualMapper)
                 );
                 break;
             case "History":
-                contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new CopySelectionRequest(visualMapper.getSelectedEntities(), visualMapper.getEntityColumns())),
-                        newOperationAction(() -> new CopyAllRequest(visualMapper.getCurrentEntities(), visualMapper.getEntityColumns()))
-                );
+                contextMenuActionGroupFactory = () -> newTabCopyActionGroup(false, visualMapper);
                 break;
         }
         if (contextMenuActionGroupFactory != null)
             mixin.setUpContextMenu(table, contextMenuActionGroupFactory);
         return tab;
-    }
-
-    private static <E extends Entity> E get(ObjectProperty<Entity> selectedEntityProperty) {
-        return (E) selectedEntityProperty.get();
     }
 
     private Node buildPersonalDetailsView() {
@@ -298,6 +288,46 @@ public final class BookingDetailsPanel implements
         GridPane.setColumnIndex(titledPane, columnIndex++);
         return titledPane;
     }
+
+    /*==================================================================================================================
+    ========================================= OperationAction factory methods ==========================================
+    ==================================================================================================================*/
+
+    private OperationAction newSelectedDocumentOperationAction(Function<Document, ?> operationRequestFactory) {
+        return newOperationAction(() -> operationRequestFactory.apply(getSelectedDocument()), /* to update the i18n text when the selection change -> */ selectedDocumentProperty, bookingsVisualResultProperty);
+    }
+
+    private OperationAction newTabSelectedDocumentOperationAction(Function<Document, ?> operationRequestFactory, Tab tab) {
+        ObjectProperty<Document> selectedEntityProperty = getTabSelectedEntityProperty(tab);
+        return newOperationAction(() -> operationRequestFactory.apply(selectedEntityProperty.get()), /* to update the i18n text when the selection change -> */ selectedEntityProperty);
+    }
+
+    private OperationAction newTabSelectedDocumentLineOperationAction(Function<DocumentLine, ?> operationRequestFactory, Tab tab) {
+        ObjectProperty<DocumentLine> selectedEntityProperty = getTabSelectedEntityProperty(tab);
+        return newOperationAction(() -> operationRequestFactory.apply(selectedEntityProperty.get()), /* to update the i18n text when the selection change -> */ selectedEntityProperty);
+    }
+
+    private OperationAction newTabSelectedMoneyTransferOperationAction(Function<MoneyTransfer, ?> operationRequestFactory, Tab tab) {
+        ObjectProperty<MoneyTransfer> selectedEntityProperty = getTabSelectedEntityProperty(tab);
+        return newOperationAction(() -> operationRequestFactory.apply(selectedEntityProperty.get()), /* to update the i18n text when the selection change -> */ selectedEntityProperty);
+    }
+
+    private OperationAction newTabSelectedMailOperationAction(Function<Mail, ?> operationRequestFactory, Tab tab) {
+        ObjectProperty<Mail> selectedEntityProperty = getTabSelectedEntityProperty(tab);
+        return newOperationAction(() -> operationRequestFactory.apply(selectedEntityProperty.get()), /* to update the i18n text when the selection change -> */ selectedEntityProperty);
+    }
+
+    private <E extends Entity> ObjectProperty<E> getTabSelectedEntityProperty(Tab tab) {
+        return (ObjectProperty<E>) tab.getProperties().get("selectedEntityProperty");
+    }
+
+    private ActionGroup newTabCopyActionGroup(boolean hasSeparators, ReactiveVisualMapper<Entity> visualMapper) {
+        return newActionGroup(null, hasSeparators,
+                newOperationAction(() -> new CopySelectionRequest(visualMapper.getSelectedEntities(), visualMapper.getEntityColumns())),
+                newOperationAction(() -> new CopyAllRequest(visualMapper.getCurrentEntities(), visualMapper.getEntityColumns()))
+        );
+    }
+
 
     /*==================================================================================================================
     ============================================== Static factory methods ==============================================

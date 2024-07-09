@@ -7,6 +7,7 @@ import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.ui.action.ActionGroup;
+import dev.webfx.stack.ui.operation.action.OperationAction;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
@@ -36,6 +37,7 @@ import one.modality.event.client.activity.eventdependent.EventDependentViewDomai
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.YearMonth;
+import java.util.function.Function;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.fields;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
@@ -80,22 +82,22 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
         Node masterView = groupMasterSlaveView.getMasterView();
         setUpContextMenu(ControlUtil.lookupChild(masterView, n -> n instanceof VisualGrid), () -> newActionGroup(
                 newSnapshotActionGroup(),
-                newOperationAction(() -> new SendLetterRequest(pm.getSelectedDocument())),
+                newSelectedDocumentOperationAction(SendLetterRequest::new),
                 newSeparatorActionGroup("Registration",
-                        newOperationAction(() -> new ToggleMarkDocumentAsReadRequest(pm.getSelectedDocument()), /* to update the i18n text when the selection change -> */ pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentAsWillPayRequest(pm.getSelectedDocument()), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleCancelDocumentRequest(pm.getSelectedDocument()), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleConfirmDocumentRequest(pm.getSelectedDocument()), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleFlagDocumentRequest(pm.getSelectedDocument()), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentPassAsReadyRequest(pm.getSelectedDocument()), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new MarkDocumentPassAsUpdatedRequest(pm.getSelectedDocument()), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentAsArrivedRequest(pm.getSelectedDocument()), pm.selectedDocumentProperty())
+                        newSelectedDocumentOperationAction(ToggleMarkDocumentAsReadRequest::new),
+                        newSelectedDocumentOperationAction(ToggleMarkDocumentAsWillPayRequest::new),
+                        newSelectedDocumentOperationAction(ToggleCancelDocumentRequest::new),
+                        newSelectedDocumentOperationAction(ToggleConfirmDocumentRequest::new),
+                        newSelectedDocumentOperationAction(ToggleFlagDocumentRequest::new),
+                        newSelectedDocumentOperationAction(ToggleMarkDocumentPassAsReadyRequest::new),
+                        newSelectedDocumentOperationAction(MarkDocumentPassAsUpdatedRequest::new),
+                        newSelectedDocumentOperationAction(ToggleMarkDocumentAsArrivedRequest::new)
                 ),
                 newSeparatorActionGroup("Security",
-                        newOperationAction(() -> new ToggleMarkDocumentAsUncheckedRequest(pm.getSelectedDocument()), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentAsUnknownRequest(pm.getSelectedDocument()), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentAsKnownRequest(pm.getSelectedDocument()), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentAsVerifiedRequest(pm.getSelectedDocument()), pm.selectedDocumentProperty())
+                        newSelectedDocumentOperationAction(ToggleMarkDocumentAsUncheckedRequest::new),
+                        newSelectedDocumentOperationAction(ToggleMarkDocumentAsUnknownRequest::new),
+                        newSelectedDocumentOperationAction(ToggleMarkDocumentAsKnownRequest::new),
+                        newSelectedDocumentOperationAction(ToggleMarkDocumentAsVerifiedRequest::new)
                 ),
                 newSeparatorActionGroup(
                         newOperationAction(() -> new CopySelectionRequest(masterVisualMapper.getSelectedEntities(), masterVisualMapper.getEntityColumns())),
@@ -115,6 +117,10 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
     private ActionGroup newSnapshotActionGroup() {
         return newActionGroup("Snapshot", true,
                 newOperationAction(() -> new AddNewSnapshotRequest(masterVisualMapper.getSelectedEntities(), pm.getSelectedMaster().getOrganization()),  pm.selectedDocumentProperty()));
+    }
+
+    private OperationAction newSelectedDocumentOperationAction(Function<Document, ?> operationRequestFactory) {
+        return newOperationAction(() -> operationRequestFactory.apply(pm.getSelectedDocument()), /* to update the i18n text when the selection change -> */ pm.selectedDocumentProperty());
     }
 
     @Override
