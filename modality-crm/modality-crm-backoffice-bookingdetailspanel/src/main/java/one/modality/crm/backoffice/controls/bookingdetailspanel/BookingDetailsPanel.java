@@ -115,11 +115,11 @@ public final class BookingDetailsPanel implements
     public Node buildUi() {
         BorderPane container = new BorderPane();
         FlexPane flexButtonBar = new FlexPane(5, 2,
-                ActionBinder.bindButtonToAction(createFlexButton(), newSelectedDocumentOperationAction(ShowBookingEditorRequest::new)),
-                ActionBinder.bindButtonToAction(createFlexButton(), newSelectedDocumentOperationAction(ToggleMarkDocumentAsReadRequest::new)),
-                ActionBinder.bindButtonToAction(createFlexButton(), newSelectedDocumentOperationAction(ToggleMarkDocumentAsWillPayRequest::new)),
-                ActionBinder.bindButtonToAction(createFlexButton(), newSelectedDocumentOperationAction(ToggleCancelDocumentRequest::new)),
-                ActionBinder.bindButtonToAction(createFlexButton(), newSelectedDocumentOperationAction(ToggleMarkDocumentAsArrivedRequest::new))
+                createFlexButton(ShowBookingEditorRequest::new),
+                createFlexButton(ToggleMarkDocumentAsReadRequest::new),
+                createFlexButton(ToggleMarkDocumentAsWillPayRequest::new),
+                createFlexButton(ToggleCancelDocumentRequest::new),
+                createFlexButton(ToggleMarkDocumentAsArrivedRequest::new)
         );
         BorderPane.setMargin(flexButtonBar, new Insets(1, 0, 1, 0));
         container.setTop(flexButtonBar);
@@ -137,11 +137,12 @@ public final class BookingDetailsPanel implements
         return container;
     }
 
-    private static Button createFlexButton() {
+    private Button createFlexButton(Function<Document, ?> operationRequestFactory) {
         Button button = new Button();
         button.setMinWidth(Region.USE_PREF_SIZE);
         button.setMaxWidth(Double.MAX_VALUE);
         button.setCursor(Cursor.HAND);
+        ActionBinder.bindButtonToAction(button, newSelectedDocumentOperationAction(operationRequestFactory));
         return button;
     }
 
@@ -272,7 +273,10 @@ public final class BookingDetailsPanel implements
         columnConstraints.add(cc);
         columnConstraints.add(cc);
 
-        gridPane.getChildren().setAll(createComment("Person request", "request"), createComment("Registration comment", "comment"), createComment("Special needs", "specialNeeds"));
+        gridPane.getChildren().setAll(
+                createComment("Person request", "request"),
+                createComment("Registration comment", "comment"),
+                createComment("Special needs", "specialNeeds"));
 
         return gridPane;
     }
@@ -289,6 +293,7 @@ public final class BookingDetailsPanel implements
         GridPane.setColumnIndex(titledPane, columnIndex++);
         return titledPane;
     }
+
 
     /*==================================================================================================================
     ========================================= OperationAction factory methods ==========================================
@@ -333,7 +338,6 @@ public final class BookingDetailsPanel implements
     private static ReactiveVisualMapper<Entity> getTabVisualMapper(Tab tab) {
         return (ReactiveVisualMapper<Entity>) tab.getProperties().get("visualMapper");
     }
-
 
 
     /*==================================================================================================================
