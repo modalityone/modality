@@ -223,6 +223,7 @@ tr.selected, .grid-row.selected {
 .primary-button {
     color: white;
 }
+
 .primary-button > fx-background {
     background: var(--blue-color);
 }
@@ -242,6 +243,7 @@ tr.selected, .grid-row.selected {
 .danger-button > fx-background {
     background: var(--red-color);
 }
+
 .danger-button:hover > fx-background {
     background: var(--red-color-hover);
 }
@@ -249,9 +251,11 @@ tr.selected, .grid-row.selected {
 .success-button {
     color: white;
 }
+
 .success-button > fx-background {
     background: var(--green-color);
 }
+
 .success-button:hover > fx-background   {
     background: var(--green-color-hover);
 }
@@ -259,9 +263,11 @@ tr.selected, .grid-row.selected {
 .secondary-button {
     color: white;
 }
+
 .secondary-button > fx-background {
     background: var(--grey-color);
 }
+
 .secondary-button:hover > fx-background {
     background: var(--grey-color-hover);
 }
@@ -302,10 +308,6 @@ tr.selected, .grid-row.selected {
 
 .small-text {
     font-size: 9px;
-}
-
-.table-row-cell:selected .font-blue {
-
 }
 
 .table-row-cell:selected > fx-background {

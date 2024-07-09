@@ -125,6 +125,7 @@ HtmlText, HtmlTextEditor {
     -fx-background-color: -blue-color;
     -fx-text-fill: white;
 }
+
 .primary-button:hover {
     -fx-background-color: -blue-color-hover;
 }
@@ -133,6 +134,7 @@ HtmlText, HtmlTextEditor {
     -fx-background-color: -red-color;
     -fx-text-fill: white;
 }
+
 .danger-button:hover {
     -fx-background-color: -red-color-hover;
 }
@@ -184,22 +186,19 @@ HtmlText, HtmlTextEditor {
     -fx-font-weight: bolder;
 }
 
-.title
-{
+.title {
   -fx-font-size: 35px;
 }
-.subtitle
-{
+
+.subtitle {
   -fx-font-size: 22px;
 }
 
-.title3
-{
+.title3 {
   -fx-font-size: 16px;
 }
 
-.title4
-{
+.title4 {
   -fx-font-size: 14px;
 }
 
@@ -211,20 +210,13 @@ HtmlText, HtmlTextEditor {
 }
 
 
-.small-text
-{
+.small-text {
   -fx-font-size: 9px;
-}
-
-.table-row-cell:selected .font-blue
-{
-
 }
 
 .table-row-cell:selected {
   -fx-background: #BBBBBB;
 }
-
 
 .webfx-dates-picker-selected {
     -fx-background-color: #afe7ff;

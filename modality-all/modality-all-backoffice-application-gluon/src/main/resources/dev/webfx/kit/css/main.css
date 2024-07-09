@@ -170,6 +170,7 @@ Text, Label, Button, TextField {
     -fx-background-color: -blue-color;
     -fx-text-fill: white;
 }
+
 .primary-button:hover {
     -fx-background-color: -blue-color-hover;
 }
@@ -178,6 +179,7 @@ Text, Label, Button, TextField {
     -fx-background-color: -red-color;
     -fx-text-fill: white;
 }
+
 .danger-button:hover {
     -fx-background-color: -red-color-hover;
 }
@@ -229,22 +231,19 @@ Text, Label, Button, TextField {
     -fx-font-weight: bolder;
 }
 
-.title
-{
+.title {
   -fx-font-size: 35px;
 }
-.subtitle
-{
+
+.subtitle {
   -fx-font-size: 22px;
 }
 
-.title3
-{
+.title3 {
   -fx-font-size: 16px;
 }
 
-.title4
-{
+.title4 {
   -fx-font-size: 14px;
 }
 
@@ -256,20 +255,13 @@ Text, Label, Button, TextField {
 }
 
 
-.small-text
-{
+.small-text {
   -fx-font-size: 9px;
-}
-
-.table-row-cell:selected .font-blue
-{
-
 }
 
 .table-row-cell:selected {
   -fx-background: #BBBBBB;
 }
-
 
 .webfx-dates-picker-selected {
     -fx-background-color: #afe7ff;
@@ -303,6 +295,12 @@ Text, Label, Button, TextField {
     -fx-background-color: #0096D6FF;
     -fx-background-radius: 10px;
     -fx-text-fill: white;
+}
+
+/*===== javafx@main.css from modality-crm-backoffice-bookingdetailspanel =====*/
+
+.titled-pane .title {
+    -fx-font-size: 14px;
 }
 
 /*===== modality-backoffice-bookings-javafx@main.css from modality-ecommerce-backoffice-activity-bookings-plugin =====*/
