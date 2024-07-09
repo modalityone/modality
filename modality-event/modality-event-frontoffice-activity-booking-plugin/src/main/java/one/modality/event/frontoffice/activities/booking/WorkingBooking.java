@@ -1,6 +1,7 @@
 package one.modality.event.frontoffice.activities.booking;
 
 import dev.webfx.platform.async.Future;
+import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.entity.EntityStore;
 import one.modality.base.shared.entities.*;
@@ -180,15 +181,17 @@ public class WorkingBooking {
     }
 
     public Attendance[] getAttendanceAdded() {
+        List<Attendance> list = new ArrayList<>();
         for (AbstractDocumentEvent currentEvent : documentChanges) {
-            if(currentEvent instanceof AddAttendancesEvent) return ((AddAttendancesEvent) currentEvent).getAttendances();
+            if(currentEvent instanceof AddAttendancesEvent) list.addAll(Arrays.asList(((AddAttendancesEvent) currentEvent).getAttendances()));
         }
-        return null;
+        return list.toArray(new Attendance[0]);
     }
     public Attendance[] getAttendanceRemoved() {
+        List<Attendance> list = new ArrayList<>();
         for (AbstractDocumentEvent currentEvent : documentChanges) {
-            if(currentEvent instanceof RemoveAttendancesEvent) return ((RemoveAttendancesEvent) currentEvent).getAttendances();
+            if(currentEvent instanceof RemoveAttendancesEvent) list.addAll(Arrays.asList(((RemoveAttendancesEvent) currentEvent).getAttendances()));
         }
-        return null;
+        return list.toArray(new Attendance[0]);
     }
 }
