@@ -114,13 +114,15 @@ public final class BookingDetailsPanel implements
     @Override
     public Node buildUi() {
         BorderPane container = new BorderPane();
-        container.setTop(new FlexPane(10, 2,
+        FlexPane flexButtonBar = new FlexPane(5, 2,
                 ActionBinder.bindButtonToAction(createFlexButton(), newSelectedDocumentOperationAction(ShowBookingEditorRequest::new)),
                 ActionBinder.bindButtonToAction(createFlexButton(), newSelectedDocumentOperationAction(ToggleMarkDocumentAsReadRequest::new)),
                 ActionBinder.bindButtonToAction(createFlexButton(), newSelectedDocumentOperationAction(ToggleMarkDocumentAsWillPayRequest::new)),
                 ActionBinder.bindButtonToAction(createFlexButton(), newSelectedDocumentOperationAction(ToggleCancelDocumentRequest::new)),
                 ActionBinder.bindButtonToAction(createFlexButton(), newSelectedDocumentOperationAction(ToggleMarkDocumentAsArrivedRequest::new))
-        ));
+        );
+        BorderPane.setMargin(flexButtonBar, new Insets(1, 0, 1, 0));
+        container.setTop(flexButtonBar);
         container.setCenter(new TabPane(
                 createTab("PersonalDetails", buildPersonalDetailsView()),
                 createFilterTab("Options", "{class: 'DocumentLine', columns: `site,item,dates,lockAllocation,resourceConfiguration,comment,price_isCustom,price_net,price_nonRefundable,price_minDeposit,price_deposit`, where: 'document=${selectedDocument}', orderBy: 'item.family.ord,site..ord,item.ord'}"),
