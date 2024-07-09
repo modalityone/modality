@@ -10,7 +10,6 @@ import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import one.modality.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
 import one.modality.base.backoffice.controls.masterslave.group.GroupMasterSlaveView;
 import one.modality.base.backoffice.operations.entities.generic.AddNewSnapshotRequest;
@@ -80,23 +79,23 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
         // We set up a context menu on the master view
         Node masterView = groupMasterSlaveView.getMasterView();
         setUpContextMenu(ControlUtil.lookupChild(masterView, n -> n instanceof VisualGrid), () -> newActionGroup(
-                newSnapshotActionGroup(container),
-                newOperationAction(() -> new SendLetterRequest(pm.getSelectedDocument(), container)),
+                newSnapshotActionGroup(),
+                newOperationAction(() -> new SendLetterRequest(pm.getSelectedDocument())),
                 newSeparatorActionGroup("Registration",
-                        newOperationAction(() -> new ToggleMarkDocumentAsReadRequest(pm.getSelectedDocument(), container), /* to update the i18n text when the selection change -> */ pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentAsWillPayRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleCancelDocumentRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleConfirmDocumentRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleFlagDocumentRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentPassAsReadyRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new MarkDocumentPassAsUpdatedRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentAsArrivedRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty())
+                        newOperationAction(() -> new ToggleMarkDocumentAsReadRequest(pm.getSelectedDocument()), /* to update the i18n text when the selection change -> */ pm.selectedDocumentProperty()),
+                        newOperationAction(() -> new ToggleMarkDocumentAsWillPayRequest(pm.getSelectedDocument()), pm.selectedDocumentProperty()),
+                        newOperationAction(() -> new ToggleCancelDocumentRequest(pm.getSelectedDocument()), pm.selectedDocumentProperty()),
+                        newOperationAction(() -> new ToggleConfirmDocumentRequest(pm.getSelectedDocument()), pm.selectedDocumentProperty()),
+                        newOperationAction(() -> new ToggleFlagDocumentRequest(pm.getSelectedDocument()), pm.selectedDocumentProperty()),
+                        newOperationAction(() -> new ToggleMarkDocumentPassAsReadyRequest(pm.getSelectedDocument()), pm.selectedDocumentProperty()),
+                        newOperationAction(() -> new MarkDocumentPassAsUpdatedRequest(pm.getSelectedDocument()), pm.selectedDocumentProperty()),
+                        newOperationAction(() -> new ToggleMarkDocumentAsArrivedRequest(pm.getSelectedDocument()), pm.selectedDocumentProperty())
                 ),
                 newSeparatorActionGroup("Security",
-                        newOperationAction(() -> new ToggleMarkDocumentAsUncheckedRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentAsUnknownRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentAsKnownRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentAsVerifiedRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty())
+                        newOperationAction(() -> new ToggleMarkDocumentAsUncheckedRequest(pm.getSelectedDocument()), pm.selectedDocumentProperty()),
+                        newOperationAction(() -> new ToggleMarkDocumentAsUnknownRequest(pm.getSelectedDocument()), pm.selectedDocumentProperty()),
+                        newOperationAction(() -> new ToggleMarkDocumentAsKnownRequest(pm.getSelectedDocument()), pm.selectedDocumentProperty()),
+                        newOperationAction(() -> new ToggleMarkDocumentAsVerifiedRequest(pm.getSelectedDocument()), pm.selectedDocumentProperty())
                 ),
                 newSeparatorActionGroup(
                         newOperationAction(() -> new CopySelectionRequest(masterVisualMapper.getSelectedEntities(), masterVisualMapper.getEntityColumns())),
@@ -113,9 +112,9 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
     }
 
     // TODO move this into an interface
-    private ActionGroup newSnapshotActionGroup(Pane container) {
+    private ActionGroup newSnapshotActionGroup() {
         return newActionGroup("Snapshot", true,
-                newOperationAction(() -> new AddNewSnapshotRequest(masterVisualMapper.getSelectedEntities(), pm.getSelectedMaster().getOrganization(), container),  pm.selectedDocumentProperty()));
+                newOperationAction(() -> new AddNewSnapshotRequest(masterVisualMapper.getSelectedEntities(), pm.getSelectedMaster().getOrganization()),  pm.selectedDocumentProperty()));
     }
 
     @Override

@@ -113,10 +113,10 @@ public final class BookingDetailsPanel implements
     public Node buildUi() {
         BorderPane container = new BorderPane();
         container.setTop(new FlexPane(10, 2,
-                ActionBinder.bindButtonToAction(createFlexButton(), newOperationAction(() -> new ToggleMarkDocumentAsReadRequest(getSelectedDocument(), FXMainFrameDialogArea.getDialogArea()), selectedDocumentProperty, bookingsVisualResultProperty)),
-                ActionBinder.bindButtonToAction(createFlexButton(), newOperationAction(() -> new ToggleMarkDocumentAsWillPayRequest(getSelectedDocument(), FXMainFrameDialogArea.getDialogArea()), selectedDocumentProperty, bookingsVisualResultProperty)),
-                ActionBinder.bindButtonToAction(createFlexButton(), newOperationAction(() -> new ToggleCancelDocumentRequest(getSelectedDocument(), FXMainFrameDialogArea.getDialogArea()), selectedDocumentProperty, bookingsVisualResultProperty)),
-                ActionBinder.bindButtonToAction(createFlexButton(), newOperationAction(() -> new ToggleMarkDocumentAsArrivedRequest(getSelectedDocument(), FXMainFrameDialogArea.getDialogArea()), selectedDocumentProperty, bookingsVisualResultProperty))
+                ActionBinder.bindButtonToAction(createFlexButton(), newOperationAction(() -> new ToggleMarkDocumentAsReadRequest(getSelectedDocument()), selectedDocumentProperty, bookingsVisualResultProperty)),
+                ActionBinder.bindButtonToAction(createFlexButton(), newOperationAction(() -> new ToggleMarkDocumentAsWillPayRequest(getSelectedDocument()), selectedDocumentProperty, bookingsVisualResultProperty)),
+                ActionBinder.bindButtonToAction(createFlexButton(), newOperationAction(() -> new ToggleCancelDocumentRequest(getSelectedDocument()), selectedDocumentProperty, bookingsVisualResultProperty)),
+                ActionBinder.bindButtonToAction(createFlexButton(), newOperationAction(() -> new ToggleMarkDocumentAsArrivedRequest(getSelectedDocument()), selectedDocumentProperty, bookingsVisualResultProperty))
         ));
         container.setCenter(new TabPane(
                 createTab("PersonalDetails", buildPersonalDetailsView()),
@@ -173,11 +173,11 @@ public final class BookingDetailsPanel implements
         switch (i18nKey) {
             case "Options":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new AddNewDocumentLineRequest(getSelectedDocument(), FXMainFrameDialogArea.getDialogArea())),
+                        newOperationAction(() -> new AddNewDocumentLineRequest(getSelectedDocument())),
                         newSeparatorActionGroup(
-                                newOperationAction(() -> new EditDocumentLineRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea())),
-                                newOperationAction(() -> new ToggleCancelDocumentLineRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea()), selectedEntityProperty),
-                                newOperationAction(() -> new DeleteDocumentLineRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea()))
+                                newOperationAction(() -> new EditDocumentLineRequest(get(selectedEntityProperty))),
+                                newOperationAction(() -> new ToggleCancelDocumentLineRequest(get(selectedEntityProperty)), selectedEntityProperty),
+                                newOperationAction(() -> new DeleteDocumentLineRequest(get(selectedEntityProperty)))
                         ),
                         newSeparatorActionGroup(
                                 newOperationAction(() -> new CopySelectionRequest(visualMapper.getSelectedEntities(), visualMapper.getEntityColumns())),
@@ -187,11 +187,11 @@ public final class BookingDetailsPanel implements
                 break;
             case "Payments":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new AddNewPaymentRequest(getSelectedDocument(), FXMainFrameDialogArea.getDialogArea())),
-                        newOperationAction(() -> new AddNewTransferRequest(getSelectedDocument(), FXMainFrameDialogArea.getDialogArea())),
+                        newOperationAction(() -> new AddNewPaymentRequest(getSelectedDocument())),
+                        newOperationAction(() -> new AddNewTransferRequest(getSelectedDocument())),
                         newSeparatorActionGroup(
-                                newOperationAction(() -> new EditPaymentRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea())),
-                                newOperationAction(() -> new DeletePaymentRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea()))
+                                newOperationAction(() -> new EditPaymentRequest(get(selectedEntityProperty))),
+                                newOperationAction(() -> new DeletePaymentRequest(get(selectedEntityProperty)))
                         ),
                         newSeparatorActionGroup(
                                 newOperationAction(() -> new CopySelectionRequest(visualMapper.getSelectedEntities(), visualMapper.getEntityColumns())),
@@ -201,21 +201,21 @@ public final class BookingDetailsPanel implements
                 break;
             case "MultipleBookings":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new MergeMultipleBookingsOptionsRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea())),
-                        newOperationAction(() -> new CancelOtherMultipleBookingsRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea())),
-                        newOperationAction(() -> new GetBackCancelledMultipleBookingsDepositRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea())),
-                        newOperationAction(() -> new ToggleMarkMultipleBookingRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea()))
+                        newOperationAction(() -> new MergeMultipleBookingsOptionsRequest(get(selectedEntityProperty))),
+                        newOperationAction(() -> new CancelOtherMultipleBookingsRequest(get(selectedEntityProperty))),
+                        newOperationAction(() -> new GetBackCancelledMultipleBookingsDepositRequest(get(selectedEntityProperty))),
+                        newOperationAction(() -> new ToggleMarkMultipleBookingRequest(get(selectedEntityProperty)))
                 );
                 break;
             case "Cart":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new OpenBookingCartRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea()))
+                        newOperationAction(() -> new OpenBookingCartRequest(get(selectedEntityProperty)))
                 );
                 break;
             case "Mails":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newOperationAction(() -> new OpenMailRequest(get(selectedEntityProperty), FXMainFrameDialogArea.getDialogArea())),
-                        newOperationAction(() -> new ComposeNewMailRequest(getSelectedDocument(), FXMainFrameDialogArea.getDialogArea())),
+                        newOperationAction(() -> new OpenMailRequest(get(selectedEntityProperty))),
+                        newOperationAction(() -> new ComposeNewMailRequest(getSelectedDocument())),
                         newSeparatorActionGroup(
                                 newOperationAction(() -> new CopySelectionRequest(visualMapper.getSelectedEntities(), visualMapper.getEntityColumns())),
                                 newOperationAction(() -> new CopyAllRequest(visualMapper.getCurrentEntities(), visualMapper.getEntityColumns()))

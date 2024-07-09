@@ -1,10 +1,11 @@
 package one.modality.ecommerce.backoffice.operations.entities.document;
 
-import javafx.scene.layout.Pane;
-import one.modality.base.shared.entities.Document;
+import dev.webfx.platform.async.AsyncFunction;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
-import dev.webfx.platform.async.AsyncFunction;
+import javafx.scene.layout.Pane;
+import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
+import one.modality.base.shared.entities.Document;
 
 public final class SendLetterRequest implements HasOperationCode,
         HasOperationExecutor<SendLetterRequest, Void> {
@@ -13,6 +14,10 @@ public final class SendLetterRequest implements HasOperationCode,
 
     private final Document document;
     private final Pane parentContainer;
+
+    public SendLetterRequest(Document document) {
+        this(document, FXMainFrameDialogArea.getDialogArea());
+    }
 
     public SendLetterRequest(Document document, Pane parentContainer) {
         this.document = document;

@@ -1,10 +1,11 @@
 package one.modality.ecommerce.backoffice.operations.entities.moneytransfer;
 
-import javafx.scene.layout.Pane;
-import one.modality.base.shared.entities.MoneyTransfer;
+import dev.webfx.platform.async.AsyncFunction;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
-import dev.webfx.platform.async.AsyncFunction;
+import javafx.scene.layout.Pane;
+import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
+import one.modality.base.shared.entities.MoneyTransfer;
 
 public final class DeletePaymentRequest implements HasOperationCode,
         HasOperationExecutor<DeletePaymentRequest, Void> {
@@ -13,6 +14,10 @@ public final class DeletePaymentRequest implements HasOperationCode,
 
     private final MoneyTransfer payment;
     private final Pane parentContainer;
+
+    public DeletePaymentRequest(MoneyTransfer payment) {
+        this(payment, FXMainFrameDialogArea.getDialogArea());
+    }
 
     public DeletePaymentRequest(MoneyTransfer payment, Pane parentContainer) {
         this.payment = payment;

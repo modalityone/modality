@@ -2,11 +2,16 @@ package one.modality.ecommerce.backoffice.operations.entities.document.security;
 
 import javafx.scene.layout.Pane;
 import one.modality.base.backoffice.operations.entities.generic.SetEntityFieldRequest;
+import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.Document;
 
 public final class ToggleMarkDocumentAsKnownRequest extends SetEntityFieldRequest {
 
     private final static String OPERATION_CODE = "ToggleMarkDocumentAsKnown";
+
+    public ToggleMarkDocumentAsKnownRequest(Document document) {
+        this(document, FXMainFrameDialogArea.getDialogArea());
+    }
 
     public ToggleMarkDocumentAsKnownRequest(Document document, Pane parentContainer) {
         super(document, "person_unknown,person_known,person_verified", "false,true,false", null, parentContainer);
