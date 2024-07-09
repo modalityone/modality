@@ -72,3 +72,6 @@ MarkAsVerified:
 SendLetter:
   text: "Send a letter"
   graphic: "images/s16/letter.png"
+ShowBookingEditor:
+  text: "[expression: '#' + ref + ' ~ ' + person_name + ' ~ ' + dates]"
+  graphic: "[expression: genderIcon]"

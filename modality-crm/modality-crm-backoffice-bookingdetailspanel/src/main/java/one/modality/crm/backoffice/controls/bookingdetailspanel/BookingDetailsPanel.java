@@ -47,10 +47,7 @@ import one.modality.ecommerce.backoffice.operations.entities.document.multiplebo
 import one.modality.ecommerce.backoffice.operations.entities.document.multiplebookings.GetBackCancelledMultipleBookingsDepositRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.multiplebookings.MergeMultipleBookingsOptionsRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.multiplebookings.ToggleMarkMultipleBookingRequest;
-import one.modality.ecommerce.backoffice.operations.entities.document.registration.ToggleCancelDocumentRequest;
-import one.modality.ecommerce.backoffice.operations.entities.document.registration.ToggleMarkDocumentAsArrivedRequest;
-import one.modality.ecommerce.backoffice.operations.entities.document.registration.ToggleMarkDocumentAsReadRequest;
-import one.modality.ecommerce.backoffice.operations.entities.document.registration.ToggleMarkDocumentAsWillPayRequest;
+import one.modality.ecommerce.backoffice.operations.entities.document.registration.*;
 import one.modality.ecommerce.backoffice.operations.entities.documentline.AddNewDocumentLineRequest;
 import one.modality.ecommerce.backoffice.operations.entities.documentline.DeleteDocumentLineRequest;
 import one.modality.ecommerce.backoffice.operations.entities.documentline.EditDocumentLineRequest;
@@ -68,7 +65,7 @@ public final class BookingDetailsPanel implements
         HasActiveProperty,
         UiBuilder {
 
-    public static final String REQUIRED_FIELDS = "person_firstName,person_lastName,person_age,person_email,person_organization,person_phone,person_cityName,person_country,person_carer1Name,person_carer2Name,event.startDate"; // event.startDate is required for the personal details panel
+    public static final String REQUIRED_FIELDS = "person_firstName,person_lastName,person_age,person_email,person_organization,person_phone,person_cityName,person_country,person_carer1Name,person_carer2Name,event.startDate,dates"; // event.startDate is required for the personal details panel
 
     private final ObjectProperty<Document> selectedDocumentProperty = new SimpleObjectProperty<>() {
         @Override
@@ -118,6 +115,7 @@ public final class BookingDetailsPanel implements
     public Node buildUi() {
         BorderPane container = new BorderPane();
         container.setTop(new FlexPane(10, 2,
+                ActionBinder.bindButtonToAction(createFlexButton(), newSelectedDocumentOperationAction(ShowBookingEditorRequest::new)),
                 ActionBinder.bindButtonToAction(createFlexButton(), newSelectedDocumentOperationAction(ToggleMarkDocumentAsReadRequest::new)),
                 ActionBinder.bindButtonToAction(createFlexButton(), newSelectedDocumentOperationAction(ToggleMarkDocumentAsWillPayRequest::new)),
                 ActionBinder.bindButtonToAction(createFlexButton(), newSelectedDocumentOperationAction(ToggleCancelDocumentRequest::new)),
