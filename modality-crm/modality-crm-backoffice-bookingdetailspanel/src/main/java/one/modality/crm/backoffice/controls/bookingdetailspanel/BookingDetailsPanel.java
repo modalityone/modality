@@ -164,7 +164,6 @@ public final class BookingDetailsPanel implements
         // Setting up the reactive visual mapper
         String classOnly = dqlStatementString.substring(0, dqlStatementString.indexOf(',')) + "}";
         ObjectProperty<Entity> selectedEntityProperty = new SimpleObjectProperty<>();
-        tab.getProperties().put("selectedEntityProperty", selectedEntityProperty); // used by getTabSelectedEntityProperty()
         ReactiveVisualMapper<Entity> visualMapper = ReactiveVisualMapper.createPushReactiveChain()
                 .always(classOnly)
                 .ifNotNullOtherwiseEmptyString(selectedDocumentProperty, document -> Strings.replaceAll(dqlStatementString, "${selectedDocument}", document.getPrimaryKey()))
@@ -174,6 +173,8 @@ public final class BookingDetailsPanel implements
                 .visualizeResultInto(table)
                 .setSelectedEntityHandler(selectedEntityProperty::set)
                 .start();
+        tab.getProperties().put("selectedEntityProperty", selectedEntityProperty); // used by getTabSelectedEntityProperty()
+        tab.getProperties().put("visualMapper", visualMapper); // used by getTabVisualMapper()
 
         Supplier<ActionGroup> contextMenuActionGroupFactory = null;
         switch (i18nKey) {
@@ -185,7 +186,7 @@ public final class BookingDetailsPanel implements
                                 newTabSelectedDocumentLineOperationAction(ToggleCancelDocumentLineRequest::new, tab),
                                 newTabSelectedDocumentLineOperationAction(DeleteDocumentLineRequest::new, tab)
                         ),
-                        newTabCopyActionGroup(true, visualMapper)
+                        newTabCopyActionGroup(true, tab)
                 );
                 break;
             case "Payments":
@@ -196,7 +197,7 @@ public final class BookingDetailsPanel implements
                                 newTabSelectedMoneyTransferOperationAction(EditPaymentRequest::new, tab),
                                 newTabSelectedMoneyTransferOperationAction(DeletePaymentRequest::new, tab)
                         ),
-                        newTabCopyActionGroup(true, visualMapper)
+                        newTabCopyActionGroup(true, tab)
                 );
                 break;
             case "MultipleBookings":
@@ -216,11 +217,11 @@ public final class BookingDetailsPanel implements
                 contextMenuActionGroupFactory = () -> newActionGroup(
                         newTabSelectedMailOperationAction(OpenMailRequest::new, tab),
                         newSelectedDocumentOperationAction(ComposeNewMailRequest::new),
-                        newTabCopyActionGroup(true, visualMapper)
+                        newTabCopyActionGroup(true, tab)
                 );
                 break;
             case "History":
-                contextMenuActionGroupFactory = () -> newTabCopyActionGroup(false, visualMapper);
+                contextMenuActionGroupFactory = () -> newTabCopyActionGroup(false, tab);
                 break;
         }
         if (contextMenuActionGroupFactory != null)
@@ -299,34 +300,40 @@ public final class BookingDetailsPanel implements
 
     private OperationAction newTabSelectedDocumentOperationAction(Function<Document, ?> operationRequestFactory, Tab tab) {
         ObjectProperty<Document> selectedEntityProperty = getTabSelectedEntityProperty(tab);
-        return newOperationAction(() -> operationRequestFactory.apply(selectedEntityProperty.get()), /* to update the i18n text when the selection change -> */ selectedEntityProperty);
+        return newOperationAction(() -> operationRequestFactory.apply(selectedEntityProperty.get()), /* to update the i18n text when the selection change -> */ selectedEntityProperty, getTabVisualMapper(tab).visualResultProperty());
     }
 
     private OperationAction newTabSelectedDocumentLineOperationAction(Function<DocumentLine, ?> operationRequestFactory, Tab tab) {
         ObjectProperty<DocumentLine> selectedEntityProperty = getTabSelectedEntityProperty(tab);
-        return newOperationAction(() -> operationRequestFactory.apply(selectedEntityProperty.get()), /* to update the i18n text when the selection change -> */ selectedEntityProperty);
+        return newOperationAction(() -> operationRequestFactory.apply(selectedEntityProperty.get()), /* to update the i18n text when the selection change -> */ selectedEntityProperty, getTabVisualMapper(tab).visualResultProperty());
     }
 
     private OperationAction newTabSelectedMoneyTransferOperationAction(Function<MoneyTransfer, ?> operationRequestFactory, Tab tab) {
         ObjectProperty<MoneyTransfer> selectedEntityProperty = getTabSelectedEntityProperty(tab);
-        return newOperationAction(() -> operationRequestFactory.apply(selectedEntityProperty.get()), /* to update the i18n text when the selection change -> */ selectedEntityProperty);
+        return newOperationAction(() -> operationRequestFactory.apply(selectedEntityProperty.get()), /* to update the i18n text when the selection change -> */ selectedEntityProperty, getTabVisualMapper(tab).visualResultProperty());
     }
 
     private OperationAction newTabSelectedMailOperationAction(Function<Mail, ?> operationRequestFactory, Tab tab) {
         ObjectProperty<Mail> selectedEntityProperty = getTabSelectedEntityProperty(tab);
-        return newOperationAction(() -> operationRequestFactory.apply(selectedEntityProperty.get()), /* to update the i18n text when the selection change -> */ selectedEntityProperty);
+        return newOperationAction(() -> operationRequestFactory.apply(selectedEntityProperty.get()), /* to update the i18n text when the selection change -> */ selectedEntityProperty, getTabVisualMapper(tab).visualResultProperty());
     }
 
-    private <E extends Entity> ObjectProperty<E> getTabSelectedEntityProperty(Tab tab) {
-        return (ObjectProperty<E>) tab.getProperties().get("selectedEntityProperty");
-    }
-
-    private ActionGroup newTabCopyActionGroup(boolean hasSeparators, ReactiveVisualMapper<Entity> visualMapper) {
+    private ActionGroup newTabCopyActionGroup(boolean hasSeparators, Tab tab) {
+        ReactiveVisualMapper<Entity> visualMapper = getTabVisualMapper(tab);
         return newActionGroup(null, hasSeparators,
                 newOperationAction(() -> new CopySelectionRequest(visualMapper.getSelectedEntities(), visualMapper.getEntityColumns())),
                 newOperationAction(() -> new CopyAllRequest(visualMapper.getCurrentEntities(), visualMapper.getEntityColumns()))
         );
     }
+
+    private static <E extends Entity> ObjectProperty<E> getTabSelectedEntityProperty(Tab tab) {
+        return (ObjectProperty<E>) tab.getProperties().get("selectedEntityProperty");
+    }
+
+    private static ReactiveVisualMapper<Entity> getTabVisualMapper(Tab tab) {
+        return (ReactiveVisualMapper<Entity>) tab.getProperties().get("visualMapper");
+    }
+
 
 
     /*==================================================================================================================
