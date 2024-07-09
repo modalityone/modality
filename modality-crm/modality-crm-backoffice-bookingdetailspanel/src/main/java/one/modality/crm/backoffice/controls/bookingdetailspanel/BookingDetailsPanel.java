@@ -276,7 +276,7 @@ public final class BookingDetailsPanel implements
         gridPane.getChildren().setAll(
                 createComment("Person request", "request"),
                 createComment("Registration comment", "comment"),
-                createComment("Special needs", "specialNeeds"));
+                createComment("Assisted needs", "specialNeeds"));
 
         return gridPane;
     }
