@@ -784,6 +784,8 @@
     <public path="" includes="images/s16/controls/"/>
     <!--=============================< webfx-stack-ui-dialog >==============================-->
     <source path="dev/webfx/stack/ui/dialog"/>
+    <!--===========================< webfx-stack-ui-exceptions >============================-->
+    <source path="dev/webfx/stack/ui/exceptions"/>
     <!--============================< webfx-stack-ui-fxraiser >=============================-->
     <source path="dev/webfx/stack/ui/fxraiser"/>
     <source path="dev/webfx/stack/ui/fxraiser/impl"/>
