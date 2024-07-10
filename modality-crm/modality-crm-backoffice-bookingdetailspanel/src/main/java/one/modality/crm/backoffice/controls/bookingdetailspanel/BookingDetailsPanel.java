@@ -232,8 +232,8 @@ public final class BookingDetailsPanel implements
 
     private Node buildPersonalDetailsView() {
         BorderPane container = detailsPanel.getContainer();
-        if (false)
-            return container;
+        //return container;
+
         ScalePane scalePane = new ScalePane(container);
         scalePane.setCanShrink(false);
         scalePane.setFillWidth(false);
@@ -274,9 +274,9 @@ public final class BookingDetailsPanel implements
         columnConstraints.add(cc);
 
         gridPane.getChildren().setAll(
-                createComment("Person request", "request"),
+                createComment("Person request",       "request"),
                 createComment("Registration comment", "comment"),
-                createComment("Assisted needs", "specialNeeds"));
+                createComment("Assisted needs",       "specialNeeds"));
 
         return gridPane;
     }
@@ -299,28 +299,46 @@ public final class BookingDetailsPanel implements
     ========================================= OperationAction factory methods ==========================================
     ==================================================================================================================*/
 
-    private OperationAction newSelectedDocumentOperationAction(Function<Document, ?> operationRequestFactory) {
-        return newOperationAction(() -> operationRequestFactory.apply(getSelectedDocument()), /* to update the i18n text when the selection change -> */ selectedDocumentProperty, bookingsVisualResultProperty);
+    private OperationAction<?, Object> newSelectedDocumentOperationAction(Function<Document, ?> operationRequestFactory) {
+        return newOperationAction(
+                // Creating a new operation request associated to the selected document each time the user clicks on this action
+                () -> operationRequestFactory.apply(getSelectedDocument()),
+                // Refreshing the graphical properties of this action (through i18n) each time the user selects another document,
+                selectedDocumentProperty,
+                // or when the server refreshes the data, in particular on push notification after that action has been
+                // executed (ex: "Mark as arrived" => arrived=true in database => server push => "Unmark as arrived").
+                bookingsVisualResultProperty
+        );
     }
 
-    private OperationAction newTabSelectedDocumentOperationAction(Function<Document, ?> operationRequestFactory, Tab tab) {
-        ObjectProperty<Document> selectedEntityProperty = getTabSelectedEntityProperty(tab);
-        return newOperationAction(() -> operationRequestFactory.apply(selectedEntityProperty.get()), /* to update the i18n text when the selection change -> */ selectedEntityProperty, getTabVisualMapper(tab).visualResultProperty());
+    // Same but with a selected entity in a tab (note: this method can't be called directly without a cast, that's why other methods follows)
+    private <E extends Entity> OperationAction<?, Object> newTabSelectedEntityOperationAction(Function<E, ?> operationRequestFactory, Tab tab) {
+        ObjectProperty<E> tabSelectedEntityProperty = getTabSelectedEntityProperty(tab);
+        return newOperationAction(
+                // Creating a new operation request associated to the selected entity in the tab each time the user clicks on this action
+                () -> operationRequestFactory.apply(tabSelectedEntityProperty.get()),
+                // Refreshing the graphical properties of this action (through i18n) each time the user selects another entity in this tab,
+                tabSelectedEntityProperty,
+                // or when the server refreshes the data, in particular on push notification after that action has been
+                // executed (ex: "Cancel" => cancelled=true in database => server push => "Uncancel").
+                getTabVisualMapper(tab).visualResultProperty()
+        );
     }
 
-    private OperationAction newTabSelectedDocumentLineOperationAction(Function<DocumentLine, ?> operationRequestFactory, Tab tab) {
-        ObjectProperty<DocumentLine> selectedEntityProperty = getTabSelectedEntityProperty(tab);
-        return newOperationAction(() -> operationRequestFactory.apply(selectedEntityProperty.get()), /* to update the i18n text when the selection change -> */ selectedEntityProperty, getTabVisualMapper(tab).visualResultProperty());
+    private OperationAction<?, Object> newTabSelectedDocumentOperationAction(Function<Document, ?> operationRequestFactory, Tab tab) {
+        return newTabSelectedEntityOperationAction(operationRequestFactory, tab);
     }
 
-    private OperationAction newTabSelectedMoneyTransferOperationAction(Function<MoneyTransfer, ?> operationRequestFactory, Tab tab) {
-        ObjectProperty<MoneyTransfer> selectedEntityProperty = getTabSelectedEntityProperty(tab);
-        return newOperationAction(() -> operationRequestFactory.apply(selectedEntityProperty.get()), /* to update the i18n text when the selection change -> */ selectedEntityProperty, getTabVisualMapper(tab).visualResultProperty());
+    private OperationAction<?, Object> newTabSelectedDocumentLineOperationAction(Function<DocumentLine, ?> operationRequestFactory, Tab tab) {
+        return newTabSelectedEntityOperationAction(operationRequestFactory, tab);
     }
 
-    private OperationAction newTabSelectedMailOperationAction(Function<Mail, ?> operationRequestFactory, Tab tab) {
-        ObjectProperty<Mail> selectedEntityProperty = getTabSelectedEntityProperty(tab);
-        return newOperationAction(() -> operationRequestFactory.apply(selectedEntityProperty.get()), /* to update the i18n text when the selection change -> */ selectedEntityProperty, getTabVisualMapper(tab).visualResultProperty());
+    private OperationAction<?, Object> newTabSelectedMoneyTransferOperationAction(Function<MoneyTransfer, ?> operationRequestFactory, Tab tab) {
+        return newTabSelectedEntityOperationAction(operationRequestFactory, tab);
+    }
+
+    private OperationAction<?, Object> newTabSelectedMailOperationAction(Function<Mail, ?> operationRequestFactory, Tab tab) {
+        return newTabSelectedEntityOperationAction(operationRequestFactory, tab);
     }
 
     private ActionGroup newTabCopyActionGroup(boolean hasSeparators, Tab tab) {
@@ -331,10 +349,12 @@ public final class BookingDetailsPanel implements
         );
     }
 
+    @SuppressWarnings("unchecked")
     private static <E extends Entity> ObjectProperty<E> getTabSelectedEntityProperty(Tab tab) {
         return (ObjectProperty<E>) tab.getProperties().get("selectedEntityProperty");
     }
 
+    @SuppressWarnings("unchecked")
     private static ReactiveVisualMapper<Entity> getTabVisualMapper(Tab tab) {
         return (ReactiveVisualMapper<Entity>) tab.getProperties().get("visualMapper");
     }
