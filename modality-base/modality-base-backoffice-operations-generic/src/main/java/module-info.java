@@ -20,6 +20,7 @@ module modality.base.backoffice.operations.generic {
     requires webfx.stack.orm.reactive.entities;
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.dialog;
+    requires webfx.stack.ui.exceptions;
     requires webfx.stack.ui.operation;
 
     // Exported packages
