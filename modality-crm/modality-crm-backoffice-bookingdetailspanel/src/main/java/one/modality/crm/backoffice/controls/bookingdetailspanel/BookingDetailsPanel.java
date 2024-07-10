@@ -258,9 +258,8 @@ public final class BookingDetailsPanel implements
 
     private Node buildCommentView() {
         GridPane gridPane = new GridPane();
-        gridPane.setHgap(10);
-        //gridPane.setVgap(10);
-        gridPane.setPadding(new Insets(5));
+        gridPane.setHgap(5); // Space between the 3 comments
+        gridPane.setPadding(new Insets(2, 0, 0, 0)); // Small padding on top
 
         RowConstraints rc = new RowConstraints();
         rc.setPercentHeight(100);
