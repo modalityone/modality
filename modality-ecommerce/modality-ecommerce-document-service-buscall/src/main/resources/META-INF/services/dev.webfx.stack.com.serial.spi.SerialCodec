@@ -18,3 +18,7 @@ one.modality.ecommerce.document.service.buscall.serial.MarkDocumentPassAsUpdated
 one.modality.ecommerce.document.service.buscall.serial.SubmitDocumentChangesArgumentSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.SubmitDocumentChangesResultSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.UpdateMoneyTransferEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.security.MarkDocumentAsKnownEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.security.MarkDocumentAsUncheckedEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.security.MarkDocumentAsUnknownEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.security.MarkDocumentAsVerifiedEventSerialCodec

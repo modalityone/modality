@@ -346,11 +346,13 @@
     <!--======================< modality-ecommerce-document-service >=======================-->
     <source path="one/modality/ecommerce/document/service"/>
     <source path="one/modality/ecommerce/document/service/events"/>
+    <source path="one/modality/ecommerce/document/service/events/security"/>
     <source path="one/modality/ecommerce/document/service/spi"/>
     <source path="one/modality/ecommerce/document/service/util"/>
     <!--==================< modality-ecommerce-document-service-buscall >===================-->
     <source path="one/modality/ecommerce/document/service/buscall"/>
     <source path="one/modality/ecommerce/document/service/buscall/serial"/>
+    <source path="one/modality/ecommerce/document/service/buscall/serial/security"/>
     <!--===================< modality-ecommerce-document-service-remote >===================-->
     <source path="one/modality/ecommerce/document/service/spi/impl/remote"/>
     <!--===========================< modality-ecommerce-payment >===========================-->

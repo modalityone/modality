@@ -28,10 +28,10 @@ import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.backoffice.controls.bookingdetailspanel.BookingDetailsPanel;
 import one.modality.ecommerce.backoffice.operations.entities.document.SendLetterRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.registration.*;
-import one.modality.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsKnownRequest;
-import one.modality.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsUncheckedRequest;
-import one.modality.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsUnknownRequest;
-import one.modality.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsVerifiedRequest;
+import one.modality.ecommerce.backoffice.operations.entities.document.security.MarkDocumentAsKnownRequest;
+import one.modality.ecommerce.backoffice.operations.entities.document.security.MarkDocumentAsUncheckedRequest;
+import one.modality.ecommerce.backoffice.operations.entities.document.security.MarkDocumentAsUnknownRequest;
+import one.modality.ecommerce.backoffice.operations.entities.document.security.MarkDocumentAsVerifiedRequest;
 import one.modality.event.client.activity.eventdependent.EventDependentViewDomainActivity;
 
 import java.time.LocalDate;
@@ -94,10 +94,10 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
                         newSelectedDocumentOperationAction(ToggleMarkDocumentAsArrivedRequest::new)
                 ),
                 newSeparatorActionGroup("Security",
-                        newSelectedDocumentOperationAction(ToggleMarkDocumentAsUncheckedRequest::new),
-                        newSelectedDocumentOperationAction(ToggleMarkDocumentAsUnknownRequest::new),
-                        newSelectedDocumentOperationAction(ToggleMarkDocumentAsKnownRequest::new),
-                        newSelectedDocumentOperationAction(ToggleMarkDocumentAsVerifiedRequest::new)
+                        newSelectedDocumentOperationAction(MarkDocumentAsUncheckedRequest::new),
+                        newSelectedDocumentOperationAction(MarkDocumentAsUnknownRequest::new),
+                        newSelectedDocumentOperationAction(MarkDocumentAsKnownRequest::new),
+                        newSelectedDocumentOperationAction(MarkDocumentAsVerifiedRequest::new)
                 ),
                 newSeparatorActionGroup(
                         newOperationAction(() -> new CopySelectionRequest(masterVisualMapper.getSelectedEntities(), masterVisualMapper.getEntityColumns())),
