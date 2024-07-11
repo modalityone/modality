@@ -119,9 +119,14 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                     documentLine = updateStore.getOrCreateEntity(DocumentLine.class, rea.getDocumentLinePrimaryKey());
                     documentLine.setDocument(document);
                 }
-            } else if (e instanceof CancelDocumentEvent) {
+            } else if (e instanceof AbstractSetDocumentFieldsEvent) {
+                AbstractSetDocumentFieldsEvent sdfe = (AbstractSetDocumentFieldsEvent) e;
                 document = updateStore.updateEntity(Document.class, e.getDocumentPrimaryKey());
-                document.setCancelled(true);
+                Object[] fieldIds = sdfe.getFieldIds();
+                Object[] fieldValues = sdfe.getFieldValues();
+                for (int i = 0; i < fieldIds.length; i++) {
+                    document.setFieldValue(fieldIds[i], fieldValues[i]);
+                }
             }
         }
 

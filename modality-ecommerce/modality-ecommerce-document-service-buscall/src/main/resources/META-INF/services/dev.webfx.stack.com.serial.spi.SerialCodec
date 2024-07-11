@@ -4,10 +4,17 @@ one.modality.ecommerce.document.service.buscall.serial.AddDocumentLineEventSeria
 one.modality.ecommerce.document.service.buscall.serial.AddMoneyTransferEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.CancelDocumentEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.DocumentAggregateSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.FlagDocumentEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.LoadPolicyArgumentSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.LoadDocumentArgumentSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.PolicyAggregateSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.RemoveAttendancesEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.MarkDocumentAsArrivedEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.MarkDocumentAsConfirmedEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.MarkDocumentAsReadEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.MarkDocumentAsWillPayEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.MarkDocumentPassAsReadyEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.MarkDocumentPassAsUpdatedEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.SubmitDocumentChangesArgumentSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.SubmitDocumentChangesResultSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.UpdateMoneyTransferEventSerialCodec

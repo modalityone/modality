@@ -14,8 +14,8 @@ public final class SubmitDocumentChangesArgumentSerialCodec extends SerialCodecB
 
     private static final String CODEC_ID = "SubmitDocumentArgument";
 
-    private static final String DOCUMENT_EVENTS_KEY = "documentEvents";
     private static final String HISTORY_COMMENT_KEY = "historyComment";
+    private static final String DOCUMENT_EVENTS_KEY = "documentEvents";
 
     public SubmitDocumentChangesArgumentSerialCodec() {
         super(SubmitDocumentChangesArgument.class, CODEC_ID);
@@ -23,15 +23,15 @@ public final class SubmitDocumentChangesArgumentSerialCodec extends SerialCodecB
 
     @Override
     public void encode(SubmitDocumentChangesArgument arg, AstObject serial) {
-        encodeArray( serial, DOCUMENT_EVENTS_KEY, arg.getDocumentEvents());
         encodeString(serial, HISTORY_COMMENT_KEY, arg.getHistoryComment());
+        encodeArray( serial, DOCUMENT_EVENTS_KEY, arg.getDocumentEvents());
     }
 
     @Override
     public SubmitDocumentChangesArgument decode(ReadOnlyAstObject serial) {
         return new SubmitDocumentChangesArgument(
-                decodeArray( serial, DOCUMENT_EVENTS_KEY, AbstractDocumentEvent.class),
-                decodeString(serial, HISTORY_COMMENT_KEY)
+                decodeString(serial, HISTORY_COMMENT_KEY),
+                decodeArray( serial, DOCUMENT_EVENTS_KEY, AbstractDocumentEvent.class)
         );
     }
 

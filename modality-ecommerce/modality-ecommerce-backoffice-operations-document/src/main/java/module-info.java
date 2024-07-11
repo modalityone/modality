@@ -11,6 +11,7 @@ module modality.ecommerce.backoffice.operations.document {
     requires modality.base.client.mainframe.dialogarea.fx;
     requires modality.base.shared.entities;
     requires modality.crm.client.personaldetails;
+    requires modality.ecommerce.document.service;
     requires webfx.kit.launcher;
     requires webfx.platform.async;
     requires webfx.stack.orm.entity;

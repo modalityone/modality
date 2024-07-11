@@ -108,7 +108,7 @@ public class WorkingBooking {
         if (document == null || document.isNew()) {
             cancelChanges();
         } else {
-            integrateNewDocumentEvent(new CancelDocumentEvent(document));
+            integrateNewDocumentEvent(new CancelDocumentEvent(document, true));
             lastestDocumentAggregate = null;
         }
     }
@@ -157,8 +157,7 @@ public class WorkingBooking {
 
         return DocumentService.submitDocumentChanges(
                 new SubmitDocumentChangesArgument(
-                        documentChanges.toArray(new AbstractDocumentEvent[0]),
-                        historyComment
+                        historyComment, documentChanges.toArray(new AbstractDocumentEvent[0])
                 )).map(result -> {
                     documentPrimaryKey = result.getDocumentPrimaryKey();
                     cancelChanges(); // Because successfully submitted

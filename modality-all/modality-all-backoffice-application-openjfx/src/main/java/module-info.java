@@ -8,6 +8,8 @@ module modality.all.backoffice.application.openjfx {
     // Direct dependencies modules
     requires javafx.web;
     requires modality.all.backoffice.application;
+    requires modality.ecommerce.document.service.buscall;
+    requires modality.ecommerce.document.service.remote;
     requires modality.ecommerce.payment.buscall;
     requires modality.ecommerce.payment.remote;
     requires webfx.extras.filepicker.openjfx;

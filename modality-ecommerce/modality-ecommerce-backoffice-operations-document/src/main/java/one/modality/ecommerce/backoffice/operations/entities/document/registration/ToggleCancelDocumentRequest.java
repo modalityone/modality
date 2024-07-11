@@ -1,11 +1,11 @@
 package one.modality.ecommerce.backoffice.operations.entities.document.registration;
 
+import dev.webfx.platform.async.AsyncFunction;
 import javafx.scene.layout.Pane;
-import one.modality.base.backoffice.operations.entities.generic.SetEntityFieldRequest;
 import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.Document;
 
-public final class ToggleCancelDocumentRequest extends SetEntityFieldRequest {
+public final class ToggleCancelDocumentRequest extends AbstractSetDocumentFieldsRequest<ToggleCancelDocumentRequest> {
 
     private final static String OPERATION_CODE = "ToggleCancelDocument";
 
@@ -14,7 +14,7 @@ public final class ToggleCancelDocumentRequest extends SetEntityFieldRequest {
     }
 
     public ToggleCancelDocumentRequest(Document document, Pane parentContainer) {
-        super(document, "cancelled,read", "!cancelled,passReady?false:true", "Are you sure you want to cancel this booking?", parentContainer);
+        super(document, parentContainer);
     }
 
     @Override
@@ -22,4 +22,8 @@ public final class ToggleCancelDocumentRequest extends SetEntityFieldRequest {
         return OPERATION_CODE;
     }
 
+    @Override
+    public AsyncFunction<ToggleCancelDocumentRequest, Void> getOperationExecutor() {
+        return ToggleCancelDocumentExecutor::executeRequest;
+    }
 }
