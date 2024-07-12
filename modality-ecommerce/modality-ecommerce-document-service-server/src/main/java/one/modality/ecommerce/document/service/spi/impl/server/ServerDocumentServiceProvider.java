@@ -75,8 +75,10 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                     List<AbstractDocumentEvent> documentEvents = new ArrayList<>();
                     historyList.forEach(history -> {
                         ReadOnlyAstArray astArray = AST.parseArray(history.getChanges(), "json");
-                        AbstractDocumentEvent[] events = SerialCodecManager.decodeAstArrayToJavaArray(astArray, AbstractDocumentEvent.class);
-                        documentEvents.addAll(Arrays.asList(events));
+                        if (astArray != null) { // This case may come from KBS2
+                            AbstractDocumentEvent[] events = SerialCodecManager.decodeAstArrayToJavaArray(astArray, AbstractDocumentEvent.class);
+                            documentEvents.addAll(Arrays.asList(events));
+                        }
                     });
                     return new DocumentAggregate(documentEvents);
                 });
