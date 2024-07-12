@@ -10,9 +10,15 @@ GetBackCancelledDeposit:
 MergeOptionsFromOtherNotCancelledBookings:
   text: "Merge options from other not cancelled bookings"
   graphic: "images/s16/actions/merge.png"
-UnmarkAsMultipleBooking:
-  text: "Unmark as multiple booking"
+MarkMultipleBooking:
+  text: "Mark as multiple booking"
   graphic: "images/s16/multipleBookings/redCross.png"
+MarkNotMultipleBooking:
+  text: "Unmark as multiple booking"
+  graphic: "[MarkMultipleBooking]"
+ToggleMarkNotMultipleBooking:
+  text: "[expression: multipleBooking = null ? '[MarkMultipleBooking]' : '[MarkNotMultipleBooking]' ]"
+  graphic: "[expression: multipleBooking = null ? '[MarkMultipleBooking]' : '[MarkNotMultipleBooking]' ]"
 PassUpdated:
   text: "Pass updated"
   graphic: "images/s16/actions/passUpdated.png"
@@ -27,9 +33,19 @@ ToggleCancel:
   graphic: "[Cancel]"
 Confirm:
   text: "Confirm"
+Unconfirm:
+  text: "Unconfirm"
+ToggleConfirm:
+  text: "[expression: confirmed ? '[Unconfirm]' : '[Confirm]' ]"
 Flag:
   text: "Flag"
   graphic: "images/s16/actions/flag.png"
+Unflag:
+  text: "Unflag"
+  graphic: "[Flag]"
+ToggleFlag:
+  text: "[expression: flagged ? '[Unflag]' : '[Flag]' ]"
+  graphic: "[Flag]"
 MarkAsArrived:
   text: "Mark as arrived"
   graphic: "images/s16/actions/markAsArrived.png"
@@ -57,6 +73,12 @@ ToggleWillPay:
 PassReady:
   text: "Pass ready"
   graphic: "images/s16/actions/passReady.png"
+PassNotReady:
+  text: "Pass not ready"
+  graphic: "[PassReady]"
+TogglePassReady:
+  text: "[expression: passReady ? '[PassNotReady]' : '[PassReady]' ]"
+  graphic: "[PassReady]"
 MarkAsKnown:
   text: "Mark as known"
   graphic: "images/s16/security/known.png"

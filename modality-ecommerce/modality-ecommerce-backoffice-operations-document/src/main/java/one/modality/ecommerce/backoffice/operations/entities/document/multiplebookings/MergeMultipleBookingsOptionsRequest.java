@@ -1,11 +1,12 @@
 package one.modality.ecommerce.backoffice.operations.entities.document.multiplebookings;
 
+import dev.webfx.platform.async.AsyncFunction;
 import javafx.scene.layout.Pane;
-import one.modality.base.backoffice.operations.entities.generic.SetEntityFieldRequest;
 import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.Document;
+import one.modality.ecommerce.backoffice.operations.entities.document.registration.AbstractSetDocumentFieldsRequest;
 
-public final class MergeMultipleBookingsOptionsRequest extends SetEntityFieldRequest {
+public final class MergeMultipleBookingsOptionsRequest extends AbstractSetDocumentFieldsRequest<MergeMultipleBookingsOptionsRequest> {
 
     private final static String OPERATION_CODE = "MergeMultipleBookingsOptions";
 
@@ -14,11 +15,16 @@ public final class MergeMultipleBookingsOptionsRequest extends SetEntityFieldReq
     }
 
     public MergeMultipleBookingsOptionsRequest(Document document, Pane parentContainer) {
-        super(document, "triggerMergeFromOtherMultipleBookings", "true", "Please confirm", parentContainer);
+        super(document, parentContainer);
     }
 
     @Override
     public Object getOperationCode() {
         return OPERATION_CODE;
+    }
+
+    @Override
+    public AsyncFunction<MergeMultipleBookingsOptionsRequest, Void> getOperationExecutor() {
+        return MergeMultipleBookingsOptionsExecutor::executeRequest;
     }
 }

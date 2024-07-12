@@ -29,7 +29,9 @@ public final class DialogExecutorUtil {
             executing[0] = true;
             executor.get()
                 .onFailure(cause -> {
-                    reportException(dialogCallback, parentContainer, cause);
+                    reportException(dialogCallback, parentContainer, cause); // Actually just print stack trace for now...
+                    if (dialogCallback != null) // So we close the window
+                        dialogCallback.closeDialog();
                     promise.fail(cause);
                 })
                 .onSuccess(b -> {

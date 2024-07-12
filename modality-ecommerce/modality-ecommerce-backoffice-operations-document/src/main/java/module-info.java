@@ -20,7 +20,6 @@ module modality.ecommerce.backoffice.operations.document {
     requires webfx.stack.ui.operation;
 
     // Exported packages
-    exports one.modality.ecommerce.backoffice.operations.entities.document;
     exports one.modality.ecommerce.backoffice.operations.entities.document.cart;
     exports one.modality.ecommerce.backoffice.operations.entities.document.multiplebookings;
     exports one.modality.ecommerce.backoffice.operations.entities.document.registration;

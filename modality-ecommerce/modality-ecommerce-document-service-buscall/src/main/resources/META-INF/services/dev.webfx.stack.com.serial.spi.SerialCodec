@@ -5,6 +5,10 @@ one.modality.ecommerce.document.service.buscall.serial.book.AddMoneyTransferEven
 one.modality.ecommerce.document.service.buscall.serial.book.CancelDocumentEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.book.RemoveAttendancesEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.gateway.UpdateMoneyTransferEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.multiplebookings.CancelOtherMultipleBookingsEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.multiplebookings.GetBackCancelledMultipleBookingsDepositEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.multiplebookings.MarkNotMultipleBookingEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.multiplebookings.MergeMultipleBookingsOptionsEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.registration.FlagDocumentEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.registration.MarkDocumentAsArrivedEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.registration.ConfirmDocumentEventSerialCodec

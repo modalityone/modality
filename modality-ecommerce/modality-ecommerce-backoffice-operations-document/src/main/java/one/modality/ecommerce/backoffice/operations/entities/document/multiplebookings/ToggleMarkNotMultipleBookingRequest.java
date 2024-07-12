@@ -6,15 +6,15 @@ import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.Document;
 import one.modality.ecommerce.backoffice.operations.entities.document.registration.AbstractSetDocumentFieldsRequest;
 
-public final class CancelOtherMultipleBookingsRequest extends AbstractSetDocumentFieldsRequest<CancelOtherMultipleBookingsRequest> {
+public final class ToggleMarkNotMultipleBookingRequest extends AbstractSetDocumentFieldsRequest<ToggleMarkNotMultipleBookingRequest> {
 
-    private final static String OPERATION_CODE = "CancelOtherMultipleBookings";
+    private final static String OPERATION_CODE = "ToggleMarkNotMultipleBooking";
 
-    public CancelOtherMultipleBookingsRequest(Document document) {
+    public ToggleMarkNotMultipleBookingRequest(Document document) {
         this(document, FXMainFrameDialogArea.getDialogArea());
     }
 
-    public CancelOtherMultipleBookingsRequest(Document document, Pane parentContainer) {
+    public ToggleMarkNotMultipleBookingRequest(Document document, Pane parentContainer) {
         super(document, parentContainer);
     }
 
@@ -24,8 +24,7 @@ public final class CancelOtherMultipleBookingsRequest extends AbstractSetDocumen
     }
 
     @Override
-    public AsyncFunction<CancelOtherMultipleBookingsRequest, Void> getOperationExecutor() {
-        return CancelOtherMultipleBookingsExecutor::executeRequest;
+    public AsyncFunction<ToggleMarkNotMultipleBookingRequest, Void> getOperationExecutor() {
+        return ToggleMarkNotMultipleBookingExecutor::executeRequest;
     }
-
 }

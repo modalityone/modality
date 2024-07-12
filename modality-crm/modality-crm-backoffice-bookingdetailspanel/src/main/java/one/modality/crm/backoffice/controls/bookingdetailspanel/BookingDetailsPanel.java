@@ -46,7 +46,7 @@ import one.modality.ecommerce.backoffice.operations.entities.document.cart.OpenB
 import one.modality.ecommerce.backoffice.operations.entities.document.multiplebookings.CancelOtherMultipleBookingsRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.multiplebookings.GetBackCancelledMultipleBookingsDepositRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.multiplebookings.MergeMultipleBookingsOptionsRequest;
-import one.modality.ecommerce.backoffice.operations.entities.document.multiplebookings.ToggleMarkMultipleBookingRequest;
+import one.modality.ecommerce.backoffice.operations.entities.document.multiplebookings.ToggleMarkNotMultipleBookingRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.registration.*;
 import one.modality.ecommerce.backoffice.operations.entities.documentline.AddNewDocumentLineRequest;
 import one.modality.ecommerce.backoffice.operations.entities.documentline.DeleteDocumentLineRequest;
@@ -206,7 +206,8 @@ public final class BookingDetailsPanel implements
                         newTabSelectedDocumentOperationAction(MergeMultipleBookingsOptionsRequest::new, tab),
                         newTabSelectedDocumentOperationAction(CancelOtherMultipleBookingsRequest::new, tab),
                         newTabSelectedDocumentOperationAction(GetBackCancelledMultipleBookingsDepositRequest::new, tab),
-                        newTabSelectedDocumentOperationAction(ToggleMarkMultipleBookingRequest::new, tab)
+                        newSeparatorAction(),
+                        newTabSelectedDocumentOperationAction(ToggleMarkNotMultipleBookingRequest::new, tab)
                 );
                 break;
             case "Cart":

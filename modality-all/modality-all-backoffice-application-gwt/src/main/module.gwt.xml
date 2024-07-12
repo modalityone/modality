@@ -331,7 +331,6 @@
     <source path="one/modality/ecommerce/backoffice/activities/statistics/routing"/>
     <source path="one/modality/ecommerce/backoffice/operations/routes/statistics"/>
     <!--===============< modality-ecommerce-backoffice-operations-document >================-->
-    <source path="one/modality/ecommerce/backoffice/operations/entities/document"/>
     <source path="one/modality/ecommerce/backoffice/operations/entities/document/cart"/>
     <source path="one/modality/ecommerce/backoffice/operations/entities/document/multiplebookings"/>
     <source path="one/modality/ecommerce/backoffice/operations/entities/document/registration"/>
@@ -348,6 +347,7 @@
     <source path="one/modality/ecommerce/document/service/events"/>
     <source path="one/modality/ecommerce/document/service/events/book"/>
     <source path="one/modality/ecommerce/document/service/events/gateway"/>
+    <source path="one/modality/ecommerce/document/service/events/multiplebookings"/>
     <source path="one/modality/ecommerce/document/service/events/registration"/>
     <source path="one/modality/ecommerce/document/service/events/security"/>
     <source path="one/modality/ecommerce/document/service/spi"/>
@@ -357,6 +357,7 @@
     <source path="one/modality/ecommerce/document/service/buscall/serial"/>
     <source path="one/modality/ecommerce/document/service/buscall/serial/book"/>
     <source path="one/modality/ecommerce/document/service/buscall/serial/gateway"/>
+    <source path="one/modality/ecommerce/document/service/buscall/serial/multiplebookings"/>
     <source path="one/modality/ecommerce/document/service/buscall/serial/registration"/>
     <source path="one/modality/ecommerce/document/service/buscall/serial/security"/>
     <!--===================< modality-ecommerce-document-service-remote >===================-->
