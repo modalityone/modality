@@ -1,11 +1,11 @@
 package one.modality.ecommerce.backoffice.operations.entities.documentline;
 
+import dev.webfx.platform.async.AsyncFunction;
 import javafx.scene.layout.Pane;
-import one.modality.base.backoffice.operations.entities.generic.ToggleBooleanEntityFieldRequest;
 import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.DocumentLine;
 
-public final class ToggleCancelDocumentLineRequest extends ToggleBooleanEntityFieldRequest {
+public final class ToggleCancelDocumentLineRequest extends AbstractSetDocumentLineFieldsRequest<ToggleCancelDocumentLineRequest> {
 
     private final static String OPERATION_CODE = "ToggleCancelDocumentLine";
 
@@ -14,11 +14,16 @@ public final class ToggleCancelDocumentLineRequest extends ToggleBooleanEntityFi
     }
 
     public ToggleCancelDocumentLineRequest(DocumentLine documentLine, Pane parentContainer) {
-        super (documentLine, "cancelled", "Are you sure you want to cancel this option?", parentContainer);
+        super (documentLine, parentContainer);
     }
 
     @Override
     public Object getOperationCode() {
         return OPERATION_CODE;
+    }
+
+    @Override
+    public AsyncFunction<ToggleCancelDocumentLineRequest, Void> getOperationExecutor() {
+        return ToggleCancelDocumentLineExecutor::executeRequest;
     }
 }

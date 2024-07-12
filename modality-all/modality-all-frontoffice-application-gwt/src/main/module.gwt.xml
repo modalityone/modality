@@ -232,6 +232,7 @@
     <source path="one/modality/ecommerce/document/service/events/gateway"/>
     <source path="one/modality/ecommerce/document/service/events/multiplebookings"/>
     <source path="one/modality/ecommerce/document/service/events/registration"/>
+    <source path="one/modality/ecommerce/document/service/events/registration/line"/>
     <source path="one/modality/ecommerce/document/service/events/security"/>
     <source path="one/modality/ecommerce/document/service/spi"/>
     <source path="one/modality/ecommerce/document/service/util"/>
@@ -242,6 +243,7 @@
     <source path="one/modality/ecommerce/document/service/buscall/serial/gateway"/>
     <source path="one/modality/ecommerce/document/service/buscall/serial/multiplebookings"/>
     <source path="one/modality/ecommerce/document/service/buscall/serial/registration"/>
+    <source path="one/modality/ecommerce/document/service/buscall/serial/registration/line"/>
     <source path="one/modality/ecommerce/document/service/buscall/serial/security"/>
     <!--===================< modality-ecommerce-document-service-remote >===================-->
     <source path="one/modality/ecommerce/document/service/spi/impl/remote"/>

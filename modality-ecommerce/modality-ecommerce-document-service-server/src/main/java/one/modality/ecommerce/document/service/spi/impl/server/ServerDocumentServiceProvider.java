@@ -21,6 +21,7 @@ import one.modality.ecommerce.document.service.events.book.AddAttendancesEvent;
 import one.modality.ecommerce.document.service.events.book.AddDocumentEvent;
 import one.modality.ecommerce.document.service.events.book.AddDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.book.RemoveAttendancesEvent;
+import one.modality.ecommerce.document.service.events.registration.line.RemoveDocumentLineEvent;
 import one.modality.ecommerce.document.service.spi.DocumentServiceProvider;
 import one.modality.ecommerce.history.server.HistoryRecorder;
 
@@ -103,6 +104,12 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                 documentLine.setDocument(document = updateStore.getOrCreateEntity(Document.class, adle.getDocumentPrimaryKey()));
                 documentLine.setSite(adle.getSitePrimaryKey());
                 documentLine.setItem(adle.getItemPrimaryKey());
+            } else if (e instanceof RemoveDocumentLineEvent) {
+                RemoveDocumentLineEvent rdle = (RemoveDocumentLineEvent) e;
+                documentLine = updateStore.getOrCreateEntity(DocumentLine.class, rdle.getDocumentLinePrimaryKey());
+                updateStore.deleteEntity(documentLine);
+                if (document == null)
+                    document = updateStore.getOrCreateEntity(Document.class, rdle.getDocumentPrimaryKey());
             } else if (e instanceof AddAttendancesEvent) {
                 AddAttendancesEvent aae = (AddAttendancesEvent) e;
                 documentLine = updateStore.getOrCreateEntity(DocumentLine.class, aae.getDocumentLinePrimaryKey());
@@ -114,15 +121,15 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                     attendance.setScheduledItem(scheduledItemsPrimaryKeys[i]);
                 }
             } else if (e instanceof RemoveAttendancesEvent) {
-                RemoveAttendancesEvent rea = (RemoveAttendancesEvent) e;
-                Object[] attendancesPrimaryKeys = rea.getAttendancesPrimaryKeys();
+                RemoveAttendancesEvent rae = (RemoveAttendancesEvent) e;
+                Object[] attendancesPrimaryKeys = rae.getAttendancesPrimaryKeys();
                 for (Object attendancesPrimaryKey : attendancesPrimaryKeys) {
                     updateStore.deleteEntity(Attendance.class, attendancesPrimaryKey);
                 }
                 if (document == null)
-                    document = updateStore.getOrCreateEntity(Document.class, rea.getDocumentPrimaryKey());
+                    document = updateStore.getOrCreateEntity(Document.class, rae.getDocumentPrimaryKey());
                 if (documentLine == null) {
-                    documentLine = updateStore.getOrCreateEntity(DocumentLine.class, rea.getDocumentLinePrimaryKey());
+                    documentLine = updateStore.getOrCreateEntity(DocumentLine.class, rae.getDocumentLinePrimaryKey());
                     documentLine.setDocument(document);
                 }
             } else if (e instanceof AbstractSetDocumentFieldsEvent) {
@@ -132,6 +139,16 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                 Object[] fieldValues = sdfe.getFieldValues();
                 for (int i = 0; i < fieldIds.length; i++) {
                     document.setFieldValue(fieldIds[i], fieldValues[i]);
+                }
+            } else if (e instanceof AbstractSetDocumentLineFieldsEvent) {
+                AbstractSetDocumentLineFieldsEvent sdlfe = (AbstractSetDocumentLineFieldsEvent) e;
+                documentLine = updateStore.updateEntity(DocumentLine.class, sdlfe.getDocumentLinePrimaryKey());
+                if (document == null)
+                    document = updateStore.getOrCreateEntity(Document.class, sdlfe.getDocumentPrimaryKey());
+                Object[] fieldIds = sdlfe.getFieldIds();
+                Object[] fieldValues = sdlfe.getFieldValues();
+                for (int i = 0; i < fieldIds.length; i++) {
+                    documentLine.setFieldValue(fieldIds[i], fieldValues[i]);
                 }
             }
         }

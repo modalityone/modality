@@ -48,6 +48,12 @@
         </dependency>
 
         <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-ecommerce-document-service</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-async</artifactId>
             <version>0.1.0-SNAPSHOT</version>
@@ -63,6 +69,12 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-util</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-orm-entity</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
@@ -70,12 +82,6 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-orm-entity-controls</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-ui-controls</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

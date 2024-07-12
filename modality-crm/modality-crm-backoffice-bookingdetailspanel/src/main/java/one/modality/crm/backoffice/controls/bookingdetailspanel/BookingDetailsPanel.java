@@ -181,9 +181,9 @@ public final class BookingDetailsPanel implements
         switch (i18nKey) {
             case "Options":
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                        newSelectedDocumentOperationAction(AddNewDocumentLineRequest::new),
+                        newSelectedDocumentOperationAction(AddNewDocumentLineRequest::new), // Executor not implemented yet
                         newSeparatorActionGroup(
-                                newTabSelectedDocumentLineOperationAction(EditDocumentLineRequest::new, tab),
+                                newTabSelectedDocumentLineOperationAction(EditDocumentLineRequest::new, tab), // PropertySheet not using DocumentService
                                 newTabSelectedDocumentLineOperationAction(ToggleCancelDocumentLineRequest::new, tab),
                                 newTabSelectedDocumentLineOperationAction(DeleteDocumentLineRequest::new, tab)
                         ),

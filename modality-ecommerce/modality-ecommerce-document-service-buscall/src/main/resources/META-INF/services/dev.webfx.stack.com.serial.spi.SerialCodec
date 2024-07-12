@@ -9,6 +9,8 @@ one.modality.ecommerce.document.service.buscall.serial.multiplebookings.CancelOt
 one.modality.ecommerce.document.service.buscall.serial.multiplebookings.GetBackCancelledMultipleBookingsDepositEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.multiplebookings.MarkNotMultipleBookingEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.multiplebookings.MergeMultipleBookingsOptionsEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.registration.line.CancelDocumentLineEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.registration.line.RemoveDocumentLineEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.registration.FlagDocumentEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.registration.MarkDocumentAsArrivedEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.registration.ConfirmDocumentEventSerialCodec

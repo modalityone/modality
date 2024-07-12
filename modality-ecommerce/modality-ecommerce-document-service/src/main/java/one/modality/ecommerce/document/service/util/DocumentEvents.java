@@ -7,7 +7,7 @@ import one.modality.ecommerce.document.service.events.*;
 import one.modality.ecommerce.document.service.events.book.AddAttendancesEvent;
 import one.modality.ecommerce.document.service.events.book.AddDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.book.RemoveAttendancesEvent;
-import one.modality.ecommerce.document.service.events.registration.RemoveDocumentLineEvent;
+import one.modality.ecommerce.document.service.events.registration.line.RemoveDocumentLineEvent;
 
 import java.util.Iterator;
 import java.util.List;
