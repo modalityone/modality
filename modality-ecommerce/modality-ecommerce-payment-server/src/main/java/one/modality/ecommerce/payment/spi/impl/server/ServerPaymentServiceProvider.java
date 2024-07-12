@@ -6,6 +6,7 @@ import dev.webfx.platform.util.Numbers;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.session.state.ThreadLocalStateHolder;
 import one.modality.base.shared.entities.GatewayParameter;
 import one.modality.base.shared.entities.Method;
 import one.modality.base.shared.entities.MoneyTransfer;
@@ -142,24 +143,33 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
         boolean pending = argument.isPendingStatus();
         boolean successful = argument.isSuccessfulStatus();
         String errorMessage = argument.getErrorMessage();
-        moneyTransfer.setPending(pending);
-        moneyTransfer.setSuccessful(successful);
-        if (gatewayTransactionRef != null)
-            moneyTransfer.setTransactionRef(gatewayTransactionRef);
-        if (gatewayStatus != null)
-            moneyTransfer.setStatus(gatewayStatus);
-        if (gatewayResponse != null)
-            moneyTransfer.setGatewayResponse(gatewayResponse);
-        if (errorMessage != null)
-            moneyTransfer.setComment(errorMessage);
+        Future<MoneyTransfer> loadingFuture;
+        Object gatewayUserId = ThreadLocalStateHolder.getUserId(); // Capturing gateway userId because we may have an async call
+        if (!pending && successful) { // If the payment is successful, we check if it was pending before (to adjust the history comment)
+            loadingFuture = moneyTransfer.onExpressionLoaded("pending");
+        } else {
+            loadingFuture = Future.succeededFuture(moneyTransfer);
+        }
+        return loadingFuture.compose(x -> {
+            boolean wasPending = x.isPending();
+            moneyTransfer.setPending(pending);
+            moneyTransfer.setSuccessful(successful);
+            if (gatewayTransactionRef != null)
+                moneyTransfer.setTransactionRef(gatewayTransactionRef);
+            if (gatewayStatus != null)
+                moneyTransfer.setStatus(gatewayStatus);
+            if (gatewayResponse != null)
+                moneyTransfer.setGatewayResponse(gatewayResponse);
+            if (errorMessage != null)
+                moneyTransfer.setComment(errorMessage);
 
-        String historyComment =
-                !pending && successful  ?   "Stated payment is successful" :
-                !pending && !successful ?   "Stated payment is failed" :
-                pending && successful   ?   "Stated payment is authorised (not yet completed)" :
-                /*pending && !successful?*/ "Stated payment is pending";
+            String historyComment =
+                !pending && successful  ?   (wasPending ? "Processed payment successfully" : "Reported payment is successful") :
+                !pending && !successful ?   "Reported payment is failed" :
+                pending && successful   ?   "Reported payment is authorised (not yet completed)" :
+                /*pending && !successful?*/ "Reported payment is pending";
 
-        return HistoryRecorder.preparePaymentHistoryBeforeSubmit(historyComment, moneyTransfer)
+            return HistoryRecorder.preparePaymentHistoryBeforeSubmit(historyComment, moneyTransfer, gatewayUserId)
                 .compose(history ->
                     updateStore.submitChanges()
                         .compose(submitResultBatch -> { // Checking that something happened in the database
@@ -169,9 +179,10 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                             return Future.succeededFuture((Void) null);
                         })
                         .onSuccess(ignored -> // Completing the history recording (changes column with resolved primary keys)
-                            HistoryRecorder.completeDocumentHistoryAfterSubmit(history, new UpdateMoneyTransferEvent(moneyTransfer))
+                                HistoryRecorder.completeDocumentHistoryAfterSubmit(history, new UpdateMoneyTransferEvent(moneyTransfer))
                         )
                 );
+        });
     }
 
 }

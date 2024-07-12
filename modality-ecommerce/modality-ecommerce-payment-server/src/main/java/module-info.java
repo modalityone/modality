@@ -16,6 +16,7 @@ module modality.ecommerce.payment.server {
     requires webfx.platform.util;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.entity;
+    requires webfx.stack.session.state;
 
     // Exported packages
     exports one.modality.ecommerce.payment.spi.impl.server;
