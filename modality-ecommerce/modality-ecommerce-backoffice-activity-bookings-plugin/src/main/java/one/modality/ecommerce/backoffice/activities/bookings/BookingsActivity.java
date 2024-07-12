@@ -116,11 +116,19 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
     // TODO move this into an interface
     private ActionGroup newSnapshotActionGroup() {
         return newActionGroup("Snapshot", true,
-                newOperationAction(() -> new AddNewSnapshotRequest(masterVisualMapper.getSelectedEntities(), pm.getSelectedMaster().getOrganization()),  pm.selectedDocumentProperty()));
+                newOperationAction(() -> new AddNewSnapshotRequest(masterVisualMapper.getSelectedEntities(), pm.getSelectedMaster() == null ? null : pm.getSelectedMaster().getOrganization()),  pm.selectedDocumentProperty()));
     }
 
     private OperationAction newSelectedDocumentOperationAction(Function<Document, ?> operationRequestFactory) {
-        return newOperationAction(() -> operationRequestFactory.apply(pm.getSelectedDocument()), /* to update the i18n text when the selection change -> */ pm.selectedDocumentProperty());
+        return newOperationAction(
+                // Creating a new operation request associated to the selected document each time the user clicks on this action
+                () -> operationRequestFactory.apply(pm.getSelectedDocument()),
+                // Refreshing the graphical properties of this action (through i18n) each time the user selects another document,
+                pm.selectedDocumentProperty(),
+                // or when the server refreshes the data, in particular on push notification after that action has been
+                // executed (ex: "Confirm" => confirmed=true in database => server push => "Unconfirm").
+                pm.masterVisualResultProperty()
+        );
     }
 
     @Override
