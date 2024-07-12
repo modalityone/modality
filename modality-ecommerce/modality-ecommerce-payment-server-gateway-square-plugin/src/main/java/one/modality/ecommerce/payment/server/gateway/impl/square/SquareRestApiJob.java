@@ -22,6 +22,7 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import one.modality.base.shared.entities.MoneyTransfer;
+import one.modality.ecommerce.history.server.HistoryRecorder;
 import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.PaymentStatus;
 import one.modality.ecommerce.payment.UpdatePaymentStatusArgument;
@@ -165,6 +166,14 @@ public final class SquareRestApiJob implements ApplicationJob {
                         );
                         return null;
                     });
+
+                    // The following code is executed just after the call to the Square Payment API (which will take a
+                    // bit of time to finalise the payment and return the status), but we add a record in the history
+                    // to indicate that the booker submitted valid cc details.
+                    UpdateStore updateStore = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
+                    MoneyTransfer moneyTransfer = updateStore.updateEntity(MoneyTransfer.class, Integer.parseInt(paymentId));
+                    HistoryRecorder.preparePaymentHistoryBeforeSubmit("Submitted valid CC to Square", moneyTransfer)
+                            .onSuccess(x -> updateStore.submitChanges());
                 });
     }
 
