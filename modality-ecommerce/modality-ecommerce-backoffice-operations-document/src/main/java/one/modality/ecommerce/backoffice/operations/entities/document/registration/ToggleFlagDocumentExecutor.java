@@ -5,7 +5,7 @@ import one.modality.base.backoffice.operations.entities.generic.DialogExecutorUt
 import one.modality.base.shared.entities.Document;
 import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.SubmitDocumentChangesArgument;
-import one.modality.ecommerce.document.service.events.FlagDocumentEvent;
+import one.modality.ecommerce.document.service.events.registration.FlagDocumentEvent;
 
 /**
  * @author Bruno Salmon

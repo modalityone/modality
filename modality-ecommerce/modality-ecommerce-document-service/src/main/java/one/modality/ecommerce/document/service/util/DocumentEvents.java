@@ -4,6 +4,10 @@ import dev.webfx.platform.util.Arrays;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.ecommerce.document.service.events.*;
+import one.modality.ecommerce.document.service.events.book.AddAttendancesEvent;
+import one.modality.ecommerce.document.service.events.book.AddDocumentLineEvent;
+import one.modality.ecommerce.document.service.events.book.RemoveAttendancesEvent;
+import one.modality.ecommerce.document.service.events.registration.RemoveDocumentLineEvent;
 
 import java.util.Iterator;
 import java.util.List;

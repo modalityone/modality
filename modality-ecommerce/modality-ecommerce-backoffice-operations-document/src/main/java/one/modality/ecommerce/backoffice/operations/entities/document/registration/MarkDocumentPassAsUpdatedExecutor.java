@@ -4,7 +4,7 @@ import dev.webfx.platform.async.Future;
 import one.modality.base.shared.entities.Document;
 import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.SubmitDocumentChangesArgument;
-import one.modality.ecommerce.document.service.events.MarkDocumentAsReadEvent;
+import one.modality.ecommerce.document.service.events.registration.MarkDocumentAsReadEvent;
 
 /**
  * @author Bruno Salmon

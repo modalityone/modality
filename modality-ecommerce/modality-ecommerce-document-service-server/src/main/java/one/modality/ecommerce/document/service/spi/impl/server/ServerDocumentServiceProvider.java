@@ -17,6 +17,10 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import one.modality.base.shared.entities.*;
 import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.document.service.events.*;
+import one.modality.ecommerce.document.service.events.book.AddAttendancesEvent;
+import one.modality.ecommerce.document.service.events.book.AddDocumentEvent;
+import one.modality.ecommerce.document.service.events.book.AddDocumentLineEvent;
+import one.modality.ecommerce.document.service.events.book.RemoveAttendancesEvent;
 import one.modality.ecommerce.document.service.spi.DocumentServiceProvider;
 import one.modality.ecommerce.history.server.HistoryRecorder;
 

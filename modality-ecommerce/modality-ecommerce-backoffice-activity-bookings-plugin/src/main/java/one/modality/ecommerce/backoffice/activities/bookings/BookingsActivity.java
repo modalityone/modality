@@ -26,7 +26,7 @@ import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.backoffice.controls.bookingdetailspanel.BookingDetailsPanel;
-import one.modality.ecommerce.backoffice.operations.entities.document.SendLetterRequest;
+import one.modality.ecommerce.backoffice.operations.entities.document.registration.SendLetterRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.registration.*;
 import one.modality.ecommerce.backoffice.operations.entities.document.security.MarkDocumentAsKnownRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.security.MarkDocumentAsUncheckedRequest;

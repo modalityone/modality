@@ -5,6 +5,8 @@ import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.entity.EntityStore;
 import one.modality.base.shared.entities.*;
 import one.modality.ecommerce.document.service.events.*;
+import one.modality.ecommerce.document.service.events.book.*;
+import one.modality.ecommerce.document.service.events.gateway.UpdateMoneyTransferEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;

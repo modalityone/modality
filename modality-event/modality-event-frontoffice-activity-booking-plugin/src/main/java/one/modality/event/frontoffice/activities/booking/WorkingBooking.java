@@ -8,6 +8,7 @@ import one.modality.base.shared.entities.*;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.document.service.events.*;
+import one.modality.ecommerce.document.service.events.book.*;
 import one.modality.ecommerce.document.service.util.DocumentEvents;
 import one.modality.event.client.event.fx.FXEvent;
 
