@@ -22,7 +22,7 @@ final class ToggleConfirmDocumentExecutor {
                             , rq.getParentContainer(),
                             () -> DocumentService.submitDocumentChanges(
                                     new SubmitDocumentChangesArgument(
-                                            confirmed ? "Marked as confirmed" : "Unmarked as confirmed",
+                                            confirmed ? "Confirmed booking" : "Unconfirmed booking",
                                             new ConfirmDocumentEvent(document, confirmed, read))
                             ));
                 });
