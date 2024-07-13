@@ -20,6 +20,14 @@ public final class PaymentService {
         return getProvider().initiatePayment(argument);
     }
 
+    public static Future<CompletePaymentResult> completePayment(CompletePaymentArgument argument) {
+        return getProvider().completePayment(argument);
+    }
+
+    public static Future<CancelPaymentResult> cancelPayment(CancelPaymentArgument argument) {
+        return getProvider().cancelPayment(argument);
+    }
+
     public static Future<MakeApiPaymentResult> makeApiPayment(MakeApiPaymentArgument argument) {
         return getProvider().makeApiPayment(argument);
     }

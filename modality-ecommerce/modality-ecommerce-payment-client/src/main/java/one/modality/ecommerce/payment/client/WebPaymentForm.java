@@ -8,6 +8,7 @@ import dev.webfx.platform.conf.ConfigLoader;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.scheduler.Scheduler;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Numbers;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -25,9 +26,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
-import one.modality.ecommerce.payment.InitiatePaymentResult;
-import one.modality.ecommerce.payment.PaymentStatus;
-import one.modality.ecommerce.payment.SandboxCard;
+import one.modality.ecommerce.payment.*;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -49,9 +48,9 @@ public class WebPaymentForm {
     private boolean inited;
     private Consumer<String> onLoadFailure; // Called when the webview failed to load
     private Consumer<String> onInitFailure; // Called when the payment page failed to initialised (otherwise the card details should appear)
-    private Consumer<String> onGatewayFailure; // Called when the gateway failed to create the payment (just after the buyer pressed Pay)
-    private Consumer<String> onModalityFailure; // Called when Modality couldn't handle the payment ()
-    private Consumer<PaymentStatus> onFinalStatus;
+    private Consumer<String> onVerificationFailure; // Called when the gateway failed to create the payment (just after the buyer pressed Pay)
+    private Consumer<String> onPaymentFailure; // Called when Modality couldn't complete the payment
+    private Consumer<PaymentStatus> onPaymentCompletion;
 
     public WebPaymentForm(InitiatePaymentResult result, HasPersonalDetails buyerPersonalDetails) {
         this.result = result;
@@ -68,18 +67,18 @@ public class WebPaymentForm {
         return this;
     }
 
-    public WebPaymentForm setOnGatewayFailure(Consumer<String> onGatewayFailure) {
-        this.onGatewayFailure = onGatewayFailure;
+    public WebPaymentForm setOnVerificationFailure(Consumer<String> onVerificationFailure) {
+        this.onVerificationFailure = onVerificationFailure;
         return this;
     }
 
-    public WebPaymentForm setOnModalityFailure(Consumer<String> onModalityServerFailure) {
-        this.onModalityFailure = onModalityServerFailure;
+    public WebPaymentForm setOnPaymentFailure(Consumer<String> onModalityServerFailure) {
+        this.onPaymentFailure = onModalityServerFailure;
         return this;
     }
 
-    public WebPaymentForm setOnFinalStatus(Consumer<PaymentStatus> onFinalStatus) {
-        this.onFinalStatus = onFinalStatus;
+    public WebPaymentForm setOnPaymentCompletion(Consumer<PaymentStatus> onPaymentCompletion) {
+        this.onPaymentCompletion = onPaymentCompletion;
         return this;
     }
 
@@ -108,11 +107,11 @@ public class WebPaymentForm {
                         webViewPane.callWindow("modality_injectJavaPaymentForm", WebPaymentForm.this);
                         initFailureChecker = Scheduler.scheduleDelay(5000, () -> {
                             if (!inited) {
-                                onInitFailure("The payment page didn't respond as expected");
+                                onGatewayInitFailure("The payment page didn't respond as expected");
                             }
                         });
                     } catch (Exception ex) {
-                        onInitFailure(ex.getMessage());
+                        onGatewayInitFailure(ex.getMessage());
                     }
                 });
         String htmlContent = result.getHtmlContent();
@@ -214,7 +213,7 @@ public class WebPaymentForm {
                     buyerPersonalDetails.getCountry().getIsoAlpha2()
             );
         } catch (Exception ex) {
-            onGatewayFailure(ex.getMessage());
+            onGatewayBuyerVerificationFailure(ex.getMessage());
         }
     }
 
@@ -230,6 +229,10 @@ public class WebPaymentForm {
         userInteractionAllowedProperty.set(allowed);
     }
 
+    private void setUserInteractionAllowedInUiThread(boolean allowed) {
+        UiScheduler.runInUiThread(() -> setUserInteractionAllowed(allowed));
+    }
+
     private void onLoadFailure(String error) {
         logDebug("onLoadFailure called (error = " + error + ")");
         if (onLoadFailure != null) {
@@ -239,41 +242,48 @@ public class WebPaymentForm {
 
     // Callback methods (called back by the payment gateway script)
 
-    public void onInitSuccess() {
-        logDebug("onInitSuccess called");
+    public void onGatewayInitSuccess() {
+        logDebug("onGatewayInitSuccess called");
         inited = true;
-        setUserInteractionAllowed(true);
+        setUserInteractionAllowedInUiThread(true);
     }
 
-    public void onInitFailure(String error) {
-        logDebug("onInitFailure called (error = " + error + ")");
+    public void onGatewayInitFailure(String error) {
+        logDebug("onGatewayInitFailure called (error = " + error + ")");
         inited = true;
         //setUserInteractionAllowed(true);
         callConsumerOnUiThreadIfSet(onInitFailure, error);
     }
 
-    public void onGatewayRecoveredFailure(String error) {
-        logDebug("onGatewayRecoveredFailure called (error = " + error + ")");
-        setUserInteractionAllowed(true);
+    public void onGatewayCardVerificationFailure(String error) {
+        logDebug("onGatewayCardVerificationFailure called (error = " + error + ")");
+        setUserInteractionAllowedInUiThread(true);
     }
 
-    public void onGatewayFailure(String error) {
-        logDebug("onGatewayFailure called (error = " + error + ")");
-        setUserInteractionAllowed(true);
-        Console.log(error);
-        callConsumerOnUiThreadIfSet(onGatewayFailure, error);
+    public void onGatewayBuyerVerificationFailure(String error) {
+        logDebug("onGatewayBuyerVerificationFailure called (error = " + error + ")");
+        setUserInteractionAllowedInUiThread(true);
+        callConsumerOnUiThreadIfSet(onVerificationFailure, error);
     }
 
-    public void onModalityFailure(String error) {
-        logDebug("onModalityFailure called (error = " + error + ")");
-        setUserInteractionAllowed(true);
-        callConsumerOnUiThreadIfSet(onModalityFailure, error);
+    public void onGatewayPaymentVerificationSuccess(String gatewayCompletePaymentPayload) {
+        logDebug("onGatewayPaymentVerificationSuccess called (gatewayCompletePaymentPayload = " + gatewayCompletePaymentPayload + ")");
+        PaymentService.completePayment(new CompletePaymentArgument(result.getPaymentPrimaryKey(), result.isLive(), result.getGatewayName(), gatewayCompletePaymentPayload))
+                .onFailure(e -> onModalityCompletePaymentFailure(e.getMessage()))
+                .onSuccess(r -> onModalityCompletePaymentSuccess(r.getPaymentStatus()));
     }
 
-    public void onFinalStatus(String status) {
-        logDebug("onFinalStatus called (status = " + status + ")");
-        //setUserInteractionAllowed(true);
-        callConsumerOnUiThreadIfSet(onFinalStatus, PaymentStatus.valueOf(status));
+    public void onModalityCompletePaymentFailure(String error) {
+        logDebug("onModalityCompletePaymentFailure called (error = " + error + ")");
+        setUserInteractionAllowedInUiThread(true);
+        callConsumerOnUiThreadIfSet(onPaymentFailure, error);
+    }
+
+
+    public void onModalityCompletePaymentSuccess(PaymentStatus status) {
+        logDebug("onModalityCompletePaymentSuccess called (status = " + status + ")");
+        //setUserInteractionAllowedInUiThread(true);
+        callConsumerOnUiThreadIfSet(onPaymentCompletion, status);
     }
 
 

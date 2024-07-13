@@ -9,7 +9,6 @@ module modality.ecommerce.payment.server.gateway.square.plugin {
     requires io.vertx.core;
     requires io.vertx.web;
     requires modality.base.shared.entities;
-    requires modality.ecommerce.history.server;
     requires modality.ecommerce.payment;
     requires modality.ecommerce.payment.server.gateway;
     requires square;

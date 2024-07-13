@@ -19,6 +19,16 @@ public class RemotePaymentServiceProvider implements PaymentServiceProvider {
     }
 
     @Override
+    public Future<CompletePaymentResult> completePayment(CompletePaymentArgument argument) {
+        return BusCallService.call(PaymentServiceBusAddress.COMPLETE_PAYMENT_METHOD_ADDRESS, argument);
+    }
+
+    @Override
+    public Future<CancelPaymentResult> cancelPayment(CancelPaymentArgument argument) {
+        return BusCallService.call(PaymentServiceBusAddress.CANCEL_PAYMENT_METHOD_ADDRESS, argument);
+    }
+
+    @Override
     public Future<MakeApiPaymentResult> makeApiPayment(MakeApiPaymentArgument argument) {
         return BusCallService.call(PaymentServiceBusAddress.MAKE_API_PAYMENT_METHOD_ADDRESS, argument);
     }

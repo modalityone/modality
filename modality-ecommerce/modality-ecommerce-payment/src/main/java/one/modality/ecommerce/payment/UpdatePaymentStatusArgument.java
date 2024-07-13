@@ -5,7 +5,7 @@ package one.modality.ecommerce.payment;
  */
 public final class UpdatePaymentStatusArgument {
 
-    private final String paymentId;
+    private final Object paymentPrimaryKey;
     private final String gatewayResponse;
     private final String gatewayTransactionRef;
     private final String gatewayStatus;
@@ -13,8 +13,8 @@ public final class UpdatePaymentStatusArgument {
     private final boolean successfulStatus;
     private final String errorMessage;
 
-    public UpdatePaymentStatusArgument(String paymentId, String gatewayResponse, String gatewayTransactionRef, String gatewayStatus, boolean pendingStatus, boolean successfulStatus, String errorMessage) {
-        this.paymentId = paymentId;
+    public UpdatePaymentStatusArgument(Object paymentPrimaryKey, String gatewayResponse, String gatewayTransactionRef, String gatewayStatus, boolean pendingStatus, boolean successfulStatus, String errorMessage) {
+        this.paymentPrimaryKey = paymentPrimaryKey;
         this.gatewayResponse = gatewayResponse;
         this.gatewayTransactionRef = gatewayTransactionRef;
         this.gatewayStatus = gatewayStatus;
@@ -23,8 +23,8 @@ public final class UpdatePaymentStatusArgument {
         this.errorMessage = errorMessage;
     }
 
-    public String getPaymentId() {
-        return paymentId;
+    public Object getPaymentPrimaryKey() {
+        return paymentPrimaryKey;
     }
 
     public String getGatewayResponse() {
@@ -51,12 +51,12 @@ public final class UpdatePaymentStatusArgument {
         return errorMessage;
     }
 
-    public static UpdatePaymentStatusArgument createCapturedStatusArgument(String paymentId, String gatewayResponse, String gatewayTransactionRef, String gatewayStatus, boolean pendingStatus, boolean successStatus) {
-        return new UpdatePaymentStatusArgument(paymentId, gatewayResponse, gatewayTransactionRef, gatewayStatus, pendingStatus, successStatus, null);
+    public static UpdatePaymentStatusArgument createCapturedStatusArgument(Object paymentPrimaryKey, String gatewayResponse, String gatewayTransactionRef, String gatewayStatus, boolean pendingStatus, boolean successStatus) {
+        return new UpdatePaymentStatusArgument(paymentPrimaryKey, gatewayResponse, gatewayTransactionRef, gatewayStatus, pendingStatus, successStatus, null);
     }
 
-    public static UpdatePaymentStatusArgument createExceptionStatusArgument(String paymentId, String gatewayResponse, String errorMessage) {
-        return new UpdatePaymentStatusArgument(paymentId, gatewayResponse, null, null, true, false, errorMessage);
+    public static UpdatePaymentStatusArgument createExceptionStatusArgument(Object paymentPrimaryKey, String gatewayResponse, String errorMessage) {
+        return new UpdatePaymentStatusArgument(paymentPrimaryKey, gatewayResponse, null, null, true, false, errorMessage);
     }
 
 }

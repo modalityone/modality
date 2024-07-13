@@ -1,15 +1,13 @@
 console.log("Starting Modality-Square script");
 
 // Parameters injected by SquarePaymentGateway java class on server-side
+const modality_amount = ${modality_amount};
+const modality_currencyCode = "${modality_currencyCode}";
+const modality_seamless = ${modality_seamless};
 const square_webPaymentsSDKUrl = '${square_webPaymentsSDKUrl}';
 const square_appId = '${square_appId}';
 const square_locationId = '${square_locationId}';
 const square_idempotencyKey = window.crypto.randomUUID();
-const modality_seamless = ${modality_seamless};
-const modality_paymentId = '${modality_paymentId}';
-const modality_amount = ${modality_amount};
-const modality_currencyCode = "${modality_currencyCode}";
-const modality_completePaymentRoute = "${modality_completePaymentRoute}";
 
 // Parameter injected by WebPaymentForm java class on client-side (to allow JS -> Java callbacks)
 let modality_javaPaymentForm;
@@ -37,15 +35,15 @@ function modality_injectJavaPaymentForm(jpf) {
             square_card.destroy();
         } catch (e) {
             console.error('Destroying previous card failed', e);
-            modality_notifyInitFailure('Destroying previous card failed')
+            modality_notifyGatewayInitFailure('Destroying previous card failed')
             return;
         }
     }
     if (modality_inited) {
         if (modality_initError)
-            modality_notifyInitFailure(modality_initError);
+            modality_notifyGatewayInitFailure(modality_initError);
         else
-            modality_notifyInitSuccess();
+            modality_notifyGatewayInitSuccess();
     }
 }
 
@@ -56,41 +54,36 @@ function modality_submitGatewayPayment(firstName, lastName, email, phone, addres
 
 // Methods called by this JS script to call back the Java WebPaymentForm class
 
-function modality_notifyInitSuccess() {
+function modality_notifyGatewayInitSuccess() {
     modality_inited = true;
     if (modality_javaPaymentForm) {
-        modality_javaPaymentForm.onInitSuccess();
+        modality_javaPaymentForm.onGatewayInitSuccess();
         modality_initNotificationCalled = true;
     }
 }
 
-function modality_notifyInitFailure(error) {
+function modality_notifyGatewayInitFailure(error) {
     modality_inited = true;
     modality_initError = error;
     if (modality_javaPaymentForm) {
-        modality_javaPaymentForm.onInitFailure(error);
+        modality_javaPaymentForm.onGatewayInitFailure(error);
         modality_initNotificationCalled = true;
     }
 }
 
-function modality_notifyGatewayRecoveredFailure(error) {
+function modality_notifyGatewayCardVerificationFailure(error) {
     if (modality_javaPaymentForm)
-        modality_javaPaymentForm.onGatewayRecoveredFailure(error);
+        modality_javaPaymentForm.onGatewayCardVerificationFailure(error);
 }
 
-function modality_notifyGatewayFailure(error) {
+function modality_notifyGatewayBuyerVerificationFailure(error) {
     if (modality_javaPaymentForm)
-        modality_javaPaymentForm.onGatewayFailure(error);
+        modality_javaPaymentForm.onGatewayBuyerVerificationFailure(error);
 }
 
-function modality_notifyModalityFailure(error) {
+function modality_notifyGatewayPaymentVerificationSuccess(paymentCompletionPayload) {
     if (modality_javaPaymentForm)
-        modality_javaPaymentForm.onModalityFailure(error);
-}
-
-function modality_notifyFinalStatus(status) {
-    if (modality_javaPaymentForm)
-        modality_javaPaymentForm.onFinalStatus(status);
+        modality_javaPaymentForm.onGatewayPaymentVerificationSuccess(paymentCompletionPayload);
 }
 
 console.log("Loading Square module");
@@ -108,39 +101,6 @@ import(square_webPaymentsSDKUrl)
             const card = await payments.card();
             await card.attach('#' + square_cardElementId);
             return card;
-        }
-
-        async function createPayment(square_sourceId, square_verificationToken) {
-            const body = JSON.stringify({
-                modality_paymentId: modality_paymentId,
-                modality_amount: modality_amount,
-                modality_currencyCode: modality_currencyCode,
-                square_locationId : square_locationId,
-                square_sourceId: square_sourceId,
-                square_verificationToken: square_verificationToken,
-                square_idempotencyKey: square_idempotencyKey,
-            });
-
-            // Calling the Modality server to complete the payment (will call Square to make the actual final payment)
-            const paymentResponse = await fetch(modality_completePaymentRoute, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body,
-            });
-
-            const text = await paymentResponse.text();
-            if (!paymentResponse.ok) {
-                throw new Error(text);
-            } else {
-                let status = text.toUpperCase();
-                if (status === "APPROVED" || status === "PENDING" || status === "COMPLETED" || status === "CANCELED" || status === "FAILED") {
-                    return status;
-                } else {
-                    throw new Error(text);
-                }
-            }
         }
 
         async function tokenize(paymentMethod) {
@@ -213,14 +173,14 @@ import(square_webPaymentsSDKUrl)
             }
 
             if (!window.Square) {
-                modality_notifyInitFailure('Square.js failed to load properly');
+                modality_notifyGatewayInitFailure('Square.js failed to load properly');
                 return;
             }
 
             modality_containerElement = modality_seamless ? document.getElementById(modality_seamlessContainerId) : document.body;
 
             if (!modality_containerElement) {
-                modality_notifyInitFailure('Expected seamless container #' + modality_seamlessContainerId + ' but was not found in main DOM');
+                modality_notifyGatewayInitFailure('Expected seamless container #' + modality_seamlessContainerId + ' but was not found in main DOM');
                 return;
             }
 
@@ -236,7 +196,7 @@ import(square_webPaymentsSDKUrl)
                 payments = window.Square.payments(square_appId, square_locationId);
             } catch (e) {
                 console.error('Payments failed', e);
-                modality_notifyInitFailure('Square payments failed to initialize')
+                modality_notifyGatewayInitFailure('Square payments failed to initialize')
                 const statusContainer = document.getElementById(
                     'square-payment-status-container',
                 );
@@ -250,11 +210,11 @@ import(square_webPaymentsSDKUrl)
                 square_card = await initializeCard(payments);
             } catch (e) {
                 console.error('Initializing Card failed', e);
-                modality_notifyInitFailure('Square card initialization failed')
+                modality_notifyGatewayInitFailure('Square card initialization failed')
                 return;
             }
 
-            modality_notifyInitSuccess();
+            modality_notifyGatewayInitSuccess();
         }
 
         async function handlePaymentMethodSubmission(firstName, lastName, email, phone, address, city, state, countryCode) {
@@ -265,7 +225,7 @@ import(square_webPaymentsSDKUrl)
             } catch (e) {
                 displayPaymentResults('FAILURE');
                 console.error(e.message);
-                modality_notifyGatewayRecoveredFailure(e.message);
+                modality_notifyGatewayCardVerificationFailure(e.message);
                 return;
             }
 
@@ -276,25 +236,21 @@ import(square_webPaymentsSDKUrl)
             } catch (e) {
                 displayPaymentResults('FAILURE');
                 console.error(e.message);
-                modality_notifyGatewayFailure(e.message);
+                modality_notifyGatewayBuyerVerificationFailure(e.message);
                 return;
             }
 
-            // Thirdly: Modality server process (includes Square payment completion + Modality payment database update)
-            try {
-                const paymentStatus = await createPayment(
-                    token,
-                    verificationToken,
-                );
-                displayPaymentResults('SUCCESS');
+            // Thirdly: Modality payment form callback for payment completion
+            const paymentCompletionPayload= {
+                modality_amount: modality_amount,
+                modality_currencyCode: modality_currencyCode,
+                square_locationId : square_locationId,
+                square_sourceId: token,
+                square_verificationToken: verificationToken,
+                square_idempotencyKey: square_idempotencyKey,
+            };
 
-                console.debug('Payment Success', paymentStatus);
-                modality_notifyFinalStatus(paymentStatus);
-            } catch (e) {
-                displayPaymentResults('FAILURE');
-                console.error(e.message);
-                modality_notifyModalityFailure(e.message);
-            }
+            modality_notifyGatewayPaymentVerificationSuccess(JSON.stringify(paymentCompletionPayload));
         }
 
         if (document.readyState === "complete" || document.readyState === "interactive") {

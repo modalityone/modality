@@ -1,8 +1,19 @@
 package one.modality.ecommerce.payment.server.gateway.impl.square;
 
+import com.squareup.square.Environment;
+import com.squareup.square.SquareClient;
+import com.squareup.square.api.PaymentsApi;
+import com.squareup.square.authentication.BearerAuthModel;
+import com.squareup.square.models.*;
+import dev.webfx.platform.ast.AST;
+import dev.webfx.platform.ast.ReadOnlyAstObject;
 import dev.webfx.platform.async.Future;
+import dev.webfx.platform.async.Promise;
+import dev.webfx.platform.console.Console;
 import dev.webfx.platform.resource.Resource;
 import dev.webfx.platform.util.uuid.Uuid;
+import io.vertx.core.json.JsonObject;
+import one.modality.ecommerce.payment.PaymentStatus;
 import one.modality.ecommerce.payment.SandboxCard;
 import one.modality.ecommerce.payment.server.gateway.*;
 
@@ -14,6 +25,7 @@ import static one.modality.ecommerce.payment.server.gateway.impl.square.SquareRe
 public final class SquarePaymentGateway implements PaymentGateway {
 
     private static final String GATEWAY_NAME = "Square";
+
     private static final String SQUARE_LIVE_WEB_PAYMENTS_SDK_URL = "https://web.squarecdn.com/v1/square.js";
     private static final String SQUARE_SANDBOX_WEB_PAYMENTS_SDK_URL = "https://sandbox.web.squarecdn.com/v1/square.js";
 
@@ -63,14 +75,12 @@ public final class SquarePaymentGateway implements PaymentGateway {
         ;
         String template = seamless ? SCRIPT_TEMPLATE : HTML_TEMPLATE;
         template = template
+                .replace("${modality_amount}", Long.toString(argument.getAmount()))
+                .replace("${modality_currencyCode}", argument.getCurrencyCode())
                 .replace("${modality_seamless}", String.valueOf(seamless))
                 .replace("${square_webPaymentsSDKUrl}", live ? SQUARE_LIVE_WEB_PAYMENTS_SDK_URL : SQUARE_SANDBOX_WEB_PAYMENTS_SDK_URL)
                 .replace("${square_appId}", appId)
                 .replace("${square_locationId}", locationId)
-                .replace("${modality_paymentId}", argument.getPaymentId())
-                .replace("${modality_amount}", Long.toString(argument.getAmount()))
-                .replace("${modality_currencyCode}", argument.getCurrencyCode())
-                .replace("${modality_completePaymentRoute}", live ? SQUARE_LIVE_COMPLETE_PAYMENT_ENDPOINT : SQUARE_SANDBOX_COMPLETE_PAYMENT_ENDPOINT)
                 ;
         SandboxCard[] sandboxCards = live ? null : SANDBOX_CARDS;
         if (seamless) {
@@ -82,6 +92,61 @@ public final class SquarePaymentGateway implements PaymentGateway {
             return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedUrlInitiatePaymentResult(live, false, url, sandboxCards));
         }
     }
+
+    @Override
+    public Future<GatewayCompletePaymentResult> completePayment(GatewayCompletePaymentArgument argument) {
+        Promise<GatewayCompletePaymentResult> promise = Promise.promise();
+        boolean live = argument.isLive();
+        String accessToken = argument.getAccessToken();
+        SquareClient client = new SquareClient.Builder()
+                .environment(live ? Environment.PRODUCTION : Environment.SANDBOX)
+                .bearerAuthCredentials(new BearerAuthModel.Builder(accessToken).build())
+                .build();
+        ReadOnlyAstObject payload = AST.parseObject(argument.getPayload(), "json");
+        Long amount = payload.getLong("modality_amount");
+        String currencyCode = payload.getString("modality_currencyCode");
+        String locationId = payload.getString("square_locationId");
+        String idempotencyKey = payload.getString("square_idempotencyKey");
+        String sourceId = payload.getString("square_sourceId");
+        String verificationToken = payload.getString("square_verificationToken");
+
+        PaymentsApi paymentsApi = client.getPaymentsApi();
+        paymentsApi.createPaymentAsync(new CreatePaymentRequest.Builder(sourceId, idempotencyKey)
+                .locationId(locationId)
+                .verificationToken(verificationToken)
+                .amountMoney(new Money(amount, currencyCode))
+                .build()
+        ).thenAccept(result -> {
+            Payment payment = result.getPayment();
+            JsonObject gatewayResponseJson = new JsonObject();
+            gatewayResponseJson.put("id", payment.getId());
+            gatewayResponseJson.put("status", payment.getStatus());
+            gatewayResponseJson.put("buyerEmailAddress", payment.getBuyerEmailAddress());
+            CardPaymentDetails cardDetails = payment.getCardDetails();
+            Card card = cardDetails == null ? null : cardDetails.getCard();
+            if (card != null) {
+                gatewayResponseJson.put("cardBrand", card.getCardBrand());
+                gatewayResponseJson.put("cardLast4", card.getLast4());
+            }
+            gatewayResponseJson.put("orderId", payment.getOrderId());
+            gatewayResponseJson.put("createdAt", payment.getCreatedAt());
+            gatewayResponseJson.put("updatedAt", payment.getUpdatedAt());
+            gatewayResponseJson.put("receiptNumber", payment.getReceiptNumber());
+            gatewayResponseJson.put("receiptUrl", payment.getReceiptUrl());
+            String gatewayResponse = gatewayResponseJson.toString();
+            String gatewayTransactionRef = payment.getId();
+            String gatewayStatus = payment.getStatus();
+            SquarePaymentStatus squarePaymentStatus = SquarePaymentStatus.valueOf(gatewayStatus.toUpperCase());
+            PaymentStatus paymentStatus = squarePaymentStatus.getGenericPaymentStatus();
+            promise.complete(new GatewayCompletePaymentResult(gatewayResponse, gatewayTransactionRef, gatewayStatus, paymentStatus));
+        }).exceptionally(ex -> {
+            Console.log("[Square] completePayment - Square raised exception " + ex.getMessage());
+            promise.fail(ex);
+            return null;
+        });
+        return promise.future();
+    }
+
 
     @Override
     public Future<GatewayMakeApiPaymentResult> makeApiPayment(GatewayMakeApiPaymentArgument argument) {

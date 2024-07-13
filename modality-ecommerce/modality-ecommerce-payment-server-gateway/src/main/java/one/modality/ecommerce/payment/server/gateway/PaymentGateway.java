@@ -8,6 +8,8 @@ public interface PaymentGateway {
 
     Future<GatewayInitiatePaymentResult> initiatePayment(GatewayInitiatePaymentArgument argument);
 
+    Future<GatewayCompletePaymentResult> completePayment(GatewayCompletePaymentArgument argument);
+
     Future<GatewayMakeApiPaymentResult> makeApiPayment(GatewayMakeApiPaymentArgument argument);
 
 }

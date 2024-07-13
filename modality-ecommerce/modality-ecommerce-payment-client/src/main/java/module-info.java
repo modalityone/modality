@@ -17,6 +17,7 @@ module modality.ecommerce.payment.client {
     requires webfx.platform.conf;
     requires webfx.platform.console;
     requires webfx.platform.scheduler;
+    requires webfx.platform.uischeduler;
     requires webfx.platform.util;
     requires webfx.platform.windowlocation;
 

@@ -9,6 +9,10 @@ public interface PaymentServiceProvider {
 
     Future<InitiatePaymentResult> initiatePayment(InitiatePaymentArgument argument);
 
+    Future<CompletePaymentResult> completePayment(CompletePaymentArgument argument);
+
+    Future<CancelPaymentResult> cancelPayment(CancelPaymentArgument argument);
+
     Future<MakeApiPaymentResult> makeApiPayment(MakeApiPaymentArgument argument);
 
     // Internal server-side method only (no serialisation support)

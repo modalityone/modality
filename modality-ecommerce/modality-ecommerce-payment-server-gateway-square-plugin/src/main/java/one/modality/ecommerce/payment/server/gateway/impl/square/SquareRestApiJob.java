@@ -1,10 +1,5 @@
 package one.modality.ecommerce.payment.server.gateway.impl.square;
 
-import com.squareup.square.Environment;
-import com.squareup.square.SquareClient;
-import com.squareup.square.api.PaymentsApi;
-import com.squareup.square.authentication.BearerAuthModel;
-import com.squareup.square.models.*;
 import dev.webfx.platform.ast.AST;
 import dev.webfx.platform.ast.AstObject;
 import dev.webfx.platform.ast.ReadOnlyAstObject;
@@ -22,7 +17,6 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import one.modality.base.shared.entities.MoneyTransfer;
-import one.modality.ecommerce.history.server.HistoryRecorder;
 import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.PaymentStatus;
 import one.modality.ecommerce.payment.UpdatePaymentStatusArgument;
@@ -32,11 +26,7 @@ import one.modality.ecommerce.payment.UpdatePaymentStatusArgument;
  */
 public final class SquareRestApiJob implements ApplicationJob {
 
-    private final static boolean DEBUG = true;
-
     static final String SQUARE_PAYMENT_FORM_ENDPOINT             = "/payment/square/paymentForm/:htmlCacheKey";
-    static final String SQUARE_LIVE_COMPLETE_PAYMENT_ENDPOINT    = "/payment/square/live/completePayment";
-    static final String SQUARE_SANDBOX_COMPLETE_PAYMENT_ENDPOINT = "/payment/square/sandbox/completePayment";
     private static final String SQUARE_LIVE_WEBHOOK_ENDPOINT     = "/payment/square/live/webhook";
     private static final String SQUARE_SANDBOX_WEBHOOK_ENDPOINT  = "/payment/square/sandbox/webhook";
 
@@ -61,17 +51,6 @@ public final class SquareRestApiJob implements ApplicationJob {
                             .end(html);
                 });
 
-        // This endpoint is called by the web payment form after the user pressed the Pay button and all verifications
-        // have been successful on the web payment form (CC details, buyer verified, etc...)
-        router.route(SQUARE_LIVE_COMPLETE_PAYMENT_ENDPOINT)
-                .handler(BodyHandler.create()) // To ensure the whole payload is loaded before calling the next handler
-                .handler(ctx -> handleCompletePayment(ctx, true));
-
-        // Same endpoint but for sandbox payments
-        router.route(SQUARE_SANDBOX_COMPLETE_PAYMENT_ENDPOINT)
-                .handler(BodyHandler.create()) // To ensure the whole payload is loaded before calling the next handler
-                .handler(ctx -> handleCompletePayment(ctx, false));
-
         // Endpoint for live payments Square web hook
         router.route(SQUARE_LIVE_WEBHOOK_ENDPOINT)
                 .handler(BodyHandler.create()) // To ensure the whole payload is loaded before calling the next handler
@@ -81,100 +60,6 @@ public final class SquareRestApiJob implements ApplicationJob {
         router.route(SQUARE_SANDBOX_WEBHOOK_ENDPOINT)
                 .handler(BodyHandler.create()) // To ensure the whole payload is loaded before calling the next handler
                 .handler(ctx -> handleWebhook(ctx, false));
-    }
-
-    private void handleCompletePayment(RoutingContext ctx, boolean live) {
-        if (DEBUG) {
-            Console.log("[Square] completePayment - step 0 - endpoint called with live = " + live);
-        }
-        JsonObject payload = ctx.body().asJsonObject();
-        String paymentId = payload.getString("modality_paymentId");
-        Long amount = payload.getLong("modality_amount");
-        String currencyCode = payload.getString("modality_currencyCode");
-        String locationId = payload.getString("square_locationId");
-        String idempotencyKey = payload.getString("square_idempotencyKey");
-        String sourceId = payload.getString("square_sourceId");
-        String verificationToken = payload.getString("square_verificationToken");
-        // TODO check all the above values are set, otherwise return an error
-
-        PaymentService.loadPaymentGatewayParameters(paymentId, live)
-                .onFailure(e -> ctx.end(e.getMessage()))
-                .onSuccess(parameters -> {
-                    if (DEBUG) {
-                        Console.log("[Square] completePayment - step 1 - payment gateway parameters loaded");
-                    }
-                    String accessToken = parameters.get("access_token");
-                    // TODO check accessToke is set, otherwise return an error
-                    SquareClient client = new SquareClient.Builder()
-                            .environment(live ? Environment.PRODUCTION : Environment.SANDBOX)
-                            .bearerAuthCredentials(new BearerAuthModel.Builder(accessToken).build())
-                            .build();
-                    if (DEBUG) {
-                        Console.log("[Square] completePayment - step 2 - calling Square createPayment with amount = " + amount + ", currencyCode = " + currencyCode);
-                    }
-                    PaymentsApi paymentsApi = client.getPaymentsApi();
-                    paymentsApi.createPaymentAsync(new CreatePaymentRequest.Builder(sourceId, idempotencyKey)
-                            .locationId(locationId)
-                            .verificationToken(verificationToken)
-                            .amountMoney(new Money(amount, currencyCode))
-                            .build()
-                    ).thenAccept(result -> {
-                        if (DEBUG) {
-                            Console.log("[Square] completePayment - step 3 - createPayment returned without exception");
-                        }
-                        Payment payment = result.getPayment();
-                        JsonObject gatewayResponseJson = new JsonObject();
-                        gatewayResponseJson.put("id", payment.getId());
-                        gatewayResponseJson.put("status", payment.getStatus());
-                        gatewayResponseJson.put("buyerEmailAddress", payment.getBuyerEmailAddress());
-                        CardPaymentDetails cardDetails = payment.getCardDetails();
-                        Card card = cardDetails == null ? null : cardDetails.getCard();
-                        if (card != null) {
-                            gatewayResponseJson.put("cardBrand", card.getCardBrand());
-                            gatewayResponseJson.put("cardLast4", card.getLast4());
-                        }
-                        gatewayResponseJson.put("orderId", payment.getOrderId());
-                        gatewayResponseJson.put("createdAt", payment.getCreatedAt());
-                        gatewayResponseJson.put("updatedAt", payment.getUpdatedAt());
-                        gatewayResponseJson.put("receiptNumber", payment.getReceiptNumber());
-                        gatewayResponseJson.put("receiptUrl", payment.getReceiptUrl());
-                        String gatewayResponse = gatewayResponseJson.toString();
-                        String gatewayTransactionRef = payment.getId();
-                        String gatewayStatus = payment.getStatus();
-                        SquarePaymentStatus squarePaymentStatus = SquarePaymentStatus.valueOf(gatewayStatus.toUpperCase());
-                        PaymentStatus paymentStatus = squarePaymentStatus.getGenericPaymentStatus();
-                        boolean pending = paymentStatus.isPending();
-                        boolean successful = paymentStatus.isSuccessful();
-                        if (DEBUG) {
-                            Console.log("[Square] completePayment - step 4 - updating the payment status in the database");
-                        }
-                        // We finally update the payment status through the payment service (this will also create a history entry)
-                        SQUARE_HISTORY_USER_ID.run(() ->
-                            PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createCapturedStatusArgument(paymentId, gatewayResponse, gatewayTransactionRef, gatewayStatus, pending, successful))
-                                    .onSuccess(v -> ctx.end(gatewayStatus.toUpperCase()))
-                                    .onFailure(e -> ctx.end(e.getMessage()))
-                        );
-                    }).exceptionally(ex -> {
-                        if (DEBUG) {
-                            Console.log("[Square] completePayment - Square raised exception " + ex.getMessage());
-                        }
-                        // We finally update the payment status through the payment service (this will also create a history entry)
-                        SQUARE_HISTORY_USER_ID.run(() ->
-                            PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createExceptionStatusArgument(paymentId, null, ex.getMessage()))
-                                    .onSuccess(v -> ctx.end(ex.getMessage()))
-                                    .onFailure(e -> ctx.end(e.getMessage()))
-                        );
-                        return null;
-                    });
-
-                    // The following code is executed just after the call to the Square Payment API (which will take a
-                    // bit of time to finalise the payment and return the status), but we add a record in the history
-                    // to indicate that the booker submitted valid cc details.
-                    UpdateStore updateStore = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
-                    MoneyTransfer moneyTransfer = updateStore.updateEntity(MoneyTransfer.class, Integer.parseInt(paymentId));
-                    HistoryRecorder.preparePaymentHistoryBeforeSubmit("Submitted valid CC to Square", moneyTransfer)
-                            .onSuccess(x -> updateStore.submitChanges());
-                });
     }
 
     private void handleWebhook(RoutingContext ctx, boolean live) {
@@ -228,7 +113,7 @@ public final class SquareRestApiJob implements ApplicationJob {
                                     }
                                 } else {
                                     // We finally update the payment status through the payment service (this will also create a history entry)
-                                    SQUARE_HISTORY_USER_ID.run(() ->
+                                    SQUARE_HISTORY_USER_ID.callAndReturn(() ->
                                         PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createCapturedStatusArgument(paymentPk.toString(), textPayload, id, status, pending, successful))
                                             .onFailure(e -> Console.log(logPrefix + "⛔️️  Failed to update status " + status + " for transactionRef = " + id, e))
                                             .onSuccess(v -> Console.log(logPrefix + "✅  Successfully updated status " + status + " for transactionRef = " + id))

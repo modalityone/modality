@@ -5,6 +5,9 @@ import dev.webfx.platform.ast.ReadOnlyAstObject;
 import dev.webfx.stack.com.serial.spi.impl.SerialCodecBase;
 import one.modality.ecommerce.payment.InitiatePaymentArgument;
 
+/**
+ * @author Bruno Salmon
+ */
 public final class InitiatePaymentArgumentSerialCodec extends SerialCodecBase<InitiatePaymentArgument> {
 
     private static final String CODEC_ID = "InitiatePaymentArgument";

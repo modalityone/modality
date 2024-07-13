@@ -13,20 +13,17 @@
 
     <java-callbacks>
         <callback-class name="one.modality.ecommerce.payment.client.WebPaymentForm">
-            <callback-method name="onInitSuccess"/>
-            <callback-method name="onInitFailure">
+            <callback-method name="onGatewayInitSuccess"/>
+            <callback-method name="onGatewayInitFailure">
                 <callback-argument class="java.lang.String"/>
             </callback-method>
-            <callback-method name="onGatewayRecoveredFailure">
+            <callback-method name="onGatewayCardVerificationFailure">
                 <callback-argument class="java.lang.String"/>
             </callback-method>
-            <callback-method name="onGatewayFailure">
+            <callback-method name="onGatewayBuyerVerificationFailure">
                 <callback-argument class="java.lang.String"/>
             </callback-method>
-            <callback-method name="onModalityFailure">
-                <callback-argument class="java.lang.String"/>
-            </callback-method>
-            <callback-method name="onFinalStatus">
+            <callback-method name="onGatewayPaymentVerificationSuccess">
                 <callback-argument class="java.lang.String"/>
             </callback-method>
         </callback-class>

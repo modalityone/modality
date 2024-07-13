@@ -39,6 +39,11 @@ public class AuthorizeDotNetApiPaymentGateway implements PaymentGateway {
         return Future.failedFuture("initiatePayment() not yet implemented for Authorize.net");
     }
 
+    @Override
+    public Future<GatewayCompletePaymentResult> completePayment(GatewayCompletePaymentArgument argument) {
+        return Future.failedFuture("completePayment() not yet implemented for Authorize.net");
+    }
+
     public Future<GatewayMakeApiPaymentResult> makeApiPayment(GatewayMakeApiPaymentArgument argument) {
         Promise<GatewayMakeApiPaymentResult> promise = Promise.promise();
         Scheduler.runInBackground(() -> {

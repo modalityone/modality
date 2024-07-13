@@ -5,6 +5,9 @@ import dev.webfx.platform.ast.ReadOnlyAstObject;
 import dev.webfx.stack.com.serial.spi.impl.SerialCodecBase;
 import one.modality.ecommerce.payment.SandboxCard;
 
+/**
+ * @author Bruno Salmon
+ */
 public final class SandboxCardSerialCodec extends SerialCodecBase<SandboxCard> {
 
     private static final String CODEC_ID = "SandboxCard";

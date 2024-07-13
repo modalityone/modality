@@ -5,10 +5,9 @@ import dev.webfx.platform.ast.AstObject;
 import dev.webfx.stack.com.serial.spi.impl.SerialCodecBase;
 import one.modality.ecommerce.payment.MakeApiPaymentArgument;
 
-/**************************************
- *           Serial Codec             *
- * ***********************************/
-
+/**
+ * @author Bruno Salmon
+ */
 public final class MakeApiPaymentArgumentSerialCodec extends SerialCodecBase<MakeApiPaymentArgument> {
 
     private static final String CODEC_ID = "MakeApiPaymentArgument";

@@ -6,6 +6,9 @@ import dev.webfx.stack.com.serial.spi.impl.SerialCodecBase;
 import one.modality.ecommerce.payment.InitiatePaymentResult;
 import one.modality.ecommerce.payment.SandboxCard;
 
+/**
+ * @author Bruno Salmon
+ */
 public final class InitiatePaymentResultSerialCodec extends SerialCodecBase<InitiatePaymentResult> {
 
     private static final String CODEC_ID = "InitiatePaymentResult";

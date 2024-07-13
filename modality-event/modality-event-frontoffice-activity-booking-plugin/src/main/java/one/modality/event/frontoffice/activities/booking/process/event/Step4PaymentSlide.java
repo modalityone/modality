@@ -69,15 +69,15 @@ class Step4PaymentSlide extends StepSlide {
                     controller.displayErrorMessage("ErrorWhileInitializingHTMLPaymentForm");
                     Console.log(errorMsg);
                 })
-                .setOnGatewayFailure(errorMsg -> {
+                .setOnVerificationFailure(errorMsg -> {
                     controller.displayErrorMessage("ErrorPaymentGatewayFailure");
                     Console.log(errorMsg);
                 })
-                .setOnModalityFailure(errorMsg -> {
+                .setOnPaymentFailure(errorMsg -> {
                     controller.displayErrorMessage("ErrorPaymentModalityFailure");
                     Console.log(errorMsg);
                 })
-                .setOnFinalStatus(status -> {
+                .setOnPaymentCompletion(status -> {
                     //TODO: to test the following
                     if(status.isSuccessful()) {
                         messageHtmlText.setText("");

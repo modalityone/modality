@@ -49,6 +49,11 @@ public class StripePaymentGateway implements PaymentGateway {
         }
     }
 
+    @Override
+    public Future<GatewayCompletePaymentResult> completePayment(GatewayCompletePaymentArgument argument) {
+        return Future.failedFuture("completePayment() not yet implemented for Stripe");
+    }
+
     public Future<InitiatePaymentResult> initiatePaymentRedirect(GatewayInitiatePaymentArgument argument) {
         Stripe.apiKey = API_SECRET_KEY;
         // Extract the following to a 'StripeClient'

@@ -7,7 +7,6 @@ import java.util.Map;
  */
 public final class GatewayInitiatePaymentArgument {
 
-    private final String paymentId; // pass as a String to make it easier to manage for the gateway
     private final long amount;
     private final String currencyCode;
     private final boolean live;
@@ -16,8 +15,7 @@ public final class GatewayInitiatePaymentArgument {
     private final String productName;
     private final Map<String, String> accountParameters;
 
-    public GatewayInitiatePaymentArgument(String paymentId, long amount, String currencyCode, boolean live, boolean seamlessIfSupported, boolean parentPageHttps, String productName, Map<String, String> accountParameters) {
-        this.paymentId = paymentId;
+    public GatewayInitiatePaymentArgument(long amount, String currencyCode, boolean live, boolean seamlessIfSupported, boolean parentPageHttps, String productName, Map<String, String> accountParameters) {
         this.amount = amount;
         this.currencyCode = currencyCode;
         this.live = live;
@@ -25,10 +23,6 @@ public final class GatewayInitiatePaymentArgument {
         this.parentPageHttps = parentPageHttps;
         this.productName = productName;
         this.accountParameters = accountParameters;
-    }
-
-    public String getPaymentId() {
-        return paymentId;
     }
 
     public long getAmount() {
