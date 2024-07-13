@@ -45,5 +45,17 @@ public interface History extends Entity, EntityHasDocument, EntityHasUserPerson 
     default Mail getMail() {
         return getForeignEntity("mail");
     }
-    
+
+    default void setMoneyTransfer(Object document) {
+        setForeignField("moneyTransfer", document);
+    }
+
+    default EntityId getMoneyTransferId() {
+        return getForeignEntityId("moneyTransfer");
+    }
+
+    default Document getMoneyTransfer() {
+        return getForeignEntity("moneyTransfer");
+    }
+
 }

@@ -133,7 +133,7 @@ public final class HistoryRecorder {
 
         // Now we are set to insert the History entity
         History history = updateStore.insertEntity(History.class);
-        history.setForeignField("moneyTransfer", payment);
+        history.setMoneyTransfer(payment);
         history.setDocument(document);
         history.setComment(comment);
 
