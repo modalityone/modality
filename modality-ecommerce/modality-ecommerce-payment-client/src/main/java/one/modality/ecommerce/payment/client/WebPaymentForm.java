@@ -9,6 +9,7 @@ import dev.webfx.platform.conf.ConfigLoader;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.scheduler.Scheduler;
+import dev.webfx.platform.shutdown.Shutdown;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Numbers;
 import javafx.application.Platform;
@@ -52,10 +53,19 @@ public class WebPaymentForm {
     private Consumer<String> onVerificationFailure; // Called when the gateway failed to create the payment (just after the buyer pressed Pay)
     private Consumer<String> onPaymentFailure; // Called when Modality couldn't complete the payment
     private Consumer<PaymentStatus> onPaymentCompletion;
+    private boolean paymentCancelled;
+    private boolean paymentCompleted;
 
     public WebPaymentForm(InitiatePaymentResult result, HasPersonalDetails buyerPersonalDetails) {
         this.result = result;
         this.buyerPersonalDetails = buyerPersonalDetails;
+        // If the user closes the window while he hasn't cancelled or completed the payment, we consider this as a
+        // user cancellation
+        Shutdown.addShutdownHook(() -> {
+            if (!paymentCancelled && !paymentCompleted) {
+                cancelPayment();
+            }
+        });
     }
 
     public WebPaymentForm setOnLoadFailure(Consumer<String> onLoadFailure) {
@@ -220,6 +230,7 @@ public class WebPaymentForm {
 
     public Future<CancelPaymentResult> cancelPayment() {
         logDebug("cancelPayment called");
+        paymentCancelled = true;
         return PaymentService.cancelPayment(new CancelPaymentArgument(result.getPaymentPrimaryKey()));
     }
 
@@ -274,6 +285,7 @@ public class WebPaymentForm {
 
     public void onGatewayPaymentVerificationSuccess(String gatewayCompletePaymentPayload) {
         logDebug("onGatewayPaymentVerificationSuccess called (gatewayCompletePaymentPayload = " + gatewayCompletePaymentPayload + ")");
+        paymentCompleted = true;
         PaymentService.completePayment(new CompletePaymentArgument(result.getPaymentPrimaryKey(), result.isLive(), result.getGatewayName(), gatewayCompletePaymentPayload))
                 .onFailure(e -> onModalityCompletePaymentFailure(e.getMessage()))
                 .onSuccess(r -> onModalityCompletePaymentSuccess(r.getPaymentStatus()));
