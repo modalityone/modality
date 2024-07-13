@@ -5,6 +5,7 @@ import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import javafx.application.Platform;
@@ -53,8 +54,14 @@ class Step4PaymentSlide extends StepSlide {
         payButton.getStyleClass().addAll("event-button", "success-button");
         cancelButton.getStyleClass().addAll("event-button", "secondary-button");
         cancelButton.setOnAction(e -> {
-            webPaymentForm.cancelPayment();
-            controller.displayErrorMessage("ErrorUserCanceledPayment");
+            turnOnButtonWaitMode(payButton);
+            turnOnButtonWaitMode(cancelButton);
+            webPaymentForm.cancelPayment()
+                            .onComplete(ar -> UiScheduler.runInUiThread(() -> {
+                                turnOffButtonWaitMode(payButton, "Pay");
+                                turnOffButtonWaitMode(cancelButton, "Cancel");
+                                controller.displayErrorMessage("ErrorUserCanceledPayment");
+                            }));
         });
         FlexPane buttonBar = new FlexPane(payButton, cancelButton);
         buttonBar.setHorizontalSpace(10);
