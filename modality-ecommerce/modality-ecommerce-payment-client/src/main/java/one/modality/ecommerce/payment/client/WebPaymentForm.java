@@ -3,6 +3,7 @@ package one.modality.ecommerce.payment.client;
 import dev.webfx.extras.panes.FlexPane;
 import dev.webfx.extras.webview.pane.LoadOptions;
 import dev.webfx.extras.webview.pane.WebViewPane;
+import dev.webfx.platform.async.Future;
 import dev.webfx.platform.browser.Browser;
 import dev.webfx.platform.conf.ConfigLoader;
 import dev.webfx.platform.console.Console;
@@ -215,6 +216,11 @@ public class WebPaymentForm {
         } catch (Exception ex) {
             onGatewayBuyerVerificationFailure(ex.getMessage());
         }
+    }
+
+    public Future<CancelPaymentResult> cancelPayment() {
+        logDebug("cancelPayment called");
+        return PaymentService.cancelPayment(new CancelPaymentArgument(result.getPaymentPrimaryKey()));
     }
 
     public ReadOnlyBooleanProperty userInteractionAllowedProperty() {

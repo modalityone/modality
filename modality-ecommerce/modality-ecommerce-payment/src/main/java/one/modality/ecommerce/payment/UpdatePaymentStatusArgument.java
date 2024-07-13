@@ -55,6 +55,10 @@ public final class UpdatePaymentStatusArgument {
         return new UpdatePaymentStatusArgument(paymentPrimaryKey, gatewayResponse, gatewayTransactionRef, gatewayStatus, pendingStatus, successStatus, null);
     }
 
+    public static UpdatePaymentStatusArgument createCancelStatusArgument(Object paymentPrimaryKey) {
+        return new UpdatePaymentStatusArgument(paymentPrimaryKey, null, null, null, false, false, null);
+    }
+
     public static UpdatePaymentStatusArgument createExceptionStatusArgument(Object paymentPrimaryKey, String gatewayResponse, String errorMessage) {
         return new UpdatePaymentStatusArgument(paymentPrimaryKey, gatewayResponse, null, null, true, false, errorMessage);
     }

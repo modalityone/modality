@@ -148,8 +148,8 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
 
     @Override
     public Future<CancelPaymentResult> cancelPayment(CancelPaymentArgument argument) {
-        Console.log("cancelPayment() called");
-        return Future.succeededFuture();
+        return updatePaymentStatus(UpdatePaymentStatusArgument.createCancelStatusArgument(argument.getPaymentPrimaryKey()))
+                .map(x -> new CancelPaymentResult());
     }
 
     @Override
@@ -219,14 +219,15 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
         boolean successful = argument.isSuccessfulStatus();
         String errorMessage = argument.getErrorMessage();
         Future<MoneyTransfer> loadingFuture;
-        Object gatewayUserId = ThreadLocalStateHolder.getUserId(); // Capturing gateway userId because we may have an async call
+        Object userId = ThreadLocalStateHolder.getUserId(); // Capturing gateway userId because we may have an async call
+        boolean isHumanUser = !(userId instanceof SystemUserId);
         if (!pending && successful) { // If the payment is successful, we check if it was pending before (to adjust the history comment)
             loadingFuture = moneyTransfer.onExpressionLoaded("pending");
         } else {
             loadingFuture = Future.succeededFuture(moneyTransfer);
         }
         return loadingFuture.compose(x -> {
-            boolean wasPending = x.isPending();
+            Boolean wasPending = x.isPending();
             moneyTransfer.setPending(pending);
             moneyTransfer.setSuccessful(successful);
             if (gatewayTransactionRef != null)
@@ -240,11 +241,11 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
 
             String historyComment =
                 !pending && successful  ?   (wasPending ? "Processed payment successfully" : "Reported payment is successful") :
-                !pending && !successful ?   "Reported payment is failed" :
+                !pending && !successful ?   (isHumanUser ? "Cancelled payment" : "Reported payment is failed") :
                 pending && successful   ?   "Reported payment is authorised (not yet completed)" :
                 /*pending && !successful?*/ "Reported payment is pending";
 
-            return HistoryRecorder.preparePaymentHistoryBeforeSubmit(historyComment, moneyTransfer, gatewayUserId)
+            return HistoryRecorder.preparePaymentHistoryBeforeSubmit(historyComment, moneyTransfer, userId)
                 .compose(history ->
                     updateStore.submitChanges()
                         .compose(submitResultBatch -> { // Checking that something happened in the database

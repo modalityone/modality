@@ -52,7 +52,10 @@ class Step4PaymentSlide extends StepSlide {
         payButton.setOnAction(e -> webPaymentForm.pay());
         payButton.getStyleClass().addAll("event-button", "success-button");
         cancelButton.getStyleClass().addAll("event-button", "secondary-button");
-        cancelButton.setOnAction(e -> controller.displayErrorMessage("ErrorUserCanceledPayment"));
+        cancelButton.setOnAction(e -> {
+            webPaymentForm.cancelPayment();
+            controller.displayErrorMessage("ErrorUserCanceledPayment");
+        });
         FlexPane buttonBar = new FlexPane(payButton, cancelButton);
         buttonBar.setHorizontalSpace(10);
         VBox.setMargin(buttonBar, new Insets(10, 0, 10, 0));

@@ -13,6 +13,7 @@ module modality.ecommerce.payment.client {
     requires modality.ecommerce.payment;
     requires webfx.extras.panes;
     requires webfx.extras.webview.pane;
+    requires webfx.platform.async;
     requires webfx.platform.browser;
     requires webfx.platform.conf;
     requires webfx.platform.console;

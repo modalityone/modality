@@ -12,17 +12,21 @@ public final class CancelPaymentArgumentSerialCodec extends SerialCodecBase<Canc
 
     private static final String CODEC_ID = "CancelPaymentArgument";
 
+    private static final String PAYMENT_PRIMARY_KEY_KEY = "payment";
+
     public CancelPaymentArgumentSerialCodec() {
         super(CancelPaymentArgument.class, CODEC_ID);
     }
 
     @Override
     public void encode(CancelPaymentArgument arg, AstObject serial) {
+        encodeObject( serial, PAYMENT_PRIMARY_KEY_KEY, arg.getPaymentPrimaryKey());
     }
 
     @Override
     public CancelPaymentArgument decode(ReadOnlyAstObject serial) {
         return new CancelPaymentArgument(
+                decodeObject( serial, PAYMENT_PRIMARY_KEY_KEY)
         );
     }
 }
