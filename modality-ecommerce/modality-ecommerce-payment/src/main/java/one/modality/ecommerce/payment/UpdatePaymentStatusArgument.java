@@ -11,15 +11,17 @@ public final class UpdatePaymentStatusArgument {
     private final String gatewayStatus;
     private final boolean pendingStatus;
     private final boolean successfulStatus;
+    private final boolean explicitUserCancellation;
     private final String errorMessage;
 
-    public UpdatePaymentStatusArgument(Object paymentPrimaryKey, String gatewayResponse, String gatewayTransactionRef, String gatewayStatus, boolean pendingStatus, boolean successfulStatus, String errorMessage) {
+    public UpdatePaymentStatusArgument(Object paymentPrimaryKey, String gatewayResponse, String gatewayTransactionRef, String gatewayStatus, boolean pendingStatus, boolean successfulStatus, boolean explicitUserCancellation, String errorMessage) {
         this.paymentPrimaryKey = paymentPrimaryKey;
         this.gatewayResponse = gatewayResponse;
         this.gatewayTransactionRef = gatewayTransactionRef;
         this.gatewayStatus = gatewayStatus;
         this.pendingStatus = pendingStatus;
         this.successfulStatus = successfulStatus;
+        this.explicitUserCancellation = explicitUserCancellation;
         this.errorMessage = errorMessage;
     }
 
@@ -47,20 +49,24 @@ public final class UpdatePaymentStatusArgument {
         return successfulStatus;
     }
 
+    public boolean isExplicitUserCancellation() {
+        return explicitUserCancellation;
+    }
+
     public String getErrorMessage() {
         return errorMessage;
     }
 
     public static UpdatePaymentStatusArgument createCapturedStatusArgument(Object paymentPrimaryKey, String gatewayResponse, String gatewayTransactionRef, String gatewayStatus, boolean pendingStatus, boolean successStatus) {
-        return new UpdatePaymentStatusArgument(paymentPrimaryKey, gatewayResponse, gatewayTransactionRef, gatewayStatus, pendingStatus, successStatus, null);
+        return new UpdatePaymentStatusArgument(paymentPrimaryKey, gatewayResponse, gatewayTransactionRef, gatewayStatus, pendingStatus, successStatus, false, null);
     }
 
-    public static UpdatePaymentStatusArgument createCancelStatusArgument(Object paymentPrimaryKey) {
-        return new UpdatePaymentStatusArgument(paymentPrimaryKey, null, null, null, false, false, null);
+    public static UpdatePaymentStatusArgument createCancelStatusArgument(Object paymentPrimaryKey, boolean explicitUserCancellation) {
+        return new UpdatePaymentStatusArgument(paymentPrimaryKey, null, null, null, false, false, explicitUserCancellation, null);
     }
 
     public static UpdatePaymentStatusArgument createExceptionStatusArgument(Object paymentPrimaryKey, String gatewayResponse, String errorMessage) {
-        return new UpdatePaymentStatusArgument(paymentPrimaryKey, gatewayResponse, null, null, true, false, errorMessage);
+        return new UpdatePaymentStatusArgument(paymentPrimaryKey, gatewayResponse, null, null, true, false, false,  errorMessage);
     }
 
 }

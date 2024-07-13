@@ -63,7 +63,7 @@ public class WebPaymentForm {
         // user cancellation
         Shutdown.addShutdownHook(() -> {
             if (!paymentCancelled && !paymentCompleted) {
-                cancelPayment();
+                cancelPayment(false);
             }
         });
     }
@@ -230,8 +230,12 @@ public class WebPaymentForm {
 
     public Future<CancelPaymentResult> cancelPayment() {
         logDebug("cancelPayment called");
+        return cancelPayment(true);
+    }
+
+    private Future<CancelPaymentResult> cancelPayment(boolean explicitUserCancellation) {
         paymentCancelled = true;
-        return PaymentService.cancelPayment(new CancelPaymentArgument(result.getPaymentPrimaryKey()));
+        return PaymentService.cancelPayment(new CancelPaymentArgument(result.getPaymentPrimaryKey(), explicitUserCancellation));
     }
 
     public ReadOnlyBooleanProperty userInteractionAllowedProperty() {

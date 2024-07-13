@@ -148,7 +148,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
 
     @Override
     public Future<CancelPaymentResult> cancelPayment(CancelPaymentArgument argument) {
-        return updatePaymentStatus(UpdatePaymentStatusArgument.createCancelStatusArgument(argument.getPaymentPrimaryKey()))
+        return updatePaymentStatus(UpdatePaymentStatusArgument.createCancelStatusArgument(argument.getPaymentPrimaryKey(), argument.isExplicitUserCancellation()))
                 .map(x -> new CancelPaymentResult());
     }
 
@@ -217,10 +217,11 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
         String gatewayStatus = argument.getGatewayStatus();
         boolean pending = argument.isPendingStatus();
         boolean successful = argument.isSuccessfulStatus();
+        boolean isExplicitUserCancellation = argument.isExplicitUserCancellation();
         String errorMessage = argument.getErrorMessage();
         Future<MoneyTransfer> loadingFuture;
-        Object userId = ThreadLocalStateHolder.getUserId(); // Capturing gateway userId because we may have an async call
-        boolean isHumanUser = !(userId instanceof SystemUserId);
+        Object userId = ThreadLocalStateHolder.getUserId(); // Capturing userId because we may have an async call
+        boolean isGatewayUser = userId instanceof SystemUserId;
         if (!pending && successful) { // If the payment is successful, we check if it was pending before (to adjust the history comment)
             loadingFuture = moneyTransfer.onExpressionLoaded("pending");
         } else {
@@ -241,7 +242,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
 
             String historyComment =
                 !pending && successful  ?   (wasPending ? "Processed payment successfully" : "Reported payment is successful") :
-                !pending && !successful ?   (isHumanUser ? "Cancelled payment" : "Reported payment is failed") :
+                !pending && !successful ?   (isGatewayUser ? "Reported payment is failed" : isExplicitUserCancellation ? "Cancelled payment" : "Abandoned payment" /* typically closed window */) :
                 pending && successful   ?   "Reported payment is authorised (not yet completed)" :
                 /*pending && !successful?*/ "Reported payment is pending";
 
