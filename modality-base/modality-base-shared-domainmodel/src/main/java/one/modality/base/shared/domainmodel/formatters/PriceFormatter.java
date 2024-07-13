@@ -52,7 +52,7 @@ public class PriceFormatter implements ValueFormatter, ValueParser {
     }
 
     public static String formatWithoutCurrency(Object value) {
-        return formatWithCurrency(value, "");
+        return formatWithCurrency(value, null);
     }
 
     public static String formatWithCurrency(Object value, String currencySymbol) {

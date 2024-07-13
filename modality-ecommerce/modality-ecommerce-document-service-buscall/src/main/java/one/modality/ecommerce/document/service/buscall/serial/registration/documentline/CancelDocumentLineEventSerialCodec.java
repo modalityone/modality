@@ -1,8 +1,8 @@
-package one.modality.ecommerce.document.service.buscall.serial.registration.line;
+package one.modality.ecommerce.document.service.buscall.serial.registration.documentline;
 
 import dev.webfx.platform.ast.ReadOnlyAstObject;
 import one.modality.ecommerce.document.service.buscall.serial.AbstractSetDocumentLineFieldsEventSerialCodec;
-import one.modality.ecommerce.document.service.events.registration.line.CancelDocumentLineEvent;
+import one.modality.ecommerce.document.service.events.registration.documentline.CancelDocumentLineEvent;
 
 /**
  * @author Bruno Salmon

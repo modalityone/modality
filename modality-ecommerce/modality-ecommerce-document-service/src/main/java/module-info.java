@@ -20,7 +20,8 @@ module modality.ecommerce.document.service {
     exports one.modality.ecommerce.document.service.events.gateway;
     exports one.modality.ecommerce.document.service.events.multiplebookings;
     exports one.modality.ecommerce.document.service.events.registration;
-    exports one.modality.ecommerce.document.service.events.registration.line;
+    exports one.modality.ecommerce.document.service.events.registration.documentline;
+    exports one.modality.ecommerce.document.service.events.registration.moneytransfer;
     exports one.modality.ecommerce.document.service.events.security;
     exports one.modality.ecommerce.document.service.spi;
     exports one.modality.ecommerce.document.service.util;

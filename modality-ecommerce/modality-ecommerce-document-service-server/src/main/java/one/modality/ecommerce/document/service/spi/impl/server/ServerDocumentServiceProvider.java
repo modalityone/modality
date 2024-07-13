@@ -21,7 +21,8 @@ import one.modality.ecommerce.document.service.events.book.AddAttendancesEvent;
 import one.modality.ecommerce.document.service.events.book.AddDocumentEvent;
 import one.modality.ecommerce.document.service.events.book.AddDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.book.RemoveAttendancesEvent;
-import one.modality.ecommerce.document.service.events.registration.line.RemoveDocumentLineEvent;
+import one.modality.ecommerce.document.service.events.registration.documentline.RemoveDocumentLineEvent;
+import one.modality.ecommerce.document.service.events.registration.moneytransfer.RemoveMoneyTransferEvent;
 import one.modality.ecommerce.document.service.spi.DocumentServiceProvider;
 import one.modality.ecommerce.history.server.HistoryRecorder;
 
@@ -150,6 +151,11 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                 for (int i = 0; i < fieldIds.length; i++) {
                     documentLine.setFieldValue(fieldIds[i], fieldValues[i]);
                 }
+            } else if (e instanceof RemoveMoneyTransferEvent) { // Note that AddMoneyTransferEvent is managed by ServerPaymentServiceProvider
+                RemoveMoneyTransferEvent rmte = (RemoveMoneyTransferEvent) e;
+                updateStore.deleteEntity(MoneyTransfer.class, rmte.getMoneyTransferPrimaryKey());
+                if (document == null)
+                    document = updateStore.getOrCreateEntity(Document.class, rmte.getDocumentPrimaryKey());
             }
         }
 

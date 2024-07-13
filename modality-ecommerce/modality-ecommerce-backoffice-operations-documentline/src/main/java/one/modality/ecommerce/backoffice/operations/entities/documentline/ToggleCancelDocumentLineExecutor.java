@@ -6,7 +6,7 @@ import one.modality.base.backoffice.operations.entities.generic.DialogExecutorUt
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.SubmitDocumentChangesArgument;
-import one.modality.ecommerce.document.service.events.registration.line.CancelDocumentLineEvent;
+import one.modality.ecommerce.document.service.events.registration.documentline.CancelDocumentLineEvent;
 
 /**
  * @author Bruno Salmon

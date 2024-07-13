@@ -1,4 +1,4 @@
-package one.modality.ecommerce.document.service.events.registration.line;
+package one.modality.ecommerce.document.service.events.registration.documentline;
 
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.ecommerce.document.service.events.AbstractDocumentLineEvent;

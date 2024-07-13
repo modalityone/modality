@@ -2,6 +2,7 @@ package one.modality.base.backoffice.operations.entities.generic;
 
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.ui.controls.alert.AlertUtil;
 import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
@@ -19,26 +20,28 @@ public final class DialogExecutorUtil {
 
     public static Future<Void> executeOnUserConfirmation(String confirmationText, Pane parentContainer, Supplier<Future<?>> executor) {
         Promise<Void> promise = Promise.promise();
-        DialogContent dialogContent = new DialogContent().setContent(new Text(confirmationText));
-        boolean[] executing = { false };
-        DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, parentContainer).addCloseHook(() -> {
-            if (!executing[0])
-                promise.fail(new UserCancellationException());
-        });
-        DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
-            executing[0] = true;
-            executor.get()
-                .onFailure(cause -> {
-                    reportException(dialogCallback, parentContainer, cause); // Actually just print stack trace for now...
-                    if (dialogCallback != null) // So we close the window
-                        dialogCallback.closeDialog();
-                    promise.fail(cause);
-                })
-                .onSuccess(b -> {
-                    if (dialogCallback != null)
-                        dialogCallback.closeDialog();
-                    promise.complete();
-                });
+        UiScheduler.runInUiThread(() -> {
+            DialogContent dialogContent = new DialogContent().setContent(new Text(confirmationText));
+            boolean[] executing = { false };
+            DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, parentContainer).addCloseHook(() -> {
+                if (!executing[0])
+                    promise.fail(new UserCancellationException());
+            });
+            DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
+                executing[0] = true;
+                executor.get()
+                    .onFailure(cause -> {
+                        reportException(dialogCallback, parentContainer, cause); // Actually just print stack trace for now...
+                        if (dialogCallback != null) // So we close the window
+                            dialogCallback.closeDialog();
+                        promise.fail(cause);
+                    })
+                    .onSuccess(b -> {
+                        if (dialogCallback != null)
+                            dialogCallback.closeDialog();
+                        promise.complete();
+                    });
+            });
         });
         return promise.future();
     }

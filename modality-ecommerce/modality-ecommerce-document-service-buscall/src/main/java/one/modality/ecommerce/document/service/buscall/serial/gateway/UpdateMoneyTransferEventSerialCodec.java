@@ -1,13 +1,13 @@
 package one.modality.ecommerce.document.service.buscall.serial.gateway;
 
 import dev.webfx.platform.ast.ReadOnlyAstObject;
-import one.modality.ecommerce.document.service.buscall.serial.AbstractMoneyTransferEventSerialCodec;
+import one.modality.ecommerce.document.service.buscall.serial.AbstractExistingMoneyTransferEventSerialCodec;
 import one.modality.ecommerce.document.service.events.gateway.UpdateMoneyTransferEvent;
 
 /**
  * @author Bruno Salmon
  */
-public final class UpdateMoneyTransferEventSerialCodec extends AbstractMoneyTransferEventSerialCodec<UpdateMoneyTransferEvent> {
+public final class UpdateMoneyTransferEventSerialCodec extends AbstractExistingMoneyTransferEventSerialCodec<UpdateMoneyTransferEvent> {
 
     private static final String CODEC_ID = "UpdateMoneyTransferEvent";
 
