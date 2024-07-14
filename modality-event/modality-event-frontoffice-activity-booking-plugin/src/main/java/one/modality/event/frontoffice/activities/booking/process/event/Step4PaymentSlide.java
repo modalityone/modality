@@ -23,6 +23,7 @@ import one.modality.event.client.event.fx.FXEvent;
 
 class Step4PaymentSlide extends StepSlide {
 
+    private final Label gatewayLogo = new Label();
     private final HtmlText paymentInformationInPaymentSlide = new HtmlText();
     private Label bookedEventTitleText;
     private final HtmlText messageHtmlText = new HtmlText();
@@ -30,10 +31,11 @@ class Step4PaymentSlide extends StepSlide {
     public Step4PaymentSlide(SlideController control, BookEventData bed) {
         super(control, bed);
         controller.setStep4PaymentSlide(this);
-        I18n.bindI18nTextProperty(paymentInformationInPaymentSlide.textProperty(), "PaymentInformation");
     }
 
     public void setWebPaymentForm(WebPaymentForm webPaymentForm) {
+        I18n.bindI18nTextProperty(paymentInformationInPaymentSlide.textProperty(), "PaymentInformation", webPaymentForm.getGatewayName());
+        I18nControls.bindI18nProperties(gatewayLogo, webPaymentForm.getGatewayName());
         Region paymentRegion = webPaymentForm.buildPaymentForm();
         mainVbox.getChildren().add(paymentRegion);
         if (webPaymentForm.isSandbox()) {
@@ -131,18 +133,22 @@ class Step4PaymentSlide extends StepSlide {
         bookedEventTitleText = new Label();
         bookedEventTitleText.getStyleClass().addAll("book-event-primary-title", "emphasize");
         MonoPane topPane = new MonoPane(bookedEventTitleText);
+        topPane.setMaxWidth(Double.MAX_VALUE);
         topPane.setAlignment(Pos.CENTER_LEFT);
         VBox.setMargin(topPane, new Insets(20,0,0,50));
         mainVbox.getChildren().add(topPane);
 
         paymentInformationInPaymentSlide.getStyleClass().add("subtitle-grey");
-        paymentInformationInPaymentSlide.setMaxWidth(600);
-        paymentInformationInPaymentSlide.setPadding(new Insets(50,0,20,0));
+        MonoPane paymentInfoPane = new MonoPane(paymentInformationInPaymentSlide);
+        paymentInfoPane.setMaxWidth(Double.MAX_VALUE);
+        paymentInfoPane.setAlignment(Pos.CENTER_LEFT);
+        VBox.setMargin(paymentInfoPane, new Insets(10,0,20,50));
+        mainVbox.getChildren().add(paymentInfoPane);
 
-        MonoPane paymentPane = new MonoPane(paymentInformationInPaymentSlide);
-        topPane.setAlignment(Pos.BASELINE_LEFT);
-        VBox.setMargin(paymentPane, new Insets(10,0,20,50));
-        mainVbox.getChildren().add(paymentPane);
-
+        MonoPane gatewayPane = new MonoPane(gatewayLogo);
+        gatewayPane.setMaxWidth(Double.MAX_VALUE);
+        gatewayPane.setAlignment(Pos.CENTER_LEFT);
+        VBox.setMargin(gatewayPane, new Insets(10,0,20,50));
+        mainVbox.getChildren().add(gatewayPane);
     }
 }
