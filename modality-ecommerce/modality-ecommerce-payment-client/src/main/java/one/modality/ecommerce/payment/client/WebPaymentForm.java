@@ -288,9 +288,13 @@ public class WebPaymentForm {
     }
 
     public void pay() {
-        if (!inited || !userInteractionAllowedProperty.get())
+        if (!inited || !isUserInteractionAllowed())
             throw new IllegalStateException("pay() must be called after the payment form has been initialized and when the user is allowed to interact");
-        showVerificationProcessOverlay();
+        if (webViewPane.isSeamless()) {
+            // We don't show the verification overlay if not seamless, because the overlay will prevent the user to fill
+            // possible the verification form!
+            showVerificationProcessOverlay();
+        }
         try {
             Console.log("Calling modality_submitGatewayPayment() in payment form");
             webViewPane.callWindow("modality_submitGatewayPayment",
