@@ -3,6 +3,7 @@
 module modality.ecommerce.history.server {
 
     // Direct dependencies modules
+    requires modality.base.shared.domainmodel;
     requires modality.base.shared.entities;
     requires modality.crm.shared.authn;
     requires modality.ecommerce.document.service;

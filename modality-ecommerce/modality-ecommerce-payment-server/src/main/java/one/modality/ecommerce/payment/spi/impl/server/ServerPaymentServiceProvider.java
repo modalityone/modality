@@ -3,7 +3,6 @@ package one.modality.ecommerce.payment.spi.impl.server;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.service.MultipleServiceProviders;
-import dev.webfx.platform.util.Numbers;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
@@ -31,8 +30,6 @@ import java.util.ServiceLoader;
  * @author Bruno Salmon
  */
 public class ServerPaymentServiceProvider implements PaymentServiceProvider {
-
-    private final static boolean DEBUG = true;
 
     private static List<PaymentGateway> getProvidedPaymentGateways() {
         return MultipleServiceProviders.getProviders(PaymentGateway.class, () -> ServiceLoader.load(PaymentGateway.class));
@@ -102,15 +99,12 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
         // to indicate that the booker submitted valid cc details.
         UpdateStore updateStore = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
         MoneyTransfer moneyTransfer = updateStore.updateEntity(MoneyTransfer.class, paymentPrimaryKey);
-        HistoryRecorder.preparePaymentHistoryBeforeSubmit("Submitted valid CC to " + gatewayName, moneyTransfer)
+        HistoryRecorder.preparePaymentHistoryBeforeSubmit("Requested " + gatewayName + " to process [payment]", moneyTransfer)
                 .onFailure(Console::log)
                 .onSuccess(x -> updateStore.submitChanges());
 
         return loadPaymentGatewayParameters(paymentPrimaryKey, live)
                 .compose(parameters -> {
-                    if (DEBUG) {
-                        Console.log("[Square] completePayment - step 1 - payment gateway parameters loaded");
-                    }
                     String accessToken = parameters.get("access_token");
                     // TODO check accessToken is set, otherwise return an error
                     return paymentGateway.completePayment(new GatewayCompletePaymentArgument(live, accessToken, argument.getGatewayCompletePaymentPayload()))
@@ -181,7 +175,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
         moneyTransfer.setSuccessful(false);
         moneyTransfer.setMethod(Method.ONLINE_METHOD_ID);
 
-        return HistoryRecorder.preparePaymentHistoryBeforeSubmit("Initiated payment " + (amount / 100) + "." + Numbers.twoDigits(amount % 100), moneyTransfer)
+        return HistoryRecorder.preparePaymentHistoryBeforeSubmit("Initiated [payment]", moneyTransfer)
                 .compose(history ->
                     updateStore.submitChanges()
                     // On success, we load the necessary data associated with this moneyTransfer for the payment gateway
@@ -219,15 +213,13 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
         boolean successful = argument.isSuccessfulStatus();
         boolean isExplicitUserCancellation = argument.isExplicitUserCancellation();
         String errorMessage = argument.getErrorMessage();
-        Future<MoneyTransfer> loadingFuture;
         Object userId = ThreadLocalStateHolder.getUserId(); // Capturing userId because we may have an async call
         boolean isGatewayUser = userId instanceof SystemUserId;
+        String fieldsToLoad = "amount"; // As it will be required for history anyway
         if (!pending && successful) { // If the payment is successful, we check if it was pending before (to adjust the history comment)
-            loadingFuture = moneyTransfer.onExpressionLoaded("pending");
-        } else {
-            loadingFuture = Future.succeededFuture(moneyTransfer);
+            fieldsToLoad += ",pending";
         }
-        return loadingFuture.compose(x -> {
+        return moneyTransfer.<MoneyTransfer>onExpressionLoaded(fieldsToLoad).compose(x -> {
             Boolean wasPending = x.isPending();
             moneyTransfer.setPending(pending);
             moneyTransfer.setSuccessful(successful);
@@ -241,10 +233,10 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                 moneyTransfer.setComment(errorMessage);
 
             String historyComment =
-                !pending && successful  ?   (wasPending ? "Processed payment successfully" : "Reported payment is successful") :
-                !pending && !successful ?   (isGatewayUser ? "Reported payment is failed" : isExplicitUserCancellation ? "Cancelled payment" : "Abandoned payment" /* typically closed window */) :
-                pending && successful   ?   "Reported payment is authorised (not yet completed)" :
-                /*pending && !successful?*/ "Reported payment is pending";
+                !pending && successful  ?   (wasPending ? "Processed [payment] successfully" : "Reported [payment] is successful") :
+                !pending && !successful ?   (isGatewayUser ? "Reported [payment] is failed" : isExplicitUserCancellation ? "Cancelled [payment]" : "Abandoned [payment]" /* typically closed window */) :
+                pending && successful   ?   "Reported [payment] is authorised (not yet completed)" :
+                /*pending && !successful?*/ "Reported [payment] is pending";
 
             return HistoryRecorder.preparePaymentHistoryBeforeSubmit(historyComment, moneyTransfer, userId)
                 .compose(history ->

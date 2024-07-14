@@ -9,6 +9,7 @@ import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.session.state.SystemUserId;
 import dev.webfx.stack.session.state.ThreadLocalStateHolder;
+import one.modality.base.shared.domainmodel.formatters.PriceFormatter;
 import one.modality.base.shared.entities.*;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 import one.modality.ecommerce.document.service.events.*;
@@ -121,24 +122,26 @@ public final class HistoryRecorder {
                 document = updateStore.createEntity(documentId);
             }
         }
+        String fieldsToLoad = "amount"; // we also read the amount (necessary for UpdateMoneyTransferEvent serialization)
         // If still not found, we need to load it from the database (this happens when ServerPaymentServiceProvider updates a payment)
         if (document == null) {
-            return payment.onExpressionLoaded("document,amount") // we also read the amount (necessary for UpdateMoneyTransferEvent serialization)
-                    .compose(v -> {
-                        if (payment.getDocument() == null)
-                            return Future.failedFuture("Payment document not found in database");
-                        return preparePaymentHistoryBeforeSubmit(comment, payment, userId);
-                    });
+            fieldsToLoad += ",document";
         }
 
-        // Now we are set to insert the History entity
-        History history = updateStore.insertEntity(History.class);
-        history.setMoneyTransfer(payment);
-        history.setDocument(document);
-        history.setComment(comment);
+        return payment.onExpressionLoaded(fieldsToLoad)
+                .compose(v -> {
+                    if (payment.getDocument() == null)
+                        return Future.failedFuture("Payment document not found in database");
+                    // Now we are set to insert the History entity
+                    History history = updateStore.insertEntity(History.class);
+                    history.setMoneyTransfer(payment);
+                    history.setDocument(payment.getDocument());
+                    history.setComment(comment.replace("[payment]", "payment " + PriceFormatter.formatWithoutCurrency(payment.getAmount())));
 
-        // Final step in the history creation is to set the user
-        return setHistoryUser(history, userId);
+                    // Final step in the history creation is to set the user
+                    return setHistoryUser(history, userId);
+                });
+
     }
 
 }
