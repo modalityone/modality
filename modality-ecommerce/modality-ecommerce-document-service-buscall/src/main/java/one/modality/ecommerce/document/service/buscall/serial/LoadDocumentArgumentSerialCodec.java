@@ -14,6 +14,7 @@ public final class LoadDocumentArgumentSerialCodec extends SerialCodecBase<LoadD
     private static final String DOCUMENT_PRIMARY_KEY_KEY = "document";
     private static final String PERSON_PRIMARY_KEY_KEY = "person";
     private static final String EVENT_PRIMARY_KEY_KEY = "event";
+    private static final String HISTORY_PRIMARY_KEY_KEY = "history";
 
     public LoadDocumentArgumentSerialCodec() {
         super(LoadDocumentArgument.class, CODEC_ID);
@@ -24,6 +25,7 @@ public final class LoadDocumentArgumentSerialCodec extends SerialCodecBase<LoadD
         encodeObject(serial, DOCUMENT_PRIMARY_KEY_KEY, lda.getDocumentPrimaryKey());
         encodeObject(serial, PERSON_PRIMARY_KEY_KEY,   lda.getPersonPrimaryKey());
         encodeObject(serial, EVENT_PRIMARY_KEY_KEY,    lda.getEventPrimaryKey());
+        encodeObject(serial, HISTORY_PRIMARY_KEY_KEY,  lda.getHistoryPrimaryKey());
     }
 
     @Override
@@ -31,7 +33,8 @@ public final class LoadDocumentArgumentSerialCodec extends SerialCodecBase<LoadD
         return new LoadDocumentArgument(
                 decodeObject(serial, DOCUMENT_PRIMARY_KEY_KEY),
                 decodeObject(serial, PERSON_PRIMARY_KEY_KEY),
-                decodeObject(serial, EVENT_PRIMARY_KEY_KEY)
+                decodeObject(serial, EVENT_PRIMARY_KEY_KEY),
+                decodeObject(serial, HISTORY_PRIMARY_KEY_KEY)
         );
     }
 

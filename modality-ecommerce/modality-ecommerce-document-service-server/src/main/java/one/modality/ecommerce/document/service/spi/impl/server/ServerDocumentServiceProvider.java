@@ -16,11 +16,10 @@ import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import one.modality.base.shared.entities.*;
 import one.modality.ecommerce.document.service.*;
-import one.modality.ecommerce.document.service.events.*;
-import one.modality.ecommerce.document.service.events.book.AddAttendancesEvent;
-import one.modality.ecommerce.document.service.events.book.AddDocumentEvent;
-import one.modality.ecommerce.document.service.events.book.AddDocumentLineEvent;
-import one.modality.ecommerce.document.service.events.book.RemoveAttendancesEvent;
+import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
+import one.modality.ecommerce.document.service.events.AbstractSetDocumentFieldsEvent;
+import one.modality.ecommerce.document.service.events.AbstractSetDocumentLineFieldsEvent;
+import one.modality.ecommerce.document.service.events.book.*;
 import one.modality.ecommerce.document.service.events.registration.documentline.RemoveDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.registration.moneytransfer.RemoveMoneyTransferEvent;
 import one.modality.ecommerce.document.service.spi.DocumentServiceProvider;
@@ -28,6 +27,7 @@ import one.modality.ecommerce.history.server.HistoryRecorder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Bruno Salmon
@@ -62,14 +62,52 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
 
     @Override
     public Future<DocumentAggregate> loadDocument(LoadDocumentArgument argument) {
-        EntityStoreQuery query;
-        if (argument.getDocumentPrimaryKey() != null) {
-            query = new EntityStoreQuery("select changes from History where document=? order by id", new Object[] { argument.getDocumentPrimaryKey() });
-        } else {
-            query = new EntityStoreQuery("select changes from History where document = (select Document where person=? and event=? and !cancelled order by id desc limit 1) order by id", new Object[] { argument.getPersonPrimaryKey(), argument.getEventPrimaryKey() });
+        if (argument.getHistoryPrimaryKey() == null) {
+            return loadLatestDocumentFromDatabase(argument);
+        }
+        return loadDocumentFromHistory(argument);
+    }
+
+    private Future<DocumentAggregate> loadLatestDocumentFromDatabase(LoadDocumentArgument argument) {
+        Object[] parameters = { argument.getDocumentPrimaryKey() };
+        EntityStoreQuery[] queries = {
+                new EntityStoreQuery("select event,person from Document where id=? order by id", parameters),
+                new EntityStoreQuery("select document,site,item from DocumentLine where document=? and site!=null order by id", parameters),
+                new EntityStoreQuery("select documentLine,scheduledItem from Attendance where documentLine.document=? order by id", parameters),
+                new EntityStoreQuery("select document,amount,pending,successful from MoneyTransfer where document=? order by id", parameters)
+        };
+        if (parameters[0] == null) {
+            parameters = new Object[] { argument.getPersonPrimaryKey(), argument.getEventPrimaryKey() };
+            for (int i = 0; i < queries.length; i++) {
+                queries[i] = new EntityStoreQuery(queries[i].getSelect().replace("=?", "=(select Document where person=? and event=? and !cancelled order by id desc limit 1)"), parameters);
+            }
         }
         return EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
-                .<History>executeQuery(query)
+                .executeQueryBatch(queries)
+                .map(entityLists -> {
+                    Document document = ((List<Document>) entityLists[0]).stream().findFirst().orElse(null);
+                    if (document == null) {
+                        return null;
+                    }
+                    List<AbstractDocumentEvent> documentEvents = new ArrayList<>();
+                    documentEvents.add(new AddDocumentEvent(document));
+                    ((List<DocumentLine>) entityLists[1]).forEach(dl -> documentEvents.add(new AddDocumentLineEvent(dl)));
+                    ((List<Attendance>) entityLists[2]).stream().collect(Collectors.groupingBy(Attendance::getDocumentLine))
+                            .entrySet().forEach(entry -> documentEvents.add(new AddAttendancesEvent(entry.getValue().toArray(new Attendance[0]))));
+                    ((List<MoneyTransfer>) entityLists[3]).forEach(mt -> documentEvents.add(new AddMoneyTransferEvent(mt)));
+                    return new DocumentAggregate(documentEvents);
+                });
+    }
+
+    private Future<DocumentAggregate> loadDocumentFromHistory(LoadDocumentArgument argument) {
+        String select = "select changes from History where document=? and id<=? order by id";
+        Object[] parameters = { argument.getDocumentPrimaryKey(), argument.getHistoryPrimaryKey() };
+        if (parameters[0] == null) {
+            parameters = new Object[] { argument.getPersonPrimaryKey(), argument.getEventPrimaryKey(), argument.getHistoryPrimaryKey() };
+            select = select.replace("document=?", "document=(select Document where person=? and event=? and !cancelled order by id desc limit 1)");
+        }
+        return EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
+                .<History>executeQuery(select, parameters)
                 .map(historyList -> {
                     if (historyList.isEmpty()) {
                         return null;

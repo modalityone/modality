@@ -13,18 +13,23 @@ public final class LoadDocumentArgument {
     private final Object personPrimaryKey;
     private final Object eventPrimaryKey;
 
+    // Optional history loading. If not null, it will load the document up to that history. If null, it will load the
+    // latest version of the document.
+    private final Object historyPrimaryKey;
+
     public LoadDocumentArgument(Object documentPrimaryKey) {
-        this(documentPrimaryKey, null, null);
+        this(documentPrimaryKey, null, null, null);
     }
 
     public LoadDocumentArgument(Object personPrimaryKey, Object eventPrimaryKey) {
-        this(null, personPrimaryKey, eventPrimaryKey);
+        this(null, personPrimaryKey, eventPrimaryKey, null);
     }
 
-    public LoadDocumentArgument(Object documentPrimaryKey, Object personPrimaryKey, Object eventPrimaryKey) {
+    public LoadDocumentArgument(Object documentPrimaryKey, Object personPrimaryKey, Object eventPrimaryKey, Object historyPrimaryKey) {
         this.documentPrimaryKey = documentPrimaryKey;
         this.personPrimaryKey = personPrimaryKey;
         this.eventPrimaryKey = eventPrimaryKey;
+        this.historyPrimaryKey = historyPrimaryKey;
     }
 
     public Object getDocumentPrimaryKey() {
@@ -37,5 +42,9 @@ public final class LoadDocumentArgument {
 
     public Object getEventPrimaryKey() {
         return eventPrimaryKey;
+    }
+
+    public Object getHistoryPrimaryKey() {
+        return historyPrimaryKey;
     }
 }
