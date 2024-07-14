@@ -233,6 +233,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                 moneyTransfer.setComment(errorMessage);
 
             String historyComment =
+                errorMessage != null ?      "Raised an error while processing [payment]" :
                 !pending && successful  ?   (wasPending ? "Processed [payment] successfully" : "Reported [payment] is successful") :
                 !pending && !successful ?   (isGatewayUser ? "Reported [payment] is failed" : isExplicitUserCancellation ? "Cancelled [payment]" : "Abandoned [payment]" /* typically closed window */) :
                 pending && successful   ?   "Reported [payment] is authorised (not yet completed)" :
