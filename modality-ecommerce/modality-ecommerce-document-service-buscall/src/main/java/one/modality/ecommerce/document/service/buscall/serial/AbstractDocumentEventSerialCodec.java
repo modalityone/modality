@@ -17,8 +17,12 @@ public abstract class AbstractDocumentEventSerialCodec<T extends AbstractDocumen
 
     @Override
     public void encode(T o, AstObject serial) {
+        encode(o, serial, false);
+    }
+
+    protected void encode(T o, AstObject serial, boolean nullDocumentPkAllowed) {
         super.encode(o, serial);
-        encodeObject(serial, DOCUMENT_PRIMARY_KEY, o.getDocumentPrimaryKey(), NullEncoding.NULL_VALUE_NOT_ALLOWED);
+        encodeObject(serial, DOCUMENT_PRIMARY_KEY, o.getDocumentPrimaryKey(), nullDocumentPkAllowed ? NullEncoding.NULL_VALUE_IGNORED : NullEncoding.NULL_VALUE_NOT_ALLOWED);
     }
 
     protected Object decodeDocumentPrimaryKey(ReadOnlyAstObject serial) {
