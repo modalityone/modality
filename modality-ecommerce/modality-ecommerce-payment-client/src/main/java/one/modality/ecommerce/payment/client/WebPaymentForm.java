@@ -1,6 +1,7 @@
 package one.modality.ecommerce.payment.client;
 
 import dev.webfx.extras.panes.FlexPane;
+import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.webview.pane.LoadOptions;
 import dev.webfx.extras.webview.pane.WebViewPane;
 import dev.webfx.platform.async.Future;
@@ -17,15 +18,14 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
 import one.modality.ecommerce.payment.*;
@@ -45,7 +45,15 @@ public class WebPaymentForm {
     private final InitiatePaymentResult result;
     private final HasPersonalDetails buyerPersonalDetails;
     private final WebViewPane webViewPane = new WebViewPane();
-    private final BooleanProperty userInteractionAllowedProperty = new SimpleBooleanProperty(false);
+    private final MonoPane overlayPane = new MonoPane();
+    private final StackPane stackPane = new StackPane(webViewPane, overlayPane);
+    private final BooleanProperty userInteractionAllowedProperty = new SimpleBooleanProperty(false) {
+        @Override
+        protected void invalidated() {
+            if (get())
+                hideOverlay();
+        }
+    };
     private Scheduled initFailureChecker;
     private boolean inited;
     private Consumer<String> onLoadFailure; // Called when the webview failed to load
@@ -63,7 +71,7 @@ public class WebPaymentForm {
         // user cancellation
         Shutdown.addShutdownHook(() -> {
             if (!paymentCancelled && !paymentCompleted) {
-                cancelPayment(false);
+                cancelPayment(false); // false indicates it's not an explicit user cancellation
             }
         });
     }
@@ -107,7 +115,6 @@ public class WebPaymentForm {
         webViewPane.setMaxHeight(800); // Setting a maximum in case we are in browser iFrame (which we avoid for now)
         webViewPane.setFitHeightExtra(result.isSeamless() ? 5 : 10);
         //webViewPane.setRedirectConsole(true); // causes stack overflow
-        setUserInteractionAllowed(false);
         LoadOptions loadOptions = new LoadOptions()
                 .setOnLoadFailure(this::onLoadFailure)
                 .setOnLoadSuccess(() -> { // Note: can be called several times in case of an iFrame reload
@@ -142,7 +149,80 @@ public class WebPaymentForm {
             webViewPane.loadFromUrl(url, loadOptions, false);
         }
         webViewPane.getStyleClass().add("payment-form");
-        return webViewPane;
+        showLoadingFormOverlay();
+        stackPane.setMaxWidth(Double.MAX_VALUE);
+        return stackPane;
+    }
+
+    private void showOverlay(Node overlay) {
+        Region bgPane = new Pane();
+        bgPane.setOpacity(0.95);
+        bgPane.setBackground(Background.fill(Color.WHITE));
+        if (stackPane.getWidth() > 0) {
+            bgPane.setPrefWidth(stackPane.getWidth());
+            bgPane.setPrefHeight(stackPane.getHeight());
+        } else {
+            bgPane.setMinHeight(100);
+        }
+        overlayPane.setContent(new StackPane(bgPane, overlay));
+        setUserInteractionAllowed(false);
+    }
+
+    private void hideOverlay() {
+        overlayPane.setContent(null);
+    }
+
+    private void showLoadingFormOverlay() {
+        VBox vBox = new VBox(5,
+                createLabel("The " + getGatewayName() + " payment form is loading"),
+                createProgressIndicator(32)
+        );
+        vBox.setAlignment(Pos.CENTER);
+        showOverlay(vBox);
+    }
+
+    private ProgressIndicator createProgressIndicator(double size) {
+        ProgressIndicator pi = new ProgressIndicator();
+        pi.setMinSize(size, size);
+        pi.setPrefSize(size, size);
+        pi.setMaxSize(size, size);
+        return pi;
+    }
+
+    private void showVerificationProcessOverlay() {
+        VBox vBox = new VBox(5,
+                createLabel(getGatewayName() + " is verifying your details"),
+                createProgressIndicator(32)
+        );
+        vBox.setAlignment(Pos.CENTER);
+        showOverlay(vBox);
+    }
+
+
+    private void showVerificationSuccessOverlay() {
+        VBox vBox = new VBox(5,
+                createLabel("Your details have been successfully verified!"),
+                createLabel(getGatewayName() + " is now completing your payment"),
+                createProgressIndicator(32)
+        );
+        vBox.setAlignment(Pos.CENTER);
+        showOverlay(vBox);
+    }
+
+    private void showCancellingOverlay() {
+        VBox vBox = new VBox(5,
+                createLabel("We are cancelling your payment"),
+                createProgressIndicator(32)
+        );
+        vBox.setAlignment(Pos.CENTER);
+        showOverlay(vBox);
+    }
+
+    private Label createLabel(String text) {
+        Label label = new Label(text);
+        label.setWrapText(true);
+        //label.setFont(Font.font(null, FontWeight.BOLD, 14));
+        return label;
     }
 
     public String getGatewayName() {
@@ -159,7 +239,7 @@ public class WebPaymentForm {
 
     public Node createSandboxBar() {
         SandboxCard[] sandboxCards = result.getSandboxCards();
-        if (sandboxCards == null)
+        if (sandboxCards == null || sandboxCards.length == 0)
             return new Text("No sandbox cards available");
         Button numbersButton = copyButton("Numbers");
         Button expirationDateButton = copyButton("Expiration Date");
@@ -210,7 +290,7 @@ public class WebPaymentForm {
     public void pay() {
         if (!inited || !userInteractionAllowedProperty.get())
             throw new IllegalStateException("pay() must be called after the payment form has been initialized and when the user is allowed to interact");
-        setUserInteractionAllowed(false);
+        showVerificationProcessOverlay();
         try {
             Console.log("Calling modality_submitGatewayPayment() in payment form");
             webViewPane.callWindow("modality_submitGatewayPayment",
@@ -230,7 +310,8 @@ public class WebPaymentForm {
 
     public Future<CancelPaymentResult> cancelPayment() {
         logDebug("cancelPayment called");
-        return cancelPayment(true);
+        showCancellingOverlay();
+        return cancelPayment(true); // true indicates it's an explicit user cancellation (pressed Cancel button)
     }
 
     private Future<CancelPaymentResult> cancelPayment(boolean explicitUserCancellation) {
@@ -250,8 +331,8 @@ public class WebPaymentForm {
         userInteractionAllowedProperty.set(allowed);
     }
 
-    private void setUserInteractionAllowedInUiThread(boolean allowed) {
-        UiScheduler.runInUiThread(() -> setUserInteractionAllowed(allowed));
+    private void allowUserInteraction() {
+        UiScheduler.runInUiThread(() -> setUserInteractionAllowed(true));
     }
 
     private void onLoadFailure(String error) {
@@ -266,7 +347,7 @@ public class WebPaymentForm {
     public void onGatewayInitSuccess() {
         logDebug("onGatewayInitSuccess called");
         inited = true;
-        setUserInteractionAllowedInUiThread(true);
+        allowUserInteraction();
     }
 
     public void onGatewayInitFailure(String error) {
@@ -278,18 +359,19 @@ public class WebPaymentForm {
 
     public void onGatewayCardVerificationFailure(String error) {
         logDebug("onGatewayCardVerificationFailure called (error = " + error + ")");
-        setUserInteractionAllowedInUiThread(true);
+        allowUserInteraction();
     }
 
     public void onGatewayBuyerVerificationFailure(String error) {
         logDebug("onGatewayBuyerVerificationFailure called (error = " + error + ")");
-        setUserInteractionAllowedInUiThread(true);
+        allowUserInteraction();
         callConsumerOnUiThreadIfSet(onVerificationFailure, error);
     }
 
     public void onGatewayPaymentVerificationSuccess(String gatewayCompletePaymentPayload) {
         logDebug("onGatewayPaymentVerificationSuccess called (gatewayCompletePaymentPayload = " + gatewayCompletePaymentPayload + ")");
         paymentCompleted = true;
+        showVerificationSuccessOverlay();
         PaymentService.completePayment(new CompletePaymentArgument(result.getPaymentPrimaryKey(), result.isLive(), result.getGatewayName(), gatewayCompletePaymentPayload))
                 .onFailure(e -> onModalityCompletePaymentFailure(e.getMessage()))
                 .onSuccess(r -> onModalityCompletePaymentSuccess(r.getPaymentStatus()));
@@ -297,7 +379,7 @@ public class WebPaymentForm {
 
     public void onModalityCompletePaymentFailure(String error) {
         logDebug("onModalityCompletePaymentFailure called (error = " + error + ")");
-        setUserInteractionAllowedInUiThread(true);
+        allowUserInteraction();
         callConsumerOnUiThreadIfSet(onPaymentFailure, error);
     }
 
@@ -331,7 +413,7 @@ public class WebPaymentForm {
 
     private static void logDebug(String message) {
         if (DEBUG) {
-            Console.log(">>>>>>>>>>>>>> " + message);
+            Console.log("[WebPaymentForm] " + message);
         }
     }
 
