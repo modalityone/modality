@@ -20,10 +20,10 @@ public final class AddDocumentLineEvent extends AbstractDocumentLineEvent {
         itemPrimaryKey = Entities.getPrimaryKey(documentLine.getItem());
     }
 
-    public AddDocumentLineEvent(Object documentPrimaryKey, Object documentLinePrimaryKey, Object itemPrimaryKey, Object sitePrimaryKey) {
+    public AddDocumentLineEvent(Object documentPrimaryKey, Object documentLinePrimaryKey, Object sitePrimaryKey, Object itemPrimaryKey) {
         super(documentPrimaryKey, documentLinePrimaryKey);
-        this.itemPrimaryKey = itemPrimaryKey;
         this.sitePrimaryKey = sitePrimaryKey;
+        this.itemPrimaryKey = itemPrimaryKey;
     }
 
     public Object getItemPrimaryKey() {
