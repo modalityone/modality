@@ -297,7 +297,7 @@ Text, Label, Button, TextField {
     -fx-text-fill: white;
 }
 
-/*===== javafx@main.css from modality-crm-backoffice-bookingdetailspanel =====*/
+/*===== modality-backoffice-bookingdetailspanel-javafx@main.css from modality-crm-backoffice-bookingdetailspanel =====*/
 
 .titled-pane .title {
     -fx-font-size: 14px;
