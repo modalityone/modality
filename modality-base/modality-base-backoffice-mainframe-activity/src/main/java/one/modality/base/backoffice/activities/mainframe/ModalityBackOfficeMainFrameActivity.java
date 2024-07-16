@@ -160,8 +160,8 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
         // node (as a transparent button bar on top of it) -> so the container header must be after the mount node,
         // otherwise it will be hidden.
         mainFrame.getChildren().setAll(Collections.listOfRemoveNulls(
-                ganttCanvasContainer,
                 getMountNode(),
+                ganttCanvasContainer, // Also after the mount node because of the circle & chevron collapse decoration
                 mainFrameHeader,
                 mainFrameFooter,
                 profilePanel));
@@ -262,6 +262,9 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
         LuminanceTheme.createApplicationFrameFacet(headerTabsBar)
                 .style();
         MonoClipPane clipPane = new MonoClipPane(headerTabsBar);
+        clipPane.setMinHeight(Region.USE_PREF_SIZE);
+        clipPane.setMaxHeight(Region.USE_PREF_SIZE);
+        clipPane.setAlignment(Pos.TOP_CENTER);
         // The clipPane is initially contracted. Will be expanded (eventually through animation) once not empty.
         clipPane.setPrefHeight(0);
         // The tabs are communicated from the activities to this main frame through FXMainFrameHeaderTabsBar

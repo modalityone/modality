@@ -4,6 +4,7 @@ import dev.webfx.extras.canvas.bar.BarDrawer;
 import dev.webfx.extras.canvas.layer.ChildDrawer;
 import dev.webfx.extras.canvas.pane.CanvasPane;
 import dev.webfx.extras.geometry.Bounds;
+import dev.webfx.extras.panes.CollapsePane;
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.ThemeRegistry;
 import dev.webfx.extras.theme.layout.FXLayoutMode;
@@ -63,6 +64,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
     private final MultiLayerLocalDateLayout globalLayout = MultiLayerLocalDateLayout.create();
     private final MultiLayerLocalDateCanvasDrawer globalCanvasDrawer = new MultiLayerLocalDateCanvasDrawer(globalLayout);
     private final CanvasPane canvasPane = TimeCanvasUtil.createTimeCanvasPane(globalLayout, globalCanvasDrawer);
+    private final Pane collapsePaneContainer = CollapsePane.createDecoratedCollapsePane(canvasPane, true);
     private final BarDrawer yearBarDrawer = new BarDrawer();
     private final BarDrawer monthBarDrawer = new BarDrawer();
     private final BarDrawer weekBarDrawer = new BarDrawer();
@@ -117,7 +119,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
 
         FXGanttHighlight.addDayHighlight(daysLayer, globalCanvasDrawer);
 
-        // Animation management on time window change (starting animation timeline)
+        // Horizontal animation management on time window change (starting animation timeline)
         timeWindowEndProperty().addListener(new InvalidationListener() { // end changes after start (so both are updated at this point)
             private LocalDate lastTimeWindowStart;
             @Override
@@ -140,7 +142,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
             }
         });
 
-        // Animation management on time window change (during animation timeline)
+        // Horizontal animation management on time window change (during animation timeline)
         animatedTimeProjector.translateXProperty().addListener(observable -> {
             // Getting the start and end of the appearing time window to the user at this time of the animation timeline
             LocalDate start = animatedTimeProjector.xToTime(0);
@@ -166,7 +168,7 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
     }
 
     public Pane getCanvasContainer() {
-        return canvasPane;
+        return collapsePaneContainer;
     }
 
     public TimeProjector<LocalDate> getTimeProjector() {
@@ -246,8 +248,8 @@ public final class DatedGanttCanvas implements TimeWindow<LocalDate> {
 
         // Setting global visibility
         boolean isVisible = FXGanttVisibility.isVisible();
-        canvasPane.setVisible(isVisible);
-        canvasPane.setManaged(isVisible);
+        collapsePaneContainer.setVisible(isVisible);
+        collapsePaneContainer.setManaged(isVisible);
 
         // Setting layers visibility
         globalLayout.getLayers().forEach(l -> l.setVisible(FXGanttVisibility.showEvents()));
