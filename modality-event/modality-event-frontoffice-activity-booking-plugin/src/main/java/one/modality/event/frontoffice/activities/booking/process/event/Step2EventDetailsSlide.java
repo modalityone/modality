@@ -19,7 +19,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
@@ -116,12 +115,16 @@ import java.util.stream.Collectors;
 
         //If the date in unselectable for any reason listed above, we select another css property for this element
         recurringEventSchedule.setUnselectedDateCssGetter((localDate -> {
+            if(alreadyBookedDate.contains(localDate)) {
+                return "date-already-booked";
+            }
             if(unselectableDate.contains(localDate)) {
                 return "date-non-selectable";
             }
             return recurringEventSchedule.getUnselectedDateCssClass();
         }));
 
+        /* UX Designer asked to remove this
         recurringEventSchedule.setComputeNodeForExistingBookedDateFunction((localDate -> {
             if(alreadyBookedDate.contains(localDate)) {
                 Label toReturn = new Label("*");
@@ -133,7 +136,7 @@ import java.util.stream.Collectors;
                 return toReturn;
             }
             return null;
-        }));
+        }));*/
 
         FlexPane dateFlexPane = recurringEventSchedule.buildUi();
         dateFlexPane.setPadding(new Insets(20, 0, 20, 0));

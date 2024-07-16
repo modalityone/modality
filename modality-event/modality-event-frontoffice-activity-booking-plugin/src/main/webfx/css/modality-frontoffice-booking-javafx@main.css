@@ -20,13 +20,13 @@
    -fx-font-weight: bolder;
    -fx-text-fill: -blue-color; /* blue-color is defined in modality-base-client-css*/
    -fx-fill: #0096D6;
-   -fx-font-weight: bolder;
    -fx-font-size: 14px;
 }
 
-.date-selected {
+.date-selected, .date-already-booked {
      -fx-background-color: #0096D6;
 }
+
 .date-non-selectable {
     -fx-background-color: #AAAAAA;
 }

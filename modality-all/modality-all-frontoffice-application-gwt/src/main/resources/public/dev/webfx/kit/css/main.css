@@ -409,20 +409,21 @@ body {
 
 .book-event-primary-title {
     font-weight: bolder;
-    color: var(--blue-color, #0096D6); /* Use CSS variable with fallback */
+    color: #0096D6;
     font-size: 14px;
 }
 
 /* .date-selected */
-.date-selected > fx-background {
-    background-color: var(--blue-color, #0096D6);
-}
-.date-non-selectable > fx-background {
-    background-color: var(--blue-color, #AAAAAA);
-}
-
 .date-selected  {
     color: white;
+}
+
+.date-selected > fx-background, .date-already-booked > fx-background {
+    background-color: #0096D6;
+}
+
+.date-non-selectable > fx-background {
+    background-color: #AAAAAA;
 }
 
 .date-past-not-selected > fx-background {
@@ -431,11 +432,8 @@ body {
 
 /* .date-unselected */
 .date-unselected {
-    background-color: none;
-}
-
-.date-unselected {
     color: black;
+    background-color: inherit;
 }
 
 .checkout-address {
