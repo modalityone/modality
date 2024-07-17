@@ -4,15 +4,22 @@ import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.service.MultipleServiceProviders;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
+import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.session.state.SystemUserId;
 import dev.webfx.stack.session.state.ThreadLocalStateHolder;
+import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.GatewayParameter;
 import one.modality.base.shared.entities.Method;
 import one.modality.base.shared.entities.MoneyTransfer;
-import one.modality.ecommerce.document.service.events.book.AddMoneyTransferEvent;
+import one.modality.ecommerce.document.service.DocumentService;
+import one.modality.ecommerce.document.service.SubmitDocumentChangesArgument;
+import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
+import one.modality.ecommerce.document.service.events.AbstractExistingMoneyTransferEvent;
+import one.modality.ecommerce.document.service.events.book.*;
 import one.modality.ecommerce.document.service.events.gateway.UpdateMoneyTransferEvent;
+import one.modality.ecommerce.document.service.events.registration.documentline.RemoveDocumentLineEvent;
 import one.modality.ecommerce.history.server.HistoryRecorder;
 import one.modality.ecommerce.payment.*;
 import one.modality.ecommerce.payment.server.gateway.GatewayCompletePaymentArgument;
@@ -21,10 +28,7 @@ import one.modality.ecommerce.payment.server.gateway.GatewayMakeApiPaymentArgume
 import one.modality.ecommerce.payment.server.gateway.PaymentGateway;
 import one.modality.ecommerce.payment.spi.PaymentServiceProvider;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ServiceLoader;
+import java.util.*;
 
 /**
  * @author Bruno Salmon
@@ -142,8 +146,61 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
 
     @Override
     public Future<CancelPaymentResult> cancelPayment(CancelPaymentArgument argument) {
-        return updatePaymentStatus(UpdatePaymentStatusArgument.createCancelStatusArgument(argument.getPaymentPrimaryKey(), argument.isExplicitUserCancellation()))
-                .map(x -> new CancelPaymentResult());
+        return updatePaymentStatusImpl(UpdatePaymentStatusArgument.createCancelStatusArgument(argument.getPaymentPrimaryKey(), argument.isExplicitUserCancellation()))
+                // When payments are cancelled on recurring events, we automatically unbook unpaid options
+                .compose(moneyTransfer -> unbookUnpaidOptionsIfRecurringEvent(moneyTransfer)
+                .map(ignoredVoid -> new CancelPaymentResult()))
+                .onFailure(Console::log);
+    }
+
+    private Future<Void> unbookUnpaidOptionsIfRecurringEvent(MoneyTransfer moneyTransfer) {
+        return moneyTransfer.onExpressionLoaded("document.(event.type.recurringItem,price_deposit)")
+                .compose(x -> {
+                    EntityId recurringItemId = moneyTransfer.evaluate("document.event.type.recurringItem");
+                    // We check it's a recurring event, otherwise we skip that feature
+                    if (recurringItemId == null)
+                        return Future.succeededFuture();
+                    Document document = moneyTransfer.getDocument();
+                    // If there was no deposit on the booking, we cancel that booking
+                    if (document.getPriceDeposit() == 0) {
+                        return SystemUserId.SYSTEM.callAndReturn(() -> DocumentService.submitDocumentChanges(new SubmitDocumentChangesArgument(
+                                "Cancelled booking",
+                                new CancelDocumentEvent(document, true))
+                        ).map(ignored -> null));
+                    }
+                    // If there is a deposit, we remove all options added after the last successful payment (that is
+                    // meant to pay all previous options).
+                    return DocumentService.loadDocumentWithPolicyAndWholeHistory(document)
+                            .compose(documentAggregate -> {
+                                // Searching for the last successful payment (shouldn't be null as there is a price deposit)
+                                MoneyTransfer lastSuccessfulPayment = documentAggregate.getSuccessfulMoneyTransfersStream().reduce((first, second) -> second).orElse(null);
+                                // Searching for the event marking this payment as successful
+                                List<AbstractDocumentEvent> documentEvents = documentAggregate.getNewDocumentEvents();
+                                List<AbstractDocumentEvent> removeEvents = new ArrayList<>();
+                                documentEvents.stream().dropWhile(e -> {
+                                    if (!(e instanceof AbstractExistingMoneyTransferEvent))
+                                        return true;
+                                    AbstractExistingMoneyTransferEvent aemte = (AbstractExistingMoneyTransferEvent) e;
+                                    if (aemte.getMoneyTransfer() != lastSuccessfulPayment)
+                                        return true;
+                                    if (aemte.isPending() || !aemte.isSuccessful())
+                                        return true;
+                                    return false;
+                                }).forEach(e -> {
+                                    if (e instanceof AddAttendancesEvent) {
+                                        AddAttendancesEvent aae = (AddAttendancesEvent) e;
+                                        removeEvents.add(new RemoveAttendancesEvent(aae.getAttendances()));
+                                    } else if (e instanceof AddDocumentLineEvent) {
+                                        AddDocumentLineEvent aee = (AddDocumentLineEvent) e;
+                                        removeEvents.add(new RemoveDocumentLineEvent(aee.getDocumentLine()));
+                                    }
+                                });
+                                return SystemUserId.SYSTEM.callAndReturn(() -> DocumentService.submitDocumentChanges(
+                                        new SubmitDocumentChangesArgument("Unbooked unpaid options",
+                                                removeEvents.toArray(new AbstractDocumentEvent[0])))
+                                        .map(ignoredResult -> null));
+                            });
+                });
     }
 
     @Override
@@ -204,6 +261,10 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
 
     @Override
     public Future<Void> updatePaymentStatus(UpdatePaymentStatusArgument argument) {
+        return updatePaymentStatusImpl(argument).map((Void) null);
+    }
+
+    private Future<MoneyTransfer> updatePaymentStatusImpl(UpdatePaymentStatusArgument argument) {
         UpdateStore updateStore = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
         MoneyTransfer moneyTransfer = updateStore.updateEntity(MoneyTransfer.class, argument.getPaymentPrimaryKey());
         String gatewayResponse = argument.getGatewayResponse();
@@ -246,7 +307,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                             int rowCount = submitResultBatch.get(0).getRowCount();
                             if (rowCount == 0)
                                 return Future.failedFuture("Unknown payment");
-                            return Future.succeededFuture((Void) null);
+                            return Future.succeededFuture(moneyTransfer);
                         })
                         .onSuccess(ignored -> // Completing the history recording (changes column with resolved primary keys)
                                 HistoryRecorder.completeDocumentHistoryAfterSubmit(history, new UpdateMoneyTransferEvent(moneyTransfer))
