@@ -3,7 +3,6 @@ package one.modality.event.frontoffice.activities.booking.process.event;
 import dev.webfx.extras.carrousel.Carrousel;
 import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Numbers;
@@ -107,19 +106,12 @@ public final class BookEventActivity extends ViewDomainActivityBase {
             // the user was already logged-in (memorised in session), while FXUserPerson requires a DB reading, which
             // may not be finished yet at this time.
             Object userPersonPrimaryKey = FXUserPersonId.getUserPersonPrimaryKey();
-            Future.all(
-                    // 0) We load the policy aggregate for this event
-                    DocumentService.loadPolicy(new LoadPolicyArgument(event.getPrimaryKey())),
-                    // 1) And eventually the already existing booking of the user (i.e. his last booking for this event)
-                    userPersonPrimaryKey == null ? Future.succeededFuture(null) : // unless the user is not logged in yet
-                    DocumentService.loadDocument(new LoadDocumentArgument(userPersonPrimaryKey, event.getPrimaryKey()))
-                )
+            DocumentService.loadPolicyAndDocument(event, userPersonPrimaryKey)
                 .onFailure(Console::log)
-                .onSuccess(compositeFuture -> UiScheduler.runInUiThread(() -> {
+                .onSuccess(policyAndDocumentAggregates -> UiScheduler.runInUiThread(() -> {
                     if (event == FXEvent.getEvent()) { // Double-checking that no other changes occurred in the meantime
-                        policyAggregate = compositeFuture.resultAt(0); // 0 = policy aggregate (never null)
-                        policyAggregate.rebuildEntities(event);
-                        DocumentAggregate existingBooking = compositeFuture.resultAt(1); // 1 = document aggregate (may be null)
+                        policyAggregate = policyAndDocumentAggregates.getPolicyAggregate(); // never null
+                        DocumentAggregate existingBooking = policyAndDocumentAggregates.getDocumentAggregate(); // may be null
                         currentBooking = new WorkingBooking(policyAggregate, existingBooking);
                         bookEventData.setCurrentBooking(currentBooking);
                         loadEventDetails(event);
