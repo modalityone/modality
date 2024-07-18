@@ -22,7 +22,7 @@
         <library>
             <groupId>com.squareup</groupId>
             <artifactId>square</artifactId>
-            <version>40.1.0.20240604</version>
+            <version>40.1.1.20240717</version>
             <!-- These dependencies clash with some underlying Vert.x modules, so we solve this issue by excluding them -->
             <exclusions>
                 <exclusion>
