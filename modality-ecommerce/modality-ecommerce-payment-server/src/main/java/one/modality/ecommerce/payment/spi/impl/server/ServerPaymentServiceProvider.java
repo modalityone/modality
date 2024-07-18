@@ -103,7 +103,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
         // to indicate that the booker submitted valid cc details.
         UpdateStore updateStore = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
         MoneyTransfer moneyTransfer = updateStore.updateEntity(MoneyTransfer.class, paymentPrimaryKey);
-        HistoryRecorder.preparePaymentHistoryBeforeSubmit("Requested " + gatewayName + " to process [payment]", moneyTransfer)
+        HistoryRecorder.preparePaymentHistoryBeforeSubmit("Submitted card details to " + gatewayName + " for [payment]", moneyTransfer)
                 .onFailure(Console::log)
                 .onSuccess(x -> updateStore.submitChanges());
 
