@@ -201,7 +201,7 @@ public class WebPaymentForm {
 
     private void showVerificationSuccessOverlay() {
         VBox vBox = new VBox(5,
-                createLabel("Your details have been successfully verified!"),
+                createLabel("Your details have been successfully captured by " + getGatewayName()),
                 createLabel(getGatewayName() + " is now completing your payment"),
                 createProgressIndicator(32)
         );
