@@ -4,7 +4,10 @@ import com.squareup.square.Environment;
 import com.squareup.square.SquareClient;
 import com.squareup.square.api.PaymentsApi;
 import com.squareup.square.authentication.BearerAuthModel;
-import com.squareup.square.models.*;
+import com.squareup.square.exceptions.ApiException;
+import com.squareup.square.models.CreatePaymentRequest;
+import com.squareup.square.models.Money;
+import com.squareup.square.models.Payment;
 import dev.webfx.platform.ast.AST;
 import dev.webfx.platform.ast.ReadOnlyAstObject;
 import dev.webfx.platform.async.Future;
@@ -12,12 +15,12 @@ import dev.webfx.platform.async.Promise;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.resource.Resource;
 import dev.webfx.platform.util.uuid.Uuid;
-import io.vertx.core.json.JsonObject;
+import io.apimatic.coreinterfaces.http.Context;
 import one.modality.ecommerce.payment.PaymentStatus;
 import one.modality.ecommerce.payment.SandboxCard;
 import one.modality.ecommerce.payment.server.gateway.*;
 
-import static one.modality.ecommerce.payment.server.gateway.impl.square.SquareRestApiJob.*;
+import static one.modality.ecommerce.payment.server.gateway.impl.square.SquareRestApiJob.SQUARE_PAYMENT_FORM_ENDPOINT;
 
 /**
  * @author Bruno Salmon
@@ -116,35 +119,40 @@ public final class SquarePaymentGateway implements PaymentGateway {
                 .verificationToken(verificationToken)
                 .amountMoney(new Money(amount, currencyCode))
                 .build()
-        ).thenAccept(result -> {
+        ).thenAccept(result -> { // Seems to always indicate a successful payment
             Payment payment = result.getPayment();
-            JsonObject gatewayResponseJson = new JsonObject();
-            gatewayResponseJson.put("id", payment.getId());
-            gatewayResponseJson.put("status", payment.getStatus());
-            gatewayResponseJson.put("buyerEmailAddress", payment.getBuyerEmailAddress());
-            CardPaymentDetails cardDetails = payment.getCardDetails();
-            Card card = cardDetails == null ? null : cardDetails.getCard();
-            if (card != null) {
-                gatewayResponseJson.put("cardBrand", card.getCardBrand());
-                gatewayResponseJson.put("cardLast4", card.getLast4());
+            // We generate the final result from the payment information, and also capture the http response body (stored in the database)
+            promise.complete(generateResultFromSquarePayment(payment, result.getContext()));
+        }).exceptionally(ex -> { // Can be a technical exception, or a failed payment (ex: card declined)
+            // We extract the Square exception (most interesting part) if it is wrapped inside a Java exception
+            if (ex.getCause() instanceof ApiException) {
+                ex = ex.getCause();
             }
-            gatewayResponseJson.put("orderId", payment.getOrderId());
-            gatewayResponseJson.put("createdAt", payment.getCreatedAt());
-            gatewayResponseJson.put("updatedAt", payment.getUpdatedAt());
-            gatewayResponseJson.put("receiptNumber", payment.getReceiptNumber());
-            gatewayResponseJson.put("receiptUrl", payment.getReceiptUrl());
-            String gatewayResponse = gatewayResponseJson.toString();
-            String gatewayTransactionRef = payment.getId();
-            String gatewayStatus = payment.getStatus();
-            SquarePaymentStatus squarePaymentStatus = SquarePaymentStatus.valueOf(gatewayStatus.toUpperCase());
-            PaymentStatus paymentStatus = squarePaymentStatus.getGenericPaymentStatus();
-            promise.complete(new GatewayCompletePaymentResult(gatewayResponse, gatewayTransactionRef, gatewayStatus, paymentStatus));
-        }).exceptionally(ex -> {
             Console.log("[Square] completePayment - Square raised exception " + ex.getMessage());
+            // If the exception is about a failed payment, we apply the same process as for a successful payment
+            if (ex instanceof ApiException) {
+                ApiException ae = (ApiException) ex;
+                Object data = ae.getData();
+                if (data instanceof Payment) {
+                    // Same as for a successful payment, the difference will be the status that will indicate it's failed
+                    promise.complete(generateResultFromSquarePayment((Payment) data, ae.getHttpContext()));
+                    return null;
+                }
+            }
+            // Otherwise it's probably a technical exception
             promise.fail(ex);
             return null;
         });
         return promise.future();
+    }
+
+    private static GatewayCompletePaymentResult generateResultFromSquarePayment(Payment payment, Context httpContext) {
+        String gatewayResponse = httpContext.getResponse().getBody();
+        String gatewayTransactionRef = payment.getId();
+        String gatewayStatus = payment.getStatus();
+        SquarePaymentStatus squarePaymentStatus = SquarePaymentStatus.valueOf(gatewayStatus.toUpperCase());
+        PaymentStatus paymentStatus = squarePaymentStatus.getGenericPaymentStatus();
+        return new GatewayCompletePaymentResult(gatewayResponse, gatewayTransactionRef, gatewayStatus, paymentStatus);
     }
 
 

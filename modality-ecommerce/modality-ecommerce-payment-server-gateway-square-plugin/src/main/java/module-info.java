@@ -6,6 +6,7 @@
 module modality.ecommerce.payment.server.gateway.square.plugin {
 
     // Direct dependencies modules
+    requires core.interfaces;
     requires io.vertx.core;
     requires io.vertx.web;
     requires modality.base.shared.entities;
