@@ -8,8 +8,8 @@ import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.dialog.DialogCallback;
 import dev.webfx.stack.ui.exceptions.UserCancellationException;
+import dev.webfx.stack.ui.operation.OperationUtil;
 import javafx.scene.control.Button;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
@@ -32,7 +32,7 @@ public final class DialogExecutorUtil {
             DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
                 executing[0] = true;
                 Button executingButton = dialogContent.getOkButton();
-                turnOnButtonWaitMode(executingButton);
+                OperationUtil.turnOnButtonsWaitModeDuringExecution(
                 executor.get()
                     .onFailure(cause -> {
                         promise.fail(cause);
@@ -40,7 +40,6 @@ public final class DialogExecutorUtil {
                             reportException(dialogCallback, parentContainer, cause); // Actually just print stack trace for now...
                             if (dialogCallback != null) // So we close the window
                                 dialogCallback.closeDialog();
-                            turnOffButtonWaitMode(executingButton);
                         });
                     })
                     .onSuccess(b -> {
@@ -48,9 +47,9 @@ public final class DialogExecutorUtil {
                         UiScheduler.runInUiThread(() -> {
                             if (dialogCallback != null)
                                 dialogCallback.closeDialog();
-                            turnOffButtonWaitMode(executingButton);
                         });
-                    });
+                    })
+                , executingButton, dialogContent.getCancelButton());
             });
         });
         return promise.future();
@@ -61,18 +60,6 @@ public final class DialogExecutorUtil {
             dialogCallback.showException(cause);
         else
             AlertUtil.showExceptionAlert(cause, parentContainer.getScene().getWindow());
-    }
-
-    private static void turnOnButtonWaitMode(Button button) {
-        ProgressIndicator progressIndicator = new ProgressIndicator();
-        progressIndicator.setPrefSize(20, 20); // Note setMaxSize() doesn't work with WebFX but setPrefSize() does
-        button.setDisable(true);
-        button.setGraphic(progressIndicator);
-    }
-
-    private static void turnOffButtonWaitMode(Button button) {
-        button.setDisable(false);
-        button.setGraphic(null);
     }
 
 }
