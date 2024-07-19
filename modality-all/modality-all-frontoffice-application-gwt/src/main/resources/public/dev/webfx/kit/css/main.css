@@ -374,7 +374,7 @@ input[type="password"]:not([value=""]) {
 }
 
 /* Applying Montserrat as default font for Modality */
-body {
+body, textarea {
     font-family: Montserrat, serif;
     font-size: 13px;
     -webkit-font-smoothing: antialiased;
