@@ -803,7 +803,7 @@ public final class ManageRecurringEventView {
         Label shortDescriptionLabel = I18nControls.bindI18nProperties(new Label(),"ShortDescription");
         shortDescriptionLabel.setMinWidth(LABEL_WIDTH);
         shortDescriptionHtmlEditor.setMode(BASIC);
-        shortDescriptionHtmlEditor.setMaxHeight(150);
+        shortDescriptionHtmlEditor.setPrefHeight(150);
         shortDescriptionHtmlEditor.textProperty().addListener(obs -> {
             if(currentEditedEvent!=null) {
                 currentEditedEvent.setShortDescription(shortDescriptionHtmlEditor.getText());
