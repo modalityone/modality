@@ -1,5 +1,6 @@
 package one.modality.crm.backoffice.controls.bookingdetailspanel;
 
+import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.FlexPane;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.visual.VisualResult;
@@ -10,6 +11,7 @@ import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.domainmodel.HasDataSourceModel;
 import dev.webfx.stack.orm.entity.Entity;
+import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
@@ -17,14 +19,15 @@ import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActive
 import dev.webfx.stack.ui.action.ActionBinder;
 import dev.webfx.stack.ui.action.ActionGroup;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.stack.ui.operation.OperationUtil;
 import dev.webfx.stack.ui.operation.action.OperationAction;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -70,8 +73,8 @@ public final class BookingDetailsPanel implements
     private final ObjectProperty<Document> selectedDocumentProperty = new SimpleObjectProperty<>() {
         @Override
         protected void invalidated() {
-            detailsPanel.setEditable(false);
-            detailsPanel.setEntity(get());
+            personalDetailsPanel.setEditable(false);
+            personalDetailsPanel.setEntity(get());
         }
     };
     private final BooleanProperty activeProperty = new SimpleBooleanProperty(true);
@@ -82,12 +85,12 @@ public final class BookingDetailsPanel implements
 
     private final ButtonFactoryMixin mixin;
     private final DataSourceModel dataSourceModel;
-    private final BookingPersonalDetailsPanel detailsPanel;
+    private final BookingPersonalDetailsPanel personalDetailsPanel;
 
     public BookingDetailsPanel(ButtonFactoryMixin mixin, DataSourceModel dataSourceModel) {
         this.mixin = mixin;
         this.dataSourceModel = dataSourceModel;
-        detailsPanel = new BookingPersonalDetailsPanel(dataSourceModel, new ButtonSelectorParameters().setButtonFactory(mixin).setDialogParentGetter(FXMainFrameDialogArea::getDialogArea));
+        personalDetailsPanel = new BookingPersonalDetailsPanel(dataSourceModel, new ButtonSelectorParameters().setButtonFactory(mixin).setDialogParentGetter(FXMainFrameDialogArea::getDialogArea));
     }
 
     @Override
@@ -232,7 +235,7 @@ public final class BookingDetailsPanel implements
     }
 
     private Node buildPersonalDetailsView() {
-        BorderPane container = detailsPanel.getContainer();
+        BorderPane container = personalDetailsPanel.getContainer();
         //return container;
 
         ScalePane scalePane = new ScalePane(container);
@@ -242,7 +245,7 @@ public final class BookingDetailsPanel implements
         scalePane.setScaleRegion(true);
         scalePane.setVAlignment(VPos.TOP);
         scalePane.setStretchWidth(true);
-        detailsPanel.enableBigViewButton(() -> scalePane.setContent(container));
+        personalDetailsPanel.enableBigViewButton(() -> scalePane.setContent(container));
 
         /*ButtonSelectorParameters buttonSelectorParameters = new ButtonSelectorParameters().setButtonFactory(mixin).setDialogParentGetter(FXMainFrameDialogArea::getDialogArea);
 
@@ -258,40 +261,78 @@ public final class BookingDetailsPanel implements
     }
 
     private Node buildCommentView() {
-        GridPane gridPane = new GridPane();
-        gridPane.setHgap(5); // Space between the 3 comments
-        gridPane.setPadding(new Insets(2, 0, 0, 0)); // Small padding on top
-
-        RowConstraints rc = new RowConstraints();
-        rc.setPercentHeight(100);
-        gridPane.getRowConstraints().add(rc);
-
-        ColumnConstraints cc = new ColumnConstraints();
-        cc.setPercentWidth(33.3333);
-        ObservableList<ColumnConstraints> columnConstraints = gridPane.getColumnConstraints();
-        columnConstraints.add(cc);
-        columnConstraints.add(cc);
-        columnConstraints.add(cc);
-
-        gridPane.getChildren().setAll(
-                createComment("Person request",       "request"),
+        ColumnsPane columnsPane = new ColumnsPane(
+                createComment("Person request", "request"),
                 createComment("Registration comment", "comment"),
-                createComment("Assisted needs",       "specialNeeds"));
-
-        return gridPane;
+                createComment("Assisted needs", "specialNeeds")
+        );
+        columnsPane.setHgap(5); // Space between the 3 comments
+        columnsPane.setPadding(new Insets(2, 0, 0, 0)); // Small padding on top
+        return columnsPane;
     }
 
     private int columnIndex;
 
     private Node createComment(String title, String commentField) {
         TextArea textArea = new TextArea();
-        textArea.textProperty().bind(FXProperties.compute(selectedDocumentProperty, document -> document == null ? null : document.getStringFieldValue(commentField)));
-        textArea.setEditable(false);
+        Runnable textSyncer = () -> textArea.setText(getSelectedDocument() == null ? null : getSelectedDocument().getStringFieldValue(commentField));
         TitledPane titledPane = new TitledPane(title, textArea);
         titledPane.setCollapsible(false);
         titledPane.setMaxHeight(Double.MAX_VALUE);
         GridPane.setColumnIndex(titledPane, columnIndex++);
-        return titledPane;
+        Hyperlink updateLink = I18nControls.bindI18nTextProperty(new Hyperlink(), "Update");
+        Hyperlink saveLink   = I18nControls.bindI18nTextProperty(new Hyperlink(), "Save");
+        Hyperlink cancelLink = I18nControls.bindI18nTextProperty(new Hyperlink(), "Cancel");
+        BooleanProperty editableProperty = new SimpleBooleanProperty(true) {
+            @Override
+            protected void invalidated() {
+                boolean editable = get();
+                updateLink.setManaged(!editable);  updateLink.setVisible(!editable);
+                saveLink  .setManaged( editable);  saveLink  .setVisible( editable);
+                cancelLink.setManaged( editable);  cancelLink.setVisible( editable);
+                textArea  .setEditable(editable);
+                if (!editable)
+                    textSyncer.run();
+            }
+        };
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            editableProperty.set(false);
+            textSyncer.run();
+        }, selectedDocumentProperty);
+        FXProperties.runOnPropertiesChange(() -> {
+            if (!editableProperty.get())
+                textSyncer.run();
+        }, bookingsVisualResultProperty);
+        updateLink.setOnAction(e -> editableProperty.set(true));
+        cancelLink.setOnAction(e -> editableProperty.set(false));
+        saveLink.setOnAction(e -> {
+            Document originalDocument = getSelectedDocument();
+            UpdateStore updateStore = UpdateStore.createAbove(originalDocument.getStore());
+            Document updatedDocument = updateStore.updateEntity(originalDocument);
+            updatedDocument.setFieldValue(commentField, textArea.getText());
+            OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                    updateStore.submitChanges().onSuccess(x -> {
+                        // Now that the changes have been successfully recorded in the database, we will exit the edit
+                        // mode. But this will also trigger textSyncer, which will copy the text from the original
+                        // document, which still contains the previous value (until the push notification arrives).
+                        // So to prevent that, we need to update first the original document with the latest value
+                        // entered by the user.
+                        originalDocument.setFieldValue(commentField, updatedDocument.getFieldValue(commentField));
+                        // TODO: add a generic method to UpdateStore to apply the commited changes to the underlying store
+                        // Now we can exit the edit mode.
+                        editableProperty.set(false);
+                    }),
+                    saveLink, cancelLink
+            );
+        });
+        HBox buttonBar = new HBox(10, updateLink, saveLink, cancelLink);
+        buttonBar.setAlignment(Pos.CENTER);
+        buttonBar.setMaxWidth(Region.USE_PREF_SIZE);
+        buttonBar.setMaxHeight(28); // Assuming this is the title height
+        StackPane stackPane = new StackPane(titledPane, buttonBar);
+        StackPane.setAlignment(buttonBar, Pos.TOP_RIGHT);
+        StackPane.setMargin(buttonBar, new Insets(0, 5, 0, 0));
+        return stackPane;
     }
 
 

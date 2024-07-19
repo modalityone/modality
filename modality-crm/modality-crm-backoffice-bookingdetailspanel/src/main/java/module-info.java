@@ -33,6 +33,7 @@ module modality.crm.backoffice.bookingdetailspanel {
     requires webfx.stack.routing.activity;
     requires webfx.stack.ui.action;
     requires webfx.stack.ui.controls;
+    requires webfx.stack.ui.operation;
     requires webfx.stack.ui.operation.action;
 
     // Exported packages
