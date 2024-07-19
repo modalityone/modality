@@ -227,6 +227,12 @@ tr.selected, .grid-row.selected {
     background: var(--grid-selection-color)
 }
 
+/*===== ckeditor-web@main.css from webfx-extras-webtext-peers-gwt-j2cl =====*/
+
+/* Hiding the warning message from CKEditor 4.22.1 */
+.cke_notifications_area {
+    display: none;
+}
 /*===== modality-backoffice-home-web@main.css from modality-base-backoffice-activity-home-plugin =====*/
 
 
@@ -243,7 +249,7 @@ fx-homepane fx-tile * {
 }
 
 /* Applying Montserrat as default font for Modality */
-body, textarea {
+body, textarea /* because textarea has explicit default monospace font */ {
     font-family: Montserrat, serif;
     font-size: 13px;
     -webkit-font-smoothing: antialiased;
