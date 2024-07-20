@@ -119,7 +119,7 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-extras-time-datepickers</artifactId>
+            <artifactId>webfx-extras-time-pickers</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

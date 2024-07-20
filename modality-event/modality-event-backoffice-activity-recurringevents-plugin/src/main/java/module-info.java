@@ -20,7 +20,7 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires webfx.extras.panes;
     requires webfx.extras.switches;
     requires webfx.extras.theme;
-    requires webfx.extras.time.datepickers;
+    requires webfx.extras.time.pickers;
     requires webfx.extras.util.control;
     requires webfx.extras.util.layout;
     requires webfx.extras.util.masterslave;

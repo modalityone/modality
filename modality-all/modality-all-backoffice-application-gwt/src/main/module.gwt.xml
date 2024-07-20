@@ -450,8 +450,6 @@
     <source path="dev/webfx/extras/theme/text"/>
     <!--===============================< webfx-extras-time >================================-->
     <source path="dev/webfx/extras/time"/>
-    <!--=========================< webfx-extras-time-datepickers >==========================-->
-    <source path="dev/webfx/extras/time/datepickers"/>
     <!--============================< webfx-extras-time-format >============================-->
     <source path="dev/webfx/extras/time/format"/>
     <source path="dev/webfx/extras/time/format/spi"/>
@@ -468,6 +466,8 @@
     <source path="dev/webfx/extras/time/layout/gantt"/>
     <source path="dev/webfx/extras/time/layout/gantt/canvas"/>
     <source path="dev/webfx/extras/time/layout/gantt/impl"/>
+    <!--===========================< webfx-extras-time-pickers >============================-->
+    <source path="dev/webfx/extras/time/pickers"/>
     <!--============================< webfx-extras-time-window >============================-->
     <source path="dev/webfx/extras/time/projector"/>
     <source path="dev/webfx/extras/time/window"/>

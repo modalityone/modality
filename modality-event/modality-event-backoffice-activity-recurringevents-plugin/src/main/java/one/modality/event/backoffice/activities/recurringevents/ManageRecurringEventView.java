@@ -6,7 +6,7 @@ import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.extras.time.datepickers.DatesPicker;
+import dev.webfx.extras.time.pickers.DatesPicker;
 import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
 import dev.webfx.extras.util.masterslave.SlaveEditor;
