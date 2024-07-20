@@ -18,7 +18,7 @@ public final class RecurringEventsActivity extends ViewDomainActivityBase implem
     final BorderPane container = new BorderPane();
     private final TabsBar<Node> headerTabsBar = new TabsBar<>(this, this::changeTabSelection);//container::setCenter);
 
-    private BooleanProperty editTabSelectedProperty = new SimpleBooleanProperty(false);
+    private final BooleanProperty editTabSelectedProperty = new SimpleBooleanProperty(false);
 
     @Override
     public Node buildUi() {
@@ -34,11 +34,11 @@ public final class RecurringEventsActivity extends ViewDomainActivityBase implem
         container.setCenter(n);
         editTabSelectedProperty.setValue(headerTabsBar.getTabs().get(0).isSelected());
     }
+
     public void onResume() {
         super.onResume();
         FXMainFrameHeaderTabs.setHeaderTabs(headerTabsBar.getTabs());
         FXGanttVisibility.setGanttVisibility(GanttVisibility.EVENTS);
-
     }
 
     @Override

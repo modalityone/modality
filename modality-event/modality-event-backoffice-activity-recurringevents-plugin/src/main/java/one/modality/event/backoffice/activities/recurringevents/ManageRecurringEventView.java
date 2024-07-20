@@ -6,6 +6,7 @@ import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.extras.time.datepickers.DatesPicker;
 import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
 import dev.webfx.extras.util.masterslave.SlaveEditor;
@@ -375,7 +376,7 @@ public final class ManageRecurringEventView {
                         //We display on the calendar the month containing the first date of the recurring event
                         if (!list.isEmpty()) {
                             LocalDate oldestDate = Collections.min(list);
-                            calendarPane.getDatesPicker().focusOnMonth(YearMonth.of(oldestDate.getYear(), oldestDate.getMonthValue()));
+                            calendarPane.getDatesPicker().setYearMonth(YearMonth.of(oldestDate.getYear(), oldestDate.getMonthValue()));
                         }
                         //Then we get the timeline and event, there should be just one timeline per recurring event
                         eventSite = currentSelectedEvent.getVenue();
@@ -473,7 +474,7 @@ public final class ManageRecurringEventView {
         areWeDeleting = false;
         workingScheduledItems.clear();
         calendarPane.getDatesPicker().getSelectedDates().clear();
-        calendarPane.getDatesPicker().setMonth(YearMonth.now());
+        calendarPane.getDatesPicker().setYearMonth(YearMonth.now());
         //We put the default behaviour on the datePicker, otherwise it won't reset the behaviour define in the previous event selected
         calendarPane.getDatesPicker().setOnDateClicked(localDate -> calendarPane.getDatesPicker().processDateSelected(localDate));
         calendarPane.getDatesPicker().setDateCssGetter(localDate -> calendarPane.getDatesPicker().getSelectedDateCss());

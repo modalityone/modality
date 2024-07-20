@@ -19,6 +19,7 @@
             <undetected-module>javafx-base</undetected-module>
         </used-by-source-modules>
         <plugin-module>modality-base-client-icons</plugin-module>
+        <plugin-module>webfx-stack-i18n-time-plugin</plugin-module>
     </dependencies>
 
 </project>

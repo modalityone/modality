@@ -20,9 +20,7 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires webfx.extras.panes;
     requires webfx.extras.switches;
     requires webfx.extras.theme;
-    requires webfx.extras.time;
-    requires webfx.extras.time.layout;
-    requires webfx.extras.time.layout.calendar;
+    requires webfx.extras.time.datepickers;
     requires webfx.extras.util.control;
     requires webfx.extras.util.layout;
     requires webfx.extras.util.masterslave;
@@ -32,7 +30,6 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires webfx.platform.async;
     requires webfx.platform.console;
     requires webfx.platform.file;
-    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.cloud.image;
     requires webfx.stack.cloud.image.client;
