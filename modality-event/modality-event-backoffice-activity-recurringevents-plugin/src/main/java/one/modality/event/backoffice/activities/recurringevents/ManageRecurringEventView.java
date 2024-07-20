@@ -1097,7 +1097,7 @@ public final class ManageRecurringEventView {
                     selectEachDayLabel,
                     daySelected,
                     verticalLine,
-                    datePicker.getContainer(),
+                    datePicker.getView(),
                     recurringEventsScrollPane
             );
 
@@ -1213,7 +1213,7 @@ public final class ManageRecurringEventView {
         protected void layoutChildren() {
             layoutInArea(selectEachDayLabel, 20, 0, 260, 30, 0, HPos.CENTER, VPos.CENTER);
             layoutInArea(daySelected, 280, 0, 250, 30, 0, HPos.CENTER, VPos.CENTER);
-            layoutInArea(datePicker.getContainer(), 0, 20, 280, 500, 0, HPos.CENTER, VPos.CENTER);
+            layoutInArea(datePicker.getView(), 0, 20, 280, 500, 0, HPos.CENTER, VPos.CENTER);
             layoutInArea(verticalLine, 280, 35, 10, 250, 0, HPos.CENTER, VPos.TOP);
             layoutInArea(recurringEventsScrollPane, 300, 35, 200, 180, 0, HPos.CENTER, VPos.TOP);
         }
