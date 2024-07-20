@@ -91,7 +91,7 @@ import static dev.webfx.extras.webtext.HtmlTextEditor.Mode.BASIC;
 import static dev.webfx.extras.webtext.HtmlTextEditor.Mode.STANDARD;
 
 /**
- *
+ * @author David Hello
  */
 public final class ManageRecurringEventView {
     private final VisualGrid eventTable = new VisualGrid();
@@ -169,7 +169,7 @@ public final class ManageRecurringEventView {
     private LocalTime defaultEndTime;
 
     //When the duration or the event time is changed, we call this listener.
-    private InvalidationListener changeOnStartTimeOrDurationListener = observable -> {
+    private final InvalidationListener changeOnStartTimeOrDurationListener = observable -> {
         if (isLocalTimeTextValid(timeOfTheEventTextField.getText()) && isIntegerValid(durationTextField.getText())) {
             LocalTime startTime = LocalTime.parse(timeOfTheEventTextField.getText());
             int duration = Integer.parseInt(durationTextField.getText());
@@ -357,10 +357,11 @@ public final class ManageRecurringEventView {
                             ScheduledItem scheduledItem = scheduledItemList.stream().filter(si -> localDate.equals(si.getDate())).findFirst().orElse(null);
                             if (scheduledItem != null && scheduledItem.getFieldValue("attendance") != null) {
                                 isEventDeletable.setValue(false);
-                                return "webfx-dates-picker-secondary";
+                                return "webfx-time-pickers-secondary";
                             } else {
-                                //TODO: finish here, the code bellow doesn't work to change the color text of the passed date
-                                if (localDate.isBefore(LocalDate.now())) return "webfx-dates-picker-date-passed";
+                                //TODO: finish here, the code bellow doesn't work to change the color text of the past date
+                                if (localDate.isBefore(LocalDate.now()))
+                                    return "webfx-time-pickers-past";
                                 return calendarPane.getDatesPicker().getSelectedDateCss();
                             }
                         }));
@@ -1091,7 +1092,13 @@ public final class ManageRecurringEventView {
             recurringEventsScrollPane.setContent(recurringEventsVBox);
             recurringEventsScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
             recurringEventsScrollPane.setMaxHeight(180);
-            getChildren().setAll(selectEachDayLabel,daySelected,verticalLine,datesPicker.getCalendarPane(),recurringEventsScrollPane);
+            getChildren().setAll(
+                    selectEachDayLabel,
+                    daySelected,
+                    verticalLine,
+                    datesPicker.getContainer(),
+                    recurringEventsScrollPane
+            );
 
             onChangeDateListener = change -> {
                 if(currentEditedEvent!= null && currentEditedEvent==currentObservedEvent) {
@@ -1210,7 +1217,7 @@ public final class ManageRecurringEventView {
         protected void layoutChildren() {
             layoutInArea(selectEachDayLabel, 20, 0, 260, 30, 0, HPos.CENTER, VPos.CENTER);
             layoutInArea(daySelected, 280, 0, 250, 30, 0, HPos.CENTER, VPos.CENTER);
-            layoutInArea(datesPicker.getCalendarPane(), 0, 20, 280, 500, 0, HPos.CENTER, VPos.CENTER);
+            layoutInArea(datesPicker.getContainer(), 0, 20, 280, 500, 0, HPos.CENTER, VPos.CENTER);
             layoutInArea(verticalLine, 280, 35, 10, 250, 0, HPos.CENTER, VPos.TOP);
             layoutInArea(recurringEventsScrollPane, 300, 35, 200, 180, 0, HPos.CENTER, VPos.TOP);
         }

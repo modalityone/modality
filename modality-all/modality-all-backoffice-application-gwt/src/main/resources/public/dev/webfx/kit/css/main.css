@@ -123,6 +123,37 @@ fx-switch.webfx-switch.selected > fx-background {
 fx-switch.webfx-switch fx-circle.knob {
     background-color: var(--webfx-switch-knob-background-color);
 }
+/*===== webfx-extras-time-pickers-web@main.css from webfx-extras-time-pickers =====*/
+
+:root {
+    --webfx-time-pickers-foreground-blue-color: #0096D6;
+    --webfx-time-pickers-background-blue-color: #afe7ff;
+    --webfx-time-pickers-background-gray-color: #cccccc;
+
+    --webfx-time-pickers-arrow-color: var(--webfx-time-pickers-foreground-blue-color);
+    --webfx-time-pickers-month-color: var(--webfx-time-pickers-foreground-blue-color);
+    --webfx-time-pickers-date-background-color: var(--webfx-time-pickers-background-gray-color);
+    --webfx-time-pickers-selected-date-background-color: var(--webfx-time-pickers-background-blue-color);
+}
+
+.webfx-time-pickers-selected > fx-background {
+    background-color: var(--webfx-time-pickers-selected-date-background-color);
+    border-radius: 10px;
+}
+
+.webfx-time-pickers-secondary > fx-background {
+    background-color: var(--webfx-time-pickers-date-background-color);
+    border-radius: 10px;
+}
+
+fx-svgpath.webfx-time-pickers-arrow svg path:not([fill]):not([stroke]) {
+    fill: var(--webfx-time-pickers-arrow-color);
+}
+
+.webfx-time-pickers-month {
+    color: var(--webfx-time-pickers-month-color);
+    font-size: 14px;
+}
 /*===== webfx-extras-filepicker-web@main.css from webfx-extras-filepicker-gwt-j2cl =====*/
 
 /* We dont want any background or border for the FilePicker button */
@@ -377,25 +408,6 @@ body, textarea /* because textarea has explicit default monospace font */ {
     background: #BBBBBB;
 }
 
-.webfx-dates-picker-selected > fx-background {
-    background-color: #afe7ff;
-    border-radius: 10px;
-}
-
-.webfx-dates-picker-secondary > fx-background {
-    background-color: #cccccc;
-    border-radius: 10px;
-}
-
-.webfx-dates-picker-arrow {
-    fill: var(--blue-color);
-    border-radius: 10px;
-}
-
-.webfx-dates-picker-month {
-    color: var(--blue-color);
-    font-size: 14px;
-}
 /*===== modality-client-login-web@main.css from modality-crm-client-activity-login-plugin =====*/
 
 .login * {
@@ -544,7 +556,6 @@ tr.branch, .grid-row.branch {
     linear-gradient( 180deg, var(--color-light), var(--color-dark) 100%);
 }
 /*===== modality-backoffice-recurringevents-web@main.css from modality-event-backoffice-activity-recurringevents-plugin =====*/
-
 
 .booking-name {
     color: #838788;

@@ -54,6 +54,38 @@ Switch.webfx-switch.selected {
 Switch.webfx-switch Circle.knob {
     -fx-fill: -webfx-switch-knob-background-color;
 }
+/*===== webfx-extras-time-pickers-javafx@main.css from webfx-extras-time-pickers =====*/
+
+* {
+    -webfx-time-pickers-blue1-color: #0096D6;
+    -webfx-time-pickers-blue2-color: #afe7ff;
+    -webfx-time-pickers-gray-color: #cccccc;
+
+    -webfx-time-pickers-arrow-color: -webfx-time-pickers-blue1-color;
+    -webfx-time-pickers-month-color: -webfx-time-pickers-blue1-color;
+    -webfx-time-pickers-date-background-color: -webfx-time-pickers-gray-color;
+    -webfx-time-pickers-selected-date-background-color: -webfx-time-pickers-blue2-color;
+}
+
+.webfx-time-pickers-selected {
+    -fx-background-color: -webfx-time-pickers-selected-date-background-color;
+    -fx-background-radius: 10px;
+}
+
+.webfx-time-pickers-secondary {
+    -fx-background-color: -webfx-time-pickers-date-background-color;
+    -fx-background-radius: 10px;
+}
+
+.webfx-time-pickers-arrow {
+    -fx-fill: -webfx-time-pickers-arrow-color;
+}
+
+.webfx-time-pickers-month {
+    -fx-text-fill: -webfx-time-pickers-month-color;
+    -fx-font-size: 14px;
+}
+
 /*===== webfx-extras-visual-charts-javafx@main.css from webfx-extras-visual-charts-peers-openjfx =====*/
 
 VisualLineChart, VisualPieChart, VisualBarChart, VisualAreaChart {
@@ -156,8 +188,7 @@ Text, Label, Button, TextField {
     -orange-color: #EE7130;
 }
 
-.event-button Button
-{
+.event-button Button {
     -fx-background-radius: 4;
     -fx-pref-height:36px;
     -fx-max-height:36px;
@@ -254,33 +285,12 @@ Text, Label, Button, TextField {
    -fx-font-weight: bolder;
 }
 
-
 .small-text {
   -fx-font-size: 9px;
 }
 
 .table-row-cell:selected {
   -fx-background: #BBBBBB;
-}
-
-.webfx-dates-picker-selected {
-    -fx-background-color: #afe7ff;
-    -fx-background-radius: 10px;
-}
-
-.webfx-dates-picker-secondary {
-    -fx-background-color: #cccccc;
-    -fx-background-radius: 10px;
-}
-
-.webfx-dates-picker-arrow {
-    -fx-fill: -blue-color;
-    -fx-background-radius: 10px;
-}
-
-.webfx-dates-picker-month {
-    -fx-text-fill: -blue-color;
-    -fx-font-size: 14px;
 }
 
 /*===== modality-client-login-javafx@main.css from modality-crm-client-activity-login-plugin =====*/
@@ -408,25 +418,21 @@ Text, Label, Button, TextField {
 
 /*===== modality-backoffice-recurringevents-javafx@main.css from modality-event-backoffice-activity-recurringevents-plugin =====*/
 
-.booking-name
-{
+.booking-name {
     -fx-text-fill: #838788;
 }
 
-.booking-status-confirmed
-{
+.booking-status-confirmed {
      -fx-text-fill: #41BA4D;
      -fx-font-size: 9px;
-
 }
 
-.booking-status-unconfirmed
-{
+.booking-status-unconfirmed {
     -fx-text-fill: #eb8634;
     -fx-font-size: 9px;
 }
-.booking-total-count
-{
+
+.booking-total-count {
     -fx-text-fill: #FF0404;
     -fx-font-size: 9px;
 }

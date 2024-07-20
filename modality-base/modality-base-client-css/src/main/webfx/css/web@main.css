@@ -116,23 +116,3 @@
 .table-row-cell:selected > fx-background {
     background: #BBBBBB;
 }
-
-.webfx-dates-picker-selected > fx-background {
-    background-color: #afe7ff;
-    border-radius: 10px;
-}
-
-.webfx-dates-picker-secondary > fx-background {
-    background-color: #cccccc;
-    border-radius: 10px;
-}
-
-.webfx-dates-picker-arrow {
-    fill: var(--blue-color);
-    border-radius: 10px;
-}
-
-.webfx-dates-picker-month {
-    color: var(--blue-color);
-    font-size: 14px;
-}

@@ -1,22 +1,18 @@
-.booking-name
-{
+.booking-name {
     -fx-text-fill: #838788;
 }
 
-.booking-status-confirmed
-{
+.booking-status-confirmed {
      -fx-text-fill: #41BA4D;
      -fx-font-size: 9px;
-
 }
 
-.booking-status-unconfirmed
-{
+.booking-status-unconfirmed {
     -fx-text-fill: #eb8634;
     -fx-font-size: 9px;
 }
-.booking-total-count
-{
+
+.booking-total-count {
     -fx-text-fill: #FF0404;
     -fx-font-size: 9px;
 }

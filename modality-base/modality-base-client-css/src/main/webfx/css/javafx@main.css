@@ -11,8 +11,7 @@
     -orange-color: #EE7130;
 }
 
-.event-button Button
-{
+.event-button Button {
     -fx-background-radius: 4;
     -fx-pref-height:36px;
     -fx-max-height:36px;
@@ -109,31 +108,10 @@
    -fx-font-weight: bolder;
 }
 
-
 .small-text {
   -fx-font-size: 9px;
 }
 
 .table-row-cell:selected {
   -fx-background: #BBBBBB;
-}
-
-.webfx-dates-picker-selected {
-    -fx-background-color: #afe7ff;
-    -fx-background-radius: 10px;
-}
-
-.webfx-dates-picker-secondary {
-    -fx-background-color: #cccccc;
-    -fx-background-radius: 10px;
-}
-
-.webfx-dates-picker-arrow {
-    -fx-fill: -blue-color;
-    -fx-background-radius: 10px;
-}
-
-.webfx-dates-picker-month {
-    -fx-text-fill: -blue-color;
-    -fx-font-size: 14px;
 }
