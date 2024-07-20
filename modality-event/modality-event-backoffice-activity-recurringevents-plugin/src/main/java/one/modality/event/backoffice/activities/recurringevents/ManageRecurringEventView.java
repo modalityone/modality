@@ -6,7 +6,8 @@ import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.extras.theme.text.TextTheme;
-import dev.webfx.extras.time.pickers.DatesPicker;
+import dev.webfx.extras.time.pickers.DatePicker;
+import dev.webfx.extras.time.pickers.DatePickerOptions;
 import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
 import dev.webfx.extras.util.masterslave.SlaveEditor;
@@ -94,6 +95,7 @@ import static dev.webfx.extras.webtext.HtmlTextEditor.Mode.STANDARD;
  * @author David Hello
  */
 public final class ManageRecurringEventView {
+
     private final VisualGrid eventTable = new VisualGrid();
     private final TextField nameOfEventTextField = I18nControls.bindI18nProperties( new TextField(),"NameOfTheEvent");
     private final HtmlTextEditor shortDescriptionHtmlEditor = new HtmlTextEditor();
@@ -321,13 +323,11 @@ public final class ManageRecurringEventView {
      * and initialise the class variable.
      * @param e the Event from who we want the data
      */
-    private void displayEventDetails(Event e)
-    {
+    private void displayEventDetails(Event e) {
         Console.log("Display Event Called");
         currentSelectedEvent = e;
         //Event e can be null if for example we select on the gantt graph an event that is not a recurring event
-        if(e==null)
-        {
+        if (e == null) {
             eventDetailsVBox.setVisible(false);
             eventDetailsVBox.setManaged(false);
             return;
@@ -345,39 +345,37 @@ public final class ManageRecurringEventView {
                 .onFailure(Console::log)
                 .onSuccess(query -> Platform.runLater(() -> {
                     EntityList<ScheduledItem> scheduledItemList = query.getStore().getEntityList(query.getListId());
-                    //we test if the selectedEvent==e, because, if a user click very fast from en event to another, there
-                    //can be a sync pb between the result of the request from the database and the code executed
+                    // we test if the selectedEvent==e, because, if a user click very fast from en event to another, there
+                    // can be a sync pb between the result of the request from the database and the code executed
                     if (currentSelectedEvent == e) {
-                        //We take the selected date from the database, and transform the result in a list of LocalDate, that we pass to the datePicker,
-                        //so they appear selected in the calendar
+                        DatePicker datePicker = calendarPane.getDatePicker();
+                        // We take the selected date from the database, and transform the result in a list of LocalDate,
+                        // that we pass to the datePicker, so they appear selected in the calendar
                         scheduledItemsReadFromDatabase = scheduledItemList;
-                        List<LocalDate> list = scheduledItemsReadFromDatabase.stream().map(EntityHasLocalDate::getDate).collect(Collectors.toList());
+                        List<LocalDate> bookedDates = scheduledItemsReadFromDatabase.stream().map(EntityHasLocalDate::getDate).collect(Collectors.toList());
+                        datePicker.setSelectedDates(bookedDates);
 
-                        calendarPane.getDatesPicker().setDateCssGetter((localDate -> {
+                        Function<LocalDate, Boolean> isDateBooked = localDate -> {
                             ScheduledItem scheduledItem = scheduledItemList.stream().filter(si -> localDate.equals(si.getDate())).findFirst().orElse(null);
-                            if (scheduledItem != null && scheduledItem.getFieldValue("attendance") != null) {
+                            return scheduledItem != null && scheduledItem.getFieldValue("attendance") != null;
+                        };
+
+                        datePicker.setGetDateStyleClassFunction((localDate -> {
+                            if (isDateBooked.apply(localDate)) {
                                 isEventDeletable.setValue(false);
-                                return "webfx-time-pickers-secondary";
+                                return "date-secondary";
                             } else {
-                                //TODO: finish here, the code bellow doesn't work to change the color text of the past date
-                                if (localDate.isBefore(LocalDate.now()))
-                                    return "webfx-time-pickers-past";
-                                return calendarPane.getDatesPicker().getSelectedDateCss();
+                                return datePicker.getDateStyleClassDefault(localDate);
                             }
                         }));
-                        calendarPane.getDatesPicker().getSelectedDates().setAll(list);
-                        calendarPane.getDatesPicker().setOnDateClicked(localDate -> {
-                            if(localDate.isBefore(LocalDate.now())) return; //If the date is before the current date, we do nothing
-                            ScheduledItem scheduledItem = scheduledItemList.stream().filter(si->localDate.equals(si.getDate())).findFirst().orElse(null);
-                            if(!(scheduledItem!=null && scheduledItem.getFieldValue("attendance")!=null)) {
-                                calendarPane.getDatesPicker().processDateSelected(localDate);
-                            }
-                        });
+                        datePicker.setIsDateSelectableFunction(localDate ->
+                                datePicker.isDateSelectableDefault(localDate) && !isDateBooked.apply(localDate)
+                        );
 
                         //We display on the calendar the month containing the first date of the recurring event
-                        if (!list.isEmpty()) {
-                            LocalDate oldestDate = Collections.min(list);
-                            calendarPane.getDatesPicker().setYearMonth(YearMonth.of(oldestDate.getYear(), oldestDate.getMonthValue()));
+                        if (!bookedDates.isEmpty()) {
+                            LocalDate oldestDate = Collections.min(bookedDates);
+                            datePicker.setDisplayedYearMonth(YearMonth.of(oldestDate.getYear(), oldestDate.getMonthValue()));
                         }
                         //Then we get the timeline and event, there should be just one timeline per recurring event
                         eventSite = currentSelectedEvent.getVenue();
@@ -474,12 +472,11 @@ public final class ManageRecurringEventView {
         defaultEndTime = null;
         areWeDeleting = false;
         workingScheduledItems.clear();
-        calendarPane.getDatesPicker().getSelectedDates().clear();
-        calendarPane.getDatesPicker().setYearMonth(YearMonth.now());
-        //We put the default behaviour on the datePicker, otherwise it won't reset the behaviour define in the previous event selected
-        calendarPane.getDatesPicker().setOnDateClicked(localDate -> calendarPane.getDatesPicker().processDateSelected(localDate));
-        calendarPane.getDatesPicker().setDateCssGetter(localDate -> calendarPane.getDatesPicker().getSelectedDateCss());
-        calendarPane.getDatesPicker().initializeDaysSelected();
+        // We reset the datePicker, otherwise it will keep the settings of the previous event
+        DatePicker datePicker = calendarPane.getDatePicker();
+        datePicker.clearSelection();
+        datePicker.setDisplayedYearMonth(YearMonth.now());
+        //datesPicker.updateDatesBackground();
         updateStore.cancelChanges();
         imageView.setImage(null);
         isPictureDisplayed.setValue(false);
@@ -510,8 +507,7 @@ public final class ManageRecurringEventView {
                     if (!exists) {
                         imageView.setImage(null);
                         isPictureDisplayed.setValue(false);
-                    }
-                    else {
+                    } else {
                         //First, we need to get the zoom factor of the screen
                         double zoomFactor = Screen.getPrimary().getOutputScaleX();
                         String url = cloudImageService.url(String.valueOf(imageTag), (int) (imageView.getFitWidth()*zoomFactor), -1);
@@ -923,7 +919,7 @@ public final class ManageRecurringEventView {
         datesOfTheEventLabel = I18nControls.bindI18nProperties(new Label(),"Dates");
         datesOfTheEventLabel.setPadding(new Insets(0, 0, 5, 0));
         calendarPane = new EventCalendarPane();
-        calendarPane.getDatesPicker().getSelectedDates().addListener(onChangeDateListener);
+        calendarPane.getDatePicker().getSelectedDates().addListener(onChangeDateListener);
 
         final int labelWidth = 200;
         Label externalLinkLabel = I18nControls.bindI18nProperties(new Label(), "ExternalLink");
@@ -1059,7 +1055,12 @@ public final class ManageRecurringEventView {
         Line verticalLine;
         VBox recurringEventsVBox = new VBox();
         ScrollPane recurringEventsScrollPane = new ScrollPane();
-        DatesPicker datesPicker = new DatesPicker(YearMonth.now());
+        DatePicker datePicker = new DatePicker(new DatePickerOptions()
+                .setMultipleSelectionAllowed(true)
+                .setPastDatesSelectionAllowed(false)
+                .setApplyBorderStyle(false)
+                .setApplyMaxSize(false)
+        );
 
         public EventCalendarPane() {
             TextTheme.createSecondaryTextFacet(selectEachDayLabel).style();
@@ -1096,7 +1097,7 @@ public final class ManageRecurringEventView {
                     selectEachDayLabel,
                     daySelected,
                     verticalLine,
-                    datesPicker.getContainer(),
+                    datePicker.getContainer(),
                     recurringEventsScrollPane
             );
 
@@ -1128,7 +1129,7 @@ public final class ManageRecurringEventView {
                             }
                         }
 
-                        List<LocalDate> localDatesSorted = calendarPane.getDatesPicker().getSelectedDates().stream().sorted().collect(Collectors.toList());
+                        List<LocalDate> localDatesSorted = calendarPane.getDatePicker().getSelectedDates().stream().sorted().collect(Collectors.toList());
                         if (!localDatesSorted.isEmpty()) {
                             currentEditedEvent.setStartDate(localDatesSorted.get(0));
                             currentEditedEvent.setEndDate(localDatesSorted.get(localDatesSorted.size() - 1));
@@ -1155,12 +1156,10 @@ public final class ManageRecurringEventView {
                 Text currentDateValue = new Text(currentDate.format(DateTimeFormatter.ofPattern("MMM dd")));
                 TextField currentScheduleItemStartTime = new TextField();
 
-                if(scheduledItem.getFieldValue("attendance")==null) {
-                    trashDate.setOnMouseClicked(event -> datesPicker.getSelectedDates().remove(currentDate));
+                if (scheduledItem.getFieldValue("attendance") == null) {
+                    trashDate.setOnMouseClicked(event -> datePicker.getSelectedDates().remove(currentDate));
                     ShapeTheme.createSecondaryShapeFacet(trashDate).style();
-                }
-                else
-                {
+                } else {
                     trashDate.setFill(Color.LIGHTGRAY);
                     currentScheduleItemStartTime.setDisable(true);
                 }
@@ -1177,20 +1176,17 @@ public final class ManageRecurringEventView {
                 currentScheduleItemStartTime.setAlignment(Pos.CENTER);
                 currentScheduleItemStartTime.setMaxWidth(90);
 
-                if(scheduledItem.getStartTime()==null) {
+                if (scheduledItem.getStartTime() == null) {
                     scheduledItem.setStartTime(defaultStartTime);
                     scheduledItem.setEndTime(defaultEndTime);
                 }
                 //If we're still at null here, it means the defaultStartTime is set to null
-                if(scheduledItem.getStartTime()==null) {
+                if (scheduledItem.getStartTime() == null) {
                     currentScheduleItemStartTime.setPromptText("HH:mm");
-                } else {
-                if(scheduledItem.getStartTime().equals(defaultStartTime)) {
+                } else if (scheduledItem.getStartTime().equals(defaultStartTime)) {
                     currentScheduleItemStartTime.setPromptText(scheduledItem.getStartTime().format(DateTimeFormatter.ofPattern("HH:mm")));
-                }
-                else {
+                } else {
                     currentScheduleItemStartTime.setText(scheduledItem.getStartTime().format(DateTimeFormatter.ofPattern("HH:mm")));
-                }
                 }
                 BorderPane currentLineBorderPane = new BorderPane();
                 BorderPane.setMargin(currentDateValue, new Insets(0,20,0,10));
@@ -1203,8 +1199,8 @@ public final class ManageRecurringEventView {
             }
 
 
-        public DatesPicker getDatesPicker() {
-            return datesPicker;
+        public DatePicker getDatePicker() {
+            return datePicker;
         }
 
         public VBox getRecurringEventsVBox() {
@@ -1217,7 +1213,7 @@ public final class ManageRecurringEventView {
         protected void layoutChildren() {
             layoutInArea(selectEachDayLabel, 20, 0, 260, 30, 0, HPos.CENTER, VPos.CENTER);
             layoutInArea(daySelected, 280, 0, 250, 30, 0, HPos.CENTER, VPos.CENTER);
-            layoutInArea(datesPicker.getContainer(), 0, 20, 280, 500, 0, HPos.CENTER, VPos.CENTER);
+            layoutInArea(datePicker.getContainer(), 0, 20, 280, 500, 0, HPos.CENTER, VPos.CENTER);
             layoutInArea(verticalLine, 280, 35, 10, 250, 0, HPos.CENTER, VPos.TOP);
             layoutInArea(recurringEventsScrollPane, 300, 35, 200, 180, 0, HPos.CENTER, VPos.TOP);
         }
@@ -1234,7 +1230,7 @@ public final class ManageRecurringEventView {
      */
     private static boolean isLocalTimeTextValid(String text) {
         try {
-            return LocalTime.parse(text)!=null;
+            return LocalTime.parse(text) != null;
         } catch (DateTimeParseException e) {
             return false;
         }
@@ -1256,13 +1252,13 @@ public final class ManageRecurringEventView {
             return false;
         }
     }
+
     /**
      * Test if a string is a format that is ready to be converted in an Integer by the method Integer.parseInt
      * @param text the string to be tested
      * @return true, is the string parameter can be converted in Integer, false otherwise
      */
-    private static boolean isIntegerValid(String text)
-    {
+    private static boolean isIntegerValid(String text) {
         try {
             Integer.parseInt(text);
             return true;

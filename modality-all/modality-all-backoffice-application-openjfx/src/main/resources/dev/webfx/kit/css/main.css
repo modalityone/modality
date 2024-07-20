@@ -63,25 +63,31 @@ Switch.webfx-switch Circle.knob {
 
     -webfx-time-pickers-arrow-color: -webfx-time-pickers-blue1-color;
     -webfx-time-pickers-month-color: -webfx-time-pickers-blue1-color;
+    -webfx-time-pickers-border-color: -webfx-time-pickers-gray-color;
     -webfx-time-pickers-date-background-color: -webfx-time-pickers-gray-color;
     -webfx-time-pickers-selected-date-background-color: -webfx-time-pickers-blue2-color;
 }
 
-.webfx-time-pickers-selected {
+.webfx-datepicker.border {
+    -fx-border-color: -webfx-time-pickers-border-color;
+    -fx-border-radius: 10px;
+}
+
+.webfx-datepicker .date-selected {
     -fx-background-color: -webfx-time-pickers-selected-date-background-color;
     -fx-background-radius: 10px;
 }
 
-.webfx-time-pickers-secondary {
+.webfx-datepicker .date-secondary {
     -fx-background-color: -webfx-time-pickers-date-background-color;
     -fx-background-radius: 10px;
 }
 
-.webfx-time-pickers-arrow {
+.webfx-datepicker .arrow {
     -fx-fill: -webfx-time-pickers-arrow-color;
 }
 
-.webfx-time-pickers-month {
+.webfx-datepicker .month {
     -fx-text-fill: -webfx-time-pickers-month-color;
     -fx-font-size: 14px;
 }
