@@ -391,13 +391,14 @@ public final class ManageRecurringEventView {
                                 .map(Map.Entry::getKey);
 
                         ScheduledItem firstScheduledItem = scheduledItemsReadFromDatabase.get(0);
-                        String duration = String.valueOf(firstScheduledItem.getStartTime().until(firstScheduledItem.getEndTime(), ChronoUnit.MINUTES));
+                        LocalTime startTime = firstScheduledItem.getStartTime();
+                        LocalTime endTime = firstScheduledItem.getEndTime();
+                        String duration = startTime == null || endTime == null ? "" : String.valueOf(ChronoUnit.MINUTES.between(startTime, endTime));
                         durationTextField.setText(duration);
                         //We initialise the value of defaultStartTime after the setText on durationTextField, otherwise the listener called in durationTextField will overide the value we want to set
-                        if(mostFrequentStartTime.isPresent()) {
+                        if (mostFrequentStartTime.isPresent()) {
                             defaultStartTime = mostFrequentStartTime.get();
-                        }
-                        else {
+                        } else {
                             //If we're, it means all the scheduledItem have at least one attendance. So we look for the defaultStartTime in all the scheduledItem and not
                             //only in the one with no attendance.
                             Optional<LocalTime> mostFrequentStartTimeInScheduledItemWithAttendance = scheduledItemList.stream()
@@ -406,10 +407,10 @@ public final class ManageRecurringEventView {
                                     .entrySet().stream()
                                     .max(Comparator.comparingLong(Map.Entry::getValue))
                                     .map(Map.Entry::getKey);
-                            defaultStartTime = mostFrequentStartTimeInScheduledItemWithAttendance.get();
+                            defaultStartTime = mostFrequentStartTimeInScheduledItemWithAttendance.orElse(null);
                         }
-                        defaultEndTime = defaultStartTime.plusMinutes(Long.parseLong(duration));
-                        timeOfTheEventTextField.setText(defaultStartTime.toString());
+                        defaultEndTime = defaultStartTime == null ? null : defaultStartTime.plusMinutes(Long.parseLong(duration));
+                        timeOfTheEventTextField.setText(defaultStartTime == null ? null : defaultStartTime.toString());
                         I18nControls.bindI18nTextProperty(titleEventDetailsLabel, "EditEventInformation", e.getName());
                         //We read and format the opening date value
                         LocalDateTime openingDate = e.getOpeningDate();
