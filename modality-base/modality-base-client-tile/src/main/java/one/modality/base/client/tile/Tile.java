@@ -1,13 +1,13 @@
 package one.modality.base.client.tile;
 
+import dev.webfx.extras.panes.ClipPane;
+import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.theme.Facet;
 import dev.webfx.extras.theme.FontDef;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.layout.LayoutUtil;
-import dev.webfx.extras.panes.ClipPane;
-import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.ui.action.Action;
@@ -27,6 +27,7 @@ import javafx.scene.text.Text;
  * @author Bruno Salmon
  */
 public class Tile extends MonoPane {
+
     private final Action action;
     private final boolean useHtml;
     private final boolean allowsGraphic;
@@ -39,11 +40,6 @@ public class Tile extends MonoPane {
     private boolean adaptativeFontSize;
 
     private final Pane clippedTextGraphicPane = new ClipPane() {
-
-        {
-            setAlignment(Pos.BOTTOM_CENTER); // for a possible folding animation from bottom to top
-            setMinWidth(USE_PREF_SIZE);
-        }
 
         @Override
         protected void layoutChildren() {
@@ -58,6 +54,7 @@ public class Tile extends MonoPane {
             }
             resizeClip();
         }
+
         @Override
         protected double computePrefWidth(double height) {
             double prefWidth = getTextNode().prefWidth(height);
@@ -96,6 +93,10 @@ public class Tile extends MonoPane {
         setCursor(Cursor.HAND);
         htmlText.setMouseTransparent(true);
         FXProperties.runNowAndOnPropertiesChange(this::onActionPropertiesChanged, action.textProperty(), action.graphicProperty());
+        if (!useHtml) {
+            setAlignment(Pos.BOTTOM_CENTER); // for a possible folding animation from bottom to top
+            setMinWidth(USE_PREF_SIZE);
+        }
     }
 
     private Node getTextNode() {
