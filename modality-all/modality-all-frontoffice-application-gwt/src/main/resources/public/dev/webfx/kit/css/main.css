@@ -203,7 +203,7 @@ tr.selected, .grid-row.selected {
 
 :root {
     --webfx-switch-selected-background-color: #0096D6;
-    --grid-selection-color: #BBBBBB;
+    --webfx-visualgrid-selection-color: #BBBBBB;
     --green-color: #41BA4D;
     --green-color-hover: #38a143;
     --blue-color: #0096D6;
