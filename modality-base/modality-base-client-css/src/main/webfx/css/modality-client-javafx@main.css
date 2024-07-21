@@ -1,5 +1,6 @@
 * {
     -webfx-switch-selected-background-color: #0096D6;
+    -webfx-visualgrid-selection-color: #BBBBBB;
     -green-color: #41BA4D;
     -green-color-hover: #38a143;
     -blue-color: #0096D6;
@@ -110,8 +111,4 @@
 
 .small-text {
   -fx-font-size: 9px;
-}
-
-.table-row-cell:selected {
-  -fx-background: #BBBBBB;
 }

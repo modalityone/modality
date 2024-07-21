@@ -176,13 +176,13 @@ fx-switch.webfx-switch fx-circle.knob {
 /*===== webfx-extras-visual-grid-web@main.css from webfx-extras-visual-grid-peers-gwt-j2cl =====*/
 
 :root {
-    --grid-border-color: #D3D3D3;
-    --grid-row-height: 28px;
-    --grid-selection-color: #AED6F1;
+    --webfx-visualgrid-border-color: #D3D3D3;
+    --webfx-visualgrid-row-height: 28px;
+    --webfx-visualgrid-selection-color: #AED6F1;
 }
 
 th, td {
-    border: 1px solid var(--grid-border-color);
+    border: 1px solid var(--webfx-visualgrid-border-color);
     border-top-width: 0;
 }
 
@@ -195,7 +195,7 @@ table {
 
 thead {
     border: none;
-    height: var(--grid-row-height);
+    height: var(--webfx-visualgrid-row-height);
     position: sticky;
     top: 1px;
     z-index: 2; /* header must be above body when scrolling */
@@ -204,19 +204,19 @@ thead {
 thead th {
     border-right-width: thin;
     border-right-style: solid;
-    border-right-color: var(--grid-border-color);
-    height: var(--grid-row-height);
+    border-right-color: var(--webfx-visualgrid-border-color);
+    height: var(--webfx-visualgrid-row-height);
     font-weight: bold;
     text-align: center;
     overflow: hidden;
 }
 
 tbody td {
-    border-bottom-color: var(--grid-border-color);
+    border-bottom-color: var(--webfx-visualgrid-border-color);
 }
 
 tbody tr {
-    height: var(--grid-row-height);
+    height: var(--webfx-visualgrid-row-height);
 }
 
 thead th, tbody td {
@@ -231,7 +231,7 @@ th:before { /* this rule is to prevent body appearing in 1px line above header w
     width: 100%;
     left: 0;
     top: -1px;
-    border-top: 1px solid var(--grid-border-color);
+    border-top: 1px solid var(--webfx-visualgrid-border-color);
 }
 
 
@@ -254,15 +254,15 @@ th, tbody, td {
 }
 
 .grid-head, .grid-row {
-    border-bottom: 1px solid var(--grid-border-color);
+    border-bottom: 1px solid var(--webfx-visualgrid-border-color);
 }
 
 .grid-col {
-    border-right: 1px solid var(--grid-border-color);
+    border-right: 1px solid var(--webfx-visualgrid-border-color);
 }
 
 tr.selected, .grid-row.selected {
-    background: var(--grid-selection-color)
+    background: var(--webfx-visualgrid-selection-color)
 }
 
 /*===== ckeditor-web@main.css from webfx-extras-webtext-peers-gwt-j2cl =====*/
@@ -294,10 +294,11 @@ body, textarea /* because textarea has explicit default monospace font */ {
 }
 
 
-/*===== web@main.css from modality-base-client-css =====*/
+/*===== modality-client-web@main.css from modality-base-client-css =====*/
 
 :root {
     --webfx-switch-selected-background-color: #0096D6;
+    --grid-selection-color: #BBBBBB;
     --green-color: #41BA4D;
     --green-color-hover: #38a143;
     --blue-color: #0096D6;
@@ -409,10 +410,6 @@ body, textarea /* because textarea has explicit default monospace font */ {
 
 .small-text {
     font-size: 9px;
-}
-
-.table-row-cell:selected > fx-background {
-    background: #BBBBBB;
 }
 
 /*===== modality-client-login-web@main.css from modality-crm-client-activity-login-plugin =====*/

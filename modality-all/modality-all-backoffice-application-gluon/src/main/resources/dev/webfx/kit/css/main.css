@@ -108,6 +108,12 @@ VisualGrid {
     -fx-skin: "dev.webfx.kit.mapper.peers.javafxcontrols.openjfx.skin.FxControlPeerSkin";
 }
 
+* {
+    -webfx-visualgrid-border-color: #D3D3D3;
+    /*-webfx-visualgrid-row-height: 28px;*/
+    -webfx-visualgrid-selection-color: #AED6F1;
+}
+
 .table-view {
     -fx-table-cell-border-color: #bbbbbb; /* same color as java 7 caspian, java 8 one is too light on colored rows */
     -fx-cursor: hand;
@@ -145,13 +151,17 @@ VisualGrid {
 }
 
 .grid-head, .grid-row {
-    -fx-border-color: #D3D3D3;
+    -fx-border-color: -webfx-visualgrid-border-color;
     -fx-border-width: 0 0 1px 0;
 }
 
 .grid-col {
     -fx-border-color: #D3D3D3;
     -fx-border-width: 0 1px 0 0;
+}
+
+.table-row-cell:selected {
+    -fx-background: -webfx-visualgrid-selection-color;
 }
 
 .table-row-cell:selected .table-cell {
@@ -179,10 +189,11 @@ Text, Label, Button, TextField {
    -fx-background-color: transparent;
 }
 
-/*===== javafx@main.css from modality-base-client-css =====*/
+/*===== modality-client-javafx@main.css from modality-base-client-css =====*/
 
 * {
     -webfx-switch-selected-background-color: #0096D6;
+    -webfx-visualgrid-selection-color: #BBBBBB;
     -green-color: #41BA4D;
     -green-color-hover: #38a143;
     -blue-color: #0096D6;
@@ -293,10 +304,6 @@ Text, Label, Button, TextField {
 
 .small-text {
   -fx-font-size: 9px;
-}
-
-.table-row-cell:selected {
-  -fx-background: #BBBBBB;
 }
 
 /*===== modality-client-login-javafx@main.css from modality-crm-client-activity-login-plugin =====*/
