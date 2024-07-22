@@ -52,12 +52,12 @@ public class TabsBar<T> {
         Tab[] tab = {null};
         Object[] tabContent = { null };
         Action action = actionFactory.newAction(text, () -> {
-            if (tabContent[0] == null)
-                tabContent[0] = valueSupplier.get();
-            valueSetter.accept((T) tabContent[0]);
             if (selectedTab != null)
                 selectedTab.setSelected(false);
             selectedTab = tab[0].setSelected(true);
+            if (tabContent[0] == null)
+                tabContent[0] = valueSupplier.get();
+            valueSetter.accept((T) tabContent[0]);
         });
         return tab[0] = new Tab(action);
     }

@@ -32,7 +32,6 @@ import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import dev.webfx.stack.ui.dialog.DialogCallback;
 import dev.webfx.stack.ui.dialog.DialogUtil;
 import javafx.application.Platform;
@@ -44,7 +43,6 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ObservableBooleanValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -96,6 +94,8 @@ import static dev.webfx.extras.webtext.HtmlTextEditor.Mode.STANDARD;
  */
 public final class ManageRecurringEventView {
 
+    private final RecurringEventsActivity activity;
+    private final BooleanProperty activeProperty = new SimpleBooleanProperty();
     private final VisualGrid eventTable = new VisualGrid();
     private final TextField nameOfEventTextField = I18nControls.bindI18nProperties( new TextField(),"NameOfTheEvent");
     private final HtmlTextEditor shortDescriptionHtmlEditor = new HtmlTextEditor();
@@ -158,7 +158,6 @@ public final class ManageRecurringEventView {
         }
     };
     private EntityButtonSelector<Site> siteSelector;
-    private final ButtonFactoryMixin mixin;
     private final CloudImageService cloudImageService = new ClientImageService();
     private File cloudPictureFileToUpload;
     private final BooleanProperty isCloudPictureToBeDeleted = new SimpleBooleanProperty(false);
@@ -253,11 +252,12 @@ public final class ManageRecurringEventView {
             return updateStore.hasChanges() || updateStoreOrPictureHasChanged.get();
         }
     };
+
     //This parameter will allow us to manage the interaction and behaviour of the Panel that display the details of an event and the event selected
     final private MasterSlaveLinker<Event> masterSlaveEventLinker = new MasterSlaveLinker<>(eventDetailsSlaveEditor);
 
-    public ManageRecurringEventView(ButtonFactoryMixin mixin) {
-        this.mixin = mixin;
+    public ManageRecurringEventView(RecurringEventsActivity activity) {
+        this.activity = activity;
     }
 
     /**
@@ -279,14 +279,17 @@ public final class ManageRecurringEventView {
         }
     }
 
+    void setActive(boolean active) {
+        activeProperty.set(active);
+    }
+
     /**
      * This method is used to initialise the Logic
      */
-    public void startLogic(RecurringEventsActivity activity)
-    {
+    public void startLogic() {
         EventRenderers.registerRenderers();
 
-        eventVisualMapper = ReactiveVisualMapper.<Event>createPushReactiveChain(mixin)
+        eventVisualMapper = ReactiveVisualMapper.<Event>createPushReactiveChain(activity)
                 .always("{class: 'Event', alias: 'e', fields: '(select site.name from Timeline where event=e limit 1) as location'}")
                 .always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o))
                 .always(DqlStatement.where("type.recurringItem!=null and kbs3"))
@@ -294,7 +297,7 @@ public final class ManageRecurringEventView {
                 .setStore(entityStore)
                 .setVisualSelectionProperty(eventTable.visualSelectionProperty())
                 .visualizeResultInto(eventTable.visualResultProperty())
-                .bindActivePropertyTo(Bindings.and((ObservableBooleanValue) activity.activeProperty(), activity.editTabSelectedProperty().not()))
+                .bindActivePropertyTo(Bindings.and(activity.activeProperty(), activeProperty))
                 .addEntitiesHandler(entityList ->  Console.log("Reactive visual Mapper loaded"))
                 .start();
 
@@ -621,7 +624,7 @@ public final class ManageRecurringEventView {
                         I18nControls.bindI18nTextProperty(titleEventDetailsLabel, "AddEventInformation");
                         siteSelector = new EntityButtonSelector<Site>(
                                 "{class: 'Site', alias: 's', where: 'event=null', orderBy :'name'}",
-                                mixin, eventDetailsVBox, dataSourceModel
+                                activity, eventDetailsVBox, dataSourceModel
                         ) { // Overriding the button content to add the possibility of Adding a new site prefix text
                             private final BorderPane bp = new BorderPane();
                             final TextField searchTextField = super.getSearchTextField();

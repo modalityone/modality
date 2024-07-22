@@ -1,19 +1,21 @@
 package one.modality.event.backoffice.activities.recurringevents;
 
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
-import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import dev.webfx.stack.orm.reactive.entities.entities_to_objects.IndividualEntityToObjectMapper;
 import dev.webfx.stack.orm.reactive.entities.entities_to_objects.ReactiveObjectsMapper;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import javafx.beans.InvalidationListener;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
@@ -21,7 +23,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -38,6 +39,9 @@ import java.time.format.DateTimeFormatter;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
 public class RecurringEventAttendanceView {
+
+    private final RecurringEventsActivity activity;
+    private final BooleanProperty activeProperty = new SimpleBooleanProperty();
     private final VisualGrid eventTable = new VisualGrid();
     private static final String EVENT_COLUMNS = "[" +
             "{expression: 'state', label: 'Status', renderer: 'eventStateRenderer'}," +
@@ -47,12 +51,12 @@ public class RecurringEventAttendanceView {
             "{expression: 'dateIntervalFormat(startDate, endDate)', label: 'Dates'}" +
             "]";
 
-    private static final Background WHITE_BACKGROUND = new Background(new BackgroundFill(Color.WHITE, null, null));
-    private final DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
     private final FlowPane attendanceFlowPane = new FlowPane();
     private final ObjectProperty<Event> selectedEventProperty = new SimpleObjectProperty<>();
+    private ReactiveObjectsMapper<ScheduledItem, Node> scheduledItemObjectMapper;
 
-    public RecurringEventAttendanceView() {
+    public RecurringEventAttendanceView(RecurringEventsActivity activity) {
+        this.activity = activity;
     }
 
     public Node buildContainer() {
@@ -68,38 +72,38 @@ public class RecurringEventAttendanceView {
         attendanceFlowPane.setId("attendanceFlowPane");
         eventTable.setFullHeight(true);
 
-        VBox mainVBox = new VBox(currentEventLabel,eventTable,attendanceFlowPane);
+        VBox mainVBox = new VBox(currentEventLabel, eventTable, attendanceFlowPane);
         mainFrame.setCenter(mainVBox);
-        ScrollPane scrollPane = new ScrollPane(mainFrame);
-       // scrollPane.setFitToHeight(true);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setPadding(new Insets(10));
-        return scrollPane;
+        return ControlUtil.createVerticalScrollPaneWithPadding(10, mainFrame);
     }
 
-    public void startLogic(Object mixin)
-    {
+    void setActive(boolean active) {
+        activeProperty.set(active);
+    }
+
+    public void startLogic() {
         EventRenderers.registerRenderers();
 
-        ReactiveVisualMapper<Event> eventVisualMapper = ReactiveVisualMapper.<Event>createPushReactiveChain(mixin)
+        ReactiveVisualMapper<Event> eventVisualMapper = ReactiveVisualMapper.<Event>createPushReactiveChain(activity)
                 .always("{class: 'Event', alias: 'e', fields: 'name, openingDate, description, type.recurringItem,(select site.name from Timeline where event=e limit 1) as location'}")
                 .always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o))
                 .always(DqlStatement.where("type.recurringItem!=null and kbs3"))
                 .setEntityColumns(EVENT_COLUMNS)
                 .setVisualSelectionProperty(eventTable.visualSelectionProperty())
                 .visualizeResultInto(eventTable.visualResultProperty())
+                .bindActivePropertyTo(Bindings.and(activity.activeProperty(), activeProperty))
                 .start();
 
-        ReactiveObjectsMapper.<ScheduledItem, Node>createPushReactiveChain(this)
+        scheduledItemObjectMapper = ReactiveObjectsMapper.<ScheduledItem, Node>createPushReactiveChain(activity)
                 .always("{class: 'ScheduledItem', alias: 's', fields: 'date,startTime,endTime', where: 'event.type.recurringItem!=null and event.kbs3=true', orderBy: 'date'}")
-                .ifNotNullOtherwiseEmpty(selectedEventProperty, eventId -> where("event=?", eventId))
+                .ifNotNullOtherwiseEmpty(selectedEventProperty, event -> where("event=?", event))
                 .setIndividualEntityToObjectMapperFactory(IndividualScheduledItemToBoxMapper::new)
                 .storeMappedObjectsInto(attendanceFlowPane.getChildren())
-                .setDataSourceModel(dataSourceModel)
+                .bindActivePropertyTo(Bindings.and(activity.activeProperty(), activeProperty))
                 .start();
 
         eventVisualMapper.requestedSelectedEntityProperty().bindBidirectional(FXEvent.eventProperty());
-        FXEvent.eventProperty().bindBidirectional(selectedEventProperty);
+        selectedEventProperty.bindBidirectional(FXEvent.eventProperty());
     }
 
     class IndividualScheduledItemToBoxMapper implements IndividualEntityToObjectMapper<ScheduledItem, Node> {
@@ -113,14 +117,14 @@ public class RecurringEventAttendanceView {
 
         IndividualScheduledItemToBoxMapper(ScheduledItem scheduledItem) {
             peopleGrid.setBorder(Border.EMPTY);
-            peopleGrid.setBackground(WHITE_BACKGROUND);
+            peopleGrid.setBackground(Background.fill(Color.WHITE));
             boxesContainer.setMinWidth(300);
             boxesContainer.setPadding(new Insets(0, 50, 50, 0));
             label.setMinHeight(30);
             label.setTextFill(Color.WHITE);
-            label.setBackground(new Background(new BackgroundFill(Color.rgb(0, 150, 214), null, null)));
+            label.setBackground(Background.fill(Color.rgb(0, 150, 214)));
             label.setAlignment(Pos.CENTER);
-            label.setFont(Font.font(label.getFont().getName(), FontWeight.BOLD, label.getFont().getSize()));
+            label.setFont(Font.font(null, FontWeight.BOLD, 16));
             VBox.setMargin(label, new Insets(2));
             VBox.setMargin(peopleGrid, new Insets(0, 5, 5, 5));
             VBox.setVgrow(peopleGrid, Priority.ALWAYS);
@@ -133,8 +137,7 @@ public class RecurringEventAttendanceView {
             ColumnConstraints col1 = new ColumnConstraints(230);
             ColumnConstraints col2 = new ColumnConstraints(70);
             peopleGrid.getColumnConstraints().addAll(col1, col2);
-            peopleGrid.setBorder(new javafx.scene.layout.Border(new javafx.scene.layout.BorderStroke(Color.GRAY,
-                    javafx.scene.layout.BorderStrokeStyle.SOLID, javafx.scene.layout.CornerRadii.EMPTY, javafx.scene.layout.BorderWidths.DEFAULT)));
+            peopleGrid.setBorder(Border.stroke(Color.GRAY));
             attendanceFlowPane.getChildren().add(boxesContainer);
             totalCountLabel.setPadding(new Insets(5,0,0,0));
             totalCountLabel.getStyleClass().add("booking-total-count");
@@ -144,16 +147,15 @@ public class RecurringEventAttendanceView {
             // Visualizing people booked for that site item resource configuration into a visual grid (inside the box)
             // Each person (row in the grid) is represented by a DocumentLine allocated to that site item resource configuration
 
-            ReactiveEntitiesMapper<DocumentLine> peopleMapper = ReactiveEntitiesMapper.<DocumentLine>createPushReactiveChain(this)
+            ReactiveEntitiesMapper<DocumentLine> peopleMapper = ReactiveEntitiesMapper.<DocumentLine>createPushReactiveChain(activity)
+                    .setActiveParent(scheduledItemObjectMapper)
                     .always("{class: 'DocumentLine', alias: 'dl', fields: 'document.(person_name, confirmed,ref)',orderBy: 'document.person_lastName'}")
                     .ifNotNullOtherwiseEmpty(scheduledItemObjectProperty, si -> where("exists(select Attendance a where a.documentLine=dl and a.date=? and a.scheduledItem=?)", si.getDate(), si))
-                    .setDataSourceModel(dataSourceModel)
                     .start();
             observableDocumentList = peopleMapper.getObservableEntities();
             observableDocumentList.addListener((InvalidationListener) observable -> {
                 peopleGrid.getChildren().clear();
-                observableDocumentList.forEach(dl->
-                {
+                observableDocumentList.forEach(dl-> {
                     Label name = new Label("#"+dl.getDocument().getRef() + " " + dl.getDocument().getFullName());
                     name.setPadding(new Insets(5,0,5,5));
                     name.getStyleClass().add("booking-name");
@@ -175,7 +177,7 @@ public class RecurringEventAttendanceView {
                     peopleGrid.add(state, 1, row);
                     GridPane.setHalignment(state, HPos.CENTER);
                 });
-                totalCountLabel.setText(I18n.getI18nText("Total")+" " + observableDocumentList.size());
+                totalCountLabel.setText(I18n.getI18nText("Total") + " " + observableDocumentList.size());
             });
         }
 
@@ -186,9 +188,10 @@ public class RecurringEventAttendanceView {
 
         public void onEntityChangedOrReplaced(ScheduledItem scheduledItem) {
             scheduledItemObjectProperty.set(scheduledItem);
-            LocalDate date = (LocalDate) scheduledItem.evaluate("date");
+            LocalDate date = scheduledItem.evaluate("date");
             label.setText(date.format(DateTimeFormatter.ofPattern("MMMM dd")));
         }
+
         @Override
         public void onEntityRemoved(ScheduledItem entity) {
         }

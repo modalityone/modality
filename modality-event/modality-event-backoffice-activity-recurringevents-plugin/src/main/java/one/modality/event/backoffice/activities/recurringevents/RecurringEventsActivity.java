@@ -2,23 +2,20 @@ package one.modality.event.backoffice.activities.recurringevents;
 
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import one.modality.base.backoffice.mainframe.headertabs.fx.FXMainFrameHeaderTabs;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
+import one.modality.base.client.tile.Tab;
 import one.modality.base.client.tile.TabsBar;
 
 public final class RecurringEventsActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
 
     private final ManageRecurringEventView manageRecurringEventView = new ManageRecurringEventView(this);
-    private final RecurringEventAttendanceView recurringEventAttendanceView = new RecurringEventAttendanceView();
-    final BorderPane container = new BorderPane();
-    private final TabsBar<Node> headerTabsBar = new TabsBar<>(this, this::changeTabSelection);//container::setCenter);
-
-    private final BooleanProperty editTabSelectedProperty = new SimpleBooleanProperty(false);
+    private final RecurringEventAttendanceView recurringEventAttendanceView = new RecurringEventAttendanceView(this);
+    private final BorderPane container = new BorderPane();
+    private final TabsBar<Node> headerTabsBar = new TabsBar<>(this, this::changeTabSelection);
 
     @Override
     public Node buildUi() {
@@ -32,7 +29,10 @@ public final class RecurringEventsActivity extends ViewDomainActivityBase implem
 
     public void changeTabSelection(Node n) {
         container.setCenter(n);
-        editTabSelectedProperty.setValue(headerTabsBar.getTabs().get(0).isSelected());
+        Tab manageTab = headerTabsBar.getTabs().get(0);
+        boolean isManageTabSelected = manageTab.isSelected();
+        manageRecurringEventView.setActive(isManageTabSelected);
+        recurringEventAttendanceView.setActive(!isManageTabSelected);
     }
 
     public void onResume() {
@@ -56,20 +56,9 @@ public final class RecurringEventsActivity extends ViewDomainActivityBase implem
         return new BorderPane(recurringEventAttendanceView.buildContainer());
     }
 
-    public TabsBar getHeaderTabsBar() {
-        return headerTabsBar;
-    }
-
     protected void startLogic() {
-        manageRecurringEventView.startLogic(this);
-        recurringEventAttendanceView.startLogic(this);
+        manageRecurringEventView.startLogic();
+        recurringEventAttendanceView.startLogic();
     }
 
-    public boolean isEditTabSelected() {
-        return editTabSelectedProperty.get();
-    }
-
-    public BooleanProperty editTabSelectedProperty() {
-        return editTabSelectedProperty;
-    }
 }
