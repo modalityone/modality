@@ -302,6 +302,8 @@
     <source path="dev/webfx/extras/time/format/spi/impl"/>
     <!--===============================< webfx-extras-type >================================-->
     <source path="dev/webfx/extras/type"/>
+    <!--===============================< webfx-extras-util >================================-->
+    <source path="dev/webfx/extras/util"/>
     <!--==========================< webfx-extras-util-animation >===========================-->
     <source path="dev/webfx/extras/util/animation"/>
     <!--==========================< webfx-extras-util-background >==========================-->
