@@ -1064,6 +1064,7 @@ public final class ManageRecurringEventView {
                 .setPastDatesSelectionAllowed(false)
                 .setApplyBorderStyle(false)
                 .setApplyMaxSize(false)
+                .setSortSelectedDates(true)
         );
 
         public EventCalendarPane() {
@@ -1072,9 +1073,9 @@ public final class ManageRecurringEventView {
             setMaxWidth(500);
             setMinWidth(500);
             workingScheduledItems.addListener((ListChangeListener<ScheduledItem>) change -> {
-                //We call the listener only when the object has been loaded and not during the construction
-                //ie when currentEditedEvent=currentSelectedEvent
-              //  isWorkingScheduledItemEmpty.set(workingScheduledItems.isEmpty());
+                // We call the listener only when the object has been loaded and not during the construction
+                // ie when currentEditedEvent=currentSelectedEvent
+                // isWorkingScheduledItemEmpty.set(workingScheduledItems.isEmpty());
                 if(currentEditedEvent!= null && (currentEditedEvent==currentObservedEvent)) {
                     recurringEventsVBox.getChildren().clear();
                     List<LocalDate> dates = workingScheduledItems.stream().map(EntityHasLocalDate::getDate).collect(Collectors.toList());
