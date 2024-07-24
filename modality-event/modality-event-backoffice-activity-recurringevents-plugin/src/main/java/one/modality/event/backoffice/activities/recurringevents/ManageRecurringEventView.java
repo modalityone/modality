@@ -92,7 +92,16 @@ import static dev.webfx.extras.webtext.HtmlTextEditor.Mode.STANDARD;
 /**
  * @author David Hello
  */
-public final class ManageRecurringEventView {
+final class ManageRecurringEventView {
+
+    private static final String EVENT_COLUMNS = "[" +
+        "{expression: 'state', label: 'Status', renderer: 'eventStateRenderer'}," +
+        "{expression: 'advertised', label: 'Advertised'},"+
+        "{expression: 'name', label: 'Name'}," +
+        "{expression: 'type', label: 'TypeOfEvent'}," +
+        "{expression: 'venue.name', label: 'Location'}," +
+        "{expression: 'dateIntervalFormat(startDate, endDate)', label: 'Dates'}" +
+        "]";
 
     private final RecurringEventsActivity activity;
     private final BooleanProperty activeProperty = new SimpleBooleanProperty();
@@ -123,14 +132,6 @@ public final class ManageRecurringEventView {
     private SVGPath trashImage;
     private ListChangeListener<LocalDate> onChangeDateListener;
     private EventCalendarPane calendarPane;
-    private static final String EVENT_COLUMNS = "[" +
-            "{expression: 'state', label: 'Status', renderer: 'eventStateRenderer'}," +
-            "{expression: 'advertised', label: 'Advertised'},"+
-            "{expression: 'name', label: 'Name'}," +
-            "{expression: 'type', label: 'TypeOfEvent'}," +
-            "{expression: 'venue.name', label: 'Location'}," +
-            "{expression: 'dateIntervalFormat(startDate, endDate)', label: 'Dates'}" +
-            "]";
 
     private Event currentEditedEvent;
     private Event currentSelectedEvent;
@@ -287,7 +288,7 @@ public final class ManageRecurringEventView {
      * This method is used to initialise the Logic
      */
     public void startLogic() {
-        EventRenderers.registerRenderers();
+        RecurringEventRenderers.registerRenderers();
 
         eventVisualMapper = ReactiveVisualMapper.<Event>createPushReactiveChain(activity)
                 .always("{class: 'Event', alias: 'e', fields: '(select site.name from Timeline where event=e limit 1) as location'}")

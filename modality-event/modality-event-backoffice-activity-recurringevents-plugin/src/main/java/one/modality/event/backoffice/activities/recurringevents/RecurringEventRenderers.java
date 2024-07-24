@@ -7,18 +7,20 @@ import javafx.scene.layout.HBox;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import one.modality.base.client.icons.SvgIcons;
+import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.EventState;
 
 /**
  * @author Bruno Salmon
  */
-final class EventRenderers {
+final class RecurringEventRenderers {
 
     static {
+        // eventStateRenderer
         ValueRendererRegistry.registerValueRenderer("eventStateRenderer", (value, context) -> {
             EventState state = EventState.of((String) value);
             Text toReturn = new Text();
-            if(state==null) {
+            if (state == null) {
                 I18n.bindI18nProperties(toReturn, "NOT_DEFINED");
                 toReturn.getStyleClass().add("secondary-text");
                 return toReturn;
@@ -49,6 +51,7 @@ final class EventRenderers {
             return toReturn;
         });
 
+        // editEventRenderer
         ValueRendererRegistry.registerValueRenderer("editEventRenderer", (value, context) -> {
             Hyperlink editHyperLink = new Hyperlink("Edit");
             editHyperLink.setOnAction(e -> {
@@ -58,6 +61,14 @@ final class EventRenderers {
             trashSVGPath.getStyleClass().add("danger-text");
             trashSVGPath.setOnMouseClicked(e -> System.out.println(e.toString()));
             return new HBox(editHyperLink);
+        });
+
+        // confirmRenderer (used for the last column of the bookings displayed in RecurringEventAttendanceView)
+        ValueRendererRegistry.registerValueRenderer("confirmRenderer", (value, context) -> {
+            Document document = (Document) value;
+            Text confirmText = I18n.bindI18nProperties(new Text(), document.isConfirmed() ? "BookingConfirmed" : "BookingUnconfirmed");
+            confirmText.getStyleClass().add(document.isConfirmed() ? "booking-status-confirmed" : "booking-status-unconfirmed");
+            return confirmText;
         });
 
     }
