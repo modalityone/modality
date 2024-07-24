@@ -284,11 +284,11 @@
     <source path="dev/webfx/extras/imagestore"/>
     <!--===============================< webfx-extras-label >===============================-->
     <source path="dev/webfx/extras/label"/>
-    <!--==========================< webfx-extras-materialdesign >===========================-->
-    <source path="dev/webfx/extras/materialdesign/textfield"/>
-    <source path="dev/webfx/extras/materialdesign/util"/>
     <!--===============================< webfx-extras-panes >===============================-->
     <source path="dev/webfx/extras/panes"/>
+    <!--=======================< webfx-extras-styles-materialdesign >=======================-->
+    <source path="dev/webfx/extras/styles/materialdesign/textfield"/>
+    <source path="dev/webfx/extras/styles/materialdesign/util"/>
     <!--===============================< webfx-extras-theme >===============================-->
     <source path="dev/webfx/extras/theme"/>
     <source path="dev/webfx/extras/theme/layout"/>

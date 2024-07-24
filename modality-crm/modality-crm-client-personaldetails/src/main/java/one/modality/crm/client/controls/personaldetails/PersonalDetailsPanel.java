@@ -1,6 +1,6 @@
 package one.modality.crm.client.controls.personaldetails;
 
-import dev.webfx.extras.materialdesign.textfield.MaterialTextFieldPane;
+import dev.webfx.extras.styles.materialdesign.textfield.MaterialTextFieldPane;
 import dev.webfx.extras.panes.FlexColumnPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.ScalableBorderPane;

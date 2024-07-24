@@ -434,11 +434,11 @@
     <!--===============================< webfx-extras-layer >===============================-->
     <source path="dev/webfx/extras/layer"/>
     <source path="dev/webfx/extras/layer/interact"/>
-    <!--==========================< webfx-extras-materialdesign >===========================-->
-    <source path="dev/webfx/extras/materialdesign/textfield"/>
-    <source path="dev/webfx/extras/materialdesign/util"/>
     <!--===============================< webfx-extras-panes >===============================-->
     <source path="dev/webfx/extras/panes"/>
+    <!--=======================< webfx-extras-styles-materialdesign >=======================-->
+    <source path="dev/webfx/extras/styles/materialdesign/textfield"/>
+    <source path="dev/webfx/extras/styles/materialdesign/util"/>
     <!--=============================< webfx-extras-switches >==============================-->
     <source path="dev/webfx/extras/switches"/>
     <!--===============================< webfx-extras-theme >===============================-->
