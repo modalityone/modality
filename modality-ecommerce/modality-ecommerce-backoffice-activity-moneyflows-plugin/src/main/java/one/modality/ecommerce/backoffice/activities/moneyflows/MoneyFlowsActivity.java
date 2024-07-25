@@ -260,7 +260,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
         private void showMsg(String msg) {
             Label label = new Label(msg);
             DialogContent dialogContent = new DialogContent().setContent(label);
-            dialogContent.getCancelButton().setVisible(false);
+            dialogContent.getSecondaryButton().setVisible(false);
             DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, graph);
             DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> dialogCallback.closeDialog());
         }

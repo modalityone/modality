@@ -436,6 +436,8 @@
     <source path="dev/webfx/extras/layer/interact"/>
     <!--===============================< webfx-extras-panes >===============================-->
     <source path="dev/webfx/extras/panes"/>
+    <!--=========================< webfx-extras-styles-bootstrap >==========================-->
+    <source path="dev/webfx/extras/styles/bootstrap"/>
     <!--=======================< webfx-extras-styles-materialdesign >=======================-->
     <source path="dev/webfx/extras/styles/materialdesign/textfield"/>
     <source path="dev/webfx/extras/styles/materialdesign/util"/>

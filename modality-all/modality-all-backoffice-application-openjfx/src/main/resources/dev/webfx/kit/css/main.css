@@ -26,6 +26,321 @@
 }
 
 
+/*===== webfx-extras-bootstrap-javafx@main.css from webfx-extras-styles-bootstrap =====*/
+
+/* Bootstrap style */
+* {
+    -bootstrap-white: #fff ;
+    
+    -bootstrap-grey1: #e6e6e6 ;
+    -bootstrap-grey2: #d4d4d4 ;
+    -bootstrap-grey3: #ccc ;
+    -bootstrap-grey4: #adadad ;
+    -bootstrap-grey5: #8c8c8c ;
+    -bootstrap-grey6: #777777 ;
+    -bootstrap-grey7: #333 ;
+
+    -bootstrap-blue1: #5bc0de ;
+    -bootstrap-blue2: #46b8da ;
+    -bootstrap-blue3: #31b0d5 ;
+    -bootstrap-blue4: #269abc ;
+    -bootstrap-blue5: #337ab7 ;
+    -bootstrap-blue6: #2e6da4 ;
+    -bootstrap-blue7: #1b6d85 ;
+    -bootstrap-blue8: #286090 ;
+    -bootstrap-blue9: #204d74 ;
+    -bootstrap-blue10: #122b40 ;
+    -bootstrap-blue11: #31708f ;
+
+    -bootstrap-green1: #5cb85c ;
+    -bootstrap-green2: #4cae4c ;
+    -bootstrap-green3: #449d44 ;
+    -bootstrap-green4: #398439 ;
+    -bootstrap-green5: #255625 ;
+    -bootstrap-green6: #3c763d ;
+
+    -bootstrap-orange1: #f0ad4e ;
+    -bootstrap-orange2: #eea236 ;
+    -bootstrap-orange3: #ec971f ;
+    -bootstrap-orange4: #d58512 ;
+    -bootstrap-orange5: #985f0d ;
+    -bootstrap-orange6: #8a6d3b ;
+
+    -bootstrap-red1: #d9534f ;
+    -bootstrap-red2: #d43f3a ;
+    -bootstrap-red3: #c9302c ;
+    -bootstrap-red4: #ac2925 ;
+    -bootstrap-red5: #761c19 ;
+    -bootstrap-red6: #a94442 ;
+}
+
+/* Buttons */
+
+.btn {
+    -fx-font-weight: normal;
+    -fx-text-alignment: center;
+    -fx-cursor: default;
+    -fx-border-color: transparent;
+    -fx-border-width: 1px;
+    -fx-border-style: solid;
+    -fx-background-insets: 0, 0, -1, 0;
+    -fx-padding: 6px 12px 6px 12px;
+    -fx-font-size: 14px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-min-width: 80px;
+}
+
+.btn:hover {
+    -fx-text-fill: -bootstrap-grey7;
+    -fx-fill: -bootstrap-grey7;
+}
+
+.btn-default {
+    -fx-text-fill: -bootstrap-grey7;
+    -fx-fill: -bootstrap-grey7;
+    -fx-background-color: -bootstrap-white;
+    -fx-border-color: -bootstrap-grey3;
+}
+
+.btn-default:hover {
+    -fx-text-fill: -bootstrap-grey7;
+    -fx-fill: -bootstrap-grey7;
+    -fx-background-color: -bootstrap-grey1;
+    -fx-border-color: -bootstrap-grey5;
+}
+
+.btn-primary {
+    -fx-text-fill: -bootstrap-white;
+    -fx-fill: -bootstrap-white;
+    -fx-background-color: -bootstrap-blue5;
+    -fx-border-color: -bootstrap-blue6;
+}
+
+.btn-primary:hover {
+    -fx-text-fill: -bootstrap-white;
+    -fx-fill: -bootstrap-white;
+    -fx-background-color: -bootstrap-blue8;
+    -fx-border-color: -bootstrap-blue9;
+}
+
+.btn-secondary {
+    -fx-text-fill: -bootstrap-white;
+    -fx-fill: -bootstrap-white;
+    -fx-background-color: -bootstrap-grey4;
+    -fx-border-color: -bootstrap-grey5;
+}
+
+.btn-secondary:hover {
+    -fx-text-fill: -bootstrap-white;
+    -fx-fill: -bootstrap-white;
+    -fx-background-color: -bootstrap-grey5;
+    -fx-border-color: -bootstrap-grey6;
+}
+
+.btn-success {
+    -fx-text-fill: -bootstrap-white;
+    -fx-fill: -bootstrap-white;
+    -fx-background-color: -bootstrap-green1;
+    -fx-border-color: -bootstrap-green2;
+}
+
+.btn-success:hover {
+    -fx-text-fill: -bootstrap-white;
+    -fx-fill: -bootstrap-white;
+    -fx-background-color: -bootstrap-green3;
+    -fx-border-color: -bootstrap-green4;
+}
+
+.btn-info {
+    -fx-text-fill: -bootstrap-white;
+    -fx-fill: -bootstrap-white;
+    -fx-background-color: -bootstrap-blue1;
+    -fx-border-color: -bootstrap-blue2;
+}
+
+.btn-info:hover {
+    -fx-text-fill: -bootstrap-white;
+    -fx-fill: -bootstrap-white;
+    -fx-background-color: -bootstrap-blue3;
+    -fx-border-color: -bootstrap-blue4; 
+}
+
+.btn-warning {
+    -fx-text-fill: -bootstrap-white;
+    -fx-fill: -bootstrap-white;
+    -fx-background-color: -bootstrap-orange1;
+    -fx-border-color: -bootstrap-orange2;
+}
+
+.btn-warning:hover {
+    -fx-text-fill: -bootstrap-white;
+    -fx-fill: -bootstrap-white;
+    -fx-background-color: -bootstrap-orange3;
+    -fx-border-color: -bootstrap-orange4;
+}
+
+
+.btn-danger {
+    -fx-text-fill: -bootstrap-white;
+    -fx-fill: -bootstrap-white;
+    -fx-background-color: -bootstrap-red1;
+    -fx-border-color: -bootstrap-red2;
+}
+
+.btn-danger:hover {
+    -fx-text-fill: -bootstrap-white;
+    -fx-fill: -bootstrap-white;
+    -fx-background-color: -bootstrap-red3;
+    -fx-border-color: -bootstrap-red4;
+}
+
+.btn-lg {
+    -fx-padding: 10px 16px 10px 16px;
+    -fx-font-size: 18px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+}
+
+.btn-sm {
+    -fx-padding: 5px 10px 5px 10px;
+    -fx-font-size: 12px;
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+}
+
+.btn-xs {
+    -fx-padding: 1px 5px 1px 5px;
+    -fx-font-size: 12px;
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+}
+
+.btn-block {
+    width: 100%;
+}
+
+/* Text */
+
+.b, .strong {
+    -fx-font-weight: bold;
+}
+
+.i, .em, .italic, .dfn {
+    -fx-font-style: italic;
+}
+
+.h1 {
+    -fx-font-size: 2em;
+}
+
+.small {
+    -fx-font-size: 80%;
+}
+
+.code, .kbd, .pre, .samp {
+    -fx-font-family: 'monospace';
+    -fx-font-size: 1em;
+}
+
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    -fx-text-fill: inherit;
+    -fx-fill: inherit;
+}
+
+.h1 .small, .h2 .small, .h3 .small, .h4 .small, .h5 .small, .h6 .small {
+    -fx-font-weight: normal;
+    -fx-text-fill: -bootstrap-grey6;
+    -fx-fill: -bootstrap-grey6;
+}
+
+.h1 .small, .h2 .small, .h3 .small {
+    -fx-font-size: 65%;
+}
+
+.h4 .small, .h5 .small, .h6 .small {
+    -fx-font-size: 75%;
+}
+
+.h1 {
+    -fx-font-size: 36px;
+}
+
+.h2 {
+    -fx-font-size: 30px;
+}
+
+.h3 {
+    -fx-font-size: 24px;
+}
+
+.h4 {
+    -fx-font-size: 18px;
+}
+
+.h5 {
+    -fx-font-size: 14px;
+}
+
+.h6 {
+    -fx-font-size: 12px;
+}
+
+.lead {
+    -fx-font-size: 16px;
+    -fx-font-weight: 300;
+}
+
+.small {
+    -fx-font-size: 85%;
+}
+
+.text-left {
+    -fx-text-alignment: left;
+}
+
+.text-right {
+    -fx-text-alignment: right;
+}
+
+.text-center {
+    -fx-text-alignment: center;
+}
+
+.text-justify {
+    -fx-text-alignment: justify;
+}
+
+.text-muted {
+    -fx-text-fill: -bootstrap-grey6;
+    -fx-fill: -bootstrap-grey6;
+}
+
+.text-primary {
+    -fx-text-fill: -bootstrap-blue5;
+    -fx-fill: -bootstrap-blue5;
+}
+
+.text-success {
+    -fx-text-fill: -bootstrap-green6;
+    -fx-fill: -bootstrap-green6;
+}
+
+.text-info {
+    -fx-text-fill: -bootstrap-blue11;
+    -fx-fill: -bootstrap-blue11;
+}
+
+.text-warning {
+    -fx-text-fill: -bootstrap-orange6;
+    -fx-fill: -bootstrap-orange6;
+}
+
+.text-danger {
+    -fx-text-fill: -bootstrap-red6;
+    -fx-fill: -bootstrap-red6;
+}
+
 /*===== webfx-extras-material-javafx@main.css from webfx-extras-styles-materialdesign =====*/
 
 
@@ -194,15 +509,6 @@ Text, Label, Button, TextField {
 * {
     -webfx-switch-selected-background-color: #0096D6;
     -webfx-visualgrid-selection-color: #BBBBBB;
-    -green-color: #41BA4D;
-    -green-color-hover: #38a143;
-    -blue-color: #0096D6;
-    -blue-color-hover: #0082ba;
-    -grey-color: #838788;
-    -grey-color-hover: #717475;
-    -red-color: red;
-    -red-color-hover: #de0000;
-    -orange-color: #EE7130;
 }
 
 .event-button Button {
@@ -212,98 +518,6 @@ Text, Label, Button, TextField {
     -fx-alignment: center;
  /*  -fx-font-family: "Google Sans", Roboto, Arial;*/
     -fx-font-weight: bolder;
-}
-
-.primary-button Button {
-    -fx-background-color: -blue-color;
-    -fx-text-fill: white;
-}
-
-.primary-button:hover {
-    -fx-background-color: -blue-color-hover;
-}
-
-.danger-button {
-    -fx-background-color: -red-color;
-    -fx-text-fill: white;
-}
-
-.danger-button:hover {
-    -fx-background-color: -red-color-hover;
-}
-
-.success-button {
-    -fx-background-color: -green-color;
-    -fx-text-fill: white;
-}
-
-.success-button:hover {
-  -fx-background-color: -green-color-hover;
-}
-
-.secondary-button {
-    -fx-background-color: -grey-color;
-    -fx-text-fill: white;
-}
-
-.secondary-button:hover {
-    -fx-background-color: -grey-color-hover;
-}
-
-.primary-text, .primary-text SVGPath{
-    -fx-text-fill: -blue-color;
-    -fx-fill: -blue-color;
-}
-
-.secondary-text, .secondary-text SVGPath {
-    -fx-text-fill: -grey-color;
-    -fx-fill: -grey-color;
-}
-
-.warning-text, .warning-text SVGPath {
-    -fx-text-fill: -orange-color;
-    -fx-fill: -orange-color;
-}
-
-.danger-text, .danger-text SVGPath {
-    -fx-text-fill: -red-color;
-    -fx-fill: -red-color;
-}
-
-.success-text, .success-text SVGPath {
-    -fx-text-fill: -green-color;
-    -fx-fill: -green-color;
-}
-
-.emphasize {
-    -fx-font-weight: bolder;
-}
-
-.title {
-  -fx-font-size: 35px;
-}
-
-.subtitle {
-  -fx-font-size: 22px;
-}
-
-.title3 {
-  -fx-font-size: 16px;
-}
-
-.title4 {
-  -fx-font-size: 14px;
-}
-
-.confirmation-title {
-   -fx-font-size: 22px;
-   -fx-text-fill: -green-color;
-   -fx-fill: -green-color;
-   -fx-font-weight: bolder;
-}
-
-.small-text {
-  -fx-font-size: 9px;
 }
 
 /*===== modality-client-login-javafx@main.css from modality-crm-client-activity-login-plugin =====*/

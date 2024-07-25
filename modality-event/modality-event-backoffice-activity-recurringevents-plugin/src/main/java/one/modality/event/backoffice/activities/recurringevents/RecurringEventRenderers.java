@@ -1,9 +1,10 @@
 package one.modality.event.backoffice.activities.recurringevents;
 
 import dev.webfx.extras.cell.renderer.ValueRendererRegistry;
+import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.stack.i18n.I18n;
 import javafx.scene.control.Hyperlink;
-import javafx.scene.layout.HBox;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import one.modality.base.client.icons.SvgIcons;
@@ -21,34 +22,26 @@ final class RecurringEventRenderers {
             EventState state = EventState.of((String) value);
             Text toReturn = new Text();
             if (state == null) {
-                I18n.bindI18nProperties(toReturn, "NOT_DEFINED");
-                toReturn.getStyleClass().add("secondary-text");
-                return toReturn;
+                return Bootstrap.textSecondary(I18n.bindI18nProperties(toReturn, "NOT_DEFINED"));
             }
             I18n.bindI18nProperties(toReturn, state.toString());
             switch (state) {
                 case DRAFT:
                 case OPENABLE:
-                    toReturn.getStyleClass().add("warning-text");
-                    break;
+                    return Bootstrap.textWarning(toReturn);
                 case OPEN:
-                    toReturn.getStyleClass().add("success-text");
-                    break;
+                    return Bootstrap.textSuccess(toReturn);
                 case CLOSED:
                 case ARCHIVED:
                 case RECONCILIED:
                 case RESTRICTED:
                 case FINALISED:
-                    toReturn.getStyleClass().add("secondary-text");
-                    break;
+                    return Bootstrap.textSecondary(toReturn);
                 case ON_HOLD:
-                    toReturn.getStyleClass().add("warning-text");
-                    break;
+                    return Bootstrap.textWarning(toReturn);
                 default:
-                    toReturn.getStyleClass().add("warning-text");
-                    break;
+                    return Bootstrap.textWarning(toReturn);
             }
-            return toReturn;
         });
 
         // editEventRenderer
@@ -58,9 +51,8 @@ final class RecurringEventRenderers {
                 //   displayEventDetails(event);
             });
             SVGPath trashSVGPath = SvgIcons.createTrashSVGPath();
-            trashSVGPath.getStyleClass().add("danger-text");
-            trashSVGPath.setOnMouseClicked(e -> System.out.println(e.toString()));
-            return new HBox(editHyperLink);
+            trashSVGPath.getStyleClass().add(Bootstrap.TEXT_DANGER);
+            return new MonoPane(editHyperLink);
         });
 
         // confirmRenderer (used for the last column of the bookings displayed in RecurringEventAttendanceView)

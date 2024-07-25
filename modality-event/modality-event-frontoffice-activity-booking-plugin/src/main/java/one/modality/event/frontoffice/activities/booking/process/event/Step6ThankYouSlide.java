@@ -3,6 +3,7 @@ package one.modality.event.frontoffice.activities.booking.process.event;
 import dev.webfx.extras.imagestore.ImageStore;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.ScalePane;
+import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.stack.i18n.controls.I18nControls;
@@ -31,16 +32,13 @@ class Step6ThankYouSlide extends StepSlide{
         ScalePane headerImageScalePane = new ScalePane(headerImageView);
         headerImageScalePane.setPadding(new Insets(30,0,50,0));
 
-        Label bookingConfirmedLabel = I18nControls.bindI18nProperties(new Label(), "BookingSubmitted");
+        Label bookingConfirmedLabel = Bootstrap.textSuccess(I18nControls.bindI18nProperties(new Label(), "BookingSubmitted"));
         bookingConfirmedLabel.setContentDisplay(ContentDisplay.TOP);
         bookingConfirmedLabel.setGraphicTextGap(10);
-        //  bookingConfirmedLabel.getGraphic().getStyleClass().add("success-text");
-        bookingConfirmedLabel.getStyleClass().addAll("success-text","emphasize");
 
-        Label thankYouLabel = I18nControls.bindI18nProperties(new Label(), "ThankYouForBooking");
+        Label thankYouLabel = Bootstrap.textSecondary(I18nControls.bindI18nProperties(new Label(), "ThankYouForBooking"));
         thankYouLabel.setWrapText(true);
         thankYouLabel.setTextAlignment(TextAlignment.CENTER);
-        thankYouLabel.getStyleClass().add("secondary-text");
         MonoPane thankYouPane = new MonoPane(thankYouLabel);
         thankYouPane.setAlignment(Pos.CENTER);
         VBox.setMargin(thankYouPane, new Insets(20,0,0,50));

@@ -4,6 +4,7 @@ import dev.webfx.extras.panes.FlexPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.ScaleMode;
 import dev.webfx.extras.panes.ScalePane;
+import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.cloud.image.CloudImageService;
@@ -130,9 +131,9 @@ import java.util.stream.Collectors;
                 Label toReturn = new Label("*");
                 //TODO add a legend and put in css file (waiting UX Designer)
                 if(bookEventData.isDepositOnPreviousBookingComplete())
-                    toReturn.getStyleClass().setAll("success-text");
+                    toReturn.getStyleClass().setAll(Bootstrap.SUCCESS_TEXT);
                 else
-                    toReturn.getStyleClass().setAll("danger-text");
+                    toReturn.getStyleClass().setAll(Bootstrap.DANGER_TEXT);
                 return toReturn;
             }
             return null;
@@ -146,16 +147,15 @@ import java.util.stream.Collectors;
         selectableDates.removeAll(unselectableDate);
 
         Hyperlink selectAllClassesHyperlink = I18nControls.bindI18nTextProperty(new Hyperlink(), "SelectAllClasses");
+        Bootstrap.textPrimary(Bootstrap.h4(selectAllClassesHyperlink));
         selectAllClassesHyperlink.setAlignment(Pos.CENTER);
-        selectAllClassesHyperlink.getStyleClass().addAll("primary-text", "title4");
         selectAllClassesHyperlink.setOnAction((event -> recurringEventSchedule.selectDates(selectableDates)));
         Text priceText = new Text(I18n.getI18nText("PricePerClass", EventPriceFormatter.formatWithCurrency(bookEventData.getRate(), FXEvent.getEvent())));
         priceText.getStyleClass().add("subtitle-grey");
         VBox.setMargin(priceText, new Insets(20, 0, 5, 0));
 
-        Button checkoutButton = I18nControls.bindI18nProperties(new Button(), "ProceedCheckout");
+        Button checkoutButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "ProceedCheckout"));
         //We manage the property of the button in css
-        checkoutButton.getStyleClass().addAll("event-button", "success-button");
         checkoutButton.setMaxWidth(300);
         checkoutButton.setOnAction((event -> {
             bookEventData.getCurrentBooking().cancelChanges();

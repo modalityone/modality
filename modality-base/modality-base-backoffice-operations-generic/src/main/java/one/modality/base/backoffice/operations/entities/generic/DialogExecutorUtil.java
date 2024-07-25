@@ -11,7 +11,6 @@ import dev.webfx.stack.ui.exceptions.UserCancellationException;
 import dev.webfx.stack.ui.operation.OperationUtil;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
 
 import java.util.function.Supplier;
 
@@ -23,7 +22,7 @@ public final class DialogExecutorUtil {
     public static Future<Void> executeOnUserConfirmation(String confirmationText, Pane parentContainer, Supplier<Future<?>> executor) {
         Promise<Void> promise = Promise.promise();
         UiScheduler.runInUiThread(() -> {
-            DialogContent dialogContent = new DialogContent().setContent(new Text(confirmationText));
+            DialogContent dialogContent = new DialogContent().setHeaderText("AreYouSure").setContentText(confirmationText);
             boolean[] executing = { false };
             DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, parentContainer).addCloseHook(() -> {
                 if (!executing[0])
@@ -31,7 +30,7 @@ public final class DialogExecutorUtil {
             });
             DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
                 executing[0] = true;
-                Button executingButton = dialogContent.getOkButton();
+                Button executingButton = dialogContent.getPrimaryButton();
                 OperationUtil.turnOnButtonsWaitModeDuringExecution(
                 executor.get()
                     .onFailure(cause -> {
@@ -49,7 +48,7 @@ public final class DialogExecutorUtil {
                                 dialogCallback.closeDialog();
                         });
                     })
-                , executingButton, dialogContent.getCancelButton());
+                , executingButton, dialogContent.getSecondaryButton());
             });
         });
         return promise.future();

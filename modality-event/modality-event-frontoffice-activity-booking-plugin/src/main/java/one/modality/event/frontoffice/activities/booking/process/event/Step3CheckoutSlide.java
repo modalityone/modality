@@ -1,6 +1,7 @@
 package one.modality.event.frontoffice.activities.booking.process.event;
 
 import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
@@ -228,10 +229,9 @@ class Step3CheckoutSlide extends StepSlide {
         mainVbox.getChildren().add(separatorHBox);
         bookEventData.updateGeneralBalance();
 
-        submitButton = I18nControls.bindI18nProperties(new Button(), "Submit",bookEventData.getFormattedBalanceProperty());
+        submitButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "Submit",bookEventData.getFormattedBalanceProperty()));
         //We manage the property of the button in css
         submitButton.setGraphicTextGap(30);
-        submitButton.getStyleClass().addAll("event-button", "success-button");
         submitButton.setMaxWidth(150);
         submitButton.setOnAction(event -> {
                     Person userPerson = FXUserPerson.getUserPerson();

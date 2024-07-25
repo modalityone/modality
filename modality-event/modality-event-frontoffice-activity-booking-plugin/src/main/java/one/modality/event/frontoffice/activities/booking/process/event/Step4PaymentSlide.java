@@ -2,6 +2,7 @@ package one.modality.event.frontoffice.activities.booking.process.event;
 
 import dev.webfx.extras.panes.FlexPane;
 import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
@@ -41,7 +42,7 @@ class Step4PaymentSlide extends StepSlide {
         if (webPaymentForm.isSandbox()) {
             mainVbox.getChildren().add(webPaymentForm.createSandboxBar());
         }
-        Button payButton = I18nControls.bindI18nProperties(new Button(), "Pay",bookEventData.getFormattedBalanceProperty());
+        Button payButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "Pay", bookEventData.getFormattedBalanceProperty()));
         FXProperties.runNowAndOnPropertiesChange(() -> {
             if (webPaymentForm.isUserInteractionAllowed()) {
                 turnOffButtonWaitMode(payButton, "Pay");
@@ -49,12 +50,10 @@ class Step4PaymentSlide extends StepSlide {
                 turnOnButtonWaitMode(payButton);
             }
         }, webPaymentForm.userInteractionAllowedProperty());
-        Button cancelButton = I18nControls.bindI18nProperties(new Button(), "Cancel");
+        Button cancelButton = Bootstrap.largeSecondaryButton(I18nControls.bindI18nProperties(new Button(), "Cancel"));
         payButton.setMaxWidth(Double.MAX_VALUE);
         cancelButton.setMaxWidth(Double.MAX_VALUE);
         payButton.setOnAction(e -> webPaymentForm.pay());
-        payButton.getStyleClass().addAll("event-button", "success-button");
-        cancelButton.getStyleClass().addAll("event-button", "secondary-button");
         cancelButton.setOnAction(e -> {
             turnOnButtonWaitMode(payButton);
             turnOnButtonWaitMode(cancelButton);
@@ -98,10 +97,9 @@ class Step4PaymentSlide extends StepSlide {
                     if(status.isFailed()) {
                         mainVbox.getChildren().remove(paymentRegion);
                         messageHtmlText.setText(I18n.getI18nText("PaymentFailed"));
-                        Button retryPayButton = I18nControls.bindI18nProperties(new Button(), "RetryPayment");
+                        Button retryPayButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "RetryPayment"));
                         //We manage the property of the button in css
                         retryPayButton.setGraphicTextGap(30);
-                        retryPayButton.getStyleClass().addAll("event-button", "success-button");
                         retryPayButton.setMaxWidth(150);
                         mainVbox.getChildren().add(retryPayButton);
                         retryPayButton.setOnAction(event -> {

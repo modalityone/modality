@@ -18,6 +18,7 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires webfx.extras.cell;
     requires webfx.extras.filepicker;
     requires webfx.extras.panes;
+    requires webfx.extras.styles.bootstrap;
     requires webfx.extras.switches;
     requires webfx.extras.theme;
     requires webfx.extras.time.pickers;

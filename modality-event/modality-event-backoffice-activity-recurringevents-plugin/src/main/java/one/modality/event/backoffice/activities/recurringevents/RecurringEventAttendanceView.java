@@ -1,6 +1,7 @@
 package one.modality.event.backoffice.activities.recurringevents;
 
 import dev.webfx.extras.panes.ColumnsPane;
+import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.util.layout.LayoutUtil;
@@ -64,10 +65,9 @@ final class RecurringEventAttendanceView {
     }
 
     Node buildContainer() {
-        Label currentEventLabel = I18nControls.bindI18nProperties(new Label(),"CurrentClasses");
+        Label currentEventLabel = Bootstrap.h3(I18nControls.bindI18nProperties(new Label(),"CurrentClasses"));
         currentEventLabel.setPadding(new Insets(0, 0, 20, 0));
         TextTheme.createSecondaryTextFacet(currentEventLabel).style();
-        currentEventLabel.getStyleClass().add("title3");
 
         attendancePane.setMinColumnWidth(300);
         attendancePane.setHgap(20);

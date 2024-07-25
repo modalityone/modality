@@ -1,5 +1,6 @@
 package one.modality.crm.client.authn.login.ui.gateway.signup;
 
+import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.authn.login.ui.spi.impl.gateway.UiLoginGatewayProviderBase;
 import dev.webfx.stack.authn.login.ui.spi.impl.gateway.UiLoginPortalCallback;
@@ -106,8 +107,7 @@ public class ModalitySignupUiLoginGatewayProvider extends UiLoginGatewayProvider
 
         grid.add(passwordInput, 0, 7);
 
-        Button saveButton = I18nControls.bindI18nProperties(new Button(), "Save");
-        saveButton.getStyleClass().addAll("event-button", "success-button");
+        Button saveButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "Save"));
         saveButton.setOnAction(event -> {
             errorMessage.setText("");
             errorMessage.setVisible(false);
@@ -138,7 +138,7 @@ public class ModalitySignupUiLoginGatewayProvider extends UiLoginGatewayProvider
                                 errorMessage.setVisible(true);
                             }
                             else {
-                                errorMessage.setText("An error has occured during the creation. Please try later");
+                                errorMessage.setText("An error has occurred during the creation. Please try later");
                                 errorMessage.setVisible(true);
                             }
                             System.out.println(exception.getMessage());

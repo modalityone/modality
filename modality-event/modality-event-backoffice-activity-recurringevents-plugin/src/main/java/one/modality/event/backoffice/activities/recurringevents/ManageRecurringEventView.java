@@ -3,6 +3,7 @@ package one.modality.event.backoffice.activities.recurringevents;
 import dev.webfx.extras.filepicker.FilePicker;
 import dev.webfx.extras.panes.FlexPane;
 import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.extras.theme.text.TextTheme;
@@ -147,7 +148,6 @@ final class ManageRecurringEventView {
     private EventState previousEventState;
     private static final int EDIT_MODE = 1;
     private static final int ADD_MODE = -1;
-    private static final int PREF_BUTTON_WIDTH=150;
     private final IntegerProperty currentMode = new SimpleIntegerProperty() {
         @Override
         protected void invalidated() {
@@ -200,7 +200,7 @@ final class ManageRecurringEventView {
         @Override
         public void showSlaveSwitchApprovalDialog(Consumer<Boolean> approvalCallback) {
             Text titleConfirmationText = I18n.bindI18nProperties(new Text(),"AreYouSure");
-            titleConfirmationText.getStyleClass().add("confirmation-title");
+            Bootstrap.textSuccess(Bootstrap.h3(Bootstrap.strong(titleConfirmationText)));
             BorderPane dialog = new BorderPane();
             dialog.setTop(titleConfirmationText);
             BorderPane.setAlignment(titleConfirmationText, Pos.CENTER);
@@ -208,12 +208,8 @@ final class ManageRecurringEventView {
             dialog.setCenter(confirmationText);
             BorderPane.setAlignment(confirmationText, Pos.CENTER);
             BorderPane.setMargin(confirmationText, new Insets(30, 0, 30, 0));
-            Button okButton = I18nControls.bindI18nProperties(new Button(),"Confirm");
-            okButton.getStyleClass().addAll("event-button", "danger-button");
-            okButton.setMinWidth(PREF_BUTTON_WIDTH);
-            Button cancelActionButton = I18nControls.bindI18nProperties(new Button(),"Cancel");
-            cancelActionButton.getStyleClass().addAll("event-button", "secondary-button");
-            cancelActionButton.setMinWidth(PREF_BUTTON_WIDTH);
+            Button okButton = Bootstrap.largeDangerButton(I18nControls.bindI18nProperties(new Button(),"Confirm"));
+            Button cancelActionButton = Bootstrap.largeSecondaryButton(I18nControls.bindI18nTextProperty(new Button(),"Cancel"));
 
             HBox buttonsHBox = new HBox(cancelActionButton, okButton);
             buttonsHBox.setAlignment(Pos.CENTER);
@@ -592,15 +588,11 @@ final class ManageRecurringEventView {
         //mainFrame.setTop( title);
 
         //Displaying the list of events
-        Label currentEventLabel = I18nControls.bindI18nProperties(new Label(),"ListEvents");
+        Label currentEventLabel = Bootstrap.h3(I18nControls.bindI18nProperties(new Label(),"ListEvents"));
         currentEventLabel.setPadding(new Insets(15,0,20,0));
         TextTheme.createSecondaryTextFacet(currentEventLabel).style();
-        currentEventLabel.getStyleClass().add("subtitle");
 
-        Button addButton = I18nControls.bindI18nProperties(new Button(), "AddEventInformationButton");
-        //We manage the property of the button in css
-        addButton.getStyleClass().addAll("event-button", "success-button");
-        addButton.setMinWidth(PREF_BUTTON_WIDTH);
+        Button addButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), "AddEventInformationButton"));
 
         addButton.setOnAction((event -> masterSlaveEventLinker.checkSlaveSwitchApproval(true, () -> {
             resetTextFields();
@@ -700,18 +692,16 @@ final class ManageRecurringEventView {
         titleEventDetailsLabel.setPadding(new Insets(30,0,20,0));
         TextTheme.createSecondaryTextFacet(titleEventDetailsLabel).style();
 
-        deleteButton = I18nControls.bindI18nProperties(new Button(),"DeleteEvent");
+        deleteButton = Bootstrap.dangerButton(I18nControls.bindI18nProperties(new Button(),"DeleteEvent"));
         deleteButton.setGraphicTextGap(10);
         //We manage the property of the button in css
         deleteButton.setId("DeleteEvent");
-        deleteButton.getStyleClass().addAll("event-button", "danger-button");
-        deleteButton.setMinWidth(PREF_BUTTON_WIDTH);
         deleteButton.setOnAction(event -> {
             //If the event is null, it means the selection has been removed from the visual mapper from the visual mapper.
             if(event!=null) {
                 //We open a dialog box asking if we want to delete the event
                 Text titleConfirmationText = I18n.bindI18nProperties(new Text(),"AreYouSure");
-                titleConfirmationText.getStyleClass().add("confirmation-title");
+                Bootstrap.textSuccess(Bootstrap.strong(Bootstrap.h3(titleConfirmationText)));
                 BorderPane dialog = new BorderPane();
                 dialog.setTop(titleConfirmationText);
                 BorderPane.setAlignment(titleConfirmationText,Pos.CENTER);
@@ -719,12 +709,8 @@ final class ManageRecurringEventView {
                 dialog.setCenter(confirmationText);
                 BorderPane.setAlignment(confirmationText,Pos.CENTER);
                 BorderPane.setMargin(confirmationText,new Insets(30,0,30,0));
-                Button okDeleteButton = I18nControls.bindI18nProperties(new Button(),"Confirm");
-                okDeleteButton.getStyleClass().addAll("event-button", "danger-button");
-                okDeleteButton.setMinWidth(PREF_BUTTON_WIDTH);
-                Button cancelActionButton = I18nControls.bindI18nProperties(new Button(),"Cancel");
-                cancelActionButton.getStyleClass().addAll("event-button", "grey-button");
-                cancelActionButton.setMinWidth(PREF_BUTTON_WIDTH);
+                Button okDeleteButton = Bootstrap.largeDangerButton(I18nControls.bindI18nProperties(new Button(),"Confirm"));
+                Button cancelActionButton = Bootstrap.largeSecondaryButton(I18nControls.bindI18nProperties(new Button(),"Cancel"));
 
                 HBox buttonsHBox = new HBox(cancelActionButton,okDeleteButton);
                 buttonsHBox.setAlignment(Pos.CENTER);
@@ -742,7 +728,7 @@ final class ManageRecurringEventView {
                                 .onFailure(x->Platform.runLater(() -> {
                                     areWeDeleting = false;
                                     Text infoText = I18n.bindI18nProperties(new Text(),"Error");
-                                    infoText.getStyleClass().add("confirmation-title");
+                                    Bootstrap.textSuccess(Bootstrap.strong(Bootstrap.h3(infoText)));
                                     BorderPane errorDialog = new BorderPane();
                                     errorDialog.setTop(infoText);
                                     BorderPane.setAlignment(titleConfirmationText,Pos.CENTER);
@@ -750,9 +736,7 @@ final class ManageRecurringEventView {
                                     errorDialog.setCenter(deleteErrorTest);
                                     BorderPane.setAlignment(deleteErrorTest,Pos.CENTER);
                                     BorderPane.setMargin(deleteErrorTest,new Insets(30,0,30,0));
-                                    Button okErrorButton = I18nControls.bindI18nProperties(new Button(),"Ok");
-                                    okErrorButton.getStyleClass().addAll("event-button", "danger-button");
-                                    okErrorButton.setMinWidth(PREF_BUTTON_WIDTH);
+                                    Button okErrorButton = Bootstrap.largeDangerButton(I18nControls.bindI18nProperties(new Button(),"Ok"));
 
                                     DialogCallback errorMessageCallback = DialogUtil.showModalNodeInGoldLayout(errorDialog, FXMainFrameDialogArea.getDialogArea());
                                     okErrorButton.setOnAction(m-> errorMessageCallback.closeDialog());
@@ -856,8 +840,7 @@ final class ManageRecurringEventView {
             isPictureDisplayed.setValue(true);
         });
 
-        Label uploadButtonDescription = I18nControls.bindI18nProperties(new Label(),"SelectYourFile");
-        uploadButtonDescription.getStyleClass().add("small-text");
+        Label uploadButtonDescription = Bootstrap.small(I18nControls.bindI18nProperties(new Label(),"SelectYourFile"));
 
         TextTheme.createPrimaryTextFacet(uploadButtonDescription).style();
 
@@ -876,9 +859,8 @@ final class ManageRecurringEventView {
         imageStackPane.setMinHeight(100);
       //  imageStackPane.setPrefSize(200,210);
         imageStackPane.setAlignment(Pos.CENTER);
-        Label emptyPictureLabel = I18nControls.bindI18nProperties(new Label(),"NoPictureSelected");
+        Label emptyPictureLabel = Bootstrap.small(I18nControls.bindI18nProperties(new Label(),"NoPictureSelected"));
         TextTheme.createSecondaryTextFacet(emptyPictureLabel).style();
-        emptyPictureLabel.getStyleClass().add("small-text");
 
         trashImage = SvgIcons.createTrashSVGPath();
         trashImage.setOnMouseClicked(event ->  {
@@ -964,39 +946,14 @@ final class ManageRecurringEventView {
         line6.setPadding(new Insets(20, 0, 0, 0));
         line6.setAlignment(Pos.CENTER_LEFT);
 
-        cancelButton = I18nControls.bindI18nProperties(new Button(),"CancelButton");
-        cancelButton.getStyleClass().addAll("event-button", "grey-button");
-        cancelButton.setMinWidth(PREF_BUTTON_WIDTH);
-
-
-        cancelButton.setOnAction(e -> displayEventDetails(currentEditedEvent));
-        cancelButton.disableProperty().bind(FXProperties.compute(currentMode, mode -> mode.intValue() == ADD_MODE));
-
-        saveButton = I18nControls.bindI18nProperties(new Button(),"SaveButton");
-        saveButton.setGraphicTextGap(10);
-        saveButton.getStyleClass().addAll("event-button", "primary-button");
-        saveButton.setMinWidth(PREF_BUTTON_WIDTH);
-
-        saveButton.setOnAction(event -> {
-            if(validateForm())
-            {
-                if(previousEventState==null) {
-                    previousEventState=EventState.DRAFT;
-                    currentEditedEvent.setState(EventState.DRAFT);
-                }
-                submitUpdateStoreChanges();
-                //If we add a new Event, put the selection on this event.
-               // if(currentMode.get()== ADD_MODE) eventVisualMapper.setSelectedEntity(currentEditedEvent);
-            }
-        });
-
-        HBox buttonsLine = new HBox(cancelButton, saveButton);
-        buttonsLine.setPadding(new Insets(50, 0, 0, 0));
-        buttonsLine.setAlignment(Pos.CENTER);
-        buttonsLine.setSpacing(30);
-        buttonsLine.setAlignment(Pos.CENTER);
-
-        VBox rightPaneVBox = new VBox(line1, datesOfTheEventLabel, calendarPane, line4InLeftPanel, line4, line5, line6);
+        VBox rightPaneVBox = new VBox(
+                line1,
+                datesOfTheEventLabel,
+                calendarPane,
+                line4InLeftPanel,
+                line4,
+                line5,
+                line6);
 
         // ----FlexPane---------------------------------------|
         //|--VBox--------------------||---------Vbox---------||
@@ -1008,6 +965,29 @@ final class ManageRecurringEventView {
         FlexPane eventDetailsPane = new FlexPane(leftPaneVBox, rightPaneVBox);
         eventDetailsPane.setHorizontalSpace(50);
         eventDetailsPane.setVerticalSpace(20);
+
+        cancelButton = Bootstrap.largeSecondaryButton(I18nControls.bindI18nProperties(new Button(),"CancelButton"));
+        cancelButton.setOnAction(e -> displayEventDetails(currentEditedEvent));
+        cancelButton.disableProperty().bind(FXProperties.compute(currentMode, mode -> mode.intValue() == ADD_MODE));
+
+        saveButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(),"SaveButton"));
+        saveButton.setGraphicTextGap(10);
+        saveButton.setOnAction(event -> {
+            if(validateForm())
+            {
+                if(previousEventState==null) {
+                    previousEventState=EventState.DRAFT;
+                    currentEditedEvent.setState(EventState.DRAFT);
+                }
+                submitUpdateStoreChanges();
+                //If we add a new Event, put the selection on this event.
+                // if(currentMode.get()== ADD_MODE) eventVisualMapper.setSelectedEntity(currentEditedEvent);
+            }
+        });
+
+        HBox buttonsLine = new HBox(30, cancelButton, saveButton);
+        buttonsLine.setPadding(new Insets(50, 0, 0, 0));
+        buttonsLine.setAlignment(Pos.CENTER);
 
         HBox labelLine = new HBox();
         labelLine.setAlignment(Pos.BASELINE_LEFT);
