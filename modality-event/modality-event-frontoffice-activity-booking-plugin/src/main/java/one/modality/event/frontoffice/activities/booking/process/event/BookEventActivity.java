@@ -46,6 +46,7 @@ public final class BookEventActivity extends ViewDomainActivityBase {
     public Node buildUi() {
         carrousel.setSlideSuppliers(step1LoadingSlide, step2EventDetailsSlide, step3CheckoutSlide, step4PaymentSlide, step6ThankYouSlide, step5ErrorSlide);
         carrousel.setLoop(false);
+        carrousel.setShowingDots(false);
         Region carrouselContainer = carrousel.getContainer();
         carrouselContainer.setMaxWidth(MAX_WIDTH);
         ScrollPane mainScrollPane = ControlUtil.createVerticalScrollPaneWithPadding(10, new BorderPane(carrouselContainer));
