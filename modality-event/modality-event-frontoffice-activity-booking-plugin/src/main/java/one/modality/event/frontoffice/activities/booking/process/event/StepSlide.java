@@ -1,5 +1,6 @@
 package one.modality.event.frontoffice.activities.booking.process.event;
 
+import dev.webfx.extras.panes.GoldenRatioPane;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.ui.operation.OperationUtil;
 import javafx.scene.Node;
@@ -8,23 +9,18 @@ import javafx.scene.layout.VBox;
 
 import java.util.function.Supplier;
 
-public abstract class StepSlide implements Supplier<Node> {
-    protected VBox mainVbox;
-    protected SlideController controller;
-    protected BookEventData bookEventData;
+abstract class StepSlide implements Supplier<Node> {
 
-    public StepSlide(SlideController control,BookEventData bed) {
+    protected final VBox mainVbox = new VBox();
+    private final GoldenRatioPane goldenRatioPane = new GoldenRatioPane(mainVbox);
+    protected final SlideController controller;
+
+    public StepSlide(SlideController control) {
         controller = control;
-        bookEventData = bed;
-        mainVbox = new VBox();
-    }
-
-    public VBox getMainVBox() {
-        return mainVbox;
     }
 
     public Node get() {
-        return getMainVBox();
+        return goldenRatioPane;
     }
 
     public void reset() {

@@ -4,12 +4,11 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ProgressIndicator;
 
-class Step1LoadingSlide extends StepSlide{
+final class Step1LoadingSlide extends StepSlide {
 
 
-    public Step1LoadingSlide(SlideController control, BookEventData bed) {
-        super(control, bed);
-        controller.setStep1LoadingSlide(this);
+    public Step1LoadingSlide(SlideController control) {
+        super(control);
     }
 
     public Node buildUi() {

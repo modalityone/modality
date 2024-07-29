@@ -971,7 +971,6 @@ final class ManageRecurringEventView {
         cancelButton.disableProperty().bind(FXProperties.compute(currentMode, mode -> mode.intValue() == ADD_MODE));
 
         saveButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(),"SaveButton"));
-        saveButton.setGraphicTextGap(10);
         saveButton.setOnAction(event -> {
             if(validateForm())
             {

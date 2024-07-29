@@ -22,20 +22,21 @@ import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
 
-class Step4PaymentSlide extends StepSlide {
+final class Step4PaymentSlide extends StepSlide {
 
+    private final Label bookedEventTitleLabel = Bootstrap.textPrimary(Bootstrap.h4(new Label()));
     private final Label gatewayLogo = new Label();
-    private final HtmlText paymentInformationInPaymentSlide = new HtmlText();
-    private Label bookedEventTitleText;
+    private final HtmlText paymentInformationHtmlText = Bootstrap.textPrimary(Bootstrap.h4(new HtmlText()));
     private final HtmlText messageHtmlText = new HtmlText();
 
-    public Step4PaymentSlide(SlideController control, BookEventData bed) {
-        super(control, bed);
-        controller.setStep4PaymentSlide(this);
+    Step4PaymentSlide(SlideController control) {
+        super(control);
     }
 
-    public void setWebPaymentForm(WebPaymentForm webPaymentForm) {
-        I18n.bindI18nTextProperty(paymentInformationInPaymentSlide.textProperty(), "PaymentInformation", webPaymentForm.getGatewayName());
+    void setWebPaymentForm(WebPaymentForm webPaymentForm) {
+        BookEventData bookEventData = controller.getBookEventData();
+        bookedEventTitleLabel.setWrapText(true);
+        I18n.bindI18nTextProperty(paymentInformationHtmlText.textProperty(), "PaymentInformation", webPaymentForm.getGatewayName());
         I18nControls.bindI18nProperties(gatewayLogo, webPaymentForm.getGatewayName());
         Region paymentRegion = webPaymentForm.buildPaymentForm();
         mainVbox.getChildren().add(paymentRegion);
@@ -61,16 +62,15 @@ class Step4PaymentSlide extends StepSlide {
                             .onComplete(ar -> UiScheduler.runInUiThread(() -> {
                                 turnOffButtonWaitMode(payButton, "Pay");
                                 turnOffButtonWaitMode(cancelButton, "Cancel");
-                                controller.displayErrorMessage("ErrorUserCanceledPayment");
+                                controller.displayCancellationMessage();
                             }));
         });
         FlexPane buttonBar = new FlexPane(payButton, cancelButton);
         buttonBar.setHorizontalSpace(10);
         VBox.setMargin(buttonBar, new Insets(10, 0, 10, 0));
         mainVbox.getChildren().add(buttonBar);
-        //paymentRegion.
         int totalPrice = bookEventData.getPriceCalculatorForCurrentOption().calculateTotalPrice();
-        bookedEventTitleText.setText(FXEvent.getEvent().getName() + " | Total booking price: " + bookEventData.getFormattedBalanceProperty().getValue());
+        bookedEventTitleLabel.setText(FXEvent.getEvent().getName() + " |\u00A0Total\u00A0booking\u00A0price: " + bookEventData.getFormattedBalanceProperty().getValue());
         webPaymentForm
                 .setOnLoadFailure(errorMsg -> {
                     controller.displayErrorMessage("ErrorWhileLoadingPaymentForm");
@@ -98,9 +98,6 @@ class Step4PaymentSlide extends StepSlide {
                         mainVbox.getChildren().remove(paymentRegion);
                         messageHtmlText.setText(I18n.getI18nText("PaymentFailed"));
                         Button retryPayButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "RetryPayment"));
-                        //We manage the property of the button in css
-                        retryPayButton.setGraphicTextGap(30);
-                        retryPayButton.setMaxWidth(150);
                         mainVbox.getChildren().add(retryPayButton);
                         retryPayButton.setOnAction(event -> {
                             turnOnButtonWaitMode(retryPayButton);
@@ -125,19 +122,17 @@ class Step4PaymentSlide extends StepSlide {
                 });
     }
 
-    public void buildUi() {
+    void buildUi() {
         mainVbox.getChildren().clear();
         mainVbox.setAlignment(Pos.TOP_CENTER);
-        bookedEventTitleText = new Label();
-        bookedEventTitleText.getStyleClass().addAll("book-event-primary-title", "emphasize");
-        MonoPane topPane = new MonoPane(bookedEventTitleText);
+        MonoPane topPane = new MonoPane(bookedEventTitleLabel);
         topPane.setMaxWidth(Double.MAX_VALUE);
         topPane.setAlignment(Pos.CENTER_LEFT);
         VBox.setMargin(topPane, new Insets(20,0,0,50));
         mainVbox.getChildren().add(topPane);
 
-        paymentInformationInPaymentSlide.getStyleClass().add("subtitle-grey");
-        MonoPane paymentInfoPane = new MonoPane(paymentInformationInPaymentSlide);
+        paymentInformationHtmlText.getStyleClass().add("subtitle-grey");
+        MonoPane paymentInfoPane = new MonoPane(paymentInformationHtmlText);
         paymentInfoPane.setMaxWidth(Double.MAX_VALUE);
         paymentInfoPane.setAlignment(Pos.CENTER_LEFT);
         VBox.setMargin(paymentInfoPane, new Insets(10,0,20,50));

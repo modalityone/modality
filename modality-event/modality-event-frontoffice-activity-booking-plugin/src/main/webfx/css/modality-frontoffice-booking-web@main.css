@@ -46,10 +46,7 @@
 
 .checkout-address {
     color: #BBBBBB;
-}
-
-.checkout-address svg {
-    fill: #BBBBBB;
+    --fx-svg-path-fill: #BBBBBB;
 }
 
 .line-total > fx-background {

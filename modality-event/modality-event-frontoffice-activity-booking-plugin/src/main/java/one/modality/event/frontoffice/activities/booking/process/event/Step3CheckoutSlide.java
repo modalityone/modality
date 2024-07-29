@@ -36,42 +36,43 @@ import one.modality.event.frontoffice.activities.booking.process.account.Checkou
 
 import java.time.LocalDate;
 
-class Step3CheckoutSlide extends StepSlide {
-    private final HtmlText eventShortDescriptionInCheckoutSlide = controller.bindI18nEventExpression(new HtmlText(), "shortDescription");
+final class Step3CheckoutSlide extends StepSlide {
+
+    private final HtmlText eventShortDescriptionHtmlText = controller.bindI18nEventExpression(new HtmlText(), "shortDescription");
     private final Label venueAddress = controller.bindI18nEventExpression(new Label(), "venue.address");
     private final VBox pastScheduledItemVBox = new VBox();
     private final VBox scheduledItemVBox = new VBox();
-    private final Label totalPriceLabel = I18nControls.bindI18nProperties(new Label(),"TotalPrice",bookEventData.getFormattedTotalProperty());
+    private final Label totalPriceLabel = I18nControls.bindI18nProperties(new Label(),"TotalPrice", controller.getBookEventData().getFormattedTotalProperty());
     // Node property that will be managed by the sub-router to mount the CheckoutAccountActivity (when routed)
     private final ObjectProperty<Node> checkoutAccountMountNodeProperty = new SimpleObjectProperty<>();
     private Button submitButton;
 
-    public Step3CheckoutSlide(SlideController control, BookEventData bed) {
-        super(control, bed);
-        controller.setStep3CheckoutSlide(this);
-
+    public Step3CheckoutSlide(SlideController control) {
+        super(control);
     }
 
     // Exposing accountMountNodeProperty for the sub-routing binding (done in BookEventActivity)
-    public ObjectProperty<Node> accountMountNodeProperty() {
+    ObjectProperty<Node> accountMountNodeProperty() {
         return checkoutAccountMountNodeProperty;
     }
 
-    public void buildUi() {
+    void buildUi() {
         mainVbox.getChildren().clear();
+        BookEventData bookEventData = controller.getBookEventData();
         bookEventData.setBalanceProperty(0);
         mainVbox.setAlignment(Pos.TOP_CENTER);
-        Label bookedEventTitleText = controller.bindI18nEventExpression(new Label(), "i18n(this)");
-        bookedEventTitleText.getStyleClass().addAll("book-event-primary-title", "emphasize");
+        Label bookedEventTitleLabel = Bootstrap.textPrimary(Bootstrap.h4(Bootstrap.strong(
+                controller.bindI18nEventExpression(new Label(), "i18n(this)"))));
+        bookedEventTitleLabel.setWrapText(true);
 
-        MonoPane topPane = new MonoPane(bookedEventTitleText);
+        MonoPane topPane = new MonoPane(bookedEventTitleLabel);
         topPane.setAlignment(Pos.CENTER_LEFT);
         VBox.setMargin(topPane, new Insets(20,0,0,50));
         mainVbox.getChildren().add(topPane);
 
-        eventShortDescriptionInCheckoutSlide.getStyleClass().add("subtitle-grey");
-        eventShortDescriptionInCheckoutSlide.setMaxWidth(350);
-        MonoPane shortDescriptionMonoPane = new MonoPane(eventShortDescriptionInCheckoutSlide);
+        Bootstrap.textSecondary(eventShortDescriptionHtmlText);
+        eventShortDescriptionHtmlText.setMaxWidth(350);
+        MonoPane shortDescriptionMonoPane = new MonoPane(eventShortDescriptionHtmlText);
         topPane.setAlignment(Pos.BASELINE_LEFT);
         VBox.setMargin(topPane, new Insets(10,0,0,50));
         mainVbox.getChildren().add(shortDescriptionMonoPane);
@@ -229,10 +230,7 @@ class Step3CheckoutSlide extends StepSlide {
         mainVbox.getChildren().add(separatorHBox);
         bookEventData.updateGeneralBalance();
 
-        submitButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "Submit",bookEventData.getFormattedBalanceProperty()));
-        //We manage the property of the button in css
-        submitButton.setGraphicTextGap(30);
-        submitButton.setMaxWidth(150);
+        submitButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "Submit", bookEventData.getFormattedBalanceProperty()));
         submitButton.setOnAction(event -> {
                     Person userPerson = FXUserPerson.getUserPerson();
                     if (userPerson == null) { // Means that the user is not logged in, or logged in via SSO but without an account in Modality

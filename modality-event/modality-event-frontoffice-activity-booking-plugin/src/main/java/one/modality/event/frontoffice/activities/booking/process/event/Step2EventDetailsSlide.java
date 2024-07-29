@@ -20,6 +20,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
@@ -36,30 +37,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
- class Step2EventDetailsSlide extends StepSlide {
+final class Step2EventDetailsSlide extends StepSlide {
 
     private final RecurringEventSchedule recurringEventSchedule = new RecurringEventSchedule();
-    private final HtmlText eventShortDescriptionInEventSlide = controller.bindI18nEventExpression(new HtmlText(), "shortDescription");
+    private final HtmlText eventShortDescriptionHtmlText = controller.bindI18nEventExpression(new HtmlText(), "shortDescription");
     private final BooleanProperty isOptionsSelectedEmptyProperty = new SimpleBooleanProperty();
     private final HtmlText eventDescription = controller.bindI18nEventExpression(new HtmlText(), "description");
     private final ImageView imageView = new ImageView();
     private final CloudImageService cloudImageService = new ClientImageService();
 
-    public Step2EventDetailsSlide(SlideController control, BookEventData bed) {
-        super(control, bed);
-        controller.setStep2EventDetailsSlide(this);
+    Step2EventDetailsSlide(SlideController control) {
+        super(control);
     }
 
-    public void buildUi() {
-        Text title = I18n.bindI18nProperties(new Text(),"GPEvent");
-        title.getStyleClass().addAll("book-event-primary-title");
-        VBox.setMargin(title, new Insets(0,0,5,0));
+    void buildUi() {
+        Label titleLabel = Bootstrap.textPrimary(Bootstrap.h3(I18nControls.bindI18nProperties(new Label(),"GPEvent")));
+        titleLabel.setWrapText(true);
+        VBox.setMargin(titleLabel, new Insets(0,0,5,0));
 
-        Text eventCentreLocationText = controller.bindI18nEventExpression(new Text(),
+        Label eventCentreLocationLabel = controller.bindI18nEventExpression(new Label(),
                 "'[At] ' + coalesce(i18n(venue), i18n(organization))");
 
-        eventShortDescriptionInEventSlide.getStyleClass().setAll("subtitle-grey");
-        MonoPane shortDescriptionPane = new MonoPane(eventShortDescriptionInEventSlide);
+        Bootstrap.textSecondary(eventShortDescriptionHtmlText);
+        MonoPane shortDescriptionPane = new MonoPane(eventShortDescriptionHtmlText);
         shortDescriptionPane.setAlignment(Pos.TOP_LEFT);
         VBox.setMargin(shortDescriptionPane, new Insets(5,0,15,0));
 
@@ -70,17 +70,18 @@ import java.util.stream.Collectors;
         eventDescription.getStyleClass().add("description-text");
 
         Text scheduleText = I18n.bindI18nProperties(new Text(),"Schedule");
-        scheduleText.getStyleClass().addAll("book-event-primary-title");
+        scheduleText.getStyleClass().addAll("book-event-primary-titleLabel");
         VBox.setMargin(scheduleText, new Insets(20,0,10,0));
 
         Text selectTheCourseText = I18n.bindI18nProperties(new Text(),"SelectTheEvent");
         VBox.setMargin(selectTheCourseText, new Insets(0, 0, 5, 0));
 
+        BookEventData bookEventData = controller.getBookEventData();
         recurringEventSchedule.setScheduledItems(bookEventData.getScheduledItemsOnEvent());
         // We add a listener on the date to update the BooleanProperty bound to the disable property of the checkout button
         recurringEventSchedule.getSelectedDates().addListener((ListChangeListener<LocalDate>) change -> setIsOptionsSelectedEmptyProperty(getRecurringEventSchedule().getSelectedDates().isEmpty()));
         setIsOptionsSelectedEmptyProperty(getRecurringEventSchedule().getSelectedDates().isEmpty());
-        setIsOptionsSelectedEmptyProperty(bookEventData.calculateBalance()==0);
+        setIsOptionsSelectedEmptyProperty(bookEventData.calculateBalance() == 0);
         List<LocalDate> unselectableDate = new ArrayList<>();
         List<LocalDate> alreadyBookedDate = new ArrayList<>();
 
@@ -155,7 +156,6 @@ import java.util.stream.Collectors;
         VBox.setMargin(priceText, new Insets(20, 0, 5, 0));
 
         Button checkoutButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "ProceedCheckout"));
-        //We manage the property of the button in css
         checkoutButton.setMaxWidth(300);
         checkoutButton.setOnAction((event -> {
             bookEventData.getCurrentBooking().cancelChanges();
@@ -164,14 +164,14 @@ import java.util.stream.Collectors;
             controller.displayNextSlide();
         }));
 
-        checkoutButton.disableProperty().bind(Bindings.createBooleanBinding(()->bookEventData.isDepositOnPreviousBookingComplete()).
+        checkoutButton.disableProperty().bind(Bindings.createBooleanBinding(bookEventData::isDepositOnPreviousBookingComplete).
                                             and(isOptionsSelectedEmptyProperty));
 
         mainVbox.setPadding(new Insets(30, 50, 20, 50));
         mainVbox.setAlignment(Pos.TOP_CENTER);
         mainVbox.getChildren().setAll(
-                title,
-                eventCentreLocationText,
+                titleLabel,
+                eventCentreLocationLabel,
                 shortDescriptionPane,
                 imageScalePane,
                 eventDescription,
@@ -187,7 +187,7 @@ import java.util.stream.Collectors;
     public void loadData(Event e) {
         Object imageTag = e.getId().getPrimaryKey();
         String pictureId = String.valueOf(imageTag);
-        bookEventData.setBalanceProperty(0);
+        controller.getBookEventData().setBalanceProperty(0);
         cloudImageService.exists(pictureId)
                 .onFailure(Console::log)
                 .onSuccess(exists -> Platform.runLater(() -> {
