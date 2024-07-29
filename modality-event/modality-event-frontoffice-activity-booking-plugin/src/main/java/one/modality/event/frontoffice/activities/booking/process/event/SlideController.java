@@ -1,6 +1,6 @@
 package one.modality.event.frontoffice.activities.booking.process.event;
 
-import dev.webfx.extras.carrousel.Carrousel;
+import dev.webfx.extras.carousel.Carousel;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
@@ -19,7 +19,7 @@ import one.modality.event.client.event.fx.FXEvent;
 
 final class SlideController {
 
-    private final Carrousel carrousel = new Carrousel();
+    private final Carousel carousel = new Carousel();
     private final Step1LoadingSlide step1LoadingSlide;
     private final Step2EventDetailsSlide step2EventDetailsSlide;
     private final Step3CheckoutSlide step3CheckoutSlide;
@@ -41,7 +41,7 @@ final class SlideController {
         step7ErrorSlide = new Step7ErrorSlide(this);
         initialise();
 
-        carrousel.setSlideSuppliers(
+        carousel.setSlideSuppliers(
                 step1LoadingSlide,
                 step2EventDetailsSlide,
                 step3CheckoutSlide,
@@ -49,8 +49,8 @@ final class SlideController {
                 step5ThankYouSlide,
                 step6CancellationSlide,
                 step7ErrorSlide);
-        carrousel.setLoop(false);
-        carrousel.setShowingDots(false);
+        carousel.setLoop(false);
+        carousel.setShowingDots(false);
 
         step1LoadingSlide.buildUi();
         //the step2, 3 and 7 slide needs the data to be loaded from the database before we're able to build the UI, so the call is made elsewhere
@@ -79,9 +79,9 @@ final class SlideController {
                 step5ThankYouSlide.buildUi();
                 step6CancellationSlide.buildUi();
                 step7ErrorSlide.buildUi();
-                carrousel.displaySlide(step2EventDetailsSlide.get());
+                carousel.displaySlide(step2EventDetailsSlide.get());
             } else { // Here the data are not loaded
-                carrousel.displaySlide(step1LoadingSlide.get());
+                carousel.displaySlide(step1LoadingSlide.get());
             }
         }), eventDataLoaded);
     }
@@ -91,7 +91,7 @@ final class SlideController {
     }
 
     Region getContainer() {
-        return carrousel.getContainer();
+        return carousel.getContainer();
     }
 
     /**
@@ -114,7 +114,7 @@ final class SlideController {
     }
 
     void goToThankYouSlide() {
-        carrousel.displaySlide(step5ThankYouSlide.get());
+        carousel.displaySlide(step5ThankYouSlide.get());
     }
 
     Step4PaymentSlide getStep4PaymentSlide() {
@@ -123,11 +123,11 @@ final class SlideController {
 
     void displayErrorMessage(String message) {
         step7ErrorSlide.setErrorMessage(message);
-        Platform.runLater(() -> carrousel.displaySlide(step7ErrorSlide.get()));
+        Platform.runLater(() -> carousel.displaySlide(step7ErrorSlide.get()));
     }
 
     void displayCancellationMessage() {
-        Platform.runLater(() -> carrousel.displaySlide(step6CancellationSlide.get()));
+        Platform.runLater(() -> carousel.displaySlide(step6CancellationSlide.get()));
     }
 
     BooleanProperty eventDataLoadedProperty() {
@@ -139,7 +139,7 @@ final class SlideController {
     }
 
     void displayNextSlide() {
-        carrousel.moveForward();
+        carousel.moveForward();
     }
 
     RecurringEventSchedule getRecurringEventSchedule() {
