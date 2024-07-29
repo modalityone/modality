@@ -294,9 +294,10 @@ public class WebPaymentForm {
             // We don't show the verification overlay if not seamless, because the overlay will prevent the user to fill
             // possible the verification form!
             showVerificationProcessOverlay();
-        }
+        } else // Also we disable the user interaction (was done in seamless mode through showing overlay)
+            setUserInteractionAllowed(false);
         try {
-            Console.log("Calling modality_submitGatewayPayment() in payment form");
+            logDebug("Calling modality_submitGatewayPayment() in payment form");
             webViewPane.callWindow("modality_submitGatewayPayment",
                     buyerPersonalDetails.getFirstName(),
                     buyerPersonalDetails.getLastName(),
