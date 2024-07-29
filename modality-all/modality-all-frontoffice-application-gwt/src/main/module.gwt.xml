@@ -274,8 +274,8 @@
     <source path="one/modality/event/frontoffice/operations/routes/booking"/>
     <resource path="one/modality/event/frontoffice/activities/booking/map"/>
     <public path="" includes="one/modality/event/frontoffice/activities/booking/map/"/>
-    <!--=============================< webfx-extras-carrousel >=============================-->
-    <source path="dev/webfx/extras/carrousel"/>
+    <!--=============================< webfx-extras-carousel >==============================-->
+    <source path="dev/webfx/extras/carousel"/>
     <!--===============================< webfx-extras-cell >================================-->
     <source path="dev/webfx/extras/cell/collator"/>
     <source path="dev/webfx/extras/cell/renderer"/>
