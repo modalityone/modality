@@ -8,7 +8,6 @@ import dev.webfx.platform.resource.Resource;
 import dev.webfx.stack.orm.entity.Entity;
 import javafx.event.Event;
 import javafx.scene.Node;
-import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
 import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Organization;
@@ -34,23 +33,20 @@ public class DynamicMapView extends MapViewBase {
         if (WebViewPane.isBrowser()) { // In the browser, Google Maps can integrate seamlessly without an iFrame
             // Note: this is not only lighter but also necessary for FireFox, because Google Maps JS API bugs when
             // inside a FireFox iFrame (map images are not loaded & displayed).
-            // So, we give the webView an id (will be mapped to the id of the HTML tag <fx-webview> which contains the iFrame)
-            WebView webView = webViewPane.getWebView();
-            webView.setId("googleMap");
-            // And instead of displaying the map in the iFrame body, we will display it directly inside <fx-webview>
             script = script.replace("document.body", "document.getElementById('googleMap')");
             // Note: displaying the map in this way will actually remove the default iFrame within <fx-webview>
             // Another benefit of the seamless integration is that the user can zoom with the mouse scroll only (while
             // in an iFrame he needs to hold the command button in addition).
             // Last detail: scroll events are used by Google Maps to zoom in or out the map, so we don't want them to
             // be handled also in JavaFX, otherwise this would scroll the window while zooming.
-            webView.setOnScroll(Event::consume);
+            webViewPane.setOnScroll(Event::consume);
         }
         // Also we don't redirect the console, otherwise this would create an infinite loop (because the java WebFX
         // Console already relies on the current window console).
         webViewPane.setRedirectConsole(!WebViewPane.isBrowser());
         webViewPane.loadFromScript(script, new LoadOptions()
                 .setSeamlessInBrowser(true)
+                .setSeamlessContainerId("googleMap")
                 .setOnWebWindowReady(() -> {
                     googleMapLoaded = false;
                     googleMarkers.clear(); // Important to clear googleMarkers on subsequent views, because we need to recreate them all
