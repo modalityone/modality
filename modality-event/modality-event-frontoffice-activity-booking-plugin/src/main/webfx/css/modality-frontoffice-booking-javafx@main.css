@@ -1,14 +1,22 @@
-.description-text {
+* {
+    -fx-event-description-text-color: #444;
+}
+
+.event-title, .event-title Text, .event-title SVGPath {
+    -fx-text-fill: white;
+    -fx-fill: white;
+}
+
+.event-description-text, .event-description-text Text {
+    -fx-text-fill: -fx-event-description-text-color;
+    -fx-fill: -fx-event-description-text-color;
     -fx-text-alignment: justify;
 }
 
-.description-text TextFlow {
-    -fx-line-spacing: 8px;
+.event-description-text TextFlow {
+    -fx-line-spacing: 12px;
 }
 
-.eventTime {
-    -fx-font-size: 10px;
-}
 
 .subtitle-grey {
    -fx-text-fill: grey;
@@ -16,41 +24,45 @@
    -fx-font-size: 14px;
 }
 
-.book-event-primary-title {
-   -fx-font-weight: bolder;
-   -fx-text-fill: -blue-color; /* blue-color is defined in modality-base-client-css*/
-   -fx-fill: #0096D6;
-   -fx-font-size: 14px;
+/* Date cells for recurring events */
+
+.event-date-cell {
+    -fx-border-color: #cccccc;
 }
 
-.date-selected, .date-already-booked {
-     -fx-background-color: #0096D6;
+.event-date-cell.date-unselected {
+    -fx-background-color: none;
 }
 
-.date-non-selectable {
-    -fx-background-color: #AAAAAA;
+.event-date-cell.date-non-selectable {
+    -fx-border-color: #cccccc;
+    -fx-background-color: #dddddd;
 }
 
-.date-past-not-selected {
-     -fx-background-color: #CCCCCC;
+.event-date-cell.date-non-selectable Text {
+    -fx-fill: #aaaaaa;
 }
 
-.date-selected Text {
+.event-date-cell.date-unselected Text {
+    -fx-fill: #444;
+}
+
+.event-date-cell.date-selected,
+.event-date-cell.date-already-booked {
+    -fx-border-color: none;
+    -fx-background-color: #EE7130;
+}
+
+.event-date-cell.date-selected Text {
     -fx-fill: white;
 }
 
-.date-unselected {
-     -fx-background-color: none;
+.event-date-cell.date-already-booked Text {
+    -fx-fill: #eeeeee;
 }
 
-.date-unselected Text {
-    -fx-fill: black;
-}
-
-
-.checkout-address, .checkout-address SVGPath  {
-    -fx-text-fill: #BBBBBB;
-    -fx-fill: #BBBBBB;
+.event-date-cell .eventTime {
+    -fx-font-size: 10px;
 }
 
 .line-total {

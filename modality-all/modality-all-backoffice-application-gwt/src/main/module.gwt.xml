@@ -290,6 +290,7 @@
     <source path="one/modality/base/shared/entities/formatters"/>
     <source path="one/modality/base/shared/entities/impl"/>
     <source path="one/modality/base/shared/entities/markers"/>
+    <source path="one/modality/base/shared/entities/triggers"/>
     <!--==============< modality-catering-backoffice-activity-kitchen-plugin >==============-->
     <source path="one/modality/catering/backoffice/activities/kitchen"/>
     <source path="one/modality/catering/backoffice/activities/kitchen/routing"/>

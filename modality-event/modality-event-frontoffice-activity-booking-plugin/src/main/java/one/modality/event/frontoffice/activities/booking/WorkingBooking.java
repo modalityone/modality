@@ -7,10 +7,9 @@ import dev.webfx.stack.orm.entity.EntityStore;
 import one.modality.base.shared.entities.*;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.document.service.*;
-import one.modality.ecommerce.document.service.events.*;
+import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 import one.modality.ecommerce.document.service.events.book.*;
 import one.modality.ecommerce.document.service.util.DocumentEvents;
-import one.modality.event.client.event.fx.FXEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +58,10 @@ public class WorkingBooking {
 
     public Object getDocumentPrimaryKey() {
         return documentPrimaryKey;
+    }
+
+    public Event getEvent() {
+        return policyAggregate.getEvent();
     }
 
     public void bookScheduledItems(List<ScheduledItem> scheduledItems) {
@@ -132,7 +135,7 @@ public class WorkingBooking {
         } else {
             if (documentPrimaryKey == null) { // Case of new booking not yet submitted
                 document = getEntityStore().createEntity(Document.class);
-                document.setEvent(FXEvent.getEvent());
+                document.setEvent(getEvent());
                 document.setPerson(FXUserPerson.getUserPerson());
                 integrateNewDocumentEvent(new AddDocumentEvent(document));
             } else { // Case of new booking once submitted

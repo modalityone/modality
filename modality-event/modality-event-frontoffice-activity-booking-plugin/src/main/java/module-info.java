@@ -23,7 +23,6 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires modality.ecommerce.payment;
     requires modality.ecommerce.payment.client;
     requires modality.event.client.event.fx;
-    requires webfx.extras.carousel;
     requires webfx.extras.imagestore;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
@@ -70,6 +69,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     exports one.modality.event.frontoffice.activities.booking.process;
     exports one.modality.event.frontoffice.activities.booking.process.account;
     exports one.modality.event.frontoffice.activities.booking.process.event;
+    exports one.modality.event.frontoffice.activities.booking.process.event.slides;
     exports one.modality.event.frontoffice.activities.booking.routing;
     exports one.modality.event.frontoffice.activities.booking.views;
     exports one.modality.event.frontoffice.operations.routes.booking;

@@ -1,52 +1,72 @@
-/* .text-justified */
-.description-text {
-    text-align: justify;
-    line-height: 1.5em;
+* {
+    --fx-event-description-text-color: #444;
 }
 
-/* .eventTime */
-.eventTime {
+.event-title {
+    color: white;
+    --fx-svg-path-fill: white;
+}
+
+/* .text-justified */
+.event-description-text {
+    color: var(--fx-event-description-text-color);
+    text-align: justify;
+    line-height: 1.7em;
+}
+
+/* Date cells for recurring events */
+
+.event-date-cell > fx-border {
+    border: 1px solid #cccccc;
+}
+
+.event-date-cell.date-unselected > fx-background {
+    background: none;
+}
+
+.event-date-cell.date-non-selectable > fx-background {
+    background-color: #dddddd;
+}
+
+.event-date-cell.date-non-selectable > fx-border {
+    border-color: #cccccc;
+}
+
+.event-date-cell.date-non-selectable {
+    color: #aaaaaa;
+}
+
+.event-date-cell.date-unselected {
+    color: #444;
+}
+
+.event-date-cell.date-selected > fx-background,
+.event-date-cell.date-already-booked > fx-background {
+    background-color: #EE7130;
+}
+
+.event-date-cell.date-selected > fx-border,
+.event-date-cell.date-already-booked > fx-border {
+    border: none;
+}
+
+.event-date-cell.date-selected {
+    color: white;
+}
+
+.event-date-cell.date-already-booked {
+    color: #eeeeee;
+}
+
+.event-date-cell .eventTime {
     font-size: 10px;
 }
+
 
 /* .subtitle-grey */
 .subtitle-grey {
     color: grey;
     font-size: 14px;
-}
-
-.book-event-primary-title {
-    font-weight: bolder;
-    color: #0096D6;
-    font-size: 14px;
-}
-
-/* .date-selected */
-.date-selected  {
-    color: white;
-}
-
-.date-selected > fx-background, .date-already-booked > fx-background {
-    background-color: #0096D6;
-}
-
-.date-non-selectable > fx-background {
-    background-color: #AAAAAA;
-}
-
-.date-past-not-selected > fx-background {
-     background-color: grey;
-}
-
-/* .date-unselected */
-.date-unselected {
-    color: black;
-    background-color: inherit;
-}
-
-.checkout-address {
-    color: #BBBBBB;
-    --fx-svg-path-fill: #BBBBBB;
 }
 
 .line-total > fx-background {

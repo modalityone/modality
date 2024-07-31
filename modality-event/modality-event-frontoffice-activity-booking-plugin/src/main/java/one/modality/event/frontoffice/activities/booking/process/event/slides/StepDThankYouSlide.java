@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.activities.booking.process.event;
+package one.modality.event.frontoffice.activities.booking.process.event.slides;
 
 import dev.webfx.extras.imagestore.ImageStore;
 import dev.webfx.extras.panes.ScalePane;
@@ -6,22 +6,23 @@ import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
+import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
-final class Step5ThankYouSlide extends StepSlide {
+final class StepDThankYouSlide extends StepSlide {
 
-    Step5ThankYouSlide(SlideController control) {
-        super(control);
+    private static final double MAX_PAGE_WITH = 800;
+
+    StepDThankYouSlide(BookEventActivity bookEventActivity) {
+        super(bookEventActivity);
     }
 
-    void buildUi() {
-        mainVbox.setAlignment(Pos.TOP_CENTER);
-        mainVbox.setSpacing(40);
+    @Override
+    void buildSlideUi() {
         String headerImageUrl = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.event.frontoffice.activity.bookevent").getString("headerImageUrl");
         ImageView headerImageView = ImageStore.createImageView(headerImageUrl);
         ScalePane headerImageScalePane = new ScalePane(headerImageView);
@@ -36,14 +37,18 @@ final class Step5ThankYouSlide extends StepSlide {
         thankYouLabel.setTextAlignment(TextAlignment.CENTER);
         VBox.setMargin(thankYouLabel, new Insets(20,0,50,0));
 
-        Label bookingNumber = I18nControls.bindI18nProperties(new Label(), "BookingNumber", controller.getBookEventData().bookingReferenceProperty());
+        Label bookingNumber = I18nControls.bindI18nProperties(new Label(), "BookingNumber", getWorkingBookingProperties().bookingReferenceProperty());
         bookingNumber.setWrapText(true);
         bookingNumber.setTextAlignment(TextAlignment.CENTER);
         VBox.setMargin(bookingNumber, new Insets(20,0,50,0));
+
         mainVbox.getChildren().setAll(
                 headerImageScalePane,
                 bookingConfirmedLabel,
                 thankYouLabel,
                 bookingNumber);
+        mainVbox.setMaxWidth(MAX_PAGE_WITH);
+        mainVbox.setSpacing(40);
+        mainVbox.setPadding(Insets.EMPTY);
     }
 }

@@ -1,119 +1,4 @@
 
-/*===== webfx-kit-javafxgraphics-fxregion-web@main.css from webfx-kit-javafxgraphics-peers-gwt-j2cl =====*/
-
-/* Mocking JavaFX border behaviours */
-
-@property --fx-border {
-    syntax: "*";
-    inherits: false;
-    initial-value: none;
-}
-
-@property --fx-border-color {
-    syntax: "*";
-    inherits: false;
-    initial-value: none;
-}
-
-@property --fx-border-style {
-    syntax: "*";
-    inherits: false;
-    initial-value: none;
-}
-
-@property --fx-border-radius {
-    syntax: "*";
-    inherits: false;
-    initial-value: none;
-}
-
-@property --fx-border-left {
-    syntax: "*";
-    inherits: false;
-    initial-value: none;
-}
-
-@property --fx-border-top {
-    syntax: "*";
-    inherits: false;
-    initial-value: none;
-}
-
-@property --fx-border-right {
-    syntax: "*";
-    inherits: false;
-    initial-value: none;
-}
-
-@property --fx-border-bottom {
-    syntax: "*";
-    inherits: false;
-    initial-value: none;
-}
-
-@property --fx-border-top-left-radius {
-    syntax: "<border-top-left-radius>";
-    inherits: false;
-    initial-value: none;
-}
-
-@property --fx-border-top-right-radius {
-    syntax: "*";
-    inherits: false;
-    initial-value: none;
-}
-
-@property --fx-border-bottom-right-radius {
-    syntax: "*";
-    inherits: false;
-    initial-value: none;
-}
-
-@property --fx-border-bottom-left-radius {
-    syntax: "*";
-    inherits: false;
-    initial-value: none;
-}
-
-
-/*
-:root {
-    --fx-border: unset;
-    --fx-border-color: unset;
-    --fx-border-style: unset;
-    --fx-border-radius: unset;
-    --fx-border-left: unset;
-    --fx-border-top: unset;
-    --fx-border-right: unset;
-    --fx-border-bottom: unset;
-    --fx-border-top-left-radius: unset;
-    --fx-border-top-right-radius: unset;
-    --fx-border-bottom-right-radius: unset;
-    --fx-border-bottom-left-radius: unset;
-}
-*/
-
-.fx-region::after {
-    content: "";
-    box-sizing: border-box; /* Ensures the size includes the border */
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    pointer-events: none; /* Ensures it does not interfere with interactions */
-    border: var(--fx-border);
-    border-color: var(--fx-border-color);
-    border-style: var(--fx-border-style);
-    border-radius: var(--fx-border-radius);
-    border-left: var(--fx-border-left);
-    border-top: var(--fx-border-top);
-    border-right: var(--fx-border-right);
-    border-bottom: var(--fx-border-bottom);
-    border-top-left-radius: var(--fx-border-top-left-radius);
-    border-top-right-radius: var(--fx-border-top-right-radius);
-    border-bottom-right-radius: var(--fx-border-bottom-right-radius);
-    border-bottom-left-radius: var(--fx-border-bottom-left-radius);
-}
-
 /*===== webfx-kit-javafxgraphics-web@main.css from webfx-kit-javafxgraphics-peers-gwt-j2cl =====*/
 
 :root {
@@ -150,11 +35,11 @@ fx-svgpath svg path:not([fill])[stroke] { /* if the application code set the str
 
 /***** Global variables *****/
 :root {
-    --fx-controls-border-color: #c0c0c0;
-    --fx-controls-border-radius: 5px;
-    --fx-controls-border-style: solid;
-    --fx-controls-border-width: 1px;
-    --fx-controls-border-color-focus: #0096D6;
+    --fx-border-color: #c0c0c0;
+    --fx-border-radius: 5px;
+    --fx-border-style: solid;
+    --fx-border-width: 1px;
+    --fx-border-color-focus: #0096D6;
     --fx-textfield-background: white;
 }
 
@@ -164,18 +49,18 @@ fx-svgpath svg path:not([fill])[stroke] { /* if the application code set the str
 
 fx-button > fx-background {
     background: linear-gradient(180deg, white, #e0e0e0);
-    border-radius: var(--fx-controls-border-radius);
+    border-radius: var(--fx-border-radius);
 }
 
 fx-button > fx-border, fx-textfield > fx-border, textarea {
-    border-color: var(--fx-controls-border-color);
-    border-style: var(--fx-controls-border-style);
-    border-width: var(--fx-controls-border-width);
-    border-radius: var(--fx-controls-border-radius);
+    border-color: var(--fx-border-color);
+    border-style: var(--fx-border-style);
+    border-width: var(--fx-border-width);
+    border-radius: var(--fx-border-radius);
 }
 
 fx-textfield:focus-within > fx-border, textarea:focus {
-    border-color: var(--fx-controls-border-color-focus);
+    border-color: var(--fx-border-color-focus);
     outline: none !important;
 }
 
@@ -190,7 +75,7 @@ fx-hyperlink fx-text:hover {
 
 fx-textfield > fx-background {
     background: var(--fx-textfield-background);
-    border-radius: var(--fx-controls-border-radius);
+    border-radius: var(--fx-border-radius);
 }
 
 /* Removing borders, outlines and background for input elements (to not interfere with the above) */

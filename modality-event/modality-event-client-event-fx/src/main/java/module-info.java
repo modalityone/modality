@@ -7,6 +7,7 @@ module modality.event.client.event.fx {
     requires modality.base.shared.entities;
     requires webfx.kit.util;
     requires webfx.platform.console;
+    requires webfx.platform.uischeduler;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.entity;
     requires webfx.stack.session;

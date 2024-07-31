@@ -2,6 +2,7 @@ package one.modality.event.client.event.fx;
 
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -50,7 +51,9 @@ public final class FXEventId {
                                 .<Event>executeQuery("select icon,name,startDate,endDate from Event where id=?", eventId)
                                 .onFailure(Console::log)
                                 .onSuccess(list -> // on successfully receiving the list (should be a singleton list)
-                                        FXEvent.setEvent(list.isEmpty() ? null : list.get(0))); // we finally set FXOrganization
+                                                UiScheduler.runInUiThread(() ->
+                                        FXEvent.setEvent(list.isEmpty() ? null : list.get(0))) // we finally set FXEvent
+                                );
                 }
             }
         }

@@ -191,7 +191,7 @@ public class WebPaymentForm {
 
     private void showVerificationProcessOverlay() {
         VBox vBox = new VBox(5,
-                createLabel(getGatewayName() + " is verifying your details"),
+                createLabel(getGatewayName() + " is capturing your details"),
                 createProgressIndicator(32)
         );
         vBox.setAlignment(Pos.CENTER);
@@ -321,7 +321,8 @@ public class WebPaymentForm {
 
     private Future<CancelPaymentResult> cancelPayment(boolean explicitUserCancellation) {
         paymentCancelled = true;
-        return PaymentService.cancelPayment(new CancelPaymentArgument(result.getPaymentPrimaryKey(), explicitUserCancellation));
+        return PaymentService.cancelPayment(new CancelPaymentArgument(result.getPaymentPrimaryKey(), explicitUserCancellation))
+                .onComplete(ar -> allowUserInteraction());
     }
 
     public ReadOnlyBooleanProperty userInteractionAllowedProperty() {

@@ -1,6 +1,6 @@
 package one.modality.event.frontoffice.activities.booking.process.event;
 
-import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
@@ -9,20 +9,21 @@ import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivi
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.routing.uirouter.UiRouter;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.Node;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Region;
+import javafx.scene.text.Font;
 import one.modality.base.shared.entities.Event;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.PolicyAggregate;
+import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.client.event.fx.FXEventId;
 import one.modality.event.frontoffice.activities.booking.WorkingBooking;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountRouting;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountUiRoute;
+import one.modality.event.frontoffice.activities.booking.process.event.slides.LettersSlideController;
 
 
 /**
@@ -30,21 +31,20 @@ import one.modality.event.frontoffice.activities.booking.process.account.Checkou
  */
 public final class BookEventActivity extends ViewDomainActivityBase {
 
-    private static final double MAX_WIDTH = 600;
+    private final WorkingBookingProperties workingBookingProperties = new WorkingBookingProperties();
+    private final LettersSlideController lettersSlideController = new LettersSlideController(this);
 
-    private WorkingBooking currentBooking;
-    private PolicyAggregate policyAggregate;
-    private BookEventData bookEventData;
-    private SlideController slideController;
+    public WorkingBookingProperties getWorkingBookingProperties() {
+        return workingBookingProperties;
+    }
+
+    public ReadOnlyObjectProperty<Font> mediumFontProperty() {
+        return lettersSlideController.mediumFontProperty();
+    }
 
     @Override
     public Node buildUi() {
-        Region carrouselContainer = slideController.getContainer();
-        carrouselContainer.setMaxWidth(MAX_WIDTH);
-        ScrollPane mainScrollPane = ControlUtil.createVerticalScrollPaneWithPadding(10, new BorderPane(carrouselContainer));
-        carrouselContainer.minHeightProperty().bind(mainScrollPane.heightProperty());
-
-        return mainScrollPane;
+        return lettersSlideController.getContainer();
     }
 
     @Override
@@ -57,13 +57,13 @@ public final class BookEventActivity extends ViewDomainActivityBase {
 
     @Override
     protected void startLogic() {
-        bookEventData = new BookEventData();
-        slideController = new SlideController(bookEventData, mountNodeProperty());
-
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Event event = FXEvent.getEvent();
             if (event == null) // May happen main on first call (ex: on page reload)
                 return;
+
+            lettersSlideController.onEventChanged(event);
+
             // Note: It's better to use FXUserPersonId rather than FXUserPerson in case of a page reload in the browser
             // (or redirection to this page from a website) because the retrieval of FXUserPersonId is immediate in case
             // the user was already logged-in (memorised in session), while FXUserPerson requires a DB reading, which
@@ -73,14 +73,14 @@ public final class BookEventActivity extends ViewDomainActivityBase {
                 .onFailure(Console::log)
                 .onSuccess(policyAndDocumentAggregates -> UiScheduler.runInUiThread(() -> {
                     if (event == FXEvent.getEvent()) { // Double-checking that no other changes occurred in the meantime
-                        policyAggregate = policyAndDocumentAggregates.getPolicyAggregate(); // never null
+                        PolicyAggregate policyAggregate = policyAndDocumentAggregates.getPolicyAggregate(); // never null
                         DocumentAggregate existingBooking = policyAndDocumentAggregates.getDocumentAggregate(); // may be null
-                        currentBooking = new WorkingBooking(policyAggregate, existingBooking);
-                        bookEventData.setCurrentBooking(currentBooking);
-                        slideController.loadEventDetails(event);
+                        WorkingBooking workingBooking = new WorkingBooking(policyAggregate, existingBooking);
+                        workingBookingProperties.setWorkingBooking(workingBooking);
+                        lettersSlideController.onWorkingBookingLoaded();
                     }
             }));
-        }, FXEvent.eventProperty());
+            }, FXEvent.eventProperty());
     }
 
     @Override
@@ -98,4 +98,37 @@ public final class BookEventActivity extends ViewDomainActivityBase {
                 () -> this, // the parent activity factory (actually this activity)
                 subRouter); // the sub-router that will mount the
     }
+
+    public void displayBookSlide() {
+        lettersSlideController.displayBookSlide();
+    }
+
+    public void displayCheckoutSlide() {
+        lettersSlideController.displayCheckoutSlide();
+    }
+
+    public void displayPaymentSlide(WebPaymentForm webPaymentForm) {
+        lettersSlideController.displayPaymentSlide(webPaymentForm);
+    }
+
+    public void displayCancellationSlide() {
+        lettersSlideController.displayCancellationSlide();
+    }
+
+    public void displayErrorMessage(String message) {
+        lettersSlideController.displayErrorMessage(message);
+    }
+
+    public void displayThankYouSlide() {
+        lettersSlideController.displayThankYouSlide();
+    }
+
+    public RecurringEventSchedule getRecurringEventSchedule() {
+        return lettersSlideController.getRecurringEventSchedule();
+    }
+
+    public HtmlText bindI18nEventExpression(HtmlText text, String eventExpression) {
+        return lettersSlideController.bindI18nEventExpression(text, eventExpression);
+    }
+
 }
