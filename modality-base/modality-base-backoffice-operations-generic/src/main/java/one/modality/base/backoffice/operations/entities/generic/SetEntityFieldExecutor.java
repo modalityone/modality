@@ -2,7 +2,6 @@ package one.modality.base.backoffice.operations.entities.generic;
 
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
-import dev.webfx.stack.db.submit.SubmitArgument;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.expression.Expression;
@@ -13,6 +12,7 @@ import dev.webfx.stack.ui.dialog.DialogCallback;
 import dev.webfx.stack.ui.exceptions.UserCancellationException;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import one.modality.base.shared.entities.triggers.Triggers;
 
 final class SetEntityFieldExecutor {
 
@@ -51,10 +51,7 @@ final class SetEntityFieldExecutor {
                 UpdateStore updateStore = UpdateStore.createAbove(entity.getStore());
                 Entity updateEntity = updateStore.updateEntity(entity);
                 leftExpression.setValue(updateEntity, rightExpression.evaluate(updateEntity, updateStore.getEntityDataWriter()), updateStore.getEntityDataWriter());
-                updateStore.submitChanges(SubmitArgument.builder()
-                        .setStatement("select set_transaction_parameters(true)")
-                        .setDataSourceId(entity.getStore().getDataSourceId())
-                        .build())
+                updateStore.submitChanges(Triggers.backOfficeTransaction(updateStore))
                     .onFailure(cause -> {
                         reportException(dialogCallback, parentContainer, cause);
                         promise.fail(cause);

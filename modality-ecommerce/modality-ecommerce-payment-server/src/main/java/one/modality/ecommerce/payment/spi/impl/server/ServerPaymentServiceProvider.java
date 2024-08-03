@@ -13,6 +13,7 @@ import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.GatewayParameter;
 import one.modality.base.shared.entities.Method;
 import one.modality.base.shared.entities.MoneyTransfer;
+import one.modality.base.shared.entities.triggers.Triggers;
 import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.SubmitDocumentChangesArgument;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
@@ -302,7 +303,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
 
             return HistoryRecorder.preparePaymentHistoryBeforeSubmit(historyComment, moneyTransfer, userId)
                 .compose(history ->
-                    updateStore.submitChanges()
+                    updateStore.submitChanges(Triggers.frontOfficeTransaction(updateStore))
                         .compose(submitResultBatch -> { // Checking that something happened in the database
                             int rowCount = submitResultBatch.get(0).getRowCount();
                             if (rowCount == 0)

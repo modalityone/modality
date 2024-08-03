@@ -13,7 +13,6 @@ module modality.base.backoffice.operations.generic {
     requires webfx.extras.type;
     requires webfx.platform.async;
     requires webfx.platform.uischeduler;
-    requires webfx.stack.db.submit;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;

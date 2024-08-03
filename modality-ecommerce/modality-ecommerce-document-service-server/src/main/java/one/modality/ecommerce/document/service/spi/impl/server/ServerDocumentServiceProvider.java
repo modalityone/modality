@@ -9,12 +9,12 @@ import dev.webfx.stack.com.serial.SerialCodecManager;
 import dev.webfx.stack.db.query.QueryArgument;
 import dev.webfx.stack.db.query.QueryArgumentBuilder;
 import dev.webfx.stack.db.query.QueryService;
-import dev.webfx.stack.db.submit.SubmitArgument;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.triggers.Triggers;
 import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 import one.modality.ecommerce.document.service.events.AbstractSetDocumentFieldsEvent;
@@ -208,31 +208,27 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
     }
 
     private Future<SubmitDocumentChangesResult> submitChangesAndPrepareResult(UpdateStore updateStore, Document document) {
-        return updateStore.submitChanges(
-                SubmitArgument.builder()
-                        .setStatement("select set_transaction_parameters(false)")
-                        .setDataSourceId(updateStore.getDataSourceId())
-                        .build()
-        ).compose(batch -> {
-            Object documentPk = document.getPrimaryKey();
-            Object documentRef = document.getRef();
-            Object cartPk = null;
-            String cartUuid = null;
-            Cart cart = document.getCart();
-            if (cart != null) {
-                cartPk = cart.getPrimaryKey();
-                cartUuid = cart.getUuid();
-            }
-            if (cartUuid == null || documentRef == null) {
-                return document.onExpressionLoaded("ref,cart.uuid")
-                        .map(x -> new SubmitDocumentChangesResult(
-                                document.getPrimaryKey(),
-                                document.getRef(),
-                                document.getCart().getPrimaryKey(),
-                                document.getCart().getUuid()));
-            }
-            return Future.succeededFuture(new SubmitDocumentChangesResult(documentPk, documentRef, cartPk, cartUuid));
-        });
+        return updateStore.submitChanges(Triggers.frontOfficeTransaction(updateStore))
+                .compose(batch -> {
+                    Object documentPk = document.getPrimaryKey();
+                    Object documentRef = document.getRef();
+                    Object cartPk = null;
+                    String cartUuid = null;
+                    Cart cart = document.getCart();
+                    if (cart != null) {
+                        cartPk = cart.getPrimaryKey();
+                        cartUuid = cart.getUuid();
+                    }
+                    if (cartUuid == null || documentRef == null) {
+                        return document.onExpressionLoaded("ref,cart.uuid")
+                                .map(x -> new SubmitDocumentChangesResult(
+                                        document.getPrimaryKey(),
+                                        document.getRef(),
+                                        document.getCart().getPrimaryKey(),
+                                        document.getCart().getUuid()));
+                    }
+                    return Future.succeededFuture(new SubmitDocumentChangesResult(documentPk, documentRef, cartPk, cartUuid));
+                });
     }
 
 }

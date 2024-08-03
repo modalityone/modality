@@ -1,12 +1,12 @@
 package one.modality.ecommerce.backoffice.operations.entities.moneyflow;
 
-import dev.webfx.stack.ui.controls.dialog.DialogContent;
-import dev.webfx.stack.orm.entity.UpdateStore;
-import dev.webfx.stack.db.submit.SubmitArgument;
 import dev.webfx.platform.async.Future;
+import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
+import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import javafx.scene.layout.Pane;
 import one.modality.base.shared.entities.MoneyFlow;
+import one.modality.base.shared.entities.triggers.Triggers;
 
 final class DeleteMoneyFlowExecutor {
 
@@ -30,9 +30,6 @@ final class DeleteMoneyFlowExecutor {
     private static void deleteMoneyFlow(MoneyFlow deleteEntity) {
         UpdateStore updateStore = UpdateStore.createAbove(deleteEntity.getStore());
         updateStore.deleteEntity(deleteEntity);
-        updateStore.submitChanges(SubmitArgument.builder()
-                .setStatement("select set_transaction_parameters(false)")
-                .setDataSourceId(updateStore.getDataSourceId())
-                .build());
+        updateStore.submitChanges(Triggers.backOfficeTransaction(updateStore));
     }
 }

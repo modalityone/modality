@@ -1,9 +1,9 @@
 package one.modality.ecommerce.backoffice.activities.moneyflows;
 
+import dev.webfx.extras.util.background.BackgroundFactory;
 import dev.webfx.extras.visual.VisualSelection;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.stack.db.submit.SubmitArgument;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
@@ -11,10 +11,9 @@ import dev.webfx.stack.orm.reactive.entities.entities_to_objects.IndividualEntit
 import dev.webfx.stack.orm.reactive.entities.entities_to_objects.ReactiveObjectsMapper;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.ui.action.ActionGroup;
-import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
+import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
-import dev.webfx.extras.util.background.BackgroundFactory;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -27,17 +26,18 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
+import one.modality.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentViewDomainActivity;
+import one.modality.base.shared.domainmodel.functions.AbcNames;
 import one.modality.base.shared.entities.MoneyAccount;
 import one.modality.base.shared.entities.MoneyFlow;
 import one.modality.base.shared.entities.Organization;
-import one.modality.ecommerce.backoffice.operations.entities.moneyflow.EditMoneyFlowRequest;
-import one.modality.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
-import one.modality.base.shared.domainmodel.functions.AbcNames;
+import one.modality.base.shared.entities.triggers.Triggers;
 import one.modality.ecommerce.backoffice.operations.entities.moneyaccount.AddNewMoneyAccountRequest;
 import one.modality.ecommerce.backoffice.operations.entities.moneyaccount.DeleteMoneyAccountRequest;
 import one.modality.ecommerce.backoffice.operations.entities.moneyaccount.EditMoneyAccountRequest;
 import one.modality.ecommerce.backoffice.operations.entities.moneyflow.DeleteMoneyFlowRequest;
+import one.modality.ecommerce.backoffice.operations.entities.moneyflow.EditMoneyFlowRequest;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -241,10 +241,7 @@ public class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity 
                     insertEntity.setFromMoneyAccount(fromAccount);
                     insertEntity.setToMoneyAccount(moneyAccount);
                     insertEntity.setOrganization(moneyAccount.getOrganization());
-                    updateStore.submitChanges(SubmitArgument.builder()
-                            .setStatement("select set_transaction_parameters(false)")
-                            .setDataSourceId(updateStore.getDataSourceId())
-                            .build());
+                    updateStore.submitChanges(Triggers.backOfficeTransaction(updateStore));
                 }
             });
             setUpContextMenu(pane, this::createContextMenuActionGroup);

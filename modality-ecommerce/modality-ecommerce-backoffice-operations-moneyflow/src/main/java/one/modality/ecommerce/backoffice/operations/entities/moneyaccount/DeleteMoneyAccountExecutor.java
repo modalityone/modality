@@ -1,13 +1,13 @@
 package one.modality.ecommerce.backoffice.operations.entities.moneyaccount;
 
-import dev.webfx.stack.ui.controls.dialog.DialogContent;
-import dev.webfx.stack.orm.entity.UpdateStore;
-import dev.webfx.stack.db.submit.SubmitArgument;
 import dev.webfx.platform.async.Future;
+import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
+import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import javafx.scene.layout.Pane;
 import one.modality.base.shared.entities.MoneyAccount;
 import one.modality.base.shared.entities.MoneyFlow;
+import one.modality.base.shared.entities.triggers.Triggers;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,17 +58,11 @@ final class DeleteMoneyAccountExecutor {
         for (MoneyFlow moneyFlow : moneyFlowsLinkedToAccount) {
             UpdateStore updateStore = UpdateStore.createAbove(moneyFlow.getStore());
             updateStore.deleteEntity(moneyFlow);
-            updateStore.submitChanges(SubmitArgument.builder()
-                    .setStatement("select set_transaction_parameters(false)")
-                    .setDataSourceId(updateStore.getDataSourceId())
-                    .build());
+            updateStore.submitChanges(Triggers.backOfficeTransaction(updateStore));
         }
 
         UpdateStore updateStore = UpdateStore.createAbove(moneyAccount.getStore());
         updateStore.deleteEntity(moneyAccount);
-        updateStore.submitChanges(SubmitArgument.builder()
-                .setStatement("select set_transaction_parameters(false)")
-                .setDataSourceId(updateStore.getDataSourceId())
-                .build());
+        updateStore.submitChanges(Triggers.backOfficeTransaction(updateStore));
     }
 }
