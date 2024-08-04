@@ -30,6 +30,10 @@ public final class FXModalityUserPrincipal {
         return loggedInProperty;
     }
 
+    public static boolean isLoggedIn() {
+        return loggedInProperty.get();
+    }
+
 
     public static ReadOnlyObjectProperty<ModalityUserPrincipal> modalityUserPrincipalProperty() {
         return modalityUserPrincipalProperty;
@@ -46,8 +50,9 @@ public final class FXModalityUserPrincipal {
     static {
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Object userId = FXUserId.getUserId();
+            ModalityUserPrincipal modalityUserPrincipal = null;
             if (userId instanceof ModalityUserPrincipal) // Happens when directly logging using Modality username/password
-                setModalityUserPrincipal((ModalityUserPrincipal) userId);
+                modalityUserPrincipal = (ModalityUserPrincipal) userId;
             else { // User provisioning code: SSO login => ModalityUserPrincipal TODO: Move this provisioning code on server
                 // Checking UserClaims (when logging through SSO)
                 UserClaims userClaims = FXUserClaims.getUserClaims();
@@ -64,15 +69,16 @@ public final class FXModalityUserPrincipal {
                                         // Getting the Person entity
                                         Person person = personList.get(0);
                                         // Creating the ModalityUserPrincipal instance from Person entity
-                                        ModalityUserPrincipal modalityUserPrincipal = new ModalityUserPrincipal(person.getPrimaryKey(), person.getForeignEntityId("frontendAccount").getPrimaryKey());
+                                        ModalityUserPrincipal mup = new ModalityUserPrincipal(person.getPrimaryKey(), person.getForeignEntityId("frontendAccount").getPrimaryKey());
                                         // Setting FXModalityUserPrincipal with this instance
-                                        setModalityUserPrincipal(modalityUserPrincipal);
+                                        setModalityUserPrincipal(mup);
                                     }
                                 });
                     }
                 }
             }
-            loggedInProperty.set(getModalityUserPrincipal() != null && FXLoggedIn.isLoggedIn());
+            setModalityUserPrincipal(modalityUserPrincipal);
+            loggedInProperty.set(modalityUserPrincipal != null && FXLoggedIn.isLoggedIn());
         }, FXUserId.userIdProperty(), FXUserClaims.userClaimsProperty(), FXLoggedIn.loggedInProperty());
     }
 

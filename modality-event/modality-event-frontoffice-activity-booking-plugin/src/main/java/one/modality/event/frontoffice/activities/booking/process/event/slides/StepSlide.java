@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
+import one.modality.base.shared.entities.Event;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.booking.process.event.RecurringEventSchedule;
@@ -44,6 +45,10 @@ abstract class StepSlide implements Supplier<Node> {
 
     WorkingBookingProperties getWorkingBookingProperties() {
         return getBookEventActivity().getWorkingBookingProperties();
+    }
+
+    Event getEvent() {
+        return getWorkingBookingProperties().getEvent();
     }
 
     void displayBookSlide() {

@@ -2,8 +2,10 @@ package one.modality.ecommerce.document.service;
 
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.service.SingleServiceProvider;
+import dev.webfx.stack.orm.entity.Entities;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.Person;
 import one.modality.ecommerce.document.service.spi.DocumentServiceProvider;
 
 import java.util.ServiceLoader;
@@ -28,6 +30,18 @@ public final class DocumentService {
     public static Future<SubmitDocumentChangesResult> submitDocumentChanges(SubmitDocumentChangesArgument argument) {
         return getProvider().submitDocumentChanges(argument);
     }
+
+    // Additional top-level utility methods to load document (not directly implemented by provider and not directly serialised)
+
+    public static Future<DocumentAggregate> loadDocument(Event event, Person userPerson) {
+        return loadDocument(Entities.getPrimaryKey(event), Entities.getPrimaryKey(userPerson));
+    }
+
+    public static Future<DocumentAggregate> loadDocument(Object eventPrimaryKey, Object userPersonPrimaryKey) {
+        return eventPrimaryKey == null || userPersonPrimaryKey == null ? Future.succeededFuture(null) :
+                loadDocument(new LoadDocumentArgument(userPersonPrimaryKey, eventPrimaryKey));
+    }
+
 
     // Additional top-level utility methods to load document and policy (not directly implemented by provider and not directly serialised)
 

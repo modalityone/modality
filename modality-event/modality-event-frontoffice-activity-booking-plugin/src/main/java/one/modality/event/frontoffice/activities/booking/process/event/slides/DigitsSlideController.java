@@ -31,14 +31,16 @@ final class DigitsSlideController {
     }
 
     void onWorkingBookingLoaded() {
-        step1BookDatesSlide.reset();
+        //step1BookDatesSlide.reset();
         step2CheckoutSlide.reset();
         step3PaymentSlide.reset();
         step5ErrorSlide.reset();
 
+        step1BookDatesSlide.onWorkingBookingLoaded();
+        transitionPane.replaceContentNoAnimation(step1BookDatesSlide.get());
+
         // Sub-routing node binding (displaying the possible sub-routing account node in the appropriate place in step3)
         step2CheckoutSlide.accountMountNodeProperty().bind(bookEventActivity.mountNodeProperty());
-        transitionPane.replaceContentNoAnimation(step1BookDatesSlide.get());
     }
 
     RecurringEventSchedule getRecurringEventSchedule() {

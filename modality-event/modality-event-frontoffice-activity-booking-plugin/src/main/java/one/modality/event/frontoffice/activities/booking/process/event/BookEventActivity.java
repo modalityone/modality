@@ -5,14 +5,18 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Numbers;
+import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.routing.uirouter.UiRouter;
+import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.text.Font;
 import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.Person;
+import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.DocumentService;
@@ -21,15 +25,21 @@ import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.client.event.fx.FXEventId;
 import one.modality.event.frontoffice.activities.booking.WorkingBooking;
+import one.modality.event.frontoffice.activities.booking.fx.FXPersonToBook;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountRouting;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountUiRoute;
 import one.modality.event.frontoffice.activities.booking.process.event.slides.LettersSlideController;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 
 /**
  * @author Bruno Salmon
  */
-public final class BookEventActivity extends ViewDomainActivityBase {
+public final class BookEventActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
 
     private final WorkingBookingProperties workingBookingProperties = new WorkingBookingProperties();
     private final LettersSlideController lettersSlideController = new LettersSlideController(this);
@@ -57,9 +67,10 @@ public final class BookEventActivity extends ViewDomainActivityBase {
 
     @Override
     protected void startLogic() {
+        // Initial load of the event policy + possible existing booking of the user (if logged-in)
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Event event = FXEvent.getEvent();
-            if (event == null) // May happen main on first call (ex: on page reload)
+            if (event == null) // Too early - may happen on first call (ex: on page reload)
                 return;
 
             lettersSlideController.onEventChanged(event);
@@ -81,6 +92,46 @@ public final class BookEventActivity extends ViewDomainActivityBase {
                     }
             }));
             }, FXEvent.eventProperty());
+
+        // Subsequent loading when changing the person to book (load of possible booking + reapply new selected dates)
+        FXProperties.runOnPropertiesChange(() -> {
+            Event event = FXEvent.getEvent();
+            WorkingBooking previousPersonWorkingBooking = workingBookingProperties.getWorkingBooking();
+            if (event == null || previousPersonWorkingBooking == null)
+                return;
+
+            // Double-checking that the person to book is different from the previous booking person
+            Person personToBook = FXPersonToBook.getPersonToBook();
+            DocumentAggregate previousPersonExistingBooking = previousPersonWorkingBooking.getInitialDocumentAggregate();
+            if (previousPersonExistingBooking != null && Objects.equals(previousPersonExistingBooking.getDocument().getPerson(), personToBook))
+                return;
+
+            // Loading the possible existing booking of the new person to book for that recurring event, and then reapplying the dates selected by the user
+            DocumentService.loadDocument(event, personToBook)
+                    .onFailure(Console::log)
+                    .onSuccess(newPersonExistingBooking -> UiScheduler.runInUiThread(() -> {
+                        // Re-instantiating the working booking with that new existing booking (can be null if it doesn't exist)
+                        PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
+                        WorkingBooking workingBooking = new WorkingBooking(policyAggregate, newPersonExistingBooking);
+                        workingBookingProperties.setWorkingBooking(workingBooking);
+                        // Informing the slide controller about that change
+                        // TODO: improve the code in slide controllers, so that we can first make the change to the
+                        // TODO: working booking, and then considers and reflects that input to the event schedule
+                        // but because it doesn't work (yet), we capture the (new) selected dates before informing the controller
+                        List<LocalDate> selectedDates = new ArrayList<>(getRecurringEventSchedule().getSelectedDates());
+                        lettersSlideController.onWorkingBookingLoaded(); // No selected dates in event schedule at this stage
+
+                        // Then we re-apply the selected dates to the new booking (move this up once TODO is done)
+                        List<ScheduledItem> scheduledItemsAdded = Collections.filter(workingBookingProperties.getScheduledItemsOnEvent(),
+                                si -> selectedDates.contains(si.getDate()));
+                        workingBooking.cancelChanges(); // weird, but this is to ensure the document is created
+                        workingBooking.bookScheduledItems(scheduledItemsAdded); // Booking the selected dates
+
+                        // Finally we reflect the selected dates to the event schedule as well (to remove once TODO is done)
+                        getRecurringEventSchedule().selectDates(selectedDates);
+                    }))
+            ;
+        }, FXPersonToBook.personToBookProperty());
     }
 
     @Override

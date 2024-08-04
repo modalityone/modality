@@ -5,11 +5,11 @@ import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.entity.EntityStore;
 import one.modality.base.shared.entities.*;
-import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 import one.modality.ecommerce.document.service.events.book.*;
 import one.modality.ecommerce.document.service.util.DocumentEvents;
+import one.modality.event.frontoffice.activities.booking.fx.FXPersonToBook;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,6 +86,10 @@ public class WorkingBooking {
             existingAttendances = null;
         }
         Attendance[] attendances = scheduledItems.stream().map(scheduledItem -> {
+            // Checking that the scheduledItem is not already in the existing attendances
+            if (Collections.findFirst(existingAttendances, a -> Objects.equals(a.getScheduledItem(), scheduledItem)) != null)
+                return null;
+            // Second check, but using the date
             if (Collections.findFirst(existingAttendances, a -> Objects.equals(a.getDate(), scheduledItem.getDate())) != null)
                 return null;
             Attendance attendance = getEntityStore().createEntity(Attendance.class);
@@ -136,7 +140,7 @@ public class WorkingBooking {
             if (documentPrimaryKey == null) { // Case of new booking not yet submitted
                 document = getEntityStore().createEntity(Document.class);
                 document.setEvent(getEvent());
-                document.setPerson(FXUserPerson.getUserPerson());
+                document.setPerson(FXPersonToBook.getPersonToBook());
                 integrateNewDocumentEvent(new AddDocumentEvent(document));
             } else { // Case of new booking once submitted
                 document = getEntityStore().createEntity(Document.class, documentPrimaryKey);
@@ -147,14 +151,14 @@ public class WorkingBooking {
     public Future<SubmitDocumentChangesResult> submitChanges(String historyComment) {
         // In case the booking is not linked to the booker account (because the user was not logged-in at the start of
         // the booking process), we set it now (the front-office probably forced the user to login before submit).
-        Person userPerson = FXUserPerson.getUserPerson();
-        if (document.getPerson() == null && userPerson != null) {
-            document.setPerson(userPerson);
+        Person personToBook = FXPersonToBook.getPersonToBook();
+        if (document.getPerson() == null && personToBook != null) {
+            document.setPerson(personToBook);
             documentChanges.forEach(e -> {
                 if (e instanceof AddDocumentEvent) {
                     AddDocumentEvent ade = (AddDocumentEvent) e;
                     if (ade.getPersonPrimaryKey() == null)
-                        ade.setPersonPrimaryKey(userPerson.getPrimaryKey());
+                        ade.setPersonPrimaryKey(personToBook.getPrimaryKey());
                 }
             });
         }
@@ -176,25 +180,28 @@ public class WorkingBooking {
     }
 
     public boolean isNewBooking() {
-        return this.getInitialDocumentAggregate()==null;
+        return getInitialDocumentAggregate() == null;
     }
 
     public List<AbstractDocumentEvent> getDocumentChanges() {
         return documentChanges;
     }
 
-    public Attendance[] getAttendanceAdded() {
+    public List<Attendance> getAttendanceAdded() {
         List<Attendance> list = new ArrayList<>();
         for (AbstractDocumentEvent currentEvent : documentChanges) {
-            if(currentEvent instanceof AddAttendancesEvent) list.addAll(Arrays.asList(((AddAttendancesEvent) currentEvent).getAttendances()));
+            if (currentEvent instanceof AddAttendancesEvent)
+                list.addAll(Arrays.asList(((AddAttendancesEvent) currentEvent).getAttendances()));
         }
-        return list.toArray(new Attendance[0]);
+        return list;
     }
-    public Attendance[] getAttendanceRemoved() {
+
+    public List<Attendance> getAttendanceRemoved() {
         List<Attendance> list = new ArrayList<>();
         for (AbstractDocumentEvent currentEvent : documentChanges) {
-            if(currentEvent instanceof RemoveAttendancesEvent) list.addAll(Arrays.asList(((RemoveAttendancesEvent) currentEvent).getAttendances()));
+            if (currentEvent instanceof RemoveAttendancesEvent)
+                list.addAll(Arrays.asList(((RemoveAttendancesEvent) currentEvent).getAttendances()));
         }
-        return list.toArray(new Attendance[0]);
+        return list;
     }
 }

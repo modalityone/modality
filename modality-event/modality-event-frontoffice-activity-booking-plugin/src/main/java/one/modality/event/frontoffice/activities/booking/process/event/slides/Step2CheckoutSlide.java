@@ -36,11 +36,13 @@ import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.booking.WorkingBooking;
+import one.modality.event.frontoffice.activities.booking.fx.FXPersonToBook;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountRouting;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.booking.process.event.WorkingBookingProperties;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.stream.Stream;
 
 final class Step2CheckoutSlide extends StepSlide {
@@ -122,7 +124,7 @@ final class Step2CheckoutSlide extends StepSlide {
             Item item = scheduledItem.getItem();
             String dateFormatted = I18n.getI18nText("DateFormatted", I18n.getI18nText(date.getMonth().name()), date.getDayOfMonth());
             Label name = new Label(item.getName() + " - " + dateFormatted + (existing? " (already booked)" : ""));
-            Label price = new Label(EventPriceFormatter.formatWithCurrency(workingBookingProperties.getRate(), workingBooking.getEvent()));
+            Label price = new Label(EventPriceFormatter.formatWithCurrency(workingBookingProperties.getRate(), getEvent()));
 
             Hyperlink trashOption = new Hyperlink();
             SVGPath svgTrash = SvgIcons.createTrashSVGPath();
@@ -184,8 +186,8 @@ final class Step2CheckoutSlide extends StepSlide {
     }
 
     private void submit() {
-        Person userPerson = FXUserPerson.getUserPerson();
-        if (userPerson == null) { // Means that the user is not logged in, or logged in via SSO but without an account in Modality
+        Person personToBook = FXPersonToBook.getPersonToBook();
+        if (personToBook == null) { // Means that the user is not logged in, or logged in via SSO but without an account in Modality
             WindowHistory.getProvider().push(CheckoutAccountRouting.getPath());
             return;
         }
@@ -203,9 +205,10 @@ final class Step2CheckoutSlide extends StepSlide {
             // We look at the changes to fill the history
             StringBuilder history = new StringBuilder();
             boolean first = true;
-            if (workingBooking.getAttendanceAdded().length != 0) {
+            List<Attendance> attendanceAdded = workingBooking.getAttendanceAdded();
+            if (!attendanceAdded.isEmpty()) {
                 history.append("Booked ");
-                for (Attendance attendance : workingBooking.getAttendanceAdded()) {
+                for (Attendance attendance : attendanceAdded) {
                     if (!first)
                         history.append(", ");
                     // We get the date throw the scheduledItem associated to the attendance, because the
@@ -215,10 +218,11 @@ final class Step2CheckoutSlide extends StepSlide {
                 }
             }
 
-            if (workingBooking.getAttendanceRemoved().length != 0) {
+            List<Attendance> attendanceRemoved = workingBooking.getAttendanceRemoved();
+            if (!attendanceRemoved.isEmpty()) {
                 history.append(first ? "Removed " : " & removed ");
                 first = true;
-                for (Attendance attendance : workingBooking.getAttendanceRemoved()) {
+                for (Attendance attendance : attendanceRemoved) {
                     if (!first)
                         history.append(", ");
                     history.append(Times.format(attendance.getScheduledItem().getDate(), "dd/MM"));

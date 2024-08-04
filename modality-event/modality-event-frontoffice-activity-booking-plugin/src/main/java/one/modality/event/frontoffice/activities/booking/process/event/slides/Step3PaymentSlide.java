@@ -19,7 +19,6 @@ import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
-import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.booking.process.event.WorkingBookingProperties;
 
@@ -90,7 +89,7 @@ final class Step3PaymentSlide extends StepSlide {
         VBox.setMargin(buttonBar, new Insets(10, 0, 10, 0));
         mainVbox.getChildren().add(buttonBar);
         int totalPrice = workingBookingProperties.calculateTotal();
-        bookedEventTitleLabel.setText(FXEvent.getEvent().getName() + " |\u00A0Total\u00A0booking\u00A0price: " + workingBookingProperties.formattedBalanceProperty().getValue());
+        bookedEventTitleLabel.setText(getEvent().getName() + " |\u00A0Total\u00A0booking\u00A0price: " + workingBookingProperties.formattedBalanceProperty().getValue());
         webPaymentForm
                 .setOnLoadFailure(errorMsg -> {
                     displayErrorMessage("ErrorWhileLoadingPaymentForm");

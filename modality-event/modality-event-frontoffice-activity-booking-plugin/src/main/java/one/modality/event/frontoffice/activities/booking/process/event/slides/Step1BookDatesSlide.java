@@ -2,24 +2,35 @@ package one.modality.event.frontoffice.activities.booking.process.event.slides;
 
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.webtext.HtmlText;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
+import dev.webfx.stack.orm.dql.DqlStatement;
+import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
+import one.modality.base.frontoffice.utility.TextUtility;
 import one.modality.base.shared.entities.Attendance;
+import one.modality.base.shared.entities.Person;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
-import one.modality.event.client.event.fx.FXEvent;
+import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.event.frontoffice.activities.booking.WorkingBooking;
+import one.modality.event.frontoffice.activities.booking.fx.FXPersonToBook;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.booking.process.event.RecurringEventSchedule;
 import one.modality.event.frontoffice.activities.booking.process.event.WorkingBookingProperties;
@@ -34,9 +45,11 @@ final class Step1BookDatesSlide extends StepSlide {
     private final HtmlText eventDescription = new HtmlText();
     private final RecurringEventSchedule recurringEventSchedule = new RecurringEventSchedule();
     private final BooleanProperty noDatesBookedProperty = new SimpleBooleanProperty();
+    private final Hyperlink selectAllClassesHyperlink = I18nControls.bindI18nTextProperty(new Hyperlink(), "SelectAllClasses");
 
     Step1BookDatesSlide(BookEventActivity bookEventActivity) {
         super(bookEventActivity);
+        noDatesBookedProperty.bind(ObservableLists.isEmpty(recurringEventSchedule.getSelectedDates()));
     }
 
     @Override
@@ -53,12 +66,72 @@ final class Step1BookDatesSlide extends StepSlide {
         Text selectTheCourseText = I18n.bindI18nProperties(new Text(),"SelectTheEvent");
         VBox.setMargin(selectTheCourseText, new Insets(0, 0, 5, 0));
 
+        Pane schedule = recurringEventSchedule.buildUi();
+        VBox.setMargin(schedule, new Insets(30, 0, 30, 0));
+
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
         WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
 
+        Bootstrap.textPrimary(Bootstrap.h4(selectAllClassesHyperlink));
+        selectAllClassesHyperlink.setAlignment(Pos.CENTER);
+        Text priceText = new Text(I18n.getI18nText("PricePerClass", EventPriceFormatter.formatWithCurrency(workingBookingProperties.getRate(), getEvent())));
+        priceText.getStyleClass().add("subtitle-grey");
+        VBox.setMargin(priceText, new Insets(20, 0, 20, 0));
+
+        Text personPrefixText = TextUtility.createText("PersonToBook:", Color.GRAY);
+        EntityButtonSelector<Person> personSelector = new EntityButtonSelector<Person>(
+                    "{class: 'Person', alias: 'p', columns: [{expression: `[genderIcon,firstName,lastName]`}], orderBy: 'id'}",
+                    getBookEventActivity(), FXMainFrameDialogArea::getDialogArea, getBookEventActivity().getDataSourceModel()
+            ) { // Overriding the button content to add the "Teacher" prefix text
+            @Override
+            protected Node getOrCreateButtonContentFromSelectedItem() {
+                return new HBox(10, personPrefixText, super.getOrCreateButtonContentFromSelectedItem());
+            }
+        }.ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> DqlStatement.where("frontendAccount=?", mup.getUserAccountId()));
+        personSelector.selectedItemProperty().bindBidirectional(FXPersonToBook.personToBookProperty());
+        Button personButton = Bootstrap.largeButton(personSelector.getButton());
+        personButton.setMinWidth(300);
+        personButton.setMaxWidth(Region.USE_PREF_SIZE);
+        VBox.setMargin(personButton, new Insets(20, 0, 20, 0));
+        personButton.visibleProperty().bind(FXModalityUserPrincipal.loggedInProperty());
+        personButton.managedProperty().bind(FXModalityUserPrincipal.loggedInProperty());
+
+        Button checkoutButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "ProceedCheckout"));
+        checkoutButton.setMinWidth(300);
+        checkoutButton.maxWidthProperty().bind(FXProperties.compute(personButton.widthProperty(), personButtonWidth ->
+                FXModalityUserPrincipal.isLoggedIn() ? personButtonWidth : 300));
+        checkoutButton.disableProperty().bind(Bindings.createBooleanBinding(
+                () -> workingBookingProperties.getBalance() <= 0 && noDatesBookedProperty.get(),
+                workingBookingProperties.balanceProperty(), noDatesBookedProperty)
+        );
+        checkoutButton.setOnAction((event -> {
+            workingBooking.cancelChanges();
+            workingBooking.bookScheduledItems(recurringEventSchedule.getSelectedScheduledItem());
+            displayCheckoutSlide();
+        }));
+        VBox.setMargin(checkoutButton, new Insets(0, 0, 20, 0)); // in addition to VBox bottom margin 80
+
+        mainVbox.getChildren().setAll(
+                eventDescription,
+                scheduleText,
+                selectTheCourseText,
+                schedule,
+                selectAllClassesHyperlink,
+                priceText,
+                personButton,
+                checkoutButton
+        );
+    }
+
+    void onWorkingBookingLoaded() {
+        WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
+        WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
+
+        List<ScheduledItem> scheduledItemsOnEvent = workingBookingProperties.getScheduledItemsOnEvent();
+
         List<LocalDate> unselectableDate = new ArrayList<>();
         List<LocalDate> alreadyBookedDate = new ArrayList<>();
-        workingBookingProperties.getScheduledItemsOnEvent().forEach(si-> {
+        scheduledItemsOnEvent.forEach(si-> {
             LocalDate localDate = si.getDate();
             if (workingBooking.getLastestDocumentAggregate().getAttendancesStream()
                     .map(Attendance::getScheduledItem)
@@ -81,7 +154,7 @@ final class Step1BookDatesSlide extends StepSlide {
 
         //If the date in unselectable for any reason listed above, we do nothing when we click on the date
         recurringEventSchedule.setOnDateClicked(localDate -> {
-            if(unselectableDate.contains(localDate)) {
+            if (unselectableDate.contains(localDate)) {
                 return;
             }
             recurringEventSchedule.processDateSelected(localDate);
@@ -113,52 +186,12 @@ final class Step1BookDatesSlide extends StepSlide {
             return null;
         }));*/
 
-        recurringEventSchedule.setScheduledItems(workingBookingProperties.getScheduledItemsOnEvent());
-        noDatesBookedProperty.bind(ObservableLists.isEmpty(recurringEventSchedule.getSelectedDates()));
-
-        Pane schedule = recurringEventSchedule.buildUi();
-        VBox.setMargin(schedule, new Insets(30, 0, 30, 0));
+        recurringEventSchedule.setScheduledItems(scheduledItemsOnEvent);
 
         // We create a list of local date, that will contain all the selectable date, ie the one that are not in the past, and not already booked
-        List<LocalDate> selectableDates = workingBookingProperties.getScheduledItemsOnEvent().stream().map(ScheduledItem::getDate).collect(Collectors.toList());
+        List<LocalDate> selectableDates = scheduledItemsOnEvent.stream().map(ScheduledItem::getDate).collect(Collectors.toList());
         selectableDates.removeAll(unselectableDate);
-
-        Hyperlink selectAllClassesHyperlink = I18nControls.bindI18nTextProperty(new Hyperlink(), "SelectAllClasses");
-        Bootstrap.textPrimary(Bootstrap.h4(selectAllClassesHyperlink));
-        selectAllClassesHyperlink.setAlignment(Pos.CENTER);
         selectAllClassesHyperlink.setOnAction((event -> recurringEventSchedule.selectDates(selectableDates)));
-        Text priceText = new Text(I18n.getI18nText("PricePerClass", EventPriceFormatter.formatWithCurrency(workingBookingProperties.getRate(), FXEvent.getEvent())));
-        priceText.getStyleClass().add("subtitle-grey");
-        VBox.setMargin(priceText, new Insets(20, 0, 20, 0));
-
-        Button checkoutButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "ProceedCheckout"));
-        checkoutButton.setMaxWidth(300);
-        checkoutButton.setOnAction((event -> {
-            workingBooking.cancelChanges();
-            workingBooking.bookScheduledItems(recurringEventSchedule.getSelectedScheduledItem());
-            displayCheckoutSlide();
-        }));
-
-        checkoutButton.disableProperty().bind(Bindings.createBooleanBinding(
-                () -> workingBookingProperties.getBalance() <= 0 && noDatesBookedProperty.get(),
-                workingBookingProperties.balanceProperty(), noDatesBookedProperty)
-        );
-
-        //mainVbox.setPadding(new Insets(30, 0, 20, 0));
-        mainVbox.getChildren().setAll(
-                eventDescription,
-                scheduleText,
-                selectTheCourseText,
-                schedule,
-                selectAllClassesHyperlink,
-                priceText,
-                checkoutButton
-        );
-    }
-
-    void reset() {
-        recurringEventSchedule.getSelectedDates().clear();
-        super.reset();
     }
 
     RecurringEventSchedule getRecurringEventSchedule() {
