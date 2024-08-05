@@ -6,7 +6,7 @@ public class StyleUtility {
 
     public static String MAIN_BLUE = "#0096D6";
     public static Color MAIN_BLUE_COLOR = Color.web(MAIN_BLUE);
-    public static String MAIN_ORANGE = "#EE7130";
+    public static String MAIN_ORANGE = "#F5761A";
     public static Color MAIN_ORANGE_COLOR = Color.web(MAIN_ORANGE);
     public static String POSITIVE_GREEN = "#41BA4D";
     public static Color POSITIVE_GREEN_COLOR = Color.web(POSITIVE_GREEN);

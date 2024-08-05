@@ -520,7 +520,7 @@ Text, Label, Button, TextField {
 .event-date-cell.date-selected,
 .event-date-cell.date-already-booked {
     -fx-border-color: none;
-    -fx-background-color: #EE7130;
+    -fx-background-color: #F5761A;
 }
 
 .event-date-cell.date-selected Text {
