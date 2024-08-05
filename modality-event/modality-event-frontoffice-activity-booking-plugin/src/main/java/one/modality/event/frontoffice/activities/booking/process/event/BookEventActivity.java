@@ -14,6 +14,7 @@ import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.text.Font;
+import one.modality.base.frontoffice.mainframe.backgroundnode.fx.FXCollapseFooter;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Person;
 import one.modality.base.shared.entities.ScheduledItem;
@@ -63,6 +64,18 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         if (eventId != null) { // This happens when sub-routing /booking/account (instead of /booking/event/:eventId)
             FXEventId.setEventId(EntityId.create(Event.class, Numbers.toShortestNumber(eventId)));
         }
+    }
+
+    @Override
+    public void onResume() {
+        FXCollapseFooter.setCollapseFooter(true);
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        FXCollapseFooter.setCollapseFooter(false);
+        super.onPause();
     }
 
     @Override
@@ -172,6 +185,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
     public void displayThankYouSlide() {
         lettersSlideController.displayThankYouSlide();
+        FXCollapseFooter.setCollapseFooter(false);
     }
 
     public RecurringEventSchedule getRecurringEventSchedule() {

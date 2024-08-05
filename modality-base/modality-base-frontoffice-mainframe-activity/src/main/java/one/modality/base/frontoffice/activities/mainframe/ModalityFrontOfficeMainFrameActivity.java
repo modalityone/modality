@@ -1,5 +1,6 @@
 package one.modality.base.frontoffice.activities.mainframe;
 
+import dev.webfx.extras.panes.CollapsePane;
 import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.kit.util.properties.FXProperties;
@@ -31,6 +32,7 @@ import one.modality.base.client.application.ModalityClientMainFrameActivity;
 import one.modality.base.client.application.RoutingActions;
 import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
 import one.modality.base.frontoffice.mainframe.backgroundnode.fx.FXBackgroundNode;
+import one.modality.base.frontoffice.mainframe.backgroundnode.fx.FXCollapseFooter;
 
 public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFrameActivity {
 
@@ -42,6 +44,7 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
     private Node backgroundNode; // can be used to hold a WebView, and prevent iFrame reload in the web version
     private final BorderPane mountNodeContainer = new BorderPane();
     private Region mainFrameFooter;
+    private ScalePane[] scaledFooterButtons;
     private Pane dialogArea;
 
     @Override
@@ -100,8 +103,7 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
         // Requesting a layout for containerPane on layout mode changes
         FXProperties.runNowAndOnPropertiesChange(() -> {
             double footerHeight = Math.max(0.08 * (Math.min(mainFrame.getHeight(), mainFrame.getWidth())), 40);
-            if (mainFrameFooter != null)
-                mainFrameFooter.getChildrenUnmodifiable().forEach(n -> ((ScalePane) n).setPrefHeight(footerHeight));
+            Arrays.forEach(scaledFooterButtons, scaledButton -> scaledButton.setPrefHeight(footerHeight));
         }, mainFrame.widthProperty(), mainFrame.heightProperty());
 
         setUpContextMenu(mainFrame, this::contextMenuActionGroup);
@@ -157,10 +159,14 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
         Button[] buttons = RoutingActions.filterRoutingActions(this, this, sortedPossibleRoutingOperations)
                 .stream().map(this::createRouteButton)
                 .toArray(Button[]::new);
-        ColumnsPane buttonBar = new ColumnsPane(Arrays.map(buttons, ModalityFrontOfficeMainFrameActivity::scaleButton, Node[]::new));
+        scaledFooterButtons = Arrays.map(buttons, ModalityFrontOfficeMainFrameActivity::scaleButton, ScalePane[]::new);
+        ColumnsPane buttonBar = new ColumnsPane(scaledFooterButtons);
         buttonBar.getStyleClass().setAll("button-bar"); // Style class used in Modality.css to make buttons square (remove round corners)
-        buttonBar.setEffect(new DropShadow());
-        return buttonBar;
+        CollapsePane collapsePane  = new CollapsePane(buttonBar);
+        collapsePane.setEffect(new DropShadow());
+        collapsePane.setClipEnabled(false);
+        collapsePane.collapsedProperty().bind(FXCollapseFooter.collapseFooterProperty());
+        return collapsePane;
     }
 
     private Button createRouteButton(Action routeAction) {
