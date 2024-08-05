@@ -214,24 +214,6 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-authn-login-buscall</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-authn-login-remote</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-authn-login-ui-gateway-webviewbased-openjfx</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-authn-login-ui-portal</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
@@ -346,8 +328,6 @@
                         <list>dev/webfx/kit/css/fonts/password/[^/]+$</list>
                         <list>dev/webfx/platform/conf/[^/]+$</list>
                         <list>dev/webfx/platform/meta/exe/[^/]+$</list>
-                        <list>dev/webfx/stack/authn/login/ui/spi/impl/gateway/facebook/[^/]+$</list>
-                        <list>dev/webfx/stack/authn/login/ui/spi/impl/gateway/google/[^/]+$</list>
                         <list>dev/webfx/stack/i18n/[^/]+$</list>
                         <list>dev/webfx/stack/ui/validation/controlsfx/images/[^/]+$</list>
                         <list>images/buddhas/[^/]+$</list>

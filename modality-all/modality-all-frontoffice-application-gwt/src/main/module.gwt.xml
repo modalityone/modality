@@ -217,8 +217,6 @@
     <source path="one/modality/crm/client/activities/unauthorized"/>
     <!--==========================< modality-crm-client-authn-fx >==========================-->
     <source path="one/modality/crm/shared/services/authn/fx"/>
-    <!--============< modality-crm-client-authn-login-ui-gateway-signup-plugin >============-->
-    <source path="one/modality/crm/client/authn/login/ui/gateway/signup"/>
     <!--===================< modality-crm-client-authz-required-plugin >====================-->
     <source path="one/modality/crm/client/services/authz"/>
     <!--======================< modality-crm-client-personaldetails >=======================-->
@@ -539,36 +537,13 @@
     <source path="dev/webfx/stack/authn/spi"/>
     <!--===========================< webfx-stack-authn-buscall >============================-->
     <source path="dev/webfx/stack/authn/buscall"/>
-    <!--============================< webfx-stack-authn-login >=============================-->
-    <source path="dev/webfx/stack/authn/login"/>
-    <source path="dev/webfx/stack/authn/login/spi"/>
-    <!--========================< webfx-stack-authn-login-buscall >=========================-->
-    <source path="dev/webfx/stack/authn/login/buscall"/>
-    <source path="dev/webfx/stack/authn/login/buscall/serial"/>
-    <!--=========================< webfx-stack-authn-login-remote >=========================-->
-    <source path="dev/webfx/stack/authn/login/spi/impl/remote"/>
     <!--===========================< webfx-stack-authn-login-ui >===========================-->
     <source path="dev/webfx/stack/authn/login/ui"/>
     <source path="dev/webfx/stack/authn/login/ui/spi"/>
     <!--=======================< webfx-stack-authn-login-ui-gateway >=======================-->
     <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway"/>
-    <!--===============< webfx-stack-authn-login-ui-gateway-facebook-plugin >===============-->
-    <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/facebook"/>
-    <resource path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/facebook"/>
-    <public path="" includes="dev/webfx/stack/authn/login/ui/spi/impl/gateway/facebook/"/>
-    <!--================< webfx-stack-authn-login-ui-gateway-google-plugin >================-->
-    <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/google"/>
-    <resource path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/google"/>
-    <public path="" includes="dev/webfx/stack/authn/login/ui/spi/impl/gateway/google/"/>
-    <!--===============< webfx-stack-authn-login-ui-gateway-mojoauth-plugin >===============-->
-    <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/mojoauth"/>
     <!--===============< webfx-stack-authn-login-ui-gateway-password-plugin >===============-->
     <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/password"/>
-    <!--================< webfx-stack-authn-login-ui-gateway-webviewbased >=================-->
-    <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/webview"/>
-    <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/webview/spi"/>
-    <!--==============< webfx-stack-authn-login-ui-gateway-webviewbased-gwt >===============-->
-    <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/webview/spi/impl/gwt"/>
     <!--=======================< webfx-stack-authn-login-ui-portal >========================-->
     <source path="dev/webfx/stack/authn/login/ui/spi/impl/portal"/>
     <!--========================< webfx-stack-authn-logout-client >=========================-->
@@ -662,8 +637,6 @@
     <source path="dev/webfx/stack/db/submit/buscall/serial"/>
     <!--==========================< webfx-stack-db-submit-remote >==========================-->
     <source path="dev/webfx/stack/db/submit/spi/impl/remote"/>
-    <!--==============================< webfx-stack-hash-md5 >==============================-->
-    <source path="dev/webfx/stack/hash/md5"/>
     <!--================================< webfx-stack-i18n >================================-->
     <source path="dev/webfx/stack/i18n"/>
     <source path="dev/webfx/stack/i18n/operations"/>
