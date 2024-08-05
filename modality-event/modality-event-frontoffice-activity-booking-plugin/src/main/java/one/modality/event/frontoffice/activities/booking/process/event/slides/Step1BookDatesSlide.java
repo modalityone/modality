@@ -6,31 +6,21 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.orm.dql.DqlStatement;
-import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
-import one.modality.base.frontoffice.utility.TextUtility;
 import one.modality.base.shared.entities.Attendance;
-import one.modality.base.shared.entities.Person;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.event.frontoffice.activities.booking.WorkingBooking;
-import one.modality.event.frontoffice.activities.booking.fx.FXPersonToBook;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.booking.process.event.RecurringEventSchedule;
 import one.modality.event.frontoffice.activities.booking.process.event.WorkingBookingProperties;
@@ -78,27 +68,11 @@ final class Step1BookDatesSlide extends StepSlide {
         priceText.getStyleClass().add("subtitle-grey");
         VBox.setMargin(priceText, new Insets(20, 0, 20, 0));
 
-        Text personPrefixText = TextUtility.createText("PersonToBook:", Color.GRAY);
-        EntityButtonSelector<Person> personSelector = new EntityButtonSelector<Person>(
-                    "{class: 'Person', alias: 'p', columns: [{expression: `[genderIcon,firstName,lastName]`}], orderBy: 'id'}",
-                    getBookEventActivity(), FXMainFrameDialogArea::getDialogArea, getBookEventActivity().getDataSourceModel()
-            ) { // Overriding the button content to add the "Teacher" prefix text
-            @Override
-            protected Node getOrCreateButtonContentFromSelectedItem() {
-                return new HBox(10, personPrefixText, super.getOrCreateButtonContentFromSelectedItem());
-            }
-        }.ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> DqlStatement.where("frontendAccount=?", mup.getUserAccountId()));
-        personSelector.selectedItemProperty().bindBidirectional(FXPersonToBook.personToBookProperty());
-        Button personButton = Bootstrap.largeButton(personSelector.getButton());
-        personButton.setMinWidth(300);
-        personButton.setMaxWidth(Region.USE_PREF_SIZE);
-        VBox.setMargin(personButton, new Insets(20, 0, 20, 0));
-        personButton.visibleProperty().bind(FXModalityUserPrincipal.loggedInProperty());
-        personButton.managedProperty().bind(FXModalityUserPrincipal.loggedInProperty());
+        Button personToBookButton = createPersonToBookButton();
 
         Button checkoutButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "ProceedCheckout"));
         checkoutButton.setMinWidth(300);
-        checkoutButton.maxWidthProperty().bind(FXProperties.compute(personButton.widthProperty(), personButtonWidth ->
+        checkoutButton.maxWidthProperty().bind(FXProperties.compute(personToBookButton.widthProperty(), personButtonWidth ->
                 FXModalityUserPrincipal.isLoggedIn() ? personButtonWidth : 300));
         checkoutButton.disableProperty().bind(Bindings.createBooleanBinding(
                 () -> workingBookingProperties.getBalance() <= 0 && noDatesBookedProperty.get(),
@@ -118,7 +92,7 @@ final class Step1BookDatesSlide extends StepSlide {
                 schedule,
                 selectAllClassesHyperlink,
                 priceText,
-                personButton,
+                personToBookButton,
                 checkoutButton
         );
     }

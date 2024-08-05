@@ -3,7 +3,6 @@ package one.modality.event.frontoffice.activities.booking.process.account;
 import dev.webfx.platform.windowhistory.WindowHistory;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import javafx.scene.Node;
-import javafx.scene.text.Text;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 
@@ -15,8 +14,8 @@ public class CheckoutAccountActivity extends ViewDomainActivityBase {
     private Person lastUserPerson;
 
     @Override
-    public Node buildUi() {
-        return new Text("Welcome!");
+    public Node buildUi() { // This is what is displayed once logged-in
+        return null; // new Text("Welcome!");
     }
 
     @Override

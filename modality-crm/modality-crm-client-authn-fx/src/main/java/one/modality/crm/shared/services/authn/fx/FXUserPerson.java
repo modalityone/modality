@@ -2,6 +2,7 @@ package one.modality.crm.shared.services.authn.fx;
 
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.EntityId;
@@ -26,7 +27,7 @@ public final class FXUserPerson {
                 DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
                 EntityStore.create(dataSourceModel).<Person>executeQuery("select firstName,lastName,male,ordained,email,phone,street,postCode,cityName,country,organization from Person where id=?", userPersonId)
                         .onFailure(Console::log)
-                        .onSuccess(persons -> setUserPerson(persons.get(0)));
+                        .onSuccess(persons -> UiScheduler.runInUiThread(() -> setUserPerson(persons.get(0))));
             }
         }, FXUserPersonId.userPersonIdProperty());
     }

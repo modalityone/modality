@@ -4,24 +4,25 @@ import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.kit.util.properties.Unregisterable;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.time.Times;
 import dev.webfx.platform.windowhistory.WindowHistory;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.icons.SvgIcons;
@@ -52,11 +53,14 @@ final class Step2CheckoutSlide extends StepSlide {
     private final GridPane summaryGridPane = new GridPane();
     // Node property that will be managed by the sub-router to mount the CheckoutAccountActivity (when routed)
     private final ObjectProperty<Node> checkoutAccountMountNodeProperty = new SimpleObjectProperty<>();
-    private final Button submitButton = Bootstrap.largeSuccessButton(new Button());
+    private final Button submitButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "Submit"));
+    private final BooleanProperty step1PersonToBookWasShownProperty = new SimpleBooleanProperty();
+    private Unregisterable personToBookListener;
 
     public Step2CheckoutSlide(BookEventActivity bookEventActivity) {
         super(bookEventActivity);
-        summaryGridPane.setMaxWidth(10000);
+        summaryGridPane.setMaxWidth(10000); // Workaround for a bug in GridPane layout OpenJFX implementation. Indeed,
+        // the default value Double.MAX is causing infinite loop with TransitionPane
     }
 
     // Exposing accountMountNodeProperty for the sub-routing binding (done in SlideController)
@@ -64,9 +68,12 @@ final class Step2CheckoutSlide extends StepSlide {
         return checkoutAccountMountNodeProperty;
     }
 
+    public void setStep1PersonToBookWasShown(boolean step1PersonToBookWasShown) {
+        step1PersonToBookWasShownProperty.set(step1PersonToBookWasShown);
+    }
+
     @Override
     void buildSlideUi() {
-        mainVbox.getChildren().clear();
         mainVbox.setMaxWidth(MAX_SLIDE_WIDTH);
 
         ColumnConstraints c1 = new ColumnConstraints();
@@ -77,20 +84,49 @@ final class Step2CheckoutSlide extends StepSlide {
         c3.setPercentWidth(15);
         summaryGridPane.getColumnConstraints().setAll(c1, c2, c3);
         summaryGridPane.setVgap(5);
-        summaryGridPane.setPadding(new Insets(20, 0, 50, 0));
+        summaryGridPane.setPadding(new Insets(20, 0, 0, 0));
         rebuildSummaryGridPane();
-        mainVbox.getChildren().add(summaryGridPane);
 
-        I18nControls.bindI18nProperties(submitButton, "Submit",
-                getWorkingBookingProperties().formattedBalanceProperty());
+        Button personToBookButton = createPersonToBookButton();
+        MonoPane personToBookMonoPane = new MonoPane(personToBookButton);
+        personToBookMonoPane.visibleProperty().bind(step1PersonToBookWasShownProperty.not());
+        personToBookMonoPane.managedProperty().bind(step1PersonToBookWasShownProperty.not());
+        VBox.setMargin(personToBookMonoPane, new Insets(20, 0, 20, 0));
+
         submitButton.setOnAction(event -> submit());
-        mainVbox.getChildren().add(submitButton);
+        VBox.setMargin(submitButton, new Insets(20, 0, 20, 0));
 
         // Adding the container that will display the CheckoutAccountActivity (and eventually the login page before)
-        MonoPane accountActivityContainer = new MonoPane();
-        accountActivityContainer.contentProperty().bind(checkoutAccountMountNodeProperty); // managed by sub-router
-        VBox.setMargin(accountActivityContainer, new Insets(50, 0, 50, 0)); // Some good margins before and after
-        mainVbox.getChildren().add(accountActivityContainer);
+        BorderPane loginContainer = new BorderPane();
+        //VBox.setMargin(loginContainer, new Insets(0, 0, 50, 0)); // Some good margins before and after
+
+        mainVbox.getChildren().setAll(
+                summaryGridPane,
+                personToBookMonoPane,
+                submitButton,
+                loginContainer
+        );
+
+        // Don't know why but doing mono directional binding can cause bind exceptions on next iteration...
+        loginContainer.centerProperty().bindBidirectional(checkoutAccountMountNodeProperty); // managed by sub-router
+
+        if (personToBookListener == null) {
+            personToBookListener = FXProperties.runNowAndOnPropertiesChange(() -> {
+                Person personToBook = FXPersonToBook.getPersonToBook();
+                boolean loggedIn = personToBook != null; // Means that the user is logged in with an account in Modality
+                if (!loggedIn && loginContainer.getCenter() == null) {
+                    WindowHistory.getProvider().push(CheckoutAccountRouting.getPath());
+                }
+                Label pleaseLoginLabel = Bootstrap.textPrimary(I18nControls.bindI18nProperties(new Label(), "PleaseLogin"));
+                BorderPane.setAlignment(pleaseLoginLabel, Pos.TOP_CENTER);
+                BorderPane.setMargin(pleaseLoginLabel, new Insets(0, 0, 20,0));
+                loginContainer.setTop(loggedIn ? null : pleaseLoginLabel);
+                loginContainer.setVisible(!loggedIn);
+                loginContainer.setManaged(!loggedIn);
+                submitButton.setVisible(loggedIn);
+                submitButton.setManaged(loggedIn);
+            }, FXPersonToBook.personToBookProperty());
+        }
     }
 
     private void rebuildSummaryGridPane() {
@@ -186,11 +222,6 @@ final class Step2CheckoutSlide extends StepSlide {
     }
 
     private void submit() {
-        Person personToBook = FXPersonToBook.getPersonToBook();
-        if (personToBook == null) { // Means that the user is not logged in, or logged in via SSO but without an account in Modality
-            WindowHistory.getProvider().push(CheckoutAccountRouting.getPath());
-            return;
-        }
         turnOnButtonWaitMode(submitButton);
 
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();

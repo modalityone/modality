@@ -2,8 +2,10 @@ package one.modality.event.frontoffice.activities.booking.process.event.slides;
 
 import dev.webfx.extras.panes.TransitionPane;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import javafx.application.Platform;
 import javafx.scene.layout.Region;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
+import one.modality.event.frontoffice.activities.booking.fx.FXPersonToBook;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.booking.process.event.RecurringEventSchedule;
 
@@ -16,6 +18,7 @@ final class DigitsSlideController {
     private final Step3PaymentSlide step3PaymentSlide;
     private final Step4CancellationSlide step4CancellationSlide;
     private final Step5ErrorSlide step5ErrorSlide;
+    private StepSlide displayedSlide;
 
     public DigitsSlideController(BookEventActivity bookEventActivity) {
         this.bookEventActivity = bookEventActivity;
@@ -37,10 +40,17 @@ final class DigitsSlideController {
         step5ErrorSlide.reset();
 
         step1BookDatesSlide.onWorkingBookingLoaded();
-        transitionPane.replaceContentNoAnimation(step1BookDatesSlide.get());
-
-        // Sub-routing node binding (displaying the possible sub-routing account node in the appropriate place in step3)
-        step2CheckoutSlide.accountMountNodeProperty().bind(bookEventActivity.mountNodeProperty());
+        if (displayedSlide != step2CheckoutSlide) {
+            transitionPane.replaceContentNoAnimation(step1BookDatesSlide.get());
+            displayedSlide = step1BookDatesSlide;
+            // Sub-routing node binding (displaying the possible sub-routing account node in the appropriate place in step3)
+            step2CheckoutSlide.accountMountNodeProperty().bind(bookEventActivity.mountNodeProperty());
+        } else {
+            // Rebuilding the ui if this happens in checkout date because the summary needs to be updated
+            step2CheckoutSlide.reset();
+            Platform.runLater(this::displayCheckoutSlide); // the reason for this postpone is that BookEventActivity will update the booking just after this call
+            // TODO: remove the postpone once BookEventActivity code is fixed
+        }
     }
 
     RecurringEventSchedule getRecurringEventSchedule() {
@@ -48,10 +58,14 @@ final class DigitsSlideController {
     }
 
     private void displaySlide(StepSlide slide) {
+        displayedSlide = slide;
         UiScheduler.runInUiThread((() -> transitionPane.transitToContent(slide.get())));
     }
 
     void displayCheckoutSlide() {
+        if (displayedSlide == step1BookDatesSlide) {
+            step2CheckoutSlide.setStep1PersonToBookWasShown(FXPersonToBook.getPersonToBook() != null);
+        }
         displaySlide(step2CheckoutSlide);
     }
 
