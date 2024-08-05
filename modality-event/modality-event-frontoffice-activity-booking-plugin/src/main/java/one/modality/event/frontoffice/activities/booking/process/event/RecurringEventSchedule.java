@@ -1,9 +1,8 @@
 package one.modality.event.frontoffice.activities.booking.process.event;
 
 import dev.webfx.extras.panes.ColumnsPane;
-import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.stack.i18n.I18n;
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -50,29 +49,16 @@ public class RecurringEventSchedule {
         container.setMinColumnWidth(DATE_BOX_WIDTH);
         container.setMaxWidth(800);
 
-        scheduledItemsList.addListener((InvalidationListener) observable -> UiScheduler.runInUiThread(() -> {
-            container.getChildren().clear();
-            scheduledItemsList.forEach(scheduledItem -> {
-                ScheduledItemBox scheduledItemBox = new ScheduledItemBox(scheduledItem);
-                container.getChildren().add(scheduledItemBox.getContainerVBox());
-            });
-        }));
+        // We bind the children to scheduled items, mapping each to a ScheduledItemBox
+        ObservableLists.bindConverted(container.getChildren(), scheduledItemsList, si -> new ScheduledItemBox(si).getContainerVBox());
 
-        //We remove from the updateStore and the ScheduledItem
-        ListChangeListener<LocalDate> onChangeDateListener = change -> {
-            LocalDate date = null;
+        // We keep the dates styles updated on selection change
+        selectedDates.addListener((ListChangeListener<LocalDate>) change -> {
             while (change.next()) {
-                if (change.wasAdded()) {
-                    date = change.getAddedSubList().get(0);
-                }
-                if (change.wasRemoved()) {
-                    //We remove from the updateStore and the ScheduledItem
-                    date = change.getRemoved().get(0);
-                }
+                change.getAddedSubList().forEach(this::changeCssPropertyForSelectedDate);
+                change.getRemoved().forEach(this::changeCssPropertyForSelectedDate);
             }
-            changeCssPropertyForSelectedDate(date);
-        };
-        selectedDates.addListener(onChangeDateListener);
+        });
     }
 
     public void setScheduledItems(List<ScheduledItem> siList) {

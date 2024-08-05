@@ -94,6 +94,7 @@ final class Step2CheckoutSlide extends StepSlide {
         VBox.setMargin(personToBookMonoPane, new Insets(20, 0, 20, 0));
 
         submitButton.setOnAction(event -> submit());
+        submitButton.disableProperty().bind(FXProperties.compute(getWorkingBookingProperties().balanceProperty(), balance -> balance.intValue() <= 0));
         VBox.setMargin(submitButton, new Insets(20, 0, 20, 0));
 
         // Adding the container that will display the CheckoutAccountActivity (and eventually the login page before)
@@ -230,7 +231,7 @@ final class Step2CheckoutSlide extends StepSlide {
         // Three cases here:
         // 1) we pay an old balance with no new option, the currentBooking has no changes
         if (!workingBooking.hasChanges()) {
-            initiatePayment(workingBooking.getDocumentPrimaryKey());
+            initiatePayment(workingBooking.getDocumentPrimaryKey()); // Will go to payment page on success
         } else {
             // 2) the currentBooking has new option
             // We look at the changes to fill the history

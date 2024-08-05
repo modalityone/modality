@@ -2,7 +2,6 @@ package one.modality.event.frontoffice.activities.booking.process.event.slides;
 
 import dev.webfx.extras.panes.TransitionPane;
 import dev.webfx.platform.uischeduler.UiScheduler;
-import javafx.application.Platform;
 import javafx.scene.layout.Region;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.booking.fx.FXPersonToBook;
@@ -48,8 +47,7 @@ final class DigitsSlideController {
         } else {
             // Rebuilding the ui if this happens in checkout date because the summary needs to be updated
             step2CheckoutSlide.reset();
-            Platform.runLater(this::displayCheckoutSlide); // the reason for this postpone is that BookEventActivity will update the booking just after this call
-            // TODO: remove the postpone once BookEventActivity code is fixed
+            displayCheckoutSlide();
         }
     }
 

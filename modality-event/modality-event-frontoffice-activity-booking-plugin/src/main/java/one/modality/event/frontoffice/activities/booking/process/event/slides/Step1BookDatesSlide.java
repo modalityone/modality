@@ -4,6 +4,7 @@ import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
+import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import javafx.beans.binding.Bindings;
@@ -16,11 +17,9 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
-import one.modality.event.frontoffice.activities.booking.WorkingBooking;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.booking.process.event.RecurringEventSchedule;
 import one.modality.event.frontoffice.activities.booking.process.event.WorkingBookingProperties;
@@ -28,7 +27,6 @@ import one.modality.event.frontoffice.activities.booking.process.event.WorkingBo
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 final class Step1BookDatesSlide extends StepSlide {
 
@@ -60,7 +58,6 @@ final class Step1BookDatesSlide extends StepSlide {
         VBox.setMargin(schedule, new Insets(30, 0, 30, 0));
 
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
-        WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
 
         Bootstrap.textPrimary(Bootstrap.h4(selectAllClassesHyperlink));
         selectAllClassesHyperlink.setAlignment(Pos.CENTER);
@@ -78,11 +75,7 @@ final class Step1BookDatesSlide extends StepSlide {
                 () -> workingBookingProperties.getBalance() <= 0 && noDatesBookedProperty.get(),
                 workingBookingProperties.balanceProperty(), noDatesBookedProperty)
         );
-        checkoutButton.setOnAction((event -> {
-            workingBooking.cancelChanges();
-            workingBooking.bookScheduledItems(recurringEventSchedule.getSelectedScheduledItem());
-            displayCheckoutSlide();
-        }));
+        checkoutButton.setOnAction((event -> displayCheckoutSlide()));
         VBox.setMargin(checkoutButton, new Insets(0, 0, 20, 0)); // in addition to VBox bottom margin 80
 
         mainVbox.getChildren().setAll(
@@ -99,22 +92,15 @@ final class Step1BookDatesSlide extends StepSlide {
 
     void onWorkingBookingLoaded() {
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
-        WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
 
         List<ScheduledItem> scheduledItemsOnEvent = workingBookingProperties.getScheduledItemsOnEvent();
 
+        // Computing unselectable and already booked dates for the purpose of styling the event schedule
         List<LocalDate> unselectableDate = new ArrayList<>();
         List<LocalDate> alreadyBookedDate = new ArrayList<>();
         scheduledItemsOnEvent.forEach(si-> {
             LocalDate localDate = si.getDate();
-            if (workingBooking.getLastestDocumentAggregate().getAttendancesStream()
-                    .map(Attendance::getScheduledItem)
-                    .map(ScheduledItem::getDate)
-                    .anyMatch(date -> date.equals(localDate))) {
-                // Here there is already a date booked in this booking
-                unselectableDate.add(localDate);
-                alreadyBookedDate.add(localDate);
-            } else if (workingBookingProperties.getScheduledItemsAlreadyBooked().stream()
+            if (workingBookingProperties.getScheduledItemsAlreadyBooked().stream()
                     .map(ScheduledItem::getDate)
                     .anyMatch(date -> date.equals(localDate))) {
                 //Here there is already a date booked in this another booking
@@ -160,10 +146,12 @@ final class Step1BookDatesSlide extends StepSlide {
             return null;
         }));*/
 
-        recurringEventSchedule.setScheduledItems(scheduledItemsOnEvent);
+        // Synchronizing the event schedule from the working booking (will select the dates newly added in the working booking)
+        getBookEventActivity().syncEventScheduleFromWorkingBooking();
 
-        // We create a list of local date, that will contain all the selectable date, ie the one that are not in the past, and not already booked
-        List<LocalDate> selectableDates = scheduledItemsOnEvent.stream().map(ScheduledItem::getDate).collect(Collectors.toList());
+        // Arming the "Select all classes" hyperlink. We create a list of dates that will contain all the selectable
+        // dates = the ones that are not in the past, and not already booked
+        List<LocalDate> selectableDates = Collections.map(scheduledItemsOnEvent, ScheduledItem::getDate);
         selectableDates.removeAll(unselectableDate);
         selectAllClassesHyperlink.setOnAction((event -> recurringEventSchedule.selectDates(selectableDates)));
     }

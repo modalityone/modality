@@ -15,6 +15,7 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.text.Font;
 import one.modality.base.frontoffice.mainframe.backgroundnode.fx.FXCollapseFooter;
+import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Person;
 import one.modality.base.shared.entities.ScheduledItem;
@@ -32,7 +33,6 @@ import one.modality.event.frontoffice.activities.booking.process.account.Checkou
 import one.modality.event.frontoffice.activities.booking.process.event.slides.LettersSlideController;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -127,24 +127,31 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
                         PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
                         WorkingBooking workingBooking = new WorkingBooking(policyAggregate, newPersonExistingBooking);
                         workingBookingProperties.setWorkingBooking(workingBooking);
+                        syncWorkingBookingFromEventSchedule();
                         // Informing the slide controller about that change
-                        // TODO: improve the code in slide controllers, so that we can first make the change to the
-                        // TODO: working booking, and then considers and reflects that input to the event schedule
-                        // but because it doesn't work (yet), we capture the (new) selected dates before informing the controller
-                        List<LocalDate> selectedDates = new ArrayList<>(getRecurringEventSchedule().getSelectedDates());
                         lettersSlideController.onWorkingBookingLoaded(); // No selected dates in event schedule at this stage
-
-                        // Then we re-apply the selected dates to the new booking (move this up once TODO is done)
-                        List<ScheduledItem> scheduledItemsAdded = Collections.filter(workingBookingProperties.getScheduledItemsOnEvent(),
-                                si -> selectedDates.contains(si.getDate()));
-                        workingBooking.cancelChanges(); // weird, but this is to ensure the document is created
-                        workingBooking.bookScheduledItems(scheduledItemsAdded); // Booking the selected dates
-
-                        // Finally we reflect the selected dates to the event schedule as well (to remove once TODO is done)
-                        getRecurringEventSchedule().selectDates(selectedDates);
                     }))
             ;
         }, FXPersonToBook.personToBookProperty());
+    }
+
+    public void syncEventScheduleFromWorkingBooking() {
+        WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
+        List<Attendance> attendanceAdded = workingBooking.getAttendanceAdded();
+        List<LocalDate> datesAdded = Collections.map(attendanceAdded, Attendance::getDate);
+        getRecurringEventSchedule().setScheduledItems(workingBookingProperties.getScheduledItemsOnEvent());
+        getRecurringEventSchedule().selectDates(datesAdded);
+    }
+
+    void syncWorkingBookingFromEventSchedule() {
+        syncWorkingBookingFromNewSelectedScheduledItems(getRecurringEventSchedule().getSelectedScheduledItem());
+    }
+
+    void syncWorkingBookingFromNewSelectedScheduledItems(List<ScheduledItem> scheduledItemsAdded) {
+        // Then we re-apply the selected dates to the new booking (move this up once TODO is done)
+        WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
+        workingBooking.cancelChanges(); // weird, but this is to ensure the document is created
+        workingBooking.bookScheduledItems(scheduledItemsAdded); // Booking the selected dates
     }
 
     @Override
@@ -168,6 +175,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     }
 
     public void displayCheckoutSlide() {
+        syncWorkingBookingFromEventSchedule();
         lettersSlideController.displayCheckoutSlide();
     }
 
