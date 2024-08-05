@@ -51,8 +51,11 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
             protected void layoutChildren() {
                 double width = getWidth(), height = getHeight();
                 double headerHeight = 0;
-                double footerHeight = mainFrameFooter.prefHeight(width);
-                layoutInArea(mainFrameFooter, 0, height - footerHeight, width, footerHeight, 0, HPos.CENTER, VPos.BOTTOM);
+                double footerHeight = 0;
+                if (mainFrameFooter != null) {
+                    footerHeight = mainFrameFooter.prefHeight(width);
+                    layoutInArea(mainFrameFooter, 0, height - footerHeight, width, footerHeight, 0, HPos.CENTER, VPos.BOTTOM);
+                }
                 double nodeY = headerHeight;
                 layoutInArea(mountNodeContainer, 0, nodeY, width, height - nodeY - footerHeight, 0, null, HPos.CENTER, VPos.TOP);
                 if (backgroundNode != null) { // Same position & size as the mount node (if present)
@@ -97,7 +100,8 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
         // Requesting a layout for containerPane on layout mode changes
         FXProperties.runNowAndOnPropertiesChange(() -> {
             double footerHeight = Math.max(0.08 * (Math.min(mainFrame.getHeight(), mainFrame.getWidth())), 40);
-            mainFrameFooter.getChildrenUnmodifiable().forEach(n -> ((ScalePane) n).setPrefHeight(footerHeight));
+            if (mainFrameFooter != null)
+                mainFrameFooter.getChildrenUnmodifiable().forEach(n -> ((ScalePane) n).setPrefHeight(footerHeight));
         }, mainFrame.widthProperty(), mainFrame.heightProperty());
 
         setUpContextMenu(mainFrame, this::contextMenuActionGroup);
