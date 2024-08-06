@@ -17,6 +17,7 @@ import one.modality.event.frontoffice.activities.booking.process.event.Recurring
 
 public final class LettersSlideController {
 
+    private final BookEventActivity bookEventActivity;
     private final TransitionPane transitionPane = new TransitionPane();
     private final ScrollPane scrollPane = ControlUtil.createVerticalScrollPane(transitionPane);
     private final StepABlankSlide stepABlankSlide;
@@ -25,6 +26,7 @@ public final class LettersSlideController {
     private final StepDThankYouSlide stepDThankYouSlide;
 
     public LettersSlideController(BookEventActivity bookEventActivity) {
+        this.bookEventActivity = bookEventActivity;
         stepABlankSlide     = new StepABlankSlide(bookEventActivity);
         stepBLoadingSlide   = new StepBLoadingSlide(bookEventActivity);
         stepCBookEventSlide = new StepCBookEventSlide(bookEventActivity);
@@ -79,6 +81,7 @@ public final class LettersSlideController {
 
     public void displayThankYouSlide() {
         displaySlide(stepDThankYouSlide);
+        bookEventActivity.onReachingEndSlide();
     }
 
     public void displayCheckoutSlide() {
@@ -87,6 +90,7 @@ public final class LettersSlideController {
 
     public void displayErrorMessage(String message) {
         stepCBookEventSlide.displayErrorMessage(message);
+        bookEventActivity.onReachingEndSlide();
     }
 
     public void displayPaymentSlide(WebPaymentForm webPaymentForm) {
@@ -95,6 +99,7 @@ public final class LettersSlideController {
 
     public void displayCancellationSlide() {
         stepCBookEventSlide.displayCancellationSlide();
+        bookEventActivity.onReachingEndSlide();
     }
 
     public RecurringEventSchedule getRecurringEventSchedule() {

@@ -19,8 +19,13 @@ public final class FXEvent {
         @Override
         protected void invalidated() {
             FXEventId.setEventId(getEventId());
+            if (get() != null) {
+                lastNonNullEventProperty.set(get());
+            }
         }
     };
+
+    private final static ObjectProperty<Event> lastNonNullEventProperty = new SimpleObjectProperty<>();
 
     static {
         FXEventId.init();
@@ -46,6 +51,10 @@ public final class FXEvent {
     public static void setEvent(Event event) {
         if (!Objects.equals(event, getEvent()))
             eventProperty.set(event);
+    }
+
+    public static ObjectProperty<Event> lastNonNullEventProperty() {
+        return lastNonNullEventProperty;
     }
 
 }

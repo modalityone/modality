@@ -8,6 +8,7 @@ import dev.webfx.platform.util.Numbers;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
+import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.routing.uirouter.UiRouter;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
@@ -61,14 +62,17 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     @Override
     protected void updateModelFromContextParameters() {
         Object eventId = getParameter("eventId");
-        if (eventId != null) { // This happens when sub-routing /booking/account (instead of /booking/event/:eventId)
+        if (eventId != null) { // eventId is null when sub-routing /booking/account (instead of /booking/event/:eventId)
             FXEventId.setEventId(EntityId.create(Event.class, Numbers.toShortestNumber(eventId)));
+            // Initially hiding the footer (app menu), especially when coming form the website.
+            FXCollapseFooter.setCollapseFooter(true);
         }
     }
 
     @Override
     public void onResume() {
-        FXCollapseFooter.setCollapseFooter(true);
+        // Initially hiding the footer (app menu) when coming form the website. However, if coming back
+        FXCollapseFooter.setCollapseFooter(FXEventId.getEventId() != null);
         super.onResume();
     }
 
@@ -76,6 +80,11 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     public void onPause() {
         FXCollapseFooter.setCollapseFooter(false);
         super.onPause();
+    }
+
+    public void onReachingEndSlide() {
+        FXEventId.setEventId(null); // This is to ensure that next time the user books an event in this same session, we
+        FXCollapseFooter.setCollapseFooter(false);
     }
 
     @Override
@@ -92,7 +101,10 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
             // (or redirection to this page from a website) because the retrieval of FXUserPersonId is immediate in case
             // the user was already logged-in (memorised in session), while FXUserPerson requires a DB reading, which
             // may not be finished yet at this time.
-            Object userPersonPrimaryKey = FXUserPersonId.getUserPersonPrimaryKey();
+            Person personToBook = FXPersonToBook.getPersonToBook();
+            Object userPersonPrimaryKey = Entities.getPrimaryKey(personToBook);
+            if (userPersonPrimaryKey == null)
+                userPersonPrimaryKey = FXUserPersonId.getUserPersonPrimaryKey();
             DocumentService.loadPolicyAndDocument(event, userPersonPrimaryKey)
                 .onFailure(Console::log)
                 .onSuccess(policyAndDocumentAggregates -> UiScheduler.runInUiThread(() -> {

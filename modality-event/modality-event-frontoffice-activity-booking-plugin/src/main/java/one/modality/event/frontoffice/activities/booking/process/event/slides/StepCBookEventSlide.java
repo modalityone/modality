@@ -181,7 +181,7 @@ final class StepCBookEventSlide extends StepSlide {
 
     void bindI18nEventExpression(Property<String> textProperty, String eventExpression) {
         I18n.bindI18nTextProperty(textProperty, new I18nSubKey("expression: " + eventExpression,
-                FXEvent.eventProperty()), FXEvent.eventProperty(), eventDescriptionLoadedProperty);
+                FXEvent.eventProperty()), FXEvent.lastNonNullEventProperty(), eventDescriptionLoadedProperty);
     }
 
     <L extends Labeled> L bindI18nEventExpression(L text, String eventExpression) {
