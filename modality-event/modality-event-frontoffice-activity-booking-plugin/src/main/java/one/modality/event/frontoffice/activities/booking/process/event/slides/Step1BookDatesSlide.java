@@ -80,12 +80,12 @@ final class Step1BookDatesSlide extends StepSlide {
 
         mainVbox.getChildren().setAll(
                 eventDescription,
+                personToBookButton,
                 scheduleText,
                 selectTheCourseText,
                 schedule,
                 selectAllClassesHyperlink,
                 priceText,
-                personToBookButton,
                 checkoutButton
         );
     }
