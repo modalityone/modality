@@ -3,6 +3,7 @@ package one.modality.event.frontoffice.activities.booking.process.event.slides;
 import dev.webfx.extras.panes.ScaleMode;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.webtext.HtmlText;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.cloud.image.CloudImageService;
@@ -11,6 +12,7 @@ import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import javafx.application.Platform;
 import javafx.beans.property.*;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -41,15 +43,6 @@ final class StepCBookEventSlide extends StepSlide {
     private final HtmlText eventShortDescriptionHtmlText = bindI18nEventExpression(new HtmlText(), "'<center>' + shortDescription + '</center>'");
     private final ObjectProperty<Font> mediumFontProperty = new SimpleObjectProperty<>(Font.font(StyleUtility.MEDIUM_TEXT_SIZE));
     private final ObjectProperty<Font> subFontProperty = new SimpleObjectProperty<>(Font.font(StyleUtility.SUB_TEXT_SIZE));
-    private final VBox bookVBox = new VBox() {
-        @Override
-        protected void layoutChildren() {
-            double fontFactor = GeneralUtility.computeFontFactor(getWidth());
-            mediumFontProperty.set(Font.font(Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, StyleUtility.MEDIUM_TEXT_SIZE * fontFactor))));
-            subFontProperty.set(   Font.font(Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, StyleUtility.SUB_TEXT_SIZE    * fontFactor))));
-            super.layoutChildren();
-        }
-    };
     private final BooleanProperty eventDescriptionLoadedProperty = new SimpleBooleanProperty();
     private boolean workingBookingLoaded;
     private final DigitsSlideController digitsSlideController;
@@ -107,20 +100,20 @@ final class StepCBookEventSlide extends StepSlide {
     public void buildSlideUi() {
         Label eventLabel = bindI18nEventExpression(new Label(),"i18n(this)");
         eventLabel.setTextAlignment(TextAlignment.CENTER);
-        eventLabel.setWrapText(true);
+        //eventLabel.setWrapText(true);
         eventLabel.getStyleClass().add("event-title");
         eventLabel.fontProperty().bind(mediumFontProperty);
         VBox.setMargin(eventLabel, new Insets(0,0,5,0));
 
         Label venueAddress = bindI18nEventExpression(new Label(), "venue.address");
         venueAddress.setTextAlignment(TextAlignment.CENTER);
-        venueAddress.setWrapText(true);
+        //venueAddress.setWrapText(true);
         venueAddress.getStyleClass().add("event-title");
         venueAddress.setGraphicTextGap(5);
         venueAddress.setGraphic(SvgIcons.createPinpointSVGPath());
         venueAddress.fontProperty().bind(subFontProperty);
 
-        VBox.setMargin(eventShortDescriptionHtmlText, new Insets(5,0,15,0));
+        VBox.setMargin(eventShortDescriptionHtmlText, new Insets(5, 0, 15, 0));
         eventShortDescriptionHtmlText.fontProperty().bind(subFontProperty);
         eventShortDescriptionHtmlText.getStyleClass().add("event-title");
         eventShortDescriptionHtmlText.setFocusTraversable(false);
@@ -128,12 +121,15 @@ final class StepCBookEventSlide extends StepSlide {
         ScalePane imageScalePane = new ScalePane(ScaleMode.BEST_FIT, imageView);
         imageScalePane.setCanGrow(false);
 
-        VBox vBox = new VBox(5,
+        VBox eventShortTextBox = new VBox(5,
                 eventLabel,
                 venueAddress,
                 eventShortDescriptionHtmlText
         );
-        vBox.setAlignment(Pos.CENTER);
+        eventShortTextBox.setMinWidth(Region.USE_PREF_SIZE);
+        ScalePane eventShortTextScalePane = new ScalePane(ScaleMode.BEST_FIT, eventShortTextBox);
+
+        eventShortTextBox.setAlignment(Pos.CENTER);
         GridPane gridPane = new GridPane();
         gridPane.setHgap(10);
         ColumnConstraints c1 = new ColumnConstraints();
@@ -142,10 +138,9 @@ final class StepCBookEventSlide extends StepSlide {
         c2.setPercentWidth(66);
         gridPane.getColumnConstraints().addAll(c1, c2);
         gridPane.add(imageScalePane, 0, 0);
-        gridPane.add(vBox, 1, 0);
-        gridPane.setAlignment(Pos.CENTER);
-        gridPane.setMaxWidth(MAX_PAGE_WIDTH);
-        gridPane.setPadding(new Insets(30));
+        gridPane.add(eventShortTextScalePane, 1, 0);
+        //gridPane.setAlignment(Pos.CENTER);
+        GridPane.setHalignment(imageScalePane, HPos.LEFT);
 
         VBox orangePane = new VBox(gridPane); // For any reason, using MonoPane makes height grows when width grows
         orangePane.setAlignment(Pos.CENTER);
@@ -153,13 +148,22 @@ final class StepCBookEventSlide extends StepSlide {
         orangePane.setMaxWidth(Double.MAX_VALUE);
 
         Region digitsTransitionPane = digitsSlideController.getContainer();
-        digitsTransitionPane.setMaxWidth(MAX_PAGE_WIDTH);
-
-        bookVBox.setAlignment(Pos.TOP_CENTER);
-        bookVBox.getChildren().setAll(orangePane, digitsTransitionPane);
 
         mainVbox.setPadding(Insets.EMPTY);
-        mainVbox.getChildren().setAll(bookVBox);
+        mainVbox.getChildren().setAll(orangePane, digitsTransitionPane);
+
+        FXProperties.runOnPropertiesChange(() -> {
+            double width = mainVbox.getWidth();
+            double maxPageWidth = Math.min(MAX_PAGE_WIDTH, 0.90 * width);
+            double orangeVerticalGap = maxPageWidth * 0.1;
+            orangePane.setPadding(new Insets(orangeVerticalGap, 0, orangeVerticalGap, 0));
+            gridPane.setMaxWidth(maxPageWidth);
+            digitsTransitionPane.setMaxWidth(maxPageWidth);
+            digitsTransitionPane.setPadding(new Insets(maxPageWidth * 0.03, 0, 0, 0));
+            double fontFactor = GeneralUtility.computeFontFactor(maxPageWidth);
+            mediumFontProperty.set(Font.font(Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, StyleUtility.MEDIUM_TEXT_SIZE * fontFactor))));
+            subFontProperty.set(   Font.font(Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, StyleUtility.SUB_TEXT_SIZE    * fontFactor))));
+        }, mainVbox.widthProperty());
     }
 
     void displayCheckoutSlide() {

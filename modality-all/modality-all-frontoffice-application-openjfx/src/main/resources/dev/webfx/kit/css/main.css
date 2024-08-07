@@ -88,7 +88,7 @@
     -fx-font-size: 14px;
     -fx-border-radius: 4px;
     -fx-background-radius: 4px;
-    -fx-min-width: 80px;
+    /*-fx-min-width: 80px;*/
 }
 
 .btn:hover {

@@ -53,7 +53,6 @@ public final class LettersSlideController {
      * In this method, we update the UI according to the event
      */
     public void onWorkingBookingLoaded() {
-        stepDThankYouSlide.reset();
         stepCBookEventSlide.onWorkingBookingLoaded();
     }
 

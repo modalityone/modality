@@ -35,7 +35,7 @@ abstract class StepSlide implements Supplier<Node> {
     StepSlide(BookEventActivity bookEventActivity) {
         this.bookEventActivity = bookEventActivity;
         mainVbox.setAlignment(Pos.TOP_CENTER);
-        mainVbox.setPadding(new Insets(0, 30, 80, 30));
+        mainVbox.setPadding(new Insets(0, 0, 80, 0));
     }
 
     public Node get() {
