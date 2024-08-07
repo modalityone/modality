@@ -40,10 +40,10 @@ final class StepCBookEventSlide extends StepSlide {
 
     private final CloudImageService cloudImageService = new ClientImageService();
     private final ImageView imageView = new ImageView();
+    private final BooleanProperty eventDescriptionLoadedProperty = new SimpleBooleanProperty();
     private final HtmlText eventShortDescriptionHtmlText = bindI18nEventExpression(new HtmlText(), "'<center>' + shortDescription + '</center>'");
     private final ObjectProperty<Font> mediumFontProperty = new SimpleObjectProperty<>(Font.font(StyleUtility.MEDIUM_TEXT_SIZE));
     private final ObjectProperty<Font> subFontProperty = new SimpleObjectProperty<>(Font.font(StyleUtility.SUB_TEXT_SIZE));
-    private final BooleanProperty eventDescriptionLoadedProperty = new SimpleBooleanProperty();
     private boolean workingBookingLoaded;
     private final DigitsSlideController digitsSlideController;
 
@@ -113,7 +113,7 @@ final class StepCBookEventSlide extends StepSlide {
         venueAddress.setGraphic(SvgIcons.createPinpointSVGPath());
         venueAddress.fontProperty().bind(subFontProperty);
 
-        VBox.setMargin(eventShortDescriptionHtmlText, new Insets(5, 0, 15, 0));
+        VBox.setMargin(eventShortDescriptionHtmlText, new Insets(20, 0, 0, 0));
         eventShortDescriptionHtmlText.fontProperty().bind(subFontProperty);
         eventShortDescriptionHtmlText.getStyleClass().add("event-title");
         eventShortDescriptionHtmlText.setFocusTraversable(false);
@@ -158,6 +158,7 @@ final class StepCBookEventSlide extends StepSlide {
             double orangeVerticalGap = maxPageWidth * 0.1;
             orangePane.setPadding(new Insets(orangeVerticalGap, 0, orangeVerticalGap, 0));
             gridPane.setMaxWidth(maxPageWidth);
+            eventShortDescriptionHtmlText.setMaxWidth(maxPageWidth * 0.6);
             digitsTransitionPane.setMaxWidth(maxPageWidth);
             digitsTransitionPane.setPadding(new Insets(maxPageWidth * 0.03, 0, 0, 0));
             double fontFactor = GeneralUtility.computeFontFactor(maxPageWidth);
@@ -188,7 +189,7 @@ final class StepCBookEventSlide extends StepSlide {
 
     void bindI18nEventExpression(Property<String> textProperty, String eventExpression) {
         I18n.bindI18nTextProperty(textProperty, new I18nSubKey("expression: " + eventExpression,
-                FXEvent.eventProperty()), FXEvent.lastNonNullEventProperty(), eventDescriptionLoadedProperty);
+                FXEvent.lastNonNullEventProperty()), FXEvent.lastNonNullEventProperty(), eventDescriptionLoadedProperty);
     }
 
     <L extends Labeled> L bindI18nEventExpression(L text, String eventExpression) {
