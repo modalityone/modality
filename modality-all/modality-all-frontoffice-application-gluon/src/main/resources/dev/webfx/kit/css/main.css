@@ -500,6 +500,14 @@ Text, Label, Button, TextField {
     -fx-border-color: #cccccc;
 }
 
+.event-date-cell.date-unselected Text {
+    -fx-fill: #444;
+}
+
+.event-date-cell Text.event-time {
+    -fx-fill: #838788;
+}
+
 .event-date-cell.date-unselected {
     -fx-background-color: none;
 }
@@ -509,12 +517,9 @@ Text, Label, Button, TextField {
     -fx-background-color: #dddddd;
 }
 
-.event-date-cell.date-non-selectable Text {
+.event-date-cell.date-non-selectable Text,
+.event-date-cell.date-non-selectable Text.event-time {
     -fx-fill: #aaaaaa;
-}
-
-.event-date-cell.date-unselected Text {
-    -fx-fill: #444;
 }
 
 .event-date-cell.date-selected,
@@ -531,9 +536,6 @@ Text, Label, Button, TextField {
     -fx-fill: #eeeeee;
 }
 
-.event-date-cell .eventTime {
-    -fx-font-size: 10px;
-}
 
 .line-total {
     -fx-background-color: #CCCCCC;

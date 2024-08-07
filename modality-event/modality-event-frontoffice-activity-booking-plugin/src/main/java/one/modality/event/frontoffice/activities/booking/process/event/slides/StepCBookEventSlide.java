@@ -33,6 +33,7 @@ import one.modality.event.frontoffice.activities.booking.process.event.Recurring
 final class StepCBookEventSlide extends StepSlide {
 
     private static final double MAX_PAGE_WIDTH = 1200;
+    private static final double MIN_FONT_SIZE = 12;
     private static final double MAX_FONT_SIZE = 16;
 
     private final CloudImageService cloudImageService = new ClientImageService();
@@ -44,8 +45,8 @@ final class StepCBookEventSlide extends StepSlide {
         @Override
         protected void layoutChildren() {
             double fontFactor = GeneralUtility.computeFontFactor(getWidth());
-            mediumFontProperty.set(Font.font(Math.min(MAX_FONT_SIZE, StyleUtility.MEDIUM_TEXT_SIZE * fontFactor)));
-            subFontProperty.set(   Font.font(Math.min(MAX_FONT_SIZE, StyleUtility.SUB_TEXT_SIZE    * fontFactor)));
+            mediumFontProperty.set(Font.font(Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, StyleUtility.MEDIUM_TEXT_SIZE * fontFactor))));
+            subFontProperty.set(   Font.font(Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, StyleUtility.SUB_TEXT_SIZE    * fontFactor))));
             super.layoutChildren();
         }
     };
@@ -112,6 +113,8 @@ final class StepCBookEventSlide extends StepSlide {
         VBox.setMargin(eventLabel, new Insets(0,0,5,0));
 
         Label venueAddress = bindI18nEventExpression(new Label(), "venue.address");
+        venueAddress.setTextAlignment(TextAlignment.CENTER);
+        venueAddress.setWrapText(true);
         venueAddress.getStyleClass().add("event-title");
         venueAddress.setGraphicTextGap(5);
         venueAddress.setGraphic(SvgIcons.createPinpointSVGPath());

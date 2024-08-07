@@ -719,6 +719,14 @@ body, textarea /* because textarea has explicit default monospace font */ {
     border: 1px solid #cccccc;
 }
 
+.event-date-cell.date-unselected {
+    color: #444;
+}
+
+.event-date-cell .event-time {
+    color: #838788;
+}
+
 .event-date-cell.date-unselected > fx-background {
     background: none;
 }
@@ -735,10 +743,6 @@ body, textarea /* because textarea has explicit default monospace font */ {
     color: #aaaaaa;
 }
 
-.event-date-cell.date-unselected {
-    color: #444;
-}
-
 .event-date-cell.date-selected > fx-background,
 .event-date-cell.date-already-booked > fx-background {
     background-color: #F5761A;
@@ -749,16 +753,14 @@ body, textarea /* because textarea has explicit default monospace font */ {
     border: none;
 }
 
-.event-date-cell.date-selected {
+.event-date-cell.date-selected,
+.event-date-cell.date-selected .event-time {
     color: white;
 }
 
-.event-date-cell.date-already-booked {
+.event-date-cell.date-already-booked,
+.event-date-cell.date-already-booked .event-time {
     color: #eeeeee;
-}
-
-.event-date-cell .eventTime {
-    font-size: 10px;
 }
 
 

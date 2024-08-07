@@ -1,6 +1,7 @@
 package one.modality.event.frontoffice.activities.booking.process.event;
 
 import dev.webfx.extras.panes.ColumnsPane;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.stack.i18n.I18n;
 import javafx.beans.property.ObjectProperty;
@@ -8,11 +9,11 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import one.modality.base.shared.entities.ScheduledItem;
 
@@ -25,9 +26,7 @@ import java.util.stream.Collectors;
 
 public class RecurringEventSchedule {
 
-    private static final double DATE_BOX_WIDTH = 100;
-
-    private final ColumnsPane container = new ColumnsPane();
+    private final ColumnsPane columnsPane = new ColumnsPane();
     private final ObservableList<ScheduledItem> scheduledItemsList = FXCollections.observableArrayList();
     protected ObservableList<LocalDate> selectedDates = FXCollections.observableArrayList();
     private final Map<LocalDate, ScheduledItemBox> scheduledItemBoxes = new HashMap<>();
@@ -37,20 +36,32 @@ public class RecurringEventSchedule {
     //private Function<LocalDate, Node> computeNodeForExistingBookedDateFunction = localDate -> getDefaultNodeForExistingBookedDate();
     private Consumer<LocalDate> dateConsumer = null;
 
-    //We define the property on the css and the default value
+    // We define the property on the css and the default value
     private final ObjectProperty<String> selectedDateCssClassProperty = new SimpleObjectProperty<>( "date-selected");
     private final ObjectProperty<String> unselectedDateCssClassProperty = new SimpleObjectProperty<>( "date-unselected");
     //private final ObjectProperty<String> existingBookedDateNodeProperty = new SimpleObjectProperty<>( );
 
+    private final ObjectProperty<Font> dayFontProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<Font> timeFontProperty = new SimpleObjectProperty<>();
 
     public RecurringEventSchedule() {
-        container.setHgap(30);
-        container.setVgap(30);
-        container.setMinColumnWidth(DATE_BOX_WIDTH);
-        container.setMaxWidth(800);
+        columnsPane.setMaxColumnCount(4);
+        columnsPane.setMaxWidth(800);
+
+        FXProperties.runOnPropertiesChange(() -> {
+            double width = columnsPane.getWidth();
+            double gap = width / 800 * 20;
+            columnsPane.setHgap(gap);
+            columnsPane.setVgap(gap);
+            columnsPane.setMinColumnWidth(Math.max(100, width / 5));
+            columnsPane.setMinRowHeight(columnsPane.getColWidth() * 0.4);
+            double fontFactor = columnsPane.getColWidth() / 200;
+            dayFontProperty.set(Font.font(20 * fontFactor));
+            timeFontProperty.set(Font.font(15 * fontFactor));
+        }, columnsPane.widthProperty());
 
         // We bind the children to scheduled items, mapping each to a ScheduledItemBox
-        ObservableLists.bindConverted(container.getChildren(), scheduledItemsList, si -> new ScheduledItemBox(si).getContainerVBox());
+        ObservableLists.bindConverted(columnsPane.getChildren(), scheduledItemsList, si -> new ScheduledItemBox(si).getContainerVBox());
 
         // We keep the dates styles updated on selection change
         selectedDates.addListener((ListChangeListener<LocalDate>) change -> {
@@ -67,7 +78,7 @@ public class RecurringEventSchedule {
     }
 
     public Pane buildUi() {
-        return container;
+        return columnsPane;
     }
 
     /**
@@ -163,17 +174,18 @@ public class RecurringEventSchedule {
 
         private ScheduledItemBox(ScheduledItem scheduledItem) {
             containerVBox.getStyleClass().add("event-date-cell");
-            containerVBox.setMaxWidth(Double.MAX_VALUE);
-            containerVBox.setMinWidth(0);
-            containerVBox.setSpacing(5);
-            containerVBox.setPadding(new Insets(5, 0, 5, 0)); // 5px en haut et en bas
             containerVBox.setAlignment(Pos.CENTER);
-            hourText.getStyleClass().add("eventTime");
+            containerVBox.setMinWidth(0);
+            containerVBox.setMaxWidth(Double.MAX_VALUE);
+            containerVBox.setSpacing(5);
+            hourText.getStyleClass().add("event-time");
+            hourText.fontProperty().bind(timeFontProperty);
             dayAndCommentHBox.setSpacing(10);
             dayAndCommentHBox.setAlignment(Pos.CENTER);
             LocalDate date = scheduledItem.getDate();
             String dateFormatted = I18n.getI18nText("DateFormatted", I18n.getI18nText(date.getMonth().name()), date.getDayOfMonth());
             dayText.setText(dateFormatted);
+            dayText.fontProperty().bind(dayFontProperty);
             /* Commented for now as it's not used and returns an empty label that however shift the date (not centered anymore)
             Node comment = computeNodeForExistingBookedDateFunction.apply(date);
             if (comment != null) {
