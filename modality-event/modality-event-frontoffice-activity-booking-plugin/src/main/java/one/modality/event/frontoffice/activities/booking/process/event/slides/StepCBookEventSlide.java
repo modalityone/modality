@@ -15,6 +15,7 @@ import javafx.beans.property.*;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.image.Image;
@@ -100,20 +101,16 @@ final class StepCBookEventSlide extends StepSlide {
     public void buildSlideUi() {
         Label eventLabel = bindI18nEventExpression(new Label(),"i18n(this)");
         eventLabel.setTextAlignment(TextAlignment.CENTER);
-        //eventLabel.setWrapText(true);
         eventLabel.getStyleClass().add("event-title");
         eventLabel.fontProperty().bind(mediumFontProperty);
-        VBox.setMargin(eventLabel, new Insets(0,0,5,0));
 
         Label venueAddress = bindI18nEventExpression(new Label(), "venue.address");
         venueAddress.setTextAlignment(TextAlignment.CENTER);
-        //venueAddress.setWrapText(true);
         venueAddress.getStyleClass().add("event-title");
         venueAddress.setGraphicTextGap(5);
         venueAddress.setGraphic(SvgIcons.createPinpointSVGPath());
         venueAddress.fontProperty().bind(subFontProperty);
 
-        VBox.setMargin(eventShortDescriptionHtmlText, new Insets(20, 0, 0, 0));
         eventShortDescriptionHtmlText.fontProperty().bind(subFontProperty);
         eventShortDescriptionHtmlText.getStyleClass().add("event-title");
         eventShortDescriptionHtmlText.setFocusTraversable(false);
@@ -121,7 +118,7 @@ final class StepCBookEventSlide extends StepSlide {
         ScalePane imageScalePane = new ScalePane(ScaleMode.BEST_FIT, imageView);
         imageScalePane.setCanGrow(false);
 
-        VBox eventShortTextBox = new VBox(5,
+        VBox eventShortTextBox = new VBox(
                 eventLabel,
                 venueAddress,
                 eventShortDescriptionHtmlText
@@ -139,8 +136,8 @@ final class StepCBookEventSlide extends StepSlide {
         gridPane.getColumnConstraints().addAll(c1, c2);
         gridPane.add(imageScalePane, 0, 0);
         gridPane.add(eventShortTextScalePane, 1, 0);
-        //gridPane.setAlignment(Pos.CENTER);
         GridPane.setHalignment(imageScalePane, HPos.LEFT);
+        GridPane.setValignment(eventShortTextScalePane, VPos.CENTER);
 
         VBox orangePane = new VBox(gridPane); // For any reason, using MonoPane makes height grows when width grows
         orangePane.setAlignment(Pos.CENTER);
@@ -158,6 +155,8 @@ final class StepCBookEventSlide extends StepSlide {
             double orangeVerticalGap = maxPageWidth * 0.1;
             orangePane.setPadding(new Insets(orangeVerticalGap, 0, orangeVerticalGap, 0));
             gridPane.setMaxWidth(maxPageWidth);
+            VBox.setMargin(eventLabel, new Insets(0,0,5 * maxPageWidth / MAX_PAGE_WIDTH,0));
+            VBox.setMargin(eventShortDescriptionHtmlText, new Insets(20 * maxPageWidth / MAX_PAGE_WIDTH, 0, 0, 0));
             eventShortDescriptionHtmlText.setMaxWidth(maxPageWidth * 0.6);
             digitsTransitionPane.setMaxWidth(maxPageWidth);
             digitsTransitionPane.setPadding(new Insets(maxPageWidth * 0.03, 0, 0, 0));
