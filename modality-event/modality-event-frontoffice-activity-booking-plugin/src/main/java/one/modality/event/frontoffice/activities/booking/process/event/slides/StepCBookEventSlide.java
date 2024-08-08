@@ -60,7 +60,7 @@ final class StepCBookEventSlide extends StepSlide {
     public void onEventChanged(Event event) {
         workingBookingLoaded = false;
         eventDescriptionLoadedProperty.set(false);
-        event.onExpressionLoaded("name, shortDescription, description, venue.(name, label, address)")
+        event.onExpressionLoaded("name, shortDescription, description, venue.(name, label, address), organization.country")
                 .onFailure(ex -> displayErrorMessage(ex.getMessage()))
                 .onSuccess(x -> UiScheduler.runInUiThread(this::onEventDescriptionLoaded));
 

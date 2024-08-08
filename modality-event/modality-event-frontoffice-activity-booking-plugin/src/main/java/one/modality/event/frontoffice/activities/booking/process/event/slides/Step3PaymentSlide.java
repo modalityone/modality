@@ -15,10 +15,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import one.modality.base.shared.entities.markers.HasPersonalDetails;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
+import one.modality.event.frontoffice.activities.booking.fx.FXGuestToBook;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.booking.process.event.WorkingBookingProperties;
 
@@ -133,8 +135,11 @@ final class Step3PaymentSlide extends StepSlide {
                                         Console.log(paymentResult);
                                     }))
                                     .onSuccess(paymentResult -> Platform.runLater(() -> {
-                                        WebPaymentForm newWebPaymentForm2 = new WebPaymentForm(paymentResult, FXUserPerson.getUserPerson());
-                                        setWebPaymentForm(newWebPaymentForm2);
+                                        HasPersonalDetails buyerDetails = FXUserPerson.getUserPerson();
+                                        if (buyerDetails == null)
+                                            buyerDetails = FXGuestToBook.getGuestToBook();
+                                        WebPaymentForm retryWebPaymentForm = new WebPaymentForm(paymentResult, buyerDetails);
+                                        setWebPaymentForm(retryWebPaymentForm);
                                         mainVbox.getChildren().remove(retryPayButton);
                                     }));
                         });

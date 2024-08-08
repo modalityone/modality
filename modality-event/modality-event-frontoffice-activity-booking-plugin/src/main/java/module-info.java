@@ -15,6 +15,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires modality.base.client.mainframe.dialogarea.fx;
     requires modality.base.client.tile;
     requires modality.base.client.util;
+    requires modality.base.client.validation;
     requires modality.base.frontoffice.mainframe.backgroundnode.fx;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;

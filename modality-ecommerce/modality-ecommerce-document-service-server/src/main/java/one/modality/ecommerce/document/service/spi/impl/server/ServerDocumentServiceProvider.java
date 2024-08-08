@@ -135,8 +135,11 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                 AddDocumentEvent ade = (AddDocumentEvent) e;
                 document = updateStore.insertEntity(Document.class, ade.getDocumentPrimaryKey());
                 document.setEvent(ade.getEventPrimaryKey());
-                document.setPerson(ade.getPersonPrimaryKey());
                 document.setFieldValue("activity", 12); // GP TODO: remove activity from DB
+                document.setPerson(ade.getPersonPrimaryKey());
+                document.setFirstName(ade.getFirstName());
+                document.setLastName(ade.getLastName());
+                document.setEmail(ade.getEmail());
             } else if (e instanceof AddDocumentLineEvent) {
                 AddDocumentLineEvent adle = (AddDocumentLineEvent) e;
                 documentLine = updateStore.insertEntity(DocumentLine.class, adle.getDocumentLinePrimaryKey());

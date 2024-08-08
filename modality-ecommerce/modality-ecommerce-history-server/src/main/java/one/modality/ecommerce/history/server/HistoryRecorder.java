@@ -64,7 +64,7 @@ public final class HistoryRecorder {
                     history.setUsername(userClaims.getUsername());
                     return Future.succeededFuture(history);
                 }, ex -> {
-                    history.setUsername("Online user");
+                    history.setUsername("Online guest");
                     return Future.succeededFuture(history);
                 });
     }

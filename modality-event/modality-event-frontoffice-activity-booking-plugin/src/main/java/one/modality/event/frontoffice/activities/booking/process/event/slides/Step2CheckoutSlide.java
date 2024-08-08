@@ -1,8 +1,10 @@
 package one.modality.event.frontoffice.activities.booking.process.event.slides;
 
 import dev.webfx.extras.panes.ColumnsPane;
+import dev.webfx.extras.panes.FlipPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
@@ -10,6 +12,8 @@ import dev.webfx.platform.util.time.Times;
 import dev.webfx.platform.windowhistory.WindowHistory;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
+import dev.webfx.stack.ui.controls.MaterialFactoryMixin;
+import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -21,21 +25,23 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.icons.SvgIcons;
-import one.modality.base.shared.entities.Attendance;
-import one.modality.base.shared.entities.Item;
-import one.modality.base.shared.entities.Person;
-import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.client.validation.ModalityValidationSupport;
+import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
+import one.modality.base.shared.entities.markers.HasPersonalDetails;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.booking.WorkingBooking;
+import one.modality.event.frontoffice.activities.booking.fx.FXGuestToBook;
 import one.modality.event.frontoffice.activities.booking.fx.FXPersonToBook;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountRouting;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
@@ -45,14 +51,15 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Stream;
 
-final class Step2CheckoutSlide extends StepSlide {
+final class Step2CheckoutSlide extends StepSlide implements MaterialFactoryMixin {
 
     private static final double MAX_SLIDE_WIDTH = 800;
 
     private final GridPane summaryGridPane = new GridPane();
     // Node property that will be managed by the sub-router to mount the CheckoutAccountActivity (when routed)
     private final ObjectProperty<Node> checkoutAccountMountNodeProperty = new SimpleObjectProperty<>();
-    private final Button submitButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "Submit"));
+    private final Button submitButton      = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "Submit"));
+    private final Button guestSubmitButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "Submit"));
     private final BooleanProperty step1PersonToBookWasShownProperty = new SimpleBooleanProperty();
 
     public Step2CheckoutSlide(BookEventActivity bookEventActivity) {
@@ -96,30 +103,78 @@ final class Step2CheckoutSlide extends StepSlide {
         VBox.setMargin(submitButton, new Insets(20, 0, 20, 0));
 
         // Adding the container that will display the CheckoutAccountActivity (and eventually the login page before)
-        BorderPane loginContainer = new BorderPane();
-        //VBox.setMargin(loginContainer, new Insets(0, 0, 50, 0)); // Some good margins before and after
+        BorderPane signInContainer = new BorderPane();
+        Label loginLabel = Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), "LoginBeforeBooking")));
+        Hyperlink orGuestLink = Bootstrap.textPrimary(I18nControls.bindI18nProperties(new Hyperlink(), "OrBookAsGuest"));
+        VBox signIntopVBox = new VBox(10, loginLabel, orGuestLink);
+        signIntopVBox.setAlignment(Pos.TOP_CENTER);
+        BorderPane.setMargin(signIntopVBox, new Insets(0, 0, 20,0));
+        signInContainer.setTop(signIntopVBox);
+
+        BorderPane guestContainer = new BorderPane();
+        Label guestDetailsLabel = Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), "GuestDetails")));
+        Hyperlink orAccountLink = Bootstrap.textPrimary(I18nControls.bindI18nProperties(new Hyperlink(), "OrBookUsingAccount"));
+        VBox guestTopVBox = new VBox(10, guestDetailsLabel, orAccountLink);
+        guestTopVBox.setAlignment(Pos.TOP_CENTER);
+        BorderPane.setMargin(guestTopVBox, new Insets(0, 0, 20,0));
+        guestContainer.setTop(guestTopVBox);
+        LayoutUtil.setMaxWidthToInfinite(guestSubmitButton);
+        GridPane.setMargin(guestSubmitButton, new Insets(40, 0, 0, 0));
+        TextField firstNameTextField = newMaterialTextField("FirstName");
+        TextField lastNameTextField = newMaterialTextField("LastName");
+        TextField emailTextField = newMaterialTextField("Email");
+        GridPane guestGridPane = new GridPaneBuilder()
+                .addNodeFillingRow(firstNameTextField)
+                .addNodeFillingRow(lastNameTextField)
+                .addNodeFillingRow(emailTextField)
+                .addNodeFillingRow(guestSubmitButton)
+                .build();
+        guestGridPane.setMaxSize(400, Region.USE_PREF_SIZE);
+        guestGridPane.setPadding(new Insets(40));
+        guestGridPane.setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(20), null)));
+        guestGridPane.setBorder(new Border(new BorderStroke(Color.gray(0.8), BorderStrokeStyle.SOLID, new CornerRadii(20), BorderStroke.THIN)));
+        guestGridPane.setEffect(new DropShadow(10, Color.gray(0.8)));
+        guestContainer.setCenter(guestGridPane);
+        ModalityValidationSupport validationSupport = new ModalityValidationSupport();
+        validationSupport.addRequiredInput(firstNameTextField, "FirstName");
+        validationSupport.addRequiredInput(lastNameTextField, "LastName");
+        validationSupport.addEmailValidation(emailTextField, emailTextField, "Email");
+        guestSubmitButton.setOnAction(event -> {
+            if (validationSupport.isValid()) {
+                Document document = getWorkingBookingProperties().getWorkingBooking().getLastestDocumentAggregate().getDocument();
+                document.setFirstName(firstNameTextField.getText());
+                document.setLastName(lastNameTextField.getText());
+                document.setEmail(emailTextField.getText());
+                document.setCountry(getEvent().getOrganization().getCountry());
+                FXGuestToBook.setGuestToBook(document);
+                submit();
+            }
+        });
+
+        FlipPane flipPane = new FlipPane();
+        flipPane.setAlignment(Pos.TOP_CENTER);
+        flipPane.setFront(signInContainer);
+        flipPane.setBack(guestContainer);
+        orGuestLink.setOnAction(e -> flipPane.flipToBack());
+        orAccountLink.setOnAction(e -> flipPane.flipToFront());
 
         mainVbox.getChildren().setAll(
                 summaryGridPane,
                 personToBookMonoPane,
                 submitButton,
-                loginContainer
+                flipPane
         );
 
-        loginContainer.centerProperty().bind(checkoutAccountMountNodeProperty); // managed by sub-router
+        signInContainer.centerProperty().bind(checkoutAccountMountNodeProperty); // managed by sub-router
 
         FXProperties.runNowAndOnPropertiesChange(() -> {
             Person personToBook = FXPersonToBook.getPersonToBook();
             boolean loggedIn = personToBook != null; // Means that the user is logged in with an account in Modality
-            if (!loggedIn && loginContainer.getCenter() == null) {
+            if (!loggedIn && signInContainer.getCenter() == null) {
                 WindowHistory.getProvider().push(CheckoutAccountRouting.getPath());
             }
-            Label pleaseLoginLabel = Bootstrap.textPrimary(I18nControls.bindI18nProperties(new Label(), "PleaseLogin"));
-            BorderPane.setAlignment(pleaseLoginLabel, Pos.TOP_CENTER);
-            BorderPane.setMargin(pleaseLoginLabel, new Insets(0, 0, 20,0));
-            loginContainer.setTop(loggedIn ? null : pleaseLoginLabel);
-            loginContainer.setVisible(!loggedIn);
-            loginContainer.setManaged(!loggedIn);
+            flipPane.setVisible(!loggedIn);
+            flipPane.setManaged(!loggedIn);
             submitButton.setVisible(loggedIn);
             submitButton.setManaged(loggedIn);
         }, FXPersonToBook.personToBookProperty());
@@ -225,6 +280,7 @@ final class Step2CheckoutSlide extends StepSlide {
 
     private void submit() {
         turnOnButtonWaitMode(submitButton);
+        turnOnButtonWaitMode(guestSubmitButton);
 
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
         WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
@@ -280,7 +336,6 @@ final class Step2CheckoutSlide extends StepSlide {
     }
 
     private void initiatePayment(Object documentPrimaryKey) {
-        Person userPerson = FXUserPerson.getUserPerson();
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
         PaymentService.initiatePayment(
                         ClientPaymentUtil.createInitiatePaymentArgument(workingBookingProperties.getBalance(), documentPrimaryKey)
@@ -291,7 +346,11 @@ final class Step2CheckoutSlide extends StepSlide {
                 }))
                 .onSuccess(paymentResult -> UiScheduler.runInUiThread(() -> {
                     turnOffButtonWaitMode(submitButton, "Submit");
-                    WebPaymentForm webPaymentForm = new WebPaymentForm(paymentResult, userPerson);
+                    turnOffButtonWaitMode(guestSubmitButton, "Submit");
+                    HasPersonalDetails buyerDetails = FXUserPerson.getUserPerson();
+                    if (buyerDetails == null)
+                        buyerDetails = FXGuestToBook.getGuestToBook();
+                    WebPaymentForm webPaymentForm = new WebPaymentForm(paymentResult, buyerDetails);
                     displayPaymentSlide(webPaymentForm);
                 }));
     }

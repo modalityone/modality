@@ -3,6 +3,7 @@ package one.modality.event.frontoffice.activities.booking;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
+import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityStore;
 import one.modality.base.shared.entities.*;
 import one.modality.ecommerce.document.service.*;
@@ -151,14 +152,15 @@ public class WorkingBooking {
     public Future<SubmitDocumentChangesResult> submitChanges(String historyComment) {
         // In case the booking is not linked to the booker account (because the user was not logged-in at the start of
         // the booking process), we set it now (the front-office probably forced the user to login before submit).
-        Person personToBook = FXPersonToBook.getPersonToBook();
-        if (document.getPerson() == null && personToBook != null) {
-            document.setPerson(personToBook);
+        if (document.isNew()) {
             documentChanges.forEach(e -> {
                 if (e instanceof AddDocumentEvent) {
                     AddDocumentEvent ade = (AddDocumentEvent) e;
                     if (ade.getPersonPrimaryKey() == null)
-                        ade.setPersonPrimaryKey(personToBook.getPrimaryKey());
+                        ade.setPersonPrimaryKey(Entities.getPrimaryKey(FXPersonToBook.getPersonToBook()));
+                    ade.setFirstName(document.getFirstName());
+                    ade.setLastName(document.getLastName());
+                    ade.setEmail(document.getEmail());
                 }
             });
         }
