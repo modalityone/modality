@@ -8,6 +8,7 @@ import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
+import dev.webfx.stack.ui.controls.button.ButtonFactory;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -79,6 +80,7 @@ final class Step1BookDatesSlide extends StepSlide {
 
         Button checkoutButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "ProceedCheckout"));
         checkoutButton.setMinWidth(300);
+        ButtonFactory.resetDefaultButton(checkoutButton);
         ScalePane checkoutScalePane = new ScalePane(ScaleMode.FIT_WIDTH, checkoutButton);
         checkoutScalePane.setCanGrow(false);
         checkoutScalePane.setMaxWidth(Double.MAX_VALUE);

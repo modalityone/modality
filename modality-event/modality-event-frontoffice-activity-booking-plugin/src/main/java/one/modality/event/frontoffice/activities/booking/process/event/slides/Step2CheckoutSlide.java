@@ -5,6 +5,7 @@ import dev.webfx.extras.panes.FlipPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.layout.LayoutUtil;
+import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
@@ -155,8 +156,16 @@ final class Step2CheckoutSlide extends StepSlide implements MaterialFactoryMixin
         flipPane.setAlignment(Pos.TOP_CENTER);
         flipPane.setFront(signInContainer);
         flipPane.setBack(guestContainer);
-        orGuestLink.setOnAction(e -> flipPane.flipToBack());
-        orAccountLink.setOnAction(e -> flipPane.flipToFront());
+        orGuestLink.setOnAction(e -> {
+            flipPane.flipToBack();
+            guestSubmitButton.setDefaultButton(true);
+            SceneUtil.autoFocusIfEnabled(firstNameTextField);
+            UiScheduler.scheduleDelay(500, () -> SceneUtil.autoFocusIfEnabled(firstNameTextField));
+        });
+        orAccountLink.setOnAction(e -> {
+            flipPane.flipToFront();
+            guestSubmitButton.setDefaultButton(false);
+        });
 
         mainVbox.getChildren().setAll(
                 summaryGridPane,
@@ -177,6 +186,7 @@ final class Step2CheckoutSlide extends StepSlide implements MaterialFactoryMixin
             flipPane.setManaged(!loggedIn);
             submitButton.setVisible(loggedIn);
             submitButton.setManaged(loggedIn);
+            submitButton.setDefaultButton(loggedIn);
         }, FXPersonToBook.personToBookProperty());
     }
 

@@ -71,6 +71,7 @@ final class Step3PaymentSlide extends StepSlide {
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
         Button payButton    = Bootstrap.largeSuccessButton(  I18nControls.bindI18nProperties(new Button(), "Pay", workingBookingProperties.formattedBalanceProperty()));
         Button cancelButton = Bootstrap.largeSecondaryButton(I18nControls.bindI18nProperties(new Button(), "Cancel"));
+        payButton.setDefaultButton(true);
         FXProperties.runNowAndOnPropertiesChange(() -> {
             if (webPaymentForm.isUserInteractionAllowed()) {
                 turnOffButtonWaitMode(payButton, "Pay");
