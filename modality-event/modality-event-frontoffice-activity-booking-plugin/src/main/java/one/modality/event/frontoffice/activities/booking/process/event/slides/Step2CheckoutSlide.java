@@ -4,7 +4,6 @@ import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.kit.util.properties.Unregisterable;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.time.Times;
@@ -55,7 +54,6 @@ final class Step2CheckoutSlide extends StepSlide {
     private final ObjectProperty<Node> checkoutAccountMountNodeProperty = new SimpleObjectProperty<>();
     private final Button submitButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "Submit"));
     private final BooleanProperty step1PersonToBookWasShownProperty = new SimpleBooleanProperty();
-    private Unregisterable personToBookListener;
 
     public Step2CheckoutSlide(BookEventActivity bookEventActivity) {
         super(bookEventActivity);
@@ -73,7 +71,7 @@ final class Step2CheckoutSlide extends StepSlide {
     }
 
     @Override
-    void buildSlideUi() {
+    void buildSlideUi() { // Called only once
         mainVbox.setMaxWidth(MAX_SLIDE_WIDTH);
 
         ColumnConstraints c1 = new ColumnConstraints();
@@ -108,26 +106,29 @@ final class Step2CheckoutSlide extends StepSlide {
                 loginContainer
         );
 
-        // Don't know why but doing mono directional binding can cause bind exceptions on next iteration...
-        loginContainer.centerProperty().bindBidirectional(checkoutAccountMountNodeProperty); // managed by sub-router
+        loginContainer.centerProperty().bind(checkoutAccountMountNodeProperty); // managed by sub-router
 
-        if (personToBookListener == null) {
-            personToBookListener = FXProperties.runNowAndOnPropertiesChange(() -> {
-                Person personToBook = FXPersonToBook.getPersonToBook();
-                boolean loggedIn = personToBook != null; // Means that the user is logged in with an account in Modality
-                if (!loggedIn && loginContainer.getCenter() == null) {
-                    WindowHistory.getProvider().push(CheckoutAccountRouting.getPath());
-                }
-                Label pleaseLoginLabel = Bootstrap.textPrimary(I18nControls.bindI18nProperties(new Label(), "PleaseLogin"));
-                BorderPane.setAlignment(pleaseLoginLabel, Pos.TOP_CENTER);
-                BorderPane.setMargin(pleaseLoginLabel, new Insets(0, 0, 20,0));
-                loginContainer.setTop(loggedIn ? null : pleaseLoginLabel);
-                loginContainer.setVisible(!loggedIn);
-                loginContainer.setManaged(!loggedIn);
-                submitButton.setVisible(loggedIn);
-                submitButton.setManaged(loggedIn);
-            }, FXPersonToBook.personToBookProperty());
-        }
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            Person personToBook = FXPersonToBook.getPersonToBook();
+            boolean loggedIn = personToBook != null; // Means that the user is logged in with an account in Modality
+            if (!loggedIn && loginContainer.getCenter() == null) {
+                WindowHistory.getProvider().push(CheckoutAccountRouting.getPath());
+            }
+            Label pleaseLoginLabel = Bootstrap.textPrimary(I18nControls.bindI18nProperties(new Label(), "PleaseLogin"));
+            BorderPane.setAlignment(pleaseLoginLabel, Pos.TOP_CENTER);
+            BorderPane.setMargin(pleaseLoginLabel, new Insets(0, 0, 20,0));
+            loginContainer.setTop(loggedIn ? null : pleaseLoginLabel);
+            loginContainer.setVisible(!loggedIn);
+            loginContainer.setManaged(!loggedIn);
+            submitButton.setVisible(loggedIn);
+            submitButton.setManaged(loggedIn);
+        }, FXPersonToBook.personToBookProperty());
+    }
+
+    @Override
+    void reset() {
+        // super.reset(); // No, we don't rebuild the whole UI, as this can raise an exception with the mount node binding
+        rebuildSummaryGridPane(); // We just need to rebuild the summary grid pane
     }
 
     private void rebuildSummaryGridPane() {

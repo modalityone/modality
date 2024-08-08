@@ -33,12 +33,11 @@ final class DigitsSlideController {
     }
 
     void onWorkingBookingLoaded() {
-        //step1BookDatesSlide.reset();
+        step1BookDatesSlide.onWorkingBookingLoaded();
         step2CheckoutSlide.reset();
         step3PaymentSlide.reset();
         step5ErrorSlide.reset();
 
-        step1BookDatesSlide.onWorkingBookingLoaded();
         if (displayedSlide != step2CheckoutSlide) {
             transitionPane.replaceContentNoAnimation(step1BookDatesSlide.get());
             displayedSlide = step1BookDatesSlide;
