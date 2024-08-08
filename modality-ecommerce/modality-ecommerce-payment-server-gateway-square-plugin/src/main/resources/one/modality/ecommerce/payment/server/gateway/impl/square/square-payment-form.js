@@ -132,7 +132,7 @@ import(square_webPaymentsSDKUrl)
                     familyName: lastName,
                     email: email,
                     phone: phone,
-                    addressLines: [address],
+                    addressLines: address ? [address] : [],
                     city: city,
                     state: state,
                     countryCode: countryCode,
