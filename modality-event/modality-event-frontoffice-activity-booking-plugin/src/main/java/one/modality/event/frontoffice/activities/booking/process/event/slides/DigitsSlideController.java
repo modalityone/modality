@@ -34,7 +34,8 @@ final class DigitsSlideController {
 
     void onWorkingBookingLoaded() {
         step1BookDatesSlide.onWorkingBookingLoaded();
-        step2CheckoutSlide.reset();
+
+        // TODO: avoid rebuilding the whole UI for these remaining slides
         step3PaymentSlide.reset();
         step5ErrorSlide.reset();
 
@@ -44,8 +45,6 @@ final class DigitsSlideController {
             // Sub-routing node binding (displaying the possible sub-routing account node in the appropriate place in step3)
             step2CheckoutSlide.accountMountNodeProperty().bind(bookEventActivity.mountNodeProperty());
         } else {
-            // Rebuilding the ui if this happens in checkout date because the summary needs to be updated
-            step2CheckoutSlide.reset();
             displayCheckoutSlide();
         }
     }
@@ -63,6 +62,7 @@ final class DigitsSlideController {
         if (displayedSlide == step1BookDatesSlide) {
             step2CheckoutSlide.setStep1PersonToBookWasShown(FXPersonToBook.getPersonToBook() != null);
         }
+        step2CheckoutSlide.reset(); // ensures the summary is updated
         displaySlide(step2CheckoutSlide);
     }
 
