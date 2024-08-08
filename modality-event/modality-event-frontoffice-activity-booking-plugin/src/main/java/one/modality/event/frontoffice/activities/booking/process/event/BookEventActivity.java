@@ -85,6 +85,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     public void onReachingEndSlide() {
         FXEventId.setEventId(null); // This is to ensure that next time the user books an event in this same session, we
         FXCollapseFooter.setCollapseFooter(false);
+        getRecurringEventSchedule().clearClickedDates();
     }
 
     @Override
@@ -141,18 +142,10 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
                         workingBookingProperties.setWorkingBooking(workingBooking);
                         syncWorkingBookingFromEventSchedule();
                         // Informing the slide controller about that change
-                        lettersSlideController.onWorkingBookingLoaded(); // No selected dates in event schedule at this stage
+                        lettersSlideController.onWorkingBookingLoaded();
                     }))
             ;
         }, FXPersonToBook.personToBookProperty());
-    }
-
-    public void syncEventScheduleFromWorkingBooking() {
-        WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
-        List<Attendance> attendanceAdded = workingBooking.getAttendanceAdded();
-        List<LocalDate> datesAdded = Collections.map(attendanceAdded, Attendance::getDate);
-        getRecurringEventSchedule().setScheduledItems(workingBookingProperties.getScheduledItemsOnEvent());
-        getRecurringEventSchedule().selectDates(datesAdded);
     }
 
     void syncWorkingBookingFromEventSchedule() {
@@ -164,6 +157,15 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
         workingBooking.cancelChanges(); // weird, but this is to ensure the document is created
         workingBooking.bookScheduledItems(scheduledItemsAdded); // Booking the selected dates
+    }
+
+    public void syncEventScheduleFromWorkingBooking() {
+        WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
+        List<Attendance> attendanceAdded = workingBooking.getAttendanceAdded();
+        List<LocalDate> datesAdded = Collections.map(attendanceAdded, Attendance::getDate);
+        RecurringEventSchedule recurringEventSchedule = getRecurringEventSchedule();
+        recurringEventSchedule.setScheduledItems(workingBookingProperties.getScheduledItemsOnEvent(), true);
+        recurringEventSchedule.addSelectedDates(datesAdded);
     }
 
     @Override

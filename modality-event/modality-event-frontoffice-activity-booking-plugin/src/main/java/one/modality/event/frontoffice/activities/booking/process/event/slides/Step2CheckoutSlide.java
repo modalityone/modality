@@ -171,7 +171,7 @@ final class Step2CheckoutSlide extends StepSlide {
             trashOption.setOnAction(event -> {
                 workingBooking.removeAttendance(a);
                 if (!existing) {
-                    getRecurringEventSchedule().getSelectedDates().remove(date);
+                    getRecurringEventSchedule().removeClickedDate(date);
                 }
                 rebuildSummaryGridPane();
             });

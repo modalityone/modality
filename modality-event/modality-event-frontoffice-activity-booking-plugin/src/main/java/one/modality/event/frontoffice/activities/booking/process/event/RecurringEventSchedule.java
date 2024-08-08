@@ -3,11 +3,11 @@ package one.modality.event.frontoffice.activities.booking.process.event;
 import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
+import dev.webfx.platform.util.collection.HashList;
 import dev.webfx.stack.i18n.I18n;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
@@ -28,13 +28,14 @@ public class RecurringEventSchedule {
 
     private final ColumnsPane columnsPane = new ColumnsPane();
     private final ObservableList<ScheduledItem> scheduledItemsList = FXCollections.observableArrayList();
-    protected ObservableList<LocalDate> selectedDates = FXCollections.observableArrayList();
+    protected ObservableList<LocalDate> selectedDates = FXCollections.observableArrayList(); // indicates the dates to add to the current booking
+    private final List<LocalDate> clickedDates = new HashList<>(); // Same as selected dates, or larger as it keeps clicked dates when changing the person to book
     private final Map<LocalDate, ScheduledItemBox> scheduledItemBoxes = new HashMap<>();
 
     private final Function<LocalDate, String> computeCssClassForSelectedDateFunction = localDate -> getSelectedDateCssClass();
     private Function<LocalDate, String> computeCssClassForUnselectedDateFunction = localDate -> getUnselectedDateCssClass();
     //private Function<LocalDate, Node> computeNodeForExistingBookedDateFunction = localDate -> getDefaultNodeForExistingBookedDate();
-    private Consumer<LocalDate> dateConsumer = null;
+    private Consumer<LocalDate> dateClickedHandler = null;
 
     // We define the property on the css and the default value
     private final ObjectProperty<String> selectedDateCssClassProperty = new SimpleObjectProperty<>( "date-selected");
@@ -64,17 +65,24 @@ public class RecurringEventSchedule {
         ObservableLists.bindConverted(columnsPane.getChildren(), scheduledItemsList, si -> new ScheduledItemBox(si).getContainerVBox());
 
         // We keep the dates styles updated on selection change
-        selectedDates.addListener((ListChangeListener<LocalDate>) change -> {
+        ObservableLists.runOnListChange(change -> {
             while (change.next()) {
                 change.getAddedSubList().forEach(this::changeCssPropertyForSelectedDate);
                 change.getRemoved().forEach(this::changeCssPropertyForSelectedDate);
             }
-        });
+        }, selectedDates);
     }
 
-    public void setScheduledItems(List<ScheduledItem> siList) {
-        siList.sort(Comparator.comparing(ScheduledItem::getDate));
-        scheduledItemsList.setAll(siList);
+    public void setScheduledItems(List<ScheduledItem> scheduledItems, boolean reapplyClickedDates) {
+        scheduledItems.sort(Comparator.comparing(ScheduledItem::getDate));
+        scheduledItemsList.setAll(scheduledItems);
+        selectedDates.clear();
+        List<LocalDate> clickedDatesToReapply = !reapplyClickedDates ? Collections.emptyList() : scheduledItemsList.stream()
+                .map(ScheduledItem::getDate)
+                .filter(clickedDates::contains)
+                .collect(Collectors.toList());
+        clickedDates.clear();
+        addClickedDates(clickedDatesToReapply);
     }
 
     public Pane buildUi() {
@@ -83,10 +91,10 @@ public class RecurringEventSchedule {
 
     /**
      * This method can be used if we want to customize the behaviour when clicking on a date
-     * @param consumer the consumer
+     * @param dateClickedHandler the dateClickedHandler
      */
-    public void setOnDateClicked(Consumer<LocalDate> consumer) {
-        dateConsumer = consumer;
+    public void setOnDateClicked(Consumer<LocalDate> dateClickedHandler) {
+        this.dateClickedHandler = dateClickedHandler;
     }
 
     public void setUnselectedDateCssGetter(Function<LocalDate,String> function) {
@@ -102,34 +110,46 @@ public class RecurringEventSchedule {
             changeBackgroundWhenSelected(date, selectedDates.contains(date));
     }
 
-    public void processDateSelected(LocalDate date) {
+    public void processClickedDate(LocalDate date) {
         if (selectedDates.contains(date)) {
-            removeSelectedDate(date);
+            removeClickedDate(date);
         } else {
-            addSelectedDate(date);
+            addClickedDate(date);
         }
         Collections.sort(selectedDates);
     }
 
-    protected void addSelectedDate(LocalDate date) {
+    public void addClickedDate(LocalDate date) {
+        clickedDates.add(date);
         selectedDates.add(date);
     }
 
-    public void selectDates(List <LocalDate> list) {
-        selectedDates.clear();
-        scheduledItemsList.forEach(si-> {
-            if (list.contains(si.getDate())) {
-                selectedDates.add(si.getDate());
-            }
-        });
+    public void removeClickedDate(LocalDate date) {
+        clickedDates.remove(date);
+        selectedDates.remove(date);
+    }
+
+
+    public void clearClickedDates() {
+        clickedDates.clear();
+    }
+
+    public void addSelectedDates(List<LocalDate> dates) {
+        scheduledItemsList.stream()
+                .map(ScheduledItem::getDate)
+                .filter(dates::contains)
+                .forEach(selectedDates::add);
+    }
+
+    public void addClickedDates(List<LocalDate> dates) {
+        scheduledItemsList.stream()
+                .map(ScheduledItem::getDate)
+                .filter(dates::contains)
+                .forEach(this::addClickedDate);
     }
 
     public ObservableList<LocalDate> getSelectedDates() {
         return selectedDates;
-    }
-
-    protected void removeSelectedDate(LocalDate date) {
-        selectedDates.remove(date);
     }
 
     protected void changeBackgroundWhenSelected(LocalDate date, boolean isSelected) {
@@ -198,10 +218,10 @@ public class RecurringEventSchedule {
             hourText.setText(I18n.getI18nText("AtTime", startTime.toString()));
             scheduledItemBoxes.put(date, this);
             containerVBox.setOnMouseClicked(event -> {
-                if (dateConsumer == null) {
-                    processDateSelected(date);
+                if (dateClickedHandler == null) {
+                    processClickedDate(date);
                 } else {
-                    dateConsumer.accept(date);
+                    dateClickedHandler.accept(date);
                 }
             });
             changeCssPropertyForSelectedDate(date);

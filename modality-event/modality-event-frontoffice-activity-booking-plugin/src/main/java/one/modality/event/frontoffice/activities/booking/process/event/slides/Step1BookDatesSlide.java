@@ -129,7 +129,7 @@ final class Step1BookDatesSlide extends StepSlide {
             if (unselectableDate.contains(localDate)) {
                 return;
             }
-            recurringEventSchedule.processDateSelected(localDate);
+            recurringEventSchedule.processClickedDate(localDate);
             workingBookingProperties.updateAll();
         });
 
@@ -163,9 +163,9 @@ final class Step1BookDatesSlide extends StepSlide {
 
         // Arming the "Select all classes" hyperlink. We create a list of dates that will contain all the selectable
         // dates = the ones that are not in the past, and not already booked
-        List<LocalDate> selectableDates = Collections.map(scheduledItemsOnEvent, ScheduledItem::getDate);
-        selectableDates.removeAll(unselectableDate);
-        selectAllClassesHyperlink.setOnAction((event -> recurringEventSchedule.selectDates(selectableDates)));
+        List<LocalDate> allSelectableDates = Collections.map(scheduledItemsOnEvent, ScheduledItem::getDate);
+        allSelectableDates.removeAll(unselectableDate);
+        selectAllClassesHyperlink.setOnAction((event -> recurringEventSchedule.addClickedDates(allSelectableDates)));
     }
 
     RecurringEventSchedule getRecurringEventSchedule() {
