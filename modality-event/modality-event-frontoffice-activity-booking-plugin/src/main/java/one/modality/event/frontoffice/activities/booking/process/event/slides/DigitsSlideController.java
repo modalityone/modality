@@ -26,6 +26,7 @@ final class DigitsSlideController {
         step3PaymentSlide      = new Step3PaymentSlide(bookEventActivity);
         step4CancellationSlide = new Step4CancellationSlide(bookEventActivity);
         step5ErrorSlide        = new Step5ErrorSlide(bookEventActivity);
+        transitionPane.setScrollToTop(true);
     }
 
     Region getContainer() {
