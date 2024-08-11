@@ -1,7 +1,6 @@
 package one.modality.base.frontoffice.utility;
 
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.platform.async.Handler;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
@@ -24,6 +23,8 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import one.modality.base.frontoffice.fx.FXApp;
+
+import java.util.function.Consumer;
 
 public class GeneralUtility {
 
@@ -328,14 +329,14 @@ public class GeneralUtility {
         }, imageView.imageProperty());
     }*/
 
-    public static void onNodeClickedWithoutScroll(Handler<MouseEvent> clickHandler, Node... nodes) {
+    public static void onNodeClickedWithoutScroll(Consumer<MouseEvent> clickHandler, Node... nodes) {
         double[] screenPressedY = {0};
         Arrays.forEach(nodes, node -> {
             node.setCursor(Cursor.HAND);
             node.setOnMousePressed(e -> screenPressedY[0] = e.getScreenY());
             node.setOnMouseReleased(e -> {
                 if (clickHandler != null && Math.abs(e.getScreenY() - screenPressedY[0]) < 10) // This is to skip the click when the user is actually scrolling on a touch screen such as mobiles
-                    clickHandler.handle(e);
+                    clickHandler.accept(e);
             });
         });
     }
