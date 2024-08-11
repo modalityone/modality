@@ -39,3 +39,4 @@ one.modality.base.shared.entities.impl.SnapshotImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.TeacherImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.TimeLineImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.TopicImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.VideoImpl$ProvidedFactory
