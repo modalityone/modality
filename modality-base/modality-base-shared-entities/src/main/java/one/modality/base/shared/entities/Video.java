@@ -35,4 +35,12 @@ public interface Video extends EntityHasMediaInfo, EntityHasWistiaVideoId, Entit
         return getIntegerFieldValue("height");
     }
 
+
+    default void setMediaId(String mediaId) {
+        setFieldValue("mediaId", mediaId);
+    }
+
+    default String getMediaId() {
+        return getStringFieldValue("mediaId");
+    }
 }
