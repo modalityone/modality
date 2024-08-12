@@ -8,9 +8,6 @@ import dev.webfx.stack.db.datasource.spi.simple.SimpleLocalDataSource;
 import dev.webfx.stack.db.query.QueryArgumentBuilder;
 import dev.webfx.stack.db.query.QueryService;
 
-import static one.modality.base.server.services.datasource.ModalityLocalDataSourceProvider.MODALITY_DATA_SOURCE;
-import static one.modality.base.server.services.datasource.ModalityLocalDataSourceProvider.getModalityDataSourceId;
-
 /**
  * @author Bruno Salmon
  */
@@ -38,9 +35,9 @@ public class ModalityLocalDataSourceInitializer implements ApplicationJob {
                     config.getString("password")
             );
 
-            Object dataSourceId = getModalityDataSourceId();
+            Object dataSourceId = ModalityLocalDataSourceProvider.getModalityDataSourceId();
             DBMS dbms = DBMS.POSTGRES;
-            MODALITY_DATA_SOURCE = new SimpleLocalDataSource(dataSourceId, dbms, connectionDetails);
+            ModalityLocalDataSourceProvider.setModalityDataSource(new SimpleLocalDataSource(dataSourceId, dbms, connectionDetails));
 
             // 2) Testing the database connection
             QueryService.executeQuery(new QueryArgumentBuilder()
