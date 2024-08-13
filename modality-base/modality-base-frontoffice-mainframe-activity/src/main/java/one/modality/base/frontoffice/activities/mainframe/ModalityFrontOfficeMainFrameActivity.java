@@ -52,7 +52,8 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
     public Node buildUi() {
         mountNodeContainer.setCircleAnimation(true);
         mountNodeContainer.setAnimateFirstContent(true);
-        //mountNodeContainer.setKeepsLeavingNodes(true);
+        // To prevent an issue in the login portal with recycling the login UIs, we keep the leaving activities in the scene graph
+        mountNodeContainer.setKeepsLeavingNodes(true); // Note: activities with video players should call TransitionPane.setKeepsLeavingNode(node, false)
         FXMainFrameTransiting.transitingProperty().bind(mountNodeContainer.transitingProperty());
         mainFrame = new Pane() { // Children are set later in updateMountNode()
             @Override
