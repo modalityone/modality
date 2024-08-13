@@ -34,6 +34,7 @@ public final class LettersSlideController {
         stepBBookEventSlide = new StepBBookEventSlide(bookEventActivity);
         stepCThankYouSlide = new StepCThankYouSlide(bookEventActivity);
         transitionPane.setCircleAnimation(true);
+        transitionPane.setScrollToTop(true);
         displayLoadingSlide();
     }
 
