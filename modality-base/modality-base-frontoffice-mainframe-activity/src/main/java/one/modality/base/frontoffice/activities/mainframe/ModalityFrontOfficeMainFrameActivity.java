@@ -3,6 +3,7 @@ package one.modality.base.frontoffice.activities.mainframe;
 import dev.webfx.extras.panes.CollapsePane;
 import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.ScalePane;
+import dev.webfx.extras.panes.TransitionPane;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.platform.util.Arrays;
@@ -22,7 +23,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.Background;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
@@ -31,6 +31,7 @@ import javafx.scene.text.FontWeight;
 import one.modality.base.client.application.ModalityClientMainFrameActivity;
 import one.modality.base.client.application.RoutingActions;
 import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
+import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameTransiting;
 import one.modality.base.frontoffice.mainframe.backgroundnode.fx.FXBackgroundNode;
 import one.modality.base.frontoffice.mainframe.backgroundnode.fx.FXCollapseFooter;
 
@@ -42,13 +43,17 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
 
     protected Pane mainFrame;
     private Node backgroundNode; // can be used to hold a WebView, and prevent iFrame reload in the web version
-    private final BorderPane mountNodeContainer = new BorderPane();
+    private final TransitionPane mountNodeContainer = new TransitionPane();
     private Region mainFrameFooter;
     private ScalePane[] scaledFooterButtons;
     private Pane dialogArea;
 
     @Override
     public Node buildUi() {
+        mountNodeContainer.setCircleAnimation(true);
+        mountNodeContainer.setAnimateFirstContent(true);
+        //mountNodeContainer.setKeepsLeavingNodes(true);
+        FXMainFrameTransiting.transitingProperty().bind(mountNodeContainer.transitingProperty());
         mainFrame = new Pane() { // Children are set later in updateMountNode()
             @Override
             protected void layoutChildren() {
@@ -59,13 +64,15 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
                     footerHeight = mainFrameFooter.prefHeight(width);
                     layoutInArea(mainFrameFooter, 0, height - footerHeight, width, footerHeight, 0, HPos.CENTER, VPos.BOTTOM);
                 }
-                double nodeY = headerHeight;
-                layoutInArea(mountNodeContainer, 0, nodeY, width, height - nodeY - footerHeight, 0, null, HPos.CENTER, VPos.TOP);
+                double mountNodeY = headerHeight;
+                double mountNodeHeight = height - headerHeight - footerHeight;
+                mountNodeContainer.setMinHeight(mountNodeHeight);
+                layoutInArea(mountNodeContainer, 0, mountNodeY, width, mountNodeHeight, 0, null, HPos.CENTER, VPos.TOP);
                 if (backgroundNode != null) { // Same position & size as the mount node (if present)
-                    layoutInArea(backgroundNode, 0, nodeY, width, height - nodeY - footerHeight, 0, null, HPos.CENTER, VPos.TOP);
+                    layoutInArea(backgroundNode, 0, mountNodeY, width, mountNodeHeight, 0, null, HPos.CENTER, VPos.TOP);
                 }
                 if (dialogArea != null) { // Same position & size as the mount node (if present)
-                    layoutInArea(dialogArea, 0, nodeY, width, height - nodeY - footerHeight, 0, null, HPos.CENTER, VPos.TOP);
+                    layoutInArea(dialogArea, 0, mountNodeY, width, mountNodeHeight, 0, null, HPos.CENTER, VPos.TOP);
                 }
             }
         };
@@ -88,7 +95,11 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
         FXProperties.runNowAndOnPropertiesChange(() -> {
             // Updating the mount node container with the new mount node
             Node mountNode = getMountNode();
-            mountNodeContainer.setCenter(mountNode);
+            if (mountNode instanceof Region) {
+                ((Region) mountNode).minHeightProperty().bind(mountNodeContainer.heightProperty());
+            }
+            mountNodeContainer.transitToContent(mountNode);
+            //mountNodeContainer.setCenter(mountNode);
             // When the mount node is null, this is to indicate that we want to display the background node instead
             boolean displayBackgroundNode = mountNode == null;
             // We make the background node visible only when we want to display it
@@ -162,7 +173,7 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
         scaledFooterButtons = Arrays.map(buttons, ModalityFrontOfficeMainFrameActivity::scaleButton, ScalePane[]::new);
         ColumnsPane buttonBar = new ColumnsPane(scaledFooterButtons);
         buttonBar.getStyleClass().setAll("button-bar"); // Style class used in Modality.css to make buttons square (remove round corners)
-        CollapsePane collapsePane  = new CollapsePane(buttonBar);
+        CollapsePane collapsePane = new CollapsePane(buttonBar);
         collapsePane.setEffect(new DropShadow());
         collapsePane.setClipEnabled(false);
         collapsePane.collapsedProperty().bind(FXCollapseFooter.collapseFooterProperty());
