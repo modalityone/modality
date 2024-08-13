@@ -33,7 +33,7 @@ public final class FXEventId {
                 session.put(SESSION_FX_EVENT_ID_KEY, Entities.getPrimaryKey(eventId));
                 SessionService.getSessionStore().put(session);
             }
-            // Synchronizing FXOrganization to match that new organization id (FXOrganizationId => FXOrganization)
+            // Synchronizing FXEvent to match that new event id (FXEventId => FXEvent)
             if (!Objects.equals(eventId, FXEvent.getEventId())) { // Sync only if ids differ.
                 // If the new event id is null, we set the FXEvent to null
                 if (Entities.getPrimaryKey(eventId) == null)
@@ -47,13 +47,13 @@ public final class FXEventId {
                     if (event != null)
                         FXEvent.setEvent(event);
                     else // Otherwise, we request the server to load that event from that id
-                        eventStore
-                                .<Event>executeQuery("select icon,name,startDate,endDate from Event where id=?", eventId)
-                                .onFailure(Console::log)
-                                .onSuccess(list -> // on successfully receiving the list (should be a singleton list)
-                                                UiScheduler.runInUiThread(() ->
-                                        FXEvent.setEvent(list.isEmpty() ? null : list.get(0))) // we finally set FXEvent
-                                );
+                        eventStore.<Event>executeQuery("select icon,name,startDate,endDate from Event where id=?", eventId)
+                            .onFailure(Console::log)
+                            .onSuccess(list -> // on successfully receiving the list (should be a singleton list)
+                                UiScheduler.runInUiThread(() -> {
+                                    if (Objects.equals(eventId, getEventId())) // final check it is still relevant
+                                        FXEvent.setEvent(list.isEmpty() ? null : list.get(0)); // we finally set FXEvent
+                                }));
                 }
             }
         }
