@@ -41,13 +41,16 @@ final class DigitsSlideController {
         step5ErrorSlide.reset();
 
         if (displayedSlide != step2CheckoutSlide) {
-            transitionPane.replaceContentNoAnimation(step1BookDatesSlide.get());
-            displayedSlide = step1BookDatesSlide;
+            displayFirstSlide();
             // Sub-routing node binding (displaying the possible sub-routing account node in the appropriate place in step3)
             step2CheckoutSlide.accountMountNodeProperty().bind(bookEventActivity.mountNodeProperty());
         } else {
             displayCheckoutSlide();
         }
+    }
+
+    void displayFirstSlide() {
+        displaySlide(step1BookDatesSlide);
     }
 
     RecurringEventSchedule getRecurringEventSchedule() {
@@ -56,7 +59,12 @@ final class DigitsSlideController {
 
     private void displaySlide(StepSlide slide) {
         displayedSlide = slide;
-        UiScheduler.runInUiThread((() -> transitionPane.transitToContent(slide.get())));
+        UiScheduler.runInUiThread((() -> {
+            if (slide == step1BookDatesSlide)
+                transitionPane.replaceContentNoAnimation(slide.get());
+            else
+                transitionPane.transitToContent(slide.get());
+        }));
     }
 
     void displayCheckoutSlide() {

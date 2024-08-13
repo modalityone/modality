@@ -33,7 +33,7 @@ import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.booking.process.event.RecurringEventSchedule;
 
-final class StepCBookEventSlide extends StepSlide {
+final class StepBBookEventSlide extends StepSlide {
 
     private static final double MAX_PAGE_WIDTH = 1200;
     private static final double MIN_FONT_SIZE = 12;
@@ -48,7 +48,7 @@ final class StepCBookEventSlide extends StepSlide {
     private boolean workingBookingLoaded;
     private final DigitsSlideController digitsSlideController;
 
-    public StepCBookEventSlide(BookEventActivity bookEventActivity) {
+    public StepBBookEventSlide(BookEventActivity bookEventActivity) {
         super(bookEventActivity);
         digitsSlideController = new DigitsSlideController(bookEventActivity);
     }
@@ -58,6 +58,8 @@ final class StepCBookEventSlide extends StepSlide {
     }
 
     public void onEventChanged(Event event) {
+        if (workingBookingLoaded)
+            digitsSlideController.displayFirstSlide();
         workingBookingLoaded = false;
         eventDescriptionLoadedProperty.set(false);
         event.onExpressionLoaded("name, shortDescription, description, venue.(name, label, address), organization.country")

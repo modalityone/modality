@@ -13,11 +13,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
-final class StepDThankYouSlide extends StepSlide {
+final class StepCThankYouSlide extends StepSlide {
 
     private static final double MAX_PAGE_WITH = 800;
 
-    StepDThankYouSlide(BookEventActivity bookEventActivity) {
+    StepCThankYouSlide(BookEventActivity bookEventActivity) {
         super(bookEventActivity);
     }
 

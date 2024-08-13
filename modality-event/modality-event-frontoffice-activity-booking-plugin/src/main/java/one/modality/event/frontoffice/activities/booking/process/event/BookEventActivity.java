@@ -12,6 +12,7 @@ import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.routing.uirouter.UiRouter;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.text.Font;
@@ -71,14 +72,20 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
     @Override
     public void onResume() {
-        // Initially hiding the footer (app menu) when coming form the website. However, if coming back
-        FXCollapseFooter.setCollapseFooter(FXEventId.getEventId() != null);
+        // Initially hiding the footer (app menu) to not distract the user with other things (especially when coming
+        // form the website).
+        FXCollapseFooter.setCollapseFooter(true);
         super.onResume();
     }
 
     @Override
     public void onPause() {
-        FXCollapseFooter.setCollapseFooter(false);
+        // Showing the footer again when leaving this activity. However, the router sometimes calls onPause() and then
+        // onResume() immediately after, so we need to check the user really left this activity.
+        Platform.runLater(() -> { // we postpone the check to ensure the situation is now stable
+            if (!isActive()) // final check to see if the user left
+                FXCollapseFooter.setCollapseFooter(false); // showing footer in this case
+        });
         super.onPause();
     }
 
@@ -97,6 +104,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
                 return;
 
             lettersSlideController.onEventChanged(event);
+            getRecurringEventSchedule().clearClickedDates(); // clearing possible clicked dates from previous event
 
             // Note: It's better to use FXUserPersonId rather than FXUserPerson in case of a page reload in the browser
             // (or redirection to this page from a website) because the retrieval of FXUserPersonId is immediate in case
