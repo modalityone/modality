@@ -9,6 +9,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -36,6 +37,8 @@ abstract class StepSlide implements Supplier<Node> {
         this.bookEventActivity = bookEventActivity;
         mainVbox.setAlignment(Pos.TOP_CENTER);
         mainVbox.setPadding(new Insets(0, 0, 80, 0));
+        // Also a background is necessary for devices not supporting inverse clipping used in circle animation (ex: iPadOS)
+        mainVbox.setBackground(Background.fill(Color.WHITE));
     }
 
     public Node get() {
