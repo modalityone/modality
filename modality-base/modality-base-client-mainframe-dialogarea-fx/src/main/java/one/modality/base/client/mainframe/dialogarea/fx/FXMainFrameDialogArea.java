@@ -9,7 +9,7 @@ import javafx.scene.layout.Pane;
  */
 public final class FXMainFrameDialogArea {
 
-    private final static ObjectProperty<Pane> dialogAreaProperty = new SimpleObjectProperty<>();
+    private static final ObjectProperty<Pane> dialogAreaProperty = new SimpleObjectProperty<>();
 
     public static ObjectProperty<Pane> dialogAreaProperty() {
         return dialogAreaProperty;

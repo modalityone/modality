@@ -32,6 +32,7 @@ import javafx.scene.text.FontWeight;
 import one.modality.base.client.application.ModalityClientMainFrameActivity;
 import one.modality.base.client.application.RoutingActions;
 import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
+import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameOverlayArea;
 import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameTransiting;
 import one.modality.base.frontoffice.mainframe.backgroundnode.fx.FXBackgroundNode;
 import one.modality.base.frontoffice.mainframe.backgroundnode.fx.FXCollapseFooter;
@@ -48,6 +49,7 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
     private Region mainFrameFooter;
     private ScalePane[] scaledFooterButtons;
     private Pane dialogArea;
+    private int firstOverlayChildIndex;
 
     @Override
     public Node buildUi() {
@@ -90,6 +92,8 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
                     backgroundNode,     // may be a WebView
                     mountNodeContainer, // contains a standard mount node, or null if we want to display the backgroundNode
                     mainFrameFooter));  // the footer (front-office navigation buttons bar)
+            firstOverlayChildIndex = mainFrame.getChildren().size();
+            updateOverlayChildren();
         }, FXBackgroundNode.backgroundNodeProperty());
 
         // Reacting to the mount node changes:
@@ -113,6 +117,9 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
             mountNodeContainer.setMouseTransparent(displayBackgroundNode);
             updateDialogArea();
         }, mountNodeProperty());
+
+        FXMainFrameOverlayArea.setOverlayArea(mainFrame);
+        FXMainFrameOverlayArea.getOverlayChildren().addListener((InvalidationListener) observable -> updateOverlayChildren());
 
         // Requesting a layout for containerPane on layout mode changes
         FXProperties.runNowAndOnPropertiesChange(() -> {
@@ -151,8 +158,16 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
         if (dialogArea.getChildren().isEmpty())
             mainFrameChildren.remove(dialogArea);
         else if (!mainFrameChildren.contains(dialogArea)) {
-            mainFrameChildren.add(dialogArea);
+            mainFrameChildren.add(firstOverlayChildIndex - 1, dialogArea);
         }
+    }
+
+    private void updateOverlayChildren() {
+        ObservableList<Node> mainFrameChildren = mainFrame.getChildren();
+        ObservableList<Node> overlayChildren = FXMainFrameOverlayArea.getOverlayChildren();
+        while (firstOverlayChildIndex < mainFrameChildren.size())
+            mainFrameChildren.remove(firstOverlayChildIndex);
+        mainFrameChildren.addAll(firstOverlayChildIndex, overlayChildren);
     }
 
     protected ActionGroup contextMenuActionGroup() {
