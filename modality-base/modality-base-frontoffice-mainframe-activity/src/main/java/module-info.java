@@ -14,6 +14,7 @@ module modality.base.frontoffice.mainframe.activity {
     requires webfx.platform.conf;
     requires webfx.platform.util;
     requires webfx.stack.i18n;
+    requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.action;
     requires webfx.stack.ui.operation.action;
 

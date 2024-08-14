@@ -9,6 +9,7 @@ import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter;
+import dev.webfx.stack.routing.uirouter.UiRouter;
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionBinder;
 import dev.webfx.stack.ui.action.ActionGroup;
@@ -52,8 +53,7 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
     public Node buildUi() {
         mountNodeContainer.setCircleAnimation(true);
         mountNodeContainer.setAnimateFirstContent(true);
-        // To prevent an issue in the login portal with recycling the login UIs, we keep the leaving activities in the scene graph
-        mountNodeContainer.setKeepsLeavingNodes(true); // Note: activities with video players should call TransitionPane.setKeepsLeavingNode(node, false)
+        //mountNodeContainer.setKeepsLeavingNodes(true); // Note: activities with video players should call TransitionPane.setKeepsLeavingNode(node, false)
         FXMainFrameTransiting.transitingProperty().bind(mountNodeContainer.transitingProperty());
         mainFrame = new Pane() { // Children are set later in updateMountNode()
             @Override
@@ -99,6 +99,8 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
             if (mountNode instanceof Region) {
                 ((Region) mountNode).minHeightProperty().bind(mountNodeContainer.heightProperty());
             }
+            UiRouter uiRouter = getUiRouter();
+            mountNodeContainer.setReverse(uiRouter.getHistory().isGoingBackward());
             mountNodeContainer.transitToContent(mountNode);
             //mountNodeContainer.setCenter(mountNode);
             // When the mount node is null, this is to indicate that we want to display the background node instead
