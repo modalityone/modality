@@ -12,7 +12,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires javafx.web;
     requires jdk.jsobject;
     requires modality.base.client.icons;
-    requires modality.base.client.mainframe.dialogarea.fx;
+    requires modality.base.client.mainframe.fx;
     requires modality.base.client.tile;
     requires modality.base.client.util;
     requires modality.base.client.validation;

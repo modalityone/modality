@@ -2,7 +2,7 @@ package one.modality.ecommerce.backoffice.operations.entities.document.registrat
 
 import dev.webfx.platform.async.AsyncFunction;
 import javafx.scene.layout.Pane;
-import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
+import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.Document;
 
 public final class ToggleFlagDocumentRequest extends AbstractSetDocumentFieldsRequest<ToggleFlagDocumentRequest> {

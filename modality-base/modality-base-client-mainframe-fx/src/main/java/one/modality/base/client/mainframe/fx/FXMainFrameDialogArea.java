@@ -1,4 +1,4 @@
-package one.modality.base.client.mainframe.dialogarea.fx;
+package one.modality.base.client.mainframe.fx;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;

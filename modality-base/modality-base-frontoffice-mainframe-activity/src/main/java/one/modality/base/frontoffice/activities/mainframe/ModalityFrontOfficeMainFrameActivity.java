@@ -35,9 +35,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import one.modality.base.client.application.ModalityClientMainFrameActivity;
 import one.modality.base.client.application.RoutingActions;
-import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
-import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameOverlayArea;
-import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameTransiting;
+import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
+import one.modality.base.client.mainframe.fx.FXMainFrameOverlayArea;
+import one.modality.base.client.mainframe.fx.FXMainFrameTransiting;
 import one.modality.base.frontoffice.mainframe.backgroundnode.fx.FXBackgroundNode;
 import one.modality.base.frontoffice.mainframe.backgroundnode.fx.FXCollapseFooter;
 

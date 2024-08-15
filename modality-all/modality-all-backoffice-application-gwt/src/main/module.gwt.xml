@@ -259,8 +259,8 @@
     <public path="" includes="images/svg/color/"/>
     <resource path="images/svg/mono"/>
     <public path="" includes="images/svg/mono/"/>
-    <!--==================< modality-base-client-mainframe-dialogarea-fx >==================-->
-    <source path="one/modality/base/client/mainframe/dialogarea/fx"/>
+    <!--=======================< modality-base-client-mainframe-fx >========================-->
+    <source path="one/modality/base/client/mainframe/fx"/>
     <!--==============< modality-base-client-operationactionsloading-plugin >===============-->
     <source path="one/modality/base/client/operationactionsloading"/>
     <!--=====================< modality-base-client-presentationmodel >=====================-->

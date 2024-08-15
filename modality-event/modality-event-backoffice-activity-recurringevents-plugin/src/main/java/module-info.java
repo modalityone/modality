@@ -9,7 +9,7 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires modality.base.backoffice.mainframe.headertabs.fx;
     requires modality.base.client.gantt.fx;
     requires modality.base.client.icons;
-    requires modality.base.client.mainframe.dialogarea.fx;
+    requires modality.base.client.mainframe.fx;
     requires modality.base.client.tile;
     requires modality.base.client.validation;
     requires modality.base.shared.entities;

@@ -13,7 +13,7 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
-import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameTransiting;
+import one.modality.base.client.mainframe.fx.FXMainFrameTransiting;
 import one.modality.base.shared.entities.Event;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;

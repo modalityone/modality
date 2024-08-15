@@ -15,7 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
+import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.tile.TabsBar;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.backoffice.mainframe.headertabs.fx.FXMainFrameHeaderTabs;

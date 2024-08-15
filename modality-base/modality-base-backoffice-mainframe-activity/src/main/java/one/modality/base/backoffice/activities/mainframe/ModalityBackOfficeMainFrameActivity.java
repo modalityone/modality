@@ -45,7 +45,7 @@ import one.modality.base.backoffice.mainframe.headertabs.fx.FXMainFrameHeaderTab
 import one.modality.base.client.tile.Tab;
 import one.modality.base.client.application.ModalityClientMainFrameActivity;
 import one.modality.base.client.gantt.fx.interstice.FXGanttInterstice;
-import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
+import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.profile.fx.FXProfile;
 
 import java.util.Comparator;

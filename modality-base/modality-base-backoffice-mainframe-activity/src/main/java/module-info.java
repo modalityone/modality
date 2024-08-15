@@ -11,7 +11,7 @@ module modality.base.backoffice.mainframe.activity {
     requires modality.base.backoffice.mainframe.headertabs.fx;
     requires modality.base.client.application;
     requires modality.base.client.gantt.fx;
-    requires modality.base.client.mainframe.dialogarea.fx;
+    requires modality.base.client.mainframe.fx;
     requires modality.base.client.profile.fx;
     requires modality.base.client.tile;
     requires webfx.extras.canvas.pane;

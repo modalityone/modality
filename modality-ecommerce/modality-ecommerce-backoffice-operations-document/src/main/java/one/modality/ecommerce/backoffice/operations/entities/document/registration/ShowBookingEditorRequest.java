@@ -5,7 +5,7 @@ import dev.webfx.stack.orm.entity.HasEntity;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
 import javafx.scene.layout.Pane;
-import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
+import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.Document;
 
 public final class ShowBookingEditorRequest implements HasOperationCode, HasEntity,
