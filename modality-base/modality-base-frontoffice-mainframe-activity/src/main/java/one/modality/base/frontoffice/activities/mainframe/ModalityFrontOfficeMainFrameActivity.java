@@ -6,6 +6,7 @@ import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.panes.TransitionPane;
 import dev.webfx.extras.panes.transitions.CircleTransition;
 import dev.webfx.extras.panes.transitions.FadeTransition;
+import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.platform.util.Arrays;
@@ -210,6 +211,11 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
         collapsePane.setEffect(new DropShadow());
         collapsePane.setClipEnabled(false);
         collapsePane.collapsedProperty().bind(FXCollapseFooter.collapseFooterProperty());
+        // Considering the bottom of the safe area, in particular for OS like iPadOS with a bar at the bottom
+        double safeAreaBottom = WebFxKitLauncher.getSafeAreaInsets().getBottom();
+        if (safeAreaBottom > 5) { // we already have a 5px padding for the buttons
+            collapsePane.setPadding(new Insets(0, 0, safeAreaBottom - 5, 0));
+        }
         return collapsePane;
     }
 
@@ -237,11 +243,6 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
         ScalePane scalePane = new ScalePane(button);
         scalePane.setStretchWidth(true);
         scalePane.setStretchHeight(true);
-        /* Commented as this is not good for mobiles other than iPad
-        // Adding some bottom padding due to the iPad bar overlay at the bottom
-        if (OperatingSystem.isMobile()) // Should we implement OperatingSystem.isIPad()?
-            scalePane.setPadding(new Insets(0, 0, 10, 0));
-        */
         scalePane.managedProperty().bind(button.managedProperty()); // Should it be in MonoPane?
         return scalePane;
     }
