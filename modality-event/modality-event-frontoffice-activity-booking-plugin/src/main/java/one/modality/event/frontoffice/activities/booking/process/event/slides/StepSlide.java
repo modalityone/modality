@@ -15,6 +15,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.frontoffice.utility.TextUtility;
 import one.modality.base.shared.entities.Event;
@@ -36,7 +37,8 @@ abstract class StepSlide implements Supplier<Node> {
     StepSlide(BookEventActivity bookEventActivity) {
         this.bookEventActivity = bookEventActivity;
         mainVbox.setAlignment(Pos.TOP_CENTER);
-        mainVbox.setPadding(new Insets(0, 0, 80, 0));
+        // Setting a good bottom margin (1/3 screen height), so bottom elements are not stuck at the booking of the screen
+        mainVbox.setPadding(new Insets(0, 0, Screen.getPrimary().getVisualBounds().getHeight() / 3, 0));
         // Also a background is necessary for devices not supporting inverse clipping used in circle animation (ex: iPadOS)
         mainVbox.setBackground(Background.fill(Color.WHITE));
     }

@@ -40,7 +40,6 @@ final class StepCThankYouSlide extends StepSlide {
         Label bookingNumber = I18nControls.bindI18nProperties(new Label(), "BookingNumber", getWorkingBookingProperties().bookingReferenceProperty());
         bookingNumber.setWrapText(true);
         bookingNumber.setTextAlignment(TextAlignment.CENTER);
-        VBox.setMargin(bookingNumber, new Insets(20,0,50,0));
 
         mainVbox.getChildren().setAll(
                 headerImageScalePane,
@@ -49,6 +48,5 @@ final class StepCThankYouSlide extends StepSlide {
                 bookingNumber);
         mainVbox.setMaxWidth(MAX_PAGE_WITH);
         mainVbox.setSpacing(40);
-        mainVbox.setPadding(Insets.EMPTY);
     }
 }
