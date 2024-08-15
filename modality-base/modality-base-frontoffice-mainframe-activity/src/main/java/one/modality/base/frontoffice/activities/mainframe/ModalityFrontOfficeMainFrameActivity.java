@@ -5,6 +5,7 @@ import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.panes.TransitionPane;
 import dev.webfx.extras.panes.transitions.CircleTransition;
+import dev.webfx.extras.panes.transitions.FadeTransition;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.platform.util.Arrays;
@@ -15,6 +16,8 @@ import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionBinder;
 import dev.webfx.stack.ui.action.ActionGroup;
 import javafx.beans.InvalidationListener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -46,7 +49,7 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
 
     protected Pane mainFrame;
     private Node backgroundNode; // can be used to hold a WebView, and prevent iFrame reload in the web version
-    private final TransitionPane mountNodeContainer = new TransitionPane();
+    private final TransitionPane mountTransitionPane = new TransitionPane();
     private Region mainFrameFooter;
     private ScalePane[] scaledFooterButtons;
     private Pane dialogArea;
@@ -54,10 +57,21 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
 
     @Override
     public Node buildUi() {
-        mountNodeContainer.setTransition(new CircleTransition());
-        mountNodeContainer.setAnimateFirstContent(true);
-        //mountNodeContainer.setKeepsLeavingNodes(true); // Note: activities with video players should call TransitionPane.setKeepsLeavingNode(node, false)
-        FXMainFrameTransiting.transitingProperty().bind(mountNodeContainer.transitingProperty());
+        // Starting with a circle transition animation for the first activity displayed
+        mountTransitionPane.setAnimateFirstContent(true);
+        mountTransitionPane.setTransition(new CircleTransition());
+        // And then a fade transition for subsequent activities
+        mountTransitionPane.transitingProperty().addListener(new ChangeListener<>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if (oldValue && !newValue) {
+                    mountTransitionPane.setTransition(new FadeTransition());
+                    mountTransitionPane.transitingProperty().removeListener(this);
+                }
+            }
+        });
+        //mountTransitionPane.setKeepsLeavingNodes(true); // Note: activities with video players should call TransitionPane.setKeepsLeavingNode(node, false)
+        FXMainFrameTransiting.transitingProperty().bind(mountTransitionPane.transitingProperty());
         mainFrame = new Pane() { // Children are set later in updateMountNode()
             @Override
             protected void layoutChildren() {
@@ -70,8 +84,8 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
                 }
                 double mountNodeY = headerHeight;
                 double mountNodeHeight = height - headerHeight - footerHeight;
-                mountNodeContainer.setMinHeight(mountNodeHeight);
-                layoutInArea(mountNodeContainer, 0, mountNodeY, width, mountNodeHeight, 0, null, HPos.CENTER, VPos.TOP);
+                mountTransitionPane.setMinHeight(mountNodeHeight);
+                layoutInArea(mountTransitionPane, 0, mountNodeY, width, mountNodeHeight, 0, null, HPos.CENTER, VPos.TOP);
                 if (backgroundNode != null) { // Same position & size as the mount node (if present)
                     layoutInArea(backgroundNode, 0, mountNodeY, width, mountNodeHeight, 0, null, HPos.CENTER, VPos.TOP);
                 }
@@ -90,9 +104,9 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
         FXProperties.runNowAndOnPropertiesChange(() -> {
             backgroundNode = FXBackgroundNode.getBackgroundNode();
             mainFrame.getChildren().setAll(Collections.listOfRemoveNulls(
-                    backgroundNode,     // may be a WebView
-                    mountNodeContainer, // contains a standard mount node, or null if we want to display the backgroundNode
-                    mainFrameFooter));  // the footer (front-office navigation buttons bar)
+                    backgroundNode,      // may be a WebView
+                    mountTransitionPane, // contains a standard mount node, or null if we want to display the backgroundNode
+                    mainFrameFooter));   // the footer (front-office navigation buttons bar)
             firstOverlayChildIndex = mainFrame.getChildren().size();
             updateOverlayChildren();
         }, FXBackgroundNode.backgroundNodeProperty());
@@ -102,11 +116,11 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
             // Updating the mount node container with the new mount node
             Node mountNode = getMountNode();
             if (mountNode instanceof Region) {
-                ((Region) mountNode).minHeightProperty().bind(mountNodeContainer.heightProperty());
+                ((Region) mountNode).minHeightProperty().bind(mountTransitionPane.heightProperty());
             }
             UiRouter uiRouter = getUiRouter();
-            mountNodeContainer.setReverse(uiRouter.getHistory().isGoingBackward());
-            mountNodeContainer.transitToContent(mountNode);
+            mountTransitionPane.setReverse(uiRouter.getHistory().isGoingBackward());
+            mountTransitionPane.transitToContent(mountNode);
             //mountNodeContainer.setCenter(mountNode);
             // When the mount node is null, this is to indicate that we want to display the background node instead
             boolean displayBackgroundNode = mountNode == null;
@@ -115,7 +129,7 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
                 backgroundNode.setVisible(displayBackgroundNode);
             // Also when we display the background node, we need make the mount node container transparent to the mouse
             // (as the background node is behind) to allow the user to interact with it (ex: WebView).
-            mountNodeContainer.setMouseTransparent(displayBackgroundNode);
+            mountTransitionPane.setMouseTransparent(displayBackgroundNode);
             updateDialogArea();
         }, mountNodeProperty());
 
