@@ -11,7 +11,7 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>modality-base-backoffice-mainframe-headertabs-fx</artifactId>
+    <artifactId>modality-base-backoffice-mainframe-fx</artifactId>
 
     <dependencies>
 

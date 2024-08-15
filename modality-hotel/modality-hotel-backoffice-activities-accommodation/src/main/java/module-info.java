@@ -9,7 +9,7 @@ module modality.hotel.backoffice.activities.accommodation {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
-    requires modality.base.backoffice.mainframe.headertabs.fx;
+    requires modality.base.backoffice.mainframe.fx;
     requires modality.base.client.activity.organizationdependent;
     requires modality.base.client.gantt.fx;
     requires modality.base.client.mainframe.fx;

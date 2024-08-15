@@ -41,7 +41,7 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 import one.modality.base.backoffice.ganttcanvas.MainFrameGanttCanvas;
 import one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider;
-import one.modality.base.backoffice.mainframe.headertabs.fx.FXMainFrameHeaderTabs;
+import one.modality.base.backoffice.mainframe.fx.FXMainFrameHeaderTabs;
 import one.modality.base.client.tile.Tab;
 import one.modality.base.client.application.ModalityClientMainFrameActivity;
 import one.modality.base.client.gantt.fx.interstice.FXGanttInterstice;

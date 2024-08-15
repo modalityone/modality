@@ -6,7 +6,7 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
-    requires modality.base.backoffice.mainframe.headertabs.fx;
+    requires modality.base.backoffice.mainframe.fx;
     requires modality.base.client.gantt.fx;
     requires modality.base.client.icons;
     requires modality.base.client.mainframe.fx;

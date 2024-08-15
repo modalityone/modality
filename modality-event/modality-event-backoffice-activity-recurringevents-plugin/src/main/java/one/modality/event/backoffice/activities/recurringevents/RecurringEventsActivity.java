@@ -4,7 +4,7 @@ import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivi
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
-import one.modality.base.backoffice.mainframe.headertabs.fx.FXMainFrameHeaderTabs;
+import one.modality.base.backoffice.mainframe.fx.FXMainFrameHeaderTabs;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.client.tile.Tab;

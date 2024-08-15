@@ -9,7 +9,7 @@ module modality.base.backoffice.activity.operations.plugin {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
-    requires modality.base.backoffice.mainframe.headertabs.fx;
+    requires modality.base.backoffice.mainframe.fx;
     requires modality.base.client.activity;
     requires modality.base.client.mainframe.fx;
     requires modality.base.client.tile;

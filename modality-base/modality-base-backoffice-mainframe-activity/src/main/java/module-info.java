@@ -7,8 +7,8 @@ module modality.base.backoffice.mainframe.activity {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.backoffice.gantt.canvas;
+    requires modality.base.backoffice.mainframe.fx;
     requires modality.base.backoffice.mainframe.headernode;
-    requires modality.base.backoffice.mainframe.headertabs.fx;
     requires modality.base.client.application;
     requires modality.base.client.gantt.fx;
     requires modality.base.client.mainframe.fx;

@@ -41,13 +41,13 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-backoffice-mainframe-headernode</artifactId>
+            <artifactId>modality-base-backoffice-mainframe-fx</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-backoffice-mainframe-headertabs-fx</artifactId>
+            <artifactId>modality-base-backoffice-mainframe-headernode</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 

@@ -18,7 +18,7 @@ import javafx.scene.layout.HBox;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.tile.TabsBar;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
-import one.modality.base.backoffice.mainframe.headertabs.fx.FXMainFrameHeaderTabs;
+import one.modality.base.backoffice.mainframe.fx.FXMainFrameHeaderTabs;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 

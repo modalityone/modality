@@ -1,4 +1,4 @@
-package one.modality.base.backoffice.mainframe.headertabs.fx;
+package one.modality.base.backoffice.mainframe.fx;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
