@@ -4,6 +4,7 @@ import dev.webfx.extras.panes.CollapsePane;
 import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.extras.panes.TransitionPane;
+import dev.webfx.extras.panes.transitions.CircleTransition;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.platform.util.Arrays;
@@ -53,7 +54,7 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
 
     @Override
     public Node buildUi() {
-        mountNodeContainer.setCircleAnimation(true);
+        mountNodeContainer.setTransition(new CircleTransition());
         mountNodeContainer.setAnimateFirstContent(true);
         //mountNodeContainer.setKeepsLeavingNodes(true); // Note: activities with video players should call TransitionPane.setKeepsLeavingNode(node, false)
         FXMainFrameTransiting.transitingProperty().bind(mountNodeContainer.transitingProperty());

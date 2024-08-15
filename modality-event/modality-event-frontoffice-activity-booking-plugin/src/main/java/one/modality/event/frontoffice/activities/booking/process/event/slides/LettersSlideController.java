@@ -1,6 +1,7 @@
 package one.modality.event.frontoffice.activities.booking.process.event.slides;
 
 import dev.webfx.extras.panes.TransitionPane;
+import dev.webfx.extras.panes.transitions.CircleTransition;
 import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.platform.console.Console;
@@ -33,7 +34,7 @@ public final class LettersSlideController {
         stepALoadingSlide = new StepALoadingSlide(bookEventActivity);
         stepBBookEventSlide = new StepBBookEventSlide(bookEventActivity);
         stepCThankYouSlide = new StepCThankYouSlide(bookEventActivity);
-        transitionPane.setCircleAnimation(true);
+        transitionPane.setTransition(new CircleTransition());
         transitionPane.setScrollToTop(true);
         displayLoadingSlide();
     }
