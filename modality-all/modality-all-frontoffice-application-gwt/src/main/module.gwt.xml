@@ -185,7 +185,7 @@
     <source path="one/modality/base/frontoffice/application"/>
     <!--==================< modality-base-frontoffice-mainframe-activity >==================-->
     <source path="one/modality/base/frontoffice/activities/mainframe"/>
-    <!--=============< modality-base-frontoffice-mainframe-backgroundnode-fx >==============-->
+    <!--=====================< modality-base-frontoffice-mainframe-fx >=====================-->
     <source path="one/modality/base/frontoffice/mainframe/backgroundnode/fx"/>
     <!--=======================< modality-base-frontoffice-utility >========================-->
     <source path="one/modality/base/frontoffice/entities"/>

@@ -11,7 +11,7 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>modality-base-frontoffice-mainframe-backgroundnode-fx</artifactId>
+    <artifactId>modality-base-frontoffice-mainframe-fx</artifactId>
 
     <dependencies>
 

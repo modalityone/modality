@@ -214,7 +214,7 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-base-frontoffice-mainframe-backgroundnode-fx</artifactId>
+            <artifactId>modality-base-frontoffice-mainframe-fx</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <classifier>sources</classifier>
         </dependency>

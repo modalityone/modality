@@ -16,7 +16,7 @@ import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.text.Font;
-import one.modality.base.frontoffice.mainframe.backgroundnode.fx.FXCollapseFooter;
+import one.modality.base.frontoffice.mainframe.fx.FXCollapseFooter;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Person;

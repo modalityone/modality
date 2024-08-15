@@ -58,7 +58,7 @@
         <module>modality-base-frontoffice-activity-alerts-plugin</module>
         <module>modality-base-frontoffice-application</module>
         <module>modality-base-frontoffice-mainframe-activity</module>
-        <module>modality-base-frontoffice-mainframe-backgroundnode-fx</module>
+        <module>modality-base-frontoffice-mainframe-fx</module>
         <module>modality-base-frontoffice-max-plugin</module>
         <module>modality-base-frontoffice-min-plugin</module>
         <module>modality-base-frontoffice-utility</module>

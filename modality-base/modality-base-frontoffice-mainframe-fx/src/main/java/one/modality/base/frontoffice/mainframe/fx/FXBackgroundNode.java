@@ -1,4 +1,4 @@
-package one.modality.base.frontoffice.mainframe.backgroundnode.fx;
+package one.modality.base.frontoffice.mainframe.fx;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;

@@ -38,8 +38,8 @@ import one.modality.base.client.application.RoutingActions;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.mainframe.fx.FXMainFrameOverlayArea;
 import one.modality.base.client.mainframe.fx.FXMainFrameTransiting;
-import one.modality.base.frontoffice.mainframe.backgroundnode.fx.FXBackgroundNode;
-import one.modality.base.frontoffice.mainframe.backgroundnode.fx.FXCollapseFooter;
+import one.modality.base.frontoffice.mainframe.fx.FXBackgroundNode;
+import one.modality.base.frontoffice.mainframe.fx.FXCollapseFooter;
 
 public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFrameActivity {
 
