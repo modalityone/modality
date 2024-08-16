@@ -225,7 +225,7 @@ public final class ModalityValidationSupport {
         }
     }
 
-    public void addEmailValidation(TextField emailInput, Node where,String errorMessage) {
+    public void addEmailValidation(TextField emailInput, Node where, String errorMessage) {
         // Define the email pattern
         String emailPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
         Pattern pattern = Pattern.compile(emailPattern);
@@ -317,6 +317,7 @@ public final class ModalityValidationSupport {
                 popOverDecoration.applyDecoration(popOverDecorationTarget);
                 if (popUpOverAutoScroll) {
                     SceneUtil.scrollNodeToBeVerticallyVisibleOnScene(popOverDecorationTarget);
+                    SceneUtil.autoFocusIfEnabled(popOverOwnerNode);
                     popUpOverAutoScroll = false;
                 }
             }
