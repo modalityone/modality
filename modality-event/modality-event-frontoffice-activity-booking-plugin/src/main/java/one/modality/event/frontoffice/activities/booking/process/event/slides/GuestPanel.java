@@ -53,11 +53,11 @@ final class GuestPanel implements MaterialFactoryMixin {
         guestGridPane.setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(20), null)));
         guestGridPane.setBorder(new Border(new BorderStroke(Color.gray(0.8), BorderStrokeStyle.SOLID, new CornerRadii(20), BorderStroke.THIN)));
         guestGridPane.setEffect(new DropShadow(10, Color.gray(0.8)));
+        guestGridPane.getStyleClass().add("login"); // in order to have same style as login (especially font size)
         container.setCenter(guestGridPane);
         validationSupport.addRequiredInput(firstNameTextField, "FirstName");
         validationSupport.addRequiredInput(lastNameTextField, "LastName");
         validationSupport.addEmailValidation(emailTextField, emailTextField, "Email");
-        container.getStyleClass().add("login"); // in order to have same style as login
     }
 
     public void addTopNode(Node topNode) {
@@ -76,7 +76,7 @@ final class GuestPanel implements MaterialFactoryMixin {
 
     public void onShowing() {
         guestSubmitButton.setDefaultButton(true);
-        SceneUtil.autoFocusIfEnabled(firstNameTextField);
+        //SceneUtil.autoFocusIfEnabled(firstNameTextField);
         UiScheduler.scheduleDelay(500, () -> SceneUtil.autoFocusIfEnabled(firstNameTextField));
     }
 
