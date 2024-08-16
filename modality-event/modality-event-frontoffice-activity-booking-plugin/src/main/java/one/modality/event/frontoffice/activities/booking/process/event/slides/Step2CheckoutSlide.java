@@ -4,8 +4,6 @@ import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.FlipPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.extras.util.layout.LayoutUtil;
-import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
@@ -13,8 +11,6 @@ import dev.webfx.platform.util.time.Times;
 import dev.webfx.platform.windowhistory.WindowHistory;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.ui.controls.MaterialFactoryMixin;
-import dev.webfx.stack.ui.controls.dialog.GridPaneBuilder;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -26,13 +22,10 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.icons.SvgIcons;
-import one.modality.base.client.validation.ModalityValidationSupport;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
@@ -52,15 +45,15 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Stream;
 
-final class Step2CheckoutSlide extends StepSlide implements MaterialFactoryMixin {
+final class Step2CheckoutSlide extends StepSlide {
 
     private static final double MAX_SLIDE_WIDTH = 800;
 
     private final GridPane summaryGridPane = new GridPane();
     // Node property that will be managed by the sub-router to mount the CheckoutAccountActivity (when routed)
     private final ObjectProperty<Node> checkoutAccountMountNodeProperty = new SimpleObjectProperty<>();
-    private final Button submitButton      = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "Submit"));
-    private final Button guestSubmitButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "Submit"));
+    private final GuestPanel guestPanel = new GuestPanel();
+    private final Button submitButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "Submit"));
     private final BooleanProperty step1PersonToBookWasShownProperty = new SimpleBooleanProperty();
 
     public Step2CheckoutSlide(BookEventActivity bookEventActivity) {
@@ -112,59 +105,29 @@ final class Step2CheckoutSlide extends StepSlide implements MaterialFactoryMixin
         BorderPane.setMargin(signIntopVBox, new Insets(0, 0, 20,0));
         signInContainer.setTop(signIntopVBox);
 
-        BorderPane guestContainer = new BorderPane();
-        Label guestDetailsLabel = Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), "GuestDetails")));
-        Hyperlink orAccountLink = Bootstrap.textPrimary(I18nControls.bindI18nProperties(new Hyperlink(), "OrBookUsingAccount"));
-        VBox guestTopVBox = new VBox(10, guestDetailsLabel, orAccountLink);
-        guestTopVBox.setAlignment(Pos.TOP_CENTER);
-        BorderPane.setMargin(guestTopVBox, new Insets(0, 0, 20,0));
-        guestContainer.setTop(guestTopVBox);
-        LayoutUtil.setMaxWidthToInfinite(guestSubmitButton);
-        GridPane.setMargin(guestSubmitButton, new Insets(40, 0, 0, 0));
-        TextField firstNameTextField = newMaterialTextField("FirstName");
-        TextField lastNameTextField = newMaterialTextField("LastName");
-        TextField emailTextField = newMaterialTextField("Email");
-        GridPane guestGridPane = new GridPaneBuilder()
-                .addNodeFillingRow(firstNameTextField)
-                .addNodeFillingRow(lastNameTextField)
-                .addNodeFillingRow(emailTextField)
-                .addNodeFillingRow(guestSubmitButton)
-                .build();
-        guestGridPane.setMaxSize(400, Region.USE_PREF_SIZE);
-        guestGridPane.setPadding(new Insets(40));
-        guestGridPane.setBackground(new Background(new BackgroundFill(Color.WHITE, new CornerRadii(20), null)));
-        guestGridPane.setBorder(new Border(new BorderStroke(Color.gray(0.8), BorderStrokeStyle.SOLID, new CornerRadii(20), BorderStroke.THIN)));
-        guestGridPane.setEffect(new DropShadow(10, Color.gray(0.8)));
-        guestContainer.setCenter(guestGridPane);
-        ModalityValidationSupport validationSupport = new ModalityValidationSupport();
-        validationSupport.addRequiredInput(firstNameTextField, "FirstName");
-        validationSupport.addRequiredInput(lastNameTextField, "LastName");
-        validationSupport.addEmailValidation(emailTextField, emailTextField, "Email");
-        guestSubmitButton.setOnAction(event -> {
-            if (validationSupport.isValid()) {
-                Document document = getWorkingBookingProperties().getWorkingBooking().getLastestDocumentAggregate().getDocument();
-                document.setFirstName(firstNameTextField.getText());
-                document.setLastName(lastNameTextField.getText());
-                document.setEmail(emailTextField.getText());
-                document.setCountry(getEvent().getOrganization().getCountry());
-                FXGuestToBook.setGuestToBook(document);
-                submit();
-            }
+        guestPanel.setOnSubmit(event -> {
+            Document document = getWorkingBookingProperties().getWorkingBooking().getLastestDocumentAggregate().getDocument();
+            document.setFirstName(guestPanel.getFirstName());
+            document.setLastName(guestPanel.getLastName());
+            document.setEmail(guestPanel.getEmail());
+            document.setCountry(getEvent().getOrganization().getCountry());
+            FXGuestToBook.setGuestToBook(document);
+            submit();
         });
 
         FlipPane flipPane = new FlipPane();
         flipPane.setAlignment(Pos.TOP_CENTER);
         flipPane.setFront(signInContainer);
-        flipPane.setBack(guestContainer);
+        flipPane.setBack(guestPanel.getContainer());
         orGuestLink.setOnAction(e -> {
             flipPane.flipToBack();
-            guestSubmitButton.setDefaultButton(true);
-            SceneUtil.autoFocusIfEnabled(firstNameTextField);
-            UiScheduler.scheduleDelay(500, () -> SceneUtil.autoFocusIfEnabled(firstNameTextField));
+            guestPanel.onShowing();
         });
+        Hyperlink orAccountLink = Bootstrap.textPrimary(I18nControls.bindI18nProperties(new Hyperlink(), "OrBookUsingAccount"));
+        guestPanel.addTopNode(orAccountLink);
         orAccountLink.setOnAction(e -> {
             flipPane.flipToFront();
-            guestSubmitButton.setDefaultButton(false);
+            guestPanel.onHiding();
         });
 
         mainVbox.getChildren().setAll(
@@ -288,9 +251,18 @@ final class Step2CheckoutSlide extends StepSlide implements MaterialFactoryMixin
         summaryGridPane.add(totalPane, 0, rowIndex, 3, 1);
     }
 
-    private void submit() {
+    private void turnOnWaitMode() {
         turnOnButtonWaitMode(submitButton);
-        turnOnButtonWaitMode(guestSubmitButton);
+        guestPanel.turnOnButtonWaitMode();
+    }
+
+    private void turnOffWaitMode() {
+        turnOffButtonWaitMode(submitButton, "Submit");
+        guestPanel.turnOffButtonWaitMode();
+    }
+
+    private void submit() {
+        turnOnWaitMode();
 
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
         WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
@@ -355,8 +327,7 @@ final class Step2CheckoutSlide extends StepSlide implements MaterialFactoryMixin
                     Console.log(paymentResult);
                 }))
                 .onSuccess(paymentResult -> UiScheduler.runInUiThread(() -> {
-                    turnOffButtonWaitMode(submitButton, "Submit");
-                    turnOffButtonWaitMode(guestSubmitButton, "Submit");
+                    turnOffWaitMode();
                     HasPersonalDetails buyerDetails = FXUserPerson.getUserPerson();
                     if (buyerDetails == null)
                         buyerDetails = FXGuestToBook.getGuestToBook();

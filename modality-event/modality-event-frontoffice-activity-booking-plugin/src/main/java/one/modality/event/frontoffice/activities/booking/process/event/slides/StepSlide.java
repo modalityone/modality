@@ -96,11 +96,11 @@ abstract class StepSlide implements Supplier<Node> {
         return getBookEventActivity().getRecurringEventSchedule();
     }
 
-    protected static void turnOnButtonWaitMode(Button... buttons) {
+    static void turnOnButtonWaitMode(Button... buttons) {
         OperationUtil.turnOnButtonsWaitMode(buttons);
     }
 
-    protected static void turnOffButtonWaitMode(Button button, String i18nKey) {
+    static void turnOffButtonWaitMode(Button button, String i18nKey) {
         OperationUtil.turnOffButtonsWaitMode(button); // but this doesn't reestablish the possible i18n graphic
         // So we reestablish it using i18n
         I18nControls.bindI18nGraphicProperty(button, i18nKey);
