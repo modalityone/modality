@@ -1,7 +1,11 @@
 package one.modality.event.frontoffice.activities.booking.process.event.slides;
 
+import dev.webfx.extras.panes.GoldenRatioPane;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.Background;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.frontoffice.utility.StyleUtility;
@@ -21,7 +25,10 @@ final class StepALoadingSlide extends StepSlide {
         svgPath.setContent(LOGO);
         svgPath.setFill(Color.WHITE);
         mainVbox.setAlignment(Pos.CENTER);
-        mainVbox.getChildren().add(svgPath);
+        GoldenRatioPane goldenRatioPane = new GoldenRatioPane(svgPath);
+        VBox.setVgrow(goldenRatioPane, Priority.ALWAYS);
+        mainVbox.getChildren().setAll(goldenRatioPane);
         mainVbox.setBackground(Background.fill(StyleUtility.MAIN_ORANGE_COLOR));
+        mainVbox.setPadding(Insets.EMPTY); // Removing extra bottom padding
     }
 }
