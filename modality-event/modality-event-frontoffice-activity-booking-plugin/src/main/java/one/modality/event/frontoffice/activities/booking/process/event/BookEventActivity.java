@@ -66,7 +66,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         if (eventId != null) { // eventId is null when sub-routing /booking/account (instead of /booking/event/:eventId)
             FXEventId.setEventId(EntityId.create(Event.class, Numbers.toShortestNumber(eventId)));
             // Initially hiding the footer (app menu), especially when coming form the website.
-            //FXCollapseFooter.setCollapseFooter(true);
+            FXCollapseFooter.setCollapseFooter(true);
         }
     }
 
@@ -74,7 +74,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     public void onResume() {
         // Initially hiding the footer (app menu) to not distract the user with other things (especially when coming
         // form the website).
-        //FXCollapseFooter.setCollapseFooter(true);
+        FXCollapseFooter.setCollapseFooter(true);
         super.onResume();
     }
 
