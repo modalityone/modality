@@ -1,6 +1,7 @@
 package one.modality.event.frontoffice.activities.booking.process.event.slides;
 
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.util.animation.Animations;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.platform.uischeduler.UiScheduler;
@@ -67,6 +68,8 @@ final class GuestPanel implements MaterialFactoryMixin {
         guestSubmitButton.setOnAction(event -> {
             if (validationSupport.isValid()) {
                 submitHandler.handle(event);
+            } else {
+                Animations.shake(container);
             }
         });
     }

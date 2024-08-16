@@ -28,6 +28,7 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires webfx.extras.imagestore;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
+    requires webfx.extras.util.animation;
     requires webfx.extras.util.control;
     requires webfx.extras.util.layout;
     requires webfx.extras.util.scene;
