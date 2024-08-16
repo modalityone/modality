@@ -20,7 +20,7 @@ import java.util.Objects;
  */
 public final class FXOrganizationId {
 
-    private final static String SESSION_ORGANIZATION_ID_KEY = "fxOrganizationId";
+    private static final String SESSION_ORGANIZATION_ID_KEY = "fxOrganizationId";
 
     private final static ObjectProperty<EntityId> organizationIdProperty = new SimpleObjectProperty<>() {
         @Override
@@ -46,14 +46,17 @@ public final class FXOrganizationId {
                     // If yes, there is no need to request the server, we use directly that instance
                     if (organization != null)
                         FXOrganization.setOrganization(organization);
-                    else // Otherwise, we request the server to load that organization from that id
-                        organizationStore.<Organization>executeQuery("select name,type,country from Organization where id=?", organizationId)
+                    else { // Otherwise, we request the server to load that organization from that id
+                        organizationStore.<Organization>executeQuery("select " + FXOrganization.EXPECTED_FIELDS + " from Organization where id=?", organizationId)
                             .onFailure(Console::log)
                             .onSuccess(list -> // on successfully receiving the list (should be a singleton list)
                                 UiScheduler.runInUiThread(() -> {
-                                    if (Objects.equals(organizationId, getOrganizationId())) // final check it is still relevant
-                                        FXOrganization.setOrganization(list.isEmpty() ? null : list.get(0)); // we finally set FXEvent
+                                    if (Objects.equals(organizationId, getOrganizationId())) { // final check it is still relevant
+                                        Organization loadedOrganization = list.isEmpty() ? null : list.get(0);
+                                        FXOrganization.setOrganization(loadedOrganization); // we finally set FXEvent
+                                    }
                                 }));
+                    }
                 }
             }
         }

@@ -12,6 +12,7 @@ import dev.webfx.stack.session.state.client.fx.FXSession;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import one.modality.base.shared.entities.Event;
+import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 
 import java.util.Objects;
 
@@ -20,7 +21,7 @@ import java.util.Objects;
  */
 public final class FXEventId {
 
-    private final static String SESSION_FX_EVENT_ID_KEY = "fxEventId";
+    private static final String SESSION_FX_EVENT_ID_KEY = "fxEventId";
 
     private final static ObjectProperty<EntityId> eventIdProperty = new SimpleObjectProperty<>() {
         @Override
@@ -46,14 +47,26 @@ public final class FXEventId {
                     // If yes, there is no need to request the server, we use directly that instance
                     if (event != null)
                         FXEvent.setEvent(event);
-                    else // Otherwise, we request the server to load that event from that id
-                        eventStore.<Event>executeQuery("select icon,name,startDate,endDate from Event where id=?", eventId)
+                    else { // Otherwise, we request the server to load that event from that id
+                        eventStore.<Event>executeQuery("select " + FXEvent.EXPECTED_FIELDS + " from Event where id=?", eventId)
                             .onFailure(Console::log)
                             .onSuccess(list -> // on successfully receiving the list (should be a singleton list)
                                 UiScheduler.runInUiThread(() -> {
-                                    if (Objects.equals(eventId, getEventId())) // final check it is still relevant
-                                        FXEvent.setEvent(list.isEmpty() ? null : list.get(0)); // we finally set FXEvent
+                                    if (Objects.equals(eventId, getEventId())) { // final check it is still relevant
+                                        Event loadedEvent = list.isEmpty() ? null : list.get(0);
+                                        FXEvent.setEvent(loadedEvent); // we finally set FXEvent
+                                        // In addition, in case FXOrganizationId is not yet set, we set it now. For ex,
+                                        // if a user books an event for the first time through visiting the organization
+                                        // website which redirected the booking to Modality, we memorize the organization
+                                        // so that at the end of the booking process, if the users visits the Modality
+                                        // booking page, he doesn't have to select the organization again, it is already
+                                        // selected, and the user can see all its other events on the booking page.
+                                        if (loadedEvent != null && FXOrganizationId.getOrganizationId() == null) {
+                                            FXOrganizationId.setOrganizationId(loadedEvent.getOrganizationId());
+                                        }
+                                    }
                                 }));
+                    }
                 }
             }
         }
