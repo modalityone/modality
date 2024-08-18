@@ -13,6 +13,7 @@
 
     <providers>
         <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.crm.shared.services.authn.serial.ModalityUserPrincipalSerialCodec</provider>
+        <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.crm.shared.services.authn.serial.ModalityGuestPrincipalSerialCodec</provider>
     </providers>
 
 </project>

@@ -302,16 +302,8 @@
     <!--====================< modality-crm-backoffice-organization-fx >=====================-->
     <source path="one/modality/crm/backoffice/organization/fx"/>
     <source path="one/modality/crm/backoffice/organization/fx/impl"/>
-    <!--===================< modality-crm-client-activity-login-plugin >====================-->
-    <source path="one/modality/crm/client/activities/login"/>
-    <resource path="dev/webfx/kit/css/fonts/password"/>
-    <public path="" includes="dev/webfx/kit/css/fonts/password/"/>
-    <!--================< modality-crm-client-activity-unauthorized-plugin >================-->
-    <source path="one/modality/crm/client/activities/unauthorized"/>
     <!--==========================< modality-crm-client-authn-fx >==========================-->
     <source path="one/modality/crm/shared/services/authn/fx"/>
-    <!--===================< modality-crm-client-authz-required-plugin >====================-->
-    <source path="one/modality/crm/client/services/authz"/>
     <!--======================< modality-crm-client-personaldetails >=======================-->
     <source path="one/modality/crm/client/controls/personaldetails"/>
     <!--===========================< modality-crm-shared-authn >============================-->
@@ -711,15 +703,6 @@
     <source path="dev/webfx/stack/authn/spi"/>
     <!--===========================< webfx-stack-authn-buscall >============================-->
     <source path="dev/webfx/stack/authn/buscall"/>
-    <!--===========================< webfx-stack-authn-login-ui >===========================-->
-    <source path="dev/webfx/stack/authn/login/ui"/>
-    <source path="dev/webfx/stack/authn/login/ui/spi"/>
-    <!--=======================< webfx-stack-authn-login-ui-gateway >=======================-->
-    <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway"/>
-    <!--===============< webfx-stack-authn-login-ui-gateway-password-plugin >===============-->
-    <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway/password"/>
-    <!--=======================< webfx-stack-authn-login-ui-portal >========================-->
-    <source path="dev/webfx/stack/authn/login/ui/spi/impl/portal"/>
     <!--========================< webfx-stack-authn-logout-client >=========================-->
     <source path="dev/webfx/stack/authn/logout/client/operation"/>
     <!--============================< webfx-stack-authn-remote >============================-->

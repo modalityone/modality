@@ -19,6 +19,8 @@
 
     <modules>
         <module>modality-crm-backoffice-bookingdetailspanel</module>
+        <module>modality-crm-backoffice-max-plugin</module>
+        <module>modality-crm-backoffice-min-plugin</module>
         <module>modality-crm-backoffice-operations-mail</module>
         <module>modality-crm-backoffice-organization-fx</module>
         <module>modality-crm-client-activity-login-plugin</module>
@@ -26,8 +28,14 @@
         <module>modality-crm-client-authn-fx</module>
         <module>modality-crm-client-authn-login-ui-gateway-signup-plugin</module>
         <module>modality-crm-client-authz-required-plugin</module>
+        <module>modality-crm-client-magiclink-application</module>
+        <module>modality-crm-client-max-plugin</module>
+        <module>modality-crm-client-min-plugin</module>
         <module>modality-crm-client-personaldetails</module>
         <module>modality-crm-client-profile-plugin</module>
+        <module>modality-crm-frontoffice-max-plugin</module>
+        <module>modality-crm-frontoffice-min-plugin</module>
+        <module>modality-crm-server-authn-gateway-magiclink-plugin</module>
         <module>modality-crm-server-authn-gateway-usernamepassword-plugin</module>
         <module>modality-crm-server-authz-required-plugin</module>
         <module>modality-crm-server-max-plugin</module>

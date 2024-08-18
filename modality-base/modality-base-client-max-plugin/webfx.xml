@@ -11,13 +11,6 @@
 
         <plugin-module>modality-base-client-min-plugin</plugin-module>
 
-        <!-- No yet ready for production
-        <plugin-module>modality-crm-client-authn-login-ui-gateway-signup-plugin</plugin-module>
-        <plugin-module>webfx-stack-authn-login-ui-gateway-facebook-plugin</plugin-module>
-        <plugin-module>webfx-stack-authn-login-ui-gateway-google-plugin</plugin-module>
-        <plugin-module>webfx-stack-authn-login-ui-gateway-mojoauth-plugin</plugin-module>
-        -->
-        <plugin-module>webfx-stack-authn-login-ui-gateway-password-plugin</plugin-module>
     </dependencies>
 
 </project>

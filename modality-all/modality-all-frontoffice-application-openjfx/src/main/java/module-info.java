@@ -33,8 +33,8 @@ module modality.all.frontoffice.application.openjfx {
     requires webfx.platform.windowhistory.java;
     requires webfx.platform.windowlocation.java;
     requires webfx.stack.authn.buscall;
-    requires webfx.stack.authn.login.ui.portal;
     requires webfx.stack.authn.remote;
+    requires webfx.stack.com.bus.call;
     requires webfx.stack.com.bus.json.client;
     requires webfx.stack.com.bus.json.client.websocket.java;
     requires webfx.stack.com.websocket.java;

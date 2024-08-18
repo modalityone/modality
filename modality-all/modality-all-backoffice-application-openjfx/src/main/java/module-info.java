@@ -30,10 +30,10 @@ module modality.all.backoffice.application.openjfx {
     requires webfx.platform.shutdown.java;
     requires webfx.platform.storage.java;
     requires webfx.platform.storagelocation.java;
+    requires webfx.platform.useragent.java.client;
     requires webfx.platform.windowhistory.java;
     requires webfx.platform.windowlocation.java;
     requires webfx.stack.authn.buscall;
-    requires webfx.stack.authn.login.ui.portal;
     requires webfx.stack.authn.remote;
     requires webfx.stack.com.bus.json.client;
     requires webfx.stack.com.bus.json.client.websocket.java;

@@ -83,7 +83,7 @@ public final class ModalityUsernamePasswordAuthenticationGatewayProvider impleme
             Object personId = result.getValue(0, 0);
             Object accountId = result.getValue(0, 1);
             ModalityUserPrincipal modalityUserPrincipal = new ModalityUserPrincipal(personId, accountId);
-            return PushServerService.pushState(StateAccessor.setUserId(null, modalityUserPrincipal), runId);
+            return PushServerService.pushState(StateAccessor.createUserIdState(modalityUserPrincipal), runId);
         });
     }
 

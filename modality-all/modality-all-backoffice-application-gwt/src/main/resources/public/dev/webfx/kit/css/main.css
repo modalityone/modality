@@ -739,38 +739,6 @@ body, textarea /* because textarea has explicit default monospace font */ {
     border: none;
 }
 
-/*===== modality-client-login-web@main.css from modality-crm-client-activity-login-plugin =====*/
-
-.login * {
-    font-size: 18px; /* doesn't work yet (because of hardcoded style in app code) */
-}
-
-.login fx-button { /* doesn't work yet (because of hardcoded style in app code) */
-    background: #0096D6FF;
-    border: none;
-    border-radius: 10px;
-}
-
-.login fx-button .text {
-    color: white; /* doesn't work yet (because of hardcoded style in app code) */
-    /*padding: 15px; JavaFX padding already applied in app code for now */
-}
-
-/* Montserrat password dots are tiny! So we use another font for passwords, but we don't want that font for the placeholder!
-   So we apply that font only once the user started typing the password. This is done using :not([value=""]) CSS
-   selector. Normally "value" refers to the initial value of the input only. However HtmlTextInputControlPeer keeps
-   updating "value" to "" or "not-empty" whether the user has typed something, so this CSS rule finally works: */
-input[type="password"]:not([value=""]) {
-    font-family: "Password", serif;
-    letter-spacing: 0.15em;
-}
-
-@font-face {
-    font-family: "Password";
-    src: url("./fonts/password/password.woff") format("woff");
-    font-weight: 100 900;
-}
-
 /*===== modality-backoffice-bookingdetailspanel-web@main.css from modality-crm-backoffice-bookingdetailspanel =====*/
 
 fx-titledpane .title {
