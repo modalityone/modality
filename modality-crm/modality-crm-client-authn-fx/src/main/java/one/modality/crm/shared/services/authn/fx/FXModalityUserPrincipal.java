@@ -72,6 +72,7 @@ public final class FXModalityUserPrincipal {
                                         ModalityUserPrincipal mup = new ModalityUserPrincipal(person.getPrimaryKey(), person.getForeignEntityId("frontendAccount").getPrimaryKey());
                                         // Setting FXModalityUserPrincipal with this instance
                                         setModalityUserPrincipal(mup);
+                                        loggedInProperty.set(FXLoggedIn.isLoggedIn());
                                     }
                                 });
                     }
