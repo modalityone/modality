@@ -15,9 +15,6 @@ module modality.crm.client.activity.login.plugin {
     // Exported packages
     exports one.modality.crm.client.activities.login;
 
-    // Resources packages
-    opens dev.webfx.kit.css.fonts.password;
-
     // Provided services
     provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.crm.client.activities.login.LoginUiRoute;
 

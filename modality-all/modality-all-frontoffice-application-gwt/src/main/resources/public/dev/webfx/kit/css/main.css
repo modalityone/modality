@@ -6,6 +6,11 @@
     --safe-area-inset-right:  env(safe-area-inset-right);
     --safe-area-inset-bottom: env(safe-area-inset-bottom);
     --safe-area-inset-left:   env(safe-area-inset-left);
+    --fx-border-color: #c0c0c0;
+    --fx-border-radius: 5px;
+    --fx-border-style: solid;
+    --fx-border-width: 1px;
+    --fx-border-color-focus: #0096D6;
     --fx-svg-path-fill: black;
 }
 
@@ -26,6 +31,13 @@ body {
     opacity: 50%;
 }
 
+.fx-border > fx-border {
+    border-color: var(--fx-border-color);
+    border-style: var(--fx-border-style);
+    border-width: var(--fx-border-width);
+    border-radius: var(--fx-border-radius);
+}
+
 /* Applying the default JavaFX behaviour for SVGPath */
 fx-svgpath svg path:not([fill]):not([stroke]) { /* if the application code didn't set neither fill nor stroke */
     fill: var(--fx-svg-path-fill);  /* then the fill is black */
@@ -39,10 +51,6 @@ fx-svgpath svg path:not([fill])[stroke] { /* if the application code set the str
 
 /***** Global variables *****/
 :root {
-    --fx-border-color: #c0c0c0;
-    --fx-border-radius: 5px;
-    --fx-border-style: solid;
-    --fx-border-width: 1px;
     --fx-border-color-focus: #0096D6;
     --fx-textfield-background: white;
 }
