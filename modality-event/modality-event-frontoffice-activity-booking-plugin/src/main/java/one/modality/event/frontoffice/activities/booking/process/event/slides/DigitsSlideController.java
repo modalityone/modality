@@ -27,6 +27,8 @@ final class DigitsSlideController {
         step4CancellationSlide = new Step4CancellationSlide(bookEventActivity);
         step5ErrorSlide        = new Step5ErrorSlide(bookEventActivity);
         transitionPane.setScrollToTop(true);
+        // The following code is to solve a performance issue that happens on mobiles during the translation transition
+        transitionPane.setUnmanagedDuringTransition(); // For more explanation, read the comment inside this method.
     }
 
     Region getContainer() {
