@@ -21,6 +21,7 @@ module modality.crm.client.authz.required.plugin {
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
     requires webfx.stack.routing.router.client;
+    requires webfx.stack.session.state;
     requires webfx.stack.session.state.client.fx;
 
     // Exported packages
