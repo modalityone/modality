@@ -18,6 +18,7 @@ module modality.base.backoffice.mainframe.activity {
     requires webfx.extras.panes;
     requires webfx.extras.theme;
     requires webfx.extras.util.animation;
+    requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.conf;
     requires webfx.platform.resource;

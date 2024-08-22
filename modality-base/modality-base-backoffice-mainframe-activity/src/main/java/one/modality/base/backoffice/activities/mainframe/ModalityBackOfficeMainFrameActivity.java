@@ -6,6 +6,7 @@ import dev.webfx.extras.theme.layout.FXLayoutMode;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.animation.Animations;
+import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.platform.resource.Resource;
@@ -372,7 +373,9 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
         statusBar.getChildren().addAll(new Rectangle(10, 0), pendingText, pendingPane);
 
         statusBar.setAlignment(Pos.CENTER);
-        statusBar.setPadding(new Insets(5));
+        // Considering the bottom of the safe area, in particular for OS like iPadOS with a bar at the bottom
+        Insets sai = WebFxKitLauncher.getSafeAreaInsets();
+        statusBar.setPadding(new Insets(Math.max(5, sai.getTop()), Math.max(5, sai.getRight()), Math.max(5, sai.getBottom()), Math.max(5, sai.getLeft())));
         LuminanceTheme.createApplicationFrameFacet(statusBar).style();
         return statusBar;
     }
