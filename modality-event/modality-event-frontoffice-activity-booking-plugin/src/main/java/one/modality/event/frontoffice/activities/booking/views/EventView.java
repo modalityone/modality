@@ -92,7 +92,7 @@ public final class EventView {
 
     public void setEvent(Event event) {
         this.event = event;
-        String imageUrl = (String) event.evaluate("image.url");
+        String imageUrl = event.evaluate("image.url");
         boolean hasImage = imageUrl != null;
         eventImageScalePane.setVisible(hasImage);
         eventImageScalePane.setManaged(hasImage);
@@ -104,7 +104,7 @@ public final class EventView {
         I18n.bindI18nProperties(eventCentreLocationText, new I18nSubKey("expression: '[At] ' + coalesce(i18n(venue), i18n(organization))", event));
         I18n.bindI18nProperties(eventCountryLocationText, new I18nSubKey("expression: coalesce(i18n(venue.country), i18n(organization.country))", event));
         eventDateText.setText(Strings.toString(event.getStartDate()));
-        buttonContainer.setCenter((event.isLive() ||event.getState()== EventState.OPEN) ? bookButton : comingSoonButton);
+        buttonContainer.setCenter((event.isLive() || event.getState() == EventState.OPEN) ? bookButton : comingSoonButton);
     }
 
     public Node getView() {
