@@ -201,11 +201,11 @@ public class GeneralUtility {
     }
 
     public static <T extends Labeled> T setupLabeled(T labeled, String i18nKey, Color color) {
-        if (i18nKey != null)
-            I18nControls.bindI18nProperties(labeled, i18nKey);
         labeled.setTextFill(color);
         labeled.setWrapText(true);
         labeled.setLineSpacing(6);
+        if (i18nKey != null)
+            I18nControls.bindI18nProperties(labeled, i18nKey);
         return labeled;
     }
 
@@ -223,6 +223,14 @@ public class GeneralUtility {
 
     public static Hyperlink createHyperlink(String i18nKey, Color color) {
         return setupLabeled(new Hyperlink(), i18nKey, color);
+    }
+
+    public static Region createOrangeLineSeparator() {
+        Region line = new Region();
+        line.setBackground(Background.fill(StyleUtility.MAIN_ORANGE_COLOR));
+        line.setMinHeight(1);
+        line.setPrefWidth(Double.MAX_VALUE);
+        return line;
     }
 
     public static <T extends Labeled> void setLabeledFont(T labeled, String fontFamily, FontWeight fontWeight, double fontSize) {
