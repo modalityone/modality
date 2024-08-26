@@ -3,6 +3,7 @@ package one.modality.event.client.event.fx;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.stack.authn.login.ui.FXLoginContext;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -11,6 +12,7 @@ import dev.webfx.stack.session.SessionService;
 import dev.webfx.stack.session.state.client.fx.FXSession;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import one.modality.base.shared.context.ModalityContext;
 import one.modality.base.shared.entities.Event;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 
@@ -33,6 +35,11 @@ public final class FXEventId {
             if (session != null) {
                 session.put(SESSION_FX_EVENT_ID_KEY, Entities.getPrimaryKey(eventId));
                 SessionService.getSessionStore().put(session);
+            }
+            // Also updating the FXLoginContext
+            Object loginContext = FXLoginContext.getLoginContext();
+            if (loginContext instanceof ModalityContext) {
+                ((ModalityContext) loginContext).setEventId(Entities.getPrimaryKey(eventId));
             }
             // Synchronizing FXEvent to match that new event id (FXEventId => FXEvent)
             if (!Objects.equals(eventId, FXEvent.getEventId())) { // Sync only if ids differ.

@@ -3,6 +3,7 @@ package one.modality.crm.backoffice.organization.fx;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.stack.authn.login.ui.FXLoginContext;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -11,6 +12,7 @@ import dev.webfx.stack.session.SessionService;
 import dev.webfx.stack.session.state.client.fx.FXSession;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import one.modality.base.shared.context.ModalityContext;
 import one.modality.base.shared.entities.Organization;
 
 import java.util.Objects;
@@ -33,6 +35,8 @@ public final class FXOrganizationId {
                 session.put(SESSION_ORGANIZATION_ID_KEY, Entities.getPrimaryKey(organizationId));
                 SessionService.getSessionStore().put(session);
             }
+            // Also resetting the FXLoginContext
+            FXLoginContext.setLoginContext(new ModalityContext(Entities.getPrimaryKey(organizationId), null, null, null));
             // Synchronizing FXOrganization to match that new organization id (FXOrganizationId => FXOrganization)
             if (!Objects.equals(organizationId, FXOrganization.getOrganizationId())) { // Sync only if ids differ.
                 // If the new organization id is null, we set the FXOrganization to null
