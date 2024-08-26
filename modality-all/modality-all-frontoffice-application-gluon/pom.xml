@@ -214,6 +214,12 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-authn-login-ui-portal</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-authn-remote</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
@@ -325,6 +331,7 @@
                     <resourcesList>
                         <list>dev/webfx/extras/webview/pane/[^/]+$</list>
                         <list>dev/webfx/kit/css/fonts/montserrat/[^/]+$</list>
+                        <list>dev/webfx/kit/css/fonts/password/[^/]+$</list>
                         <list>dev/webfx/platform/conf/[^/]+$</list>
                         <list>dev/webfx/platform/meta/exe/[^/]+$</list>
                         <list>dev/webfx/stack/i18n/[^/]+$</list>

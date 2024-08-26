@@ -192,6 +192,9 @@
     <source path="one/modality/base/frontoffice/fx"/>
     <source path="one/modality/base/frontoffice/states"/>
     <source path="one/modality/base/frontoffice/utility"/>
+    <!--==========================< modality-base-shared-context >==========================-->
+    <source path="one/modality/base/shared/context"/>
+    <source path="one/modality/base/shared/context/serial"/>
     <!--========================< modality-base-shared-domainmodel >========================-->
     <source path="one/modality/base/shared/domainmodel/formatters"/>
     <source path="one/modality/base/shared/domainmodel/functions"/>
@@ -530,6 +533,15 @@
     <source path="dev/webfx/stack/authn/spi"/>
     <!--===========================< webfx-stack-authn-buscall >============================-->
     <source path="dev/webfx/stack/authn/buscall"/>
+    <!--===========================< webfx-stack-authn-login-ui >===========================-->
+    <source path="dev/webfx/stack/authn/login/ui"/>
+    <source path="dev/webfx/stack/authn/login/ui/spi"/>
+    <!--=======================< webfx-stack-authn-login-ui-gateway >=======================-->
+    <source path="dev/webfx/stack/authn/login/ui/spi/impl/gateway"/>
+    <!--=======================< webfx-stack-authn-login-ui-portal >========================-->
+    <source path="dev/webfx/stack/authn/login/ui/spi/impl/portal"/>
+    <resource path="dev/webfx/kit/css/fonts/password"/>
+    <public path="" includes="dev/webfx/kit/css/fonts/password/"/>
     <!--========================< webfx-stack-authn-logout-client >=========================-->
     <source path="dev/webfx/stack/authn/logout/client/operation"/>
     <!--============================< webfx-stack-authn-remote >============================-->

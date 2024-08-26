@@ -489,6 +489,40 @@ HtmlText, HtmlTextEditor {
     -fx-skin: "dev.webfx.kit.mapper.peers.javafxcontrols.openjfx.skin.FxControlPeerSkin";
 }
 
+/*===== webfx-stack-authn-login-ui-portal-javafx@main.css from webfx-stack-authn-login-ui-portal =====*/
+
+
+.login {
+    -fx-font-size: 18px;
+}
+
+.login Button {
+    -fx-background-color: #0096D6FF;
+    -fx-background-radius: 10px;
+    -fx-text-fill: white;
+    -fx-curson: hand;
+}
+
+.login Button SVGPath {
+    -fx-fill: white;
+}
+
+.login .or {
+    -fx-fill: #888;
+}
+
+.login .line {
+    -fx-background-color: lightgray;
+}
+
+.login .background {
+    -fx-background-color: white;
+    -fx-background-radius: 20px;
+    -fx-border-color: lightgray;
+    -fx-border-radius: 20px;
+    -fx-effect: dropshadow(gaussian, lightgray, 10, 0, 0, 0)
+}
+
 /*===== modality-client-javafx@main.css from modality-base-client-application =====*/
 
 Text, Label, Button, TextField {

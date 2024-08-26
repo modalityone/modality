@@ -17,7 +17,6 @@ module modality.base.frontoffice.activity.account.plugin {
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.util.control;
-    requires webfx.extras.util.layout;
     requires webfx.kit.util;
     requires webfx.platform.resource;
     requires webfx.platform.util;

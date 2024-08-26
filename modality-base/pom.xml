@@ -64,6 +64,7 @@
         <module>modality-base-frontoffice-utility</module>
         <module>modality-base-server-datasource-plugin</module>
         <module>modality-base-server-geoimport-plugin</module>
+        <module>modality-base-server-mail</module>
         <module>modality-base-server-max-plugin</module>
         <module>modality-base-server-min-plugin</module>
         <module>modality-base-server-rest-map-vertx-plugin</module>

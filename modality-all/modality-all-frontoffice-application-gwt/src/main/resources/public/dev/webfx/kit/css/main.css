@@ -633,6 +633,67 @@ tr.selected, .grid-row.selected {
 .cke_notifications_area {
     display: none;
 }
+/*===== webfx-stack-authn-login-ui-portal-web@main.css from webfx-stack-authn-login-ui-portal =====*/
+
+.login * {
+    font-size: 18px;
+}
+
+.login fx-button {
+    cursor: pointer;
+}
+
+.login fx-button > fx-background {
+    background: #0096D6FF;
+    border-radius: 15px;
+}
+
+.login fx-button > fx-border {
+    --fx-border-color: transparent;
+}
+
+.login fx-button .text {
+    color: white;
+}
+
+.login fx-button fx-svgpath {
+    --fx-svg-path-fill: white;
+}
+
+/* Montserrat password dots are tiny! So we use another font for passwords, but we don't want that font for the placeholder!
+   So we apply that font only once the user started typing the password. This is done using :not([value=""]) CSS
+   selector. Normally "value" refers to the initial value of the input only. However HtmlTextInputControlPeer keeps
+   updating "value" to "" or "not-empty" whether the user has typed something, so this CSS rule finally works: */
+input[type="password"]:not([value=""]) {
+    font-family: "Password", serif;
+    letter-spacing: 0.15em;
+}
+
+@font-face {
+    font-family: "Password";
+    src: url("./fonts/password/password.woff") format("woff");
+    font-weight: 100 900;
+}
+
+.login .or {
+    color: #888;
+}
+
+.login .line {
+    background-color: lightgray;
+}
+
+.login .background > fx-background {
+    background-color: white;
+    border-radius: 20px;
+}
+
+.login .fx-border > fx-border {
+    --fx-border-color: lightgray;
+    --fx-border-radius: 20px;
+    box-shadow: lightgray 0 0 10px;
+}
+
 /*===== modality-client-web@main.css from modality-base-client-css =====*/
 
 :root {
