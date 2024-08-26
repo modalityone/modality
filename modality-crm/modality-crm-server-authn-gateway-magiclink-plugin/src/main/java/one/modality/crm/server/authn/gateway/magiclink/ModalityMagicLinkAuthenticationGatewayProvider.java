@@ -8,6 +8,8 @@ import dev.webfx.platform.util.uuid.Uuid;
 import dev.webfx.stack.authn.*;
 import dev.webfx.stack.authn.logout.server.LogoutPush;
 import dev.webfx.stack.authn.server.gateway.spi.ServerAuthenticationGatewayProvider;
+import dev.webfx.stack.mail.MailService;
+import dev.webfx.stack.mail.MailMessage;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.domainmodel.HasDataSourceModel;
@@ -16,6 +18,8 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.push.server.PushServerService;
 import dev.webfx.stack.session.state.StateAccessor;
 import dev.webfx.stack.session.state.ThreadLocalStateHolder;
+import one.modality.base.server.mail.ModalityMailMessage;
+import one.modality.base.shared.context.ModalityContext;
 import one.modality.base.shared.entities.MagicLink;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.shared.services.authn.ModalityGuestPrincipal;
@@ -72,8 +76,13 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
             link = "http" + link;
         magicLink.setLink(link);
         magicLink.setEmail(request.getEmail());
+        ModalityContext modalityContext = request.getContext() instanceof ModalityContext ? (ModalityContext) request.getContext()
+            : new ModalityContext(1 /* default organizationId if no context is provider */, null, null, null);
         return updateStore.submitChanges()
-            .map(ignoredBatch -> null);
+            .compose(ignoredBatch -> {
+                modalityContext.setMagicLinkId(magicLink.getPrimaryKey());
+                return MailService.sendMail(new ModalityMailMessage(MailMessage.create(null, magicLink.getEmail(), "Magic link", magicLink.getLink()), modalityContext));
+            });
     }
 
     private Future<Void> authenticateWithMagicLink(MagicLinkCredentials credentials) {
