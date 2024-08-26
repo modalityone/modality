@@ -131,7 +131,7 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
 
     @Override
     public boolean acceptsUserId() {
-        return true;
+        return false;
     }
 
     @Override
