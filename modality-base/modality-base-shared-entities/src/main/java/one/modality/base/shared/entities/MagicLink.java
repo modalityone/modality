@@ -57,4 +57,12 @@ public interface MagicLink extends Entity {
         return getStringFieldValue("email");
     }
 
+    default void setAppRunId(String appRunId) {
+        setFieldValue("appRunId", appRunId);
+    }
+
+    default String getAppRunId() {
+        return getStringFieldValue("appRunId");
+    }
+
 }

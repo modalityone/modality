@@ -6,15 +6,17 @@
 module modality.crm.server.authn.gateway.usernamepassword.plugin {
 
     // Direct dependencies modules
+    requires modality.base.shared.entities;
     requires modality.crm.shared.authn;
     requires webfx.platform.async;
     requires webfx.platform.console;
     requires webfx.stack.authn;
     requires webfx.stack.authn.logout.server;
     requires webfx.stack.authn.server.gateway;
-    requires webfx.stack.db.query;
+    requires webfx.stack.hash.md5;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel;
+    requires webfx.stack.orm.entity;
     requires webfx.stack.push.server;
     requires webfx.stack.session.state;
 
