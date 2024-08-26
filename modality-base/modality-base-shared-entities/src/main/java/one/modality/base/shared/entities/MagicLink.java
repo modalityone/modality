@@ -25,12 +25,20 @@ public interface MagicLink extends Entity {
         return getLocalDateTimeFieldValue("usageDate");
     }
 
-    default void setRunId(String runId) {
-        setFieldValue("runId", runId);
+    default void setUsageRunId(String usageRunId) {
+        setFieldValue("usageRunId", usageRunId);
     }
 
-    default String getRunId() {
-        return getStringFieldValue("runId");
+    default String getUsageRunId() {
+        return getStringFieldValue("usageRunId");
+    }
+
+    default void setTargetRunId(String runId) {
+        setFieldValue("targetRunId", runId);
+    }
+
+    default String getTargetRunId() {
+        return getStringFieldValue("targetRunId");
     }
 
     default void setToken(String token) {
@@ -41,14 +49,6 @@ public interface MagicLink extends Entity {
         return getStringFieldValue("token");
     }
 
-    default void setLink(String link) {
-        setFieldValue("link", link);
-    }
-
-    default String getLink() {
-        return getStringFieldValue("link");
-    }
-
     default void setEmail(String email) {
         setFieldValue("email", email);
     }
@@ -57,12 +57,20 @@ public interface MagicLink extends Entity {
         return getStringFieldValue("email");
     }
 
-    default void setAppRunId(String appRunId) {
-        setFieldValue("appRunId", appRunId);
+    default void setLang(String lang) {
+        setFieldValue("lang", lang);
     }
 
-    default String getAppRunId() {
-        return getStringFieldValue("appRunId");
+    default String getLang() {
+        return getStringFieldValue("lang");
+    }
+
+    default void setLink(String link) {
+        setFieldValue("link", link);
+    }
+
+    default String getLink() {
+        return getStringFieldValue("link");
     }
 
 }

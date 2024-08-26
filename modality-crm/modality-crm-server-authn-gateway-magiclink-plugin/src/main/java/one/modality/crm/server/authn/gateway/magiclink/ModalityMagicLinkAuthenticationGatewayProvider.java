@@ -65,13 +65,15 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
     }
 
     private Future<Void> createAndSendMagicLink(MagicLinkRequest request) {
-        String runId = ThreadLocalStateHolder.getRunId();
+        String targetRunId = ThreadLocalStateHolder.getRunId();
         UpdateStore updateStore = UpdateStore.create(dataSourceModel);
         MagicLink magicLink = updateStore.insertEntity(MagicLink.class);
-        magicLink.setRunId(runId);
+        magicLink.setTargetRunId(targetRunId);
         String token = Uuid.randomUuid();
         magicLink.setToken(token);
-        String link = request.getClientOrigin() + MAGIC_LINK_APP_ROUTE.replace(":token", token).replace(":lang", Strings.toSafeString(request.getLanguage()));
+        String lang = Strings.toSafeString(request.getLanguage());
+        magicLink.setLang(lang);
+        String link = request.getClientOrigin() + MAGIC_LINK_APP_ROUTE.replace(":token", token).replace(":lang", lang);
         if (link.startsWith(":")) // temporary workaround for requests coming from desktops & mobiles
             link = "http" + link;
         magicLink.setLink(link);
@@ -86,10 +88,10 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
     }
 
     private Future<Void> authenticateWithMagicLink(MagicLinkCredentials credentials) {
-        String magicLinkAppRunId = ThreadLocalStateHolder.getRunId();
+        String usageRunId = ThreadLocalStateHolder.getRunId();
         // 1) Checking the existence of the magic link in the database, and if so, loading it with required info
         return EntityStore.create(dataSourceModel)
-            .<MagicLink>executeQuery("select runId,email,creationDate,usageDate from MagicLink where token=? limit 1", credentials.getToken())
+            .<MagicLink>executeQuery("select targetRunId,email,creationDate,usageDate from MagicLink where token=? limit 1", credentials.getToken())
             .compose(magicLinks -> {
                 if (magicLinks.isEmpty())
                     return Future.failedFuture("Magic link not found (token: " + credentials.getToken() + ")");
@@ -107,7 +109,7 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
                     .<Person>executeQuery("select frontendAccount from Person p where frontendAccount.username=? order by p.id limit 1", magicLink.getEmail())
                     .compose(persons -> {
                         // 4) Preparing the userId = ModalityUserPrincipal for registered users, ModalityGuestPrincipal for unregistered users
-                        String targetRunId = magicLink.getRunId();
+                        String targetRunId = magicLink.getTargetRunId();
                         Object targetUserId;
                         if (!persons.isEmpty()) {
                             Person userPerson = persons.get(0);
@@ -130,7 +132,7 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
                                 UpdateStore updateStore = UpdateStore.createAbove(magicLink.getStore());
                                 MagicLink ml = updateStore.updateEntity(magicLink);
                                 ml.setUsageDate(now);
-                                ml.setAppRunId(magicLinkAppRunId);
+                                ml.setUsageRunId(usageRunId);
                                 return updateStore.submitChanges().map(ignored2 -> (Void) null)
                                     .onFailure(Console::log);
                             });
@@ -164,11 +166,11 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
             return Future.failedFuture(getClass().getSimpleName() + ".updateCredentials() requires a " + MagicLinkPasswordUpdate.class.getSimpleName() + " argument");
         }
         MagicLinkPasswordUpdate update = (MagicLinkPasswordUpdate) updateCredentialsArgument;
-        String magicLinkAppRunId = ThreadLocalStateHolder.getRunId();
+        String usageRunId = ThreadLocalStateHolder.getRunId();
         // 1) Loading the email for the magic link normally associated with this magic link app userId from the database
         // This will be used to identify the account we need to change the password for.
         return EntityStore.create(dataSourceModel)
-            .<MagicLink>executeQuery("select email from MagicLink where appRunId=? limit 1", magicLinkAppRunId)
+            .<MagicLink>executeQuery("select email from MagicLink where usageRunId=? limit 1", usageRunId)
             .compose(magicLinks -> {
                 if (magicLinks.isEmpty())
                     return Future.failedFuture("Magic link not found!");
