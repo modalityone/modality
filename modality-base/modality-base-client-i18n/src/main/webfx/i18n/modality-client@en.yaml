@@ -19,6 +19,7 @@ payInFull: "pay in full"
 TotalAmount: "Total amount"
 Error: "An error occurred"
 LimitTo100: "Limit to 100"
+NewPassword: "New password (case sensitive)"
 GenericSearch:
   prompt: "Search here to narrow the list"
 EventSearch:

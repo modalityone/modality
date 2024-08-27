@@ -1,22 +1,32 @@
 package one.modality.crm.magiclink.application;
 
+import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.windowlocation.WindowLocation;
 import dev.webfx.stack.authn.AuthenticationService;
 import dev.webfx.stack.authn.MagicLinkCredentials;
+import dev.webfx.stack.authn.MagicLinkPasswordUpdate;
 import dev.webfx.stack.i18n.I18n;
+import dev.webfx.stack.i18n.controls.I18nControls;
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import one.modality.base.client.i18n.ModalityI18nKeys;
 
 public class MagicLinkApplication extends Application {
 
     private final Text text = I18n.bindI18nProperties(new Text(), "MagicLinkInitialMessage");
     private String token;
-
+    private final VBox content = new VBox();
+    private Stage stage;
     @Override
     public void init() {
         readTokenAndSetLanguage();
@@ -47,6 +57,30 @@ public class MagicLinkApplication extends Application {
 
     private void onSuccess() {
         I18n.bindI18nProperties(text, "MagicLinkSuccessMessage");
+        Label titleLabel = Bootstrap.textPrimary(I18nControls.bindI18nTextProperty(new Label(),ModalityI18nKeys.ChangeYourPassword));
+        content.setAlignment(Pos.CENTER);
+        content.setSpacing(20);
+        Label passwordLabel = Bootstrap.textSecondary(I18nControls.bindI18nTextProperty(new Label(),ModalityI18nKeys.NewPassword));
+        PasswordField passwordField = new PasswordField();
+        passwordField.setMaxWidth(250);
+        Button confirmButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(),ModalityI18nKeys.Confirm));
+        confirmButton.setPrefWidth(250);
+        confirmButton.setOnAction(l -> {
+            AuthenticationService.updateCredentials(new MagicLinkPasswordUpdate(passwordField.getText()))
+                .onFailure(e -> Console.log("Error Updating password: " + e))
+                .onSuccess(e -> {Console.log("Password Updated: " + e);
+            if (stage != null) {
+                stage.close();  // Close the window
+            }});
+        });;
+        Button cancelButton = Bootstrap.secondaryButton(I18nControls.bindI18nProperties(new Button(),ModalityI18nKeys.Cancel));
+        cancelButton.setPrefWidth(250);
+        cancelButton.setOnAction(l -> {
+            if (stage != null) {
+                stage.close();  // Close the window
+            }
+        });
+        content.getChildren().addAll(text,titleLabel,passwordLabel, passwordField, confirmButton, cancelButton);
     }
 
     private void onFailure(Throwable e) {
@@ -64,13 +98,15 @@ public class MagicLinkApplication extends Application {
                 i18nKey = "MagicLinkPushError";
         }
         I18n.bindI18nProperties(text, i18nKey);
+        content.getChildren().add(text);
     }
 
     @Override
     public void start(Stage primaryStage) {
-        StackPane root = new StackPane(text);
-        primaryStage.setScene(new Scene(root, 800, 600));
-        primaryStage.show();
+        StackPane root = new StackPane(content);
+        stage = primaryStage;
+        stage.setScene(new Scene(root, 800, 600));
+        stage.show();
     }
 
 }
