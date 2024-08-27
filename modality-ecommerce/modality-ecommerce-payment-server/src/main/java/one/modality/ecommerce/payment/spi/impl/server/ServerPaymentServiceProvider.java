@@ -262,7 +262,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
 
     @Override
     public Future<Void> updatePaymentStatus(UpdatePaymentStatusArgument argument) {
-        return updatePaymentStatusImpl(argument).map((Void) null);
+        return updatePaymentStatusImpl(argument).mapEmpty();
     }
 
     private Future<MoneyTransfer> updatePaymentStatusImpl(UpdatePaymentStatusArgument argument) {

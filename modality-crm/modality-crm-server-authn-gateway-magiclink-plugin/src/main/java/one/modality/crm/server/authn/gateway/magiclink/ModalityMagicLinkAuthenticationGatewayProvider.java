@@ -190,7 +190,7 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
                         PasswordUpdate passwordUpdate = new PasswordUpdate(userPerson.evaluate("frontendAccount.password"), update.getNewPassword());
                         Promise<Void> promise = Promise.promise();
                         ThreadLocalStateHolder.runAsUser(targetUserId,
-                            () -> promise.handle(AuthenticationService.updateCredentials(passwordUpdate).map(x -> (Void) null))
+                            () -> promise.handle(AuthenticationService.updateCredentials(passwordUpdate).mapEmpty())
                         );
                         return promise.future();
                     });
