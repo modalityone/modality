@@ -68,14 +68,7 @@ public class MagicLinkApplication extends Application {
                 .onFailure(e -> Console.log("Error Updating password: " + e))
                 .onSuccess(ignored -> Console.log("Password Updated"));
         });
-        Button cancelButton = Bootstrap.secondaryButton(I18nControls.bindI18nProperties(new Button(),ModalityI18nKeys.Cancel));
-        cancelButton.setPrefWidth(250);
-        cancelButton.setOnAction(l -> {
-            if (stage != null) {
-                stage.close();  // Close the window
-            }
-        });
-        content.getChildren().setAll(text, titleLabel ,passwordLabel, passwordField, confirmButton, cancelButton);
+        content.getChildren().setAll(text, titleLabel ,passwordLabel, passwordField, confirmButton);
     }
 
     private void onFailure(Throwable e) {
