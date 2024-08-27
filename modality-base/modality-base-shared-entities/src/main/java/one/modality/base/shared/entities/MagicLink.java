@@ -33,12 +33,12 @@ public interface MagicLink extends Entity {
         return getStringFieldValue("usageRunId");
     }
 
-    default void setTargetRunId(String runId) {
-        setFieldValue("targetRunId", runId);
+    default void setLoginRunId(String loginRunId) {
+        setFieldValue("loginRunId", loginRunId);
     }
 
-    default String getTargetRunId() {
-        return getStringFieldValue("targetRunId");
+    default String getLoginRunId() {
+        return getStringFieldValue("loginRunId");
     }
 
     default void setToken(String token) {

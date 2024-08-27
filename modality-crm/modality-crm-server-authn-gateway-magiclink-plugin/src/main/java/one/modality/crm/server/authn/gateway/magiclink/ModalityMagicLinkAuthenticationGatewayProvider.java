@@ -65,10 +65,10 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
     }
 
     private Future<Void> createAndSendMagicLink(MagicLinkRequest request) {
-        String targetRunId = ThreadLocalStateHolder.getRunId();
+        String loginRunId = ThreadLocalStateHolder.getRunId();
         UpdateStore updateStore = UpdateStore.create(dataSourceModel);
         MagicLink magicLink = updateStore.insertEntity(MagicLink.class);
-        magicLink.setTargetRunId(targetRunId);
+        magicLink.setLoginRunId(loginRunId);
         String token = Uuid.randomUuid();
         magicLink.setToken(token);
         String lang = Strings.toSafeString(request.getLanguage());
@@ -91,7 +91,7 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
         String usageRunId = ThreadLocalStateHolder.getRunId();
         // 1) Checking the existence of the magic link in the database, and if so, loading it with required info
         return EntityStore.create(dataSourceModel)
-            .<MagicLink>executeQuery("select targetRunId,email,creationDate,usageDate from MagicLink where token=? limit 1", credentials.getToken())
+            .<MagicLink>executeQuery("select loginRunId,email,creationDate,usageDate from MagicLink where token=? limit 1", credentials.getToken())
             .compose(magicLinks -> {
                 if (magicLinks.isEmpty())
                     return Future.failedFuture("Magic link not found (token: " + credentials.getToken() + ")");
@@ -109,7 +109,7 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
                     .<Person>executeQuery("select frontendAccount from Person p where frontendAccount.username=? order by p.id limit 1", magicLink.getEmail())
                     .compose(persons -> {
                         // 4) Preparing the userId = ModalityUserPrincipal for registered users, ModalityGuestPrincipal for unregistered users
-                        String targetRunId = magicLink.getTargetRunId();
+                        String loginRunId = magicLink.getLoginRunId();
                         Object targetUserId;
                         if (!persons.isEmpty()) {
                             Person userPerson = persons.get(0);
@@ -124,7 +124,7 @@ public class ModalityMagicLinkAuthenticationGatewayProvider implements ServerAut
 
                         // We push the userId to the original login client directly here, and indirectly this should be
                         // followed by a subsequent push of the authorizations to that same client (as explained above).
-                        return PushServerService.pushState(targetState, targetRunId)
+                        return PushServerService.pushState(targetState, loginRunId)
                             .compose(ignored -> { // indicates that the original client acknowledged this login push
                                 // 6) Now that we managed to reach the original client and have a successful login,
                                 // we record the usage date in the database. This will indicate that the magic link has
