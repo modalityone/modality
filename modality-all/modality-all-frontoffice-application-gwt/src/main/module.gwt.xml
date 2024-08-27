@@ -105,6 +105,7 @@
     <source path="one/modality/base/client/entities/util/filters"/>
     <source path="one/modality/base/client/entities/util/functions"/>
     <!--===========================< modality-base-client-i18n >============================-->
+    <source path="one/modality/base/client/i18n"/>
     <source path="one/modality/base/client/operations/i18n"/>
     <source path="one/modality/base/client/services/i18n"/>
     <!--===========================< modality-base-client-icons >===========================-->
