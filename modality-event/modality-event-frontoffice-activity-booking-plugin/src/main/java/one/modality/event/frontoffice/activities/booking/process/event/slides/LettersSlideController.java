@@ -4,7 +4,6 @@ import dev.webfx.extras.panes.TransitionPane;
 import dev.webfx.extras.panes.transitions.CircleTransition;
 import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.webtext.HtmlText;
-import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
@@ -54,13 +53,9 @@ public final class LettersSlideController {
         return stepBBookEventSlide.mediumFontProperty();
     }
 
-    /**
-     * In this method, we update the UI according to the event
-     */
     public void onWorkingBookingLoaded() {
         stepBBookEventSlide.onWorkingBookingLoaded();
     }
-
 
     private void displaySlide(StepSlide slide) {
         displayedSlide = slide;
@@ -80,7 +75,7 @@ public final class LettersSlideController {
         transitingProperty.addListener(new InvalidationListener() {
             @Override
             public void invalidated(Observable observable) {
-                Console.log("transition changed (assuming finished)");
+                //Console.log("transition changed (assuming finished)");
                 transitingProperty.removeListener(this);
                 displaySlide(slide);
             }

@@ -71,6 +71,22 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     }
 
     @Override
+    public void onCreate(ViewDomainActivityContextFinal context) {
+        super.onCreate(context);
+        // Hot declaration of the sub-routing to the checkout account activity
+        UiRouter subRouter = UiRouter.createSubRouter(context);
+        // Registering the redirect auth routes in the sub-router (to possibly have the login page within the mount node)
+        subRouter.registerProvidedUiRoutes(false, true);
+        // Registering the route to CheckoutAccountActivity
+        subRouter.route(new CheckoutAccountUiRoute()); // sub-route = / and activity = CheckoutAccountActivity
+        // Linking this sub-router to the current router (of BookEventActivity)
+        getUiRouter().routeAndMount(
+            CheckoutAccountRouting.getPath(), // /booking/account
+            () -> this, // the parent activity factory (actually this activity)
+            subRouter); // the sub-router that will mount the
+    }
+
+    @Override
     public void onResume() {
         // Initially hiding the footer (app menu) to not distract the user with other things (especially when coming
         // form the website).
@@ -102,9 +118,10 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
             Event event = FXEvent.getEvent();
             if (event == null) // Too early - may happen on first call (ex: on page reload)
                 return;
+            // TODO: if eventId doesn't exist in the database, FXEvent.getEvent() stays null and nothing happens (stuck on loading page)
 
             lettersSlideController.onEventChanged(event);
-            getRecurringEventSchedule().clearClickedDates(); // clearing possible clicked dates from previous event
+            getRecurringEventSchedule().clearClickedDates(); // clearing possible clicked dates from previous event (if some dates are common)
 
             // Note: It's better to use FXUserPersonId rather than FXUserPerson in case of a page reload in the browser
             // (or redirection to this page from a website) because the retrieval of FXUserPersonId is immediate in case
@@ -124,8 +141,8 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
                         workingBookingProperties.setWorkingBooking(workingBooking);
                         lettersSlideController.onWorkingBookingLoaded();
                     }
-            }));
-            }, FXEvent.eventProperty());
+                }));
+        }, FXEvent.eventProperty());
 
         // Subsequent loading when changing the person to book (load of possible booking + reapply new selected dates)
         FXProperties.runOnPropertiesChange(() -> {
@@ -142,16 +159,16 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
 
             // Loading the possible existing booking of the new person to book for that recurring event, and then reapplying the dates selected by the user
             DocumentService.loadDocument(event, personToBook)
-                    .onFailure(Console::log)
-                    .onSuccess(newPersonExistingBooking -> UiScheduler.runInUiThread(() -> {
-                        // Re-instantiating the working booking with that new existing booking (can be null if it doesn't exist)
-                        PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
-                        WorkingBooking workingBooking = new WorkingBooking(policyAggregate, newPersonExistingBooking);
-                        workingBookingProperties.setWorkingBooking(workingBooking);
-                        syncWorkingBookingFromEventSchedule();
-                        // Informing the slide controller about that change
-                        lettersSlideController.onWorkingBookingLoaded();
-                    }))
+                .onFailure(Console::log)
+                .onSuccess(newPersonExistingBooking -> UiScheduler.runInUiThread(() -> {
+                    // Re-instantiating the working booking with that new existing booking (can be null if it doesn't exist)
+                    PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
+                    WorkingBooking workingBooking = new WorkingBooking(policyAggregate, newPersonExistingBooking);
+                    workingBookingProperties.setWorkingBooking(workingBooking);
+                    syncWorkingBookingFromEventSchedule();
+                    // Informing the slide controller about that change
+                    lettersSlideController.onWorkingBookingLoaded();
+                }))
             ;
         }, FXPersonToBook.personToBookProperty());
     }
@@ -174,22 +191,6 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         RecurringEventSchedule recurringEventSchedule = getRecurringEventSchedule();
         recurringEventSchedule.setScheduledItems(workingBookingProperties.getScheduledItemsOnEvent(), true);
         recurringEventSchedule.addSelectedDates(datesAdded);
-    }
-
-    @Override
-    public void onCreate(ViewDomainActivityContextFinal context) {
-        super.onCreate(context);
-        // Hot declaration of the sub-routing to the checkout account activity
-        UiRouter subRouter = UiRouter.createSubRouter(context);
-        // Registering the redirect auth routes in the sub-router (to possibly have the login page within the mount node)
-        subRouter.registerProvidedUiRoutes(false, true);
-        // Registering the route to CheckoutAccountActivity
-        subRouter.route(new CheckoutAccountUiRoute()); // sub-route = / and activity = CheckoutAccountActivity
-        // Linking this sub-router to the current router (of BookEventActivity)
-        getUiRouter().routeAndMount(
-                CheckoutAccountRouting.getPath(), // /booking/account
-                () -> this, // the parent activity factory (actually this activity)
-                subRouter); // the sub-router that will mount the
     }
 
     public void displayBookSlide() {

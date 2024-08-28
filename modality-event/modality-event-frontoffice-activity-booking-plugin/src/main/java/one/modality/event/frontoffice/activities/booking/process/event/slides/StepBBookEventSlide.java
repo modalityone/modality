@@ -63,24 +63,24 @@ final class StepBBookEventSlide extends StepSlide {
         workingBookingLoaded = false;
         eventDescriptionLoadedProperty.set(false);
         event.onExpressionLoaded("name, shortDescription, description, venue.(name, label, address), organization.country")
-                .onFailure(ex -> displayErrorMessage(ex.getMessage()))
-                .onSuccess(x -> UiScheduler.runInUiThread(this::onEventDescriptionLoaded));
+            .onFailure(ex -> displayErrorMessage(ex.getMessage()))
+            .onSuccess(x -> UiScheduler.runInUiThread(this::onEventDescriptionLoaded));
 
         imageView.setImage(null);
         Object imageTag = event.getId().getPrimaryKey();
         String pictureId = String.valueOf(imageTag);
         cloudImageService.exists(pictureId)
-                .onFailure(Console::log)
-                .onSuccess(exists -> Platform.runLater(() -> {
-                    Console.log("exists: " + exists);
-                    if (exists) {
-                        //First, we need to get the zoom factor of the screen
-                        double zoomFactor = Screen.getPrimary().getOutputScaleX();
-                        String url = cloudImageService.url(String.valueOf(imageTag), (int) (imageView.getFitWidth() * zoomFactor), -1);
-                        Image imageToDisplay = new Image(url, true);
-                        imageView.setImage(imageToDisplay);
-                    }
-                }));
+            .onFailure(Console::log)
+            .onSuccess(exists -> Platform.runLater(() -> {
+                Console.log("exists: " + exists);
+                if (exists) {
+                    //First, we need to get the zoom factor of the screen
+                    double zoomFactor = Screen.getPrimary().getOutputScaleX();
+                    String url = cloudImageService.url(String.valueOf(imageTag), (int) (imageView.getFitWidth() * zoomFactor), -1);
+                    Image imageToDisplay = new Image(url, true);
+                    imageView.setImage(imageToDisplay);
+                }
+            }));
     }
 
     void onWorkingBookingLoaded() {
@@ -101,12 +101,12 @@ final class StepBBookEventSlide extends StepSlide {
     }
 
     public void buildSlideUi() {
-        Label eventLabel = bindI18nEventExpression(new Label(),"i18n(this)");
+        Label eventLabel = bindI18nEventExpression(new Label(), "i18n(this)");
         eventLabel.setTextAlignment(TextAlignment.CENTER);
         eventLabel.getStyleClass().add("event-title");
         eventLabel.fontProperty().bind(mediumFontProperty);
 
-        Label venueAddress = bindI18nEventExpression(new Label(), "venue.address");
+        Label venueAddress = bindI18nEventExpression(new Label(), "coalesce(venue.address, i18n(venue))");
         venueAddress.setTextAlignment(TextAlignment.CENTER);
         venueAddress.getStyleClass().add("event-title");
         venueAddress.setGraphicTextGap(5);
@@ -121,9 +121,9 @@ final class StepBBookEventSlide extends StepSlide {
         imageScalePane.setCanGrow(false);
 
         VBox eventShortTextBox = new VBox(
-                eventLabel,
-                venueAddress,
-                eventShortDescriptionHtmlText
+            eventLabel,
+            venueAddress,
+            eventShortDescriptionHtmlText
         );
         eventShortTextBox.setMinWidth(Region.USE_PREF_SIZE);
         ScalePane eventShortTextScalePane = new ScalePane(ScaleMode.BEST_FIT, eventShortTextBox);
@@ -157,7 +157,7 @@ final class StepBBookEventSlide extends StepSlide {
             double orangeVerticalGap = maxPageWidth * 0.1;
             orangePane.setPadding(new Insets(orangeVerticalGap, 0, orangeVerticalGap, 0));
             gridPane.setMaxWidth(maxPageWidth);
-            VBox.setMargin(eventLabel, new Insets(0,0,5 * maxPageWidth / MAX_PAGE_WIDTH,0));
+            VBox.setMargin(eventLabel, new Insets(0, 0, 5 * maxPageWidth / MAX_PAGE_WIDTH, 0));
             VBox.setMargin(eventShortDescriptionHtmlText, new Insets(20 * maxPageWidth / MAX_PAGE_WIDTH, 0, 0, 0));
             eventShortDescriptionHtmlText.setMaxWidth(maxPageWidth * 0.6);
             digitsTransitionPane.setMaxWidth(maxPageWidth);
@@ -190,7 +190,7 @@ final class StepBBookEventSlide extends StepSlide {
 
     void bindI18nEventExpression(Property<String> textProperty, String eventExpression) {
         I18n.bindI18nTextProperty(textProperty, new I18nSubKey("expression: " + eventExpression,
-                FXEvent.lastNonNullEventProperty()), FXEvent.lastNonNullEventProperty(), eventDescriptionLoadedProperty);
+            FXEvent.lastNonNullEventProperty()), FXEvent.lastNonNullEventProperty(), eventDescriptionLoadedProperty);
     }
 
     <L extends Labeled> L bindI18nEventExpression(L text, String eventExpression) {

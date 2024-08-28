@@ -16,6 +16,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.Timeline;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -213,9 +214,13 @@ public class RecurringEventSchedule {
             }*/
             LocalTime startTime = scheduledItem.getStartTime();
             if (startTime == null) {
-                startTime = scheduledItem.getTimeline().getStartTime();
+                Timeline timeline = scheduledItem.getTimeline();
+                if (timeline != null)
+                    startTime = timeline.getStartTime();
             }
-            hourText.setText(I18n.getI18nText("AtTime", startTime.toString()));
+            if (startTime != null) {
+                hourText.setText(I18n.getI18nText("AtTime", startTime.toString()));
+            }
             scheduledItemBoxes.put(date, this);
             containerVBox.setOnMouseClicked(event -> {
                 if (dateClickedHandler == null) {

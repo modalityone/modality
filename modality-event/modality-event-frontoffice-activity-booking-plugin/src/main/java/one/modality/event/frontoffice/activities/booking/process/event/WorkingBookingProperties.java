@@ -1,8 +1,10 @@
 package one.modality.event.frontoffice.activities.booking.process.event;
 
+import dev.webfx.platform.util.collection.Collections;
 import javafx.beans.property.*;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.Rate;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.ecommerce.document.service.DocumentAggregate;
@@ -10,7 +12,6 @@ import one.modality.ecommerce.document.service.PolicyAggregate;
 import one.modality.event.frontoffice.activities.booking.PriceCalculator;
 import one.modality.event.frontoffice.activities.booking.WorkingBooking;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -324,7 +325,8 @@ public class WorkingBookingProperties {
     }
 
     public int getRate() {
-        return getWorkingBooking().getPolicyAggregate().getRates().get(0).getPrice();
+        Rate rate = Collections.first(getWorkingBooking().getPolicyAggregate().getRates());
+        return rate != null ? rate.getPrice() : 0;
     }
 
 }
