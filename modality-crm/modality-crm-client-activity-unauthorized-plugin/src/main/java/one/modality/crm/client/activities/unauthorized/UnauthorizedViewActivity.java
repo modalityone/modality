@@ -2,6 +2,7 @@ package one.modality.crm.client.activities.unauthorized;
 
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.session.state.client.fx.FXAuthorizationsWaiting;
 import javafx.geometry.Pos;
@@ -35,9 +36,13 @@ final class UnauthorizedViewActivity extends ViewDomainActivityBase {
         svgPath.setStrokeWidth(2);
         svgPath.setFill(null);
         Text text = new Text();
+        text.setText("Authorization check...");
         FXProperties.runNowAndOnPropertiesChange(() -> {
-            boolean waiting = FXAuthorizationsWaiting.isAuthorizationsWaiting();
-            text.setText(waiting ? "Authorization check..." : "Sorry, you are not authorized to access this page");
+            // Postponing the verification in case there is a busy UI build
+            UiScheduler.scheduleDeferred(() -> {
+                boolean waiting = FXAuthorizationsWaiting.isAuthorizationsWaiting();
+                text.setText(waiting ? "Authorization check..." : "Sorry, you are not authorized to access this page");
+            });
         }, FXAuthorizationsWaiting.authorizationsWaitingProperty());
         ScalePane scalePane = new ScalePane(svgPath);
         scalePane.setFixedSize(256, 256);
