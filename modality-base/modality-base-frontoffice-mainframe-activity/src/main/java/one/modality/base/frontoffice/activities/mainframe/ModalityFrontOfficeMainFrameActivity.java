@@ -212,10 +212,11 @@ public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFram
         collapsePane.setClipEnabled(false);
         collapsePane.collapsedProperty().bind(FXCollapseFooter.collapseFooterProperty());
         // Considering the bottom of the safe area, in particular for OS like iPadOS with a bar at the bottom
-        double safeAreaBottom = WebFxKitLauncher.getSafeAreaInsets().getBottom();
-        if (safeAreaBottom > 5) { // we already have a 5px padding for the buttons
-            collapsePane.setPadding(new Insets(0, 0, safeAreaBottom - 5, 0));
-        }
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            double safeAreaBottom = WebFxKitLauncher.getSafeAreaInsets().getBottom();
+            // we already have a 5px padding for the buttons
+            collapsePane.setPadding(new Insets(0, 0, Math.max(0, safeAreaBottom - 5), 0));
+        }, WebFxKitLauncher.safeAreaInsetsProperty());
         return collapsePane;
     }
 
