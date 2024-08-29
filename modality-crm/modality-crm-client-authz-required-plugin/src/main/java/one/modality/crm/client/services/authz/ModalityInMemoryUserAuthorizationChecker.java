@@ -22,6 +22,7 @@ import one.modality.base.client.conf.ModalityClientConfig;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Bruno Salmon
@@ -34,6 +35,8 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
     private final DataSourceModel dataSourceModel;
     private final CacheEntry<Object> authorizationPushCashEntry = SessionClientCache.get().getCacheEntry("cache-authz-push");
     private List<Entity> publicOrGuestOperationsWithGrantRoute;
+    private Object lastPushObject;
+    private List<Entity> lastPublicOrGuestOperationsWithGrantRoute;
 
     ModalityInMemoryUserAuthorizationChecker(DataSourceModel dataSourceModel) {
         this.dataSourceModel = dataSourceModel;
@@ -51,13 +54,26 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
         // some may have a route associated, and we need therefore to authorize those public routes.
         EntityStore.create(dataSourceModel)
                 .executeCachedQuery(
-                        LocalStorageCache.get().getCacheEntry("cache-authz-operations"), this::registerPublicOrGuestOperationsWithGrantRoute,
+                        LocalStorageCache.get().getCacheEntry("cache-authz-operations"), this::onPublicOrGuestOperationsWithGrantRouteChanged,
                         "select grantRoute,guest,public from Operation where grantRoute!=null and (public or guest) and " + (ModalityClientConfig.isBackOffice() ? "backoffice" : "frontoffice"))
                 .onFailure(Console::log)
-                .onSuccess(this::registerPublicOrGuestOperationsWithGrantRoute);
+                .onSuccess(this::onPublicOrGuestOperationsWithGrantRouteChanged);
+    }
+
+    private void onPublicOrGuestOperationsWithGrantRouteChanged(List<Entity> operations) {
+        publicOrGuestOperationsWithGrantRoute = operations;
+        onAuthorizationPush(lastPushObject);
     }
 
     void onAuthorizationPush(Object pushObject) {
+        // May happen that it's the same input as last time, and there is no need to recompute everything and fire an event
+        if (Objects.equals(pushObject, lastPushObject) && lastPublicOrGuestOperationsWithGrantRoute == publicOrGuestOperationsWithGrantRoute) {
+            return;
+        }
+        lastPushObject = pushObject;
+        lastPublicOrGuestOperationsWithGrantRoute = publicOrGuestOperationsWithGrantRoute;
+
+        // At this point, it's an actual change in the authorizations
         QueryResult queryResult = (QueryResult) pushObject;
         QueryRowToEntityMapping queryMapping = dataSourceModel.parseAndCompileSelect(AUTHZ_QUERY_BASE).getQueryMapping();
         EntityStore entityStore = EntityStore.create(dataSourceModel);
@@ -96,11 +112,6 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
 
         // Caching latest authorizations
         authorizationPushCashEntry.putValue(pushObject);
-    }
-
-    private void registerPublicOrGuestOperationsWithGrantRoute(List<Entity> operations) {
-        this.publicOrGuestOperationsWithGrantRoute = operations;
-        clearAllAuthorizationRulesAndGrantAuthorizedRoutesFromPublicOrGuestOperations();
     }
 
     private void clearAllAuthorizationRulesAndGrantAuthorizedRoutesFromPublicOrGuestOperations() {
