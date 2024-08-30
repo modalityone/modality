@@ -1,22 +1,22 @@
 package one.modality.event.frontoffice.activities.booking.process.event;
 
-import dev.webfx.extras.panes.FlexPane;
-import dev.webfx.platform.console.Console;
-import dev.webfx.platform.util.tuples.Pair;
+import dev.webfx.extras.panes.ColumnsPane;
+import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.kit.util.properties.ObservableLists;
+import dev.webfx.platform.util.collection.HashList;
 import dev.webfx.stack.i18n.I18n;
-import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.Timeline;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -26,157 +26,154 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class RecurringEventSchedule {
-    private final FlexPane ecompassingFlexPane = new FlexPane();
+
+    private final ColumnsPane columnsPane = new ColumnsPane();
     private final ObservableList<ScheduledItem> scheduledItemsList = FXCollections.observableArrayList();
-    protected ObservableList<LocalDate> selectedDates = FXCollections.observableArrayList();
-    Map<LocalDate, Pair<ScheduledItemToPane, Pair<String,String>>> paneAndCssClassMap = new HashMap<>();
+    protected ObservableList<LocalDate> selectedDates = FXCollections.observableArrayList(); // indicates the dates to add to the current booking
+    private final List<LocalDate> clickedDates = new HashList<>(); // Same as selected dates, or larger as it keeps clicked dates when changing the person to book
+    private final Map<LocalDate, ScheduledItemBox> scheduledItemBoxes = new HashMap<>();
 
-    private Function<LocalDate, String> computeCssClassForSelectedDateFunction = localDate -> getSelectedDateCssClass();
-
+    private final Function<LocalDate, String> computeCssClassForSelectedDateFunction = localDate -> getSelectedDateCssClass();
     private Function<LocalDate, String> computeCssClassForUnselectedDateFunction = localDate -> getUnselectedDateCssClass();
+    //private Function<LocalDate, Node> computeNodeForExistingBookedDateFunction = localDate -> getDefaultNodeForExistingBookedDate();
+    private Consumer<LocalDate> dateClickedHandler = null;
 
-    protected Consumer<LocalDate> dateConsumer = null;
-
-    //We define the property on the css and the default value
+    // We define the property on the css and the default value
     private final ObjectProperty<String> selectedDateCssClassProperty = new SimpleObjectProperty<>( "date-selected");
     private final ObjectProperty<String> unselectedDateCssClassProperty = new SimpleObjectProperty<>( "date-unselected");
-    private ListChangeListener<LocalDate> onChangeDateListener;
+    //private final ObjectProperty<String> existingBookedDateNodeProperty = new SimpleObjectProperty<>( );
 
-
+    private final ObjectProperty<Font> dayFontProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<Font> timeFontProperty = new SimpleObjectProperty<>();
 
     public RecurringEventSchedule() {
-        ecompassingFlexPane.setVerticalSpace(30);
-        ecompassingFlexPane.setHorizontalSpace(30);
-        ecompassingFlexPane.setFlexLastRow(false);
+        columnsPane.setMaxColumnCount(4);
+        columnsPane.setMaxWidth(800);
 
-        scheduledItemsList.addListener((InvalidationListener) observable -> {
-            Platform.runLater(() -> {
-                ecompassingFlexPane.getChildren().clear();
-                dev.webfx.platform.util.collection.Collections.forEach(scheduledItemsList, scheduledItem -> {
-                    ScheduledItemToPane currentPane = new ScheduledItemToPane(scheduledItem);
-                    ecompassingFlexPane.getChildren().add(currentPane.getContainerVBox());
-                });
-            });
-        });
+        FXProperties.runOnPropertiesChange(() -> {
+            double width = columnsPane.getWidth();
+            double gap = width / 800 * 20;
+            columnsPane.setHgap(gap);
+            columnsPane.setVgap(gap);
+            columnsPane.setMinColumnWidth(Math.max(100, width / 5));
+            columnsPane.setMinRowHeight(columnsPane.getColWidth() * 0.4);
+            double fontFactor = columnsPane.getColWidth() / 200;
+            dayFontProperty.set(Font.font(20 * fontFactor));
+            timeFontProperty.set(Font.font(15 * fontFactor));
+        }, columnsPane.widthProperty());
 
-        onChangeDateListener = change -> {LocalDate date = null;
+        // We bind the children to scheduled items, mapping each to a ScheduledItemBox
+        ObservableLists.bindConverted(columnsPane.getChildren(), scheduledItemsList, si -> new ScheduledItemBox(si).getContainerVBox());
+
+        // We keep the dates styles updated on selection change
+        ObservableLists.runOnListChange(change -> {
             while (change.next()) {
-                if (change.wasAdded()) {
-                    date = change.getAddedSubList().get(0);
-                }
-                if (change.wasRemoved()) {
-                    //We remove from the updateStore and the ScheduledItem
-                    date = change.getRemoved().get(0);
-                }
+                change.getAddedSubList().forEach(this::changeCssPropertyForSelectedDate);
+                change.getRemoved().forEach(this::changeCssPropertyForSelectedDate);
             }
-            changeCssPropertyForSelectedDate(date);
-        };
-        selectedDates.addListener( onChangeDateListener);
-    }
-    public void setScheduledItems(List<ScheduledItem> siList) {
-        Collections.sort(siList, Comparator.comparing(ScheduledItem::getDate));
-        scheduledItemsList.setAll(siList);
+        }, selectedDates);
     }
 
-    public ScheduledItem getScheduledItem(LocalDate date) {
-        return scheduledItemsList.stream()
-                .filter(item -> item.getDate().equals(date))
-                .findFirst()
-                .orElse(null);
+    public void setScheduledItems(List<ScheduledItem> scheduledItems, boolean reapplyClickedDates) {
+        scheduledItems.sort(Comparator.comparing(ScheduledItem::getDate));
+        scheduledItemsList.setAll(scheduledItems);
+        selectedDates.clear();
+        List<LocalDate> clickedDatesToReapply = !reapplyClickedDates ? Collections.emptyList() : scheduledItemsList.stream()
+                .map(ScheduledItem::getDate)
+                .filter(clickedDates::contains)
+                .collect(Collectors.toList());
+        clickedDates.clear();
+        addClickedDates(clickedDatesToReapply);
     }
 
-    public void addScheduledItemToSelectedList(ScheduledItem s) {
-        getSelectedScheduledItem().add(s);
+    public Pane buildUi() {
+        return columnsPane;
     }
 
-    public void removeScheduledItemFromSelectedList(ScheduledItem s) {
-        getSelectedScheduledItem().remove(s);
-    }
-
-
-    public List<ScheduledItem> getScheduledItems()
-    {
-        return scheduledItemsList;
-    }
-    public FlexPane buildUi() {
-        return ecompassingFlexPane;
-    }
     /**
      * This method can be used if we want to customize the behaviour when clicking on a date
-     * @param consumer the consumer
+     * @param dateClickedHandler the dateClickedHandler
      */
-    protected void setOnDateClicked(Consumer<LocalDate> consumer)
-    {
-        dateConsumer = consumer;
+    public void setOnDateClicked(Consumer<LocalDate> dateClickedHandler) {
+        this.dateClickedHandler = dateClickedHandler;
     }
-    public void setUnselectedDateCssGetter(Function<LocalDate,String> function)
-    {
+
+    public void setUnselectedDateCssGetter(Function<LocalDate,String> function) {
         computeCssClassForUnselectedDateFunction = function;
     }
 
+    /*public void setComputeNodeForExistingBookedDateFunction(Function<LocalDate, Node> function) {
+        computeNodeForExistingBookedDateFunction = function;
+    }*/
+
     public void changeCssPropertyForSelectedDate(LocalDate date) {
-        if(date!=null) {
-            if (this.selectedDates.contains(date)) {
-                changeBackgroundWhenSelected(date, true);
-            } else {
-                changeBackgroundWhenSelected(date, false);
-            }
-        }
+        if (date != null)
+            changeBackgroundWhenSelected(date, selectedDates.contains(date));
     }
 
-    public void processDateSelected(LocalDate date)
-    {
-        if(this.selectedDates.contains(date))
-        {
-            removeSelectedDate(date);
-        }
-        else
-        {
-            addSelectedDate(date);
+    public void processClickedDate(LocalDate date) {
+        if (selectedDates.contains(date)) {
+            removeClickedDate(date);
+        } else {
+            addClickedDate(date);
         }
         Collections.sort(selectedDates);
     }
-    protected void addSelectedDate(LocalDate date)
-    {
-        this.selectedDates.add(date);
+
+    public void addClickedDate(LocalDate date) {
+        clickedDates.add(date);
+        selectedDates.add(date);
     }
 
-    public void selectAllDates() {
-        selectedDates.clear();
-        scheduledItemsList.forEach(si->
-        {
-            selectedDates.add(si.getDate());
-        });
+    public void removeClickedDate(LocalDate date) {
+        clickedDates.remove(date);
+        selectedDates.remove(date);
     }
+
+
+    public void clearClickedDates() {
+        clickedDates.clear();
+    }
+
+    public void addSelectedDates(List<LocalDate> dates) {
+        scheduledItemsList.stream()
+                .map(ScheduledItem::getDate)
+                .filter(dates::contains)
+                .forEach(selectedDates::add);
+    }
+
+    public void addClickedDates(List<LocalDate> dates) {
+        scheduledItemsList.stream()
+                .map(ScheduledItem::getDate)
+                .filter(dates::contains)
+                .forEach(this::addClickedDate);
+    }
+
     public ObservableList<LocalDate> getSelectedDates() {
         return selectedDates;
     }
 
-    protected void removeSelectedDate(LocalDate date) {
-        this.selectedDates.remove(date);
-    }
-    protected void changeBackgroundWhenSelected(LocalDate currentDate,boolean isSelected) {
-        Pair<ScheduledItemToPane, Pair<String,String>> objectColor = paneAndCssClassMap.get(currentDate);
-        ScheduledItemToPane pane = objectColor.get1();
-        String cssClassWhenSelected = objectColor.get2().get1();
-        String cssClassWhenUnSelected = objectColor.get2().get2();
+    protected void changeBackgroundWhenSelected(LocalDate date, boolean isSelected) {
+        ScheduledItemBox scheduledItemBox = scheduledItemBoxes.get(date);
+        String cssClassWhenSelected = computeCssClassForSelectedDateFunction.apply(date);
+        String cssClassWhenUnSelected = computeCssClassForUnselectedDateFunction.apply(date);
 
-        if(isSelected) {
-            pane.getContainerVBox().getStyleClass().remove(cssClassWhenUnSelected);
-            pane.getContainerVBox().getStyleClass().add(cssClassWhenSelected);
-        }
-        else {
-            pane.getContainerVBox().getStyleClass().remove(cssClassWhenSelected);
-            pane.getContainerVBox().getStyleClass().add(cssClassWhenUnSelected);
+        ObservableList<String> styleClass = scheduledItemBox.getContainerVBox().getStyleClass();
+        if (isSelected) {
+            styleClass.remove(cssClassWhenUnSelected);
+            styleClass.add(cssClassWhenSelected);
+        } else {
+            styleClass.remove(cssClassWhenSelected);
+            styleClass.add(cssClassWhenUnSelected);
         }
     }
 
-    public ObservableList<ScheduledItem> getSelectedScheduledItem()
-    {
+    public ObservableList<ScheduledItem> getSelectedScheduledItem() {
         return FXCollections.observableList(scheduledItemsList.stream()
                 .filter(item -> selectedDates.contains(item.getDate()))
                 .collect(Collectors.toList()));
     }
+
     public String getSelectedDateCssClass() {
         return selectedDateCssClassProperty.get();
     }
@@ -185,54 +182,59 @@ public class RecurringEventSchedule {
         return unselectedDateCssClassProperty.get();
     }
 
-    private class ScheduledItemToPane {
-        Text dayText = new Text();
-        Text hourText = new Text();
-        VBox containerVBox = new VBox(dayText,hourText);
-        final int boxWidth = 100;
+    /*public Node getDefaultNodeForExistingBookedDate() {
+        return new Label(existingBookedDateNodeProperty.get());
+    }*/
 
-        private ScheduledItemToPane(ScheduledItem scheduledItem){
-            containerVBox.setBorder(new Border(new BorderStroke(Color.LIGHTGRAY,
-                    BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
-            containerVBox.setMaxWidth(boxWidth);
-            containerVBox.setMinWidth(boxWidth);
-            containerVBox.setSpacing(5);
-            containerVBox.setPadding(new Insets(5, 0, 5, 0)); // 5px en haut et en bas
-            hourText.getStyleClass().add("eventTime");
+    private class ScheduledItemBox {
+
+        private final Text dayText = new Text();
+        private final HBox dayAndCommentHBox = new HBox(dayText);
+        private final Text hourText = new Text();
+        private final VBox containerVBox = new VBox(dayAndCommentHBox, hourText);
+
+        private ScheduledItemBox(ScheduledItem scheduledItem) {
+            containerVBox.getStyleClass().add("event-date-cell");
             containerVBox.setAlignment(Pos.CENTER);
-            scheduledItem.onExpressionLoaded("date, startTime").onFailure(Console::log)
-                    .onSuccess(x -> Platform.runLater(()-> {
-                        LocalDate date = scheduledItem.getDate();
-                        String dateFormatted = I18n.getI18nText("DateFormatted", I18n.getI18nText(date.getMonth().name()), date.getDayOfMonth());
-                        dayText.setText(dateFormatted);
-                        //We test if the StartTime of the scheduledItem is defined. If it's null, we need to look at the info in the timeline associated to the event
-                        LocalTime startTime = scheduledItem.getStartTime();
-                        if(startTime==null) {
-                            startTime = scheduledItem.getTimeline().getStartTime();
-                            }
-                        hourText.setText(I18n.getI18nText("AtTime",startTime.toString()));
-                        paneAndCssClassMap.put(date,new Pair<>(this, new Pair<>(computeCssClassForSelectedDateFunction.apply(date),computeCssClassForUnselectedDateFunction.apply(date))));
-                        containerVBox.setOnMouseClicked(event -> {
-                            if (dateConsumer == null) {
-                                processDateSelected(date);
-                            } else {
-                                dateConsumer.accept(date);
-                            }
-                        });
-                        changeCssPropertyForSelectedDate(date);
-                    }));
+            containerVBox.setMinWidth(0);
+            containerVBox.setMaxWidth(Double.MAX_VALUE);
+            containerVBox.setSpacing(5);
+            hourText.getStyleClass().add("event-time");
+            hourText.fontProperty().bind(timeFontProperty);
+            dayAndCommentHBox.setSpacing(10);
+            dayAndCommentHBox.setAlignment(Pos.CENTER);
+            LocalDate date = scheduledItem.getDate();
+            String dateFormatted = I18n.getI18nText("DateFormatted", I18n.getI18nText(date.getMonth().name()), date.getDayOfMonth());
+            dayText.setText(dateFormatted);
+            dayText.fontProperty().bind(dayFontProperty);
+            /* Commented for now as it's not used and returns an empty label that however shift the date (not centered anymore)
+            Node comment = computeNodeForExistingBookedDateFunction.apply(date);
+            if (comment != null) {
+                dayAndCommentHBox.getChildren().add(comment);
+            }*/
+            LocalTime startTime = scheduledItem.getStartTime();
+            if (startTime == null) {
+                Timeline timeline = scheduledItem.getTimeline();
+                if (timeline != null)
+                    startTime = timeline.getStartTime();
+            }
+            if (startTime != null) {
+                hourText.setText(I18n.getI18nText("AtTime", startTime.toString()));
+            }
+            scheduledItemBoxes.put(date, this);
+            containerVBox.setOnMouseClicked(event -> {
+                if (dateClickedHandler == null) {
+                    processClickedDate(date);
+                } else {
+                    dateClickedHandler.accept(date);
+                }
+            });
+            changeCssPropertyForSelectedDate(date);
         }
 
 
         public Pane getContainerVBox(){
             return containerVBox;
-        }
-
-        public Text getDayText() {
-            return dayText;
-        }
-        public Text getHourText() {
-            return hourText;
         }
     }
 }

@@ -17,8 +17,8 @@ public abstract class AbstractDocumentLineEventSerialCodec<T extends AbstractDoc
 
     @Override
     public void encode(T o, AstObject serial) {
-        super.encode(o, serial);
-        encodeObject(serial, DOCUMENT_LINE_PRIMARY_KEY, o.getDocumentLinePrimaryKey());
+        super.encode(o, serial, true); // null primary key allowed for document, but not documentLine
+        encodeObject(serial, DOCUMENT_LINE_PRIMARY_KEY, o.getDocumentLinePrimaryKey(), NullEncoding.NULL_VALUE_NOT_ALLOWED);
     }
 
     protected Object decodeDocumentLinePrimaryKey(ReadOnlyAstObject serial) {

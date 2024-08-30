@@ -2,19 +2,19 @@ package one.modality.hotel.backoffice.operations.entities.resourceconfiguration;
 
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
-import dev.webfx.stack.db.submit.SubmitArgument;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
-import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
+import dev.webfx.stack.ui.controls.dialog.DialogContent;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ResourceConfiguration;
+import one.modality.base.shared.entities.triggers.Triggers;
 
 final class ChangeResourceConfigurationItemExecutor {
 
@@ -40,10 +40,7 @@ final class ChangeResourceConfigurationItemExecutor {
                 DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
                     UpdateStore updateStore = UpdateStore.create(dataSourceModel);
                     updateStore.updateEntity(resourceConfiguration).setItem(selectedItem);
-                    updateStore.submitChanges(SubmitArgument.builder()
-                            .setStatement("select set_transaction_parameters(true)")
-                            .setDataSourceId(dataSourceModel.getDataSourceId())
-                            .build())
+                    updateStore.submitChanges(Triggers.backOfficeTransaction(updateStore))
                             .onFailure(dialogCallback::showException)
                             .onSuccess(x -> {
                                 dialogCallback.closeDialog();

@@ -8,7 +8,7 @@ import dev.webfx.platform.boot.spi.ApplicationJob;
 public class ClientFunctionsRegisteringApplicationJob implements ApplicationJob {
 
     @Override
-    public void onStart() {
+    public void onInit() {
         new I18nFunction().register();
     }
 }

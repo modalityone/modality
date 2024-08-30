@@ -8,7 +8,12 @@
     </modules>
 
     <required-libraries>
-        <library artifact="com.stripe:stripe-java:22.29.0"/>
+        <library artifact="com.stripe:stripe-java:25.10.0"/>
+        <library artifact="com.google.code.gson:gson:2.11.0">
+            <exported-packages>
+                <package>com.google.gson</package>
+            </exported-packages>
+        </library>
     </required-libraries>
 
 </project>

@@ -10,10 +10,10 @@ module modality.base.backoffice.operations.filters {
     requires javafx.graphics;
     requires modality.base.shared.entities;
     requires webfx.platform.async;
-    requires webfx.stack.db.submit;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
     requires webfx.stack.ui.controls;
+    requires webfx.stack.ui.dialog;
     requires webfx.stack.ui.operation;
 
     // Exported packages

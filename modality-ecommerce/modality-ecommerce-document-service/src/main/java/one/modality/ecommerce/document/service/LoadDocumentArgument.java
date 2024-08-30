@@ -1,25 +1,50 @@
 package one.modality.ecommerce.document.service;
 
-import java.time.LocalDateTime;
-
 /**
  * @author Bruno Salmon
  */
 public final class LoadDocumentArgument {
 
-    private final Object primaryKey;
-    private final LocalDateTime dateTime;
+    // Primary key of the document to load
+    private final Object documentPrimaryKey;
 
-    public LoadDocumentArgument(Object primaryKey, LocalDateTime dateTime) {
-        this.primaryKey = primaryKey;
-        this.dateTime = dateTime;
+    // Alternatively, primary key of the person and event. In that case, the document service will load the latest
+    // document associated to that person for this event (or null if none is found).
+    private final Object personPrimaryKey;
+    private final Object eventPrimaryKey;
+
+    // Optional history loading. If not null, it will load the document up to that history. If null, it will load the
+    // latest version of the document.
+    private final Object historyPrimaryKey;
+
+    public LoadDocumentArgument(Object documentPrimaryKey) {
+        this(documentPrimaryKey, null, null, null);
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
+    public LoadDocumentArgument(Object personPrimaryKey, Object eventPrimaryKey) {
+        this(null, personPrimaryKey, eventPrimaryKey, null);
     }
 
-    public Object getPrimaryKey() {
-        return primaryKey;
+    public LoadDocumentArgument(Object documentPrimaryKey, Object personPrimaryKey, Object eventPrimaryKey, Object historyPrimaryKey) {
+        this.documentPrimaryKey = documentPrimaryKey;
+        this.personPrimaryKey = personPrimaryKey;
+        this.eventPrimaryKey = eventPrimaryKey;
+        this.historyPrimaryKey = historyPrimaryKey;
+    }
+
+    public Object getDocumentPrimaryKey() {
+        return documentPrimaryKey;
+    }
+
+    public Object getPersonPrimaryKey() {
+        return personPrimaryKey;
+    }
+
+    public Object getEventPrimaryKey() {
+        return eventPrimaryKey;
+    }
+
+    public Object getHistoryPrimaryKey() {
+        return historyPrimaryKey;
     }
 }

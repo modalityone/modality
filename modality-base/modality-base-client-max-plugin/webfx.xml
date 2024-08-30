@@ -11,10 +11,6 @@
 
         <plugin-module>modality-base-client-min-plugin</plugin-module>
 
-        <plugin-module>webfx-stack-authn-login-ui-gateway-facebook-plugin</plugin-module>
-        <plugin-module>webfx-stack-authn-login-ui-gateway-google-plugin</plugin-module>
-        <plugin-module>webfx-stack-authn-login-ui-gateway-mojoauth-plugin</plugin-module>
-        <plugin-module>webfx-stack-authn-login-ui-gateway-password-plugin</plugin-module>
     </dependencies>
 
 </project>

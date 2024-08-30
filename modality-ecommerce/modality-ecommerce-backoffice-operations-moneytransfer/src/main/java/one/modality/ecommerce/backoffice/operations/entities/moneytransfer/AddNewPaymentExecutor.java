@@ -12,8 +12,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebView;
 import one.modality.base.shared.entities.Document;
-import one.modality.ecommerce.payment.embedded.EmbeddedPaymentService;
-import one.modality.ecommerce.payment.embedded.InitiateEmbeddedPaymentArgument;
+import one.modality.ecommerce.payment.PaymentService;
+import one.modality.ecommerce.payment.InitiatePaymentArgument;
 
 final class AddNewPaymentExecutor {
 
@@ -31,23 +31,13 @@ final class AddNewPaymentExecutor {
         LayoutUtil.setPrefSize(stackPane, 500);
         LayoutUtil.setMaxSizeToInfinite(stackPane);
         BorderPane borderPane = new BorderPane(stackPane);
-        String description = document.getEvent().getName() + " - Ref " + document.getRef();
         int amount = document.getPriceNet() - document.getPriceDeposit();
-        String currency = "GBP"; // hardcoded for now...
-        /*if (REDIRECT) // Doesn't work in the browser iFrame
-            RedirectPaymentService.initiateRedirectPayment(new InitiateRedirectPaymentArgument(description, amount, currency))
-                    .onFailure(e -> Platform.runLater(() -> borderPane.setCenter(new Label(e.getMessage()))))
-                    .onSuccess(r -> Platform.runLater(() -> {
-                        String paymentUrl = r.getRedirectPaymentUrl();
-                        webView.getEngine().load(paymentUrl);
-                    }));
-        else*/
-            EmbeddedPaymentService.initiateEmbeddedPayment(new InitiateEmbeddedPaymentArgument(amount, currency, description, 1, null, null, null))
-                    .onFailure(e -> Platform.runLater(() -> borderPane.setCenter(new Label(e.getMessage()))))
-                    .onSuccess(r -> Platform.runLater(() -> {
-                        String htmlContent = r.getHtmlContent();
-                        webView.getEngine().loadContent(htmlContent);
-                    }));
+        PaymentService.initiatePayment(new InitiatePaymentArgument(amount, document.getPrimaryKey(), false, false))
+                .onFailure(e -> Platform.runLater(() -> borderPane.setCenter(new Label(e.getMessage()))))
+                .onSuccess(r -> Platform.runLater(() -> {
+                    String htmlContent = r.getHtmlContent();
+                    webView.getEngine().loadContent(htmlContent);
+                }));
         Button cancelButton = new Button("Cancel");
         LayoutUtil.setMaxWidthToInfinite(cancelButton);
         borderPane.setBottom(cancelButton);

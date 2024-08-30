@@ -8,8 +8,10 @@ module modality.all.backoffice.application.openjfx {
     // Direct dependencies modules
     requires javafx.web;
     requires modality.all.backoffice.application;
-    requires modality.ecommerce.payment.embedded.buscall;
-    requires modality.ecommerce.payment.embedded.remote;
+    requires modality.ecommerce.document.service.buscall;
+    requires modality.ecommerce.document.service.remote;
+    requires modality.ecommerce.payment.buscall;
+    requires modality.ecommerce.payment.remote;
     requires webfx.extras.filepicker.openjfx;
     requires webfx.extras.visual.charts.peers.openjfx;
     requires webfx.extras.visual.grid.peers.openjfx;
@@ -28,12 +30,10 @@ module modality.all.backoffice.application.openjfx {
     requires webfx.platform.shutdown.java;
     requires webfx.platform.storage.java;
     requires webfx.platform.storagelocation.java;
+    requires webfx.platform.useragent.java.client;
     requires webfx.platform.windowhistory.java;
     requires webfx.platform.windowlocation.java;
     requires webfx.stack.authn.buscall;
-    requires webfx.stack.authn.login.buscall;
-    requires webfx.stack.authn.login.remote;
-    requires webfx.stack.authn.login.ui.gateway.webviewbased.openjfx;
     requires webfx.stack.authn.login.ui.portal;
     requires webfx.stack.authn.remote;
     requires webfx.stack.com.bus.json.client;

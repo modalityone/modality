@@ -3,6 +3,11 @@ package one.modality.crm.shared.services.authn;
 import java.util.Objects;
 
 /**
+ * Represents a registered user who successfully logged in and who has an account in Modality. All users who logged in
+ * using username/password are in this case, but also registered users who used another login method such as magic link
+ * or SSO login will be finally recognised as registered user and their userId will be an instance of this class.
+ * Non registered users will have an instance of ModalityGuestPrincipal instead.
+ *
  * @author Bruno Salmon
  */
 public final class ModalityUserPrincipal {

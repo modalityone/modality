@@ -15,6 +15,8 @@ import java.util.Objects;
  */
 public final class FXOrganization {
 
+    public static final String EXPECTED_FIELDS = "name,type,country";
+
     private final static ObjectProperty<Organization> organizationProperty = new SimpleObjectProperty<>() {
         @Override
         protected void invalidated() {
@@ -30,7 +32,7 @@ public final class FXOrganization {
         return Entities.getId(getOrganization());
     }
 
-    static EntityStore getOrganizationStore() {
+    public static EntityStore getOrganizationStore() {
         Organization organization = getOrganization();
         return organization != null ? organization.getStore() : EntityStore.create(DataSourceModelService.getDefaultDataSourceModel());
     }

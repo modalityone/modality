@@ -6,6 +6,7 @@ import dev.webfx.extras.theme.layout.FXLayoutMode;
 import dev.webfx.extras.theme.luminance.LuminanceTheme;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.animation.Animations;
+import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.platform.resource.Resource;
@@ -41,11 +42,11 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 import one.modality.base.backoffice.ganttcanvas.MainFrameGanttCanvas;
 import one.modality.base.backoffice.mainframe.headernode.MainFrameHeaderNodeProvider;
-import one.modality.base.backoffice.mainframe.headertabs.fx.FXMainFrameHeaderTabs;
+import one.modality.base.backoffice.mainframe.fx.FXMainFrameHeaderTabs;
 import one.modality.base.client.tile.Tab;
 import one.modality.base.client.application.ModalityClientMainFrameActivity;
 import one.modality.base.client.gantt.fx.interstice.FXGanttInterstice;
-import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
+import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.profile.fx.FXProfile;
 
 import java.util.Comparator;
@@ -160,8 +161,8 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
         // node (as a transparent button bar on top of it) -> so the container header must be after the mount node,
         // otherwise it will be hidden.
         mainFrame.getChildren().setAll(Collections.listOfRemoveNulls(
-                ganttCanvasContainer,
                 getMountNode(),
+                ganttCanvasContainer, // Also after the mount node because of the circle & chevron collapse decoration
                 mainFrameHeader,
                 mainFrameFooter,
                 profilePanel));
@@ -262,6 +263,9 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
         LuminanceTheme.createApplicationFrameFacet(headerTabsBar)
                 .style();
         MonoClipPane clipPane = new MonoClipPane(headerTabsBar);
+        clipPane.setMinHeight(Region.USE_PREF_SIZE);
+        clipPane.setMaxHeight(Region.USE_PREF_SIZE);
+        clipPane.setAlignment(Pos.TOP_CENTER);
         // The clipPane is initially contracted. Will be expanded (eventually through animation) once not empty.
         clipPane.setPrefHeight(0);
         // The tabs are communicated from the activities to this main frame through FXMainFrameHeaderTabsBar
@@ -369,7 +373,11 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
         statusBar.getChildren().addAll(new Rectangle(10, 0), pendingText, pendingPane);
 
         statusBar.setAlignment(Pos.CENTER);
-        statusBar.setPadding(new Insets(5));
+        // Considering the bottom of the safe area, in particular for OS like iPadOS with a bar at the bottom
+        FXProperties.runOnPropertiesChange(() -> {
+            Insets sai = WebFxKitLauncher.getSafeAreaInsets();
+            statusBar.setPadding(new Insets(Math.max(5, sai.getTop()), Math.max(5, sai.getRight()), Math.max(5, sai.getBottom()), Math.max(5, sai.getLeft())));
+        }, WebFxKitLauncher.safeAreaInsetsProperty());
         LuminanceTheme.createApplicationFrameFacet(statusBar).style();
         return statusBar;
     }

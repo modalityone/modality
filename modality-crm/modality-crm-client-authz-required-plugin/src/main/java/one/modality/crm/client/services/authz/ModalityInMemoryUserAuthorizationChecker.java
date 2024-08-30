@@ -8,7 +8,6 @@ import dev.webfx.stack.cache.CacheEntry;
 import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.cache.client.SessionClientCache;
 import dev.webfx.stack.db.query.QueryResult;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.dql.sqlcompiler.mapping.QueryRowToEntityMapping;
 import dev.webfx.stack.orm.entity.Entity;
@@ -16,10 +15,14 @@ import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.query_result_to_entities.QueryResultToEntitiesMapper;
 import dev.webfx.stack.routing.router.auth.authz.RoutingAuthorizationRuleParser;
+import dev.webfx.stack.session.state.LogoutUserId;
 import dev.webfx.stack.session.state.client.fx.FXAuthorizationsChanged;
+import dev.webfx.stack.session.state.client.fx.FXUserId;
 import one.modality.base.client.conf.ModalityClientConfig;
+import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Bruno Salmon
@@ -27,37 +30,55 @@ import java.util.List;
 final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthorizationChecker {
 
     // TODO: share this constant with the server counterpart (ModalityAuthorizationServerServiceProvider).
-    private final static String AUTHZ_QUERY_BASE = "select rule.rule,activityState.route,operation.(code, grantRoute) from AuthorizationAssignment";
+    private final static String AUTHZ_QUERY_BASE = "select rule.rule,activityState.route,operation.(code,grantRoute,guest) from AuthorizationAssignment aa";
 
     private final DataSourceModel dataSourceModel;
     private final CacheEntry<Object> authorizationPushCashEntry = SessionClientCache.get().getCacheEntry("cache-authz-push");
+    private List<Entity> publicOrGuestOperationsWithGrantRoute;
+    private Object lastPushObject;
+    private List<Entity> lastPublicOrGuestOperationsWithGrantRoute;
 
     ModalityInMemoryUserAuthorizationChecker(DataSourceModel dataSourceModel) {
         this.dataSourceModel = dataSourceModel;
         // Registering the authorization (requests and rules) parsers
         ruleRegistry.addAuthorizationRuleParser(new RoutingAuthorizationRuleParser());
         ruleRegistry.addAuthorizationRuleParser(new OperationAuthorizationRuleParser());
-        // Getting initial authorizations from cache if present
-        Object cachedValue = authorizationPushCashEntry.getValue();
-        if (cachedValue != null)
-            onAuthorizationPush(cachedValue);
+        // Getting initial authorizations from cache if present (only if previous session was logged in as Modality user already)
+        if (FXModalityUserPrincipal.getModalityUserPrincipal() != null) {
+            Object cachedValue = authorizationPushCashEntry.getValue();
+            if (cachedValue != null)
+                onAuthorizationPush(cachedValue);
+        }
         // Note: the pushObject sent by the server contained all permissions specifically assigned to the user.
         // In addition, we may have public operations. Since they are public, they don't need authorizations, however
         // some may have a route associated, and we need therefore to authorize those public routes.
-        EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
+        EntityStore.create(dataSourceModel)
                 .executeCachedQuery(
-                        LocalStorageCache.get().getCacheEntry("cache-authz-operations"), this::registerOperationRoutes,
-                        "select grantRoute from Operation where public and grantRoute!=null and " + (ModalityClientConfig.isBackOffice() ? "backoffice" : "frontoffice"))
+                        LocalStorageCache.get().getCacheEntry("cache-authz-operations"), this::onPublicOrGuestOperationsWithGrantRouteChanged,
+                        "select grantRoute,guest,public from Operation where grantRoute!=null and (public or guest) and " + (ModalityClientConfig.isBackOffice() ? "backoffice" : "frontoffice"))
                 .onFailure(Console::log)
-                .onSuccess(this::registerOperationRoutes);
+                .onSuccess(this::onPublicOrGuestOperationsWithGrantRouteChanged);
+    }
+
+    private void onPublicOrGuestOperationsWithGrantRouteChanged(List<Entity> operations) {
+        publicOrGuestOperationsWithGrantRoute = operations;
+        onAuthorizationPush(lastPushObject);
     }
 
     void onAuthorizationPush(Object pushObject) {
+        // May happen that it's the same input as last time, and there is no need to recompute everything and fire an event
+        if (Objects.equals(pushObject, lastPushObject) && lastPublicOrGuestOperationsWithGrantRoute == publicOrGuestOperationsWithGrantRoute) {
+            return;
+        }
+        lastPushObject = pushObject;
+        lastPublicOrGuestOperationsWithGrantRoute = publicOrGuestOperationsWithGrantRoute;
+
+        // At this point, it's an actual change in the authorizations
         QueryResult queryResult = (QueryResult) pushObject;
         QueryRowToEntityMapping queryMapping = dataSourceModel.parseAndCompileSelect(AUTHZ_QUERY_BASE).getQueryMapping();
         EntityStore entityStore = EntityStore.create(dataSourceModel);
         EntityList<Entity> assignments = QueryResultToEntitiesMapper.mapQueryResultToEntities(queryResult, queryMapping, entityStore, "assignments");
-        ruleRegistry.clear();
+        clearAllAuthorizationRulesAndGrantAuthorizedRoutesFromPublicOrGuestOperations();
         for (Entity assignment: assignments) {
             // Case of a rule (ex: "grant route:*" or "grant operation:*")
             Entity authorizationRule = assignment.getForeignEntity("rule");
@@ -93,12 +114,19 @@ final class ModalityInMemoryUserAuthorizationChecker extends InMemoryUserAuthori
         authorizationPushCashEntry.putValue(pushObject);
     }
 
-    private void registerOperationRoutes(List<Entity> operations) {
-        operations.forEach(op -> {
-            String route = op.getStringFieldValue("grantRoute");
-            if (!Strings.isEmpty(route)) {
-                ruleRegistry.registerAuthorizationRule("grant route:" + route);
-            }
-        });
+    private void clearAllAuthorizationRulesAndGrantAuthorizedRoutesFromPublicOrGuestOperations() {
+        ruleRegistry.clearAllAuthorizationRules();
+        if (publicOrGuestOperationsWithGrantRoute != null) {
+            publicOrGuestOperationsWithGrantRoute.forEach(op -> {
+                String route = op.getStringFieldValue("grantRoute");
+                if (!Strings.isEmpty(route)) {
+                    boolean isOperationPublic = op.getBooleanFieldValue("public");
+                    boolean isOperationGuest = op.getBooleanFieldValue("guest");
+                    boolean isUserAtLeastGuest = !LogoutUserId.isLogoutUserIdOrNull(FXUserId.getUserId());
+                    if (isOperationPublic || isOperationGuest && isUserAtLeastGuest)
+                        ruleRegistry.registerAuthorizationRule("grant route:" + route);
+                }
+            });
+        }
     }
 }

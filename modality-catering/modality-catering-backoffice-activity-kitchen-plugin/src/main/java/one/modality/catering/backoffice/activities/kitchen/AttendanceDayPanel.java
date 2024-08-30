@@ -35,6 +35,8 @@ public class AttendanceDayPanel extends GridPane {
         addDietaryOptions(date, attendanceCounts);
         addMealCounts(attendanceCounts, date, sortedDisplayedMeals);
         setVgap(2); // To avoid SVGs to touch each others
+        setMaxWidth(10000); // Workaround for a bug in GridPane layout OpenJFX implementation. Indeed, the default value
+        // Double.MAX is causing infinite loop if put in another GridPane (which happens with TimeGridPane here)
     }
 
     private List<Item> sortMeals(AttendanceCounts attendanceCounts, LocalDate date, List<Item> meals) {

@@ -35,7 +35,7 @@ import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
+import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.profile.fx.FXProfile;
 import one.modality.base.shared.entities.Organization;

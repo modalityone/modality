@@ -11,7 +11,6 @@ module modality.base.frontoffice.utility {
     requires javafx.graphics;
     requires modality.base.shared.entities;
     requires webfx.kit.util;
-    requires webfx.platform.async;
     requires webfx.platform.util;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;

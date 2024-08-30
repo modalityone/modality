@@ -49,9 +49,11 @@ import java.util.function.Function;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
 public final class BookingActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
+
+    private static final double MAX_PAGE_WIDTH = 1200; // Similar value to website
+
     private final VBox internationalEventsContainer = new VBox(20);
     private final OrganizationSelectorView organizationSelectorView = new OrganizationSelectorView(this, this);
-
     private final VBox localEventsContainer = new VBox(20);
     private final TabsBar<Entity> tabsBar = new TabsBar<>(this, this::showLocalEventsOfType);
     private final FlexPane localEventTypeTabsPane = new FlexPane();
@@ -81,6 +83,7 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
         VBox.setMargin(localEventsLabel, new Insets(25));
 
         GrowingPane growingPane = new GrowingPane(localEventsContainer);
+
         VBox container = new VBox(
                 headerLabel,
                 headerImageScalePane,
@@ -92,7 +95,8 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
                 growingPane);
         container.setAlignment(Pos.CENTER);
         container.setBackground(Background.fill(Color.WHITE));
-        container.setMaxWidth(1200);
+        container.setMaxWidth(MAX_PAGE_WIDTH);
+        container.setPadding(new Insets(0, 0, 200, 0)); // Footer margin (white)
 
         FXProperties.runOnPropertiesChange(() -> {
             double width = container.getWidth();

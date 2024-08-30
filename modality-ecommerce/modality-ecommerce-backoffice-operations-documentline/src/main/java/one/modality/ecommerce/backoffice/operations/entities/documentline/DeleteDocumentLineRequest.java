@@ -1,10 +1,11 @@
 package one.modality.ecommerce.backoffice.operations.entities.documentline;
 
-import javafx.scene.layout.Pane;
-import one.modality.base.shared.entities.DocumentLine;
+import dev.webfx.platform.async.AsyncFunction;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
-import dev.webfx.platform.async.AsyncFunction;
+import javafx.scene.layout.Pane;
+import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
+import one.modality.base.shared.entities.DocumentLine;
 
 public final class DeleteDocumentLineRequest implements HasOperationCode,
         HasOperationExecutor<DeleteDocumentLineRequest, Void> {
@@ -14,16 +15,20 @@ public final class DeleteDocumentLineRequest implements HasOperationCode,
     private final DocumentLine documentLine;
     private final Pane parentContainer;
 
+    public DeleteDocumentLineRequest(DocumentLine documentLine) {
+        this(documentLine, FXMainFrameDialogArea.getDialogArea());
+    }
+
     public DeleteDocumentLineRequest(DocumentLine documentLine, Pane parentContainer) {
         this.documentLine = documentLine;
         this.parentContainer = parentContainer;
     }
 
-    DocumentLine getDocumentLine() {
+    public DocumentLine getDocumentLine() {
         return documentLine;
     }
 
-    Pane getParentContainer() {
+    public Pane getParentContainer() {
         return parentContainer;
     }
 

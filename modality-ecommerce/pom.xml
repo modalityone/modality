@@ -31,27 +31,16 @@
         <module>modality-ecommerce-document-service-buscall</module>
         <module>modality-ecommerce-document-service-remote</module>
         <module>modality-ecommerce-document-service-server</module>
-        <module>modality-ecommerce-payment-api</module>
-        <module>modality-ecommerce-payment-api-buscall</module>
-        <module>modality-ecommerce-payment-api-gateway</module>
-        <module>modality-ecommerce-payment-api-gateway-authorizedotnet-plugin</module>
-        <module>modality-ecommerce-payment-api-remote</module>
-        <module>modality-ecommerce-payment-api-server</module>
-        <module>modality-ecommerce-payment-api-ui</module>
-        <module>modality-ecommerce-payment-embedded</module>
-        <module>modality-ecommerce-payment-embedded-buscall</module>
-        <module>modality-ecommerce-payment-embedded-gateway</module>
-        <module>modality-ecommerce-payment-embedded-gateway-stripe-plugin</module>
-        <module>modality-ecommerce-payment-embedded-remote</module>
-        <module>modality-ecommerce-payment-embedded-server</module>
-        <module>modality-ecommerce-payment-embedded-ui</module>
-        <module>modality-ecommerce-payment-redirect</module>
-        <module>modality-ecommerce-payment-redirect-buscall</module>
-        <module>modality-ecommerce-payment-redirect-gateway</module>
-        <module>modality-ecommerce-payment-redirect-gateway-stripe-plugin</module>
-        <module>modality-ecommerce-payment-redirect-remote</module>
-        <module>modality-ecommerce-payment-redirect-server</module>
-        <module>modality-ecommerce-payment-redirect-ui</module>
+        <module>modality-ecommerce-history-server</module>
+        <module>modality-ecommerce-payment</module>
+        <module>modality-ecommerce-payment-buscall</module>
+        <module>modality-ecommerce-payment-client</module>
+        <module>modality-ecommerce-payment-remote</module>
+        <module>modality-ecommerce-payment-server</module>
+        <module>modality-ecommerce-payment-server-gateway</module>
+        <module>modality-ecommerce-payment-server-gateway-authorizedotnet-plugin</module>
+        <module>modality-ecommerce-payment-server-gateway-square-plugin</module>
+        <module>modality-ecommerce-payment-server-gateway-stripe-plugin</module>
         <module>modality-ecommerce-server-max-plugin</module>
         <module>modality-ecommerce-server-min-plugin</module>
     </modules>

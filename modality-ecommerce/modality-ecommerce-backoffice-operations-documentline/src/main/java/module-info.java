@@ -9,11 +9,13 @@ module modality.ecommerce.backoffice.operations.documentline {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.backoffice.operations.generic;
+    requires modality.base.client.mainframe.fx;
     requires modality.base.shared.entities;
+    requires modality.ecommerce.document.service;
     requires webfx.platform.async;
+    requires webfx.platform.util;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
-    requires webfx.stack.ui.controls;
     requires webfx.stack.ui.operation;
 
     // Exported packages

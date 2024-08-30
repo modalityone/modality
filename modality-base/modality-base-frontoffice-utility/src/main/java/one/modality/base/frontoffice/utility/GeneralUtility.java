@@ -1,7 +1,6 @@
 package one.modality.base.frontoffice.utility;
 
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.platform.async.Handler;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
@@ -23,11 +22,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import one.modality.base.frontoffice.entities.Center;
 import one.modality.base.frontoffice.fx.FXApp;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.function.Consumer;
 
 public class GeneralUtility {
 
@@ -39,26 +36,6 @@ public class GeneralUtility {
         SVGPath icon = new SVGPath();
         icon.setContent(svgPath);
         return icon;
-    }
-
-    public static Double distance(Double lat1, Double lon1, Double lat2, Double lon2, char unit) {
-        if (lat1 == null || lat2 == null || lon1 == null || lon2 == null)
-            return null;
-
-        double lat1Rad = Math.toRadians(lat1);
-        double lat2Rad = Math.toRadians(lat2);
-        double thetaRad = Math.toRadians(lon1 - lon2);
-        double dist = Math.sin(lat1Rad) * Math.sin(lat2Rad) + Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.cos(thetaRad);
-        dist = Math.acos(dist);
-        dist = Math.toDegrees(dist);
-        dist = dist * 60 * 1.1515;
-        if (unit == 'K') {
-            dist = dist * 1.609344;
-        } else if (unit == 'N') {
-            dist = dist * 0.8684;
-        }
-
-        return (dist);
     }
 
     public static Node createSpace(int height) {
@@ -80,14 +57,6 @@ public class GeneralUtility {
             tf.setMaxWidth(limitedWidth);
         }
         return tf;
-    }
-
-    public static String generateStaticMapLinks(Double lat, Double lng, List<Center> centers) {
-        return   "https://maps.googleapis.com/maps/api/staticmap?center=" + lat + "," + lng +
-                "&markers=color:blue%7Clabel:S%7C" + centers.stream().map(c -> {
-                    return c.lat + "," + c.lng;
-                }).collect(Collectors.joining("|"))
-                + "&zoom=9&size=400x400&key=AIzaSyAihoCYFho8rqJwnBjxzBlk56SR0uL7_Ks";
     }
 
     public static void styleSelectButton(EntityButtonSelector buttonSelector) {
@@ -216,26 +185,6 @@ public class GeneralUtility {
         return b;
     }
 
-    /*public static Label getMainLabel(String content, String color) {
-        return createLabel(content, Color.web(color), FontWeight.SEMI_BOLD, StyleUtility.MAIN_TEXT_SIZE);
-    }*/
-
-    /*public static Label getMainHeaderLabel(String content) {
-        return createLabel(content, StyleUtility.MAIN_ORANGE_COLOR, true, 21);
-    }*/
-
-    /*public static Label getMediumLabel(String content, String color) {
-        return createLabel(content, Color.web(color), false, StyleUtility.MEDIUM_TEXT_SIZE);
-    }*/
-
-    /*public static Label createLabel(String text, Color color, boolean bold, double fontSize) {
-        return setupLabeled(new Label(), text, color, bold, fontSize);
-    }*/
-
-    /*public static Label createLabel(String text, Color color, FontWeight fontWeight, double fontSize) {
-        return setupLabeled(new Label(), text, color, fontWeight, fontSize);
-    }*/
-
     public static Hyperlink createHyperlink(String text, Color color, double fontSize) {
         return setupLabeled(new Hyperlink(), text, color, false, fontSize);
     }
@@ -252,11 +201,11 @@ public class GeneralUtility {
     }
 
     public static <T extends Labeled> T setupLabeled(T labeled, String i18nKey, Color color) {
-        if (i18nKey != null)
-            I18nControls.bindI18nProperties(labeled, i18nKey);
         labeled.setTextFill(color);
         labeled.setWrapText(true);
         labeled.setLineSpacing(6);
+        if (i18nKey != null)
+            I18nControls.bindI18nProperties(labeled, i18nKey);
         return labeled;
     }
 
@@ -276,6 +225,14 @@ public class GeneralUtility {
         return setupLabeled(new Hyperlink(), i18nKey, color);
     }
 
+    public static Region createOrangeLineSeparator() {
+        Region line = new Region();
+        line.setBackground(Background.fill(StyleUtility.MAIN_ORANGE_COLOR));
+        line.setMinHeight(1);
+        line.setPrefWidth(Double.MAX_VALUE);
+        return line;
+    }
+
     public static <T extends Labeled> void setLabeledFont(T labeled, String fontFamily, FontWeight fontWeight, double fontSize) {
         labeled.setFont(Font.font(fontFamily, fontWeight, fontSize));
         setNodeFontStyle(labeled, fontFamily, fontWeight, fontSize);
@@ -283,13 +240,6 @@ public class GeneralUtility {
 
     public static void setNodeFontStyle(Node labeled, String fontFamily, FontWeight fontWeight, double fontSize) {
         labeled.setStyle("-fx-font-family: " + fontFamily + "; -fx-font-weight: " + fontWeight.getWeight() + "; -fx-font-size: " + fontSize);
-    }
-
-    public static SVGPath createSvgPath(String content, String color) {
-        SVGPath p = new SVGPath();
-        p.setContent(content);
-        p.setFill(Color.web(color));
-        return p;
     }
 
     public static Node bindButtonWithPopup(Button button, Node container, Node content, int height) {
@@ -387,14 +337,14 @@ public class GeneralUtility {
         }, imageView.imageProperty());
     }*/
 
-    public static void onNodeClickedWithoutScroll(Handler<MouseEvent> clickHandler, Node... nodes) {
+    public static void onNodeClickedWithoutScroll(Consumer<MouseEvent> clickHandler, Node... nodes) {
         double[] screenPressedY = {0};
         Arrays.forEach(nodes, node -> {
             node.setCursor(Cursor.HAND);
             node.setOnMousePressed(e -> screenPressedY[0] = e.getScreenY());
             node.setOnMouseReleased(e -> {
                 if (clickHandler != null && Math.abs(e.getScreenY() - screenPressedY[0]) < 10) // This is to skip the click when the user is actually scrolling on a touch screen such as mobiles
-                    clickHandler.handle(e);
+                    clickHandler.accept(e);
             });
         });
     }

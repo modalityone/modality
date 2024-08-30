@@ -1,6 +1,9 @@
 package one.modality.crm.backoffice.organization.fx;
 
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.console.Console;
+import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.stack.authn.login.ui.FXLoginContext;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -9,6 +12,7 @@ import dev.webfx.stack.session.SessionService;
 import dev.webfx.stack.session.state.client.fx.FXSession;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import one.modality.base.shared.context.ModalityContext;
 import one.modality.base.shared.entities.Organization;
 
 import java.util.Objects;
@@ -18,7 +22,7 @@ import java.util.Objects;
  */
 public final class FXOrganizationId {
 
-    private final static String SESSION_ORGANIZATION_ID_KEY = "fxOrganizationId";
+    private static final String SESSION_ORGANIZATION_ID_KEY = "fxOrganizationId";
 
     private final static ObjectProperty<EntityId> organizationIdProperty = new SimpleObjectProperty<>() {
         @Override
@@ -31,6 +35,8 @@ public final class FXOrganizationId {
                 session.put(SESSION_ORGANIZATION_ID_KEY, Entities.getPrimaryKey(organizationId));
                 SessionService.getSessionStore().put(session);
             }
+            // Also resetting the FXLoginContext
+            FXLoginContext.setLoginContext(new ModalityContext(Entities.getPrimaryKey(organizationId), null, null, null));
             // Synchronizing FXOrganization to match that new organization id (FXOrganizationId => FXOrganization)
             if (!Objects.equals(organizationId, FXOrganization.getOrganizationId())) { // Sync only if ids differ.
                 // If the new organization id is null, we set the FXOrganization to null
@@ -44,12 +50,17 @@ public final class FXOrganizationId {
                     // If yes, there is no need to request the server, we use directly that instance
                     if (organization != null)
                         FXOrganization.setOrganization(organization);
-                    else // Otherwise, we request the server to load that organization from that id
-                        organizationStore
-                                .<Organization>executeQuery("select name,type,country from Organization where id=?", organizationId)
-                                .onFailure(System.out::println)
-                                .onSuccess(list -> // on successfully receiving the list (should be a singleton list)
-                                        FXOrganization.setOrganization(list.isEmpty() ? null : list.get(0))); // we finally set FXOrganization
+                    else { // Otherwise, we request the server to load that organization from that id
+                        organizationStore.<Organization>executeQuery("select " + FXOrganization.EXPECTED_FIELDS + " from Organization where id=?", organizationId)
+                            .onFailure(Console::log)
+                            .onSuccess(list -> // on successfully receiving the list (should be a singleton list)
+                                UiScheduler.runInUiThread(() -> {
+                                    if (Objects.equals(organizationId, getOrganizationId())) { // final check it is still relevant
+                                        Organization loadedOrganization = list.isEmpty() ? null : list.get(0);
+                                        FXOrganization.setOrganization(loadedOrganization); // we finally set FXEvent
+                                    }
+                                }));
+                    }
                 }
             }
         }

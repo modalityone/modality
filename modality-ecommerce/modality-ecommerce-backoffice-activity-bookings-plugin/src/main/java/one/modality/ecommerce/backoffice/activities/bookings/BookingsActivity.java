@@ -7,14 +7,16 @@ import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.ui.action.ActionGroup;
+import dev.webfx.stack.ui.operation.action.OperationAction;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.scene.Node;
-import javafx.scene.layout.Pane;
-import one.modality.base.backoffice.controls.masterslave.ConventionalUiBuilder;
+import javafx.scene.layout.BorderPane;
 import one.modality.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
+import one.modality.base.backoffice.controls.masterslave.group.GroupMasterSlaveView;
 import one.modality.base.backoffice.operations.entities.generic.AddNewSnapshotRequest;
 import one.modality.base.backoffice.operations.entities.generic.CopyAllRequest;
 import one.modality.base.backoffice.operations.entities.generic.CopySelectionRequest;
+import one.modality.base.client.entities.util.filters.FilterSearchBar;
 import one.modality.base.client.gantt.fx.interstice.FXGanttInterstice;
 import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
@@ -24,17 +26,18 @@ import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.backoffice.controls.bookingdetailspanel.BookingDetailsPanel;
-import one.modality.ecommerce.backoffice.operations.entities.document.SendLetterRequest;
+import one.modality.ecommerce.backoffice.operations.entities.document.registration.SendLetterRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.registration.*;
-import one.modality.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsKnownRequest;
-import one.modality.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsUncheckedRequest;
-import one.modality.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsUnknownRequest;
-import one.modality.ecommerce.backoffice.operations.entities.document.security.ToggleMarkDocumentAsVerifiedRequest;
+import one.modality.ecommerce.backoffice.operations.entities.document.security.MarkDocumentAsKnownRequest;
+import one.modality.ecommerce.backoffice.operations.entities.document.security.MarkDocumentAsUncheckedRequest;
+import one.modality.ecommerce.backoffice.operations.entities.document.security.MarkDocumentAsUnknownRequest;
+import one.modality.ecommerce.backoffice.operations.entities.document.security.MarkDocumentAsVerifiedRequest;
 import one.modality.event.client.activity.eventdependent.EventDependentViewDomainActivity;
 
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.YearMonth;
+import java.util.function.Function;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.fields;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
@@ -54,38 +57,47 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
         return pm; // eventId and organizationId will then be updated from route
     }
 
-    private ConventionalUiBuilder ui; // Keeping this reference for activity resume
+    private FilterSearchBar filterSearchBar;
 
     @Override
     public Node buildUi() {
-        ui = createAndBindGroupMasterSlaveViewWithFilterSearchBar(pm, "bookings", "Document");
+        // The container (shown under the events gantt canvas) is a border pane that will display the filter search bar
+        // on top, and the group/master/slave view in the center.
+        BorderPane container = new BorderPane();
+        // We create the filter search bar and put it on top of the container.
+        filterSearchBar = createFilterSearchBar("bookings", "Document", container, pm);
+        container.setTop(filterSearchBar.buildUi());
+        // We create the group/master/slave view and put it in the center of the container. The master view is the
+        // bookings table and the group view is initially hidden, but if the user selects a group in the filter search
+        // bar, this is the group view that is displayed and the master view is hidden at this point. However, if the
+        // user selects a specific group in the group view, then the master view appears again below the group view on
+        // top, and displays the bookings of that particular group. In all cases, the slave view is initially hidden but
+        // if the user selects 1 specific booking in the master view, the slave view appears at below the master view
+        // and display the details of that particular booking.
+        GroupMasterSlaveView groupMasterSlaveView = GroupMasterSlaveView.createAndBind(pm, this);
+        //BookingDetailsPanel bdp = groupMasterSlaveView.getSlaveView();
+        container.setCenter(groupMasterSlaveView.buildUi());
 
-        // Adding new booking button on left and clone event on right of the filter search bar
-        //Button newBookingButton = newButton(newOperationAction(() -> new RouteToNewBackOfficeBookingRequest(getEventId(), getHistory())));
-                //cloneEventButton = newButton(newOperationAction(() -> new RouteToCloneEventRequest(getEventId(), getHistory())));
-        //ui.setLeftTopNodes(setUnmanagedWhenInvisible(newBookingButton));
-        //ui.setRightTopNodes(setUnmanagedWhenInvisible(cloneEventButton));
-
-        Pane container = ui.buildUi();
-
-        setUpContextMenu(ControlUtil.lookupChild(ui.getGroupMasterSlaveView().getMasterView(), n -> n instanceof VisualGrid), () -> newActionGroup(
-                newSnapshotActionGroup(container),
-                newOperationAction(() -> new SendLetterRequest(pm.getSelectedDocument(), container)),
+        // We set up a context menu on the master view
+        Node masterView = groupMasterSlaveView.getMasterView();
+        setUpContextMenu(ControlUtil.lookupChild(masterView, n -> n instanceof VisualGrid), () -> newActionGroup(
+                newSnapshotActionGroup(),
+                newSelectedDocumentOperationAction(SendLetterRequest::new),
                 newSeparatorActionGroup("Registration",
-                        newOperationAction(() -> new ToggleMarkDocumentAsReadRequest(pm.getSelectedDocument(), container), /* to update the i18n text when the selection change -> */ pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentAsWillPayRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleCancelDocumentRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleConfirmDocumentRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleFlagDocumentRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentPassAsReadyRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new MarkDocumentPassAsUpdatedRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentAsArrivedRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty())
+                        newSelectedDocumentOperationAction(ToggleMarkDocumentAsReadRequest::new),
+                        newSelectedDocumentOperationAction(ToggleMarkDocumentAsWillPayRequest::new),
+                        newSelectedDocumentOperationAction(ToggleCancelDocumentRequest::new),
+                        newSelectedDocumentOperationAction(ToggleConfirmDocumentRequest::new),
+                        newSelectedDocumentOperationAction(ToggleFlagDocumentRequest::new),
+                        newSelectedDocumentOperationAction(ToggleMarkDocumentPassAsReadyRequest::new),
+                        newSelectedDocumentOperationAction(MarkDocumentPassAsUpdatedRequest::new),
+                        newSelectedDocumentOperationAction(ToggleMarkDocumentAsArrivedRequest::new)
                 ),
                 newSeparatorActionGroup("Security",
-                        newOperationAction(() -> new ToggleMarkDocumentAsUncheckedRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentAsUnknownRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentAsKnownRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty()),
-                        newOperationAction(() -> new ToggleMarkDocumentAsVerifiedRequest(pm.getSelectedDocument(), container), pm.selectedDocumentProperty())
+                        newSelectedDocumentOperationAction(MarkDocumentAsUncheckedRequest::new),
+                        newSelectedDocumentOperationAction(MarkDocumentAsUnknownRequest::new),
+                        newSelectedDocumentOperationAction(MarkDocumentAsKnownRequest::new),
+                        newSelectedDocumentOperationAction(MarkDocumentAsVerifiedRequest::new)
                 ),
                 newSeparatorActionGroup(
                         newOperationAction(() -> new CopySelectionRequest(masterVisualMapper.getSelectedEntities(), masterVisualMapper.getEntityColumns())),
@@ -95,22 +107,34 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
 
         pm.ganttSelectedObjectProperty().bind(FXGanttSelection.ganttSelectedObjectProperty());
 
-        // for CSS styling
+        // Setting an Id for CSS styling
         container.setId("bookings");
 
         return container;
     }
 
     // TODO move this into an interface
-    private ActionGroup newSnapshotActionGroup(Pane container) {
+    private ActionGroup newSnapshotActionGroup() {
         return newActionGroup("Snapshot", true,
-                newOperationAction(() -> new AddNewSnapshotRequest(masterVisualMapper.getSelectedEntities(), pm.getSelectedMaster().getOrganization(), container),  pm.selectedDocumentProperty()));
+                newOperationAction(() -> new AddNewSnapshotRequest(masterVisualMapper.getSelectedEntities(), pm.getSelectedMaster() == null ? null : pm.getSelectedMaster().getOrganization()),  pm.selectedDocumentProperty()));
+    }
+
+    private OperationAction newSelectedDocumentOperationAction(Function<Document, ?> operationRequestFactory) {
+        return newOperationAction(
+                // Creating a new operation request associated to the selected document each time the user clicks on this action
+                () -> operationRequestFactory.apply(pm.getSelectedDocument()),
+                // Refreshing the graphical properties of this action (through i18n) each time the user selects another document,
+                pm.selectedDocumentProperty(),
+                // or when the server refreshes the data, in particular on push notification after that action has been
+                // executed (ex: "Confirm" => confirmed=true in database => server push => "Unconfirm").
+                pm.masterVisualResultProperty()
+        );
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        ui.onResume(); // activate search text focus on activity resume
+        filterSearchBar.onResume(); // activate search text focus on activity resume
         FXGanttVisibility.setGanttVisibility(GanttVisibility.EVENTS);
         FXGanttInterstice.setGanttIntersticeRequired(true);
     }

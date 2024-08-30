@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <description>The SPI payment gateway implementation for making embedded payments with Square.</description>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+    </dependencies>
+
+    <providers>
+        <provider interface="one.modality.ecommerce.payment.server.gateway.PaymentGateway">one.modality.ecommerce.payment.server.gateway.impl.square.SquarePaymentGateway</provider>
+        <provider interface="dev.webfx.platform.boot.spi.ApplicationJob">one.modality.ecommerce.payment.server.gateway.impl.square.SquareRestApiJob</provider>
+    </providers>
+
+    <required-libraries>
+        <!-- Square library -->
+        <library>
+            <groupId>com.squareup</groupId>
+            <artifactId>square</artifactId>
+            <version>40.1.1.20240717</version>
+            <!-- These dependencies clash with some underlying Vert.x modules, so we solve this issue by excluding them -->
+            <exclusions>
+                <exclusion>
+                    <groupId>com.sun.activation</groupId>
+                    <artifactId>javax.activation</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jakarta.activation</groupId>
+                    <artifactId>jakarta.activation-api</artifactId>
+                </exclusion>
+            </exclusions>
+            <exported-packages>
+                <package>com.squareup.square</package>
+                <package>com.squareup.square.api</package>
+                <package>com.squareup.square.authentication</package>
+                <package>com.squareup.square.exceptions</package>
+                <package>com.squareup.square.models</package>
+            </exported-packages>
+        </library>
+        <!-- Underlying library used by Square that we use in Modality code to access the http response body -->
+        <library>
+            <groupId>io.apimatic</groupId>
+            <artifactId>core-interfaces</artifactId>
+            <version>0.3.1</version>
+            <exported-packages>
+                <package>io.apimatic.coreinterfaces.http</package>
+            </exported-packages>
+        </library>
+    </required-libraries>
+
+</project>

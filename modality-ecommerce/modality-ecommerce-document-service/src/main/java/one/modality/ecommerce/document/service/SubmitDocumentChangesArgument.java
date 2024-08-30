@@ -7,10 +7,10 @@ import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
  */
 public final class SubmitDocumentChangesArgument {
 
-    private final AbstractDocumentEvent[] documentEvents;
     private final String historyComment;
+    private final AbstractDocumentEvent[] documentEvents;
 
-    public SubmitDocumentChangesArgument(AbstractDocumentEvent[] documentEvents, String historyComment) {
+    public SubmitDocumentChangesArgument(String historyComment, AbstractDocumentEvent... documentEvents) {
         this.documentEvents = documentEvents;
         this.historyComment = historyComment;
     }

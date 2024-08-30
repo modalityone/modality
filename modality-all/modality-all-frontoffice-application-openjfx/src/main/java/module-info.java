@@ -10,6 +10,8 @@ module modality.all.frontoffice.application.openjfx {
     requires modality.all.frontoffice.application;
     requires modality.ecommerce.document.service.buscall;
     requires modality.ecommerce.document.service.remote;
+    requires modality.ecommerce.payment.buscall;
+    requires modality.ecommerce.payment.remote;
     requires webfx.extras.visual.grid.peers.openjfx;
     requires webfx.extras.webtext.peers.openjfx;
     requires webfx.kit.javafxgraphics.openjfx;
@@ -31,11 +33,9 @@ module modality.all.frontoffice.application.openjfx {
     requires webfx.platform.windowhistory.java;
     requires webfx.platform.windowlocation.java;
     requires webfx.stack.authn.buscall;
-    requires webfx.stack.authn.login.buscall;
-    requires webfx.stack.authn.login.remote;
-    requires webfx.stack.authn.login.ui.gateway.webviewbased.openjfx;
     requires webfx.stack.authn.login.ui.portal;
     requires webfx.stack.authn.remote;
+    requires webfx.stack.com.bus.call;
     requires webfx.stack.com.bus.json.client;
     requires webfx.stack.com.bus.json.client.websocket.java;
     requires webfx.stack.com.websocket.java;

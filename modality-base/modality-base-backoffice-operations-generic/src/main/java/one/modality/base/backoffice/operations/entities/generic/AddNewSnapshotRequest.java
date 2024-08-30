@@ -1,10 +1,11 @@
 package one.modality.base.backoffice.operations.entities.generic;
 
+import dev.webfx.platform.async.AsyncFunction;
+import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.ui.operation.HasOperationCode;
 import dev.webfx.stack.ui.operation.HasOperationExecutor;
-import dev.webfx.stack.orm.entity.Entity;
-import dev.webfx.platform.async.AsyncFunction;
 import javafx.scene.layout.Pane;
+import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.Organization;
 
 import java.util.Collection;
@@ -18,6 +19,10 @@ public final class AddNewSnapshotRequest implements HasOperationCode,
     private final Collection<? extends Entity> entities;
     private final Organization organization;
     private final Pane parentContainer;
+
+    public AddNewSnapshotRequest(Collection<? extends Entity> entities, Organization organization) {
+        this(entities, organization, FXMainFrameDialogArea.getDialogArea());
+    }
 
     public AddNewSnapshotRequest(Collection<? extends Entity> entities, Organization organization, Pane parentContainer) {
         this.entities = entities;

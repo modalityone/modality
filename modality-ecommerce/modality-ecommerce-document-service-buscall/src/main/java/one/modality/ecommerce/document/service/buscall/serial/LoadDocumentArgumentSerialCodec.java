@@ -11,8 +11,10 @@ import one.modality.ecommerce.document.service.LoadDocumentArgument;
 public final class LoadDocumentArgumentSerialCodec extends SerialCodecBase<LoadDocumentArgument> {
 
     private static final String CODEC_ID = "LoadDocumentArgument";
-    private static final String PRIMARY_KEY_KEY = "primaryKey";
-    private static final String DATE_TIME_KEY = "dateTime";
+    private static final String DOCUMENT_PRIMARY_KEY_KEY = "document";
+    private static final String PERSON_PRIMARY_KEY_KEY = "person";
+    private static final String EVENT_PRIMARY_KEY_KEY = "event";
+    private static final String HISTORY_PRIMARY_KEY_KEY = "history";
 
     public LoadDocumentArgumentSerialCodec() {
         super(LoadDocumentArgument.class, CODEC_ID);
@@ -20,15 +22,19 @@ public final class LoadDocumentArgumentSerialCodec extends SerialCodecBase<LoadD
 
     @Override
     public void encode(LoadDocumentArgument lda, AstObject serial) {
-        encodeObject(       serial, PRIMARY_KEY_KEY, lda.getPrimaryKey(), NullEncoding.NULL_VALUE_NOT_ALLOWED);
-        encodeLocalDateTime(serial, DATE_TIME_KEY,   lda.getDateTime());
+        encodeObject(serial, DOCUMENT_PRIMARY_KEY_KEY, lda.getDocumentPrimaryKey());
+        encodeObject(serial, PERSON_PRIMARY_KEY_KEY,   lda.getPersonPrimaryKey());
+        encodeObject(serial, EVENT_PRIMARY_KEY_KEY,    lda.getEventPrimaryKey());
+        encodeObject(serial, HISTORY_PRIMARY_KEY_KEY,  lda.getHistoryPrimaryKey());
     }
 
     @Override
     public LoadDocumentArgument decode(ReadOnlyAstObject serial) {
         return new LoadDocumentArgument(
-                decodeObject(       serial, PRIMARY_KEY_KEY, NullEncoding.NULL_VALUE_NOT_ALLOWED),
-                decodeLocalDateTime(serial, DATE_TIME_KEY)
+                decodeObject(serial, DOCUMENT_PRIMARY_KEY_KEY),
+                decodeObject(serial, PERSON_PRIMARY_KEY_KEY),
+                decodeObject(serial, EVENT_PRIMARY_KEY_KEY),
+                decodeObject(serial, HISTORY_PRIMARY_KEY_KEY)
         );
     }
 

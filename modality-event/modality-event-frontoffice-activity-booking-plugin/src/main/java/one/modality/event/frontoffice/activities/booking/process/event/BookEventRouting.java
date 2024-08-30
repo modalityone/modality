@@ -17,5 +17,4 @@ public final class BookEventRouting {
         return ModalityRoutingUtil.interpolateEventIdInPath(eventId, PATH);
     }
 
-
 }

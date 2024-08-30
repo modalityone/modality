@@ -11,6 +11,8 @@
         <used-by-source-modules/>
 
         <plugin-module>modality-crm-server-authn-gateway-usernamepassword-plugin</plugin-module>
+        <plugin-module>modality-crm-server-authn-gateway-magiclink-plugin</plugin-module>
+        <plugin-module>modality-crm-server-authz-required-plugin</plugin-module>
 
     </dependencies>
 

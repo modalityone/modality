@@ -1,6 +1,19 @@
 
 /*===== webfx-kit-javafxgraphics-web@main.css from webfx-kit-javafxgraphics-peers-gwt-j2cl =====*/
 
+:root {
+    --safe-area-inset-top:    env(safe-area-inset-top);
+    --safe-area-inset-right:  env(safe-area-inset-right);
+    --safe-area-inset-bottom: env(safe-area-inset-bottom);
+    --safe-area-inset-left:   env(safe-area-inset-left);
+    --fx-border-color: #c0c0c0;
+    --fx-border-radius: 5px;
+    --fx-border-style: solid;
+    --fx-border-width: 1px;
+    --fx-border-color-focus: #0096D6;
+    --fx-svg-path-fill: black;
+}
+
 /* Mocking some basic JavaFX behaviours */
 body {
     overflow: hidden; /* Disabling browser horizontal and vertical scroll bars */
@@ -18,20 +31,26 @@ body {
     opacity: 50%;
 }
 
-/* When fill and stroke are not set by application code, we make them transparent by default like in JavaFX (otherwise
- the browser will make them black). */
-fx-svgpath svg {
-    fill: none;
-    stroke: none;
+.fx-border > fx-border {
+    border-color: var(--fx-border-color);
+    border-style: var(--fx-border-style);
+    border-width: var(--fx-border-width);
+    border-radius: var(--fx-border-radius);
+}
+
+/* Applying the default JavaFX behaviour for SVGPath */
+fx-svgpath svg path:not([fill]):not([stroke]) { /* if the application code didn't set neither fill nor stroke */
+    fill: var(--fx-svg-path-fill);  /* then the fill is black */
+}
+
+fx-svgpath svg path:not([fill])[stroke] { /* if the application code set the stroke but not the fill */
+    --fx-svg-path-fill: transparent; /* then the fill is transparent */
+    fill: var(--fx-svg-path-fill);
 }
 /*===== webfx-kit-javafxcontrols-web@main.css from webfx-kit-javafxcontrols-peers-gwt-j2cl =====*/
 
 /***** Global variables *****/
 :root {
-    --fx-border-color: #c0c0c0;
-    --fx-border-radius: 5px;
-    --fx-border-style: solid;
-    --fx-border-width: 1px;
     --fx-border-color-focus: #0096D6;
     --fx-textfield-background: white;
 }
@@ -78,13 +97,435 @@ input[type="text"], input[type="password"] {
     background-color: transparent;
 }
 
+/* Cross for the tab close button */
+.tab-close-button {
+    background-image: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' stroke='%23444' stroke-width='2' stroke-linejoin='round' viewBox=\'0 0 16 16\'%3E%3Cpath d=\'M 4,4 L 12,12 Z M 4,12 L 12,4 Z\'/%3E%3C/svg%3E");
+}
+
 /*===== webfx-kit-javafxweb-web@main.css from webfx-kit-javafxweb-peers-gwt-j2cl =====*/
 
 iframe {
     border: none;
 }
 
-/*===== webfx-extras-material-web@main.css from webfx-extras-materialdesign =====*/
+/*===== webfx-extras-bootstrap-web@main.css from webfx-extras-styles-bootstrap =====*/
+
+/* Bootstrap style */
+:root {
+    --bootstrap-white: #fff ;
+
+    --bootstrap-grey1: #e6e6e6 ;
+    --bootstrap-grey2: #d4d4d4 ;
+    --bootstrap-grey3: #ccc ;
+    --bootstrap-grey4: #adadad ;
+    --bootstrap-grey5: #8c8c8c ;
+    --bootstrap-grey6: #777777 ;
+    --bootstrap-grey7: #333 ;
+
+    --bootstrap-blue1: #5bc0de ;
+    --bootstrap-blue2: #46b8da ;
+    --bootstrap-blue3: #31b0d5 ;
+    --bootstrap-blue4: #269abc ;
+    --bootstrap-blue5: #337ab7 ;
+    --bootstrap-blue6: #2e6da4 ;
+    --bootstrap-blue7: #1b6d85 ;
+    --bootstrap-blue8: #286090 ;
+    --bootstrap-blue9: #204d74 ;
+    --bootstrap-blue10: #122b40 ;
+    --bootstrap-blue11: #31708f ;
+
+    --bootstrap-green1: #5cb85c ;
+    --bootstrap-green2: #4cae4c ;
+    --bootstrap-green3: #449d44 ;
+    --bootstrap-green4: #398439 ;
+    --bootstrap-green5: #255625 ;
+    --bootstrap-green6: #3c763d ;
+
+    --bootstrap-orange1: #f0ad4e ;
+    --bootstrap-orange2: #eea236 ;
+    --bootstrap-orange3: #ec971f ;
+    --bootstrap-orange4: #d58512 ;
+    --bootstrap-orange5: #985f0d ;
+    --bootstrap-orange6: #8a6d3b ;
+
+    --bootstrap-red1: #d9534f ;
+    --bootstrap-red2: #d43f3a ;
+    --bootstrap-red3: #c9302c ;
+    --bootstrap-red4: #ac2925 ;
+    --bootstrap-red5: #761c19 ;
+    --bootstrap-red6: #a94442 ;
+}
+
+/* Buttons */
+
+.btn {
+    cursor: pointer;
+
+    font-weight: normal;
+    text-align: center;
+    /*cursor: default;*/
+    /*background-insets: 0, 0, -1, 0;*/
+    /*padding: 6px 12px 6px 12px;*/
+    font-size: 14px;
+    min-width: 80px;
+}
+
+.btn > fx-background {
+    background: unset; /* to unset linear gradient */
+    border-radius: 4px;
+}
+
+.btn > fx-border {
+    border-color: transparent;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 4px;
+}
+
+.btn:hover {
+    color: var(--bootstrap-grey7);
+    --fx-svg-path-fill: var(--bootstrap-grey7);
+}
+
+.btn-default {
+    color: var(--bootstrap-grey7);
+    --fx-svg-path-fill: var(--bootstrap-grey7);
+}
+
+.btn-default > fx-background {
+    background-color: var(--bootstrap-white);
+}
+
+.btn-default > fx-border {
+    border-color: var(--bootstrap-grey3);
+}
+
+.btn-default:hover {
+    color: var(--bootstrap-grey7);
+    --fx-svg-path-fill: var(--bootstrap-grey7);
+}
+
+.btn-default:hover > fx-background {
+    background-color: var(--bootstrap-grey1);
+}
+
+.btn-default:hover > fx-border {
+    border-color: var(--bootstrap-grey5);
+}
+
+.btn-primary {
+    color: var(--bootstrap-white);
+    --fx-svg-path-fill: var(--bootstrap-white);
+}
+
+.btn-primary > fx-background {
+    background-color: var(--bootstrap-blue5);
+}
+
+.btn-primary > fx-border {
+    border-color: var(--bootstrap-blue6);
+}
+
+.btn-primary:hover {
+    color: var(--bootstrap-white);
+    --fx-svg-path-fill: var(--bootstrap-white);
+}
+
+.btn-primary:hover > fx-background {
+    background-color: var(--bootstrap-blue8);
+}
+
+.btn-primary:hover > fx-border {
+    border-color: var(--bootstrap-blue9);
+}
+
+.btn-secondary {
+    color: var(--bootstrap-white);
+    --fx-svg-path-fill: var(--bootstrap-white);
+}
+
+.btn-secondary > fx-background {
+    background-color: var(--bootstrap-grey4);
+}
+
+.btn-secondary > fx-border {
+    border-color: var(--bootstrap-grey5);
+}
+
+.btn-secondary:hover {
+    color: var(--bootstrap-white);
+    --fx-svg-path-fill: var(--bootstrap-white);
+}
+
+.btn-secondary:hover > fx-background {
+    background-color: var(--bootstrap-grey5);
+}
+
+.btn-secondary:hover > fx-border {
+    border-color: var(--bootstrap-grey6);
+}
+
+.btn-success {
+    color: var(--bootstrap-white);
+    --fx-svg-path-fill: var(--bootstrap-white);
+}
+
+.btn-success > fx-background {
+    background-color: var(--bootstrap-green1);
+}
+
+.btn-success > fx-border {
+    border-color: var(--bootstrap-green2);
+}
+
+.btn-success:hover {
+    color: var(--bootstrap-white);
+    --fx-svg-path-fill: var(--bootstrap-white);
+}
+
+.btn-success:hover > fx-background {
+    background-color: var(--bootstrap-green3);
+}
+
+.btn-success:hover > fx-border {
+    border-color: var(--bootstrap-green4);
+}
+
+.btn-info {
+    color: var(--bootstrap-white);
+    --fx-svg-path-fill: var(--bootstrap-white);
+}
+
+.btn-info > fx-background {
+    background-color: var(--bootstrap-blue1);
+    border-color: var(--bootstrap-blue2);
+}
+
+.btn-info > fx-border {
+    border-color: var(--bootstrap-blue2);
+}
+
+.btn-info:hover {
+    color: var(--bootstrap-white);
+    --fx-svg-path-fill: var(--bootstrap-white);
+}
+
+.btn-info:hover > fx-background {
+    background-color: var(--bootstrap-blue3);
+}
+
+.btn-info:hover > fx-border {
+    border-color: var(--bootstrap-blue4);
+}
+
+.btn-warning {
+    color: var(--bootstrap-white);
+    --fx-svg-path-fill: var(--bootstrap-white);
+}
+
+.btn-warning > fx-background {
+    background-color: var(--bootstrap-orange1);
+}
+
+.btn-warning > fx-border {
+    border-color: var(--bootstrap-orange2);
+}
+
+.btn-warning:hover {
+    color: var(--bootstrap-white);
+    --fx-svg-path-fill: var(--bootstrap-white);
+}
+
+.btn-warning:hover > fx-background {
+    background-color: var(--bootstrap-orange3);
+}
+
+.btn-warning:hover > fx-border {
+    border-color: var(--bootstrap-orange4);
+}
+
+.btn-danger {
+    color: var(--bootstrap-white);
+    --fx-svg-path-fill: var(--bootstrap-white);
+}
+
+.btn-danger > fx-background {
+    background: var(--bootstrap-red1);
+}
+
+.btn-danger > fx-border {
+    border-color: var(--bootstrap-red2);
+}
+
+.btn-danger:hover {
+    color: var(--bootstrap-white);
+    --fx-svg-path-fill: var(--bootstrap-white);
+}
+
+.btn-danger:hover > fx-background {
+    background-color: var(--bootstrap-red3);
+}
+
+.btn-danger:hover > fx-border {
+    border-color: var(--bootstrap-red4);
+}
+
+.btn-lg {
+    /*padding: 10px 16px 10px 16px;*/
+    font-size: 18px;
+}
+
+.btn-lg > fx-background, .btn-lg > fx-border {
+    border-radius: 6px;
+}
+
+.btn-sm {
+    /*padding: 5px 10px 5px 10px;*/
+    font-size: 12px;
+}
+
+.btn-sm > fx-background, .btn-sm > fx-border {
+    border-radius: 3px;
+}
+
+.btn-xs {
+    /*padding: 1px 5px 1px 5px;*/
+    font-size: 12px;
+}
+
+.btn-xs > fx-background, .btn-xs > fx-border {
+    border-radius: 3px;
+}
+
+.btn-block {
+    width: 100%;
+}
+
+.b, .strong {
+    font-weight: bold;
+}
+
+.i, .em, .italic, .dfn {
+    font-style: italic;
+}
+
+.h1 {
+    font-size: 2em;
+}
+
+.small {
+    font-size: 80%;
+}
+
+.code, .kbd, .pre, .samp {
+    font-family: 'monospace';
+    font-size: 1em;
+}
+
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    color: inherit;
+    /*fill: inherit;*/
+}
+
+.h1 .small, .h2 .small, .h3 .small, .h4 .small, .h5 .small, .h6 .small {
+    font-weight: normal;
+    color: var(--bootstrap-grey6);
+    --fx-svg-path-fill: var(--bootstrap-grey6);
+}
+
+.h1 .small, .h2 .small, .h3 .small {
+    font-size: 65%;
+}
+
+.h4 .small, .h5 .small, .h6 .small {
+    font-size: 75%;
+}
+
+.h1 {
+    font-size: 36px;
+}
+
+.h2 {
+    font-size: 30px;
+}
+
+.h3 {
+    font-size: 24px;
+}
+
+.h4 {
+    font-size: 18px;
+}
+
+.h5 {
+    font-size: 14px;
+}
+
+.h6 {
+    font-size: 12px;
+}
+
+.lead {
+    font-size: 16px;
+    font-weight: 300;
+}
+
+.small {
+    font-size: 85%;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-justify {
+    text-align: justify;
+}
+
+.text-muted {
+    color: var(--bootstrap-grey6);
+    --fx-svg-path-fill: var(--bootstrap-grey6);
+}
+
+.text-primary {
+    color: var(--bootstrap-blue5);
+    --fx-svg-path-fill: var(--bootstrap-blue5);
+}
+
+.text-secondary {
+    color: var(--bootstrap-grey5);
+    --fx-svg-path-fill: var(--bootstrap-grey5);
+}
+
+.text-success {
+    color: var(--bootstrap-green6);
+    --fx-svg-path-fill: var(--bootstrap-green6);
+}
+
+.text-info {
+    color: var(--bootstrap-blue11);
+    --fx-svg-path-fill: var(--bootstrap-blue11);
+}
+
+.text-warning {
+    color: var(--bootstrap-orange6);
+    --fx-svg-path-fill: var(--bootstrap-orange6);
+}
+
+.text-danger {
+    color: var(--bootstrap-red6);
+    --fx-svg-path-fill: var(--bootstrap-red6);
+}
+
+/*===== webfx-extras-material-web@main.css from webfx-extras-styles-materialdesign =====*/
 
 
 fx-textfield.material > fx-border {
@@ -116,6 +557,44 @@ fx-switch.webfx-switch.selected > fx-background {
 fx-switch.webfx-switch fx-circle.knob {
     background-color: var(--webfx-switch-knob-background-color);
 }
+/*===== webfx-extras-time-pickers-web@main.css from webfx-extras-time-pickers =====*/
+
+:root {
+    --webfx-time-pickers-blue1-color: #0096D6;
+    --webfx-time-pickers-blue2-color: #afe7ff;
+    --webfx-time-pickers-gray-color: #cccccc;
+
+    --webfx-time-pickers-arrow-color: var(--webfx-time-pickers-blue1-color);
+    --webfx-time-pickers-month-color: var(--webfx-time-pickers-blue1-color);
+    --webfx-time-pickers-border-color: var(--webfx-time-pickers-gray-color);
+    --webfx-time-pickers-date-background-color: var(--webfx-time-pickers-gray-color);
+    --webfx-time-pickers-selected-date-background-color: var(--webfx-time-pickers-blue2-color);
+}
+
+.webfx-datepicker.border > fx-border {
+    border-color: var(--webfx-time-pickers-border-color);
+    border-style: solid;
+    border-radius: 10px;
+}
+
+.webfx-datepicker .date-selected > fx-background {
+    background-color: var(--webfx-time-pickers-selected-date-background-color);
+    border-radius: 10px;
+}
+
+.webfx-datepicker .date-secondary > fx-background {
+    background-color: var(--webfx-time-pickers-date-background-color);
+    border-radius: 10px;
+}
+
+.webfx-datepicker .arrow svg path:not([fill]):not([stroke]) {
+    fill: var(--webfx-time-pickers-arrow-color);
+}
+
+.webfx-datepicker .month {
+    color: var(--webfx-time-pickers-month-color);
+    font-size: 14px;
+}
 /*===== webfx-extras-filepicker-web@main.css from webfx-extras-filepicker-gwt-j2cl =====*/
 
 /* We dont want any background or border for the FilePicker button */
@@ -131,13 +610,13 @@ fx-switch.webfx-switch fx-circle.knob {
 /*===== webfx-extras-visual-grid-web@main.css from webfx-extras-visual-grid-peers-gwt-j2cl =====*/
 
 :root {
-    --grid-border-color: #D3D3D3;
-    --grid-row-height: 28px;
-    --grid-selection-color: #AED6F1;
+    --webfx-visualgrid-border-color: #D3D3D3;
+    --webfx-visualgrid-row-height: 28px;
+    --webfx-visualgrid-selection-color: #AED6F1;
 }
 
 th, td {
-    border: 1px solid var(--grid-border-color);
+    border: 1px solid var(--webfx-visualgrid-border-color);
     border-top-width: 0;
 }
 
@@ -150,7 +629,7 @@ table {
 
 thead {
     border: none;
-    height: var(--grid-row-height);
+    height: var(--webfx-visualgrid-row-height);
     position: sticky;
     top: 1px;
     z-index: 2; /* header must be above body when scrolling */
@@ -159,19 +638,19 @@ thead {
 thead th {
     border-right-width: thin;
     border-right-style: solid;
-    border-right-color: var(--grid-border-color);
-    height: var(--grid-row-height);
+    border-right-color: var(--webfx-visualgrid-border-color);
+    height: var(--webfx-visualgrid-row-height);
     font-weight: bold;
     text-align: center;
     overflow: hidden;
 }
 
 tbody td {
-    border-bottom-color: var(--grid-border-color);
+    border-bottom-color: var(--webfx-visualgrid-border-color);
 }
 
 tbody tr {
-    height: var(--grid-row-height);
+    height: var(--webfx-visualgrid-row-height);
 }
 
 thead th, tbody td {
@@ -186,7 +665,7 @@ th:before { /* this rule is to prevent body appearing in 1px line above header w
     width: 100%;
     left: 0;
     top: -1px;
-    border-top: 1px solid var(--grid-border-color);
+    border-top: 1px solid var(--webfx-visualgrid-border-color);
 }
 
 
@@ -209,15 +688,82 @@ th, tbody, td {
 }
 
 .grid-head, .grid-row {
-    border-bottom: 1px solid var(--grid-border-color);
+    border-bottom: 1px solid var(--webfx-visualgrid-border-color);
 }
 
 .grid-col {
-    border-right: 1px solid var(--grid-border-color);
+    border-right: 1px solid var(--webfx-visualgrid-border-color);
 }
 
 tr.selected, .grid-row.selected {
-    background: var(--grid-selection-color)
+    background: var(--webfx-visualgrid-selection-color)
+}
+
+/*===== webfx-extras-ckeditor-web@main.css from webfx-extras-webtext-peers-gwt-j2cl =====*/
+
+/* Hiding the warning message from CKEditor 4.22.1 */
+.cke_notifications_area {
+    display: none;
+}
+/*===== webfx-stack-authn-login-ui-portal-web@main.css from webfx-stack-authn-login-ui-portal =====*/
+
+.login * {
+    font-size: 18px;
+}
+
+.login fx-button {
+    cursor: pointer;
+}
+
+.login fx-button > fx-background {
+    background: #0096D6FF;
+    border-radius: 15px;
+}
+
+.login fx-button > fx-border {
+    --fx-border-color: transparent;
+}
+
+.login fx-button .text {
+    color: white;
+}
+
+.login fx-button fx-svgpath {
+    --fx-svg-path-fill: white;
+}
+
+/* Montserrat password dots are tiny! So we use another font for passwords, but we don't want that font for the placeholder!
+   So we apply that font only once the user started typing the password. This is done using :not([value=""]) CSS
+   selector. Normally "value" refers to the initial value of the input only. However HtmlTextInputControlPeer keeps
+   updating "value" to "" or "not-empty" whether the user has typed something, so this CSS rule finally works: */
+input[type="password"]:not([value=""]) {
+    font-family: "Password", serif;
+    letter-spacing: 0.15em;
+}
+
+@font-face {
+    font-family: "Password";
+    src: url("./fonts/password/password.woff") format("woff");
+    font-weight: 100 900;
+}
+
+.login .or {
+    color: #888;
+}
+
+.login .line {
+    background-color: lightgray;
+}
+
+.login .background > fx-background {
+    background-color: white;
+    border-radius: 20px;
+}
+
+.login .fx-border > fx-border {
+    --fx-border-color: lightgray;
+    --fx-border-radius: 20px;
+    box-shadow: lightgray 0 0 10px;
 }
 
 /*===== modality-backoffice-home-web@main.css from modality-base-backoffice-activity-home-plugin =====*/
@@ -236,26 +782,18 @@ fx-homepane fx-tile * {
 }
 
 /* Applying Montserrat as default font for Modality */
-body {
+body, textarea /* because textarea has explicit default monospace font */ {
     font-family: Montserrat, serif;
     font-size: 13px;
     -webkit-font-smoothing: antialiased;
 }
 
 
-/*===== web@main.css from modality-base-client-css =====*/
+/*===== modality-client-web@main.css from modality-base-client-css =====*/
 
 :root {
     --webfx-switch-selected-background-color: #0096D6;
-    --green-color: #41BA4D;
-    --green-color-hover: #38a143;
-    --blue-color: #0096D6;
-    --blue-color-hover: #0082ba;
-    --grey-color: #838788;
-    --grey-color-hover: #717475;
-    --red-color: red;
-    --red-color-hover: #de0000;
-    --orange-color: #EE7130;
+    --webfx-visualgrid-selection-color: #BBBBBB;
 }
 
 .event-button {
@@ -270,147 +808,10 @@ body {
     border: none;
 }
 
-.primary-button {
-    color: white;
-}
-.primary-button > fx-background {
-    background: var(--blue-color);
-}
+/*===== modality-backoffice-bookingdetailspanel-web@main.css from modality-crm-backoffice-bookingdetailspanel =====*/
 
-.primary-button.disabled > fx-background, .primary-button.disabled:hover > fx-background {
-    background: var(--blue-color);
-}
-
-.primary-button:hover > fx-background {
-    background: var(--blue-color-hover);
-}
-
-.danger-button {
-  color: white;
-}
-
-.danger-button > fx-background {
-    background: var(--red-color);
-}
-.danger-button:hover > fx-background {
-    background: var(--red-color-hover);
-}
-
-.success-button {
-    color: white;
-}
-.success-button > fx-background {
-    background: var(--green-color);
-}
-.success-button:hover > fx-background   {
-    background: var(--green-color-hover);
-}
-
-.secondary-button {
-    color: white;
-}
-.secondary-button > fx-background {
-    background: var(--grey-color);
-}
-.secondary-button:hover > fx-background {
-    background: var(--grey-color-hover);
-}
-
-.secondary-text {
-    color: var(--grey-color);
-}
-
-.warning-text {
-    color: var(--orange-color);
-}
-
-.danger-text {
-    color: var(--red-color);
-}
-
-.success-text {
-    color: var(--green-color);
-}
-
-.title {
-    font-size: 35px;
-}
-
-.subtitle {
-    font-size: 22px;
-}
-
-.title3 {
-    font-size: 16px;
-}
-
-.confirmation-title {
-    font-size: 22px;
-    color: var(--green-color);
-    font-weight: bold;
-}
-
-.small-text {
-    font-size: 9px;
-}
-
-.table-row-cell:selected .font-blue {
-
-}
-
-.table-row-cell:selected > fx-background {
-    background: #BBBBBB;
-}
-
-.webfx-dates-picker-selected > fx-background {
-    background-color: #afe7ff;
-    border-radius: 10px;
-}
-
-.webfx-dates-picker-secondary > fx-background {
-    background-color: #cccccc;
-    border-radius: 10px;
-}
-
-.webfx-dates-picker-arrow {
-    fill: var(--blue-color);
-    border-radius: 10px;
-}
-
-.webfx-dates-picker-month {
-    color: var(--blue-color);
+fx-titledpane .title {
     font-size: 14px;
-}
-/*===== modality-client-login-web@main.css from modality-crm-client-activity-login-plugin =====*/
-
-.login * {
-    font-size: 18px; /* doesn't work yet (because of hardcoded style in app code) */
-}
-
-.login fx-button { /* doesn't work yet (because of hardcoded style in app code) */
-    background: #0096D6FF;
-    border: none;
-    border-radius: 10px;
-}
-
-.login fx-button .text {
-    color: white; /* doesn't work yet (because of hardcoded style in app code) */
-    /*padding: 15px; JavaFX padding already applied in app code for now */
-}
-
-/* Montserrat password dots are tiny! So we use another font for passwords, but we don't want that font for the placeholder!
-   So we apply that font only once the user started typing the password. This is done using :not([value=""]) CSS
-   selector. Normally "value" refers to the initial value of the input only. However HtmlTextInputControlPeer keeps
-   updating "value" to "" or "not-empty" whether the user has typed something, so this CSS rule finally works: */
-input[type="password"]:not([value=""]) {
-    font-family: "Password", serif;
-    letter-spacing: 0.15em;
-}
-
-@font-face {
-    font-family: "Password";
-    src: url("./fonts/password/password.woff") format("woff");
-    font-weight: 100 900;
 }
 
 /*===== modality-backoffice-bookings-web@main.css from modality-ecommerce-backoffice-activity-bookings-plugin =====*/
@@ -512,18 +913,17 @@ tr.branch, .grid-row.branch {
 
 /**** Applying styles to data table and grid ****/
 
-#bookings tr, #bookings .grid-row {
+#bookings tbody tr, #bookings .grid-row {
     background: linear-gradient(  90deg, var(--stay-color) 0%, var(--stay-color) 40%, transparent 50%, transparent 100%),
     linear-gradient( 180deg, var(--color-light), var(--color-dark) 100%);
 }
 
-#bookings tr.selected, #bookings .grid-row.selected {
+#bookings tbody tr.selected, #bookings .grid-row.selected {
     background: repeating-linear-gradient(155deg, var(--selection-color), transparent 5px, transparent 10px, var(--selection-color) 15px, var(--selection-color) 20px),
     linear-gradient(  90deg, var(--stay-color) 0%, var(--stay-color) 40%, transparent 50%, transparent 100%),
     linear-gradient( 180deg, var(--color-light), var(--color-dark) 100%);
 }
 /*===== modality-backoffice-recurringevents-web@main.css from modality-event-backoffice-activity-recurringevents-plugin =====*/
-
 
 .booking-name {
     color: #838788;

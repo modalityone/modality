@@ -11,6 +11,11 @@ import one.modality.base.shared.entities.markers.HasLabel;
 import one.modality.base.shared.entities.markers.HasName;
 
 /**
+ * i18n() function that can be used in expressions. Special cases are handled depending on the passed argument:
+ * - if an entity (or EntityId) is passed, it will try to find the translation in the associated label, or name otherwise
+ * - if a label is passed, it will return the translation in the current i18n language.
+ * - in other cases, it will call I18n.getI18nText() with the passed argument
+ *
  * @author Bruno Salmon
  */
 public final class I18nFunction extends Function {
@@ -21,7 +26,7 @@ public final class I18nFunction extends Function {
 
     @Override
     public Object evaluate(Object argument, DomainReader domainReader) {
-        Object result = null;
+        Object result;
         if (argument instanceof EntityId)
             argument = domainReader.getDomainObjectFromId(argument, null);
         Label label = null;
@@ -33,6 +38,8 @@ public final class I18nFunction extends Function {
             result = domainReader.getDomainFieldValue(label, I18n.getLanguage());
             if (result == null)
                 result = domainReader.getDomainFieldValue(label, I18n.getDefaultLanguage());
+        } else {
+            result = I18n.getI18nText(argument);
         }
         if (result == null && argument instanceof HasName)
             result = ((HasName) argument).getName();

@@ -1,31 +1,27 @@
 package one.modality.ecommerce.backoffice.operations.entities.documentline;
 
-import dev.webfx.stack.ui.controls.dialog.DialogContent;
-import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.platform.async.Future;
-import dev.webfx.platform.async.Promise;
-import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
-import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
+import dev.webfx.platform.util.Objects;
+import one.modality.base.backoffice.operations.entities.generic.DialogExecutorUtil;
 import one.modality.base.shared.entities.DocumentLine;
+import one.modality.ecommerce.document.service.DocumentService;
+import one.modality.ecommerce.document.service.SubmitDocumentChangesArgument;
+import one.modality.ecommerce.document.service.events.registration.documentline.RemoveDocumentLineEvent;
 
 final class DeleteDocumentLineExecutor {
 
     static Future<Void> executeRequest(DeleteDocumentLineRequest rq) {
-        return execute(rq.getDocumentLine(), rq.getParentContainer());
-    }
-
-    private static Future<Void> execute(DocumentLine documentLine, Pane parentContainer) {
-        Promise<Void> promise = Promise.promise();
-        DialogContent dialogContent = new DialogContent().setContent(new Text("Are you sure you want to delete this option?"));
-        DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, parentContainer).addCloseHook(promise::complete);
-        DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
-            UpdateStore updateStore = UpdateStore.create(documentLine.getStore().getDataSourceModel());
-            updateStore.deleteEntity(documentLine);
-            updateStore.submitChanges()
-                    .onFailure(dialogCallback::showException)
-                    .onSuccess(resultBatch -> dialogCallback.closeDialog());
-        });
-        return promise.future();
+        return rq.getDocumentLine().<DocumentLine>onExpressionLoaded("item.name")
+                .compose(documentLine -> {
+                    String itemName = Objects.coalesce(documentLine.evaluate("item.name"), "option");
+                    return DialogExecutorUtil.executeOnUserConfirmation(
+                            "Are you sure you want to delete " + itemName + "?"
+                            , rq.getParentContainer(),
+                            () -> DocumentService.submitDocumentChanges(
+                                    new SubmitDocumentChangesArgument(
+                                            "Deleted " + itemName,
+                                            new RemoveDocumentLineEvent(documentLine))
+                            ));
+                });
     }
 }

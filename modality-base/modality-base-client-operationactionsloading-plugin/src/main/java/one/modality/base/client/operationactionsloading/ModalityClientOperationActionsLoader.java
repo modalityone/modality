@@ -11,10 +11,14 @@ import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityStore;
+import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
 import dev.webfx.stack.ui.action.Action;
 import dev.webfx.stack.ui.action.ActionFactoryMixin;
+import dev.webfx.stack.ui.exceptions.UserCancellationException;
+import dev.webfx.stack.ui.operation.action.OperationAction;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import dev.webfx.stack.ui.operation.action.OperationActionRegistry;
+import javafx.scene.control.ProgressIndicator;
 import one.modality.base.client.conf.ModalityClientConfig;
 
 import java.util.List;
@@ -22,7 +26,7 @@ import java.util.List;
 /**
  * @author Bruno Salmon
  */
-public class ModalityClientOperationActionsLoader implements ApplicationModuleBooter,
+public final class ModalityClientOperationActionsLoader implements ApplicationModuleBooter,
         OperationActionFactoryMixin,
         ActionFactoryMixin {
 
@@ -64,7 +68,7 @@ public class ModalityClientOperationActionsLoader implements ApplicationModuleBo
         OperationActionRegistry registry = getOperationActionRegistry();
         // Registering graphical properties for all loaded operations
         for (Entity operation : operations) {
-            String operationCode = (String) operation.evaluate("code");
+            String operationCode = operation.evaluate("code");
             String i18nCode = operation.getStringFieldValue("i18nCode");
             boolean isPublic = operation.getBooleanFieldValue("public");
             Object i18nKey = new ModalityOperationI18nKey(i18nCode, operationCode);
@@ -99,6 +103,32 @@ public class ModalityClientOperationActionsLoader implements ApplicationModuleBo
                     ((ModalityOperationI18nKey) i18nKey).setOperationRequest(operationRequest);
                 I18n.refreshMessageTokenProperties(i18nKey);
             }
+        });
+    }
+
+    static {
+        OperationAction.setActionExecutingIconFactory(operationRequest -> {
+            if (operationRequest instanceof RouteRequest) {
+                return null;
+            }
+            ProgressIndicator progressIndicator = new ProgressIndicator();
+            progressIndicator.setPrefSize(16, 16);
+            return progressIndicator;
+        });
+
+        OperationAction.setActionExecutedIconFactory((operationRequest, throwable) -> {
+            if (operationRequest instanceof RouteRequest) {
+                return null;
+            }
+            String i18nKey;
+            if (throwable == null) {
+                i18nKey = "ExecutedSuccessfullyActionIcon";
+            } else if (throwable instanceof UserCancellationException) {
+                i18nKey = "ExecutedCancelledByUserActionIcon";
+            } else {
+                i18nKey = "ExecutedErrorActionIcon";
+            }
+            return I18n.getI18nGraphic(i18nKey);
         });
     }
 

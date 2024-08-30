@@ -67,12 +67,44 @@ public interface Document extends
         return getBooleanFieldValue("confirmed");
     }
 
-    default void setArrived(Boolean confirmed) {
-        setFieldValue("arrived", confirmed);
+    default void setArrived(Boolean arrived) {
+        setFieldValue("arrived", arrived);
     }
 
     default Boolean isArrived() {
         return getBooleanFieldValue("arrived");
+    }
+
+    default void setRead(Boolean read) {
+        setFieldValue("read", read);
+    }
+
+    default Boolean isRead() {
+        return getBooleanFieldValue("read");
+    }
+
+    default void setWillPay(Boolean willPay) {
+        setFieldValue("willPay", willPay);
+    }
+
+    default Boolean isWillPay() {
+        return getBooleanFieldValue("willPay");
+    }
+
+    default void setPassReady(Boolean passReady) {
+        setFieldValue("passReady", passReady);
+    }
+
+    default Boolean isPassReady() {
+        return getBooleanFieldValue("passReady");
+    }
+
+    default void setFlagged(Boolean flagged) {
+        setFieldValue("flagged", flagged);
+    }
+
+    default Boolean isFlagged() {
+        return getBooleanFieldValue("flagged");
     }
 
 }

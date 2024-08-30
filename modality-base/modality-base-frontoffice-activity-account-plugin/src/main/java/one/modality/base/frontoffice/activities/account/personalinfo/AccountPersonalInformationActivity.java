@@ -6,7 +6,7 @@ import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParamet
 import dev.webfx.stack.ui.controls.MaterialFactoryMixin;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.scene.Node;
-import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
+import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.client.controls.personaldetails.PersonalDetailsPanel;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;

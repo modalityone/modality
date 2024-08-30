@@ -15,10 +15,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
+import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.tile.TabsBar;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
-import one.modality.base.backoffice.mainframe.headertabs.fx.FXMainFrameHeaderTabs;
+import one.modality.base.backoffice.mainframe.fx.FXMainFrameHeaderTabs;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
@@ -28,14 +28,15 @@ import static dev.webfx.stack.orm.dql.DqlStatement.where;
 final class OperationsActivity extends ViewDomainActivityBase implements ModalityButtonFactoryMixin {
 
     private final static String OPERATION_COLUMNS = "[" +
-            "{expression: 'name', label: 'Name'}," +
-            "{expression: 'code', label: 'Code'}," +
-            "{expression: 'grantRoute', label: 'Grant route'}," +
-            "{expression: 'i18nCode', label: 'i18n'}," +
-            "{expression: 'backoffice', label:'BackOffice'}," +
-            "{expression: 'frontoffice', label: 'FrontOffice'}," +
-            "{expression: 'public', label: 'Public'}" +
-            "]";
+        "{expression: 'name', label: 'Name'}," +
+        "{expression: 'code', label: 'Code'}," +
+        "{expression: 'grantRoute', label: 'Grant route'}," +
+        "{expression: 'i18nCode', label: 'i18n'}," +
+        "{expression: 'backoffice', label:'BackOffice'}," +
+        "{expression: 'frontoffice', label: 'FrontOffice'}," +
+        "{expression: 'guest', label: 'Guest'}," +
+        "{expression: 'public', label: 'Public'}" +
+    "]";
 
     enum OperationTab {
         BACKOFFICE_ROUTES(true, true),
@@ -63,10 +64,10 @@ final class OperationsActivity extends ViewDomainActivityBase implements Modalit
     @Override
     public Node buildUi() {
         headerTabsBar.setTabs(
-                headerTabsBar.createTab("BackOffice - Routes", OperationTab.BACKOFFICE_ROUTES),
-                headerTabsBar.createTab("BackOffice - Operations", OperationTab.BACKOFFICE_OPERATIONS),
-                headerTabsBar.createTab("FrontOffice - Routes", OperationTab.FRONTOFFICE_ROUTES),
-                headerTabsBar.createTab("FrontOffice - Operations", OperationTab.FRONTOFFICE_OPERATIONS)
+            headerTabsBar.createTab("BackOffice - Routes", OperationTab.BACKOFFICE_ROUTES),
+            headerTabsBar.createTab("BackOffice - Operations", OperationTab.BACKOFFICE_OPERATIONS),
+            headerTabsBar.createTab("FrontOffice - Routes", OperationTab.FRONTOFFICE_ROUTES),
+            headerTabsBar.createTab("FrontOffice - Operations", OperationTab.FRONTOFFICE_OPERATIONS)
         );
         BorderPane container = new BorderPane(operationsTable);
         searchBox.setPromptText("Search");
@@ -95,20 +96,20 @@ final class OperationsActivity extends ViewDomainActivityBase implements Modalit
     @Override
     protected void startLogic() {
         ReactiveVisualMapper.createPushReactiveChain(this)
-                .always("{class: 'Operation', alias: 'o', orderBy: 'code'}")
-                // Search box condition
-                .ifTrimNotEmpty(searchBox.textProperty(), s -> where("lower(code) like ?", "%" + s.toLowerCase() + "%"))
-                // Limit condition
-                //.ifPositive(pm.limitProperty(), l -> limit("?", l))
-                .setEntityColumns(OPERATION_COLUMNS)
-                .always(selectedTabProperty, ot -> where( ot.routes ? "code like 'RouteTo%'" : "code not like 'RouteTo%'"))
-                .always(selectedTabProperty, ot -> where( ot.backoffice ? "backoffice" : "frontoffice"))
-                .always(publicRadioButton.selectedProperty(), pub -> where( pub ? "public" : "!public"))
-                .always(kbsxCheckBox.selectedProperty(), kbsx -> where(kbsx ? "name like 'KBSX%'" : "name not like 'KBSX%'"))
-                .visualizeResultInto(operationsTable.visualResultProperty())
-                .setVisualSelectionProperty(operationsTable.visualSelectionProperty())
-                .setSelectedEntityHandler(this::editOperation)
-                .start()
+            .always("{class: 'Operation', alias: 'o', orderBy: 'code'}")
+            // Search box condition
+            .ifTrimNotEmpty(searchBox.textProperty(), s -> where("lower(code) like ?", "%" + s.toLowerCase() + "%"))
+            // Limit condition
+            //.ifPositive(pm.limitProperty(), l -> limit("?", l))
+            .setEntityColumns(OPERATION_COLUMNS)
+            .always(selectedTabProperty, ot -> where(ot.routes ? "code like 'RouteTo%'" : "code not like 'RouteTo%'"))
+            .always(selectedTabProperty, ot -> where(ot.backoffice ? "backoffice" : "frontoffice"))
+            .always(publicRadioButton.selectedProperty(), pub -> where(pub ? "public" : "!public"))
+            .always(kbsxCheckBox.selectedProperty(), kbsx -> where(kbsx ? "name like 'KBSX%'" : "name not like 'KBSX%'"))
+            .visualizeResultInto(operationsTable.visualResultProperty())
+            .setVisualSelectionProperty(operationsTable.visualSelectionProperty())
+            .setSelectedEntityHandler(this::editOperation)
+            .start()
         ;
     }
 

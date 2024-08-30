@@ -1,13 +1,14 @@
 package one.modality.base.shared.entities;
 
-import one.modality.base.shared.entities.markers.EntityHasDocument;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
+import one.modality.base.shared.entities.markers.EntityHasDocument;
+import one.modality.base.shared.entities.markers.EntityHasUserPerson;
 
 /**
  * @author Bruno Salmon
  */
-public interface History extends Entity, EntityHasDocument {
+public interface History extends Entity, EntityHasDocument, EntityHasUserPerson {
 
     default void setUsername(String username) {
         setFieldValue("username", username);
@@ -25,6 +26,13 @@ public interface History extends Entity, EntityHasDocument {
         return getStringFieldValue("comment");
     }
 
+    default void setChanges(String changes) {
+        setFieldValue("changes", changes);
+    }
+
+    default String getChanges() {
+        return getStringFieldValue("changes");
+    }
 
     default void setMail(Object mail) {
         setForeignField("mail", mail);
@@ -37,5 +45,17 @@ public interface History extends Entity, EntityHasDocument {
     default Mail getMail() {
         return getForeignEntity("mail");
     }
-    
+
+    default void setMoneyTransfer(Object document) {
+        setForeignField("moneyTransfer", document);
+    }
+
+    default EntityId getMoneyTransferId() {
+        return getForeignEntityId("moneyTransfer");
+    }
+
+    default Document getMoneyTransfer() {
+        return getForeignEntity("moneyTransfer");
+    }
+
 }

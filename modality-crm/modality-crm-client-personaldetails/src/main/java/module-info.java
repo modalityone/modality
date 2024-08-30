@@ -14,8 +14,8 @@ module modality.crm.client.personaldetails {
     requires modality.base.shared.domainmodel;
     requires modality.base.shared.entities;
     requires modality.crm.client.authn.fx;
-    requires webfx.extras.materialdesign;
     requires webfx.extras.panes;
+    requires webfx.extras.styles.materialdesign;
     requires webfx.extras.util.control;
     requires webfx.extras.util.layout;
     requires webfx.extras.util.scene;

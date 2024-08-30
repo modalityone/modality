@@ -25,13 +25,13 @@ public final class BookingStarter {
     }
 
     private static void startKbs2EventBooking(Event event) {
-        String bookingFormUrl = (String) event.evaluate("bookingFormUrl");
+        String bookingFormUrl = event.evaluate("bookingFormUrl");
         bookingFormUrl = bookingFormUrl.replace("{host}", "kadampabookings.org");
         BrowserUtil.chooseHowToOpenWebsite(bookingFormUrl);
     }
 
     private static void startKbs3EventBooking(Event event) {
-        FXEvent.setEvent(event);
+        FXEvent.setEvent(event); // Not required but helps to start faster as the event is already loaded
         WindowHistory.getProvider().push(BookEventRouting.getBookEventPath(event));
     }
 

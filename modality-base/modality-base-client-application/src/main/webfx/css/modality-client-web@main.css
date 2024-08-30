@@ -5,7 +5,7 @@
 }
 
 /* Applying Montserrat as default font for Modality */
-body {
+body, textarea /* because textarea has explicit default monospace font */ {
     font-family: Montserrat, serif;
     font-size: 13px;
     -webkit-font-smoothing: antialiased;

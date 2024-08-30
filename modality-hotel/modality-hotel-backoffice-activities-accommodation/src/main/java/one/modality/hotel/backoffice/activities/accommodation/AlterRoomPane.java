@@ -355,7 +355,7 @@ public class AlterRoomPane extends VBox {
         if (resourceConfigurations.size() < 2) {
             String msg = "This is the only configuration for this resource. It cannot be deleted.";
             DialogContent dialogContent = new DialogContent().setContentText(msg);
-            dialogContent.getCancelButton().setVisible(false);
+            dialogContent.getSecondaryButton().setVisible(false);
             DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, this);
             DialogBuilderUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
         } else {
@@ -458,7 +458,7 @@ public class AlterRoomPane extends VBox {
         VisualGrid table = new VisualGrid(visualResult);
         VBox overlappingMsgPane = new VBox(msgLabel, table);
         DialogContent dialogContent = new DialogContent().setContent(overlappingMsgPane);
-        dialogContent.getOkButton().setVisible(false);
+        dialogContent.getPrimaryButton().setVisible(false);
         DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, this);
         DialogBuilderUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
     }
@@ -471,7 +471,7 @@ public class AlterRoomPane extends VBox {
                 success.set(true);
                 dialogCallback.closeDialog();
             });
-            dialogContent.getCancelButton().setOnAction(event -> {
+            dialogContent.getSecondaryButton().setOnAction(event -> {
                 success.set(false);
                 dialogContent.getDialogCallback().closeDialog();
             });

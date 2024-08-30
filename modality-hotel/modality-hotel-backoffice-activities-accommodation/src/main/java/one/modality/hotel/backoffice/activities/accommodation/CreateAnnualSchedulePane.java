@@ -178,7 +178,7 @@ public class CreateAnnualSchedulePane extends VBox {
 
     private void showMsg(String msg) {
         DialogContent dialogContent = new DialogContent().setContent(new Label(msg));
-        dialogContent.getOkButton().setVisible(false);
+        dialogContent.getPrimaryButton().setVisible(false);
         DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, parent);
         DialogBuilderUtil.armDialogContentButtons(dialogContent, DialogCallback::closeDialog);
     }

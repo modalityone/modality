@@ -13,6 +13,7 @@ module modality.base.client.i18n {
     requires webfx.stack.ui.operation;
 
     // Exported packages
+    exports one.modality.base.client.i18n;
     exports one.modality.base.client.operations.i18n;
     exports one.modality.base.client.services.i18n;
 

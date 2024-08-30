@@ -6,7 +6,7 @@ module modality.crm.client.profile.plugin {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.activity;
-    requires modality.base.client.mainframe.dialogarea.fx;
+    requires modality.base.client.mainframe.fx;
     requires modality.base.client.profile.fx;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;

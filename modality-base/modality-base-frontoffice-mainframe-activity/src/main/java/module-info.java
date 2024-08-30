@@ -7,13 +7,15 @@ module modality.base.frontoffice.mainframe.activity {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.application;
-    requires modality.base.client.mainframe.dialogarea.fx;
-    requires modality.base.frontoffice.mainframe.backgroundnode.fx;
+    requires modality.base.client.mainframe.fx;
+    requires modality.base.frontoffice.mainframe.fx;
     requires webfx.extras.panes;
+    requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.conf;
     requires webfx.platform.util;
     requires webfx.stack.i18n;
+    requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.action;
     requires webfx.stack.ui.operation.action;
 

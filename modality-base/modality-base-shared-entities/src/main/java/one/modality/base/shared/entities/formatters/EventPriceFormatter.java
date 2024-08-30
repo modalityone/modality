@@ -14,13 +14,20 @@ public class EventPriceFormatter extends PriceFormatter {
         super(getEventCurrencySymbol(event));
     }
 
-    public static String getEventCurrencySymbol(Event event) {
+    public static String getEventCurrencyCode(Event event) {
         // Temporary hardcoded
         Object organizationPk = Entities.getPrimaryKey(event.getOrganizationId());
         if (organizationPk == null)
             return null;
         boolean isKMCF = Numbers.toInteger(organizationPk) == 2;
-        return isKMCF ? " €" : "£";
+        return isKMCF ? "EUR" : "GBP";
+    }
+
+    public static String getEventCurrencySymbol(Event event) {
+        // Temporary hardcoded
+        if ("EUR".equals(getEventCurrencyCode(event)))
+            return " €";
+        return "£";
     }
 
     public static String formatWithCurrency(Object value, Event event) {

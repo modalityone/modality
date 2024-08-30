@@ -1,0 +1,99 @@
+OpenBookingCart:
+  text: "Open booking cart"
+  graphic: "images/s16/cart.png"
+CancelOthers:
+  text: "Cancel others"
+  graphic: "images/s16/actions/cancel.png"
+GetBackCancelledDeposit:
+  text: "Get back cancelled deposit"
+  graphic: "images/s16/methods/contra.png"
+MergeOptionsFromOtherNotCancelledBookings:
+  text: "Merge options from other not cancelled bookings"
+  graphic: "images/s16/actions/merge.png"
+MarkMultipleBooking:
+  text: "Mark as multiple booking"
+  graphic: "images/s16/multipleBookings/redCross.png"
+MarkNotMultipleBooking:
+  text: "Unmark as multiple booking"
+  graphic: "[MarkMultipleBooking]"
+ToggleMarkNotMultipleBooking:
+  text: "[expression: multipleBooking = null ? '[MarkMultipleBooking]' : '[MarkNotMultipleBooking]' ]"
+  graphic: "[expression: multipleBooking = null ? '[MarkMultipleBooking]' : '[MarkNotMultipleBooking]' ]"
+PassUpdated:
+  text: "Pass updated"
+  graphic: "images/s16/actions/passUpdated.png"
+Cancel:
+  text: "Cancel"
+  graphic: "images/s16/actions/cancel.png"
+Uncancel:
+  text: "Uncancel"
+  graphic: "images/s16/actions/cancel.png"
+ToggleCancel:
+  text: "[expression: cancelled ? '[Uncancel]' : '[Cancel]' ]"
+  graphic: "[Cancel]"
+Confirm:
+  text: "Confirm"
+Unconfirm:
+  text: "Unconfirm"
+ToggleConfirm:
+  text: "[expression: confirmed ? '[Unconfirm]' : '[Confirm]' ]"
+Flag:
+  text: "Flag"
+  graphic: "images/s16/actions/flag.png"
+Unflag:
+  text: "Unflag"
+  graphic: "[Flag]"
+ToggleFlag:
+  text: "[expression: flagged ? '[Unflag]' : '[Flag]' ]"
+  graphic: "[Flag]"
+MarkAsArrived:
+  text: "Mark as arrived"
+  graphic: "images/s16/actions/markAsArrived.png"
+UnmarkAsArrived:
+  text: "Unmark as arrived"
+ToggleMarkAsArrived:
+  text: "[expression: arrived ? '[UnmarkAsArrived]' : '[MarkAsArrived]' ]"
+  graphic: "[MarkAsArrived]"
+MarkAsRead:
+  text: "Mark as read"
+  graphic: "images/s16/actions/markAsRead.png"
+UnmarkAsRead:
+  text: "Unmark as read"
+ToggleMarkAsRead:
+  text: "[expression: read ? '[UnmarkAsRead]' : '[MarkAsRead]' ]"
+  graphic: "[MarkAsRead]"
+WillPay:
+  text: "Will pay"
+  graphic: "images/s16/actions/willPay.png"
+WontPay:
+  text: "Won't pay"
+ToggleWillPay:
+  text: "[expression: willPay ? '[WontPay]' : '[WillPay]' ]"
+  graphic: "[WillPay]"
+PassReady:
+  text: "Pass ready"
+  graphic: "images/s16/actions/passReady.png"
+PassNotReady:
+  text: "Pass not ready"
+  graphic: "[PassReady]"
+TogglePassReady:
+  text: "[expression: passReady ? '[PassNotReady]' : '[PassReady]' ]"
+  graphic: "[PassReady]"
+MarkAsKnown:
+  text: "Mark as known"
+  graphic: "images/s16/security/known.png"
+MarkAsUnchecked:
+  text: "Mark as unchecked"
+  graphic: "images/s16/security/unchecked.png"
+MarkAsUnknown:
+  text: "Mark as unknown"
+  graphic: "images/s16/security/unknown.png"
+MarkAsVerified:
+  text: "Mark as verified"
+  graphic: "images/s16/security/verified.png"
+SendLetter:
+  text: "Send a letter"
+  graphic: "images/s16/letter.png"
+ShowBookingEditor:
+  text: "[expression: '#' + ref + ' ~ ' + person_name + ' ~ ' + dates]"
+  graphic: "[expression: genderIcon]"

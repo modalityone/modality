@@ -33,7 +33,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.FontWeight;
 import javafx.scene.web.WebView;
-import one.modality.base.client.mainframe.dialogarea.fx.FXMainFrameDialogArea;
+import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.base.frontoffice.utility.StyleUtility;
 import one.modality.base.shared.entities.Country;
@@ -127,8 +127,8 @@ public final class OrganizationSelectorView {
                             double fontFactor = GeneralUtility.computeFontFactor(w);
                             GeneralUtility.setLabeledFont(websiteLink, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
                             GeneralUtility.setLabeledFont(addressLink, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
-                            GeneralUtility.setLabeledFont(phoneLink, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
-                            GeneralUtility.setLabeledFont(emailLink, StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
+                            GeneralUtility.setLabeledFont(phoneLink,   StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
+                            GeneralUtility.setLabeledFont(emailLink,   StyleUtility.TEXT_FAMILY, FontWeight.NORMAL, fontFactor * 16);
                         } else
                             contactBox.setAlignment(Pos.CENTER);
                         if (presentationPane.isVisible()) {
