@@ -65,7 +65,17 @@ public final class PolicyAggregate {
 
     public Stream<Rate> getSiteItemRatesStream(Site site, Item item) {
         return getRatesStream()
-                .filter(r -> Entities.sameId(r.getSite(), site) && Entities.sameId(r.getItem(), item));
+            .filter(r -> Entities.sameId(r.getSite(), site) && Entities.sameId(r.getItem(), item));
+    }
+
+    public Stream<Rate> getSiteItemDailyRatesStream(Site site, Item item) {
+        return getSiteItemRatesStream(site, item)
+            .filter(Rate::isPerDay);
+    }
+
+    public Stream<Rate> getSiteItemFixedRatesStream(Site site, Item item) {
+        return getSiteItemRatesStream(site, item)
+            .filter(r -> !r.isPerDay());
     }
 
     public List<Rate> getSiteItemRates(Site site, Item item) {
