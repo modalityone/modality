@@ -2,6 +2,7 @@ package one.modality.base.frontoffice.activities.account;
 
 import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.authn.logout.client.operation.LogoutRequest;
 import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
@@ -10,6 +11,8 @@ import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMap
 import dev.webfx.stack.ui.action.ActionBinder;
 import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.beans.InvalidationListener;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -18,10 +21,14 @@ import javafx.scene.Node;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Screen;
 import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.base.frontoffice.utility.StyleUtility;
 import one.modality.base.shared.entities.Document;
@@ -41,7 +48,9 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
 
     private static final double MAX_PAGE_WIDTH = 1200; // Similar value to website
 
-    private final ObservableList<Document> bookings = FXCollections.observableArrayList();
+    private final ObservableList<Document> upcomingBookings = FXCollections.observableArrayList();
+    private final ObservableList<Document> pastBookings = FXCollections.observableArrayList();
+    private final ObjectProperty<LocalDate> loadPastEventsBeforeDateProperty = new SimpleObjectProperty<>();
 
     @Override
     public Node buildUi() {
@@ -61,16 +70,19 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
         //VBox.setMargin(pastBookingsLabel, new Insets(10, 0, 10, 0));
         VBox pastBookingsContainer = new VBox(10);
 
-        bookings.addListener((InvalidationListener) observable -> {
-            upcomingBookingsContainer.getChildren().clear();
-            pastBookingsContainer.getChildren().clear();
-            bookings.stream().collect(Collectors.groupingBy(Document::getEvent, LinkedHashMap::new, Collectors.toList())) // Using LinkedHashMap to keep the sort
+        upcomingBookings.addListener((InvalidationListener) observable -> {
+            upcomingBookings.stream().collect(Collectors.groupingBy(Document::getEvent, LinkedHashMap::new, Collectors.toList())) // Using LinkedHashMap to keep the sort
                 .forEach((event, eventBookings) -> {
                     EventBookingsView eventBookingsView = new EventBookingsView(event, eventBookings);
-                    if (LocalDate.now().isBefore(event.getEndDate()))
-                        upcomingBookingsContainer.getChildren().add(0, eventBookingsView.getView()); // inverting order => chronological order
-                    else
-                        pastBookingsContainer.getChildren().add(eventBookingsView.getView()); // keeping order => inverted chronological order (most recent booking first)
+                    upcomingBookingsContainer.getChildren().add(0, eventBookingsView.getView()); // inverting order => chronological order
+                });
+        });
+
+        pastBookings.addListener((InvalidationListener) observable -> {
+            pastBookings.stream().collect(Collectors.groupingBy(Document::getEvent, LinkedHashMap::new, Collectors.toList())) // Using LinkedHashMap to keep the sort
+                .forEach((event, eventBookings) -> {
+                    EventBookingsView eventBookingsView = new EventBookingsView(event, eventBookings);
+                    pastBookingsContainer.getChildren().add(eventBookingsView.getView());
                 });
         });
 
@@ -87,28 +99,58 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
         vBox.setAlignment(Pos.TOP_CENTER);
         vBox.setMaxWidth(MAX_PAGE_WIDTH);
         vBox.setBackground(Background.fill(Color.WHITE));
-        vBox.setPadding(new Insets(20));
 
         FXProperties.runOnPropertiesChange(() -> {
             double width = vBox.getWidth();
             double fontFactor = GeneralUtility.computeFontFactor(width);
             GeneralUtility.setLabeledFont(upcomingBookingsLabel, StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
-            GeneralUtility.setLabeledFont(pastBookingsLabel,     StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
-            GeneralUtility.setLabeledFont(logoutLink,            StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
+            GeneralUtility.setLabeledFont(pastBookingsLabel, StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
+            GeneralUtility.setLabeledFont(logoutLink, StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
         }, vBox.widthProperty());
 
-        return ControlUtil.createVerticalScrollPane(new BorderPane(vBox));
+        ScrollPane scrollPane = ControlUtil.createVerticalScrollPane(new BorderPane(vBox));
+
+        // Lazy loading when the user scrolls down
+        double lazyLoadingBottomSpace = Screen.getPrimary().getVisualBounds().getHeight();
+        vBox.setPadding(new Insets(0, 0, lazyLoadingBottomSpace, 0));
+        FXProperties.runOnPropertiesChange(() -> {
+            if (ControlUtil.computeScrollPaneVBottomOffset(scrollPane) > vBox.getHeight() - lazyLoadingBottomSpace) {
+                Document lastBooking = Collections.last(pastBookings);
+                if (lastBooking == null)
+                    vBox.setPadding(Insets.EMPTY);
+                else {
+                    LocalDate startDate = lastBooking.getEvent().getStartDate();
+                    FXProperties.setIfNotEquals(loadPastEventsBeforeDateProperty, startDate);
+                }
+            }
+        }, scrollPane.vvalueProperty(), vBox.heightProperty());
+
+        return scrollPane;
     }
 
     @Override
     protected void startLogic() {
+        // Upcoming bookings
         ReactiveEntitiesMapper.<Document>createReactiveChain(this)
             .always("{class: 'Document', alias: 'd', orderBy: 'event.startDate desc, ref desc'}")
             .always(DqlStatement.fields(BookingView.BOOKING_REQUIRED_FIELDS))
+            .always(DqlStatement.where("event.endDate >= now()"))
             .always(DqlStatement.where("!cancelled or price_deposit>0"))
             .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.frontendAccount=?", mup.getUserAccountId()))
-            .storeEntitiesInto(bookings)
-            .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-account-bookings"))
+            .storeEntitiesInto(upcomingBookings)
+            .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-account-upcomingBookings"))
+            .start();
+
+        // Past bookings
+        ReactiveEntitiesMapper.<Document>createReactiveChain(this)
+            .always("{class: 'Document', alias: 'd', orderBy: 'event.startDate desc, ref desc', limit: 5}")
+            .always(DqlStatement.fields(BookingView.BOOKING_REQUIRED_FIELDS))
+            .always(DqlStatement.where("event.endDate < now()"))
+            .always(DqlStatement.where("!cancelled or price_deposit>0"))
+            .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.frontendAccount=?", mup.getUserAccountId()))
+            .ifNotNull(loadPastEventsBeforeDateProperty, date -> DqlStatement.where("event.startDate < ?", date))
+            .storeEntitiesInto(pastBookings)
+            .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-account-pastBookings"))
             .start();
     }
 
