@@ -374,7 +374,7 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
 
         statusBar.setAlignment(Pos.CENTER);
         // Considering the bottom of the safe area, in particular for OS like iPadOS with a bar at the bottom
-        FXProperties.runOnPropertiesChange(() -> {
+        FXProperties.runNowAndOnPropertiesChange(() -> {
             Insets sai = WebFxKitLauncher.getSafeAreaInsets();
             statusBar.setPadding(new Insets(Math.max(5, sai.getTop()), Math.max(5, sai.getRight()), Math.max(5, sai.getBottom()), Math.max(5, sai.getLeft())));
         }, WebFxKitLauncher.safeAreaInsetsProperty());
