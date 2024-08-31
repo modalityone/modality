@@ -80,7 +80,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Consumer;
@@ -385,6 +384,7 @@ final class ManageRecurringEventView {
                         Optional<LocalTime> mostFrequentStartTime = scheduledItemList.stream()
                                 .filter(scheduledItem -> scheduledItem.getFieldValue("attendance") == null)
                                 .map(ScheduledItem::getStartTime)
+                                .filter(Objects::nonNull)
                                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                                 .entrySet().stream()
                                 .max(Comparator.comparingLong(Map.Entry::getValue))
@@ -403,6 +403,7 @@ final class ManageRecurringEventView {
                             //only in the one with no attendance.
                             Optional<LocalTime> mostFrequentStartTimeInScheduledItemWithAttendance = scheduledItemList.stream()
                                     .map(ScheduledItem::getStartTime)
+                                    .filter(Objects::nonNull)
                                     .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                                     .entrySet().stream()
                                     .max(Comparator.comparingLong(Map.Entry::getValue))
@@ -972,9 +973,8 @@ final class ManageRecurringEventView {
 
         saveButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(),"SaveButton"));
         saveButton.setOnAction(event -> {
-            if(validateForm())
-            {
-                if(previousEventState==null) {
+            if (validateForm()) {
+                if (previousEventState==null) {
                     previousEventState=EventState.DRAFT;
                     currentEditedEvent.setState(EventState.DRAFT);
                 }
@@ -1215,8 +1215,9 @@ final class ManageRecurringEventView {
      */
     private static boolean isLocalTimeTextValid(String text) {
         try {
-            return LocalTime.parse(text) != null;
-        } catch (DateTimeParseException e) {
+            LocalTime.parse(text);
+            return true;
+        } catch (Exception e) {
             return false;
         }
     }
