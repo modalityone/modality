@@ -1,6 +1,8 @@
 package one.modality.event.frontoffice.activities.booking.process.event.slides;
 
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.platform.console.Console;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
@@ -20,8 +22,13 @@ import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.frontoffice.utility.TextUtility;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Person;
+import one.modality.base.shared.entities.markers.HasPersonalDetails;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
+import one.modality.crm.shared.services.authn.fx.FXUserPerson;
+import one.modality.ecommerce.payment.PaymentService;
+import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
+import one.modality.event.frontoffice.activities.booking.fx.FXGuestToBook;
 import one.modality.event.frontoffice.activities.booking.fx.FXPersonToBook;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.booking.process.event.RecurringEventSchedule;
@@ -80,6 +87,14 @@ abstract class StepSlide implements Supplier<Node> {
         getBookEventActivity().displayPaymentSlide(webPaymentForm);
     }
 
+    void displayPendingPaymentSlide() {
+        getBookEventActivity().displayPendingPaymentSlide();
+    }
+
+    void displayFailedPaymentSlide() {
+        getBookEventActivity().displayFailedPaymentSlide();
+    }
+
     void displayCancellationSlide() {
         getBookEventActivity().displayCancellationSlide();
     }
@@ -91,6 +106,35 @@ abstract class StepSlide implements Supplier<Node> {
     void displayThankYouSlide() {
         getBookEventActivity().displayThankYouSlide();
     }
+
+    void initiateNewPaymentAndDisplayPaymentSlide() {
+        WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
+        Object documentPrimaryKey = workingBookingProperties.getWorkingBooking().getDocumentPrimaryKey();
+        turnOnWaitMode();
+        PaymentService.initiatePayment(
+                ClientPaymentUtil.createInitiatePaymentArgument(workingBookingProperties.getBalance(), documentPrimaryKey)
+            )
+            .onFailure(paymentResult -> UiScheduler.runInUiThread(() -> {
+                turnOffWaitMode();
+                displayErrorMessage("ErrorWhileInitiatingPayment");
+                Console.log(paymentResult);
+            }))
+            .onSuccess(paymentResult -> UiScheduler.runInUiThread(() -> {
+                turnOffWaitMode();
+                HasPersonalDetails buyerDetails = FXUserPerson.getUserPerson();
+                if (buyerDetails == null)
+                    buyerDetails = FXGuestToBook.getGuestToBook();
+                WebPaymentForm webPaymentForm = new WebPaymentForm(paymentResult, buyerDetails);
+                displayPaymentSlide(webPaymentForm);
+            }));
+    }
+
+    void turnOnWaitMode() {
+    }
+
+    void turnOffWaitMode() {
+    }
+
 
     RecurringEventSchedule getRecurringEventSchedule() {
         return getBookEventActivity().getRecurringEventSchedule();

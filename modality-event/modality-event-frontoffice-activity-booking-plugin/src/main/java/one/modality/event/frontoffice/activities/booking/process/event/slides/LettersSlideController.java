@@ -108,6 +108,14 @@ public final class LettersSlideController {
         stepBBookEventSlide.displayPaymentSlide(webPaymentForm);
     }
 
+    public void displayPendingPaymentSlide() {
+        stepBBookEventSlide.displayPendingPaymentSlide();
+    }
+
+    public void displayFailedPaymentSlide() {
+        stepBBookEventSlide.displayFailedPaymentSlide();
+    }
+
     public void displayCancellationSlide() {
         stepBBookEventSlide.displayCancellationSlide();
         bookEventActivity.onReachingEndSlide();

@@ -7,13 +7,13 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
-final class Step5ErrorSlide extends StepSlide {
+final class Step6CancellationSlide extends StepSlide {
 
     private static final double MAX_SLIDE_WIDTH = 800;
 
-    private final HtmlText errorMessage = Bootstrap.h5(new HtmlText());
+    private final HtmlText cancellationMessage = Bootstrap.h5(new HtmlText());
 
-    Step5ErrorSlide(BookEventActivity bookEventActivity) {
+    Step6CancellationSlide(BookEventActivity bookEventActivity) {
         super(bookEventActivity);
     }
 
@@ -22,19 +22,12 @@ final class Step5ErrorSlide extends StepSlide {
         mainVbox.setSpacing(10);
         mainVbox.setMaxWidth(MAX_SLIDE_WIDTH);
 
-        Label title = Bootstrap.textDanger(Bootstrap.h3(new Label("An error has occurred")));
+        Label title = Bootstrap.textWarning(Bootstrap.h3(new Label("Cancellation")));
         title.setWrapText(true);
         title.setPadding(new Insets(50, 0, 30, 0));
+        I18n.bindI18nTextProperty(cancellationMessage.textProperty(), "ErrorUserCanceledPayment");
 
-        mainVbox.getChildren().setAll(title, errorMessage);
+        mainVbox.getChildren().setAll(title, cancellationMessage);
     }
 
-    void reset() {
-        errorMessage.setText("");
-        super.reset();
-    }
-
-    void setErrorMessage(String errorMessageI18nKey) {
-        errorMessage.setText("<center>" + I18n.getI18nText(errorMessageI18nKey) + "</center>");
-    }
 }

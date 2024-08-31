@@ -15,17 +15,21 @@ final class DigitsSlideController {
     private final Step1BookDatesSlide step1BookDatesSlide;
     private final Step2CheckoutSlide step2CheckoutSlide;
     private final Step3PaymentSlide step3PaymentSlide;
-    private final Step4CancellationSlide step4CancellationSlide;
-    private final Step5ErrorSlide step5ErrorSlide;
+    private final Step4PendingPaymentSlide step4PendingPaymentSlide;
+    private final Step5FailedPaymentSlide step5FailedPaymentSlide;
+    private final Step6CancellationSlide step6CancellationSlide;
+    private final Step7ErrorSlide step7ErrorSlide;
     private StepSlide displayedSlide;
 
     public DigitsSlideController(BookEventActivity bookEventActivity) {
-        this.bookEventActivity = bookEventActivity;
-        step1BookDatesSlide    = new Step1BookDatesSlide(bookEventActivity);
-        step2CheckoutSlide     = new Step2CheckoutSlide(bookEventActivity);
-        step3PaymentSlide      = new Step3PaymentSlide(bookEventActivity);
-        step4CancellationSlide = new Step4CancellationSlide(bookEventActivity);
-        step5ErrorSlide        = new Step5ErrorSlide(bookEventActivity);
+        this.bookEventActivity   = bookEventActivity;
+        step1BookDatesSlide      = new Step1BookDatesSlide(bookEventActivity);
+        step2CheckoutSlide       = new Step2CheckoutSlide(bookEventActivity);
+        step3PaymentSlide        = new Step3PaymentSlide(bookEventActivity);
+        step4PendingPaymentSlide = new Step4PendingPaymentSlide(bookEventActivity);
+        step5FailedPaymentSlide  = new Step5FailedPaymentSlide(bookEventActivity);
+        step6CancellationSlide   = new Step6CancellationSlide(bookEventActivity);
+        step7ErrorSlide          = new Step7ErrorSlide(bookEventActivity);
         transitionPane.setScrollToTop(true);
         // The following code is to solve a performance issue that happens on mobiles during the translation transition
         transitionPane.setUnmanagedDuringTransition(); // For more explanation, read the comment inside this method.
@@ -40,7 +44,7 @@ final class DigitsSlideController {
 
         // TODO: avoid rebuilding the whole UI for these remaining slides
         step3PaymentSlide.reset();
-        step5ErrorSlide.reset();
+        step7ErrorSlide.reset();
 
         if (displayedSlide != step2CheckoutSlide) {
             displayFirstSlide();
@@ -82,13 +86,21 @@ final class DigitsSlideController {
         displaySlide(step3PaymentSlide);
     }
 
+    void displayPendingPaymentSlide() {
+        displaySlide(step4PendingPaymentSlide);
+    }
+
+    void displayFailedPaymentSlide() {
+        displaySlide(step5FailedPaymentSlide);
+    }
+
     void displayCancellationSlide() {
-        displaySlide(step4CancellationSlide);
+        displaySlide(step6CancellationSlide);
     }
 
     void displayErrorMessage(String message) {
-        step5ErrorSlide.setErrorMessage(message);
-        displaySlide(step5ErrorSlide);
+        step7ErrorSlide.setErrorMessage(message);
+        displaySlide(step7ErrorSlide);
     }
 
 }

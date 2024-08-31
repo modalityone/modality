@@ -7,13 +7,11 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
-final class Step4CancellationSlide extends StepSlide {
+final class Step4PendingPaymentSlide extends StepSlide {
 
     private static final double MAX_SLIDE_WIDTH = 800;
 
-    private final HtmlText cancellationMessage = Bootstrap.h5(new HtmlText());
-
-    Step4CancellationSlide(BookEventActivity bookEventActivity) {
+    Step4PendingPaymentSlide(BookEventActivity bookEventActivity) {
         super(bookEventActivity);
     }
 
@@ -25,9 +23,11 @@ final class Step4CancellationSlide extends StepSlide {
         Label title = Bootstrap.textWarning(Bootstrap.h3(new Label("Cancellation")));
         title.setWrapText(true);
         title.setPadding(new Insets(50, 0, 30, 0));
-        I18n.bindI18nTextProperty(cancellationMessage.textProperty(), "ErrorUserCanceledPayment");
 
-        mainVbox.getChildren().setAll(title, cancellationMessage);
+        HtmlText message = Bootstrap.h5(new HtmlText());
+        I18n.bindI18nTextProperty(message.textProperty(), "PaymentPending");
+
+        mainVbox.getChildren().setAll(title, message);
     }
 
 }

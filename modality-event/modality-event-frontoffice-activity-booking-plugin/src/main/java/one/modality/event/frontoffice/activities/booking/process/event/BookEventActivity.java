@@ -206,6 +206,14 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         lettersSlideController.displayPaymentSlide(webPaymentForm);
     }
 
+    public void displayPendingPaymentSlide() {
+        lettersSlideController.displayPendingPaymentSlide();
+    }
+
+    public void displayFailedPaymentSlide() {
+        lettersSlideController.displayFailedPaymentSlide();
+    }
+
     public void displayCancellationSlide() {
         lettersSlideController.displayCancellationSlide();
     }

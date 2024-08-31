@@ -28,12 +28,7 @@ import javafx.scene.shape.SVGPath;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
-import one.modality.base.shared.entities.markers.HasPersonalDetails;
-import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.document.service.DocumentAggregate;
-import one.modality.ecommerce.payment.PaymentService;
-import one.modality.ecommerce.payment.client.ClientPaymentUtil;
-import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.booking.WorkingBooking;
 import one.modality.event.frontoffice.activities.booking.fx.FXGuestToBook;
 import one.modality.event.frontoffice.activities.booking.fx.FXPersonToBook;
@@ -102,7 +97,7 @@ final class Step2CheckoutSlide extends StepSlide {
         Hyperlink orGuestLink = Bootstrap.textPrimary(I18nControls.bindI18nProperties(new Hyperlink(), "OrBookAsGuest"));
         VBox signIntopVBox = new VBox(10, loginLabel, orGuestLink);
         signIntopVBox.setAlignment(Pos.TOP_CENTER);
-        BorderPane.setMargin(signIntopVBox, new Insets(0, 0, 20,0));
+        BorderPane.setMargin(signIntopVBox, new Insets(0, 0, 20, 0));
         signInContainer.setTop(signIntopVBox);
 
         guestPanel.setOnSubmit(event -> {
@@ -131,10 +126,10 @@ final class Step2CheckoutSlide extends StepSlide {
         });
 
         mainVbox.getChildren().setAll(
-                summaryGridPane,
-                personToBookMonoPane,
-                submitButton,
-                flipPane
+            summaryGridPane,
+            personToBookMonoPane,
+            submitButton,
+            flipPane
         );
 
         signInContainer.centerProperty().bind(checkoutAccountMountNodeProperty); // managed by sub-router
@@ -165,9 +160,9 @@ final class Step2CheckoutSlide extends StepSlide {
         DocumentAggregate documentAggregate = workingBookingProperties.getDocumentAggregate();
 
         summaryGridPane.getChildren().clear();
-        addRow( Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), "Summary"))),
-                Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), "Price"))),
-                new Label());
+        addRow(Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), "Summary"))),
+            Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), "Price"))),
+            new Label());
 
         //FIRST PART: WHAT HAS BEEN ALREADY BOOKED FOR THIS EVENT IN THE PAST
         if (!workingBooking.isNewBooking()) {
@@ -189,7 +184,7 @@ final class Step2CheckoutSlide extends StepSlide {
             LocalDate date = scheduledItem.getDate();
             Item item = scheduledItem.getItem();
             String dateFormatted = I18n.getI18nText("DateFormatted", I18n.getI18nText(date.getMonth().name()), date.getDayOfMonth());
-            Label name = new Label(item.getName() + " - " + dateFormatted + (existing? " (already booked)" : ""));
+            Label name = new Label(item.getName() + " - " + dateFormatted + (existing ? " (already booked)" : ""));
             Label price = new Label(EventPriceFormatter.formatWithCurrency(workingBookingProperties.getRate(), getEvent()));
 
             Hyperlink trashOption = new Hyperlink();
@@ -217,22 +212,22 @@ final class Step2CheckoutSlide extends StepSlide {
         workingBookingProperties.updateAll();
         if (existing) {
             addTotalLine(
-                    "TotalOnPreviousBooking", workingBookingProperties.formattedPreviousTotalProperty(),
-                    "Deposit", workingBookingProperties.formattedDepositProperty(),
-                    "BalanceOnPreviousBooking", workingBookingProperties.formattedPreviousBalanceProperty()
+                "TotalOnPreviousBooking", workingBookingProperties.formattedPreviousTotalProperty(),
+                "Deposit", workingBookingProperties.formattedDepositProperty(),
+                "BalanceOnPreviousBooking", workingBookingProperties.formattedPreviousBalanceProperty()
             );
         } else {
             addTotalLine(
-                    "TotalPrice", workingBookingProperties.formattedTotalProperty(),
-                    "Deposit", workingBookingProperties.formattedDepositProperty(),
-                    "GeneralBalance", workingBookingProperties.formattedBalanceProperty()
+                "TotalPrice", workingBookingProperties.formattedTotalProperty(),
+                "Deposit", workingBookingProperties.formattedDepositProperty(),
+                "GeneralBalance", workingBookingProperties.formattedBalanceProperty()
             );
         }
     }
 
     private void addRow(Node node1, Node node2, Node node3) {
         int rowIndex = summaryGridPane.getRowCount();
-        GridPane.setMargin(node1, new Insets(0, 0, rowIndex == 0 ? 20 : 0,20));
+        GridPane.setMargin(node1, new Insets(0, 0, rowIndex == 0 ? 20 : 0, 20));
         summaryGridPane.add(node1, 0, rowIndex);
         summaryGridPane.add(node2, 1, rowIndex);
         summaryGridPane.add(node3, 2, rowIndex);
@@ -251,12 +246,14 @@ final class Step2CheckoutSlide extends StepSlide {
         summaryGridPane.add(totalPane, 0, rowIndex, 3, 1);
     }
 
-    private void turnOnWaitMode() {
+    @Override
+    void turnOnWaitMode() {
         turnOnButtonWaitMode(submitButton);
         guestPanel.turnOnButtonWaitMode();
     }
 
-    private void turnOffWaitMode() {
+    @Override
+    void turnOffWaitMode() {
         turnOffButtonWaitMode(submitButton, "Submit");
         guestPanel.turnOffButtonWaitMode();
     }
@@ -270,7 +267,7 @@ final class Step2CheckoutSlide extends StepSlide {
         // Three cases here:
         // 1) we pay an old balance with no new option, the currentBooking has no changes
         if (!workingBooking.hasChanges()) {
-            initiatePayment(workingBooking.getDocumentPrimaryKey()); // Will go to payment page on success
+            initiateNewPaymentAndDisplayPaymentSlide(); // Will go to payment page on success
         } else {
             // 2) the currentBooking has new option
             // We look at the changes to fill the history
@@ -302,38 +299,19 @@ final class Step2CheckoutSlide extends StepSlide {
             }
 
             workingBooking.submitChanges(history.toString())
-                    .onFailure(result -> UiScheduler.runInUiThread(() -> {
-                        displayErrorMessage("ErrorWhileInsertingBooking");
-                        Console.log(result);
-                    }))
-                    .onSuccess(result -> UiScheduler.runInUiThread(() -> {
-                        workingBookingProperties.setBookingReference(result.getDocumentRef());
-                        if (workingBookingProperties.getBalance() > 0) {
-                            initiatePayment(result.getDocumentPrimaryKey());
-                        } else {
-                            displayThankYouSlide();
-                        }
-                    }));
-        }
-    }
-
-    private void initiatePayment(Object documentPrimaryKey) {
-        WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
-        PaymentService.initiatePayment(
-                        ClientPaymentUtil.createInitiatePaymentArgument(workingBookingProperties.getBalance(), documentPrimaryKey)
-                )
-                .onFailure(paymentResult -> UiScheduler.runInUiThread(() -> {
-                    displayErrorMessage("ErrorWhileInitiatingPayment");
-                    Console.log(paymentResult);
+                .onFailure(result -> UiScheduler.runInUiThread(() -> {
+                    displayErrorMessage("ErrorWhileInsertingBooking");
+                    Console.log(result);
                 }))
-                .onSuccess(paymentResult -> UiScheduler.runInUiThread(() -> {
-                    turnOffWaitMode();
-                    HasPersonalDetails buyerDetails = FXUserPerson.getUserPerson();
-                    if (buyerDetails == null)
-                        buyerDetails = FXGuestToBook.getGuestToBook();
-                    WebPaymentForm webPaymentForm = new WebPaymentForm(paymentResult, buyerDetails);
-                    displayPaymentSlide(webPaymentForm);
+                .onSuccess(result -> UiScheduler.runInUiThread(() -> {
+                    workingBookingProperties.setBookingReference(result.getDocumentRef());
+                    if (workingBookingProperties.getBalance() > 0) {
+                        initiateNewPaymentAndDisplayPaymentSlide();
+                    } else {
+                        displayThankYouSlide();
+                    }
                 }));
+        }
     }
 
 }

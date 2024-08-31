@@ -168,22 +168,37 @@ final class StepBBookEventSlide extends StepSlide {
         }, mainVbox.widthProperty());
     }
 
+    @Override
     void displayCheckoutSlide() {
         digitsSlideController.displayCheckoutSlide();
     }
 
+    @Override
     void displayErrorMessage(String message) {
         digitsSlideController.displayErrorMessage(message);
     }
 
+    @Override
     void displayPaymentSlide(WebPaymentForm webPaymentForm) {
         digitsSlideController.displayPaymentSlide(webPaymentForm);
     }
 
+    @Override
+    void displayPendingPaymentSlide() {
+        digitsSlideController.displayPendingPaymentSlide();
+    }
+
+    @Override
+    void displayFailedPaymentSlide() {
+        digitsSlideController.displayFailedPaymentSlide();
+    }
+
+    @Override
     void displayCancellationSlide() {
         digitsSlideController.displayCancellationSlide();
     }
 
+    @Override
     RecurringEventSchedule getRecurringEventSchedule() {
         return digitsSlideController.getRecurringEventSchedule();
     }
