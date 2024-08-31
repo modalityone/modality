@@ -9,10 +9,7 @@ import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.session.state.SystemUserId;
 import dev.webfx.stack.session.state.ThreadLocalStateHolder;
-import one.modality.base.shared.entities.Document;
-import one.modality.base.shared.entities.GatewayParameter;
-import one.modality.base.shared.entities.Method;
-import one.modality.base.shared.entities.MoneyTransfer;
+import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.triggers.Triggers;
 import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.SubmitDocumentChangesArgument;
@@ -62,7 +59,8 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                     if (paymentGateway == null)
                         return gatewayNotFoundFailedFuture(gatewayName);
                     // Step 3: Loading the relevant payment gateway parameters
-                    boolean live = false; //moneyTransfer.getDocument().getEvent().isLive();
+                    Event event = moneyTransfer.getDocument().getEvent();
+                    boolean live = event.getState().compareTo(EventState.OPEN) >= 0 /* KBS3 way */ || event.isLive() /* KBS2 way */;
                     return loadPaymentGatewayParameters(moneyTransfer, live)
                             .compose(parameters -> {
                                 // Step 4: Calling the payment gateway with all the data collected
@@ -148,7 +146,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
     @Override
     public Future<CancelPaymentResult> cancelPayment(CancelPaymentArgument argument) {
         return updatePaymentStatusImpl(UpdatePaymentStatusArgument.createCancelStatusArgument(argument.getPaymentPrimaryKey(), argument.isExplicitUserCancellation()))
-                // When payments are cancelled on recurring events, we automatically unbook unpaid options
+                // When payments are cancelled on recurring events, we automatically un-book unpaid options
                 .compose(moneyTransfer -> unbookUnpaidOptionsIfRecurringEvent(moneyTransfer)
                 .map(ignoredVoid -> new CancelPaymentResult()))
                 .onFailure(Console::log);
@@ -238,7 +236,7 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                     updateStore.submitChanges()
                     // On success, we load the necessary data associated with this moneyTransfer for the payment gateway
                     .compose(batch ->
-                        moneyTransfer.<MoneyTransfer>onExpressionLoaded("toMoneyAccount.(currency.code, gatewayCompany.name), document.event.live")
+                        moneyTransfer.<MoneyTransfer>onExpressionLoaded("toMoneyAccount.(currency.code, gatewayCompany.name), document.event.(live,state)")
                         .onSuccess(ignored -> // Completing the history recording (changes column with resolved primary keys)
                             HistoryRecorder.completeDocumentHistoryAfterSubmit(history, new AddMoneyTransferEvent(moneyTransfer))
                         )
