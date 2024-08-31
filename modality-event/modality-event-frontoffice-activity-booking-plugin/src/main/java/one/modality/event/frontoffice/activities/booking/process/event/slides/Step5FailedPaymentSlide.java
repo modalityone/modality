@@ -27,7 +27,7 @@ final class Step5FailedPaymentSlide extends StepSlide {
         title.setPadding(new Insets(50, 0, 30, 0));
 
         Label message = Bootstrap.textDanger(Bootstrap.h5(I18nControls.bindI18nProperties(new Label(), "PaymentFailedMessage")));
-        title.setPadding(new Insets(0, 0, 30, 0));
+        message.setPadding(new Insets(0, 0, 30, 0));
 
         retryPayButton.setOnAction(e -> initiateNewPaymentAndDisplayPaymentSlide());
 
