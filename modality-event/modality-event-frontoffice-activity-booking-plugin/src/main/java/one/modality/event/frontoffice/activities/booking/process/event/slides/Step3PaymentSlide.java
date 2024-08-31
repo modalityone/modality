@@ -35,6 +35,7 @@ final class Step3PaymentSlide extends StepSlide {
 
     void setWebPaymentForm(WebPaymentForm webPaymentForm) {
         this.webPaymentForm = webPaymentForm;
+        mainVbox.getChildren().clear(); //
     }
 
     @Override
@@ -65,8 +66,8 @@ final class Step3PaymentSlide extends StepSlide {
         }
 
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
-        I18nControls.bindI18nProperties(new Button(), "Pay", workingBookingProperties.formattedBalanceProperty());
-        I18nControls.bindI18nProperties(new Button(), "Cancel");
+        I18nControls.bindI18nProperties(payButton, "Pay", workingBookingProperties.formattedBalanceProperty());
+        I18nControls.bindI18nProperties(cancelButton, "Cancel");
         payButton.setDefaultButton(true);
         FXProperties.runNowAndOnPropertiesChange(() -> {
             if (webPaymentForm.isUserInteractionAllowed()) {

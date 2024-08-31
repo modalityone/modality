@@ -1,8 +1,7 @@
 package one.modality.event.frontoffice.activities.booking.process.event.slides;
 
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.extras.webtext.HtmlText;
-import dev.webfx.stack.i18n.I18n;
+import dev.webfx.stack.i18n.controls.I18nControls;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
@@ -20,12 +19,11 @@ final class Step4PendingPaymentSlide extends StepSlide {
         mainVbox.setSpacing(10);
         mainVbox.setMaxWidth(MAX_SLIDE_WIDTH);
 
-        Label title = Bootstrap.textWarning(Bootstrap.h3(new Label("Cancellation")));
+        Label title = Bootstrap.textWarning(Bootstrap.h3(new Label("PaymentPending")));
         title.setWrapText(true);
         title.setPadding(new Insets(50, 0, 30, 0));
 
-        HtmlText message = Bootstrap.h5(new HtmlText());
-        I18n.bindI18nTextProperty(message.textProperty(), "PaymentPending");
+        Label message = Bootstrap.textDanger(Bootstrap.h5(I18nControls.bindI18nProperties(new Label(), "PaymentPendingMessage")));
 
         mainVbox.getChildren().setAll(title, message);
     }

@@ -72,9 +72,11 @@ ErrorPaymentModalityFailure: "A communication error has occurred between the pay
 ErrorUserCanceledPayment: "You have cancelled the payment. The registration has been processed, but payment is still due. If you wish to cancel your registration, you can do so by clicking on the button below."
 ErrorWhileCancelingTheBooking: "An error has occurred while canceling your booking. Please contact us at info@manjushri.org"
 CancelRegistration: "Cancel Booking"
-RegistrationCanceled: "Your booking has been canceled"
-PaymentFailed: "Your payment has failed. Click on the button bellow to retry"
-PaymentPending: "Your payment is in a pending state. The bank can take a few days to process the payment. As soon as more information from the bank, we'll update your booking state."
+RegistrationCanceled: "Your booking has been cancelled"
+PaymentFailed: "Failed payment"
+PaymentFailedMessage: "Your payment has failed. Click on the button bellow to retry"
+PaymentPending: "Pending payment"
+PaymentPendingMessage: "Your payment is in a pending state. The bank can take a few days to process the payment. As soon as more information from the bank, we'll update your booking state."
 RetryPayment:
   text: "Retry Payment"
   graphic:
