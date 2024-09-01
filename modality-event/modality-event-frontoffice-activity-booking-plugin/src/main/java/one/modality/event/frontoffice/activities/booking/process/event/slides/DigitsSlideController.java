@@ -3,6 +3,7 @@ package one.modality.event.frontoffice.activities.booking.process.event.slides;
 import dev.webfx.extras.panes.TransitionPane;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import javafx.scene.layout.Region;
+import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.booking.fx.FXPersonToBook;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
@@ -64,12 +65,13 @@ final class DigitsSlideController {
     }
 
     private void displaySlide(StepSlide slide) {
+        boolean animate = slide != step1BookDatesSlide || displayedSlide == step6CancellationSlide;
         displayedSlide = slide;
         UiScheduler.runInUiThread((() -> {
-            if (slide == step1BookDatesSlide)
-                transitionPane.replaceContentNoAnimation(slide.get());
-            else
+            if (animate)
                 transitionPane.transitToContent(slide.get());
+            else
+                transitionPane.replaceContentNoAnimation(slide.get());
         }));
     }
 
@@ -94,7 +96,8 @@ final class DigitsSlideController {
         displaySlide(step5FailedPaymentSlide);
     }
 
-    void displayCancellationSlide() {
+    void displayCancellationSlide(CancelPaymentResult cancelPaymentResult) {
+        step6CancellationSlide.setCancelPaymentResult(cancelPaymentResult);
         displaySlide(step6CancellationSlide);
     }
 

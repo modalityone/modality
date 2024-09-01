@@ -281,8 +281,6 @@ final class Step2CheckoutSlide extends StepSlide {
     }
 
     private void submit() {
-        turnOnWaitMode();
-
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
         WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
 
@@ -320,12 +318,15 @@ final class Step2CheckoutSlide extends StepSlide {
                 }
             }
 
+            turnOnWaitMode();
             workingBooking.submitChanges(history.toString())
                 .onFailure(result -> UiScheduler.runInUiThread(() -> {
+                    turnOffWaitMode();
                     displayErrorMessage("ErrorWhileInsertingBooking");
                     Console.log(result);
                 }))
                 .onSuccess(result -> UiScheduler.runInUiThread(() -> {
+                    turnOffWaitMode();
                     workingBookingProperties.setBookingReference(result.getDocumentRef());
                     if (workingBookingProperties.getBalance() > 0) {
                         initiateNewPaymentAndDisplayPaymentSlide();

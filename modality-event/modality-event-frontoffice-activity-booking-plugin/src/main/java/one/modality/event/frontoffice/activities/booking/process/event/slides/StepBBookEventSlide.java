@@ -28,6 +28,7 @@ import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.base.frontoffice.utility.StyleUtility;
 import one.modality.base.shared.entities.Event;
+import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
@@ -194,8 +195,8 @@ final class StepBBookEventSlide extends StepSlide {
     }
 
     @Override
-    void displayCancellationSlide() {
-        digitsSlideController.displayCancellationSlide();
+    void displayCancellationSlide(CancelPaymentResult cancelPaymentResult) {
+        digitsSlideController.displayCancellationSlide(cancelPaymentResult);
     }
 
     @Override

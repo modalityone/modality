@@ -25,6 +25,7 @@ import one.modality.base.shared.entities.Person;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
+import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
@@ -95,8 +96,8 @@ abstract class StepSlide implements Supplier<Node> {
         getBookEventActivity().displayFailedPaymentSlide();
     }
 
-    void displayCancellationSlide() {
-        getBookEventActivity().displayCancellationSlide();
+    void displayCancellationSlide(CancelPaymentResult cancelPaymentResult) {
+        getBookEventActivity().displayCancellationSlide(cancelPaymentResult);
     }
 
     void displayErrorMessage(String message) {
@@ -134,7 +135,6 @@ abstract class StepSlide implements Supplier<Node> {
 
     void turnOffWaitMode() {
     }
-
 
     RecurringEventSchedule getRecurringEventSchedule() {
         return getBookEventActivity().getRecurringEventSchedule();

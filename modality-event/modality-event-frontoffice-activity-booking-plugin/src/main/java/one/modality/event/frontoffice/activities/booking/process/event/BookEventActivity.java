@@ -2,6 +2,7 @@ package one.modality.event.frontoffice.activities.booking.process.event;
 
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Numbers;
@@ -25,6 +26,7 @@ import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.PolicyAggregate;
+import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.client.event.fx.FXEventId;
@@ -114,63 +116,67 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     @Override
     protected void startLogic() {
         // Initial load of the event policy + possible existing booking of the user (if logged-in)
-        FXProperties.runNowAndOnPropertiesChange(() -> {
-            Event event = FXEvent.getEvent();
-            if (event == null) // Too early - may happen on first call (ex: on page reload)
-                return;
-            // TODO: if eventId doesn't exist in the database, FXEvent.getEvent() stays null and nothing happens (stuck on loading page)
-
-            lettersSlideController.onEventChanged(event);
-            getRecurringEventSchedule().clearClickedDates(); // clearing possible clicked dates from previous event (if some dates are common)
-
-            // Note: It's better to use FXUserPersonId rather than FXUserPerson in case of a page reload in the browser
-            // (or redirection to this page from a website) because the retrieval of FXUserPersonId is immediate in case
-            // the user was already logged-in (memorised in session), while FXUserPerson requires a DB reading, which
-            // may not be finished yet at this time.
-            Person personToBook = FXPersonToBook.getPersonToBook();
-            Object userPersonPrimaryKey = Entities.getPrimaryKey(personToBook);
-            if (userPersonPrimaryKey == null)
-                userPersonPrimaryKey = FXUserPersonId.getUserPersonPrimaryKey();
-            DocumentService.loadPolicyAndDocument(event, userPersonPrimaryKey)
-                .onFailure(Console::log)
-                .onSuccess(policyAndDocumentAggregates -> UiScheduler.runInUiThread(() -> {
-                    if (event == FXEvent.getEvent()) { // Double-checking that no other changes occurred in the meantime
-                        PolicyAggregate policyAggregate = policyAndDocumentAggregates.getPolicyAggregate(); // never null
-                        DocumentAggregate existingBooking = policyAndDocumentAggregates.getDocumentAggregate(); // may be null
-                        WorkingBooking workingBooking = new WorkingBooking(policyAggregate, existingBooking);
-                        workingBookingProperties.setWorkingBooking(workingBooking);
-                        lettersSlideController.onWorkingBookingLoaded();
-                    }
-                }));
-        }, FXEvent.eventProperty());
+        FXProperties.runNowAndOnPropertiesChange(this::loadPolicyAndBooking, FXEvent.eventProperty());
 
         // Subsequent loading when changing the person to book (load of possible booking + reapply new selected dates)
-        FXProperties.runOnPropertiesChange(() -> {
-            Event event = FXEvent.getEvent();
-            WorkingBooking previousPersonWorkingBooking = workingBookingProperties.getWorkingBooking();
-            if (event == null || previousPersonWorkingBooking == null)
-                return;
+        FXProperties.runOnPropertiesChange(() -> loadBookingWithSamePolicy(true),
+            FXPersonToBook.personToBookProperty());
+    }
 
-            // Double-checking that the person to book is different from the previous booking person
-            Person personToBook = FXPersonToBook.getPersonToBook();
-            DocumentAggregate previousPersonExistingBooking = previousPersonWorkingBooking.getInitialDocumentAggregate();
-            if (previousPersonExistingBooking != null && Objects.equals(previousPersonExistingBooking.getDocument().getPerson(), personToBook))
-                return;
+    void loadPolicyAndBooking() {
+        Event event = FXEvent.getEvent();
+        if (event == null) // Too early - may happen on first call (ex: on page reload)
+            return;
+        // TODO: if eventId doesn't exist in the database, FXEvent.getEvent() stays null and nothing happens (stuck on loading page)
 
-            // Loading the possible existing booking of the new person to book for that recurring event, and then reapplying the dates selected by the user
-            DocumentService.loadDocument(event, personToBook)
-                .onFailure(Console::log)
-                .onSuccess(newPersonExistingBooking -> UiScheduler.runInUiThread(() -> {
-                    // Re-instantiating the working booking with that new existing booking (can be null if it doesn't exist)
-                    PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
-                    WorkingBooking workingBooking = new WorkingBooking(policyAggregate, newPersonExistingBooking);
+        lettersSlideController.onEventChanged(event);
+        getRecurringEventSchedule().clearClickedDates(); // clearing possible clicked dates from previous event (if some dates are common)
+
+        // Note: It's better to use FXUserPersonId rather than FXUserPerson in case of a page reload in the browser
+        // (or redirection to this page from a website) because the retrieval of FXUserPersonId is immediate in case
+        // the user was already logged-in (memorised in session), while FXUserPerson requires a DB reading, which
+        // may not be finished yet at this time.
+        Person personToBook = FXPersonToBook.getPersonToBook();
+        Object userPersonPrimaryKey = Entities.getPrimaryKey(personToBook);
+        if (userPersonPrimaryKey == null)
+            userPersonPrimaryKey = FXUserPersonId.getUserPersonPrimaryKey();
+        DocumentService.loadPolicyAndDocument(event, userPersonPrimaryKey)
+            .onFailure(Console::log)
+            .onSuccess(policyAndDocumentAggregates -> UiScheduler.runInUiThread(() -> {
+                if (event == FXEvent.getEvent()) { // Double-checking that no other changes occurred in the meantime
+                    PolicyAggregate policyAggregate = policyAndDocumentAggregates.getPolicyAggregate(); // never null
+                    DocumentAggregate existingBooking = policyAndDocumentAggregates.getDocumentAggregate(); // may be null
+                    WorkingBooking workingBooking = new WorkingBooking(policyAggregate, existingBooking);
                     workingBookingProperties.setWorkingBooking(workingBooking);
-                    syncWorkingBookingFromEventSchedule();
-                    // Informing the slide controller about that change
                     lettersSlideController.onWorkingBookingLoaded();
-                }))
-            ;
-        }, FXPersonToBook.personToBookProperty());
+                }
+            }));
+    }
+
+    public Future<Void> loadBookingWithSamePolicy(boolean onlyIfDifferentPerson) {
+        Event event = FXEvent.getEvent();
+        WorkingBooking previousPersonWorkingBooking = workingBookingProperties.getWorkingBooking();
+        if (event == null || onlyIfDifferentPerson && previousPersonWorkingBooking == null)
+            return Future.succeededFuture();
+
+        // Double-checking that the person to book is different from the previous booking person
+        Person personToBook = FXPersonToBook.getPersonToBook();
+        DocumentAggregate previousPersonExistingBooking = previousPersonWorkingBooking.getInitialDocumentAggregate();
+        if (onlyIfDifferentPerson && previousPersonExistingBooking != null && Objects.equals(previousPersonExistingBooking.getDocument().getPerson(), personToBook))
+            return Future.succeededFuture();
+        // Loading the possible existing booking of the new person to book for that recurring event, and then reapplying the dates selected by the user
+        return DocumentService.loadDocument(event, personToBook)
+            .onFailure(Console::log)
+            .onSuccess(newPersonExistingBooking -> UiScheduler.runInUiThread(() -> {
+                // Re-instantiating the working booking with that new existing booking (can be null if it doesn't exist)
+                PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
+                WorkingBooking workingBooking = new WorkingBooking(policyAggregate, newPersonExistingBooking);
+                workingBookingProperties.setWorkingBooking(workingBooking);
+                syncWorkingBookingFromEventSchedule();
+                // Informing the slide controller about that change
+                lettersSlideController.onWorkingBookingLoaded();
+            }))
+            .mapEmpty();
     }
 
     void syncWorkingBookingFromEventSchedule() {
@@ -214,8 +220,8 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         lettersSlideController.displayFailedPaymentSlide();
     }
 
-    public void displayCancellationSlide() {
-        lettersSlideController.displayCancellationSlide();
+    public void displayCancellationSlide(CancelPaymentResult bookingCancelled) {
+        lettersSlideController.displayCancellationSlide(bookingCancelled);
     }
 
     public void displayErrorMessage(String message) {

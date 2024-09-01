@@ -14,6 +14,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import one.modality.base.client.mainframe.fx.FXMainFrameTransiting;
 import one.modality.base.shared.entities.Event;
+import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.booking.process.event.RecurringEventSchedule;
@@ -116,9 +117,9 @@ public final class LettersSlideController {
         stepBBookEventSlide.displayFailedPaymentSlide();
     }
 
-    public void displayCancellationSlide() {
-        stepBBookEventSlide.displayCancellationSlide();
-        bookEventActivity.onReachingEndSlide();
+    public void displayCancellationSlide(CancelPaymentResult cancelPaymentResult) {
+        stepBBookEventSlide.displayCancellationSlide(cancelPaymentResult);
+        //bookEventActivity.onReachingEndSlide(); // Commented as this resets FXEvent() and prevents button to work in cancellation slide
     }
 
     public RecurringEventSchedule getRecurringEventSchedule() {

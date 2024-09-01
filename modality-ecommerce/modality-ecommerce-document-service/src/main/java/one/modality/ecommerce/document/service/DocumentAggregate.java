@@ -86,6 +86,10 @@ public final class DocumentAggregate {
                     document = ade.getDocument();
                 } else
                     throw new IllegalArgumentException("There should be only one AddDocumentEvent");
+            } else if (e instanceof CancelDocumentEvent) {
+                CancelDocumentEvent cde = (CancelDocumentEvent) e;
+                document.setCancelled(cde.isCancelled());
+                document.setRead(cde.isRead());
             } else if (e instanceof AddDocumentLineEvent) {
                 documentLines.add(((AddDocumentLineEvent) e).getDocumentLine());
             } else if (e instanceof AddAttendancesEvent) {

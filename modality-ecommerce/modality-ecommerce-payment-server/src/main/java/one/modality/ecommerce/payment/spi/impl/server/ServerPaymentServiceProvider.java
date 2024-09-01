@@ -147,25 +147,24 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
     public Future<CancelPaymentResult> cancelPayment(CancelPaymentArgument argument) {
         return updatePaymentStatusImpl(UpdatePaymentStatusArgument.createCancelStatusArgument(argument.getPaymentPrimaryKey(), argument.isExplicitUserCancellation()))
                 // When payments are cancelled on recurring events, we automatically un-book unpaid options
-                .compose(moneyTransfer -> unbookUnpaidOptionsIfRecurringEvent(moneyTransfer)
-                .map(ignoredVoid -> new CancelPaymentResult()))
+                .compose(this::unbookUnpaidOptionsIfRecurringEvent)
                 .onFailure(Console::log);
     }
 
-    private Future<Void> unbookUnpaidOptionsIfRecurringEvent(MoneyTransfer moneyTransfer) {
+    private Future<CancelPaymentResult> unbookUnpaidOptionsIfRecurringEvent(MoneyTransfer moneyTransfer) {
         return moneyTransfer.onExpressionLoaded("document.(event.type.recurringItem,price_deposit)")
                 .compose(x -> {
                     EntityId recurringItemId = moneyTransfer.evaluate("document.event.type.recurringItem");
                     // We check it's a recurring event, otherwise we skip that feature
                     if (recurringItemId == null)
-                        return Future.succeededFuture();
+                        return Future.succeededFuture(new CancelPaymentResult(false));
                     Document document = moneyTransfer.getDocument();
                     // If there was no deposit on the booking, we cancel that booking
                     if (document.getPriceDeposit() == 0) {
                         return SystemUserId.SYSTEM.callAndReturn(() -> DocumentService.submitDocumentChanges(new SubmitDocumentChangesArgument(
                                 "Cancelled booking",
                                 new CancelDocumentEvent(document, true))
-                        ).map(ignored -> null));
+                        ).map(ignored -> new CancelPaymentResult(true)));
                     }
                     // If there is a deposit, we remove all options added after the last successful payment (that is
                     // meant to pay all previous options).
@@ -194,10 +193,12 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                                         removeEvents.add(new RemoveDocumentLineEvent(aee.getDocumentLine()));
                                     }
                                 });
+                                if (removeEvents.isEmpty())
+                                    return Future.succeededFuture(new CancelPaymentResult(false));
                                 return SystemUserId.SYSTEM.callAndReturn(() -> DocumentService.submitDocumentChanges(
                                         new SubmitDocumentChangesArgument("Unbooked unpaid options",
                                                 removeEvents.toArray(new AbstractDocumentEvent[0])))
-                                        .map(ignoredResult -> null));
+                                        .map(ignoredResult -> new CancelPaymentResult(false)));
                             });
                 });
     }

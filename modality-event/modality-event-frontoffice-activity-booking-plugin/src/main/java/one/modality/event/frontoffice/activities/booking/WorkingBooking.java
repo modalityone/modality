@@ -123,6 +123,11 @@ public class WorkingBooking {
         }
     }
 
+    public void uncancelBooking() {
+        integrateNewDocumentEvent(new CancelDocumentEvent(document, false));
+        lastestDocumentAggregate = null;
+    }
+
     private void integrateNewDocumentEvent(AbstractDocumentEvent e) {
         DocumentEvents.integrateNewDocumentEvent(e, documentChanges);
     }

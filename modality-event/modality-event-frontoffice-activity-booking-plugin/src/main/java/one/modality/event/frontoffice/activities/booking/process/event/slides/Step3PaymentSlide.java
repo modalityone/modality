@@ -81,7 +81,13 @@ final class Step3PaymentSlide extends StepSlide {
         payButton.setOnAction(e -> webPaymentForm.pay());
         cancelButton.setOnAction(e -> {
             webPaymentForm.cancelPayment()
-                .onComplete(ar -> UiScheduler.runInUiThread(this::displayCancellationSlide));
+                .onComplete(ar -> UiScheduler.runInUiThread(() -> {
+                    if (ar.failed())
+                        displayErrorMessage(ar.cause().getMessage());
+                    else {
+                        displayCancellationSlide(ar.result());
+                    }
+                }));
         });
         FlexPane buttonBar = new FlexPane(payButton, cancelButton);
         buttonBar.setHorizontalSpace(10);
