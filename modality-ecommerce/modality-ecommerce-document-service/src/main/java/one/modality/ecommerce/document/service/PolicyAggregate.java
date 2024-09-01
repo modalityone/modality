@@ -1,5 +1,7 @@
 package one.modality.ecommerce.document.service;
 
+import dev.webfx.platform.console.Console;
+import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.db.query.QueryResult;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.dql.sqlcompiler.mapping.QueryRowToEntityMapping;
@@ -87,6 +89,29 @@ public final class PolicyAggregate {
 
     public Stream<Rate> getRatesStream() {
         return getRates().stream();
+    }
+
+    public Stream<Rate> getDailyRatesStream() {
+        return getRatesStream()
+            .filter(Rate::isPerDay);
+    }
+
+    public List<Rate> getDailyRates() {
+        return getDailyRatesStream().collect(Collectors.toList());
+    }
+
+    public Rate getDailyRate() {
+        List<Rate> dailyRates = getDailyRates();
+        int dailyRatesCount = dailyRates.size();
+        if (dailyRatesCount > 1) {
+            Console.log("⚠️ WARNING: PolicyAggregate.getDailyRate() is meant to be used with single daily rate policies, but this policy has " + dailyRatesCount + " rates.");
+        }
+        return Collections.first(dailyRates);
+    }
+
+    public int getDailyRatePrice() {
+        Rate rate = getDailyRate();
+        return rate != null ? rate.getPrice() : 0;
     }
 
     public Stream<Rate> getSiteItemRatesStream(Site site, Item item) {
