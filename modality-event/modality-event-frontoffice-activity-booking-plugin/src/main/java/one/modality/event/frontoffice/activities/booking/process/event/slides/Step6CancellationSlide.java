@@ -39,7 +39,7 @@ final class Step6CancellationSlide extends StepSlide {
         button.setOnAction(e -> {
             // Booking cancelled => un-cancel booking
             if (cancelPaymentResult.isBookingCancelled()) {
-                cancelOrUncancelBookingAndDisplayBookSlide(false);
+                cancelOrUncancelBookingAndDisplayNextSlide(false);
             } else {
                 turnOnWaitMode();
                 getBookEventActivity().loadBookingWithSamePolicy(false)

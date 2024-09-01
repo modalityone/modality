@@ -131,7 +131,7 @@ abstract class StepSlide implements Supplier<Node> {
             }));
     }
 
-    void cancelOrUncancelBookingAndDisplayBookSlide(boolean cancel) {
+    void cancelOrUncancelBookingAndDisplayNextSlide(boolean cancel) {
         WorkingBooking workingBooking = getWorkingBookingProperties().getWorkingBooking();
         if (cancel)
             workingBooking.cancelBooking();
@@ -143,8 +143,13 @@ abstract class StepSlide implements Supplier<Node> {
                 turnOffWaitMode();
                 displayErrorMessage(ex.getMessage());
             }))
-            .onSuccess(ignored -> getBookEventActivity().loadBookingWithSamePolicy(false)
-                .onComplete(ar -> UiScheduler.runInUiThread(this::turnOffWaitMode)));
+            .onSuccess(ignored -> {
+                if (cancel)
+                    displayCancellationSlide(new CancelPaymentResult(true));
+                else
+                    getBookEventActivity().loadBookingWithSamePolicy(false)
+                        .onComplete(ar -> UiScheduler.runInUiThread(this::turnOffWaitMode));
+            });
     }
 
     void turnOnWaitMode() {
@@ -170,8 +175,8 @@ abstract class StepSlide implements Supplier<Node> {
     Button createPersonToBookButton() {
         Text personPrefixText = TextUtility.createText("PersonToBook:", Color.GRAY);
         EntityButtonSelector<Person> personSelector = new EntityButtonSelector<Person>(
-                "{class: 'Person', alias: 'p', columns: [{expression: `[genderIcon,firstName,lastName]`}], orderBy: 'id'}",
-                getBookEventActivity(), FXMainFrameDialogArea::getDialogArea, getBookEventActivity().getDataSourceModel()
+            "{class: 'Person', alias: 'p', columns: [{expression: `[genderIcon,firstName,lastName]`}], orderBy: 'id'}",
+            getBookEventActivity(), FXMainFrameDialogArea::getDialogArea, getBookEventActivity().getDataSourceModel()
         ) { // Overriding the button content to add the "Teacher" prefix text
             @Override
             protected Node getOrCreateButtonContentFromSelectedItem() {

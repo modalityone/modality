@@ -1,11 +1,12 @@
 package one.modality.event.frontoffice.activities.booking.process.event.slides;
 
-import dev.webfx.extras.panes.FlexPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
@@ -36,8 +37,8 @@ final class Step5FailedPaymentSlide extends StepSlide {
         message.setWrapText(true);
         VBox.setMargin(message, new Insets(50, 0, 50, 0));
 
-        FlexPane buttonBar = new FlexPane(retryPayButton, cancelButton);
-        buttonBar.setHorizontalSpace(10);
+        HBox buttonBar = new HBox(10, retryPayButton, cancelButton);
+        buttonBar.setAlignment(Pos.CENTER);
 
         mainVbox.getChildren().setAll(title, message, buttonBar);
 
@@ -47,7 +48,7 @@ final class Step5FailedPaymentSlide extends StepSlide {
         });
         cancelButton.setOnAction(e -> {
             pressedButton = cancelButton;
-            cancelOrUncancelBookingAndDisplayBookSlide(true);
+            cancelOrUncancelBookingAndDisplayNextSlide(true);
         });
     }
 
