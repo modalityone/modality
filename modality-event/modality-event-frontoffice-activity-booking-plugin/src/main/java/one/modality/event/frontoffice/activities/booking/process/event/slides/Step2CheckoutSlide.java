@@ -159,25 +159,39 @@ final class Step2CheckoutSlide extends StepSlide {
         WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
         DocumentAggregate documentAggregate = workingBookingProperties.getDocumentAggregate();
 
+        workingBookingProperties.updateAll();
+
         summaryGridPane.getChildren().clear();
         addRow(Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), "Summary"))),
             Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), "Price"))),
             new Label());
 
-        //FIRST PART: WHAT HAS BEEN ALREADY BOOKED FOR THIS EVENT IN THE PAST
+        int noDiscountTotalPrice = 0;
+        // FIRST PART: WHAT HAS BEEN ALREADY BOOKED FOR THIS EVENT IN THE PAST
         if (!workingBooking.isNewBooking()) {
-            addAttendanceRows(documentAggregate.getExistingAttendancesStream(), true);
+            noDiscountTotalPrice += addAttendanceRows(documentAggregate.getExistingAttendancesStream(), true);
+            addExistingTotalLine();
         }
 
-        //SECOND PART: WHAT WE BOOK AT THIS STEP
-        addAttendanceRows(documentAggregate.getNewAttendancesStream(), false);
+        // SECOND PART: WHAT WE BOOK AT THIS STEP
+        noDiscountTotalPrice += addAttendanceRows(documentAggregate.getNewAttendancesStream(), false);
 
-        workingBookingProperties.updateBalance();
+        // THIRD PART: DISCOUNT, IF ANY
+        int total = workingBookingProperties.getTotal();
+        if (total < noDiscountTotalPrice) {
+            addRow(I18nControls.bindI18nProperties(new Label(), "Discount"),
+                new Label(EventPriceFormatter.formatWithCurrency(total - noDiscountTotalPrice, workingBooking.getEvent())),
+                new Label());
+        }
+
+        addNewTotalLine();
     }
 
-    private void addAttendanceRows(Stream<Attendance> attendanceStream, boolean existing) {
+    private int addAttendanceRows(Stream<Attendance> attendanceStream, boolean existing) {
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
         WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
+
+        int[] totalPrice = { 0 };
 
         attendanceStream.forEach(a -> {
             ScheduledItem scheduledItem = a.getScheduledItem();
@@ -185,7 +199,10 @@ final class Step2CheckoutSlide extends StepSlide {
             Item item = scheduledItem.getItem();
             String dateFormatted = I18n.getI18nText("DateFormatted", I18n.getI18nText(date.getMonth().name()), date.getDayOfMonth());
             Label name = new Label(item.getName() + " - " + dateFormatted + (existing ? " (already booked)" : ""));
-            Label price = new Label(EventPriceFormatter.formatWithCurrency(workingBookingProperties.getDailyRatePrice(), getEvent()));
+            int dailyRatePrice = workingBookingProperties.getDailyRatePrice();
+            totalPrice[0] += dailyRatePrice;
+            Label price = new Label(EventPriceFormatter.formatWithCurrency(dailyRatePrice, getEvent()));
+            GridPane.setHalignment(price, HPos.RIGHT);
 
             Hyperlink trashOption = new Hyperlink();
             SVGPath svgTrash = SvgIcons.createTrashSVGPath();
@@ -209,20 +226,25 @@ final class Step2CheckoutSlide extends StepSlide {
             GridPane.setHalignment(trashOption, HPos.CENTER);
         });
 
-        workingBookingProperties.updateAll();
-        if (existing) {
-            addTotalLine(
-                "TotalOnPreviousBooking", workingBookingProperties.formattedPreviousTotalProperty(),
-                "Deposit", workingBookingProperties.formattedDepositProperty(),
-                "BalanceOnPreviousBooking", workingBookingProperties.formattedPreviousBalanceProperty()
-            );
-        } else {
-            addTotalLine(
-                "TotalPrice", workingBookingProperties.formattedTotalProperty(),
-                "Deposit", workingBookingProperties.formattedDepositProperty(),
-                "GeneralBalance", workingBookingProperties.formattedBalanceProperty()
-            );
-        }
+        return totalPrice[0];
+    }
+
+    private void addExistingTotalLine() {
+        WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
+        addTotalLine(
+            "TotalOnPreviousBooking", workingBookingProperties.formattedPreviousTotalProperty(),
+            "Deposit", workingBookingProperties.formattedDepositProperty(),
+            "BalanceOnPreviousBooking", workingBookingProperties.formattedPreviousBalanceProperty()
+        );
+    }
+
+    private void addNewTotalLine() {
+        WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
+        addTotalLine(
+            "TotalPrice", workingBookingProperties.formattedTotalProperty(),
+            "Deposit", workingBookingProperties.formattedDepositProperty(),
+            "GeneralBalance", workingBookingProperties.formattedBalanceProperty()
+        );
     }
 
     private void addRow(Node node1, Node node2, Node node3) {
