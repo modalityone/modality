@@ -14,6 +14,7 @@ import java.util.function.Supplier;
 public class PriceCalculator {
 
     private final Supplier<DocumentAggregate> documentAggregateSupplier;
+    private boolean ignoreDiscounts;
 
     public PriceCalculator(Supplier<DocumentAggregate> documentAggregateSupplier) {
         this.documentAggregateSupplier = documentAggregateSupplier;
@@ -27,13 +28,20 @@ public class PriceCalculator {
         return documentAggregateSupplier.get();
     }
 
+    public int calculateNoDiscountTotalPrice() {
+        ignoreDiscounts = true;
+        int price = calculateTotalPrice();
+        ignoreDiscounts = false;
+        return price;
+    }
+
     public int calculateTotalPrice() {
         DocumentAggregate documentAggregate = getDocumentAggregate();
         if (documentAggregate == null)
             return 0;
         return documentAggregate.getDocumentLinesStream()
-                .mapToInt(this::calculateLinePrice)
-                .sum();
+            .mapToInt(this::calculateLinePrice)
+            .sum();
     }
 
     public int calculateLinePrice(DocumentLine line) {
@@ -53,6 +61,8 @@ public class PriceCalculator {
         int dailyRatePrice = attendances.stream()
             .mapToInt(this::calculateAttendancePrice)
             .sum();
+        if (ignoreDiscounts)
+            return dailyRatePrice;
         // 2) Calculating the price consisting of applying the cheapest (if multiple) fixed rate
         DocumentLine line = attendances.get(0).getDocumentLine();
         int fixedRatePrice = documentAggregate.getPolicyAggregate()
@@ -76,9 +86,9 @@ public class PriceCalculator {
         Item item = documentLine.getItem();
         return documentAggregate.getPolicyAggregate()
             .getSiteItemDailyRatesStream(site, item)
-                .mapToInt(Rate::getPrice)
-                .min()
-                .orElse(0);
+            .mapToInt(Rate::getPrice)
+            .min()
+            .orElse(0);
     }
 
 }

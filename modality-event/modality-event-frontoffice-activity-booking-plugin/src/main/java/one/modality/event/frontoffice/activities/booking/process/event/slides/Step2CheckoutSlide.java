@@ -185,7 +185,7 @@ final class Step2CheckoutSlide extends StepSlide {
             Item item = scheduledItem.getItem();
             String dateFormatted = I18n.getI18nText("DateFormatted", I18n.getI18nText(date.getMonth().name()), date.getDayOfMonth());
             Label name = new Label(item.getName() + " - " + dateFormatted + (existing ? " (already booked)" : ""));
-            Label price = new Label(EventPriceFormatter.formatWithCurrency(workingBookingProperties.getRate(), getEvent()));
+            Label price = new Label(EventPriceFormatter.formatWithCurrency(workingBookingProperties.getDailyRatePrice(), getEvent()));
 
             Hyperlink trashOption = new Hyperlink();
             SVGPath svgTrash = SvgIcons.createTrashSVGPath();

@@ -1,10 +1,7 @@
 package one.modality.event.frontoffice.activities.booking.process.event;
 
-import dev.webfx.platform.util.collection.Collections;
 import javafx.beans.property.*;
-import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.Rate;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.ecommerce.document.service.DocumentAggregate;
@@ -13,7 +10,6 @@ import one.modality.event.frontoffice.activities.booking.PriceCalculator;
 import one.modality.event.frontoffice.activities.booking.WorkingBooking;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class WorkingBookingProperties {
 
@@ -23,7 +19,7 @@ public class WorkingBookingProperties {
 
     // Deposit (of both the latest booking and previous booking)
     private final StringProperty formattedDepositProperty = new SimpleStringProperty();
-    private final IntegerProperty depositProperty = new SimpleIntegerProperty(-1)  {
+    private final IntegerProperty depositProperty = new SimpleIntegerProperty(-1) {
         @Override
         protected void invalidated() {
             setFormattedDeposit(EventPriceFormatter.formatWithCurrency(getDeposit(), getEvent()));
@@ -32,7 +28,7 @@ public class WorkingBookingProperties {
 
     // Total (of the latest booking)
     private final StringProperty formattedTotalProperty = new SimpleStringProperty();
-    private final IntegerProperty totalProperty = new SimpleIntegerProperty(-1)  {
+    private final IntegerProperty totalProperty = new SimpleIntegerProperty(-1) {
         @Override
         protected void invalidated() {
             setFormattedTotal(EventPriceFormatter.formatWithCurrency(getTotal(), getEvent()));
@@ -41,23 +37,23 @@ public class WorkingBookingProperties {
 
     // Balance (of the latest booking)
     private final StringProperty formattedBalanceProperty = new SimpleStringProperty();
-    private final IntegerProperty balanceProperty = new SimpleIntegerProperty(-1)  {
+    private final IntegerProperty balanceProperty = new SimpleIntegerProperty(-1) {
         @Override
         protected void invalidated() {
             int balance = getBalance();
             setFormattedBalance(EventPriceFormatter.formatWithCurrency(balance, getEvent()));
         }
     };
-    
+
     // Previous total (of the booking loaded from database)
     private final StringProperty formattedPreviousTotalProperty = new SimpleStringProperty();
-    private final IntegerProperty previousTotalProperty = new SimpleIntegerProperty(-1)  {
+    private final IntegerProperty previousTotalProperty = new SimpleIntegerProperty(-1) {
         @Override
         protected void invalidated() {
             setFormattedPreviousTotal(EventPriceFormatter.formatWithCurrency(getPreviousTotal(), getEvent()));
         }
     };
-    
+
     // Previous balance (of the booking loaded from database)
     private final StringProperty formattedPreviousBalanceProperty = new SimpleStringProperty();
     private final IntegerProperty previousBalanceProperty = new SimpleIntegerProperty(-1) {
@@ -188,7 +184,7 @@ public class WorkingBookingProperties {
     public String getFormattedTotal() {
         return formattedTotalProperty.getValue();
     }
-    
+
 
     // Balance
 
@@ -223,8 +219,8 @@ public class WorkingBookingProperties {
     public String getFormattedBalance() {
         return formattedBalanceProperty.getValue();
     }
-    
-    
+
+
     // Previous total
 
     public int getPreviousTotal() {
@@ -308,25 +304,27 @@ public class WorkingBookingProperties {
     public Object getBookingReference() {
         return bookingReferenceProperty.getValue();
     }
-    
+
+    // Shorthand methods to workingBooking
 
     public List<ScheduledItem> getScheduledItemsAlreadyBooked() {
-        DocumentAggregate initialDocumentAggregate = workingBooking.getInitialDocumentAggregate();
-        if (initialDocumentAggregate == null) {
-            return Collections.emptyList();
-        }
-        return initialDocumentAggregate.getAttendancesStream()
-                .map(Attendance::getScheduledItem)
-                .collect(Collectors.toList());
+        return workingBooking.getScheduledItemsAlreadyBooked();
     }
 
     public List<ScheduledItem> getScheduledItemsOnEvent() {
-        return getPolicyAggregate().getScheduledItems();
+        return workingBooking.getScheduledItemsOnEvent();
     }
 
-    public int getRate() {
-        Rate rate = Collections.first(getWorkingBooking().getPolicyAggregate().getRates());
-        return rate != null ? rate.getPrice() : 0;
+    public int getDailyRatePrice() {
+        return workingBooking.getDailyRatePrice();
+    }
+
+    public int getWholeEventPrice() {
+        return workingBooking.getWholeEventPrice();
+    }
+
+    public int getWholeEventNoDiscountPrice() {
+        return workingBooking.getWholeEventNoDiscountPrice();
     }
 
 }

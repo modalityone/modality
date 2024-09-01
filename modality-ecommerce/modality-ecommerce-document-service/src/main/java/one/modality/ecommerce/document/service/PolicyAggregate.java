@@ -10,6 +10,7 @@ import dev.webfx.stack.orm.entity.query_result_to_entities.QueryResultToEntities
 import one.modality.base.shared.entities.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -55,6 +56,31 @@ public final class PolicyAggregate {
         return event;
     }
 
+    public List<ScheduledItem> getScheduledItems() {
+        return scheduledItems;
+    }
+
+    public Stream<ScheduledItem> getScheduledItemsStream() {
+        return getScheduledItems().stream();
+    }
+
+    public Stream<ScheduledItem> getFamilyScheduledItemsStream(ItemFamily family) {
+        return getFamilyScheduledItemsStream(family.getCode());
+    }
+
+    public Stream<ScheduledItem> getFamilyScheduledItemsStream(String familyCode) {
+        return getScheduledItemsStream()
+            .filter(scheduledItem -> Objects.equals(familyCode, scheduledItem.getItem().getFamily().getCode()));
+    }
+
+    public Stream<ScheduledItem> getTeachingScheduledItemsStream() {
+        return getFamilyScheduledItemsStream(ItemFamily.TEACHING_FAMILY_CODE);
+    }
+
+    public List<ScheduledItem> getTeachingScheduledItems() {
+        return getTeachingScheduledItemsStream().collect(Collectors.toList());
+    }
+
     public List<Rate> getRates() {
         return rates;
     }
@@ -83,13 +109,7 @@ public final class PolicyAggregate {
                 .collect(Collectors.toList());
     }
 
-    public List<ScheduledItem> getScheduledItems() {
-        return scheduledItems;
-    }
-
-    public Stream<ScheduledItem> getScheduledItemsStream() {
-        return getScheduledItems().stream();
-    }
+    // The following methods are meant to be used for serialization, not for application code
 
     public String getRatesQueryBase() {
         return ratesQueryBase;

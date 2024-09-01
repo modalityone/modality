@@ -15,6 +15,7 @@ import one.modality.event.frontoffice.activities.booking.fx.FXPersonToBook;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author Bruno Salmon
@@ -206,4 +207,43 @@ public class WorkingBooking {
         }
         return list;
     }
+
+    public List<ScheduledItem> getScheduledItemsAlreadyBooked() {
+        DocumentAggregate initialDocumentAggregate = getInitialDocumentAggregate();
+        if (initialDocumentAggregate == null) {
+            return Collections.emptyList();
+        }
+        return initialDocumentAggregate.getAttendancesStream()
+            .map(Attendance::getScheduledItem)
+            .collect(Collectors.toList());
+    }
+
+    // Shorthand methods to PolicyAggregate
+
+    public List<ScheduledItem> getScheduledItemsOnEvent() {
+        return getPolicyAggregate().getScheduledItems();
+    }
+
+    public int getDailyRatePrice() {
+        return getPolicyAggregate().getDailyRatePrice();
+    }
+
+    public int getWholeEventPrice() {
+        WorkingBooking workingBooking = createWholeEventWorkingBooking(getPolicyAggregate());
+        PriceCalculator priceCalculator = new PriceCalculator(workingBooking.getLastestDocumentAggregate());
+        return priceCalculator.calculateTotalPrice();
+    }
+
+    public int getWholeEventNoDiscountPrice() {
+        WorkingBooking workingBooking = createWholeEventWorkingBooking(getPolicyAggregate());
+        PriceCalculator priceCalculator = new PriceCalculator(workingBooking.getLastestDocumentAggregate());
+        return priceCalculator.calculateNoDiscountTotalPrice();
+    }
+
+    public static WorkingBooking createWholeEventWorkingBooking(PolicyAggregate policyAggregate) {
+        WorkingBooking workingBooking = new WorkingBooking(policyAggregate, null);
+        workingBooking.bookScheduledItems(policyAggregate.getTeachingScheduledItems());
+        return workingBooking;
+    }
+
 }
