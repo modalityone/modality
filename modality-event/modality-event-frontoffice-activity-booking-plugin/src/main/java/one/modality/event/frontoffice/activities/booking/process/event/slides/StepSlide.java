@@ -29,6 +29,7 @@ import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
+import one.modality.event.frontoffice.activities.booking.WorkingBooking;
 import one.modality.event.frontoffice.activities.booking.fx.FXGuestToBook;
 import one.modality.event.frontoffice.activities.booking.fx.FXPersonToBook;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
@@ -128,6 +129,22 @@ abstract class StepSlide implements Supplier<Node> {
                 WebPaymentForm webPaymentForm = new WebPaymentForm(paymentResult, buyerDetails);
                 displayPaymentSlide(webPaymentForm);
             }));
+    }
+
+    void cancelOrUncancelBookingAndDisplayBookSlide(boolean cancel) {
+        WorkingBooking workingBooking = getWorkingBookingProperties().getWorkingBooking();
+        if (cancel)
+            workingBooking.cancelBooking();
+        else
+            workingBooking.uncancelBooking();
+        turnOnWaitMode();
+        workingBooking.submitChanges(cancel ? "Cancelled booking" : "Uncancelled booking")
+            .onFailure(ex -> UiScheduler.runInUiThread(() -> {
+                turnOffWaitMode();
+                displayErrorMessage(ex.getMessage());
+            }))
+            .onSuccess(ignored -> getBookEventActivity().loadBookingWithSamePolicy(false)
+                .onComplete(ar -> UiScheduler.runInUiThread(this::turnOffWaitMode)));
     }
 
     void turnOnWaitMode() {

@@ -65,7 +65,7 @@ final class DigitsSlideController {
     }
 
     private void displaySlide(StepSlide slide) {
-        boolean animate = slide != step1BookDatesSlide || displayedSlide == step6CancellationSlide;
+        boolean animate = slide != step1BookDatesSlide || displayedSlide == step5FailedPaymentSlide || displayedSlide == step6CancellationSlide;
         displayedSlide = slide;
         UiScheduler.runInUiThread((() -> {
             if (animate)

@@ -27,6 +27,7 @@ final class Step3PaymentSlide extends StepSlide {
     private final HtmlText paymentInformationHtmlText = Bootstrap.textPrimary(Bootstrap.h4(new HtmlText()));
     private final Button payButton = Bootstrap.largeSuccessButton(new Button());
     private final Button cancelButton = Bootstrap.largeSecondaryButton(new Button());
+    private Button pressedButton;
     private WebPaymentForm webPaymentForm;
 
     Step3PaymentSlide(BookEventActivity bookEventActivity) {
@@ -78,8 +79,12 @@ final class Step3PaymentSlide extends StepSlide {
         }, webPaymentForm.userInteractionAllowedProperty());
         payButton.setMaxWidth(Double.MAX_VALUE);
         cancelButton.setMaxWidth(Double.MAX_VALUE);
-        payButton.setOnAction(e -> webPaymentForm.pay());
+        payButton.setOnAction(e -> {
+            pressedButton = payButton;
+            webPaymentForm.pay();
+        });
         cancelButton.setOnAction(e -> {
+            pressedButton = cancelButton;
             webPaymentForm.cancelPayment()
                 .onComplete(ar -> UiScheduler.runInUiThread(() -> {
                     if (ar.failed())
@@ -124,7 +129,10 @@ final class Step3PaymentSlide extends StepSlide {
 
     @Override
     void turnOnWaitMode() {
-        turnOnButtonWaitMode(payButton, cancelButton);
+        if (pressedButton == payButton)
+            turnOnButtonWaitMode(payButton, cancelButton);
+        else
+            turnOnButtonWaitMode(cancelButton, payButton);
     }
 
     @Override
