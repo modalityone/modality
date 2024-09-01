@@ -121,8 +121,10 @@ public class RecurringEventSchedule {
     }
 
     public void addClickedDate(LocalDate date) {
-        clickedDates.add(date);
-        selectedDates.add(date);
+        if (!clickedDates.contains(date))
+            clickedDates.add(date);
+        if (!selectedDates.contains(date))
+            selectedDates.add(date);
     }
 
     public void removeClickedDate(LocalDate date) {
