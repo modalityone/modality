@@ -77,8 +77,6 @@ final class Step3PaymentSlide extends StepSlide {
                 turnOnWaitMode();
             }
         }, webPaymentForm.userInteractionAllowedProperty());
-        payButton.setMaxWidth(Double.MAX_VALUE);
-        cancelButton.setMaxWidth(Double.MAX_VALUE);
         payButton.setOnAction(e -> {
             pressedButton = payButton;
             webPaymentForm.pay();
@@ -94,6 +92,8 @@ final class Step3PaymentSlide extends StepSlide {
                     }
                 }));
         });
+        payButton.setMaxWidth(Double.MAX_VALUE);
+        cancelButton.setMaxWidth(Double.MAX_VALUE);
         FlexPane buttonBar = new FlexPane(payButton, cancelButton);
         buttonBar.setHorizontalSpace(10);
         VBox.setMargin(buttonBar, new Insets(10, 0, 10, 0));
