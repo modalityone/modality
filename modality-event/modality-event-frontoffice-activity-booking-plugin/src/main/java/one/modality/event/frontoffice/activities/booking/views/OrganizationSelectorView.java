@@ -60,7 +60,7 @@ public final class OrganizationSelectorView {
     private final MapView organizationMapView = new StaticMapView(10);
     private MapView worldMapView;
     private final RatioPane presentationPane = new RatioPane(16d/9);
-    private final WebView presentationVideoView = new WebView();
+    private WebView presentationVideoView; // new WebView() can raise "Not on FX application thread" if this is the first page loaded
     private final Hyperlink websiteLink = GeneralUtility.createHyperlink("localCentreWebsite", Color.WHITE);
     private final Hyperlink addressLink = GeneralUtility.createHyperlink("localCentreAddress", Color.WHITE);
     private final Hyperlink phoneLink   = GeneralUtility.createHyperlink("localCentrePhone",   Color.WHITE);
@@ -172,6 +172,8 @@ public final class OrganizationSelectorView {
                                         : organizationId == 2 ? "https://www.youtube.com/embed/alIoC9_oD5w?rel=0"
                                         : null;
                         presentationPane.setVisible(imageLink != null || videoLink != null);
+                        if (presentationVideoView == null)
+                            presentationVideoView = new WebView();
                         if (videoLink == null)
                             presentationVideoView.getEngine().load(null); // Unloading possible previous video (stops the video if playing)
                         if (imageLink != null) {
