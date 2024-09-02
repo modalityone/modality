@@ -13,6 +13,7 @@ import dev.webfx.platform.useragent.UserAgent;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
+import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.reactive.entities.entities_to_objects.IndividualEntityToObjectMapper;
 import dev.webfx.stack.orm.reactive.entities.entities_to_objects.ObservableEntitiesToObjectsMapper;
@@ -85,14 +86,14 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
         GrowingPane growingPane = new GrowingPane(localEventsContainer);
 
         VBox container = new VBox(
-                headerLabel,
-                headerImageScalePane,
-                internationalEventsLabel,
-                internationalEventsContainer,
-                localEventsLabel,
-                localCenterDisplay,
-                localEventTypeTabsPane,
-                growingPane);
+            headerLabel,
+            headerImageScalePane,
+            internationalEventsLabel,
+            internationalEventsContainer,
+            localEventsLabel,
+            localCenterDisplay,
+            localEventTypeTabsPane,
+            growingPane);
         container.setAlignment(Pos.CENTER);
         container.setBackground(Background.fill(Color.WHITE));
         container.setMaxWidth(MAX_PAGE_WIDTH);
@@ -101,9 +102,9 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
         FXProperties.runOnPropertiesChange(() -> {
             double width = container.getWidth();
             double fontFactor = GeneralUtility.computeFontFactor(width);
-            GeneralUtility.setLabeledFont(headerLabel,              StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 21);
+            GeneralUtility.setLabeledFont(headerLabel, StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 21);
             GeneralUtility.setLabeledFont(internationalEventsLabel, StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
-            GeneralUtility.setLabeledFont(localEventsLabel,         StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
+            GeneralUtility.setLabeledFont(localEventsLabel, StyleUtility.TEXT_FAMILY, FontWeight.BOLD, fontFactor * 16);
         }, container.widthProperty());
 
         localEvents.addListener((InvalidationListener) observable -> {
@@ -125,9 +126,9 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
         });
 
         Function<Event, IndividualEntityToObjectMapper<Event, Node>>
-                factory = IndividualEntityToObjectMapper.createFactory(EventView::new, EventView::setEvent, EventView::getView);
+            factory = IndividualEntityToObjectMapper.createFactory(EventView::new, EventView::setEvent, EventView::getView);
         ObservableEntitiesToObjectsMapper<Event, ? extends IndividualEntityToObjectMapper<Event, Node>>
-                entitiesToObjectsMapper = new ObservableEntitiesToObjectsMapper<>(localEventsOfSelectedType, factory, (Event e, IndividualEntityToObjectMapper<Event, Node> m) -> m.onEntityChangedOrReplaced(e), (Event e1, IndividualEntityToObjectMapper<Event, Node> m1) -> m1.onEntityRemoved(e1));
+            entitiesToObjectsMapper = new ObservableEntitiesToObjectsMapper<>(localEventsOfSelectedType, factory, (Event e, IndividualEntityToObjectMapper<Event, Node> m) -> m.onEntityChangedOrReplaced(e), (Event e1, IndividualEntityToObjectMapper<Event, Node> m1) -> m1.onEntityRemoved(e1));
         ObservableLists.bindConverted(localEventsContainer.getChildren(), entitiesToObjectsMapper.getMappedObjects(), IndividualEntityToObjectMapper::getMappedObject);
 
         return ControlUtil.createVerticalScrollPane(new BorderPane(container));
@@ -148,18 +149,19 @@ public final class BookingActivity extends ViewDomainActivityBase implements But
 
         // Loading international Festivals
         ReactiveObjectsMapper.<Event, Node>createPushReactiveChain(this)
-                .always(commonDqlStart + "', where: 'organization.type.code = `CORP` and endDate > now() and !bookingClosed and name not like `%Online%`', orderBy: 'startDate, id'}")
-                .setIndividualEntityToObjectMapperFactory(IndividualEntityToObjectMapper.createFactory(EventView::new, EventView::setEvent, EventView::getView))
-                .storeMappedObjectsInto(internationalEventsContainer.getChildren())
-                .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-booking-internationalEvents"))
-                .start();
+            .always(commonDqlStart + "', where: 'organization.type.code = `CORP` and endDate > now() and !bookingClosed and name not like `%Online%`', orderBy: 'startDate, id'}")
+            .always(DqlStatement.where("name like '%Festival%'")) // This is to remove STTP classes TODO: find a more generic way to filter out private events
+            .setIndividualEntityToObjectMapperFactory(IndividualEntityToObjectMapper.createFactory(EventView::new, EventView::setEvent, EventView::getView))
+            .storeMappedObjectsInto(internationalEventsContainer.getChildren())
+            .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-booking-internationalEvents"))
+            .start();
 
         // Loading local events
         ReactiveObjectsMapper.<Event, Node>createPushReactiveChain(this)
-                .always(commonDqlStart + ", type.(name,label.<loadAll>,ord), state', where: 'endDate > now() and !bookingClosed and type.name != `Not event`', orderBy: 'startDate'}")
-                .ifNotNullOtherwiseEmpty(FXOrganizationId.organizationIdProperty(), orgId -> where("organization=?", orgId))
-                .storeEntitiesInto(localEvents)
-                .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-booking-localEvents"))
-                .start();
+            .always(commonDqlStart + ", type.(name,label.<loadAll>,ord), state', where: 'endDate > now() and !bookingClosed and type.name != `Not event`', orderBy: 'startDate'}")
+            .ifNotNullOtherwiseEmpty(FXOrganizationId.organizationIdProperty(), orgId -> where("organization=?", orgId))
+            .storeEntitiesInto(localEvents)
+            .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-booking-localEvents"))
+            .start();
     }
 }
