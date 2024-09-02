@@ -44,6 +44,9 @@ final class Step3PaymentSlide extends StepSlide {
         mainVbox.setMaxWidth(MAX_SLIDE_WIDTH);
         mainVbox.setAlignment(Pos.CENTER_LEFT);
 
+        WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
+        bindI18nEventExpression(bookedEventTitleLabel, "i18n(this) + '[TotalBookingPrice]'", workingBookingProperties.formattedBalanceProperty());
+        bookedEventTitleLabel.setWrapText(true);
         VBox.setMargin(bookedEventTitleLabel, new Insets(20, 0, 0, 0));
 
         I18n.bindI18nTextProperty(paymentInformationHtmlText.textProperty(), "PaymentInformation", webPaymentForm.getGatewayName());
@@ -53,20 +56,19 @@ final class Step3PaymentSlide extends StepSlide {
         I18nControls.bindI18nProperties(gatewayLogo, webPaymentForm.getGatewayName());
         VBox.setMargin(gatewayLogo, new Insets(10, 0, 20, 0));
 
+        Region paymentRegion = webPaymentForm.buildPaymentForm();
+
         mainVbox.getChildren().setAll(
             bookedEventTitleLabel,
             paymentInformationHtmlText,
-            gatewayLogo
+            gatewayLogo,
+            paymentRegion
         );
 
-        bookedEventTitleLabel.setWrapText(true);
-        Region paymentRegion = webPaymentForm.buildPaymentForm();
-        mainVbox.getChildren().add(paymentRegion);
         if (webPaymentForm.isSandbox()) {
             mainVbox.getChildren().add(webPaymentForm.createSandboxBar());
         }
 
-        WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
         I18nControls.bindI18nProperties(payButton, "Pay", workingBookingProperties.formattedBalanceProperty());
         I18nControls.bindI18nProperties(cancelButton, "Cancel");
         payButton.setDefaultButton(true);
@@ -98,7 +100,7 @@ final class Step3PaymentSlide extends StepSlide {
         buttonBar.setHorizontalSpace(10);
         VBox.setMargin(buttonBar, new Insets(10, 0, 10, 0));
         mainVbox.getChildren().add(buttonBar);
-        bindI18nEventExpression(bookedEventTitleLabel, "i18n(this) + '[TotalBookingPrice]'", workingBookingProperties.formattedBalanceProperty());
+
         webPaymentForm
             .setOnLoadFailure(errorMsg -> {
                 displayErrorMessage("ErrorWhileLoadingPaymentForm");
@@ -119,7 +121,7 @@ final class Step3PaymentSlide extends StepSlide {
             .setOnPaymentCompletion(status -> {
                 if (status.isPending()) {
                     displayPendingPaymentSlide();
-                } if (status.isSuccessful()) {
+                } else if (status.isSuccessful()) {
                     displayThankYouSlide();
                 } else { // failed payment
                     displayFailedPaymentSlide();
