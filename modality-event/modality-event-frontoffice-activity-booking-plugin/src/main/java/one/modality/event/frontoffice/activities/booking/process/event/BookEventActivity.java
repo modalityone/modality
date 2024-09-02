@@ -16,12 +16,10 @@ import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.Node;
+import javafx.scene.control.Labeled;
 import javafx.scene.text.Font;
 import one.modality.base.frontoffice.mainframe.fx.FXCollapseFooter;
-import one.modality.base.shared.entities.Attendance;
-import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.Person;
-import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.*;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.DocumentService;
@@ -237,8 +235,12 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         return lettersSlideController.getRecurringEventSchedule();
     }
 
-    public HtmlText bindI18nEventExpression(HtmlText text, String eventExpression) {
-        return lettersSlideController.bindI18nEventExpression(text, eventExpression);
+    public <T extends Labeled> T bindI18nEventExpression(T text, String eventExpression, Object... args) {
+        return lettersSlideController.bindI18nEventExpression(text, eventExpression, args);
+    }
+
+    public HtmlText bindI18nEventExpression(HtmlText text, String eventExpression, Object... args) {
+        return lettersSlideController.bindI18nEventExpression(text, eventExpression, args);
     }
 
 }

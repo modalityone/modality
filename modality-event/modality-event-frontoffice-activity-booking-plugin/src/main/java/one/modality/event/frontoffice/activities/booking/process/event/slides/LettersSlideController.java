@@ -9,6 +9,7 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.scene.control.Labeled;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
@@ -126,8 +127,12 @@ public final class LettersSlideController {
         return stepBBookEventSlide.getRecurringEventSchedule();
     }
 
-    public HtmlText bindI18nEventExpression(HtmlText text, String eventExpression) {
-        return stepBBookEventSlide.bindI18nEventExpression(text, eventExpression);
+    public <T extends Labeled> T bindI18nEventExpression(T text, String eventExpression, Object... args) {
+        return stepBBookEventSlide.bindI18nEventExpression(text, eventExpression, args);
+    }
+
+    public HtmlText bindI18nEventExpression(HtmlText text, String eventExpression, Object... args) {
+        return stepBBookEventSlide.bindI18nEventExpression(text, eventExpression, args);
     }
 
 }

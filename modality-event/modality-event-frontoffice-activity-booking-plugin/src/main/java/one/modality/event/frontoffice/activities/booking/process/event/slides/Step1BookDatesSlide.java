@@ -46,7 +46,7 @@ final class Step1BookDatesSlide extends StepSlide {
 
     @Override
     void buildSlideUi() {
-        getBookEventActivity().bindI18nEventExpression(eventDescription, "description");
+        bindI18nEventExpression(eventDescription, "description");
         VBox.setMargin(eventDescription, new Insets(20, 0, 0, 0));
         eventDescription.fontProperty().bind(getBookEventActivity().mediumFontProperty());
         eventDescription.getStyleClass().add("event-description-text");

@@ -6,6 +6,7 @@ import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.util.Arrays;
 import dev.webfx.stack.cloud.image.CloudImageService;
 import dev.webfx.stack.cloud.image.impl.client.ClientImageService;
 import dev.webfx.stack.i18n.I18n;
@@ -204,19 +205,22 @@ final class StepBBookEventSlide extends StepSlide {
         return digitsSlideController.getRecurringEventSchedule();
     }
 
-    void bindI18nEventExpression(Property<String> textProperty, String eventExpression) {
+    @Override
+    public <L extends Labeled> L bindI18nEventExpression(L text, String eventExpression, Object... args) {
+        bindI18nEventExpression(text.textProperty(), eventExpression, args);
+        return text;
+    }
+
+    @Override
+    public HtmlText bindI18nEventExpression(HtmlText text, String eventExpression, Object... args) {
+        bindI18nEventExpression(text.textProperty(), eventExpression, args);
+        return text;
+    }
+
+    private void bindI18nEventExpression(Property<String> textProperty, String eventExpression, Object... args) {
+        Object[] additionalArgs = { FXEvent.lastNonNullEventProperty(), eventDescriptionLoadedProperty };
+        Object[] allArgs = Arrays.concat(Object[]::new, args, additionalArgs);
         I18n.bindI18nTextProperty(textProperty, new I18nSubKey("expression: " + eventExpression,
-            FXEvent.lastNonNullEventProperty()), FXEvent.lastNonNullEventProperty(), eventDescriptionLoadedProperty);
+            FXEvent.lastNonNullEventProperty()), allArgs);
     }
-
-    <L extends Labeled> L bindI18nEventExpression(L text, String eventExpression) {
-        bindI18nEventExpression(text.textProperty(), eventExpression);
-        return text;
-    }
-
-    HtmlText bindI18nEventExpression(HtmlText text, String eventExpression) {
-        bindI18nEventExpression(text.textProperty(), eventExpression);
-        return text;
-    }
-
 }

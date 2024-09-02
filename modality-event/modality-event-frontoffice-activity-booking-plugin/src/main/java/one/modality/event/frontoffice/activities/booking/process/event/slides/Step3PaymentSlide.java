@@ -98,7 +98,7 @@ final class Step3PaymentSlide extends StepSlide {
         buttonBar.setHorizontalSpace(10);
         VBox.setMargin(buttonBar, new Insets(10, 0, 10, 0));
         mainVbox.getChildren().add(buttonBar);
-        bookedEventTitleLabel.setText(getEvent().getName() + " |\u00A0Total\u00A0booking\u00A0price: " + workingBookingProperties.formattedBalanceProperty().getValue());
+        bindI18nEventExpression(bookedEventTitleLabel, "i18n(this) + '[TotalBookingPrice]'", workingBookingProperties.formattedBalanceProperty());
         webPaymentForm
             .setOnLoadFailure(errorMsg -> {
                 displayErrorMessage("ErrorWhileLoadingPaymentForm");

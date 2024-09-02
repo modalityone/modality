@@ -1,6 +1,7 @@
 package one.modality.event.frontoffice.activities.booking.process.event.slides;
 
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.i18n.controls.I18nControls;
@@ -11,6 +12,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Labeled;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -192,5 +194,14 @@ abstract class StepSlide implements Supplier<Node> {
         personButton.managedProperty().bind(FXModalityUserPrincipal.loggedInProperty());
         return personButton;
     }
+
+    public <T extends Labeled> T bindI18nEventExpression(T text, String eventExpression, Object... args) {
+        return getBookEventActivity().bindI18nEventExpression(text, eventExpression, args);
+    }
+
+    public HtmlText bindI18nEventExpression(HtmlText text, String eventExpression, Object... args) {
+        return getBookEventActivity().bindI18nEventExpression(text, eventExpression, args);
+    }
+
 
 }
