@@ -179,10 +179,13 @@ final class Step2CheckoutSlide extends StepSlide {
         // THIRD PART: DISCOUNT, IF ANY
         int total = workingBookingProperties.getTotal();
         if (total < noDiscountTotalPrice) {
+            Label price = new Label(EventPriceFormatter.formatWithCurrency(total - noDiscountTotalPrice, workingBooking.getEvent()));
+            GridPane.setHalignment(price, HPos.RIGHT);
             addRow(I18nControls.bindI18nProperties(new Label(), "Discount"),
-                new Label(EventPriceFormatter.formatWithCurrency(total - noDiscountTotalPrice, workingBooking.getEvent())),
+                price,
                 new Label());
         }
+
 
         addNewTotalLine();
     }
