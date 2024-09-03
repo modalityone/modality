@@ -4,8 +4,9 @@ import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.markers.EntityHasMediaInfo;
 import one.modality.base.shared.entities.markers.EntityHasTeacher;
 import one.modality.base.shared.entities.markers.EntityHasWistiaVideoId;
+import one.modality.base.shared.entities.markers.EntityHasYoutubeVideoId;
 
-public interface Video extends EntityHasMediaInfo, EntityHasWistiaVideoId, EntityHasTeacher {
+public interface Video extends EntityHasMediaInfo, EntityHasWistiaVideoId, EntityHasYoutubeVideoId, EntityHasTeacher {
 
     default void setNews(Object news) {
         setForeignField("news", news);
