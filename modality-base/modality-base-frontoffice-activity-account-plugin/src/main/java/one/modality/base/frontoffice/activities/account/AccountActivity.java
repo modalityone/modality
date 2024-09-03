@@ -4,7 +4,6 @@ import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.authn.logout.client.operation.LogoutRequest;
-import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
@@ -138,7 +137,7 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
             .always(DqlStatement.where("!cancelled or price_deposit>0"))
             .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.frontendAccount=?", mup.getUserAccountId()))
             .storeEntitiesInto(upcomingBookingsFeed)
-            .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-account-upcomingBookings"))
+            //.setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-account-upcomingBookings"))
             .start();
 
         // Past bookings
@@ -150,7 +149,7 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
             .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.frontendAccount=?", mup.getUserAccountId()))
             .ifNotNull(loadPastEventsBeforeDateProperty, date -> DqlStatement.where("event.startDate < ?", date))
             .storeEntitiesInto(pastBookingsFeed)
-            .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-account-pastBookings"))
+            //.setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-account-pastBookings"))
             .start();
     }
 
