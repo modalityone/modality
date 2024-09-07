@@ -17,7 +17,7 @@ public final class WorkingBookingSyncer {
     }
 
     public static void syncWorkingBookingFromSelectedScheduledItems(WorkingBooking workingBooking, List<ScheduledItem> scheduledItems, boolean addOnly) {
-        if (workingBooking.getDocument() == null)
+      //  if (workingBooking.getDocument() == null)
             workingBooking.cancelChanges(); // weird, but this is to ensure the document is created
         workingBooking.bookScheduledItems(scheduledItems, addOnly); // We re-apply the selected items to the booking
     }

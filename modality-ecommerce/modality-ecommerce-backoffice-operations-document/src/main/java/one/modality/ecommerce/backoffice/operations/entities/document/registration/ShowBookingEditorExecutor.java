@@ -19,6 +19,8 @@ import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.PolicyAggregate;
 import one.modality.event.client.recurringevents.RecurringEventSchedule;
 import one.modality.event.client.recurringevents.WorkingBooking;
+import one.modality.event.client.recurringevents.WorkingBookingHistoryHelper;
+import one.modality.event.client.recurringevents.WorkingBookingSyncer;
 
 import java.time.LocalDate;
 import java.util.stream.Collectors;
@@ -48,10 +50,16 @@ final class ShowBookingEditorExecutor {
                     DialogContent dialogContent = new DialogContent().setHeaderText("BookingDetails").setContent(schedule);
                     boolean[] executing = {false};
                     DialogCallback dc = DialogBuilderUtil.showModalNodeInGoldLayout(dialogContent, parentContainer);
-
+                    //We disable the save button at the beginning
+                    dialogContent.getPrimaryButton().setDisable(true);
                     //Here we disable the save button if there are no changes in the booking dates
-                    recurringEventSchedule.getSelectedDates().addListener((ListChangeListener<LocalDate>) change ->
-                        dialogContent.getPrimaryButton().setDisable(recurringEventSchedule.getSelectedDates().equals(workingBooking.getScheduledItemsAlreadyBooked().stream().map(ScheduledItem::getDate).collect(Collectors.toList()))));
+                    recurringEventSchedule.getSelectedDates().addListener((ListChangeListener<LocalDate>) change -> {
+                        dialogContent.getPrimaryButton().setDisable(recurringEventSchedule.getSelectedDates().equals(workingBooking.getScheduledItemsAlreadyBooked().stream().map(ScheduledItem::getDate).collect(Collectors.toList())));
+                        if(recurringEventSchedule.getSelectedDates().size()==0) {
+                            //If there is no selection, we prevent to save
+                            dialogContent.getPrimaryButton().setDisable(true);
+                        }
+                    });
 
                     //Here we cancel
                     dc.addCloseHook(() -> {
@@ -62,8 +70,13 @@ final class ShowBookingEditorExecutor {
                     DialogBuilderUtil.armDialogContentButtons(dialogContent, dialogCallback -> {
                         executing[0] = true;
                         Button executingButton = dialogContent.getPrimaryButton();
-                        workingBooking.submitChanges("Change from backoffice");
-                        executingButton.setDisable(false);
+                        WorkingBookingSyncer.syncWorkingBookingFromEventSchedule(workingBooking,recurringEventSchedule,false);
+                        WorkingBookingHistoryHelper historyHelper = new WorkingBookingHistoryHelper(workingBooking.getAttendanceAdded(),workingBooking.getAttendanceRemoved());
+                        workingBooking.submitChanges(historyHelper.buildHistory())
+                            .onSuccess(ignored->dialogCallback.closeDialog())
+                            .onFailure(e-> {
+                                dialogCallback.showException(e);
+                            });
                     });
                 });
 

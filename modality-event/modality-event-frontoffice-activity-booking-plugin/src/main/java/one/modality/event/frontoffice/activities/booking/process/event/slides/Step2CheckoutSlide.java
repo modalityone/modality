@@ -7,7 +7,6 @@ import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
-import dev.webfx.platform.util.time.Times;
 import dev.webfx.platform.windowhistory.WindowHistory;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
@@ -29,15 +28,15 @@ import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.ecommerce.document.service.DocumentAggregate;
-import one.modality.event.client.recurringevents.WorkingBooking;
-import one.modality.event.frontoffice.activities.booking.fx.FXGuestToBook;
 import one.modality.event.client.recurringevents.FXPersonToBook;
+import one.modality.event.client.recurringevents.WorkingBooking;
+import one.modality.event.client.recurringevents.WorkingBookingHistoryHelper;
+import one.modality.event.frontoffice.activities.booking.fx.FXGuestToBook;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountRouting;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.booking.process.event.WorkingBookingProperties;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.stream.Stream;
 
 final class Step2CheckoutSlide extends StepSlide {
@@ -286,7 +285,6 @@ final class Step2CheckoutSlide extends StepSlide {
     private void submit() {
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
         WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
-
         // Three cases here:
         // 1) we pay an old balance with no new option, the currentBooking has no changes
         if (!workingBooking.hasChanges()) {
@@ -294,35 +292,9 @@ final class Step2CheckoutSlide extends StepSlide {
         } else {
             // 2) the currentBooking has new option
             // We look at the changes to fill the history
-            StringBuilder history = new StringBuilder();
-            boolean first = true;
-            List<Attendance> attendanceAdded = workingBooking.getAttendanceAdded();
-            if (!attendanceAdded.isEmpty()) {
-                history.append("Booked ");
-                for (Attendance attendance : attendanceAdded) {
-                    if (!first)
-                        history.append(", ");
-                    // We get the date throw the scheduledItem associated to the attendance, because the
-                    // attendance date is not loaded from the database if it comes from a previous booking
-                    history.append(Times.format(attendance.getScheduledItem().getDate(), "dd/MM"));
-                    first = false;
-                }
-            }
-
-            List<Attendance> attendanceRemoved = workingBooking.getAttendanceRemoved();
-            if (!attendanceRemoved.isEmpty()) {
-                history.append(first ? "Removed " : " & removed ");
-                first = true;
-                for (Attendance attendance : attendanceRemoved) {
-                    if (!first)
-                        history.append(", ");
-                    history.append(Times.format(attendance.getScheduledItem().getDate(), "dd/MM"));
-                    first = false;
-                }
-            }
-
+            WorkingBookingHistoryHelper historyHelper = new WorkingBookingHistoryHelper(workingBooking.getAttendanceAdded(),workingBooking.getAttendanceRemoved());
             turnOnWaitMode();
-            workingBooking.submitChanges(history.toString())
+            workingBooking.submitChanges(historyHelper.buildHistory())
                 .onFailure(result -> UiScheduler.runInUiThread(() -> {
                     turnOffWaitMode();
                     displayErrorMessage("ErrorWhileInsertingBooking");

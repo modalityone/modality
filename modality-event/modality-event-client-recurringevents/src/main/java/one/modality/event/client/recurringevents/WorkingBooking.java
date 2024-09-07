@@ -119,8 +119,10 @@ public class WorkingBooking {
     }
 
     public void removeAttendances(List<Attendance> attendance) {
-        integrateNewDocumentEvent(new RemoveAttendancesEvent(attendance.toArray(new Attendance[0])));
-        lastestDocumentAggregate = null;
+        if (!attendance.isEmpty()) {
+            integrateNewDocumentEvent(new RemoveAttendancesEvent(attendance.toArray(new Attendance[0])));
+            lastestDocumentAggregate = null;
+        }
     }
 
     public void cancelBooking() {

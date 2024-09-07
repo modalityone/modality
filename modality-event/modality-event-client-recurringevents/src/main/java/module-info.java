@@ -14,6 +14,7 @@ module modality.event.client.recurringevents {
     requires webfx.platform.util;
     requires webfx.stack.i18n;
     requires webfx.stack.orm.entity;
+    requires webfx.platform.util.time;
 
     // Exported packages
     exports one.modality.event.client.recurringevents;
