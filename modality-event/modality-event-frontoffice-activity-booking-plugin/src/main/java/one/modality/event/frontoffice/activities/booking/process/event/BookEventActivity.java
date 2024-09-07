@@ -178,7 +178,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     }
 
     void syncWorkingBookingFromEventSchedule() {
-        WorkingBookingSyncer.syncWorkingBookingFromEventSchedule(workingBookingProperties.getWorkingBooking(), getRecurringEventSchedule());
+        WorkingBookingSyncer.syncWorkingBookingFromEventSchedule(workingBookingProperties.getWorkingBooking(), getRecurringEventSchedule(), true);
     }
 
     public void syncEventScheduleFromWorkingBooking() {

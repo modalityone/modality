@@ -69,7 +69,7 @@ public class WorkingBooking {
         return policyAggregate.getEvent();
     }
 
-    public void bookScheduledItems(List<ScheduledItem> scheduledItems) {
+    public void bookScheduledItems(List<ScheduledItem> scheduledItems, boolean addOnly) {
         if (scheduledItems.isEmpty())
             return;
         // first draft version assuming it's a new booking and new line
@@ -105,6 +105,12 @@ public class WorkingBooking {
         }).filter(Objects::nonNull).toArray(Attendance[]::new);
         if (attendances.length > 0)
             integrateNewDocumentEvent(new AddAttendancesEvent(attendances));
+        if (!addOnly) {
+            // We remove all existing attendances not referencing the passed scheduledItems
+            List<Attendance> attendancesToRemove = Collections.filter(existingAttendances, a ->
+                Collections.findFirst(scheduledItems, si -> a.getScheduledItem() == si) == null);
+            removeAttendances(attendancesToRemove);
+        }
         lastestDocumentAggregate = null;
     }
 
@@ -250,7 +256,7 @@ public class WorkingBooking {
 
     public static WorkingBooking createWholeEventWorkingBooking(PolicyAggregate policyAggregate) {
         WorkingBooking workingBooking = new WorkingBooking(policyAggregate, null);
-        workingBooking.bookScheduledItems(policyAggregate.getTeachingScheduledItems());
+        workingBooking.bookScheduledItems(policyAggregate.getTeachingScheduledItems(), false);
         return workingBooking;
     }
 

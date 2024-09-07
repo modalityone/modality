@@ -12,14 +12,14 @@ import java.util.List;
  */
 public final class WorkingBookingSyncer {
 
-    public static void syncWorkingBookingFromEventSchedule(WorkingBooking workingBooking, RecurringEventSchedule recurringEventSchedule) {
-        syncWorkingBookingFromSelectedScheduledItems(workingBooking, recurringEventSchedule.getSelectedScheduledItem());
+    public static void syncWorkingBookingFromEventSchedule(WorkingBooking workingBooking, RecurringEventSchedule recurringEventSchedule, boolean addOnly) {
+        syncWorkingBookingFromSelectedScheduledItems(workingBooking, recurringEventSchedule.getSelectedScheduledItem(), addOnly);
     }
 
-    public static void syncWorkingBookingFromSelectedScheduledItems(WorkingBooking workingBooking, List<ScheduledItem> scheduledItemsAdded) {
+    public static void syncWorkingBookingFromSelectedScheduledItems(WorkingBooking workingBooking, List<ScheduledItem> scheduledItems, boolean addOnly) {
         if (workingBooking.getDocument() == null)
             workingBooking.cancelChanges(); // weird, but this is to ensure the document is created
-        workingBooking.bookScheduledItems(scheduledItemsAdded); // We re-apply the selected dates to the booking
+        workingBooking.bookScheduledItems(scheduledItems, addOnly); // We re-apply the selected items to the booking
     }
 
     public static void syncEventScheduleFromWorkingBooking(WorkingBooking workingBooking, RecurringEventSchedule recurringEventSchedule) {
