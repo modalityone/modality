@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.activities.booking.process.event;
+package one.modality.event.client.recurringevents;
 
 import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.kit.util.properties.FXProperties;

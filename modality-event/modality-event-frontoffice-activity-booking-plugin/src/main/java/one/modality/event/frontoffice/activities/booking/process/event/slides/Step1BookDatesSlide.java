@@ -25,7 +25,7 @@ import javafx.scene.text.TextAlignment;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.event.frontoffice.activities.booking.process.event.RecurringEventSchedule;
+import one.modality.event.client.recurringevents.RecurringEventSchedule;
 import one.modality.event.frontoffice.activities.booking.process.event.WorkingBookingProperties;
 
 import java.time.LocalDate;

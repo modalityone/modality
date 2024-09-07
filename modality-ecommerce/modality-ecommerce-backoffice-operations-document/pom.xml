@@ -19,6 +19,12 @@
 
         <dependency>
             <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -54,6 +60,12 @@
         </dependency>
 
         <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-event-client-recurringevents</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-kit-launcher</artifactId>
             <version>0.1.0-SNAPSHOT</version>
@@ -67,10 +79,22 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-console</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-javatime-emul-j2cl</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <scope>runtime</scope>
             <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-uischeduler</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -93,8 +117,26 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-ui-dialog</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-ui-exceptions</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-ui-operation</artifactId>
             <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-javafxbase-emul</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>

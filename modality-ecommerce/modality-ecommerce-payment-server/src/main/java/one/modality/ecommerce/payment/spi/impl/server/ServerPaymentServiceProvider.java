@@ -11,6 +11,7 @@ import dev.webfx.stack.session.state.SystemUserId;
 import dev.webfx.stack.session.state.ThreadLocalStateHolder;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.triggers.Triggers;
+import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.SubmitDocumentChangesArgument;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
@@ -169,7 +170,8 @@ public class ServerPaymentServiceProvider implements PaymentServiceProvider {
                     // If there is a deposit, we remove all options added after the last successful payment (that is
                     // meant to pay all previous options).
                     return DocumentService.loadDocumentWithPolicyAndWholeHistory(document)
-                            .compose(documentAggregate -> {
+                            .compose(policyAndDocumentAggregates -> {
+                                DocumentAggregate documentAggregate = policyAndDocumentAggregates.getDocumentAggregate();
                                 // Searching for the last successful payment (shouldn't be null as there is a price deposit)
                                 MoneyTransfer lastSuccessfulPayment = documentAggregate.getSuccessfulMoneyTransfersStream().reduce((first, second) -> second).orElse(null);
                                 // Searching for the event marking this payment as successful

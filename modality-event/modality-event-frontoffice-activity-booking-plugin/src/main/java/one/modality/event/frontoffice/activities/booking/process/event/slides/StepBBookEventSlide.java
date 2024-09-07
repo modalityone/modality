@@ -33,7 +33,7 @@ import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.event.frontoffice.activities.booking.process.event.RecurringEventSchedule;
+import one.modality.event.client.recurringevents.RecurringEventSchedule;
 
 final class StepBBookEventSlide extends StepSlide {
 

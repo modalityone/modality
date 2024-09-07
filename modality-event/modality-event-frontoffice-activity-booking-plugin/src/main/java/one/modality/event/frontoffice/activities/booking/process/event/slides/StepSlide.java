@@ -31,11 +31,11 @@ import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
-import one.modality.event.frontoffice.activities.booking.WorkingBooking;
+import one.modality.event.client.recurringevents.WorkingBooking;
 import one.modality.event.frontoffice.activities.booking.fx.FXGuestToBook;
-import one.modality.event.frontoffice.activities.booking.fx.FXPersonToBook;
+import one.modality.event.client.recurringevents.FXPersonToBook;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.event.frontoffice.activities.booking.process.event.RecurringEventSchedule;
+import one.modality.event.client.recurringevents.RecurringEventSchedule;
 import one.modality.event.frontoffice.activities.booking.process.event.WorkingBookingProperties;
 
 import java.util.function.Supplier;

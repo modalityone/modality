@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.activities.booking;
+package one.modality.event.client.recurringevents;
 
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.util.Arrays;
@@ -10,7 +10,6 @@ import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 import one.modality.ecommerce.document.service.events.book.*;
 import one.modality.ecommerce.document.service.util.DocumentEvents;
-import one.modality.event.frontoffice.activities.booking.fx.FXPersonToBook;
 
 import java.util.ArrayList;
 import java.util.List;
