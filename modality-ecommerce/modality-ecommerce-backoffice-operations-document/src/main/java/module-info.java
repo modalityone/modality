@@ -6,6 +6,7 @@
 module modality.ecommerce.backoffice.operations.document {
 
     // Direct dependencies modules
+    requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.backoffice.operations.generic;

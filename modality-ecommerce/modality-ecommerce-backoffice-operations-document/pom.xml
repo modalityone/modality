@@ -19,6 +19,12 @@
 
         <dependency>
             <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -131,12 +137,6 @@
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-ui-operation</artifactId>
             <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>dev.webfx</groupId>
-            <artifactId>webfx-kit-javafxbase-emul</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
 
     </dependencies>
