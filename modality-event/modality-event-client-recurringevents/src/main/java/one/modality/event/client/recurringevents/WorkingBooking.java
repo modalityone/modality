@@ -57,6 +57,10 @@ public class WorkingBooking {
         return lastestDocumentAggregate;
     }
 
+    public Document getDocument() {
+        return document;
+    }
+
     public Object getDocumentPrimaryKey() {
         return documentPrimaryKey;
     }

@@ -1,9 +1,8 @@
-package one.modality.event.frontoffice.activities.booking;
+package one.modality.event.client.recurringevents;
 
 import dev.webfx.platform.util.collection.Collections;
 import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.ScheduledItem;
-import one.modality.event.frontoffice.activities.booking.process.event.RecurringEventSchedule;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,13 +13,13 @@ import java.util.List;
 public final class WorkingBookingSyncer {
 
     public static void syncWorkingBookingFromEventSchedule(WorkingBooking workingBooking, RecurringEventSchedule recurringEventSchedule) {
-        syncWorkingBookingFromNewSelectedScheduledItems(workingBooking, recurringEventSchedule.getSelectedScheduledItem());
+        syncWorkingBookingFromSelectedScheduledItems(workingBooking, recurringEventSchedule.getSelectedScheduledItem());
     }
 
-    public static void syncWorkingBookingFromNewSelectedScheduledItems(WorkingBooking workingBooking, List<ScheduledItem> scheduledItemsAdded) {
-        // Then we re-apply the selected dates to the new booking (move this up once TODO is done)
-        workingBooking.cancelChanges(); // weird, but this is to ensure the document is created
-        workingBooking.bookScheduledItems(scheduledItemsAdded); // Booking the selected dates
+    public static void syncWorkingBookingFromSelectedScheduledItems(WorkingBooking workingBooking, List<ScheduledItem> scheduledItemsAdded) {
+        if (workingBooking.getDocument() == null)
+            workingBooking.cancelChanges(); // weird, but this is to ensure the document is created
+        workingBooking.bookScheduledItems(scheduledItemsAdded); // We re-apply the selected dates to the booking
     }
 
     public static void syncEventScheduleFromWorkingBooking(WorkingBooking workingBooking, RecurringEventSchedule recurringEventSchedule) {
@@ -30,7 +29,7 @@ public final class WorkingBookingSyncer {
         recurringEventSchedule.addSelectedDates(datesAdded);
     }
 
-/*
+/* Same API but with WorkingBookingProperties
     public static void syncEventScheduleFromWorkingBooking(WorkingBookingProperties workingBookingProperties, RecurringEventSchedule recurringEventSchedule) {
         syncEventScheduleFromWorkingBooking(workingBookingProperties.getWorkingBooking(), recurringEventSchedule);
     }

@@ -6,7 +6,6 @@ import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Numbers;
-import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.orm.entity.Entities;
@@ -19,7 +18,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Labeled;
 import javafx.scene.text.Font;
 import one.modality.base.frontoffice.mainframe.fx.FXCollapseFooter;
-import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.Person;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.DocumentService;
@@ -28,15 +28,14 @@ import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.client.event.fx.FXEventId;
+import one.modality.event.client.recurringevents.FXPersonToBook;
 import one.modality.event.client.recurringevents.RecurringEventSchedule;
 import one.modality.event.client.recurringevents.WorkingBooking;
-import one.modality.event.client.recurringevents.FXPersonToBook;
+import one.modality.event.client.recurringevents.WorkingBookingSyncer;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountRouting;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountUiRoute;
 import one.modality.event.frontoffice.activities.booking.process.event.slides.LettersSlideController;
 
-import java.time.LocalDate;
-import java.util.List;
 import java.util.Objects;
 
 
@@ -179,23 +178,11 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
     }
 
     void syncWorkingBookingFromEventSchedule() {
-        syncWorkingBookingFromNewSelectedScheduledItems(getRecurringEventSchedule().getSelectedScheduledItem());
-    }
-
-    void syncWorkingBookingFromNewSelectedScheduledItems(List<ScheduledItem> scheduledItemsAdded) {
-        // Then we re-apply the selected dates to the new booking (move this up once TODO is done)
-        WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
-        workingBooking.cancelChanges(); // weird, but this is to ensure the document is created
-        workingBooking.bookScheduledItems(scheduledItemsAdded); // Booking the selected dates
+        WorkingBookingSyncer.syncWorkingBookingFromEventSchedule(workingBookingProperties.getWorkingBooking(), getRecurringEventSchedule());
     }
 
     public void syncEventScheduleFromWorkingBooking() {
-        WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
-        List<Attendance> attendanceAdded = workingBooking.getAttendanceAdded();
-        List<LocalDate> datesAdded = Collections.map(attendanceAdded, Attendance::getDate);
-        RecurringEventSchedule recurringEventSchedule = getRecurringEventSchedule();
-        recurringEventSchedule.setScheduledItems(workingBookingProperties.getScheduledItemsOnEvent(), true);
-        recurringEventSchedule.addSelectedDates(datesAdded);
+        WorkingBookingSyncer.syncEventScheduleFromWorkingBooking(workingBookingProperties.getWorkingBooking(), getRecurringEventSchedule());
     }
 
     public void displayBookSlide() {
