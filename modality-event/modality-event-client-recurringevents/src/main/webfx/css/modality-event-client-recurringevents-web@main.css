@@ -1,0 +1,81 @@
+* {
+    --fx-event-description-text-color: #444;
+}
+
+.event-title {
+    color: white;
+    --fx-svg-path-fill: white;
+}
+
+/* .text-justified */
+.event-description-text {
+    color: var(--fx-event-description-text-color);
+    text-align: justify;
+    line-height: 1.7em;
+}
+
+/* Date cells for recurring events */
+
+.event-date-cell > fx-border {
+    border: 1px solid #cccccc;
+}
+
+.event-date-cell.date-unselected {
+    color: #444;
+}
+
+.event-date-cell .event-time {
+    color: #838788;
+}
+
+.event-date-cell.date-unselected > fx-background {
+    background: none;
+}
+
+.event-date-cell.date-non-selectable > fx-background {
+    background-color: #dddddd;
+}
+
+.event-date-cell.date-non-selectable > fx-border {
+    border-color: #cccccc;
+}
+
+.event-date-cell.date-non-selectable,
+.event-date-cell.date-non-selectable .event-time {
+    color: #aaaaaa;
+}
+
+.event-date-cell.date-selected > fx-background,
+.event-date-cell.date-already-booked > fx-background {
+    background-color: #F5761A;
+}
+
+.event-date-cell.date-selected > fx-border,
+.event-date-cell.date-already-booked > fx-border {
+    border: none;
+}
+
+.event-date-cell.date-selected,
+.event-date-cell.date-selected .event-time {
+    color: white;
+}
+
+.event-date-cell.date-already-booked,
+.event-date-cell.date-already-booked .event-time {
+    color: #eeeeee;
+}
+
+
+/* .subtitle-grey */
+.subtitle-grey {
+    color: grey;
+    font-size: 14px;
+}
+
+.line-total > fx-background {
+    background-color: #CCCCCC;
+}
+
+.line-total span {
+    font-weight: bolder;
+}

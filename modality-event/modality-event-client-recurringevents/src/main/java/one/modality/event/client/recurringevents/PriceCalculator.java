@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.activities.booking;
+package one.modality.event.client.recurringevents;
 
 import one.modality.base.shared.entities.*;
 import one.modality.ecommerce.document.service.DocumentAggregate;

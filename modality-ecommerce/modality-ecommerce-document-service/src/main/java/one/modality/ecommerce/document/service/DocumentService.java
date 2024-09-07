@@ -45,19 +45,18 @@ public final class DocumentService {
 
     // Additional top-level utility methods to load document and policy (not directly implemented by provider and not directly serialised)
 
-    public static Future<DocumentAggregate> loadDocumentWithPolicy(Document document) {
+    public static Future<PolicyAndDocumentAggregates> loadDocumentWithPolicy(Document document) {
         return loadDocumentWithPolicyAndHistory(document, null);
     }
 
-    public static Future<DocumentAggregate> loadDocumentWithPolicyAndWholeHistory(Document document) {
+    public static Future<PolicyAndDocumentAggregates> loadDocumentWithPolicyAndWholeHistory(Document document) {
         return loadDocumentWithPolicyAndHistory(document, Integer.MAX_VALUE);
     }
 
-    private static Future<DocumentAggregate> loadDocumentWithPolicyAndHistory(Document document, Object historyPrimaryKey) {
+    private static Future<PolicyAndDocumentAggregates> loadDocumentWithPolicyAndHistory(Document document, Object historyPrimaryKey) {
         return loadPolicyAndDocument(
                 document.getEvent(),
-                new LoadDocumentArgument(document.getPrimaryKey(), null, null, historyPrimaryKey))
-                .map(PolicyAndDocumentAggregates::getDocumentAggregate);
+                new LoadDocumentArgument(document.getPrimaryKey(), null, null, historyPrimaryKey));
     }
 
     public static Future<PolicyAndDocumentAggregates> loadPolicyAndDocument(Event event, Object userPersonPrimaryKey) {

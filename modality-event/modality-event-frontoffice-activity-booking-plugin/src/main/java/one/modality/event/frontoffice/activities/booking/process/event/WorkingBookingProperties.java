@@ -6,8 +6,8 @@ import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.PolicyAggregate;
-import one.modality.event.frontoffice.activities.booking.PriceCalculator;
-import one.modality.event.frontoffice.activities.booking.WorkingBooking;
+import one.modality.event.client.recurringevents.PriceCalculator;
+import one.modality.event.client.recurringevents.WorkingBooking;
 
 import java.util.List;
 
