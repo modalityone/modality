@@ -15,4 +15,19 @@ public final class RemoveAttendancesEvent extends AbstractAttendancesEvent {
     public RemoveAttendancesEvent(Object documentPrimaryKey, Object documentLinePrimaryKey, Object[] attendancePrimaryKeys) {
         super(documentPrimaryKey, documentLinePrimaryKey, attendancePrimaryKeys, null);
     }
+
+    @Override
+    public void replayEvent() {
+        replayEventOnAttendances();
+    }
+
+    @Override
+    protected void replayEventOnAttendances() {
+        if (isForSubmit()) {
+            Object[] attendancesPrimaryKeys = getAttendancesPrimaryKeys();
+            for (Object attendancesPrimaryKey : attendancesPrimaryKeys) {
+                updateStore.deleteEntity(Attendance.class, attendancesPrimaryKey);
+            }
+        }
+    }
 }

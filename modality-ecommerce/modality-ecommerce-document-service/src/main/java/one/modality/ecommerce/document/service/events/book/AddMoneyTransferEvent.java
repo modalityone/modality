@@ -15,4 +15,13 @@ public final class AddMoneyTransferEvent extends AbstractExistingMoneyTransferEv
     public AddMoneyTransferEvent(MoneyTransfer moneyTransfer) {
         super(moneyTransfer);
     }
+
+    @Override
+    protected void createMoneyTransfer() {
+        if (isForSubmit()) {
+            moneyTransfer = updateStore.insertEntity(MoneyTransfer.class, getMoneyTransferPrimaryKey());
+        } else {
+            super.createMoneyTransfer();
+        }
+    }
 }

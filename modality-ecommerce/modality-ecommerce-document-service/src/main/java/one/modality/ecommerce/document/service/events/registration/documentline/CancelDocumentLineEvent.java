@@ -1,37 +1,40 @@
 package one.modality.ecommerce.document.service.events.registration.documentline;
 
 import one.modality.base.shared.entities.DocumentLine;
-import one.modality.ecommerce.document.service.events.AbstractSetDocumentLineFieldsEvent;
+import one.modality.ecommerce.document.service.events.AbstractDocumentLineEvent;
 
 /**
  * @author Bruno Salmon
  */
-public final class CancelDocumentLineEvent extends AbstractSetDocumentLineFieldsEvent {
+public final class CancelDocumentLineEvent extends AbstractDocumentLineEvent {
 
-    private static final Object[] FIELD_IDS = { "cancelled", "read" };
+    private final boolean cancelled;
+    private final boolean read;
 
     public CancelDocumentLineEvent(Object documentPrimaryKey, Object documentLinePrimaryKey, boolean cancelled, boolean read) {
-        super(documentPrimaryKey, documentLinePrimaryKey, FIELD_IDS, cancelled, read);
+        super(documentPrimaryKey, documentLinePrimaryKey);
+        this.cancelled = cancelled;
+        this.read = read;
     }
 
     public CancelDocumentLineEvent(DocumentLine documentLine, boolean cancelled, boolean read) {
-        super(documentLine, FIELD_IDS, cancelled, read);
+        super(documentLine);
+        this.cancelled = cancelled;
+        this.read = read;
     }
 
     public boolean isCancelled() {
-        return isCancelled(getFieldValues());
+        return cancelled;
     }
 
     public boolean isRead() {
-        return isRead(getFieldValues());
+        return read;
     }
 
-    public static boolean isCancelled(Object[] fieldValues) {
-        return (boolean) fieldValues[0];
+    @Override
+    public void replayEventOnDocumentLine() {
+        super.replayEventOnDocumentLine();
+        documentLine.setCancelled(cancelled);
+        documentLine.setRead(read);
     }
-
-    public static boolean isRead(Object[] fieldValues) {
-        return (boolean) fieldValues[1];
-    }
-
 }

@@ -15,4 +15,22 @@ public final class RemoveMoneyTransferEvent extends AbstractMoneyTransferEvent {
     public RemoveMoneyTransferEvent(MoneyTransfer moneyTransfer) {
         super(moneyTransfer);
     }
+
+    @Override
+    public void replayEvent() {
+        if (isForSubmit()) {
+            replayEventOnMoneyTransfer();
+        } else {
+            super.replayEvent();
+        }
+    }
+
+    @Override
+    protected void replayEventOnMoneyTransfer() {
+        if (isForSubmit()) {
+            updateStore.deleteEntity(MoneyTransfer.class, getMoneyTransferPrimaryKey());
+        } else {
+            super.replayEventOnMoneyTransfer();
+        }
+    }
 }

@@ -17,11 +17,11 @@ import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.triggers.Triggers;
 import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
-import one.modality.ecommerce.document.service.events.AbstractSetDocumentFieldsEvent;
-import one.modality.ecommerce.document.service.events.AbstractSetDocumentLineFieldsEvent;
-import one.modality.ecommerce.document.service.events.book.*;
-import one.modality.ecommerce.document.service.events.registration.documentline.RemoveDocumentLineEvent;
-import one.modality.ecommerce.document.service.events.registration.moneytransfer.RemoveMoneyTransferEvent;
+import one.modality.ecommerce.document.service.events.AbstractDocumentLineEvent;
+import one.modality.ecommerce.document.service.events.book.AddAttendancesEvent;
+import one.modality.ecommerce.document.service.events.book.AddDocumentEvent;
+import one.modality.ecommerce.document.service.events.book.AddDocumentLineEvent;
+import one.modality.ecommerce.document.service.events.book.AddMoneyTransferEvent;
 import one.modality.ecommerce.document.service.spi.DocumentServiceProvider;
 import one.modality.ecommerce.history.server.HistoryRecorder;
 
@@ -131,72 +131,12 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
         DocumentLine documentLine = null;
         AbstractDocumentEvent[] documentEvents = argument.getDocumentEvents();
         for (AbstractDocumentEvent e : documentEvents) {
-            if (e instanceof AddDocumentEvent) {
-                AddDocumentEvent ade = (AddDocumentEvent) e;
-                document = updateStore.insertEntity(Document.class, ade.getDocumentPrimaryKey());
-                document.setEvent(ade.getEventPrimaryKey());
-                document.setFieldValue("activity", 12); // GP TODO: remove activity from DB
-                document.setPerson(ade.getPersonPrimaryKey());
-                document.setFirstName(ade.getFirstName());
-                document.setLastName(ade.getLastName());
-                document.setEmail(ade.getEmail());
-            } else if (e instanceof AddDocumentLineEvent) {
-                AddDocumentLineEvent adle = (AddDocumentLineEvent) e;
-                documentLine = updateStore.insertEntity(DocumentLine.class, adle.getDocumentLinePrimaryKey());
-                documentLine.setDocument(document = updateStore.getOrCreateEntity(Document.class, adle.getDocumentPrimaryKey()));
-                documentLine.setSite(adle.getSitePrimaryKey());
-                documentLine.setItem(adle.getItemPrimaryKey());
-            } else if (e instanceof RemoveDocumentLineEvent) {
-                RemoveDocumentLineEvent rdle = (RemoveDocumentLineEvent) e;
-                documentLine = updateStore.getOrCreateEntity(DocumentLine.class, rdle.getDocumentLinePrimaryKey());
-                updateStore.deleteEntity(documentLine);
-                if (document == null)
-                    document = updateStore.getOrCreateEntity(Document.class, rdle.getDocumentPrimaryKey());
-            } else if (e instanceof AddAttendancesEvent) {
-                AddAttendancesEvent aae = (AddAttendancesEvent) e;
-                documentLine = updateStore.getOrCreateEntity(DocumentLine.class, aae.getDocumentLinePrimaryKey());
-                Object[] attendancesPrimaryKeys = aae.getAttendancesPrimaryKeys();
-                Object[] scheduledItemsPrimaryKeys = aae.getScheduledItemsPrimaryKeys();
-                for (int i = 0; i < attendancesPrimaryKeys.length; i++) {
-                    Attendance attendance = updateStore.insertEntity(Attendance.class, attendancesPrimaryKeys[i]);
-                    attendance.setDocumentLine(documentLine);
-                    attendance.setScheduledItem(scheduledItemsPrimaryKeys[i]);
-                }
-            } else if (e instanceof RemoveAttendancesEvent) {
-                RemoveAttendancesEvent rae = (RemoveAttendancesEvent) e;
-                Object[] attendancesPrimaryKeys = rae.getAttendancesPrimaryKeys();
-                for (Object attendancesPrimaryKey : attendancesPrimaryKeys) {
-                    updateStore.deleteEntity(Attendance.class, attendancesPrimaryKey);
-                }
-                if (document == null)
-                    document = updateStore.getOrCreateEntity(Document.class, rae.getDocumentPrimaryKey());
-                if (documentLine == null) {
-                    documentLine = updateStore.getOrCreateEntity(DocumentLine.class, rae.getDocumentLinePrimaryKey());
-                    documentLine.setDocument(document);
-                }
-            } else if (e instanceof AbstractSetDocumentFieldsEvent) {
-                AbstractSetDocumentFieldsEvent sdfe = (AbstractSetDocumentFieldsEvent) e;
-                document = updateStore.updateEntity(Document.class, e.getDocumentPrimaryKey());
-                Object[] fieldIds = sdfe.getFieldIds();
-                Object[] fieldValues = sdfe.getFieldValues();
-                for (int i = 0; i < fieldIds.length; i++) {
-                    document.setFieldValue(fieldIds[i], fieldValues[i]);
-                }
-            } else if (e instanceof AbstractSetDocumentLineFieldsEvent) {
-                AbstractSetDocumentLineFieldsEvent sdlfe = (AbstractSetDocumentLineFieldsEvent) e;
-                documentLine = updateStore.updateEntity(DocumentLine.class, sdlfe.getDocumentLinePrimaryKey());
-                if (document == null)
-                    document = updateStore.getOrCreateEntity(Document.class, sdlfe.getDocumentPrimaryKey());
-                Object[] fieldIds = sdlfe.getFieldIds();
-                Object[] fieldValues = sdlfe.getFieldValues();
-                for (int i = 0; i < fieldIds.length; i++) {
-                    documentLine.setFieldValue(fieldIds[i], fieldValues[i]);
-                }
-            } else if (e instanceof RemoveMoneyTransferEvent) { // Note that AddMoneyTransferEvent is managed by ServerPaymentServiceProvider
-                RemoveMoneyTransferEvent rmte = (RemoveMoneyTransferEvent) e;
-                updateStore.deleteEntity(MoneyTransfer.class, rmte.getMoneyTransferPrimaryKey());
-                if (document == null)
-                    document = updateStore.getOrCreateEntity(Document.class, rmte.getDocumentPrimaryKey());
+            e.setEntityStore(updateStore); // This indicates it's for submit
+            e.replayEvent();
+            if (document == null)
+                document = e.getDocument();
+            if (documentLine == null && e instanceof AbstractDocumentLineEvent) {
+                documentLine = ((AbstractDocumentLineEvent) e).getDocumentLine();
             }
         }
 

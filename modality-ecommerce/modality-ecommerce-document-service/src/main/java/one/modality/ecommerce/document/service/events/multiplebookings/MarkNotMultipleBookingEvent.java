@@ -1,30 +1,33 @@
 package one.modality.ecommerce.document.service.events.multiplebookings;
 
+import dev.webfx.stack.orm.entity.Entities;
 import one.modality.base.shared.entities.Document;
-import one.modality.ecommerce.document.service.events.AbstractSetDocumentFieldsEvent;
+import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 
 /**
  * @author Bruno Salmon
  */
-public class MarkNotMultipleBookingEvent extends AbstractSetDocumentFieldsEvent {
+public class MarkNotMultipleBookingEvent extends AbstractDocumentEvent {
 
-    private static final Object[] FIELD_IDS = { "notMultipleBooking" };
+    private final Object notMultipleBookingPrimaryKey;
 
     public MarkNotMultipleBookingEvent(Object documentPrimaryKey, Object notMultipleBookingPrimaryKey) {
-        super(documentPrimaryKey, FIELD_IDS, notMultipleBookingPrimaryKey);
+        super(documentPrimaryKey);
+        this.notMultipleBookingPrimaryKey = notMultipleBookingPrimaryKey;
     }
 
     public MarkNotMultipleBookingEvent(Document document, Document notMultipleBooking) {
-        super(document, FIELD_IDS, notMultipleBooking);
+        super(document);
+        this.notMultipleBookingPrimaryKey = Entities.getPrimaryKey(notMultipleBooking);
     }
 
-    public Object getNotMultipleBooking() {
-        return getNotMultipleBooking(getFieldValues());
+    public Object getNotMultipleBookingPrimaryKey() {
+        return notMultipleBookingPrimaryKey;
     }
 
-    public static Object getNotMultipleBooking(Object[] fieldValues) {
-        return fieldValues[0];
+    @Override
+    public void replayEventOnDocument() {
+        super.replayEventOnDocument();
+        document.setFieldValue("notMultipleBookingPrimaryKey", notMultipleBookingPrimaryKey);
     }
-
-
 }

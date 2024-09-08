@@ -1,28 +1,32 @@
 package one.modality.ecommerce.document.service.events.registration;
 
 import one.modality.base.shared.entities.Document;
-import one.modality.ecommerce.document.service.events.AbstractSetDocumentFieldsEvent;
+import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 
 /**
  * @author Bruno Salmon
  */
-public class FlagDocumentEvent extends AbstractSetDocumentFieldsEvent {
+public class FlagDocumentEvent extends AbstractDocumentEvent {
 
-    private static final Object[] FIELD_IDS = { "flagged" };
+    private final boolean flagged;
 
     public FlagDocumentEvent(Object documentPrimaryKey, boolean flagged) {
-        super(documentPrimaryKey, FIELD_IDS, flagged);
+        super(documentPrimaryKey);
+        this.flagged = flagged;
     }
 
     public FlagDocumentEvent(Document document, boolean flagged) {
-        super(document, FIELD_IDS, flagged);
+        super(document);
+        this.flagged = flagged;
     }
 
     public boolean isFlagged() {
-        return isFlagged(getFieldValues());
+        return flagged;
     }
 
-    public static boolean isFlagged(Object[] fieldValues) {
-        return (boolean) fieldValues[0];
+    @Override
+    public void replayEventOnDocument() {
+        super.replayEventOnDocument();
+        document.setFlagged(flagged);
     }
 }

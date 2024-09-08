@@ -1,21 +1,24 @@
 package one.modality.ecommerce.document.service.events.multiplebookings;
 
 import one.modality.base.shared.entities.Document;
-import one.modality.ecommerce.document.service.events.AbstractSetDocumentFieldsEvent;
+import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 
 /**
  * @author Bruno Salmon
  */
-public class MergeMultipleBookingsOptionsEvent extends AbstractSetDocumentFieldsEvent {
-
-    private static final Object[] FIELD_IDS = { "triggerMergeFromOtherMultipleBookings" };
+public class MergeMultipleBookingsOptionsEvent extends AbstractDocumentEvent {
 
     public MergeMultipleBookingsOptionsEvent(Object documentPrimaryKey) {
-        super(documentPrimaryKey, FIELD_IDS, true);
+        super(documentPrimaryKey);
     }
 
     public MergeMultipleBookingsOptionsEvent(Document document) {
-        super(document, FIELD_IDS, true);
+        super(document);
     }
 
+    @Override
+    public void replayEventOnDocument() {
+        super.replayEventOnDocument();
+        document.setFieldValue("triggerMergeFromOtherMultipleBookings", true);
+    }
 }

@@ -23,8 +23,8 @@ public class AbstractMoneyTransferEvent extends AbstractDocumentEvent {
 
     public MoneyTransfer getMoneyTransfer() {
         if (moneyTransfer == null && entityStore != null) {
-            moneyTransfer = entityStore.getOrCreateEntity(MoneyTransfer.class, getMoneyTransferPrimaryKey());
-            moneyTransfer.setDocument(getDocument());
+            createMoneyTransfer();
+            replayEventOnMoneyTransfer();
         }
         return moneyTransfer;
     }
@@ -35,5 +35,16 @@ public class AbstractMoneyTransferEvent extends AbstractDocumentEvent {
 
     public void setMoneyTransferPrimaryKey(Object moneyTransferPrimaryKey) {
         this.moneyTransferPrimaryKey = moneyTransferPrimaryKey;
+    }
+
+    protected void createMoneyTransfer() {
+        if (isForSubmit())
+            moneyTransfer = updateStore.updateEntity(MoneyTransfer.class, getMoneyTransferPrimaryKey());
+        else
+            moneyTransfer = entityStore.getOrCreateEntity(MoneyTransfer.class, getMoneyTransferPrimaryKey());
+    }
+
+    protected void replayEventOnMoneyTransfer() {
+        moneyTransfer.setDocument(getDocument());
     }
 }

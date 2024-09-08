@@ -35,12 +35,12 @@ public final class AddDocumentEventSerialCodec extends AbstractDocumentEventSeri
     @Override
     public AddDocumentEvent decode(ReadOnlyAstObject serial) {
         return postDecode(new AddDocumentEvent(
-                decodeDocumentPrimaryKey(serial),
-                decodeObject(serial, EVENT_PRIMARY_KEY),
-                decodeObject(serial, PERSON_PRIMARY_KEY),
-                decodeString(serial, FIRST_NAME_KEY),
-                decodeString(serial, LAST_NAME_KEY),
-                decodeString(serial, EMAIL_KEY)
+            decodeDocumentPrimaryKey(serial),
+            decodeObject(serial, EVENT_PRIMARY_KEY),
+            decodeObject(serial, PERSON_PRIMARY_KEY),
+            decodeString(serial, FIRST_NAME_KEY),
+            decodeString(serial, LAST_NAME_KEY),
+            decodeString(serial, EMAIL_KEY)
         ), serial);
     }
 }

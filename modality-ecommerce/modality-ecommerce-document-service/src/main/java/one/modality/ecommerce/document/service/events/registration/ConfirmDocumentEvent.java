@@ -1,21 +1,24 @@
 package one.modality.ecommerce.document.service.events.registration;
 
 import one.modality.base.shared.entities.Document;
-import one.modality.ecommerce.document.service.events.AbstractSetDocumentFieldsEvent;
+import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 
 /**
  * @author Bruno Salmon
  */
-public class ConfirmDocumentEvent extends AbstractSetDocumentFieldsEvent {
+public class ConfirmDocumentEvent extends AbstractDocumentEvent {
 
-    private static final Object[] FIELD_IDS = { "confirmed", "read" };
+    private final boolean confirmed;
+    private final boolean read;
 
     public ConfirmDocumentEvent(Object documentPrimaryKey, boolean confirmed) {
         this(documentPrimaryKey, confirmed, false);
     }
 
     public ConfirmDocumentEvent(Object documentPrimaryKey, boolean confirmed, boolean read) {
-        super(documentPrimaryKey, FIELD_IDS, confirmed, read);
+        super(documentPrimaryKey);
+        this.confirmed = confirmed;
+        this.read = read;
     }
 
     public ConfirmDocumentEvent(Document document, boolean confirmed) {
@@ -23,22 +26,23 @@ public class ConfirmDocumentEvent extends AbstractSetDocumentFieldsEvent {
     }
 
     public ConfirmDocumentEvent(Document document, boolean confirmed, boolean read) {
-        super(document, FIELD_IDS, confirmed, read);
+        super(document);
+        this.confirmed = confirmed;
+        this.read = read;
     }
 
     public boolean isConfirmed() {
-        return isConfirmed(getFieldValues());
+        return confirmed;
     }
 
     public boolean isRead() {
-        return isRead(getFieldValues());
+        return read;
     }
 
-    public static boolean isConfirmed(Object[] fieldValues) {
-        return (boolean) fieldValues[0];
-    }
-
-    public static boolean isRead(Object[] fieldValues) {
-        return (boolean) fieldValues[1];
+    @Override
+    public void replayEventOnDocument() {
+        super.replayEventOnDocument();
+        document.setConfirmed(confirmed);
+        document.setRead(read);
     }
 }
