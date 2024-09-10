@@ -10,7 +10,7 @@ import one.modality.ecommerce.document.service.events.book.ApplyFacilityFeeDocum
  */
 public final class ApplyFacilityFeeDocumentEventSerialCodec extends AbstractDocumentEventSerialCodec<ApplyFacilityFeeDocumentEvent> {
 
-    private static final String CODEC_ID = "CancelDocumentEvent";
+    private static final String CODEC_ID = "ApplyFacilityFeeDocumentEvent";
     private static final String APPLY_KEY = "apply";
 
     public ApplyFacilityFeeDocumentEventSerialCodec() {

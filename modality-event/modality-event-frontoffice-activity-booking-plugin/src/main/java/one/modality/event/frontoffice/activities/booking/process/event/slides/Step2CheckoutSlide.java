@@ -5,6 +5,7 @@ import dev.webfx.extras.panes.FlipPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.windowhistory.WindowHistory;
@@ -87,10 +88,6 @@ final class Step2CheckoutSlide extends StepSlide {
         personToBookMonoPane.managedProperty().bind(step1PersonToBookWasShownProperty.not());
         VBox.setMargin(personToBookMonoPane, new Insets(20, 0, 20, 0));
 
-        submitButton.setOnAction(event -> submit());
-        submitButton.disableProperty().bind(FXProperties.compute(getWorkingBookingProperties().balanceProperty(), balance -> balance.intValue() <= 0));
-        VBox.setMargin(submitButton, new Insets(20, 0, 20, 0));
-
         // Adding the container that will display the CheckoutAccountActivity (and eventually the login page before)
         BorderPane signInContainer = new BorderPane();
         Label loginLabel = Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), "LoginBeforeBooking")));
@@ -127,10 +124,19 @@ final class Step2CheckoutSlide extends StepSlide {
 
         CheckBox facilityFeeCheckBox = I18nControls.bindI18nProperties(new CheckBox(), "FacilityFee");
         VBox.setMargin(facilityFeeCheckBox, new Insets(50, 0, 50, 0));
+        Document document = getWorkingBooking().getLastestDocumentAggregate().getDocument();
+        facilityFeeCheckBox.setSelected(document.isPersonFacilityFee());
         facilityFeeCheckBox.setOnAction(e -> {
             getWorkingBooking().applyFacilityFeeRate(facilityFeeCheckBox.isSelected());
             rebuildSummaryGridPane();
         });
+
+        submitButton.setOnAction(event -> submit());
+        // The submit button is disabled if there is nothing to pay and no new changes on the booking
+        submitButton.disableProperty().bind(FXProperties.combine(
+            getWorkingBookingProperties().balanceProperty(), ObservableLists.isEmpty(getWorkingBooking().getDocumentChanges()),
+            (balance, empty) -> balance.intValue() <= 0 && empty));
+        VBox.setMargin(submitButton, new Insets(20, 0, 20, 0));
 
         mainVbox.getChildren().setAll(
             summaryGridPane,
@@ -170,9 +176,11 @@ final class Step2CheckoutSlide extends StepSlide {
         workingBookingProperties.updateAll();
 
         summaryGridPane.getChildren().clear();
-        addRow(Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), "Summary"))),
+        addRow(
+            Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), "Summary"))),
             Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), "Price"))),
-            new Label());
+            new Label()
+        );
 
         int noDiscountTotalPrice = 0;
         // FIRST PART: WHAT HAS BEEN ALREADY BOOKED FOR THIS EVENT IN THE PAST
@@ -188,9 +196,11 @@ final class Step2CheckoutSlide extends StepSlide {
         int total = workingBookingProperties.getTotal();
         if (total < noDiscountTotalPrice) {
             Label price = new Label(EventPriceFormatter.formatWithCurrency(total - noDiscountTotalPrice, workingBooking.getEvent()));
-            addRow(I18nControls.bindI18nProperties(new Label(), "Discount"),
+            addRow(
+                I18nControls.bindI18nProperties(new Label(), "Discount"),
                 price,
-                new Label());
+                new Label()
+            );
         }
 
 

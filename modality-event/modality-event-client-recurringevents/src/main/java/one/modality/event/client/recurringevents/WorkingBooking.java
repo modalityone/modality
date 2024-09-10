@@ -5,6 +5,8 @@ import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityStore;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import one.modality.base.shared.entities.*;
 import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
@@ -23,7 +25,7 @@ public class WorkingBooking {
 
     private final PolicyAggregate policyAggregate;
     private final DocumentAggregate initialDocumentAggregate; // null for new bookings
-    private final List<AbstractDocumentEvent> documentChanges = new ArrayList<>();
+    private final ObservableList<AbstractDocumentEvent> documentChanges = FXCollections.observableArrayList();
     private Object documentPrimaryKey; // null for new booking
     private Document document;
     private DocumentAggregate lastestDocumentAggregate;
@@ -216,7 +218,7 @@ public class WorkingBooking {
         return getInitialDocumentAggregate() == null;
     }
 
-    public List<AbstractDocumentEvent> getDocumentChanges() {
+    public ObservableList<AbstractDocumentEvent> getDocumentChanges() {
         return documentChanges;
     }
 

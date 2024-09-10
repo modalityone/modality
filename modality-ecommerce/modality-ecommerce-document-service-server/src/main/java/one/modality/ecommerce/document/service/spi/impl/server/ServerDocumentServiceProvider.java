@@ -18,10 +18,7 @@ import one.modality.base.shared.entities.triggers.Triggers;
 import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 import one.modality.ecommerce.document.service.events.AbstractDocumentLineEvent;
-import one.modality.ecommerce.document.service.events.book.AddAttendancesEvent;
-import one.modality.ecommerce.document.service.events.book.AddDocumentEvent;
-import one.modality.ecommerce.document.service.events.book.AddDocumentLineEvent;
-import one.modality.ecommerce.document.service.events.book.AddMoneyTransferEvent;
+import one.modality.ecommerce.document.service.events.book.*;
 import one.modality.ecommerce.document.service.spi.DocumentServiceProvider;
 import one.modality.ecommerce.history.server.HistoryRecorder;
 
@@ -41,23 +38,23 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
     public Future<PolicyAggregate> loadPolicy(LoadPolicyArgument argument) {
         // Managing the case of recurring event only for now
         return QueryService.executeQueryBatch(
-                new Batch<>(new QueryArgument[] {
-                        new QueryArgumentBuilder()
-                                .setStatement(POLICY_SCHEDULED_ITEMS_QUERY_BASE + " where event = ?")
-                                .setParameters(argument.getEventPk())
-                                .setLanguage("DQL")
-                                .setDataSourceId(DataSourceModelService.getDefaultDataSourceId())
-                                .build(),
-                        new QueryArgumentBuilder()
-                                .setStatement(POLICY_RATES_QUERY_BASE + " where site = (select venue from Event where id = ?)")
-                                .setParameters(argument.getEventPk())
-                                .setLanguage("DQL")
-                                .setDataSourceId(DataSourceModelService.getDefaultDataSourceId())
-                                .build()
+                new Batch<>(new QueryArgument[]{
+                    new QueryArgumentBuilder()
+                        .setStatement(POLICY_SCHEDULED_ITEMS_QUERY_BASE + " where event = ?")
+                        .setParameters(argument.getEventPk())
+                        .setLanguage("DQL")
+                        .setDataSourceId(DataSourceModelService.getDefaultDataSourceId())
+                        .build(),
+                    new QueryArgumentBuilder()
+                        .setStatement(POLICY_RATES_QUERY_BASE + " where site = (select venue from Event where id = ?)")
+                        .setParameters(argument.getEventPk())
+                        .setLanguage("DQL")
+                        .setDataSourceId(DataSourceModelService.getDefaultDataSourceId())
+                        .build()
                 }))
-                .map(batch -> new PolicyAggregate(
-                        POLICY_SCHEDULED_ITEMS_QUERY_BASE, batch.get(0),
-                        POLICY_RATES_QUERY_BASE, batch.get(1)));
+            .map(batch -> new PolicyAggregate(
+                POLICY_SCHEDULED_ITEMS_QUERY_BASE, batch.get(0),
+                POLICY_RATES_QUERY_BASE, batch.get(1)));
     }
 
     @Override
@@ -69,59 +66,61 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
     }
 
     private Future<DocumentAggregate> loadLatestDocumentFromDatabase(LoadDocumentArgument argument) {
-        Object[] parameters = { argument.getDocumentPrimaryKey() };
+        Object[] parameters = {argument.getDocumentPrimaryKey()};
         EntityStoreQuery[] queries = {
-                new EntityStoreQuery("select event,person from Document where id=? order by id", parameters),
-                new EntityStoreQuery("select document,site,item from DocumentLine where document=? and site!=null order by id", parameters),
-                new EntityStoreQuery("select documentLine,scheduledItem from Attendance where documentLine.document=? order by id", parameters),
-                new EntityStoreQuery("select document,amount,pending,successful from MoneyTransfer where document=? order by id", parameters)
+            new EntityStoreQuery("select event,person,person_firstName,person_lastName,person_email,person_facilityFee from Document where id=? order by id", parameters),
+            new EntityStoreQuery("select document,site,item from DocumentLine where document=? and site!=null order by id", parameters),
+            new EntityStoreQuery("select documentLine,scheduledItem from Attendance where documentLine.document=? order by id", parameters),
+            new EntityStoreQuery("select document,amount,pending,successful from MoneyTransfer where document=? order by id", parameters)
         };
         if (parameters[0] == null) {
-            parameters = new Object[] { argument.getPersonPrimaryKey(), argument.getEventPrimaryKey() };
+            parameters = new Object[]{argument.getPersonPrimaryKey(), argument.getEventPrimaryKey()};
             for (int i = 0; i < queries.length; i++) {
                 queries[i] = new EntityStoreQuery(queries[i].getSelect().replace("=?", "=(select Document where person=? and event=? and !cancelled order by id desc limit 1)"), parameters);
             }
         }
         return EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
-                .executeQueryBatch(queries)
-                .map(entityLists -> {
-                    Document document = ((List<Document>) entityLists[0]).stream().findFirst().orElse(null);
-                    if (document == null) {
-                        return null;
-                    }
-                    List<AbstractDocumentEvent> documentEvents = new ArrayList<>();
-                    documentEvents.add(new AddDocumentEvent(document));
-                    ((List<DocumentLine>) entityLists[1]).forEach(dl -> documentEvents.add(new AddDocumentLineEvent(dl)));
-                    ((List<Attendance>) entityLists[2]).stream().collect(Collectors.groupingBy(Attendance::getDocumentLine))
-                            .entrySet().forEach(entry -> documentEvents.add(new AddAttendancesEvent(entry.getValue().toArray(new Attendance[0]))));
-                    ((List<MoneyTransfer>) entityLists[3]).forEach(mt -> documentEvents.add(new AddMoneyTransferEvent(mt)));
-                    return new DocumentAggregate(documentEvents);
-                });
+            .executeQueryBatch(queries)
+            .map(entityLists -> {
+                Document document = ((List<Document>) entityLists[0]).stream().findFirst().orElse(null);
+                if (document == null) {
+                    return null;
+                }
+                List<AbstractDocumentEvent> documentEvents = new ArrayList<>();
+                documentEvents.add(new AddDocumentEvent(document));
+                ((List<DocumentLine>) entityLists[1]).forEach(dl -> documentEvents.add(new AddDocumentLineEvent(dl)));
+                ((List<Attendance>) entityLists[2]).stream().collect(Collectors.groupingBy(Attendance::getDocumentLine))
+                    .entrySet().forEach(entry -> documentEvents.add(new AddAttendancesEvent(entry.getValue().toArray(new Attendance[0]))));
+                ((List<MoneyTransfer>) entityLists[3]).forEach(mt -> documentEvents.add(new AddMoneyTransferEvent(mt)));
+                if (document.isPersonFacilityFee())
+                    documentEvents.add(new ApplyFacilityFeeDocumentEvent(document, true));
+                return new DocumentAggregate(documentEvents);
+            });
     }
 
     private Future<DocumentAggregate> loadDocumentFromHistory(LoadDocumentArgument argument) {
         String select = "select changes from History where document=? and id<=? order by id";
-        Object[] parameters = { argument.getDocumentPrimaryKey(), argument.getHistoryPrimaryKey() };
+        Object[] parameters = {argument.getDocumentPrimaryKey(), argument.getHistoryPrimaryKey()};
         if (parameters[0] == null) {
-            parameters = new Object[] { argument.getPersonPrimaryKey(), argument.getEventPrimaryKey(), argument.getHistoryPrimaryKey() };
+            parameters = new Object[]{argument.getPersonPrimaryKey(), argument.getEventPrimaryKey(), argument.getHistoryPrimaryKey()};
             select = select.replace("document=?", "document=(select Document where person=? and event=? and !cancelled order by id desc limit 1)");
         }
         return EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
-                .<History>executeQuery(select, parameters)
-                .map(historyList -> {
-                    if (historyList.isEmpty()) {
-                        return null;
+            .<History>executeQuery(select, parameters)
+            .map(historyList -> {
+                if (historyList.isEmpty()) {
+                    return null;
+                }
+                List<AbstractDocumentEvent> documentEvents = new ArrayList<>();
+                historyList.forEach(history -> {
+                    ReadOnlyAstArray astArray = AST.parseArray(history.getChanges(), "json");
+                    if (astArray != null) { // This case may come from KBS2
+                        AbstractDocumentEvent[] events = SerialCodecManager.decodeAstArrayToJavaArray(astArray, AbstractDocumentEvent.class);
+                        documentEvents.addAll(Arrays.asList(events));
                     }
-                    List<AbstractDocumentEvent> documentEvents = new ArrayList<>();
-                    historyList.forEach(history -> {
-                        ReadOnlyAstArray astArray = AST.parseArray(history.getChanges(), "json");
-                        if (astArray != null) { // This case may come from KBS2
-                            AbstractDocumentEvent[] events = SerialCodecManager.decodeAstArrayToJavaArray(astArray, AbstractDocumentEvent.class);
-                            documentEvents.addAll(Arrays.asList(events));
-                        }
-                    });
-                    return new DocumentAggregate(documentEvents);
                 });
+                return new DocumentAggregate(documentEvents);
+            });
     }
 
     @Override
@@ -142,36 +141,36 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
 
         // Note: At this point, document may be null, but in that case we at least have documentLine not null
         return HistoryRecorder.prepareDocumentHistoryBeforeSubmit(argument.getHistoryComment(), document, documentLine)
-                .compose(history -> // At this point, history.getDocument() is never null (it has eventually been
-                        submitChangesAndPrepareResult(updateStore, history.getDocument()) // resolved through DB reading)
-                        .onSuccess(ignored -> // Completing the history recording (changes column with resolved primary keys)
-                            HistoryRecorder.completeDocumentHistoryAfterSubmit(history, argument.getDocumentEvents())
-                        )
-                );
+            .compose(history -> // At this point, history.getDocument() is never null (it has eventually been
+                submitChangesAndPrepareResult(updateStore, history.getDocument()) // resolved through DB reading)
+                    .onSuccess(ignored -> // Completing the history recording (changes column with resolved primary keys)
+                        HistoryRecorder.completeDocumentHistoryAfterSubmit(history, argument.getDocumentEvents())
+                    )
+            );
     }
 
     private Future<SubmitDocumentChangesResult> submitChangesAndPrepareResult(UpdateStore updateStore, Document document) {
         return updateStore.submitChanges(Triggers.frontOfficeTransaction(updateStore))
-                .compose(batch -> {
-                    Object documentPk = document.getPrimaryKey();
-                    Object documentRef = document.getRef();
-                    Object cartPk = null;
-                    String cartUuid = null;
-                    Cart cart = document.getCart();
-                    if (cart != null) {
-                        cartPk = cart.getPrimaryKey();
-                        cartUuid = cart.getUuid();
-                    }
-                    if (cartUuid == null || documentRef == null) {
-                        return document.onExpressionLoaded("ref,cart.uuid")
-                                .map(x -> new SubmitDocumentChangesResult(
-                                        document.getPrimaryKey(),
-                                        document.getRef(),
-                                        document.getCart().getPrimaryKey(),
-                                        document.getCart().getUuid()));
-                    }
-                    return Future.succeededFuture(new SubmitDocumentChangesResult(documentPk, documentRef, cartPk, cartUuid));
-                });
+            .compose(batch -> {
+                Object documentPk = document.getPrimaryKey();
+                Object documentRef = document.getRef();
+                Object cartPk = null;
+                String cartUuid = null;
+                Cart cart = document.getCart();
+                if (cart != null) {
+                    cartPk = cart.getPrimaryKey();
+                    cartUuid = cart.getUuid();
+                }
+                if (cartUuid == null || documentRef == null) {
+                    return document.onExpressionLoaded("ref,cart.uuid")
+                        .map(x -> new SubmitDocumentChangesResult(
+                            document.getPrimaryKey(),
+                            document.getRef(),
+                            document.getCart().getPrimaryKey(),
+                            document.getCart().getUuid()));
+                }
+                return Future.succeededFuture(new SubmitDocumentChangesResult(documentPk, documentRef, cartPk, cartUuid));
+            });
     }
 
 }
