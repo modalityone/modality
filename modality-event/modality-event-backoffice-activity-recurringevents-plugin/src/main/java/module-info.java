@@ -56,7 +56,7 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     exports one.modality.event.backoffice.operations.routes.recurringevents;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.backoffice.activities.recurringevents.BookingUiRoute;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.backoffice.activities.recurringevents.RecurringEventsUiRoute;
     provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.event.backoffice.activities.recurringevents.RouteToRecurringEventsRequestEmitter;
 
 }

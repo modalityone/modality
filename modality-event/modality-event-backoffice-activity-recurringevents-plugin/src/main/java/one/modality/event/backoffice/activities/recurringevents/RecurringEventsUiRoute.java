@@ -5,9 +5,9 @@ import dev.webfx.stack.routing.uirouter.UiRoute;
 import dev.webfx.stack.routing.uirouter.impl.UiRouteImpl;
 import one.modality.event.backoffice.activities.recurringevents.routing.RecurringEventsRouting;
 
-public final class BookingUiRoute extends UiRouteImpl {
+public final class RecurringEventsUiRoute extends UiRouteImpl {
 
-    public BookingUiRoute() {
+    public RecurringEventsUiRoute() {
         super(uiRoute());
     }
 

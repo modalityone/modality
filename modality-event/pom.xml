@@ -18,6 +18,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>modality-event-backoffice-activity-medias-plugin</module>
         <module>modality-event-backoffice-activity-recurringevents-plugin</module>
         <module>modality-event-backoffice-events-buttonselector-plugin</module>
         <module>modality-event-backoffice-events-ganttcanvas-plugin</module>
