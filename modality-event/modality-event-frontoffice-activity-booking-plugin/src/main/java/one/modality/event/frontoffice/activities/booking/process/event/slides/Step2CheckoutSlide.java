@@ -19,6 +19,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
@@ -100,7 +101,7 @@ final class Step2CheckoutSlide extends StepSlide {
         signInContainer.setTop(signIntopVBox);
 
         guestPanel.setOnSubmit(event -> {
-            Document document = getWorkingBookingProperties().getWorkingBooking().getLastestDocumentAggregate().getDocument();
+            Document document = getWorkingBooking().getLastestDocumentAggregate().getDocument();
             document.setFirstName(guestPanel.getFirstName());
             document.setLastName(guestPanel.getLastName());
             document.setEmail(guestPanel.getEmail());
@@ -124,9 +125,17 @@ final class Step2CheckoutSlide extends StepSlide {
             guestPanel.onHiding();
         });
 
+        CheckBox facilityFeeCheckBox = I18nControls.bindI18nProperties(new CheckBox(), "FacilityFee");
+        VBox.setMargin(facilityFeeCheckBox, new Insets(50, 0, 50, 0));
+        facilityFeeCheckBox.setOnAction(e -> {
+            getWorkingBooking().applyFacilityFeeRate(facilityFeeCheckBox.isSelected());
+            rebuildSummaryGridPane();
+        });
+
         mainVbox.getChildren().setAll(
             summaryGridPane,
             personToBookMonoPane,
+            facilityFeeCheckBox,
             submitButton,
             flipPane
         );
@@ -155,8 +164,8 @@ final class Step2CheckoutSlide extends StepSlide {
 
     private void rebuildSummaryGridPane() {
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
-        WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
-        DocumentAggregate documentAggregate = workingBookingProperties.getDocumentAggregate();
+        WorkingBooking workingBooking = getWorkingBooking();
+        DocumentAggregate documentAggregate = getDocumentAggregate();
 
         workingBookingProperties.updateAll();
 
@@ -179,7 +188,6 @@ final class Step2CheckoutSlide extends StepSlide {
         int total = workingBookingProperties.getTotal();
         if (total < noDiscountTotalPrice) {
             Label price = new Label(EventPriceFormatter.formatWithCurrency(total - noDiscountTotalPrice, workingBooking.getEvent()));
-            GridPane.setHalignment(price, HPos.RIGHT);
             addRow(I18nControls.bindI18nProperties(new Label(), "Discount"),
                 price,
                 new Label());
@@ -191,7 +199,7 @@ final class Step2CheckoutSlide extends StepSlide {
 
     private int addAttendanceRows(Stream<Attendance> attendanceStream, boolean existing) {
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
-        WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
+        WorkingBooking workingBooking = getWorkingBooking();
 
         int[] totalPrice = { 0 };
 
@@ -204,7 +212,6 @@ final class Step2CheckoutSlide extends StepSlide {
             int dailyRatePrice = workingBookingProperties.getDailyRatePrice();
             totalPrice[0] += dailyRatePrice;
             Label price = new Label(EventPriceFormatter.formatWithCurrency(dailyRatePrice, getEvent()));
-            GridPane.setHalignment(price, HPos.RIGHT);
 
             Hyperlink trashOption = new Hyperlink();
             SVGPath svgTrash = SvgIcons.createTrashSVGPath();
@@ -255,6 +262,7 @@ final class Step2CheckoutSlide extends StepSlide {
         summaryGridPane.add(node1, 0, rowIndex);
         summaryGridPane.add(node2, 1, rowIndex);
         summaryGridPane.add(node3, 2, rowIndex);
+        GridPane.setHalignment(node2, HPos.RIGHT); // price column
     }
 
     private void addTotalLine(String col1I18n, Object col1Amount, String col2I18n, Object col2Amount, String col3I18n, Object col3Amount) {
@@ -284,7 +292,7 @@ final class Step2CheckoutSlide extends StepSlide {
 
     private void submit() {
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
-        WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
+        WorkingBooking workingBooking = getWorkingBooking();
         // Three cases here:
         // 1) we pay an old balance with no new option, the currentBooking has no changes
         if (!workingBooking.hasChanges()) {

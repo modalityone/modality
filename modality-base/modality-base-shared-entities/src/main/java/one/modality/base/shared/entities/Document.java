@@ -107,4 +107,12 @@ public interface Document extends
         return getBooleanFieldValue("flagged");
     }
 
+    default void setPersonFacilityFee(Boolean personFacilityFee) {
+        setFieldValue("person_facilityFee", personFacilityFee);
+    }
+
+    default Boolean isPersonFacilityFee() {
+        return getBooleanFieldValue("person_facilityFee");
+    }
+
 }

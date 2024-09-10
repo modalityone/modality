@@ -89,8 +89,7 @@ final class Step1BookDatesSlide extends StepSlide {
 
         checkoutButton.disableProperty().bind(Bindings.createBooleanBinding(
             () -> workingBookingProperties.getBalance() <= 0 && noDatesBookedProperty.get(),
-            workingBookingProperties.balanceProperty(), noDatesBookedProperty)
-        );
+            workingBookingProperties.balanceProperty(), noDatesBookedProperty));
         checkoutButton.setOnAction((event -> displayCheckoutSlide()));
         VBox.setMargin(checkoutScalePane, new Insets(20, 0, 20, 0)); // in addition to VBox bottom margin 80
 

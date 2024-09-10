@@ -9,7 +9,8 @@ public final class WorkingBookingHistoryHelper {
 
     private final List<Attendance> attendanceAdded;
     private final List<Attendance> attendanceRemoved;
-    private StringBuilder history = new StringBuilder();
+    private final StringBuilder history = new StringBuilder();
+
     public WorkingBookingHistoryHelper(List<Attendance> attendanceAdded, List<Attendance> attendanceRemoved) {
         this.attendanceAdded = attendanceAdded;
         this.attendanceRemoved = attendanceRemoved;
@@ -40,6 +41,5 @@ public final class WorkingBookingHistoryHelper {
         }
         return history.toString();
     }
-
 
 }

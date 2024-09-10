@@ -27,6 +27,7 @@ import one.modality.base.shared.entities.Person;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
+import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
@@ -73,6 +74,14 @@ abstract class StepSlide implements Supplier<Node> {
 
     WorkingBookingProperties getWorkingBookingProperties() {
         return getBookEventActivity().getWorkingBookingProperties();
+    }
+
+    WorkingBooking getWorkingBooking() {
+        return getWorkingBookingProperties().getWorkingBooking();
+    }
+
+    DocumentAggregate getDocumentAggregate() {
+        return getWorkingBookingProperties().getDocumentAggregate();
     }
 
     Event getEvent() {

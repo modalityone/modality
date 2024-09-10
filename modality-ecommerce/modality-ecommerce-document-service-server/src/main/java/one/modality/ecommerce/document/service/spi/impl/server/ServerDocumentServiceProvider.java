@@ -34,8 +34,8 @@ import java.util.stream.Collectors;
  */
 public class ServerDocumentServiceProvider implements DocumentServiceProvider {
 
-    public final static String POLICY_SCHEDULED_ITEMS_QUERY_BASE = "select site.name,item.(name,code,family.code),date,startTime,timeline.startTime from ScheduledItem";
-    public final static String POLICY_RATES_QUERY_BASE = "select site,item,price,perDay,perPerson from Rate";
+    private final static String POLICY_SCHEDULED_ITEMS_QUERY_BASE = "select site.name,item.(name,code,family.code),date,startTime,timeline.startTime from ScheduledItem";
+    private final static String POLICY_RATES_QUERY_BASE = "select site,item,price,perDay,perPerson,facilityFee_price from Rate";
 
     @Override
     public Future<PolicyAggregate> loadPolicy(LoadPolicyArgument argument) {

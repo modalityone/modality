@@ -1,5 +1,6 @@
 package one.modality.event.client.recurringevents;
 
+import dev.webfx.platform.util.Booleans;
 import one.modality.base.shared.entities.*;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 
@@ -67,14 +68,32 @@ public class PriceCalculator {
         DocumentLine line = attendances.get(0).getDocumentLine();
         int fixedRatePrice = documentAggregate.getPolicyAggregate()
             .getSiteItemFixedRatesStream(line.getSite(), line.getItem())
-            // TODO: check if the rate is applicable to this booking. For this first version, we just assume so.
-            .mapToInt(Rate::getPrice)
+            .filter(this::isRateApplicable)
+            .mapToInt(this::getCheapestApplicableRatePrice)
             .min()
             .orElse(0);
         // 3) Returning the cheapest price
         if (fixedRatePrice > 0 && fixedRatePrice < dailyRatePrice) // Typically a discount over a whole series of GP classes
             return fixedRatePrice;
         return dailyRatePrice;
+    }
+
+    private boolean isRateApplicable(Rate rate) {
+        // TODO: check if the rate is applicable to this booking. For this first version, we just assume so.
+        return true;
+    }
+
+    private int getCheapestApplicableRatePrice(Rate rate) {
+        int price = rate.getPrice();
+        DocumentAggregate documentAggregate = getDocumentAggregate();
+        if (documentAggregate != null && !ignoreDiscounts) {
+            if (Booleans.isTrue(documentAggregate.getDocument().isPersonFacilityFee())) {
+                Integer facilityFeePrice = rate.getFacilityFeePrice();
+                if (facilityFeePrice != null && facilityFeePrice < price)
+                    price = facilityFeePrice;
+            }
+        }
+        return price;
     }
 
     public int calculateAttendancePrice(Attendance attendance) {
@@ -86,7 +105,8 @@ public class PriceCalculator {
         Item item = documentLine.getItem();
         return documentAggregate.getPolicyAggregate()
             .getSiteItemDailyRatesStream(site, item)
-            .mapToInt(Rate::getPrice)
+            .filter(this::isRateApplicable)
+            .mapToInt(this::getCheapestApplicableRatePrice)
             .min()
             .orElse(0);
     }

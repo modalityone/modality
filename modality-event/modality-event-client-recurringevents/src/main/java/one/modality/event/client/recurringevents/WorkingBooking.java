@@ -87,7 +87,7 @@ public class WorkingBooking {
             documentLine.setDocument(document);
             documentLine.setSite(site);
             documentLine.setItem(item);
-            integrateNewDocumentEvent(new AddDocumentLineEvent(documentLine));
+            integrateNewDocumentEvent(new AddDocumentLineEvent(documentLine), false);
             existingAttendances = null;
         }
         Attendance[] attendances = scheduledItems.stream().map(scheduledItem -> {
@@ -104,7 +104,7 @@ public class WorkingBooking {
             return attendance;
         }).filter(Objects::nonNull).toArray(Attendance[]::new);
         if (attendances.length > 0)
-            integrateNewDocumentEvent(new AddAttendancesEvent(attendances));
+            integrateNewDocumentEvent(new AddAttendancesEvent(attendances), false);
         if (!addOnly) {
             // We remove all existing attendances not referencing the passed scheduledItems
             List<Attendance> attendancesToRemove = Collections.filter(existingAttendances, a ->
@@ -120,7 +120,7 @@ public class WorkingBooking {
 
     public void removeAttendances(List<Attendance> attendance) {
         if (!attendance.isEmpty()) {
-            integrateNewDocumentEvent(new RemoveAttendancesEvent(attendance.toArray(new Attendance[0])));
+            integrateNewDocumentEvent(new RemoveAttendancesEvent(attendance.toArray(new Attendance[0])), false);
             lastestDocumentAggregate = null;
         }
     }
@@ -129,17 +129,31 @@ public class WorkingBooking {
         if (document == null || document.isNew()) {
             cancelChanges();
         } else {
-            integrateNewDocumentEvent(new CancelDocumentEvent(document, true));
+            integrateNewDocumentEvent(new CancelDocumentEvent(document, true), true);
             lastestDocumentAggregate = null;
         }
     }
 
     public void uncancelBooking() {
-        integrateNewDocumentEvent(new CancelDocumentEvent(document, false));
+        integrateNewDocumentEvent(new CancelDocumentEvent(document, false), true);
         lastestDocumentAggregate = null;
     }
 
-    private void integrateNewDocumentEvent(AbstractDocumentEvent e) {
+    public void applyFacilityFeeRate() {
+        applyFacilityFeeRate(true);
+    }
+
+    public void removeFacilityFeeRate() {
+        applyFacilityFeeRate(false);
+    }
+
+    public void applyFacilityFeeRate(boolean apply) {
+        integrateNewDocumentEvent(new ApplyFacilityFeeDocumentEvent(document, apply), true);
+    }
+
+    private void integrateNewDocumentEvent(AbstractDocumentEvent e, boolean applyImmediatelyToDocument) {
+        if (applyImmediatelyToDocument)
+            e.replayEventOnDocument();
         DocumentEvents.integrateNewDocumentEvent(e, documentChanges);
     }
 
@@ -159,7 +173,7 @@ public class WorkingBooking {
                 document = getEntityStore().createEntity(Document.class);
                 document.setEvent(getEvent());
                 document.setPerson(FXPersonToBook.getPersonToBook());
-                integrateNewDocumentEvent(new AddDocumentEvent(document));
+                integrateNewDocumentEvent(new AddDocumentEvent(document), false);
             } else { // Case of new booking once submitted
                 document = getEntityStore().createEntity(Document.class, documentPrimaryKey);
             }
