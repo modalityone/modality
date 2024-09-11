@@ -4,6 +4,7 @@ one.modality.base.shared.entities.impl.CartImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.ChannelImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.CountryImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.CurrencyImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.DayTemplateImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.DocumentImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.DocumentLineImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.EventImpl$ProvidedFactory
