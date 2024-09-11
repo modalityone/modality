@@ -89,7 +89,7 @@ final class OperationsActivity extends ViewDomainActivityBase implements Modalit
 
     @Override
     public void onPause() {
-        FXMainFrameHeaderTabs.clearHeaderTabs();
+        FXMainFrameHeaderTabs.resetToDefault();
         super.onPause();
     }
 

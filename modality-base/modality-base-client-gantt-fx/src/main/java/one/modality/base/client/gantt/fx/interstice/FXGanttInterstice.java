@@ -8,18 +8,30 @@ import javafx.beans.property.SimpleBooleanProperty;
  */
 public class FXGanttInterstice {
 
-    private final static BooleanProperty ganttIntersticeRequiredProperty = new SimpleBooleanProperty();
+    private final static BooleanProperty ganttIntersticeVisibleProperty = new SimpleBooleanProperty();
 
     public static BooleanProperty ganttIntersticeRequiredProperty() {
-        return ganttIntersticeRequiredProperty;
+        return ganttIntersticeVisibleProperty;
     }
 
-    public static boolean isGanttIntersticeRequired() {
-        return ganttIntersticeRequiredProperty.get();
+    public static boolean isGanttIntersticeVisible() {
+        return ganttIntersticeVisibleProperty.get();
     }
 
-    public static void setGanttIntersticeRequired(boolean breathingSpace) {
-         ganttIntersticeRequiredProperty.set(breathingSpace);
+    public static void setGanttIntersticeVisible(boolean visible) {
+         ganttIntersticeVisibleProperty.set(visible);
+    }
+
+    public static void showGanttInterstice() {
+        setGanttIntersticeVisible(true);
+    }
+
+    public static void hideGanttInterstice() {
+        setGanttIntersticeVisible(false);
+    }
+
+    public static void resetToDefault() {
+        setGanttIntersticeVisible(false);
     }
 
 }

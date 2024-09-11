@@ -100,7 +100,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         // onResume() immediately after, so we need to check the user really left this activity.
         Platform.runLater(() -> { // we postpone the check to ensure the situation is now stable
             if (!isActive()) // final check to see if the user left
-                FXCollapseFooter.setCollapseFooter(false); // showing footer in this case
+                FXCollapseFooter.resetToDefault(); // showing footer in this case
         });
         super.onPause();
     }

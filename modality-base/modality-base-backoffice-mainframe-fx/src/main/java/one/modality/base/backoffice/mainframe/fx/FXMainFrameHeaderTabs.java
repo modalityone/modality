@@ -31,4 +31,8 @@ public final class FXMainFrameHeaderTabs {
         headerTabsObservableList.clear();
     }
 
+    public static void resetToDefault() {
+        clearHeaderTabs();
+    }
+
 }

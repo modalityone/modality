@@ -86,7 +86,7 @@ public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrame
                     onProfileLayout(); // for profile panel animation management
                 }
                 if (ganttCanvasContainer.isVisible()) {
-                    nodeHeight = ganttCanvasContainer.prefHeight(width) + (FXGanttInterstice.isGanttIntersticeRequired() ? breathingPadding.getBottom() : 0);
+                    nodeHeight = ganttCanvasContainer.prefHeight(width) + (FXGanttInterstice.isGanttIntersticeVisible() ? breathingPadding.getBottom() : 0);
                     layoutInArea(ganttCanvasContainer, 0, nodeY, width, nodeHeight, 0, breathingPadding, HPos.CENTER, VPos.TOP);
                 }
                 Node mountNode = getMountNode();

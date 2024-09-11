@@ -13,6 +13,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import one.modality.base.backoffice.controls.masterslave.ConventionalUiBuilderMixin;
 import one.modality.base.backoffice.controls.masterslave.group.GroupMasterSlaveView;
+import one.modality.base.backoffice.mainframe.fx.FXEventSelector;
 import one.modality.base.backoffice.operations.entities.generic.AddNewSnapshotRequest;
 import one.modality.base.backoffice.operations.entities.generic.CopyAllRequest;
 import one.modality.base.backoffice.operations.entities.generic.CopySelectionRequest;
@@ -20,13 +21,11 @@ import one.modality.base.client.entities.util.filters.FilterSearchBar;
 import one.modality.base.client.gantt.fx.interstice.FXGanttInterstice;
 import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
-import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.shared.domainmodel.functions.AbcNames;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.crm.backoffice.controls.bookingdetailspanel.BookingDetailsPanel;
-import one.modality.ecommerce.backoffice.operations.entities.document.registration.SendLetterRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.registration.*;
 import one.modality.ecommerce.backoffice.operations.entities.document.security.MarkDocumentAsKnownRequest;
 import one.modality.ecommerce.backoffice.operations.entities.document.security.MarkDocumentAsUncheckedRequest;
@@ -135,14 +134,16 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
     public void onResume() {
         super.onResume();
         filterSearchBar.onResume(); // activate search text focus on activity resume
-        FXGanttVisibility.setGanttVisibility(GanttVisibility.EVENTS);
-        FXGanttInterstice.setGanttIntersticeRequired(true);
+        FXGanttVisibility.showEvents();
+        FXGanttInterstice.showGanttInterstice();
+        FXEventSelector.showEventSelector();
     }
 
     @Override
     public void onPause() {
-        FXGanttVisibility.setGanttVisibility(GanttVisibility.HIDDEN);
-        FXGanttInterstice.setGanttIntersticeRequired(false);
+        FXGanttVisibility.resetToDefault();
+        FXGanttInterstice.resetToDefault();
+        FXEventSelector.resetToDefault();
         super.onPause();
     }
 

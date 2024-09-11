@@ -8,12 +8,11 @@ module modality.event.backoffice.events.buttonselector.plugin {
     // Direct dependencies modules
     requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.backoffice.mainframe.fx;
     requires modality.base.backoffice.mainframe.headernode;
-    requires modality.base.client.gantt.fx;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
     requires modality.event.client.event.fx;
-    requires webfx.kit.util;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;

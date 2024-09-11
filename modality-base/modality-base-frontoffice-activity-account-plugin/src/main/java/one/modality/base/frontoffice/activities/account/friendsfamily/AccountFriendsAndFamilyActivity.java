@@ -97,8 +97,4 @@ public class AccountFriendsAndFamilyActivity extends ViewDomainActivityBase impl
         return GeneralUtility.bindButtonWithPopup(deleteMember, ControlUtil.createVerticalScrollPane(container), new VBox(), 200);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
 }

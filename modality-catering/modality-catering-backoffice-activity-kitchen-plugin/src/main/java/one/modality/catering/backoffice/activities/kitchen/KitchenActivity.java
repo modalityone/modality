@@ -33,7 +33,6 @@ import javafx.scene.text.FontWeight;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
-import one.modality.base.client.gantt.fx.visibility.GanttVisibility;
 import one.modality.base.client.time.theme.TimeFacet;
 import one.modality.base.shared.entities.Item;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
@@ -166,13 +165,13 @@ public class KitchenActivity extends ViewDomainActivityBase
 
     @Override
     public void onResume() {
-        FXGanttVisibility.setGanttVisibility(GanttVisibility.MONTHS);
+        FXGanttVisibility.showMonths();
         super.onResume();
     }
 
     @Override
     public void onPause() {
-        FXGanttVisibility.setGanttVisibility(GanttVisibility.HIDDEN);
+        FXGanttVisibility.resetToDefault();
         super.onPause();
     }
 
