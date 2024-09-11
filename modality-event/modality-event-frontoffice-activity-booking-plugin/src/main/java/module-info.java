@@ -38,7 +38,6 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.async;
-    requires webfx.platform.browser;
     requires webfx.platform.conf;
     requires webfx.platform.console;
     requires webfx.platform.os;
@@ -61,12 +60,10 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.controls;
-    requires webfx.stack.ui.dialog;
     requires webfx.stack.ui.operation;
 
     // Exported packages
     exports one.modality.event.frontoffice.activities.booking;
-    exports one.modality.event.frontoffice.activities.booking.browser;
     exports one.modality.event.frontoffice.activities.booking.fx;
     exports one.modality.event.frontoffice.activities.booking.map;
     exports one.modality.event.frontoffice.activities.booking.process;

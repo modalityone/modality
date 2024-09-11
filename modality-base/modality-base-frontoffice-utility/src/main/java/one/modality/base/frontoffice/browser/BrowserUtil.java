@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.activities.booking.browser;
+package one.modality.base.frontoffice.browser;
 
 import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.platform.browser.Browser;
@@ -21,6 +21,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebView;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
+import one.modality.base.frontoffice.mainframe.fx.FXBackgroundNode;
 import one.modality.base.frontoffice.utility.GeneralUtility;
 import one.modality.base.frontoffice.utility.StyleUtility;
 
@@ -32,6 +33,10 @@ public final class BrowserUtil {
     private static final String INTERNAL_BROWSER_ROUTE = "/website";
     private static UiRouter uiRouter;
     private static final WebView internalBrowser = new WebView();
+
+    static {
+        internalBrowser.setMaxHeight(Double.MAX_VALUE);
+    }
 
     public static void openExternalBrowser(String url) {
         // Following code is commented because HostServices is not working on Gluon mobiles.
@@ -50,12 +55,13 @@ public final class BrowserUtil {
         uiRouter.route(INTERNAL_BROWSER_ROUTE, () -> new ViewActivityBase<ViewActivityContextFinal>() {
             @Override
             public Node buildUi() {
-                return internalBrowser;
+                return null; //internalBrowser;
             }
         }, ViewActivityContext::create);
     }
 
     public static void openInternalBrowser(String url) {
+        FXBackgroundNode.setBackgroundNode(internalBrowser);
         // Loading the url in the internal browser
         internalBrowser.getEngine().load(url);
         // Going to the route to display that browser

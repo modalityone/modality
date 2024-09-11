@@ -189,6 +189,7 @@
     <!--=====================< modality-base-frontoffice-mainframe-fx >=====================-->
     <source path="one/modality/base/frontoffice/mainframe/fx"/>
     <!--=======================< modality-base-frontoffice-utility >========================-->
+    <source path="one/modality/base/frontoffice/browser"/>
     <source path="one/modality/base/frontoffice/entities"/>
     <source path="one/modality/base/frontoffice/fx"/>
     <source path="one/modality/base/frontoffice/states"/>
@@ -260,7 +261,6 @@
     <source path="one/modality/event/client/recurringevents"/>
     <!--===============< modality-event-frontoffice-activity-booking-plugin >===============-->
     <source path="one/modality/event/frontoffice/activities/booking"/>
-    <source path="one/modality/event/frontoffice/activities/booking/browser"/>
     <source path="one/modality/event/frontoffice/activities/booking/fx"/>
     <source path="one/modality/event/frontoffice/activities/booking/map"/>
     <source path="one/modality/event/frontoffice/activities/booking/process"/>
