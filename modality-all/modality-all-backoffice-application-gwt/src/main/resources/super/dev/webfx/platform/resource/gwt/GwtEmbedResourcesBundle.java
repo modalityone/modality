@@ -15,7 +15,7 @@ public interface GwtEmbedResourcesBundle extends ClientBundle {
     @Source("dev/webfx/platform/meta/exe/exe.properties")
     TextResource r2();
 
-    @Source("dev/webfx/stack/i18n/en.properties")
+    @Source("dev/webfx/stack/i18n/en.json")
     TextResource r3();
 
     @Source("dev/webfx/stack/i18n/fr.properties")
@@ -30,7 +30,7 @@ public interface GwtEmbedResourcesBundle extends ClientBundle {
         public ProvidedGwtResourceBundle() {
             registerResource("dev/webfx/platform/conf/src-root.properties", R.r1());
             registerResource("dev/webfx/platform/meta/exe/exe.properties", R.r2());
-            registerResource("dev/webfx/stack/i18n/en.properties", R.r3());
+            registerResource("dev/webfx/stack/i18n/en.json", R.r3());
             registerResource("dev/webfx/stack/i18n/fr.properties", R.r4());
             registerResource("one/modality/base/shared/domainmodel/DomainModelSnapshot.json", R.r5());
 

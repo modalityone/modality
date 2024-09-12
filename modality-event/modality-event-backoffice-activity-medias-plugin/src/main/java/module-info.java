@@ -3,8 +3,14 @@
 module modality.event.backoffice.activity.medias.plugin {
 
     // Direct dependencies modules
+    requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.backoffice.mainframe.fx;
+    requires modality.base.client.tile;
+    requires webfx.extras.theme;
+    requires webfx.extras.util.control;
     requires webfx.platform.windowhistory;
+    requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;

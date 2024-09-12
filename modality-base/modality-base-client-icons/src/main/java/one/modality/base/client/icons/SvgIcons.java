@@ -32,4 +32,13 @@ public final class SvgIcons {
         return trashSVGPath;
     }
 
+    public static SVGPath createPlusPath() {
+        SVGPath svgPath = new SVGPath();
+        svgPath.setContent("M9.8975 18.9698C15.0129 18.9698 19.1597 14.823 19.1597 9.70756C19.1597 4.59216 15.0129 0.445312 9.8975 0.445312C4.7821 0.445312 0.635254 4.59216 0.635254 9.70756C0.635254 14.823 4.7821 18.9698 9.8975 18.9698ZM8.57465 5.29908H11.221V8.3878H14.308V11.0342H11.221V14.1203H8.57465V11.0342H5.48678V8.3878H8.57465V5.29908Z");
+        svgPath.setStrokeWidth(1);
+        return svgPath;
     }
+
+}
+
+
