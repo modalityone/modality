@@ -27,4 +27,20 @@ public interface Timeline extends Entity,
         return getForeignEntity("dayTemplate");
     }
 
+    default void setAudioOffered(Boolean audioOffered) {
+        setFieldValue("audioOffered", audioOffered);
+    }
+
+    default Boolean isAudioOffered() {
+        return getBooleanFieldValue("audioOffered");
+    }
+
+    default void setVideoOffered(Boolean videoOffered) {
+        setFieldValue("videoOffered", videoOffered);
+    }
+
+    default Boolean isVideoOffered() {
+        return getBooleanFieldValue("videoOffered");
+    }
+
 }
