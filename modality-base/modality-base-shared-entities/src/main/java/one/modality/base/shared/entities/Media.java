@@ -61,5 +61,14 @@ public interface Media extends Entity {
         return getBooleanFieldValue("published");
     }
 
+    default void setOrd(Integer ord) {
+        setFieldValue("ord", ord);
+    }
+
+    default Integer getOrd() {
+        return getIntegerFieldValue("ord");
+    }
+
+
 }
 

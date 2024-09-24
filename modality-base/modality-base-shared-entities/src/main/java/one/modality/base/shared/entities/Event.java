@@ -73,6 +73,22 @@ public interface Event extends Entity,
         return getLocalDateTimeFieldValue("openingDate");
     }
 
+    default void setVodExpirationDate(LocalDateTime vodExpirationDate) {
+        setFieldValue("vodExpirationDate", vodExpirationDate);
+    }
+
+    default LocalDateTime getVodExpirationDate() {
+        return getLocalDateTimeFieldValue("vodExpirationDate");
+    }
+
+    default void setAudioExpirationDate(LocalDateTime audioExpirationDate) {
+        setFieldValue("audioExpirationDate", audioExpirationDate);
+    }
+
+    default LocalDateTime getAudioExpirationDate() {
+        return getLocalDateTimeFieldValue("audioExpirationDate");
+    }
+
     default void setLive(Boolean live) {
         setFieldValue("live", live);
     }

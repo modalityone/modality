@@ -202,9 +202,9 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
 
         //We execute the query in batch, otherwise we can have synchronisation problem between the different threads
         entityStore.executeQueryBatch(
-            new EntityStoreQuery("select name, event from DayTemplate si where event=? order by name", new Object[] { e})
-            , new EntityStoreQuery("select distinct name from Item where organization=? and family.code = '"+familyItemCode+"'", new Object[] { e.getOrganization()})
-            ,new EntityStoreQuery("select name from Site where event=? and main limit 1", new Object[] { e}))
+              new EntityStoreQuery("select name, event from DayTemplate si where event=? order by name", new Object[] { e })
+            , new EntityStoreQuery("select distinct name from Item where organization=? and family.code=?", new Object[] { e.getOrganization(), familyItemCode})
+            , new EntityStoreQuery("select name from Site where event=? and main limit 1", new Object[] { e}))
             .onFailure(Console::log)
             .onSuccess(entityLists -> Platform.runLater(() -> {
                 EntityList<DayTemplate> dayTemplateList = entityLists[0];

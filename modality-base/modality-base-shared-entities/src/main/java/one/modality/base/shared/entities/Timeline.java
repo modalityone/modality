@@ -8,6 +8,8 @@ import one.modality.base.shared.entities.markers.*;
  * @author Bruno Salmon
  */
 public interface Timeline extends Entity,
+    EntityHasName,
+    EntityHasLabel,
     EntityHasSiteAndItem,
     EntityHasItemFamily,
     EntityHasEvent,

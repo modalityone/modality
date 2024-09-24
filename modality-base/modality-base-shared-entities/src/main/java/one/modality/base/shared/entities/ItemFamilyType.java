@@ -4,15 +4,27 @@ package one.modality.base.shared.entities;
  * @author Bruno Salmon
  */
 public enum ItemFamilyType {
-    TEACHING,
-    TRANSLATION,
-    ACCOMMODATION,
-    MEALS,
-    DIET,
-    PARKING,
-    TRANSPORT,
-    TAX,
-    UNKNOWN;
+    TEACHING("teach"),
+    TRANSLATION("transl"),
+    LIVESTREAM("livestream"),
+    VIDEO_ON_DEMAND("vod"),
+    ACCOMMODATION("acco"),
+    MEALS("meals"),
+    DIET("diet"),
+    PARKING("park"),
+    TRANSPORT("transp"),
+    TAX("tax"),
+    UNKNOWN(null);
+
+    private final String code;
+
+    ItemFamilyType(String code) {
+        this.code = code;
+    }
+
+    public String getCode() {
+        return code;
+    }
 
     public static ItemFamilyType fromCode(String code) {
         if (code != null) {
