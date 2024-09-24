@@ -53,7 +53,8 @@ BookingOpeningTime:
 ExternalLink:
   text: "Reg. external link"
   prompt: "Enter the url for registration page if not managed by KBS"
-ValidationTimeFormatIncorrect: "The format of Time of event is incorrect (should be 19:30 for example)"
+ValidationTimeFormatIncorrect: "The time format is incorrect (should be 19:30 for example)"
+ValidationDateFormatIncorrect: "The date format is incorrect (should be 25-12-2028 for example)"
 ValidationDurationIncorrect: "Duration should be a number of minutes (ex : 90 for a duration of 1h30)"
 ValidationSelectOneDate: "Please specify at list one date for this event"
 ValidationUrlIncorrect: "The URL entered is malformed"

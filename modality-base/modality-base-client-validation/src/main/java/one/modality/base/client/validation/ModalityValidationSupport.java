@@ -240,6 +240,43 @@ public final class ModalityValidationSupport {
         );
     }
 
+    public void addUrlValidation(TextField urlInput, Node where, String errorMessage) {
+        // Define the URL pattern (basic)
+        String urlPattern = "^(https?://)(www\\.)?[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}(/.*)?$";
+        Pattern pattern = Pattern.compile(urlPattern);
+
+        addValidationRule(
+            Bindings.createBooleanBinding(
+                () -> {
+                    String input = urlInput.getText();
+                    return input!=null && pattern.matcher(input).matches();  // Accept empty or valid URL
+                },
+                urlInput.textProperty()
+            ),
+            where,
+            errorMessage
+        );
+    }
+
+    public void addUrlOrEmptyValidation(TextField urlInput, Node where, String errorMessage) {
+        // Define the URL pattern (basic)
+        String urlPattern = "^(https?://)(www\\.)?[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}(/.*)?$";
+        Pattern pattern = Pattern.compile(urlPattern);
+
+        // Create the validation rule
+        addValidationRule(
+            Bindings.createBooleanBinding(
+                () -> {
+                    String input = urlInput.getText();
+                    return input.isEmpty() || pattern.matcher(input).matches();  // Accept empty or valid URL
+                },
+                urlInput.textProperty()
+            ),
+            where,
+            errorMessage
+        );
+    }
+
     public void addNonEmptyValidation(TextField textField, Node where,String errorMessage) {
         // Create the validation rule
         addValidationRule(
@@ -264,6 +301,23 @@ public final class ModalityValidationSupport {
                     }}, textField.textProperty()),
                 where,
                 errorMessage
+        );
+    }
+
+    public void addIntegerValidation(TextField textField, Node where, String errorMessage) {
+        // Create the validation rule
+        addValidationRule(
+            Bindings.createBooleanBinding(() -> {
+                try {
+                    // Try to parse the text as an integer
+                    Integer.parseInt(textField.getText().trim());
+                    return true;
+                } catch (NumberFormatException e) {
+                    return false;
+                }
+            }, textField.textProperty()),
+            where,
+            errorMessage
         );
     }
 
