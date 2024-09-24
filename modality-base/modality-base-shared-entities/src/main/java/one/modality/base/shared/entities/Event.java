@@ -89,12 +89,12 @@ public interface Event extends Entity,
         return getLocalDateTimeFieldValue("audioExpirationDate");
     }
 
-    default void setLivestreamLink(String livestreamLink) {
-        setFieldValue("livestreamLink", livestreamLink);
+    default void setLivestreamUrl(String livestreamUrl) {
+        setFieldValue("livestreamUrl", livestreamUrl);
     }
 
-    default String getLivestreamLink() {
-        return getStringFieldValue("livestreamLink");
+    default String getLivestreamUrl() {
+        return getStringFieldValue("livestreamUrl");
     }
 
     default void setLive(Boolean live) {
