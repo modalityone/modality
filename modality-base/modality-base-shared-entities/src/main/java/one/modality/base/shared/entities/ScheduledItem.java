@@ -70,4 +70,12 @@ public interface ScheduledItem extends Entity,
         return getForeignEntity("commentLabel");
     }
 
+    default void setVodDelayed(Boolean vodDelayed) {
+        setFieldValue("vodDelayed", vodDelayed);
+    }
+
+    default Boolean isVodDelayed() {
+        return getBooleanFieldValue("vodDelayed");
+    }
+
 }
