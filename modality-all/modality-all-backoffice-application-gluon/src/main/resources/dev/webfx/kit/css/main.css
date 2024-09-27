@@ -523,6 +523,15 @@ HtmlText, HtmlTextEditor {
     -fx-effect: dropshadow(gaussian, lightgray, 10, 0, 0, 0)
 }
 
+/*===== modality-backoffice-mainframe-javafx@main.css from modality-base-backoffice-mainframe-activity =====*/
+
+.button.main-frame-header-button {
+    -fx-background-color: transparent;
+}
+
+.button.main-frame-header-button:hover {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 50%, #BBB 99%, transparent 100%);
+}
 /*===== modality-client-javafx@main.css from modality-base-client-application =====*/
 
 Text, Label, Button, TextField {

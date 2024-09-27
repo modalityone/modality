@@ -4,7 +4,8 @@ import dev.webfx.stack.i18n.spi.HasDictionaryMessageKey;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.HasEntity;
 
-public final class ModalityOperationI18nKey implements HasDictionaryMessageKey, HasEntity {
+final class ModalityOperationI18nKey implements HasDictionaryMessageKey, HasEntity {
+
     private final String i18nCode;
     // We also memorise the operation code, because several operations may share the same i18n code, and in that case,
     // they should have a different ModalityOperationI18nKey instance (and equals() will return false when comparing

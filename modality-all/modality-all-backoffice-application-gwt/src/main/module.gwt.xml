@@ -326,6 +326,7 @@
     <source path="one/modality/ecommerce/backoffice/activities/statistics/routing"/>
     <source path="one/modality/ecommerce/backoffice/operations/routes/statistics"/>
     <!--===============< modality-ecommerce-backoffice-operations-document >================-->
+    <source path="one/modality/ecommerce/backoffice/operations/entities/document"/>
     <source path="one/modality/ecommerce/backoffice/operations/entities/document/cart"/>
     <source path="one/modality/ecommerce/backoffice/operations/entities/document/multiplebookings"/>
     <source path="one/modality/ecommerce/backoffice/operations/entities/document/registration"/>

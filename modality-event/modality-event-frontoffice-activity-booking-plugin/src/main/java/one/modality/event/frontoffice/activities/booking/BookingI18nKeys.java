@@ -1,0 +1,72 @@
+// File managed by WebFX (DO NOT EDIT MANUALLY)
+package one.modality.event.frontoffice.activities.booking;
+
+public interface BookingI18nKeys {
+
+    String eventsHeader = "eventsHeader";
+    String internationalEvents = "internationalEvents";
+    String localEvents = "localEvents";
+    String yourLocalCentre = "yourLocalCentre";
+    String findYourLocalCentre = "findYourLocalCentre";
+    String Back = "Back";
+    String localCentreWebsite = "localCentreWebsite";
+    String localCentreAddress = "localCentreAddress";
+    String localCentrePhone = "localCentrePhone";
+    String localCentreEmail = "localCentreEmail";
+    String openInsideApp = "openInsideApp";
+    String openOutsideApp = "openOutsideApp";
+    String copyLink = "copyLink";
+    String comingSoon = "comingSoon";
+    String bookNow = "bookNow";
+    String closed = "closed";
+    String at = "at";
+    String Schedule = "Schedule";
+    String GPEvent = "GPEvent";
+    String SelectTheEvent = "SelectTheEvent";
+    String AtTime = "AtTime";
+    String SelectAllClasses = "SelectAllClasses";
+    String PersonToBook = "PersonToBook";
+    String ProceedCheckout = "ProceedCheckout";
+    String PricePerClass = "PricePerClass";
+    String AllClasses = "AllClasses";
+    String LoginBeforeBooking = "LoginBeforeBooking";
+    String OrBookAsGuest = "OrBookAsGuest";
+    String GuestDetails = "GuestDetails";
+    String OrBookUsingAccount = "OrBookUsingAccount";
+    String DateFormatted = "DateFormatted";
+    String Pay = "Pay";
+    String TotalBookingPrice = "TotalBookingPrice";
+    String PaymentInformation = "PaymentInformation";
+    String Square = "Square";
+    String BookingSubmitted = "BookingSubmitted";
+    String ThankYouForBooking = "ThankYouForBooking";
+    String BookingNumber = "BookingNumber";
+    String PaymentCancelled = "PaymentCancelled";
+    String BookAgain = "BookAgain";
+    String PaymentAndBookingCancelled = "PaymentAndBookingCancelled";
+    String UncancelBooking = "UncancelBooking";
+    String PaymentFailed = "PaymentFailed";
+    String PaymentFailedMessage = "PaymentFailedMessage";
+    String RetryPayment = "RetryPayment";
+    String CancelBooking = "CancelBooking";
+    String PaymentPending = "PaymentPending";
+    String PaymentPendingMessage = "PaymentPendingMessage";
+    String ErrorWhileInsertingBooking = "ErrorWhileInsertingBooking";
+    String ErrorWhileInitiatingPayment = "ErrorWhileInitiatingPayment";
+    String ErrorWhileLoadingPaymentForm = "ErrorWhileLoadingPaymentForm";
+    String ErrorWhileInitializingHTMLPaymentForm = "ErrorWhileInitializingHTMLPaymentForm";
+    String ErrorPaymentGatewayFailure = "ErrorPaymentGatewayFailure";
+    String ErrorPaymentModalityFailure = "ErrorPaymentModalityFailure";
+    String ErrorWhileCancelingTheBooking = "ErrorWhileCancelingTheBooking";
+    String CancelRegistration = "CancelRegistration";
+    String RegistrationCanceled = "RegistrationCanceled";
+    String PreviousBookedDate = "PreviousBookedDate";
+    String BalanceOnPreviousBooking = "BalanceOnPreviousBooking";
+    String TotalOnPreviousBooking = "TotalOnPreviousBooking";
+    String TotalPrice = "TotalPrice";
+    String Deposit = "Deposit";
+    String GeneralBalance = "GeneralBalance";
+    String FacilityFee = "FacilityFee";
+    String At = "At";
+
+}

@@ -15,4 +15,6 @@
         <provider interface="dev.webfx.platform.boot.spi.ApplicationJob">one.modality.crm.backoffice.controls.bookingdetailspanel.BookingDetailsPanelApplicationJob</provider>
     </providers>
 
+    <i18n javaKeysClass="one.modality.crm.backoffice.controls.bookingdetailspanel.BookingDetailsI18nKeys"/>
+
 </project>

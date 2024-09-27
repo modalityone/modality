@@ -18,11 +18,10 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import one.modality.base.client.i18n.ModalityI18nKeys;
 
 public class MagicLinkApplication extends Application {
 
-    private final Text text = I18n.bindI18nProperties(new Text(), "MagicLinkInitialMessage");
+    private final Text text = I18n.bindI18nProperties(new Text(), MagicLinkI18nKeys.MagicLinkInitialMessage);
     private String token;
     private final VBox content = new VBox(20, text);
     private Stage stage;
@@ -31,7 +30,7 @@ public class MagicLinkApplication extends Application {
     public void init() {
         readTokenAndSetLanguage();
         if (token == null) {
-            I18n.bindI18nProperties(text, "MagicLinkUnrecognisedError");
+            I18n.bindI18nProperties(text, MagicLinkI18nKeys.MagicLinkUnrecognisedError);
         } else {
             AuthenticationService.authenticate(new MagicLinkCredentials(token))
                 .onFailure(e -> UiScheduler.runInUiThread(() -> onFailure(e)))
@@ -57,11 +56,11 @@ public class MagicLinkApplication extends Application {
 
     private void onSuccess() {
         I18n.bindI18nProperties(text, "MagicLinkSuccessMessage");
-        Label titleLabel = Bootstrap.textPrimary(I18nControls.bindI18nTextProperty(new Label(), ModalityI18nKeys.ChangeYourPassword));
-        Label passwordLabel = Bootstrap.textSecondary(I18nControls.bindI18nTextProperty(new Label(), ModalityI18nKeys.NewPassword));
+        Label titleLabel = Bootstrap.textPrimary(I18nControls.bindI18nTextProperty(new Label(), MagicLinkI18nKeys.ChangeYourPassword));
+        Label passwordLabel = Bootstrap.textSecondary(I18nControls.bindI18nTextProperty(new Label(), MagicLinkI18nKeys.NewPassword));
         PasswordField passwordField = new PasswordField();
         passwordField.setMaxWidth(250);
-        Button confirmButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Confirm));
+        Button confirmButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), "Confirm"));
         confirmButton.setPrefWidth(250);
         confirmButton.setOnAction(l -> {
             AuthenticationService.updateCredentials(new MagicLinkPasswordUpdate(passwordField.getText()))
@@ -74,16 +73,16 @@ public class MagicLinkApplication extends Application {
     private void onFailure(Throwable e) {
         String technicalMessage = e.getMessage();
         Console.log("Technical error: " + technicalMessage);
-        Object i18nKey = "MagicLinkUnexpectedError";
+        Object i18nKey = MagicLinkI18nKeys.MagicLinkUnexpectedError;
         if (technicalMessage != null) {
             if (technicalMessage.contains("not found")) {
-                i18nKey = "MagicLinkUnrecognisedError";
+                i18nKey = MagicLinkI18nKeys.MagicLinkUnrecognisedError;
             } else if (technicalMessage.contains("used")) {
-                i18nKey = "MagicLinkAlreadyUsedError";
+                i18nKey = MagicLinkI18nKeys.MagicLinkAlreadyUsedError;
             } else if (technicalMessage.contains("expired")) {
-                i18nKey = "MagicLinkExpiredError";
+                i18nKey = MagicLinkI18nKeys.MagicLinkExpiredError;
             } if (technicalMessage.contains("address"))
-                i18nKey = "MagicLinkPushError";
+                i18nKey = MagicLinkI18nKeys.MagicLinkPushError;
         }
         I18n.bindI18nProperties(text, i18nKey);
     }

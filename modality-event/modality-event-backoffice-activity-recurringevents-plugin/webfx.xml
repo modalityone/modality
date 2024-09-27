@@ -17,4 +17,6 @@
         <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.event.backoffice.activities.recurringevents.RouteToRecurringEventsRequestEmitter</provider>
     </providers>
 
+    <i18n javaKeysClass="one.modality.event.backoffice.activities.recurringevents.RecurringEventsI18nKeys"/>
+
 </project>

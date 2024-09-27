@@ -15,4 +15,7 @@
         <provider interface="javafx.application.Application">one.modality.crm.magiclink.application.MagicLinkApplication</provider>
     </providers>
 
+    <i18n javaKeysClass="one.modality.crm.magiclink.application.MagicLinkI18nKeys"/>
+
+
 </project>

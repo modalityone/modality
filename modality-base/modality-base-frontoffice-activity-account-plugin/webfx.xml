@@ -27,4 +27,6 @@
 
     </providers>
 
+    <i18n javaKeysClass="one.modality.base.frontoffice.activities.account.AccountI18nKeys"/>
+
 </project>

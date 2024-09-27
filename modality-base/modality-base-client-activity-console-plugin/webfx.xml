@@ -16,4 +16,6 @@
         <provider interface="dev.webfx.platform.console.spi.ConsoleProvider">one.modality.base.client.activities.console.BufferedConsoleProvider</provider>
     </providers>
 
+    <i18n javaKeysClass="one.modality.base.client.activities.console.ConsoleI18nKeys"/>
+
 </project>
