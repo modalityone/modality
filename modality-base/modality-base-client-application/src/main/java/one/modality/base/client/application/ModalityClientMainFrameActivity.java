@@ -60,11 +60,11 @@ public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
                 double x = 5, y = 3, w, h = height - 6;
                 layoutInArea(homeButton, x, y, w = homeButton.prefWidth(h), h, 0, HPos.LEFT, VPos.CENTER);
                 if (backButton.isManaged())
-                    layoutInArea(backButton, x += w + 8, y, w = backButton.prefWidth(h), h, 0, HPos.LEFT, VPos.CENTER);
+                    layoutInArea(backButton, x += w + 5, y, w = backButton.prefWidth(h), h, 0, HPos.LEFT, VPos.CENTER);
                 if (forwardButton.isManaged())
                     layoutInArea(forwardButton, x += w + 3, y, w = forwardButton.prefWidth(h), h, 0, HPos.LEFT, VPos.CENTER);
                 if (brandNode != null)
-                    layoutInArea(brandNode, x += w + 8, y, w = brandNode.prefWidth(h), h, 0, Insets.EMPTY, false, false, HPos.LEFT, VPos.CENTER);
+                    layoutInArea(brandNode, x += w + 12, y, w = brandNode.prefWidth(h), h, 0, Insets.EMPTY, false, false, HPos.LEFT, VPos.CENTER);
                 layoutInArea(headerCenterItem, x += w + 5, y, w = Math.max(width - 2 * x, headerCenterItem.prefWidth(h)), h, 0, Insets.EMPTY, false, false, HPos.CENTER, VPos.CENTER);
                 Node profileButton = FXProfile.getProfileButton();
                 if (profileButton != null && profileButton.isManaged())
@@ -115,6 +115,7 @@ public class ModalityClientMainFrameActivity extends ViewDomainActivityBase
     public Button newButton() {
         Button button = ModalityButtonFactoryMixin.super.newButton();
         button.setPadding(new Insets(5));
+        button.getStyleClass().add("main-frame-header-button");
         return button;
     }
 

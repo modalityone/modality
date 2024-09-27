@@ -1,0 +1,7 @@
+.button.main-frame-header-button {
+    -fx-background-color: transparent;
+}
+
+.button.main-frame-header-button:hover {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 50%, #BBB 99%, transparent 100%);
+}
