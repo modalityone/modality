@@ -260,7 +260,7 @@ public final class ModalityValidationSupport {
 
     public void addUrlOrEmptyValidation(TextField urlInput, Node where, String errorMessage) {
         // Define the URL pattern (basic)
-        String urlPattern = "^(https?://)(www\\.)?[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}(/.*)?$";
+        String urlPattern = "^(https?|srt|rtmp|rtsp)://[\\w.-]+(:\\d+)?(/[\\w./-]*)?(\\?[\\w=&%.-]*)?(#[\\w!:.=&,-]*)?$";
         Pattern pattern = Pattern.compile(urlPattern);
 
         // Create the validation rule
@@ -301,6 +301,29 @@ public final class ModalityValidationSupport {
                     }}, textField.textProperty()),
                 where,
                 errorMessage
+        );
+    }
+
+    public void addDateOrEmptyValidation(TextField textField, String dateFormat, Node where, String errorMessage) {
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(dateFormat);
+
+        // Create the validation rule
+        addValidationRule(
+            Bindings.createBooleanBinding(() -> {
+                String input = textField.getText().trim();
+                // Allow empty input to be valid
+                if (input.isEmpty()) {
+                    return true;
+                }
+                try {
+                    dateFormatter.parse(input);
+                    return true;  // Input is valid if it can be parsed
+                } catch (DateTimeParseException e) {
+                    return false; // Invalid date format
+                }
+            }, textField.textProperty()),
+            where,
+            errorMessage
         );
     }
 

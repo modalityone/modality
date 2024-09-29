@@ -67,6 +67,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
+import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
 import one.modality.base.client.validation.ModalityValidationSupport;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.markers.EntityHasLocalDate;
@@ -82,7 +83,6 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -195,37 +195,7 @@ final class ManageRecurringEventView {
         }};
 
 
-    private final SlaveEditor<Event> eventDetailsSlaveEditor = new SlaveEditor<>() {
-        @Override
-        public void showSlaveSwitchApprovalDialog(Consumer<Boolean> approvalCallback) {
-            Text titleConfirmationText = I18n.bindI18nProperties(new Text(),"AreYouSure");
-            Bootstrap.textSuccess(Bootstrap.h3(Bootstrap.strong(titleConfirmationText)));
-            BorderPane dialog = new BorderPane();
-            dialog.setTop(titleConfirmationText);
-            BorderPane.setAlignment(titleConfirmationText, Pos.CENTER);
-            Text confirmationText = I18n.bindI18nProperties(new Text(),"CancelChangesConfirmation");
-            dialog.setCenter(confirmationText);
-            BorderPane.setAlignment(confirmationText, Pos.CENTER);
-            BorderPane.setMargin(confirmationText, new Insets(30, 0, 30, 0));
-            Button okButton = Bootstrap.largeDangerButton(I18nControls.bindI18nProperties(new Button(),"Confirm"));
-            Button cancelActionButton = Bootstrap.largeSecondaryButton(I18nControls.bindI18nTextProperty(new Button(),"Cancel"));
-
-            HBox buttonsHBox = new HBox(cancelActionButton, okButton);
-            buttonsHBox.setAlignment(Pos.CENTER);
-            buttonsHBox.setSpacing(30);
-            dialog.setBottom(buttonsHBox);
-            BorderPane.setAlignment(buttonsHBox, Pos.CENTER);
-            DialogCallback dialogCallback = DialogUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
-            okButton.setOnAction(l -> {
-                dialogCallback.closeDialog();
-                approvalCallback.accept(true);
-            });
-            cancelActionButton.setOnAction(l -> {
-                dialogCallback.closeDialog();
-                approvalCallback.accept(false);
-            });
-        }
-
+    private final SlaveEditor<Event> eventDetailsSlaveEditor = new ModalitySlaveEditor<Event>() {
         /**
          * This method is called by the master controller when we change the event we're editing
          *

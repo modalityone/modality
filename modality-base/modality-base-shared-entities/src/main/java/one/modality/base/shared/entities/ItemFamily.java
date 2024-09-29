@@ -13,7 +13,7 @@ public interface ItemFamily extends
         HasItemFamilyType {
 
     @Override
-    default ItemFamilyType getItemFamilyType() {
-        return ItemFamilyType.fromCode(getCode());
+    default KnownItemFamily getItemFamilyType() {
+        return KnownItemFamily.fromCode(getCode());
     }
 }

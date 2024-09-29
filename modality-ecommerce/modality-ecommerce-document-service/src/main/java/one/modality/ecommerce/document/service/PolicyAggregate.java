@@ -76,7 +76,7 @@ public final class PolicyAggregate {
     }
 
     public Stream<ScheduledItem> getTeachingScheduledItemsStream() {
-        return getFamilyScheduledItemsStream(ItemFamilyType.ACCOMMODATION.getCode());
+        return getFamilyScheduledItemsStream(KnownItemFamily.ACCOMMODATION.getCode());
     }
 
     public List<ScheduledItem> getTeachingScheduledItems() {

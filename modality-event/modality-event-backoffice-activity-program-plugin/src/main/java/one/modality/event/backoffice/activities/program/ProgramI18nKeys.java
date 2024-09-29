@@ -10,6 +10,7 @@ public interface ProgramI18nKeys {
     String DeleteDayTemplate = "DeleteDayTemplate";
     String To = "To";
     String ItemSelectedShouldntBeNull = "ItemSelectedShouldntBeNull";
+    String NameThisLine = "NameThisLine";
     String DuplicateIcon = "DuplicateIcon";
 
 }

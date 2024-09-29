@@ -11,6 +11,7 @@ module modality.event.backoffice.activity.recurringevents.plugin {
     requires modality.base.client.icons;
     requires modality.base.client.mainframe.fx;
     requires modality.base.client.tile;
+    requires modality.base.client.util;
     requires modality.base.client.validation;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;

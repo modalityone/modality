@@ -8,7 +8,6 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
@@ -33,7 +32,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.validation.ModalityValidationSupport;
-import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.Media;
 import one.modality.base.shared.entities.MediaType;
 import one.modality.base.shared.entities.ScheduledItem;
@@ -47,19 +45,18 @@ import java.util.stream.Collectors;
 
 public abstract class MediaLinksManagement {
     BorderPane mainContainer = new BorderPane();
-    Item linkedItem;
     protected EntityStore entityStore;
     protected ObservableList<LocalDate> teachingsDates;
-    protected ObservableList<ScheduledItem> teachingsScheduledItemsReadFromDatabase;
-    protected ObservableList<ScheduledItem> scheduledItemsLinkedToTeachingScheduledItemsReadFromDatabase;
+    protected ObservableList<ScheduledItem> scheduledItemsReadFromDatabase;
     protected ObservableList<Media> recordingsMediasReadFromDatabase;
+    protected String currentItemCode;
 
-    public MediaLinksManagement(Item linkedItem, EntityStore entityStore,ObservableList<LocalDate> teachingsDates,ObservableList<ScheduledItem> teachingsScheduledItemsReadFromDatabase,ObservableList<Media> recordingsMediasReadFromDatabase) {
-        this.linkedItem = linkedItem;
+    public MediaLinksManagement(String currentItemCode, EntityStore entityStore, ObservableList<LocalDate> teachingsDates, ObservableList<ScheduledItem> audioScheduledItemsReadFromDatabase, ObservableList<Media> recordingsMediasReadFromDatabase) {
+        this.currentItemCode = currentItemCode;
         this.entityStore = entityStore;
         this.recordingsMediasReadFromDatabase = recordingsMediasReadFromDatabase;
         this.teachingsDates = teachingsDates;
-        this.teachingsScheduledItemsReadFromDatabase = teachingsScheduledItemsReadFromDatabase;
+        this.scheduledItemsReadFromDatabase = audioScheduledItemsReadFromDatabase;
     }
 
     protected BorderPane computeTeachingDateLine(LocalDate date) {
@@ -68,24 +65,24 @@ public abstract class MediaLinksManagement {
     }
 
     private void reinitialiseRecordingsMediasReadFromDatabase() {
-        entityStore.executeQuery(
-                new EntityStoreQuery("select url, scheduledItem.parent, scheduledItem.item, scheduledItem.date, scheduledItem.item.family.code, published from Media where scheduledItem.event= ? and scheduledItem.item.family.code = '"+linkedItem.getFamily().getCode()+"'", new Object[] { FXEvent.getEvent()}))
+        entityStore.<Media>executeQuery(
+                new EntityStoreQuery("select url, scheduledItem.parent, scheduledItem.item, scheduledItem.date, published, scheduledItem.item.code from Media where scheduledItem.event= ? and scheduledItem.item.code = ?", new Object[] { FXEvent.getEvent(),currentItemCode}))
             .onFailure(Console::log)
-            .onSuccess(query -> Platform.runLater(() -> {
-                EntityList<Media> mediasList = query.getStore().getEntityList(query.getListId());
+            .onSuccess(mediasList -> Platform.runLater(() -> {
                 recordingsMediasReadFromDatabase.setAll(mediasList);
                 }));
     }
 
     public void updatePercentageProperty(LocalDate date,IntegerProperty percentageProperty,StringProperty cssProperty) {
-        long numberOfTeachingForThisDayAndLanguage = teachingsScheduledItemsReadFromDatabase.stream()
-            .filter(item -> item.getDate().equals(date))
+        //PRECONDITION FOR DATABASE DATA: currentItemCode should be not null (
+        long numberOfTeachingForThisDayAndLanguage = scheduledItemsReadFromDatabase.stream()
+            .filter(audioScheduledItem -> audioScheduledItem.getDate().equals(date) && currentItemCode.equals(audioScheduledItem.getItem().getCode()))
             .count();
 
         // Calculate the number of media for this day and language
         long numberOfScheduledItemLinkedToMediaForThisDay = recordingsMediasReadFromDatabase.stream()
             .filter(media -> media.getScheduledItem().getDate().equals(date) &&
-                media.getScheduledItem().getItem().equals(linkedItem))
+                media.getScheduledItem().getItem().getCode().equals(currentItemCode))
             .map(Media::getScheduledItem)
             .filter(item -> item.getDate().equals(date))  // Récupère le ScheduledItem associé à chaque Media
             .distinct()                    // Supprime les doublons si nécessaire (facultatif)
@@ -132,10 +129,10 @@ public abstract class MediaLinksManagement {
 
         protected BorderPane drawPanel() {
             /* The content with the list of the teachings per day and the links **/
-            filteredListForCurrentDay = teachingsScheduledItemsReadFromDatabase.stream()
-                .filter(item -> item.getDate().equals(currentDate))
+            filteredListForCurrentDay = scheduledItemsReadFromDatabase.stream()
+                .filter(scheduledItem -> scheduledItem.getDate().equals(currentDate)&&scheduledItem.getItem().getCode()==currentItemCode)
                 .collect(Collectors.toList());
-            workingMedias.setAll(recordingsMediasReadFromDatabase.stream().filter(media -> media.getScheduledItem().getDate().equals(currentDate) && media.getScheduledItem().getItem().equals(linkedItem)).
+            workingMedias.setAll(recordingsMediasReadFromDatabase.stream().filter(media -> media.getScheduledItem().getDate().equals(currentDate) && media.getScheduledItem().getItem().getCode().equals(currentItemCode)).
                 map(updateStore::updateEntity).collect(Collectors.toList()));
             BorderPane container = new BorderPane();
 
@@ -153,22 +150,16 @@ public abstract class MediaLinksManagement {
             Separator separator = new Separator();
             centerVBox.getChildren().add(separator);
 
-            /* The content with the list of the teachings per day and the links **/
-            List<ScheduledItem> filteredListForCurrentDay = teachingsScheduledItemsReadFromDatabase.stream()
-                .filter(item -> item.getDate().equals(currentDate))
-                .collect(Collectors.toList());
-
-            for (ScheduledItem teachingScheduledItem : filteredListForCurrentDay) {
+            for (ScheduledItem currentScheduledItem : filteredListForCurrentDay) {
 
                 /* Here we create the line for each teaching **/
                 HBox currentLine = new HBox();
                 currentLine.setPadding(new Insets(20, 20, 20, 40));
 
-                //TODO: when the timeline will have a name, we will take the name from the timeline
-                String name = teachingScheduledItem.getName();
+                String name = currentScheduledItem.getParent().getTimeline().getName();
                 if (name == null) name = "Unknown";
                 Label teachingTitle = new Label(name);
-                Label startTimeLabel = new Label(teachingScheduledItem.getTimeline().getStartTime().format(timeFormatter) + " - " + teachingScheduledItem.getTimeline().getEndTime().format(timeFormatter));
+                Label startTimeLabel = new Label(currentScheduledItem.getParent().getTimeline().getStartTime().format(timeFormatter) + " - " + currentScheduledItem.getParent().getTimeline().getEndTime().format(timeFormatter));
                 teachingTitle.getStyleClass().add(Bootstrap.STRONG);
                 startTimeLabel.getStyleClass().add(Bootstrap.STRONG);
                 VBox teachingDetailsVBox = new VBox(teachingTitle, startTimeLabel);
@@ -177,6 +168,7 @@ public abstract class MediaLinksManagement {
                 Label publishedLabel = new Label("Published");
                 Switch publishedSwitch = new Switch();
                 HBox publishedInfo = new HBox(publishedLabel,publishedSwitch);
+                publishedInfo.setAlignment(Pos.CENTER);
                 publishedInfo.setSpacing(5);
                 publishedInfo.setVisible(false);
 
@@ -188,7 +180,7 @@ public abstract class MediaLinksManagement {
 
                 //We look if there is an existing media for this teaching
                 List<Media> mediaList = workingMedias.stream()
-                    .filter(media -> media.getScheduledItem().getParent().equals(teachingScheduledItem))
+                    .filter(media -> media.getScheduledItem().equals(currentScheduledItem))
                     .collect(Collectors.toList());
 
                 //We create an ArrayList of Media that will contain only one element instead of a Media to be able to use it in lambda expression
@@ -205,15 +197,8 @@ public abstract class MediaLinksManagement {
                 linkTextField.textProperty().addListener((observable, oldValue, newValue) -> {
                     //If there is a change and the mediaList for this teaching is empty, we create the Recording Scheduled Item and the Media associated
                     if (mediaList.isEmpty()) {
-                        ScheduledItem currentRecordingScheduledItem = updateStore.insertEntity(ScheduledItem.class);
-                        currentRecordingScheduledItem.setParent(teachingScheduledItem);
-                        currentRecordingScheduledItem.setSite(teachingScheduledItem.getSite());
-                        currentRecordingScheduledItem.setEvent(teachingScheduledItem.getEvent());
-                        currentRecordingScheduledItem.setItem(linkedItem);
-                        currentRecordingScheduledItem.setDate(teachingScheduledItem.getDate());
-
                         Media createdMedia = updateStore.insertEntity(Media.class);
-                        createdMedia.setScheduledItem(currentRecordingScheduledItem);
+                        createdMedia.setScheduledItem(currentScheduledItem);
                         createdMedia.setType(MediaType.AUDIO);
                         currentMedia.add(createdMedia);
                         mediaList.add(createdMedia);
@@ -221,14 +206,12 @@ public abstract class MediaLinksManagement {
                     currentMedia.get(0).setUrl(newValue);
                     publishedInfo.setVisible(true);
 
-                    //If the new value is empty, we delete the recording scheduledItem and the media associated
+                    //If the new value is empty, we delete the media
                     if (newValue.isEmpty() && !mediaList.isEmpty()) {
                         updateStore.deleteEntity(currentMedia.get(0));
-                        updateStore.deleteEntity(currentMedia.get(0).getScheduledItem());
                         mediaList.remove(currentMedia.get(0));
                         currentMedia.clear();
                         publishedInfo.setVisible(false);
-
                     }
                 });
 
@@ -239,6 +222,7 @@ public abstract class MediaLinksManagement {
 
                 currentLine.setSpacing(10);
                 currentLine.getChildren().setAll(teachingDetailsVBox, anotherSpacer, publishedInfo, linkTextField);
+                currentLine.setAlignment(Pos.CENTER_LEFT);
 
                 centerVBox.getChildren().add(currentLine);
             }
@@ -295,7 +279,7 @@ public abstract class MediaLinksManagement {
             //We add a listener to dynamically update the percentage text and css property
             recordingsMediasReadFromDatabase.addListener((InvalidationListener) observable -> {
                 updatePercentageProperty(currentDate,percentageProperty,cssProperty);
-                workingMedias.setAll(recordingsMediasReadFromDatabase.stream().filter(media -> media.getScheduledItem().getDate().equals(currentDate) && media.getScheduledItem().getItem().equals(linkedItem)).
+                workingMedias.setAll(recordingsMediasReadFromDatabase.stream().filter(media -> media.getScheduledItem().getDate().equals(currentDate) && media.getScheduledItem().getItem().getCode().equals(currentItemCode)).
                     map(updateStore::updateEntity).collect(Collectors.toList()));
 
             });
@@ -340,7 +324,7 @@ public abstract class MediaLinksManagement {
 
         public void resetUpdateStoreAndOtherComponents() {
             reinitialiseRecordingsMediasReadFromDatabase();
-            workingMedias.setAll(recordingsMediasReadFromDatabase.stream().filter(media -> media.getScheduledItem().getDate().equals(currentDate) && media.getScheduledItem().getItem().equals(linkedItem)).
+            workingMedias.setAll(recordingsMediasReadFromDatabase.stream().filter(media -> media.getScheduledItem().getDate().equals(currentDate) && media.getScheduledItem().getItem().getCode().equals(currentItemCode)).
                 map(updateStore::updateEntity).collect(Collectors.toList()));
         }
     }
