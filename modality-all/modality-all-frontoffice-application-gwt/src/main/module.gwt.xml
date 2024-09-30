@@ -259,6 +259,10 @@
     <source path="one/modality/event/client/event/fx"/>
     <!--=====================< modality-event-client-recurringevents >======================-->
     <source path="one/modality/event/client/recurringevents"/>
+    <!--===========< modality-event-frontoffice-activity-audiorecordings-plugin >===========-->
+    <source path="one/modality/event/frontoffice/activities/audiorecordings"/>
+    <source path="one/modality/event/frontoffice/activities/audiorecordings/routing"/>
+    <source path="one/modality/event/frontoffice/operations/routes/audiorecordings"/>
     <!--===============< modality-event-frontoffice-activity-booking-plugin >===============-->
     <source path="one/modality/event/frontoffice/activities/booking"/>
     <source path="one/modality/event/frontoffice/activities/booking/fx"/>
