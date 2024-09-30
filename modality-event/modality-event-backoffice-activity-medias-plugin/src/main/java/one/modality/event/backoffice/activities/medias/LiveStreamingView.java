@@ -6,15 +6,11 @@ import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.webtext.HtmlTextEditor;
-import dev.webfx.platform.console.Console;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
-import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
-import dev.webfx.stack.orm.entity.EntityStoreQuery;
-import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
@@ -29,11 +25,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import one.modality.base.shared.entities.Media;
 import one.modality.base.shared.entities.ScheduledItem;
-import one.modality.base.shared.entities.markers.EntityHasLocalDate;
-import one.modality.event.client.event.fx.FXEvent;
 
 import java.time.LocalDate;
-import java.util.stream.Collectors;
 
 import static dev.webfx.extras.webtext.HtmlTextEditor.Mode.BASIC;
 
@@ -59,7 +52,7 @@ public class LiveStreamingView {
     public Node buildContainer() {
         BorderPane mainFrame = new BorderPane();
         mainFrame.setPadding(new Insets(0,0,30,0));
-        Label title = I18nControls.bindI18nProperties(new Label(), "LiveStreamingTitle");
+        Label title = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.LiveStreamingTitle);
         title.setPadding(new Insets(30));
         title.setGraphicTextGap(30);
         TextTheme.createPrimaryTextFacet(title).style();
@@ -77,7 +70,7 @@ public class LiveStreamingView {
         liveMessageHTMLEditor.setMode(BASIC);
         liveMessageHTMLEditor.setPrefHeight(270);
 
-        Label liveMessageLabel = I18nControls.bindI18nProperties(new Label(), "LiveInfoMessage");
+        Label liveMessageLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.LiveInfoMessage);
         liveMessageLabel.setTextFill(Color.WHITE);
         liveMessageLabel.getStyleClass().add(Bootstrap.STRONG);
 
@@ -135,38 +128,13 @@ public class LiveStreamingView {
         globalLinkTextField.setMinWidth(600);
         globalLinkLine.getChildren().add(globalLinkTextField);
 
-        BorderPane individualSettingsHBox = buildIndividualSettingsContainer();
 
-        //The bindings of the visibility and manage property to the switch
-        individualSettingsHBox.visibleProperty().bind(areWeUsingIndividualLinksForEachSessionSwitch.selectedProperty());
-        individualSettingsHBox.managedProperty().bind(areWeUsingIndividualLinksForEachSessionSwitch.selectedProperty());
-        globalLinkLine.visibleProperty().bind(areWeUsingIndividualLinksForEachSessionSwitch.selectedProperty().not());
-        globalLinkLine.managedProperty().bind(areWeUsingIndividualLinksForEachSessionSwitch.selectedProperty().not());
-
-
-        mainVBox.getChildren().addAll(globalLinkLine,individualSettingsHBox);
+        mainVBox.getChildren().addAll(globalLinkLine);
 
         mainFrame.setCenter(mainVBox);
         BorderPane.setAlignment(mainVBox,Pos.CENTER);
 
         return ControlUtil.createVerticalScrollPaneWithPadding(10, mainFrame);
-    }
-
-    private BorderPane buildIndividualSettingsContainer() {
-        entityStore.executeQueryBatch(
-                new EntityStoreQuery("select name, date, timeline.startTime, timeline.endTime, item.name, event, site from ScheduledItem where event= ? and item.family.code = 'teach' order by date", new Object[] { FXEvent.getEvent()}),
-                new EntityStoreQuery("select url, scheduledItem.parent, scheduledItem.item, scheduledItem.date, published from Media where scheduledItem.event= ? and scheduledItem.item.family.code = '"+itemFamilyTypeCode+"'", new Object[] { FXEvent.getEvent()}))
-            .onFailure(Console::log)
-            .onSuccess(entityList -> Platform.runLater(() -> {
-                EntityList<ScheduledItem> siList = entityList[0];
-                EntityList<Media> mediaList = entityList[1];
-                //We have two lists of scheduled items, the teachings and the recordings (we suppose that for each recording ScheduledItem, we have a media associated in the database
-                teachingsScheduledItemsReadFromDatabase.setAll(siList);
-                recordingsMediasReadFromDatabase.setAll(mediaList);
-                teachingsDates.setAll(siList.stream().map(EntityHasLocalDate::getDate).distinct().collect(Collectors.toList()));
-            }));
-                MediaLinksManagement languageLinkManagement = new MediaLinksForLiveStreamingManagement(entityStore,teachingsDates,teachingsScheduledItemsReadFromDatabase,recordingsMediasReadFromDatabase);
-                return languageLinkManagement.getContainer();
     }
 
     public void setActive(boolean b) {

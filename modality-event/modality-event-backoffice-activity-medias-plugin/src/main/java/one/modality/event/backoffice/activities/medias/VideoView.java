@@ -14,6 +14,8 @@ import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
@@ -30,18 +32,19 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.validation.ModalityValidationSupport;
-import one.modality.base.shared.entities.Item;
-import one.modality.base.shared.entities.Media;
-import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.markers.EntityHasLocalDate;
 import one.modality.event.client.event.fx.FXEvent;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.stream.Collectors;
 
 
-public class VODView {
+public class VideoView {
     private final MediasActivity activity;
     private final BooleanProperty activeProperty = new SimpleBooleanProperty();
     private final DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
@@ -50,17 +53,17 @@ public class VODView {
     private final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
     private final boolean[] validationSupportInitialised = {false};
     private final ObservableList<LocalDate> teachingsDates = FXCollections.observableArrayList();
-    private final ObservableList<ScheduledItem> teachingsScheduledItemsReadFromDatabase = FXCollections.observableArrayList();
+    private final ObservableList<ScheduledItem> vodScheduledItemsReadFromDatabase = FXCollections.observableArrayList();
     private final ObservableList<Media> recordingsMediasReadFromDatabase = FXCollections.observableArrayList();
-    private final ObservableList<ScheduledItem>  scheduledItemsLinkedToTeachingScheduledItemsReadFromDatabase = FXCollections.observableArrayList();
-   //TEMPORARY FOR TESTING TODO private final String itemFamilyTypeCode = "VOD";
-    private final String itemFamilyTypeCode = "record";
     private TextField contentExpirationDateTextField;
     private TextField contentExpirationTimeTextField;
     private TextField videoAvailableAfterTextField;
+    private TextField livestreamGlobalLinkTextField;
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
 
-    public VODView(MediasActivity activity) {
+    public VideoView(MediasActivity activity) {
         this.activity = activity;
     }
 
@@ -72,7 +75,7 @@ public class VODView {
     public Node buildContainer() {
         BorderPane mainFrame = new BorderPane();
         mainFrame.setPadding(new Insets(0,0,30,0));
-        Label title = I18nControls.bindI18nProperties(new Label(), "VODTitle");
+        Label title = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.VideoSettingsTitle);
         title.setPadding(new Insets(30));
         title.setGraphicTextGap(30);
         TextTheme.createPrimaryTextFacet(title).style();
@@ -84,17 +87,46 @@ public class VODView {
         VBox masterSettings = new VBox();
         masterSettings.setPadding(new Insets(20));
 
-        Label masterLabel = I18nControls.bindI18nProperties(new Label(), "MasterSettings");
+        Label masterLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.MasterSettings);
         masterLabel.getStyleClass().add(Bootstrap.STRONG);
         masterLabel.setPadding(new Insets(20,0,0,0));
         masterSettings.getChildren().add(masterLabel);
 
-        Label availableUntilLabel = I18nControls.bindI18nProperties(new Label(), "AvailableUntil");
+        Event currentEvent = updateStore.updateEntity(FXEvent.getEvent());
+
+        Label liveStreamGlobalLink = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.LiveStreamGlobalLink);
+        liveStreamGlobalLink.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
+        liveStreamGlobalLink.setPadding(new Insets(15,0,0,0));
+        masterSettings.getChildren().add(liveStreamGlobalLink);
+
+        Label liveStreamGlobalComment = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.LiveStreamGlobalLinkComment);
+        liveStreamGlobalComment.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
+        liveStreamGlobalComment.getStyleClass().add(Bootstrap.SMALL);
+        masterSettings.getChildren().add(liveStreamGlobalComment);
+
+        livestreamGlobalLinkTextField = new TextField();
+        livestreamGlobalLinkTextField.setPromptText("Ex: srt://uk.castr.io:9998?pkt_size=1316&streamid=#!::r=live_14831a60190211efb48523dddcde7908,password=a4be1ab3,m=publish");
+        validationSupport.addUrlOrEmptyValidation(livestreamGlobalLinkTextField,livestreamGlobalLinkTextField,MediasI18nKeys.MalformedUrl);
+        if(currentEvent.getLivestreamUrl()!=null) {
+            livestreamGlobalLinkTextField.setText(currentEvent.getLivestreamUrl());
+        }
+        livestreamGlobalLinkTextField.textProperty().addListener(observable -> {
+            if(livestreamGlobalLinkTextField.getText()=="") {
+                currentEvent.setLivestreamUrl(null);
+            } else {
+                currentEvent.setLivestreamUrl(livestreamGlobalLinkTextField.getText());
+            }
+        });
+        VBox.setMargin(livestreamGlobalLinkTextField, new Insets(10, 0, 10, 0));
+        masterSettings.getChildren().add(livestreamGlobalLinkTextField);
+
+
+        Label availableUntilLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.AvailableUntil);
         availableUntilLabel.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
         availableUntilLabel.setPadding(new Insets(15,0,0,0));
         masterSettings.getChildren().add(availableUntilLabel);
 
-        Label availableUntilCommentLabel = I18nControls.bindI18nProperties(new Label(), "AvailableUntilComment");
+        Label availableUntilCommentLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.AvailableUntilComment);
         availableUntilCommentLabel.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
         availableUntilCommentLabel.getStyleClass().add(Bootstrap.SMALL);
         availableUntilCommentLabel.setPadding(new Insets(0,0,10,0));
@@ -103,6 +135,9 @@ public class VODView {
 
         contentExpirationDateTextField = new TextField();
         contentExpirationDateTextField.setPromptText("Format: 25-09-2025");
+        if(currentEvent.getVodExpirationDate()!=null) {
+            contentExpirationDateTextField.setText(currentEvent.getVodExpirationDate().format(dateFormatter));
+        }
         validationSupport.addDateValidation(contentExpirationDateTextField, "dd-MM-yyyy", contentExpirationDateTextField,I18n.getI18nText("ValidationTimeFormatIncorrect"));
 
         masterSettings.getChildren().add(contentExpirationDateTextField);
@@ -110,27 +145,42 @@ public class VODView {
         contentExpirationTimeTextField = new TextField();
         contentExpirationTimeTextField.setPromptText("Format: 14:25");
         validationSupport.addDateValidation(contentExpirationTimeTextField, "HH:mm", contentExpirationTimeTextField,I18n.getI18nText("ValidationTimeFormatIncorrect"));
+        if(currentEvent.getVodExpirationDate()!=null) {
+            contentExpirationTimeTextField.setText(currentEvent.getVodExpirationDate().format(timeFormatter));
+        }
         VBox.setMargin(contentExpirationTimeTextField, new Insets(10, 0, 10, 0));
         masterSettings.getChildren().add(contentExpirationTimeTextField);
 
-        //TODO: here add the timezone selector when it's readuy
+        contentExpirationTimeTextField.textProperty().addListener(new InvalidationListener() {
+            @Override
+            public void invalidated(Observable observable) {
+                updateVodExpirationDate(currentEvent);
+            }
+        });
+        contentExpirationDateTextField.textProperty().addListener(new InvalidationListener() {
+            @Override
+            public void invalidated(Observable observable) {
+                updateVodExpirationDate(currentEvent);
+            }
+        });
 
-
-        Label vodAvailableAfterLive = I18nControls.bindI18nProperties(new Label(), "VODAvailableAfter");
+        Label vodAvailableAfterLive = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.VODAvailableAfter);
         vodAvailableAfterLive.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
         vodAvailableAfterLive.setPadding(new Insets(15,0,0,0));
         masterSettings.getChildren().add(vodAvailableAfterLive);
 
-        Label vodAvailableAfterLiveComment = I18nControls.bindI18nProperties(new Label(), "VODAvailableAfterComment");
+        Label vodAvailableAfterLiveComment = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.VODAvailableAfterComment);
         vodAvailableAfterLiveComment.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
         vodAvailableAfterLiveComment.getStyleClass().add(Bootstrap.SMALL);
         masterSettings.getChildren().add(vodAvailableAfterLiveComment);
 
         videoAvailableAfterTextField = new TextField();
         videoAvailableAfterTextField.setPromptText("Format: 90");
-        validationSupport.addIntegerValidation(videoAvailableAfterTextField, videoAvailableAfterTextField,I18n.getI18nText("ValidationIntegerIncorrect"));
-        VBox.setMargin(videoAvailableAfterTextField, new Insets(10, 0, 10, 0));
+       // validationSupport.addIntegerValidation(videoAvailableAfterTextField, videoAvailableAfterTextField,I18n.getI18nText("ValidationIntegerIncorrect"));
+        VBox.setMargin(videoAvailableAfterTextField, new Insets(10, 0, 30, 0));
         masterSettings.getChildren().add(videoAvailableAfterTextField);
+
+
 
         //SAVE BUTTON
         Button saveButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), "Save"));
@@ -174,40 +224,41 @@ public class VODView {
         return ControlUtil.createVerticalScrollPaneWithPadding(10, mainFrame);
     }
 
+    private void updateVodExpirationDate(Event currentEvent) {
+        try {
+            LocalDate date = LocalDate.parse(contentExpirationDateTextField.getText(), dateFormatter);
+            LocalTime time = LocalTime.parse(contentExpirationTimeTextField.getText(), timeFormatter);
+            // Combine the date and time to create LocalDateTime
+            LocalDateTime availableUntil = LocalDateTime.of(date, time);
+            currentEvent.setVodExpirationDate(availableUntil);
+        } catch (DateTimeParseException e) {
+            // Handle the error or leave empty if ignoring invalid input
+        }
+    }
     private BorderPane buildIndividualLinksContainer() {
-        //TODO: when we know what will be the Item for VOD, we can remove perhaps the first request and make the necessary changes
         BorderPane container = new BorderPane();
-
-        // Initialize the list that will hold the current item
-        final ArrayList<Item> currentItem = new ArrayList<>();
-
         entityStore.executeQueryBatch(
-                new EntityStoreQuery("select distinct name,family.code from Item where organization=? and family.code = '" + itemFamilyTypeCode + "' order by name",
-                    new Object[] { FXEvent.getEvent().getOrganization() }),
-                new EntityStoreQuery("select name, date, timeline.startTime, timeline.endTime, item.name, event, site from ScheduledItem where event= ? and item.family.code = 'teach' order by date",
-                    new Object[] { FXEvent.getEvent() }),
-                new EntityStoreQuery("select name, parent, date, event, site, expirationDate,available from ScheduledItem where parent.event= ? and item.family.code = '"+itemFamilyTypeCode+"' and parent.item.family.code = 'teach' order by date",
-                    new Object[] { FXEvent.getEvent() }),
-                new EntityStoreQuery("select url, scheduledItem.parent, scheduledItem.item, scheduledItem.date, published from Media where scheduledItem.event= ? and scheduledItem.item.family.code = '" + itemFamilyTypeCode + "'",
-                    new Object[] { FXEvent.getEvent() })
+                new EntityStoreQuery("select distinct name,family.code from Item where organization=? and family.code = ? order by name",
+                    new Object[] { FXEvent.getEvent().getOrganization(),KnownItem.VIDEO.getCode() }),
+                new EntityStoreQuery("select name, parent, date, event, site, expirationDate,available, vodDelayed, item, item.code, parent.timeline.name, parent.timeline.startTime, parent.timeline.endTime from ScheduledItem where parent.event= ? and item.code = ? and parent.item.family.code = ? order by date",
+                    new Object[] { FXEvent.getEvent(),KnownItem.VIDEO.getCode(),KnownItemFamily.TEACHING.getCode() }),
+                new EntityStoreQuery("select url, scheduledItem.item, scheduledItem.date, scheduledItem.vodDelayed, published, scheduledItem.item.code from Media where scheduledItem.event= ? and scheduledItem.item.code = ?",
+                    new Object[] { FXEvent.getEvent(),KnownItem.VIDEO.getCode() })
             ).onFailure(Console::log)
             .onSuccess(entityList -> Platform.runLater(() -> {
                 //TODO: when we know which Item we use for VOD, we change the code bellow
                 EntityList<Item> VODItems = entityList[0];
-                currentItem.add(VODItems.get(0));
-                EntityList<ScheduledItem> teachingSIList = entityList[1];
-                EntityList<ScheduledItem> childSIList = entityList[2];
-                EntityList<Media> mediaList = entityList[3];
+                EntityList<ScheduledItem> videoSIList = entityList[1];
+                EntityList<Media> mediaList = entityList[2];
 
                 // Update lists with data from the database
-                teachingsScheduledItemsReadFromDatabase.setAll(teachingSIList);
-                scheduledItemsLinkedToTeachingScheduledItemsReadFromDatabase.setAll(childSIList);
+                vodScheduledItemsReadFromDatabase.setAll(videoSIList);
                 recordingsMediasReadFromDatabase.setAll(mediaList);
-                teachingsDates.setAll(teachingSIList.stream().map(EntityHasLocalDate::getDate).distinct().collect(Collectors.toList()));
+                teachingsDates.setAll(videoSIList.stream().map(EntityHasLocalDate::getDate).distinct().collect(Collectors.toList()));
 
                 // Instantiate the MediaLinksForVODManagement with data
                 MediaLinksForVODManagement languageLinkManagement = new MediaLinksForVODManagement(
-                    VODItems.get(0), entityStore, teachingsDates, teachingsScheduledItemsReadFromDatabase,scheduledItemsLinkedToTeachingScheduledItemsReadFromDatabase, recordingsMediasReadFromDatabase);
+                    VODItems.get(0), entityStore, teachingsDates, vodScheduledItemsReadFromDatabase, recordingsMediasReadFromDatabase);
 
                 // Now that the data is ready, update the container
                 container.setCenter(languageLinkManagement.getContainer());

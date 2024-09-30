@@ -1,7 +1,7 @@
 package one.modality.base.shared.entities.markers;
 
 import one.modality.base.shared.entities.ItemFamily;
-import one.modality.base.shared.entities.ItemFamilyType;
+import one.modality.base.shared.entities.KnownItemFamily;
 import dev.webfx.stack.orm.entity.EntityId;
 
 /**
@@ -20,8 +20,8 @@ public interface HasItemFamily extends HasItemFamilyType {
     }
 
     @Override
-    default ItemFamilyType getItemFamilyType() {
+    default KnownItemFamily getItemFamilyType() {
         ItemFamily itemFamily = getItemFamily();
-        return itemFamily == null ? ItemFamilyType.UNKNOWN : itemFamily.getItemFamilyType();
+        return itemFamily == null ? KnownItemFamily.UNKNOWN : itemFamily.getItemFamilyType();
     }
 }

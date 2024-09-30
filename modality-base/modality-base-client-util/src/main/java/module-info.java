@@ -6,17 +6,25 @@
 module modality.base.client.util {
 
     // Direct dependencies modules
+    requires javafx.controls;
+    requires javafx.graphics;
     requires modality.base.client.entities;
+    requires modality.base.client.mainframe.fx;
+    requires webfx.extras.styles.bootstrap;
     requires webfx.extras.type;
+    requires webfx.extras.util.masterslave;
     requires webfx.platform.console;
     requires webfx.platform.util;
     requires webfx.stack.i18n;
+    requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.expression;
+    requires webfx.stack.ui.dialog;
 
     // Exported packages
     exports one.modality.base.client.util.functions;
     exports one.modality.base.client.util.log;
+    exports one.modality.base.client.util.masterslave;
     exports one.modality.base.client.util.routing;
 
 }

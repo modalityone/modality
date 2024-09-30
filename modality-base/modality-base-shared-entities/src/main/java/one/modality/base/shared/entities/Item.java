@@ -66,8 +66,8 @@ public interface Item extends
     //// Enriched fields and methods
 
     @Override
-    default ItemFamilyType getItemFamilyType() {
+    default KnownItemFamily getItemFamilyType() {
         ItemFamily family = getFamily();
-        return family == null ? ItemFamilyType.UNKNOWN : family.getItemFamilyType();
+        return family == null ? KnownItemFamily.UNKNOWN : family.getItemFamilyType();
     }
 }

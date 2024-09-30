@@ -13,3 +13,5 @@ AssignDay: "Assign the dates for this schedule - multiple selection"
 DeleteDayTemplate: "Delete this template"
 To: "to"
 ItemSelectedShouldntBeNull: "Please select an item"
+NameThisLine: "Name this line"
+

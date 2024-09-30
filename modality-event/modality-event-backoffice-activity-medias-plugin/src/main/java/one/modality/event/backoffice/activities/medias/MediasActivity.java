@@ -15,7 +15,7 @@ public class MediasActivity extends ViewDomainActivityBase implements ButtonFact
 
     private final RecordingsView recordingsView = new RecordingsView(this);
     private final LiveStreamingView liveStreamingView = new LiveStreamingView(this);
-    private final VODView VODView = new VODView(this);
+    private final VideoView VideoView = new VideoView(this);
 
     private final BorderPane container = new BorderPane();
     private final TabsBar<Node> headerTabsBar = new TabsBar<>(this, this::changeTabSelection);
@@ -23,10 +23,10 @@ public class MediasActivity extends ViewDomainActivityBase implements ButtonFact
     @Override
     public Node buildUi() {
         headerTabsBar.setTabs(
-            headerTabsBar.createTab("Recordings", this::buildRecordingsView),
-            headerTabsBar.createTab("Livestreaming", this::buildLiveStreamingView),
-            headerTabsBar.createTab("VOD", this::buildVODView)
-        );
+            headerTabsBar.createTab(MediasI18nKeys.LivestreamTabTitle, this::buildLiveStreamingView),
+            headerTabsBar.createTab(MediasI18nKeys.VideoTabTitle, this::buildVODView),
+            headerTabsBar.createTab(MediasI18nKeys.AudioRecordingTabTitle, this::buildRecordingsView)
+            );
         return container;
     }
 
@@ -34,7 +34,7 @@ public class MediasActivity extends ViewDomainActivityBase implements ButtonFact
         container.setCenter(n);
         recordingsView.setActive(headerTabsBar.getTabs().get(0).isSelected());
         liveStreamingView.setActive(headerTabsBar.getTabs().get(1).isSelected());
-        VODView.setActive(headerTabsBar.getTabs().get(2).isSelected());
+        VideoView.setActive(headerTabsBar.getTabs().get(2).isSelected());
     }
 
 
@@ -57,12 +57,12 @@ public class MediasActivity extends ViewDomainActivityBase implements ButtonFact
 
     private Node buildLiveStreamingView() { return new BorderPane(liveStreamingView.buildContainer());}
 
-    private Node buildVODView() { return new BorderPane(VODView.buildContainer());}
+    private Node buildVODView() { return new BorderPane(VideoView.buildContainer());}
 
 
     protected void startLogic() {
         recordingsView.startLogic();
         liveStreamingView.startLogic();
-        VODView.startLogic();
+        VideoView.startLogic();
     }
 }

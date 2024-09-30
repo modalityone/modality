@@ -3,22 +3,22 @@ package one.modality.base.shared.entities;
 /**
  * @author Bruno Salmon
  */
-public enum ItemFamilyType {
+public enum KnownItemFamily {
     TEACHING("teach"),
     TRANSLATION("transl"),
-    LIVESTREAM("livestream"),
-    VIDEO_ON_DEMAND("vod"),
+    VIDEO("video"),
     ACCOMMODATION("acco"),
     MEALS("meals"),
     DIET("diet"),
     PARKING("park"),
     TRANSPORT("transp"),
     TAX("tax"),
+    AUDIO_RECORDING("record"),
     UNKNOWN(null);
 
     private final String code;
 
-    ItemFamilyType(String code) {
+    KnownItemFamily(String code) {
         this.code = code;
     }
 
@@ -26,7 +26,7 @@ public enum ItemFamilyType {
         return code;
     }
 
-    public static ItemFamilyType fromCode(String code) {
+    public static KnownItemFamily fromCode(String code) {
         if (code != null) {
             switch (code) {
                 case "teach" : return TEACHING;
@@ -37,6 +37,7 @@ public enum ItemFamilyType {
                 case "park" : return PARKING;
                 case "transp" : return TRANSPORT;
                 case "tax" : return TAX;
+                case "record" : return AUDIO_RECORDING;
             }
         }
         return UNKNOWN;

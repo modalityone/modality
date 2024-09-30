@@ -165,6 +165,7 @@
     <!--===========================< modality-base-client-util >============================-->
     <source path="one/modality/base/client/util/functions"/>
     <source path="one/modality/base/client/util/log"/>
+    <source path="one/modality/base/client/util/masterslave"/>
     <source path="one/modality/base/client/util/routing"/>
     <!--========================< modality-base-client-validation >=========================-->
     <source path="one/modality/base/client/validation"/>
@@ -319,6 +320,8 @@
     <source path="dev/webfx/extras/util/control"/>
     <!--============================< webfx-extras-util-layout >============================-->
     <source path="dev/webfx/extras/util/layout"/>
+    <!--=========================< webfx-extras-util-masterslave >==========================-->
+    <source path="dev/webfx/extras/util/masterslave"/>
     <!--============================< webfx-extras-util-paint >=============================-->
     <source path="dev/webfx/extras/util/paint"/>
     <!--============================< webfx-extras-util-scene >=============================-->

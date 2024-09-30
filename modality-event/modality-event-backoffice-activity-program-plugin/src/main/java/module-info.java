@@ -9,6 +9,7 @@ module modality.event.backoffice.activity.program.plugin {
     requires modality.base.backoffice.mainframe.fx;
     requires modality.base.client.icons;
     requires modality.base.client.mainframe.fx;
+    requires modality.base.client.util;
     requires modality.base.client.validation;
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
@@ -19,6 +20,7 @@ module modality.event.backoffice.activity.program.plugin {
     requires webfx.extras.theme;
     requires webfx.extras.time.pickers;
     requires webfx.extras.util.control;
+    requires webfx.extras.util.masterslave;
     requires webfx.kit.util;
     requires webfx.platform.console;
     requires webfx.platform.windowhistory;

@@ -1,40 +1,40 @@
 package one.modality.base.shared.entities.markers;
 
-import one.modality.base.shared.entities.ItemFamilyType;
+import one.modality.base.shared.entities.KnownItemFamily;
 
 /**
  * @author Bruno Salmon
  */
 public interface HasItemFamilyType {
 
-    ItemFamilyType getItemFamilyType();
+    KnownItemFamily getItemFamilyType();
 
     default boolean isAccommodation() {
-        return getItemFamilyType() == ItemFamilyType.ACCOMMODATION;
+        return getItemFamilyType() == KnownItemFamily.ACCOMMODATION;
     }
 
     default boolean isMeals() {
-        return getItemFamilyType() == ItemFamilyType.MEALS;
+        return getItemFamilyType() == KnownItemFamily.MEALS;
     }
 
     default boolean isDiet() {
-        return getItemFamilyType() == ItemFamilyType.DIET;
+        return getItemFamilyType() == KnownItemFamily.DIET;
     }
 
     default boolean isTeaching() {
-        return getItemFamilyType() == ItemFamilyType.TEACHING;
+        return getItemFamilyType() == KnownItemFamily.TEACHING;
     }
 
     default boolean isTranslation() {
-        return getItemFamilyType() == ItemFamilyType.TRANSLATION;
+        return getItemFamilyType() == KnownItemFamily.TRANSLATION;
     }
 
     default boolean isTransport() {
-        return getItemFamilyType() == ItemFamilyType.TRANSPORT;
+        return getItemFamilyType() == KnownItemFamily.TRANSPORT;
     }
 
     default boolean isTax() {
-        return getItemFamilyType() == ItemFamilyType.TAX;
+        return getItemFamilyType() == KnownItemFamily.TAX;
     }
 
 }
