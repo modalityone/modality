@@ -47,14 +47,16 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
     private final int urlTextFieldWith = 600;
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+    private VideoView parentVideoView;
 
-    public MediaLinksForVODManagement(Item vodItem, EntityStore entityStore, ObservableList<LocalDate> teachingsDates, ObservableList<ScheduledItem> scheduledItemsReadFromDatabase, ObservableList<Media> recordingsMediasReadFromDatabase) {
+    public MediaLinksForVODManagement(Item vodItem, EntityStore entityStore, List<LocalDate> teachingsDates, ObservableList<ScheduledItem> scheduledItemsReadFromDatabase, ObservableList<Media> recordingsMediasReadFromDatabase, VideoView videoView) {
         super(KnownItem.VIDEO.getCode(), entityStore, teachingsDates, scheduledItemsReadFromDatabase, recordingsMediasReadFromDatabase);
+        parentVideoView = videoView;
         mainContainer.setMinWidth(800);
         VBox teachingDatesVBox = new VBox();
         teachingDatesVBox.setSpacing(30);
         mainContainer.setCenter(teachingDatesVBox);
-        ObservableLists.bindConverted(teachingDatesVBox.getChildren(), teachingsDates, this::computeTeachingDateLine);
+        teachingsDates.forEach(date->teachingDatesVBox.getChildren().add(computeTeachingDateLine(date)));
     }
 
     protected BorderPane computeTeachingDateLine(LocalDate date) {
@@ -101,6 +103,10 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
 
             for (ScheduledItem currentVideoScheduledItem : filteredListForCurrentDay) {
                 UpdateStore localUpdateStore = UpdateStore.createAbove(entityStore);
+                //We add in the parentView the updatastore.hasChangedProperty so we know if we can or not change the edited event without forgetting the current local changes
+                //made here
+                parentVideoView.addUpdateStoreHasChangesProperty(localUpdateStore.hasChangesProperty());
+
                 ScheduledItem workingCurrentVideoScheduledItem = localUpdateStore.updateEntity(currentVideoScheduledItem);
                 //First of all, we read the Video ScheduledItems linked to the teachings
                 /* Here we create the line for each teaching **/
@@ -164,7 +170,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
 
                 // Bind the children of mediasListVBox to mediaList
                 ObservableLists.bindConverted(mediasListVBox.getChildren(), mediaList, media -> {
-                    HBox mediaNode = drawMediaLinkContainer(media, mediaList, localUpdateStore);
+                   HBox mediaNode = drawMediaLinkContainer(media, mediaList, localUpdateStore);
                     mediaNode.setUserData(media);// Set user data for removal reference
                     return mediaNode;
                 });
@@ -198,7 +204,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                     Media createdMedia = localUpdateStore.insertEntity(Media.class);
                     createdMedia.setScheduledItem(workingCurrentVideoScheduledItem);
                     createdMedia.setType(MediaType.VOD);
-                    createdMedia.setOrd(mediaList.get(mediaList.size()-1).getOrd()+1);
+                 //   createdMedia.setOrd(mediaList.get(mediaList.size()-1).getOrd()+1);
                     //By adding the media to mediaList, the drawMediaLinkContainer will be called because of the bondage between mediaList and the VBox children
                     mediaList.add(createdMedia);
                 });

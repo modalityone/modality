@@ -9,6 +9,7 @@ module modality.event.backoffice.activity.medias.plugin {
     requires modality.base.backoffice.mainframe.fx;
     requires modality.base.client.icons;
     requires modality.base.client.tile;
+    requires modality.base.client.util;
     requires modality.base.client.validation;
     requires modality.base.shared.entities;
     requires modality.event.client.event.fx;
@@ -17,6 +18,7 @@ module modality.event.backoffice.activity.medias.plugin {
     requires webfx.extras.switches;
     requires webfx.extras.theme;
     requires webfx.extras.util.control;
+    requires webfx.extras.util.masterslave;
     requires webfx.extras.webtext;
     requires webfx.kit.util;
     requires webfx.platform.console;

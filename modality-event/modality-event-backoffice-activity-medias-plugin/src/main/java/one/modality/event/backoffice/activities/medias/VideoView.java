@@ -3,6 +3,8 @@ package one.modality.event.backoffice.activities.medias;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.control.ControlUtil;
+import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
+import dev.webfx.extras.util.masterslave.SlaveEditor;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.i18n.I18n;
@@ -16,6 +18,7 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
@@ -24,13 +27,12 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
 import one.modality.base.client.validation.ModalityValidationSupport;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.markers.EntityHasLocalDate;
@@ -61,20 +63,37 @@ public class VideoView {
     private TextField livestreamGlobalLinkTextField;
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-
+    private Event currentEditedEvent;
+    private ScrollPane mainContainer;
+    private BorderPane mainFrame;
+    ObservableList<BooleanExpression> listOfUpdateStoresHasChangedProperty = FXCollections.observableArrayList();
+    // Create the BooleanBinding that represents the AND condition of all properties
 
     public VideoView(MediasActivity activity) {
         this.activity = activity;
+        mainFrame = new BorderPane();
+        mainFrame.setPadding(new Insets(0,0,30,0));
+        mainContainer = ControlUtil.createVerticalScrollPane(mainFrame);
     }
 
 
     public void startLogic() {
-
+        //we initialise the current Edited event to the current event. This will be update later when we change the event selected with the masterSlaveEventLinker
+        currentEditedEvent = FXEvent.getEvent();
+        masterSlaveEventLinker.masterProperty().bindBidirectional(FXEvent.eventProperty());
+        displayEventDetails(currentEditedEvent);
     }
 
     public Node buildContainer() {
-        BorderPane mainFrame = new BorderPane();
-        mainFrame.setPadding(new Insets(0,0,30,0));
+        //The main container is build by drawContainer, who is called by displayEventDetails.
+        return mainContainer;
+    }
+
+    public void addUpdateStoreHasChangesProperty(BooleanExpression booleanProperty) {
+        listOfUpdateStoresHasChangedProperty.add(booleanProperty);
+    }
+
+    public void drawContainer() {
         Label title = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.VideoSettingsTitle);
         title.setPadding(new Insets(30));
         title.setGraphicTextGap(30);
@@ -185,6 +204,8 @@ public class VideoView {
         //SAVE BUTTON
         Button saveButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), "Save"));
         saveButton.disableProperty().bind(updateStore.hasChangesProperty().not());
+        addUpdateStoreHasChangesProperty(updateStore.hasChangesProperty());
+
         saveButton.setOnAction(e -> {
             if (!validationSupportInitialised[0]) {
                 FXProperties.runNowAndOnPropertiesChange(() -> {
@@ -220,8 +241,6 @@ public class VideoView {
 
         BorderPane.setAlignment(mainFrame,Pos.CENTER);
         BorderPane.setAlignment(mainLayout,Pos.CENTER);
-
-        return ControlUtil.createVerticalScrollPaneWithPadding(10, mainFrame);
     }
 
     private void updateVodExpirationDate(Event currentEvent) {
@@ -239,11 +258,11 @@ public class VideoView {
         BorderPane container = new BorderPane();
         entityStore.executeQueryBatch(
                 new EntityStoreQuery("select distinct name,family.code from Item where organization=? and family.code = ? order by name",
-                    new Object[] { FXEvent.getEvent().getOrganization(),KnownItem.VIDEO.getCode() }),
+                    new Object[] { currentEditedEvent.getOrganization(),KnownItem.VIDEO.getCode() }),
                 new EntityStoreQuery("select name, parent, date, event, site, expirationDate,available, vodDelayed, item, item.code, parent.timeline.name, parent.timeline.startTime, parent.timeline.endTime from ScheduledItem where parent.event= ? and item.code = ? and parent.item.family.code = ? order by date",
-                    new Object[] { FXEvent.getEvent(),KnownItem.VIDEO.getCode(),KnownItemFamily.TEACHING.getCode() }),
+                    new Object[] { currentEditedEvent,KnownItem.VIDEO.getCode(),KnownItemFamily.TEACHING.getCode() }),
                 new EntityStoreQuery("select url, scheduledItem.item, scheduledItem.date, scheduledItem.vodDelayed, published, scheduledItem.item.code from Media where scheduledItem.event= ? and scheduledItem.item.code = ?",
-                    new Object[] { FXEvent.getEvent(),KnownItem.VIDEO.getCode() })
+                    new Object[] { currentEditedEvent,KnownItem.VIDEO.getCode() })
             ).onFailure(Console::log)
             .onSuccess(entityList -> Platform.runLater(() -> {
                 //TODO: when we know which Item we use for VOD, we change the code bellow
@@ -258,7 +277,7 @@ public class VideoView {
 
                 // Instantiate the MediaLinksForVODManagement with data
                 MediaLinksForVODManagement languageLinkManagement = new MediaLinksForVODManagement(
-                    VODItems.get(0), entityStore, teachingsDates, vodScheduledItemsReadFromDatabase, recordingsMediasReadFromDatabase);
+                    VODItems.get(0), entityStore, teachingsDates, vodScheduledItemsReadFromDatabase, recordingsMediasReadFromDatabase,this);
 
                 // Now that the data is ready, update the container
                 container.setCenter(languageLinkManagement.getContainer());
@@ -267,10 +286,54 @@ public class VideoView {
         // Return the placeholder container, which will be updated later
         return container;
     }
-
     public void setActive(boolean b) {
         activeProperty.set(b);
     }
+
+    private final SlaveEditor<Event> eventDetailsSlaveEditor = new ModalitySlaveEditor<Event>() {
+        /**
+         * This method is called by the master controller when we change the event we're editing
+         *
+         * @param approvedEntity the approved Entity
+         */
+        @Override
+        public void setSlave(Event approvedEntity) {
+            currentEditedEvent = approvedEntity;
+            resetUpdateStoreAndOtherComponents();
+            displayEventDetails(currentEditedEvent);
+        }
+
+        @Override
+        public Event getSlave() {
+            return currentEditedEvent;
+        }
+
+        @Override
+        public boolean hasChanges() {
+            if (listOfUpdateStoresHasChangedProperty.isEmpty()) {
+                return false;
+            }
+            return listOfUpdateStoresHasChangedProperty.stream()
+                .anyMatch(booleanExpression -> booleanExpression.getValue());
+        }
+    };
+
+    private void resetUpdateStoreAndOtherComponents() {
+        updateStore.cancelChanges();
+        listOfUpdateStoresHasChangedProperty.clear();
+    }
+
+    private void displayEventDetails(Event e) {
+        e.onExpressionLoaded("organization,vodExpirationDate,livestreamUrl")
+            .onSuccess(ignored -> Platform.runLater(() -> {
+               drawContainer();
+            }))
+            .onFailure((Console::log));
+
+    }
+
+    //This parameter will allow us to manage the interaction and behaviour of the Panel that display the details of an event and the event selected
+    final private MasterSlaveLinker<Event> masterSlaveEventLinker = new MasterSlaveLinker<>(eventDetailsSlaveEditor);
 }
 
 

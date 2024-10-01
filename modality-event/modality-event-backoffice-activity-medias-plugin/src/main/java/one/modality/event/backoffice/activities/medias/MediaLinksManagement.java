@@ -46,12 +46,12 @@ import java.util.stream.Collectors;
 public abstract class MediaLinksManagement {
     BorderPane mainContainer = new BorderPane();
     protected EntityStore entityStore;
-    protected ObservableList<LocalDate> teachingsDates;
+    protected List<LocalDate> teachingsDates;
     protected ObservableList<ScheduledItem> scheduledItemsReadFromDatabase;
     protected ObservableList<Media> recordingsMediasReadFromDatabase;
     protected String currentItemCode;
 
-    public MediaLinksManagement(String currentItemCode, EntityStore entityStore, ObservableList<LocalDate> teachingsDates, ObservableList<ScheduledItem> audioScheduledItemsReadFromDatabase, ObservableList<Media> recordingsMediasReadFromDatabase) {
+    public MediaLinksManagement(String currentItemCode, EntityStore entityStore, List<LocalDate> teachingsDates, ObservableList<ScheduledItem> audioScheduledItemsReadFromDatabase, ObservableList<Media> recordingsMediasReadFromDatabase) {
         this.currentItemCode = currentItemCode;
         this.entityStore = entityStore;
         this.recordingsMediasReadFromDatabase = recordingsMediasReadFromDatabase;
@@ -111,7 +111,7 @@ public abstract class MediaLinksManagement {
 
     protected class MediaLinksPerDateManagement {
         protected final LocalDate currentDate;
-        UpdateStore updateStore = UpdateStore.createAbove(entityStore);
+        protected UpdateStore updateStore = UpdateStore.createAbove(entityStore);
         ModalityValidationSupport validationSupport = new ModalityValidationSupport();
         boolean[] validationSupportInitialised = {false};
         DateTimeFormatter dateFormatterToDisplayCurrentDay = DateTimeFormatter.ofPattern("d MMMM, yyyy");
@@ -124,7 +124,6 @@ public abstract class MediaLinksManagement {
 
         protected MediaLinksPerDateManagement(LocalDate date) {
             currentDate = date;
-
         }
 
         protected BorderPane drawPanel() {
