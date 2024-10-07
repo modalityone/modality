@@ -1,5 +1,6 @@
 package one.modality.base.shared.entities;
 
+import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.markers.*;
 
 /**
@@ -27,6 +28,18 @@ public interface DocumentLine extends
 
     default void setBedNumber(Integer bedNumber) {
         setFieldValue("bedNumber", bedNumber);
+    }
+
+    default void setTimeLine(Object timeline) {
+        setForeignField("timeline", timeline);
+    }
+
+    default EntityId getTimelineId() {
+        return getForeignEntityId("timeline");
+    }
+
+    default Timeline getTimeline() {
+        return getForeignEntity("timeline");
     }
 
 }
