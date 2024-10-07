@@ -75,21 +75,25 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
     private boolean validationSupportInitialised = false;
 
     private Event currentEditedEvent;
-    private Button saveButton;
-    private Button cancelButton;
     private ColumnsPane templateDayColumnsPane;
     private EventState previousEventState;
     private Site currentSite;
     private final Label festivalDescriptionLabel = new Label();
     private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     private final Map<DayTemplate, DayTemplateManagement> correspondenceBetweenDayTemplateAndDayTemplateManagement = new IdentityHashMap<>();
     private String familyItemCode = "";
     private final static String FAMILY_ITEM_CODE_TEACHING = "teach";
     private EntityList<Item> audioLanguages;
     private Item videoItem;
-    private ScrollPane mainContainer;
+    private final ScrollPane mainContainer;
+    private final BorderPane mainFrame;
+    private ListChangeListener<DayTemplate> dayTemplateListChangeListener;
 
+    public ProgramActivity() {
+        mainFrame = new BorderPane();
+        mainFrame.setPadding(new Insets(0,0,30,0));
+        mainContainer = ControlUtil.createVerticalScrollPane(mainFrame);
+    }
 
     public void setFamilyItemCode(String code) {
         familyItemCode = code;
@@ -104,13 +108,11 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
     }
 
     public Node buildUi() {
-        drawUIContainer();
+        //The main container is build by drawContainer, who is called by displayEventDetails.
         return mainContainer;
     }
 
     private void drawUIContainer() {
-        BorderPane mainFrame = new BorderPane();
-        mainFrame.setPadding(new Insets(0,0,30,0));
         Label title = I18nControls.bindI18nProperties(new Label(), "ProgramTitle");
         title.setContentDisplay(ContentDisplay.TOP);
         title.setPadding(new Insets(30));
@@ -143,13 +145,13 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
         HBox lastLine = new HBox();
         lastLine.setAlignment(Pos.BASELINE_CENTER);
         lastLine.setSpacing(100);
-        saveButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "Save"));
+        Button saveButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "Save"));
         saveButton.setOnAction(event -> {
             if (validateForm()) {
                 submitUpdateStoreChanges();
             }
         });
-        cancelButton = Bootstrap.largeSecondaryButton(I18nControls.bindI18nProperties(new Button(),"Cancel"));
+        Button cancelButton = Bootstrap.largeSecondaryButton(I18nControls.bindI18nProperties(new Button(), "Cancel"));
         cancelButton.setOnAction(e-> {
             resetUpdateStoreAndOtherComponents();
             displayEventDetails(currentEditedEvent);
@@ -157,18 +159,15 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
         saveButton.disableProperty().bind(updateStore.hasChangesProperty().not());
         cancelButton.disableProperty().bind(updateStore.hasChangesProperty().not());
 
-        lastLine.getChildren().setAll(cancelButton,saveButton);
+        lastLine.getChildren().setAll(cancelButton, saveButton);
         templateDayColumnsPane = new ColumnsPane();
         templateDayColumnsPane.setMaxColumnCount(2);
         templateDayColumnsPane.setHgap(100);
         templateDayColumnsPane.setVgap(50);
         templateDayColumnsPane.setPadding(new Insets(50,0,50,0));
 
-
-        //The BindConverted seems to call drawDayTemplate on all elements, even the one already in the list, and not only on the added one.
-//        ObservableLists.bindConverted(templateDayColumnsPane.getChildren(),workingDayTemplates,this::drawDayTemplate);
         //We add a listener on the workingDayTemplates to create a new panel or remove it according to the list changes.
-        workingDayTemplates.addListener((ListChangeListener<DayTemplate>) change -> {
+        dayTemplateListChangeListener = change -> {
             while (change.next()) {
                 if (change.wasAdded()) {
                     // Handle added elements
@@ -181,16 +180,19 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
                     for (DayTemplate removedItem : change.getRemoved()) {
                         // Find and remove the corresponding UI element
                         DayTemplateManagement dayTemplateManagement = correspondenceBetweenDayTemplateAndDayTemplateManagement.get(removedItem);
-                        if (dayTemplateManagement == null)
+                        if (dayTemplateManagement == null) {
                             correspondenceBetweenDayTemplateAndDayTemplateManagement.get(removedItem);
-                        templateDayColumnsPane.getChildren().remove(dayTemplateManagement.getContainer());
+                        }
+                            templateDayColumnsPane.getChildren().remove(dayTemplateManagement.getContainer());
                     }
                 }
             }
-        });
+        };
+        // Add the listener to the observable list
+        workingDayTemplates.addListener(dayTemplateListChangeListener);
         mainVBox.getChildren().setAll(firstLine,templateDayColumnsPane,lastLine);
         mainVBox.setMaxWidth(width);
-        mainContainer = ControlUtil.createVerticalScrollPaneWithPadding(10, mainFrame);
+        mainContainer.setContent(mainFrame);
     }
 
     private void submitUpdateStoreChanges() {
@@ -222,6 +224,7 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
 
         //First we reset everything
         resetUpdateStoreAndOtherComponents();
+
         e.onExpressionLoaded("livestreamUrl,vodExpirationDate,audioExpirationDate")
             .onFailure((Console::log));
         previousEventState = e.getState();
@@ -256,12 +259,6 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
                     workingDayTemplates.setAll(dayTemplatesReadFromDatabase.stream().map(updateStore::updateEntity).collect(Collectors.toList()));
                     workingItems.setAll(itemsReadFromDatabase.stream().map(updateStore::updateEntity).collect(Collectors.toList()));
 
-                    boolean isAdvertised;
-                    if(currentEditedEvent.isAdvertised()==null) isAdvertised = false;
-                    else isAdvertised = currentEditedEvent.isAdvertised();
-                   // advertisedSwitch.setSelected(isAdvertised);
-                    //registrationOpenSwitch.setSelected(currentEditedEvent.getState()==EventState.OPEN);
-                    //We try to load the image from cloudinary if it exists
             }));
         drawUIContainer();
     }
@@ -322,8 +319,15 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
      */
     private void resetUpdateStoreAndOtherComponents() {
         validationSupport.reset();
-        validationSupportInitialised = false;
+        mainFrame.getChildren().clear();
+        if(dayTemplateListChangeListener!=null)
+            workingDayTemplates.removeListener(dayTemplateListChangeListener);
         workingDayTemplates.clear();
+        if(templateDayColumnsPane!= null)
+            templateDayColumnsPane.getChildren().clear();
+        dayTemplatesReadFromDatabase.clear();
+        itemsReadFromDatabase.clear();
+        validationSupportInitialised = false;
         correspondenceBetweenDayTemplateAndDayTemplateManagement.clear();
         updateStore.cancelChanges();
     }
@@ -358,7 +362,7 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
             VBox timelinesContainer = new VBox();
             ObservableLists.bindConverted(timelinesContainer.getChildren(),workingTimelines,this::drawTimeline);
 
-            //We read the value of the database for the child elements only if the dayTemplate is already existing
+            //We read the value of the database for the child elements only if the dayTemplate is already existing in the database (ie not in cache)
             if(!dayTemplate.getId().isNew()) {
                 entityStore.executeQueryBatch(
                         new EntityStoreQuery("select item, dayTemplate, startTime, endTime, videoOffered, audioOffered, name, site from Timeline where dayTemplate=? order by startTime",
@@ -699,7 +703,7 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
             nameTextField.setPromptText(ProgramI18nKeys.NameThisLine);
             if(timeline.getName()!=null)
                 nameTextField.setText(timeline.getName());
-            nameTextField.textProperty().addListener(obs -> { timeline.setName(nameTextField.getText());});
+            nameTextField.textProperty().addListener(obs -> timeline.setName(nameTextField.getText()));
 
             SVGPath audioAvailableIcon = SvgIcons.createSoundIconPath();
             audioAvailableIcon.setFill(Color.GREEN);
@@ -741,7 +745,8 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
             SVGPath videoAvailableIcon = SvgIcons.createVideoIconPath();
             videoAvailableIcon.setFill(Color.GREEN);
             SVGPath videoUnavailableIcon = SvgIcons.createVideoIconInactivePath();
-            videoUnavailableIcon.getStyleClass().add(Bootstrap.TEXT_DANGER);
+            videoUnavailableIcon.setFill(Color.RED);
+
             MonoPane videoMonoPane = new MonoPane();
             videoMonoPane.setCursor(Cursor.HAND);
             if(timeline.isVideoOffered()!=null) {
@@ -788,10 +793,7 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
             line.setPadding(new Insets(5,0,5,0));
             return line;
         }
-
         public BorderPane getContainer() {return mainContainer;}
-
-
     }
 }
 

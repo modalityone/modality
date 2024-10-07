@@ -23,6 +23,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Media;
 import one.modality.base.shared.entities.ScheduledItem;
 
@@ -39,8 +40,7 @@ public class LiveStreamingView {
     private final ObservableList<LocalDate> teachingsDates = FXCollections.observableArrayList();
     private final ObservableList<ScheduledItem> teachingsScheduledItemsReadFromDatabase = FXCollections.observableArrayList();
     private final ObservableList<Media> recordingsMediasReadFromDatabase = FXCollections.observableArrayList();
-    private final String itemFamilyTypeCode = "record";
-
+    private Event currentEditedEvent;
     public LiveStreamingView(MediasActivity activity) {
         this.activity = activity;
     }
@@ -140,6 +140,7 @@ public class LiveStreamingView {
     public void setActive(boolean b) {
         activeProperty.set(b);
     }
+
 }
 
 
