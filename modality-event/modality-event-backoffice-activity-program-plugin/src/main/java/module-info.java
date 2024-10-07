@@ -16,7 +16,6 @@ module modality.event.backoffice.activity.program.plugin {
     requires modality.event.client.event.fx;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
-    requires webfx.extras.switches;
     requires webfx.extras.theme;
     requires webfx.extras.time.pickers;
     requires webfx.extras.util.control;

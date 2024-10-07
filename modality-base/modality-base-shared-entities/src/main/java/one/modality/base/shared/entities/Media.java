@@ -69,6 +69,13 @@ public interface Media extends Entity {
         return getIntegerFieldValue("ord");
     }
 
+    default void setDurationMillis(Long durationMillis) {
+        setFieldValue("durationMillis", durationMillis);
+    }
+
+    default Long getDurationMillis() {
+        return getLongFieldValue("durationMillis");
+    }
 
 }
 
