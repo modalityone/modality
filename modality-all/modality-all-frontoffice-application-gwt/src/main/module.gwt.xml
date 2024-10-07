@@ -277,6 +277,10 @@
     <source path="one/modality/event/frontoffice/operations/routes/booking"/>
     <resource path="one/modality/event/frontoffice/activities/booking/map"/>
     <public path="" includes="one/modality/event/frontoffice/activities/booking/map/"/>
+    <!--===============< modality-event-frontoffice-activity-videos-plugin >================-->
+    <source path="one/modality/event/frontoffice/activities/videos"/>
+    <source path="one/modality/event/frontoffice/activities/videos/routing"/>
+    <source path="one/modality/event/frontoffice/operations/routes/videos"/>
     <!--===============================< webfx-extras-cell >================================-->
     <source path="dev/webfx/extras/cell/collator"/>
     <source path="dev/webfx/extras/cell/renderer"/>

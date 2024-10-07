@@ -32,6 +32,7 @@
         <module>modality-event-client-theme</module>
         <module>modality-event-frontoffice-activity-audiorecordings-plugin</module>
         <module>modality-event-frontoffice-activity-booking-plugin</module>
+        <module>modality-event-frontoffice-activity-videos-plugin</module>
         <module>modality-event-frontoffice-max-plugin</module>
         <module>modality-event-frontoffice-min-plugin</module>
         <module>modality-event-server-max-plugin</module>
