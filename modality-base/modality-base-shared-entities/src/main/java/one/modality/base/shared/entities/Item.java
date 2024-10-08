@@ -63,6 +63,15 @@ public interface Item extends
         return getBooleanFieldValue("deprecated");
     }
 
+    default void setImageUrl(String imageUrl) {
+        setFieldValue("imageUrl", imageUrl);
+    }
+
+    default String getImageUrl() {
+        return getStringFieldValue("imageUrl");
+    }
+
+
     //// Enriched fields and methods
 
     @Override
