@@ -43,4 +43,16 @@ public interface Timeline extends Entity,
         return getBooleanFieldValue("videoOffered");
     }
 
+    default void setEventTimeline(Object eventTimeline) {
+        setForeignField("eventTimeline", eventTimeline);
+    }
+
+    default EntityId getEventTimelineId() {
+        return getForeignEntityId("eventTimeline");
+    }
+
+    default Timeline getEventTimeline() {
+        return getForeignEntity("eventTimeline");
+    }
+
 }

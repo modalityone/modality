@@ -7,4 +7,12 @@ public interface DayTemplate extends
     EntityHasEvent,
     EntityHasName {
 
+    default void setDates(String dates) {
+        setFieldValue("dates", dates);
+    }
+
+    default String getDates() {
+        return getStringFieldValue("dates");
+    }
+
 }
