@@ -35,6 +35,7 @@ module modality.event.backoffice.activity.program.plugin {
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.operation;
+    requires java.sql;
 
     // Exported packages
     exports one.modality.event.backoffice.activities.program;

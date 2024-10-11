@@ -11,6 +11,7 @@ import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.ui.operation.OperationUtil;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
@@ -28,8 +29,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import javafx.util.Duration;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.validation.ModalityValidationSupport;
 import one.modality.base.shared.entities.Media;
@@ -66,14 +69,14 @@ public abstract class MediaLinksManagement {
 
     private void reinitialiseRecordingsMediasReadFromDatabase() {
         entityStore.<Media>executeQuery(
-                new EntityStoreQuery("select url, scheduledItem.parent, scheduledItem.item, scheduledItem.date, published, scheduledItem.item.code from Media where scheduledItem.event= ? and scheduledItem.item.code = ?", new Object[] { FXEvent.getEvent(),currentItemCode}))
+                new EntityStoreQuery("select url, scheduledItem.parent, scheduledItem.name, scheduledItem.parent.name, scheduledItem.item, scheduledItem.date, published, scheduledItem.item.code from Media where scheduledItem.event= ? and scheduledItem.item.code = ?", new Object[]{FXEvent.getEvent(), currentItemCode}))
             .onFailure(Console::log)
             .onSuccess(mediasList -> Platform.runLater(() -> {
                 recordingsMediasReadFromDatabase.setAll(mediasList);
-                }));
+            }));
     }
 
-    public void updatePercentageProperty(LocalDate date,IntegerProperty percentageProperty,StringProperty cssProperty) {
+    public void updatePercentageProperty(LocalDate date, IntegerProperty percentageProperty, StringProperty cssProperty) {
         //PRECONDITION FOR DATABASE DATA: currentItemCode should be not null (
         long numberOfTeachingForThisDayAndLanguage = scheduledItemsReadFromDatabase.stream()
             .filter(audioScheduledItem -> audioScheduledItem.getDate().equals(date) && currentItemCode.equals(audioScheduledItem.getItem().getCode()))
@@ -93,18 +96,21 @@ public abstract class MediaLinksManagement {
             (100.0 * numberOfScheduledItemLinkedToMediaForThisDay / numberOfTeachingForThisDayAndLanguage)));
 
         if (percentageProperty.get() < 100) {
-            cssProperty.setValue(Bootstrap.TEXT_DANGER );
+            cssProperty.setValue(Bootstrap.TEXT_DANGER);
         } else {
             cssProperty.setValue(Bootstrap.TEXT_SUCCESS);
         }
     }
+
     public ObservableList<Media> getRecordingsMediasReadFromDatabase() {
         return recordingsMediasReadFromDatabase;
     }
+
     public void setVisible(boolean visible) {
         mainContainer.setVisible(visible);
         mainContainer.setManaged(visible);
     }
+
     public BorderPane getContainer() {
         return mainContainer;
     }
@@ -129,7 +135,7 @@ public abstract class MediaLinksManagement {
         protected BorderPane drawPanel() {
             /* The content with the list of the teachings per day and the links **/
             filteredListForCurrentDay = scheduledItemsReadFromDatabase.stream()
-                .filter(scheduledItem -> scheduledItem.getDate().equals(currentDate)&&scheduledItem.getItem().getCode()==currentItemCode)
+                .filter(scheduledItem -> scheduledItem.getDate().equals(currentDate) && scheduledItem.getItem().getCode() == currentItemCode)
                 .collect(Collectors.toList());
             workingMedias.setAll(recordingsMediasReadFromDatabase.stream().filter(media -> media.getScheduledItem().getDate().equals(currentDate) && media.getScheduledItem().getItem().getCode().equals(currentItemCode)).
                 map(updateStore::updateEntity).collect(Collectors.toList()));
@@ -144,10 +150,12 @@ public abstract class MediaLinksManagement {
             centerVBox.setVisible(false);
             centerVBox.setManaged(false);
             //We create a separate method for building the header line because it will likely be the same for the child classes, but the content below will change
-            HBox headerLine = buildHeaderLine(centerVBox,isCenterVisible);
+            HBox headerLine = buildHeaderLine(centerVBox, isCenterVisible);
             container.setTop(headerLine);
             Separator separator = new Separator();
             centerVBox.getChildren().add(separator);
+
+            Media mediaToBeUpdatedOnSaveButton = null;
 
             for (ScheduledItem currentScheduledItem : filteredListForCurrentDay) {
 
@@ -155,7 +163,7 @@ public abstract class MediaLinksManagement {
                 HBox currentLine = new HBox();
                 currentLine.setPadding(new Insets(20, 20, 20, 40));
 
-                String name = currentScheduledItem.getParent().getTimeline().getName();
+                String name = currentScheduledItem.getParent().getName();
                 if (name == null) name = "Unknown";
                 Label teachingTitle = new Label(name);
                 Label startTimeLabel = new Label(currentScheduledItem.getParent().getTimeline().getStartTime().format(timeFormatter) + " - " + currentScheduledItem.getParent().getTimeline().getEndTime().format(timeFormatter));
@@ -166,7 +174,7 @@ public abstract class MediaLinksManagement {
 
                 Label publishedLabel = new Label("Published");
                 Switch publishedSwitch = new Switch();
-                HBox publishedInfo = new HBox(publishedLabel,publishedSwitch);
+                HBox publishedInfo = new HBox(publishedLabel, publishedSwitch);
                 publishedInfo.setAlignment(Pos.CENTER);
                 publishedInfo.setSpacing(5);
                 publishedInfo.setVisible(false);
@@ -176,6 +184,17 @@ public abstract class MediaLinksManagement {
                 linkTextField.setPrefWidth(500);
                 //  validationSupport.addUrlOrEmptyValidation(linkTextField, linkTextField, "UrlIsMalformed");
                 validationSupport.addUrlOrEmptyValidation(linkTextField, linkTextField, I18n.getI18nText("MalformedUrl"));
+
+                Label durationLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.ExactDuration);
+                TextField durationTextField = new TextField();
+                durationTextField.setMaxWidth(100);
+                validationSupport.addMinimumDurationValidation(durationTextField, durationTextField, I18n.getI18nText(MediasI18nKeys.DurationShouldBeAtLeast60s));
+
+                Button retrieveDurationButton = I18nControls.bindI18nProperties(Bootstrap.primaryButton(new Button()), MediasI18nKeys.RetrieveDuration);
+                HBox secondLine = new HBox(durationLabel, durationTextField, retrieveDurationButton);
+                secondLine.setAlignment(Pos.CENTER_RIGHT);
+                secondLine.setSpacing(10);
+                secondLine.setPadding(new Insets(0, 20, 30, 0));
 
                 //We look if there is an existing media for this teaching
                 List<Media> mediaList = workingMedias.stream()
@@ -190,9 +209,15 @@ public abstract class MediaLinksManagement {
                     publishedInfo.setVisible(true);
                     publishedSwitch.setSelected(currentMedia.get(0).isPublished());
                     linkTextField.setText(currentMedia.get(0).getUrl());
-
+                    if (currentMedia.get(0).getDurationMillis() != null) {
+                        durationTextField.setText(String.valueOf(currentMedia.get(0).getDurationMillis() / 1000));
+                    }
+                    mediaToBeUpdatedOnSaveButton = currentMedia.get(0);
                 }
 
+                durationTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+                    currentMedia.get(0).setDurationMillis(Long.valueOf(newValue) * 1000);
+                });
                 linkTextField.textProperty().addListener((observable, oldValue, newValue) -> {
                     //If there is a change and the mediaList for this teaching is empty, we create the Recording Scheduled Item and the Media associated
                     if (mediaList.isEmpty()) {
@@ -204,15 +229,39 @@ public abstract class MediaLinksManagement {
                     }
                     currentMedia.get(0).setUrl(newValue);
                     publishedInfo.setVisible(true);
-
+                    secondLine.setVisible(true);
+                    secondLine.setManaged(true);
                     //If the new value is empty, we delete the media
                     if (newValue.isEmpty() && !mediaList.isEmpty()) {
                         updateStore.deleteEntity(currentMedia.get(0));
                         mediaList.remove(currentMedia.get(0));
                         currentMedia.clear();
                         publishedInfo.setVisible(false);
+                        secondLine.setVisible(false);
+                        secondLine.setManaged(false);
                     }
                 });
+
+
+                retrieveDurationButton.setOnAction(e -> {
+                    if (!currentMedia.isEmpty()) {
+                        Media media = currentMedia.get(0);
+                        javafx.scene.media.Media javafxMedia = new javafx.scene.media.Media(media.getUrl());
+                        // Create a MediaPlayer to handle the media
+
+                        MediaPlayer mediaPlayer = new MediaPlayer(javafxMedia);
+                        // Wait until the media is ready (loaded) to get the duration
+                        OperationUtil.turnOnButtonsWaitMode(retrieveDurationButton);
+                        mediaPlayer.setOnReady(() -> {
+                            // Get the duration of the MP3 file
+                            Duration duration = javafxMedia.getDuration();
+                            long durationInMillis = (long) duration.toMillis();
+                            durationTextField.setText(String.valueOf(durationInMillis / 1000));
+                            OperationUtil.turnOffButtonsWaitMode(retrieveDurationButton);
+                        });
+                    }
+                });
+
 
                 //currentMedia is necessarily not empty here.
                 publishedSwitch.selectedProperty().addListener((observable, oldValue, newValue) -> currentMedia.get(0).setPublished(newValue));
@@ -224,9 +273,11 @@ public abstract class MediaLinksManagement {
                 currentLine.setAlignment(Pos.CENTER_LEFT);
 
                 centerVBox.getChildren().add(currentLine);
+                centerVBox.getChildren().add(secondLine);
             }
 
-            HBox lastLineHox = buildLastLine();
+            //TODO: review this to
+            HBox lastLineHox = buildLastLine(mediaToBeUpdatedOnSaveButton);
             centerVBox.getChildren().add(lastLineHox);
 
             container.setBorder(new Border(new BorderStroke(
@@ -238,7 +289,7 @@ public abstract class MediaLinksManagement {
             return container;
         }
 
-        protected HBox buildLastLine() {
+        protected HBox buildLastLine(Media media) {
             Button saveButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "Save"));
             saveButton.disableProperty().bind(updateStore.hasChangesProperty().not());
             saveButton.setOnAction(e -> {
@@ -252,9 +303,15 @@ public abstract class MediaLinksManagement {
                 }
 
                 if (validationSupport.isValid()) {
-                    updateStore.submitChanges()
-                        .onFailure(Console::log)
-                        .onSuccess(x -> Platform.runLater(this::resetUpdateStoreAndOtherComponents));
+                    OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                        updateStore.submitChanges()
+                            .onFailure(Console::log)
+                            .onSuccess(x -> {
+                                Platform.runLater(() -> {
+                                    resetUpdateStoreAndOtherComponents();
+                                    OperationUtil.turnOffButtonsWaitMode(saveButton);
+                                });
+                            }), saveButton);
                 }
             });
             HBox hBoxToReturn = new HBox(saveButton);
@@ -262,7 +319,8 @@ public abstract class MediaLinksManagement {
             hBoxToReturn.setPadding(new Insets(0, 40, 20, 0));
             return hBoxToReturn;
         }
-        protected HBox buildHeaderLine(VBox centerVBox,boolean[] isCenterVisible) {
+
+        protected HBox buildHeaderLine(VBox centerVBox, boolean[] isCenterVisible) {
             HBox hBoxToReturn = new HBox();
             hBoxToReturn.setAlignment(Pos.CENTER_LEFT);
             hBoxToReturn.setPadding(new Insets(10, 20, 10, 20));
@@ -277,7 +335,7 @@ public abstract class MediaLinksManagement {
 
             //We add a listener to dynamically update the percentage text and css property
             recordingsMediasReadFromDatabase.addListener((InvalidationListener) observable -> {
-                updatePercentageProperty(currentDate,percentageProperty,cssProperty);
+                updatePercentageProperty(currentDate, percentageProperty, cssProperty);
                 workingMedias.setAll(recordingsMediasReadFromDatabase.stream().filter(media -> media.getScheduledItem().getDate().equals(currentDate) && media.getScheduledItem().getItem().getCode().equals(currentItemCode)).
                     map(updateStore::updateEntity).collect(Collectors.toList()));
 
@@ -292,7 +350,7 @@ public abstract class MediaLinksManagement {
                 percentageLabel.getStyleClass().removeAll(oldClass); // Remove the old class
                 percentageLabel.getStyleClass().add(newClass);       // Add the new class
             });
-            updatePercentageProperty(currentDate,percentageProperty,cssProperty);
+            updatePercentageProperty(currentDate, percentageProperty, cssProperty);
 
             SVGPath topArrowButton = SvgIcons.createTopArrowPath();
             SVGPath bottomArrowButton = SvgIcons.createBottomArrowPath();

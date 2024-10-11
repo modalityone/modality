@@ -1,5 +1,6 @@
 package one.modality.base.client.icons;
 
+import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 
 /**
@@ -82,6 +83,38 @@ public final class SvgIcons {
     public static SVGPath createVideoIconPath() {
         SVGPath svgPath = new SVGPath();
         svgPath.setContent("M7.50391 12.5L14.5039 8L7.50391 3.5V12.5ZM6.00391 18V16H2.00391C1.45391 16 0.98324 15.8043 0.591906 15.413C0.200573 15.0217 0.00457292 14.5507 0.00390625 14V2C0.00390625 1.45 0.199906 0.979333 0.591906 0.588C0.983906 0.196667 1.45457 0.000666667 2.00391 0H18.0039C18.5539 0 19.0249 0.196 19.4169 0.588C19.8089 0.98 20.0046 1.45067 20.0039 2V14C20.0039 14.55 19.8082 15.021 19.4169 15.413C19.0256 15.805 18.5546 16.0007 18.0039 16H14.0039V18H6.00391Z");
+        svgPath.setStrokeWidth(1);
+        return svgPath;
+    }
+
+    public static SVGPath createTopPointingChevron() {
+        SVGPath svgPath = new SVGPath();
+        svgPath.setContent("M 4.9 9.8 L 12.25 2.45 L 19.6 9.8");
+        svgPath.setStrokeWidth(1);
+        svgPath.setStroke(Color.BLACK);
+        svgPath.setFill(null);
+        return svgPath;
+    }
+
+    public static SVGPath createBottomPointingChevron() {
+        SVGPath svgPath = new SVGPath();
+        svgPath.setContent("M 4.9 2.45 L 12.25 9.8 L 19.6 2.45");
+        svgPath.setStrokeWidth(1);
+        svgPath.setStroke(Color.BLACK);
+        svgPath.setFill(null);
+        return svgPath;
+    }
+
+    public static SVGPath createBackArrow() {
+        SVGPath svgPath = new SVGPath();
+        svgPath.setContent("M 0 17.5 C 0 27.1645 7.8354 35 17.5 35 C 27.1645 35 35 27.1645 35 17.5 C 35 7.8354 27.1645 0 17.5 0 C 7.8354 0 0 7.8354 0 17.5 Z M 21.2019 24.9038 L 10.2569 17.5 L 21.2019 11.5265 V 24.9038 Z");
+        svgPath.setStrokeWidth(1);
+        return svgPath;
+    }
+
+    public static SVGPath createVideoPlaySVGPath() {
+        SVGPath svgPath = new SVGPath();
+        svgPath.setContent("M 12.4313 0.1625 C 10.0208 0.1625 7.6645 0.8773 5.6602 2.2165 C 3.656 3.5556 2.0939 5.4591 1.1715 7.6861 C 0.249 9.913 0.0077 12.3635 0.4779 14.7277 C 0.9482 17.0918 2.1089 19.2634 3.8134 20.9679 C 5.5179 22.6723 7.6894 23.8331 10.0536 24.3033 C 12.4177 24.7736 14.8682 24.5322 17.0952 23.6098 C 19.3222 22.6873 21.2256 21.1252 22.5648 19.121 C 23.904 17.1168 24.6188 14.7605 24.6188 12.35 C 24.6188 9.1177 23.3347 6.0177 21.0491 3.7321 C 18.7635 1.4465 15.6636 0.1625 12.4313 0.1625 Z M 18.9141 13.1291 L 8.4677 18.3523 C 8.335 18.4187 8.1874 18.45 8.0392 18.4433 C 7.8909 18.4365 7.7469 18.392 7.6206 18.314 C 7.4944 18.2359 7.3903 18.1269 7.3181 17.9972 C 7.2458 17.8676 7.208 17.7216 7.208 17.5732 V 7.1268 C 7.2081 6.9785 7.2461 6.8326 7.3184 6.7031 C 7.3907 6.5735 7.4948 6.4646 7.621 6.3867 C 7.7472 6.3087 7.8912 6.2643 8.0394 6.2576 C 8.1876 6.2509 8.335 6.2822 8.4677 6.3485 L 18.9141 11.5718 C 19.0586 11.6441 19.18 11.7553 19.2648 11.8927 C 19.3497 12.0301 19.3946 12.1885 19.3946 12.35 C 19.3946 12.5115 19.3497 12.6699 19.2648 12.8073 C 19.18 12.9447 19.0586 13.0559 18.9141 13.1282");
         svgPath.setStrokeWidth(1);
         return svgPath;
     }

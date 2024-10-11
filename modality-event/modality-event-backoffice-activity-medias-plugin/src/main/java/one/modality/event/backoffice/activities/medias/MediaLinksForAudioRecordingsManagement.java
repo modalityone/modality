@@ -23,9 +23,11 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
 
     private final ObservableList<Media> workingMediasForCurrentLanguage = FXCollections.observableArrayList();
     private final RecordingsView parentRecordingView;
+    private final Item languageItem;
 
     public MediaLinksForAudioRecordingsManagement(Item language, EntityStore entityStore, ObservableList<LocalDate> teachingsDates, ObservableList<ScheduledItem> teachingsScheduledItemsReadFromDatabase, ObservableList<Media> recordingsMediasReadFromDatabase, RecordingsView recordingsView) {
         super(language.getCode(), entityStore, teachingsDates, teachingsScheduledItemsReadFromDatabase, recordingsMediasReadFromDatabase);
+        languageItem = language;
         parentRecordingView = recordingsView;
         buildContainer();
     }
@@ -35,7 +37,7 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
 
         VBox topContent = new VBox();
 
-        Label languageLabel = I18nControls.bindI18nProperties(new Label(), "Language",currentItemCode);
+        Label languageLabel = I18nControls.bindI18nProperties(new Label(), "Language",languageItem.getName());
         languageLabel.setPadding(new Insets(30,0,60,0));
         languageLabel.getStyleClass().add(Bootstrap.H4);
         languageLabel.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
@@ -60,7 +62,8 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
         publishAllHBox.setSpacing(10);
         publishAllHBox.setPadding(new Insets(0,0,30,0));
         publishAllHBox.setAlignment(Pos.CENTER_LEFT);
-        topContent.getChildren().add(publishAllHBox);
+        //TODO: implement the publish all functionnality
+      //  topContent.getChildren().add(publishAllHBox);
 
         mainContainer.setTop(topContent);
         mainContainer.setMinWidth(800);

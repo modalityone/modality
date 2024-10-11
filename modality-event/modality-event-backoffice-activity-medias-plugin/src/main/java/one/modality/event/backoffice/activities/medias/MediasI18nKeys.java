@@ -36,5 +36,8 @@ public interface MediasI18nKeys {
     String VideoTabTitle = "VideoTabTitle";
     String LivestreamTabTitle = "LivestreamTabTitle";
     String PublishAll = "PublishAll";
+    String ExactDuration = "ExactDuration";
+    String RetrieveDuration = "RetrieveDuration";
+    String DurationShouldBeAtLeast60s = "DurationShouldBeAtLeast60s";
 
 }

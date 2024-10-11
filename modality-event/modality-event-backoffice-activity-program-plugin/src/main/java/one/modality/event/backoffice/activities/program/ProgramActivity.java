@@ -28,11 +28,16 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.stack.ui.dialog.DialogCallback;
+import dev.webfx.stack.ui.dialog.DialogUtil;
+import dev.webfx.stack.ui.operation.OperationUtil;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -42,12 +47,14 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.text.Text;
 import one.modality.base.backoffice.mainframe.fx.FXEventSelector;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
 import one.modality.base.client.validation.ModalityValidationSupport;
 import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.markers.EntityHasLocalDate;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.event.client.event.fx.FXEvent;
 
@@ -68,7 +75,6 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
     private final UpdateStore updateStore = UpdateStore.createAbove(entityStore);
     private final ObservableList<DayTemplate> workingDayTemplates = FXCollections.observableArrayList();
     private final ObservableList<Item> workingItems = FXCollections.observableArrayList();
-
     private List<DayTemplate> dayTemplatesReadFromDatabase = new ArrayList<>();
     private List<Item> itemsReadFromDatabase = new ArrayList<>();
     private final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
@@ -88,6 +94,10 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
     private final ScrollPane mainContainer;
     private final BorderPane mainFrame;
     private ListChangeListener<DayTemplate> dayTemplateListChangeListener;
+    Button saveButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), ProgramI18nKeys.SaveProgram));
+    Button generateProgramButton = Bootstrap.largePrimaryButton(I18nControls.bindI18nProperties(new Button(),ProgramI18nKeys.GenerateProgram));
+    Button cancelButton = Bootstrap.largeSecondaryButton(I18nControls.bindI18nProperties(new Button(), ProgramI18nKeys.CancelProgram));
+
 
     public ProgramActivity() {
         mainFrame = new BorderPane();
@@ -145,26 +155,61 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
         HBox lastLine = new HBox();
         lastLine.setAlignment(Pos.BASELINE_CENTER);
         lastLine.setSpacing(100);
-        Button saveButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "Save"));
-        saveButton.setOnAction(event -> {
-            if (validateForm()) {
-                submitUpdateStoreChanges();
-            }
-        });
-        Button cancelButton = Bootstrap.largeSecondaryButton(I18nControls.bindI18nProperties(new Button(), "Cancel"));
-        cancelButton.setOnAction(e-> {
+          cancelButton.setOnAction(e-> {
             resetUpdateStoreAndOtherComponents();
             displayEventDetails(currentEditedEvent);
         });
         saveButton.disableProperty().bind(updateStore.hasChangesProperty().not());
         cancelButton.disableProperty().bind(updateStore.hasChangesProperty().not());
 
-        lastLine.getChildren().setAll(cancelButton, saveButton);
+        saveButton.setOnAction(event -> {
+            if (validateForm()) {
+                OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                    updateStore.submitChanges()
+                        .onFailure(Console::log)
+                        .onSuccess(x -> Platform.runLater(() -> {
+                            displayEventDetails(currentEditedEvent);
+                            OperationUtil.turnOffButtonsWaitMode(saveButton, cancelButton);
+                        })),
+                    saveButton, cancelButton
+                );
+            }
+        });
+
+        generateProgramButton.setOnAction(e-> {
+            Text titleConfirmationText = I18n.bindI18nProperties(new Text(),"AreYouSure");
+            Bootstrap.textSuccess(Bootstrap.strong(Bootstrap.h3(titleConfirmationText)));
+            BorderPane dialog = new BorderPane();
+            dialog.setTop(titleConfirmationText);
+            BorderPane.setAlignment(titleConfirmationText,Pos.CENTER);
+            Text confirmationText = I18n.bindI18nProperties(new Text(),ProgramI18nKeys.ProgramGenerationConfirmation);
+            dialog.setCenter(confirmationText);
+            BorderPane.setAlignment(confirmationText,Pos.CENTER);
+            BorderPane.setMargin(confirmationText,new Insets(30,0,30,0));
+            Button okGenerateButton = Bootstrap.largeDangerButton(I18nControls.bindI18nProperties(new Button(),"Confirm"));
+            Button cancelActionButton = Bootstrap.largeSecondaryButton(I18nControls.bindI18nProperties(new Button(),"Cancel"));
+
+            HBox buttonsHBox = new HBox(cancelActionButton,okGenerateButton);
+            buttonsHBox.setAlignment(Pos.CENTER);
+            buttonsHBox.setSpacing(30);
+            dialog.setBottom(buttonsHBox);
+            BorderPane.setAlignment(buttonsHBox,Pos.CENTER);
+            DialogCallback dialogCallback = DialogUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
+            okGenerateButton.setOnAction(l -> {
+                generateProgram();
+                dialogCallback.closeDialog();
+            });
+            cancelActionButton.setOnAction(l -> dialogCallback.closeDialog());
+        });
+
+        generateProgramButton.disableProperty().bind(updateStore.hasChangesProperty());
+        lastLine.getChildren().setAll(cancelButton, saveButton, generateProgramButton);
         templateDayColumnsPane = new ColumnsPane();
         templateDayColumnsPane.setMaxColumnCount(2);
         templateDayColumnsPane.setHgap(100);
         templateDayColumnsPane.setVgap(50);
         templateDayColumnsPane.setPadding(new Insets(50,0,50,0));
+        templateDayColumnsPane.setAlignment(Pos.TOP_CENTER);
 
         //We add a listener on the workingDayTemplates to create a new panel or remove it according to the list changes.
         dayTemplateListChangeListener = change -> {
@@ -195,11 +240,6 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
         mainContainer.setContent(mainFrame);
     }
 
-    private void submitUpdateStoreChanges() {
-            updateStore.submitChanges()
-                .onFailure(Console::log)
-                .onSuccess(x -> Platform.runLater(() -> displayEventDetails(currentEditedEvent)));
-        }
 
     private void addNewDayTemplate() {
         DayTemplate dayTemplate = updateStore.insertEntity(DayTemplate.class);
@@ -211,7 +251,62 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
         super.onResume();
         FXEventSelector.showEventSelector();
     }
+    private void generateProgram() {
+        UpdateStore updateStore = UpdateStore.createAbove(entityStore);
+        List<Timeline> newlyCreatedEventTimelines = new ArrayList<Timeline>();
+        //Here, we take all the template timelines, and create the event timelines needed
+        //We create an event timeline for all template timelines having distinct element on {item, startTime, endTime}
+        workingDayTemplates.forEach(currentDayTemplate-> {
+            DayTemplateManagement dayTemplateManagement = correspondenceBetweenDayTemplateAndDayTemplateManagement.get(currentDayTemplate);
 
+            dayTemplateManagement.workingTemplateTimelines.forEach(currentTemplateTimeline-> {
+            LocalTime startTime = currentTemplateTimeline.getStartTime();
+            LocalTime endTime = currentTemplateTimeline.getEndTime();
+            Item item =  currentTemplateTimeline.getItem();
+            Timeline templateTimelineToEdit = updateStore.updateEntity(currentTemplateTimeline);
+            Timeline eventTimeLine = newlyCreatedEventTimelines.stream()
+                .filter(timeline ->
+                    timeline.getStartTime().equals(startTime) &&
+                        timeline.getEndTime().equals(endTime) &&
+                        timeline.getItem().equals(item)
+                )
+                .findFirst()
+                .orElse(null);
+            if(eventTimeLine==null) {
+                //Here we create an event timeline
+                eventTimeLine = updateStore.insertEntity(Timeline.class);
+                eventTimeLine.setEvent(currentEditedEvent);
+                eventTimeLine.setSite(currentTemplateTimeline.getSite());
+                eventTimeLine.setItem(item);
+                eventTimeLine.setStartTime(startTime);
+                eventTimeLine.setEndTime(endTime);
+                eventTimeLine.setItemFamily(currentTemplateTimeline.getItemFamily());
+                newlyCreatedEventTimelines.add(eventTimeLine);
+
+            }
+                templateTimelineToEdit.setEventTimeline(eventTimeLine);
+                //Now, we create the associated scheduledItem
+                for (LocalDate date : dayTemplateManagement.datePicker.getSelectedDates()) {
+                    ScheduledItem teachingScheduledItem = dayTemplateManagement.addTeachingsScheduledItemsForDateAndTimeline(date,currentTemplateTimeline.getName(), eventTimeLine,updateStore);
+                    if(currentTemplateTimeline.isAudioOffered()) {
+                        dayTemplateManagement.addAudioScheduledItemsForDate(date,teachingScheduledItem,updateStore);
+                    }
+                    if(currentTemplateTimeline.isVideoOffered()) {
+                        dayTemplateManagement.addVideoScheduledItemsForDate(date,teachingScheduledItem,updateStore);
+                    }
+                }
+            });
+        });
+        OperationUtil.turnOnButtonsWaitModeDuringExecution(
+            updateStore.submitChanges()
+                .onFailure(Console::log)
+                .onSuccess(x -> Platform.runLater(() -> {
+                    displayEventDetails(currentEditedEvent);
+                    OperationUtil.turnOffButtonsWaitMode(generateProgramButton);
+                })),
+            generateProgramButton
+        );
+    }
     @Override
     public void onPause() {
         FXEventSelector.resetToDefault();
@@ -231,7 +326,7 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
 
         //We execute the query in batch, otherwise we can have synchronisation problem between the different threads
         entityStore.executeQueryBatch(
-              new EntityStoreQuery("select name, event from DayTemplate si where event=? order by name", new Object[] { e })
+              new EntityStoreQuery("select name, event, dates from DayTemplate si where event=? order by name", new Object[] { e })
             , new EntityStoreQuery("select distinct name from Item where organization=? and family.code=?", new Object[] { e.getOrganization(), familyItemCode})
             , new EntityStoreQuery("select name from Site where event=? and main limit 1", new Object[] { e}),
                 new EntityStoreQuery("select distinct name from Item where organization=? and family.code = ? and not deprecated order by name ",
@@ -346,44 +441,40 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
         TextField templateNameTextField;
         Line verticalLine;
         DayTemplate dayTemplate;
-        private final ObservableList<Timeline> workingTimelines = FXCollections.observableArrayList();
+        private final ObservableList<Timeline> workingTemplateTimelines = FXCollections.observableArrayList();
+        private final ObservableList<Timeline> workingEventTimelines = FXCollections.observableArrayList();
         private final ObservableList<ScheduledItem> workingTeachingScheduledItems = FXCollections.observableArrayList();
         private final ObservableList<ScheduledItem> workingAudioScheduledItems = FXCollections.observableArrayList();
         private final ObservableList<ScheduledItem> workingVideoScheduledItems = FXCollections.observableArrayList();
+        private final SortedList<ScheduledItem> sortedTeachingsScheduledItems = new SortedList<>(workingTeachingScheduledItems, Comparator.comparing(EntityHasLocalDate::getDate));
+
 
         private List<Timeline> timelinesReadFromDatabase = new ArrayList<>();
         private List<ScheduledItem> workingTeachingScheduledItemsReadFromDatabase;
         private List<ScheduledItem> workingAudioScheduledItemsReadFromDatabase;
         private List<ScheduledItem> workingVideoScheduledItemsReadFromDatabase;
         DatePicker datePicker;
+        VBox listOfSelectedDatesVBox;
 
         public DayTemplateManagement(DayTemplate dayTemplate) {
             this.dayTemplate = dayTemplate;
             VBox timelinesContainer = new VBox();
-            ObservableLists.bindConverted(timelinesContainer.getChildren(),workingTimelines,this::drawTimeline);
+
+            ObservableLists.bindConverted(timelinesContainer.getChildren(), workingTemplateTimelines,this::drawSelectedDatesAsLine);
 
             //We read the value of the database for the child elements only if the dayTemplate is already existing in the database (ie not in cache)
             if(!dayTemplate.getId().isNew()) {
                 entityStore.executeQueryBatch(
                         new EntityStoreQuery("select item, dayTemplate, startTime, endTime, videoOffered, audioOffered, name, site from Timeline where dayTemplate=? order by startTime",
-                            new Object[]{dayTemplate}),
-                        new EntityStoreQuery("select timeline, timeline.dayTemplate, startTime, endTime, date from ScheduledItem where timeline.dayTemplate=? order by startTime", new Object[]{dayTemplate}),
-                        new EntityStoreQuery("select name, startTime, endTime, date, parent, item from ScheduledItem where parent.timeline.dayTemplate=? and item.family.code=? order by startTime", new Object[]{dayTemplate, KnownItemFamily.AUDIO_RECORDING.getCode()}),
-                        new EntityStoreQuery("select name, startTime, endTime, date, parent, item from ScheduledItem where parent.timeline.dayTemplate=? and item.code=? order by startTime", new Object[]{dayTemplate, KnownItem.VIDEO.getCode()})
-                    )
+                            new Object[]{dayTemplate})
+                          )
                     .onFailure(Console::log)
                     .onSuccess(entityList -> Platform.runLater(() -> {
-                        timelinesReadFromDatabase = entityList[0];
-                        workingTeachingScheduledItemsReadFromDatabase = entityList[1];
-                        workingAudioScheduledItemsReadFromDatabase = entityList[2];
-                        workingVideoScheduledItemsReadFromDatabase = entityList[3];
-                        workingTimelines.setAll(timelinesReadFromDatabase.stream().map(updateStore::updateEntity).collect(Collectors.toList()));
-                        workingTeachingScheduledItems.setAll(workingTeachingScheduledItemsReadFromDatabase.stream().map(updateStore::updateEntity).collect(Collectors.toList()));
-                        workingAudioScheduledItems.setAll(workingAudioScheduledItemsReadFromDatabase.stream().map(updateStore::updateEntity).collect(Collectors.toList()));
-                        workingVideoScheduledItems.setAll(workingVideoScheduledItemsReadFromDatabase.stream().map(updateStore::updateEntity).collect(Collectors.toList()));
-                        //We remove the duplicates on the date (we have one similar date for each scheduledItem attached to each timeline)
-                        Set<LocalDate> dateWithoutDuplicate = workingTeachingScheduledItemsReadFromDatabase.stream().map(ScheduledItem::getDate).collect(Collectors.toSet());
-                        datePicker.setSelectedDates(dateWithoutDuplicate);
+                        //timelinesReadFromDatabase =
+                        workingTemplateTimelines.setAll(entityList[0]);
+                        if(dayTemplate.getDates()!=null) {
+                            datePicker.setSelectedDates(DatesToStringConversion.getDateList(dayTemplate.getDates()));
+                        }
                     }));
             }
             else {
@@ -401,7 +492,7 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
                 duplicateDayTemplate.setEvent(dayTemplate.getEvent());
                 workingDayTemplates.add(duplicateDayTemplate);
                 DayTemplateManagement newDTM = correspondenceBetweenDayTemplateAndDayTemplateManagement.get(duplicateDayTemplate);
-                for (Timeline timelineItem : workingTimelines) {
+                for (Timeline timelineItem : workingTemplateTimelines) {
                     Timeline newTimeline = updateStore.insertEntity(Timeline.class);
                     newTimeline.setItem(timelineItem.getItem());
                     newTimeline.setStartTime(timelineItem.getStartTime());
@@ -409,10 +500,9 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
                     newTimeline.setAudioOffered(timelineItem.isAudioOffered());
                     newTimeline.setVideoOffered(timelineItem.isVideoOffered());
                     newTimeline.setSite(timelineItem.getSite());
-                    newTimeline.setEvent(timelineItem.getEvent());
                     newTimeline.setName(timelineItem.getName());
                     newTimeline.setDayTemplate(duplicateDayTemplate);
-                    newDTM.workingTimelines.add(newTimeline);
+                    newDTM.workingTemplateTimelines.add(newTimeline);
                 }
             });
             duplicateButton.setCursor(Cursor.HAND);
@@ -445,7 +535,7 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
             //TODO change when a generic function has been created
             plusButton.setFill(Color.web("#0096D6"));
             MonoPane buttonContainer = new MonoPane(plusButton);
-            buttonContainer.setOnMouseClicked(e -> addTimelineAndLinkedScheduledItem());
+            buttonContainer.setOnMouseClicked(e -> addTemplateTimeline());
             buttonContainer.setCursor(Cursor.HAND);
             buttonContainer.setPadding(new Insets(10,0,0,0));
             BorderPane.setAlignment(buttonContainer,Pos.CENTER_LEFT);
@@ -466,11 +556,14 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
             VBox bottomVBox = new VBox(deleteDayTemplate,separator);
             centerBorderPane.setBottom(bottomVBox);
             BorderPane.setAlignment(bottomVBox,Pos.BOTTOM_LEFT);
+            centerBorderPane.setMaxHeight(Region.USE_PREF_SIZE);
 
             mainContainer.setCenter(centerBorderPane);
+            mainContainer.setMaxHeight(Region.USE_PREF_SIZE);
+
             //****************************  BOTTOM ******************************************//
             BorderPane bottomBorderPane = new BorderPane();
-            bottomBorderPane.setMaxWidth(400);
+            bottomBorderPane.setMaxWidth(600);
             Label assignDateLabel =  I18nControls.bindI18nProperties(new Label(),"AssignDay");
             TextTheme.createPrimaryTextFacet(assignDateLabel).style();
             assignDateLabel.getStyleClass().add(Bootstrap.SMALL);
@@ -485,10 +578,25 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
             LocalDate eventStartDate = currentEditedEvent.getStartDate();
             datePicker.setDisplayedYearMonth(YearMonth.of(eventStartDate.getYear(), eventStartDate.getMonth()));
 
+            listOfSelectedDatesVBox = new VBox();
+            listOfSelectedDatesVBox.setAlignment(Pos.CENTER);
+            ScrollPane listOfSelectedDatesVBoxScrollPane = new ScrollPane(listOfSelectedDatesVBox);
+            listOfSelectedDatesVBoxScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+            listOfSelectedDatesVBoxScrollPane.setMaxHeight(150);
+            listOfSelectedDatesVBoxScrollPane.setMinWidth(120);
+
             bottomBorderPane.setTop(assignDateLabel);
             BorderPane.setAlignment(assignDateLabel,Pos.CENTER);
             bottomBorderPane.setCenter(datePicker.getView());
             BorderPane.setAlignment(datePicker.getView(),Pos.CENTER);
+            Separator verticalSeparator = new Separator(Orientation.VERTICAL);
+            verticalSeparator.setPadding(new Insets(0,0,0,40));
+            HBox listOfDatesHBox = new HBox(verticalSeparator,listOfSelectedDatesVBoxScrollPane);
+            listOfDatesHBox.setSpacing(40);
+            listOfDatesHBox.setAlignment(Pos.CENTER);
+            bottomBorderPane.setRight(listOfDatesHBox);
+            BorderPane.setAlignment(listOfDatesHBox,Pos.CENTER);
+
             mainContainer.setBottom(bottomBorderPane);
             BorderPane.setAlignment(bottomBorderPane,Pos.CENTER);
 
@@ -498,98 +606,97 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
                     if (change.wasAdded()) {
                         // Handle added dates
                         for (LocalDate date : change.getAddedSubList()) {
-                            //If the date is not in the workingScheduledItem, we add it
-                            //(It can happen it exists already because it has been added during the initialisation and this code can be called after because of multi-thread)
-                            if (workingTeachingScheduledItems.stream().noneMatch(item -> item.getDate().equals(date))) {
-                                addTeachingScheduledItemsForDate(date);
-                            }
+                            dayTemplate.setDates(DatesToStringConversion.addDate(dayTemplate.getDates(),date));
                         }
                     }
                     if (change.wasRemoved()) {
                         // Handle removed dates
                         for (LocalDate date : change.getRemoved()) {
-                            removeTeachingScheduledItemsForDate(date);
+                            dayTemplate.setDates(DatesToStringConversion.removeDate(dayTemplate.getDates(),date));
                         }
                     }
                 }
             });
+
+            ObservableLists.bindConverted(listOfSelectedDatesVBox.getChildren(), datePicker.getSelectedDates(), this::drawSelectedDatesAsLine);
+
             initFormValidation();
         }
+
+        private BorderPane drawSelectedDatesAsLine(LocalDate currentDate) {
+            SVGPath trashDate = SvgIcons.createTrashSVGPath();
+            trashDate.setTranslateY(2);
+            Text currentDateValue = new Text(currentDate.format(DateTimeFormatter.ofPattern("MMM dd")));
+            trashDate.setOnMouseClicked(event -> datePicker.getSelectedDates().remove(currentDate));
+            ShapeTheme.createSecondaryShapeFacet(trashDate).style();
+            BorderPane currentLineBorderPane = new BorderPane();
+            BorderPane.setMargin(currentDateValue, new Insets(0,20,0,10));
+            currentLineBorderPane.setLeft(trashDate);
+            currentLineBorderPane.setCenter(currentDateValue);
+            currentLineBorderPane.setPadding(new Insets(0,0,3,0));
+            listOfSelectedDatesVBox.getChildren().add(currentLineBorderPane);
+            return currentLineBorderPane;
+        }
+
 
         private void initFormValidation() {
             validationSupport.addRequiredInput(templateNameTextField);
         }
 
-        private void addTimelineAndLinkedScheduledItem() {
+
+        private void addTemplateTimeline() {
             Timeline newTimeLine = updateStore.insertEntity(Timeline.class);
             newTimeLine.setAudioOffered(false);
             newTimeLine.setVideoOffered(false);
             newTimeLine.setDayTemplate(dayTemplate);
-            newTimeLine.setEvent(currentEditedEvent);
             newTimeLine.setSite(currentSite);
-            workingTimelines.add(newTimeLine);
-
-            for (LocalDate date : datePicker.getSelectedDates()) {
-                addTeachingsScheduledItemsForDateAndTimeline(date,newTimeLine);
-            }
+            workingTemplateTimelines.add(newTimeLine);
         }
 
-        private void addTeachingScheduledItemsForDate(LocalDate date) {
-            for (Timeline timeline : workingTimelines) {
-                ScheduledItem parent = addTeachingsScheduledItemsForDateAndTimeline(date,timeline);
-                if(timeline.isAudioOffered()) {
-                    addAudioScheduledItemsForDate(date,parent);
-                }
-                if(timeline.isVideoOffered()) {
-                    addVideoScheduledItemsForDate(date,parent);
-                }
-            }
-        }
 
-        private ScheduledItem addTeachingsScheduledItemsForDateAndTimeline(LocalDate date, Timeline timeline) {
-            ScheduledItem teachingScheduledItem = updateStore.insertEntity(ScheduledItem.class);
+
+        private ScheduledItem addTeachingsScheduledItemsForDateAndTimeline(LocalDate date, String name, Timeline timeline, UpdateStore currentUpdateStore) {
+            ScheduledItem teachingScheduledItem = currentUpdateStore.insertEntity(ScheduledItem.class);
             teachingScheduledItem.setEvent(currentEditedEvent);
             teachingScheduledItem.setSite(currentSite);
             teachingScheduledItem.setDate(date);
+            teachingScheduledItem.setName(name);
             teachingScheduledItem.setTimeLine(timeline);
             teachingScheduledItem.setItem(timeline.getItem());
-            workingTeachingScheduledItems.add(teachingScheduledItem);
             return teachingScheduledItem;
         }
 
-        private void addAudioScheduledItemsForDate(LocalDate date, ScheduledItem parentTeachingScheduledItem) {
+        private void addAudioScheduledItemsForDate(LocalDate date, ScheduledItem parentTeachingScheduledItem,UpdateStore currentUpdateStore) {
             //Here we add for each language not deprecated the scheduledItemAssociated to the date and parent scheduledItem*
             audioLanguages.forEach(languageItem-> {
-            ScheduledItem audioScheduledItem = updateStore.insertEntity(ScheduledItem.class);
+            ScheduledItem audioScheduledItem = currentUpdateStore.insertEntity(ScheduledItem.class);
             audioScheduledItem.setEvent(currentEditedEvent);
             audioScheduledItem.setSite(currentSite);
             audioScheduledItem.setDate(date);
             audioScheduledItem.setParent(parentTeachingScheduledItem);
             audioScheduledItem.setItem(languageItem);
-            workingAudioScheduledItems.add(audioScheduledItem);
             });
         }
 
-        private void addVideoScheduledItemsForDate(LocalDate date, ScheduledItem parentTeachingScheduledItem) {
-            ScheduledItem videoScheduledItem = updateStore.insertEntity(ScheduledItem.class);
+        private void addVideoScheduledItemsForDate(LocalDate date, ScheduledItem parentTeachingScheduledItem,UpdateStore currentUpdateStore) {
+            ScheduledItem videoScheduledItem = currentUpdateStore.insertEntity(ScheduledItem.class);
             videoScheduledItem.setEvent(currentEditedEvent);
             videoScheduledItem.setSite(currentSite);
             videoScheduledItem.setDate(date);
             videoScheduledItem.setParent(parentTeachingScheduledItem);
             videoScheduledItem.setItem(videoItem);
-            workingVideoScheduledItems.add(videoScheduledItem);
         }
 
 
         private void removeDayTemplate(DayTemplate dayTemplate) {
             workingDayTemplates.remove(dayTemplate);
-            removeTimeLineLinkedToDayTemplate(dayTemplate);
+            removeTemplateTimeLineLinkedToDayTemplate(dayTemplate);
             updateStore.deleteEntity(dayTemplate);
             correspondenceBetweenDayTemplateAndDayTemplateManagement.remove(dayTemplate);
         }
 
-        private void removeTimeLineLinkedToDayTemplate(DayTemplate dayTemplate) {
-            workingTimelines.removeIf(timeline -> {
+        private void removeTemplateTimeLineLinkedToDayTemplate(DayTemplate dayTemplate) {
+            workingTemplateTimelines.removeIf(timeline -> {
                 if (timeline.getDayTemplate() == dayTemplate) {
                     removeScheduledItemsLinkedToTimeline(timeline);
                     return true; // Removes the timeline
@@ -598,9 +705,9 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
             });
         }
 
-        private void removeTimeLine(Timeline timeline) {
-            workingTimelines.remove(timeline);
-            removeScheduledItemsLinkedToTimeline(timeline);
+        private void removeTemplateTimeLine(Timeline timeline) {
+            updateStore.deleteEntity(timeline);
+            workingTemplateTimelines.remove(timeline);
         }
 
         private void removeScheduledItemsLinkedToTimeline(Timeline timeline) {
@@ -651,7 +758,7 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
             });
         }
 
-        private HBox drawTimeline(Timeline timeline) {
+        private HBox drawSelectedDatesAsLine(Timeline timeline) {
             ButtonSelector itemSelector = new EntityButtonSelector<Item>(
                 "{class: 'Item', alias: 's', where: 'family.code=`teach`', orderBy :'name'}",
                 ProgramActivity.this, FXMainFrameDialogArea.getDialogArea(), dataSourceModel
@@ -725,20 +832,20 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
                 if(timeline.isAudioOffered()) {
                     audioMonoPane.getChildren().setAll(audioAvailableIcon);
                     //We add the recording scheduledItem for those date and associated timeline
-                    datePicker.getSelectedDates().forEach(date-> workingTeachingScheduledItems.forEach(teachingScheduledItem -> {
-                        if(teachingScheduledItem.getTimeline().equals(timeline) && teachingScheduledItem.getDate().equals(date)) {
-                            addAudioScheduledItemsForDate(date,teachingScheduledItem);
-                        }
-                    }));
+//                    datePicker.getSelectedDates().forEach(date-> workingTeachingScheduledItems.forEach(teachingScheduledItem -> {
+//                        if(teachingScheduledItem.getTimeline().equals(timeline) && teachingScheduledItem.getDate().equals(date)) {
+//                            addAudioScheduledItemsForDate(date,teachingScheduledItem);
+//                        }
+//                    }));
                 }
                 else {
                     audioMonoPane.getChildren().setAll(audioUnavailable);
                     //We remove the recording scheduledItem for those date and associated timeline
-                    datePicker.getSelectedDates().forEach(date-> workingTeachingScheduledItems.forEach(teachingScheduledItem -> {
-                        if(teachingScheduledItem.getTimeline().equals(timeline) && teachingScheduledItem.getDate().equals(date)) {
-                            removeAudioScheduledItem(teachingScheduledItem);
-                        }
-                    }));
+//                    datePicker.getSelectedDates().forEach(date-> workingTeachingScheduledItems.forEach(teachingScheduledItem -> {
+//                        if(teachingScheduledItem.getTimeline().equals(timeline) && teachingScheduledItem.getDate().equals(date)) {
+//                            removeAudioScheduledItem(teachingScheduledItem);
+//                        }
+//                    }));
                 }
                 });
 
@@ -761,27 +868,27 @@ public class ProgramActivity extends ViewDomainActivityBase implements ButtonFac
                 if(timeline.isVideoOffered()) {
                     videoMonoPane.getChildren().setAll(videoAvailableIcon);
                     //We add the recording scheduledItem for those date and associated timeline
-                    datePicker.getSelectedDates().forEach(date-> workingTeachingScheduledItems.forEach(teachingScheduledItem -> {
-                        if(teachingScheduledItem.getTimeline().equals(timeline) && teachingScheduledItem.getDate().equals(date)) {
-                            addVideoScheduledItemsForDate(date,teachingScheduledItem);
-                        }
-                    }));
+//                    datePicker.getSelectedDates().forEach(date-> workingTeachingScheduledItems.forEach(teachingScheduledItem -> {
+//                        if(teachingScheduledItem.getTimeline().equals(timeline) && teachingScheduledItem.getDate().equals(date)) {
+//                            addVideoScheduledItemsForDate(date,teachingScheduledItem);
+//                        }
+//                    }));
                 }
                 else {
                     videoMonoPane.getChildren().setAll(videoUnavailableIcon);
                     //We remove the recording scheduledItem for those date and associated timeline
-                    datePicker.getSelectedDates().forEach(date-> workingTeachingScheduledItems.forEach(teachingScheduledItem -> {
-                        if(teachingScheduledItem.getTimeline().equals(timeline) && teachingScheduledItem.getDate().equals(date)) {
-                            removeVideoScheduledItem(teachingScheduledItem);
-                        }
-                    }));
+//                    datePicker.getSelectedDates().forEach(date-> workingTeachingScheduledItems.forEach(teachingScheduledItem -> {
+//                        if(teachingScheduledItem.getTimeline().equals(timeline) && teachingScheduledItem.getDate().equals(date)) {
+//                            removeVideoScheduledItem(teachingScheduledItem);
+//                        }
+//                    }));
                 }
             });
 
             SVGPath trashImage = SvgIcons.createTrashSVGPath();
             MonoPane trashContainer = new MonoPane(trashImage);
             trashContainer.setCursor(Cursor.HAND);
-            trashContainer.setOnMouseClicked(event -> removeTimeLine(timeline));
+            trashContainer.setOnMouseClicked(event -> removeTemplateTimeLine(timeline));
             ShapeTheme.createSecondaryShapeFacet(trashImage).style();
 
             HBox afterItemSelectorLine = new HBox(fromTextField,toLabel,untilTextField,nameTextField,audioMonoPane,videoMonoPane,trashContainer);

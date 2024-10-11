@@ -258,6 +258,27 @@ public final class ModalityValidationSupport {
         );
     }
 
+    public void addMinimumDurationValidation(TextField timeInput, Node where, String errorMessage) {
+        addValidationRule(
+            Bindings.createBooleanBinding(
+                () -> {
+                    try {
+                        String input = timeInput.getText();
+                        if (input == null || input.isEmpty()) return true; // Allow empty input
+                        int value = Integer.parseInt(input);  // Try to parse the input to an integer
+                        return value >= 60;  // Validate if the integer is at least 60
+                    } catch (NumberFormatException e) {
+                        return false;  // Invalid if input is not a valid integer
+                    }
+                },
+                timeInput.textProperty()
+            ),
+            where,
+            errorMessage
+        );
+    }
+
+
     public void addUrlOrEmptyValidation(TextField urlInput, Node where, String errorMessage) {
         // Define the URL pattern (basic)
         String urlPattern = "^(https?|srt|rtmp|rtsp)://[\\w.-]+(:\\d+)?(/[\\w./-]*)?(\\?[\\w=&%.-]*)?(#[\\w!:.=&,-]*)?$";

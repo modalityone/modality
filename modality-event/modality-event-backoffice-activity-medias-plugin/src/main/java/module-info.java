@@ -6,6 +6,7 @@ module modality.event.backoffice.activity.medias.plugin {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires javafx.media;
     requires modality.base.backoffice.mainframe.fx;
     requires modality.base.client.icons;
     requires modality.base.client.tile;

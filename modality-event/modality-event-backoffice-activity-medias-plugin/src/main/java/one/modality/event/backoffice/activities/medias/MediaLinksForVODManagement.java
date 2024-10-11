@@ -123,7 +123,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 HBox.setHgrow(firstSpacer, Priority.ALWAYS);
                 firstLine.getChildren().addAll(teachingInfoVBox, firstSpacer);
 
-                String name = workingCurrentVideoScheduledItem.getParent().getTimeline().getName();
+                String name = workingCurrentVideoScheduledItem.getParent().getName();
                 if (name == null) name = "Unknown";
                 Label teachingTitle = new Label(name);
                 Label startTimeLabel = new Label(workingCurrentVideoScheduledItem.getParent().getTimeline().getStartTime().format(timeFormatter) + " - " + workingCurrentVideoScheduledItem.getParent().getTimeline().getEndTime().format(timeFormatter));
@@ -204,7 +204,11 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                     Media createdMedia = localUpdateStore.insertEntity(Media.class);
                     createdMedia.setScheduledItem(workingCurrentVideoScheduledItem);
                     createdMedia.setType(MediaType.VOD);
-                 //   createdMedia.setOrd(mediaList.get(mediaList.size()-1).getOrd()+1);
+                    if(mediaList.size()> 0 && mediaList.get(mediaList.size()-1).getOrd()!=null) {
+                        createdMedia.setOrd(mediaList.get(mediaList.size() - 1).getOrd() + 1);
+                    } else {
+                        createdMedia.setOrd(0);
+                    }
                     //By adding the media to mediaList, the drawMediaLinkContainer will be called because of the bondage between mediaList and the VBox children
                     mediaList.add(createdMedia);
                 });
