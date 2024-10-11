@@ -14,7 +14,6 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.ui.operation.OperationUtil;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -342,7 +341,12 @@ public abstract class MediaLinksManagement {
             });
 
             Label percentageLabel = new Label();
-            percentageLabel.textProperty().bind(Bindings.format("%d%%", percentageProperty));
+            IntegerProperty percentageProperty = new SimpleIntegerProperty() {
+                @Override
+                public void addListener(InvalidationListener listener) {
+                    percentageLabel.setText(get() + "%");
+                }
+            };
             percentageLabel.setPadding(new Insets(0, 30, 0, 0));
             hBoxToReturn.getChildren().add(percentageLabel);
 

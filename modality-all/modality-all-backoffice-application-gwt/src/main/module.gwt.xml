@@ -68,6 +68,10 @@
     <source path="javafx/scene/text"/>
     <source path="javafx/scene/transform"/>
     <source path="javafx/stage"/>
+    <!--===========================< webfx-kit-javafxmedia-emul >===========================-->
+    <source path="dev/webfx/kit/mapper/peers/javafxmedia"/>
+    <source path="dev/webfx/kit/mapper/peers/javafxmedia/spi"/>
+    <source path="javafx/scene/media"/>
     <!--============================< webfx-kit-javafxweb-emul >============================-->
     <source path="javafx/scene/web"/>
     <!--=====================================< charba >=====================================-->
@@ -141,6 +145,8 @@
     <inherits name="elemental2.core.Core"/>
     <!--=================================< elemental2-dom >=================================-->
     <inherits name="elemental2.dom.Dom"/>
+    <!--================================< elemental2-media >================================-->
+    <inherits name="elemental2.media.Media"/>
     <!--===============================< elemental2-promise >===============================-->
     <inherits name="elemental2.promise.Promise"/>
     <!--=================================< elemental2-svg >=================================-->
@@ -556,6 +562,10 @@
     <source path="dev/webfx/kit/mapper/peers/javafxgraphics/gwtj2cl/util"/>
     <!--===================< webfx-kit-javafxgraphics-registry-gwt-j2cl >===================-->
     <source path="dev/webfx/kit/registry/javafxgraphics"/>
+    <!--======================< webfx-kit-javafxmedia-peers-gwt-j2cl >======================-->
+    <source path="dev/webfx/kit/mapper/peers/javafxmedia/spi/gwtj2cl"/>
+    <!--====================< webfx-kit-javafxmedia-registry-gwt-j2cl >=====================-->
+    <source path="dev/webfx/kit/registry/javafxmedia"/>
     <!--=========================< webfx-kit-javafxweb-enginepeer >=========================-->
     <source path="dev/webfx/kit/mapper/peers/javafxweb/engine"/>
     <!--=========================< webfx-kit-javafxweb-peers-base >=========================-->

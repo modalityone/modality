@@ -20,7 +20,6 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -30,8 +29,8 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.*;
 import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
 import one.modality.base.client.validation.ModalityValidationSupport;
@@ -238,10 +237,14 @@ public class RecordingsView {
                         //Here we display the percentage of what has been entered.
                         // To do this, we filter the list of scheduledItem per language and date, and we do the same for the media,
                         // and we compare the number
-                        IntegerProperty percentageProperty = new SimpleIntegerProperty();
                         StringProperty cssProperty = new SimpleStringProperty();
                         Label percentageLabel = new Label();
-                        percentageLabel.textProperty().bind(Bindings.format("%d%%", percentageProperty));
+                        IntegerProperty percentageProperty = new SimpleIntegerProperty() {
+                            @Override
+                            public void addListener(InvalidationListener listener) {
+                                percentageLabel.setText(get() + "%");
+                            }
+                        };
                         percentageLabel.setPadding(new Insets(0, 0, 0, 40));
                         currentLanguageHBox.getChildren().add(percentageLabel);
 
