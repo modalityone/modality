@@ -25,6 +25,12 @@ public class WebToJavaCallbacks {
             pm.set("onGatewayCardVerificationFailure", (JsVoidFn1Arg<java.lang.String>) castedInstance::onGatewayCardVerificationFailure);
             pm.set("onGatewayBuyerVerificationFailure", (JsVoidFn1Arg<java.lang.String>) castedInstance::onGatewayBuyerVerificationFailure);
             pm.set("onGatewayPaymentVerificationSuccess", (JsVoidFn1Arg<java.lang.String>) castedInstance::onGatewayPaymentVerificationSuccess);
+        } else if (javaInstance instanceof dev.webfx.extras.player.video.web.SeamlessCapableWebVideoPlayer) {
+            dev.webfx.extras.player.video.web.SeamlessCapableWebVideoPlayer castedInstance = (dev.webfx.extras.player.video.web.SeamlessCapableWebVideoPlayer) javaInstance;
+            pm.set("onReady", (JsVoidFn0Arg) castedInstance::onReady);
+            pm.set("onPlay", (JsVoidFn0Arg) castedInstance::onPlay);
+            pm.set("onPause", (JsVoidFn0Arg) castedInstance::onPause);
+            pm.set("onEnd", (JsVoidFn0Arg) castedInstance::onEnd);
         }
     }
 

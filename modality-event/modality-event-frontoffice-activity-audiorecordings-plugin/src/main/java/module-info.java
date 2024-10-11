@@ -12,6 +12,7 @@ module modality.event.frontoffice.activity.audiorecordings.plugin {
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.util.control;
+    requires webfx.platform.blob;
     requires webfx.platform.console;
     requires webfx.platform.windowhistory;
     requires webfx.stack.i18n;

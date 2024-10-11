@@ -93,7 +93,19 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-kit-javafxmedia-gluon</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-ast-factory-generic</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-audio-gluon</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -323,6 +335,7 @@
                 <artifactId>gluonfx-maven-plugin</artifactId>
                 <configuration>
                     <attachList>
+                        <list>audio</list>
                         <list>browser</list>
                         <list>lifecycle</list>
                         <list>storage</list>

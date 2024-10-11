@@ -6,6 +6,7 @@
 module modality.all.frontoffice.application.gluon {
 
     // Direct dependencies modules
+    requires javafx.media;
     requires javafx.web;
     requires modality.all.frontoffice.application;
     requires modality.ecommerce.document.service.buscall;
@@ -16,6 +17,7 @@ module modality.all.frontoffice.application.gluon {
     requires webfx.extras.webtext.peers.openjfx;
     requires webfx.kit.javafxgraphics.openjfx;
     requires webfx.platform.ast.factory.generic;
+    requires webfx.platform.audio.gluon;
     requires webfx.platform.blob.java;
     requires webfx.platform.boot.java;
     requires webfx.platform.browser.gluon;

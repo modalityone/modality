@@ -6,6 +6,7 @@
 module modality.all.frontoffice.application.openjfx {
 
     // Direct dependencies modules
+    requires javafx.media;
     requires javafx.web;
     requires modality.all.frontoffice.application;
     requires modality.ecommerce.document.service.buscall;

@@ -3,6 +3,7 @@
 module modality.event.frontoffice.activity.videos.plugin {
 
     // Direct dependencies modules
+    requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
     requires javafx.web;
