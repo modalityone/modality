@@ -223,6 +223,7 @@ public final class VideosActivity extends ViewDomainActivityBase implements Butt
                                 videoListColumnsPane[0] = new ColumnsPane();
                                 videoListColumnsPane[0].setMaxWidth(850);
                                 videoListColumnsPane[0].setMaxColumnCount(4);
+                                videoListColumnsPane[0].setMinColumnWidth(boxWidth-40);
                                 videoListColumnsPane[0].setHgap(50);
                                 videoListColumnsPane[0].setVgap(20);
                                 videoListColumnsPane[0].setAlignment(Pos.TOP_LEFT);

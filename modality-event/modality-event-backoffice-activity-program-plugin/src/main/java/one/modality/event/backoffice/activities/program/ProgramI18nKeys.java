@@ -12,10 +12,14 @@ public interface ProgramI18nKeys {
     String ItemSelectedShouldntBeNull = "ItemSelectedShouldntBeNull";
     String NameThisLine = "NameThisLine";
     String GenerateProgram = "GenerateProgram";
+    String DeleteProgram = "DeleteProgram";
     String CancelProgram = "CancelProgram";
     String SaveProgram = "SaveProgram";
     String ProgramGenerationConfirmation = "ProgramGenerationConfirmation";
+    String DeleteProgramConfirmation = "DeleteProgramConfirmation";
     String ConfirmGeneration = "ConfirmGeneration";
+    String ScheduledItemsAlreadyGenerated = "ScheduledItemsAlreadyGenerated";
+    String ScheduledItemsNotYetGenerated = "ScheduledItemsNotYetGenerated";
     String DuplicateIcon = "DuplicateIcon";
 
 }
