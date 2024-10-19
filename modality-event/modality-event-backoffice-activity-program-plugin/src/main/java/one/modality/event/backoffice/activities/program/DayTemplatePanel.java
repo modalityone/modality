@@ -44,6 +44,7 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 
 /**
+ * @author David Hello
  * @author Bruno Salmon
  */
 final class DayTemplatePanel {
@@ -67,7 +68,7 @@ final class DayTemplatePanel {
 
         //We read the value of the database for the child elements only if the dayTemplate is already existing in the database (ie not in cache)
         if (!dayTemplate.getId().isNew()) {
-            dayTemplate.getStore().<Timeline>executeQuery(
+            programPanel.entityStore.<Timeline>executeQuery(
                     "select item, dayTemplate, startTime, endTime, videoOffered, audioOffered, name, site, eventTimeline from Timeline where dayTemplate=? order by startTime"
                     , dayTemplate
                 )
@@ -81,7 +82,8 @@ final class DayTemplatePanel {
                     //Here we test if the scheduled item have already been generated, ie if at least one of the workingTemplateTimelines got an eventTimeLine not null
                     boolean hasEventTimeline = workingTemplateTimelines.stream()
                         .anyMatch(timeline -> timeline.getEventTimeline() != null);
-                    programPanel.areScheduledItemBeenGeneratedProperty.setValue(hasEventTimeline);
+                    if (hasEventTimeline)
+                        programPanel.programGeneratedProperty.setValue(true);
                 }));
         } else {
             //Here we want only the language
@@ -97,7 +99,7 @@ final class DayTemplatePanel {
             duplicateDayTemplate.setName(dayTemplate.getName() + " - copy");
             duplicateDayTemplate.setEvent(dayTemplate.getEvent());
             programPanel.workingDayTemplates.add(duplicateDayTemplate);
-            DayTemplatePanel newDTP = programPanel.correspondenceBetweenDayTemplateAndDayTemplatePanel.get(duplicateDayTemplate);
+            DayTemplatePanel newDTP = programPanel.getOrCreateDayTemplatePanel(duplicateDayTemplate);
             for (Timeline timelineItem : workingTemplateTimelines) {
                 Timeline newTimeline = getUpdateStore().insertEntity(Timeline.class);
                 newTimeline.setItem(timelineItem.getItem());
@@ -153,7 +155,7 @@ final class DayTemplatePanel {
         deleteDayTemplate.setPadding(new Insets(10, 0, 5, 0));
         deleteDayTemplate.getStyleClass().add(Bootstrap.SMALL);
         deleteDayTemplate.getStyleClass().add(Bootstrap.TEXT_DANGER);
-        deleteDayTemplate.setOnMouseClicked(e -> removeDayTemplate(dayTemplate));
+        deleteDayTemplate.setOnMouseClicked(e -> deleteDayTemplate(dayTemplate));
         deleteDayTemplate.setCursor(Cursor.HAND);
         deleteDayTemplate.setPadding(new Insets(30, 0, 0, 0));
 
@@ -244,7 +246,7 @@ final class DayTemplatePanel {
     }
 
     private Site getSite() {
-        return programPanel.currentSite;
+        return programPanel.programSite;
     }
 
     private Item getVideoItem() {
@@ -296,7 +298,7 @@ final class DayTemplatePanel {
 
     void addAudioScheduledItemsForDate(LocalDate date, ScheduledItem parentTeachingScheduledItem, UpdateStore currentUpdateStore) {
         //Here we add for each language not deprecated the scheduledItemAssociated to the date and parent scheduledItem*
-        programPanel.audioLanguages.forEach(languageItem -> {
+        programPanel.languageAudioItems.forEach(languageItem -> {
             ScheduledItem audioScheduledItem = currentUpdateStore.insertEntity(ScheduledItem.class);
             audioScheduledItem.setEvent(getEvent());
             audioScheduledItem.setSite(getSite());
@@ -315,15 +317,11 @@ final class DayTemplatePanel {
         videoScheduledItem.setParent(parentTeachingScheduledItem);
     }
 
-
-    private void removeDayTemplate(DayTemplate dayTemplate) {
-        programPanel.workingDayTemplates.remove(dayTemplate);
-        removeTemplateTimeLineLinkedToDayTemplate(dayTemplate);
-        getUpdateStore().deleteEntity(dayTemplate);
-        programPanel.correspondenceBetweenDayTemplateAndDayTemplatePanel.remove(dayTemplate);
+    private void deleteDayTemplate(DayTemplate dayTemplate) {
+        programPanel.deleteDayTemplate(dayTemplate);
     }
 
-    private void removeTemplateTimeLineLinkedToDayTemplate(DayTemplate dayTemplate) {
+    void removeTemplateTimeLineLinkedToDayTemplate(DayTemplate dayTemplate) {
         workingTemplateTimelines.removeIf(timeline -> (timeline.getDayTemplate() == dayTemplate));
     }
 

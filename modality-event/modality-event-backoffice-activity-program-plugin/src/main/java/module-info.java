@@ -19,9 +19,11 @@ module modality.event.backoffice.activity.program.plugin {
     requires webfx.extras.theme;
     requires webfx.extras.time.pickers;
     requires webfx.extras.util.control;
+    requires webfx.extras.util.layout;
     requires webfx.extras.util.masterslave;
     requires webfx.kit.util;
     requires webfx.platform.console;
+    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;
@@ -34,7 +36,6 @@ module modality.event.backoffice.activity.program.plugin {
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.controls;
-    requires webfx.stack.ui.dialog;
     requires webfx.stack.ui.operation;
 
     // Exported packages

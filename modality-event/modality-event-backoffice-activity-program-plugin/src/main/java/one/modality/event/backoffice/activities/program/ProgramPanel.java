@@ -4,10 +4,11 @@ package one.modality.event.backoffice.activities.program;
 import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
-import dev.webfx.extras.util.masterslave.SlaveEditor;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
@@ -20,14 +21,10 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
 import dev.webfx.stack.ui.controls.dialog.DialogContent;
-import dev.webfx.stack.ui.dialog.DialogCallback;
-import dev.webfx.stack.ui.dialog.DialogUtil;
 import dev.webfx.stack.ui.operation.OperationUtil;
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -37,12 +34,11 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
+import one.modality.base.client.util.dialog.ModalityDialog;
 import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
 import one.modality.base.client.validation.ModalityValidationSupport;
 import one.modality.base.shared.entities.*;
-import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.event.client.event.fx.FXEvent;
 
 import java.time.LocalDate;
@@ -54,60 +50,42 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
+ * @author David Hello
  * @author Bruno Salmon
  */
-public final class ProgramPanel implements ButtonFactoryMixin {
+public final class ProgramPanel extends ModalitySlaveEditor<Event> implements ButtonFactoryMixin {
 
     private static final double MAX_WIDTH = 1500;
 
-    private final KnownItemFamily itemFamily;
-    private final VBox mainVBox = new VBox();
+    private final KnownItemFamily programItemFamily;
+
+    //This parameter will allow us to manage the interaction and behaviour of the Panel that display the details of an event and the event selected
+    private final MasterSlaveLinker<Event> masterSlaveEventLinker = new MasterSlaveLinker<>(this);
 
     private final DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
-    private final EntityStore entityStore = EntityStore.create(dataSourceModel);
+    final EntityStore entityStore = EntityStore.create(dataSourceModel);
     final UpdateStore updateStore = UpdateStore.createAbove(entityStore);
+    private final ObjectProperty<Event> loadedEventProperty = new SimpleObjectProperty<>();
+
+    Site programSite;
+    List<Item> languageAudioItems;
+    Item videoItem;
 
     final ObservableList<DayTemplate> workingDayTemplates = FXCollections.observableArrayList();
-    private final ObservableList<Item> workingItems = FXCollections.observableArrayList();
-    private List<DayTemplate> dayTemplatesReadFromDatabase = new ArrayList<>();
-    private List<Item> itemsReadFromDatabase = new ArrayList<>();
+    private final Map<DayTemplate, DayTemplatePanel> correspondenceBetweenDayTemplateAndDayTemplatePanel = new IdentityHashMap<>();
+    final BooleanProperty programGeneratedProperty = new SimpleBooleanProperty();
+
+    private VBox mainVBox;
     final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
-    private boolean validationSupportInitialised = false;
+    private boolean validationSupportInitialised;
 
-    private Event currentEditedEvent;
-    private ColumnsPane templateDayColumnsPane;
-    Site currentSite;
-    private final Label festivalDescriptionLabel = new Label();
-    final Map<DayTemplate, DayTemplatePanel> correspondenceBetweenDayTemplateAndDayTemplatePanel = new IdentityHashMap<>();
-    EntityList<Item> audioLanguages;
-    Item videoItem;
-    private ListChangeListener<DayTemplate> dayTemplateListChangeListener;
-    private final Button saveButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), ProgramI18nKeys.SaveProgram));
-    private final Button generateProgramButton = Bootstrap.largePrimaryButton(I18nControls.bindI18nProperties(new Button(), ProgramI18nKeys.GenerateProgram));
-    private final Button cancelButton = Bootstrap.largeSecondaryButton(I18nControls.bindI18nProperties(new Button(), ProgramI18nKeys.CancelProgram));
-    final BooleanProperty areScheduledItemBeenGeneratedProperty = new SimpleBooleanProperty(false);
-    private final StringProperty eventStateDescriptionStringProperty = new SimpleStringProperty();
-    private final StringProperty generateButtonLabelStringProperty = new SimpleStringProperty();
-
-    public ProgramPanel(KnownItemFamily itemFamily) {
-        this.itemFamily = itemFamily;
-
-        eventStateDescriptionStringProperty.setValue(I18n.getI18nText(ProgramI18nKeys.ScheduledItemsNotYetGenerated));
-        generateButtonLabelStringProperty.setValue(I18n.getI18nText(ProgramI18nKeys.GenerateProgram));
-
-        areScheduledItemBeenGeneratedProperty.addListener((observable, oldValue, generated) -> {
-            if (generated) {
-                eventStateDescriptionStringProperty.setValue(I18n.getI18nText(ProgramI18nKeys.ScheduledItemsAlreadyGenerated));
-                generateButtonLabelStringProperty.setValue(I18n.getI18nText(ProgramI18nKeys.DeleteProgram));
-            } else {
-                eventStateDescriptionStringProperty.setValue(I18n.getI18nText(ProgramI18nKeys.ScheduledItemsNotYetGenerated));
-                generateButtonLabelStringProperty.setValue(I18n.getI18nText(ProgramI18nKeys.GenerateProgram));
-            }
-        });
+    public ProgramPanel(KnownItemFamily programItemFamily) {
+        this.programItemFamily = programItemFamily;
     }
 
     public Node getPanel() {
-        //The main container is build by drawContainer, who is called by displayEventDetails.
+        if (mainVBox == null)
+            buildUi();
         return mainVBox;
     }
 
@@ -115,108 +93,74 @@ public final class ProgramPanel implements ButtonFactoryMixin {
         masterSlaveEventLinker.masterProperty().bindBidirectional(FXEvent.eventProperty());
     }
 
-    // Private implementation
-
-    private boolean validateForm() {
-        if (!validationSupportInitialised) {
-            initFormValidation();
-            validationSupportInitialised = true;
-        }
-        return validationSupport.isValid();
+    @Override
+    public void setSlave(Event approvedEntity) {
+        super.setSlave(approvedEntity);
+        reloadProgramFromSelectedEvent();
     }
 
-    private void drawUIContainer() {
-        areScheduledItemBeenGeneratedProperty.setValue(false);
+    @Override
+    public boolean hasChanges() {
+        return updateStore.hasChanges();
+    }
 
-        Button generateProgramButton = Bootstrap.largePrimaryButton(new Button());
-        generateProgramButton.textProperty().bind(generateButtonLabelStringProperty);
+    // Private implementation
 
-        HBox firstLine = new HBox();
-        firstLine.setAlignment(Pos.CENTER_LEFT);
-        Label subtitle = I18nControls.bindI18nProperties(new Label(), new I18nSubKey("expression: '[Programme] - ' + name + ' (' + dateIntervalFormat(startDate, endDate)+')'", currentEditedEvent));
-        subtitle.getStyleClass().add(Bootstrap.H4);
+    Event getLoadedEvent() {
+        return loadedEventProperty.get();
+    }
+
+    void setLoadedEvent(Event loadedEvent) {
+        loadedEventProperty.set(loadedEvent);
+    }
+
+    private void buildUi() {
+        // Building the top line
+        Label subtitle = I18nControls.bindI18nProperties(Bootstrap.h4(new Label()), new I18nSubKey("expression: '[Programme] - ' + name + ' (' + dateIntervalFormat(startDate, endDate)+')'", loadedEventProperty), loadedEventProperty);
+        subtitle.setWrapText(true);
         TextTheme.createSecondaryTextFacet(subtitle).style();
-
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button addTemplateButton = Bootstrap.primaryButton(I18nControls.bindI18nProperties(new Button(), "AddDayTemplate"));
         addTemplateButton.setGraphicTextGap(10);
         addTemplateButton.setPadding(new Insets(20, 200, 20, 0));
-        addTemplateButton.setOnAction(event -> addNewDayTemplate());
+        addTemplateButton.setOnAction(event1 -> addNewDayTemplate());
 
-        firstLine.getChildren().setAll(subtitle, festivalDescriptionLabel, spacer, addTemplateButton);
+        HBox topLine = new HBox(subtitle, LayoutUtil.createHGrowable(), addTemplateButton);
 
-        HBox lastLine = new HBox();
-        lastLine.setAlignment(Pos.BASELINE_CENTER);
-        lastLine.setSpacing(100);
-        cancelButton.setOnAction(e -> {
-            resetUpdateStoreAndOtherComponents();
-            displayEventDetails(currentEditedEvent);
-        });
-        saveButton.disableProperty().bind(updateStore.hasChangesProperty().not());
-        cancelButton.disableProperty().bind(updateStore.hasChangesProperty().not());
+        // Building the bottom line
+        Button cancelButton = Bootstrap.largeSecondaryButton(I18nControls.bindI18nProperties(new Button(), ProgramI18nKeys.CancelProgram));
+        cancelButton.setOnAction(e -> reloadProgramFromSelectedEvent());
 
-        saveButton.setOnAction(event -> {
+        Button saveButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), ProgramI18nKeys.SaveProgram));
+        saveButton.setOnAction(e -> {
             if (validateForm()) {
-                OperationUtil.turnOnButtonsWaitModeDuringExecution(
-                    updateStore.submitChanges()
-                        .onFailure(x-> {
-                            DialogContent dialog = DialogContent.createConfirmationDialog("Error","Operation failed", x.getMessage());
-                            dialog.setOk();
-                            Platform.runLater(()-> {
-                                DialogBuilderUtil.showModalNodeInGoldLayout(dialog,FXMainFrameDialogArea.getDialogArea());
-                                dialog.getPrimaryButton().setOnAction(a->dialog.getDialogCallback().closeDialog());
-                            });
-                            Console.log(x);
-                        })
-                        .onSuccess(x -> Platform.runLater(() -> {
-                            displayEventDetails(currentEditedEvent);
-                            OperationUtil.turnOffButtonsWaitMode(saveButton, cancelButton);
-                        })),
-                    saveButton, cancelButton
-                );
+                submitUpdateStoreChanges(updateStore, saveButton, cancelButton);
             }
         });
 
-        generateProgramButton.setOnAction(e -> {
-            Text titleConfirmationText = I18n.bindI18nProperties(new Text(), "AreYouSure");
-            Bootstrap.textSuccess(Bootstrap.strong(Bootstrap.h3(titleConfirmationText)));
-            BorderPane dialog = new BorderPane();
-            dialog.setTop(titleConfirmationText);
-            BorderPane.setAlignment(titleConfirmationText, Pos.CENTER);
-            Text confirmationText;
-            if (areScheduledItemBeenGeneratedProperty.getValue()) {
-                confirmationText = I18n.bindI18nProperties(new Text(), ProgramI18nKeys.DeleteProgramConfirmation);
-            } else {
-                confirmationText = I18n.bindI18nProperties(new Text(), ProgramI18nKeys.ProgramGenerationConfirmation);
-            }
-            dialog.setCenter(confirmationText);
-            BorderPane.setAlignment(confirmationText, Pos.CENTER);
-            BorderPane.setMargin(confirmationText, new Insets(30, 0, 30, 0));
-            Button okGenerateButton = Bootstrap.largeDangerButton(I18nControls.bindI18nProperties(new Button(), "Confirm"));
-            Button cancelActionButton = Bootstrap.largeSecondaryButton(I18nControls.bindI18nProperties(new Button(), "Cancel"));
+        BooleanBinding hasNoChangesProperty = updateStore.hasChangesProperty().not();
+        saveButton.disableProperty().bind(hasNoChangesProperty);
+        cancelButton.disableProperty().bind(hasNoChangesProperty);
 
-            HBox buttonsHBox = new HBox(cancelActionButton, okGenerateButton);
-            buttonsHBox.setAlignment(Pos.CENTER);
-            buttonsHBox.setSpacing(30);
-            dialog.setBottom(buttonsHBox);
-            BorderPane.setAlignment(buttonsHBox, Pos.CENTER);
-            DialogCallback dialogCallback = DialogUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
-            okGenerateButton.setOnAction(l -> {
-                if (areScheduledItemBeenGeneratedProperty.getValue()) {
-                    deleteProgram();
-                } else {
-                    generateProgram();
-                }
-                dialogCallback.closeDialog();
-            });
-            cancelActionButton.setOnAction(l -> dialogCallback.closeDialog());
-        });
+
+        Button generateProgramButton = Bootstrap.largePrimaryButton(I18nControls.bindI18nProperties(new Button(), ProgramI18nKeys.GenerateProgram));
+        generateProgramButton.setOnAction(e -> ModalityDialog.showConfirmationDialog(ProgramI18nKeys.ProgramGenerationConfirmation, () -> generateProgram(generateProgramButton)));
+
+        Button deleteProgramButton = Bootstrap.largePrimaryButton(I18nControls.bindI18nProperties(new Button(), ProgramI18nKeys.DeleteProgram));
+        deleteProgramButton.setOnAction(e -> ModalityDialog.showConfirmationDialog(ProgramI18nKeys.DeleteProgramConfirmation, () -> deleteProgram(deleteProgramButton)));
 
         generateProgramButton.disableProperty().bind(updateStore.hasChangesProperty());
-        lastLine.getChildren().setAll(cancelButton, saveButton, generateProgramButton);
-        templateDayColumnsPane = new ColumnsPane();
+        generateProgramButton.visibleProperty().bind(programGeneratedProperty.not());
+        deleteProgramButton.visibleProperty().bind(programGeneratedProperty);
+        LayoutUtil.setAllUnmanagedWhenInvisible(generateProgramButton, deleteProgramButton);
+
+        HBox bottomLine = new HBox(cancelButton, saveButton, generateProgramButton, deleteProgramButton);
+
+        bottomLine.setAlignment(Pos.BASELINE_CENTER);
+        bottomLine.setSpacing(100);
+
+        // Building the template days
+        ColumnsPane templateDayColumnsPane = new ColumnsPane();
         templateDayColumnsPane.setMaxColumnCount(2);
         templateDayColumnsPane.setHgap(100);
         templateDayColumnsPane.setVgap(50);
@@ -224,7 +168,11 @@ public final class ProgramPanel implements ButtonFactoryMixin {
         templateDayColumnsPane.setAlignment(Pos.TOP_CENTER);
 
         //We add a listener on the workingDayTemplates to create a new panel or remove it according to the list changes.
-        dayTemplateListChangeListener = change -> {
+        // Handle added elements
+        // Handle removed elements
+        // Find and remove the corresponding UI element
+        // Add the listener to the observable list
+        workingDayTemplates.addListener((ListChangeListener<DayTemplate>) change -> {
             while (change.next()) {
                 if (change.wasAdded()) {
                     // Handle added elements
@@ -244,28 +192,74 @@ public final class ProgramPanel implements ButtonFactoryMixin {
                     }
                 }
             }
-        };
-        // Add the listener to the observable list
-        workingDayTemplates.addListener(dayTemplateListChangeListener);
-        Label eventStateLabel = new Label();
-        eventStateLabel.getStyleClass().addAll(Bootstrap.H4, Bootstrap.TEXT_SECONDARY);
-        eventStateLabel.textProperty().bind(eventStateDescriptionStringProperty);
+        });
+
+        // Building the event state line
+        Label eventStateLabel = Bootstrap.h4(Bootstrap.textSecondary(new Label()));
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            I18nControls.bindI18nProperties(eventStateLabel, programGeneratedProperty.get() ? ProgramI18nKeys.ScheduledItemsAlreadyGenerated : ProgramI18nKeys.ScheduledItemsNotYetGenerated);
+        }, programGeneratedProperty);
+
         HBox eventStateLine = new HBox(eventStateLabel);
         eventStateLine.setAlignment(Pos.CENTER);
         eventStateLine.setPadding(new Insets(0, 0, 30, 0));
-        mainVBox.getChildren().setAll(firstLine, templateDayColumnsPane, eventStateLine, lastLine);
+
+        mainVBox = new VBox(
+            topLine,
+            templateDayColumnsPane,
+            eventStateLine,
+            bottomLine
+        );
         mainVBox.setMaxWidth(MAX_WIDTH);
     }
 
+    private void reloadProgramFromSelectedEvent() {
+        Event selectedEvent = getSlave();
+
+        //First we reset everything
+        resetStoresAndOtherComponents();
+
+        //We execute the query in batch, otherwise we can have synchronisation problem between the different threads
+        entityStore.executeQueryBatch(
+                // Index 0: day templates
+                new EntityStoreQuery("select name, event.(livestreamUrl,vodExpirationDate,audioExpirationDate), dates from DayTemplate si where event=? order by name", new Object[]{selectedEvent}),
+                // Index 1: program site (singleton list)
+                new EntityStoreQuery("select name from Site where event=? and main limit 1", new Object[]{ selectedEvent }),
+                // Index 2: items for this program item family + audio recording + video
+                new EntityStoreQuery("select name,family.code from Item where organization=? and family.code in (?,?,?)",
+                    new Object[]{ selectedEvent.getOrganization(), programItemFamily.getCode(), KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.VIDEO.getCode() })
+            )
+            .onFailure(Console::log)
+            .onSuccess(entityLists -> Platform.runLater(() -> {
+                // Extracting the different entity lists from the query batch result
+                EntityList<DayTemplate> dayTemplates = entityLists[0];
+                EntityList<Site> sites = entityLists[1];
+                EntityList<Item> items = entityLists[2];
+
+                programSite = Collections.first(sites);
+                languageAudioItems = Collections.filter(items, item -> KnownItemFamily.AUDIO_RECORDING.getCode().equals(item.getFamily().getCode()));
+                videoItem =   Collections.findFirst(items, item -> KnownItemFamily.VIDEO.getCode().equals(item.getFamily().getCode()));
+                setLoadedEvent(entityStore.copyEntity(selectedEvent));
+                workingDayTemplates.setAll(dayTemplates.stream().map(updateStore::updateEntity).collect(Collectors.toList()));
+            }));
+    }
 
     private void addNewDayTemplate() {
         DayTemplate dayTemplate = updateStore.insertEntity(DayTemplate.class);
-        dayTemplate.setEvent(currentEditedEvent);
+        dayTemplate.setEvent(getLoadedEvent());
         workingDayTemplates.add(dayTemplate);
     }
 
-    private void generateProgram() {
-        UpdateStore updateStore = UpdateStore.createAbove(entityStore);
+    void deleteDayTemplate(DayTemplate dayTemplate) {
+        DayTemplatePanel dayTemplatePanel = correspondenceBetweenDayTemplateAndDayTemplatePanel.remove(dayTemplate);
+        workingDayTemplates.remove(dayTemplate);
+        if (dayTemplatePanel != null)
+            dayTemplatePanel.removeTemplateTimeLineLinkedToDayTemplate(dayTemplate);
+        updateStore.deleteEntity(dayTemplate);
+    }
+
+    private void generateProgram(Button generateProgramButton) {
+        UpdateStore localUpdateStore = UpdateStore.createAbove(entityStore);
         List<Timeline> newlyCreatedEventTimelines = new ArrayList<>();
         //Here, we take all the template timelines, and create the event timelines needed
         //We create an event timeline for all template timelines having distinct element on {item, startTime, endTime}
@@ -276,7 +270,7 @@ public final class ProgramPanel implements ButtonFactoryMixin {
                 LocalTime startTime = currentTemplateTimeline.getStartTime();
                 LocalTime endTime = currentTemplateTimeline.getEndTime();
                 Item item = currentTemplateTimeline.getItem();
-                Timeline templateTimelineToEdit = updateStore.updateEntity(currentTemplateTimeline);
+                Timeline templateTimelineToEdit = localUpdateStore.updateEntity(currentTemplateTimeline);
                 Timeline eventTimeLine = newlyCreatedEventTimelines.stream()
                     .filter(timeline ->
                         timeline.getStartTime().equals(startTime) &&
@@ -287,22 +281,21 @@ public final class ProgramPanel implements ButtonFactoryMixin {
                     .orElse(null);
                 if (eventTimeLine == null) {
                     //Here we create an event timeline
-                    eventTimeLine = updateStore.insertEntity(Timeline.class);
-                    eventTimeLine.setEvent(currentEditedEvent);
+                    eventTimeLine = localUpdateStore.insertEntity(Timeline.class);
+                    eventTimeLine.setEvent(getLoadedEvent());
                     eventTimeLine.setSite(currentTemplateTimeline.getSite());
                     eventTimeLine.setItem(item);
                     eventTimeLine.setStartTime(startTime);
                     eventTimeLine.setEndTime(endTime);
                     eventTimeLine.setItemFamily(currentTemplateTimeline.getItemFamily());
                     newlyCreatedEventTimelines.add(eventTimeLine);
-
                 }
                 templateTimelineToEdit.setEventTimeline(eventTimeLine);
                 //Now, we create the associated scheduledItem
                 for (LocalDate date : dayTemplatePanel.datePicker.getSelectedDates()) {
-                    ScheduledItem teachingScheduledItem = dayTemplatePanel.addTeachingsScheduledItemsForDateAndTimeline(date, currentTemplateTimeline.getName(), eventTimeLine, updateStore);
+                    ScheduledItem teachingScheduledItem = dayTemplatePanel.addTeachingsScheduledItemsForDateAndTimeline(date, currentTemplateTimeline.getName(), eventTimeLine, localUpdateStore);
                     if (currentTemplateTimeline.isAudioOffered()) {
-                        dayTemplatePanel.addAudioScheduledItemsForDate(date, teachingScheduledItem, updateStore);
+                        dayTemplatePanel.addAudioScheduledItemsForDate(date, teachingScheduledItem, localUpdateStore);
                     }
                     if (currentTemplateTimeline.isVideoOffered()) {
                         dayTemplatePanel.addVideoScheduledItemsForDate(date, teachingScheduledItem);
@@ -310,44 +303,27 @@ public final class ProgramPanel implements ButtonFactoryMixin {
                 }
             });
         });
-        OperationUtil.turnOnButtonsWaitModeDuringExecution(
-            updateStore.submitChanges()
-                .onFailure(x-> {
-                    DialogContent dialog = DialogContent.createConfirmationDialog("Error","Operation failed", x.getMessage());
-                    dialog.setOk();
-                    Platform.runLater(()-> {
-                        DialogBuilderUtil.showModalNodeInGoldLayout(dialog,FXMainFrameDialogArea.getDialogArea());
-                        dialog.getPrimaryButton().setOnAction(a->dialog.getDialogCallback().closeDialog());
-                    });
-                    Console.log(x);
-                })
-                .onSuccess(x -> Platform.runLater(() -> {
-                    displayEventDetails(currentEditedEvent);
-                    OperationUtil.turnOffButtonsWaitMode(generateProgramButton);
-                })),
-            generateProgramButton
-        );
+        submitUpdateStoreChanges(localUpdateStore, generateProgramButton);
     }
 
-    private void deleteProgram() {
+    private void deleteProgram(Button deleteProgramButton) {
         UpdateStore localUpdateStore = UpdateStore.createAbove(entityStore);
 
         //Here we look for the teachings, audio and video scheduled Item related to this timeline and delete them
         entityStore.<ScheduledItem>executeQuery(
-                new EntityStoreQuery("select id, item.family.code from ScheduledItem si where event=? order by name", new Object[]{ currentEditedEvent }))
+                new EntityStoreQuery("select id, item.family.code from ScheduledItem si where event=? order by name", new Object[]{ getLoadedEvent() }))
             .onFailure(Console::log)
             .onSuccess(scheduledItems -> Platform.runLater(() -> {
-                EntityList<ScheduledItem> scheduledItemsList = scheduledItems;
                 //First we delete all the audios and videos scheduledItem
-                scheduledItemsList.forEach(currentScheduledItem -> {
+                scheduledItems.forEach(currentScheduledItem -> {
                     String scheduledItemFamilyCode = currentScheduledItem.getItem().getFamily().getCode();
                     if(scheduledItemFamilyCode.equals(KnownItemFamily.AUDIO_RECORDING.getCode()) || scheduledItemFamilyCode.equals(KnownItemFamily.VIDEO.getCode()))
                         localUpdateStore.deleteEntity(currentScheduledItem);
                     });
 
-                scheduledItemsList.forEach(currentScheduledItem -> {
-                    String scheduledItemFamilyCode = currentScheduledItem.getItem().getFamily().getCode();
-                    if(scheduledItemFamilyCode.equals(KnownItemFamily.TEACHING.getCode()))
+                scheduledItems.forEach(currentScheduledItem -> {
+                    String code = currentScheduledItem.getItem().getFamily().getCode();
+                    if(code.equals(KnownItemFamily.TEACHING.getCode()))
                         localUpdateStore.deleteEntity(currentScheduledItem);
                 });
 
@@ -361,95 +337,37 @@ public final class ProgramPanel implements ButtonFactoryMixin {
                         localUpdateStore.deleteEntity(eventTimeLine);
                     });
                 });
-                OperationUtil.turnOnButtonsWaitModeDuringExecution(
-                    localUpdateStore.submitChanges()
-                        .onFailure(x-> {
-                            DialogContent dialog = DialogContent.createConfirmationDialog("Error","Operation failed", x.getMessage());
-                            dialog.setOk();
-                            Platform.runLater(()-> {
-                                DialogBuilderUtil.showModalNodeInGoldLayout(dialog,FXMainFrameDialogArea.getDialogArea());
-                                dialog.getPrimaryButton().setOnAction(a->dialog.getDialogCallback().closeDialog());
-                            });
-                            Console.log(x);
-                        })
-                        .onSuccess(x -> Platform.runLater(() -> {
-                            displayEventDetails(currentEditedEvent);
-                            OperationUtil.turnOffButtonsWaitMode(generateProgramButton);
-                        })),
-                    generateProgramButton
-                );
+                submitUpdateStoreChanges(localUpdateStore, deleteProgramButton);
             }));
     }
 
-    private void displayEventDetails(Event e) {
-        Console.log("Display Event Called");
-        currentEditedEvent = e;
-
-        //First we reset everything
-        resetUpdateStoreAndOtherComponents();
-
-        e.onExpressionLoaded("livestreamUrl,vodExpirationDate,audioExpirationDate")
-            .onFailure((Console::log));
-
-        //We execute the query in batch, otherwise we can have synchronisation problem between the different threads
-        entityStore.executeQueryBatch(
-                new EntityStoreQuery("select name, event, dates from DayTemplate si where event=? order by name", new Object[]{ e }),
-                new EntityStoreQuery("select distinct name from Item where organization=? and family.code=?", new Object[]{ e.getOrganization(), itemFamily.getCode() }),
-                new EntityStoreQuery("select name from Site where event=? and main limit 1", new Object[]{ e }),
-                new EntityStoreQuery("select distinct name from Item where organization=? and family.code = ? and not deprecated order by name ",
-                    new Object[]{ FXOrganization.getOrganization(), KnownItemFamily.AUDIO_RECORDING.getCode() }),
-                new EntityStoreQuery("select distinct name from Item where organization=? and family.code = ? and not deprecated order by name ",
-                    new Object[]{ FXOrganization.getOrganization(), KnownItemFamily.VIDEO.getCode() }))
-            .onFailure(Console::log)
-            .onSuccess(entityLists -> Platform.runLater(() -> {
-                EntityList<DayTemplate> dayTemplateList = entityLists[0];
-                EntityList<Item> itemList = entityLists[1];
-                EntityList<Site> siteList = entityLists[2];
-                audioLanguages = entityLists[3];
-                EntityList<Item> videoItems = entityLists[4];
-                videoItem = videoItems.get(0);
-
-                // We take the selected date from the database, and transform the result in a list of LocalDate,
-                // that we pass to the datePicker, so they appear selected in the calendar
-                dayTemplatesReadFromDatabase = dayTemplateList;
-                itemsReadFromDatabase = itemList;
-                currentSite = siteList.get(0);
-
-                //We add the event and timeline to the updateStore, so they will be modified when changed
-                currentEditedEvent = updateStore.updateEntity(e);
-
-                workingDayTemplates.setAll(dayTemplatesReadFromDatabase.stream().map(updateStore::updateEntity).collect(Collectors.toList()));
-                workingItems.setAll(itemsReadFromDatabase.stream().map(updateStore::updateEntity).collect(Collectors.toList()));
-
-            }));
-        drawUIContainer();
+    private void submitUpdateStoreChanges(UpdateStore updateStore, Labeled... buttons) {
+        OperationUtil.turnOnButtonsWaitModeDuringExecution(
+            updateStore.submitChanges()
+                .onFailure(x-> {
+                    DialogContent dialog = DialogContent.createConfirmationDialog("Error","Operation failed", x.getMessage());
+                    dialog.setOk();
+                    Platform.runLater(()-> {
+                        DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
+                        dialog.getPrimaryButton().setOnAction(a->dialog.getDialogCallback().closeDialog());
+                    });
+                    Console.log(x);
+                })
+                .onSuccess(x -> Platform.runLater(() -> {
+                    reloadProgramFromSelectedEvent();
+                    OperationUtil.turnOffButtonsWaitMode(buttons);
+                })),
+            buttons
+        );
     }
 
-    private final SlaveEditor<Event> eventDetailsSlaveEditor = new ModalitySlaveEditor<>() {
-        /**
-         * This method is called by the master controller when we change the event we're editing
-         *
-         * @param approvedEntity the approved Entity
-         */
-        @Override
-        public void setSlave(Event approvedEntity) {
-            displayEventDetails(approvedEntity);
-            currentEditedEvent = approvedEntity;
+    private boolean validateForm() {
+        if (!validationSupportInitialised) {
+            initFormValidation();
+            validationSupportInitialised = true;
         }
-
-        @Override
-        public Event getSlave() {
-            return currentEditedEvent;
-        }
-
-        @Override
-        public boolean hasChanges() {
-            return updateStore.hasChanges();
-        }
-    };
-
-    //This parameter will allow us to manage the interaction and behaviour of the Panel that display the details of an event and the event selected
-    private final MasterSlaveLinker<Event> masterSlaveEventLinker = new MasterSlaveLinker<>(eventDetailsSlaveEditor);
+        return validationSupport.isValid();
+    }
 
     private void initFormValidation() {
         if (!validationSupportInitialised) {
@@ -466,28 +384,27 @@ public final class ProgramPanel implements ButtonFactoryMixin {
         }
     }
 
+    DayTemplatePanel getOrCreateDayTemplatePanel(DayTemplate dayTemplate) {
+        DayTemplatePanel dayTemplatePanel = correspondenceBetweenDayTemplateAndDayTemplatePanel.get(dayTemplate);
+        if (dayTemplatePanel == null)
+            correspondenceBetweenDayTemplateAndDayTemplatePanel.put(dayTemplate, dayTemplatePanel = new DayTemplatePanel(dayTemplate, this));
+        return dayTemplatePanel;
+    }
+
     private BorderPane drawDayTemplate(DayTemplate dayTemplate) {
-        DayTemplatePanel dayTemplatePanel = new DayTemplatePanel(dayTemplate, this);
-        correspondenceBetweenDayTemplateAndDayTemplatePanel.put(dayTemplate, dayTemplatePanel);
-        return dayTemplatePanel.getPanel();
+        return getOrCreateDayTemplatePanel(dayTemplate).getPanel();
     }
 
     /**
      * This method is used to reset the different components in this class
      */
-    private void resetUpdateStoreAndOtherComponents() {
+    private void resetStoresAndOtherComponents() {
         validationSupport.reset();
-        mainVBox.getChildren().clear();
-        if (dayTemplateListChangeListener != null)
-            workingDayTemplates.removeListener(dayTemplateListChangeListener);
-        workingDayTemplates.clear();
-        if (templateDayColumnsPane != null)
-            templateDayColumnsPane.getChildren().clear();
-        dayTemplatesReadFromDatabase.clear();
-        itemsReadFromDatabase.clear();
         validationSupportInitialised = false;
-        correspondenceBetweenDayTemplateAndDayTemplatePanel.clear();
-        updateStore.cancelChanges();
+        workingDayTemplates.clear();
+        entityStore.clear();
+        updateStore.clear();
+        programGeneratedProperty.setValue(false);
     }
 
 }
