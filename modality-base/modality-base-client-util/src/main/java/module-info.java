@@ -22,6 +22,7 @@ module modality.base.client.util {
     requires webfx.stack.ui.dialog;
 
     // Exported packages
+    exports one.modality.base.client.util.dialog;
     exports one.modality.base.client.util.functions;
     exports one.modality.base.client.util.log;
     exports one.modality.base.client.util.masterslave;

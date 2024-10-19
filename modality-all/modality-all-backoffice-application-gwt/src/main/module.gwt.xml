@@ -279,6 +279,7 @@
     <!--========================< modality-base-client-time-theme >=========================-->
     <source path="one/modality/base/client/time/theme"/>
     <!--===========================< modality-base-client-util >============================-->
+    <source path="one/modality/base/client/util/dialog"/>
     <source path="one/modality/base/client/util/functions"/>
     <source path="one/modality/base/client/util/log"/>
     <source path="one/modality/base/client/util/masterslave"/>

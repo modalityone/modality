@@ -67,6 +67,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
+import one.modality.base.client.util.dialog.ModalityDialog;
 import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
 import one.modality.base.client.validation.ModalityValidationSupport;
 import one.modality.base.shared.entities.*;
@@ -195,7 +196,7 @@ final class ManageRecurringEventView {
         }};
 
 
-    private final SlaveEditor<Event> eventDetailsSlaveEditor = new ModalitySlaveEditor<Event>() {
+    private final SlaveEditor<Event> eventDetailsSlaveEditor = new ModalitySlaveEditor<>() {
         /**
          * This method is called by the master controller when we change the event we're editing
          *
@@ -671,62 +672,36 @@ final class ManageRecurringEventView {
             //If the event is null, it means the selection has been removed from the visual mapper from the visual mapper.
             if(event!=null) {
                 //We open a dialog box asking if we want to delete the event
-                Text titleConfirmationText = I18n.bindI18nProperties(new Text(),"AreYouSure");
-                Bootstrap.textSuccess(Bootstrap.strong(Bootstrap.h3(titleConfirmationText)));
-                BorderPane dialog = new BorderPane();
-                dialog.setTop(titleConfirmationText);
-                BorderPane.setAlignment(titleConfirmationText,Pos.CENTER);
-                Text confirmationText = I18n.bindI18nProperties(new Text(),"DeleteConfirmation");
-                dialog.setCenter(confirmationText);
-                BorderPane.setAlignment(confirmationText,Pos.CENTER);
-                BorderPane.setMargin(confirmationText,new Insets(30,0,30,0));
-                Button okDeleteButton = Bootstrap.largeDangerButton(I18nControls.bindI18nProperties(new Button(),"Confirm"));
-                Button cancelActionButton = Bootstrap.largeSecondaryButton(I18nControls.bindI18nProperties(new Button(),"Cancel"));
+                ModalityDialog.showConfirmationDialog("DeleteConfirmation", () -> {
+                    areWeDeleting = true;
+                    updateStore.cancelChanges();
+                    scheduledItemsReadFromDatabase.forEach(updateStore::deleteEntity);
+                    updateStore.deleteEntity(currentEditedEvent);
+                    updateStore.submitChanges()
+                        .onFailure(x->Platform.runLater(() -> {
+                            areWeDeleting = false;
+                            Text infoText = I18n.bindI18nProperties(new Text(),"Error");
+                            Bootstrap.textSuccess(Bootstrap.strong(Bootstrap.h3(infoText)));
+                            BorderPane errorDialog = new BorderPane();
+                            errorDialog.setTop(infoText);
+                            BorderPane.setAlignment(infoText, Pos.CENTER);
+                            Text deleteErrorTest = I18n.bindI18nProperties(new Text(),"ErrorWhileDeletingEvent");
+                            errorDialog.setCenter(deleteErrorTest);
+                            BorderPane.setAlignment(deleteErrorTest, Pos.CENTER);
+                            BorderPane.setMargin(deleteErrorTest,new Insets(30,0,30,0));
+                            Button okErrorButton = Bootstrap.largeDangerButton(I18nControls.bindI18nProperties(new Button(),"Ok"));
 
-                HBox buttonsHBox = new HBox(cancelActionButton,okDeleteButton);
-                buttonsHBox.setAlignment(Pos.CENTER);
-                buttonsHBox.setSpacing(30);
-                dialog.setBottom(buttonsHBox);
-                BorderPane.setAlignment(buttonsHBox,Pos.CENTER);
-                DialogCallback dialogCallback = DialogUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
-                okDeleteButton.setOnAction(l -> {
-                    try {
-                        areWeDeleting = true;
-                        updateStore.cancelChanges();
-                        scheduledItemsReadFromDatabase.forEach(updateStore::deleteEntity);
-                        updateStore.deleteEntity(currentEditedEvent);
-                        updateStore.submitChanges()
-                                .onFailure(x->Platform.runLater(() -> {
-                                    areWeDeleting = false;
-                                    Text infoText = I18n.bindI18nProperties(new Text(),"Error");
-                                    Bootstrap.textSuccess(Bootstrap.strong(Bootstrap.h3(infoText)));
-                                    BorderPane errorDialog = new BorderPane();
-                                    errorDialog.setTop(infoText);
-                                    BorderPane.setAlignment(titleConfirmationText,Pos.CENTER);
-                                    Text deleteErrorTest = I18n.bindI18nProperties(new Text(),"ErrorWhileDeletingEvent");
-                                    errorDialog.setCenter(deleteErrorTest);
-                                    BorderPane.setAlignment(deleteErrorTest,Pos.CENTER);
-                                    BorderPane.setMargin(deleteErrorTest,new Insets(30,0,30,0));
-                                    Button okErrorButton = Bootstrap.largeDangerButton(I18nControls.bindI18nProperties(new Button(),"Ok"));
-
-                                    DialogCallback errorMessageCallback = DialogUtil.showModalNodeInGoldLayout(errorDialog, FXMainFrameDialogArea.getDialogArea());
-                                    okErrorButton.setOnAction(m-> errorMessageCallback.closeDialog());
-                                    errorDialog.setBottom(okErrorButton);
-                                    BorderPane.setAlignment(okErrorButton,Pos.CENTER);
-                                }))
-                                .onSuccess(x -> Platform.runLater(() -> {
-                                    Object imageTag = currentEditedEvent.getId().getPrimaryKey();
-                                    deleteCloudPictureIfNecessary(imageTag);
-                                    uploadCloudPictureIfNecessary(imageTag);
-                                }));
-                        dialogCallback.closeDialog();
-                    }
-                    catch (Exception e)
-                    {
-                        Console.log(e.toString());
-                    }
+                            DialogCallback errorMessageCallback = DialogUtil.showModalNodeInGoldLayout(errorDialog, FXMainFrameDialogArea.getDialogArea());
+                            okErrorButton.setOnAction(m-> errorMessageCallback.closeDialog());
+                            errorDialog.setBottom(okErrorButton);
+                            BorderPane.setAlignment(okErrorButton, Pos.CENTER);
+                        }))
+                        .onSuccess(x -> Platform.runLater(() -> {
+                            Object imageTag = currentEditedEvent.getId().getPrimaryKey();
+                            deleteCloudPictureIfNecessary(imageTag);
+                            uploadCloudPictureIfNecessary(imageTag);
+                        }));
                 });
-                cancelActionButton.setOnAction(l -> dialogCallback.closeDialog());
             }});
 
         Region spacer = new Region();
