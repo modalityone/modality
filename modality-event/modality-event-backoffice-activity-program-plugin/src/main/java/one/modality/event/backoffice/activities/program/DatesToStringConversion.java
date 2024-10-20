@@ -1,12 +1,18 @@
 package one.modality.event.backoffice.activities.program;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class DatesToStringConversion {
+/**
+ * @author David Hello
+ */
+final class DatesToStringConversion {
 
+    static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
     // Static method to add a date
     public static String addDate(String existingDates, LocalDate date) {
@@ -53,5 +59,15 @@ public class DatesToStringConversion {
         return Arrays.stream(dates.split(", "))
             .map(LocalDate::parse)
             .collect(Collectors.toList());
+    }
+
+    //TODO: this method is a repetition of a method in ManageRecurringEventView - move it to a shared place
+    public static boolean isLocalTimeTextValid(String text) {
+        try {
+            LocalTime.parse(text);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

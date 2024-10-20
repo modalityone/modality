@@ -4,9 +4,11 @@ package one.modality.event.backoffice.activities.program;
 import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.theme.text.TextTheme;
+import dev.webfx.extras.util.OptimizedObservableListWrapper;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.i18n.I18n;
@@ -26,7 +28,6 @@ import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -41,12 +42,8 @@ import one.modality.base.client.validation.ModalityValidationSupport;
 import one.modality.base.shared.entities.*;
 import one.modality.event.client.event.fx.FXEvent;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -55,7 +52,7 @@ import java.util.stream.Collectors;
  */
 public final class ProgramPanel extends ModalitySlaveEditor<Event> implements ButtonFactoryMixin {
 
-    private static final double MAX_WIDTH = 1500;
+    private static final double MAX_WIDTH = 1600;
 
     private final KnownItemFamily programItemFamily;
 
@@ -70,22 +67,30 @@ public final class ProgramPanel extends ModalitySlaveEditor<Event> implements Bu
     Site programSite;
     List<Item> languageAudioItems;
     Item videoItem;
-
-    final ObservableList<DayTemplate> workingDayTemplates = FXCollections.observableArrayList();
-    private final Map<DayTemplate, DayTemplatePanel> correspondenceBetweenDayTemplateAndDayTemplatePanel = new IdentityHashMap<>();
     final BooleanProperty programGeneratedProperty = new SimpleBooleanProperty();
 
-    private VBox mainVBox;
+    private final List<DayTemplate> initialWorkingDayTemplates = new ArrayList<>();
+    final ObservableList<DayTemplate> workingDayTemplates = new OptimizedObservableListWrapper<>();
+    final ObservableList<DayTemplatePanel> workingDayTemplatePanels = FXCollections.observableArrayList();
+    {
+        ObservableLists.bindConverted(workingDayTemplatePanels, workingDayTemplates, dayTemplate -> new DayTemplatePanel(dayTemplate, this));
+    }
+
+    private final VBox mainVBox;
     final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
     private boolean validationSupportInitialised;
 
     public ProgramPanel(KnownItemFamily programItemFamily) {
         this.programItemFamily = programItemFamily;
+        mainVBox = buildUi();
+        mainVBox.setMaxWidth(MAX_WIDTH);
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            if (I18n.getDictionary() != null && validationSupportInitialised)
+                resetValidation();
+        }, I18n.dictionaryProperty());
     }
 
     public Node getPanel() {
-        if (mainVBox == null)
-            buildUi();
         return mainVBox;
     }
 
@@ -114,22 +119,22 @@ public final class ProgramPanel extends ModalitySlaveEditor<Event> implements Bu
         loadedEventProperty.set(loadedEvent);
     }
 
-    private void buildUi() {
+    private VBox buildUi() {
         // Building the top line
-        Label subtitle = I18nControls.bindI18nProperties(Bootstrap.h4(new Label()), new I18nSubKey("expression: '[Programme] - ' + name + ' (' + dateIntervalFormat(startDate, endDate)+')'", loadedEventProperty), loadedEventProperty);
+        Label subtitle = I18nControls.bindI18nProperties(Bootstrap.h4(new Label()),
+            new I18nSubKey("expression: '[" + ProgramI18nKeys.Programme + "] - ' + name + ' (' + dateIntervalFormat(startDate, endDate) +')'", loadedEventProperty), loadedEventProperty);
         subtitle.setWrapText(true);
         TextTheme.createSecondaryTextFacet(subtitle).style();
 
-        Button addTemplateButton = Bootstrap.primaryButton(I18nControls.bindI18nProperties(new Button(), "AddDayTemplate"));
+        Button addTemplateButton = Bootstrap.primaryButton(I18nControls.bindI18nProperties(new Button(), ProgramI18nKeys.AddDayTemplate));
         addTemplateButton.setGraphicTextGap(10);
-        addTemplateButton.setPadding(new Insets(20, 200, 20, 0));
-        addTemplateButton.setOnAction(event1 -> addNewDayTemplate());
+        addTemplateButton.setOnAction(e -> addNewDayTemplate());
 
         HBox topLine = new HBox(subtitle, LayoutUtil.createHGrowable(), addTemplateButton);
 
         // Building the bottom line
         Button cancelButton = Bootstrap.largeSecondaryButton(I18nControls.bindI18nProperties(new Button(), ProgramI18nKeys.CancelProgram));
-        cancelButton.setOnAction(e -> reloadProgramFromSelectedEvent());
+        cancelButton.setOnAction(e -> resetModelAndUiToInitial());
 
         Button saveButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), ProgramI18nKeys.SaveProgram));
         saveButton.setOnAction(e -> {
@@ -141,7 +146,6 @@ public final class ProgramPanel extends ModalitySlaveEditor<Event> implements Bu
         BooleanBinding hasNoChangesProperty = updateStore.hasChangesProperty().not();
         saveButton.disableProperty().bind(hasNoChangesProperty);
         cancelButton.disableProperty().bind(hasNoChangesProperty);
-
 
         Button generateProgramButton = Bootstrap.largePrimaryButton(I18nControls.bindI18nProperties(new Button(), ProgramI18nKeys.GenerateProgram));
         generateProgramButton.setOnAction(e -> ModalityDialog.showConfirmationDialog(ProgramI18nKeys.ProgramGenerationConfirmation, () -> generateProgram(generateProgramButton)));
@@ -161,38 +165,12 @@ public final class ProgramPanel extends ModalitySlaveEditor<Event> implements Bu
 
         // Building the template days
         ColumnsPane templateDayColumnsPane = new ColumnsPane();
-        templateDayColumnsPane.setMaxColumnCount(2);
-        templateDayColumnsPane.setHgap(100);
-        templateDayColumnsPane.setVgap(50);
+        templateDayColumnsPane.setMinColumnWidth(500);
+        templateDayColumnsPane.hgapProperty().bind(FXProperties.compute(templateDayColumnsPane.widthProperty(), w -> Math.min(50, 0.02 * w.doubleValue())));
+        templateDayColumnsPane.vgapProperty().bind(templateDayColumnsPane.hgapProperty());
         templateDayColumnsPane.setPadding(new Insets(50, 0, 50, 0));
         templateDayColumnsPane.setAlignment(Pos.TOP_CENTER);
-
-        //We add a listener on the workingDayTemplates to create a new panel or remove it according to the list changes.
-        // Handle added elements
-        // Handle removed elements
-        // Find and remove the corresponding UI element
-        // Add the listener to the observable list
-        workingDayTemplates.addListener((ListChangeListener<DayTemplate>) change -> {
-            while (change.next()) {
-                if (change.wasAdded()) {
-                    // Handle added elements
-                    for (DayTemplate addedItem : change.getAddedSubList()) {
-                        templateDayColumnsPane.getChildren().add(drawDayTemplate(addedItem));
-                    }
-                }
-                if (change.wasRemoved()) {
-                    // Handle removed elements
-                    for (DayTemplate removedItem : change.getRemoved()) {
-                        // Find and remove the corresponding UI element
-                        DayTemplatePanel dayTemplatePanel = correspondenceBetweenDayTemplateAndDayTemplatePanel.get(removedItem);
-                        if (dayTemplatePanel == null) {
-                            correspondenceBetweenDayTemplateAndDayTemplatePanel.get(removedItem);
-                        }
-                        templateDayColumnsPane.getChildren().remove(dayTemplatePanel.getPanel());
-                    }
-                }
-            }
-        });
+        ObservableLists.bindConverted(templateDayColumnsPane.getChildren(), workingDayTemplatePanels, DayTemplatePanel::getPanel);
 
         // Building the event state line
         Label eventStateLabel = Bootstrap.h4(Bootstrap.textSecondary(new Label()));
@@ -204,20 +182,16 @@ public final class ProgramPanel extends ModalitySlaveEditor<Event> implements Bu
         eventStateLine.setAlignment(Pos.CENTER);
         eventStateLine.setPadding(new Insets(0, 0, 30, 0));
 
-        mainVBox = new VBox(
+        return new VBox(
             topLine,
             templateDayColumnsPane,
             eventStateLine,
             bottomLine
         );
-        mainVBox.setMaxWidth(MAX_WIDTH);
     }
 
     private void reloadProgramFromSelectedEvent() {
         Event selectedEvent = getSlave();
-
-        //First we reset everything
-        resetStoresAndOtherComponents();
 
         //We execute the query in batch, otherwise we can have synchronisation problem between the different threads
         entityStore.executeQueryBatch(
@@ -238,10 +212,21 @@ public final class ProgramPanel extends ModalitySlaveEditor<Event> implements Bu
 
                 programSite = Collections.first(sites);
                 languageAudioItems = Collections.filter(items, item -> KnownItemFamily.AUDIO_RECORDING.getCode().equals(item.getFamily().getCode()));
-                videoItem =   Collections.findFirst(items, item -> KnownItemFamily.VIDEO.getCode().equals(item.getFamily().getCode()));
+                videoItem = Collections.findFirst(items, item -> KnownItemFamily.VIDEO.getCode().equals(item.getFamily().getCode()));
+                Collections.setAll(initialWorkingDayTemplates, dayTemplates.stream().map(updateStore::updateEntity).collect(Collectors.toList()));
                 setLoadedEvent(entityStore.copyEntity(selectedEvent));
-                workingDayTemplates.setAll(dayTemplates.stream().map(updateStore::updateEntity).collect(Collectors.toList()));
+
+                resetModelAndUiToInitial();
             }));
+    }
+
+    private void resetModelAndUiToInitial() {
+        validationSupport.reset();
+        validationSupportInitialised = false;
+        updateStore.cancelChanges();
+        programGeneratedProperty.setValue(false);
+        workingDayTemplates.setAll(initialWorkingDayTemplates);
+        workingDayTemplatePanels.forEach(DayTemplatePanel::resetModelAndUiToInitial);
     }
 
     private void addNewDayTemplate() {
@@ -250,11 +235,10 @@ public final class ProgramPanel extends ModalitySlaveEditor<Event> implements Bu
         workingDayTemplates.add(dayTemplate);
     }
 
-    void deleteDayTemplate(DayTemplate dayTemplate) {
-        DayTemplatePanel dayTemplatePanel = correspondenceBetweenDayTemplateAndDayTemplatePanel.remove(dayTemplate);
+    void deleteDayTemplate(DayTemplatePanel dayTemplatePanel) {
+        DayTemplate dayTemplate = dayTemplatePanel.getDayTemplate();
         workingDayTemplates.remove(dayTemplate);
-        if (dayTemplatePanel != null)
-            dayTemplatePanel.removeTemplateTimeLineLinkedToDayTemplate(dayTemplate);
+        dayTemplatePanel.removeTemplateTimeLineLinkedToDayTemplate();
         updateStore.deleteEntity(dayTemplate);
     }
 
@@ -263,46 +247,8 @@ public final class ProgramPanel extends ModalitySlaveEditor<Event> implements Bu
         List<Timeline> newlyCreatedEventTimelines = new ArrayList<>();
         //Here, we take all the template timelines, and create the event timelines needed
         //We create an event timeline for all template timelines having distinct element on {item, startTime, endTime}
-        workingDayTemplates.forEach(currentDayTemplate -> {
-            DayTemplatePanel dayTemplatePanel = correspondenceBetweenDayTemplateAndDayTemplatePanel.get(currentDayTemplate);
-
-            dayTemplatePanel.workingTemplateTimelines.forEach(currentTemplateTimeline -> {
-                LocalTime startTime = currentTemplateTimeline.getStartTime();
-                LocalTime endTime = currentTemplateTimeline.getEndTime();
-                Item item = currentTemplateTimeline.getItem();
-                Timeline templateTimelineToEdit = localUpdateStore.updateEntity(currentTemplateTimeline);
-                Timeline eventTimeLine = newlyCreatedEventTimelines.stream()
-                    .filter(timeline ->
-                        timeline.getStartTime().equals(startTime) &&
-                            timeline.getEndTime().equals(endTime) &&
-                            timeline.getItem().equals(item)
-                    )
-                    .findFirst()
-                    .orElse(null);
-                if (eventTimeLine == null) {
-                    //Here we create an event timeline
-                    eventTimeLine = localUpdateStore.insertEntity(Timeline.class);
-                    eventTimeLine.setEvent(getLoadedEvent());
-                    eventTimeLine.setSite(currentTemplateTimeline.getSite());
-                    eventTimeLine.setItem(item);
-                    eventTimeLine.setStartTime(startTime);
-                    eventTimeLine.setEndTime(endTime);
-                    eventTimeLine.setItemFamily(currentTemplateTimeline.getItemFamily());
-                    newlyCreatedEventTimelines.add(eventTimeLine);
-                }
-                templateTimelineToEdit.setEventTimeline(eventTimeLine);
-                //Now, we create the associated scheduledItem
-                for (LocalDate date : dayTemplatePanel.datePicker.getSelectedDates()) {
-                    ScheduledItem teachingScheduledItem = dayTemplatePanel.addTeachingsScheduledItemsForDateAndTimeline(date, currentTemplateTimeline.getName(), eventTimeLine, localUpdateStore);
-                    if (currentTemplateTimeline.isAudioOffered()) {
-                        dayTemplatePanel.addAudioScheduledItemsForDate(date, teachingScheduledItem, localUpdateStore);
-                    }
-                    if (currentTemplateTimeline.isVideoOffered()) {
-                        dayTemplatePanel.addVideoScheduledItemsForDate(date, teachingScheduledItem);
-                    }
-                }
-            });
-        });
+        workingDayTemplatePanels.forEach(dayTemplatePanel ->
+            dayTemplatePanel.generateProgram(newlyCreatedEventTimelines, localUpdateStore));
         submitUpdateStoreChanges(localUpdateStore, generateProgramButton);
     }
 
@@ -328,15 +274,7 @@ public final class ProgramPanel extends ModalitySlaveEditor<Event> implements Bu
                 });
 
                 //then we put the reference to the event timeline to null on the template timeline
-                workingDayTemplates.forEach(currentDayTemplate -> {
-                    DayTemplatePanel dayTemplatePanel = correspondenceBetweenDayTemplateAndDayTemplatePanel.get(currentDayTemplate);
-                    dayTemplatePanel.workingTemplateTimelines.forEach(currentTemplateTimeline -> {
-                        Timeline templateTimelineToUpdate = localUpdateStore.updateEntity(currentTemplateTimeline);
-                        templateTimelineToUpdate.setEventTimeline(null);
-                        Timeline eventTimeLine = currentTemplateTimeline.getEventTimeline();
-                        localUpdateStore.deleteEntity(eventTimeLine);
-                    });
-                });
+                workingDayTemplatePanels.forEach(dayTemplatePanel -> dayTemplatePanel.deleteTimelines(localUpdateStore));
                 submitUpdateStoreChanges(localUpdateStore, deleteProgramButton);
             }));
     }
@@ -354,57 +292,28 @@ public final class ProgramPanel extends ModalitySlaveEditor<Event> implements Bu
                     Console.log(x);
                 })
                 .onSuccess(x -> Platform.runLater(() -> {
-                    reloadProgramFromSelectedEvent();
                     OperationUtil.turnOffButtonsWaitMode(buttons);
+                    resetModelAndUiToInitial();
                 })),
             buttons
         );
     }
 
     private boolean validateForm() {
-        if (!validationSupportInitialised) {
-            initFormValidation();
-            validationSupportInitialised = true;
-        }
+        checkValidationInitialized();
         return validationSupport.isValid();
     }
 
-    private void initFormValidation() {
+    private void checkValidationInitialized() {
         if (!validationSupportInitialised) {
-            FXProperties.runNowAndOnPropertiesChange(() -> {
-                if (I18n.getDictionary() != null) {
-                    validationSupport.reset();
-                    workingDayTemplates.forEach(wt -> {
-                        DayTemplatePanel dtm = correspondenceBetweenDayTemplateAndDayTemplatePanel.get(wt);
-                        dtm.initFormValidation();
-                    });
-                }
-            }, I18n.dictionaryProperty());
+            resetValidation();
             validationSupportInitialised = true;
         }
     }
 
-    DayTemplatePanel getOrCreateDayTemplatePanel(DayTemplate dayTemplate) {
-        DayTemplatePanel dayTemplatePanel = correspondenceBetweenDayTemplateAndDayTemplatePanel.get(dayTemplate);
-        if (dayTemplatePanel == null)
-            correspondenceBetweenDayTemplateAndDayTemplatePanel.put(dayTemplate, dayTemplatePanel = new DayTemplatePanel(dayTemplate, this));
-        return dayTemplatePanel;
-    }
-
-    private BorderPane drawDayTemplate(DayTemplate dayTemplate) {
-        return getOrCreateDayTemplatePanel(dayTemplate).getPanel();
-    }
-
-    /**
-     * This method is used to reset the different components in this class
-     */
-    private void resetStoresAndOtherComponents() {
+    private void resetValidation() {
         validationSupport.reset();
-        validationSupportInitialised = false;
-        workingDayTemplates.clear();
-        entityStore.clear();
-        updateStore.clear();
-        programGeneratedProperty.setValue(false);
+        workingDayTemplatePanels.forEach(DayTemplatePanel::initFormValidation);
     }
 
 }
