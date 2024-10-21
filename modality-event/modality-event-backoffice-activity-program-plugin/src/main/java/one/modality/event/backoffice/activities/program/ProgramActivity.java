@@ -20,7 +20,7 @@ import one.modality.base.shared.entities.KnownItemFamily;
  */
 public final class ProgramActivity extends ViewDomainActivityBase {
 
-    private final ProgramPanel programPanel = new ProgramPanel(KnownItemFamily.TEACHING);
+    private final ProgramView programView = new ProgramView(KnownItemFamily.TEACHING);
 
     @Override
     public Node buildUi() {
@@ -31,7 +31,7 @@ public final class ProgramActivity extends ViewDomainActivityBase {
         title.getStyleClass().add(Bootstrap.H2);
         TextTheme.createPrimaryTextFacet(title).style();
 
-        BorderPane mainFrame = new BorderPane(programPanel.getPanel());
+        BorderPane mainFrame = new BorderPane(programView.getPanel());
 
         BorderPane.setAlignment(title, Pos.CENTER);
         mainFrame.setTop(title);
@@ -54,7 +54,7 @@ public final class ProgramActivity extends ViewDomainActivityBase {
 
     @Override
     protected void startLogic() {
-        programPanel.startLogic();
+        programView.startLogic();
     }
 }
 

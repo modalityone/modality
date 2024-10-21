@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
  * @author David Hello
  * @author Bruno Salmon
  */
-public final class ProgramPanel extends ModalitySlaveEditor<Event> implements ButtonFactoryMixin {
+public final class ProgramView extends ModalitySlaveEditor<Event> implements ButtonFactoryMixin {
 
     private static final double MAX_WIDTH = 1600;
 
@@ -71,16 +71,16 @@ public final class ProgramPanel extends ModalitySlaveEditor<Event> implements Bu
 
     private final List<DayTemplate> initialWorkingDayTemplates = new ArrayList<>();
     final ObservableList<DayTemplate> workingDayTemplates = new OptimizedObservableListWrapper<>();
-    final ObservableList<DayTemplatePanel> workingDayTemplatePanels = FXCollections.observableArrayList();
+    final ObservableList<DayTemplateView> workingDayTemplateViews = FXCollections.observableArrayList();
     {
-        ObservableLists.bindConverted(workingDayTemplatePanels, workingDayTemplates, dayTemplate -> new DayTemplatePanel(dayTemplate, this));
+        ObservableLists.bindConverted(workingDayTemplateViews, workingDayTemplates, dayTemplate -> new DayTemplateView(dayTemplate, this));
     }
 
     private final VBox mainVBox;
     final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
     private boolean validationSupportInitialised;
 
-    public ProgramPanel(KnownItemFamily programItemFamily) {
+    public ProgramView(KnownItemFamily programItemFamily) {
         this.programItemFamily = programItemFamily;
         mainVBox = buildUi();
         mainVBox.setMaxWidth(MAX_WIDTH);
@@ -170,7 +170,7 @@ public final class ProgramPanel extends ModalitySlaveEditor<Event> implements Bu
         templateDayColumnsPane.vgapProperty().bind(templateDayColumnsPane.hgapProperty());
         templateDayColumnsPane.setPadding(new Insets(50, 0, 50, 0));
         templateDayColumnsPane.setAlignment(Pos.TOP_CENTER);
-        ObservableLists.bindConverted(templateDayColumnsPane.getChildren(), workingDayTemplatePanels, DayTemplatePanel::getPanel);
+        ObservableLists.bindConverted(templateDayColumnsPane.getChildren(), workingDayTemplateViews, DayTemplateView::getPanel);
 
         // Building the event state line
         Label eventStateLabel = Bootstrap.h4(Bootstrap.textSecondary(new Label()));
@@ -226,7 +226,7 @@ public final class ProgramPanel extends ModalitySlaveEditor<Event> implements Bu
         updateStore.cancelChanges();
         programGeneratedProperty.setValue(false);
         workingDayTemplates.setAll(initialWorkingDayTemplates);
-        workingDayTemplatePanels.forEach(DayTemplatePanel::resetModelAndUiToInitial);
+        workingDayTemplateViews.forEach(DayTemplateView::resetModelAndUiToInitial);
     }
 
     private void addNewDayTemplate() {
@@ -235,10 +235,10 @@ public final class ProgramPanel extends ModalitySlaveEditor<Event> implements Bu
         workingDayTemplates.add(dayTemplate);
     }
 
-    void deleteDayTemplate(DayTemplatePanel dayTemplatePanel) {
-        DayTemplate dayTemplate = dayTemplatePanel.getDayTemplate();
+    void deleteDayTemplate(DayTemplateView dayTemplateView) {
+        DayTemplate dayTemplate = dayTemplateView.getDayTemplate();
         workingDayTemplates.remove(dayTemplate);
-        dayTemplatePanel.removeTemplateTimeLineLinkedToDayTemplate();
+        dayTemplateView.removeTemplateTimeLineLinkedToDayTemplate();
         updateStore.deleteEntity(dayTemplate);
     }
 
@@ -247,8 +247,8 @@ public final class ProgramPanel extends ModalitySlaveEditor<Event> implements Bu
         List<Timeline> newlyCreatedEventTimelines = new ArrayList<>();
         //Here, we take all the template timelines, and create the event timelines needed
         //We create an event timeline for all template timelines having distinct element on {item, startTime, endTime}
-        workingDayTemplatePanels.forEach(dayTemplatePanel ->
-            dayTemplatePanel.generateProgram(newlyCreatedEventTimelines, localUpdateStore));
+        workingDayTemplateViews.forEach(dayTemplateView ->
+            dayTemplateView.generateProgram(newlyCreatedEventTimelines, localUpdateStore));
         submitUpdateStoreChanges(localUpdateStore, generateProgramButton);
     }
 
@@ -274,7 +274,7 @@ public final class ProgramPanel extends ModalitySlaveEditor<Event> implements Bu
                 });
 
                 //then we put the reference to the event timeline to null on the template timeline
-                workingDayTemplatePanels.forEach(dayTemplatePanel -> dayTemplatePanel.deleteTimelines(localUpdateStore));
+                workingDayTemplateViews.forEach(dayTemplateView -> dayTemplateView.deleteTimelines(localUpdateStore));
                 submitUpdateStoreChanges(localUpdateStore, deleteProgramButton);
             }));
     }
@@ -313,7 +313,7 @@ public final class ProgramPanel extends ModalitySlaveEditor<Event> implements Bu
 
     private void resetValidation() {
         validationSupport.reset();
-        workingDayTemplatePanels.forEach(DayTemplatePanel::initFormValidation);
+        workingDayTemplateViews.forEach(DayTemplateView::initFormValidation);
     }
 
 }

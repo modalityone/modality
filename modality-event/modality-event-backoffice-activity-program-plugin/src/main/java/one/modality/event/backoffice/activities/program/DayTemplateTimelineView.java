@@ -38,7 +38,7 @@ import static one.modality.event.backoffice.activities.program.DatesToStringConv
 final class DayTemplateTimelineView {
 
     private final Timeline timeline;
-    private final DayTemplatePanel dayTemplatePanel;
+    private final DayTemplateView dayTemplateView;
 
     private final Region view;
     private ButtonSelector<Item> itemSelector;
@@ -52,11 +52,10 @@ final class DayTemplateTimelineView {
     private final SVGPath videoUnavailableIcon = SvgIcons.createVideoIconInactivePath();
     private final MonoPane videoMonoPane = new MonoPane();
 
-    DayTemplateTimelineView(Timeline timeline, DayTemplatePanel dayTemplatePanel) {
+    DayTemplateTimelineView(Timeline timeline, DayTemplateView dayTemplateView) {
         this.timeline = timeline;
-        this.dayTemplatePanel = dayTemplatePanel;
+        this.dayTemplateView = dayTemplateView;
         view = buildUi();
-        //view.setBackground(Background.fill(Color.PINK));
     }
 
     Node getView() {
@@ -64,7 +63,7 @@ final class DayTemplateTimelineView {
     }
 
     private ModalityValidationSupport getValidationSupport() {
-        return dayTemplatePanel.getValidationSupport();
+        return dayTemplateView.getValidationSupport();
     }
 
     void resetModelAndUiToInitial() {
@@ -144,7 +143,7 @@ final class DayTemplateTimelineView {
     private Region buildUi() {
         itemSelector = new EntityButtonSelector<Item>(
             "{class: 'Item', alias: 's', where: 'family.code=`teach`', orderBy :'name'}",
-            dayTemplatePanel.getProgramPanel(), FXMainFrameDialogArea.getDialogArea(), timeline.getStore().getDataSourceModel()
+            dayTemplateView.getProgramPanel(), FXMainFrameDialogArea.getDialogArea(), timeline.getStore().getDataSourceModel()
         )
             .always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o));
 
@@ -206,7 +205,7 @@ final class DayTemplateTimelineView {
         SVGPath trashImage = SvgIcons.createTrashSVGPath();
         MonoPane trashContainer = new MonoPane(trashImage);
         trashContainer.setCursor(Cursor.HAND);
-        trashContainer.setOnMouseClicked(event -> dayTemplatePanel.removeTemplateTimeLine(timeline));
+        trashContainer.setOnMouseClicked(event -> dayTemplateView.removeTemplateTimeLine(timeline));
         ShapeTheme.createSecondaryShapeFacet(trashImage).style();
 
         return new Pane(itemButton, fromTextField, toLabel, untilTextField, nameTextField, audioMonoPane, videoMonoPane, trashContainer) {

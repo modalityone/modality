@@ -2,12 +2,10 @@ package one.modality.event.backoffice.activities.program;
 
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.time.pickers.DatePicker;
 import dev.webfx.extras.time.pickers.DatePickerOptions;
 import dev.webfx.extras.util.OptimizedObservableListWrapper;
-import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
@@ -30,7 +28,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.SVGPath;
-import javafx.scene.text.Text;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.validation.ModalityValidationSupport;
 import one.modality.base.shared.entities.*;
@@ -38,7 +35,6 @@ import one.modality.base.shared.entities.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,10 +43,10 @@ import java.util.stream.Collectors;
  * @author David Hello
  * @author Bruno Salmon
  */
-final class DayTemplatePanel {
+final class DayTemplateView {
 
     private final DayTemplate dayTemplate;
-    private final ProgramPanel programPanel;
+    private final ProgramView programView;
 
     private final List<Timeline> initialWorkingTemplateTimelines = new ArrayList<>();
     private final ObservableList<Timeline> workingTemplateTimelines = new OptimizedObservableListWrapper<>();
@@ -74,9 +70,9 @@ final class DayTemplatePanel {
     private final BorderPane mainContainer;
     private final TextField templateNameTextField = new TextField();
 
-    DayTemplatePanel(DayTemplate dayTemplate, ProgramPanel programPanel) {
+    DayTemplateView(DayTemplate dayTemplate, ProgramView programView) {
         this.dayTemplate = dayTemplate;
-        this.programPanel = programPanel;
+        this.programView = programView;
         mainContainer = buildUi();
         initFormValidation();
         LocalDate eventStartDate = getEvent().getStartDate();
@@ -92,8 +88,8 @@ final class DayTemplatePanel {
         return dayTemplate;
     }
 
-    public ProgramPanel getProgramPanel() {
-        return programPanel;
+    public ProgramView getProgramPanel() {
+        return programView;
     }
 
     private Event getEvent() {
@@ -101,25 +97,25 @@ final class DayTemplatePanel {
     }
 
     ModalityValidationSupport getValidationSupport() {
-        return programPanel.validationSupport;
+        return programView.validationSupport;
     }
 
     private Site getSite() {
-        return programPanel.programSite;
+        return programView.programSite;
     }
 
     private Item getVideoItem() {
-        return programPanel.videoItem;
+        return programView.videoItem;
     }
 
     private UpdateStore getUpdateStore() {
-        return programPanel.updateStore;
+        return programView.updateStore;
     }
 
     private void startLogic() {
         //We read the value of the database for the child elements only if the dayTemplate is already existing in the database (ie not in cache)
         if (!dayTemplate.getId().isNew()) {
-            programPanel.entityStore.<Timeline>executeQuery(
+            programView.entityStore.<Timeline>executeQuery(
                     "select item, dayTemplate, startTime, endTime, videoOffered, audioOffered, name, site, eventTimeline from Timeline where dayTemplate=? order by startTime"
                     , dayTemplate
                 )
@@ -144,7 +140,7 @@ final class DayTemplatePanel {
         boolean hasEventTimeline = workingTemplateTimelines.stream()
             .anyMatch(timeline -> timeline.getEventTimeline() != null);
         if (hasEventTimeline)
-            programPanel.programGeneratedProperty.setValue(true);
+            programView.programGeneratedProperty.setValue(true);
     }
 
     private void syncModelFromUi() {
@@ -292,8 +288,8 @@ final class DayTemplatePanel {
         DayTemplate duplicateDayTemplate = getUpdateStore().insertEntity(DayTemplate.class);
         duplicateDayTemplate.setName(dayTemplate.getName() + " - copy");
         duplicateDayTemplate.setEvent(dayTemplate.getEvent());
-        programPanel.workingDayTemplates.add(duplicateDayTemplate);
-        DayTemplatePanel newDTP = Collections.last(programPanel.workingDayTemplatePanels);
+        programView.workingDayTemplates.add(duplicateDayTemplate);
+        DayTemplateView newDTP = Collections.last(programView.workingDayTemplateViews);
         for (Timeline timelineItem : workingTemplateTimelines) {
             Timeline newTimeline = getUpdateStore().insertEntity(Timeline.class);
             newTimeline.setItem(timelineItem.getItem());
@@ -329,7 +325,7 @@ final class DayTemplatePanel {
     }
 
     private void deleteDayTemplate() {
-        programPanel.deleteDayTemplate(this);
+        programView.deleteDayTemplate(this);
     }
 
     void deleteTimelines(UpdateStore updateStore) {
@@ -391,7 +387,7 @@ final class DayTemplatePanel {
 
     void addAudioScheduledItemsForDate(LocalDate date, ScheduledItem parentTeachingScheduledItem, UpdateStore currentUpdateStore) {
         //Here we add for each language not deprecated the scheduledItemAssociated to the date and parent scheduledItem*
-        programPanel.languageAudioItems.forEach(languageItem -> {
+        programView.languageAudioItems.forEach(languageItem -> {
             ScheduledItem audioScheduledItem = currentUpdateStore.insertEntity(ScheduledItem.class);
             audioScheduledItem.setEvent(getEvent());
             audioScheduledItem.setSite(getSite());
