@@ -9,6 +9,7 @@ import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
+import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -35,10 +36,9 @@ import static one.modality.event.backoffice.activities.program.DatesToStringConv
  * @author David Hello
  * @author Bruno Salmon
  */
-final class DayTemplateTimelineView {
+final class DayTemplateTimelineView implements ButtonFactoryMixin {
 
-    private final Timeline timeline;
-    private final DayTemplateView dayTemplateView;
+    private final DayTemplateTimelineModel dayTemplateTimelineModel;
 
     private final Region view;
     private ButtonSelector<Item> itemSelector;
@@ -52,9 +52,9 @@ final class DayTemplateTimelineView {
     private final SVGPath videoUnavailableIcon = SvgIcons.createVideoIconInactivePath();
     private final MonoPane videoMonoPane = new MonoPane();
 
-    DayTemplateTimelineView(Timeline timeline, DayTemplateView dayTemplateView) {
-        this.timeline = timeline;
-        this.dayTemplateView = dayTemplateView;
+    DayTemplateTimelineView(DayTemplateTimelineModel dayTemplateTimelineModel) {
+        this.dayTemplateTimelineModel = dayTemplateTimelineModel;
+        dayTemplateTimelineModel.setSyncUiFromModelRunnable(this::syncUiFromModel);
         view = buildUi();
     }
 
@@ -62,12 +62,13 @@ final class DayTemplateTimelineView {
         return view;
     }
 
-    private ModalityValidationSupport getValidationSupport() {
-        return dayTemplateView.getValidationSupport();
+    private Timeline getTimeline() {
+        return dayTemplateTimelineModel.getTimeline();
     }
 
-    void resetModelAndUiToInitial() {
-        syncUiFromModel();
+
+    private ModalityValidationSupport getValidationSupport() {
+        return dayTemplateTimelineModel.getValidationSupport();
     }
 
     private void syncUiFromModel() {
@@ -76,26 +77,28 @@ final class DayTemplateTimelineView {
         syncEndTimeUiFromModel();
         syncNameUiFromModel();
         syncAudioUiFromModel();
+        syncVideoUiFromModel();
     }
 
+    /* Not necessary
     private void syncModelFromUi() {
         syncItemModelFromUi();
         syncStartTimeModelFromUi();
         syncEndTimeModelFromUi();
         syncNameModelFromUi();
         // syncAudioModelFromUi();
-    }
+    }*/
 
     private void syncItemUiFromModel() {
-        itemSelector.setSelectedItem(timeline.getItem());
+        itemSelector.setSelectedItem(getTimeline().getItem());
     }
 
     private void syncItemModelFromUi() {
-        timeline.setItem(itemSelector.getSelectedItem());
+        getTimeline().setItem(itemSelector.getSelectedItem());
     }
 
     private void syncStartTimeUiFromModel() {
-        LocalTime startTime = timeline.getStartTime();
+        LocalTime startTime = getTimeline().getStartTime();
         if (startTime != null)
             fromTextField.setText(startTime.format(DatesToStringConversion.TIME_FORMATTER));
     }
@@ -103,12 +106,12 @@ final class DayTemplateTimelineView {
     private void syncStartTimeModelFromUi() {
         String text = fromTextField.getText();
         if (isLocalTimeTextValid(text)) {
-            timeline.setStartTime(LocalTime.parse(text));
+            getTimeline().setStartTime(LocalTime.parse(text));
         }
     }
 
     private void syncEndTimeUiFromModel() {
-        LocalTime endTime = timeline.getEndTime();
+        LocalTime endTime = getTimeline().getEndTime();
         if (endTime != null)
             untilTextField.setText(endTime.format(DatesToStringConversion.TIME_FORMATTER));
     }
@@ -116,12 +119,12 @@ final class DayTemplateTimelineView {
     private void syncEndTimeModelFromUi() {
         String text = untilTextField.getText();
         if (isLocalTimeTextValid(text)) {
-            timeline.setEndTime(LocalTime.parse(text));
+            getTimeline().setEndTime(LocalTime.parse(text));
         }
     }
 
     private void syncNameUiFromModel() {
-        String name = timeline.getName();
+        String name = getTimeline().getName();
         if (name != null)
             nameTextField.setText(name);
     }
@@ -129,21 +132,21 @@ final class DayTemplateTimelineView {
     private void syncNameModelFromUi() {
         String name = nameTextField.getText();
         if (name != null)
-            timeline.setName(name);
+            getTimeline().setName(name);
     }
 
     private void syncAudioUiFromModel() {
-        audioMonoPane.setContent(Booleans.isTrue(timeline.isAudioOffered()) ? audioAvailableIcon : audioUnavailableIcon);
+        audioMonoPane.setContent(Booleans.isTrue(getTimeline().isAudioOffered()) ? audioAvailableIcon : audioUnavailableIcon);
     }
 
     private void syncVideoUiFromModel() {
-        videoMonoPane.setContent(Booleans.isTrue(timeline.isVideoOffered()) ? videoAvailableIcon : videoUnavailableIcon);
+        videoMonoPane.setContent(Booleans.isTrue(getTimeline().isVideoOffered()) ? videoAvailableIcon : videoUnavailableIcon);
     }
 
     private Region buildUi() {
         itemSelector = new EntityButtonSelector<Item>(
             "{class: 'Item', alias: 's', where: 'family.code=`teach`', orderBy :'name'}",
-            dayTemplateView.getProgramPanel(), FXMainFrameDialogArea.getDialogArea(), timeline.getStore().getDataSourceModel()
+            this, FXMainFrameDialogArea.getDialogArea(), getTimeline().getStore().getDataSourceModel()
         )
             .always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o));
 
@@ -188,24 +191,18 @@ final class DayTemplateTimelineView {
         audioMonoPane.setAlignment(Pos.CENTER);
         audioMonoPane.setCursor(Cursor.HAND);
         syncAudioUiFromModel();
-        audioMonoPane.setOnMouseClicked(e -> {
-            timeline.setAudioOffered(!timeline.isAudioOffered());
-            syncAudioUiFromModel();
-        });
+        audioMonoPane.setOnMouseClicked(e -> dayTemplateTimelineModel.toggleAudioOffered());
 
         videoAvailableIcon.setFill(Color.GREEN);
         videoUnavailableIcon.setFill(Color.RED);
         videoMonoPane.setCursor(Cursor.HAND);
         syncVideoUiFromModel();
-        videoMonoPane.setOnMouseClicked(e -> {
-            timeline.setVideoOffered(!timeline.isVideoOffered());
-            syncVideoUiFromModel();
-        });
+        videoMonoPane.setOnMouseClicked(e -> dayTemplateTimelineModel.toggleVideoOffered());
 
         SVGPath trashImage = SvgIcons.createTrashSVGPath();
         MonoPane trashContainer = new MonoPane(trashImage);
         trashContainer.setCursor(Cursor.HAND);
-        trashContainer.setOnMouseClicked(event -> dayTemplateView.removeTemplateTimeLine(timeline));
+        trashContainer.setOnMouseClicked(event -> dayTemplateTimelineModel.removeTemplateTimeLine());
         ShapeTheme.createSecondaryShapeFacet(trashImage).style();
 
         return new Pane(itemButton, fromTextField, toLabel, untilTextField, nameTextField, audioMonoPane, videoMonoPane, trashContainer) {

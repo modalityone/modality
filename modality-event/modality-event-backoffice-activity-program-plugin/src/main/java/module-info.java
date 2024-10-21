@@ -3,6 +3,7 @@
 module modality.event.backoffice.activity.program.plugin {
 
     // Direct dependencies modules
+    requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.backoffice.mainframe.fx;
@@ -17,6 +18,7 @@ module modality.event.backoffice.activity.program.plugin {
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.theme;
     requires webfx.extras.time.pickers;
+    requires webfx.extras.util;
     requires webfx.extras.util.control;
     requires webfx.extras.util.layout;
     requires webfx.extras.util.masterslave;
@@ -36,7 +38,6 @@ module modality.event.backoffice.activity.program.plugin {
     requires webfx.stack.routing.uirouter;
     requires webfx.stack.ui.controls;
     requires webfx.stack.ui.operation;
-    requires webfx.extras.util;
 
     // Exported packages
     exports one.modality.event.backoffice.activities.program;

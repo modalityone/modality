@@ -5,14 +5,9 @@ import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.time.pickers.DatePicker;
 import dev.webfx.extras.time.pickers.DatePickerOptions;
-import dev.webfx.extras.util.OptimizedObservableListWrapper;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
-import dev.webfx.platform.console.Console;
-import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.orm.entity.UpdateStore;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -29,15 +24,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.icons.SvgIcons;
-import one.modality.base.client.validation.ModalityValidationSupport;
 import one.modality.base.shared.entities.*;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author David Hello
@@ -45,15 +35,9 @@ import java.util.stream.Collectors;
  */
 final class DayTemplateView {
 
-    private final DayTemplate dayTemplate;
-    private final ProgramView programView;
+    private final DayTemplateModel dayTemplateModel;
 
-    private final List<Timeline> initialWorkingTemplateTimelines = new ArrayList<>();
-    private final ObservableList<Timeline> workingTemplateTimelines = new OptimizedObservableListWrapper<>();
     private final ObservableList<DayTemplateTimelineView> workingDayTemplateTimelineViews = FXCollections.observableArrayList();
-    {
-        ObservableLists.bindConverted(workingDayTemplateTimelineViews, workingTemplateTimelines, timeline -> new DayTemplateTimelineView(timeline, this));
-    }
 
     private final DatePicker datePicker = new DatePicker(new DatePickerOptions()
         .setMultipleSelectionAllowed(true)
@@ -70,14 +54,16 @@ final class DayTemplateView {
     private final BorderPane mainContainer;
     private final TextField templateNameTextField = new TextField();
 
-    DayTemplateView(DayTemplate dayTemplate, ProgramView programView) {
-        this.dayTemplate = dayTemplate;
-        this.programView = programView;
+    DayTemplateView(DayTemplateModel dayTemplateModel) {
+        this.dayTemplateModel = dayTemplateModel;
+        dayTemplateModel.setSelectedDates(datePicker.getSelectedDates());
+        dayTemplateModel.setSyncUiFromModelRunnable(this::syncUiFromModel);
+        dayTemplateModel.setInitFormValidationRunnable(this::initFormValidation);
+        ObservableLists.bindConverted(workingDayTemplateTimelineViews, dayTemplateModel.getWorkingDayTemplateTimelines(), DayTemplateTimelineView::new);
         mainContainer = buildUi();
         initFormValidation();
-        LocalDate eventStartDate = getEvent().getStartDate();
+        LocalDate eventStartDate = getDayTemplate().getEvent().getStartDate();
         datePicker.setDisplayedYearMonth(YearMonth.of(eventStartDate.getYear(), eventStartDate.getMonth()));
-        startLogic();
     }
 
     BorderPane getPanel() {
@@ -85,79 +71,29 @@ final class DayTemplateView {
     }
 
     public DayTemplate getDayTemplate() {
-        return dayTemplate;
-    }
-
-    public ProgramView getProgramPanel() {
-        return programView;
-    }
-
-    private Event getEvent() {
-        return dayTemplate.getEvent();
-    }
-
-    ModalityValidationSupport getValidationSupport() {
-        return programView.validationSupport;
-    }
-
-    private Site getSite() {
-        return programView.programSite;
-    }
-
-    private Item getVideoItem() {
-        return programView.videoItem;
-    }
-
-    private UpdateStore getUpdateStore() {
-        return programView.updateStore;
-    }
-
-    private void startLogic() {
-        //We read the value of the database for the child elements only if the dayTemplate is already existing in the database (ie not in cache)
-        if (!dayTemplate.getId().isNew()) {
-            programView.entityStore.<Timeline>executeQuery(
-                    "select item, dayTemplate, startTime, endTime, videoOffered, audioOffered, name, site, eventTimeline from Timeline where dayTemplate=? order by startTime"
-                    , dayTemplate
-                )
-                .onFailure(Console::log)
-                .onSuccess(timelines -> Platform.runLater(() -> {
-                    Collections.setAll(initialWorkingTemplateTimelines, timelines.stream().map(getUpdateStore()::updateEntity).collect(Collectors.toList()));
-                    resetModelAndUiToInitial();
-                }));
-        }
-    }
-
-    void resetModelAndUiToInitial() {
-        workingTemplateTimelines.setAll(initialWorkingTemplateTimelines);
-        workingDayTemplateTimelineViews.forEach(DayTemplateTimelineView::resetModelAndUiToInitial);
-        syncUiFromModel();
+        return dayTemplateModel.getDayTemplate();
     }
 
     private void syncUiFromModel() {
         syncTemplateNameUiFromModel();
         syncSelectedDatesUiFromModel();
-        //Here we test if the scheduled item have already been generated, ie if at least one of the workingTemplateTimelines got an eventTimeLine not null
-        boolean hasEventTimeline = workingTemplateTimelines.stream()
-            .anyMatch(timeline -> timeline.getEventTimeline() != null);
-        if (hasEventTimeline)
-            programView.programGeneratedProperty.setValue(true);
     }
 
-    private void syncModelFromUi() {
+/*    private void syncModelFromUi() {
         syncTemplateNameModelFromUi();
-    }
+    }*/
 
     private void syncTemplateNameUiFromModel() {
-        templateNameTextField.setText(dayTemplate.getName());
+        templateNameTextField.setText(getDayTemplate().getName());
     }
 
     private void syncTemplateNameModelFromUi() {
-        dayTemplate.setName(templateNameTextField.getText());
+        getDayTemplate().setName(templateNameTextField.getText());
     }
 
     private void syncSelectedDatesUiFromModel() {
-        if (dayTemplate.getDates() != null) {
-            datePicker.setSelectedDates(DatesToStringConversion.getDateList(dayTemplate.getDates()));
+        if (getDayTemplate().getDates() != null) {
+            datePicker.setSelectedDates(DatesToStringConversion.getDateList(getDayTemplate().getDates()));
         }
     }
 
@@ -175,7 +111,7 @@ final class DayTemplateView {
 
         //****************************  TOP  ******************************************//
         Label duplicateButton = I18nControls.bindI18nProperties(new Label(), "DuplicateIcon");
-        duplicateButton.setOnMouseClicked(e -> duplicate());
+        duplicateButton.setOnMouseClicked(e -> dayTemplateModel.duplicate());
         duplicateButton.setCursor(Cursor.HAND);
 
         //templateNameTextField.setMinWidth(350);
@@ -201,7 +137,7 @@ final class DayTemplateView {
         //TODO change when a generic function has been created
         plusButton.setFill(Color.web("#0096D6"));
         MonoPane buttonContainer = new MonoPane(plusButton);
-        buttonContainer.setOnMouseClicked(e -> addTemplateTimeline());
+        buttonContainer.setOnMouseClicked(e -> dayTemplateModel.addTemplateTimeline());
         buttonContainer.setCursor(Cursor.HAND);
         buttonContainer.setPadding(new Insets(10, 0, 0, 0));
         BorderPane.setAlignment(buttonContainer, Pos.CENTER_LEFT);
@@ -212,7 +148,7 @@ final class DayTemplateView {
         deleteDayTemplate.setPadding(new Insets(10, 0, 5, 0));
         deleteDayTemplate.getStyleClass().add(Bootstrap.SMALL);
         deleteDayTemplate.getStyleClass().add(Bootstrap.TEXT_DANGER);
-        deleteDayTemplate.setOnMouseClicked(e -> deleteDayTemplate());
+        deleteDayTemplate.setOnMouseClicked(e -> dayTemplateModel.deleteDayTemplate());
         deleteDayTemplate.setCursor(Cursor.HAND);
         deleteDayTemplate.setPadding(new Insets(30, 0, 0, 0));
 
@@ -252,6 +188,7 @@ final class DayTemplateView {
 
         //We define the behaviour when we add or remove a date
         datePicker.getSelectedDates().addListener((ListChangeListener<LocalDate>) change -> {
+            DayTemplate dayTemplate = getDayTemplate();
             while (change.next()) {
                 if (change.wasAdded()) {
                     // Handle added dates
@@ -281,129 +218,7 @@ final class DayTemplateView {
     }
 
     void initFormValidation() {
-        getValidationSupport().addRequiredInput(templateNameTextField);
-    }
-
-    private void duplicate() {
-        DayTemplate duplicateDayTemplate = getUpdateStore().insertEntity(DayTemplate.class);
-        duplicateDayTemplate.setName(dayTemplate.getName() + " - copy");
-        duplicateDayTemplate.setEvent(dayTemplate.getEvent());
-        programView.workingDayTemplates.add(duplicateDayTemplate);
-        DayTemplateView newDTP = Collections.last(programView.workingDayTemplateViews);
-        for (Timeline timelineItem : workingTemplateTimelines) {
-            Timeline newTimeline = getUpdateStore().insertEntity(Timeline.class);
-            newTimeline.setItem(timelineItem.getItem());
-            newTimeline.setStartTime(timelineItem.getStartTime());
-            newTimeline.setEndTime(timelineItem.getEndTime());
-            newTimeline.setAudioOffered(timelineItem.isAudioOffered());
-            newTimeline.setVideoOffered(timelineItem.isVideoOffered());
-            newTimeline.setSite(timelineItem.getSite());
-            newTimeline.setName(timelineItem.getName());
-            newTimeline.setDayTemplate(duplicateDayTemplate);
-            newDTP.workingTemplateTimelines.add(newTimeline);
-        }
-    }
-
-    private void addTemplateTimeline() {
-        Timeline newTimeLine = getUpdateStore().insertEntity(Timeline.class);
-        newTimeLine.setAudioOffered(false);
-        newTimeLine.setVideoOffered(false);
-        newTimeLine.setDayTemplate(dayTemplate);
-        newTimeLine.setSite(getSite());
-        workingTemplateTimelines.add(newTimeLine);
-    }
-
-    ScheduledItem addTeachingsScheduledItemsForDateAndTimeline(LocalDate date, String name, Timeline timeline, UpdateStore currentUpdateStore) {
-        ScheduledItem teachingScheduledItem = currentUpdateStore.insertEntity(ScheduledItem.class);
-        teachingScheduledItem.setEvent(getEvent());
-        teachingScheduledItem.setSite(getSite());
-        teachingScheduledItem.setDate(date);
-        teachingScheduledItem.setName(name);
-        teachingScheduledItem.setTimeLine(timeline);
-        teachingScheduledItem.setItem(timeline.getItem());
-        return teachingScheduledItem;
-    }
-
-    private void deleteDayTemplate() {
-        programView.deleteDayTemplate(this);
-    }
-
-    void deleteTimelines(UpdateStore updateStore) {
-        workingTemplateTimelines.forEach(currentTemplateTimeline -> {
-            Timeline templateTimelineToUpdate = updateStore.updateEntity(currentTemplateTimeline);
-            templateTimelineToUpdate.setEventTimeline(null);
-            Timeline eventTimeLine = currentTemplateTimeline.getEventTimeline();
-            updateStore.deleteEntity(eventTimeLine);
-        });
-    }
-
-    void removeTemplateTimeLineLinkedToDayTemplate() {
-        workingTemplateTimelines.removeIf(timeline -> (timeline.getDayTemplate() == dayTemplate));
-    }
-
-    void removeTemplateTimeLine(Timeline timeline) {
-        getUpdateStore().deleteEntity(timeline);
-        workingTemplateTimelines.remove(timeline);
-    }
-
-    void generateProgram(List<Timeline> newlyCreatedEventTimelines, UpdateStore updateStore) {
-        workingTemplateTimelines.forEach(templateTimeline -> {
-            LocalTime startTime = templateTimeline.getStartTime();
-            LocalTime endTime = templateTimeline.getEndTime();
-            Item item = templateTimeline.getItem();
-            Timeline templateTimelineToEdit = updateStore.updateEntity(templateTimeline);
-            Timeline eventTimeLine = newlyCreatedEventTimelines.stream()
-                .filter(timeline ->
-                    timeline.getStartTime().equals(startTime) &&
-                    timeline.getEndTime().equals(endTime) &&
-                    timeline.getItem().equals(item)
-                )
-                .findFirst()
-                .orElse(null);
-            if (eventTimeLine == null) {
-                //Here we create an event timeline
-                eventTimeLine = updateStore.insertEntity(Timeline.class);
-                eventTimeLine.setEvent(getEvent());
-                eventTimeLine.setSite(templateTimeline.getSite());
-                eventTimeLine.setItem(item);
-                eventTimeLine.setStartTime(startTime);
-                eventTimeLine.setEndTime(endTime);
-                eventTimeLine.setItemFamily(templateTimeline.getItemFamily());
-                newlyCreatedEventTimelines.add(eventTimeLine);
-            }
-            templateTimelineToEdit.setEventTimeline(eventTimeLine);
-            //Now, we create the associated scheduledItem
-            for (LocalDate date : datePicker.getSelectedDates()) {
-                ScheduledItem teachingScheduledItem = addTeachingsScheduledItemsForDateAndTimeline(date, templateTimeline.getName(), eventTimeLine, updateStore);
-                if (templateTimeline.isAudioOffered()) {
-                    addAudioScheduledItemsForDate(date, teachingScheduledItem, updateStore);
-                }
-                if (templateTimeline.isVideoOffered()) {
-                    addVideoScheduledItemsForDate(date, teachingScheduledItem);
-                }
-            }
-        });
-    }
-
-    void addAudioScheduledItemsForDate(LocalDate date, ScheduledItem parentTeachingScheduledItem, UpdateStore currentUpdateStore) {
-        //Here we add for each language not deprecated the scheduledItemAssociated to the date and parent scheduledItem*
-        programView.languageAudioItems.forEach(languageItem -> {
-            ScheduledItem audioScheduledItem = currentUpdateStore.insertEntity(ScheduledItem.class);
-            audioScheduledItem.setEvent(getEvent());
-            audioScheduledItem.setSite(getSite());
-            audioScheduledItem.setDate(date);
-            audioScheduledItem.setParent(parentTeachingScheduledItem);
-            audioScheduledItem.setItem(languageItem);
-        });
-    }
-
-    void addVideoScheduledItemsForDate(LocalDate date, ScheduledItem parentTeachingScheduledItem) {
-        ScheduledItem videoScheduledItem = getUpdateStore().insertEntity(ScheduledItem.class);
-        videoScheduledItem.setEvent(getEvent());
-        videoScheduledItem.setSite(getSite());
-        videoScheduledItem.setItem(getVideoItem());
-        videoScheduledItem.setDate(date);
-        videoScheduledItem.setParent(parentTeachingScheduledItem);
+        dayTemplateModel.getValidationSupport().addRequiredInput(templateNameTextField);
     }
 
 }
