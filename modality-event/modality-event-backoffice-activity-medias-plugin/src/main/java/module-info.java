@@ -37,11 +37,9 @@ module modality.event.backoffice.activity.medias.plugin {
 
     // Exported packages
     exports one.modality.event.backoffice.activities.medias;
-    exports one.modality.event.backoffice.activities.medias.routing;
-    exports one.modality.event.backoffice.operations.routes.medias;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.backoffice.activities.medias.MediasUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.event.backoffice.activities.medias.RouteToMediasRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.backoffice.activities.medias.MediasRouting.MediasUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.event.backoffice.activities.medias.MediasRouting.RouteToMediasRequestEmitter;
 
 }

@@ -41,11 +41,9 @@ module modality.ecommerce.backoffice.activity.bookings.plugin {
 
     // Exported packages
     exports one.modality.ecommerce.backoffice.activities.bookings;
-    exports one.modality.ecommerce.backoffice.activities.bookings.routing;
-    exports one.modality.ecommerce.backoffice.operations.routes.bookings;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.ecommerce.backoffice.activities.bookings.BookingsUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.ecommerce.backoffice.activities.bookings.RouteToBookingsRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.ecommerce.backoffice.activities.bookings.BookingsRouting.BookingsUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.ecommerce.backoffice.activities.bookings.BookingsRouting.RouteToBookingsRequestEmitter;
 
 }

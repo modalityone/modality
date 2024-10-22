@@ -11,8 +11,8 @@
     </dependencies>
 
     <providers>
-        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.client.activities.console.ConsoleUiRoute</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.client.activities.console.RouteToConsoleRequestEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.client.activities.console.ConsoleRouting$ConsoleUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.client.activities.console.ConsoleRouting$RouteToConsoleRequestEmitter</provider>
         <provider interface="dev.webfx.platform.console.spi.ConsoleProvider">one.modality.base.client.activities.console.BufferedConsoleProvider</provider>
     </providers>
 

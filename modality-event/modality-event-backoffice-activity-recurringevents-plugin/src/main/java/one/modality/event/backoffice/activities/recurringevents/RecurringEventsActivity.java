@@ -10,7 +10,7 @@ import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.tile.Tab;
 import one.modality.base.client.tile.TabsBar;
 
-public final class RecurringEventsActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
+final class RecurringEventsActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
 
     private final ManageRecurringEventView manageRecurringEventView = new ManageRecurringEventView(this);
     private final RecurringEventAttendanceView recurringEventAttendanceView = new RecurringEventAttendanceView(this);
@@ -20,8 +20,8 @@ public final class RecurringEventsActivity extends ViewDomainActivityBase implem
     @Override
     public Node buildUi() {
         headerTabsBar.setTabs(
-                headerTabsBar.createTab("Manage classes", this::buildManageRecurringEventView),
-                headerTabsBar.createTab("Attendance", this::buildRecurringEventAttendanceView)
+            headerTabsBar.createTab("Manage classes", this::buildManageRecurringEventView),
+            headerTabsBar.createTab("Attendance", this::buildRecurringEventAttendanceView)
         );
 
         return container;

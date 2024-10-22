@@ -8,7 +8,7 @@
     </exported-packages>
 
     <providers>
-        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.client.activities.unauthorized.UnauthorizedUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.client.activities.unauthorized.UnauthorizedRouting$UnauthorizedUiRoute</provider>
     </providers>
 
     <dependencies>

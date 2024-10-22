@@ -28,11 +28,9 @@ module modality.event.frontoffice.activity.audiorecordings.plugin {
 
     // Exported packages
     exports one.modality.event.frontoffice.activities.audiorecordings;
-    exports one.modality.event.frontoffice.activities.audiorecordings.routing;
-    exports one.modality.event.frontoffice.operations.routes.audiorecordings;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.audiorecordings.AudioRecordingsUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.event.frontoffice.activities.audiorecordings.RouteToAudioRecordingsRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.audiorecordings.AudioRecordingsRouting.AudioRecordingsUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.event.frontoffice.activities.audiorecordings.AudioRecordingsRouting.RouteToAudioRecordingsRequestEmitter;
 
 }

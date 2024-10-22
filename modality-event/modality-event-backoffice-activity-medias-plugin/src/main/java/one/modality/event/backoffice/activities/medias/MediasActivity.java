@@ -11,7 +11,7 @@ import one.modality.base.client.tile.TabsBar;
 /**
  * @author Bruno Salmon
  */
-public class MediasActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
+final class MediasActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
 
     private final RecordingsView recordingsView = new RecordingsView(this);
     private final LiveStreamingView liveStreamingView = new LiveStreamingView(this);

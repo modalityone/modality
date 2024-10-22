@@ -49,7 +49,7 @@ import java.util.function.Function;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
-public final class BookingActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
+final class BookingActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
 
     private static final double MAX_PAGE_WIDTH = 1200; // Similar value to website
 

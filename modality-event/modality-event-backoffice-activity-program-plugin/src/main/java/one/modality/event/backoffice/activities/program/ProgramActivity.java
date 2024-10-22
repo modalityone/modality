@@ -18,9 +18,27 @@ import one.modality.base.shared.entities.KnownItemFamily;
 /**
  * @author Bruno Salmon
  */
-public final class ProgramActivity extends ViewDomainActivityBase {
+final class ProgramActivity extends ViewDomainActivityBase {
 
-    private final ProgramView programView = new ProgramView(new ProgramModel(KnownItemFamily.TEACHING));
+    private ProgramView programView;
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        FXEventSelector.showEventSelector();
+    }
+
+    @Override
+    public void onPause() {
+        FXEventSelector.resetToDefault();
+        super.onPause();
+    }
+
+    @Override
+    protected void startLogic() {
+        programView = new ProgramView(new ProgramModel(KnownItemFamily.TEACHING, getDataSourceModel()));
+        programView.startLogic();
+    }
 
     @Override
     public Node buildUi() {
@@ -38,23 +56,6 @@ public final class ProgramActivity extends ViewDomainActivityBase {
         mainFrame.setPadding(new Insets(0, 0, 30, 0));
 
         return ControlUtil.createVerticalScrollPane(mainFrame);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        FXEventSelector.showEventSelector();
-    }
-
-    @Override
-    public void onPause() {
-        FXEventSelector.resetToDefault();
-        super.onPause();
-    }
-
-    @Override
-    protected void startLogic() {
-        programView.startLogic();
     }
 }
 

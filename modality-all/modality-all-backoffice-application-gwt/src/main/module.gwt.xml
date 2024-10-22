@@ -159,16 +159,10 @@
     <inherits name="org.gwtproject.nio.GwtNioSupport"/>
     <!--================< modality-base-backoffice-activity-filters-plugin >================-->
     <source path="one/modality/base/backoffice/activities/filters"/>
-    <source path="one/modality/base/backoffice/activities/filters/routing"/>
-    <source path="one/modality/base/backoffice/operations/routes/filters"/>
     <!--=================< modality-base-backoffice-activity-home-plugin >==================-->
     <source path="one/modality/base/backoffice/activities/home"/>
-    <source path="one/modality/base/backoffice/activities/home/routing"/>
-    <source path="one/modality/base/backoffice/operations/routes/home"/>
     <!--==============< modality-base-backoffice-activity-operations-plugin >===============-->
     <source path="one/modality/base/backoffice/activities/operations"/>
-    <source path="one/modality/base/backoffice/activities/operations/routing"/>
-    <source path="one/modality/base/backoffice/operations/routes/operations"/>
     <!--======================< modality-base-backoffice-application >======================-->
     <source path="one/modality/base/backoffice/application"/>
     <!--=====================< modality-base-backoffice-gantt-canvas >======================-->
@@ -305,8 +299,6 @@
     <source path="one/modality/base/shared/entities/triggers"/>
     <!--==============< modality-catering-backoffice-activity-kitchen-plugin >==============-->
     <source path="one/modality/catering/backoffice/activities/kitchen"/>
-    <source path="one/modality/catering/backoffice/activities/kitchen/routing"/>
-    <source path="one/modality/catering/backoffice/operations/routes/kitchen"/>
     <!--==================< modality-crm-backoffice-bookingdetailspanel >===================-->
     <source path="one/modality/crm/backoffice/controls/bookingdetailspanel"/>
     <!--====================< modality-crm-backoffice-operations-mail >=====================-->
@@ -323,16 +315,10 @@
     <source path="one/modality/crm/shared/services/authn/serial"/>
     <!--=============< modality-ecommerce-backoffice-activity-bookings-plugin >=============-->
     <source path="one/modality/ecommerce/backoffice/activities/bookings"/>
-    <source path="one/modality/ecommerce/backoffice/activities/bookings/routing"/>
-    <source path="one/modality/ecommerce/backoffice/operations/routes/bookings"/>
     <!--============< modality-ecommerce-backoffice-activity-moneyflows-plugin >============-->
     <source path="one/modality/ecommerce/backoffice/activities/moneyflows"/>
-    <source path="one/modality/ecommerce/backoffice/activities/moneyflows/routing"/>
-    <source path="one/modality/ecommerce/backoffice/operations/routes/moneyflows"/>
     <!--============< modality-ecommerce-backoffice-activity-statistics-plugin >============-->
     <source path="one/modality/ecommerce/backoffice/activities/statistics"/>
-    <source path="one/modality/ecommerce/backoffice/activities/statistics/routing"/>
-    <source path="one/modality/ecommerce/backoffice/operations/routes/statistics"/>
     <!--===============< modality-ecommerce-backoffice-operations-document >================-->
     <source path="one/modality/ecommerce/backoffice/operations/entities/document"/>
     <source path="one/modality/ecommerce/backoffice/operations/entities/document/cart"/>
@@ -380,16 +366,10 @@
     <source path="one/modality/ecommerce/payment/spi/impl/remote"/>
     <!--================< modality-event-backoffice-activity-medias-plugin >================-->
     <source path="one/modality/event/backoffice/activities/medias"/>
-    <source path="one/modality/event/backoffice/activities/medias/routing"/>
-    <source path="one/modality/event/backoffice/operations/routes/medias"/>
     <!--===============< modality-event-backoffice-activity-program-plugin >================-->
     <source path="one/modality/event/backoffice/activities/program"/>
-    <source path="one/modality/event/backoffice/activities/program/routing"/>
-    <source path="one/modality/event/backoffice/operations/routes/program"/>
     <!--===========< modality-event-backoffice-activity-recurringevents-plugin >============-->
     <source path="one/modality/event/backoffice/activities/recurringevents"/>
-    <source path="one/modality/event/backoffice/activities/recurringevents/routing"/>
-    <source path="one/modality/event/backoffice/operations/routes/recurringevents"/>
     <!--=============< modality-event-backoffice-events-buttonselector-plugin >=============-->
     <source path="one/modality/event/backoffice/events/buttonselector"/>
     <!--==============< modality-event-backoffice-events-ganttcanvas-plugin >===============-->
@@ -409,12 +389,8 @@
     <source path="one/modality/hotel/backoffice/accommodation"/>
     <!--===============< modality-hotel-backoffice-activities-accommodation >===============-->
     <source path="one/modality/hotel/backoffice/activities/accommodation"/>
-    <source path="one/modality/hotel/backoffice/activities/accommodation/routing"/>
-    <source path="one/modality/hotel/backoffice/operations/routes/accommodation"/>
     <!--=================< modality-hotel-backoffice-activities-household >=================-->
     <source path="one/modality/hotel/backoffice/activities/household"/>
-    <source path="one/modality/hotel/backoffice/activities/household/routing"/>
-    <source path="one/modality/hotel/backoffice/operations/routes/household"/>
     <!--========================< modality-hotel-backoffice-icons >=========================-->
     <source path="one/modality/hotel/backoffice/icons"/>
     <!--===============< modality-hotel-backoffice-operations-documentline >================-->

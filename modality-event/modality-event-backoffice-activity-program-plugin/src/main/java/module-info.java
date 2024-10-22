@@ -28,7 +28,6 @@ module modality.event.backoffice.activity.program.plugin {
     requires webfx.platform.windowhistory;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;
-    requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
@@ -41,11 +40,9 @@ module modality.event.backoffice.activity.program.plugin {
 
     // Exported packages
     exports one.modality.event.backoffice.activities.program;
-    exports one.modality.event.backoffice.activities.program.routing;
-    exports one.modality.event.backoffice.operations.routes.program;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.backoffice.activities.program.ProgramUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.event.backoffice.activities.program.RouteToProgramRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.backoffice.activities.program.ProgramRouting.ProgramUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.event.backoffice.activities.program.ProgramRouting.RouteToProgramRequestEmitter;
 
 }

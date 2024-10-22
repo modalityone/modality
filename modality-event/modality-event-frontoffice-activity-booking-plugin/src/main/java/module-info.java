@@ -70,15 +70,13 @@ module modality.event.frontoffice.activity.booking.plugin {
     exports one.modality.event.frontoffice.activities.booking.process.account;
     exports one.modality.event.frontoffice.activities.booking.process.event;
     exports one.modality.event.frontoffice.activities.booking.process.event.slides;
-    exports one.modality.event.frontoffice.activities.booking.routing;
     exports one.modality.event.frontoffice.activities.booking.views;
-    exports one.modality.event.frontoffice.operations.routes.booking;
 
     // Resources packages
     opens one.modality.event.frontoffice.activities.booking.map;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.booking.BookingUiRoute, one.modality.event.frontoffice.activities.booking.process.event.BookEventUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.event.frontoffice.activities.booking.RouteToBookingRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.booking.BookingRouting.BookingUiRoute, one.modality.event.frontoffice.activities.booking.process.event.BookEventRouting.BookEventUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.event.frontoffice.activities.booking.BookingRouting.RouteToBookingRequestEmitter;
 
 }

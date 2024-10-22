@@ -33,7 +33,6 @@ import one.modality.event.client.recurringevents.RecurringEventSchedule;
 import one.modality.event.client.recurringevents.WorkingBooking;
 import one.modality.event.client.recurringevents.WorkingBookingSyncer;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountRouting;
-import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountUiRoute;
 import one.modality.event.frontoffice.activities.booking.process.event.slides.LettersSlideController;
 
 import java.util.Objects;
@@ -78,7 +77,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
         // Registering the redirect auth routes in the sub-router (to possibly have the login page within the mount node)
         subRouter.registerProvidedUiRoutes(false, true);
         // Registering the route to CheckoutAccountActivity
-        subRouter.route(new CheckoutAccountUiRoute()); // sub-route = / and activity = CheckoutAccountActivity
+        subRouter.route(new CheckoutAccountRouting.CheckoutAccountUiRoute()); // sub-route = / and activity = CheckoutAccountActivity
         // Linking this sub-router to the current router (of BookEventActivity)
         getUiRouter().routeAndMount(
             CheckoutAccountRouting.getPath(), // /booking/account

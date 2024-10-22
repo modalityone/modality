@@ -10,7 +10,6 @@ import javafx.scene.Node;
  */
 final class LoginActivity extends ViewDomainActivityBase {
 
-
     @Override
     public Node buildUi() {
         FXAuthorizationsWaiting.init();

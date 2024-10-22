@@ -9,7 +9,7 @@ import java.io.PrintStream;
 /**
  * @author Bruno Salmon
  */
-public class BufferedConsoleProvider implements ConsoleProvider {
+public final class BufferedConsoleProvider implements ConsoleProvider {
 
     private static final StringBuilder CONSOLE_BUFFER = new StringBuilder();
     private static Runnable LISTENER;

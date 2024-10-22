@@ -188,8 +188,6 @@
     <public path="" includes="one/modality/base/frontoffice/activities/account/images/"/>
     <!--================< modality-base-frontoffice-activity-alerts-plugin >================-->
     <source path="one/modality/base/frontoffice/activities/alerts"/>
-    <source path="one/modality/base/frontoffice/activities/alerts/routing"/>
-    <source path="one/modality/base/frontoffice/operations/routes/alerts"/>
     <!--=====================< modality-base-frontoffice-application >======================-->
     <source path="one/modality/base/frontoffice/application"/>
     <!--==================< modality-base-frontoffice-mainframe-activity >==================-->
@@ -271,8 +269,6 @@
     <source path="one/modality/event/client/recurringevents"/>
     <!--===========< modality-event-frontoffice-activity-audiorecordings-plugin >===========-->
     <source path="one/modality/event/frontoffice/activities/audiorecordings"/>
-    <source path="one/modality/event/frontoffice/activities/audiorecordings/routing"/>
-    <source path="one/modality/event/frontoffice/operations/routes/audiorecordings"/>
     <!--===============< modality-event-frontoffice-activity-booking-plugin >===============-->
     <source path="one/modality/event/frontoffice/activities/booking"/>
     <source path="one/modality/event/frontoffice/activities/booking/fx"/>
@@ -281,15 +277,11 @@
     <source path="one/modality/event/frontoffice/activities/booking/process/account"/>
     <source path="one/modality/event/frontoffice/activities/booking/process/event"/>
     <source path="one/modality/event/frontoffice/activities/booking/process/event/slides"/>
-    <source path="one/modality/event/frontoffice/activities/booking/routing"/>
     <source path="one/modality/event/frontoffice/activities/booking/views"/>
-    <source path="one/modality/event/frontoffice/operations/routes/booking"/>
     <resource path="one/modality/event/frontoffice/activities/booking/map"/>
     <public path="" includes="one/modality/event/frontoffice/activities/booking/map/"/>
     <!--===============< modality-event-frontoffice-activity-videos-plugin >================-->
     <source path="one/modality/event/frontoffice/activities/videos"/>
-    <source path="one/modality/event/frontoffice/activities/videos/routing"/>
-    <source path="one/modality/event/frontoffice/operations/routes/videos"/>
     <!--===============================< webfx-extras-cell >================================-->
     <source path="dev/webfx/extras/cell/collator"/>
     <source path="dev/webfx/extras/cell/renderer"/>

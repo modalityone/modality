@@ -6,7 +6,6 @@ import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.i18n.I18n;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -39,9 +38,8 @@ final class ProgramModel {
 
     private final KnownItemFamily programItemFamily;
 
-    private final DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
-    private final EntityStore entityStore = EntityStore.create(dataSourceModel);
-    private final UpdateStore updateStore = UpdateStore.createAbove(entityStore);
+    private final EntityStore entityStore;
+    private final UpdateStore updateStore;
 
     private final ObjectProperty<Event> loadedEventProperty = new SimpleObjectProperty<>();
 
@@ -59,8 +57,10 @@ final class ProgramModel {
     private final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
     private boolean validationSupportInitialised;
 
-    ProgramModel(KnownItemFamily programItemFamily) {
+    ProgramModel(KnownItemFamily programItemFamily, DataSourceModel dataSourceModel) {
         this.programItemFamily = programItemFamily;
+        entityStore = EntityStore.create(dataSourceModel);
+        updateStore = UpdateStore.createAbove(entityStore);
         FXProperties.runNowAndOnPropertiesChange(() -> {
             if (I18n.getDictionary() != null && validationSupportInitialised)
                 resetValidation();

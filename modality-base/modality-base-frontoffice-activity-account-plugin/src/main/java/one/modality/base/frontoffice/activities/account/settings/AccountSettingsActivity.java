@@ -9,7 +9,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import one.modality.base.frontoffice.utility.GeneralUtility;
 
-public class AccountSettingsActivity extends ViewDomainActivityBase {
+final class AccountSettingsActivity extends ViewDomainActivityBase {
+
     VBox container;
     Button deleteButton;
     Button deleteContent;

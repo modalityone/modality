@@ -8,8 +8,8 @@
     </exported-packages>
 
     <providers>
-        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.backoffice.activities.filters.FiltersUiRoute</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.backoffice.activities.filters.RouteToFiltersRequestEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.backoffice.activities.filters.FiltersRouting$FiltersUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.backoffice.activities.filters.FiltersRouting$RouteToFiltersRequestEmitter</provider>
     </providers>
 
     <dependencies>

@@ -27,7 +27,7 @@ import java.util.Collection;
 /**
  * @author Bruno Salmon
  */
-public class HomeActivity extends ViewDomainActivityBase
+final class HomeActivity extends ViewDomainActivityBase
         implements UiRouteActivityContextMixin<ViewDomainActivityContextFinal>,
         ModalityButtonFactoryMixin,
         OperationActionFactoryMixin {

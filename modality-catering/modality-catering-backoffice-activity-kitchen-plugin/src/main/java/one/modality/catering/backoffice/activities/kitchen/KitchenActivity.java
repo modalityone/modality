@@ -46,9 +46,10 @@ import java.util.*;
 /**
  * @author Bruno Salmon
  */
-public class KitchenActivity extends ViewDomainActivityBase
+final class KitchenActivity extends ViewDomainActivityBase
         implements UiRouteActivityContextMixin<ViewDomainActivityContextFinal>,
         ModalityButtonFactoryMixin  {
+
     private static final FontDef NO_DATA_MSG_FONT = FontDef.font(FontWeight.BOLD, 18);
     private AttendanceCounts attendanceCounts;
     private CalendarLayout<LocalDate, LocalDate> daysOfMonthLayout;

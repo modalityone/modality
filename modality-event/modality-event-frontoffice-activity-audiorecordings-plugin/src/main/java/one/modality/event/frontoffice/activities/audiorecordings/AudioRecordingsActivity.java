@@ -40,7 +40,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class AudioRecordingsActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
+final class AudioRecordingsActivity extends ViewDomainActivityBase implements ButtonFactoryMixin {
 
     private final TransitionPane transitionPane = new TransitionPane();
     private final ScrollPane scrollPane = ControlUtil.createVerticalScrollPane(transitionPane);

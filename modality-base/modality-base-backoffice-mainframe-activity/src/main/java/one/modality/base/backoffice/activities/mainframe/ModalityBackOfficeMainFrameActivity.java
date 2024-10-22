@@ -55,9 +55,9 @@ import java.util.function.Consumer;
 /**
  * @author Bruno Salmon
  */
-public class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrameActivity {
+public final class ModalityBackOfficeMainFrameActivity extends ModalityClientMainFrameActivity {
 
-    protected Pane mainFrame;
+    private Pane mainFrame;
     private Region mainFrameHeader;
     private Region mainFrameFooter;
     private final Region ganttCanvasContainer = MainFrameGanttCanvas.getCanvasContainer();

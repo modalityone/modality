@@ -28,11 +28,9 @@ module modality.event.frontoffice.activity.videos.plugin {
 
     // Exported packages
     exports one.modality.event.frontoffice.activities.videos;
-    exports one.modality.event.frontoffice.activities.videos.routing;
-    exports one.modality.event.frontoffice.operations.routes.videos;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.videos.VideosUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.event.frontoffice.activities.videos.RouteToVideosRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.event.frontoffice.activities.videos.VideosRouting.VideosUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.event.frontoffice.activities.videos.VideosRouting.RouteToVideosRequestEmitter;
 
 }

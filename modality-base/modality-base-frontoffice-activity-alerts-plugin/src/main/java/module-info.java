@@ -15,11 +15,9 @@ module modality.base.frontoffice.activity.alerts.plugin {
 
     // Exported packages
     exports one.modality.base.frontoffice.activities.alerts;
-    exports one.modality.base.frontoffice.activities.alerts.routing;
-    exports one.modality.base.frontoffice.operations.routes.alerts;
 
     // Provided services
-    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.base.frontoffice.activities.alerts.AlertsUiRoute;
-    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.base.frontoffice.activities.alerts.RouteToAlertsRequestEmitter;
+    provides dev.webfx.stack.routing.uirouter.UiRoute with one.modality.base.frontoffice.activities.alerts.AlertsRouting.AlertsUiRoute;
+    provides dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter with one.modality.base.frontoffice.activities.alerts.AlertsRouting.RouteToAlertsRequestEmitter;
 
 }

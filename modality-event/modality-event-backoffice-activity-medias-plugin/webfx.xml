@@ -11,8 +11,8 @@
     </dependencies>
 
     <providers>
-        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.event.backoffice.activities.medias.MediasUiRoute</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.event.backoffice.activities.medias.RouteToMediasRequestEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.event.backoffice.activities.medias.MediasRouting$MediasUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.event.backoffice.activities.medias.MediasRouting$RouteToMediasRequestEmitter</provider>
     </providers>
 
     <i18n javaKeysClass="one.modality.event.backoffice.activities.medias.MediasI18nKeys"/>

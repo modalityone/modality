@@ -42,13 +42,13 @@ import one.modality.base.client.mainframe.fx.FXMainFrameTransiting;
 import one.modality.base.frontoffice.mainframe.fx.FXBackgroundNode;
 import one.modality.base.frontoffice.mainframe.fx.FXCollapseFooter;
 
-public class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFrameActivity {
+public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMainFrameActivity {
 
     private final static String[] sortedPossibleRoutingOperations =
             SourcesConfig.getSourcesRootConfig().childConfigAt("modality.base.frontoffice.application")
                     .getString("buttonRoutingOperations").split(",");
 
-    protected Pane mainFrame;
+    private Pane mainFrame;
     private Node backgroundNode; // can be used to hold a WebView, and prevent iFrame reload in the web version
     private final TransitionPane mountTransitionPane = new TransitionPane();
     private Region mainFrameFooter;
