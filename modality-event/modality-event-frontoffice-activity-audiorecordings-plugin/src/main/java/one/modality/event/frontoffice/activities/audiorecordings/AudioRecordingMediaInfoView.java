@@ -31,7 +31,7 @@ public class AudioRecordingMediaInfoView extends MediaInfoView {
         VBox.setMargin(progressBar,new Insets(10,0,0,0));
         progressBar.setMinWidth(with);
 
-        HBox buttonLine = new HBox(playButton,pauseButton,backwardButton,forwardButton);
+        HBox buttonLine = new HBox(playButton, pauseButton, backwardButton, forwardButton);
         buttonLine.setMaxWidth(with);
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
