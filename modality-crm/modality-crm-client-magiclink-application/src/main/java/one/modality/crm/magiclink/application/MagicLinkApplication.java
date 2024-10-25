@@ -55,12 +55,12 @@ public class MagicLinkApplication extends Application {
     }
 
     private void onSuccess() {
-        I18n.bindI18nProperties(text, "MagicLinkSuccessMessage");
+        I18n.bindI18nProperties(text, MagicLinkI18nKeys.MagicLinkSuccessMessage);
         Label titleLabel = Bootstrap.textPrimary(I18nControls.bindI18nTextProperty(new Label(), MagicLinkI18nKeys.ChangeYourPassword));
         Label passwordLabel = Bootstrap.textSecondary(I18nControls.bindI18nTextProperty(new Label(), MagicLinkI18nKeys.NewPassword));
         PasswordField passwordField = new PasswordField();
         passwordField.setMaxWidth(250);
-        Button confirmButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), "Confirm"));
+        Button confirmButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), "Confirm")); // ???
         confirmButton.setPrefWidth(250);
         confirmButton.setOnAction(l -> {
             AuthenticationService.updateCredentials(new MagicLinkPasswordUpdate(passwordField.getText()))

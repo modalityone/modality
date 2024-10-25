@@ -37,40 +37,40 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
 
         VBox topContent = new VBox();
 
-        Label languageLabel = I18nControls.bindI18nProperties(new Label(), "Language",languageItem.getName());
-        languageLabel.setPadding(new Insets(30,0,60,0));
+        Label languageLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.Language, languageItem.getName());
+        languageLabel.setPadding(new Insets(30, 0, 60, 0));
         languageLabel.getStyleClass().add(Bootstrap.H4);
         languageLabel.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
         topContent.getChildren().add(languageLabel);
 
-        Label publishAllLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.PublishAll,currentItemCode);
+        Label publishAllLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.PublishAll, currentItemCode);
         Switch publishAllSwitch = new Switch();
         //We add the media to the update store
         workingMediasForCurrentLanguage.setAll(recordingsMediasReadFromDatabase.stream().map(localUpdateStore::updateEntity).collect(Collectors.toList()));
 
         publishAllSwitch.selectedProperty().addListener(observable -> {
-            if(publishAllSwitch.isSelected()) {
-                workingMediasForCurrentLanguage.forEach(currentMedia->currentMedia.setPublished(true));
+            if (publishAllSwitch.isSelected()) {
+                workingMediasForCurrentLanguage.forEach(currentMedia -> currentMedia.setPublished(true));
             }
         });
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
-        Button saveButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), "Save"));
+        Button saveButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), "Save")); // ???
         saveButton.disableProperty().bind(localUpdateStore.hasChangesProperty().not());
-        HBox publishAllHBox = new HBox(publishAllLabel,publishAllSwitch,spacer,saveButton);
+        HBox publishAllHBox = new HBox(publishAllLabel, publishAllSwitch, spacer, saveButton);
         publishAllHBox.setSpacing(10);
-        publishAllHBox.setPadding(new Insets(0,0,30,0));
+        publishAllHBox.setPadding(new Insets(0, 0, 30, 0));
         publishAllHBox.setAlignment(Pos.CENTER_LEFT);
-        //TODO: implement the publish all functionnality
-      //  topContent.getChildren().add(publishAllHBox);
+        //TODO: implement the publish all functionality
+        //  topContent.getChildren().add(publishAllHBox);
 
         mainContainer.setTop(topContent);
         mainContainer.setMinWidth(800);
         VBox teachingDatesVBox = new VBox();
         teachingDatesVBox.setSpacing(30);
         mainContainer.setCenter(teachingDatesVBox);
-        teachingsDates.forEach(date->teachingDatesVBox.getChildren().add(computeTeachingDateLine(date)));
+        teachingsDates.forEach(date -> teachingDatesVBox.getChildren().add(computeTeachingDateLine(date)));
     }
 
     protected BorderPane computeTeachingDateLine(LocalDate date) {

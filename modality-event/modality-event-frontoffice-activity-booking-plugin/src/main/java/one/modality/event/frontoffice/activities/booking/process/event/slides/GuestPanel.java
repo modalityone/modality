@@ -20,6 +20,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import one.modality.base.client.validation.ModalityValidationSupport;
+import one.modality.event.client.recurringevents.RecurringEventsI18nKeys;
 
 /**
  * @author Bruno Salmon
@@ -28,14 +29,14 @@ final class GuestPanel implements MaterialFactoryMixin {
 
     private final BorderPane container = new BorderPane();
     private final VBox guestTopVBox = new VBox(10);
-    private final TextField firstNameTextField = newMaterialTextField("FirstName");
-    private final TextField lastNameTextField = newMaterialTextField("LastName");
-    private final TextField emailTextField = newMaterialTextField("Email");
-    private final Button guestSubmitButton = Bootstrap.largeButton(I18nControls.bindI18nProperties(new Button(), "Submit"));
+    private final TextField firstNameTextField = newMaterialTextField( "FirstName"); // ???
+    private final TextField lastNameTextField = newMaterialTextField("LastName"); // ???
+    private final TextField emailTextField = newMaterialTextField("Email"); // ???
+    private final Button guestSubmitButton = Bootstrap.largeButton(I18nControls.bindI18nProperties(new Button(), "Submit")); // ???
     private final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
 
     public GuestPanel() {
-        Label guestDetailsLabel = Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), "GuestDetails")));
+        Label guestDetailsLabel = Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), RecurringEventsI18nKeys.GuestDetails)));
         guestTopVBox.getChildren().add(guestDetailsLabel);
         guestTopVBox.setAlignment(Pos.TOP_CENTER);
         BorderPane.setMargin(guestTopVBox, new Insets(0, 0, 20,0));
@@ -89,7 +90,7 @@ final class GuestPanel implements MaterialFactoryMixin {
     }
 
     public void turnOffButtonWaitMode() {
-        StepSlide.turnOffButtonWaitMode(guestSubmitButton, "Submit");
+        StepSlide.turnOffButtonWaitMode(guestSubmitButton, "Submit"); // ???
     }
 
     public Node getContainer() {

@@ -25,7 +25,6 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.SVGPath;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
@@ -33,6 +32,7 @@ import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.event.client.recurringevents.FXPersonToBook;
 import one.modality.event.client.recurringevents.WorkingBooking;
 import one.modality.event.client.recurringevents.WorkingBookingHistoryHelper;
+import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.fx.FXGuestToBook;
 import one.modality.event.frontoffice.activities.booking.process.account.CheckoutAccountRouting;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
@@ -49,7 +49,7 @@ final class Step2CheckoutSlide extends StepSlide {
     // Node property that will be managed by the sub-router to mount the CheckoutAccountActivity (when routed)
     private final ObjectProperty<Node> checkoutAccountMountNodeProperty = new SimpleObjectProperty<>();
     private final GuestPanel guestPanel = new GuestPanel();
-    private final Button submitButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "Submit"));
+    private final Button submitButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "Submit")); // ???
     private final BooleanProperty step1PersonToBookWasShownProperty = new SimpleBooleanProperty();
 
     public Step2CheckoutSlide(BookEventActivity bookEventActivity) {
@@ -90,8 +90,8 @@ final class Step2CheckoutSlide extends StepSlide {
 
         // Adding the container that will display the CheckoutAccountActivity (and eventually the login page before)
         BorderPane signInContainer = new BorderPane();
-        Label loginLabel = Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), "LoginBeforeBooking")));
-        Hyperlink orGuestLink = Bootstrap.textPrimary(I18nControls.bindI18nProperties(new Hyperlink(), "OrBookAsGuest"));
+        Label loginLabel = Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), BookingI18nKeys.LoginBeforeBooking)));
+        Hyperlink orGuestLink = Bootstrap.textPrimary(I18nControls.bindI18nProperties(new Hyperlink(), BookingI18nKeys.OrBookAsGuest));
         VBox signIntopVBox = new VBox(10, loginLabel, orGuestLink);
         signIntopVBox.setAlignment(Pos.TOP_CENTER);
         BorderPane.setMargin(signIntopVBox, new Insets(0, 0, 20, 0));
@@ -115,14 +115,14 @@ final class Step2CheckoutSlide extends StepSlide {
             flipPane.flipToBack();
             guestPanel.onShowing();
         });
-        Hyperlink orAccountLink = Bootstrap.textPrimary(I18nControls.bindI18nProperties(new Hyperlink(), "OrBookUsingAccount"));
+        Hyperlink orAccountLink = Bootstrap.textPrimary(I18nControls.bindI18nProperties(new Hyperlink(), BookingI18nKeys.OrBookUsingAccount));
         guestPanel.addTopNode(orAccountLink);
         orAccountLink.setOnAction(e -> {
             flipPane.flipToFront();
             guestPanel.onHiding();
         });
 
-        CheckBox facilityFeeCheckBox = I18nControls.bindI18nProperties(new CheckBox(), "FacilityFee");
+        CheckBox facilityFeeCheckBox = I18nControls.bindI18nProperties(new CheckBox(), BookingI18nKeys.FacilityFee);
         VBox.setMargin(facilityFeeCheckBox, new Insets(50, 0, 50, 0));
         Document document = getWorkingBooking().getLastestDocumentAggregate().getDocument();
         facilityFeeCheckBox.setSelected(document.isPersonFacilityFee());
@@ -177,8 +177,8 @@ final class Step2CheckoutSlide extends StepSlide {
 
         summaryGridPane.getChildren().clear();
         addRow(
-            Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), "Summary"))),
-            Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), "Price"))),
+            Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), "Summary"))), // ???
+            Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), "Price"))), // ???
             new Label()
         );
 
@@ -197,7 +197,7 @@ final class Step2CheckoutSlide extends StepSlide {
         if (total < noDiscountTotalPrice) {
             Label price = new Label(EventPriceFormatter.formatWithCurrency(total - noDiscountTotalPrice, workingBooking.getEvent()));
             addRow(
-                I18nControls.bindI18nProperties(new Label(), "Discount"),
+                I18nControls.bindI18nProperties(new Label(), "Discount"), // ???
                 price,
                 new Label()
             );
@@ -211,7 +211,7 @@ final class Step2CheckoutSlide extends StepSlide {
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
         WorkingBooking workingBooking = getWorkingBooking();
 
-        int[] totalPrice = { 0 };
+        int[] totalPrice = {0};
 
         attendanceStream.forEach(a -> {
             ScheduledItem scheduledItem = a.getScheduledItem();
@@ -224,9 +224,7 @@ final class Step2CheckoutSlide extends StepSlide {
             Label price = new Label(EventPriceFormatter.formatWithCurrency(dailyRatePrice, getEvent()));
 
             Hyperlink trashOption = new Hyperlink();
-            SVGPath svgTrash = SvgIcons.createTrashSVGPath();
-            svgTrash.setFill(Color.RED);
-            trashOption.setGraphic(svgTrash);
+            trashOption.setGraphic(SvgIcons.setSVGPathFill(SvgIcons.createTrashSVGPath(), Color.RED));
             trashOption.setOnAction(event -> {
                 workingBooking.removeAttendance(a);
                 if (!existing) {
@@ -310,7 +308,7 @@ final class Step2CheckoutSlide extends StepSlide {
         } else {
             // 2) the currentBooking has new option
             // We look at the changes to fill the history
-            WorkingBookingHistoryHelper historyHelper = new WorkingBookingHistoryHelper(workingBooking.getAttendanceAdded(),workingBooking.getAttendanceRemoved());
+            WorkingBookingHistoryHelper historyHelper = new WorkingBookingHistoryHelper(workingBooking.getAttendanceAdded(), workingBooking.getAttendanceRemoved());
             turnOnWaitMode();
             workingBooking.submitChanges(historyHelper.buildHistory())
                 .onFailure(result -> UiScheduler.runInUiThread(() -> {

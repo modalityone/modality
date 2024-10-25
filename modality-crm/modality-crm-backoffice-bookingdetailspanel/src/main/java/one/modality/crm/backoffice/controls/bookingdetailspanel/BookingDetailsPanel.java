@@ -280,9 +280,9 @@ public final class BookingDetailsPanel implements
         titledPane.setCollapsible(false);
         titledPane.setMaxHeight(Double.MAX_VALUE);
         GridPane.setColumnIndex(titledPane, columnIndex++);
-        Hyperlink updateLink = I18nControls.bindI18nTextProperty(new Hyperlink(), "Update");
-        Hyperlink saveLink   = I18nControls.bindI18nTextProperty(new Hyperlink(), "Save");
-        Hyperlink cancelLink = I18nControls.bindI18nTextProperty(new Hyperlink(), "Cancel");
+        Hyperlink updateLink = I18nControls.bindI18nTextProperty(new Hyperlink(), "Update");  // Where is it defined?
+        Hyperlink saveLink   = I18nControls.bindI18nTextProperty(new Hyperlink(), "Save");    // Where is it defined?
+        Hyperlink cancelLink = I18nControls.bindI18nTextProperty(new Hyperlink(), "Cancel");  // Where is it defined?
         BooleanProperty editableProperty = new SimpleBooleanProperty(true) {
             @Override
             protected void invalidated() {

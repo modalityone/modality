@@ -15,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
+import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.frontoffice.activities.booking.process.event.WorkingBookingProperties;
 
@@ -45,11 +46,11 @@ final class Step3PaymentSlide extends StepSlide {
         mainVbox.setAlignment(Pos.CENTER_LEFT);
 
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
-        bindI18nEventExpression(bookedEventTitleLabel, "i18n(this) + '[TotalBookingPrice]'", workingBookingProperties.formattedBalanceProperty());
+        bindI18nEventExpression(bookedEventTitleLabel, "i18n(this) + '[" + BookingI18nKeys.TotalBookingPrice + "]'", workingBookingProperties.formattedBalanceProperty());
         bookedEventTitleLabel.setWrapText(true);
         VBox.setMargin(bookedEventTitleLabel, new Insets(20, 0, 0, 0));
 
-        I18n.bindI18nTextProperty(paymentInformationHtmlText.textProperty(), "PaymentInformation", webPaymentForm.getGatewayName());
+        I18n.bindI18nTextProperty(paymentInformationHtmlText.textProperty(), BookingI18nKeys.PaymentInformation, webPaymentForm.getGatewayName());
         paymentInformationHtmlText.getStyleClass().add("subtitle-grey");
         VBox.setMargin(paymentInformationHtmlText, new Insets(10, 0, 20, 0));
 
@@ -69,8 +70,8 @@ final class Step3PaymentSlide extends StepSlide {
             mainVbox.getChildren().add(webPaymentForm.createSandboxBar());
         }
 
-        I18nControls.bindI18nProperties(payButton, "Pay", workingBookingProperties.formattedBalanceProperty());
-        I18nControls.bindI18nProperties(cancelButton, "Cancel");
+        I18nControls.bindI18nProperties(payButton, "Pay" /* ??? */, workingBookingProperties.formattedBalanceProperty());
+        I18nControls.bindI18nProperties(cancelButton, "Cancel"); // ???
         payButton.setDefaultButton(true);
         FXProperties.runNowAndOnPropertiesChange(() -> {
             if (webPaymentForm.isUserInteractionAllowed()) {

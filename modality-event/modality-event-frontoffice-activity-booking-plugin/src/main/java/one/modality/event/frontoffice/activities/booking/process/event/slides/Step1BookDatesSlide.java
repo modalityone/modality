@@ -24,6 +24,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
+import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 import one.modality.event.client.recurringevents.RecurringEventSchedule;
 import one.modality.event.frontoffice.activities.booking.process.event.WorkingBookingProperties;
@@ -37,7 +38,7 @@ final class Step1BookDatesSlide extends StepSlide {
     private final HtmlText eventDescription = new HtmlText();
     private final RecurringEventSchedule recurringEventSchedule = new RecurringEventSchedule();
     private final BooleanProperty noDatesBookedProperty = new SimpleBooleanProperty();
-    private final Hyperlink selectAllClassesHyperlink = I18nControls.bindI18nTextProperty(new Hyperlink(), "SelectAllClasses");
+    private final Hyperlink selectAllClassesHyperlink = I18nControls.bindI18nTextProperty(new Hyperlink(), BookingI18nKeys.SelectAllClasses);
 
     Step1BookDatesSlide(BookEventActivity bookEventActivity) {
         super(bookEventActivity);
@@ -59,11 +60,11 @@ final class Step1BookDatesSlide extends StepSlide {
         personToBookScalePane.managedProperty().bind(personToBookButton.managedProperty());
         VBox.setMargin(personToBookScalePane, new Insets(30, 0, 20, 0));
 
-        Text scheduleText = I18n.bindI18nProperties(new Text(), "Schedule");
+        Text scheduleText = I18n.bindI18nProperties(new Text(), BookingI18nKeys.Schedule);
         Bootstrap.textPrimary(Bootstrap.h4(scheduleText));
         VBox.setMargin(scheduleText, new Insets(20, 0, 10, 0));
 
-        Label selectTheCourseText = I18nControls.bindI18nProperties(new Label(), "SelectTheEvent");
+        Label selectTheCourseText = I18nControls.bindI18nProperties(new Label(), BookingI18nKeys.SelectTheEvent);
         selectTheCourseText.setTextAlignment(TextAlignment.CENTER);
         selectTheCourseText.setWrapText(true);
         VBox.setMargin(selectTheCourseText, new Insets(0, 0, 5, 0));
@@ -76,11 +77,11 @@ final class Step1BookDatesSlide extends StepSlide {
         Bootstrap.textPrimary(Bootstrap.h4(selectAllClassesHyperlink));
         selectAllClassesHyperlink.setAlignment(Pos.CENTER);
 
-        Text priceText = new Text(I18n.getI18nText("PricePerClass", EventPriceFormatter.formatWithCurrency(workingBookingProperties.getDailyRatePrice(), getEvent())));
+        Text priceText = new Text(I18n.getI18nText(BookingI18nKeys.PricePerClass, EventPriceFormatter.formatWithCurrency(workingBookingProperties.getDailyRatePrice(), getEvent())));
         priceText.getStyleClass().add("subtitle-grey");
         VBox.setMargin(priceText, new Insets(20, 0, 0, 0));
 
-        Button checkoutButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "ProceedCheckout"));
+        Button checkoutButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), BookingI18nKeys.ProceedCheckout));
         checkoutButton.setMinWidth(300);
         ButtonFactory.resetDefaultButton(checkoutButton);
         ScalePane checkoutScalePane = new ScalePane(ScaleMode.FIT_WIDTH, checkoutButton);
@@ -108,7 +109,7 @@ final class Step1BookDatesSlide extends StepSlide {
         int allClassesPrice = workingBookingProperties.getWholeEventPrice();
         int allClassesNoDiscountPrice = workingBookingProperties.getWholeEventNoDiscountPrice();
         if (allClassesPrice < allClassesNoDiscountPrice) {
-            Text allClassesText = new Text(I18n.getI18nText("AllClasses:"));
+            Text allClassesText = new Text(I18n.getI18nText(BookingI18nKeys.AllClasses + ":"));
             allClassesText.getStyleClass().add("subtitle-grey");
             Text noDiscountPriceText = new Text(EventPriceFormatter.formatWithCurrency(allClassesNoDiscountPrice, getEvent()));
             noDiscountPriceText.setStrikethrough(true);

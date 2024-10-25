@@ -66,48 +66,48 @@ public class ModalitySignupUiLoginGatewayProvider extends UiLoginGatewayProvider
         grid.setPadding(new Insets(20, 20, 20, 20));
         grid.setVgap(8);
         grid.setHgap(10);
-        emailLabel = I18nControls.bindI18nProperties(new Label(), "Email");
+        emailLabel = I18nControls.bindI18nProperties(new Label(), "Email");  // ???
         grid.add(emailLabel, 0, 0);
         emailInput = new TextField();
         grid.add(emailInput, 0, 1);
 
-        firstNameLabel = I18nControls.bindI18nProperties(new Label(), "FirstName");
+        firstNameLabel = I18nControls.bindI18nProperties(new Label(), "FirstName");  // ???
         grid.add(firstNameLabel, 1, 0);
         firstNameInput = new TextField();
         grid.add(firstNameInput, 1, 1);
 
         // Kinship
-        lastNameLabel = I18nControls.bindI18nProperties(new Label(), "LastName");
+        lastNameLabel = I18nControls.bindI18nProperties(new Label(), "LastName");  // ???
         grid.add(lastNameLabel, 0, 2);
         lastNameInput = new TextField();
         grid.add(lastNameInput, 0, 3);
 
         // Birthday
-        birthdayLabel = I18nControls.bindI18nProperties(new Label(), "BirthDate");
+        birthdayLabel = I18nControls.bindI18nProperties(new Label(), "BirthDate");  // ???
         grid.add(birthdayLabel, 1, 2);
         birthdayInput = new TextField();
         grid.add(birthdayInput, 1, 3);
         grid.setAlignment(Pos.CENTER);
 
-        genderLabel = I18nControls.bindI18nProperties(new Label(), "Gender");
+        genderLabel = I18nControls.bindI18nProperties(new Label(), "Gender");  // ???
         grid.add(genderLabel, 0, 4);
 
         genderGroup = new ToggleGroup();
-        RadioButton maleRadio = I18nControls.bindI18nProperties(new RadioButton(),"Male");
+        RadioButton maleRadio = I18nControls.bindI18nProperties(new RadioButton(),"Male");  // ???
         maleRadio.setToggleGroup(genderGroup);
-        RadioButton femaleRadio = I18nControls.bindI18nProperties(new RadioButton(),"Female");
+        RadioButton femaleRadio = I18nControls.bindI18nProperties(new RadioButton(),"Female");  // ???
         femaleRadio.setToggleGroup(genderGroup);
 
         HBox genderBox = new HBox(10, maleRadio, femaleRadio);
         grid.add(genderBox, 0, 5, 2, 1);
 
-        passwordLabel = I18nControls.bindI18nProperties(new Label(), "Password");
+        passwordLabel = I18nControls.bindI18nProperties(new Label(), "Password");  // ???
         grid.add(passwordLabel, 0, 6);
         passwordInput = new PasswordField();
 
         grid.add(passwordInput, 0, 7);
 
-        Button saveButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "Save"));
+        Button saveButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "Save"));  // ???
         saveButton.setOnAction(event -> {
             errorMessage.setText("");
             errorMessage.setVisible(false);

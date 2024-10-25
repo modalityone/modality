@@ -8,14 +8,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
+import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
 final class Step5FailedPaymentSlide extends StepSlide {
 
     private static final double MAX_SLIDE_WIDTH = 800;
 
-    private final Button retryPayButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "RetryPayment"));
-    private final Button cancelButton = Bootstrap.largeDangerButton(I18nControls.bindI18nProperties(new Button(), "CancelBooking"));
+    private final Button retryPayButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), BookingI18nKeys.RetryPayment));
+    private final Button cancelButton = Bootstrap.largeDangerButton(I18nControls.bindI18nProperties(new Button(), BookingI18nKeys.CancelBooking));
     private Button pressedButton;
 
     Step5FailedPaymentSlide(BookEventActivity bookEventActivity) {
@@ -27,11 +28,11 @@ final class Step5FailedPaymentSlide extends StepSlide {
         mainVbox.setSpacing(10);
         mainVbox.setMaxWidth(MAX_SLIDE_WIDTH);
 
-        Label title = Bootstrap.textDanger(Bootstrap.h3(I18nControls.bindI18nProperties(new Label(), "PaymentFailed")));
+        Label title = Bootstrap.textDanger(Bootstrap.h3(I18nControls.bindI18nProperties(new Label(), BookingI18nKeys.PaymentFailed)));
         title.setWrapText(true);
         VBox.setMargin(title, new Insets(50, 0, 0, 0));
 
-        Label message = Bootstrap.textDanger(Bootstrap.h5(I18nControls.bindI18nProperties(new Label(), "PaymentFailedMessage")));
+        Label message = Bootstrap.textDanger(Bootstrap.h5(I18nControls.bindI18nProperties(new Label(), BookingI18nKeys.PaymentFailedMessage)));
         message.setTextAlignment(TextAlignment.CENTER);
         message.setWrapText(true);
         VBox.setMargin(message, new Insets(50, 0, 50, 0));
@@ -63,8 +64,8 @@ final class Step5FailedPaymentSlide extends StepSlide {
 
     @Override
     void turnOffWaitMode() {
-        turnOffButtonWaitMode(retryPayButton, "RetryPayment");
-        turnOffButtonWaitMode(cancelButton, "CancelBooking");
+        turnOffButtonWaitMode(retryPayButton, BookingI18nKeys.RetryPayment);
+        turnOffButtonWaitMode(cancelButton, BookingI18nKeys.CancelBooking);
     }
 
 }

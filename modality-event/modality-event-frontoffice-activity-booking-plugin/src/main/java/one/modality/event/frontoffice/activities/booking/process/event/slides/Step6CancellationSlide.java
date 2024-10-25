@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import one.modality.ecommerce.payment.CancelPaymentResult;
+import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
 
 final class Step6CancellationSlide extends StepSlide {
@@ -63,11 +64,11 @@ final class Step6CancellationSlide extends StepSlide {
     public void setCancelPaymentResult(CancelPaymentResult cancelPaymentResult) {
         this.cancelPaymentResult = cancelPaymentResult;
         if (cancelPaymentResult.isBookingCancelled()) {
-            I18nControls.bindI18nProperties(message, "PaymentAndBookingCancelled");
-            I18nControls.bindI18nProperties(button, "UncancelBooking");
+            I18nControls.bindI18nProperties(message, BookingI18nKeys.PaymentAndBookingCancelled);
+            I18nControls.bindI18nProperties(button, BookingI18nKeys.UncancelBooking);
         } else {
-            I18nControls.bindI18nProperties(message, "PaymentCancelled");
-            I18nControls.bindI18nProperties(button, "BookAgain");
+            I18nControls.bindI18nProperties(message, BookingI18nKeys.PaymentCancelled);
+            I18nControls.bindI18nProperties(button, BookingI18nKeys.BookAgain);
         }
     }
 }

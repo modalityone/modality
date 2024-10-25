@@ -33,6 +33,7 @@ import static dev.webfx.extras.webtext.HtmlTextEditor.Mode.BASIC;
 
 
 public class LiveStreamingView {
+
     private final MediasActivity activity;
     private final BooleanProperty activeProperty = new SimpleBooleanProperty();
     private final DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
@@ -80,7 +81,7 @@ public class LiveStreamingView {
 
         Region spacer = new Region();
         HBox.setHgrow(spacer,Priority.ALWAYS);
-        Button publishMessageButton = Bootstrap.successButton(new Button(I18n.getI18nText("PublishMessage")));
+        Button publishMessageButton = Bootstrap.successButton(new Button(I18n.getI18nText(MediasI18nKeys.PublishMessage)));
         publishMessageButton.setOnAction(event -> {
             //TODO: Here we call a translation service to translate in the different language, and we display on the front end user the message
         });
@@ -106,11 +107,11 @@ public class LiveStreamingView {
         HtmlTextEditor explanationHTMLEditor = new HtmlTextEditor();
         explanationHTMLEditor.setMode(HtmlTextEditor.Mode.STANDARD);
         explanationHTMLEditor.setPrefHeight(450);
-        Label explanationLabel = I18nControls.bindI18nProperties(new Label(), "ExplanationText");
+        Label explanationLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.ExplanationText);
        // HBox explanationHBox = new HBox(explanationLabel,explanationHTMLEditor);
         mainVBox.getChildren().addAll(new HBox(explanationLabel),explanationHTMLEditor);
 
-        Label areWeUsingIndividualLinksForEachSessionLabel = I18nControls.bindI18nProperties(new Label(), "AreWeUsingIndividualLinksForEachSession");
+        Label areWeUsingIndividualLinksForEachSessionLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.AreWeUsingIndividualLinksForEachSession);
         Switch areWeUsingIndividualLinksForEachSessionSwitch = new Switch();
 
         HBox individualLinksHBox = new HBox();
@@ -120,7 +121,7 @@ public class LiveStreamingView {
 
         HBox globalLinkLine = new HBox();
         globalLinkLine.setAlignment(Pos.CENTER_LEFT);
-        Label liveStreamGlobalLink = I18nControls.bindI18nProperties(new Label(), "LiveStreamGlobalLink");
+        Label liveStreamGlobalLink = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.LiveStreamGlobalLink);
         liveStreamGlobalLink.setPadding(new Insets(0,10,0,0));
         // liveStreamGlobalLink.setMinWidth(labelMinWith);
         globalLinkLine.getChildren().add(liveStreamGlobalLink);

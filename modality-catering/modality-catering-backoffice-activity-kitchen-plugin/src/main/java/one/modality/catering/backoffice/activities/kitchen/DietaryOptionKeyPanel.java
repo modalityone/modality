@@ -19,7 +19,7 @@ public class DietaryOptionKeyPanel extends VBox {
     Label titleLabel = new Label();
 
     public DietaryOptionKeyPanel() {
-        I18n.bindI18nTextProperty(titleLabel.textProperty(), "Index:");
+        I18n.bindI18nTextProperty(titleLabel.textProperty(), "Index:");  // ???
         TextTheme.createPrimaryTextFacet(titleLabel).style();
         labelsBox.setAlignment(Pos.CENTER);
         getChildren().setAll(labelsBox);

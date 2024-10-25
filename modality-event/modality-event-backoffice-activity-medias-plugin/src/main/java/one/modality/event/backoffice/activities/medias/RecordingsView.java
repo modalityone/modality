@@ -9,6 +9,7 @@ import dev.webfx.extras.util.masterslave.SlaveEditor;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
@@ -19,7 +20,6 @@ import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -74,7 +74,7 @@ public class RecordingsView {
     public RecordingsView(MediasActivity activity) {
         this.activity = activity;
         mainFrame = new BorderPane();
-        mainFrame.setPadding(new Insets(0,0,30,0));
+        mainFrame.setPadding(new Insets(0, 0, 30, 0));
         mainContainer = ControlUtil.createVerticalScrollPane(mainFrame);
     }
 
@@ -94,7 +94,7 @@ public class RecordingsView {
     public void drawContainer() {
         mainFrame.setPadding(new Insets(0, 0, 30, 0));
 
-        Label title = I18nControls.bindI18nProperties(new Label(), "RecordingsTitle");
+        Label title = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.RecordingsTitle);
         title.setPadding(new Insets(30));
         title.setGraphicTextGap(30);
         TextTheme.createPrimaryTextFacet(title).style();
@@ -106,17 +106,17 @@ public class RecordingsView {
         VBox masterSettings = new VBox();
         masterSettings.setPadding(new Insets(20));
 
-        Label masterLabel = I18nControls.bindI18nProperties(new Label(), "MasterSettings");
+        Label masterLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.MasterSettings);
         masterLabel.getStyleClass().add(Bootstrap.STRONG);
         masterLabel.setPadding(new Insets(20, 0, 0, 0));
         masterSettings.getChildren().add(masterLabel);
 
-        Label availableUntilLabel = I18nControls.bindI18nProperties(new Label(), "AvailableUntil");
+        Label availableUntilLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.AvailableUntil);
         availableUntilLabel.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
         availableUntilLabel.setPadding(new Insets(15, 0, 0, 0));
         masterSettings.getChildren().add(availableUntilLabel);
 
-        Label availableUntilCommentLabel = I18nControls.bindI18nProperties(new Label(), "AvailableUntilComment");
+        Label availableUntilCommentLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.AvailableUntilComment);
         availableUntilCommentLabel.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
         availableUntilCommentLabel.getStyleClass().add(Bootstrap.SMALL);
         availableUntilCommentLabel.setPadding(new Insets(0, 0, 5, 0));
@@ -125,33 +125,29 @@ public class RecordingsView {
         Event event = updateStore.updateEntity(currentEditedEvent);
         contentExpirationDate = new TextField();
         contentExpirationDate.setPromptText("Format: 25-09-2028");
-        validationSupport.addDateOrEmptyValidation(contentExpirationDate, "dd-MM-yyyy", contentExpirationDate, I18n.getI18nText("ValidationTimeFormatIncorrect"));
-       //TODO how to load the expiration date in the event
-        if(event.getAudioExpirationDate()!=null) {
+        validationSupport.addDateOrEmptyValidation(contentExpirationDate, "dd-MM-yyyy", contentExpirationDate, I18n.getI18nText("ValidationTimeFormatIncorrect")); // ???
+        //TODO how to load the expiration date in the event
+        if (event.getAudioExpirationDate() != null) {
             contentExpirationDate.setText(event.getAudioExpirationDate().format(dateFormatter));
         }
-        contentExpirationDate.textProperty().addListener(new InvalidationListener() {
-            @Override
-            public void invalidated(Observable observable) {
-                try {
-                    if(contentExpirationDate.getText()=="") {
-                        event.setAudioExpirationDate(null);
-                    }
-                    LocalDate date = LocalDate.parse(contentExpirationDate.getText(), dateFormatter);
-                    LocalDateTime dateTime = LocalDateTime.of(date, LocalTime.of(0,0));
-                    event.setAudioExpirationDate(dateTime);
-                } catch (DateTimeParseException e) {
+        contentExpirationDate.textProperty().addListener(observable -> {
+            try {
+                if (Strings.isEmpty(contentExpirationDate.getText())) {
+                    event.setAudioExpirationDate(null);
                 }
+                LocalDate date = LocalDate.parse(contentExpirationDate.getText(), dateFormatter);
+                LocalDateTime dateTime = LocalDateTime.of(date, LocalTime.of(0, 0));
+                event.setAudioExpirationDate(dateTime);
+            } catch (DateTimeParseException e) {
             }
         });
 
 
         masterSettings.getChildren().add(contentExpirationDate);
 
-
         contentAvailableOfflineSwitch = new Switch();
 
-        Label availableOfflineLabel = I18nControls.bindI18nProperties(new Label(), "AvailableOffline");
+        Label availableOfflineLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.AvailableOffline);
         availableOfflineLabel.setPadding(new Insets(0, 0, 0, 10));
         TextTheme.createSecondaryTextFacet(availableOfflineLabel).style();
         HBox offlineManagementHBox = new HBox(contentAvailableOfflineSwitch, availableOfflineLabel);
@@ -159,11 +155,11 @@ public class RecordingsView {
 
         offlineManagementHBox.setAlignment(Pos.CENTER_LEFT);
         //TODO: implement the offLine access management
-       // masterSettings.getChildren().add(offlineManagementHBox);
+        // masterSettings.getChildren().add(offlineManagementHBox);
 
         //SAVE BUTTON
-        Button saveButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), "Save"));
-        VBox.setMargin(saveButton, new Insets(20,0,0,0));
+        Button saveButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), "Save")); // ???
+        VBox.setMargin(saveButton, new Insets(20, 0, 0, 0));
         addUpdateStoreHasChangesProperty(updateStore.hasChangesProperty());
         saveButton.disableProperty().bind(updateStore.hasChangesProperty().not());
         saveButton.setOnAction(e -> {
@@ -189,25 +185,24 @@ public class RecordingsView {
 
         /* The language section */
         /* **********************/
-        Label languageLabel = I18nControls.bindI18nProperties(new Label(), "SelectLanguage");
+        Label languageLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.SelectLanguage);
         languageLabel.getStyleClass().add(Bootstrap.STRONG);
         languageLabel.setPadding(new Insets(30, 0, 10, 0));
         masterSettings.getChildren().add(languageLabel);
 
         entityStore.executeQueryBatch(
-                new EntityStoreQuery("select distinct name from Item where organization=? and family.code = ? and not deprecated order by name", new Object[]{currentEditedEvent.getOrganization(),KnownItemFamily.AUDIO_RECORDING.getCode()}),
+                new EntityStoreQuery("select distinct name from Item where organization=? and family.code = ? and not deprecated order by name", new Object[]{currentEditedEvent.getOrganization(), KnownItemFamily.AUDIO_RECORDING.getCode()}),
                 new EntityStoreQuery("select name, date, parent, item.code, parent.timeline.startTime, parent.name, parent.timeline.endTime,parent.timeline.audioOffered, event, site, expirationDate, available from ScheduledItem where parent.event= ? and item.family.code = ? and parent.item.family.code = ? order by date",
-                    new Object[] { currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode(),KnownItemFamily.TEACHING.getCode()}),
-                new EntityStoreQuery("select url, scheduledItem.parent, scheduledItem.item, scheduledItem.item.code ,scheduledItem.date, published, durationMillis from Media where scheduledItem.event= ? and scheduledItem.item.family.code = ?", new Object[]{currentEditedEvent,KnownItemFamily.AUDIO_RECORDING.getCode()}))
+                    new Object[]{currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.TEACHING.getCode()}),
+                new EntityStoreQuery("select url, scheduledItem.parent, scheduledItem.item, scheduledItem.item.code ,scheduledItem.date, published, durationMillis from Media where scheduledItem.event= ? and scheduledItem.item.family.code = ?", new Object[]{currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode()}))
             .onFailure(Console::log)
             .onSuccess(entityList -> Platform.runLater(() -> {
                 EntityList<Item> itemList = entityList[0];
                 EntityList<ScheduledItem> siList = entityList[1];
                 EntityList<Media> mediaList = entityList[2];
-                if(siList.size()==0) {
+                if (siList.size() == 0) {
                     Console.log("No recording offered for this event");
-                }
-                else {
+                } else {
                     //We have two lists of scheduled items, the teachings and the recordings (we suppose that for each recording ScheduledItem, we have a media associated in the database
                     audioScheduledItemsReadFromDatabase.setAll(siList);
                     recordingsMediasReadFromDatabase.setAll(mediaList);
@@ -279,6 +274,7 @@ public class RecordingsView {
         /////////////////
         mainFrame.setCenter(mainLayout);
     }
+
     public void addUpdateStoreHasChangesProperty(BooleanExpression booleanProperty) {
         listOfUpdateStoresHasChangedProperty.add(booleanProperty);
     }
@@ -302,7 +298,7 @@ public class RecordingsView {
     }
 
     private Node drawLanguageBox(Item item) {
-        MediaLinksManagement languageLinkManagement = new MediaLinksForAudioRecordingsManagement(item, entityStore, teachingsDates, audioScheduledItemsReadFromDatabase, recordingsMediasReadFromDatabase,this);
+        MediaLinksManagement languageLinkManagement = new MediaLinksForAudioRecordingsManagement(item, entityStore, teachingsDates, audioScheduledItemsReadFromDatabase, recordingsMediasReadFromDatabase, this);
         correspondenceBetweenLanguageAndLanguageLinkManagement.put(item.getName(), languageLinkManagement);
         languageLinkManagement.setVisible(false);
         return languageLinkManagement.getContainer();
@@ -311,7 +307,8 @@ public class RecordingsView {
     public void setActive(boolean b) {
         activeProperty.set(b);
     }
-    private final SlaveEditor<Event> eventDetailsSlaveEditor = new ModalitySlaveEditor<Event>() {
+
+    private final SlaveEditor<Event> eventDetailsSlaveEditor = new ModalitySlaveEditor<>() {
         /**
          * This method is called by the master controller when we change the event we're editing
          *
@@ -335,7 +332,7 @@ public class RecordingsView {
                 return false;
             }
             return listOfUpdateStoresHasChangedProperty.stream()
-                .anyMatch(booleanExpression -> booleanExpression.getValue());
+                .anyMatch(BooleanExpression::getValue);
         }
     };
 
@@ -346,9 +343,7 @@ public class RecordingsView {
 
     private void displayEventDetails(Event e) {
         e.onExpressionLoaded("organization,audioExpirationDate")
-            .onSuccess(ignored -> Platform.runLater(() -> {
-                drawContainer();
-            }))
+            .onSuccess(ignored -> Platform.runLater(this::drawContainer))
             .onFailure((Console::log));
 
     }

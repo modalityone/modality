@@ -79,10 +79,10 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         }
     };
 
-    private final Hyperlink updateLink = newHyperlink("Update", e -> setEditable(true));
-    private final Hyperlink saveLink = newHyperlink("Save", e -> save());
-    private final Hyperlink cancelLink = newHyperlink("Cancel", e -> cancel()); { cancelLink.setContentDisplay(ContentDisplay.TEXT_ONLY); }
-    private final Hyperlink closeLink = newHyperlink("Close", e -> close());
+    private final Hyperlink updateLink = newHyperlink("Update" /* ? */, e -> setEditable(true));
+    private final Hyperlink saveLink = newHyperlink("Save" /* ? */, e -> save());
+    private final Hyperlink cancelLink = newHyperlink("Cancel" /* ? */, e -> cancel()); { cancelLink.setContentDisplay(ContentDisplay.TEXT_ONLY); }
+    private final Hyperlink closeLink = newHyperlink("Close" /* ? */, e -> close());
     private final MonoPane switchButton;
     private Runnable previousSceneCancelAccelerator;
     private Runnable closeHook;
@@ -101,7 +101,7 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         if (buttonSelectorParameters.getDropParent() == null)
             buttonSelectorParameters.setDropParent(container);
         buttonSelectorParameters.checkValid();
-        Label topLabel = I18nControls.bindI18nProperties(new Label(), "YourPersonalDetails");
+        Label topLabel = I18nControls.bindI18nProperties(new Label(), PersonalDetailsI18nKeys.YourPersonalDetails);
         SVGPath switchIcon = new SVGPath();
         switchIcon.setContent("M 2.2857143,10.285714 H 0 V 16 H 5.7142857 V 13.714286 H 2.2857143 Z M 0,5.7142857 H 2.2857143 V 2.2857143 H 5.7142857 V 0 H 0 Z M 13.714286,13.714286 H 10.285714 V 16 H 16 V 10.285714 H 13.714286 Z M 10.285714,0 v 2.2857143 h 3.428572 V 5.7142857 H 16 V 0 Z");
         switchIcon.setFill(Color.GRAY);
@@ -111,37 +111,37 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         top.setAlignment(Pos.CENTER);
         BorderPane.setMargin(top, new Insets(15, 15, 0, 15));
         container.setTop(top);
-        firstNameTextField = newMaterialTextField("FirstName");
-        lastNameTextField = newMaterialTextField("LastName");
-        maleRadioButton = newRadioButton("Male");
-        femaleRadioButton = newRadioButton("Female");
+        firstNameTextField = newMaterialTextField( PersonalDetailsI18nKeys.FirstName);
+        lastNameTextField = newMaterialTextField(PersonalDetailsI18nKeys.LastName);
+        maleRadioButton = newRadioButton(PersonalDetailsI18nKeys.Male);
+        femaleRadioButton = newRadioButton(PersonalDetailsI18nKeys.Female);
         ToggleGroup genderGroup = new ToggleGroup();
         maleRadioButton.setToggleGroup(genderGroup);
         femaleRadioButton.setToggleGroup(genderGroup);
         genderBox = new HBox(20, maleRadioButton, femaleRadioButton);
-        adultRadioButton = newRadioButton("Adult");
-        childRadioButton = newRadioButton("Child");
+        adultRadioButton = newRadioButton(PersonalDetailsI18nKeys.Adult);
+        childRadioButton = newRadioButton(PersonalDetailsI18nKeys.Child);
         ToggleGroup ageGroup = new ToggleGroup();
         childRadioButton.setToggleGroup(ageGroup);
         adultRadioButton.setToggleGroup(ageGroup);
         ageBox = new HBox(20, adultRadioButton, childRadioButton);
         birthDatePicker = LayoutUtil.setMaxWidthToInfinite(new DatePicker());
         birthDatePicker.setConverter(DateFormatter.SINGLETON.toStringConverter());
-        emailTextField = newMaterialTextField("Email");
-        phoneTextField = newMaterialTextField("Phone");
-        streetTextField = newMaterialTextField("Street");
-        postCodeTextField = newMaterialTextField("Postcode");
-        cityNameTextField = newMaterialTextField("City");
+        emailTextField = newMaterialTextField(PersonalDetailsI18nKeys.Email);
+        phoneTextField = newMaterialTextField(PersonalDetailsI18nKeys.Phone);
+        streetTextField = newMaterialTextField(PersonalDetailsI18nKeys.Street);
+        postCodeTextField = newMaterialTextField(PersonalDetailsI18nKeys.Postcode);
+        cityNameTextField = newMaterialTextField(PersonalDetailsI18nKeys.City);
         String countryJson = "{class: 'Country', orderBy: 'name'}";
         if (WebFxKitLauncher.supportsSvgImageFormat())
             countryJson = "{class: 'Country', orderBy: 'name', columns: [{expression: '[image(`images/s16/countries/svg/` + iso_alpha2 + `.svg`),name]'}] }";
         countrySelector = createEntityButtonSelector(countryJson, dataSourceModel, buttonSelectorParameters);
-        countryButton = countrySelector.toMaterialButton("Country");
+        countryButton = countrySelector.toMaterialButton(PersonalDetailsI18nKeys.Country);
         String organizationJson = "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name'}";
         if (WebFxKitLauncher.supportsSvgImageFormat())
             organizationJson = "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name', columns: [{expression: '[image(`images/s16/organizations/svg/` + (type=2 ? `kmc` : type=3 ? `kbc` : type=4 ? `branch` : `generic`) + `.svg`),name]'}] }";
         organizationSelector = createEntityButtonSelector(organizationJson, dataSourceModel, buttonSelectorParameters);
-        organizationButton = organizationSelector.toMaterialButton("Centre");
+        organizationButton = organizationSelector.toMaterialButton(PersonalDetailsI18nKeys.Centre);
         SceneUtil.onSceneReady(getContainer(), scene -> {
             previousSceneCancelAccelerator = SceneUtil.getCancelAccelerator(scene);
             SceneUtil.setCancelAccelerator(scene, this::onCancelAccelerator);

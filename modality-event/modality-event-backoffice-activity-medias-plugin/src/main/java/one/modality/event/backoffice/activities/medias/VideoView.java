@@ -202,7 +202,7 @@ public class VideoView {
 
 
         //SAVE BUTTON
-        Button saveButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), "Save"));
+        Button saveButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), "Save")); // ???
         saveButton.disableProperty().bind(updateStore.hasChangesProperty().not());
         addUpdateStoreHasChangesProperty(updateStore.hasChangesProperty());
 
@@ -277,7 +277,7 @@ public class VideoView {
 
                 // Instantiate the MediaLinksForVODManagement with data
                 MediaLinksForVODManagement languageLinkManagement = new MediaLinksForVODManagement(
-                    VODItems.get(0), entityStore, teachingsDates, vodScheduledItemsReadFromDatabase, recordingsMediasReadFromDatabase,this);
+                    entityStore, teachingsDates, vodScheduledItemsReadFromDatabase, recordingsMediasReadFromDatabase,this);
 
                 // Now that the data is ready, update the container
                 container.setCenter(languageLinkManagement.getContainer());
@@ -325,9 +325,7 @@ public class VideoView {
 
     private void displayEventDetails(Event e) {
         e.onExpressionLoaded("organization,vodExpirationDate,livestreamUrl")
-            .onSuccess(ignored -> Platform.runLater(() -> {
-               drawContainer();
-            }))
+            .onSuccess(ignored -> Platform.runLater(this::drawContainer))
             .onFailure((Console::log));
 
     }
