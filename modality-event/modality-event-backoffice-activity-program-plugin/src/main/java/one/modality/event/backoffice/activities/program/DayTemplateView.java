@@ -105,12 +105,12 @@ final class DayTemplateView {
         ObservableLists.bindConverted(timelinesContainer.getChildren(), workingDayTemplateTimelineViews, DayTemplateTimelineView::getView);
 
         //****************************  SELECTED DATES VBOX  ******************************************//
-        VBox listOfSelectedDatesVBox = new VBox();
+        VBox listOfSelectedDatesVBox = new VBox(10);
         listOfSelectedDatesVBox.setAlignment(Pos.CENTER);
         ObservableLists.bindConverted(listOfSelectedDatesVBox.getChildren(), workingDayTemplateDateViews, DayTemplateDateView::getView);
 
         //****************************  TOP  ******************************************//
-        Label duplicateButton = I18nControls.bindI18nProperties(new Label(), "DuplicateIcon");
+        Label duplicateButton = I18nControls.bindI18nProperties(new Label(), ProgramI18nKeys.DuplicateIcon);
         duplicateButton.setOnMouseClicked(e -> dayTemplateModel.duplicate());
         duplicateButton.setCursor(Cursor.HAND);
 
@@ -118,7 +118,7 @@ final class DayTemplateView {
         Separator topSeparator = new Separator();
         topSeparator.setPadding(new Insets(10, 0, 10, 0));
 
-        templateNameTextField.setPromptText("Name this template");
+        templateNameTextField.setPromptText("Name this template"); // ???
         HBox.setHgrow(templateNameTextField, Priority.ALWAYS);
         syncTemplateNameUiFromModel();
         FXProperties.runOnPropertiesChange(this::syncTemplateNameModelFromUi, templateNameTextField.textProperty());
@@ -133,29 +133,22 @@ final class DayTemplateView {
         //****************************  CENTER  ******************************************//
         BorderPane centerBorderPane = new BorderPane();
         centerBorderPane.setTop(timelinesContainer);
-        SVGPath plusButton = SvgIcons.createPlusPath();
-        //TODO change when a generic function has been created
-        plusButton.setFill(Color.web("#0096D6"));
-        MonoPane buttonContainer = new MonoPane(plusButton);
-        buttonContainer.setOnMouseClicked(e -> dayTemplateModel.addTemplateTimeline());
-        buttonContainer.setCursor(Cursor.HAND);
-        buttonContainer.setPadding(new Insets(10, 0, 0, 0));
-        BorderPane.setAlignment(buttonContainer, Pos.CENTER_LEFT);
-        centerBorderPane.setCenter(buttonContainer);
-        BorderPane.setAlignment(buttonContainer, Pos.TOP_LEFT);
 
-        Label deleteDayTemplate = I18nControls.bindI18nProperties(new Label(), "DeleteDayTemplate");
-        deleteDayTemplate.setPadding(new Insets(10, 0, 5, 0));
-        deleteDayTemplate.getStyleClass().add(Bootstrap.SMALL);
-        deleteDayTemplate.getStyleClass().add(Bootstrap.TEXT_DANGER);
-        deleteDayTemplate.setOnMouseClicked(e -> dayTemplateModel.deleteDayTemplate());
-        deleteDayTemplate.setCursor(Cursor.HAND);
-        deleteDayTemplate.setPadding(new Insets(30, 0, 0, 0));
+        SVGPath addIcon = SvgIcons.setSVGPathFill(SvgIcons.createPlusPath(), Color.web("#0096D6"));
+        MonoPane addButton = SvgIcons.createButtonPane(addIcon, dayTemplateModel::addTemplateTimeline);
+        addButton.setPadding(new Insets(10, 0, 0, 0));
+
+        centerBorderPane.setCenter(addButton);
+        BorderPane.setAlignment(addButton, Pos.TOP_LEFT);
+
+        Label deleteButton = Bootstrap.small(Bootstrap.textDanger(I18nControls.bindI18nProperties(new Label(), ProgramI18nKeys.DeleteDayTemplate)));
+        SvgIcons.armButton(deleteButton, dayTemplateModel::deleteDayTemplate);
+        deleteButton.setPadding(new Insets(30, 0, 0, 0));
 
         Separator separator = new Separator();
         separator.setPadding(new Insets(10, 0, 10, 0));
 
-        VBox bottomVBox = new VBox(deleteDayTemplate, separator);
+        VBox bottomVBox = new VBox(deleteButton, separator);
         centerBorderPane.setBottom(bottomVBox);
         BorderPane.setAlignment(bottomVBox, Pos.BOTTOM_LEFT);
         centerBorderPane.setMaxHeight(Region.USE_PREF_SIZE);
@@ -164,7 +157,7 @@ final class DayTemplateView {
         BorderPane bottomBorderPane = new BorderPane();
         BorderPane.setAlignment(bottomBorderPane, Pos.CENTER);
         bottomBorderPane.setMaxWidth(600);
-        Label assignDateLabel = I18nControls.bindI18nProperties(new Label(), "AssignDay");
+        Label assignDateLabel = I18nControls.bindI18nProperties(new Label(), ProgramI18nKeys.AssignDay);
         TextTheme.createPrimaryTextFacet(assignDateLabel).style();
         assignDateLabel.getStyleClass().add(Bootstrap.SMALL);
         assignDateLabel.setPadding(new Insets(5, 0, 10, 0));

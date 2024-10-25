@@ -13,12 +13,12 @@ import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.icons.SvgIcons;
@@ -30,7 +30,7 @@ import one.modality.crm.backoffice.organization.fx.FXOrganization;
 
 import java.time.LocalTime;
 
-import static one.modality.event.backoffice.activities.program.DatesToStringConversion.*;
+import static one.modality.event.backoffice.activities.program.DatesToStringConversion.isLocalTimeTextValid;
 
 /**
  * @author David Hello
@@ -45,16 +45,19 @@ final class DayTemplateTimelineView implements ButtonFactoryMixin {
     private final TextField fromTextField = new TextField();
     private final TextField untilTextField = new TextField();
     private final TextField nameTextField = new TextField();
-    private final SVGPath audioAvailableIcon = SvgIcons.createSoundIconPath();
-    private final SVGPath audioUnavailableIcon = SvgIcons.createSoundIconInactivePath();
-    private final MonoPane audioMonoPane = new MonoPane();
-    private final SVGPath videoAvailableIcon = SvgIcons.createVideoIconPath();
-    private final SVGPath videoUnavailableIcon = SvgIcons.createVideoIconInactivePath();
-    private final MonoPane videoMonoPane = new MonoPane();
+    private final SVGPath audioAvailableIcon = SvgIcons.setSVGPathFill(SvgIcons.createSoundIconPath(), Color.GREEN);
+    private final SVGPath audioUnavailableIcon = SvgIcons.setSVGPathFill(SvgIcons.createSoundIconInactivePath(), Color.RED);
+    private final MonoPane audioToggleButton;
+    private final SVGPath videoAvailableIcon = SvgIcons.setSVGPathFill(SvgIcons.createVideoIconPath(), Color.GREEN);
+    private final SVGPath videoUnavailableIcon = SvgIcons.setSVGPathFill(SvgIcons.createVideoIconInactivePath(), Color.RED);
+    private final MonoPane videoToggleButton;
 
     DayTemplateTimelineView(DayTemplateTimelineModel dayTemplateTimelineModel) {
         this.dayTemplateTimelineModel = dayTemplateTimelineModel;
         dayTemplateTimelineModel.setSyncUiFromModelRunnable(this::syncUiFromModel);
+        Timeline timeline = dayTemplateTimelineModel.getTimeline();
+        audioToggleButton = SvgIcons.createToggleButtonPane(audioAvailableIcon, audioUnavailableIcon, timeline::isAudioOffered, timeline::setAudioOffered);
+        videoToggleButton = SvgIcons.createToggleButtonPane(videoAvailableIcon, videoUnavailableIcon, timeline::isVideoOffered, timeline::setVideoOffered);
         view = buildUi();
     }
 
@@ -136,11 +139,11 @@ final class DayTemplateTimelineView implements ButtonFactoryMixin {
     }
 
     private void syncAudioUiFromModel() {
-        audioMonoPane.setContent(Booleans.isTrue(getTimeline().isAudioOffered()) ? audioAvailableIcon : audioUnavailableIcon);
+        audioToggleButton.setContent(Booleans.isTrue(getTimeline().isAudioOffered()) ? audioAvailableIcon : audioUnavailableIcon);
     }
 
     private void syncVideoUiFromModel() {
-        videoMonoPane.setContent(Booleans.isTrue(getTimeline().isVideoOffered()) ? videoAvailableIcon : videoUnavailableIcon);
+        videoToggleButton.setContent(Booleans.isTrue(getTimeline().isVideoOffered()) ? videoAvailableIcon : videoUnavailableIcon);
     }
 
     private Region buildUi() {
@@ -186,26 +189,10 @@ final class DayTemplateTimelineView implements ButtonFactoryMixin {
         syncNameUiFromModel();
         FXProperties.runOnPropertiesChange(this::syncNameModelFromUi, nameTextField.textProperty());
 
-        audioAvailableIcon.setFill(Color.GREEN);
-        audioUnavailableIcon.setFill(Color.RED);
-        audioMonoPane.setAlignment(Pos.CENTER);
-        audioMonoPane.setCursor(Cursor.HAND);
-        syncAudioUiFromModel();
-        audioMonoPane.setOnMouseClicked(e -> dayTemplateTimelineModel.toggleAudioOffered());
+        MonoPane trashButton = SvgIcons.createButtonPane(SvgIcons.createTrashSVGPath(), dayTemplateTimelineModel::removeTemplateTimeLine);
+        ShapeTheme.createSecondaryShapeFacet(trashButton).style(); // Make it gray
 
-        videoAvailableIcon.setFill(Color.GREEN);
-        videoUnavailableIcon.setFill(Color.RED);
-        videoMonoPane.setCursor(Cursor.HAND);
-        syncVideoUiFromModel();
-        videoMonoPane.setOnMouseClicked(e -> dayTemplateTimelineModel.toggleVideoOffered());
-
-        SVGPath trashImage = SvgIcons.createTrashSVGPath();
-        MonoPane trashContainer = new MonoPane(trashImage);
-        trashContainer.setCursor(Cursor.HAND);
-        trashContainer.setOnMouseClicked(event -> dayTemplateTimelineModel.removeTemplateTimeLine());
-        ShapeTheme.createSecondaryShapeFacet(trashImage).style();
-
-        return new Pane(itemButton, fromTextField, toLabel, untilTextField, nameTextField, audioMonoPane, videoMonoPane, trashContainer) {
+        return new Pane(itemButton, fromTextField, toLabel, untilTextField, nameTextField, audioToggleButton, videoToggleButton, trashButton) {
             private static final double FROM_WIDTH = 60, TO_WIDTH = 20, UNTIL_WIDTH = 60, AUDIO_WIDTH = 21, VIDEO_WIDTH = 24, TRASH_WIDTH = 20;
             private static final double HGAP = 5, TOTAL_HGAP = HGAP * 9;
             @Override
@@ -220,9 +207,9 @@ final class DayTemplateTimelineView implements ButtonFactoryMixin {
                 layoutInArea(toLabel,        x += FROM_WIDTH + 1 * HGAP   , 0, TO_WIDTH,    height, 0, HPos.CENTER, VPos.CENTER);
                 layoutInArea(untilTextField, x += TO_WIDTH + 1 * HGAP   , 0, UNTIL_WIDTH, height, 0, HPos.CENTER, VPos.CENTER);
                 layoutInArea(nameTextField,  x += UNTIL_WIDTH + 2 * HGAP, 0, nameWidth,  height, 0, HPos.LEFT,   VPos.CENTER);
-                layoutInArea(audioMonoPane,  x += nameWidth  + 1 * HGAP, 0, AUDIO_WIDTH, height, 0, HPos.CENTER, VPos.CENTER);
-                layoutInArea(videoMonoPane,  x += AUDIO_WIDTH + 1 * HGAP, 0, VIDEO_WIDTH, height, 0, HPos.CENTER, VPos.CENTER);
-                layoutInArea(trashContainer, x += VIDEO_WIDTH + 1 * HGAP, 0, TRASH_WIDTH, height, 0, HPos.CENTER, VPos.CENTER);
+                layoutInArea(audioToggleButton,  x += nameWidth + 1 * HGAP, 0, AUDIO_WIDTH, height, 0, HPos.CENTER, VPos.CENTER);
+                layoutInArea(videoToggleButton,  x += AUDIO_WIDTH + 1 * HGAP, 0, VIDEO_WIDTH, height, 0, HPos.CENTER, VPos.CENTER);
+                layoutInArea(trashButton, x += VIDEO_WIDTH + 1 * HGAP, 0, TRASH_WIDTH, height, 0, HPos.CENTER, VPos.CENTER);
             }
         };
     }

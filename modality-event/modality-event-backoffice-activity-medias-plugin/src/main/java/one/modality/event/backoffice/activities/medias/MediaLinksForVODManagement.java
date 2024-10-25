@@ -12,22 +12,17 @@ import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
@@ -44,19 +39,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MediaLinksForVODManagement extends MediaLinksManagement {
-    private final int urlTextFieldWith = 600;
-    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-    private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-    private VideoView parentVideoView;
 
-    public MediaLinksForVODManagement(Item vodItem, EntityStore entityStore, List<LocalDate> teachingsDates, ObservableList<ScheduledItem> scheduledItemsReadFromDatabase, ObservableList<Media> recordingsMediasReadFromDatabase, VideoView videoView) {
+    private static final int URL_TEXT_FIELD_WITH = 600;
+
+    private static final String DATE_FORMAT = "dd-MM-yyyy";
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
+
+    private final VideoView parentVideoView;
+
+    public MediaLinksForVODManagement(EntityStore entityStore, List<LocalDate> teachingsDates, ObservableList<ScheduledItem> scheduledItemsReadFromDatabase, ObservableList<Media> recordingsMediasReadFromDatabase, VideoView videoView) {
         super(KnownItem.VIDEO.getCode(), entityStore, teachingsDates, scheduledItemsReadFromDatabase, recordingsMediasReadFromDatabase);
         parentVideoView = videoView;
         mainContainer.setMinWidth(800);
         VBox teachingDatesVBox = new VBox();
         teachingDatesVBox.setSpacing(30);
         mainContainer.setCenter(teachingDatesVBox);
-        teachingsDates.forEach(date->teachingDatesVBox.getChildren().add(computeTeachingDateLine(date)));
+        teachingsDates.forEach(date -> teachingDatesVBox.getChildren().add(computeTeachingDateLine(date)));
     }
 
     protected BorderPane computeTeachingDateLine(LocalDate date) {
@@ -80,15 +78,13 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
 
             BorderPane container = new BorderPane();
             container.setBackground(Background.fill(Color.WHITE));
-            //We make an array which only one boolean instead of a boolean, so we can use it in lambda expression
-            final boolean[] isCenterVisible = {false};
 
             VBox centerVBox = new VBox();
             container.setCenter(centerVBox);
             centerVBox.setVisible(false);
             centerVBox.setManaged(false);
-            //We create a separate method for building the headerline because it will likely be the same for the child classes, but the content below will change
-            HBox headerLine = buildHeaderLine(centerVBox, isCenterVisible);
+            //We create a separate method for building the header line because it will likely be the same for the child classes, but the content below will change
+            HBox headerLine = buildHeaderLine(centerVBox);
 
             container.setTop(headerLine);
             Separator separator = new Separator();
@@ -100,10 +96,9 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 .sorted(Comparator.comparing(item -> item.getParent().getTimeline().getStartTime())) // Sort by start date
                 .collect(Collectors.toList());
 
-
             for (ScheduledItem currentVideoScheduledItem : filteredListForCurrentDay) {
                 UpdateStore localUpdateStore = UpdateStore.createAbove(entityStore);
-                //We add in the parentView the updatastore.hasChangedProperty so we know if we can or not change the edited event without forgetting the current local changes
+                //We add in the parentView the updateStore.hasChangedProperty so we know if we can or not change the edited event without forgetting the current local changes
                 //made here
                 parentVideoView.addUpdateStoreHasChangesProperty(localUpdateStore.hasChangesProperty());
 
@@ -126,7 +121,8 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 String name = workingCurrentVideoScheduledItem.getParent().getName();
                 if (name == null) name = "Unknown";
                 Label teachingTitle = new Label(name);
-                Label startTimeLabel = new Label(workingCurrentVideoScheduledItem.getParent().getTimeline().getStartTime().format(timeFormatter) + " - " + workingCurrentVideoScheduledItem.getParent().getTimeline().getEndTime().format(timeFormatter));
+                Timeline timeline = workingCurrentVideoScheduledItem.getParent().getTimeline();
+                Label startTimeLabel = new Label(timeline.getStartTime().format(MediaLinksManagement.TIME_FORMATTER) + " - " + timeline.getEndTime().format(MediaLinksManagement.TIME_FORMATTER));
                 teachingTitle.getStyleClass().add(Bootstrap.STRONG);
                 startTimeLabel.getStyleClass().add(Bootstrap.STRONG);
 
@@ -144,7 +140,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
 
                 Label linksLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.VODLinks);
                 Label noLinkLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.NoLinkDefinedYet);
-                HBox linkLabelHBox = new HBox(linksLabel,noLinkLabel);
+                HBox linkLabelHBox = new HBox(linksLabel, noLinkLabel);
                 linkLabelHBox.setSpacing(10);
                 currentVBox.getChildren().add(linkLabelHBox);
 
@@ -156,9 +152,6 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 mediasListVBox.setAlignment(Pos.CENTER_LEFT);
                 mediasListVBox.setSpacing(10);
                 currentVBox.getChildren().add(mediasListVBox);
-                //We create an array to be able to use it in lambda expression
-                //This contains the scheduledItem that contains one of several medias for this teaching
-                final ScheduledItem[] currentVODScheduledItem = new ScheduledItem[1];
 
                 ObservableList<Media> mediaList = FXCollections.observableArrayList(
                     workingMedias.stream().map(localUpdateStore::updateEntity)
@@ -170,7 +163,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
 
                 // Bind the children of mediasListVBox to mediaList
                 ObservableLists.bindConverted(mediasListVBox.getChildren(), mediaList, media -> {
-                   HBox mediaNode = drawMediaLinkContainer(media, mediaList, localUpdateStore);
+                    HBox mediaNode = drawMediaLinkContainer(media, mediaList, localUpdateStore);
                     mediaNode.setUserData(media);// Set user data for removal reference
                     return mediaNode;
                 });
@@ -192,19 +185,16 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 HBox addMediaHBox = new HBox();
                 addMediaHBox.setAlignment(Pos.CENTER_LEFT);
                 addMediaHBox.setSpacing(20);
-                Label addLinkLabel = I18nControls.bindI18nProperties(new Label(), "AddLink");
-                addLinkLabel.getStyleClass().add(Bootstrap.SMALL);
+
+                Label addLinkLabel = Bootstrap.small(I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.AddLink));
                 TextTheme.createSecondaryTextFacet(addLinkLabel).style();
-                SVGPath addButton = SvgIcons.createPlusPath();
-                addButton.setFill(Color.web("#0096D6"));
-                MonoPane addButtonPane = new MonoPane(addButton);
-                addButtonPane.setCursor(Cursor.HAND);
-                addMediaHBox.getChildren().addAll(addLinkLabel, addButtonPane);
-                addButtonPane.setOnMouseClicked(event -> {
+
+                SVGPath addIcon = SvgIcons.setSVGPathFill(SvgIcons.createPlusPath(), Color.web("#0096D6"));
+                MonoPane addButton = SvgIcons.createButtonPane(addIcon, () -> {
                     Media createdMedia = localUpdateStore.insertEntity(Media.class);
                     createdMedia.setScheduledItem(workingCurrentVideoScheduledItem);
                     createdMedia.setType(MediaType.VOD);
-                    if(mediaList.size()> 0 && mediaList.get(mediaList.size()-1).getOrd()!=null) {
+                    if (!mediaList.isEmpty() && mediaList.get(mediaList.size() - 1).getOrd() != null) {
                         createdMedia.setOrd(mediaList.get(mediaList.size() - 1).getOrd() + 1);
                     } else {
                         createdMedia.setOrd(0);
@@ -212,9 +202,11 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                     //By adding the media to mediaList, the drawMediaLinkContainer will be called because of the bondage between mediaList and the VBox children
                     mediaList.add(createdMedia);
                 });
+
+                addMediaHBox.getChildren().addAll(addLinkLabel, addButton);
                 currentVBox.getChildren().add(addMediaHBox);
 
-                Label publicationDelayedLabel = I18nControls.bindI18nProperties(new Label(), "VODDelayed");
+                Label publicationDelayedLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.VODDelayed);
                 Switch publicationDelayedSwitch = new Switch();
                 if (workingCurrentVideoScheduledItem.isVodDelayed() != null)
                     publicationDelayedSwitch.setSelected(workingCurrentVideoScheduledItem.isVodDelayed());
@@ -223,27 +215,21 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 Region spacer = new Region();
                 HBox.setHgrow(spacer, Priority.ALWAYS);
 
-                Label publishedLabel = I18nControls.bindI18nProperties(new Label(), "VODPublished");
+                Label publishedLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.VODPublished);
                 Switch publishedSwitch = new Switch();
-                publishedSwitch.selectedProperty().addListener(new InvalidationListener() {
-                    @Override
-                    public void invalidated(Observable observable) {
-                        //Here we update all the media
-                        mediaList.forEach(media -> media.setPublished(publishedSwitch.isSelected()));
-                        if (publishedSwitch.selectedProperty().get())
-                            publicationDelayedSwitch.selectedProperty().setValue(false);
-                    }
+                publishedSwitch.selectedProperty().addListener(observable -> {
+                    //Here we update all the media
+                    mediaList.forEach(media -> media.setPublished(publishedSwitch.isSelected()));
+                    if (publishedSwitch.selectedProperty().get())
+                        publicationDelayedSwitch.selectedProperty().setValue(false);
                 });
 
-                publicationDelayedSwitch.selectedProperty().addListener(new InvalidationListener() {
-                    @Override
-                    public void invalidated(Observable observable) {
-                        //Here we update all the media
-                        workingCurrentVideoScheduledItem.setVodDelayed(publicationDelayedSwitch.selectedProperty().get());
-                        //We remove the published value if delay is selected
-                        if (publicationDelayedSwitch.selectedProperty().get())
-                            publishedSwitch.selectedProperty().setValue(false);
-                    }
+                publicationDelayedSwitch.selectedProperty().addListener(observable -> {
+                    //Here we update all the media
+                    workingCurrentVideoScheduledItem.setVodDelayed(publicationDelayedSwitch.selectedProperty().get());
+                    //We remove the published value if delay is selected
+                    if (publicationDelayedSwitch.selectedProperty().get())
+                        publishedSwitch.selectedProperty().setValue(false);
                 });
 
 
@@ -251,18 +237,18 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 VODPublisheddHBox.visibleProperty().bind(Bindings.isEmpty(mediaList).not());
 
                 HBox publicationInfoHBox = new HBox(VODPublicationDelayeddHBox, spacer, VODPublisheddHBox);
-                publicationInfoHBox.setMaxWidth(urlTextFieldWith);
+                publicationInfoHBox.setMaxWidth(URL_TEXT_FIELD_WITH);
                 publicationInfoHBox.setPadding(new Insets(20, 0, 0, 0));
                 currentVBox.getChildren().add(publicationInfoHBox);
 
-                Label commentLabel = I18nControls.bindI18nProperties(new Label(), "VODComment");
+                Label commentLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.VODComment);
                 commentLabel.setPadding(new Insets(20, 0, 0, 0));
                 currentVBox.getChildren().add(commentLabel);
 
                 TextField commentTextField = new TextField();
-                commentTextField.setPromptText(I18n.getI18nText("VODPromptComment"));
+                commentTextField.setPromptText(I18n.getI18nText(MediasI18nKeys.VODPromptComment));
                 currentVBox.getChildren().add(commentTextField);
-                commentTextField.setMaxWidth(urlTextFieldWith);
+                commentTextField.setMaxWidth(URL_TEXT_FIELD_WITH);
                 if (workingCurrentVideoScheduledItem.getComment() != null)
                     commentTextField.setText(workingCurrentVideoScheduledItem.getComment());
                 commentTextField.textProperty().addListener(observable -> {
@@ -271,9 +257,9 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
 
                 HBox customContentAvailableUntilHBox = new HBox();
                 customContentAvailableUntilHBox.setPadding(new Insets(20, 0, 0, 0));
-                customContentAvailableUntilHBox.setMaxWidth(urlTextFieldWith);
+                customContentAvailableUntilHBox.setMaxWidth(URL_TEXT_FIELD_WITH);
 
-                Label customExpirationDate = I18nControls.bindI18nProperties(new Label(), "VODCustomExpirationDate");
+                Label customExpirationDate = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.VODCustomExpirationDate);
                 Switch customExpirationDateSwitch = new Switch();
                 if (workingCurrentVideoScheduledItem.getExpirationDate() != null) {
                     customExpirationDateSwitch.setSelected(true);
@@ -290,65 +276,53 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 rightHBox.visibleProperty().bind(customExpirationDateSwitch.selectedProperty());
                 rightHBox.managedProperty().bind(customExpirationDateSwitch.selectedProperty());
 
-                Label contentAvailableUntilLabel = I18nControls.bindI18nProperties(new Label(), "AvailableUntil");
+                Label contentAvailableUntilLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.AvailableUntil);
                 rightHBox.getChildren().add(contentAvailableUntilLabel);
 
                 TextField availableUntilDateTextField = new TextField();
                 availableUntilDateTextField.setPromptText("25-10-2027");
                 availableUntilDateTextField.setMaxWidth(100);
                 if (workingCurrentVideoScheduledItem.getExpirationDate() != null)
-                    availableUntilDateTextField.setText(workingCurrentVideoScheduledItem.getExpirationDate().format(dateFormatter));
+                    availableUntilDateTextField.setText(workingCurrentVideoScheduledItem.getExpirationDate().format(DATE_FORMATTER));
                 HBox.setMargin(availableUntilDateTextField, new Insets(0, 15, 0, 25));
                 rightHBox.getChildren().add(availableUntilDateTextField);
-                validationSupport.addDateValidation(availableUntilDateTextField, "dd-MM-yyyy", availableUntilDateTextField, I18n.getI18nText("ValidationDateFormatIncorrect"));
+                validationSupport.addDateValidation(availableUntilDateTextField, DATE_FORMAT, availableUntilDateTextField, I18n.getI18nText("ValidationDateFormatIncorrect"));
 
                 TextField availableUntilTimeTextField = new TextField();
                 availableUntilTimeTextField.setPromptText("18:25");
                 if (workingCurrentVideoScheduledItem.getExpirationDate() != null)
-                    availableUntilTimeTextField.setText(workingCurrentVideoScheduledItem.getExpirationDate().format(timeFormatter));
+                    availableUntilTimeTextField.setText(workingCurrentVideoScheduledItem.getExpirationDate().format(MediaLinksManagement.TIME_FORMATTER));
 
                 availableUntilTimeTextField.setMaxWidth(50);
                 rightHBox.getChildren().add(availableUntilTimeTextField);
-                validationSupport.addDateValidation(availableUntilTimeTextField, "HH:mm", availableUntilTimeTextField, I18n.getI18nText("ValidationTimeFormatIncorrect"));
+                validationSupport.addDateValidation(availableUntilTimeTextField, TIME_FORMAT, availableUntilTimeTextField, I18n.getI18nText("ValidationTimeFormatIncorrect"));
 
-                availableUntilDateTextField.textProperty().addListener(new InvalidationListener() {
-                    @Override
-                    public void invalidated(Observable observable) {
-
-                        try {
-                            LocalDate date = LocalDate.parse(availableUntilDateTextField.getText(), dateFormatter);
-                            LocalTime time = LocalTime.parse(availableUntilTimeTextField.getText(), timeFormatter);
-                            // Combine the date and time to create LocalDateTime
-                            LocalDateTime availableUntil = LocalDateTime.of(date, time);
-                            workingCurrentVideoScheduledItem.setExpirationDate(availableUntil);
-                        } catch (DateTimeParseException e) {
-                        }
+                availableUntilDateTextField.textProperty().addListener(observable -> {
+                    try {
+                        LocalDate date = LocalDate.parse(availableUntilDateTextField.getText(), DATE_FORMATTER);
+                        LocalTime time = LocalTime.parse(availableUntilTimeTextField.getText(), MediaLinksManagement.TIME_FORMATTER);
+                        // Combine the date and time to create LocalDateTime
+                        LocalDateTime availableUntil = LocalDateTime.of(date, time);
+                        workingCurrentVideoScheduledItem.setExpirationDate(availableUntil);
+                    } catch (DateTimeParseException e) {
                     }
                 });
 
-                availableUntilTimeTextField.textProperty().addListener(new InvalidationListener() {
-                    @Override
-                    public void invalidated(Observable observable) {
-                        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-                        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-                        try {
-                            LocalDate date = LocalDate.parse(availableUntilDateTextField.getText(), dateFormatter);
-                            LocalTime time = LocalTime.parse(availableUntilTimeTextField.getText(), timeFormatter);
-                            // Combine the date and time to create LocalDateTime
-                            LocalDateTime availableUntil = LocalDateTime.of(date, time);
-                            workingCurrentVideoScheduledItem.setExpirationDate(availableUntil);
-                        } catch (DateTimeParseException e) {
-                        }
+                availableUntilTimeTextField.textProperty().addListener(observable -> {
+                    try {
+                        LocalDate date = LocalDate.parse(availableUntilDateTextField.getText(), DATE_FORMATTER);
+                        LocalTime time = LocalTime.parse(availableUntilTimeTextField.getText(), TIME_FORMATTER);
+                        // Combine the date and time to create LocalDateTime
+                        LocalDateTime availableUntil = LocalDateTime.of(date, time);
+                        workingCurrentVideoScheduledItem.setExpirationDate(availableUntil);
+                    } catch (DateTimeParseException e) {
                     }
                 });
 
                 customContentAvailableUntilHBox.getChildren().add(rightHBox);
-                customExpirationDateSwitch.selectedProperty().addListener(new InvalidationListener() {
-                    @Override
-                    public void invalidated(Observable observable) {
-                        if (!customExpirationDateSwitch.selectedProperty().get()) {
-                            workingCurrentVideoScheduledItem.setExpirationDate(null);
-                        }
+                customExpirationDateSwitch.selectedProperty().addListener(observable -> {
+                    if (!customExpirationDateSwitch.selectedProperty().get()) {
+                        workingCurrentVideoScheduledItem.setExpirationDate(null);
                     }
                 });
 
@@ -407,40 +381,28 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
             hBoxToReturn.setSpacing(20);
 
             TextField linkTextField = new TextField();
-            linkTextField.setPromptText(I18n.getI18nText("EnterLinkHere"));
-            linkTextField.setMinWidth(urlTextFieldWith);
+            linkTextField.setPromptText(I18n.getI18nText(MediasI18nKeys.EnterLinkHere));
+            linkTextField.setMinWidth(URL_TEXT_FIELD_WITH);
             if (currentMedia != null) {
                 linkTextField.setText(currentMedia.getUrl());
             }
-            validationSupport.addUrlValidation(linkTextField, linkTextField, I18n.getI18nText("MalformedUrl"));
+            validationSupport.addUrlValidation(linkTextField, linkTextField, I18n.getI18nText(MediasI18nKeys.MalformedUrl));
 
             // We update the value of the media according to the text field
-            linkTextField.textProperty().addListener(new InvalidationListener() {
-                @Override
-                public void invalidated(Observable observable) {
-                    currentMedia.setUrl(linkTextField.getText());
-                }
-            });
+            linkTextField.textProperty().addListener(observable -> currentMedia.setUrl(linkTextField.getText()));
 
             hBoxToReturn.getChildren().add(linkTextField);
 
-            SVGPath removeButton = SvgIcons.createMinusPath();
-            removeButton.getStyleClass().add(Bootstrap.TEXT_DANGER);
-            MonoPane buttonContainer = new MonoPane(removeButton);
-            buttonContainer.setCursor(Cursor.HAND);
-            hBoxToReturn.setAlignment(Pos.CENTER_LEFT);
-            hBoxToReturn.getChildren().add(buttonContainer);
-            buttonContainer.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    localUpdateStore.deleteEntity(currentMedia);
-                    mediaList.remove(currentMedia);
-                }
+            SVGPath removeIcon = Bootstrap.textDanger(SvgIcons.createMinusPath());
+            MonoPane removeButton = SvgIcons.createButtonPane(removeIcon, () -> {
+                localUpdateStore.deleteEntity(currentMedia);
+                mediaList.remove(currentMedia);
             });
+
+            hBoxToReturn.setAlignment(Pos.CENTER_LEFT);
+            hBoxToReturn.getChildren().add(removeButton);
 
             return hBoxToReturn;
         }
-
-
     }
 }

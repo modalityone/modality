@@ -6,7 +6,6 @@ import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.platform.util.collection.Collections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -35,7 +34,6 @@ final class VideosOfDayView {
     private final Consumer<Node> nodeShower;
 
     private final VBox container = new VBox();
-    private boolean isPanelVisible;
 
     public VideosOfDayView(LocalDate day, List<Attendance> dayAttendances, List<Media> medias, Node parent, Consumer<Node> nodeShower) {
         this.day = day;
@@ -51,44 +49,34 @@ final class VideosOfDayView {
     }
 
     private void buildUi() {
-        VBox currentDayVBox = new VBox();
-        currentDayVBox.setSpacing(30);
-        HBox currentLine = new HBox();
-        currentLine.setSpacing(40);
-        currentLine.setPadding(new Insets(15, 0, 30, 0));
-        currentDayVBox.getChildren().add(currentLine);
-        ColumnsPane videoListColumnsPane = new ColumnsPane();
-        videoListColumnsPane.setMaxWidth(850);
-        videoListColumnsPane.setMaxColumnCount(4);
-        videoListColumnsPane.setMinColumnWidth(BOX_WIDTH - 40);
-        videoListColumnsPane.setHgap(50);
-        videoListColumnsPane.setVgap(20);
-        videoListColumnsPane.setAlignment(Pos.TOP_LEFT);
 
-        videoListColumnsPane.getChildren().setAll(
+        ColumnsPane columnsPane = new ColumnsPane();
+        columnsPane.setMaxWidth(850);
+        columnsPane.setMaxColumnCount(4);
+        columnsPane.setMinColumnWidth(BOX_WIDTH - 40);
+        columnsPane.setHgap(50);
+        columnsPane.setVgap(20);
+        columnsPane.setAlignment(Pos.TOP_LEFT);
+
+        columnsPane.getChildren().setAll(
             Collections.map(dayAttendances, a -> new VideoOfSessionView(a, medias, parent, nodeShower).getView())
         );
 
-        MonoPane toggledPane = new MonoPane(videoListColumnsPane);
-        String currentDateToString = day.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"));
-        Label dateLabel = Bootstrap.strong(new Label(currentDateToString));
-        currentLine.getChildren().add(dateLabel);
-        SVGPath topArrow = SvgIcons.createTopPointingChevron();
-        MonoPane arrowButtonMonoPane = new MonoPane(topArrow);
-        currentLine.setAlignment(Pos.CENTER_LEFT);
-        currentLine.getChildren().add(arrowButtonMonoPane);
+        Label dateLabel = Bootstrap.strong(new Label(day.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))));
+
+        SVGPath topArrowIcon = SvgIcons.createTopPointingChevron();
         SVGPath bottomArrow = SvgIcons.createBottomPointingChevron();
-        arrowButtonMonoPane.setCursor(Cursor.HAND);
-        arrowButtonMonoPane.setOnMouseClicked(e -> {
-            isPanelVisible = !isPanelVisible;
-            toggledPane.setVisible(isPanelVisible);
-            toggledPane.setManaged(isPanelVisible);
-            arrowButtonMonoPane.getChildren().setAll(isPanelVisible ? topArrow : bottomArrow);
+        MonoPane arrowButtonMonoPane = SvgIcons.createToggleButtonPane(topArrowIcon, bottomArrow, true, isPanelVisible -> {
+            columnsPane.setVisible(isPanelVisible);
+            columnsPane.setManaged(isPanelVisible);
         });
 
+        HBox top = new HBox(40, dateLabel, arrowButtonMonoPane);
+        top.setPadding(new Insets(15, 0, 30, 0));
+
         container.getChildren().setAll(
-            currentDayVBox,
-            toggledPane
+            top,
+            columnsPane
         );
     }
 

@@ -7,7 +7,6 @@ import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.Entities;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -135,25 +134,14 @@ final class VideoOfSessionView {
         HBox.setHgrow(spacer, Priority.ALWAYS);
         descriptionLine.getChildren().add(spacer);
 
-        SVGPath playSVGPath = SvgIcons.createVideoPlaySVGPath();
-        MonoPane playMonoPane = new MonoPane(playSVGPath);
+        SVGPath playVideoIcon = SvgIcons.setSVGPathFill(SvgIcons.createVideoPlaySVGPath(), isPlayable ? Color.RED : Color.LIGHTGRAY);
+        MonoPane playVideoButton = SvgIcons.createButtonPane(playVideoIcon, !isPlayable ? null : () -> {
+            String url = currentMediaList.get(0).getUrl();
+            VBox videoPlayerVBox = new VideoOfSessionPlayerView(currentDateToString + " - " + time + ": " + title, url, parent, nodeShower).getView();
+            nodeShower.accept(videoPlayerVBox);
+        });
 
-        //Here we update the UI if the value of the playable property changes, if a video expire for example
-        if (isPlayable) {
-            playSVGPath.setFill(Color.RED);
-            playMonoPane.setCursor(Cursor.HAND);
-            playMonoPane.setOnMouseClicked(e -> {
-                String url = currentMediaList.get(0).getUrl();
-                VBox videoPlayerVBox = new VideoOfSessionPlayerView(currentDateToString + " - " + time + ": " + title, url, parent, nodeShower).getView();
-                nodeShower.accept(videoPlayerVBox);
-            });
-        } else {
-            playSVGPath.setFill(Color.LIGHTGRAY);
-            playMonoPane.setCursor(Cursor.DEFAULT);
-            playMonoPane.setOnMouseClicked(null);
-        }
-
-        descriptionLine.getChildren().add(playMonoPane);
+        descriptionLine.getChildren().add(playVideoButton);
         descriptionLine.setAlignment(Pos.TOP_LEFT);
     }
 }

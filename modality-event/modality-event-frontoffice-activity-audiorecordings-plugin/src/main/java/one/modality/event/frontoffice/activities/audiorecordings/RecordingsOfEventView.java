@@ -9,7 +9,6 @@ import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -50,13 +49,11 @@ final class RecordingsOfEventView {
         firstLine.setAlignment(Pos.CENTER_LEFT);
         firstLine.setSpacing(50);
         container.getChildren().add(firstLine);
-        MonoPane backArrow = new MonoPane(SvgIcons.createBackArrow());
-        backArrow.setPadding(new Insets(20));
-        backArrow.setCursor(Cursor.HAND);
-        backArrow.setOnMouseClicked(e -> {
+        MonoPane backArrow = SvgIcons.createButtonPane(SvgIcons.createBackArrow(), () -> {
             playerList.forEach(MediaInfoView::stopPlayer);
             backRunnable.run();
         });
+        backArrow.setPadding(new Insets(20));
         firstLine.getChildren().add(backArrow);
         Label eventTitleLabel = new Label(event.getName());
         eventTitleLabel.getStyleClass().add(Bootstrap.H2);

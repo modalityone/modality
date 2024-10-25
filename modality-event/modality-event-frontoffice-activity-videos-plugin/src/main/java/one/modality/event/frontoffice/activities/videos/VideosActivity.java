@@ -45,7 +45,7 @@ final class VideosActivity extends ViewDomainActivityBase {
     protected void startLogic() {
         // Creating our own entity store to hold the loaded data without interfering with other activities
         entityStore = EntityStore.create(getDataSourceModel()); // Activity datasource model is available at this point
-        // Loading the list of events with videos booked by the user and put it into bookedVideoEvents
+        // Loading the list of events with videos booked by the user and put it into eventsWithBookedVideos
         FXProperties.runNowAndOnPropertiesChange(() -> {
             eventsWithBookedVideos.clear();
             EntityId userPersonId = FXUserPersonId.getUserPersonId();

@@ -3,7 +3,6 @@ package one.modality.event.frontoffice.activities.videos;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -52,9 +51,7 @@ final class VideoOfSessionPlayerView {
         webEngine.load(url);
 
         if (parent != null) {
-            MonoPane backArrowPane = new MonoPane(SvgIcons.createBackArrow());
-            backArrowPane.setCursor(Cursor.HAND);
-            backArrowPane.setOnMouseClicked(e -> {
+            MonoPane backArrowPane = SvgIcons.createButtonPane(SvgIcons.createBackArrow(), () -> {
                 webEngine.load(null);
                 nodeShower.accept(parent);
             });

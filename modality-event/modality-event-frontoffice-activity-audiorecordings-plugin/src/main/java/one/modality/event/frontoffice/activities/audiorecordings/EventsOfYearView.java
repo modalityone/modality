@@ -63,14 +63,9 @@ final class EventsOfYearView {
 
         SVGPath topArrow = SvgIcons.createTopPointingChevron();
         SVGPath bottomArrow = SvgIcons.createBottomPointingChevron();
-        MonoPane arrowButtonMonoPane = new MonoPane(topArrow);
-        arrowButtonMonoPane.setCursor(Cursor.HAND);
-        final boolean[] isPanelVisible = { true };
-        arrowButtonMonoPane.setOnMouseClicked(e -> {
-            isPanelVisible[0] = !isPanelVisible[0];
-            columnsPane.setVisible(isPanelVisible[0]);
-            columnsPane.setManaged(isPanelVisible[0]);
-            arrowButtonMonoPane.getChildren().setAll(isPanelVisible[0] ? topArrow : bottomArrow);
+        MonoPane arrowButtonMonoPane = SvgIcons.createToggleButtonPane(topArrow, bottomArrow, true, isPanelVisible -> {
+            columnsPane.setVisible(isPanelVisible);
+            columnsPane.setManaged(isPanelVisible);
         });
 
         HBox yearArrowLine = new HBox(40, currentYearLabel, arrowButtonMonoPane);

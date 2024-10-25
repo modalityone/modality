@@ -12,7 +12,6 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
@@ -62,10 +61,8 @@ final class EventVideosWallView {
         firstLine.setAlignment(Pos.CENTER_LEFT);
         firstLine.setSpacing(50);
         container.getChildren().add(firstLine);
-        MonoPane backArrow = new MonoPane(SvgIcons.createBackArrow());
+        MonoPane backArrow = SvgIcons.createButtonPane(SvgIcons.createBackArrow(), backRunnable);
         backArrow.setPadding(new Insets(20));
-        backArrow.setCursor(Cursor.HAND);
-        backArrow.setOnMouseClicked(e -> backRunnable.run());
 
         firstLine.getChildren().add(backArrow);
         Label eventTitleLabel = Bootstrap.h2(Bootstrap.strong(new Label(event.getName())));

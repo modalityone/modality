@@ -2,9 +2,9 @@ package one.modality.event.backoffice.activities.program;
 
 import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.extras.time.pickers.DatePicker;
-import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import one.modality.base.client.icons.SvgIcons;
@@ -23,7 +23,7 @@ final class DayTemplateDateView {
     private final LocalDate date;
     private final DatePicker datePicker;
 
-    private final BorderPane view;
+    private final HBox view;
 
     DayTemplateDateView(LocalDate date, DatePicker datePicker) {
         this.date = date;
@@ -35,17 +35,14 @@ final class DayTemplateDateView {
         return view;
     }
 
-    private BorderPane buildUi() {
-        SVGPath trashDate = SvgIcons.createTrashSVGPath();
-        trashDate.setTranslateY(2);
-        Text currentDateValue = new Text(date.format(DATE_TIME_FORMATTER));
-        trashDate.setOnMouseClicked(event -> datePicker.getSelectedDates().remove(date));
-        ShapeTheme.createSecondaryShapeFacet(trashDate).style();
-        BorderPane currentLineBorderPane = new BorderPane();
-        BorderPane.setMargin(currentDateValue, new Insets(0, 20, 0, 10));
-        currentLineBorderPane.setLeft(trashDate);
-        currentLineBorderPane.setCenter(currentDateValue);
-        currentLineBorderPane.setPadding(new Insets(0, 0, 3, 0));
-        return currentLineBorderPane;
+    private HBox buildUi() {
+        SVGPath trashDate = SvgIcons.armButton(SvgIcons.createTrashSVGPath(), () -> datePicker.getSelectedDates().remove(date));
+        ShapeTheme.createSecondaryShapeFacet(trashDate).style(); // Make it gray
+
+        Text dateText = new Text(date.format(DATE_TIME_FORMATTER));
+
+        HBox hBox = new HBox(10, trashDate, dateText);
+        hBox.setAlignment(Pos.CENTER_LEFT);
+        return hBox;
     }
 }

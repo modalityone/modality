@@ -22,7 +22,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
@@ -46,12 +45,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class MediaLinksManagement {
-    BorderPane mainContainer = new BorderPane();
+
+    protected static final String TIME_FORMAT = "HH:mm";
+    protected static final DateTimeFormatter DATE_FORMATTER_TO_DISPLAY_CURRENT_DAY = DateTimeFormatter.ofPattern("d MMMM, yyyy");
+    protected static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern(TIME_FORMAT);
+
     protected EntityStore entityStore;
     protected List<LocalDate> teachingsDates;
     protected ObservableList<ScheduledItem> scheduledItemsReadFromDatabase;
     protected ObservableList<Media> recordingsMediasReadFromDatabase;
     protected String currentItemCode;
+
+    protected final BorderPane mainContainer = new BorderPane();
 
     public MediaLinksManagement(String currentItemCode, EntityStore entityStore, List<LocalDate> teachingsDates, ObservableList<ScheduledItem> audioScheduledItemsReadFromDatabase, ObservableList<Media> recordingsMediasReadFromDatabase) {
         this.currentItemCode = currentItemCode;
@@ -115,16 +120,15 @@ public abstract class MediaLinksManagement {
     }
 
     protected class MediaLinksPerDateManagement {
+
         protected final LocalDate currentDate;
-        protected UpdateStore updateStore = UpdateStore.createAbove(entityStore);
-        ModalityValidationSupport validationSupport = new ModalityValidationSupport();
-        boolean[] validationSupportInitialised = {false};
-        DateTimeFormatter dateFormatterToDisplayCurrentDay = DateTimeFormatter.ofPattern("d MMMM, yyyy");
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-        IntegerProperty percentageProperty = new SimpleIntegerProperty();
-        StringProperty cssProperty = new SimpleStringProperty();
+        protected final UpdateStore updateStore = UpdateStore.createAbove(entityStore);
+        final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
+        final boolean[] validationSupportInitialised = {false};
+        final IntegerProperty percentageProperty = new SimpleIntegerProperty();
+        final StringProperty cssProperty = new SimpleStringProperty();
         List<ScheduledItem> filteredListForCurrentDay;
-        ObservableList<Media> workingMedias = FXCollections.observableArrayList();
+        final ObservableList<Media> workingMedias = FXCollections.observableArrayList();
 
 
         protected MediaLinksPerDateManagement(LocalDate date) {
@@ -141,15 +145,13 @@ public abstract class MediaLinksManagement {
             BorderPane container = new BorderPane();
 
             container.setBackground(Background.fill(Color.WHITE));
-            //We make an array which only one boolean instead of a boolean, so we can use it in lambda expression
-            final boolean[] isCenterVisible = {false};
 
             VBox centerVBox = new VBox();
             container.setCenter(centerVBox);
             centerVBox.setVisible(false);
             centerVBox.setManaged(false);
             //We create a separate method for building the header line because it will likely be the same for the child classes, but the content below will change
-            HBox headerLine = buildHeaderLine(centerVBox, isCenterVisible);
+            HBox headerLine = buildHeaderLine(centerVBox);
             container.setTop(headerLine);
             Separator separator = new Separator();
             centerVBox.getChildren().add(separator);
@@ -165,7 +167,7 @@ public abstract class MediaLinksManagement {
                 String name = currentScheduledItem.getParent().getName();
                 if (name == null) name = "Unknown";
                 Label teachingTitle = new Label(name);
-                Label startTimeLabel = new Label(currentScheduledItem.getParent().getTimeline().getStartTime().format(timeFormatter) + " - " + currentScheduledItem.getParent().getTimeline().getEndTime().format(timeFormatter));
+                Label startTimeLabel = new Label(currentScheduledItem.getParent().getTimeline().getStartTime().format(TIME_FORMATTER) + " - " + currentScheduledItem.getParent().getTimeline().getEndTime().format(TIME_FORMATTER));
                 teachingTitle.getStyleClass().add(Bootstrap.STRONG);
                 startTimeLabel.getStyleClass().add(Bootstrap.STRONG);
                 VBox teachingDetailsVBox = new VBox(teachingTitle, startTimeLabel);
@@ -182,7 +184,7 @@ public abstract class MediaLinksManagement {
                 linkTextField.setPromptText(I18n.getI18nText("Link"));
                 linkTextField.setPrefWidth(500);
                 //  validationSupport.addUrlOrEmptyValidation(linkTextField, linkTextField, "UrlIsMalformed");
-                validationSupport.addUrlOrEmptyValidation(linkTextField, linkTextField, I18n.getI18nText("MalformedUrl"));
+                validationSupport.addUrlOrEmptyValidation(linkTextField, linkTextField, I18n.getI18nText( MediasI18nKeys.MalformedUrl));
 
                 Label durationLabel = I18nControls.bindI18nProperties(new Label(), MediasI18nKeys.ExactDuration);
                 TextField durationTextField = new TextField();
@@ -215,7 +217,7 @@ public abstract class MediaLinksManagement {
                 }
 
                 durationTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-                    currentMedia.get(0).setDurationMillis(Long.valueOf(newValue) * 1000);
+                    currentMedia.get(0).setDurationMillis(Long.parseLong(newValue) * 1000);
                 });
                 linkTextField.textProperty().addListener((observable, oldValue, newValue) -> {
                     //If there is a change and the mediaList for this teaching is empty, we create the Recording Scheduled Item and the Media associated
@@ -276,7 +278,7 @@ public abstract class MediaLinksManagement {
             }
 
             //TODO: review this to
-            HBox lastLineHox = buildLastLine(mediaToBeUpdatedOnSaveButton);
+            HBox lastLineHox = buildLastLine();
             centerVBox.getChildren().add(lastLineHox);
 
             container.setBorder(new Border(new BorderStroke(
@@ -288,7 +290,7 @@ public abstract class MediaLinksManagement {
             return container;
         }
 
-        protected HBox buildLastLine(Media media) {
+        protected HBox buildLastLine() {
             Button saveButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "Save"));
             saveButton.disableProperty().bind(updateStore.hasChangesProperty().not());
             saveButton.setOnAction(e -> {
@@ -319,12 +321,12 @@ public abstract class MediaLinksManagement {
             return hBoxToReturn;
         }
 
-        protected HBox buildHeaderLine(VBox centerVBox, boolean[] isCenterVisible) {
+        protected HBox buildHeaderLine(VBox centerVBox) {
             HBox hBoxToReturn = new HBox();
             hBoxToReturn.setAlignment(Pos.CENTER_LEFT);
             hBoxToReturn.setPadding(new Insets(10, 20, 10, 20));
 
-            Label dateLabel = new Label(currentDate.format(dateFormatterToDisplayCurrentDay));
+            Label dateLabel = new Label(currentDate.format(DATE_FORMATTER_TO_DISPLAY_CURRENT_DAY));
             TextTheme.createPrimaryTextFacet(dateLabel).style();
             hBoxToReturn.getChildren().add(dateLabel);
 
@@ -356,27 +358,13 @@ public abstract class MediaLinksManagement {
             });
             updatePercentageProperty(currentDate, percentageProperty, cssProperty);
 
-            SVGPath topArrowButton = SvgIcons.createTopArrowPath();
-            SVGPath bottomArrowButton = SvgIcons.createBottomArrowPath();
-            topArrowButton.setFill(Color.web("#0096D6"));
-            bottomArrowButton.setFill(Color.web("#0096D6"));
-            MonoPane buttonContainer = new MonoPane(bottomArrowButton);
-
-            buttonContainer.setOnMouseClicked(e -> {
-                if (isCenterVisible[0]) {
-                    // Hide the center pane with animation
-                    centerVBox.setVisible(false);
-                    centerVBox.setManaged(false);
-                    isCenterVisible[0] = false;
-                    buttonContainer.getChildren().setAll(bottomArrowButton);
-                } else {
-                    centerVBox.setVisible(true);
-                    centerVBox.setManaged(true);
-                    isCenterVisible[0] = true;
-                    buttonContainer.getChildren().setAll(topArrowButton);
-                }
+            Color arrowsColor = Color.web("#0096D6");
+            SVGPath topArrowButton = SvgIcons.setSVGPathFill(SvgIcons.createTopArrowPath(), arrowsColor);
+            SVGPath bottomArrowButton = SvgIcons.setSVGPathFill(SvgIcons.createBottomArrowPath(), arrowsColor);
+            MonoPane buttonContainer = SvgIcons.createToggleButtonPane(topArrowButton, bottomArrowButton, false, isCenterVisible -> {
+                centerVBox.setVisible(isCenterVisible);
+                centerVBox.setManaged(isCenterVisible);
             });
-            buttonContainer.setCursor(Cursor.HAND);
 
             hBoxToReturn.getChildren().add(buttonContainer);
             hBoxToReturn.setBackground(Background.fill(Color.LIGHTGRAY));

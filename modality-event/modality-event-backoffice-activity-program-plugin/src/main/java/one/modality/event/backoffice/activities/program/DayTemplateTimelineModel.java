@@ -35,16 +35,6 @@ final class DayTemplateTimelineModel {
         syncUiFromModelRunnable.run();
     }
 
-    void toggleAudioOffered() {
-        timeline.setAudioOffered(!timeline.isAudioOffered());
-        syncUiFromModelRunnable.run();
-    }
-
-    void toggleVideoOffered() {
-        timeline.setVideoOffered(!timeline.isVideoOffered());
-        syncUiFromModelRunnable.run();
-    }
-
     void removeTemplateTimeLine() {
         dayTemplateModel.removeTemplateTimeLine(timeline);
     }
