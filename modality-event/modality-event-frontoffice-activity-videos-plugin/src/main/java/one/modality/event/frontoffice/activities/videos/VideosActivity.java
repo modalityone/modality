@@ -24,6 +24,7 @@ import javafx.scene.layout.VBox;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.KnownItemFamily;
 import one.modality.crm.shared.services.authn.fx.FXUserPersonId;
+import one.modality.event.frontoffice.medias.EventThumbnailView;
 
 /**
  * @author David Hello

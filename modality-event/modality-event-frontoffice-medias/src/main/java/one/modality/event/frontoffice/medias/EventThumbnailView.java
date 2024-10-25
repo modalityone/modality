@@ -1,4 +1,4 @@
-package one.modality.event.frontoffice.activities.videos;
+package one.modality.event.frontoffice.medias;
 
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.border.BorderFactory;

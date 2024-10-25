@@ -10,16 +10,15 @@ module modality.event.frontoffice.activity.videos.plugin {
     requires modality.base.client.icons;
     requires modality.base.shared.entities;
     requires modality.crm.client.authn.fx;
+    requires modality.event.frontoffice.medias;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
-    requires webfx.extras.util.border;
     requires webfx.extras.util.control;
     requires webfx.kit.util;
     requires webfx.platform.console;
     requires webfx.platform.util;
     requires webfx.platform.util.time;
     requires webfx.platform.windowhistory;
-    requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.entity;
