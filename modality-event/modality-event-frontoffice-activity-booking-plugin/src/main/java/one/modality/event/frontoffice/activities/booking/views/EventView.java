@@ -22,6 +22,7 @@ import one.modality.base.frontoffice.utility.StyleUtility;
 import one.modality.base.frontoffice.utility.TextUtility;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.EventState;
+import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.process.BookingStarter;
 
 public final class EventView {
@@ -39,9 +40,9 @@ public final class EventView {
             eventCentreLocationText,
             eventCountryLocationText
     );
-    private final Button comingSoonButton = GeneralUtility.createButton("comingSoon");
-    private final Button bookButton = GeneralUtility.createButton("bookNow");
-    private final Button closedButton = GeneralUtility.createButton("closed");
+    private final Button comingSoonButton = GeneralUtility.createButton(BookingI18nKeys.comingSoon);
+    private final Button bookButton = GeneralUtility.createButton(BookingI18nKeys.bookNow);
+    private final Button closedButton = GeneralUtility.createButton(BookingI18nKeys.closed);
     private final BorderPane buttonContainer = new BorderPane();
 
     private final VBox container = new VBox(10,

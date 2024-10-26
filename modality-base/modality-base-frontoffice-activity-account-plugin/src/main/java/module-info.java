@@ -14,6 +14,7 @@ module modality.base.frontoffice.activity.account.plugin {
     requires modality.base.shared.entities;
     requires modality.crm.client.authn.fx;
     requires modality.crm.client.personaldetails;
+    requires modality.ecommerce.client.i18n;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.util.control;

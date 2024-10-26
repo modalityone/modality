@@ -21,6 +21,7 @@
         <module>modality-catering-backoffice-activity-kitchen-plugin</module>
         <module>modality-catering-backoffice-max-plugin</module>
         <module>modality-catering-backoffice-min-plugin</module>
+        <module>modality-catering-client-i18n</module>
     </modules>
 
 </project>

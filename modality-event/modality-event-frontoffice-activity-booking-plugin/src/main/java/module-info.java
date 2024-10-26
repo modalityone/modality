@@ -22,6 +22,8 @@ module modality.event.frontoffice.activity.booking.plugin {
     requires modality.base.shared.entities;
     requires modality.crm.backoffice.organization.fx;
     requires modality.crm.client.authn.fx;
+    requires modality.crm.client.i18n;
+    requires modality.ecommerce.client.i18n;
     requires modality.ecommerce.document.service;
     requires modality.ecommerce.payment;
     requires modality.ecommerce.payment.client;

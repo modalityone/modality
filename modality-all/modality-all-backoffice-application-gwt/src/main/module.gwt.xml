@@ -299,6 +299,8 @@
     <source path="one/modality/base/shared/entities/triggers"/>
     <!--==============< modality-catering-backoffice-activity-kitchen-plugin >==============-->
     <source path="one/modality/catering/backoffice/activities/kitchen"/>
+    <!--=========================< modality-catering-client-i18n >==========================-->
+    <source path="one/modality/catering/client/i18n"/>
     <!--==================< modality-crm-backoffice-bookingdetailspanel >===================-->
     <source path="one/modality/crm/backoffice/controls/bookingdetailspanel"/>
     <!--====================< modality-crm-backoffice-operations-mail >=====================-->
@@ -308,6 +310,8 @@
     <source path="one/modality/crm/backoffice/organization/fx/impl"/>
     <!--==========================< modality-crm-client-authn-fx >==========================-->
     <source path="one/modality/crm/shared/services/authn/fx"/>
+    <!--============================< modality-crm-client-i18n >============================-->
+    <source path="one/modality/crm/client/i18n"/>
     <!--======================< modality-crm-client-personaldetails >=======================-->
     <source path="one/modality/crm/client/controls/personaldetails"/>
     <!--===========================< modality-crm-shared-authn >============================-->
@@ -332,6 +336,8 @@
     <source path="one/modality/ecommerce/backoffice/operations/entities/moneyflow"/>
     <!--=============< modality-ecommerce-backoffice-operations-moneytransfer >=============-->
     <source path="one/modality/ecommerce/backoffice/operations/entities/moneytransfer"/>
+    <!--=========================< modality-ecommerce-client-i18n >=========================-->
+    <source path="one/modality/ecommerce/client/i18n"/>
     <!--======================< modality-ecommerce-document-service >=======================-->
     <source path="one/modality/ecommerce/document/service"/>
     <source path="one/modality/ecommerce/document/service/events"/>

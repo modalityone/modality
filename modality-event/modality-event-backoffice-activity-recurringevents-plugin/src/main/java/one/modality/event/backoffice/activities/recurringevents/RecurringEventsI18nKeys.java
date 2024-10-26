@@ -19,7 +19,6 @@ public interface RecurringEventsI18nKeys {
     String AddNewLocation = "AddNewLocation";
     String BookingConfirmed = "BookingConfirmed";
     String BookingUnconfirmed = "BookingUnconfirmed";
-    String Total = "Total";
     String SelectTheDays = "SelectTheDays";
     String DaysSelected = "DaysSelected";
     String ArrowPreviousMonth = "ArrowPreviousMonth";
@@ -38,7 +37,7 @@ public interface RecurringEventsI18nKeys {
     String PublishButton = "PublishButton";
     String UnpublishedButton = "UnpublishedButton";
     String SaveButton = "SaveButton";
-    String EditEventInformation = "EditEventInformation";
+    String EditEventInformation0 = "EditEventInformation0";
     String AddEventInformationButton = "AddEventInformationButton";
     String CancelButton = "CancelButton";
     String SaveDraftButton = "SaveDraftButton";

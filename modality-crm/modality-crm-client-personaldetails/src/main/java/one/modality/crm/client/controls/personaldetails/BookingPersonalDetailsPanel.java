@@ -9,6 +9,7 @@ import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Person;
 import one.modality.base.shared.entities.markers.EntityHasPersonalDetails;
 import one.modality.base.shared.entities.markers.HasEvent;
+import one.modality.crm.client.i18n.CrmI18nKeys;
 
 import java.time.LocalDate;
 
@@ -17,8 +18,8 @@ import java.time.LocalDate;
  */
 public class BookingPersonalDetailsPanel extends PersonalDetailsPanel {
 
-    protected final TextField carer1NameTextField = newMaterialTextField("Carer1");
-    protected final TextField carer2NameTextField = newMaterialTextField("Carer2");
+    protected final TextField carer1NameTextField = newMaterialTextField(CrmI18nKeys.Carer1);
+    protected final TextField carer2NameTextField = newMaterialTextField(CrmI18nKeys.Carer2);
 
     public BookingPersonalDetailsPanel(EntityHasPersonalDetails entity, ButtonSelectorParameters buttonSelectorParameters) {
         super(entity, buttonSelectorParameters);
@@ -75,9 +76,9 @@ public class BookingPersonalDetailsPanel extends PersonalDetailsPanel {
         return Arrays.nonNulls(Node[]::new,
                 firstNameTextField,
                 lastNameTextField,
-                newMaterialRegion(genderBox, "Gender"),
-                newMaterialRegion(ageBox, "Age"),
-                isChild ? newMaterialRegion(birthDatePicker, "BirthDate") : null,
+                newMaterialRegion(genderBox, CrmI18nKeys.Gender),
+                newMaterialRegion(ageBox, CrmI18nKeys.Age),
+                isChild ? newMaterialRegion(birthDatePicker, CrmI18nKeys.BirthDate) : null,
                 isChild ? carer1NameTextField : null,
                 isChild ? carer2NameTextField : null,
                 emailTextField,

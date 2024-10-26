@@ -69,9 +69,9 @@ public final class BrowserUtil {
     }
 
     public static void chooseHowToOpenWebsite(String url) {
-        Hyperlink insideAppLink = GeneralUtility.createHyperlink("openInsideApp", Color.WHITE, 21);
-        Hyperlink outsideAppLink = GeneralUtility.createHyperlink("openOutsideApp", Color.WHITE, 21);
-        Hyperlink copyLink = GeneralUtility.createHyperlink("copyLink", Color.WHITE, 21);
+        Hyperlink insideAppLink = GeneralUtility.createHyperlink(BrowserI18nKeys.openInsideApp, Color.WHITE, 21);
+        Hyperlink outsideAppLink = GeneralUtility.createHyperlink(BrowserI18nKeys.openOutsideApp, Color.WHITE, 21);
+        Hyperlink copyLink = GeneralUtility.createHyperlink(BrowserI18nKeys.copyLink, Color.WHITE, 21);
         VBox vBox = new VBox(30, insideAppLink, outsideAppLink, copyLink);
         vBox.setBorder(Border.stroke(Color.WHITE));
         vBox.setBackground(Background.fill(StyleUtility.MAIN_BLUE_COLOR));

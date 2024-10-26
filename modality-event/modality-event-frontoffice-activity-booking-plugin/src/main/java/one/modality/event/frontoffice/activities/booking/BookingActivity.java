@@ -63,7 +63,7 @@ final class BookingActivity extends ViewDomainActivityBase implements ButtonFact
 
     @Override
     public Node buildUi() {
-        Label headerLabel = GeneralUtility.createLabel("eventsHeader", StyleUtility.MAIN_ORANGE_COLOR);
+        Label headerLabel = GeneralUtility.createLabel(BookingI18nKeys.eventsHeader, StyleUtility.MAIN_ORANGE_COLOR);
         headerLabel.setTextAlignment(TextAlignment.CENTER);
 
         String headerImageUrl = SourcesConfig.getSourcesRootConfig().childConfigAt("modality.event.frontoffice.activity.booking").getString("headerImageUrl");
@@ -71,11 +71,11 @@ final class BookingActivity extends ViewDomainActivityBase implements ButtonFact
         ScalePane headerImageScalePane = new ScalePane(headerImageView);
         headerImageScalePane.setMaxHeight(300);
 
-        Label internationalEventsLabel = GeneralUtility.createLabel("internationalEvents", Color.BLACK);
+        Label internationalEventsLabel = GeneralUtility.createLabel(BookingI18nKeys.internationalEvents, Color.BLACK);
 
         Node localCenterDisplay = organizationSelectorView.getView();
 
-        Label localEventsLabel = GeneralUtility.createLabel("localEvents", Color.BLACK);
+        Label localEventsLabel = GeneralUtility.createLabel(BookingI18nKeys.localEvents, Color.BLACK);
 
         double mobileStatusBarHeight = OperatingSystem.isMobile() && UserAgent.isNative() ? 15 : 0;
         VBox.setMargin(headerLabel, new Insets(5 + mobileStatusBarHeight, 0, 5, 0));

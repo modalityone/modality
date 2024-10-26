@@ -2,6 +2,7 @@ eventsHeader: "YOUR NEXT MEANINGFUL EVENT IS HERE"
 internationalEvents: "International Events"
 localEvents: "Local Events"
 yourLocalCentre: "Your Local Dharma Centre"
+ChangeYourLocation: "Change your location"
 findYourLocalCentre: "Find your local Dharma Centre (click on its marker)"
 localCentreWebsite:
   graphic:
@@ -19,9 +20,6 @@ localCentreEmail:
   graphic:
     fill: "white"
     svgPath: "M11.8543 0H1.4543C0.739297 0 0.160797 0.5625 0.160797 1.25L0.154297 8.75C0.154297 9.4375 0.739297 10 1.4543 10H11.8543C12.5693 10 13.1543 9.4375 13.1543 8.75V1.25C13.1543 0.5625 12.5693 0 11.8543 0ZM11.2043 8.75H2.1043C1.7468 8.75 1.4543 8.46875 1.4543 8.125V2.5L5.9653 5.2125C6.3878 5.46875 6.9208 5.46875 7.3433 5.2125L11.8543 2.5V8.125C11.8543 8.46875 11.5618 8.75 11.2043 8.75ZM6.6543 4.375L1.4543 1.25H11.8543L6.6543 4.375Z"
-openInsideApp: "Open inside the app"
-openOutsideApp: "Open outside the app"
-copyLink: "Copy the link"
 comingSoon: "Coming soon"
 bookNow: "Book now"
 closed: "Closed"
@@ -30,21 +28,20 @@ Schedule: "Schedule"
 GPEvent: "GP Classes"
 SelectTheEvent: "Select the classes you wish to book"
 SelectAllClasses: "Select all classes"
-PersonToBook: "Booking for"
 ProceedCheckout: "Proceed to checkout"
-PricePerClass: "Price per class: {0}"
+PricePerClass0: "Price per class: {0}"
 AllClasses: "All classes"
 LoginBeforeBooking: "Please login before submitting your booking"
 OrBookAsGuest: "or book as a guest"
 GuestDetails: "Please enter your personal details below"
 OrBookUsingAccount: "or book as a returning user"
-Pay:
+Pay0:
   text: "Pay: {0}"
   graphic:
     fill: "white"
     svgPath: "M1.9 12C1.3775 12 0.930367 11.8533 0.5586 11.5597C0.1862 11.2657 0 10.9125 0 10.5V1.5C0 1.0875 0.1862 0.7345 0.5586 0.441C0.930367 0.147 1.3775 0 1.9 0H17.1C17.6225 0 18.07 0.147 18.4424 0.441C18.8141 0.7345 19 1.0875 19 1.5V10.5C19 10.9125 18.8141 11.2657 18.4424 11.5597C18.07 11.8533 17.6225 12 17.1 12H1.9ZM1.9 6H17.1V3H1.9V6Z"
-TotalBookingPrice: " | Total booking price: {0}"
-PaymentInformation: "Please enter your payment information in the secure portal {0}, our payment provider. We do not store any credit card information."
+TotalBookingPrice0: " | Total booking price: {0}"
+PaymentInformation0: "Please enter your payment information in the secure portal {0}, our payment provider. We do not store any credit card information."
 Square:
   text: "" # because included in SVG path
   graphic:
@@ -59,7 +56,7 @@ BookingSubmitted:
    # fill: "white"
     svgPath: "M17.2 23.6L12.85 19.25C12.4833 18.8833 12.0253 18.7087 11.476 18.726C10.9253 18.742 10.4667 18.9333 10.1 19.3C9.73333 19.6667 9.55 20.1333 9.55 20.7C9.55 21.2667 9.73333 21.7333 10.1 22.1L15.8 27.8C16.1667 28.1667 16.6333 28.35 17.2 28.35C17.7667 28.35 18.2333 28.1667 18.6 27.8L29.95 16.45C30.3167 16.0833 30.492 15.6247 30.476 15.074C30.4587 14.5247 30.2667 14.0667 29.9 13.7C29.5333 13.3333 29.0667 13.15 28.5 13.15C27.9333 13.15 27.4667 13.3333 27.1 13.7L17.2 23.6ZM20 40C17.2333 40 14.6333 39.4747 12.2 38.424C9.76667 37.3747 7.65 35.95 5.85 34.15C4.05 32.35 2.62533 30.2333 1.576 27.8C0.525334 25.3667 0 22.7667 0 20C0 17.2333 0.525334 14.6333 1.576 12.2C2.62533 9.76667 4.05 7.65 5.85 5.85C7.65 4.05 9.76667 2.62467 12.2 1.574C14.6333 0.524667 17.2333 0 20 0C22.7667 0 25.3667 0.524667 27.8 1.574C30.2333 2.62467 32.35 4.05 34.15 5.85C35.95 7.65 37.3747 9.76667 38.424 12.2C39.4747 14.6333 40 17.2333 40 20C40 22.7667 39.4747 25.3667 38.424 27.8C37.3747 30.2333 35.95 32.35 34.15 34.15C32.35 35.95 30.2333 37.3747 27.8 38.424C25.3667 39.4747 22.7667 40 20 40ZM20 36C24.4333 36 28.2087 34.442 31.326 31.326C34.442 28.2087 36 24.4333 36 20C36 15.5667 34.442 11.7913 31.326 8.674C28.2087 5.558 24.4333 4 20 4C15.5667 4 11.792 5.558 8.676 8.674C5.55867 11.7913 4 15.5667 4 20C4 24.4333 5.55867 28.2087 8.676 31.326C11.792 34.442 15.5667 36 20 36Z"
 ThankYouForBooking: "Thank you for your booking. You will receive an email with all the details as soon as your availability is confirmed."
-BookingNumber: "Booking number {0}"
+BookingNumber0: "Booking number {0}"
 PaymentCancelled: "Your payment has been cancelled, and all the un-paid options have been automatically removed from your booking. If you wish to book them again, you can do so by clicking on the button below."
 BookAgain: "Book again"
 PaymentAndBookingCancelled: "Your payment has been cancelled, as well as your booking. If you wish to un-cancel it, you can do so by clicking on the button below."
@@ -84,9 +81,4 @@ ErrorWhileCancelingTheBooking: "An error has occurred while canceling your booki
 CancelRegistration: "Cancel Booking"
 RegistrationCanceled: "Your booking has been cancelled"
 PreviousBookedDate: "History of the past booked date:"
-BalanceOnPreviousBooking: "Balance: {0}"
-TotalOnPreviousBooking: "Total: {0}"
-TotalPrice: "Total: {0}"
-Deposit: "Past Deposit: {0}"
-GeneralBalance: "Balance: {0}"
 FacilityFee: "I'm a Manjushri KMC Member or Overnight Volunteer"

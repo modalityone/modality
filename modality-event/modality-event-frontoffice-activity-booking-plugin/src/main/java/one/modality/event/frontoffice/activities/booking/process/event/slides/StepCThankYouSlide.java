@@ -38,7 +38,7 @@ final class StepCThankYouSlide extends StepSlide {
         thankYouLabel.setTextAlignment(TextAlignment.CENTER);
         VBox.setMargin(thankYouLabel, new Insets(20,0,50,0));
 
-        Label bookingNumber = I18nControls.bindI18nProperties(new Label(), BookingI18nKeys.BookingNumber, getWorkingBookingProperties().bookingReferenceProperty());
+        Label bookingNumber = I18nControls.bindI18nProperties(new Label(), BookingI18nKeys.BookingNumber0, getWorkingBookingProperties().bookingReferenceProperty());
         bookingNumber.setWrapText(true);
         bookingNumber.setTextAlignment(TextAlignment.CENTER);
 

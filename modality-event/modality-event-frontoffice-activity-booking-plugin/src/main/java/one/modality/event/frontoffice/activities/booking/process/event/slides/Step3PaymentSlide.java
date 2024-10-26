@@ -15,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
@@ -47,11 +48,11 @@ final class Step3PaymentSlide extends StepSlide {
         mainVbox.setAlignment(Pos.CENTER_LEFT);
 
         WorkingBookingProperties workingBookingProperties = getWorkingBookingProperties();
-        bindI18nEventExpression(bookedEventTitleLabel, "i18n(this) + '[" + BookingI18nKeys.TotalBookingPrice + "]'", workingBookingProperties.formattedBalanceProperty());
+        bindI18nEventExpression(bookedEventTitleLabel, "i18n(this) + '[" + BookingI18nKeys.TotalBookingPrice0 + "]'", workingBookingProperties.formattedBalanceProperty());
         bookedEventTitleLabel.setWrapText(true);
         VBox.setMargin(bookedEventTitleLabel, new Insets(20, 0, 0, 0));
 
-        I18n.bindI18nTextProperty(paymentInformationHtmlText.textProperty(), BookingI18nKeys.PaymentInformation, webPaymentForm.getGatewayName());
+        I18n.bindI18nTextProperty(paymentInformationHtmlText.textProperty(), BookingI18nKeys.PaymentInformation0, webPaymentForm.getGatewayName());
         paymentInformationHtmlText.getStyleClass().add("subtitle-grey");
         VBox.setMargin(paymentInformationHtmlText, new Insets(10, 0, 20, 0));
 
@@ -71,7 +72,7 @@ final class Step3PaymentSlide extends StepSlide {
             mainVbox.getChildren().add(webPaymentForm.createSandboxBar());
         }
 
-        I18nControls.bindI18nProperties(payButton, "Pay" /* ??? */, workingBookingProperties.formattedBalanceProperty());
+        I18nControls.bindI18nProperties(payButton, BookingI18nKeys.Pay0, workingBookingProperties.formattedBalanceProperty());
         I18nControls.bindI18nProperties(cancelButton, ModalityI18nKeys.Cancel);
         payButton.setDefaultButton(true);
         FXProperties.runNowAndOnPropertiesChange(() -> {
@@ -141,7 +142,7 @@ final class Step3PaymentSlide extends StepSlide {
 
     @Override
     void turnOffWaitMode() {
-        turnOffButtonWaitMode(payButton, "Pay");
-        turnOffButtonWaitMode(cancelButton, "Cancel");
+        turnOffButtonWaitMode(payButton, EcommerceI18nKeys.Pay);
+        turnOffButtonWaitMode(cancelButton, ModalityI18nKeys.Cancel);
     }
 }

@@ -23,6 +23,7 @@ import one.modality.base.frontoffice.utility.TextUtility;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
+import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,11 +45,11 @@ public final class BookingView {
     private final Text eventCountryLocationText = TextUtility.createText(StyleUtility.ELEMENT_GRAY_COLOR);
     private final Label personLabel = new Label();
     private final Label statusLabel = new Label();
-    private final Text totalPriceLabel = I18n.bindI18nProperties(new Text(), "Total"); // ???
+    private final Text totalPriceLabel = I18n.bindI18nProperties(new Text(), EcommerceI18nKeys.Total);
     private final Text totalPriceValue = new Text();
-    private final Text remainingPriceLabel = I18n.bindI18nProperties(new Text(), "Remaining amount");  // ???
+    private final Text remainingPriceLabel = I18n.bindI18nProperties(new Text(), EcommerceI18nKeys.RemainingAmount);
     private final Text remainingPriceValue = new Text();
-    private final Text paidPriceLabel = I18n.bindI18nProperties(new Text(),  "Paid");  // ???
+    private final Text paidPriceLabel = I18n.bindI18nProperties(new Text(),  EcommerceI18nKeys.Paid);
     private final Text paidPriceValue = new Text();
     private final List<Button> buttons = new ArrayList<>();
 
@@ -208,7 +209,7 @@ public final class BookingView {
     }
 
     private Button createPaymentButton() {
-        return Bootstrap.dangerButton(I18nControls.bindI18nProperties(new Button(), "Pay" /* ??? */, EventPriceFormatter.formatWithCurrency(booking.getPriceNet() - booking.getPriceDeposit(), booking.getEvent())));
+        return Bootstrap.dangerButton(I18nControls.bindI18nProperties(new Button(), EcommerceI18nKeys.Pay, EventPriceFormatter.formatWithCurrency(booking.getPriceNet() - booking.getPriceDeposit(), booking.getEvent())));
     }
 
     public Node getView() {

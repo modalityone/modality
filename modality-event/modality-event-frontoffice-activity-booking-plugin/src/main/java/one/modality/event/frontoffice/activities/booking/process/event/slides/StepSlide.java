@@ -25,6 +25,7 @@ import one.modality.base.frontoffice.utility.TextUtility;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Person;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
+import one.modality.crm.client.i18n.CrmI18nKeys;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.document.service.DocumentAggregate;
@@ -32,11 +33,11 @@ import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
+import one.modality.event.client.recurringevents.FXPersonToBook;
+import one.modality.event.client.recurringevents.RecurringEventSchedule;
 import one.modality.event.client.recurringevents.WorkingBooking;
 import one.modality.event.frontoffice.activities.booking.fx.FXGuestToBook;
-import one.modality.event.client.recurringevents.FXPersonToBook;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
-import one.modality.event.client.recurringevents.RecurringEventSchedule;
 import one.modality.event.frontoffice.activities.booking.process.event.WorkingBookingProperties;
 
 import java.util.function.Supplier;
@@ -184,7 +185,7 @@ abstract class StepSlide implements Supplier<Node> {
     }
 
     Button createPersonToBookButton() {
-        Text personPrefixText = TextUtility.createText("PersonToBook:", Color.GRAY);
+        Text personPrefixText = TextUtility.createText(CrmI18nKeys.PersonToBook + ":", Color.GRAY);
         EntityButtonSelector<Person> personSelector = new EntityButtonSelector<Person>(
             "{class: 'Person', alias: 'p', columns: [{expression: `[genderIcon,firstName,lastName]`}], orderBy: 'id'}",
             getBookEventActivity(), FXMainFrameDialogArea::getDialogArea, getBookEventActivity().getDataSourceModel()

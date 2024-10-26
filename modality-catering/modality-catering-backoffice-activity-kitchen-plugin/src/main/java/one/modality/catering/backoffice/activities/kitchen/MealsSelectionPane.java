@@ -15,6 +15,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.Organization;
+import one.modality.catering.client.i18n.CateringI18nKeys;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -66,7 +67,7 @@ public class MealsSelectionPane extends VBox {
 
     private void addTitle() {
         Label titleLabel = new Label();
-        I18n.bindI18nTextProperty(titleLabel.textProperty(),"Meals:");
+        I18n.bindI18nTextProperty(titleLabel.textProperty(), CateringI18nKeys.Meals);
         TextTheme.createPrimaryTextFacet(titleLabel).style();
         Platform.runLater(() -> itemCheckBoxPane.getChildren().add(titleLabel));
     }

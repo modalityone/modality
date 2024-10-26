@@ -206,7 +206,7 @@ public class RecurringEventSchedule {
             dayAndCommentHBox.setSpacing(10);
             dayAndCommentHBox.setAlignment(Pos.CENTER);
             LocalDate date = scheduledItem.getDate();
-            String dateFormatted = I18n.getI18nText(RecurringEventsI18nKeys.DateFormatted, I18n.getI18nText(date.getMonth().name()), date.getDayOfMonth());
+            String dateFormatted = I18n.getI18nText(RecurringEventsI18nKeys.DateFormatted1, I18n.getI18nText(date.getMonth().name()), date.getDayOfMonth());
             dayText.setText(dateFormatted);
             dayText.fontProperty().bind(dayFontProperty);
             /* Commented for now as it's not used and returns an empty label that however shift the date (not centered anymore)
@@ -221,7 +221,7 @@ public class RecurringEventSchedule {
                     startTime = timeline.getStartTime();
             }
             if (startTime != null) {
-                hourText.setText(I18n.getI18nText(RecurringEventsI18nKeys.AtTime, startTime.toString()));
+                hourText.setText(I18n.getI18nText(RecurringEventsI18nKeys.AtTime0, startTime.toString()));
             }
             scheduledItemBoxes.put(date, this);
             containerVBox.setOnMouseClicked(event -> {

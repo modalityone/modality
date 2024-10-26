@@ -44,6 +44,7 @@ import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Organization;
 import one.modality.base.shared.entities.Person;
 import one.modality.base.shared.entities.markers.EntityHasPersonalDetails;
+import one.modality.crm.client.i18n.CrmI18nKeys;
 
 import java.time.LocalDate;
 
@@ -102,7 +103,7 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         if (buttonSelectorParameters.getDropParent() == null)
             buttonSelectorParameters.setDropParent(container);
         buttonSelectorParameters.checkValid();
-        Label topLabel = I18nControls.bindI18nProperties(new Label(), PersonalDetailsI18nKeys.YourPersonalDetails);
+        Label topLabel = I18nControls.bindI18nProperties(new Label(), CrmI18nKeys.YourPersonalDetails);
         SVGPath switchIcon = new SVGPath();
         switchIcon.setContent("M 2.2857143,10.285714 H 0 V 16 H 5.7142857 V 13.714286 H 2.2857143 Z M 0,5.7142857 H 2.2857143 V 2.2857143 H 5.7142857 V 0 H 0 Z M 13.714286,13.714286 H 10.285714 V 16 H 16 V 10.285714 H 13.714286 Z M 10.285714,0 v 2.2857143 h 3.428572 V 5.7142857 H 16 V 0 Z");
         switchIcon.setFill(Color.GRAY);
@@ -112,37 +113,37 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         top.setAlignment(Pos.CENTER);
         BorderPane.setMargin(top, new Insets(15, 15, 0, 15));
         container.setTop(top);
-        firstNameTextField = newMaterialTextField( PersonalDetailsI18nKeys.FirstName);
-        lastNameTextField = newMaterialTextField(PersonalDetailsI18nKeys.LastName);
-        maleRadioButton = newRadioButton(PersonalDetailsI18nKeys.Male);
-        femaleRadioButton = newRadioButton(PersonalDetailsI18nKeys.Female);
+        firstNameTextField = newMaterialTextField( CrmI18nKeys.FirstName);
+        lastNameTextField = newMaterialTextField(CrmI18nKeys.LastName);
+        maleRadioButton = newRadioButton(CrmI18nKeys.Male);
+        femaleRadioButton = newRadioButton(CrmI18nKeys.Female);
         ToggleGroup genderGroup = new ToggleGroup();
         maleRadioButton.setToggleGroup(genderGroup);
         femaleRadioButton.setToggleGroup(genderGroup);
         genderBox = new HBox(20, maleRadioButton, femaleRadioButton);
-        adultRadioButton = newRadioButton(PersonalDetailsI18nKeys.Adult);
-        childRadioButton = newRadioButton(PersonalDetailsI18nKeys.Child);
+        adultRadioButton = newRadioButton(CrmI18nKeys.Adult);
+        childRadioButton = newRadioButton(CrmI18nKeys.Child);
         ToggleGroup ageGroup = new ToggleGroup();
         childRadioButton.setToggleGroup(ageGroup);
         adultRadioButton.setToggleGroup(ageGroup);
         ageBox = new HBox(20, adultRadioButton, childRadioButton);
         birthDatePicker = LayoutUtil.setMaxWidthToInfinite(new DatePicker());
         birthDatePicker.setConverter(DateFormatter.SINGLETON.toStringConverter());
-        emailTextField = newMaterialTextField(PersonalDetailsI18nKeys.Email);
-        phoneTextField = newMaterialTextField(PersonalDetailsI18nKeys.Phone);
-        streetTextField = newMaterialTextField(PersonalDetailsI18nKeys.Street);
-        postCodeTextField = newMaterialTextField(PersonalDetailsI18nKeys.Postcode);
-        cityNameTextField = newMaterialTextField(PersonalDetailsI18nKeys.City);
+        emailTextField = newMaterialTextField(CrmI18nKeys.Email);
+        phoneTextField = newMaterialTextField(CrmI18nKeys.Phone);
+        streetTextField = newMaterialTextField(CrmI18nKeys.Street);
+        postCodeTextField = newMaterialTextField(CrmI18nKeys.Postcode);
+        cityNameTextField = newMaterialTextField(CrmI18nKeys.City);
         String countryJson = "{class: 'Country', orderBy: 'name'}";
         if (WebFxKitLauncher.supportsSvgImageFormat())
             countryJson = "{class: 'Country', orderBy: 'name', columns: [{expression: '[image(`images/s16/countries/svg/` + iso_alpha2 + `.svg`),name]'}] }";
         countrySelector = createEntityButtonSelector(countryJson, dataSourceModel, buttonSelectorParameters);
-        countryButton = countrySelector.toMaterialButton(PersonalDetailsI18nKeys.Country);
+        countryButton = countrySelector.toMaterialButton(CrmI18nKeys.Country);
         String organizationJson = "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name'}";
         if (WebFxKitLauncher.supportsSvgImageFormat())
             organizationJson = "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name', columns: [{expression: '[image(`images/s16/organizations/svg/` + (type=2 ? `kmc` : type=3 ? `kbc` : type=4 ? `branch` : `generic`) + `.svg`),name]'}] }";
         organizationSelector = createEntityButtonSelector(organizationJson, dataSourceModel, buttonSelectorParameters);
-        organizationButton = organizationSelector.toMaterialButton(PersonalDetailsI18nKeys.Centre);
+        organizationButton = organizationSelector.toMaterialButton(CrmI18nKeys.Centre);
         SceneUtil.onSceneReady(getContainer(), scene -> {
             previousSceneCancelAccelerator = SceneUtil.getCancelAccelerator(scene);
             SceneUtil.setCancelAccelerator(scene, this::onCancelAccelerator);
@@ -312,9 +313,9 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         return Arrays.nonNulls(Node[]::new,
                 firstNameTextField,
                 lastNameTextField,
-                newMaterialRegion(genderBox, "Gender"),
-                newMaterialRegion(ageBox, "Age"),
-                childRadioButton.isSelected() ? newMaterialRegion(birthDatePicker, "BirthDate") : null,
+                newMaterialRegion(genderBox, CrmI18nKeys.Gender),
+                newMaterialRegion(ageBox, CrmI18nKeys.Age),
+                childRadioButton.isSelected() ? newMaterialRegion(birthDatePicker, CrmI18nKeys.BirthDate) : null,
                 emailTextField,
                 phoneTextField,
                 streetTextField,

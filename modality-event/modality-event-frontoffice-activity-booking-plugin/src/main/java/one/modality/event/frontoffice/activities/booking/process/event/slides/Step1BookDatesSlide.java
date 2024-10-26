@@ -77,7 +77,7 @@ final class Step1BookDatesSlide extends StepSlide {
         Bootstrap.textPrimary(Bootstrap.h4(selectAllClassesHyperlink));
         selectAllClassesHyperlink.setAlignment(Pos.CENTER);
 
-        Text priceText = new Text(I18n.getI18nText(BookingI18nKeys.PricePerClass, EventPriceFormatter.formatWithCurrency(workingBookingProperties.getDailyRatePrice(), getEvent())));
+        Text priceText = new Text(I18n.getI18nText(BookingI18nKeys.PricePerClass0, EventPriceFormatter.formatWithCurrency(workingBookingProperties.getDailyRatePrice(), getEvent())));
         priceText.getStyleClass().add("subtitle-grey");
         VBox.setMargin(priceText, new Insets(20, 0, 0, 0));
 

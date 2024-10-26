@@ -53,7 +53,7 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
 
     @Override
     public Node buildUi() {
-        Label upcomingBookingsLabel = GeneralUtility.createLabel("YourUpcomingBookings", StyleUtility.MAIN_ORANGE_COLOR);
+        Label upcomingBookingsLabel = GeneralUtility.createLabel(AccountI18nKeys.YourUpcomingBookings, StyleUtility.MAIN_ORANGE_COLOR);
         upcomingBookingsLabel.setContentDisplay(ContentDisplay.TOP);
         upcomingBookingsLabel.setTextAlignment(TextAlignment.CENTER);
         upcomingBookingsLabel.setPadding(new Insets(25, 0, 40, 0));
@@ -61,7 +61,7 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
         //VBox.setMargin(upcomingBookingsLabel, new Insets(0, 0, 10, 0));
         VBox upcomingBookingsContainer = new VBox(10);
 
-        Label pastBookingsLabel = GeneralUtility.createLabel("YourPastBookings", StyleUtility.MAIN_ORANGE_COLOR);
+        Label pastBookingsLabel = GeneralUtility.createLabel(AccountI18nKeys.YourPastBookings, StyleUtility.MAIN_ORANGE_COLOR);
         pastBookingsLabel.setContentDisplay(ContentDisplay.TOP);
         pastBookingsLabel.setTextAlignment(TextAlignment.CENTER);
         pastBookingsLabel.setPadding(new Insets(25, 0, 40, 0));

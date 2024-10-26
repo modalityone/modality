@@ -9,6 +9,7 @@ module modality.crm.client.authn.login.ui.gateway.signup.plugin {
     requires modality.base.client.i18n;
     requires modality.base.client.validation;
     requires modality.base.shared.entities;
+    requires modality.crm.client.i18n;
     requires modality.crm.shared.authn;
     requires webfx.extras.styles.bootstrap;
     requires webfx.kit.util;

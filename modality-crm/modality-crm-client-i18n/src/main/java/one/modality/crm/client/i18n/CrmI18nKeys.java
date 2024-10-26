@@ -1,8 +1,10 @@
 // File managed by WebFX (DO NOT EDIT MANUALLY)
-package one.modality.crm.client.controls.personaldetails;
+package one.modality.crm.client.i18n;
 
-public interface PersonalDetailsI18nKeys {
+public interface CrmI18nKeys {
 
+    String ref = "ref";
+    String PersonToBook = "PersonToBook";
     String YourPersonalDetails = "YourPersonalDetails";
     String FirstName = "FirstName";
     String LastName = "LastName";

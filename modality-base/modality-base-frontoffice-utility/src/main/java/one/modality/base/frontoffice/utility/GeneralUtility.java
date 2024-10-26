@@ -185,19 +185,19 @@ public class GeneralUtility {
         return b;
     }
 
-    public static Hyperlink createHyperlink(String text, Color color, double fontSize) {
-        return setupLabeled(new Hyperlink(), text, color, false, fontSize);
+    public static Hyperlink createHyperlink(String i18nKey, Color color, double fontSize) {
+        return setupLabeled(new Hyperlink(), i18nKey, color, false, fontSize);
     }
 
-    public static <T extends Labeled> T setupLabeled(T labeled, String text, Color color, boolean bold, double fontSize) {
-        return setupLabeled(labeled, text, color, bold ? FontWeight.BOLD : FontWeight.NORMAL, fontSize);
+    public static <T extends Labeled> T setupLabeled(T labeled, String i8nKey, Color color, boolean bold, double fontSize) {
+        return setupLabeled(labeled, i8nKey, color, bold ? FontWeight.BOLD : FontWeight.NORMAL, fontSize);
     }
 
-    public static <T extends Labeled> T setupLabeled(T labeled, String text, Color color, FontWeight fontWeight, double fontSize) {
+    public static <T extends Labeled> T setupLabeled(T labeled, String i18nKey, Color color, FontWeight fontWeight, double fontSize) {
         FXProperties.runNowAndOnPropertiesChange(() -> {
             setLabeledFont(labeled, StyleUtility.TEXT_FAMILY, fontWeight, fontSize * FXApp.fontRatio.get());
         }, FXApp.fontRatio);
-        return setupLabeled(labeled, text, color);
+        return setupLabeled(labeled, i18nKey, color);
     }
 
     public static <T extends Labeled> T setupLabeled(T labeled, String i18nKey, Color color) {

@@ -25,6 +25,7 @@ import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.validation.ModalityValidationSupport;
 import one.modality.base.shared.entities.FrontendAccount;
 import one.modality.base.shared.entities.Person;
+import one.modality.crm.client.i18n.CrmI18nKeys;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 
 import java.time.LocalDate;
@@ -72,31 +73,31 @@ public class ModalitySignupUiLoginGatewayProvider extends UiLoginGatewayProvider
         emailInput = new TextField();
         grid.add(emailInput, 0, 1);
 
-        firstNameLabel = I18nControls.bindI18nProperties(new Label(), "FirstName");  // ???
+        firstNameLabel = I18nControls.bindI18nProperties(new Label(), CrmI18nKeys.FirstName);
         grid.add(firstNameLabel, 1, 0);
         firstNameInput = new TextField();
         grid.add(firstNameInput, 1, 1);
 
         // Kinship
-        lastNameLabel = I18nControls.bindI18nProperties(new Label(), "LastName");  // ???
+        lastNameLabel = I18nControls.bindI18nProperties(new Label(), CrmI18nKeys.LastName);
         grid.add(lastNameLabel, 0, 2);
         lastNameInput = new TextField();
         grid.add(lastNameInput, 0, 3);
 
         // Birthday
-        birthdayLabel = I18nControls.bindI18nProperties(new Label(), "BirthDate");  // ???
+        birthdayLabel = I18nControls.bindI18nProperties(new Label(), CrmI18nKeys.BirthDate);
         grid.add(birthdayLabel, 1, 2);
         birthdayInput = new TextField();
         grid.add(birthdayInput, 1, 3);
         grid.setAlignment(Pos.CENTER);
 
-        genderLabel = I18nControls.bindI18nProperties(new Label(), "Gender");  // ???
+        genderLabel = I18nControls.bindI18nProperties(new Label(), CrmI18nKeys.Gender);
         grid.add(genderLabel, 0, 4);
 
         genderGroup = new ToggleGroup();
-        RadioButton maleRadio = I18nControls.bindI18nProperties(new RadioButton(),"Male");  // ???
+        RadioButton maleRadio = I18nControls.bindI18nProperties(new RadioButton(),CrmI18nKeys.Male);
         maleRadio.setToggleGroup(genderGroup);
-        RadioButton femaleRadio = I18nControls.bindI18nProperties(new RadioButton(),"Female");  // ???
+        RadioButton femaleRadio = I18nControls.bindI18nProperties(new RadioButton(),CrmI18nKeys.Female);
         femaleRadio.setToggleGroup(genderGroup);
 
         HBox genderBox = new HBox(10, maleRadio, femaleRadio);

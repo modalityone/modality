@@ -15,6 +15,7 @@ import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.db.query.QueryArgument;
 import dev.webfx.stack.db.query.QueryArgumentBuilder;
+import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
 import dev.webfx.stack.orm.entity.EntityId;
@@ -35,6 +36,7 @@ import one.modality.base.client.gantt.fx.selection.FXGanttSelection;
 import one.modality.base.client.gantt.fx.visibility.FXGanttVisibility;
 import one.modality.base.client.time.theme.TimeFacet;
 import one.modality.base.shared.entities.Item;
+import one.modality.catering.client.i18n.CateringI18nKeys;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 
@@ -152,7 +154,7 @@ final class KitchenActivity extends ViewDomainActivityBase
 
         Platform.runLater(() -> {
             if (dietaryOptionSvgs.isEmpty()) {
-                Label noDataLabel = new Label("No meal data");
+                Label noDataLabel = I18nControls.bindI18nProperties(new Label(), CateringI18nKeys.NoMealsData);
                 TextTheme.createPrimaryTextFacet(noDataLabel).requestedFont(NO_DATA_MSG_FONT).style();
                 noDataLabel.setWrapText(true);
                 keyPane.getChildren().setAll(noDataLabel);

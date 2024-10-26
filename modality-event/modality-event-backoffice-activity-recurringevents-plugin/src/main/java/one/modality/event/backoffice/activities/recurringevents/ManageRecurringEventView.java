@@ -385,7 +385,7 @@ final class ManageRecurringEventView {
                     }
                     defaultEndTime = defaultStartTime == null ? null : defaultStartTime.plusMinutes(Long.parseLong(duration));
                     timeOfTheEventTextField.setText(defaultStartTime == null ? null : defaultStartTime.toString());
-                    I18nControls.bindI18nTextProperty(titleEventDetailsLabel, RecurringEventsI18nKeys.EditEventInformation, e.getName());
+                    I18nControls.bindI18nTextProperty(titleEventDetailsLabel, RecurringEventsI18nKeys.EditEventInformation0, e.getName());
                     //We read and format the opening date value
                     LocalDateTime openingDate = e.getOpeningDate();
                     if (openingDate != null) {

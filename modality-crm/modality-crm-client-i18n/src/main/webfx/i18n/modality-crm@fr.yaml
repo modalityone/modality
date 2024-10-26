@@ -1,3 +1,5 @@
+ref: "Ref"
+PersonToBook: "Inscription pour"
 YourPersonalDetails: "Vos informations personnelles"
 FirstName:
   text: "Prénom"

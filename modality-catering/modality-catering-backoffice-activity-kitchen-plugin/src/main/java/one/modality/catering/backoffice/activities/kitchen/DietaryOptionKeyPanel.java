@@ -10,6 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import one.modality.catering.client.i18n.CateringI18nKeys;
 
 import java.util.Map;
 
@@ -19,7 +20,7 @@ public class DietaryOptionKeyPanel extends VBox {
     Label titleLabel = new Label();
 
     public DietaryOptionKeyPanel() {
-        I18n.bindI18nTextProperty(titleLabel.textProperty(), "Index:");  // ???
+        I18n.bindI18nTextProperty(titleLabel.textProperty(), CateringI18nKeys.Index + ":");
         TextTheme.createPrimaryTextFacet(titleLabel).style();
         labelsBox.setAlignment(Pos.CENTER);
         getChildren().setAll(labelsBox);

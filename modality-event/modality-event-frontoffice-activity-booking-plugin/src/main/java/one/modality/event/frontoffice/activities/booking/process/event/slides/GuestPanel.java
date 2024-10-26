@@ -21,7 +21,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.validation.ModalityValidationSupport;
-import one.modality.event.client.recurringevents.RecurringEventsI18nKeys;
+import one.modality.crm.client.i18n.CrmI18nKeys;
+import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 
 /**
  * @author Bruno Salmon
@@ -30,14 +31,14 @@ final class GuestPanel implements MaterialFactoryMixin {
 
     private final BorderPane container = new BorderPane();
     private final VBox guestTopVBox = new VBox(10);
-    private final TextField firstNameTextField = newMaterialTextField( "FirstName"); // ???
-    private final TextField lastNameTextField = newMaterialTextField("LastName"); // ???
-    private final TextField emailTextField = newMaterialTextField("Email"); // ???
+    private final TextField firstNameTextField = newMaterialTextField(CrmI18nKeys.FirstName);
+    private final TextField lastNameTextField = newMaterialTextField(CrmI18nKeys.LastName);
+    private final TextField emailTextField = newMaterialTextField(CrmI18nKeys.Email);
     private final Button guestSubmitButton = Bootstrap.largeButton(I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Submit));
     private final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
 
     public GuestPanel() {
-        Label guestDetailsLabel = Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), RecurringEventsI18nKeys.GuestDetails)));
+        Label guestDetailsLabel = Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), BookingI18nKeys.GuestDetails)));
         guestTopVBox.getChildren().add(guestDetailsLabel);
         guestTopVBox.setAlignment(Pos.TOP_CENTER);
         BorderPane.setMargin(guestTopVBox, new Insets(0, 0, 20,0));

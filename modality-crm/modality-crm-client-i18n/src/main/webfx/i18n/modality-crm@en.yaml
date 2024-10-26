@@ -1,3 +1,5 @@
+ref: "Ref"
+PersonToBook: "Booking for"
 YourPersonalDetails: "Your personal details"
 FirstName:
   text: "First name"

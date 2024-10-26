@@ -29,6 +29,7 @@ import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
+import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.event.client.recurringevents.FXPersonToBook;
 import one.modality.event.client.recurringevents.RecurringEventsI18nKeys;
@@ -180,7 +181,7 @@ final class Step2CheckoutSlide extends StepSlide {
         summaryGridPane.getChildren().clear();
         addRow(
             Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), "Summary"))), // ???
-            Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), "Price"))), // ???
+            Bootstrap.textPrimary(Bootstrap.strong(I18nControls.bindI18nProperties(new Label(), EcommerceI18nKeys.Price))),
             new Label()
         );
 
@@ -199,7 +200,7 @@ final class Step2CheckoutSlide extends StepSlide {
         if (total < noDiscountTotalPrice) {
             Label price = new Label(EventPriceFormatter.formatWithCurrency(total - noDiscountTotalPrice, workingBooking.getEvent()));
             addRow(
-                I18nControls.bindI18nProperties(new Label(), "Discount"), // ???
+                I18nControls.bindI18nProperties(new Label(), EcommerceI18nKeys.Discount),
                 price,
                 new Label()
             );
@@ -219,7 +220,7 @@ final class Step2CheckoutSlide extends StepSlide {
             ScheduledItem scheduledItem = a.getScheduledItem();
             LocalDate date = scheduledItem.getDate();
             Item item = scheduledItem.getItem();
-            String dateFormatted = I18n.getI18nText(RecurringEventsI18nKeys.DateFormatted, I18n.getI18nText(date.getMonth().name()), date.getDayOfMonth());
+            String dateFormatted = I18n.getI18nText(RecurringEventsI18nKeys.DateFormatted1, I18n.getI18nText(date.getMonth().name()), date.getDayOfMonth());
             Label name = new Label(item.getName() + " - " + dateFormatted + (existing ? " (already booked)" : ""));
             int dailyRatePrice = workingBookingProperties.getDailyRatePrice();
             totalPrice[0] += dailyRatePrice;

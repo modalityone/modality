@@ -38,6 +38,5 @@ public interface DocumentI18nKeys {
     String SendLetter = "SendLetter";
     String ShowBookingEditor = "ShowBookingEditor";
     String UnmarkAsMultipleBooking = "UnmarkAsMultipleBooking";
-    String Uncancel = "Uncancel";
 
 }

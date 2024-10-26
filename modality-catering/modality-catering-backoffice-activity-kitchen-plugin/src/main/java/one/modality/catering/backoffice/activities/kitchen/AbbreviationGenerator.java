@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 public class AbbreviationGenerator {
 
-    private Map<String, String> abbreviations = new HashMap<>();
+    private final Map<String, String> abbreviations = new HashMap<>();
 
     public AbbreviationGenerator(Collection<String> strings) {
         Map<String, List<String>> capitalizedAcronymInputs = new HashMap<>();
