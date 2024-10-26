@@ -6,6 +6,7 @@ module modality.crm.client.authn.login.ui.gateway.signup.plugin {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.client.i18n;
     requires modality.base.client.validation;
     requires modality.base.shared.entities;
     requires modality.crm.shared.authn;

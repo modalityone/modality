@@ -9,6 +9,7 @@ module modality.base.client.util {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.entities;
+    requires modality.base.client.i18n;
     requires modality.base.client.mainframe.fx;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.type;

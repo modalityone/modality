@@ -32,6 +32,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
 import one.modality.base.client.validation.ModalityValidationSupport;
 import one.modality.base.shared.entities.*;
@@ -202,7 +203,7 @@ public class VideoView {
 
 
         //SAVE BUTTON
-        Button saveButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), "Save")); // ???
+        Button saveButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Save));
         saveButton.disableProperty().bind(updateStore.hasChangesProperty().not());
         addUpdateStoreHasChangesProperty(updateStore.hasChangesProperty());
 

@@ -19,6 +19,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.validation.ModalityValidationSupport;
 import one.modality.event.client.recurringevents.RecurringEventsI18nKeys;
 
@@ -32,7 +33,7 @@ final class GuestPanel implements MaterialFactoryMixin {
     private final TextField firstNameTextField = newMaterialTextField( "FirstName"); // ???
     private final TextField lastNameTextField = newMaterialTextField("LastName"); // ???
     private final TextField emailTextField = newMaterialTextField("Email"); // ???
-    private final Button guestSubmitButton = Bootstrap.largeButton(I18nControls.bindI18nProperties(new Button(), "Submit")); // ???
+    private final Button guestSubmitButton = Bootstrap.largeButton(I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Submit));
     private final ModalityValidationSupport validationSupport = new ModalityValidationSupport();
 
     public GuestPanel() {
@@ -90,7 +91,7 @@ final class GuestPanel implements MaterialFactoryMixin {
     }
 
     public void turnOffButtonWaitMode() {
-        StepSlide.turnOffButtonWaitMode(guestSubmitButton, "Submit"); // ???
+        StepSlide.turnOffButtonWaitMode(guestSubmitButton, ModalityI18nKeys.Submit);
     }
 
     public Node getContainer() {

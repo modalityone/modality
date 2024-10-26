@@ -15,7 +15,6 @@ public interface RecurringEventsI18nKeys {
     String Duration = "Duration";
     String SameTimeForAll = "SameTimeForAll";
     String EditTimeEveryEvent = "EditTimeEveryEvent";
-    String Date = "Date";
     String Location = "Location";
     String AddNewLocation = "AddNewLocation";
     String BookingConfirmed = "BookingConfirmed";
@@ -51,11 +50,10 @@ public interface RecurringEventsI18nKeys {
     String ON_HOLD = "ON_HOLD";
     String OPEN = "OPEN";
     String NOT_DEFINED = "NOT_DEFINED";
-    String AreYouSure = "AreYouSure";
     String CancelChangesConfirmation = "CancelChangesConfirmation";
     String DeleteConfirmation = "DeleteConfirmation";
-    String Error = "Error";
     String ErrorWhileDeletingEvent = "ErrorWhileDeletingEvent";
+    String ErrorWhileDeletingEventDetails = "ErrorWhileDeletingEventDetails";
     String Published = "Published";
     String Advertised = "Advertised";
     String SaveDraft = "SaveDraft";

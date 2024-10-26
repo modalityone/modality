@@ -1,9 +1,9 @@
 package one.modality.crm.client.controls.personaldetails;
 
-import dev.webfx.extras.styles.materialdesign.textfield.MaterialTextFieldPane;
 import dev.webfx.extras.panes.FlexColumnPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.panes.ScalableBorderPane;
+import dev.webfx.extras.styles.materialdesign.textfield.MaterialTextFieldPane;
 import dev.webfx.extras.util.control.ControlUtil;
 import dev.webfx.extras.util.layout.LayoutUtil;
 import dev.webfx.extras.util.scene.SceneUtil;
@@ -36,6 +36,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
+import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.validation.ModalityValidationSupport;
 import one.modality.base.shared.domainmodel.formatters.DateFormatter;
 import one.modality.base.shared.domainmodel.functions.AbcNames;
@@ -79,9 +80,9 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         }
     };
 
-    private final Hyperlink updateLink = newHyperlink("Update" /* ? */, e -> setEditable(true));
-    private final Hyperlink saveLink = newHyperlink("Save" /* ? */, e -> save());
-    private final Hyperlink cancelLink = newHyperlink("Cancel" /* ? */, e -> cancel()); { cancelLink.setContentDisplay(ContentDisplay.TEXT_ONLY); }
+    private final Hyperlink updateLink = newHyperlink(ModalityI18nKeys.Update, e -> setEditable(true));
+    private final Hyperlink saveLink = newHyperlink(ModalityI18nKeys.Save, e -> save());
+    private final Hyperlink cancelLink = newHyperlink(ModalityI18nKeys.Cancel, e -> cancel()); { cancelLink.setContentDisplay(ContentDisplay.TEXT_ONLY); }
     private final Hyperlink closeLink = newHyperlink("Close" /* ? */, e -> close());
     private final MonoPane switchButton;
     private Runnable previousSceneCancelAccelerator;

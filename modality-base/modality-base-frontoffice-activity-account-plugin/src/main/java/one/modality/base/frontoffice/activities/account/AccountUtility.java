@@ -103,7 +103,7 @@ public final class AccountUtility {
                 GeneralUtility.createSplitRow(language, practitioner, 50, 10),
                 GeneralUtility.createSplitRow(idType, idNumber, 50, 10),
                 GeneralUtility.createSpace(20),
-                GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.BLACK), "Address"),
+                GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.BLACK), "Address"), // ???
                 GeneralUtility.createSplitRow(addressCountry, addressZip, 50, 10),
                 GeneralUtility.createSplitRow(addressState, addressCity, 50, 10),
                 GeneralUtility.createSplitRow(addressStreet, addressNumber, 75, 10),
@@ -111,15 +111,15 @@ public final class AccountUtility {
                 GeneralUtility.createSpace(10),
                 GeneralUtility.createSplitRow(
 
-                        GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.BLACK), "Billing Address"),
-                        GeneralUtility.createCheckBoxDirect(personPM.ADDRESS_BILLING_SAME, false, false, "Same as the billing address", false),
+                        GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.BLACK), "Billing Address"), // ???
+                        GeneralUtility.createCheckBoxDirect(personPM.ADDRESS_BILLING_SAME, false, false, "Same as the billing address", false), // ???
                         30, 10
                 ),
                 GeneralUtility.createSpace(20),
-                GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.BLACK), "Diet"),
+                GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.BLACK), "Diet"), // ???
                 diet,
                 GeneralUtility.createSpace(20),
-                GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.BLACK), "Special needs"),
+                GeneralUtility.bindI18N(TextUtility.getMainText("", StyleUtility.BLACK), "Special needs"), // ???
                 GeneralUtility.createSplitRow(needsWheelchair, needsHearing, 50, 0),
                 GeneralUtility.createSplitRow(needsSight, needsMobility, 50, 0)
         );

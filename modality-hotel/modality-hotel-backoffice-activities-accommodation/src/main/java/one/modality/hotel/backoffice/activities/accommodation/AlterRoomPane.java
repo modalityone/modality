@@ -9,6 +9,7 @@ import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.extras.visual.impl.VisualResultImpl;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
+import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.dql.DqlStatement;
@@ -38,6 +39,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.markers.EntityHasLocalDate;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
@@ -81,10 +83,6 @@ public class AlterRoomPane extends VBox {
     private TextField toDateField;
     private VisualGrid table;
 
-    private final Button createButton;
-    private final Button updateButton;
-    private final Button deleteButton;
-    private final Button deleteRoomButton;
     private final Button saveButton;
     private final Button cancelButton;
     private final Label statusLabel;
@@ -106,17 +104,17 @@ public class AlterRoomPane extends VBox {
         Label availabilityLabel = createHeadingLabel("Availability");
 
         table = new VisualGrid();
-        createButton = new Button("Create");
+        Button createButton = I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Create);
         createButton.setOnAction(e -> create());
-        updateButton = new Button("Update");
+        Button updateButton = I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Update);
         updateButton.setOnAction(e -> update());
-        deleteButton = new Button("Delete");
+        Button deleteButton = I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Delete);
         deleteButton.setOnAction(e -> confirmDelete());
-        deleteRoomButton = new Button("Delete room");
-        saveButton = new Button("Save");
+        Button deleteRoomButton = new Button("Delete room"); // ???
+        saveButton = I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Save);
         saveButton.setOnAction(e -> confirmSave());
         saveButton.setVisible(false);
-        cancelButton = new Button("Cancel");
+        cancelButton = I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Cancel);
         cancelButton.setOnAction(e -> cancel());
         cancelButton.setVisible(false);
 

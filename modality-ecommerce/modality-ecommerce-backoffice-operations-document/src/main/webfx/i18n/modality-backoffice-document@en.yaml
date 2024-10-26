@@ -22,17 +22,15 @@ ToggleMarkNotMultipleBooking:
 PassUpdated:
   text: "Pass updated"
   graphic: "images/s16/actions/passUpdated.png"
-Cancel:
+KBS2Cancel:
   text: "Cancel"
   graphic: "images/s16/actions/cancel.png"
-Uncancel:
+KBS2Uncancel:
   text: "Uncancel"
   graphic: "images/s16/actions/cancel.png"
 ToggleCancel:
-  text: "[expression: cancelled ? '[Uncancel]' : '[Cancel]' ]"
-  graphic: "[Cancel]"
-Confirm:
-  text: "Confirm"
+  text: "[expression: cancelled ? '[KBS2Uncancel]' : '[KBS2Cancel]' ]"
+  graphic: "[KBS2Cancel]"
 Unconfirm:
   text: "Unconfirm"
 ToggleConfirm:

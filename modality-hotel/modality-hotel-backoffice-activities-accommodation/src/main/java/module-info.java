@@ -12,6 +12,7 @@ module modality.hotel.backoffice.activities.accommodation {
     requires modality.base.backoffice.mainframe.fx;
     requires modality.base.client.activity.organizationdependent;
     requires modality.base.client.gantt.fx;
+    requires modality.base.client.i18n;
     requires modality.base.client.mainframe.fx;
     requires modality.base.client.tile;
     requires modality.base.shared.domainmodel;
@@ -30,6 +31,7 @@ module modality.hotel.backoffice.activities.accommodation {
     requires webfx.platform.console;
     requires webfx.platform.util;
     requires webfx.platform.windowhistory;
+    requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.domainmodel.activity;

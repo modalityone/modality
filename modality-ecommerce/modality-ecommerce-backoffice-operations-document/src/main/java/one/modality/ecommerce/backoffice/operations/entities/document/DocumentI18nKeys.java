@@ -11,10 +11,9 @@ public interface DocumentI18nKeys {
     String MarkNotMultipleBooking = "MarkNotMultipleBooking";
     String ToggleMarkNotMultipleBooking = "ToggleMarkNotMultipleBooking";
     String PassUpdated = "PassUpdated";
-    String Cancel = "Cancel";
-    String Uncancel = "Uncancel";
+    String KBS2Cancel = "KBS2Cancel";
+    String KBS2Uncancel = "KBS2Uncancel";
     String ToggleCancel = "ToggleCancel";
-    String Confirm = "Confirm";
     String Unconfirm = "Unconfirm";
     String ToggleConfirm = "ToggleConfirm";
     String Flag = "Flag";
@@ -39,5 +38,6 @@ public interface DocumentI18nKeys {
     String SendLetter = "SendLetter";
     String ShowBookingEditor = "ShowBookingEditor";
     String UnmarkAsMultipleBooking = "UnmarkAsMultipleBooking";
+    String Uncancel = "Uncancel";
 
 }

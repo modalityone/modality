@@ -8,7 +8,6 @@ public interface BookingI18nKeys {
     String localEvents = "localEvents";
     String yourLocalCentre = "yourLocalCentre";
     String findYourLocalCentre = "findYourLocalCentre";
-    String Back = "Back";
     String localCentreWebsite = "localCentreWebsite";
     String localCentreAddress = "localCentreAddress";
     String localCentrePhone = "localCentrePhone";
@@ -23,7 +22,6 @@ public interface BookingI18nKeys {
     String Schedule = "Schedule";
     String GPEvent = "GPEvent";
     String SelectTheEvent = "SelectTheEvent";
-    String AtTime = "AtTime";
     String SelectAllClasses = "SelectAllClasses";
     String PersonToBook = "PersonToBook";
     String ProceedCheckout = "ProceedCheckout";
@@ -33,7 +31,6 @@ public interface BookingI18nKeys {
     String OrBookAsGuest = "OrBookAsGuest";
     String GuestDetails = "GuestDetails";
     String OrBookUsingAccount = "OrBookUsingAccount";
-    String DateFormatted = "DateFormatted";
     String Pay = "Pay";
     String TotalBookingPrice = "TotalBookingPrice";
     String PaymentInformation = "PaymentInformation";

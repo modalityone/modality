@@ -282,6 +282,8 @@
     <public path="" includes="one/modality/event/frontoffice/activities/booking/map/"/>
     <!--===============< modality-event-frontoffice-activity-videos-plugin >================-->
     <source path="one/modality/event/frontoffice/activities/videos"/>
+    <!--=======================< modality-event-frontoffice-medias >========================-->
+    <source path="one/modality/event/frontoffice/medias"/>
     <!--===============================< webfx-extras-cell >================================-->
     <source path="dev/webfx/extras/cell/collator"/>
     <source path="dev/webfx/extras/cell/renderer"/>

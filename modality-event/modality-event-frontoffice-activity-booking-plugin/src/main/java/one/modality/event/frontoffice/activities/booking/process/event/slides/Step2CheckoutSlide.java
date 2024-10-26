@@ -25,11 +25,13 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.event.client.recurringevents.FXPersonToBook;
+import one.modality.event.client.recurringevents.RecurringEventsI18nKeys;
 import one.modality.event.client.recurringevents.WorkingBooking;
 import one.modality.event.client.recurringevents.WorkingBookingHistoryHelper;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
@@ -49,7 +51,7 @@ final class Step2CheckoutSlide extends StepSlide {
     // Node property that will be managed by the sub-router to mount the CheckoutAccountActivity (when routed)
     private final ObjectProperty<Node> checkoutAccountMountNodeProperty = new SimpleObjectProperty<>();
     private final GuestPanel guestPanel = new GuestPanel();
-    private final Button submitButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "Submit")); // ???
+    private final Button submitButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Submit));
     private final BooleanProperty step1PersonToBookWasShownProperty = new SimpleBooleanProperty();
 
     public Step2CheckoutSlide(BookEventActivity bookEventActivity) {
@@ -217,7 +219,7 @@ final class Step2CheckoutSlide extends StepSlide {
             ScheduledItem scheduledItem = a.getScheduledItem();
             LocalDate date = scheduledItem.getDate();
             Item item = scheduledItem.getItem();
-            String dateFormatted = I18n.getI18nText("DateFormatted", I18n.getI18nText(date.getMonth().name()), date.getDayOfMonth());
+            String dateFormatted = I18n.getI18nText(RecurringEventsI18nKeys.DateFormatted, I18n.getI18nText(date.getMonth().name()), date.getDayOfMonth());
             Label name = new Label(item.getName() + " - " + dateFormatted + (existing ? " (already booked)" : ""));
             int dailyRatePrice = workingBookingProperties.getDailyRatePrice();
             totalPrice[0] += dailyRatePrice;
@@ -294,7 +296,7 @@ final class Step2CheckoutSlide extends StepSlide {
 
     @Override
     void turnOffWaitMode() {
-        turnOffButtonWaitMode(submitButton, "Submit");
+        turnOffButtonWaitMode(submitButton, ModalityI18nKeys.Submit);
         guestPanel.turnOffButtonWaitMode();
     }
 

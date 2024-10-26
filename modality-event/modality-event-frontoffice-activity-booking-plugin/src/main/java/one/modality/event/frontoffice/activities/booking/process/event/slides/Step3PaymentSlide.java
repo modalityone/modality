@@ -14,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
 import one.modality.event.frontoffice.activities.booking.process.event.BookEventActivity;
@@ -71,7 +72,7 @@ final class Step3PaymentSlide extends StepSlide {
         }
 
         I18nControls.bindI18nProperties(payButton, "Pay" /* ??? */, workingBookingProperties.formattedBalanceProperty());
-        I18nControls.bindI18nProperties(cancelButton, "Cancel"); // ???
+        I18nControls.bindI18nProperties(cancelButton, ModalityI18nKeys.Cancel);
         payButton.setDefaultButton(true);
         FXProperties.runNowAndOnPropertiesChange(() -> {
             if (webPaymentForm.isUserInteractionAllowed()) {

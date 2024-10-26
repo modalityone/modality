@@ -10,6 +10,7 @@ module modality.crm.client.personaldetails {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.activity;
+    requires modality.base.client.i18n;
     requires modality.base.client.validation;
     requires modality.base.shared.domainmodel;
     requires modality.base.shared.entities;

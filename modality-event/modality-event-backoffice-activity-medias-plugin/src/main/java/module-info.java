@@ -8,6 +8,7 @@ module modality.event.backoffice.activity.medias.plugin {
     requires javafx.graphics;
     requires javafx.media;
     requires modality.base.backoffice.mainframe.fx;
+    requires modality.base.client.i18n;
     requires modality.base.client.icons;
     requires modality.base.client.tile;
     requires modality.base.client.util;
@@ -23,6 +24,7 @@ module modality.event.backoffice.activity.medias.plugin {
     requires webfx.extras.webtext;
     requires webfx.kit.util;
     requires webfx.platform.console;
+    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.i18n;
     requires webfx.stack.i18n.controls;

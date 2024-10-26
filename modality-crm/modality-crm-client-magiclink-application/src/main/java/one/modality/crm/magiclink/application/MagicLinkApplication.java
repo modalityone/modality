@@ -18,6 +18,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import one.modality.base.client.i18n.ModalityI18nKeys;
 
 public class MagicLinkApplication extends Application {
 
@@ -60,7 +61,7 @@ public class MagicLinkApplication extends Application {
         Label passwordLabel = Bootstrap.textSecondary(I18nControls.bindI18nTextProperty(new Label(), MagicLinkI18nKeys.NewPassword));
         PasswordField passwordField = new PasswordField();
         passwordField.setMaxWidth(250);
-        Button confirmButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), "Confirm")); // ???
+        Button confirmButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Confirm));
         confirmButton.setPrefWidth(250);
         confirmButton.setOnAction(l -> {
             AuthenticationService.updateCredentials(new MagicLinkPasswordUpdate(passwordField.getText()))

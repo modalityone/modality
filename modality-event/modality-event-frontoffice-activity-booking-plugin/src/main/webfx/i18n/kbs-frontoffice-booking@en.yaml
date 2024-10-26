@@ -3,7 +3,6 @@ internationalEvents: "International Events"
 localEvents: "Local Events"
 yourLocalCentre: "Your Local Dharma Centre"
 findYourLocalCentre: "Find your local Dharma Centre (click on its marker)"
-Back: "Back"
 localCentreWebsite:
   graphic:
     fill: "white"
@@ -30,7 +29,6 @@ at: "At"
 Schedule: "Schedule"
 GPEvent: "GP Classes"
 SelectTheEvent: "Select the classes you wish to book"
-AtTime: "at: {0}"
 SelectAllClasses: "Select all classes"
 PersonToBook: "Booking for"
 ProceedCheckout: "Proceed to checkout"
@@ -40,7 +38,6 @@ LoginBeforeBooking: "Please login before submitting your booking"
 OrBookAsGuest: "or book as a guest"
 GuestDetails: "Please enter your personal details below"
 OrBookUsingAccount: "or book as a returning user"
-DateFormatted: "{0} {1}" #{0} is the month, {1} is the day
 Pay:
   text: "Pay: {0}"
   graphic:

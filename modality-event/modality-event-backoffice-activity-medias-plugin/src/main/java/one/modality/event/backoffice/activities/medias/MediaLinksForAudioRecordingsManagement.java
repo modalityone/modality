@@ -12,6 +12,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
+import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.Media;
 import one.modality.base.shared.entities.ScheduledItem;
@@ -56,7 +57,7 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
-        Button saveButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), "Save")); // ???
+        Button saveButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Save));
         saveButton.disableProperty().bind(localUpdateStore.hasChangesProperty().not());
         HBox publishAllHBox = new HBox(publishAllLabel, publishAllSwitch, spacer, saveButton);
         publishAllHBox.setSpacing(10);

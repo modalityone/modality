@@ -64,6 +64,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
+import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.util.dialog.ModalityDialog;
@@ -684,16 +685,16 @@ final class ManageRecurringEventView {
                     updateStore.submitChanges()
                         .onFailure(x -> Platform.runLater(() -> {
                             areWeDeleting = false;
-                            Text infoText = I18n.bindI18nProperties(new Text(), RecurringEventsI18nKeys.Error);
+                            Text infoText = I18n.bindI18nProperties(new Text(), RecurringEventsI18nKeys.ErrorWhileDeletingEvent);
                             Bootstrap.textSuccess(Bootstrap.strong(Bootstrap.h3(infoText)));
                             BorderPane errorDialog = new BorderPane();
                             errorDialog.setTop(infoText);
                             BorderPane.setAlignment(infoText, Pos.CENTER);
-                            Text deleteErrorTest = I18n.bindI18nProperties(new Text(), RecurringEventsI18nKeys.ErrorWhileDeletingEvent);
+                            Text deleteErrorTest = I18n.bindI18nProperties(new Text(), RecurringEventsI18nKeys.ErrorWhileDeletingEventDetails);
                             errorDialog.setCenter(deleteErrorTest);
                             BorderPane.setAlignment(deleteErrorTest, Pos.CENTER);
                             BorderPane.setMargin(deleteErrorTest, new Insets(30, 0, 30, 0));
-                            Button okErrorButton = Bootstrap.largeDangerButton(I18nControls.bindI18nProperties(new Button(), "Ok")); // ???
+                            Button okErrorButton = Bootstrap.largeDangerButton(I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Ok));
 
                             DialogCallback errorMessageCallback = DialogUtil.showModalNodeInGoldLayout(errorDialog, FXMainFrameDialogArea.getDialogArea());
                             okErrorButton.setOnAction(m -> errorMessageCallback.closeDialog());
@@ -857,7 +858,7 @@ final class ManageRecurringEventView {
         HBox line1 = new HBox(timeOfEventLabel, timeOfTheEventTextField, durationLabel, durationTextField);
         line1.setAlignment(Pos.CENTER_LEFT);
         line1.setPadding(new Insets(0, 0, 20, 0));
-        datesOfTheEventLabel = I18nControls.bindI18nProperties(new Label(), "Dates"); // ???
+        datesOfTheEventLabel = I18nControls.bindI18nProperties(new Label(), ModalityI18nKeys.Dates);
         datesOfTheEventLabel.setPadding(new Insets(0, 0, 5, 0));
         calendarPane = new EventCalendarPane();
         calendarPane.getDatePicker().getSelectedDates().addListener(onChangeDateListener);

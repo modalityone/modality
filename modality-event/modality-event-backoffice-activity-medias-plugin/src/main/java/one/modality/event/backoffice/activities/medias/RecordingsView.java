@@ -32,6 +32,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
 import one.modality.base.client.validation.ModalityValidationSupport;
 import one.modality.base.shared.entities.*;
@@ -158,7 +159,7 @@ public class RecordingsView {
         // masterSettings.getChildren().add(offlineManagementHBox);
 
         //SAVE BUTTON
-        Button saveButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), "Save")); // ???
+        Button saveButton = Bootstrap.successButton(I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Save));
         VBox.setMargin(saveButton, new Insets(20, 0, 0, 0));
         addUpdateStoreHasChangesProperty(updateStore.hasChangesProperty());
         saveButton.disableProperty().bind(updateStore.hasChangesProperty().not());

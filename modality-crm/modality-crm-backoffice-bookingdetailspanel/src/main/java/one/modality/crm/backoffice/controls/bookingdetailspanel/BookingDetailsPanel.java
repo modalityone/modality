@@ -36,6 +36,7 @@ import javafx.scene.layout.*;
 import one.modality.base.backoffice.controls.masterslave.UiBuilder;
 import one.modality.base.backoffice.operations.entities.generic.CopyAllRequest;
 import one.modality.base.backoffice.operations.entities.generic.CopySelectionRequest;
+import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.presentationmodel.HasSelectedDocumentProperty;
 import one.modality.base.shared.entities.Document;
@@ -280,9 +281,9 @@ public final class BookingDetailsPanel implements
         titledPane.setCollapsible(false);
         titledPane.setMaxHeight(Double.MAX_VALUE);
         GridPane.setColumnIndex(titledPane, columnIndex++);
-        Hyperlink updateLink = I18nControls.bindI18nTextProperty(new Hyperlink(), "Update");  // Where is it defined?
-        Hyperlink saveLink   = I18nControls.bindI18nTextProperty(new Hyperlink(), "Save");    // Where is it defined?
-        Hyperlink cancelLink = I18nControls.bindI18nTextProperty(new Hyperlink(), "Cancel");  // Where is it defined?
+        Hyperlink updateLink = I18nControls.bindI18nTextProperty(new Hyperlink(),  ModalityI18nKeys.Update);
+        Hyperlink saveLink   = I18nControls.bindI18nTextProperty(new Hyperlink(), ModalityI18nKeys.Save);
+        Hyperlink cancelLink = I18nControls.bindI18nTextProperty(new Hyperlink(), ModalityI18nKeys.Cancel);
         BooleanProperty editableProperty = new SimpleBooleanProperty(true) {
             @Override
             protected void invalidated() {

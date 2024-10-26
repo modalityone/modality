@@ -31,6 +31,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
+import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.validation.ModalityValidationSupport;
 import one.modality.base.shared.entities.Media;
@@ -291,7 +292,7 @@ public abstract class MediaLinksManagement {
         }
 
         protected HBox buildLastLine() {
-            Button saveButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "Save"));
+            Button saveButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Save));
             saveButton.disableProperty().bind(updateStore.hasChangesProperty().not());
             saveButton.setOnAction(e -> {
                 if (!validationSupportInitialised[0]) {

@@ -26,6 +26,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import one.modality.base.client.i18n.ModalityI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.*;
 
@@ -126,7 +127,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 teachingTitle.getStyleClass().add(Bootstrap.STRONG);
                 startTimeLabel.getStyleClass().add(Bootstrap.STRONG);
 
-                Button saveButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), "Save"));
+                Button saveButton = Bootstrap.largeSuccessButton(I18nControls.bindI18nProperties(new Button(), ModalityI18nKeys.Save));
                 saveButton.disableProperty().bind(localUpdateStore.hasChangesProperty().not());
 
                 HBox saveButtonContainer = new HBox(saveButton);
