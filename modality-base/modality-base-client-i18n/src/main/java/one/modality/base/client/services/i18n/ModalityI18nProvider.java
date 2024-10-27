@@ -14,7 +14,7 @@ import javafx.beans.value.ObservableValue;
 public final class ModalityI18nProvider extends AstI18nProvider {
 
     @Override
-    protected <TK extends Enum<?> & TokenKey> Object getDictionaryTokenValueImpl(Object i18nKey, TK tokenKey, Dictionary dictionary, boolean skipDefaultDictionary, boolean skipMessageKeyInterpretation, boolean skipMessageLoading) {
+    protected <TK extends Enum<?> & TokenKey> Object getDictionaryTokenValueImpl(Object i18nKey, TK tokenKey, Dictionary dictionary, boolean skipDefaultDictionary, Dictionary originalDictionary, boolean skipMessageKeyInterpretation, boolean skipMessageLoading) {
         Object messageKey = i18nKeyToDictionaryMessageKey(i18nKey);
         if (messageKey instanceof String) {
             String s = (String) messageKey;
@@ -30,7 +30,7 @@ public final class ModalityI18nProvider extends AstI18nProvider {
                 }
             }
         }
-        return super.getDictionaryTokenValueImpl(i18nKey, tokenKey, dictionary, skipDefaultDictionary, skipMessageKeyInterpretation, skipMessageLoading);
+        return super.getDictionaryTokenValueImpl(i18nKey, tokenKey, dictionary, skipDefaultDictionary, originalDictionary, skipMessageKeyInterpretation, skipMessageLoading);
     }
 
     private Entity findEntity(Object i18nKey) {
